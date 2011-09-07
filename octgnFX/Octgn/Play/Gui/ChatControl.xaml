@@ -1,0 +1,36 @@
+<UserControl x:Class="Octgn.Play.Gui.ChatControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"        
+    VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"
+    >
+	<UserControl.Resources>
+		<Style TargetType="TextBlock">
+			<Setter Property="Effect" Value="{x:Null}" />
+		</Style>
+	</UserControl.Resources>
+	
+    <Border CornerRadius="2" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1" 
+          Background="{StaticResource ControlFillBrush}">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <RichTextBox x:Name="output" 
+                   IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
+                   BorderThickness="0" Background="Transparent" />
+
+      <Rectangle Fill="White" Grid.Row="1" Height="1" />
+
+      <TextBox x:Name="input" Grid.Row="2"
+               KeyDown="KeyDownHandler" GotFocus="InputGotFocus" LostFocus="InputLostFocus" 
+               BorderThickness="0" Background="Transparent" Style="{x:Null}" />
+      <TextBlock x:Name="watermark" Grid.Row="2"
+                 VerticalAlignment="Center" Margin="4,0,4,0"
+                 IsHitTestVisible="False"
+                 Text="Type here to chat" Style="{StaticResource HintText}" />
+    </Grid>
+  </Border>
+</UserControl>

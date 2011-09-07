@@ -1,0 +1,109 @@
+﻿<Window x:Class="Octgn.DeckBuilder.DeckBuilderWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrl="clr-namespace:Octgn.Controls"
+    xmlns:gui="clr-namespace:Octgn.Play.Gui"				
+    xmlns:deck="clr-namespace:Octgn.DeckBuilder"
+    xmlns:o8="clr-namespace:Octgn"
+    x:Name="self"
+    Title="OCTGN Deck Builder" Height="600" Width="776"
+    Style="{StaticResource DialogWindow}">
+
+	<Window.CommandBindings>
+		<CommandBinding Command="gui:Commands.LoadDeck" Executed="LoadDeckCommand" />
+		<CommandBinding Command="gui:Commands.NewDeck" Executed="NewDeckCommand" />
+		<CommandBinding Command="gui:Commands.SaveDeck" Executed="SaveDeck" CanExecute="IsDeckOpen" />
+		<CommandBinding Command="gui:Commands.SaveDeckAs" Executed="SaveDeckAsHandler" CanExecute="IsDeckOpen" />
+		<CommandBinding Command="ctrl:TabCommands.NewTabCommand" Executed="OpenTabCommand" />
+		<CommandBinding Command="ctrl:TabCommands.CloseTabCommand" Executed="CloseTabCommand" CanExecute="CanCloseTab" />
+	</Window.CommandBindings>
+
+	<Window.Resources>
+		<deck:ActiveSectionConverter x:Key="ActiveSectionConverter" />
+	</Window.Resources>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="250" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="350" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<Menu Grid.ColumnSpan="2">
+			<MenuItem Header="Deck">
+				<MenuItem Header="New" x:Name="newSubMenu"
+									ItemsSource="{Binding Games, Source={x:Static o8:Program.GamesRepository}}" 
+									DisplayMemberPath="Name" Click="NewClicked" />
+				<MenuItem Header="Load..." x:Name="loadSubMenu"
+									ItemsSource="{Binding Games, Source={x:Static o8:Program.GamesRepository}}" 
+									DisplayMemberPath="Name" Click="LoadClicked" />
+				<MenuItem Header="Save" Command="gui:Commands.SaveDeck" />
+				<MenuItem Header="Save as..." Command="gui:Commands.SaveDeckAs" />
+				<Separator />
+				<MenuItem Header="Close" Click="CloseClicked" />
+			</MenuItem>
+		</Menu>
+
+		<Image Margin="4,4,2,2" Grid.Row="1" x:Name="cardImage" />
+		<GridSplitter Grid.Row="1" ResizeDirection="Rows" Height="4" Margin="0,0,0,-2"
+									VerticalAlignment="Bottom" HorizontalAlignment="Stretch" 
+									Background="Transparent" />
+
+		<Border Grid.Row="2" Margin="4,2,2,4" Padding="6" Style="{StaticResource Panel}">
+			<ScrollViewer VerticalScrollBarVisibility="Auto">
+				<ItemsControl ItemsSource="{Binding Deck.Sections, ElementName=self}"
+										ScrollViewer.VerticalScrollBarVisibility="Visible">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Expander IsExpanded="True" GotFocus="SetActiveSection">
+								<Expander.Header>
+									<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0} ({1})">
+											<Binding Path="Name" Mode="OneTime" />
+											<Binding Path="CardCount" />
+										</MultiBinding>
+									</TextBlock.Text>
+									<TextBlock.FontWeight>
+										<MultiBinding Converter="{StaticResource ActiveSectionConverter}">
+											<Binding Path="ActiveSection" ElementName="self" />
+											<Binding />
+										</MultiBinding>
+									</TextBlock.FontWeight>
+									</TextBlock>
+								</Expander.Header>
+								<DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
+										  CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden"
+										  AlternatingRowBackground="#e1ffd7"
+										  VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray"
+										  SelectionChanged="ElementSelected" Keyboard.PreviewKeyDown="DeckKeyDownHandler"
+										  CellEditEnding="ElementEditEnd">
+							        <DataGrid.Columns>
+										<DataGridTextColumn Binding="{Binding Card.Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
+										<DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
+									</DataGrid.Columns>
+								</DataGrid>
+							</Expander>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+		</Border>
+
+		<TabControl x:Name="searchTabs" Style="{StaticResource EditableTabControl}"
+								Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="2,4,4,4"
+								ItemsSource="{Binding Searches, ElementName=self}">
+			<TabControl.ItemContainerStyle>
+				<Style TargetType="TabItem" BasedOn="{StaticResource ClosableTabItem}">
+					<Setter Property="Header" Value="{Binding SearchName}" />
+				</Style>
+			</TabControl.ItemContainerStyle>
+		</TabControl>
+
+		<GridSplitter Grid.Row="1" Grid.RowSpan="2" ResizeDirection="Columns" Width="4" HorizontalAlignment="Right" Background="Transparent" />
+	</Grid>
+</Window>

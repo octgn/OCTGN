@@ -1,0 +1,86 @@
+﻿<Window x:Class="Octgn.IRC.IrcWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:irc="clr-namespace:IrcDotNet;assembly=IrcDotNet"
+        xmlns:ctrl="clr-namespace:Octgn.Controls"
+        Style="{StaticResource DialogWindow}"
+        Title="OCTGN - Chat" 
+        Height="470" Width="738">
+  <Window.Resources>
+    <DataTemplate x:Key="outputTemplate">
+      <RichTextBox IsReadOnly="True"
+                   Background="Transparent" BorderThickness="0"
+                   VerticalScrollBarVisibility="Visible">
+        <FlowDocument>
+          <Table CellSpacing="0">
+            <Table.Columns>
+              <TableColumn Width="100" />
+              <TableColumn />
+            </Table.Columns>
+            <TableRowGroup>
+            </TableRowGroup>
+          </Table>
+        </FlowDocument>
+      </RichTextBox>
+    </DataTemplate>
+    <Style TargetType="TableCell" x:Key="NickCell">
+      <Setter Property="Padding" Value="0,0,6,0" />
+      <Setter Property="BorderThickness" Value="0,0,1,0" />
+      <Setter Property="BorderBrush" Value="#20000000" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="TextAlignment" Value="Right" />
+    </Style>
+    <Style TargetType="TableCell" x:Key="TextCell">
+      <Setter Property="Padding" Value="6,0,0,0" />
+    </Style>
+  </Window.Resources>
+  <Window.CommandBindings>
+    <CommandBinding Command="ctrl:TabCommands.CloseTabCommand" Executed="CloseTabCommand" CanExecute="CanCloseTab" />
+  </Window.CommandBindings>
+  <Border Style="{StaticResource Panel}" Margin="8" Padding="8">
+    <Grid>
+      <TabControl x:Name="tabs"
+                  Style="{StaticResource InsideTabs}" Margin="0,0,188,32"
+                  SelectionChanged="SelectedTabChanged">
+        <TabControl.ItemContainerStyle>
+          <Style TargetType="TabItem" BasedOn="{StaticResource ClosableTabItem}">
+            <Setter Property="Header" Value="{Binding Name}" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsDirty}" Value="True">
+                <Setter Property="Background" Value="#a0ffff90" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </TabControl.ItemContainerStyle>        
+      </TabControl>
+      
+      <TextBlock x:Name="connectLabel" Margin="0,0,188,32"
+                 Text="Connecting to #octgn..." 
+                 VerticalAlignment="Center" HorizontalAlignment="Center" />
+      
+      <TextBox VerticalAlignment="Bottom" Margin="0,0,188,0" Height="24"
+               PreviewKeyDown="InputKeyDown" />
+
+      <ListBox x:Name="usersList" Width="180" HorizontalAlignment="Right">
+        <ListBox.ItemContainerStyle>
+          <Style TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+          </Style>
+        </ListBox.ItemContainerStyle>
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding NickName}" HorizontalAlignment="Stretch" MouseLeftButtonDown="UserDoubleClicked">
+              <TextBlock.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Header="Chat in private" FontWeight="Bold"
+                            Click="PrivateChatClicked" />
+                  <!--<MenuItem Header="Invite to play" />-->
+                </ContextMenu>
+              </TextBlock.ContextMenu>
+            </TextBlock>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+  </Border>
+</Window>
