@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Server", "..\Octgn.Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Data", "..\Octgn.Data\Octgn.Data.csproj", "{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.LobbyServer", "..\Octgn.LobbyServer\Octgn.LobbyServer.csproj", "{CBEA967B-A33D-49AF-A61C-A84137874430}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.LobbyServer", "..\Octgn.LobbyServer\Skylabs.LobbyServer.csproj", "{CBEA967B-A33D-49AF-A61C-A84137874430}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.Lobby", "..\Skylabs.Lobby\Skylabs.Lobby.csproj", "{131805CF-7971-4813-848B-CE156D4F6827}"
 EndProject
