@@ -1,6 +1,6 @@
 ﻿namespace Skylabs.Lobby
 {
-    public class Class1
+    public class LobbyClient
     {
     }
 }
