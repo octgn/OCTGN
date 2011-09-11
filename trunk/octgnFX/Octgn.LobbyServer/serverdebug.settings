@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Octgn.LobbyServer" GeneratedClassName="serverdebug">
+  <Profiles />
+  <Settings>
+    <Setting Name="BindTo" Type="System.String" Scope="User">
+      <Value Profile="(Default)">*</Value>
+    </Setting>
+    <Setting Name="BindPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">7535</Value>
+    </Setting>
+    <Setting Name="HostName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">localhost</Value>
+    </Setting>
+    <Setting Name="dbHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">localhost</Value>
+    </Setting>
+    <Setting Name="dbUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">root</Value>
+    </Setting>
+    <Setting Name="dbPass" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="db" Type="System.String" Scope="User">
+      <Value Profile="(Default)">lobby</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
