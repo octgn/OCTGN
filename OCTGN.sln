@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.LobbyServer", "..\O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.Lobby", "..\Skylabs.Lobby\Skylabs.Lobby.csproj", "{131805CF-7971-4813-848B-CE156D4F6827}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn3", "..\Octgn3\Octgn3.csproj", "{E8AD434E-3DC2-4D18-89CC-765FA50649FC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,16 +77,6 @@ Global
 		{131805CF-7971-4813-848B-CE156D4F6827}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{131805CF-7971-4813-848B-CE156D4F6827}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{131805CF-7971-4813-848B-CE156D4F6827}.Release|x86.ActiveCfg = Release|Any CPU
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Debug|x86.ActiveCfg = Debug|x86
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Debug|x86.Build.0 = Debug|x86
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Release|Any CPU.ActiveCfg = Release|x86
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Release|Mixed Platforms.Build.0 = Release|x86
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Release|x86.ActiveCfg = Release|x86
-		{E8AD434E-3DC2-4D18-89CC-765FA50649FC}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
