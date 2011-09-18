@@ -19,12 +19,16 @@ namespace Octgn.LobbyServer
         {
             SocketMessage sm = new SocketMessage("END");
             WriteMessage(sm);
-            Close();
+            Close(DisconnectReason.CleanDisconnect);
         }
 
         public override void OnMessageReceived(SocketMessage sm)
         {
             ConsoleWriter.writeLine(sm.Header, true);
+        }
+
+        public override void OnDisconnect(DisconnectReason reason)
+        {
         }
     }
 }
