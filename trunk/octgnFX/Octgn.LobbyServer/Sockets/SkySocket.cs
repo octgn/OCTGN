@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading;
 using Skylabs.ConsoleHelper;
+
+namespace Skylabs.Net
+{
+    public enum DisconnectReason { PingTimeout, RemoteHostDropped, CleanDisconnect };
+}
 
 namespace Skylabs.Net.Sockets
 {
@@ -22,15 +28,38 @@ namespace Skylabs.Net.Sockets
 
         private List<byte> Buffer= new List<byte>();
 
+        private Thread thread;
+
+        private DateTime LastPingReceived;
+
         public SkySocket(TcpClient client)
         {
             Connected = true;
             Sock = client;
             Recieve();
             Buffer = new List<byte>();
+            thread = new Thread(new ThreadStart(run));
+            LastPingReceived = DateTime.Now;
+            thread.Start();
         }
 
         public abstract void OnMessageReceived(SocketMessage sm);
+
+        public abstract void OnDisconnect(DisconnectReason reason);
+
+        private void run()
+        {
+            while(Connected)
+            {
+                DateTime temp = LastPingReceived.AddSeconds(30);
+                if(DateTime.Now >= temp)
+                {
+                    this.Close(DisconnectReason.PingTimeout);
+                }
+                SocketMessage sm = new SocketMessage("ping");
+                Thread.Sleep(10000);
+            }
+        }
 
         private void Recieve()
         {
@@ -39,11 +68,12 @@ namespace Skylabs.Net.Sockets
             Sock.Client.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
         }
 
-        public void Close()
+        public void Close(DisconnectReason reason)
         {
             this.Sock.Client.BeginDisconnect(false, new System.AsyncCallback(delegate(System.IAsyncResult res)
             {
                 Connected = false;
+                OnDisconnect(reason);
             }), Sock.Client);
         }
 
@@ -93,7 +123,12 @@ namespace Skylabs.Net.Sockets
                     SocketMessage sm = SocketMessage.Deserialize(mdata);
 
                     Buffer.RemoveRange(0, (int)count + 8);
-                    OnMessageReceived(sm);
+                    if(sm.Header.ToLower() == "ping")
+                    {
+                        LastPingReceived = DateTime.Now;
+                    }
+                    else
+                        OnMessageReceived(sm);
                 }
             }
         }
@@ -114,6 +149,7 @@ namespace Skylabs.Net.Sockets
 #else
                 ConsoleEventLog.addEvent(new ConsoleEventError("in WriteMessage", se), true);
 #endif
+                Close(DisconnectReason.RemoteHostDropped);
             }
         }
     }
