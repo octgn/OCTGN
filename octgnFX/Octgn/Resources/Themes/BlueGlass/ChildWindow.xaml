@@ -1,7 +1,7 @@
-﻿<ResourceDictionary 
+﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ctrl="clr-namespace:Octgn.Controls"
+    xmlns:ctrl="clr-namespace:Octgn3"
     >
 
     <Style x:Key="CloseButtonStyle" TargetType="Button">
@@ -54,7 +54,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>    
+    </Style>
 
     <ControlTemplate x:Key="TitleBarTemplate" TargetType="{x:Type Thumb}">
         <Border HorizontalAlignment="Stretch" BorderBrush="#FF1B0E4C" BorderThickness="1,1,1,0" CornerRadius="6,6,0,0">
