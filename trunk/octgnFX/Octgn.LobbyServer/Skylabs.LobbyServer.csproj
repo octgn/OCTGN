@@ -74,7 +74,7 @@
   <ItemGroup>
     <None Include="Properties\app.config" />
     <None Include="serverdebug.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>serverdebug.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
