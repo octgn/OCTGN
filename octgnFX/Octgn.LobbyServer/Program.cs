@@ -1,10 +1,11 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using Octgn.LobbyServer;
 using Skylabs.ConsoleHelper;
 
-namespace Octgn.LobbyServer
+namespace Skylabs.LobbyServer
 {
-    internal class Program
+    public class Program
     {
         public static Server server;
 #if(DEBUG)

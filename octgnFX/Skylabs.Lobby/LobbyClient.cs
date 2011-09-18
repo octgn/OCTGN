@@ -1,16 +1,25 @@
 ﻿using System.Net.Sockets;
+using Skylabs.Net.Sockets;
 
 namespace Skylabs.Lobby
 {
-    public class LobbyClient
+    public class LobbyClient : SkySocket
     {
-        TcpClient Client;
-
-        public void Connect()
+        public LobbyClient()
+            : base()
         {
         }
 
-        public void Connect(string server, int port)
+        public LobbyClient(TcpClient c)
+            : base(c)
+        {
+        }
+
+        public override void OnMessageReceived(Net.SocketMessage sm)
+        {
+        }
+
+        public override void OnDisconnect(Net.DisconnectReason reason)
         {
         }
     }

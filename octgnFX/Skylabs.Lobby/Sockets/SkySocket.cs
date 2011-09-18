@@ -31,10 +31,42 @@ namespace Skylabs.Net.Sockets
 
         private DateTime LastPingReceived;
 
+        public SkySocket()
+        {
+            Connected = false;
+            Sock = null;
+            Buffer = new List<Byte>();
+            thread = new Thread(new ThreadStart(run));
+        }
+
         public SkySocket(TcpClient client)
         {
+            _Connect(client);
+        }
+
+        public bool Connect(string host, int port)
+        {
+            if(!Connected)
+            {
+                TcpClient c = new TcpClient();
+                try
+                {
+                    c.Connect(host, port);
+                    _Connect(c);
+                    return true;
+                }
+                catch(Exception e)
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        private void _Connect(TcpClient c)
+        {
             Connected = true;
-            Sock = client;
+            Sock = c;
             Recieve();
             Buffer = new List<byte>();
             thread = new Thread(new ThreadStart(run));

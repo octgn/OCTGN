@@ -3,7 +3,7 @@ using Skylabs.ConsoleHelper;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
 
-namespace Octgn.LobbyServer
+namespace Skylabs.LobbyServer
 {
     public class Client : SkySocket
     {
