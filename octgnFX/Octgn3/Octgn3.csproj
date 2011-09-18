@@ -15,6 +15,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,7 +28,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -106,11 +106,55 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Themes\BlueGlass\Panel.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Resources\PlayResources.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\BlueGlass\Window.xaml">
+    <Page Include="Resources\Themes\BlueGlass\Button.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\CardRun.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\ChildWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\CommonControls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Menu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Panel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\ProgressBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\ScrollBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\ChildWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Global.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Target.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -176,9 +220,35 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Resources\Back.jpg" />
+    <Resource Include="Resources\eye.png" />
+    <Resource Include="Resources\FileIcons\Deck.ico" />
+    <Resource Include="Resources\FileIcons\Game.ico" />
+    <Resource Include="Resources\FileIcons\Patch.ico" />
+    <Resource Include="Resources\FileIcons\Set.ico" />
+    <Resource Include="Resources\Folder.png" />
+    <Resource Include="Resources\Front.jpg" />
+    <Resource Include="Resources\Icon.ico" />
+    <Resource Include="Resources\Icons\About.png" />
+    <Resource Include="Resources\Icons\FullScreen.png" />
+    <Resource Include="Resources\Icons\Help.png" />
+    <Resource Include="Resources\Icons\LoadDeck.png" />
+    <Resource Include="Resources\Icons\LoadLimited.png" />
+    <Resource Include="Resources\Icons\Ok.png" />
+    <Resource Include="Resources\Icons\PiggyBank.png" />
+    <Resource Include="Resources\Icons\Quit.png" />
+    <Resource Include="Resources\Icons\Reset.png" />
+    <Resource Include="Resources\Icons\Save.png" />
+    <Resource Include="Resources\Markers\black.png" />
+    <Resource Include="Resources\Markers\blue.png" />
+    <Resource Include="Resources\Markers\brown.png" />
+    <Resource Include="Resources\Markers\green.png" />
+    <Resource Include="Resources\Markers\orange.png" />
+    <Resource Include="Resources\Markers\purple.png" />
+    <Resource Include="Resources\Markers\red.png" />
+    <Resource Include="Resources\Markers\white.png" />
+    <Resource Include="Resources\Markers\yellow.png" />
+    <Resource Include="Resources\Patch.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
