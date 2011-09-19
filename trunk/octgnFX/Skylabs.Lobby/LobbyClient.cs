@@ -1,12 +1,15 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.Net.Sockets;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
 
 namespace Skylabs.Lobby
 {
+    public enum LoginResult { Success, Failure, Banned };
+
     public class LobbyClient : SkySocket
     {
-        public delegate void LoginFinished(bool success);
+        public delegate void LoginFinished(LoginResult success, DateTime BanEnd);
 
         private LoginFinished OnLoginFinished;
 
@@ -37,10 +40,19 @@ namespace Skylabs.Lobby
             switch(sm.Header.ToLower())
             {
                 case "loginsuccess":
-                    OnLoginFinished.Invoke(true);
+                    OnLoginFinished.Invoke(LoginResult.Success, DateTime.Now);
                     break;
                 case "loginfailed":
-                    OnLoginFinished.Invoke(false);
+                    OnLoginFinished.Invoke(LoginResult.Failure, DateTime.Now);
+                    break;
+                case "banned":
+                    string stime = sm["end"];
+                    if(stime != null)
+                    {
+                        int time = int.Parse(stime);
+
+                        OnLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.fromPHPTime(time));
+                    }
                     break;
             }
         }

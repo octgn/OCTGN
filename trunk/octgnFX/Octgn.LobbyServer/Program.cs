@@ -14,19 +14,6 @@ namespace Skylabs.LobbyServer
         public static server Settings = server.Default;
 #endif
 
-        public static string MySqlConnectionString
-        {
-            get
-            {
-                MySql.Data.MySqlClient.MySqlConnectionStringBuilder sb = new MySql.Data.MySqlClient.MySqlConnectionStringBuilder();
-                sb.Database = Settings.db;
-                sb.UserID = Settings.dbUser;
-                sb.Password = Settings.dbPass;
-                sb.Server = Settings.dbHost;
-                return sb.ToString();
-            }
-        }
-
         private static void Main(string[] args)
         {
             ConsoleEventLog.eAddEvent += new ConsoleEventLog.EventEventDelegate(ConsoleEventLog_eAddEvent);

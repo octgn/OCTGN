@@ -180,6 +180,7 @@ namespace Skylabs.Net.Sockets
             {
                 Sock.Client.Send(messagesize);
                 Sock.Client.Send(data);
+                Sock.GetStream().Flush();
             }
             catch(SocketException se)
             {
