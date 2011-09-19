@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
-using MySql.Data.MySqlClient;
+using Octgn.LobbyServer;
+using Skylabs.Lobby;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
 
@@ -12,7 +13,13 @@ namespace Skylabs.LobbyServer
 
         public bool LoggedIn { get; private set; }
 
+        public MySqlCup Cup { get; private set; }
+
         private Server Parent;
+
+        private bool SentENDMessage = false;
+
+        private bool GotENDMessage = false;
 
         public Client(TcpClient client, int id, Server server)
             : base(client)
@@ -20,20 +27,33 @@ namespace Skylabs.LobbyServer
             ID = id;
             Parent = server;
             LoggedIn = false;
+            Cup = new MySqlCup(Program.Settings.dbUser, Program.Settings.dbPass, Program.Settings.dbHost, Program.Settings.db);
         }
 
         public void Stop()
         {
-            SocketMessage sm = new SocketMessage("END");
-            WriteMessage(sm);
-            Close(DisconnectReason.CleanDisconnect);
+            if(!SentENDMessage)
+            {
+                WriteMessage(new SocketMessage("end"));
+                SentENDMessage = true;
+            }
+            if(GotENDMessage)
+            {
+                Close(DisconnectReason.CleanDisconnect);
+            }
         }
 
         public override void OnMessageReceived(SocketMessage sm)
         {
-            if(sm.Header == "login")
+            switch(sm.Header.ToLower())
             {
-                Login(sm);
+                case "login":
+                    Login(sm);
+                    break;
+                case "end":
+                    GotENDMessage = true;
+                    Stop();
+                    break;
             }
         }
 
@@ -48,39 +68,40 @@ namespace Skylabs.LobbyServer
             if(email != null && pass != null)
             {
                 pass = CreateSHAHash(pass);
-                int len = pass.Length;
-                try
+                User u = Cup.GetUser(email);
+                if(u != null)
                 {
-                    using(MySqlConnection con = new MySqlConnection(Program.MySqlConnectionString))
+                    if(u.Password == pass)
                     {
-                        con.Open();
-                        using(MySqlDataAdapter da = new MySqlDataAdapter("SELECT * FROM users WHERE email='" + email + "' AND password='" + pass + "';", con))
+                        int banned = Cup.IsBanned(u, this);
+                        if(banned == -1)
                         {
-                            using(MySqlDataReader dr = da.SelectCommand.ExecuteReader())
-                            {
-                                if(dr.HasRows)
-                                {
-                                    LoggedIn = true;
-                                    WriteMessage(new SocketMessage("loginsuccess"));
-                                    con.Close();
-                                    return;
-                                }
-                                else
-                                {
-                                    LoggedIn = false;
-                                    WriteMessage(new SocketMessage("loginfailed"));
-                                    con.Close();
-                                    return;
-                                }
-                            }
+                            LoggedIn = true;
+                            WriteMessage(new SocketMessage("loginsuccess"));
+                            return;
+                        }
+                        else
+                        {
+                            SocketMessage smm = new SocketMessage("banned");
+                            smm.Add_Data(new NameValuePair("end", banned));
+                            WriteMessage(smm);
+                            Stop();
+                            LoggedIn = false;
+                            return;
                         }
                     }
+                    else
+                    {
+                        LoggedIn = false;
+                        WriteMessage(new SocketMessage("loginfailed"));
+                        return;
+                    }
                 }
-                catch(MySqlException ex)
+                else
                 {
-#if(DEBUG)
-                    if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-#endif
+                    LoggedIn = false;
+                    WriteMessage(new SocketMessage("loginfailed"));
+                    return;
                 }
             }
             WriteMessage(new SocketMessage("loginfailed"));

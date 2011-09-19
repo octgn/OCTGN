@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Octgn.Properties;
+using Skylabs.Lobby;
 
 namespace Octgn.Launcher
 {
@@ -21,24 +22,30 @@ namespace Octgn.Launcher
             circularProgressBar1.Visibility = Visibility.Visible;
             bError.Visibility = System.Windows.Visibility.Hidden;
             Program.lobbyClient = new Skylabs.Lobby.LobbyClient();
-            bool c = Program.lobbyClient.Connect("localhost", int.Parse(Settings.Default.ServePort));
+            bool c = Program.lobbyClient.Connected;
+            if(!c)
+                c = Program.lobbyClient.Connect("localhost", int.Parse(Settings.Default.ServePort));
             if(c)
             {
                 Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password);
             }
         }
 
-        private void LoginFinished(bool success)
+        private void LoginFinished(LoginResult success, DateTime BanEnd)
         {
             Dispatcher.Invoke((Action)(() =>
             {
                 circularProgressBar1.Visibility = System.Windows.Visibility.Hidden;
-                if(success)
+                if(success == LoginResult.Success)
                 {
                 }
-                else
+                else if(success == LoginResult.Banned)
                 {
-                    bError.Visibility = System.Windows.Visibility.Visible;
+                    DoErrorMessage("You have been banned until " + BanEnd.ToShortTimeString() + " on " + BanEnd.ToShortDateString());
+                }
+                else if(success == LoginResult.Failure)
+                {
+                    DoErrorMessage("Login Failed");
                 }
             }), new object[0] { });
         }
@@ -55,6 +62,15 @@ namespace Octgn.Launcher
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             bError.Visibility = System.Windows.Visibility.Hidden;
+        }
+
+        private void DoErrorMessage(string message)
+        {
+            Dispatcher.Invoke((Action)(() =>
+            {
+                lError.Text = message;
+                bError.Visibility = System.Windows.Visibility.Visible;
+            }), new object[0] { });
         }
 
         private void passwordBox1_PasswordChanged(object sender, RoutedEventArgs e)

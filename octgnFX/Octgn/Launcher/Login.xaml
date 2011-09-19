@@ -150,7 +150,7 @@
             <Button Content="Sign In" Grid.Row="2" Height="45" HorizontalAlignment="Left" Margin="12,136,0,0" Name="button1" VerticalAlignment="Top" Width="102" Click="button1_Click" />
             <my:CircularProgressBar Grid.Row="2" x:Name="circularProgressBar1" Visibility="Hidden" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
             <Border Style="{StaticResource Panel}" BorderBrush="Silver" BorderThickness="1" Grid.Column="1" Grid.Row="2" Height="43" HorizontalAlignment="Center" Name="bError" VerticalAlignment="Top" Width="258" Margin="26,0" Visibility="Hidden">
-                <Label Content="Login Failed" Name="lError" Foreground="Red" FontWeight="Bold" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <TextBlock Name="lError" Text="TextBlock" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" />
             </Border>
         </Grid>
     </Grid>
