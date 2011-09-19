@@ -52,6 +52,9 @@
     <Reference Include="ConsoleHelper">
       <HintPath>..\..\..\..\..\c#\consolehelper\ConsoleHelper\bin\Release\ConsoleHelper.dll</HintPath>
     </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>..\..\..\..\..\c#\Libraries\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

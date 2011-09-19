@@ -151,15 +151,23 @@ namespace Skylabs.Net.Sockets
                 {
                     byte[] mdata = new byte[count];
                     Buffer.CopyTo(8, mdata, 0, (int)count);
-                    SocketMessage sm = SocketMessage.Deserialize(mdata);
+                    try
+                    {
+                        SocketMessage sm = SocketMessage.Deserialize(mdata);
+                        if(sm.Header.ToLower() == "ping")
+                        {
+                            LastPingReceived = DateTime.Now;
+                        }
+                        else
+                        {
+                            OnMessageReceived(sm);
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                    }
 
                     Buffer.RemoveRange(0, (int)count + 8);
-                    if(sm.Header.ToLower() == "ping")
-                    {
-                        LastPingReceived = DateTime.Now;
-                    }
-                    else
-                        OnMessageReceived(sm);
                 }
             }
         }
