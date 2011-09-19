@@ -51,14 +51,14 @@ namespace Skylabs.Net
             Data = new NameValuePair[0];
         }
 
-        public NameValuePair this[string key]
+        public String this[string key]
         {
             get
             {
                 for(int i=0; i < _Data.Length; i++)
                 {
                     if(_Data[i].Key == key)
-                        return _Data[i];
+                        return _Data[i].Value;
                 }
                 return null;
             }
@@ -67,7 +67,7 @@ namespace Skylabs.Net
                 for(int i=0; i < _Data.Length; i++)
                 {
                     if(_Data[i].Key == key)
-                        _Data[i] = value;
+                        _Data[i].Value = value;
                 }
             }
         }
