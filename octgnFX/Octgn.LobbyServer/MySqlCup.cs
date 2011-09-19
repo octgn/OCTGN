@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using Skylabs.ConsoleHelper;
 using Skylabs.Lobby;
 using Skylabs.LobbyServer;
 
@@ -103,6 +104,7 @@ namespace Octgn.LobbyServer
             catch(MySqlException me)
             {
 #if(DEBUG)
+                ConsoleEventLog.addEvent(new ConsoleEventError(me.Message, me), false);
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
             }
@@ -154,6 +156,7 @@ namespace Octgn.LobbyServer
             catch(MySqlException ex)
             {
 #if(DEBUG)
+                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
             }

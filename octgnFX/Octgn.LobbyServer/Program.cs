@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using Octgn.LobbyServer;
 using Skylabs.ConsoleHelper;
@@ -19,16 +20,36 @@ namespace Skylabs.LobbyServer
             ConsoleEventLog.eAddEvent += new ConsoleEventLog.EventEventDelegate(ConsoleEventLog_eAddEvent);
             ConsoleWriter.CommandText = "LobbyServer: ";
             ConsoleReader.eConsoleInput += new ConsoleReader.ConsoleInputDelegate(ConsoleReader_eConsoleInput);
+            AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
             //Start_Server();
 
             ConsoleReader.Start();
             ConsoleWriter.writeCT();
         }
 
+        private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            ConsoleEventLog.SerializeEvents("log.xml");
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (Exception)e.ExceptionObject;
+            ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
+        }
+
+        private static void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+        {
+            ConsoleEventLog.addEvent(new ConsoleEventError(e.Exception.Message, e.Exception), false);
+        }
+
         private static void ConsoleEventLog_eAddEvent(ConsoleEvent e)
         {
 #if(DEBUG)
             System.Diagnostics.Debugger.Break();
+
 #endif
         }
 
