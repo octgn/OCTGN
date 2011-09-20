@@ -61,6 +61,7 @@
     <Compile Include="Sockets\SocketMessage.cs" />
     <Compile Include="User.cs" />
     <Compile Include="ValueConverters.cs" />
+    <Compile Include="Verify.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

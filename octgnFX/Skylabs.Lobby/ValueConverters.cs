@@ -27,5 +27,16 @@ namespace Skylabs
             DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
             return unixEpoch.Add(new TimeSpan(0, 0, (int)SecondsSinceEpoch));
         }
+
+        public static string CreateSHAHash(string Password)
+        {
+            using(System.Security.Cryptography.SHA512Managed HashTool = new System.Security.Cryptography.SHA512Managed())
+            {
+                Byte[] PasswordAsByte = System.Text.Encoding.ASCII.GetBytes(Password);
+                Byte[] EncryptedBytes = HashTool.ComputeHash(PasswordAsByte);
+                HashTool.Clear();
+                return BitConverter.ToString(EncryptedBytes).Replace("-", "").ToLowerInvariant();
+            }
+        }
     }
 }

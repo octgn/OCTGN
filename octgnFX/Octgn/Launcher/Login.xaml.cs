@@ -29,6 +29,8 @@ namespace Octgn.Launcher
             {
                 Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password);
             }
+            else
+                DoErrorMessage("Could not connect to the server.");
         }
 
         private void LoginFinished(LoginResult success, DateTime BanEnd)
@@ -76,6 +78,18 @@ namespace Octgn.Launcher
         private void passwordBox1_PasswordChanged(object sender, RoutedEventArgs e)
         {
             bError.Visibility = System.Windows.Visibility.Hidden;
+        }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            Register r = new Register();
+            try
+            {
+                r.ShowDialog();
+            }
+            catch(Exception ex)
+            {
+            }
         }
     }
 }

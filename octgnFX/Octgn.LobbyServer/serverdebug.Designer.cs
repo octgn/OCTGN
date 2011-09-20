@@ -106,5 +106,17 @@ namespace Octgn.LobbyServer {
                 this["db"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7530")]
+        public int webserverport {
+            get {
+                return ((int)(this["webserverport"]));
+            }
+            set {
+                this["webserverport"] = value;
+            }
+        }
     }
 }
