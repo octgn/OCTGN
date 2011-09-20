@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using Skylabs;
 using Skylabs.ConsoleHelper;
 using Skylabs.Lobby;
 using Skylabs.LobbyServer;
@@ -57,54 +58,60 @@ namespace Octgn.LobbyServer
                 {
                     con.Open();
                     String ip = c.Sock.Client.RemoteEndPoint.ToString();
+                    MySqlCommand cmd = con.CreateCommand();
                     ip = ip.Substring(0, ip.IndexOf(':'));
-                    using(MySqlDataAdapter da = new MySqlDataAdapter("SELECT * FROM bans WHERE uid='" + user.UID.ToString() + "' OR ip='" + ip + "';", con))
-                    {
-                        using(MySqlDataReader dr = da.SelectCommand.ExecuteReader())
-                        {
-                            if(dr.HasRows)
-                            {
-                                List<Ban> bans = new List<Ban>();
-                                while(dr.Read())
-                                {
-                                    Ban b = new Ban();
 
-                                    b.BID = dr.GetInt32("bid");
-                                    b.UID = dr.GetInt32("uid");
-                                    b.EndTime = dr.GetInt32("end");
-                                    b.IP = dr.GetString("ip");
-                                    bans.Add(b);
-                                }
-                                dr.Close();
-                                foreach(Ban b in bans)
-                                {
-                                    string bid = b.BID.ToString();
-                                    DateTime endtime = Skylabs.ValueConverters.fromPHPTime(b.EndTime);
-                                    if(DateTime.Now >= endtime)
-                                    {
-                                        DeleteRow(con, "bans", "bid", bid);
-                                    }
-                                    else
-                                    {
-                                        ret = (int)b.EndTime;
-                                        break;
-                                    }
-                                }
-                                con.Close();
-                            }
-                            else
+                    cmd.CommandText = "SELECT * FROM bans WHERE uid=@uid OR ip=@ip;";
+                    cmd.Prepare();
+                    cmd.Parameters.Add("@uid", MySqlDbType.Int32);
+                    cmd.Parameters.Add("@ip", MySqlDbType.VarChar, 15);
+                    cmd.Parameters["@uid"].Value = user.UID;
+                    cmd.Parameters["@ip"].Value = ip;
+
+                    using(MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if(dr.HasRows)
+                        {
+                            List<Ban> bans = new List<Ban>();
+                            while(dr.Read())
                             {
-                                dr.Close();
-                                con.Close();
+                                Ban b = new Ban();
+
+                                b.BID = dr.GetInt32("bid");
+                                b.UID = dr.GetInt32("uid");
+                                b.EndTime = dr.GetInt32("end");
+                                b.IP = dr.GetString("ip");
+                                bans.Add(b);
                             }
+                            dr.Close();
+                            foreach(Ban b in bans)
+                            {
+                                string bid = b.BID.ToString();
+                                DateTime endtime = Skylabs.ValueConverters.fromPHPTime(b.EndTime);
+                                if(DateTime.Now >= endtime)
+                                {
+                                    DeleteRow(con, "bans", "bid", bid);
+                                }
+                                else
+                                {
+                                    ret = (int)b.EndTime;
+                                    break;
+                                }
+                            }
+                            con.Close();
+                        }
+                        else
+                        {
+                            dr.Close();
+                            con.Close();
                         }
                     }
                 }
             }
             catch(MySqlException me)
             {
-#if(DEBUG)
                 ConsoleEventLog.addEvent(new ConsoleEventError(me.Message, me), false);
+#if(DEBUG)
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
             }
@@ -113,54 +120,129 @@ namespace Octgn.LobbyServer
 
         public void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
         {
-            string deleteSQL = "DELETE FROM " + table + " WHERE " + columnname + "='" + columnvalue + "';";
-            MySqlCommand cmd2 = new MySqlCommand(deleteSQL, con);
-            cmd2.ExecuteNonQuery();
+            MySqlCommand cmd = con.CreateCommand();
+            cmd.CommandText = "DELETE FROM @table WHERE @col=@val;";
+            cmd.Prepare();
+            cmd.Parameters.Add("@table");
+            cmd.Parameters.Add("@col");
+            cmd.Parameters.Add("@val");
+            cmd.Parameters["@table"].Value = table;
+            cmd.Parameters["@col"].Value = columnname;
+            cmd.Parameters["@table"].Value = columnvalue;
+            cmd.ExecuteNonQuery();
         }
 
-        public User GetUser(string email)
+        public User GetUserByUsername(string username)
         {
-            if(email == null)
-                throw new NullReferenceException("Email can't be null.");
+            if(username == null)
+                throw new NullReferenceException("Username can't be null");
+            if(String.IsNullOrWhiteSpace(username))
+                throw new NullReferenceException("Username can't be empty");
+            User ret = null;
             try
             {
                 using(MySqlConnection con = new MySqlConnection(ConnectionString))
                 {
                     con.Open();
-                    using(MySqlDataAdapter da = new MySqlDataAdapter("SELECT * FROM users WHERE email='" + email + "';", con))
+                    MySqlCommand com = con.CreateCommand();
+                    com.CommandText = "SELECT * FROM users WHERE name=@name;";
+                    com.Prepare();
+                    com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
+                    com.Parameters["@name"].Value = username;
+                    using(MySqlDataReader dr = com.ExecuteReader())
                     {
-                        using(MySqlDataReader dr = da.SelectCommand.ExecuteReader())
+                        if(dr.Read())
                         {
-                            if(dr.HasRows)
-                            {
-                                dr.Read();
-                                User u = new User();
-                                u.Email = dr.GetString("email");
-                                u.Password = dr.GetString("password");
-                                u.DisplayName = dr.GetString("name");
-                                u.UID = dr.GetInt32("uid");
-                                dr.Close();
-                                con.Close();
-                                return u;
-                            }
-                            else
-                            {
-                                dr.Close();
-                                con.Close();
-                                return null;
-                            }
+                            ret = new User();
+                            ret.Email = dr.GetString("email");
+                            ret.Password = dr.GetString("password");
+                            ret.DisplayName = dr.GetString("name");
+                            ret.UID = dr.GetInt32("uid");
+                            ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
                         }
+                        dr.Close();
                     }
+                    con.Close();
                 }
             }
-            catch(MySqlException ex)
+            catch(Exception ex)
             {
-#if(DEBUG)
                 ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
-                if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-#endif
             }
-            return null;
+            return ret;
+        }
+
+        public User GetUser(string email)
+        {
+            if(email == null)
+                throw new NullReferenceException("Email can't be null");
+            if(String.IsNullOrWhiteSpace(email))
+                throw new NullReferenceException("Email can't be empty");
+            User ret = null;
+            try
+            {
+                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    MySqlCommand com = con.CreateCommand();
+                    com.CommandText = "SELECT * FROM users WHERE email=@email;";
+                    com.Prepare();
+                    com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
+                    com.Parameters["@email"].Value = email;
+                    using(MySqlDataReader dr = com.ExecuteReader())
+                    {
+                        if(dr.Read())
+                        {
+                            ret = new User();
+                            ret.Email = dr.GetString("email");
+                            ret.Password = dr.GetString("password");
+                            ret.DisplayName = dr.GetString("name");
+                            ret.UID = dr.GetInt32("uid");
+                            ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
+                        }
+                        dr.Close();
+                    }
+                    con.Close();
+                }
+            }
+            catch(Exception ex)
+            {
+                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
+            }
+            return ret;
+        }
+
+        public bool RegisterUser(User u)
+        {
+            if(u == null)
+                throw new NullReferenceException("User is null!");
+            if(u.Email == null || u.Password == null || u.DisplayName == null)
+                throw new NullReferenceException("User is not complete and cannot be registered.");
+            if(String.IsNullOrWhiteSpace(u.Email) || String.IsNullOrWhiteSpace(u.Password) || String.IsNullOrWhiteSpace(u.DisplayName))
+                throw new NullReferenceException("User is not complete and cannot be registered.");
+            try
+            {
+                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    MySqlCommand com = con.CreateCommand();
+                    com.CommandText = "INSERT INTO users(email,password,name) VALUES(@email,@pass,@name);";
+                    com.Prepare();
+                    com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
+                    com.Parameters.Add("@pass", MySqlDbType.VarChar, 128);
+                    com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
+                    com.Parameters["@email"].Value = u.Email;
+                    com.Parameters["@pass"].Value = ValueConverters.CreateSHAHash(u.Password);
+                    com.Parameters["@name"].Value = u.DisplayName;
+                    com.ExecuteNonQuery();
+                    return true;
+                }
+            }
+            catch(Exception ex)
+            {
+                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
+            }
+            return false;
         }
     }
 }

@@ -23,5 +23,8 @@
     <Setting Name="db" Type="System.String" Scope="User">
       <Value Profile="(Default)">lobby</Value>
     </Setting>
+    <Setting Name="webserverport" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">7530</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

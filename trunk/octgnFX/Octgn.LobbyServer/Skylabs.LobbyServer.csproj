@@ -77,6 +77,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Properties\app.config" />
     <None Include="serverdebug.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

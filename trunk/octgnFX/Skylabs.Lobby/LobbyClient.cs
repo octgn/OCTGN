@@ -10,8 +10,9 @@ namespace Skylabs.Lobby
     public class LobbyClient : SkySocket
     {
         public delegate void LoginFinished(LoginResult success, DateTime BanEnd);
-
+        public delegate void RegisterFinished(string emailerror, string passworderror, string usernameerror);
         private LoginFinished OnLoginFinished;
+        private RegisterFinished OnRegisterFinished;
 
         public LobbyClient()
             : base()
@@ -35,6 +36,19 @@ namespace Skylabs.Lobby
             }
         }
 
+        public void Register(RegisterFinished onFinish, string email, string password, string username)
+        {
+            if(Connected)
+            {
+                OnRegisterFinished = onFinish;
+                SocketMessage sm = new SocketMessage("register");
+                sm.Add_Data(new NameValuePair("email", email));
+                sm.Add_Data(new NameValuePair("password", password));
+                sm.Add_Data(new NameValuePair("username", username));
+                WriteMessage(sm);
+            }
+        }
+
         public override void OnMessageReceived(Net.SocketMessage sm)
         {
             switch(sm.Header.ToLower())
@@ -53,6 +67,15 @@ namespace Skylabs.Lobby
 
                         OnLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.fromPHPTime(time));
                     }
+                    break;
+                case "registersuccess":
+                    OnRegisterFinished(null, null, null);
+                    break;
+                case "registerfailed":
+                    string email = sm["email"];
+                    string password = sm["password"];
+                    string username = sm["username"];
+                    OnRegisterFinished(email, password, username);
                     break;
             }
         }

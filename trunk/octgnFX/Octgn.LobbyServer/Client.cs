@@ -15,6 +15,8 @@ namespace Skylabs.LobbyServer
 
         public MySqlCup Cup { get; private set; }
 
+        public User Me { get; private set; }
+
         private Server Parent;
 
         private bool SentENDMessage = false;
@@ -50,9 +52,15 @@ namespace Skylabs.LobbyServer
                 case "login":
                     Login(sm);
                     break;
+                case "ban":
+
+                    break;
                 case "end":
                     GotENDMessage = true;
                     Stop();
+                    break;
+                case "register":
+                    Register(sm);
                     break;
             }
         }
@@ -61,13 +69,90 @@ namespace Skylabs.LobbyServer
         {
         }
 
+        private void Register(SocketMessage sm)
+        {
+            string email = sm["email"];
+            string password = sm["password"];
+            string username = sm["username"];
+            string eemail = "";
+            string epassword = "";
+            string eusername = "";
+            bool problem = false;
+            if(email == null || String.IsNullOrWhiteSpace(email))
+            {
+                eemail = "Email empty";
+                problem = true;
+            }
+            else if(!Verify.IsEmail(email))
+            {
+                eemail = "Email is not valid";
+                problem = true;
+            }
+            if(password == null || String.IsNullOrWhiteSpace(password))
+            {
+                epassword = "Password empty";
+                problem = true;
+            }
+            if(username == null || String.IsNullOrWhiteSpace(username))
+            {
+                eusername = "Username empty";
+                problem = true;
+            }
+            if(problem)
+            {
+                SocketMessage smm = new SocketMessage("registerfailed");
+                smm.Add_Data(new NameValuePair("email", eemail));
+                smm.Add_Data(new NameValuePair("password", epassword));
+                smm.Add_Data(new NameValuePair("username", eusername));
+                WriteMessage(smm);
+                return;
+            }
+            if(Cup.GetUser(email) != null)
+            {
+                eemail = "Email taken.";
+                problem = true;
+            }
+            if(Cup.GetUserByUsername(username) != null)
+            {
+                eusername = "Username taken.";
+                problem = true;
+            }
+            if(problem)
+            {
+                SocketMessage smm = new SocketMessage("registerfailed");
+                smm.Add_Data(new NameValuePair("email", eemail));
+                smm.Add_Data(new NameValuePair("password", epassword));
+                smm.Add_Data(new NameValuePair("username", eusername));
+                WriteMessage(smm);
+                return;
+            }
+            //If we wind up here, everything has checked out.
+            User u = new User();
+            u.Email = email;
+            u.Password = password;
+            u.DisplayName = username;
+            if(Cup.RegisterUser(u))
+            {
+                SocketMessage smm = new SocketMessage("registersuccess");
+                WriteMessage(smm);
+            }
+            else
+            {
+                SocketMessage smm = new SocketMessage("registerfailed");
+                smm.Add_Data(new NameValuePair("email", eemail));
+                smm.Add_Data(new NameValuePair("password", epassword));
+                smm.Add_Data(new NameValuePair("username", eusername));
+                WriteMessage(smm);
+            }
+        }
+
         private void Login(SocketMessage sm)
         {
             string email = sm["email"];
             string pass = sm["password"];
             if(email != null && pass != null)
             {
-                pass = CreateSHAHash(pass);
+                pass = ValueConverters.CreateSHAHash(pass);
                 User u = Cup.GetUser(email);
                 if(u != null)
                 {
@@ -77,6 +162,7 @@ namespace Skylabs.LobbyServer
                         if(banned == -1)
                         {
                             LoggedIn = true;
+                            Me = u;
                             WriteMessage(new SocketMessage("loginsuccess"));
                             return;
                         }
@@ -105,17 +191,6 @@ namespace Skylabs.LobbyServer
                 }
             }
             WriteMessage(new SocketMessage("loginfailed"));
-        }
-
-        private static string CreateSHAHash(string Password)
-        {
-            using(System.Security.Cryptography.SHA512Managed HashTool = new System.Security.Cryptography.SHA512Managed())
-            {
-                Byte[] PasswordAsByte = System.Text.Encoding.ASCII.GetBytes(Password);
-                Byte[] EncryptedBytes = HashTool.ComputeHash(PasswordAsByte);
-                HashTool.Clear();
-                return BitConverter.ToString(EncryptedBytes).Replace("-", "").ToLowerInvariant();
-            }
         }
     }
 }
