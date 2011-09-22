@@ -15,6 +15,14 @@ namespace Octgn.Launcher
         {
             InitializeComponent();
             versionText.Text = string.Format("Version {0}", OctgnApp.OctgnVersion.ToString(4));
+#if(DEBUG)
+            //TODO Remove this at some point
+            MenuItem m = new MenuItem();
+            m.Name = "menuOldMenu";
+            m.Header = "Old Menu";
+            m.Click += new RoutedEventHandler(menuOldMenu_Click);
+            menuOctgn.Items.Add(m);
+#endif
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
@@ -90,6 +98,12 @@ namespace Octgn.Launcher
             catch(Exception ex)
             {
             }
+        }
+
+        private void menuOldMenu_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO This event and the menu need to be removed before release. This is only here for debugging purposes
+            this.NavigationService.Navigate(new MainMenu());
         }
     }
 }
