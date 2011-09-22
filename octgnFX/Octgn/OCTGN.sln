@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.LobbyServer", "..\O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.Lobby", "..\Skylabs.Lobby\Skylabs.Lobby.csproj", "{131805CF-7971-4813-848B-CE156D4F6827}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleHelper", "..\..\..\..\..\c#\consolehelper\ConsoleHelper\ConsoleHelper.csproj", "{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleHelper", "..\ConsoleHelper\ConsoleHelper.csproj", "{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
