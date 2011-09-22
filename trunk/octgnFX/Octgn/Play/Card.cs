@@ -334,7 +334,10 @@ namespace Octgn.Play
             {
                 if(!FaceUp) return DefaultBack;
                 if(Type.model == null) return DefaultFront;
-                return Type.model.Picture;
+                if(IsAlternateImage)
+                    return Type.model.AlternatePicture;
+                else
+                    return Type.model.Picture;
             }
         }
 
@@ -342,17 +345,28 @@ namespace Octgn.Play
         {
             if(!up) return DefaultBack;
             if(Type == null || Type.model == null) return DefaultFront;
-            return type.model.Picture;
+            if(IsAlternateImage)
+                return Type.model.AlternatePicture;
+            else
+                return Type.model.Picture;
         }
 
         internal BitmapImage GetBitmapImage(bool up)
         {
             if(!up) return Program.Game.CardBackBitmap;
             if(Type == null || Type.model == null) return Program.Game.CardFrontBitmap;
-
-            var bmp = new BitmapImage(new Uri(Type.model.Picture)) { CacheOption = BitmapCacheOption.OnLoad };
-            bmp.Freeze();
-            return bmp;
+            if(IsAlternateImage)
+            {
+                var bmp = new BitmapImage(new Uri(Type.model.AlternatePicture)) { CacheOption = BitmapCacheOption.OnLoad };
+                bmp.Freeze();
+                return bmp;
+            }
+            else
+            {
+                var bmp = new BitmapImage(new Uri(Type.model.Picture)) { CacheOption = BitmapCacheOption.OnLoad };
+                bmp.Freeze();
+                return bmp;
+            }
         }
 
         internal Card(Player owner, int id, ulong key, Definitions.CardDef def, Data.CardModel model, bool mySecret)
