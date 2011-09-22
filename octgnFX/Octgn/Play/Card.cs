@@ -140,6 +140,8 @@ namespace Octgn.Play
                     playersLooking.Clear();
                     // Clear peeking (if any)
                     PeekingPlayers.Clear();
+                    //Switch back to original image.
+                    IsAlternateImage = false;
                 }
             }
         }
