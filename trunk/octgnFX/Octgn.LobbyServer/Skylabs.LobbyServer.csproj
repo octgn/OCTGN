@@ -49,9 +49,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ConsoleHelper">
-      <HintPath>..\..\..\..\..\c#\consolehelper\ConsoleHelper\bin\Release\ConsoleHelper.dll</HintPath>
-    </Reference>
     <Reference Include="MySql.Data">
       <HintPath>..\..\..\..\..\c#\Libraries\MySql.Data.dll</HintPath>
     </Reference>
@@ -107,6 +104,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ConsoleHelper\ConsoleHelper.csproj">
+      <Project>{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}</Project>
+      <Name>ConsoleHelper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
       <Name>Skylabs.Lobby</Name>
