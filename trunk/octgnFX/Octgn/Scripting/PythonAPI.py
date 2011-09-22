@@ -79,6 +79,10 @@ class Card(object):
   def __format__(self, format_spec):
     return '{#%d}' % self._id
   @property
+  def isAlternateImage(self): return _api.IsAlternateImage(self._id)
+  @property
+  def switchImage(self): _api.SwitchImage(self._id)
+  @property
   def model(self): return _api.CardModel(self._id)
   @property
   def name(self): return _api.CardName(self._id)
