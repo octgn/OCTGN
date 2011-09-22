@@ -47,6 +47,7 @@ namespace Octgn.Play
         private double _x, _y;
         private Player _target;
         private Color? _highlight;
+        private bool isAlternateImage =false;
         internal bool mayBeConsideredFaceUp;   /* For better responsiveness, turning a card face down is applied immediately,
 															   without waiting on the server.
 															   If a script tries to print the card's name, when the message arrives the card is already
@@ -54,7 +55,18 @@ namespace Octgn.Play
 
         #endregion Private fields
 
-        public bool IsAlternateImage { get; set; }
+        public bool IsAlternateImage
+        {
+            get { return isAlternateImage; }
+            set
+            {
+                if(value != isAlternateImage)
+                {
+                    Program.Client.Rpc.IsAlternateImage(this, value);
+                    isAlternateImage = value;
+                }
+            }
+        }
 
         internal override int Id
         { get { return id; } }
@@ -350,7 +362,7 @@ namespace Octgn.Play
             this.Type = new CardIdentity(id) { alias = false, key = key, model = model, mySecret = mySecret };
             definition = def;
             All.Add(id, this);
-            IsAlternateImage = false;
+            isAlternateImage = false;
         }
 
         internal void SetOrientation(CardOrientation value)
