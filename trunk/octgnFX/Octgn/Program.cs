@@ -5,7 +5,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using Octgn.Play;
-using Octgn.Properties;
 using Skylabs.Lobby;
 using RE = System.Text.RegularExpressions;
 
@@ -36,6 +35,12 @@ namespace Octgn
         internal readonly static TraceSource Trace = new TraceSource("MainTrace", SourceLevels.Information);
         internal static System.Windows.Documents.Inline LastChatTrace;
 
+#if(DEBUG)
+        public static DEBUGLobbySettings LobbySettings = DEBUGLobbySettings.Default;
+#else
+        public static lobbysettings LobbySettings = lobbysettings.Default;
+#endif
+
         // TODO: Refactoring > this belongs to the Markers class
         internal readonly static DefaultMarkerModel[] DefaultMarkers = new DefaultMarkerModel[]
     {
@@ -53,8 +58,10 @@ namespace Octgn
         {
             BasePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
-            lobbyServer = new Skylabs.LobbyServer.Server(System.Net.IPAddress.Any, int.Parse(Settings.Default.ServePort));
+#if(DEBUG)
+            lobbyServer = new Skylabs.LobbyServer.Server(System.Net.IPAddress.Any, LobbySettings.ServerPort);
             lobbyServer.Start();
+#endif
         }
 
         public static void StopGame()

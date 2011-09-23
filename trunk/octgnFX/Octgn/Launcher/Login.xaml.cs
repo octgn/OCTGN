@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using Octgn.Properties;
 using Skylabs.Lobby;
 
 namespace Octgn.Launcher
@@ -32,7 +31,7 @@ namespace Octgn.Launcher
             Program.lobbyClient = new Skylabs.Lobby.LobbyClient();
             bool c = Program.lobbyClient.Connected;
             if(!c)
-                c = Program.lobbyClient.Connect("localhost", int.Parse(Settings.Default.ServePort));
+                c = Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
             if(c)
             {
                 Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password);
