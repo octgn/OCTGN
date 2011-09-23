@@ -46,11 +46,11 @@ namespace Octgn.Launcher
             {
                 // Open the archive
                 Definitions.GameDef game = Definitions.GameDef.FromO8G(newFilename);
-                if (!game.CheckVersion()) return;
+                if(!game.CheckVersion()) return;
 
                 // Check if the game already exists
-                if (Program.GamesRepository.Games.Any(g => g.Id == game.Id))
-                    if (MessageBox.Show("This game already exists.\r\nDo you want to overwrite it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+                if(Program.GamesRepository.Games.Any(g => g.Id == game.Id))
+                    if(MessageBox.Show("This game already exists.\r\nDo you want to overwrite it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
                         return;
 
                 var gameData = new Data.Game()
@@ -67,14 +67,11 @@ namespace Octgn.Launcher
                 };
                 Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
             }
-            catch (System.IO.FileFormatException ex)
+            catch(System.IO.FileFormatException ex)
             {
-                MessageBox.Show("Your game definition file is corrupt. Please redownload it.\r\n\r\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //Removed ex.Message. The user doesn't need to see the exception
+                MessageBox.Show("Your game definition file is corrupt. Please redownload it.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            catch
-            {
-                throw;
-            }            
         }
 
         private void InstallCards(object sender, RoutedEventArgs e)
