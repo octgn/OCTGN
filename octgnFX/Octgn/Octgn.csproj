@@ -167,6 +167,11 @@
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="DEBUGLobbySettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DEBUGLobbySettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="DeckBuilder\DeckBuilderWindow.xaml.cs">
       <DependentUpon>DeckBuilderWindow.xaml</DependentUpon>
     </Compile>
@@ -232,6 +237,11 @@
     <Compile Include="Launcher\StartGame.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>StartGame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="lobbysettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>lobbysettings.settings</DependentUpon>
     </Compile>
     <Compile Include="MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
@@ -403,6 +413,14 @@
       <SubType>
       </SubType>
     </EmbeddedResource>
+    <None Include="DEBUGLobbySettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DEBUGLobbySettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="lobbysettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>lobbysettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Networking\BinaryStubs.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryStubs.cs</LastGenOutput>
