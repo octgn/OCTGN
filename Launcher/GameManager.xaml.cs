@@ -42,28 +42,39 @@ namespace Octgn.Launcher
                 File.Move(ofd.FileName, newFilename);
             }
 
-            // Open the archive
-            Definitions.GameDef game = Definitions.GameDef.FromO8G(newFilename);
-            if(!game.CheckVersion()) return;
-
-            // Check if the game already exists
-            if(Program.GamesRepository.Games.Any(g => g.Id == game.Id))
-                if(MessageBox.Show("This game already exists.\r\nDo you want to overwrite it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
-                    return;
-
-            var gameData = new Data.Game()
+            try
             {
-                Id = game.Id,
-                Name = game.Name,
-                Filename = newFilename,
-                Version = game.Version,
-                CardWidth = game.CardDefinition.Width,
-                CardHeight = game.CardDefinition.Height,
-                CardBack = game.CardDefinition.back,
-                DeckSections = game.DeckDefinition.Sections.Keys,
-                SharedDeckSections = game.SharedDeckDefinition == null ? null : game.SharedDeckDefinition.Sections.Keys
-            };
-            Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
+                // Open the archive
+                Definitions.GameDef game = Definitions.GameDef.FromO8G(newFilename);
+                if (!game.CheckVersion()) return;
+
+                // Check if the game already exists
+                if (Program.GamesRepository.Games.Any(g => g.Id == game.Id))
+                    if (MessageBox.Show("This game already exists.\r\nDo you want to overwrite it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+                        return;
+
+                var gameData = new Data.Game()
+                {
+                    Id = game.Id,
+                    Name = game.Name,
+                    Filename = newFilename,
+                    Version = game.Version,
+                    CardWidth = game.CardDefinition.Width,
+                    CardHeight = game.CardDefinition.Height,
+                    CardBack = game.CardDefinition.back,
+                    DeckSections = game.DeckDefinition.Sections.Keys,
+                    SharedDeckSections = game.SharedDeckDefinition == null ? null : game.SharedDeckDefinition.Sections.Keys
+                };
+                Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
+            }
+            catch (System.IO.FileFormatException ex)
+            {
+                MessageBox.Show("Your game definition file is corrupt. Please redownload it.\r\n\r\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch
+            {
+                throw;
+            }            
         }
 
         private void InstallCards(object sender, RoutedEventArgs e)
