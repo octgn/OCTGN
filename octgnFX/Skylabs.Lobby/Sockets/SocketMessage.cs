@@ -9,7 +9,7 @@ namespace Skylabs.Net
     {
         public string Key { get; set; }
 
-        public string Value { get; set; }
+        public object Value { get; set; }
 
         public NameValuePair()
         {
@@ -32,7 +32,7 @@ namespace Skylabs.Net
         public NameValuePair(string key, object value)
         {
             Key = key;
-            Value = value.ToString();
+            Value = value;
         }
     }
 
@@ -51,7 +51,7 @@ namespace Skylabs.Net
             Data = new NameValuePair[0];
         }
 
-        public String this[string key]
+        public object this[string key]
         {
             get
             {

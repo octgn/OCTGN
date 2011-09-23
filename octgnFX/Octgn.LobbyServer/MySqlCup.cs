@@ -45,11 +45,9 @@ namespace Octgn.LobbyServer
         /// <param name="user">user</param>
         /// <param name="c">client</param>
         /// <returns>-1 if not banned. Timestamp of ban end if banned. Timestamp can be converted to DateTime with fromPHPTime.</returns>
-        public int IsBanned(User user, Client c)
+        public int IsBanned(int uid, Client c)
         {
-            if(user == null)
-                throw new NullReferenceException("User can't be null.");
-            if(user.UID <= -1)
+            if(uid <= -1)
                 throw new FormatException("User.UID not valid.");
             int ret = -1;
             try
@@ -65,7 +63,7 @@ namespace Octgn.LobbyServer
                     cmd.Prepare();
                     cmd.Parameters.Add("@uid", MySqlDbType.Int32);
                     cmd.Parameters.Add("@ip", MySqlDbType.VarChar, 15);
-                    cmd.Parameters["@uid"].Value = user.UID;
+                    cmd.Parameters["@uid"].Value = uid;
                     cmd.Parameters["@ip"].Value = ip;
 
                     using(MySqlDataReader dr = cmd.ExecuteReader())
@@ -184,25 +182,27 @@ namespace Octgn.LobbyServer
                 using(MySqlConnection con = new MySqlConnection(ConnectionString))
                 {
                     con.Open();
-                    MySqlCommand com = con.CreateCommand();
-                    com.CommandText = "SELECT * FROM users WHERE email=@email;";
-                    com.Prepare();
-                    com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
-                    com.Parameters["@email"].Value = email;
-                    using(MySqlDataReader dr = com.ExecuteReader())
+                    using(MySqlCommand com = con.CreateCommand())
                     {
-                        if(dr.Read())
+                        com.CommandText = "SELECT * FROM users WHERE email=@email;";
+                        com.Prepare();
+                        com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
+                        com.Parameters["@email"].Value = email;
+                        using(MySqlDataReader dr = com.ExecuteReader())
                         {
-                            ret = new User();
-                            ret.Email = dr.GetString("email");
-                            ret.Password = dr.GetString("password");
-                            ret.DisplayName = dr.GetString("name");
-                            ret.UID = dr.GetInt32("uid");
-                            ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
+                            if(dr.Read())
+                            {
+                                ret = new User();
+                                ret.Email = dr.GetString("email");
+                                ret.Password = dr.GetString("password");
+                                ret.DisplayName = dr.GetString("name");
+                                ret.UID = dr.GetInt32("uid");
+                                ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
+                            }
+                            dr.Close();
                         }
-                        dr.Close();
+                        con.Close();
                     }
-                    con.Close();
                 }
             }
             catch(Exception ex)
@@ -212,13 +212,11 @@ namespace Octgn.LobbyServer
             return ret;
         }
 
-        public bool RegisterUser(User u)
+        public bool RegisterUser(string email, string password, string name)
         {
-            if(u == null)
-                throw new NullReferenceException("User is null!");
-            if(u.Email == null || u.Password == null || u.DisplayName == null)
+            if(email == null || password == null || name == null)
                 throw new NullReferenceException("User is not complete and cannot be registered.");
-            if(String.IsNullOrWhiteSpace(u.Email) || String.IsNullOrWhiteSpace(u.Password) || String.IsNullOrWhiteSpace(u.DisplayName))
+            if(String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(password) || String.IsNullOrWhiteSpace(name))
                 throw new NullReferenceException("User is not complete and cannot be registered.");
             try
             {
@@ -231,9 +229,9 @@ namespace Octgn.LobbyServer
                     com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
                     com.Parameters.Add("@pass", MySqlDbType.VarChar, 128);
                     com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
-                    com.Parameters["@email"].Value = u.Email;
-                    com.Parameters["@pass"].Value = ValueConverters.CreateSHAHash(u.Password);
-                    com.Parameters["@name"].Value = u.DisplayName;
+                    com.Parameters["@email"].Value = email;
+                    com.Parameters["@pass"].Value = ValueConverters.CreateSHAHash(password);
+                    com.Parameters["@name"].Value = name;
                     com.ExecuteNonQuery();
                     return true;
                 }
@@ -243,6 +241,48 @@ namespace Octgn.LobbyServer
                 ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
             }
             return false;
+        }
+
+        public List<User> GetFriendsList(int uid)
+        {
+            if(uid <= -1)
+                throw new NullReferenceException("User ID is invalid.");
+            try
+            {
+                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    using(MySqlCommand com = con.CreateCommand())
+                    {
+                        com.CommandText = "SELECT * FROM friends WHERE uid=@uid;";
+                        com.Prepare();
+                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                        com.Parameters["@uid"].Value = uid;
+                        using(MySqlDataReader dr = com.ExecuteReader())
+                        {
+                            List<User> friends = new List<User>();
+                            while(dr.Read())
+                            {
+                                User temp = new User();
+                                temp.Email = dr.GetString("email");
+                                temp.Password = dr.GetString("password");
+                                temp.DisplayName = dr.GetString("name");
+                                temp.UID = dr.GetInt32("uid");
+                                temp.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
+                                friends.Add(temp);
+                            }
+                            dr.Close();
+                            con.Close();
+                            return friends;
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
+            }
+            return null;
         }
     }
 }

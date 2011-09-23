@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using Octgn.LobbyServer;
 using Skylabs.Lobby;
@@ -7,7 +8,7 @@ using Skylabs.Net.Sockets;
 
 namespace Skylabs.LobbyServer
 {
-    public class Client : SkySocket
+    public class Client : SkySocket, IEquatable<Client>
     {
         public int ID { get; private set; }
 
@@ -16,6 +17,8 @@ namespace Skylabs.LobbyServer
         public MySqlCup Cup { get; private set; }
 
         public User Me { get; private set; }
+
+        public List<User> Friends { get; private set; }
 
         private Server Parent;
 
@@ -30,6 +33,17 @@ namespace Skylabs.LobbyServer
             Parent = server;
             LoggedIn = false;
             Cup = new MySqlCup(Program.Settings.dbUser, Program.Settings.dbPass, Program.Settings.dbHost, Program.Settings.db);
+            Friends = new List<User>();
+        }
+
+        /// <summary>
+        /// Compares one Client to another based on Client.ID
+        /// </summary>
+        /// <param name="client">Client to compare to</param>
+        /// <returns>True if equal, false otherwise.</returns>
+        public bool Equals(Client client)
+        {
+            return (ID == client.ID);
         }
 
         public void Stop()
@@ -67,13 +81,35 @@ namespace Skylabs.LobbyServer
 
         public override void OnDisconnect(DisconnectReason reason)
         {
+            Parent.Client_Disconnect(this);
+        }
+
+        private void sendFriendsList()
+        {
+            SocketMessage sm = new SocketMessage("friends");
+            foreach(User u in Friends)
+                sm.Add_Data(new NameValuePair(u.UID.ToString(), u.UID));
+            WriteMessage(sm);
+        }
+
+        private void sendUsersOnline()
+        {
+            SocketMessage sm = new SocketMessage("onlinelist");
+            foreach(Client c in Parent.Clients)
+            {
+                if(c.LoggedIn)
+                {
+                    sm.Add_Data(new NameValuePair(c.Me.Email, c.Me));
+                }
+            }
+            WriteMessage(sm);
         }
 
         private void Register(SocketMessage sm)
         {
-            string email = sm["email"];
-            string password = sm["password"];
-            string username = sm["username"];
+            string email = (string)sm["email"];
+            string password = (string)sm["password"];
+            string username = (string)sm["username"];
             string eemail = "";
             string epassword = "";
             string eusername = "";
@@ -127,11 +163,7 @@ namespace Skylabs.LobbyServer
                 return;
             }
             //If we wind up here, everything has checked out.
-            User u = new User();
-            u.Email = email;
-            u.Password = password;
-            u.DisplayName = username;
-            if(Cup.RegisterUser(u))
+            if(Cup.RegisterUser(email, password, username))
             {
                 SocketMessage smm = new SocketMessage("registersuccess");
                 WriteMessage(smm);
@@ -148,8 +180,8 @@ namespace Skylabs.LobbyServer
 
         private void Login(SocketMessage sm)
         {
-            string email = sm["email"];
-            string pass = sm["password"];
+            string email = (string)sm["email"];
+            string pass = (string)sm["password"];
             if(email != null && pass != null)
             {
                 pass = ValueConverters.CreateSHAHash(pass);
@@ -158,12 +190,16 @@ namespace Skylabs.LobbyServer
                 {
                     if(u.Password == pass)
                     {
-                        int banned = Cup.IsBanned(u, this);
+                        int banned = Cup.IsBanned(u.UID, this);
                         if(banned == -1)
                         {
                             LoggedIn = true;
                             Me = u;
                             WriteMessage(new SocketMessage("loginsuccess"));
+                            Friends = Cup.GetFriendsList(Me.UID);
+                            Parent.User_Login(this);
+                            sendFriendsList();
+                            sendUsersOnline();
                             return;
                         }
                         else

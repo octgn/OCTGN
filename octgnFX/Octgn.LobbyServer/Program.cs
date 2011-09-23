@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Net.Sockets;
 using Octgn.LobbyServer;
 using Skylabs.ConsoleHelper;
 
@@ -23,7 +22,7 @@ namespace Skylabs.LobbyServer
             AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
-            //Start_Server();
+            Start_Server();
 
             ConsoleReader.Start();
             ConsoleWriter.writeCT();
@@ -80,14 +79,13 @@ namespace Skylabs.LobbyServer
                 case "test":
                     Tester();
                     break;
-                case "host":
+                case "start":
                     Start_Server();
                     ConsoleWriter.writeLine("Hosting", true);
                     break;
-                case "connect":
-                    Client c = new Client(new TcpClient("localhost", Settings.BindPort), 1, server);
-                    c.WriteMessage(new Skylabs.Net.SocketMessage("Hello"));
-                    c.Stop();
+                case "stop":
+                    server.Stop();
+                    ConsoleWriter.writeLine("Hosting Stopped.", true);
                     break;
                 case "quit":
                     Quit();
