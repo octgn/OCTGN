@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
@@ -7,21 +8,35 @@ namespace Skylabs.Lobby
 {
     public enum LoginResult { Success, Failure, Banned };
 
+    public enum DataRecType { FriendList, OnlineList };
+
+    public enum UserStatus { Online, Offline }
+
     public class LobbyClient : SkySocket
     {
         public delegate void LoginFinished(LoginResult success, DateTime BanEnd);
         public delegate void RegisterFinished(string emailerror, string passworderror, string usernameerror);
+        public delegate void DataRecieved(DataRecType type);
+        public delegate void UserStatusChanged(UserStatus eve, User u);
+        public event DataRecieved OnDataRecieved;
+        public event UserStatusChanged OnUserStatusChanged;
         private LoginFinished OnLoginFinished;
         private RegisterFinished OnRegisterFinished;
+
+        public List<int> FriendList { get; private set; }
+
+        public List<User> OnlineList { get; private set; }
 
         public LobbyClient()
             : base()
         {
+            FriendList = new List<int>();
         }
 
         public LobbyClient(TcpClient c)
             : base(c)
         {
+            FriendList = new List<int>();
         }
 
         public void Login(LoginFinished onFinish, string email, string password)
@@ -51,6 +66,7 @@ namespace Skylabs.Lobby
 
         public override void OnMessageReceived(Net.SocketMessage sm)
         {
+            User u;
             switch(sm.Header.ToLower())
             {
                 case "loginsuccess":
@@ -59,22 +75,48 @@ namespace Skylabs.Lobby
                 case "loginfailed":
                     OnLoginFinished.Invoke(LoginResult.Failure, DateTime.Now);
                     break;
-                case "banned":
-                    string stime = sm["end"];
-                    if(stime != null)
+                case "friends":
+                    FriendList = new List<int>();
+                    foreach(NameValuePair p in sm.Data)
                     {
-                        int time = int.Parse(stime);
-
-                        OnLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.fromPHPTime(time));
+                        FriendList.Add((int)p.Value);
                     }
+                    if(OnDataRecieved != null)
+                        OnDataRecieved.Invoke(DataRecType.FriendList);
+                    break;
+                case "onlinelist":
+                    OnlineList = new List<User>();
+                    foreach(NameValuePair p in sm.Data)
+                        OnlineList.Add((User)p.Value);
+                    if(OnDataRecieved != null)
+                        OnDataRecieved.Invoke(DataRecType.OnlineList);
+                    break;
+                case "useronline":
+                    u = (User)sm.Data[0].Value;
+                    if(!OnlineList.Contains(u)) OnlineList.Add(u);
+                    if(OnUserStatusChanged != null)
+                        OnUserStatusChanged.Invoke(UserStatus.Online, u);
+                    break;
+                case "useroffline":
+                    User temp = new User();
+                    temp.UID = (int)sm.Data[0].Value;
+                    u = (User)OnlineList[OnlineList.IndexOf(temp)].Clone();
+                    OnlineList.Remove(u);
+                    if(OnUserStatusChanged != null)
+                        OnUserStatusChanged.Invoke(UserStatus.Offline, u);
+                    break;
+                case "banned":
+                    int time = (int)sm["end"];
+
+                    OnLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.fromPHPTime(time));
                     break;
                 case "registersuccess":
                     OnRegisterFinished(null, null, null);
                     break;
                 case "registerfailed":
-                    string email = sm["email"];
-                    string password = sm["password"];
-                    string username = sm["username"];
+                    string email = (string)sm["email"];
+                    string password = (string)sm["password"];
+                    string username = (string)sm["username"];
                     OnRegisterFinished(email, password, username);
                     break;
             }

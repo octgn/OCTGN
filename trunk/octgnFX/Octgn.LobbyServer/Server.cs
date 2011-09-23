@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {
@@ -39,6 +40,43 @@ namespace Skylabs.LobbyServer
             {
                 c.Stop();
             }
+        }
+
+        /// <summary>
+        /// Happens when a client disconnects. This gets called automatically, don't call it.
+        /// </summary>
+        /// <param name="c">Client</param>
+        public void Client_Disconnect(Client c)
+        {
+            if(c.LoggedIn)
+            {
+                SocketMessage sm = new SocketMessage("useroffline");
+                sm.Add_Data(new NameValuePair("uid", c.Me.UID));
+                foreach(Client cl in Clients)
+                    if(cl.ID != c.ID)
+                    {
+                        if(cl.Connected)
+                        {
+                            cl.WriteMessage(sm);
+                        }
+                    }
+            }
+            Clients.Remove(c);
+        }
+
+        /// <summary>
+        /// Happens when a user logs in. This gets called automatically, don't call it.
+        /// </summary>
+        /// <param name="c">Client</param>
+        public void User_Login(Client c)
+        {
+            SocketMessage sm = new SocketMessage("useronline");
+            sm.Add_Data(new NameValuePair(c.Me.Email, c.Me));
+            foreach(Client cl in Clients)
+                if(cl.Connected)
+                {
+                    cl.WriteMessage(sm);
+                }
         }
 
         private void Accept_Clients()

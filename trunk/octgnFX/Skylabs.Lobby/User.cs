@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace Skylabs.Lobby
 {
     [Serializable]
-    public class User
+    public class User : IEquatable<User>, ICloneable
     {
         [Serializable]
         public enum UserLevel { Standard = 0, Moderator = 1, Admin = 2 };
@@ -38,6 +38,15 @@ namespace Skylabs.Lobby
             }
         }
 
+        public User()
+        {
+        }
+
+        public bool Equal(User u)
+        {
+            return (UID == u.UID);
+        }
+
         public byte[] Serialize()
         {
             using(MemoryStream ms = new MemoryStream())
@@ -57,5 +66,20 @@ namespace Skylabs.Lobby
                 return (User)bf.Deserialize(ms);
             }
         }
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            User ret = new User();
+            ret.Email = Email;
+            ret.UID = UID;
+            ret.Password = Password;
+            ret.Level = Level;
+            ret.DisplayName = DisplayName;
+            return ret;
+        }
+
+        #endregion ICloneable Members
     }
 }
