@@ -110,16 +110,6 @@ namespace Skylabs.Lobby
                     if(OnDataRecieved != null)
                         OnDataRecieved.Invoke(DataRecType.FriendList);
                     break;
-                case "friendadded":
-                    FriendList.Add((int)sm.Data[0].Value);
-                    if(OnDataRecieved != null)
-                        OnDataRecieved.Invoke(DataRecType.FriendList);
-                    break;
-                case "friendremoved":
-                    FriendList.Remove((int)sm.Data[0].Value);
-                    if(OnDataRecieved != null)
-                        OnDataRecieved.Invoke(DataRecType.FriendList);
-                    break;
                 case "friendrequest":
                     u = (User)sm.Data[0].Value;
                     if(OnFriendRequest != null)
