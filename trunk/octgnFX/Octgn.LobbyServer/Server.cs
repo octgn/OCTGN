@@ -110,10 +110,15 @@ namespace Skylabs.LobbyServer
         {
             // Get the socket that handles the client request.
             TcpListener listener = (TcpListener)ar.AsyncState;
-
-            Clients.Add(new Client(listener.EndAcceptTcpClient(ar), NextID, this));
-            NextID++;
-            Accept_Clients();
+            try
+            {
+                Clients.Add(new Client(listener.EndAcceptTcpClient(ar), NextID, this));
+                NextID++;
+                Accept_Clients();
+            }
+            catch(ObjectDisposedException de)
+            {
+            }
         }
     }
 }
