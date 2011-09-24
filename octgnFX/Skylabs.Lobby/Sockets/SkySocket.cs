@@ -134,9 +134,10 @@ namespace Skylabs.Net.Sockets
                     HandleInput();
                 }
             }
-            catch(Exception e)
+            catch(SocketException e)
             {
                 //Skylabs.ConsoleHelper.ConsoleWriter.writeLine(e.ToString(), false);
+                Close(DisconnectReason.RemoteHostDropped);
             }
         }
 
