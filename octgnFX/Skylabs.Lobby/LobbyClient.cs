@@ -33,12 +33,14 @@ namespace Skylabs.Lobby
             : base()
         {
             FriendList = new List<int>();
+            OnlineList = new List<User>();
         }
 
         public LobbyClient(TcpClient c)
             : base(c)
         {
             FriendList = new List<int>();
+            OnlineList = new List<User>();
         }
 
         public User GetOnlineUser(int uid)
