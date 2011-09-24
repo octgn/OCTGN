@@ -52,6 +52,9 @@ namespace Skylabs.LobbyServer
             return (ID == client.ID);
         }
 
+        /// <summary>
+        /// Disconnect cleanly
+        /// </summary>
         public void Stop()
         {
             if(!SentENDMessage)
