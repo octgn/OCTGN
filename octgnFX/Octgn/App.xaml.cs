@@ -61,8 +61,11 @@ namespace Octgn
             }
             else
             {
-                Program.DebugTrace.TraceEvent(System.Diagnostics.TraceEventType.Error, 0, ex.ToString());
+                if(e.IsTerminating)
+                    System.Diagnostics.Debugger.Break();
             }
+            if(!e.IsTerminating)
+                Program.DebugTrace.TraceEvent(System.Diagnostics.TraceEventType.Error, 0, ex.ToString());
         }
 
         protected override void OnExit(ExitEventArgs e)
