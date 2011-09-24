@@ -1,105 +1,102 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.ComponentModel;
 using System.Windows.Media.Animation;
+using Octgn.Play;
 
 namespace Octgn.Script
 {
-	public partial class MarkerDlg : Window
-	{
-		public static readonly DependencyProperty IsModelSelectedProperty = DependencyProperty.Register("IsModelSelected", typeof(bool), typeof(MarkerDlg), new UIPropertyMetadata(false));
-		public bool IsModelSelected
-		{
-			get { return (bool)GetValue(IsModelSelectedProperty); }
-			set { SetValue(IsModelSelectedProperty, value); }
-		}
+    public partial class MarkerDlg : Window
+    {
+        public static readonly DependencyProperty IsModelSelectedProperty = DependencyProperty.Register("IsModelSelected", typeof(bool), typeof(MarkerDlg), new UIPropertyMetadata(false));
 
-		private Data.MarkerModel result;
-		private ICollectionView allMarkersView;
-		private string filterText = "";
+        public bool IsModelSelected
+        {
+            get { return (bool)GetValue(IsModelSelectedProperty); }
+            set { SetValue(IsModelSelectedProperty, value); }
+        }
 
-		public Data.MarkerModel MarkerModel
-		{ get { return result; } }
+        private Data.MarkerModel result;
+        private ICollectionView allMarkersView;
+        private string filterText = "";
 
-		public int Quantity
-		{ get { return int.Parse(quantityBox.Text); } }
+        public Data.MarkerModel MarkerModel
+        { get { return result; } }
 
-		public MarkerDlg()
-		{
-			InitializeComponent();
-			allMarkersView = CollectionViewSource.GetDefaultView(Program.Game.Markers);
-			allMarkersView.Filter = (object marker) => ((Data.MarkerModel)marker).Name.IndexOf(filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
-			allList.ItemsSource = allMarkersView;
-			defaultList.ItemsSource = Program.DefaultMarkers;
-			recentList.ItemsSource = Program.Game.RecentMarkers;
-		}
+        public int Quantity
+        { get { return int.Parse(quantityBox.Text); } }
 
-		private void AddClicked(object sender, RoutedEventArgs e)
-		{
-			e.Handled = true;
+        public MarkerDlg()
+        {
+            InitializeComponent();
+            allMarkersView = CollectionViewSource.GetDefaultView(Program.Game.Markers);
+            allMarkersView.Filter = (object marker) => ((Data.MarkerModel)marker).Name.IndexOf(filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
+            allList.ItemsSource = allMarkersView;
+            defaultList.ItemsSource = Marker.DefaultMarkers;
+            recentList.ItemsSource = Program.Game.RecentMarkers;
+        }
 
-			// A double-click can only select a marker in its own list
-			// (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
-			if (sender is ListBox && ((ListBox)sender).SelectedIndex == -1) return;
+        private void AddClicked(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
 
-			if (recentList.SelectedIndex != -1) result = (Data.MarkerModel)recentList.SelectedItem;
-			if (allList.SelectedIndex != -1) result = (Data.MarkerModel)allList.SelectedItem;
-			if (defaultList.SelectedIndex != -1)
-			{
-				DefaultMarkerModel m = ((DefaultMarkerModel)defaultList.SelectedItem);
-				m.SetName(nameBox.Text);
-				result = m.Clone();
-			}
+            // A double-click can only select a marker in its own list
+            // (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
+            if(sender is ListBox && ((ListBox)sender).SelectedIndex == -1) return;
 
-			if (result == null) return;
+            if(recentList.SelectedIndex != -1) result = (Data.MarkerModel)recentList.SelectedItem;
+            if(allList.SelectedIndex != -1) result = (Data.MarkerModel)allList.SelectedItem;
+            if(defaultList.SelectedIndex != -1)
+            {
+                DefaultMarkerModel m = ((DefaultMarkerModel)defaultList.SelectedItem);
+                m.SetName(nameBox.Text);
+                result = m.Clone();
+            }
 
-			int qty;
-			if (!int.TryParse(quantityBox.Text, out qty) || qty < 0)
-			{
-				var anim = new ColorAnimation(Colors.Red, new Duration(TimeSpan.FromMilliseconds(800))) { AutoReverse = true };
-				validationBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.Compose);
-				return;
-			}
-			
-			Program.Game.AddRecentMarker(result);
-			DialogResult = true;			
-		}
+            if(result == null) return;
 
-		private void MarkerSelected(object sender, SelectionChangedEventArgs e)
-		{
-			e.Handled = true;
-			ListBox list = (ListBox)sender;
-			if (list.SelectedIndex != -1)
-			{
-				if (list != recentList) recentList.SelectedIndex = -1;
-				if (list != allList) allList.SelectedIndex = -1;
-				if (list != defaultList) defaultList.SelectedIndex = -1;
-			}
-			IsModelSelected = recentList.SelectedIndex != -1 || allList.SelectedIndex != -1 || defaultList.SelectedIndex != -1;
-		}
+            int qty;
+            if(!int.TryParse(quantityBox.Text, out qty) || qty < 0)
+            {
+                var anim = new ColorAnimation(Colors.Red, new Duration(TimeSpan.FromMilliseconds(800))) { AutoReverse = true };
+                validationBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.Compose);
+                return;
+            }
 
-		private void FilterChanged(object sender, EventArgs e)
-		{
-			filterText = filterBox.Text;
-			allMarkersView.Refresh();		
-		}
+            Program.Game.AddRecentMarker(result);
+            DialogResult = true;
+        }
 
-		private void PreviewFilterKeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.Key == Key.Escape && filterBox.Text.Length > 0)
-			{
-				filterBox.Clear();
-				e.Handled = true;
-			}
-		}
-	}
+        private void MarkerSelected(object sender, SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+            ListBox list = (ListBox)sender;
+            if(list.SelectedIndex != -1)
+            {
+                if(list != recentList) recentList.SelectedIndex = -1;
+                if(list != allList) allList.SelectedIndex = -1;
+                if(list != defaultList) defaultList.SelectedIndex = -1;
+            }
+            IsModelSelected = recentList.SelectedIndex != -1 || allList.SelectedIndex != -1 || defaultList.SelectedIndex != -1;
+        }
+
+        private void FilterChanged(object sender, EventArgs e)
+        {
+            filterText = filterBox.Text;
+            allMarkersView.Refresh();
+        }
+
+        private void PreviewFilterKeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Escape && filterBox.Text.Length > 0)
+            {
+                filterBox.Clear();
+                e.Handled = true;
+            }
+        }
+    }
 }

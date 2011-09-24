@@ -41,31 +41,27 @@ namespace Octgn
                 new MessageWindow(sb.ToString()).ShowDialog();
                 ShutdownMode = oldShutdown;
             }
-
             base.OnStartup(e);
         }
 
         private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
-
-            //if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+            Program.DebugTrace.TraceEvent(System.Diagnostics.TraceEventType.Error, 0, e.Exception.ToString());
 #endif
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            Exception ex = (Exception)e.ExceptionObject;
             if(!System.Diagnostics.Debugger.IsAttached)
             {
-                Exception ex = e.ExceptionObject as Exception;
                 var wnd = new ErrorWindow(ex);
                 wnd.ShowDialog();
             }
             else
             {
-#if(DEBUG)
-                System.Diagnostics.Debugger.Break();
-#endif
+                Program.DebugTrace.TraceEvent(System.Diagnostics.TraceEventType.Error, 0, ex.ToString());
             }
         }
 

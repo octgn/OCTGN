@@ -12,6 +12,7 @@ namespace Octgn
 {
     public static class Program
     {
+        public static DWindow DebugWindow;
         public static Game Game;
         public static LobbyClient lobbyClient;
         public static Skylabs.LobbyServer.Server lobbyServer;
@@ -33,6 +34,8 @@ namespace Octgn
         internal static Dispatcher Dispatcher;
 
         internal readonly static TraceSource Trace = new TraceSource("MainTrace", SourceLevels.Information);
+        internal readonly static TraceSource DebugTrace = new TraceSource("DebugTrace", SourceLevels.All);
+        internal readonly static CacheTraceListener DebugListener = new CacheTraceListener();
         internal static System.Windows.Documents.Inline LastChatTrace;
 
 #if(DEBUG)
@@ -41,27 +44,17 @@ namespace Octgn
         public static lobbysettings LobbySettings = lobbysettings.Default;
 #endif
 
-        // TODO: Refactoring > this belongs to the Markers class
-        internal readonly static DefaultMarkerModel[] DefaultMarkers = new DefaultMarkerModel[]
-    {
-        new DefaultMarkerModel("white", new Guid(0,0,0,0,0,0,0,0,0,0,1)),
-        new DefaultMarkerModel("blue",  new Guid(0,0,0,0,0,0,0,0,0,0,2)),
-        new DefaultMarkerModel("black", new Guid(0,0,0,0,0,0,0,0,0,0,3)),
-        new DefaultMarkerModel("red",  new Guid(0,0,0,0,0,0,0,0,0,0,4)),
-        new DefaultMarkerModel("green", new Guid(0,0,0,0,0,0,0,0,0,0,5)),
-        new DefaultMarkerModel("orange", new Guid(0,0,0,0,0,0,0,0,0,0,6)),
-        new DefaultMarkerModel("brown",  new Guid(0,0,0,0,0,0,0,0,0,0,7)),
-        new DefaultMarkerModel("yellow",  new Guid(0,0,0,0,0,0,0,0,0,0,8))
-    };
-
         static Program()
         {
+            DebugTrace.Listeners.Add(DebugListener);
             BasePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
 #if(DEBUG)
             lobbyServer = new Skylabs.LobbyServer.Server(System.Net.IPAddress.Any, LobbySettings.ServerPort);
             lobbyServer.Start();
 #endif
+            Exception e = new Exception();
+            string s = e.Message.Substring(0);
         }
 
         public static void StopGame()
