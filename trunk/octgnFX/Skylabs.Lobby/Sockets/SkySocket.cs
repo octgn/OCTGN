@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Skylabs.Net
 {
-    public enum DisconnectReason { PingTimeout, RemoteHostDropped, CleanDisconnect };
+    public enum DisconnectReason { PingTimeout, RemoteHostDropped, CleanDisconnect, MalformedData };
 }
 
 namespace Skylabs.Net.Sockets
@@ -74,7 +74,7 @@ namespace Skylabs.Net.Sockets
                     _Connect(c);
                     return true;
                 }
-                catch(Exception e)
+                catch(SocketException e)
                 {
                     return false;
                 }
@@ -168,6 +168,7 @@ namespace Skylabs.Net.Sockets
             catch(SocketException e)
             {
                 //Skylabs.ConsoleHelper.ConsoleWriter.writeLine(e.ToString(), false);
+                if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
                 Close(DisconnectReason.RemoteHostDropped);
             }
         }
@@ -183,9 +184,20 @@ namespace Skylabs.Net.Sockets
                 {
                     byte[] mdata = new byte[count];
                     Buffer.CopyTo(8, mdata, 0, (int)count);
+                    SocketMessage sm = null;
                     try
                     {
-                        SocketMessage sm = SocketMessage.Deserialize(mdata);
+                        sm = SocketMessage.Deserialize(mdata);
+                    }
+                    catch(Exception e)
+                    {
+#if(DEBUG)
+                        if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+#endif
+                        this.Close(DisconnectReason.MalformedData);
+                    }
+                    if(sm != null)
+                    {
                         if(sm.Header.ToLower() == "ping")
                         {
                             LastPingReceived = DateTime.Now;
@@ -195,10 +207,6 @@ namespace Skylabs.Net.Sockets
                             OnMessageReceived(sm);
                         }
                     }
-                    catch(Exception e)
-                    {
-                    }
-
                     Buffer.RemoveRange(0, (int)count + 8);
                 }
             }
@@ -223,7 +231,7 @@ namespace Skylabs.Net.Sockets
 #if(!DEBUG)
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #else
-                //ConsoleEventLog.addEvent(new ConsoleEventError("in WriteMessage", se), true);
+                if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
                 Close(DisconnectReason.RemoteHostDropped);
             }
