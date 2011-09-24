@@ -61,7 +61,7 @@ namespace Octgn.Launcher
 
         private void menuExit_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.MainWindow.Close();
+            Program.Exit();
         }
 
         private void menuOctgn_Click(object sender, RoutedEventArgs e)

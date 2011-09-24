@@ -68,6 +68,20 @@ namespace Octgn
             IsGameRunning = false;
         }
 
+        public static void Exit()
+        {
+            try
+            {
+                DebugWindow.Close();
+            }
+            catch(Exception e)
+            {
+            }
+            Application.Current.MainWindow.Close();
+            if(lobbyServer != null)
+                lobbyServer.Stop();
+        }
+
         internal static void OnServerError(string serverMessage)
         {
             var args = new ServerErrorEventArgs() { Message = serverMessage };
