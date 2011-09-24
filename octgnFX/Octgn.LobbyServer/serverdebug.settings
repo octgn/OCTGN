@@ -12,13 +12,13 @@
       <Value Profile="(Default)">localhost</Value>
     </Setting>
     <Setting Name="dbHost" Type="System.String" Scope="User">
-      <Value Profile="(Default)">localhost</Value>
+      <Value Profile="(Default)">www.skylabsonline.com</Value>
     </Setting>
     <Setting Name="dbUser" Type="System.String" Scope="User">
-      <Value Profile="(Default)">root</Value>
+      <Value Profile="(Default)">lobby</Value>
     </Setting>
     <Setting Name="dbPass" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">E5MNDC9ZEN36NWeD</Value>
     </Setting>
     <Setting Name="db" Type="System.String" Scope="User">
       <Value Profile="(Default)">lobby</Value>

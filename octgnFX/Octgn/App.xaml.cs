@@ -48,6 +48,7 @@ namespace Octgn
         private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
+
             //if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
         }

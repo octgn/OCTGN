@@ -61,7 +61,7 @@ namespace Octgn.LobbyServer {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
+        [global::System.Configuration.DefaultSettingValueAttribute("www.skylabsonline.com")]
         public string dbHost {
             get {
                 return ((string)(this["dbHost"]));
@@ -73,7 +73,7 @@ namespace Octgn.LobbyServer {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("root")]
+        [global::System.Configuration.DefaultSettingValueAttribute("lobby")]
         public string dbUser {
             get {
                 return ((string)(this["dbUser"]));
@@ -85,7 +85,7 @@ namespace Octgn.LobbyServer {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("E5MNDC9ZEN36NWeD")]
         public string dbPass {
             get {
                 return ((string)(this["dbPass"]));
