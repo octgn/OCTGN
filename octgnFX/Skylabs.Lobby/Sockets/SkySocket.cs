@@ -21,8 +21,14 @@ namespace Skylabs.Net.Sockets
 
     public abstract class SkySocket
     {
+        /// <summary>
+        /// Underlying TcpClient
+        /// </summary>
         public TcpClient Sock { get; private set; }
 
+        /// <summary>
+        /// Is this connected to the remote socket
+        /// </summary>
         public bool Connected { get; private set; }
 
         private List<byte> Buffer= new List<byte>();
@@ -31,6 +37,9 @@ namespace Skylabs.Net.Sockets
 
         private DateTime LastPingReceived;
 
+        /// <summary>
+        /// Creates new SkySocket that isn't connected. You must call Connect to connect.
+        /// </summary>
         public SkySocket()
         {
             Connected = false;
@@ -39,11 +48,21 @@ namespace Skylabs.Net.Sockets
             thread = new Thread(new ThreadStart(run));
         }
 
+        /// <summary>
+        /// Creates new SkySocket using an already made connection.
+        /// </summary>
+        /// <param name="client">Connected TcpClient</param>
         public SkySocket(TcpClient client)
         {
             _Connect(client);
         }
 
+        /// <summary>
+        /// Connect to a remote host.
+        /// </summary>
+        /// <param name="host">Host Name</param>
+        /// <param name="port">Port</param>
+        /// <returns>True if connected, false if not.</returns>
         public bool Connect(string host, int port)
         {
             if(!Connected)
@@ -74,8 +93,16 @@ namespace Skylabs.Net.Sockets
             thread.Start();
         }
 
+        /// <summary>
+        /// Message received
+        /// </summary>
+        /// <param name="sm">Socket Message received</param>
         public abstract void OnMessageReceived(SocketMessage sm);
 
+        /// <summary>
+        /// When this client disconnects
+        /// </summary>
+        /// <param name="reason">Reason why</param>
         public abstract void OnDisconnect(DisconnectReason reason);
 
         private void run()
@@ -99,6 +126,10 @@ namespace Skylabs.Net.Sockets
             Sock.Client.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
         }
 
+        /// <summary>
+        /// Close the client.
+        /// </summary>
+        /// <param name="reason">Reason why</param>
         public void Close(DisconnectReason reason)
         {
             this.Sock.Client.BeginDisconnect(false, new System.AsyncCallback(delegate(System.IAsyncResult res)
@@ -173,6 +204,10 @@ namespace Skylabs.Net.Sockets
             }
         }
 
+        /// <summary>
+        /// Send a SocketMessage.
+        /// </summary>
+        /// <param name="message">Message to send.</param>
         public void WriteMessage(SocketMessage message)
         {
             byte[] data = SocketMessage.Serialize(message);
