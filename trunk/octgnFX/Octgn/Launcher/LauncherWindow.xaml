@@ -4,5 +4,4 @@
     Style="{StaticResource DialogWindow}" ShowsNavigationUI="False" Source="Login.xaml"
     Width="640" SizeToContent="Height" ResizeMode="CanMinimize"
     UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
-
 </NavigationWindow>

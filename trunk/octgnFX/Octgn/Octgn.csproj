@@ -172,6 +172,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DEBUGLobbySettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="CacheTraceListener.cs" />
+    <Compile Include="DWindow.xaml.cs">
+      <DependentUpon>DWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DeckBuilder\DeckBuilderWindow.xaml.cs">
       <DependentUpon>DeckBuilderWindow.xaml</DependentUpon>
     </Compile>
@@ -504,6 +508,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\CircularProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
