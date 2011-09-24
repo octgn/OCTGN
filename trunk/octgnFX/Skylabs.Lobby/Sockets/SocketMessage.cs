@@ -78,6 +78,12 @@ namespace Skylabs.Net
             _Data[_Data.Length - 1] = data;
         }
 
+        public void Add_Data(string key, object value)
+        {
+            Array.Resize<NameValuePair>(ref _Data, Data.Length + 1);
+            _Data[_Data.Length - 1] = new NameValuePair(key, value);
+        }
+
         public static byte[] Serialize(SocketMessage message)
         {
             using(MemoryStream ms = new MemoryStream())
