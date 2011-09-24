@@ -18,8 +18,10 @@ namespace Skylabs.Lobby
         public delegate void RegisterFinished(string emailerror, string passworderror, string usernameerror);
         public delegate void DataRecieved(DataRecType type);
         public delegate void UserStatusChanged(UserStatus eve, User u);
+        public delegate void FriendRequest(User u);
         public event DataRecieved OnDataRecieved;
         public event UserStatusChanged OnUserStatusChanged;
+        public event FriendRequest OnFriendRequest;
         private LoginFinished OnLoginFinished;
         private RegisterFinished OnRegisterFinished;
 
@@ -37,6 +39,22 @@ namespace Skylabs.Lobby
             : base(c)
         {
             FriendList = new List<int>();
+        }
+
+        public User GetOnlineUser(int uid)
+        {
+            foreach(User u in OnlineList)
+            {
+                if(u.UID == uid) return u;
+            }
+            return null;
+        }
+
+        public void Add_Friend(string email)
+        {
+            SocketMessage sm = new SocketMessage("addfriend");
+            sm.Add_Data("email", email);
+            WriteMessage(sm);
         }
 
         public void Login(LoginFinished onFinish, string email, string password)
@@ -64,6 +82,14 @@ namespace Skylabs.Lobby
             }
         }
 
+        public void Accept_Friend_Request(int uid, bool accept)
+        {
+            SocketMessage sm = new SocketMessage("acceptfriend");
+            sm.Add_Data("uid", uid);
+            sm.Add_Data("accept", accept);
+            WriteMessage(sm);
+        }
+
         public override void OnMessageReceived(Net.SocketMessage sm)
         {
             User u;
@@ -83,6 +109,21 @@ namespace Skylabs.Lobby
                     }
                     if(OnDataRecieved != null)
                         OnDataRecieved.Invoke(DataRecType.FriendList);
+                    break;
+                case "friendadded":
+                    FriendList.Add((int)sm.Data[0].Value);
+                    if(OnDataRecieved != null)
+                        OnDataRecieved.Invoke(DataRecType.FriendList);
+                    break;
+                case "friendremoved":
+                    FriendList.Remove((int)sm.Data[0].Value);
+                    if(OnDataRecieved != null)
+                        OnDataRecieved.Invoke(DataRecType.FriendList);
+                    break;
+                case "friendrequest":
+                    u = (User)sm.Data[0].Value;
+                    if(OnFriendRequest != null)
+                        OnFriendRequest(u);
                     break;
                 case "onlinelist":
                     OnlineList = new List<User>();

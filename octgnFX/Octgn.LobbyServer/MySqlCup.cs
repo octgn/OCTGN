@@ -48,7 +48,7 @@ namespace Octgn.LobbyServer
         public int IsBanned(int uid, Client c)
         {
             if(uid <= -1)
-                throw new FormatException("User.UID not valid.");
+                return -1;
             int ret = -1;
             try
             {
@@ -133,9 +133,9 @@ namespace Octgn.LobbyServer
         public User GetUserByUsername(string username)
         {
             if(username == null)
-                throw new NullReferenceException("Username can't be null");
+                return null;
             if(String.IsNullOrWhiteSpace(username))
-                throw new NullReferenceException("Username can't be empty");
+                return null;
             User ret = null;
             try
             {
@@ -173,9 +173,9 @@ namespace Octgn.LobbyServer
         public User GetUser(string email)
         {
             if(email == null)
-                throw new NullReferenceException("Email can't be null");
+                return null;
             if(String.IsNullOrWhiteSpace(email))
-                throw new NullReferenceException("Email can't be empty");
+                return null;
             User ret = null;
             try
             {
@@ -212,12 +212,52 @@ namespace Octgn.LobbyServer
             return ret;
         }
 
+        public User GetUser(int uid)
+        {
+            if(uid <= -1)
+                return null;
+            User ret = null;
+            try
+            {
+                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    using(MySqlCommand com = con.CreateCommand())
+                    {
+                        com.CommandText = "SELECT * FROM users WHERE uid=@uid;";
+                        com.Prepare();
+                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                        com.Parameters["@uid"].Value = uid;
+                        using(MySqlDataReader dr = com.ExecuteReader())
+                        {
+                            if(dr.Read())
+                            {
+                                ret = new User();
+                                ret.Email = dr.GetString("email");
+                                ret.Password = dr.GetString("password");
+                                ret.DisplayName = dr.GetString("name");
+                                ret.UID = dr.GetInt32("uid");
+                                ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
+                            }
+                            dr.Close();
+                        }
+                        con.Close();
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
+            }
+            return ret;
+        }
+
         public bool RegisterUser(string email, string password, string name)
         {
             if(email == null || password == null || name == null)
-                throw new NullReferenceException("User is not complete and cannot be registered.");
+                return false;
             if(String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(password) || String.IsNullOrWhiteSpace(name))
-                throw new NullReferenceException("User is not complete and cannot be registered.");
+                return false;
             try
             {
                 using(MySqlConnection con = new MySqlConnection(ConnectionString))
@@ -243,10 +283,94 @@ namespace Octgn.LobbyServer
             return false;
         }
 
+        public void RemoveFriendRequest(int requesteeuid, string friendemail)
+        {
+            if(requesteeuid <= -1 || friendemail == null)
+                return;
+            if(String.IsNullOrWhiteSpace(friendemail))
+                return;
+            try
+            {
+                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    MySqlCommand cmd = con.CreateCommand();
+                    cmd.CommandText = "DELETE FROM friendrequests WHERE uid=@uid AND email=@email;";
+                    cmd.Prepare();
+                    cmd.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    cmd.Parameters.Add("@email", MySqlDbType.String, 100);
+                    cmd.Parameters["@uid"].Value = requesteeuid;
+                    cmd.Parameters["@email"].Value = friendemail;
+                    cmd.ExecuteNonQuery();
+                    return;
+                }
+            }
+            catch(Exception e)
+            {
+            }
+        }
+
+        public void AddFriendRequest(int uid, string friendemail)
+        {
+            if(uid <= -1)
+                return;
+            if(friendemail == null)
+                return;
+            if(String.IsNullOrWhiteSpace(friendemail))
+                return;
+            try
+            {
+                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    MySqlCommand com = con.CreateCommand();
+                    com.CommandText = "INSERT INTO friendrequests(uid,email) VALUES(@uid,@email);";
+                    com.Prepare();
+                    com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
+                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    com.Parameters["@email"].Value = friendemail;
+                    com.Parameters["@uid"].Value = uid;
+                    com.ExecuteNonQuery();
+                    return;
+                }
+            }
+            catch(Exception e)
+            {
+            }
+        }
+
+        public void AddFriend(int useruid, int frienduid)
+        {
+            if(useruid <= -1 || frienduid <= -1)
+                return;
+            try
+            {
+                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    MySqlCommand com = con.CreateCommand();
+                    com.CommandText = "INSERT INTO friends(uid,fid) VALUES(@uid,@fid);";
+                    com.Prepare();
+                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    com.Parameters.Add("@fid", MySqlDbType.Int32, 11);
+                    com.Parameters["@uid"].Value = useruid;
+                    com.Parameters["@fid"].Value = frienduid;
+                    com.ExecuteNonQuery();
+                    com.Parameters["@uid"].Value = frienduid;
+                    com.Parameters["@fid"].Value = useruid;
+                    com.ExecuteNonQuery();
+                    return;
+                }
+            }
+            catch(Exception e)
+            {
+            }
+        }
+
         public List<User> GetFriendsList(int uid)
         {
             if(uid <= -1)
-                throw new NullReferenceException("User ID is invalid.");
+                return null;
             try
             {
                 using(MySqlConnection con = new MySqlConnection(ConnectionString))

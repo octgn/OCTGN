@@ -18,13 +18,19 @@ namespace Skylabs.LobbyServer
 
         public User Me { get; private set; }
 
-        public List<User> Friends { get; private set; }
+        public List<User> Friends
+        {
+            get { return _Friends; }
+            set { _Friends = value; if(LoggedIn)sendFriendsList(); }
+        }
 
         private Server Parent;
 
         private bool SentENDMessage = false;
 
         private bool GotENDMessage = false;
+
+        private List<User> _Friends;
 
         public Client(TcpClient client, int id, Server server)
             : base(client)
@@ -66,8 +72,11 @@ namespace Skylabs.LobbyServer
                 case "login":
                     Login(sm);
                     break;
-                case "ban":
-
+                case "addfriend":
+                    AddFriend(sm);
+                    break;
+                case "acceptfriend":
+                    AcceptFriend(sm);
                     break;
                 case "end":
                     GotENDMessage = true;
@@ -82,6 +91,63 @@ namespace Skylabs.LobbyServer
         public override void OnDisconnect(DisconnectReason reason)
         {
             Parent.Client_Disconnect(this);
+        }
+
+        private void AcceptFriend(SocketMessage sm)
+        {
+            //incomming data
+            //int uid      uid of the requestee
+            //bool accept  should we accept it
+
+            if(sm.Data.Length != 2)
+                return;
+            int uid = (int)sm.Data["uid"];
+            bool accept = (bool)sm.Data["accept"];
+            User requestee = Cup.GetUser(uid);
+            if(requestee == null)
+                return;
+            if(accept)
+            {
+                //Add friend to this list
+                Friends.Add(requestee);
+                //Add you to friends list
+                Client c = Parent.GetOnlineClientByUID(requestee.UID);
+                if(c != null)
+                {
+                    c.Friends.Add(Me);
+                }
+                //Add to database
+                Cup.AddFriend(uid, requestee.UID);
+            }
+            //Remove any database friend requests
+            Cup.RemoveFriendRequest(requestee.UID, Me.Email);
+            Cup.RemoveFriendRequest(Me.UID, requestee.Email);
+        }
+
+        private void AddFriend(SocketMessage sm)
+        {
+            if(sm.Data.Length <= 0)
+                return;
+            string email = (string)sm.Data[0].Value;
+            if(email == null)
+                return;
+            if(String.IsNullOrWhiteSpace(email))
+                return;
+            if(!Verify.IsEmail(email))
+                return;
+            email = email.ToLower();
+            Client c = Parent.GetOnlineClientByEmail(email);
+            //If user exists and is online
+            if(c != null)
+            {
+                SocketMessage sm = new SocketMessage("friendrequest");
+                sm.Add_Data("uid", Me.UID);
+                c.WriteMessage(sm);
+            }
+            else
+            {
+                Cup.AddFriendRequest(Me.UID, email);
+            }
         }
 
         private void sendFriendsList()
@@ -198,7 +264,6 @@ namespace Skylabs.LobbyServer
                             WriteMessage(new SocketMessage("loginsuccess"));
                             Friends = Cup.GetFriendsList(Me.UID);
                             Parent.User_Login(this);
-                            sendFriendsList();
                             sendUsersOnline();
                             return;
                         }

@@ -42,6 +42,28 @@ namespace Skylabs.LobbyServer
             }
         }
 
+        public Client GetOnlineClientByEmail(string email)
+        {
+            foreach(Client c in Clients)
+            {
+                if(c.LoggedIn)
+                    if(c.Me.Email.ToLower().Equals(email.ToLower()))
+                        return c;
+            }
+            return null;
+        }
+
+        public Client GetOnlineClientByUID(int uid)
+        {
+            foreach(Client c in Clients)
+            {
+                if(c.LoggedIn)
+                    if(c.Me.UID == uid)
+                        return c;
+            }
+            return null;
+        }
+
         /// <summary>
         /// Happens when a client disconnects. This gets called automatically, don't call it.
         /// </summary>
