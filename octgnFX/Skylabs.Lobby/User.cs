@@ -42,7 +42,7 @@ namespace Skylabs.Lobby
         {
         }
 
-        public bool Equal(User u)
+        public bool Equals(User u)
         {
             return (UID == u.UID);
         }

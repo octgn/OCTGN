@@ -101,8 +101,8 @@ namespace Skylabs.LobbyServer
 
             if(sm.Data.Length != 2)
                 return;
-            int uid = (int)sm.Data["uid"];
-            bool accept = (bool)sm.Data["accept"];
+            int uid = (int)sm["uid"];
+            bool accept = (bool)sm["accept"];
             User requestee = Cup.GetUser(uid);
             if(requestee == null)
                 return;
@@ -140,9 +140,9 @@ namespace Skylabs.LobbyServer
             //If user exists and is online
             if(c != null)
             {
-                SocketMessage sm = new SocketMessage("friendrequest");
-                sm.Add_Data("uid", Me.UID);
-                c.WriteMessage(sm);
+                SocketMessage smm = new SocketMessage("friendrequest");
+                smm.Add_Data("uid", Me.UID);
+                c.WriteMessage(smm);
             }
             else
             {
