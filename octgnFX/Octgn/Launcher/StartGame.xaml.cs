@@ -14,7 +14,7 @@ namespace Octgn.Launcher
 	{
 		public StartGame()
 		{
-      Program.GameSettings.UseTwoSidedTable = false;
+      Program.GameSettings.UseTwoSidedTable = true;
 
 			InitializeComponent();
 
