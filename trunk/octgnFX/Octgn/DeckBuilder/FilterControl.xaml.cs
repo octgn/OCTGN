@@ -101,6 +101,11 @@ namespace Octgn.DeckBuilder
 			if (RemoveFilter != null)
 				RemoveFilter(this.TemplatedParent, e);
 		}
+
+        private void comparisonText_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.OemOpenBrackets || e.Key == Key.OemCloseBrackets) e.Handled = true;
+        }
 	}
 
 	internal class SqlComparison
