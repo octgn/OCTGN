@@ -340,22 +340,38 @@ namespace Octgn.DeckBuilder
 			var element = (Deck.Element)grid.SelectedItem;
 			if (element == null) return;
 
-			switch (e.Key)
-			{
-				case Key.Insert:
-				case Key.Add:
-					unsaved = true;
-					element.Quantity += 1;
-					e.Handled = true;
-					break;
-				
-				case Key.Delete:
-				case Key.Subtract:
-					unsaved = true;
-					element.Quantity -= 1;					
-					e.Handled = true;
-					break;
-			}
+            // jods used a Switch statement here. I needed to check conditions of multiple keys.
+            var items = grid.Items.Count - 1;
+            int moveUp = grid.SelectedIndex - 1;
+            int moveDown = grid.SelectedIndex + 1;
+            if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
+            {                
+                unsaved = true;
+                if (moveDown <= items)
+                    ActiveSection.Cards.Move(grid.SelectedIndex, moveDown);
+                grid.Focus();
+                e.Handled = true;
+            }
+            else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Subtract))
+            {
+                unsaved = true;
+                if (moveUp >= 0)
+                    ActiveSection.Cards.Move(grid.SelectedIndex, moveUp);
+                grid.Focus();
+                e.Handled = true;
+            }
+            else if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
+            {
+                unsaved = true;
+                element.Quantity += 1;
+                e.Handled = true;
+            }
+            else if (e.KeyboardDevice.IsKeyDown(Key.Delete) || e.KeyboardDevice.IsKeyDown(Key.Subtract))
+            {
+                unsaved = true;
+                element.Quantity -= 1;
+                e.Handled = true;
+            }
 		}
 
 		private void ElementEditEnd(object sender, DataGridCellEditEndingEventArgs e)
