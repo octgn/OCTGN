@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
-using Skylabs;
 using Skylabs.ConsoleHelper;
 using Skylabs.Lobby;
 using Skylabs.LobbyServer;
@@ -130,46 +129,6 @@ namespace Octgn.LobbyServer
             cmd.ExecuteNonQuery();
         }
 
-        public User GetUserByUsername(string username)
-        {
-            if(username == null)
-                return null;
-            if(String.IsNullOrWhiteSpace(username))
-                return null;
-            User ret = null;
-            try
-            {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
-                {
-                    con.Open();
-                    MySqlCommand com = con.CreateCommand();
-                    com.CommandText = "SELECT * FROM users WHERE name=@name;";
-                    com.Prepare();
-                    com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
-                    com.Parameters["@name"].Value = username;
-                    using(MySqlDataReader dr = com.ExecuteReader())
-                    {
-                        if(dr.Read())
-                        {
-                            ret = new User();
-                            ret.Email = dr.GetString("email");
-                            ret.Password = dr.GetString("password");
-                            ret.DisplayName = dr.GetString("name");
-                            ret.UID = dr.GetInt32("uid");
-                            ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
-                        }
-                        dr.Close();
-                    }
-                    con.Close();
-                }
-            }
-            catch(Exception ex)
-            {
-                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
-            }
-            return ret;
-        }
-
         public User GetUser(string email)
         {
             if(email == null)
@@ -194,7 +153,6 @@ namespace Octgn.LobbyServer
                             {
                                 ret = new User();
                                 ret.Email = dr.GetString("email");
-                                ret.Password = dr.GetString("password");
                                 ret.DisplayName = dr.GetString("name");
                                 ret.UID = dr.GetInt32("uid");
                                 ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
@@ -234,7 +192,6 @@ namespace Octgn.LobbyServer
                             {
                                 ret = new User();
                                 ret.Email = dr.GetString("email");
-                                ret.Password = dr.GetString("password");
                                 ret.DisplayName = dr.GetString("name");
                                 ret.UID = dr.GetInt32("uid");
                                 ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
@@ -252,11 +209,11 @@ namespace Octgn.LobbyServer
             return ret;
         }
 
-        public bool RegisterUser(string email, string password, string name)
+        public bool RegisterUser(string email, string name)
         {
-            if(email == null || password == null || name == null)
+            if(email == null || name == null)
                 return false;
-            if(String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(password) || String.IsNullOrWhiteSpace(name))
+            if(String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(name))
                 return false;
             try
             {
@@ -264,13 +221,11 @@ namespace Octgn.LobbyServer
                 {
                     con.Open();
                     MySqlCommand com = con.CreateCommand();
-                    com.CommandText = "INSERT INTO users(email,password,name) VALUES(@email,@pass,@name);";
+                    com.CommandText = "INSERT INTO users(email,name) VALUES(@email,@name);";
                     com.Prepare();
                     com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
-                    com.Parameters.Add("@pass", MySqlDbType.VarChar, 128);
                     com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
                     com.Parameters["@email"].Value = email;
-                    com.Parameters["@pass"].Value = ValueConverters.CreateSHAHash(password);
                     com.Parameters["@name"].Value = name;
                     com.ExecuteNonQuery();
                     return true;

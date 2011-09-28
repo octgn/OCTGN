@@ -158,11 +158,24 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Border BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
+                    <Border x:Name="cBorder" BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
 									BorderBrush="{StaticResource ControlBorderBrush}"
 									Background="{StaticResource ControlFillBrush}">
                         <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter Property="BorderBrush" TargetName="cBorder">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" >
+                                        <GradientStop Color="#FFFF8600" Offset="1.5"/>
+                                        <GradientStop x:Name="wLine" Color="#FFFF8600" Offset="-0.5"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -177,11 +190,24 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Border BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
+                    <Border x:Name="cBorder" BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
 									BorderBrush="{StaticResource ControlBorderBrush}"
 									Background="{StaticResource ControlFillBrush}">
                         <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter Property="BorderBrush" TargetName="cBorder">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5" >
+                                        <GradientStop Color="#FFFF8600" Offset="1.5"/>
+                                        <GradientStop x:Name="wLine" Color="#FFFF8600" Offset="-0.5"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

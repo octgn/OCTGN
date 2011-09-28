@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Threading;
+using Google.GData.Client;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
 
@@ -24,6 +28,16 @@ namespace Skylabs.Lobby
         public event FriendRequest OnFriendRequest;
         private LoginFinished OnLoginFinished;
         private RegisterFinished OnRegisterFinished;
+
+        public Version Version
+        {
+            get
+            {
+                Assembly asm = Assembly.GetCallingAssembly();
+                AssemblyProductAttribute at = (AssemblyProductAttribute)asm.GetCustomAttributes(typeof(AssemblyProductAttribute), false)[0];
+                return asm.GetName().Version;
+            }
+        }
 
         public List<int> FriendList { get; private set; }
 
@@ -63,11 +77,30 @@ namespace Skylabs.Lobby
         {
             if(Connected)
             {
-                OnLoginFinished = onFinish;
-                SocketMessage sm = new SocketMessage("login");
-                sm.Add_Data(new NameValuePair("email", email));
-                sm.Add_Data(new NameValuePair("password", password));
-                WriteMessage(sm);
+                Thread t = new Thread(new ThreadStart(() =>
+                {
+                    OnLoginFinished = onFinish;
+                    String AppName = "skylabs-LobbyClient-" + Version.ToString();
+                    Service s = new Service("code", AppName);
+                    s.setUserCredentials(email, password);
+                    try
+                    {
+                        string ret = s.QueryClientLoginToken();
+                        SocketMessage sm = new SocketMessage("login");
+                        sm.Add_Data(new NameValuePair("email", email));
+                        sm.Add_Data(new NameValuePair("token", ret));
+                        WriteMessage(sm);
+                    }
+                    catch(Google.GData.Client.AuthenticationException re)
+                    {
+                        onFinish.Invoke(LoginResult.Failure, DateTime.Now);
+                    }
+                    catch(WebException e)
+                    {
+                        onFinish.Invoke(LoginResult.Failure, DateTime.Now);
+                    }
+                }));
+                t.Start();
             }
         }
 
