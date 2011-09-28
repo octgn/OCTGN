@@ -100,6 +100,12 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GCodeIssueTracker">
+      <HintPath>..\Lib\GCodeIssueTracker.dll</HintPath>
+    </Reference>
+    <Reference Include="GCore">
+      <HintPath>..\Lib\GCore.dll</HintPath>
+    </Reference>
     <Reference Include="IrcDotNet">
       <HintPath>..\Lib\IRC.net\IrcDotNet.dll</HintPath>
     </Reference>
@@ -131,6 +137,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Serialization.Xml">
+      <HintPath>..\Lib\System.Serialization.Xml.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq">
@@ -163,6 +172,9 @@
     <Compile Include="Controls\ChildWindowManager.cs" />
     <Compile Include="Controls\CircularProgressBar.xaml.cs">
       <DependentUpon>CircularProgressBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PopupWindowMessage.xaml.cs">
+      <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
@@ -460,6 +472,11 @@
     <None Include="Resources\109_AllAnnotations_Error_24x24_72.png" />
     <Resource Include="Images\109_AllAnnotations_Error_24x24_72.png" />
     <Resource Include="Images\109_AllAnnotations_Error_24x24_721.png" />
+    <Resource Include="Resources\gbreak.png" />
+    <Resource Include="Resources\google.png" />
+    <Resource Include="Resources\logo %281%29.png" />
+    <Resource Include="Resources\logoback.png" />
+    <Resource Include="Resources\logowords.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -508,6 +525,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\CircularProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PopupWindowMessage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

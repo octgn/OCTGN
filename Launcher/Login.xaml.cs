@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using Skylabs.Lobby;
 
 namespace Octgn.Launcher
@@ -10,9 +11,16 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class Login : Page
     {
+        private readonly DispatcherTimer animationTimer;
+        private bool bSpin = false;
+
         public Login()
         {
             InitializeComponent();
+            SpinnerRotate.CenterX = image2.Width / 2;
+            SpinnerRotate.CenterY = image2.Height / 2;
+            animationTimer = new DispatcherTimer(DispatcherPriority.ContextIdle, Dispatcher);
+            animationTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             versionText.Text = string.Format("Version {0}", OctgnApp.OctgnVersion.ToString(4));
 #if(DEBUG)
             //TODO Remove this at some point
@@ -24,9 +32,31 @@ namespace Octgn.Launcher
 #endif
         }
 
+        private void Start_Spinning()
+        {
+            if(!bSpin && animationTimer.IsEnabled == false)
+            {
+                bSpin = true;
+                animationTimer.Tick += HandleAnimationTick;
+                animationTimer.Start();
+            }
+        }
+
+        private void Stop_Spinning()
+        {
+            bSpin = false;
+        }
+
+        private void HandleAnimationTick(object sender, EventArgs e)
+        {
+            SpinnerRotate.Angle = (SpinnerRotate.Angle + 10) % 360;
+            if(SpinnerRotate.Angle == 0 && bSpin == false)
+                animationTimer.Stop();
+        }
+
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            circularProgressBar1.Visibility = Visibility.Visible;
+            Start_Spinning();
             bError.Visibility = System.Windows.Visibility.Hidden;
             Program.lobbyClient = new Skylabs.Lobby.LobbyClient();
             bool c = Program.lobbyClient.Connected;
@@ -44,7 +74,7 @@ namespace Octgn.Launcher
         {
             Dispatcher.Invoke((Action)(() =>
             {
-                circularProgressBar1.Visibility = System.Windows.Visibility.Hidden;
+                Stop_Spinning();
                 if(success == LoginResult.Success)
                 {
                 }
@@ -103,6 +133,11 @@ namespace Octgn.Launcher
         {
             //TODO This event and the menu need to be removed before release. This is only here for debugging purposes
             this.NavigationService.Navigate(new MainMenu());
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.Uri.ToString());
         }
     }
 }

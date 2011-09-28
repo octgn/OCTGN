@@ -53,30 +53,49 @@ namespace ThreadingComponent
             SpinnerRotate.Angle = (SpinnerRotate.Angle + 30) % 360;
         }
 
-        private void HandleLoaded(object sender, RoutedEventArgs e)
+        private void SetPositions()
         {
             const double offset = Math.PI;
             const double step = Math.PI * 2 / 10.0;
+            double ew = Width / 6;
+            double eh = Height / 6;
+            double w = Width / 2;
+            double h = Height / 2;
+            double m = Math.Min(w, h);
+            double r = 4 * m / 5;
 
-            SetPosition(C0, offset, 0.0, step);
-            SetPosition(C1, offset, 1.0, step);
-            SetPosition(C2, offset, 2.0, step);
-            SetPosition(C3, offset, 3.0, step);
-            SetPosition(C4, offset, 4.0, step);
-            SetPosition(C5, offset, 5.0, step);
-            SetPosition(C6, offset, 6.0, step);
-            SetPosition(C7, offset, 7.0, step);
-            SetPosition(C8, offset, 8.0, step);
+            SetPosition(C0, offset, 0.0, step, ew, eh, w, h, r);
+            SetPosition(C1, offset, 1.0, step, ew, eh, w, h, r);
+            SetPosition(C2, offset, 2.0, step, ew, eh, w, h, r);
+            SetPosition(C3, offset, 3.0, step, ew, eh, w, h, r);
+            SetPosition(C4, offset, 4.0, step, ew, eh, w, h, r);
+            SetPosition(C5, offset, 5.0, step, ew, eh, w, h, r);
+            SetPosition(C6, offset, 6.0, step, ew, eh, w, h, r);
+            SetPosition(C7, offset, 7.0, step, ew, eh, w, h, r);
+            SetPosition(C8, offset, 8.0, step, ew, eh, w, h, r);
+        }
+
+        private void HandleLoaded(object sender, RoutedEventArgs e)
+        {
+            SetPositions();
         }
 
         private void SetPosition(Ellipse ellipse, double offset,
-            double posOffSet, double step)
+            double posOffSet, double step, double ew, double eh, double w, double h,
+            double r)
         {
-            ellipse.SetValue(Canvas.LeftProperty, 50.0
-                + Math.Sin(offset + posOffSet * step) * 50.0);
+            double t = 2 * Math.PI * posOffSet / 10;
+            ellipse.Width = ew;
+            ellipse.Height = eh;
 
-            ellipse.SetValue(Canvas.TopProperty, 50
-                + Math.Cos(offset + posOffSet * step) * 50.0);
+            ellipse.SetValue(Canvas.LeftProperty, w + r * Math.Cos(t));
+            ellipse.SetValue(Canvas.TopProperty, h + r * Math.Sin(t));
+
+            //ellipse.SetValue(Canvas.LeftProperty,w
+            //    + Math.Sin(offset + posOffSet * step) * w);
+
+            //ellipse.SetValue(Canvas.TopProperty, h
+            //    + Math.Cos(offset + posOffSet * step) * h);
         }
 
         private void HandleUnloaded(object sender, RoutedEventArgs e)
@@ -96,5 +115,10 @@ namespace ThreadingComponent
         }
 
         #endregion Private Methods
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SetPositions();
+        }
     }
 }
