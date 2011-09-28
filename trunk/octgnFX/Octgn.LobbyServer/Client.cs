@@ -85,9 +85,6 @@ namespace Skylabs.LobbyServer
                     GotENDMessage = true;
                     Stop();
                     break;
-                case "register":
-                    Register(sm);
-                    break;
             }
         }
 
@@ -217,11 +214,6 @@ namespace Skylabs.LobbyServer
                 eemail = "Email taken.";
                 problem = true;
             }
-            if(Cup.GetUserByUsername(username) != null)
-            {
-                eusername = "Username taken.";
-                problem = true;
-            }
             if(problem)
             {
                 SocketMessage smm = new SocketMessage("registerfailed");
@@ -232,7 +224,7 @@ namespace Skylabs.LobbyServer
                 return;
             }
             //If we wind up here, everything has checked out.
-            if(Cup.RegisterUser(email, password, username))
+            if(Cup.RegisterUser(email, username))
             {
                 SocketMessage smm = new SocketMessage("registersuccess");
                 WriteMessage(smm);
@@ -250,47 +242,58 @@ namespace Skylabs.LobbyServer
         private void Login(SocketMessage sm)
         {
             string email = (string)sm["email"];
-            string pass = (string)sm["password"];
-            if(email != null && pass != null)
+            string token = (string)sm["token"];
+
+            if(email != null && token != null)
             {
-                pass = ValueConverters.CreateSHAHash(pass);
                 User u = Cup.GetUser(email);
                 if(u != null)
                 {
-                    if(u.Password == pass)
+                    int banned = Cup.IsBanned(u.UID, this);
+                    if(banned == -1)
                     {
-                        int banned = Cup.IsBanned(u.UID, this);
-                        if(banned == -1)
+                        LoggedIn = true;
+                        Me = u;
+                        WriteMessage(new SocketMessage("loginsuccess"));
+                        Friends = Cup.GetFriendsList(Me.UID);
+                        Parent.User_Login(this);
+                        sendUsersOnline();
+                        return;
+                    }
+                    else
+                    {
+                        SocketMessage smm = new SocketMessage("banned");
+                        smm.Add_Data(new NameValuePair("end", banned));
+                        WriteMessage(smm);
+                        Stop();
+                        LoggedIn = false;
+                        return;
+                    }
+                }
+                else
+                {
+                    if(Cup.RegisterUser(email, email))
+                    {
+                        Me = Cup.GetUser(email);
+                        if(Me == null)
+                        {
+                            LoggedIn = false;
+                            WriteMessage(new SocketMessage("loginfailed"));
+                        }
+                        else
                         {
                             LoggedIn = true;
-                            Me = u;
                             WriteMessage(new SocketMessage("loginsuccess"));
                             Friends = Cup.GetFriendsList(Me.UID);
                             Parent.User_Login(this);
                             sendUsersOnline();
-                            return;
-                        }
-                        else
-                        {
-                            SocketMessage smm = new SocketMessage("banned");
-                            smm.Add_Data(new NameValuePair("end", banned));
-                            WriteMessage(smm);
-                            Stop();
-                            LoggedIn = false;
-                            return;
                         }
                     }
                     else
                     {
                         LoggedIn = false;
                         WriteMessage(new SocketMessage("loginfailed"));
-                        return;
                     }
-                }
-                else
-                {
-                    LoggedIn = false;
-                    WriteMessage(new SocketMessage("loginfailed"));
                     return;
                 }
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
@@ -17,6 +18,16 @@ namespace Skylabs.LobbyServer
         public List<Client> Clients { get; set; }
 
         private int NextID;
+
+        public Version Version
+        {
+            get
+            {
+                Assembly asm = Assembly.GetCallingAssembly();
+                AssemblyProductAttribute at = (AssemblyProductAttribute)asm.GetCustomAttributes(typeof(AssemblyProductAttribute), false)[0];
+                return asm.GetName().Version;
+            }
+        }
 
         public Server(IPAddress ip, int port)
         {

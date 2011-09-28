@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
      xmlns:l="clr-namespace:Octgn.Launcher"
-	Title="Login" xmlns:my="clr-namespace:ThreadingComponent" Width="640" Height="362">
+	Title="Login" xmlns:my="clr-namespace:ThreadingComponent" Width="640" Height="362" xmlns:my1="clr-namespace:Octgn.Controls">
     <Page.Resources>
         <Storyboard x:Key="LogoTimeline">
             <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="whiteRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
@@ -57,7 +57,7 @@
             </MenuItem>
 
         </Menu>
-        <Grid Margin="10" Grid.Row="1">
+        <Grid Margin="10" Grid.Row="1" Background="{x:Null}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="309*" />
                 <ColumnDefinition Width="311*" />
@@ -69,9 +69,12 @@
             </Grid.RowDefinitions>
             <Border BorderBrush="Silver" BorderThickness="1" HorizontalAlignment="Center" Name="border1" VerticalAlignment="Top" Width="620" Style="{StaticResource Panel}" Grid.RowSpan="2" Height="99" Grid.ColumnSpan="2">
                 <Grid Margin="0" Grid.RowSpan="1">
-
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="522*" />
+                        <ColumnDefinition Width="96*" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock FontSize="48" FontStyle="Italic" FontWeight="Bold" Foreground="#FFFF0000" HorizontalAlignment="Left" Margin="157,0,0,3" Style="{x:Null}" Text="OCTGN" VerticalAlignment="Center"><TextBlock.Effect><DropShadowEffect Opacity="0.4" ShadowDepth="2" /></TextBlock.Effect></TextBlock>
-                    <TextBlock Foreground="#FFF00000" HorizontalAlignment="Right" Margin="0,0,30,8" Name="versionText" Style="{x:Null}" TextWrapping="Wrap" VerticalAlignment="Bottom">Version 0.2.0.1</TextBlock>
+                    <TextBlock Foreground="#FFF00000" HorizontalAlignment="Right" Margin="0,0,232,6" Name="versionText" Style="{x:Null}" TextWrapping="Wrap" VerticalAlignment="Bottom">Version 0.2.0.1</TextBlock>
                     <Viewbox Height="82.137" HorizontalAlignment="Left" Margin="50,0,0,0" RenderTransformOrigin="0.5,0.5" Stretch="UniformToFill" VerticalAlignment="Center" Width="82.137">
                         <Viewbox.RenderTransform>
                             <TransformGroup>
@@ -102,7 +105,7 @@
                             </Canvas>
                         </Canvas>
                     </Viewbox>
-                    <Viewbox HorizontalAlignment="Left" Margin="-99.079,-62.833,0,-160.625" Opacity="0.295" Panel.ZIndex="-1" RenderTransformOrigin="0.5,0.5" Stretch="UniformToFill" VerticalAlignment="Stretch" Width="322.134" Height="Auto">
+                    <Viewbox HorizontalAlignment="Left" Margin="-99,-62.833,0,-160.625" Opacity="0.295" Panel.ZIndex="-1" RenderTransformOrigin="0.5,0.5" Stretch="UniformToFill" VerticalAlignment="Stretch" Width="322.134" Height="Auto">
                         <Viewbox.Clip>
                             <PathGeometry>
                                 <PathFigure IsClosed="True" IsFilled="True" StartPoint="70.9767921257703,72.993">
@@ -131,6 +134,13 @@
                             </Canvas>
                         </Canvas>
                     </Viewbox>
+                    <Image Height="99" HorizontalAlignment="Center" Name="image2" Stretch="None" VerticalAlignment="Center" Width="93" Source="/OCTGN;component/Resources/logoback.png" Margin="521,-1,5,-1" Grid.ColumnSpan="2">
+                        <Image.RenderTransform>
+                            <RotateTransform x:Name="SpinnerRotate"
+                     Angle="0" />
+                        </Image.RenderTransform>
+                    </Image>
+                    <Image Height="34" HorizontalAlignment="Left" Margin="516,33,0,0" Name="image3" Stretch="None" VerticalAlignment="Top" Width="112" Source="/OCTGN;component/Resources/logowords.png" Grid.ColumnSpan="2" />
                 </Grid>
             </Border>
             <Line Grid.Row="2"  StrokeThickness="4" HorizontalAlignment="Center" X1="1" X2="1" Y1="1" Y2="217" Margin="308,0" Grid.ColumnSpan="2">
@@ -143,16 +153,54 @@
                     </RadialGradientBrush>
                 </Line.Stroke>
             </Line>
-            <Label Content="E-mail Address" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="12,0,0,0" Name="label1" VerticalAlignment="Top" Width="119" Foreground="White" FontWeight="Bold" FontSize="14" />
-            <TextBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="12,34,0,0" Name="textBox1" VerticalAlignment="Top" Width="279" TextChanged="textBox1_TextChanged" />
-            <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White" Height="28" HorizontalAlignment="Left" Margin="12,63,0,0" Name="label2" VerticalAlignment="Top" Width="119" Grid.Row="2" />
-            <PasswordBox Grid.Row="2" Height="23" Margin="12,97,0,0" Name="passwordBox1" VerticalAlignment="Top" HorizontalAlignment="Left" Width="279" PasswordChanged="passwordBox1_PasswordChanged" />
-            <Button Content="Sign In" Grid.Row="2" Height="45" HorizontalAlignment="Left" Margin="12,136,0,0" Name="button1" VerticalAlignment="Top" Width="102" Click="button1_Click" />
-            <my:CircularProgressBar Grid.Row="2" x:Name="circularProgressBar1" Visibility="Hidden" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            <Border Style="{StaticResource Panel}" BorderBrush="Silver" BorderThickness="1" Grid.Column="1" Grid.Row="2" Height="43" HorizontalAlignment="Center" Name="bError" VerticalAlignment="Top" Width="258" Margin="26,0" Visibility="Hidden">
-                <TextBlock Name="lError" Text="TextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" />
+            <Label Content="E-mail Address" Grid.Row="2" Height="26" HorizontalAlignment="Left" Margin="12,42,0,0" Name="label1" VerticalAlignment="Top" Width="119" Foreground="White" FontWeight="Bold" FontSize="14" />
+            <TextBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="12,69,0,0" Name="textBox1" VerticalAlignment="Top" Width="279" TextChanged="textBox1_TextChanged" />
+            <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White" Height="28" HorizontalAlignment="Left" Margin="12,94,0,0" Name="label2" VerticalAlignment="Top" Width="119" Grid.Row="2" />
+            <PasswordBox Grid.Row="2" Height="23" Margin="12,121,0,0" Name="passwordBox1" VerticalAlignment="Top" HorizontalAlignment="Left" Width="279" PasswordChanged="passwordBox1_PasswordChanged" />
+            <Button Content="Sign In" Grid.Row="2" Height="37" HorizontalAlignment="Left" Margin="12,162,0,0" Name="button1" VerticalAlignment="Top" Width="103" Click="button1_Click" />
+            <Border BorderBrush="Silver" BorderThickness="1" Height="32" HorizontalAlignment="Center" Margin="12,7,18,0" Name="border2" Style="{StaticResource Panel}" VerticalAlignment="Top" Visibility="Visible" Width="279" Grid.Row="2">
+                <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock1" Text="Google Signin" VerticalAlignment="Stretch" FontSize="20" />
             </Border>
-            <Button Content="Register" Grid.Row="2" Height="45" HorizontalAlignment="Left" Margin="120,136,0,0" Name="button2" VerticalAlignment="Top" Width="108" Click="button2_Click" />
+            <Image Grid.Row="2" Height="43" HorizontalAlignment="Left" Margin="21,2,0,0" Name="image1" Stretch="Uniform" VerticalAlignment="Top" Width="82" Source="/OCTGN;component/Resources/google.png" />
+            <Border BorderThickness="1" Height="192" HorizontalAlignment="Center" Margin="23,0,16,18" Name="border3" Style="{StaticResource Panel}" VerticalAlignment="Bottom" Visibility="Visible" Width="272" Grid.Row="2" Grid.Column="1" Padding="5">
+                <StackPanel Name="stackPanel1" >
+                    <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock5"  VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" >
+                        If you have problems signing in, please visit
+                        <Hyperlink
+                            NavigateUri="https://accounts.google.com/"
+                            RequestNavigate="Hyperlink_RequestNavigate">
+                            Google
+                        </Hyperlink>.
+                        <LineBreak/>You can also
+                        <Hyperlink
+                            NavigateUri="https://accounts.google.com/NewAccount"
+                            RequestNavigate="Hyperlink_RequestNavigate">
+                            Make an Account
+                        </Hyperlink>
+                    </TextBlock>
+                    <Border Style="{StaticResource Panel}" BorderBrush="Silver" BorderThickness="1" Name="bError" Visibility="Hidden">
+                        <Grid Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Stretch" Name="grid1" VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="24*" />
+                                <RowDefinition Height="125*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Name="lError" Text="TextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Grid.Row="0"></TextBlock>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+                <Border.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#3BC4C4C4" Offset="1" />
+                        <GradientStop Color="#4DFFFFFF" Offset="0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.BorderBrush>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFA4A4A4" Offset="0" />
+                        <GradientStop Color="Transparent" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+            </Border>
         </Grid>
     </Grid>
 </Page>

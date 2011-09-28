@@ -2,122 +2,122 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     >
 
-  <Style TargetType="Button" x:Key="{x:Type Button}">
-    <Setter Property="Foreground" Value="White"/>
-    <Setter Property="FontSize" Value="16" />
-    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-    <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="FontFamily" Value="Trebuchet MS" />
-		<Setter Property="Padding" Value="8" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ButtonBase}">
-          <ControlTemplate.Resources>
-            <Storyboard x:Key="Lightup">
-              <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="fillRec" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
-                <SplineColorKeyFrame KeyTime="00:00:00.3000000" Value="#FF0091D3"/>
-              </ColorAnimationUsingKeyFrames>
-              <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="fillRec" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
-                <SplineColorKeyFrame KeyTime="00:00:00.3000000" Value="#FF413BA1"/>
-              </ColorAnimationUsingKeyFrames>
-            </Storyboard>
-            <Storyboard x:Key="Lightdown">
-              <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="fillRec" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
-                <SplineColorKeyFrame KeyTime="00:00:00.3000000" Value="#FF001DDA"/>
-              </ColorAnimationUsingKeyFrames>
-              <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="fillRec" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
-                <SplineColorKeyFrame KeyTime="00:00:00.3000000" Value="#FF32467C"/>
-              </ColorAnimationUsingKeyFrames>
-            </Storyboard>
-          </ControlTemplate.Resources>
-          <Grid>
-            <Rectangle Stroke="#FF707ABB" RadiusX="5" RadiusY="5" HorizontalAlignment="Stretch" Width="Auto" x:Name="fillRec">
-              <Rectangle.Fill>
-                <RadialGradientBrush>
-                  <RadialGradientBrush.RelativeTransform>
-                    <TranslateTransform X="0" Y="0.5"/>
-                  </RadialGradientBrush.RelativeTransform>
-                  <GradientStop Color="#FF001DDA" Offset="0"/>
-                  <GradientStop Color="#FF32467C" Offset="1"/>
-                </RadialGradientBrush>
-              </Rectangle.Fill>
-            </Rectangle>
-            <Rectangle RadiusX="5" RadiusY="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" x:Name="highlight">
-              <Rectangle.Fill>
-                <LinearGradientBrush EndPoint="0.50,0" StartPoint="0.5,1">                  
-                  <GradientStop Color="#7E00BAFF" Offset="1"/>
-                  <GradientStop Color="#3F00BAFF" Offset="0.668"/>
-                  <GradientStop Color="#00FFFFFF" Offset="0.656"/>
-                </LinearGradientBrush>
-              </Rectangle.Fill>
-            </Rectangle>
-						<ContentPresenter
+    <Style TargetType="Button" x:Key="{x:Type Button}">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontFamily" Value="Trebuchet MS" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="Lightup">
+                            <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="fillRec" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+                                <SplineColorKeyFrame KeyTime="00:00:00.3000000" Value="#FF0091D3"/>
+                            </ColorAnimationUsingKeyFrames>
+                            <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="fillRec" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+                                <SplineColorKeyFrame KeyTime="00:00:00.3000000" Value="#FF413BA1"/>
+                            </ColorAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="Lightdown">
+                            <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="fillRec" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)">
+                                <SplineColorKeyFrame KeyTime="00:00:00.3000000" Value="#FF001DDA"/>
+                            </ColorAnimationUsingKeyFrames>
+                            <ColorAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="fillRec" Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)">
+                                <SplineColorKeyFrame KeyTime="00:00:00.3000000" Value="#FF32467C"/>
+                            </ColorAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <Grid>
+                        <Rectangle Stroke="#FF707ABB" RadiusX="5" RadiusY="5" HorizontalAlignment="Stretch" Width="Auto" x:Name="fillRec">
+                            <Rectangle.Fill>
+                                <RadialGradientBrush>
+                                    <RadialGradientBrush.RelativeTransform>
+                                        <TranslateTransform X="0" Y="0.5"/>
+                                    </RadialGradientBrush.RelativeTransform>
+                                    <GradientStop Color="#FF001DDA" Offset="0"/>
+                                    <GradientStop Color="#FF32467C" Offset="1"/>
+                                </RadialGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle RadiusX="5" RadiusY="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" x:Name="highlight">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush EndPoint="0.50,0" StartPoint="0.5,1">
+                                    <GradientStop Color="#7E00BAFF" Offset="1"/>
+                                    <GradientStop Color="#3F00BAFF" Offset="0.668"/>
+                                    <GradientStop Color="#00FFFFFF" Offset="0.656"/>
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <ContentPresenter
                      RecognizesAccessKey="True"
-                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
 							HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"
 							x:Name="contentPresenter" />
-					</Grid>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Fill" TargetName="fillRec">
-                <Setter.Value>
-                  <RadialGradientBrush>
-                    <RadialGradientBrush.RelativeTransform>
-                      <TranslateTransform X="0" Y="0.5"/>
-                    </RadialGradientBrush.RelativeTransform>
-                    <GradientStop Color="#FF6E6E6E" Offset="0"/>
-                    <GradientStop Color="#FF494949" Offset="1"/>
-                  </RadialGradientBrush>
-                </Setter.Value>
-              </Setter>
-              <Setter Property="Foreground" Value="#FF000000"/>
-              <Setter Property="Stroke" TargetName="fillRec" Value="#FF000000"/>
-              <Setter Property="Fill" TargetName="highlight">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
-                    <GradientStop Color="#00FFFFFF" Offset="0.644"/>
-                    <GradientStop Color="#73FFFFFF" Offset="1"/>
-                    <GradientStop Color="#4BCECECE" Offset="0.668"/>
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Trigger.EnterActions>
-                <BeginStoryboard Storyboard="{StaticResource Lightup}"/>
-              </Trigger.EnterActions>
-              <Trigger.ExitActions>
-                <BeginStoryboard Storyboard="{StaticResource Lightdown}"/>
-              </Trigger.ExitActions>
-            </Trigger>
-            <Trigger Property="IsKeyboardFocused" Value="True">
-                <Trigger.EnterActions>
-                    <BeginStoryboard Storyboard="{StaticResource Lightup}"/>
-                </Trigger.EnterActions>
-                <Trigger.ExitActions>
-                    <BeginStoryboard Storyboard="{StaticResource Lightdown}"/>
-                </Trigger.ExitActions>
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-							<Setter Property="RenderTransform" TargetName="contentPresenter">
-								<Setter.Value>
-									<TranslateTransform Y="2" />
-								</Setter.Value>
-							</Setter>
-							<Setter Property="Stroke" TargetName="fillRec">
-                <Setter.Value>
-                  <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
-                    <GradientStop Color="#FF022072" Offset="0"/>
-                    <GradientStop Color="#FF5F98E1" Offset="1"/>
-                  </LinearGradientBrush>
-                </Setter.Value>
-              </Setter>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Fill" TargetName="fillRec">
+                                <Setter.Value>
+                                    <RadialGradientBrush>
+                                        <RadialGradientBrush.RelativeTransform>
+                                            <TranslateTransform X="0" Y="0.5"/>
+                                        </RadialGradientBrush.RelativeTransform>
+                                        <GradientStop Color="#FF6E6E6E" Offset="0"/>
+                                        <GradientStop Color="#FF494949" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Foreground" Value="#FF000000"/>
+                            <Setter Property="Stroke" TargetName="fillRec" Value="#FF000000"/>
+                            <Setter Property="Fill" TargetName="highlight">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                                        <GradientStop Color="#00FFFFFF" Offset="0.644"/>
+                                        <GradientStop Color="#73FFFFFF" Offset="1"/>
+                                        <GradientStop Color="#4BCECECE" Offset="0.668"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource Lightup}"/>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource Lightdown}"/>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource Lightup}"/>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource Lightdown}"/>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="RenderTransform" TargetName="contentPresenter">
+                                <Setter.Value>
+                                    <TranslateTransform Y="2" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Stroke" TargetName="fillRec">
+                                <Setter.Value>
+                                    <LinearGradientBrush EndPoint="0.504,1.01" StartPoint="0.501,-0.01">
+                                        <GradientStop Color="#FF022072" Offset="0"/>
+                                        <GradientStop Color="#FF5F98E1" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style x:Key="PlayButton" TargetType="{x:Type ToggleButton}">
         <Setter Property="Template">
@@ -264,7 +264,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="InvisibleButton" TargetType="{x:Type ToggleButton}">
         <Setter Property="Template">
             <Setter.Value>
@@ -274,89 +274,89 @@
             </Setter.Value>
         </Setter>
     </Style>
-	
-	<Style x:Key="GroupToggleButton" TargetType="ToggleButton">
-		<Setter Property="SnapsToDevicePixels" Value="True" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="ToggleButton">
-					<Border x:Name="border" 
+
+    <Style x:Key="GroupToggleButton" TargetType="ToggleButton">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="border"
 							Style="{StaticResource PanelControl}"
 							BorderBrush="{StaticResource RaisedBorderBrush}"
 							Background="#d0ffffff"
 							CornerRadius="0">
-						<ContentPresenter x:Name="content" 
+                        <ContentPresenter x:Name="content"
 										  HorizontalAlignment="Center" VerticalAlignment="Center" />
-					</Border>
-					<ControlTemplate.Triggers>						
-						<Trigger Property="IsChecked" Value="True">
-							<Setter TargetName="border" Property="Background" Value="#a0dddddd" />
-							<Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
-							<Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-						</Trigger>
-						<Trigger Property="IsPressed" Value="True">
-							<Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-						</Trigger>			
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-	
-	<Style x:Key="GroupStartToggleButton" TargetType="ToggleButton">
-		<Setter Property="SnapsToDevicePixels" Value="True" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="ToggleButton">
-					<Border x:Name="border"
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GroupStartToggleButton" TargetType="ToggleButton">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="border"
 							Style="{StaticResource PanelControl}"
 							BorderBrush="{StaticResource RaisedBorderBrush}"
 							Background="#d0ffffff"
 							CornerRadius="2,0,0,2">
-						<ContentPresenter x:Name="content" 
+                        <ContentPresenter x:Name="content"
 										  HorizontalAlignment="Center" VerticalAlignment="Center" />
-					</Border>
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsChecked" Value="True">
-							<Setter TargetName="border" Property="Background" Value="#a0dddddd" />
-							<Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
-							<Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-						</Trigger>
-						<Trigger Property="IsPressed" Value="True">
-							<Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-						</Trigger>						
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>	
-	
-	<Style x:Key="GroupEndToggleButton" TargetType="ToggleButton">
-		<Setter Property="SnapsToDevicePixels" Value="True" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="ToggleButton">
-					<Border x:Name="border"
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GroupEndToggleButton" TargetType="ToggleButton">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="border"
 							Style="{StaticResource PanelControl}"
 							BorderBrush="{StaticResource RaisedBorderBrush}"
 							Background="#d0ffffff"
 							CornerRadius="0,2,2,0">
-						<ContentPresenter x:Name="content" 
+                        <ContentPresenter x:Name="content"
 										  HorizontalAlignment="Center" VerticalAlignment="Center" />
-					</Border>
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsChecked" Value="True">
-							<Setter TargetName="border" Property="Background" Value="#a0dddddd" />
-							<Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
-							<Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-						</Trigger>
-						<Trigger Property="IsPressed" Value="True">
-							<Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
-						</Trigger>						
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>
