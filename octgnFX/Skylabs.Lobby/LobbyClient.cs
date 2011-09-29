@@ -20,7 +20,6 @@ namespace Skylabs.Lobby
     {
         public delegate void LoginFinished(LoginResult success, DateTime BanEnd, string message);
         public delegate void HandleCaptcha(string Fullurl, string Imageurl);
-        public delegate void RegisterFinished(string emailerror, string passworderror, string usernameerror);
         public delegate void DataRecieved(DataRecType type);
         public delegate void UserStatusChanged(UserStatus eve, User u);
         public delegate void FriendRequest(User u);
@@ -29,7 +28,6 @@ namespace Skylabs.Lobby
         public event FriendRequest OnFriendRequest;
         public event HandleCaptcha OnCaptchaRequired;
         private LoginFinished OnLoginFinished;
-        private RegisterFinished OnRegisterFinished;
 
         private string m_Email = "";
         private string m_Password = "";
@@ -122,19 +120,6 @@ namespace Skylabs.Lobby
                     }
                 }));
                 t.Start();
-            }
-        }
-
-        public void Register(RegisterFinished onFinish, string email, string password, string username)
-        {
-            if(Connected)
-            {
-                OnRegisterFinished = onFinish;
-                SocketMessage sm = new SocketMessage("register");
-                sm.Add_Data(new NameValuePair("email", email));
-                sm.Add_Data(new NameValuePair("password", password));
-                sm.Add_Data(new NameValuePair("username", username));
-                WriteMessage(sm);
             }
         }
 
