@@ -477,6 +477,7 @@
     <Resource Include="Resources\logo %281%29.png" />
     <Resource Include="Resources\logoback.png" />
     <Resource Include="Resources\logowords.png" />
+    <Resource Include="Resources\close.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
