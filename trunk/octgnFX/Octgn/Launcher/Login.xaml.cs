@@ -131,6 +131,7 @@ namespace Octgn.Launcher
                 Stop_Spinning();
                 if(success == LoginResult.Success)
                 {
+                    this.NavigationService.Navigate(new ClientPage());
                 }
                 else if(success == LoginResult.Banned)
                 {
