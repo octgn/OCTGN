@@ -173,6 +173,9 @@
     <Compile Include="Controls\CircularProgressBar.xaml.cs">
       <DependentUpon>CircularProgressBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FriendListItem.xaml.cs">
+      <DependentUpon>FriendListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PopupWindowMessage.xaml.cs">
       <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
     </Compile>
@@ -218,8 +221,8 @@
     </Compile>
     <Compile Include="IRC\MessageSource.cs" />
     <Compile Include="IRC\User.cs" />
-    <Compile Include="Launcher\ClientPage.xaml.cs">
-      <DependentUpon>ClientPage.xaml</DependentUpon>
+    <Compile Include="Launcher\ContactList.xaml.cs">
+      <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\InstallNoticeDialog.xaml.cs">
       <DependentUpon>InstallNoticeDialog.xaml</DependentUpon>
@@ -229,6 +232,9 @@
     </Compile>
     <Compile Include="Launcher\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\PatchDialog.xaml.cs">
       <DependentUpon>PatchDialog.xaml</DependentUpon>
@@ -478,6 +484,13 @@
     <Resource Include="Resources\logoback.png" />
     <Resource Include="Resources\logowords.png" />
     <Resource Include="Resources\close.png" />
+    <Resource Include="Resources\Icons\cards.png" />
+    <Resource Include="Resources\Icons\layer_edit.png" />
+    <Resource Include="Resources\Icons\page_edit.png" />
+    <Resource Include="Resources\Icons\ruby_add.png" />
+    <Resource Include="Resources\Icons\user_add.png" />
+    <Resource Include="Resources\cross.png" />
+    <Resource Include="Resources\uicon.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -529,6 +542,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\FriendListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\PopupWindowMessage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -565,7 +582,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Launcher\ClientPage.xaml">
+    <Page Include="Launcher\ContactList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -578,6 +595,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\Login.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\Main.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

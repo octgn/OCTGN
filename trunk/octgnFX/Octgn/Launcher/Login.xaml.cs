@@ -136,9 +136,17 @@ namespace Octgn.Launcher
             {
                 isLoggingIn = false;
                 Stop_Spinning();
+                if(cbSavePassword.IsChecked == true)
+                    Settings.Default.Password = passwordBox1.Password;
+                else
+                    Settings.Default.Password = "";
+                Settings.Default.Email = textBox1.Text;
+                Settings.Default.Save();
                 if(success == LoginResult.Success)
                 {
-                    this.NavigationService.Navigate(new ClientPage());
+                    Program.ClientWindow = new Main();
+                    Program.ClientWindow.Show();
+                    Program.LauncherWindow.Close();
                 }
                 else if(success == LoginResult.Banned)
                 {
@@ -148,11 +156,6 @@ namespace Octgn.Launcher
                 {
                     DoErrorMessage("Login Failed: " + message);
                 }
-                if(cbSavePassword.IsChecked == true)
-                    Settings.Default.Password = passwordBox1.Password;
-                else
-                    Settings.Default.Password = "";
-                Settings.Default.Email = textBox1.Text;
             }), new object[0] { });
         }
 
@@ -168,11 +171,6 @@ namespace Octgn.Launcher
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             bError.Visibility = System.Windows.Visibility.Hidden;
-            if(cbSavePassword.IsChecked == true)
-            {
-                cbSavePassword.IsChecked = false;
-                Settings.Default.Password = "";
-            }
         }
 
         private void DoErrorMessage(string message)
@@ -187,11 +185,6 @@ namespace Octgn.Launcher
         private void passwordBox1_PasswordChanged(object sender, RoutedEventArgs e)
         {
             bError.Visibility = System.Windows.Visibility.Hidden;
-            if(cbSavePassword.IsChecked == true)
-            {
-                cbSavePassword.IsChecked = false;
-                Settings.Default.Password = "";
-            }
         }
 
         private void menuOldMenu_Click(object sender, RoutedEventArgs e)
@@ -203,6 +196,27 @@ namespace Octgn.Launcher
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
             System.Diagnostics.Process.Start(e.Uri.ToString());
+            e.Handled = true;
+        }
+
+        private void textBox1_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(cbSavePassword.IsChecked == true)
+            {
+                cbSavePassword.IsChecked = false;
+                Settings.Default.Password = "";
+                Settings.Default.Save();
+            }
+        }
+
+        private void passwordBox1_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(cbSavePassword.IsChecked == true)
+            {
+                cbSavePassword.IsChecked = false;
+                Settings.Default.Password = "";
+                Settings.Default.Save();
+            }
         }
     }
 }
