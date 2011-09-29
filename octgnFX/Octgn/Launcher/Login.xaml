@@ -165,7 +165,10 @@
                 <TextBox Height="23" HorizontalAlignment="Stretch" Name="textBox1" VerticalAlignment="Top" TextChanged="textBox1_TextChanged" Margin="10,0" />
                 <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White" Height="28" HorizontalAlignment="Left" Name="label2" VerticalAlignment="Top" Width="119" Grid.Row="2" Margin="10,0" />
                 <PasswordBox Height="23"  Name="passwordBox1" VerticalAlignment="Top" HorizontalAlignment="Stretch" PasswordChanged="passwordBox1_PasswordChanged" Margin="10,0" />
-                <Button Content="Sign In" Grid.Row="3" Height="37" Name="button1" Width="103" Click="button1_Click" Margin="0,10,10,10" HorizontalAlignment="Right" />
+                <Grid   >
+                    <Button Content="Sign In" Height="37" Name="button1" Width="103" Click="button1_Click" Margin="10" HorizontalAlignment="Right" />
+                    <CheckBox x:Name="cbSavePassword" Content="Save Password" Foreground="White" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Margin="10,0" />
+                </Grid>
             </StackPanel>
 
             <Border BorderThickness="1" Height="192" HorizontalAlignment="Center" Margin="23,0,16,18" Name="border3" Style="{StaticResource Panel}" VerticalAlignment="Bottom" Visibility="Visible" Width="272" Grid.Row="2" Grid.Column="1" Padding="5" Grid.RowSpan="2">

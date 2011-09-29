@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Octgn.Properties;
 using Skylabs.Lobby;
 
 namespace Octgn.Launcher
@@ -27,6 +28,12 @@ namespace Octgn.Launcher
             animationTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             versionText.Text = string.Format("Version {0}", OctgnApp.OctgnVersion.ToString(4));
             animationTimer.Tick += HandleAnimationTick;
+            if(Settings.Default.Password != "")
+            {
+                passwordBox1.Password = Settings.Default.Password;
+                cbSavePassword.IsChecked = true;
+            }
+            textBox1.Text = Settings.Default.Email;
 #if(DEBUG)
             //TODO Remove this at some point
             MenuItem m = new MenuItem();
@@ -141,6 +148,11 @@ namespace Octgn.Launcher
                 {
                     DoErrorMessage("Login Failed: " + message);
                 }
+                if(cbSavePassword.IsChecked == true)
+                    Settings.Default.Password = passwordBox1.Password;
+                else
+                    Settings.Default.Password = "";
+                Settings.Default.Email = textBox1.Text;
             }), new object[0] { });
         }
 
@@ -156,6 +168,11 @@ namespace Octgn.Launcher
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             bError.Visibility = System.Windows.Visibility.Hidden;
+            if(cbSavePassword.IsChecked == true)
+            {
+                cbSavePassword.IsChecked = false;
+                Settings.Default.Password = "";
+            }
         }
 
         private void DoErrorMessage(string message)
@@ -170,17 +187,10 @@ namespace Octgn.Launcher
         private void passwordBox1_PasswordChanged(object sender, RoutedEventArgs e)
         {
             bError.Visibility = System.Windows.Visibility.Hidden;
-        }
-
-        private void button2_Click(object sender, RoutedEventArgs e)
-        {
-            Register r = new Register();
-            try
+            if(cbSavePassword.IsChecked == true)
             {
-                r.ShowDialog();
-            }
-            catch(Exception ex)
-            {
+                cbSavePassword.IsChecked = false;
+                Settings.Default.Password = "";
             }
         }
 
