@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Skylabs.Lobby;
 
@@ -13,15 +14,19 @@ namespace Octgn.Launcher
     {
         private readonly DispatcherTimer animationTimer;
         private bool bSpin = false;
+        private bool isLoggingIn = false;
 
         public Login()
         {
             InitializeComponent();
+            Program.lobbyClient = new LobbyClient();
+            Program.lobbyClient.OnCaptchaRequired += new LobbyClient.HandleCaptcha(lobbyClient_OnCaptchaRequired);
             SpinnerRotate.CenterX = image2.Width / 2;
             SpinnerRotate.CenterY = image2.Height / 2;
             animationTimer = new DispatcherTimer(DispatcherPriority.ContextIdle, Dispatcher);
             animationTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             versionText.Text = string.Format("Version {0}", OctgnApp.OctgnVersion.ToString(4));
+            animationTimer.Tick += HandleAnimationTick;
 #if(DEBUG)
             //TODO Remove this at some point
             MenuItem m = new MenuItem();
@@ -37,7 +42,6 @@ namespace Octgn.Launcher
             if(!bSpin && animationTimer.IsEnabled == false)
             {
                 bSpin = true;
-                animationTimer.Tick += HandleAnimationTick;
                 animationTimer.Start();
             }
         }
@@ -56,24 +60,74 @@ namespace Octgn.Launcher
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            Start_Spinning();
-            bError.Visibility = System.Windows.Visibility.Hidden;
-            Program.lobbyClient = new Skylabs.Lobby.LobbyClient();
-            bool c = Program.lobbyClient.Connected;
-            if(!c)
-                c = Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
-            if(c)
+            if(!isLoggingIn)
             {
-                Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password);
+                isLoggingIn = true;
+                Start_Spinning();
+
+                bError.Visibility = System.Windows.Visibility.Hidden;
+                bool c = Program.lobbyClient.Connected;
+                if(!c)
+                    c = Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
+                if(c)
+                {
+                    Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password, "");
+                }
+                else
+                {
+                    isLoggingIn = false;
+                    DoErrorMessage("Could not connect to the server.");
+                }
             }
-            else
-                DoErrorMessage("Could not connect to the server.");
         }
 
-        private void LoginFinished(LoginResult success, DateTime BanEnd)
+        private void lobbyClient_OnCaptchaRequired(string Fullurl, string Imageurl)
         {
             Dispatcher.Invoke((Action)(() =>
             {
+                Octgn.Controls.PopupWindowMessage pm = new Controls.PopupWindowMessage();
+                Image i = new Image();
+                TextBox tb = new TextBox();
+                Button b = new Button();
+                b.Width = 70;
+                b.Height = 30;
+                b.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
+
+                b.Content = "Ok";
+                b.Click += new RoutedEventHandler((object o, RoutedEventArgs e) =>
+                {
+                    pm.HideMessage();
+                });
+                tb.Name = "tbCaptcha";
+
+                i.Source = new BitmapImage(new Uri(Imageurl));
+                pm.AddControl(i);
+                pm.AddControl(tb);
+                pm.AddControl(b);
+                pm.OnPopupWindowClose += new Octgn.Controls.PopupWindowMessage.HandlePopupWindowClose(delegate(object sender, bool xClosed)
+                {
+                    isLoggingIn = false;
+                    if(!xClosed)
+                    {
+                        button1_Click(null, null);
+                    }
+
+                    Stop_Spinning();
+                });
+                pm.ShowMessage(this.MainGrid);
+            }));
+        }
+
+        private void webBrowser1_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            //if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+        }
+
+        private void LoginFinished(LoginResult success, DateTime BanEnd, string message)
+        {
+            Dispatcher.Invoke((Action)(() =>
+            {
+                isLoggingIn = false;
                 Stop_Spinning();
                 if(success == LoginResult.Success)
                 {
@@ -84,7 +138,7 @@ namespace Octgn.Launcher
                 }
                 else if(success == LoginResult.Failure)
                 {
-                    DoErrorMessage("Login Failed");
+                    DoErrorMessage("Login Failed: " + message);
                 }
             }), new object[0] { });
         }
