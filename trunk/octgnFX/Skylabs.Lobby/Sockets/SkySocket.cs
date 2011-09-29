@@ -114,8 +114,9 @@ namespace Skylabs.Net.Sockets
                 {
                     this.Close(DisconnectReason.PingTimeout);
                 }
-                SocketMessage sm = new SocketMessage("ping");
-                Thread.Sleep(10000);
+                else
+                    WriteMessage(new SocketMessage("ping"));
+                Thread.Sleep(5000);
             }
         }
 

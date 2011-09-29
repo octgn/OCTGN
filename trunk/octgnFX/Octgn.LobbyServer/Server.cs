@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using Skylabs.Net;
+using Skylabs.Lobby;
 
 namespace Skylabs.LobbyServer
 {
+    public enum UserEvent { Online, Offline };
+
     public class Server
     {
         public IPAddress LocalIP { get; private set; }
@@ -75,41 +77,13 @@ namespace Skylabs.LobbyServer
             return null;
         }
 
-        /// <summary>
-        /// Happens when a client disconnects. This gets called automatically, don't call it.
-        /// </summary>
-        /// <param name="c">Client</param>
-        public void Client_Disconnect(Client c)
+        public void On_User_Event(UserEvent e, Client client)
         {
-            if(c.LoggedIn)
-            {
-                SocketMessage sm = new SocketMessage("useroffline");
-                sm.Add_Data(new NameValuePair("uid", c.Me.UID));
-                foreach(Client cl in Clients)
-                    if(cl.ID != c.ID)
-                    {
-                        if(cl.Connected)
-                        {
-                            cl.WriteMessage(sm);
-                        }
-                    }
-            }
-            Clients.Remove(c);
-        }
-
-        /// <summary>
-        /// Happens when a user logs in. This gets called automatically, don't call it.
-        /// </summary>
-        /// <param name="c">Client</param>
-        public void User_Login(Client c)
-        {
-            SocketMessage sm = new SocketMessage("useronline");
-            sm.Add_Data(new NameValuePair(c.Me.Email, c.Me));
-            foreach(Client cl in Clients)
-                if(cl.Connected)
-                {
-                    cl.WriteMessage(sm);
-                }
+            User me = (User)client.Me.Clone();
+            if(e == UserEvent.Offline)
+                Clients.Remove(client);
+            foreach(Client c in Clients)
+                c.OnUserEvent(e, me);
         }
 
         private void Accept_Clients()
