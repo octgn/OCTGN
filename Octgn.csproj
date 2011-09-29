@@ -218,6 +218,9 @@
     </Compile>
     <Compile Include="IRC\MessageSource.cs" />
     <Compile Include="IRC\User.cs" />
+    <Compile Include="Launcher\ClientPage.xaml.cs">
+      <DependentUpon>ClientPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Launcher\InstallNoticeDialog.xaml.cs">
       <DependentUpon>InstallNoticeDialog.xaml</DependentUpon>
     </Compile>
@@ -232,9 +235,6 @@
     </Compile>
     <Compile Include="Launcher\PatchProgressDialog.xaml.cs">
       <DependentUpon>PatchProgressDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\Register.xaml.cs">
-      <DependentUpon>Register.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\UpgradeMessage.xaml.cs">
       <DependentUpon>UpgradeMessage.xaml</DependentUpon>
@@ -565,6 +565,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Launcher\ClientPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Launcher\InstallNoticeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -582,10 +586,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\PatchProgressDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Launcher\Register.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
