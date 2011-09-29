@@ -39,7 +39,7 @@ namespace Skylabs.LobbyServer
             Parent = server;
             LoggedIn = false;
             Cup = new MySqlCup(Program.Settings.dbUser, Program.Settings.dbPass, Program.Settings.dbHost, Program.Settings.db);
-            Friends = new List<User>();
+            _Friends = new List<User>();
         }
 
         /// <summary>
@@ -68,6 +68,17 @@ namespace Skylabs.LobbyServer
             }
         }
 
+        public void OnUserEvent(UserEvent e, User theuser)
+        {
+            SocketMessage sm;
+            if(e == UserEvent.Online)
+                sm = new SocketMessage("useronline");
+            else
+                sm = new SocketMessage("useroffline");
+            sm.Add_Data(new NameValuePair("user", theuser));
+            WriteMessage(sm);
+        }
+
         public override void OnMessageReceived(SocketMessage sm)
         {
             switch(sm.Header.ToLower())
@@ -90,7 +101,7 @@ namespace Skylabs.LobbyServer
 
         public override void OnDisconnect(DisconnectReason reason)
         {
-            Parent.Client_Disconnect(this);
+            if(LoggedIn) Parent.On_User_Event(UserEvent.Offline, this);
         }
 
         private void AcceptFriend(SocketMessage sm)
@@ -171,79 +182,11 @@ namespace Skylabs.LobbyServer
             WriteMessage(sm);
         }
 
-        private void Register(SocketMessage sm)
+        private void Login(SocketMessage insm)
         {
-            string email = (string)sm["email"];
-            string password = (string)sm["password"];
-            string username = (string)sm["username"];
-            string eemail = "";
-            string epassword = "";
-            string eusername = "";
-            bool problem = false;
-            if(email == null || String.IsNullOrWhiteSpace(email))
-            {
-                eemail = "Email empty";
-                problem = true;
-            }
-            else if(!Verify.IsEmail(email))
-            {
-                eemail = "Email is not valid";
-                problem = true;
-            }
-            if(password == null || String.IsNullOrWhiteSpace(password))
-            {
-                epassword = "Password empty";
-                problem = true;
-            }
-            if(username == null || String.IsNullOrWhiteSpace(username))
-            {
-                eusername = "Username empty";
-                problem = true;
-            }
-            if(problem)
-            {
-                SocketMessage smm = new SocketMessage("registerfailed");
-                smm.Add_Data(new NameValuePair("email", eemail));
-                smm.Add_Data(new NameValuePair("password", epassword));
-                smm.Add_Data(new NameValuePair("username", eusername));
-                WriteMessage(smm);
-                return;
-            }
-            if(Cup.GetUser(email) != null)
-            {
-                eemail = "Email taken.";
-                problem = true;
-            }
-            if(problem)
-            {
-                SocketMessage smm = new SocketMessage("registerfailed");
-                smm.Add_Data(new NameValuePair("email", eemail));
-                smm.Add_Data(new NameValuePair("password", epassword));
-                smm.Add_Data(new NameValuePair("username", eusername));
-                WriteMessage(smm);
-                return;
-            }
-            //If we wind up here, everything has checked out.
-            if(Cup.RegisterUser(email, username))
-            {
-                SocketMessage smm = new SocketMessage("registersuccess");
-                WriteMessage(smm);
-            }
-            else
-            {
-                SocketMessage smm = new SocketMessage("registerfailed");
-                smm.Add_Data(new NameValuePair("email", eemail));
-                smm.Add_Data(new NameValuePair("password", epassword));
-                smm.Add_Data(new NameValuePair("username", eusername));
-                WriteMessage(smm);
-            }
-        }
-
-        private void Login(SocketMessage sm)
-        {
-            string email = (string)sm["email"];
-            string token = (string)sm["token"];
-
+            string email = (string)insm["email"];
+            string token = (string)insm["token"];
+            SocketMessage sm;
             if(email != null && token != null)
             {
                 User u = Cup.GetUser(email);
@@ -256,15 +199,16 @@ namespace Skylabs.LobbyServer
                         Me = u;
                         WriteMessage(new SocketMessage("loginsuccess"));
                         Friends = Cup.GetFriendsList(Me.UID);
-                        Parent.User_Login(this);
+                        Parent.On_User_Event(UserEvent.Online, this);
+
                         sendUsersOnline();
                         return;
                     }
                     else
                     {
-                        SocketMessage smm = new SocketMessage("banned");
-                        smm.Add_Data(new NameValuePair("end", banned));
-                        WriteMessage(smm);
+                        sm = new SocketMessage("banned");
+                        sm.Add_Data(new NameValuePair("end", banned));
+                        WriteMessage(sm);
                         Stop();
                         LoggedIn = false;
                         return;
@@ -278,26 +222,32 @@ namespace Skylabs.LobbyServer
                         if(Me == null)
                         {
                             LoggedIn = false;
-                            WriteMessage(new SocketMessage("loginfailed"));
+                            sm = new SocketMessage("loginfailed");
+                            sm.Add_Data("message", "Server error");
+                            WriteMessage(sm);
                         }
                         else
                         {
                             LoggedIn = true;
                             WriteMessage(new SocketMessage("loginsuccess"));
                             Friends = Cup.GetFriendsList(Me.UID);
-                            Parent.User_Login(this);
+                            Parent.On_User_Event(UserEvent.Online, this);
                             sendUsersOnline();
                         }
                     }
                     else
                     {
                         LoggedIn = false;
-                        WriteMessage(new SocketMessage("loginfailed"));
+                        sm = new SocketMessage("loginfailed");
+                        sm.Add_Data("message", "Server error");
+                        WriteMessage(sm);
                     }
                     return;
                 }
             }
-            WriteMessage(new SocketMessage("loginfailed"));
+            sm = new SocketMessage("loginfailed");
+            sm.Add_Data("message", "Server error");
+            WriteMessage(sm);
         }
     }
 }

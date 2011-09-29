@@ -155,7 +155,8 @@ namespace Skylabs.Lobby
                     OnLoginFinished.Invoke(LoginResult.Success, DateTime.Now, "");
                     break;
                 case "loginfailed":
-                    OnLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, "");
+
+                    OnLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, (sm["message"] != null) ? (string)sm["message"] : "");
                     break;
                 case "friends":
                     FriendList = new List<int>();
@@ -196,15 +197,6 @@ namespace Skylabs.Lobby
                     int time = (int)sm["end"];
 
                     OnLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.fromPHPTime(time), "");
-                    break;
-                case "registersuccess":
-                    OnRegisterFinished(null, null, null);
-                    break;
-                case "registerfailed":
-                    string email = (string)sm["email"];
-                    string password = (string)sm["password"];
-                    string username = (string)sm["username"];
-                    OnRegisterFinished(email, password, username);
                     break;
             }
         }
