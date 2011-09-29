@@ -17,6 +17,8 @@ namespace Octgn
         public static LobbyClient lobbyClient;
         public static Skylabs.LobbyServer.Server lobbyServer;
         public static GameSettings GameSettings = new GameSettings();
+        public static Octgn.Launcher.Main ClientWindow;
+        public static Launcher.LauncherWindow LauncherWindow;
         internal static bool IsGameRunning = false;
         // TODO: Refactoring > those paths belong to the Octgn.Data or somewhere else
         internal readonly static string BasePath;
@@ -55,6 +57,8 @@ namespace Octgn
 #endif
             Exception e = new Exception();
             string s = e.Message.Substring(0);
+            Program.LauncherWindow = new Launcher.LauncherWindow();
+            Program.LauncherWindow.Show();
         }
 
         public static void StopGame()
@@ -77,7 +81,12 @@ namespace Octgn
             catch(Exception e)
             {
             }
-            Application.Current.MainWindow.Close();
+            if(LauncherWindow != null)
+                if(LauncherWindow.IsLoaded)
+                    LauncherWindow.Close();
+            if(ClientWindow != null)
+                if(ClientWindow.IsLoaded)
+                    ClientWindow.Close();
             if(lobbyServer != null)
                 lobbyServer.Stop();
         }

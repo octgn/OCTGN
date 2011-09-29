@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for ClientPage.xaml
+    /// Interaction logic for ContactList.xaml
     /// </summary>
-    public partial class ClientPage : Page
+    public partial class ContactList : Page
     {
-        public ClientPage()
+        public ContactList()
         {
             InitializeComponent();
         }

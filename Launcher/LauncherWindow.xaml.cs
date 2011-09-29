@@ -38,7 +38,7 @@ namespace Octgn.Launcher
             };
             OutAnimation.Freeze();
 
-            ResizeAnimation.Completed += (s, e) => SizeToContent = SizeToContent.Height;
+            ResizeAnimation.Completed += (s, e) => SizeToContent = SizeToContent.WidthAndHeight;
 
             Navigating += delegate(object sender, NavigatingCancelEventArgs e)
             {
