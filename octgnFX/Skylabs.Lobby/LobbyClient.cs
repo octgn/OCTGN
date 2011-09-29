@@ -18,7 +18,8 @@ namespace Skylabs.Lobby
 
     public class LobbyClient : SkySocket
     {
-        public delegate void LoginFinished(LoginResult success, DateTime BanEnd);
+        public delegate void LoginFinished(LoginResult success, DateTime BanEnd, string message);
+        public delegate void HandleCaptcha(string Fullurl, string Imageurl);
         public delegate void RegisterFinished(string emailerror, string passworderror, string usernameerror);
         public delegate void DataRecieved(DataRecType type);
         public delegate void UserStatusChanged(UserStatus eve, User u);
@@ -26,8 +27,13 @@ namespace Skylabs.Lobby
         public event DataRecieved OnDataRecieved;
         public event UserStatusChanged OnUserStatusChanged;
         public event FriendRequest OnFriendRequest;
+        public event HandleCaptcha OnCaptchaRequired;
         private LoginFinished OnLoginFinished;
         private RegisterFinished OnRegisterFinished;
+
+        private string m_Email = "";
+        private string m_Password = "";
+        private string m_CaptchaToken = "";
 
         public Version Version
         {
@@ -73,16 +79,26 @@ namespace Skylabs.Lobby
             WriteMessage(sm);
         }
 
-        public void Login(LoginFinished onFinish, string email, string password)
+        public void Login(LoginFinished onFinish, string email, string password, string captcha)
         {
             if(Connected)
             {
                 Thread t = new Thread(new ThreadStart(() =>
                 {
                     OnLoginFinished = onFinish;
+                    this.m_Email = email;
+                    this.m_Password = password;
                     String AppName = "skylabs-LobbyClient-" + Version.ToString();
                     Service s = new Service("code", AppName);
                     s.setUserCredentials(email, password);
+                    if(captcha != null && m_CaptchaToken != null)
+                    {
+                        if(!String.IsNullOrWhiteSpace(captcha) || !String.IsNullOrWhiteSpace(m_CaptchaToken))
+                        {
+                            s.Credentials.CaptchaToken = m_CaptchaToken;
+                            s.Credentials.CaptchaAnswer = captcha;
+                        }
+                    }
                     try
                     {
                         string ret = s.QueryClientLoginToken();
@@ -91,13 +107,18 @@ namespace Skylabs.Lobby
                         sm.Add_Data(new NameValuePair("token", ret));
                         WriteMessage(sm);
                     }
+                    catch(Google.GData.Client.CaptchaRequiredException ce)
+                    {
+                        if(OnCaptchaRequired != null) OnCaptchaRequired.Invoke("https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
+                    }
                     catch(Google.GData.Client.AuthenticationException re)
                     {
-                        onFinish.Invoke(LoginResult.Failure, DateTime.Now);
+                        string cu = (string)re.Data["CaptchaUrl"];
+                        onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
                     }
                     catch(WebException e)
                     {
-                        onFinish.Invoke(LoginResult.Failure, DateTime.Now);
+                        onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
                     }
                 }));
                 t.Start();
@@ -131,10 +152,10 @@ namespace Skylabs.Lobby
             switch(sm.Header.ToLower())
             {
                 case "loginsuccess":
-                    OnLoginFinished.Invoke(LoginResult.Success, DateTime.Now);
+                    OnLoginFinished.Invoke(LoginResult.Success, DateTime.Now, "");
                     break;
                 case "loginfailed":
-                    OnLoginFinished.Invoke(LoginResult.Failure, DateTime.Now);
+                    OnLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, "");
                     break;
                 case "friends":
                     FriendList = new List<int>();
@@ -174,7 +195,7 @@ namespace Skylabs.Lobby
                 case "banned":
                     int time = (int)sm["end"];
 
-                    OnLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.fromPHPTime(time));
+                    OnLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.fromPHPTime(time), "");
                     break;
                 case "registersuccess":
                     OnRegisterFinished(null, null, null);

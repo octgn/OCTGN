@@ -4,25 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="298" d:DesignWidth="300" Background="Black" IsVisibleChanged="UserControl_IsVisibleChanged">
-    <Border Style="{StaticResource Panel}" BorderBrush="Silver" BorderThickness="1" HorizontalAlignment="Stretch" Name="border1" VerticalAlignment="Stretch">
-        <Grid Name="grid1" Margin="5,0,5,5">
+             Width="300"
+             Height="Auto"
+             d:DesignHeight="298" d:DesignWidth="300" IsVisibleChanged="UserControl_IsVisibleChanged" x:Name="ItsMe">
+    <UserControl.Resources>
+        <Storyboard x:Key="sbShow" x:Name="sbShow">
+            <DoubleAnimation x:Name="daMeShow" From="0" To="1" Duration="00:00:01" Storyboard.TargetName="ItsMe" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+        <Storyboard x:Key="sbHide" x:Name="sbHide">
+            <DoubleAnimation x:Name="daMeHide" From="1"  To="0" Duration="00:00:01" Storyboard.TargetName="ItsMe" Storyboard.TargetProperty="Opacity"/>
+        </Storyboard>
+    </UserControl.Resources>
+    <Border BorderBrush="#7A707070" BorderThickness="10" HorizontalAlignment="Stretch" Name="border1" VerticalAlignment="Stretch" CornerRadius="10">
+        <Grid Name="grid1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="34" />
                 <RowDefinition Height="100*" />
             </Grid.RowDefinitions>
-            <Line StrokeThickness="4" HorizontalAlignment="Stretch" Y1="10" Y2="10" X2="300" Grid.RowSpan="1" VerticalAlignment="Bottom">
-                <Line.Stroke>
-                    <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="1" RadiusY="1">
-                        <RadialGradientBrush.GradientStops>
-                            <GradientStop Color="White" Offset="0" />
-                            <GradientStop Color="Transparent" Offset="0.9" />
-                        </RadialGradientBrush.GradientStops>
-                    </RadialGradientBrush>
-                </Line.Stroke>
-            </Line>
-            <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="lError" Text="TextBlock" VerticalAlignment="Center" FontSize="20" />
-            <Label Content="Label" Grid.Row="1" Height="28" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top" Foreground="White" />
+
+            <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Stretch" Background="#FFFFFFFF">
+                <Image Cursor="Hand" Height="16" HorizontalAlignment="Right" Margin="5" Name="image1" Stretch="Uniform" VerticalAlignment="Top" Width="16" Source="/OCTGN;component/Resources/close.png" MouseUp="image1_MouseUp" />
+            </StackPanel>
         </Grid>
     </Border>
 </UserControl>
