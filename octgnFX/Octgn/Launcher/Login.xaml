@@ -186,6 +186,12 @@
                             RequestNavigate="Hyperlink_RequestNavigate">
                             Make an Account
                         </Hyperlink>
+                        <LineBreak/> Please visit
+                        <Hyperlink
+                            NavigateUri="http://www.gravatar.com/"
+                            RequestNavigate="Hyperlink_RequestNavigate">
+                            Gravatar.com
+                        </Hyperlink> To change your picture.
                     </TextBlock>
                     <Border Style="{StaticResource Panel}" BorderBrush="Silver" BorderThickness="1" Name="bError" Visibility="Hidden" Padding="0,5">
                         <Grid Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Stretch" Name="grid1" VerticalAlignment="Stretch">
@@ -196,7 +202,6 @@
                             <TextBlock Style="{x:Null}" Name="lError" Text="TextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="Red" Grid.Row="0"></TextBlock>
                         </Grid>
                     </Border>
-                    <my1:FriendListItem x:Name="friendListItem1" UserName="Billy Jean" Picture="/OCTGN;component/Resources/uicon.png" />
                 </StackPanel>
                 <Border.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

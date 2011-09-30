@@ -491,6 +491,10 @@
     <Resource Include="Resources\Icons\user_add.png" />
     <Resource Include="Resources\cross.png" />
     <Resource Include="Resources\uicon.png" />
+    <Resource Include="Resources\statusAway.png" />
+    <Resource Include="Resources\statusDND.png" />
+    <Resource Include="Resources\statusOffline.png" />
+    <Resource Include="Resources\statusOnline.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
