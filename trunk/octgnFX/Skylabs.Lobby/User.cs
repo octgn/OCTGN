@@ -29,6 +29,13 @@ namespace Skylabs.Lobby
 
         public User()
         {
+            UID = -1;
+            Email = "";
+            Password = "";
+            DisplayName = "";
+            CustomStatus = "";
+            Status = UserStatus.Unknown;
+            Level = UserLevel.Standard;
         }
 
         public bool Equals(User u)
