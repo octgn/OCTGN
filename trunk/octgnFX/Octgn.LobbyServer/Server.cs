@@ -4,11 +4,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using Skylabs.Lobby;
+using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {
-    public enum UserEvent { Online, Offline };
-
     public class Server
     {
         public IPAddress LocalIP { get; private set; }
@@ -77,11 +76,12 @@ namespace Skylabs.LobbyServer
             return null;
         }
 
-        public void On_User_Event(UserEvent e, Client client)
+        public void On_User_Event(UserStatus e, Client client)
         {
             User me = (User)client.Me.Clone();
-            if(e == UserEvent.Offline)
+            if(e == UserStatus.Offline)
                 Clients.Remove(client);
+
             foreach(Client c in Clients)
                 c.OnUserEvent(e, me);
         }
@@ -89,6 +89,15 @@ namespace Skylabs.LobbyServer
         private void Accept_Clients()
         {
             ListenSocket.BeginAcceptTcpClient(AcceptReceiveDataCallback, ListenSocket);
+        }
+
+        public void AllUserMessage(SocketMessage sm)
+        {
+            foreach(Client c in Clients)
+            {
+                if(c.LoggedIn)
+                    c.WriteMessage(sm);
+            }
         }
 
         private void AcceptReceiveDataCallback(IAsyncResult ar)

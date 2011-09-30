@@ -5,11 +5,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace Skylabs.Lobby
 {
     [Serializable]
+    public enum UserLevel { Standard = 0, Moderator = 1, Admin = 2 };
+
+    [Serializable]
+    public enum UserStatus { Unknown = -1, Offline = 0, Online = 1, Away = 2, DoNotDisturb = 3, Invisible = 4 };
+
+    [Serializable]
     public class User : IEquatable<User>, ICloneable
     {
-        [Serializable]
-        public enum UserLevel { Standard = 0, Moderator = 1, Admin = 2 };
-
         public int UID { get; set; }
 
         public string Email { get; set; }
@@ -18,25 +21,11 @@ namespace Skylabs.Lobby
 
         public string DisplayName { get; set; }
 
-        public UserLevel Level { get; set; }
+        public string CustomStatus { get; set; }
 
-        public bool IsComplete
-        {
-            get
-            {
-                //Isn't nesting fun!
-                if(UID >= 0)
-                    if(Email != null)
-                        if(!String.IsNullOrWhiteSpace(Email))
-                            if(Password != null)
-                                if(!String.IsNullOrWhiteSpace(Password))
-                                    if(DisplayName != null)
-                                        if(!String.IsNullOrWhiteSpace(DisplayName))
-                                            if(Level != null)
-                                                return true;
-                return false;
-            }
-        }
+        public UserStatus Status { get; set; }
+
+        public UserLevel Level { get; set; }
 
         public User()
         {

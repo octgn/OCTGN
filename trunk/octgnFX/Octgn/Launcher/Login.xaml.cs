@@ -78,7 +78,7 @@ namespace Octgn.Launcher
                     c = Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
                 if(c)
                 {
-                    Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password, "");
+                    Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password, "", UserStatus.Online);
                 }
                 else
                 {
