@@ -68,13 +68,14 @@ namespace Skylabs.LobbyServer
             }
         }
 
-        public void OnUserEvent(UserEvent e, User theuser)
+        public void OnUserEvent(Skylabs.Lobby.UserStatus e, User theuser)
         {
-            SocketMessage sm;
-            if(e == UserEvent.Online)
-                sm = new SocketMessage("useronline");
-            else
-                sm = new SocketMessage("useroffline");
+            if(theuser.Equals(Me))
+                return;
+            SocketMessage sm = new SocketMessage("userstatus");
+            if(e == UserStatus.Invisible)
+                e = UserStatus.Offline;
+            theuser.Status = e;
             sm.Add_Data(new NameValuePair("user", theuser));
             WriteMessage(sm);
         }
@@ -96,12 +97,26 @@ namespace Skylabs.LobbyServer
                     GotENDMessage = true;
                     Stop();
                     break;
+                case "status":
+                    UserStatus u = (UserStatus)sm["status"];
+                    if(u != null)
+                    {
+                        if(u != UserStatus.Offline)
+                        {
+                            Me.Status = u;
+                            Parent.On_User_Event(u, this);
+                        }
+                    }
+                    break;
+                case "customstatus":
+                    SetCustomStatus(sm);
+                    break;
             }
         }
 
         public override void OnDisconnect(DisconnectReason reason)
         {
-            if(LoggedIn) Parent.On_User_Event(UserEvent.Offline, this);
+            if(LoggedIn) Parent.On_User_Event(UserStatus.Offline, this);
         }
 
         private void AcceptFriend(SocketMessage sm)
@@ -165,7 +180,20 @@ namespace Skylabs.LobbyServer
         {
             SocketMessage sm = new SocketMessage("friends");
             foreach(User u in Friends)
-                sm.Add_Data(new NameValuePair(u.UID.ToString(), u.UID));
+            {
+                User n = Parent.GetOnlineClientByUID(u.UID).Me;
+                if(n == null)
+                {
+                    n = u;
+                    n.Status = UserStatus.Offline;
+                }
+                else
+                {
+                    if(n.Status == UserStatus.Invisible)
+                        n.Status = UserStatus.Offline;
+                }
+                sm.Add_Data(new NameValuePair(n.UID.ToString(), n));
+            }
             WriteMessage(sm);
         }
 
@@ -176,16 +204,40 @@ namespace Skylabs.LobbyServer
             {
                 if(c.LoggedIn)
                 {
-                    sm.Add_Data(new NameValuePair(c.Me.Email, c.Me));
+                    if(c.Me.Status != UserStatus.Unknown)
+                    {
+                        User n = (User)c.Me.Clone();
+                        if(n.Status == UserStatus.Invisible)
+                            n.Status = UserStatus.Offline;
+                        sm.Add_Data(new NameValuePair(c.Me.Email, c.Me));
+                    }
                 }
             }
             WriteMessage(sm);
+        }
+
+        private void SetCustomStatus(SocketMessage sm)
+        {
+            string s = (string)sm["customstatus"];
+            if(s != null)
+            {
+                if(s.Length > 200)
+                    s = s.Substring(0, 197) + "...";
+                if(Cup.SetCustomStatus(Me.UID, s))
+                {
+                    sm.Data = new NameValuePair[] { };
+                    sm.Add_Data("user", Me);
+                    sm.Add_Data("status", s);
+                    Parent.AllUserMessage(sm);
+                }
+            }
         }
 
         private void Login(SocketMessage insm)
         {
             string email = (string)insm["email"];
             string token = (string)insm["token"];
+            UserStatus stat = (UserStatus)insm["status"];
             SocketMessage sm;
             if(email != null && token != null)
             {
@@ -196,10 +248,13 @@ namespace Skylabs.LobbyServer
                     if(banned == -1)
                     {
                         LoggedIn = true;
+                        u.Status = stat;
                         Me = u;
-                        WriteMessage(new SocketMessage("loginsuccess"));
+                        sm = new SocketMessage("loginsuccess");
+                        sm.Add_Data("me", Me);
+                        WriteMessage(sm);
                         Friends = Cup.GetFriendsList(Me.UID);
-                        Parent.On_User_Event(UserEvent.Online, this);
+                        Parent.On_User_Event(stat, this);
 
                         sendUsersOnline();
                         return;
@@ -225,14 +280,21 @@ namespace Skylabs.LobbyServer
                             sm = new SocketMessage("loginfailed");
                             sm.Add_Data("message", "Server error");
                             WriteMessage(sm);
+                            return;
                         }
                         else
                         {
                             LoggedIn = true;
-                            WriteMessage(new SocketMessage("loginsuccess"));
+                            u.Status = stat;
+                            Me = u;
+                            sm = new SocketMessage("loginsuccess");
+                            sm.Add_Data("me", Me);
+                            WriteMessage(sm);
                             Friends = Cup.GetFriendsList(Me.UID);
-                            Parent.On_User_Event(UserEvent.Online, this);
+                            Parent.On_User_Event(stat, this);
+
                             sendUsersOnline();
+                            return;
                         }
                     }
                     else
@@ -241,8 +303,8 @@ namespace Skylabs.LobbyServer
                         sm = new SocketMessage("loginfailed");
                         sm.Add_Data("message", "Server error");
                         WriteMessage(sm);
+                        return;
                     }
-                    return;
                 }
             }
             sm = new SocketMessage("loginfailed");

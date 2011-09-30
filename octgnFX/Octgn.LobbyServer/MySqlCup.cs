@@ -155,7 +155,9 @@ namespace Octgn.LobbyServer
                                 ret.Email = dr.GetString("email");
                                 ret.DisplayName = dr.GetString("name");
                                 ret.UID = dr.GetInt32("uid");
-                                ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
+                                ret.CustomStatus = dr.GetString("status");
+                                ret.Status = UserStatus.Unknown;
+                                ret.Level = (UserLevel)dr.GetInt32("level");
                             }
                             dr.Close();
                         }
@@ -194,7 +196,9 @@ namespace Octgn.LobbyServer
                                 ret.Email = dr.GetString("email");
                                 ret.DisplayName = dr.GetString("name");
                                 ret.UID = dr.GetInt32("uid");
-                                ret.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
+                                ret.CustomStatus = dr.GetString("status");
+                                ret.Status = UserStatus.Unknown;
+                                ret.Level = (Skylabs.Lobby.UserLevel)dr.GetInt32("level");
                             }
                             dr.Close();
                         }
@@ -322,6 +326,34 @@ namespace Octgn.LobbyServer
             }
         }
 
+        public bool SetCustomStatus(int uid, string status)
+        {
+            if(uid <= -1)
+                return false;
+            if(status == null)
+                return false;
+            try
+            {
+                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    MySqlCommand com = con.CreateCommand();
+                    com.CommandText = "UPDATE users SET status=@status WHERE uid=@uid;";
+                    com.Prepare();
+                    com.Parameters.Add("@status", MySqlDbType.VarChar, 200);
+                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    com.Parameters["@status"].Value = status;
+                    com.Parameters["@uid"].Value = uid;
+                    com.ExecuteNonQuery();
+                    return true;
+                }
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
         public List<User> GetFriendsList(int uid)
         {
             if(uid <= -1)
@@ -347,7 +379,9 @@ namespace Octgn.LobbyServer
                                 temp.Password = dr.GetString("password");
                                 temp.DisplayName = dr.GetString("name");
                                 temp.UID = dr.GetInt32("uid");
-                                temp.Level = (Skylabs.Lobby.User.UserLevel)dr.GetInt32("level");
+                                temp.CustomStatus = dr.GetString("status");
+                                temp.Status = UserStatus.Unknown;
+                                temp.Level = (Skylabs.Lobby.UserLevel)dr.GetInt32("level");
                                 friends.Add(temp);
                             }
                             dr.Close();
