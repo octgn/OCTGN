@@ -163,6 +163,21 @@ namespace Octgn
             return null;
         }
 
+        //Temporarily store group visibility information for LoadDeck. //bug #20
+        private struct grp_tmp
+        {
+            public Group group;
+            public GroupVisibility visibility;
+            public List<Player> viewers;
+
+            public grp_tmp(Group g, GroupVisibility vis, List<Player> v)
+            {
+                group = g;
+                visibility = vis;
+                viewers = v;
+            }
+        }
+
         public void LoadDeck(Data.Deck deck)
         {
             var player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
@@ -174,6 +189,7 @@ namespace Octgn
             ulong[] keys = new ulong[nCards];
             Card[] cards = new Card[nCards];
             Group[] groups = new Group[nCards];
+            List<grp_tmp> gtmps = new List<grp_tmp>();  //for temp groups visibility
             int j = 0;
             foreach(Data.Deck.Section section in deck.Sections)
             {
@@ -181,6 +197,13 @@ namespace Octgn
                 if(sectionDef == null)
                     throw new Data.InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
                 var group = player.Groups.First(x => x.Name == sectionDef.Group);
+
+                //In order to make the clients know what the card is (if visibility is set so that they can see it),
+                //we have to set the visibility to Nobody, and then after the cards are sent, set the visibility back
+                //to what it was. //bug #20
+                gtmps.Add(new grp_tmp(group, group.Visibility, group.viewers.ToList()));
+                group.SetVisibility(false, false);
+
                 foreach(Data.Deck.Element element in section.Cards)
                 {
                     for(int i = 0; i < element.Quantity; i++)
@@ -202,6 +225,24 @@ namespace Octgn
                 }
             }
             Program.Client.Rpc.LoadDeck(ids, keys, groups);
+
+            //reset the visibility to what it was before pushing the deck to everybody. //bug #20
+            foreach (grp_tmp g in gtmps)
+            {
+                if (g.visibility == GroupVisibility.Everybody)
+                    g.group.SetVisibility(true, false);
+                else if (g.visibility == GroupVisibility.Nobody)
+                    g.group.SetVisibility(false, false);
+                else
+                {
+                    foreach (Player p in g.viewers)
+                    {
+                        g.group.AddViewer(p, false);
+                    }
+                }
+            }
+            gtmps.Clear();
+            gtmps.TrimExcess();
         }
 
         internal void AddRecentCard(Data.CardModel card)
