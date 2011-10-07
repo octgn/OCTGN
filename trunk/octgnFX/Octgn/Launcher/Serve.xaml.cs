@@ -75,8 +75,8 @@ namespace Octgn.Launcher
       GetIPv4Addresses();
     }
 
-		private void GetIPv6Addresses()
-		{
+	private void GetIPv6Addresses()
+	{
       IEnumerable<IPAddress> addresses;
       try
       {
@@ -101,8 +101,13 @@ namespace Octgn.Launcher
                 orderby ip.IsIPv6Teredo descending
                 select ip;
       ipList.ItemsSource = ips;
-      if (!ipList.HasItems) noIpLabel.Visibility = Visibility.Visible;
-		}
+      if (!ipList.HasItems)
+      {
+          noIpLabel.Visibility = Visibility.Visible;
+          v4Box.IsChecked = true; //check the ipv4 box.
+          v6Box.IsEnabled = false; //disable the ipv6 box.
+      }
+	}
 
     private void GetIPv4Addresses()
     {
