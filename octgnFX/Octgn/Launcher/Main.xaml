@@ -4,7 +4,7 @@
         xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
         Title="Octgn"
         x:Name="Window"
-        Width="302" Height="519" Icon="/OCTGN;component/Resources/icon.ico">
+        Width="315" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="315">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

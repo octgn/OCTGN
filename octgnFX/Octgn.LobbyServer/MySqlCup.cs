@@ -374,14 +374,7 @@ namespace Octgn.LobbyServer
                             List<User> friends = new List<User>();
                             while(dr.Read())
                             {
-                                User temp = new User();
-                                temp.Email = dr.GetString("email");
-                                temp.Password = dr.GetString("password");
-                                temp.DisplayName = dr.GetString("name");
-                                temp.UID = dr.GetInt32("uid");
-                                temp.CustomStatus = dr.GetString("status");
-                                temp.Status = UserStatus.Unknown;
-                                temp.Level = (Skylabs.Lobby.UserLevel)dr.GetInt32("level");
+                                User temp = GetUser(dr.GetInt32("fid"));
                                 friends.Add(temp);
                             }
                             dr.Close();
