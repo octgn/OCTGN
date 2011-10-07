@@ -20,8 +20,15 @@ namespace Skylabs.LobbyServer
 
         public List<User> Friends
         {
-            get { return _Friends; }
-            set { _Friends = value; if(LoggedIn)sendFriendsList(); }
+            get
+            {
+                return _Friends;
+            }
+            set
+            {
+                _Friends = value;
+                if(LoggedIn) sendFriendsList();
+            }
         }
 
         private Server Parent;
@@ -144,6 +151,7 @@ namespace Skylabs.LobbyServer
                 }
                 //Add to database
                 Cup.AddFriend(uid, requestee.UID);
+                Cup.AddFriend(requestee.UID, uid);
             }
             //Remove any database friend requests
             Cup.RemoveFriendRequest(requestee.UID, Me.Email);
@@ -181,14 +189,16 @@ namespace Skylabs.LobbyServer
             SocketMessage sm = new SocketMessage("friends");
             foreach(User u in Friends)
             {
-                User n = Parent.GetOnlineClientByUID(u.UID).Me;
-                if(n == null)
+                Client c = Parent.GetOnlineClientByUID(u.UID);
+                User n;
+                if(c == null)
                 {
                     n = u;
                     n.Status = UserStatus.Offline;
                 }
                 else
                 {
+                    n = c.Me;
                     if(n.Status == UserStatus.Invisible)
                         n.Status = UserStatus.Offline;
                 }
