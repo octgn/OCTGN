@@ -38,14 +38,14 @@
         <Color x:Key="gstopsel2" A="0xFF" R="0xFF" G="0xFF" B="0xff"/>
         <Color x:Key="gstopsel3" A="0xFF" R="0xFF" G="0xFF" B="0xff"/>
         <LinearGradientBrush x:Key="ListItemBackground" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="White" Offset="0"/>
-            <GradientStop Color="White" Offset="0.65" />
-            <GradientStop Color="White" Offset="1" />
+            <GradientStop Color="Transparent" Offset="0"/>
+            <GradientStop Color="Transparent" Offset="0.65" />
+            <GradientStop Color="Transparent" Offset="1" />
         </LinearGradientBrush>
         <Storyboard x:Key="OnFocus" SpeedRatio="2" Duration="00:00:01">
-            <ColorAnimation From="White" To="#FF4BA4FF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)"/>
-            <ColorAnimation From="White" To="#FF007DFF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)"/>
-            <ColorAnimation From="White" To="#FF72BAFF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)"/>
+            <ColorAnimation From="Transparent" To="#FF4BA4FF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)"/>
+            <ColorAnimation From="Transparent" To="#FF007DFF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)"/>
+            <ColorAnimation From="Transparent" To="#FF72BAFF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)"/>
             <ColorAnimation From="Black" To="White" Storyboard.TargetName="tbUsername" Storyboard.TargetProperty="Foreground.Color"/>
             <ColorAnimation From="Silver" To="White" Storyboard.TargetName="tbStatus" Storyboard.TargetProperty="Foreground.Color"/>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="CornerRadius">
@@ -65,9 +65,9 @@
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="LoseFocus" SpeedRatio="2" Duration="00:00:01">
-            <ColorAnimation To="White" From="#FF4BA4FF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)"/>
-            <ColorAnimation To="White" From="#FF007DFF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)"/>
-            <ColorAnimation To="White" From="#FF72BAFF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)"/>
+            <ColorAnimation To="Transparent" From="#FF4BA4FF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)"/>
+            <ColorAnimation To="Transparent" From="#FF007DFF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)"/>
+            <ColorAnimation To="Transparent" From="#FF72BAFF" Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)"/>
             <ColorAnimation To="Black" From="White" Storyboard.TargetName="tbUsername" Storyboard.TargetProperty="Foreground.Color"/>
             <ColorAnimation To="Silver" From="White" Storyboard.TargetName="tbStatus" Storyboard.TargetProperty="Foreground.Color"/>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="CornerRadius">

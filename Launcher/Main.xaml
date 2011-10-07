@@ -4,14 +4,14 @@
         xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
         Title="Octgn"
         x:Name="Window"
-        Width="315" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="315">
+        Width="335" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="335">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <ribbon:Ribbon x:Name="Ribbon">
+        <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="Ribbon_SelectionChanged">
             <ribbon:Ribbon.ApplicationMenu>
                 <ribbon:RibbonApplicationMenu ></ribbon:RibbonApplicationMenu>
             </ribbon:Ribbon.ApplicationMenu>
@@ -19,6 +19,9 @@
                 <ribbon:RibbonQuickAccessToolBar>
                 </ribbon:RibbonQuickAccessToolBar>
             </ribbon:Ribbon.QuickAccessToolBar>
+            <ribbon:RibbonTab Header="!">
+
+            </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="Lobby">
                 <ribbon:RibbonGroup>
                     <ribbon:RibbonButton Label="Add A Friend" LargeImageSource="/Resources/Icons/user_add.png"/>
@@ -35,6 +38,6 @@
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
         </ribbon:Ribbon>
-        <Frame Grid.Row="1" HorizontalAlignment="Stretch" Name="frame1" VerticalAlignment="Stretch" />
+        <Frame Grid.Row="1" HorizontalAlignment="Stretch" Name="frame1" VerticalAlignment="Stretch"  Navigating="frame_Navigating" NavigationUIVisibility="Hidden" />
     </Grid>
 </ribbon:RibbonWindow>
