@@ -38,6 +38,7 @@ namespace Octgn.Launcher
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            stackPanel1.Children.Clear();
             foreach(User u in Program.lobbyClient.FriendList)
             {
                 FriendListItem f = new FriendListItem();

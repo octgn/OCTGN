@@ -6,16 +6,15 @@
       mc:Ignorable="d"
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ContactList" Loaded="Page_Loaded" Unloaded="Page_Unloaded">
-
-    <Grid>
-        <Grid.Background>
+    <ScrollViewer VerticalAlignment="Stretch">
+        <ScrollViewer.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
                 <GradientStop Color="White" Offset="0" />
                 <GradientStop Color="White" Offset="1" />
                 <GradientStop Color="#FFEBEBEB" Offset="0.5" />
             </LinearGradientBrush>
-        </Grid.Background>
-        <StackPanel HorizontalAlignment="Stretch"  Name="stackPanel1" VerticalAlignment="Stretch">
+        </ScrollViewer.Background>
+        <StackPanel HorizontalAlignment="Stretch"  Name="stackPanel1" VerticalAlignment="Top">
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </Page>
