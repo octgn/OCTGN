@@ -10,7 +10,7 @@ namespace Octgn.Launcher
         public Main()
         {
             InitializeComponent();
-            frame1.Navigate(new MainMenu());
+            frame1.Navigate(new ContactList());
             // Insert code required on object creation below this point.
         }
     }

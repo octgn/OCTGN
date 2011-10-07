@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Octgn.Controls;
+using Skylabs.Lobby;
 
 namespace Octgn.Launcher
 {
@@ -22,6 +14,61 @@ namespace Octgn.Launcher
         public ContactList()
         {
             InitializeComponent();
+            Program.lobbyClient.OnUserStatusChanged += new Skylabs.Lobby.LobbyClient.UserStatusChanged(lobbyClient_OnUserStatusChanged);
+            Program.lobbyClient.OnDataRecieved += new LobbyClient.DataRecieved(lobbyClient_OnDataRecieved);
+        }
+
+        private void lobbyClient_OnDataRecieved(DataRecType type, object e)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                if(type == DataRecType.FriendList)
+                {
+                    stackPanel1.Children.Clear();
+                    foreach(User u in Program.lobbyClient.FriendList)
+                    {
+                        FriendListItem f = new FriendListItem();
+                        f.ThisUser = u;
+                        f.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                        stackPanel1.Children.Add(f);
+                    }
+                }
+            }));
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            foreach(User u in Program.lobbyClient.FriendList)
+            {
+                FriendListItem f = new FriendListItem();
+                f.ThisUser = u;
+                stackPanel1.Children.Add(f);
+            }
+        }
+
+        private void lobbyClient_OnUserStatusChanged(Skylabs.Lobby.UserStatus eve, Skylabs.Lobby.User u)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                foreach(UIElement ui in stackPanel1.Children)
+                {
+                    FriendListItem f = ui as FriendListItem;
+                    if(ui != null)
+                    {
+                        if(f.ThisUser.Equals(u))
+                        {
+                            f.ThisUser = u;
+                            break;
+                        }
+                    }
+                }
+            }));
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
+            Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
         }
     }
 }
