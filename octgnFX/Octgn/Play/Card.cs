@@ -63,7 +63,9 @@ namespace Octgn.Play
                 if(value != isAlternateImage)
                 {
                     Program.Client.Rpc.IsAlternateImage(this, value);
+
                     isAlternateImage = value;
+                    OnPropertyChanged("Picture");
                 }
             }
         }
