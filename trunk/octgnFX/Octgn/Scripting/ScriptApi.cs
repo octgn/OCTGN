@@ -135,7 +135,8 @@ namespace Octgn.Scripting
         public void SwitchImage(int id)
         {
             Card c = Card.Find(id);
-            c.IsAlternateImage = (c.IsAlternateImage != true);
+            //c.IsAlternateImage = (c.IsAlternateImage != true);
+            engine.Invoke(() => { c.IsAlternateImage = (c.IsAlternateImage != true); });
         }
 
         public string CardName(int id)
