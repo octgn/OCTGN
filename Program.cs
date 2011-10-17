@@ -134,13 +134,16 @@ namespace Octgn
                 args.Add(tokenValue);
                 match = match.NextMatch();
             }
+            args.Add(player);
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player) | EventIds.Explicit, finalText, args.ToArray());
         }
 
         // TODO: Refactoring: those helper methods belong somewhere else (near the tracing classes)
         internal static void TracePlayerEvent(Player player, string message, params object[] args)
         {
-            Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message, args);
+            List<object> args1 = new List<object>(args);
+            args1.Add(player);
+            Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message, args1.ToArray());
         }
 
         internal static void TraceWarning(string message)
