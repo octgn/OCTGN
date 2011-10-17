@@ -118,25 +118,67 @@ namespace Octgn.Play
 			}
 		}
 
-		private System.Windows.Media.Color color = System.Windows.Media.Colors.Green;
+
+        //Color for the chat.
+        //TODO: extend this to be game wide and be exposed to python. ralig98
+        private System.Windows.Media.Color color;
 		private System.Windows.Media.Brush solidBrush, transparentBrush;
 		// Associated color
 		public System.Windows.Media.Color Color
 		{
 			get
 			{
-				int idx = all.IndexOf(this);
+				//int idx = all.IndexOf(this);
 				// Check if there's a global player
-				if (all[0].Id != 0)
-					++idx;
+                //if (all[0].Id != 0)
+                //    ++idx;
 				//TODO: return correct color
 				//                return System.Windows.Media.ColorConverter.ConvertFromString(Program.settings.GetPlayerColor(idx));
-				if ((idx & 1) == 1)
-					return System.Windows.Media.Color.FromRgb(0x59, 0xEF, 0x5F);
-				else
-					return System.Windows.Media.Colors.Red;
+                //if ((idx & 1) == 1)
+                //    return System.Windows.Media.Color.FromRgb(0x59, 0xEF, 0x5F);
+                //else
+                //    return System.Windows.Media.Colors.Red;
+
+                return color;
 			}
+
+            set
+            {
+                color = value;
+            }
 		}
+
+        private System.Windows.Media.Color determinePlayerColor(int idx)
+        {
+            // Create the Player's Color
+            System.Windows.Media.Color[] baseColors = {
+                                  System.Windows.Media.Color.FromRgb(0x00, 0x66, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x66, 0x00, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x00, 0x00, 0x66),
+                                  System.Windows.Media.Color.FromRgb(0x66, 0x00, 0x66),
+                                  System.Windows.Media.Color.FromRgb(0xFF, 0x66, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x00, 0x00, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x00, 0x99, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x99, 0x00, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x00, 0x00, 0x99),
+                                  System.Windows.Media.Color.FromRgb(0x99, 0x00, 0x99),
+                                  System.Windows.Media.Color.FromRgb(0xFF, 0x99, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x33, 0x33, 0x33),
+                                  System.Windows.Media.Color.FromRgb(0x00, 0x99, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x99, 0x00, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x00, 0x00, 0x99),
+                                  System.Windows.Media.Color.FromRgb(0x99, 0x00, 0x99),
+                                  System.Windows.Media.Color.FromRgb(0xFF, 0x99, 0x00),
+                                  System.Windows.Media.Color.FromRgb(0x66, 0x66, 0x66),
+                                  System.Windows.Media.Color.FromRgb(0xFF, 0x00, 0x00)};
+            if (idx == 255)
+                return baseColors[0];
+            if (idx == 0)
+                return baseColors[18];
+            if (idx > 18)
+                idx = idx - 18;
+            return baseColors[idx];
+        }
 
 		// Work around a WPF binding bug ? Borders don't seem to bind correctly to Color!
 		public System.Windows.Media.Brush Brush
@@ -157,22 +199,23 @@ namespace Octgn.Play
 			// Register the player
 			all.Add(this);
 			OnPropertyChanged("Color");
-			// Create the color brushes            
+			//Create the color brushes           
+            color = determinePlayerColor(this.Id);
 			solidBrush = new System.Windows.Media.SolidColorBrush(Color);
 			solidBrush.Freeze();
 			transparentBrush = new System.Windows.Media.SolidColorBrush(Color);
 			transparentBrush.Opacity = 0.4;
 			transparentBrush.Freeze();
 			OnPropertyChanged("Brush");
-			OnPropertyChanged("TransparentBrush");			
+			OnPropertyChanged("TransparentBrush");
 			// Create counters
 			counters = new Counter[g.PlayerDefinition.Counters != null ? g.PlayerDefinition.Counters.Length : 0];
 			for (int i = 0; i < Counters.Length; i++)
 				Counters[i] = new Counter(this, g.PlayerDefinition.Counters[i]);
-      // Create variables
-      Variables = new Dictionary<string, int>();
-      foreach (var varDef in g.Variables.Where(v => !v.Global))
-        Variables.Add(varDef.Name, varDef.DefaultValue);
+            // Create variables
+            Variables = new Dictionary<string, int>();
+            foreach (var varDef in g.Variables.Where(v => !v.Global))
+                Variables.Add(varDef.Name, varDef.DefaultValue);
 			// Create a hand, if any
 			if (g.PlayerDefinition.Hand != null)
 				hand = new Hand(this, g.PlayerDefinition.Hand);
