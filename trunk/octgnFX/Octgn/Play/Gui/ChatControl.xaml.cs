@@ -100,27 +100,27 @@ namespace Octgn.Play.Gui
 					((id & EventIds.Explicit) == 0))
 				return;
 
-			if (id == EventIds.Turn)
-			{
-				var p = new Paragraph()
-				{
-					TextAlignment = TextAlignment.Center,
-					Margin = new Thickness(2),
-					Inlines =
+            if (id == EventIds.Turn)
+            {
+                var p = new Paragraph()
+                {
+                    TextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(2),
+                    Inlines =
                     {
                         new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush },                
                         new Run(" " + string.Format(format, args) + " ") { Foreground = TurnBrush, FontWeight = FontWeights.Bold  },
                         new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush }
                     }
-				};
-				if (((Paragraph)ctrl.output.Document.Blocks.LastBlock).Inlines.Count == 0)
-					ctrl.output.Document.Blocks.Remove(ctrl.output.Document.Blocks.LastBlock);
-				ctrl.output.Document.Blocks.Add(p);
-				ctrl.output.Document.Blocks.Add(new Paragraph() { Margin = new Thickness() });    // Restore left alignment
-				ctrl.output.ScrollToEnd();
-			}
-			else
-				InsertLine(FormatInline(MergeArgs(format, args), eventType, id));
+                };
+                if (((Paragraph)ctrl.output.Document.Blocks.LastBlock).Inlines.Count == 0)
+                    ctrl.output.Document.Blocks.Remove(ctrl.output.Document.Blocks.LastBlock);
+                ctrl.output.Document.Blocks.Add(p);
+                ctrl.output.Document.Blocks.Add(new Paragraph() { Margin = new Thickness() });    // Restore left alignment
+                ctrl.output.ScrollToEnd();
+            }
+            else
+                InsertLine(FormatInline(MergeArgs(format, args), eventType, id, args));
 		}
 
 		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
@@ -151,7 +151,7 @@ namespace Octgn.Play.Gui
       ctrl.output.ScrollToEnd();
 		}
 
-		private Inline FormatInline(Inline inline, TraceEventType eventType, int id)
+		private Inline FormatInline(Inline inline, TraceEventType eventType, int id, Object[] args=null)
 		{
 			if (eventType == TraceEventType.Warning || eventType == TraceEventType.Error)
 			{
@@ -160,10 +160,27 @@ namespace Octgn.Play.Gui
 			}
 			else if (eventType == TraceEventType.Information)
 			{
-				if ((id & EventIds.Chat) != 0)
-					inline.FontWeight = FontWeights.Bold;
-				if ((id & EventIds.OtherPlayer) == 0)
-					inline.Foreground = Brushes.DarkGray;
+                if ((id & EventIds.Chat) != 0)
+                        inline.FontWeight = FontWeights.Bold;
+                if (args == null || args.GetUpperBound(0) == -1)
+                {
+                    if ((id & EventIds.OtherPlayer) == 0)
+                        inline.Foreground = Brushes.DarkGray; 
+                }
+                else
+                {
+                    int i = 0;
+                    Player p = args[i] as Player;
+                    while (p == null && i < args.Length-1)
+                    {
+                        i++;
+                        p = args[i] as Player;
+                    }
+                    if (p != null)
+                        inline.Foreground = new SolidColorBrush(p.Color);
+                    else
+                        inline.Foreground = Brushes.Red;
+                }
 			}
 			return inline;
 		}
