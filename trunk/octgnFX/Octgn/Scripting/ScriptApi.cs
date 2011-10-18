@@ -34,6 +34,9 @@ namespace Octgn.Scripting
         public string PlayerName(int id)
         { return Player.Find((byte)id).Name; }
 
+        public string PlayerColor(int id)
+        { return Player.Find((byte)id).Color.ToString().Remove(1,2); }
+
         public List<KeyValuePair<int, string>> PlayerCounters(int id)
         {
             return Player.Find((byte)id)
