@@ -247,6 +247,8 @@ class Player(object):
   def hand(self): return self._hand
   @property
   def piles(self): return self._piles
+  @property
+  def color(self): return _api.PlayerColor(self._id)
 
 _id = _api.LocalPlayerId()
 me = Player(_id) if _id >= 0 else None
