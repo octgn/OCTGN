@@ -14,8 +14,9 @@ namespace Octgn.Data
 		public string Name { get; internal set; }
 		public Game Game { get; internal set; }
 		public Version GameVersion { get; internal set; }
-    public Version Version { get; internal set; }
-		internal string packageName;
+        public Version Version { get; internal set; }
+        public string Filename { get; internal set; }
+        public string PackageName { get; internal set; }
     private List<Pack> cachedPacks;
 
     public List<Pack> Packs
@@ -32,7 +33,7 @@ namespace Octgn.Data
 
 		public Set(string packageName, XmlReader reader, GamesRepository repository)
 		{
-			this.packageName = packageName;
+			this.PackageName = packageName;
 			Name = reader.GetAttribute("name");
 			Id = new Guid(reader.GetAttribute("id"));
 			var gameId = new Guid(reader.GetAttribute("gameId"));
@@ -46,7 +47,7 @@ namespace Octgn.Data
 
 		public string GetPackUri()
 		{
-			return "pack://file:,,," + packageName.Replace('\\', ',');
+			return "pack://file:,,," + PackageName.Replace('\\', ',');
 		}
 
 		internal static Set FromDataRow(Game game, IVistaDBRow row)
@@ -58,7 +59,7 @@ namespace Octgn.Data
 				Game = game,
 				GameVersion = new Version((string)row["gameVersion"].Value),
         Version = new Version((string)row["version"].Value),
-				packageName = (string)row["package"].Value
+				PackageName = (string)row["package"].Value
 			};
 		}
 

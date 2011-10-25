@@ -300,7 +300,7 @@ namespace Octgn.Data
                 setTable.PutString("name", set.Name);
                 setTable.PutString("gameVersion", set.GameVersion.ToString());
                 setTable.PutString("version", set.Version.ToString());
-                setTable.PutString("package", set.packageName);
+                setTable.PutString("package", set.PackageName);
                 setTable.Post();
             }
         }

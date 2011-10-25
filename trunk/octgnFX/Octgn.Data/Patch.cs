@@ -40,7 +40,7 @@ namespace Octgn.Data
         
         // Get the list of sets to potentially patch
         game = repository.Games.FirstOrDefault(g => g.Id == gameId);
-        var installedSets = game.Sets.Select(s => s.packageName).ToList();
+        var installedSets = game.Sets.Select(s => s.PackageName).ToList();
         List<string> uninstalledSets;
         
         if (patchFolder != null)
@@ -112,7 +112,7 @@ namespace Octgn.Data
         if (set.Version > patchDoc.Root.Attr<Version>("maxVersion")) return;
 
         if (installed)
-          game.DeleteSet(game.Sets.Single(s => s.packageName == filename));
+          game.DeleteSet(game.Sets.Single(s => s.PackageName == filename));
 
         // Process the set 
         foreach (XElement action in patchDoc.Root.Elements())
