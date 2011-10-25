@@ -240,6 +240,27 @@ namespace Octgn.Scripting
             });
         }
 
+        //Returns the card's index
+        //ralig98
+        public int CardGetIndex(int CardId)
+        {
+            return Card.Find(CardId).GetIndex();
+        }
+
+        //Set's the card's index to idx.  Enforces a TableOnly rule, since the index's on other piles/groups are inverted.
+        //ralig98
+        public void CardSetIndex(int CardId, int idx, bool TableOnly = false)
+        {
+            var c = Card.Find(CardId);
+            if (TableOnly)
+            {
+                if (c.Group is Table)
+                    engine.Invoke(() => c.MoveToTable((int)c.X, (int)c.Y, c.FaceUp, idx)); 
+            }
+            else
+                engine.Invoke(() => c.MoveToTable((int)c.X, (int)c.Y, c.FaceUp, idx));
+        }
+
         public void CardTarget(int id, bool active)
         {
             var c = Card.Find(id);
