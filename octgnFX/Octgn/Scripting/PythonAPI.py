@@ -118,6 +118,14 @@ class Card(object):
     self.moveTo(pile, len(pile))
   def moveToTable(self, x, y, forceFaceDown = False):
     _api.CardMoveToTable(self._id, x, y, forceFaceDown)
+  def sendToBack(self):
+    _api.CardSetIndex(self._id, 0, True)
+  def sendToFront(self):
+    _api.CardSetIndex(self._id,len(table), True)
+  def setIndex(self, index):
+    _api.CardSetIndex(self._id,index, True)
+  @property
+  def getIndex(self): return _api.CardGetIndex(self._id)
   def select(self): _api.CardSelect(self._id)
   def target(self, active = True): _api.CardTarget(self._id, active)
   @property
