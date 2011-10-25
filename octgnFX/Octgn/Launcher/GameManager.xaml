@@ -42,9 +42,15 @@
 				<TextBlock Margin="5" TextWrapping="Wrap" Text="Installed Games" />
 				
 				<Border Style="{StaticResource PanelControl}" Margin="5" Grid.Row="1">
-					<ListBox x:Name="gamesList"
-							 ItemsSource="{Binding Source={StaticResource gamesDataView}}" DisplayMemberPath="Name" />
-				</Border>	  				
+                    <ListBox x:Name="gamesList"
+							 ItemsSource="{Binding Source={StaticResource gamesDataView}}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Name}" ToolTipService.ToolTip="{Binding Path=Filename}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>	  				
 				
 				<Button Margin="5" Grid.Row="2"
 						Click="InstallGame" Content="Install a new game" />
@@ -78,7 +84,7 @@
 							     ItemsSource="{Binding Source={StaticResource setsView}}">
             <ListBox.ItemTemplate>
               <DataTemplate>
-                <TextBlock>
+                <TextBlock ToolTipService.ToolTip="{Binding Path=PackageName}">
                   <Run Text="{Binding Name, Mode=OneTime}" />
                   <Run Text="{Binding Version, StringFormat= (v. \{0\}), Mode=OneTime}" 
                        Foreground="#888888" FontSize="12" />
