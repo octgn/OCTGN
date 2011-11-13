@@ -72,7 +72,7 @@ namespace Octgn.Launcher
                 isLoggingIn = true;
                 Start_Spinning();
 
-                bError.Visibility = System.Windows.Visibility.Hidden;
+                bError.Visibility = Visibility.Hidden;
                 bool c = Program.lobbyClient.Connected;
                 if(!c)
                     c = Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
