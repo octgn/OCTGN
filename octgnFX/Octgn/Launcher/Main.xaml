@@ -13,7 +13,10 @@
 
         <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="Ribbon_SelectionChanged">
             <ribbon:Ribbon.ApplicationMenu>
-                <ribbon:RibbonApplicationMenu ></ribbon:RibbonApplicationMenu>
+                <ribbon:RibbonApplicationMenu >
+                    <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOff_Click"></ribbon:RibbonApplicationMenuItem>
+                    <ribbon:RibbonApplicationMenuItem x:Name="Quit" Header="Quit" Click="Quit_Click"></ribbon:RibbonApplicationMenuItem>
+                </ribbon:RibbonApplicationMenu>
             </ribbon:Ribbon.ApplicationMenu>
             <ribbon:Ribbon.QuickAccessToolBar>
                 <ribbon:RibbonQuickAccessToolBar>
