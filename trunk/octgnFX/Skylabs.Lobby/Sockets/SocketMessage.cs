@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Skylabs.Net
@@ -39,11 +40,11 @@ namespace Skylabs.Net
     [Serializable]
     public class SocketMessage
     {
-        public NameValuePair[] Data { get { return _Data; } set { _Data = value; } }
+        public NameValuePair[] Data { get { return _data; } set { _data = value; } }
 
         public string Header { get; set; }
 
-        private NameValuePair[] _Data;
+        private NameValuePair[] _data;
 
         public SocketMessage(string header)
         {
@@ -54,34 +55,27 @@ namespace Skylabs.Net
         public object this[string key]
         {
             get
-            {
-                for(int i=0; i < _Data.Length; i++)
-                {
-                    if(_Data[i].Key == key)
-                        return _Data[i].Value;
-                }
-                return null;
-            }
+            { return (from t in _data where t.Key == key select t.Value).FirstOrDefault(); }
             set
             {
-                for(int i=0; i < _Data.Length; i++)
+                foreach (NameValuePair t in _data)
                 {
-                    if(_Data[i].Key == key)
-                        _Data[i].Value = value;
+                    if(t.Key == key)
+                        t.Value = value;
                 }
             }
         }
 
-        public void Add_Data(NameValuePair data)
+        public void AddData(NameValuePair data)
         {
-            Array.Resize<NameValuePair>(ref _Data, Data.Length + 1);
-            _Data[_Data.Length - 1] = data;
+            Array.Resize(ref _data, Data.Length + 1);
+            _data[_data.Length - 1] = data;
         }
 
-        public void Add_Data(string key, object value)
+        public void AddData(string key, object value)
         {
-            Array.Resize<NameValuePair>(ref _Data, Data.Length + 1);
-            _Data[_Data.Length - 1] = new NameValuePair(key, value);
+            Array.Resize(ref _data, Data.Length + 1);
+            _data[_data.Length - 1] = new NameValuePair(key, value);
         }
 
         public static byte[] Serialize(SocketMessage message)

@@ -16,12 +16,12 @@ namespace Skylabs.ConsoleHelper
         {
             get
             {
-                return _RawData;
+                return _rawData;
             }
             set
             {
-                _RawData = value.TrimStart(new char[1] { ' ' });
-                parseMessage();
+                _rawData = value.TrimStart(new[] { ' ' });
+                ParseMessage();
             }
         }
 
@@ -29,7 +29,7 @@ namespace Skylabs.ConsoleHelper
 
         public List<ConsoleArgument> Args { get; set; }
 
-        private String _RawData;
+        private String _rawData;
 
         public ConsoleMessage()
         {
@@ -41,15 +41,15 @@ namespace Skylabs.ConsoleHelper
             RawData = rawData;
         }
 
-        public void parseMessage(String data)
+        public void ParseMessage(String data)
         {
             RawData = data;
         }
 
-        private void parseMessage()
+        private void ParseMessage()
         {
             //TODO better handling of jibberish. Probubly be best to use regex. It'd be a lot cleaner and sexier.
-            RawData.TrimStart(new char[1] { ' ' });
+            RawData = RawData.TrimStart(new[] { ' ' });
             int ws = RawData.IndexOf(' ');
             Header = "";
             Args = new List<ConsoleArgument>();
@@ -63,27 +63,28 @@ namespace Skylabs.ConsoleHelper
                 try
                 {
                     String args = RawData.Substring(ws + 1);
-                    args.TrimStart(new char[1] { ' ' });
+                    args = args.TrimStart(new[] { ' ' });
                     if(!args.Equals(""))
                     {
-                        String[] araw = args.Split(new char[1] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                        String[] araw = args.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
                         if(araw.Length != 0)
                         {
                             foreach(String a in araw)
                             {
-                                a.Trim();
-                                ws = a.IndexOf(' ');
+                                string temp = a.Trim();
+                                ws = temp.IndexOf(' ');
                                 if(ws == -1)
                                 {
-                                    ConsoleArgument ca = new ConsoleArgument();
-                                    ca.Argument = a;
+                                    ConsoleArgument ca = new ConsoleArgument {Argument = temp};
                                     Args.Add(ca);
                                 }
                                 else
                                 {
-                                    ConsoleArgument ca = new ConsoleArgument();
-                                    ca.Argument = a.Substring(0, ws);
-                                    ca.Value = a.Substring(ws + 1);
+                                    ConsoleArgument ca = new ConsoleArgument
+                                                             {
+                                                                 Argument = temp.Substring(0, ws),
+                                                                 Value = temp.Substring(ws + 1)
+                                                             };
                                     Args.Add(ca);
                                 }
                             }
@@ -92,7 +93,7 @@ namespace Skylabs.ConsoleHelper
                 }
                 catch(Exception e)
                 {
-                    new ConsoleEventError("Error parsing arguments. ", e).writeEvent(true);
+                    new ConsoleEventError("Error parsing arguments. ", e).WriteEvent(true);
                 }
             }
         }

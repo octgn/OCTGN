@@ -12,11 +12,11 @@ namespace Skylabs.Net.Sockets
 {
     public class StateObject
     {
-        public TcpClient workSocket = null;
+        public TcpClient WorkSocket;
         // Size of receive buffer.
         public const int BufferSize = 256;
         // Receive buffer.
-        public byte[] buffer = new byte[BufferSize];
+        public byte[] Buffer = new byte[BufferSize];
     }
 
     public abstract class SkySocket
@@ -31,28 +31,28 @@ namespace Skylabs.Net.Sockets
         /// </summary>
         public bool Connected { get; private set; }
 
-        private List<byte> Buffer= new List<byte>();
+        private List<byte> _buffer= new List<byte>();
 
-        private Thread thread;
+        private Thread _thread;
 
-        private DateTime LastPingReceived;
+        private DateTime _lastPingReceived;
 
         /// <summary>
         /// Creates new SkySocket that isn't connected. You must call Connect to connect.
         /// </summary>
-        public SkySocket()
+        protected SkySocket()
         {
             Connected = false;
             Sock = null;
-            Buffer = new List<Byte>();
-            thread = new Thread(new ThreadStart(run));
+            _buffer = new List<Byte>();
+            _thread = new Thread(Run);
         }
 
         /// <summary>
         /// Creates new SkySocket using an already made connection.
         /// </summary>
         /// <param name="client">Connected TcpClient</param>
-        public SkySocket(TcpClient client)
+        protected SkySocket(TcpClient client)
         {
             _Connect(client);
         }
@@ -87,10 +87,10 @@ namespace Skylabs.Net.Sockets
             Connected = true;
             Sock = c;
             Recieve();
-            Buffer = new List<byte>();
-            thread = new Thread(new ThreadStart(run));
-            LastPingReceived = DateTime.Now;
-            thread.Start();
+            _buffer = new List<byte>();
+            _thread = new Thread(Run);
+            _lastPingReceived = DateTime.Now;
+            _thread.Start();
         }
 
         /// <summary>
@@ -105,14 +105,14 @@ namespace Skylabs.Net.Sockets
         /// <param name="reason">Reason why</param>
         public abstract void OnDisconnect(DisconnectReason reason);
 
-        private void run()
+        private void Run()
         {
             while(Connected)
             {
-                DateTime temp = LastPingReceived.AddSeconds(30);
+                DateTime temp = _lastPingReceived.AddSeconds(30);
                 if(DateTime.Now >= temp)
                 {
-                    this.Close(DisconnectReason.PingTimeout);
+                    Close(DisconnectReason.PingTimeout);
                 }
                 else
                     WriteMessage(new SocketMessage("ping"));
@@ -122,9 +122,8 @@ namespace Skylabs.Net.Sockets
 
         private void Recieve()
         {
-            StateObject state = new StateObject();
-            state.workSocket = Sock;
-            Sock.Client.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
+            StateObject state = new StateObject {WorkSocket = Sock};
+            Sock.Client.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
         }
 
         /// <summary>
@@ -133,11 +132,11 @@ namespace Skylabs.Net.Sockets
         /// <param name="reason">Reason why</param>
         public void Close(DisconnectReason reason)
         {
-            this.Sock.Client.BeginDisconnect(false, new System.AsyncCallback(delegate(System.IAsyncResult res)
-            {
-                Connected = false;
-                OnDisconnect(reason);
-            }), Sock.Client);
+            Sock.Client.BeginDisconnect(false, delegate
+                                                   {
+                                                       Connected = false;
+                                                       OnDisconnect(reason);
+                                                   }, Sock.Client);
         }
 
         private void ReceiveCallback(IAsyncResult ar)
@@ -145,7 +144,7 @@ namespace Skylabs.Net.Sockets
             try
             {
                 StateObject state = (StateObject)ar.AsyncState;
-                TcpClient client = state.workSocket;
+                TcpClient client = state.WorkSocket;
 
                 // Read data from the remote device.
                 int bytesRead = client.Client.EndReceive(ar);
@@ -154,7 +153,7 @@ namespace Skylabs.Net.Sockets
                 {
                     // There might be more data, so store the data received so far.
                     for(int i=0; i < bytesRead; i++)
-                        Buffer.Add(state.buffer[i]);
+                        _buffer.Add(state.Buffer[i]);
                     HandleInput();
                     // Try and grab more data
                     Recieve();
@@ -176,15 +175,15 @@ namespace Skylabs.Net.Sockets
 
         private void HandleInput()
         {
-            if(Buffer.Count > 8)
+            if(_buffer.Count > 8)
             {
                 byte[] mlength = new byte[8];
-                Buffer.CopyTo(0, mlength, 0, 8);
+                _buffer.CopyTo(0, mlength, 0, 8);
                 long count = BitConverter.ToInt64(mlength, 0);
-                if(Buffer.Count >= count + 8)
+                if(_buffer.Count >= count + 8)
                 {
                     byte[] mdata = new byte[count];
-                    Buffer.CopyTo(8, mdata, 0, (int)count);
+                    _buffer.CopyTo(8, mdata, 0, (int)count);
                     SocketMessage sm = null;
                     try
                     {
@@ -195,20 +194,20 @@ namespace Skylabs.Net.Sockets
 #if(DEBUG)
                         if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
-                        this.Close(DisconnectReason.MalformedData);
+                        Close(DisconnectReason.MalformedData);
                     }
                     if(sm != null)
                     {
                         if(sm.Header.ToLower() == "ping")
                         {
-                            LastPingReceived = DateTime.Now;
+                            _lastPingReceived = DateTime.Now;
                         }
                         else
                         {
                             OnMessageReceived(sm);
                         }
                     }
-                    Buffer.RemoveRange(0, (int)count + 8);
+                    _buffer.RemoveRange(0, (int)count + 8);
                 }
             }
         }

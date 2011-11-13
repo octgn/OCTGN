@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
-using Google.GData.Client;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
 
@@ -16,10 +16,10 @@ namespace Skylabs.Lobby
 
     public class LobbyClient : SkySocket
     {
-        public delegate void LoginFinished(LoginResult success, DateTime BanEnd, string message);
-        public delegate void HandleCaptcha(string Fullurl, string Imageurl);
+        public delegate void LoginFinished(LoginResult success, DateTime banEnd, string message);
+        public delegate void HandleCaptcha(string fullurl, string imageurl);
         public delegate void DataRecieved(DataRecType type, object e);
-        public delegate void UserStatusChanged(Skylabs.Lobby.UserStatus eve, User u);
+        public delegate void UserStatusChanged(UserStatus eve, User u);
         public delegate void FriendRequest(User u);
         public event DataRecieved OnDataRecieved;
         public event UserStatusChanged OnUserStatusChanged;
@@ -28,18 +28,15 @@ namespace Skylabs.Lobby
 
         public User Me { get; private set; }
 
-        private LoginFinished OnLoginFinished;
+        private LoginFinished _onLoginFinished;
 
-        private string m_Email = "";
-        private string m_Password = "";
-        private string m_CaptchaToken = "";
+        private string _mCaptchaToken = "";
 
         public Version Version
         {
             get
             {
                 Assembly asm = Assembly.GetCallingAssembly();
-                AssemblyProductAttribute at = (AssemblyProductAttribute)asm.GetCustomAttributes(typeof(AssemblyProductAttribute), false)[0];
                 return asm.GetName().Version;
             }
         }
@@ -49,7 +46,6 @@ namespace Skylabs.Lobby
         public List<User> OnlineList { get; private set; }
 
         public LobbyClient()
-            : base()
         {
             FriendList = new List<User>();
             OnlineList = new List<User>();
@@ -64,17 +60,13 @@ namespace Skylabs.Lobby
 
         public User GetOnlineUser(int uid)
         {
-            foreach(User u in OnlineList)
-            {
-                if(u.UID == uid) return u;
-            }
-            return null;
+            return OnlineList.FirstOrDefault(u => u.Uid == uid);
         }
 
-        public void Add_Friend(string email)
+        public void AddFriend(string email)
         {
             SocketMessage sm = new SocketMessage("addfriend");
-            sm.Add_Data("email", email);
+            sm.AddData("email", email);
             WriteMessage(sm);
         }
 
@@ -82,55 +74,53 @@ namespace Skylabs.Lobby
         {
             if(Connected)
             {
-                Thread t = new Thread(new ThreadStart(() =>
-                {
-                    OnLoginFinished = onFinish;
-                    this.m_Email = email;
-                    this.m_Password = password;
-                    String AppName = "skylabs-LobbyClient-" + Version.ToString();
-                    Service s = new Service("code", AppName);
-                    s.setUserCredentials(email, password);
-                    if(captcha != null && m_CaptchaToken != null)
-                    {
-                        if(!String.IsNullOrWhiteSpace(captcha) || !String.IsNullOrWhiteSpace(m_CaptchaToken))
-                        {
-                            s.Credentials.CaptchaToken = m_CaptchaToken;
-                            s.Credentials.CaptchaAnswer = captcha;
-                        }
-                    }
-                    try
-                    {
-                        string ret = s.QueryClientLoginToken();
-                        SocketMessage sm = new SocketMessage("login");
-                        sm.Add_Data(new NameValuePair("email", email));
-                        sm.Add_Data(new NameValuePair("token", ret));
-                        sm.Add_Data("status", status);
-                        WriteMessage(sm);
-                    }
-                    catch(Google.GData.Client.CaptchaRequiredException ce)
-                    {
-                        m_CaptchaToken = ce.Token;
-                        if(OnCaptchaRequired != null) OnCaptchaRequired.Invoke("https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
-                    }
-                    catch(Google.GData.Client.AuthenticationException re)
-                    {
-                        string cu = (string)re.Data["CaptchaUrl"];
-                        onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
-                    }
-                    catch(WebException e)
-                    {
-                        onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
-                    }
-                }));
+                Thread t = new Thread(() =>
+                                          {
+                                              _onLoginFinished = onFinish;
+                                              String appName = "skylabs-LobbyClient-" + Version;
+                                              Service s = new Service("code", appName);
+                                              s.setUserCredentials(email, password);
+                                              if(captcha != null && _mCaptchaToken != null)
+                                              {
+                                                  if(!String.IsNullOrWhiteSpace(captcha) || !String.IsNullOrWhiteSpace(_mCaptchaToken))
+                                                  {
+                                                      s.Credentials.CaptchaToken = _mCaptchaToken;
+                                                      s.Credentials.CaptchaAnswer = captcha;
+                                                  }
+                                              }
+                                              try
+                                              {
+                                                  string ret = s.QueryClientLoginToken();
+                                                  SocketMessage sm = new SocketMessage("login");
+                                                  sm.AddData(new NameValuePair("email", email));
+                                                  sm.AddData(new NameValuePair("token", ret));
+                                                  sm.AddData("status", status);
+                                                  WriteMessage(sm);
+                                              }
+                                              catch(Google.GData.Client.CaptchaRequiredException ce)
+                                              {
+                                                  _mCaptchaToken = ce.Token;
+                                                  if(OnCaptchaRequired != null) OnCaptchaRequired.Invoke("https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
+                                              }
+                                              catch(Google.GData.Client.AuthenticationException re)
+                                              {
+                                                  string cu = (string)re.Data["CaptchaUrl"];
+                                                  onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
+                                              }
+                                              catch(WebException e)
+                                              {
+                                                  onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
+                                              }
+                                          });
                 t.Start();
             }
         }
 
-        public void Accept_Friend_Request(int uid, bool accept)
+        public void AcceptFriendRequest(int uid, bool accept)
         {
             SocketMessage sm = new SocketMessage("acceptfriend");
-            sm.Add_Data("uid", uid);
-            sm.Add_Data("accept", accept);
+            sm.AddData("uid", uid);
+            sm.AddData("accept", accept);
             WriteMessage(sm);
         }
 
@@ -142,16 +132,16 @@ namespace Skylabs.Lobby
                 case "loginsuccess":
                     Me = (User)sm["me"];
                     if(Me != null)
-                        OnLoginFinished.Invoke(LoginResult.Success, DateTime.Now, "");
+                        _onLoginFinished.Invoke(LoginResult.Success, DateTime.Now, "");
                     else
                     {
-                        OnLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, "Data failure.");
-                        this.Close(DisconnectReason.CleanDisconnect);
+                        _onLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, "Data failure.");
+                        Close(DisconnectReason.CleanDisconnect);
                     }
                     break;
                 case "loginfailed":
 
-                    OnLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, (sm["message"] != null) ? (string)sm["message"] : "");
+                    _onLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, (sm["message"] != null) ? (string)sm["message"] : "");
                     break;
                 case "friends":
                     FriendList = new List<User>();
@@ -202,7 +192,7 @@ namespace Skylabs.Lobby
                 case "banned":
                     int time = (int)sm["end"];
 
-                    OnLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.fromPHPTime(time), "");
+                    _onLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.FromPhpTime(time), "");
                     break;
             }
         }
@@ -210,7 +200,7 @@ namespace Skylabs.Lobby
         public void SetStatus(UserStatus s)
         {
             SocketMessage sm = new SocketMessage("status");
-            sm.Add_Data("status", s);
+            sm.AddData("status", s);
             WriteMessage(sm);
             Me.Status = s;
         }
@@ -218,7 +208,7 @@ namespace Skylabs.Lobby
         public void SetCustomStatus(string CustomStatus)
         {
             SocketMessage sm = new SocketMessage("customstatus");
-            sm.Add_Data("customstatus", CustomStatus);
+            sm.AddData("customstatus", CustomStatus);
             WriteMessage(sm);
         }
 
