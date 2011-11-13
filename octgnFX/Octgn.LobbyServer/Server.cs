@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -10,7 +11,7 @@ namespace Skylabs.LobbyServer
 {
     public class Server
     {
-        public IPAddress LocalIP { get; private set; }
+        public IPAddress LocalIp { get; private set; }
 
         public int Port { get; private set; }
 
@@ -18,31 +19,30 @@ namespace Skylabs.LobbyServer
 
         public List<Client> Clients { get; set; }
 
-        private int NextID;
+        private int _nextId;
 
         public Version Version
         {
             get
             {
                 Assembly asm = Assembly.GetCallingAssembly();
-                AssemblyProductAttribute at = (AssemblyProductAttribute)asm.GetCustomAttributes(typeof(AssemblyProductAttribute), false)[0];
                 return asm.GetName().Version;
             }
         }
 
         public Server(IPAddress ip, int port)
         {
-            NextID = 0;
-            LocalIP = ip;
+            _nextId = 0;
+            LocalIp = ip;
             Port = port;
-            ListenSocket = new TcpListener(LocalIP, Port);
+            ListenSocket = new TcpListener(LocalIp, Port);
             Clients = new List<Client>();
         }
 
         public void Start()
         {
             ListenSocket.Start();
-            Accept_Clients();
+            AcceptClients();
         }
 
         public void Stop()
@@ -56,27 +56,15 @@ namespace Skylabs.LobbyServer
 
         public Client GetOnlineClientByEmail(string email)
         {
-            foreach(Client c in Clients)
-            {
-                if(c.LoggedIn)
-                    if(c.Me.Email.ToLower().Equals(email.ToLower()))
-                        return c;
-            }
-            return null;
+            return Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Email.ToLower().Equals(email.ToLower()));
         }
 
-        public Client GetOnlineClientByUID(int uid)
+        public Client GetOnlineClientByUid(int uid)
         {
-            foreach(Client c in Clients)
-            {
-                if(c.LoggedIn)
-                    if(c.Me.UID == uid)
-                        return c;
-            }
-            return null;
+            return Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Uid == uid);
         }
 
-        public void On_User_Event(UserStatus e, Client client)
+        public void OnUserEvent(UserStatus e, Client client)
         {
             User me = (User)client.Me.Clone();
             if(e == UserStatus.Offline)
@@ -86,7 +74,7 @@ namespace Skylabs.LobbyServer
                 c.OnUserEvent(e, me);
         }
 
-        private void Accept_Clients()
+        private void AcceptClients()
         {
             ListenSocket.BeginAcceptTcpClient(AcceptReceiveDataCallback, ListenSocket);
         }
@@ -106,12 +94,13 @@ namespace Skylabs.LobbyServer
             TcpListener listener = (TcpListener)ar.AsyncState;
             try
             {
-                Clients.Add(new Client(listener.EndAcceptTcpClient(ar), NextID, this));
-                NextID++;
-                Accept_Clients();
+                Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId, this));
+                _nextId++;
+                AcceptClients();
             }
             catch(ObjectDisposedException de)
             {
+                //Todo Probubly should have some form of logging for this error.
             }
         }
     }

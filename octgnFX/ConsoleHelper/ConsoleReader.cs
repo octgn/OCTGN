@@ -9,59 +9,56 @@ namespace Skylabs.ConsoleHelper
     {
         public delegate void ConsoleInputDelegate(ConsoleMessage input);
 
-        public static event ConsoleInputDelegate eConsoleInput;
+        public static event ConsoleInputDelegate EConsoleInput;
         //public static ConsoleColor InputColor { get { return _InputColor; } set { _InputColor = value; } }
 
         //private static ConsoleColor _InputColor = ConsoleColor.Gray;
 
-        private static Thread thread;
-        private static Thread rlthread;
+        private static Thread _thread;
 
         public static ThreadState ThreadState
         {
             get
             {
-                return thread.ThreadState;
+                return _thread.ThreadState;
             }
         }
 
         public static void Start()
         {
-            thread = new Thread(run);
-            thread.Name = "ConsoleHandThread";
-            thread.Start();
+            _thread = new Thread(Run) {Name = "ConsoleHandThread"};
+            _thread.Start();
         }
 
-        private static void handleInput(ConsoleMessage cm)
+        private static void HandleInput(ConsoleMessage cm)
         {
-            if(eConsoleInput != null)
+            if(EConsoleInput != null)
             {
-                if(eConsoleInput.GetInvocationList().Length > 0)
-                    eConsoleInput.Invoke(cm);
+                if(EConsoleInput.GetInvocationList().Length > 0)
+                    EConsoleInput.Invoke(cm);
             }
         }
 
         public static void Stop()
         {
-            if(thread != null)
+            if(_thread != null)
             {
-                if(thread.ThreadState == System.Threading.ThreadState.Running)
+                if(_thread.ThreadState == ThreadState.Running)
                 {
                     Console.In.Close();
 
-                    thread.Abort();
-                    thread = null;
+                    _thread.Abort();
+                    _thread = null;
                     //thread.Join();
                 }
             }
         }
 
-        private static void run()
+        private static void Run()
         {
-            Boolean b = true;
             Boolean endLine = false;
             StringBuilder sb = new StringBuilder();
-            while(b == true)
+            while(true)
             {
                 if(Console.KeyAvailable)
                 {
@@ -78,7 +75,7 @@ namespace Skylabs.ConsoleHelper
                 }
                 if(!String.IsNullOrEmpty(sb.ToString()) && endLine)
                 {
-                    handleInput(new ConsoleMessage(sb.ToString()));
+                    HandleInput(new ConsoleMessage(sb.ToString()));
                     sb = new StringBuilder();
                     endLine = false;
                 }

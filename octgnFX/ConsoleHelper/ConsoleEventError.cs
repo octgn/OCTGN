@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace Skylabs.ConsoleHelper
@@ -12,12 +11,10 @@ namespace Skylabs.ConsoleHelper
         {
             get
             {
-                if(exception.Message != null)
-                    return exception.Message;
-                else
-                    return "No Exception Message Data.";
+                if (Exception.Message != null)
+                    return Exception.Message;
+                return "No Exception Message Data.";
             }
-            set { }
         }
 
         [XmlElement("StackTrace")]
@@ -25,16 +22,14 @@ namespace Skylabs.ConsoleHelper
         {
             get
             {
-                if(exception.StackTrace != null)
-                    return exception.StackTrace;
-                else
-                    return "No Stack Trace Message Data.";
+                if(Exception.StackTrace != null)
+                    return Exception.StackTrace;
+                return "No Stack Trace Message Data.";
             }
-            set { }
         }
 
-        [XmlIgnore()]
-        public Exception exception { get; set; }
+        [XmlIgnore]
+        public Exception Exception { get; set; }
 
         private ConsoleEventError()
         {
@@ -45,7 +40,7 @@ namespace Skylabs.ConsoleHelper
         {
             Header = "!Error: ";
             //Color = ConsoleColor.Red;
-            exception = e;
+            Exception = e;
         }
     }
 }

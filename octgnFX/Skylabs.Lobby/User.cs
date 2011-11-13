@@ -13,7 +13,7 @@ namespace Skylabs.Lobby
     [Serializable]
     public class User : IEquatable<User>, ICloneable
     {
-        public int UID { get; set; }
+        public int Uid { get; set; }
 
         public string Email { get; set; }
 
@@ -29,7 +29,7 @@ namespace Skylabs.Lobby
 
         public User()
         {
-            UID = -1;
+            Uid = -1;
             Email = "";
             Password = "";
             DisplayName = "";
@@ -40,7 +40,7 @@ namespace Skylabs.Lobby
 
         public bool Equals(User u)
         {
-            return (UID == u.UID);
+            return (Uid == u.Uid);
         }
 
         public byte[] Serialize()
@@ -67,12 +67,8 @@ namespace Skylabs.Lobby
 
         public object Clone()
         {
-            User ret = new User();
-            ret.Email = Email;
-            ret.UID = UID;
-            ret.Password = Password;
-            ret.Level = Level;
-            ret.DisplayName = DisplayName;
+            User ret = new User
+                           {Email = Email, Uid = Uid, Password = Password, Level = Level, DisplayName = DisplayName};
             return ret;
         }
 

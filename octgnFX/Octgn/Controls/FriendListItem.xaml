@@ -34,10 +34,7 @@
         </Grid>
     </Border>
     <UserControl.Resources>
-        <Color x:Key="gstopsel1" A="0xFF" R="0xFF" G="0xFF" B="0xff" />
-        <Color x:Key="gstopsel2" A="0xFF" R="0xFF" G="0xFF" B="0xff"/>
-        <Color x:Key="gstopsel3" A="0xFF" R="0xFF" G="0xFF" B="0xff"/>
-        <LinearGradientBrush x:Key="ListItemBackground" EndPoint="0.5,1" StartPoint="0.5,0">
+      <LinearGradientBrush x:Key="ListItemBackground" EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="Transparent" Offset="0"/>
             <GradientStop Color="Transparent" Offset="0.65" />
             <GradientStop Color="Transparent" Offset="1" />

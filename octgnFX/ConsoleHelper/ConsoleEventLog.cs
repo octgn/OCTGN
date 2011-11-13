@@ -10,21 +10,21 @@ namespace Skylabs.ConsoleHelper
     public class ConsoleEventLog
     {
         public delegate void EventEventDelegate(ConsoleEvent e);
-        public static event EventEventDelegate eAddEvent = null;
+        public static event EventEventDelegate EAddEvent = null;
 
-        public static List<ConsoleEvent> Events { get { return _Events; } set { _Events = value; } }
+        public static List<ConsoleEvent> Events { get { return _events; } set { _events = value; } }
 
-        private static List<ConsoleEvent> _Events = new List<ConsoleEvent>();
+        private static List<ConsoleEvent> _events = new List<ConsoleEvent>();
 
-        public static void addEvent(ConsoleEvent con, Boolean writeToConsole)
+        public static void AddEvent(ConsoleEvent con, Boolean writeToConsole)
         {
             Events.Add(con);
             if(writeToConsole)
-                con.writeEvent(false);
-            if(eAddEvent != null)
+                con.WriteEvent(false);
+            if(EAddEvent != null)
             {
-                if(eAddEvent.GetInvocationList().Length != 0)
-                    eAddEvent.Invoke(con);
+                if(EAddEvent.GetInvocationList().Length != 0)
+                    EAddEvent.Invoke(con);
             }
         }
 
@@ -34,12 +34,10 @@ namespace Skylabs.ConsoleHelper
             {
                 using(Stream stream = File.Open(filename, FileMode.Create, FileAccess.ReadWrite, FileShare.Write))
                 {
-                    XmlSerializer xs;
-                    XmlTextWriter xmlTextWriter = new XmlTextWriter(stream, Encoding.ASCII);
-                    xmlTextWriter.Formatting = Formatting.Indented;
-                    xmlTextWriter.Indentation = 4;
+                    XmlTextWriter xmlTextWriter = new XmlTextWriter(stream, Encoding.ASCII)
+                                                      {Formatting = Formatting.Indented, Indentation = 4};
                     List<Type> cTypes = new List<Type>();
-                    foreach(ConsoleEvent c in ConsoleEventLog.Events)
+                    foreach(ConsoleEvent c in Events)
                     {
                         bool foundit = false;
                         foreach(Type t in cTypes)
@@ -53,8 +51,8 @@ namespace Skylabs.ConsoleHelper
                         if(!foundit)
                             cTypes.Add(c.GetType());
                     }
-                    xs = new XmlSerializer(ConsoleEventLog.Events.GetType(), new XmlAttributeOverrides(), cTypes.ToArray(), new XmlRootAttribute("Events"), "Skylabs.olobby");
-                    xs.Serialize(xmlTextWriter, ConsoleEventLog.Events);
+                    XmlSerializer xs = new XmlSerializer(Events.GetType(), new XmlAttributeOverrides(), cTypes.ToArray(), new XmlRootAttribute("Events"), "Skylabs.olobby");
+                    xs.Serialize(xmlTextWriter, Events);
                 }
             }
             catch(Exception e)

@@ -24,7 +24,7 @@ namespace Octgn.Controls
 
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            this.Focus();
+            Focus();
         }
 
         private void imgDismiss_MouseUp(object sender, MouseButtonEventArgs e)

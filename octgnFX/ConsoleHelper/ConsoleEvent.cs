@@ -1,6 +1,4 @@
 ﻿using System;
-
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace Skylabs.ConsoleHelper
@@ -10,7 +8,7 @@ namespace Skylabs.ConsoleHelper
     {
         //[XmlIgnore()]
         //public ConsoleColor Color { get; set; }
-        [XmlIgnore()]
+        [XmlIgnore]
         public string Header { get; set; }
 
         [XmlElement("message")]
@@ -38,18 +36,18 @@ namespace Skylabs.ConsoleHelper
             Date = DateTime.Now;
         }
 
-        public String getConsoleString()
+        public String GetConsoleString()
         {
             return Header + Message;
         }
 
-        public void writeEvent(Boolean addToEventLog)
+        public void WriteEvent(Boolean addToEventLog)
         {
             //Console.ForegroundColor = Color;
-            ConsoleWriter.writeLine(Header + Message, false);
-            ConsoleWriter.writeCT();
+            ConsoleWriter.WriteLine(Header + Message, false);
+            ConsoleWriter.WriteCt();
             if(addToEventLog)
-                ConsoleEventLog.addEvent(this, false);
+                ConsoleEventLog.AddEvent(this, false);
         }
     }
 }

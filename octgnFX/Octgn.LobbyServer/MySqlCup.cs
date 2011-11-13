@@ -9,39 +9,41 @@ namespace Octgn.LobbyServer
 {
     public class MySqlCup
     {
-        public string DBUser { get; private set; }
+        public string DbUser { get; private set; }
 
-        public string DBPass { get; private set; }
+        public string DbPass { get; private set; }
 
-        public string DBHost { get; private set; }
+        public string DbHost { get; private set; }
 
-        public string DBName { get; private set; }
+        public string DbName { get; private set; }
 
         public string ConnectionString
         {
             get
             {
-                MySql.Data.MySqlClient.MySqlConnectionStringBuilder sb = new MySql.Data.MySqlClient.MySqlConnectionStringBuilder();
-                sb.Database = DBName;
-                sb.UserID = DBUser;
-                sb.Password = DBPass;
-                sb.Server = DBHost;
+                MySqlConnectionStringBuilder sb = new MySqlConnectionStringBuilder
+                                                                             {
+                                                                                 Database = DbName,
+                                                                                 UserID = DbUser,
+                                                                                 Password = DbPass,
+                                                                                 Server = DbHost
+                                                                             };
                 return sb.ToString();
             }
         }
 
         public MySqlCup(string user, string pass, string host, string db)
         {
-            DBUser = user;
-            DBPass = pass;
-            DBHost = host;
-            DBName = db;
+            DbUser = user;
+            DbPass = pass;
+            DbHost = host;
+            DbName = db;
         }
 
         /// <summary>
         /// Is the current user banned?
         /// </summary>
-        /// <param name="user">user</param>
+        /// <param name="uid">User ID</param>
         /// <param name="c">client</param>
         /// <returns>-1 if not banned. Timestamp of ban end if banned. Timestamp can be converted to DateTime with fromPHPTime.</returns>
         public int IsBanned(int uid, Client c)
@@ -72,19 +74,21 @@ namespace Octgn.LobbyServer
                             List<Ban> bans = new List<Ban>();
                             while(dr.Read())
                             {
-                                Ban b = new Ban();
+                                Ban b = new Ban
+                                            {
+                                                Bid = dr.GetInt32("bid"),
+                                                Uid = dr.GetInt32("uid"),
+                                                EndTime = dr.GetInt32("end"),
+                                                Ip = dr.GetString("ip")
+                                            };
 
-                                b.BID = dr.GetInt32("bid");
-                                b.UID = dr.GetInt32("uid");
-                                b.EndTime = dr.GetInt32("end");
-                                b.IP = dr.GetString("ip");
                                 bans.Add(b);
                             }
                             dr.Close();
                             foreach(Ban b in bans)
                             {
-                                string bid = b.BID.ToString();
-                                DateTime endtime = Skylabs.ValueConverters.fromPHPTime(b.EndTime);
+                                string bid = b.Bid.ToString();
+                                DateTime endtime = Skylabs.ValueConverters.FromPhpTime(b.EndTime);
                                 if(DateTime.Now >= endtime)
                                 {
                                     DeleteRow(con, "bans", "bid", bid);
@@ -107,7 +111,7 @@ namespace Octgn.LobbyServer
             }
             catch(MySqlException me)
             {
-                ConsoleEventLog.addEvent(new ConsoleEventError(me.Message, me), false);
+                ConsoleEventLog.AddEvent(new ConsoleEventError(me.Message, me), false);
 #if(DEBUG)
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
@@ -151,13 +155,15 @@ namespace Octgn.LobbyServer
                         {
                             if(dr.Read())
                             {
-                                ret = new User();
-                                ret.Email = dr.GetString("email");
-                                ret.DisplayName = dr.GetString("name");
-                                ret.UID = dr.GetInt32("uid");
-                                ret.CustomStatus = dr.GetString("status");
-                                ret.Status = UserStatus.Unknown;
-                                ret.Level = (UserLevel)dr.GetInt32("level");
+                                ret = new User
+                                          {
+                                              Email = dr.GetString("email"),
+                                              DisplayName = dr.GetString("name"),
+                                              Uid = dr.GetInt32("uid"),
+                                              CustomStatus = dr.GetString("status"),
+                                              Status = UserStatus.Unknown,
+                                              Level = (UserLevel) dr.GetInt32("level")
+                                          };
                             }
                             dr.Close();
                         }
@@ -167,7 +173,7 @@ namespace Octgn.LobbyServer
             }
             catch(Exception ex)
             {
-                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
+                ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
             }
             return ret;
         }
@@ -192,13 +198,15 @@ namespace Octgn.LobbyServer
                         {
                             if(dr.Read())
                             {
-                                ret = new User();
-                                ret.Email = dr.GetString("email");
-                                ret.DisplayName = dr.GetString("name");
-                                ret.UID = dr.GetInt32("uid");
-                                ret.CustomStatus = dr.GetString("status");
-                                ret.Status = UserStatus.Unknown;
-                                ret.Level = (Skylabs.Lobby.UserLevel)dr.GetInt32("level");
+                                ret = new User
+                                          {
+                                              Email = dr.GetString("email"),
+                                              DisplayName = dr.GetString("name"),
+                                              Uid = dr.GetInt32("uid"),
+                                              CustomStatus = dr.GetString("status"),
+                                              Status = UserStatus.Unknown,
+                                              Level = (UserLevel) dr.GetInt32("level")
+                                          };
                             }
                             dr.Close();
                         }
@@ -208,7 +216,7 @@ namespace Octgn.LobbyServer
             }
             catch(Exception ex)
             {
-                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
+                ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
             }
             return ret;
         }
@@ -237,7 +245,7 @@ namespace Octgn.LobbyServer
             }
             catch(Exception ex)
             {
-                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
+                ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
             }
             return false;
         }
@@ -266,6 +274,7 @@ namespace Octgn.LobbyServer
             }
             catch(Exception e)
             {
+                //TODO Should have some sort of logging here.
             }
         }
 
@@ -295,6 +304,7 @@ namespace Octgn.LobbyServer
             }
             catch(Exception e)
             {
+                //TODO Should have some sort of logging here.
             }
         }
 
@@ -323,6 +333,7 @@ namespace Octgn.LobbyServer
             }
             catch(Exception e)
             {
+                //TODO Should have some sort of logging here.
             }
         }
 
@@ -386,7 +397,7 @@ namespace Octgn.LobbyServer
             }
             catch(Exception ex)
             {
-                ConsoleEventLog.addEvent(new ConsoleEventError(ex.Message, ex), false);
+                ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
             }
             return null;
         }

@@ -64,7 +64,7 @@ namespace Octgn.Controls
 
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            this.Focus();
+            Focus();
         }
     }
 }
