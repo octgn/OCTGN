@@ -18,7 +18,7 @@
       <Value Profile="(Default)">lobby</Value>
     </Setting>
     <Setting Name="dbPass" Type="System.String" Scope="User">
-      <Value Profile="(Default)">E5MNDC9ZEN36NWeD</Value>
+      <Value Profile="(Default)">8BAtKPVrzFqEGjdj</Value>
     </Setting>
     <Setting Name="db" Type="System.String" Scope="User">
       <Value Profile="(Default)">lobby</Value>

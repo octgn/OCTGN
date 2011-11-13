@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
+using Google.GData.Client;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
 
@@ -97,12 +98,12 @@ namespace Skylabs.Lobby
                                                   sm.AddData("status", status);
                                                   WriteMessage(sm);
                                               }
-                                              catch(Google.GData.Client.CaptchaRequiredException ce)
+                                              catch(CaptchaRequiredException ce)
                                               {
                                                   _mCaptchaToken = ce.Token;
                                                   if(OnCaptchaRequired != null) OnCaptchaRequired.Invoke("https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
                                               }
-                                              catch(Google.GData.Client.AuthenticationException re)
+                                              catch(AuthenticationException re)
                                               {
                                                   string cu = (string)re.Data["CaptchaUrl"];
                                                   onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
