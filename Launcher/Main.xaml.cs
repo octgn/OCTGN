@@ -5,6 +5,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Microsoft.Windows.Controls.Ribbon;
+using Skylabs.Net;
 
 namespace Octgn.Launcher
 {
@@ -97,6 +98,20 @@ namespace Octgn.Launcher
                         break;
                 }
             }
+        }
+
+        private void Quit_Click(object sender, RoutedEventArgs e)
+        {
+            Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
+            Program.Exit();
+        }
+
+        private void LogOff_Click(object sender, RoutedEventArgs e)
+        {
+            Program.LauncherWindow = new LauncherWindow();
+            Program.LauncherWindow.Show();
+            Program.ClientWindow.Close();
+            Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);            
         }
     }
 }
