@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Octgn.Properties;
@@ -67,16 +68,20 @@ namespace Octgn.Launcher
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            if(!isLoggingIn)
+            DoLogin();
+        }
+        private void DoLogin()
+        {
+            if (!isLoggingIn)
             {
                 isLoggingIn = true;
                 Start_Spinning();
 
                 bError.Visibility = Visibility.Hidden;
                 bool c = Program.lobbyClient.Connected;
-                if(!c)
+                if (!c)
                     c = Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
-                if(c)
+                if (c)
                 {
                     Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password, "", UserStatus.Online);
                 }
@@ -87,7 +92,6 @@ namespace Octgn.Launcher
                 }
             }
         }
-
         private void lobbyClient_OnCaptchaRequired(string Fullurl, string Imageurl)
         {
             Dispatcher.Invoke((Action)(() =>
@@ -211,7 +215,11 @@ namespace Octgn.Launcher
 
         private void passwordBox1_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(cbSavePassword.IsChecked == true)
+            if (e.Key == Key.Enter)
+            {
+                DoLogin();
+            }
+            else if (cbSavePassword.IsChecked == true)
             {
                 cbSavePassword.IsChecked = false;
                 Settings.Default.Password = "";
