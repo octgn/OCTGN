@@ -64,6 +64,11 @@ namespace Octgn.Controls
 
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            //Focus();
+        }
+
+        private void flistitem_MouseUp(object sender, MouseButtonEventArgs e)
+        {
             Focus();
         }
     }
