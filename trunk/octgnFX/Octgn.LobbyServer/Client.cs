@@ -172,10 +172,10 @@ namespace Skylabs.LobbyServer
             email = email.ToLower();
             Client c = Parent.GetOnlineClientByEmail(email);
             //If user exists and is online
+            Cup.AddFriendRequest(Me.Uid, email);
             if(c != null)
             {
                 SocketMessage smm = new SocketMessage("friendrequest");
-                Cup.AddFriendRequest(Me.Uid, email);
                 smm.AddData("user", Me);
                 c.WriteMessage(smm);
             }
