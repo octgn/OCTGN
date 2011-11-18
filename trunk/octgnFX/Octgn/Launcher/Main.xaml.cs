@@ -98,7 +98,7 @@ namespace Octgn.Launcher
                         break;
                     case "Sets":
                         GameList gl = new GameList();
-                        gl.OnGameDoubleClick += new EventHandler(gl_OnGameDoubleClick);
+                        gl.OnGameClick += new EventHandler(gl_OnGameDoubleClick);
                         frame1.Navigate(gl);
                         break;
                     case "!":
@@ -141,7 +141,7 @@ namespace Octgn.Launcher
         {
             _currentSetList = null;
             GameList gl = new GameList();
-            gl.OnGameDoubleClick += new EventHandler(gl_OnGameDoubleClick);
+            gl.OnGameClick += new EventHandler(gl_OnGameDoubleClick);
             frame1.Navigate(gl);
         }
 

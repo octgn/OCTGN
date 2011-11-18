@@ -21,7 +21,7 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class GameList : Page
     {
-        public event EventHandler OnGameDoubleClick;
+        public event EventHandler OnGameClick;
         public GameList()
         {
             InitializeComponent();
@@ -34,9 +34,19 @@ namespace Octgn.Launcher
             {
                 GameListItem gs = new GameListItem();
                 gs.Game = g;
-                gs.MouseDoubleClick += new MouseButtonEventHandler(gs_MouseDoubleClick);
+                //gs.MouseDoubleClick += new MouseButtonEventHandler(gs_MouseDoubleClick);
+                gs.MouseUp += new MouseButtonEventHandler(gs_MouseUp);
                 stackPanel1.Children.Add(gs);
             }            
+        }
+
+        void gs_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            GameListItem gs = (GameListItem)sender;
+            if (OnGameClick != null)
+            {
+                OnGameClick.Invoke(gs.Game, new EventArgs());
+            }
         }
         void GamesRepository_GameInstalled(object sender, EventArgs e)
         {
@@ -46,9 +56,9 @@ namespace Octgn.Launcher
         void gs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             GameListItem gs = (GameListItem) sender;
-            if (OnGameDoubleClick != null)
+            if (OnGameClick != null)
             {
-                OnGameDoubleClick.Invoke(gs.Game,new EventArgs());
+                OnGameClick.Invoke(gs.Game,new EventArgs());
             }
         }
         private void Page_Loaded(object sender, RoutedEventArgs e)
