@@ -150,12 +150,12 @@ namespace Skylabs.LobbyServer
                     c.Friends.Add(Me);
                 }
                 //Add to database
-                Cup.AddFriend(uid, requestee.Uid);
-                Cup.AddFriend(requestee.Uid, uid);
+                Cup.AddFriend(Me.Uid, requestee.Uid);
             }
             //Remove any database friend requests
             Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
             Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
+            this.SendFriendsList();
         }
 
         private void AddFriend(SocketMessage sm)
@@ -175,12 +175,23 @@ namespace Skylabs.LobbyServer
             if(c != null)
             {
                 SocketMessage smm = new SocketMessage("friendrequest");
-                smm.AddData("uid", Me.Uid);
+                Cup.AddFriendRequest(Me.Uid, email);
+                smm.AddData("user", Me);
                 c.WriteMessage(smm);
             }
-            else
+        }
+
+        private void SendFriendRequests()
+        {
+            List<int> r = Cup.GetFriendRequests(Me.Email);
+            if (r == null)
+                return;
+            foreach (int e in r)
             {
-                Cup.AddFriendRequest(Me.Uid, email);
+                SocketMessage smm = new SocketMessage("friendrequest");
+                User u = Cup.GetUser(e);
+                smm.AddData("user", u);
+                WriteMessage(smm);
             }
         }
 
@@ -267,6 +278,7 @@ namespace Skylabs.LobbyServer
                         Parent.OnUserEvent(stat, this);
 
                         SendUsersOnline();
+                        SendFriendRequests();
                         return;
                     }
                     sm = new SocketMessage("banned");

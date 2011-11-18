@@ -46,10 +46,13 @@ namespace Skylabs.Lobby
 
         public List<User> OnlineList { get; private set; }
 
+        public List<Notification> Notifications { get; set; } 
+
         public LobbyClient()
         {
             FriendList = new List<User>();
             OnlineList = new List<User>();
+            Notifications = new List<Notification>();
         }
 
         public LobbyClient(TcpClient c)
@@ -57,6 +60,7 @@ namespace Skylabs.Lobby
         {
             FriendList = new List<User>();
             OnlineList = new List<User>();
+            Notifications = new List<Notification>();
         }
 
         public User GetOnlineUser(int uid)
@@ -117,14 +121,6 @@ namespace Skylabs.Lobby
             }
         }
 
-        public void AcceptFriendRequest(int uid, bool accept)
-        {
-            SocketMessage sm = new SocketMessage("acceptfriend");
-            sm.AddData("uid", uid);
-            sm.AddData("accept", accept);
-            WriteMessage(sm);
-        }
-
         public override void OnMessageReceived(Net.SocketMessage sm)
         {
             User u;
@@ -155,6 +151,7 @@ namespace Skylabs.Lobby
                     break;
                 case "friendrequest":
                     u = (User)sm.Data[0].Value;
+                    Notifications.Add(new FriendRequestNotification(u,this));
                     if(OnFriendRequest != null)
                         OnFriendRequest(u);
                     break;

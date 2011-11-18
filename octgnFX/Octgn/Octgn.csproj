@@ -173,6 +173,9 @@
     <Compile Include="Controls\CircularProgressBar.xaml.cs">
       <DependentUpon>CircularProgressBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FriendRequestNotification.xaml.cs">
+      <DependentUpon>FriendRequestNotification.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FriendListItem.xaml.cs">
       <DependentUpon>FriendListItem.xaml</DependentUpon>
     </Compile>
@@ -229,6 +232,12 @@
     <Compile Include="IRC\User.cs" />
     <Compile Include="Launcher\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\AddFriendPage.xaml.cs">
+      <DependentUpon>AddFriendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\NotificationList.xaml.cs">
+      <DependentUpon>NotificationList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\SetList.xaml.cs">
       <DependentUpon>SetList.xaml</DependentUpon>
@@ -563,6 +572,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\FriendRequestNotification.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\FriendListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -614,6 +627,14 @@
     <Page Include="Launcher\ContactList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\AddFriendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\NotificationList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Launcher\SetList.xaml">
       <Generator>MSBuild:Compile</Generator>
