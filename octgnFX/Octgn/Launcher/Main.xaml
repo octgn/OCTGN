@@ -13,7 +13,7 @@
 
         <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="Ribbon_SelectionChanged">
             <ribbon:Ribbon.ApplicationMenu>
-                <ribbon:RibbonApplicationMenu >
+                <ribbon:RibbonApplicationMenu IsMainMenu="True">
                     <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOff_Click"></ribbon:RibbonApplicationMenuItem>
                     <ribbon:RibbonApplicationMenuItem x:Name="Quit" Header="Quit" Click="Quit_Click"></ribbon:RibbonApplicationMenuItem>
                 </ribbon:RibbonApplicationMenu>
@@ -22,6 +22,11 @@
                 <ribbon:RibbonQuickAccessToolBar>
                 </ribbon:RibbonQuickAccessToolBar>
             </ribbon:Ribbon.QuickAccessToolBar>
+            <ribbon:RibbonTab Header="Lobby">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton x:Name="bAddFriend" Label="Add A Friend" LargeImageSource="/Resources/Icons/user_add.png" Click="bAddFriend_Click" />
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="Games">
                 <ribbon:RibbonGroup>
                     <ribbon:RibbonButton x:Name="bDeckEditor" Label="Deck Editor" LargeImageSource="/Resources/Icons/page_edit.png" Click="bDeckEditor_Click" />
@@ -43,11 +48,6 @@
             </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="!">
 
-            </ribbon:RibbonTab>
-            <ribbon:RibbonTab Header="Lobby">
-                <ribbon:RibbonGroup>
-                    <ribbon:RibbonButton Label="Add A Friend" LargeImageSource="/Resources/Icons/user_add.png"/>
-                </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
         </ribbon:Ribbon>
         <Frame Grid.Row="1" HorizontalAlignment="Stretch" Name="frame1" VerticalAlignment="Stretch"  Navigating="frame_Navigating" NavigationUIVisibility="Hidden" />
