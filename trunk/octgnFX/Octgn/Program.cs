@@ -19,6 +19,7 @@ namespace Octgn
         public static GameSettings GameSettings = new GameSettings();
         public static Octgn.Launcher.Main ClientWindow;
         public static Launcher.LauncherWindow LauncherWindow;
+        public static DeckBuilder.DeckBuilderWindow DeckEditor;
         internal static bool IsGameRunning = false;
         // TODO: Refactoring > those paths belong to the Octgn.Data or somewhere else
         internal readonly static string BasePath;

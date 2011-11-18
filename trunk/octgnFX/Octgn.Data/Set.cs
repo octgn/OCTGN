@@ -28,6 +28,10 @@ namespace Octgn.Data
       }
     }
 
+    public override string ToString()
+    {
+        return Name + " " + "(" + Version.ToString()+")";
+    }
 		internal Set()
 		{ }
 
