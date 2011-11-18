@@ -102,7 +102,7 @@ namespace Octgn.Launcher
                         frame1.Navigate(gl);
                         break;
                     case "!":
-
+                        frame1.Navigate(new NotificationList());
                         break;
                 }
             }
@@ -184,7 +184,7 @@ namespace Octgn.Launcher
 
         private void bAddFriend_Click(object sender, RoutedEventArgs e)
         {
-
+            frame1.Navigate(new AddFriendPage());
         }
     }
 }
