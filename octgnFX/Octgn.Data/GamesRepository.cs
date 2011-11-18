@@ -16,8 +16,9 @@ namespace Octgn.Data
     private List<string> missingFiles;
     private string masterDbPath;
     private ObservableCollection<Game> cachedGames, allCachedGames;
+      public event EventHandler GameInstalled;
 
-    static GamesRepository()
+      static GamesRepository()
     {
       BasePath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -112,6 +113,8 @@ namespace Octgn.Data
       var existingGame = cachedGames.FirstOrDefault(g => g.Id == game.Id);
       if (existingGame != null) cachedGames.Remove(existingGame);
       cachedGames.Add(game);
+        if(GameInstalled != null)
+            GameInstalled.Invoke(game,new EventArgs());
     }
 
     #region DB creation

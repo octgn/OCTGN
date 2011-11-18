@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Microsoft.Windows.Controls.Ribbon;
+using Octgn.DeckBuilder;
 using Skylabs.Net;
+using System.IO;
 
 namespace Octgn.Launcher
 {
@@ -17,7 +20,7 @@ namespace Octgn.Launcher
         private bool                        _allowDirectNavigation = false;
         private NavigatingCancelEventArgs   _navArgs = null;
         private Duration                    _duration = new Duration(TimeSpan.FromSeconds(1));
-
+        private SetList _currentSetList;
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
             if(Content != null && !_allowDirectNavigation)
@@ -90,14 +93,26 @@ namespace Octgn.Launcher
                     case "Lobby":
                         frame1.Navigate(new ContactList());
                         break;
-                    case "Octgn":
-                        frame1.Navigate(new MainMenu());
+                    case "Games":
+                        frame1.Navigate(new GameList());
+                        break;
+                    case "Sets":
+                        GameList gl = new GameList();
+                        gl.OnGameDoubleClick += new EventHandler(gl_OnGameDoubleClick);
+                        frame1.Navigate(gl);
                         break;
                     case "!":
 
                         break;
                 }
             }
+        }
+
+        void gl_OnGameDoubleClick(object sender, EventArgs e)
+        {
+            Data.Game g = sender as Data.Game;
+            _currentSetList = new SetList(g);
+            frame1.Navigate(_currentSetList);
         }
 
         private void Quit_Click(object sender, RoutedEventArgs e)
@@ -108,10 +123,102 @@ namespace Octgn.Launcher
 
         private void LogOff_Click(object sender, RoutedEventArgs e)
         {
+            if (Program.DeckEditor != null)
+                Program.DeckEditor.Close();
             Program.LauncherWindow = new LauncherWindow();
             Program.LauncherWindow.Show();
             Program.ClientWindow.Close();
             Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);            
+        }
+
+        private void RibbonButton_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.Filter = "Game definition files (*.o8g)|*.o8g";
+            if (ofd.ShowDialog() != true) return;
+
+            //Fix def filename
+            String newFilename = Uri.UnescapeDataString(ofd.FileName);
+            if (!newFilename.ToLower().Equals(ofd.FileName.ToLower()))
+            {
+                File.Move(ofd.FileName, newFilename);
+            }
+
+            try
+            {
+                // Open the archive
+                Definitions.GameDef game = Definitions.GameDef.FromO8G(newFilename);
+                if (!game.CheckVersion()) return;
+
+                // Check if the game already exists
+                if (Program.GamesRepository.Games.Any(g => g.Id == game.Id))
+                    if (MessageBox.Show("This game already exists.\r\nDo you want to overwrite it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+                        return;
+
+                var gameData = new Data.Game()
+                {
+                    Id = game.Id,
+                    Name = game.Name,
+                    Filename = newFilename,
+                    Version = game.Version,
+                    CardWidth = game.CardDefinition.Width,
+                    CardHeight = game.CardDefinition.Height,
+                    CardBack = game.CardDefinition.back,
+                    DeckSections = game.DeckDefinition.Sections.Keys,
+                    SharedDeckSections = game.SharedDeckDefinition == null ? null : game.SharedDeckDefinition.Sections.Keys
+                };
+                Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
+            }
+            catch (System.IO.FileFormatException ex)
+            {
+                //Removed ex.Message. The user doesn't need to see the exception
+                MessageBox.Show("Your game definition file is corrupt. Please redownload it.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            _currentSetList = null;
+            GameList gl = new GameList();
+            gl.OnGameDoubleClick += new EventHandler(gl_OnGameDoubleClick);
+            frame1.Navigate(gl);
+        }
+
+        private void RibbonButton_Click_2(object sender, RoutedEventArgs e)
+        {
+            if(_currentSetList != null)
+            _currentSetList.Deleted_Selected();
+        }
+
+        private void bInstallSets_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentSetList != null)
+            _currentSetList.Install_Sets();
+        }
+
+        private void bPatchSets_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentSetList != null)
+            _currentSetList.Patch_Selected();
+        }
+
+        private void bDeckEditor_Click(object sender, RoutedEventArgs e)
+        {
+            if (Program.GamesRepository.Games.Count == 0)
+            {
+                MessageBox.Show("You have no game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (Program.DeckEditor == null)
+            {
+                Program.DeckEditor = new DeckBuilderWindow();
+                Program.DeckEditor.Show();
+            }
+            else if (Program.DeckEditor.IsVisible == false)
+            {
+                Program.DeckEditor = new DeckBuilderWindow();
+                Program.DeckEditor.Show();                
+            }
         }
     }
 }

@@ -22,22 +22,31 @@
                 <ribbon:RibbonQuickAccessToolBar>
                 </ribbon:RibbonQuickAccessToolBar>
             </ribbon:Ribbon.QuickAccessToolBar>
+            <ribbon:RibbonTab Header="Games">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton x:Name="bDeckEditor" Label="Deck Editor" LargeImageSource="/Resources/Icons/page_edit.png" Click="bDeckEditor_Click" />
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton Label="Install Game" LargeImageSource="/Resources/Icons/ruby_Add.png" Click="RibbonButton_Click" />
+                    <ribbon:RibbonButton Label="Remove Game" LargeImageSource="/Resources/Icons/ruby_delete.png" IsEnabled="False" />
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+            <ribbon:RibbonTab Header="Sets">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton Label="Select Game" LargeImageSource="/Resources/Icons/bullet_arrow_down.png" Click="RibbonButton_Click_1" />
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton x:Name ="bInstallSets" Label="Install Sets" LargeImageSource="/Resources/Icons/image_add.png" Click="bInstallSets_Click" />
+                    <ribbon:RibbonButton x:Name="bRemoveSets" Label="Remove Sets" LargeImageSource="/Resources/Icons/image_delete.png" Click="RibbonButton_Click_2" />
+                    <ribbon:RibbonButton x:Name="bPatchSets" Label="Patch All Sets" LargeImageSource="/Resources/Icons/image_link.png" Click="bPatchSets_Click" />
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="!">
 
             </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="Lobby">
                 <ribbon:RibbonGroup>
                     <ribbon:RibbonButton Label="Add A Friend" LargeImageSource="/Resources/Icons/user_add.png"/>
-                </ribbon:RibbonGroup>
-            </ribbon:RibbonTab>
-            <ribbon:RibbonTab Header="Octgn">
-                <ribbon:RibbonGroup>
-                    <ribbon:RibbonButton Label="Host A Game" LargeImageSource="/Resources/Icons/Cards.png"/>
-
-                </ribbon:RibbonGroup>
-                <ribbon:RibbonGroup>
-                    <ribbon:RibbonButton Label="Deck Editor" LargeImageSource="/Resources/Icons/page_edit.png"/>
-                    <ribbon:RibbonButton Label="Install Game" LargeImageSource="/Resources/Icons/ruby_Add.png"/>
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
         </ribbon:Ribbon>

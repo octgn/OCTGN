@@ -176,6 +176,9 @@
     <Compile Include="Controls\FriendListItem.xaml.cs">
       <DependentUpon>FriendListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GameListItem.xaml.cs">
+      <DependentUpon>GameListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\NotificationListItem.xaml.cs">
       <DependentUpon>NotificationListItem.xaml</DependentUpon>
     </Compile>
@@ -226,6 +229,12 @@
     <Compile Include="IRC\User.cs" />
     <Compile Include="Launcher\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\SetList.xaml.cs">
+      <DependentUpon>SetList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\GameList.xaml.cs">
+      <DependentUpon>GameList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\InstallNoticeDialog.xaml.cs">
       <DependentUpon>InstallNoticeDialog.xaml</DependentUpon>
@@ -498,6 +507,11 @@
     <Resource Include="Resources\statusDND.png" />
     <Resource Include="Resources\statusOffline.png" />
     <Resource Include="Resources\statusOnline.png" />
+    <Resource Include="Resources\Icons\ruby_delete.png" />
+    <Resource Include="Resources\Icons\bullet_arrow_down.png" />
+    <Resource Include="Resources\Icons\image_delete.png" />
+    <Resource Include="Resources\Icons\image_add.png" />
+    <Resource Include="Resources\Icons\image_link.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -553,6 +567,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\GameListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\NotificationListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -594,6 +612,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\ContactList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\SetList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\GameList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -7,6 +7,7 @@
     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     WindowTitle="OCTGN - Manage games" Height="400"
     >
+    
 	<Page.Resources>
     <CollectionViewSource Source="{Binding AllGames, Source={x:Static oct:Program.GamesRepository}}" x:Key="gamesDataView">
       <CollectionViewSource.SortDescriptions>
@@ -76,12 +77,12 @@
           <Run Text="{Binding Version, StringFormat= (v. \{0\})}" FontSize="12" />
         </TextBlock>
 
-        <TextBlock Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Margin="5"
+        <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Margin="5"
 						   Text="Card sets" />
 				
 				<Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Margin="5" Style="{StaticResource PanelControl}">
           <ListBox x:Name="setsList"  
-							     ItemsSource="{Binding Source={StaticResource setsView}}">
+							     ItemsSource="{Binding Source={StaticResource setsView}}" >
             <ListBox.ItemTemplate>
               <DataTemplate>
                 <TextBlock ToolTipService.ToolTip="{Binding Path=PackageName}">
