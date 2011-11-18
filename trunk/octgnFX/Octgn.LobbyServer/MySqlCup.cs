@@ -308,6 +308,45 @@ namespace Octgn.LobbyServer
             }
         }
 
+        public List<int> GetFriendRequests(string email)
+        {
+            if (email == null)
+                return null;
+            if (String.IsNullOrWhiteSpace(email))
+                return null;
+            List<int >ret = null;
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    MySqlCommand com = con.CreateCommand();
+                    com.CommandText = "SELECT * FROM friendrequests WHERE email=@email;";
+                    com.Prepare();
+                    com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
+                    com.Parameters["@email"].Value = email;
+                    using (MySqlDataReader dr = com.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            if(ret == null)
+                                ret = new List<int>();
+                            int uid = dr.GetInt32("uid");
+                            ret.Add(uid);
+                        }
+                        dr.Close();
+                    }
+                    con.Close();
+                    return ret;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return null;
+        }
+
         public void AddFriend(int useruid, int frienduid)
         {
             if(useruid <= -1 || frienduid <= -1)
