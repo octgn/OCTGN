@@ -28,7 +28,7 @@ namespace Octgn.Launcher
         protected void InstallGame(object sender, RoutedEventArgs e)
         {
             if(!Settings.Default.DontShowInstallNotice)
-                new InstallNoticeDialog { Owner = Application.Current.MainWindow }.ShowDialog();
+                new InstallNoticeDialog { Owner = Program.ClientWindow }.ShowDialog();
 
             // Get the definition file
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
@@ -77,7 +77,7 @@ namespace Octgn.Launcher
         private void InstallCards(object sender, RoutedEventArgs e)
         {
             if(!Settings.Default.DontShowInstallNotice)
-                new InstallNoticeDialog { Owner = Application.Current.MainWindow }.ShowDialog();
+                new InstallNoticeDialog { Owner = Program.ClientWindow }.ShowDialog();
 
             // Open the DB
             Data.Game gameDb = (Data.Game)gamesList.SelectedItem;
@@ -95,7 +95,7 @@ namespace Octgn.Launcher
             };
             if(ofd.ShowDialog() != true) return;
 
-            var wnd = new InstallSetsProgressDialog { Owner = Application.Current.MainWindow };
+            var wnd = new InstallSetsProgressDialog { Owner = Program.ClientWindow };
             ThreadPool.QueueUserWorkItem(_ =>
               {
                   int current = 0, max = ofd.FileNames.Length;
