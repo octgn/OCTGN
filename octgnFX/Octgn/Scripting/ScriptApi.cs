@@ -5,6 +5,7 @@ using System.Security;
 using System.Windows;
 using Octgn.Play;
 using Media = System.Windows.Media;
+using System.Net;
 
 namespace Octgn.Scripting
 {
@@ -439,6 +440,21 @@ namespace Octgn.Scripting
 
         public bool IsTwoSided()
         { return Program.GameSettings.UseTwoSidedTable; }
+
+        public string Web_Read(string url)
+        {
+            string result = "";
+            try
+            {
+                WebClient client = new WebClient();
+                result = client.DownloadString(url);
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            return result;
+        }
 
         #endregion Special APIs
     }

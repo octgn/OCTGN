@@ -22,6 +22,9 @@ def whisper(message):
 def rnd(min, max):
   return _api.Random(min, max)
 
+def webRead(url):
+  return _api.Web_Read(url)
+
 def confirm(message):
   return _api.Confirm(message)
 
