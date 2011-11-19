@@ -179,6 +179,7 @@ namespace Octgn.Server
                 return;
             }
             // Check if the versions are compatible
+#if !DEBUG
             if(clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor)
             {
                 XmlSenderStub rpc = new XmlSenderStub(sender, this);
@@ -187,6 +188,7 @@ namespace Octgn.Server
                 catch { }
                 return;
             }
+#endif
             // Check if we accept new players
             if(!acceptPlayers)
             {
