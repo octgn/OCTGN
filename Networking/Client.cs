@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Windows.Threading;
 using Octgn.Play;
+using System.Threading;
 
 
 namespace Octgn.Networking
@@ -23,6 +24,8 @@ namespace Octgn.Networking
         private XmlReceiveDelegate xmlHandler;      // Receive delegate when in xml mode
         private Server.IServerCalls rpc;
         private bool disposed = false;              // True when the client has been closed
+
+        private Thread PingThread;
 
         // Delegates definitions
         private delegate void BinaryReceiveDelegate(byte[] data);
@@ -66,10 +69,24 @@ namespace Octgn.Networking
             packetPos = 0;
             // Connect to the give address
             tcp.Connect(address, port);
+
+            PingThread = new Thread(DoPings);
+
             // Start waiting for incoming data
             tcp.GetStream().BeginRead(buffer, 0, 1024, Receive, null);
         }
-
+        private void DoPings()
+        {
+            while (!disposed)
+            {
+                lock (this)
+                {
+                    if (disposed) return;
+                    this.Rpc.Ping();
+                }
+                Thread.Sleep(2000);
+            }
+        }
         public void BeginConnect(EventHandler<ConnectedEventArgs> callback)
         {
             packetPos = 0;
