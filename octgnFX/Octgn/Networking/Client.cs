@@ -71,7 +71,7 @@ namespace Octgn.Networking
             tcp.Connect(address, port);
 
             PingThread = new Thread(DoPings);
-
+            PingThread.Start();
             // Start waiting for incoming data
             tcp.GetStream().BeginRead(buffer, 0, 1024, Receive, null);
         }

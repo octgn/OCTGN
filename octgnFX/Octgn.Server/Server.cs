@@ -13,6 +13,10 @@ namespace Octgn.Server
 		private Handler handler;            // Message handler
 		private List<Connection> clients = new List<Connection>();  // List of all the connected clients		
 
+	    private Thread ConnectionChecker;
+
+	    private bool closed = false;
+
 		#endregion
 
 		#region Public interface
@@ -20,14 +24,15 @@ namespace Octgn.Server
 		// Creates and starts a new server
 		public Server(int port, bool useIPv6, Guid gameId, Version gameVersion)
 		{
-      if (useIPv6)
-      {
-        tcp = new TcpListener(System.Net.IPAddress.IPv6Any, port);
-        tcp.AllowNatTraversal(true);
-      }
-      else
-        tcp = new TcpListener(System.Net.IPAddress.Any, port);
+            if (useIPv6)
+            {
+                tcp = new TcpListener(System.Net.IPAddress.IPv6Any, port);
+                tcp.AllowNatTraversal(true);
+            }
+            else
+                tcp = new TcpListener(System.Net.IPAddress.Any, port);
 			this.handler = new Handler(gameId, gameVersion);
+
 			Start();
 		}
 
@@ -35,6 +40,7 @@ namespace Octgn.Server
 		public void Stop()
 		{
 			// Stop the server and release resources
+		    closed = true;
 			try
 			{ tcp.Server.Close(); tcp.Stop(); }
 			catch
@@ -75,22 +81,49 @@ namespace Octgn.Server
 		// Called when a client gets disconnected
 		public bool Disconnected(TcpClient lost)
 		{
+		    bool ret = false;
 			lock (clients)
 			{
 				// Search the client
-				for (int i = 0; i < clients.Count; i++)
-					if (clients[i].client == lost)
-					{
-						// Remove it
-						clients[i].Disconnected();
-						return true;
-					}
+                foreach (Connection t in clients)
+                {
+                    if (t.client == lost)
+                    {
+                        // Remove it
+                        t.Disconnected();
+                        ret = true;
+                        break;
+                    }
+                }
 			}
-			// Client is not found
-			return false;
+			return ret;
 		}
 
-		// Main thread function: waits and accept incoming connections
+        private void CheckConnections()
+        {
+            while (!closed)
+            {
+                lock (clients)
+                {
+                    if (clients.Count == 0)
+                    {
+                        Stop();
+                    }
+                DoAgain:
+                    for (int i = 0; i < clients.Count; i++)
+                    {
+                        if (clients[i].disposed)
+                        {
+                            clients.RemoveAt(i);
+                            goto DoAgain;
+                        }
+                    }
+                }
+                Thread.Sleep(5000);
+            }
+        }
+
+	    // Main thread function: waits and accept incoming connections
 		private void Listen(object o)
 		{
 			// Retrieve the parameter
@@ -98,6 +131,8 @@ namespace Octgn.Server
 			// Start the server and signal it
 			tcp.Start();
 			started.Set();
+            ConnectionChecker = new Thread(CheckConnections);
+            ConnectionChecker.Start();
 			try
 			{
 				while (true)
@@ -124,7 +159,7 @@ namespace Octgn.Server
 			private byte[] packet = new byte[512];  // Buffer where received data is processed in packets
 			private int packetPos = 0;              // Current position in the packet buffer
 			private bool binary = false;            // Receives binary data ?
-			private bool disposed = false;          // Indicates if the connection has already been disposed
+			public bool disposed = false;          // Indicates if the connection has already been disposed
 		    private DateTime lastPing = DateTime.Now;
 
 		    private Thread PingThread;
