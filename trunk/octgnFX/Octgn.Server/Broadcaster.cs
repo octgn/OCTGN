@@ -89,6 +89,15 @@ namespace Octgn.Server
                 }
         }
 
+        public void Ping()
+        {
+            if (xml != null)
+                xml.Ping();
+            if (bin != null)
+                bin.Ping();
+            Send();
+        }
+
         public void Binary()
         {
             if(xml != null)

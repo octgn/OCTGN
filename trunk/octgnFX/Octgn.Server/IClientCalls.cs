@@ -61,5 +61,6 @@ namespace Octgn.Server
 		void LookAtBottom(byte player, int uid, int group, int count, bool look);
 		void StartLimited(byte player, Guid[] packs);
 		void CancelLimited(byte player);
+	    void Ping();
 	}
 }

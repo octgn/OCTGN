@@ -116,7 +116,7 @@ namespace Octgn.Server
 
 		#endregion
 
-		private class Connection
+		public class Connection
 		{
 			private Server server;                  // The containing server
 			internal readonly TcpClient client;     // The underlying Windows socket            
@@ -125,15 +125,41 @@ namespace Octgn.Server
 			private int packetPos = 0;              // Current position in the packet buffer
 			private bool binary = false;            // Receives binary data ?
 			private bool disposed = false;          // Indicates if the connection has already been disposed
+		    private DateTime lastPing = DateTime.Now;
+
+		    private Thread PingThread;
 
 			// C'tor
 			internal Connection(Server server, TcpClient client)
 			{
 				// Init fields
 				this.server = server; this.client = client;
+                //Start ping thread
+                PingThread = new Thread(DoPing);
+                PingThread.Start();
 				// Start reading
 				client.GetStream().BeginRead(buffer, 0, 512, Receive, null);
 			}
+
+            public void PingReceived()
+            {
+                lastPing = DateTime.Now;
+            }
+
+            private void DoPing()
+            {
+                while (!disposed)
+                {
+                    lock (this)
+                    {
+                        TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - lastPing.Ticks);
+                        if (ts.TotalSeconds > 5)
+                            Disconnect(); //TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
+                        if (disposed) return;
+                    }
+                    Thread.Sleep(1000);
+                }
+            }
 
 			// Callback when data is received
 			private void Receive(IAsyncResult ar)
@@ -197,7 +223,7 @@ namespace Octgn.Server
 						byte[] data = new byte[length - 4]; Array.Copy(packet, 4, data, 0, length - 4);
 						// Lock the handler, because it is not thread-safe
 						lock (server.handler)
-							server.handler.ReceiveMessage(data, client);
+							server.handler.ReceiveMessage(data, client,this);
 						// Adjust the packet pos and contents
 						packetPos -= length;
 						Array.Copy(packet, length, packet, 0, packetPos);

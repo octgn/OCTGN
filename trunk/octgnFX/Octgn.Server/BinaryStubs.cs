@@ -34,6 +34,20 @@ namespace Octgn.Server
             Send(stream.ToArray());
         }
 
+        public void Ping()
+        {
+            MemoryStream stream = new MemoryStream(512);
+            stream.Seek(4, SeekOrigin.Begin);
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(handler.muted);
+            writer.Write((byte)255);
+            writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+            writer.Write((int)stream.Length);
+            writer.Close();
+            Send(stream.ToArray());
+        }
+
         public void Binary()
         {
             MemoryStream stream = new MemoryStream(512);

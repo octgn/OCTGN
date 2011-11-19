@@ -38,6 +38,19 @@ namespace Octgn.Networking
             Send(sb.ToString());
         }
 
+        public void Ping()
+        {
+            StringBuilder sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+
+            writer.WriteStartElement("Ping");
+            if (Program.Client.Muted != 0)
+                writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
+            writer.WriteEndElement();
+            writer.Close();
+            Send(sb.ToString());
+        }
+
         public void IsAlternateImage(Card c, bool isAlternateImage)
         {
             StringBuilder sb = new StringBuilder();
