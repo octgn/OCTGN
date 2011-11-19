@@ -48,6 +48,7 @@ namespace Skylabs.LobbyServer
         {
 #if(DEBUG)
             System.Diagnostics.Debugger.Break();
+            //TODO Serialize and save to a file before release.
 
 #endif
         }

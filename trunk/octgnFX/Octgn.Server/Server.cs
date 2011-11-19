@@ -13,7 +13,11 @@ namespace Octgn.Server
 		private Handler handler;            // Message handler
 		private List<Connection> clients = new List<Connection>();  // List of all the connected clients		
 
+	    public event EventHandler OnStop;
+
 	    private Thread ConnectionChecker;
+
+	    private Thread ServerThread;
 
 	    private bool closed = false;
 
@@ -59,6 +63,8 @@ namespace Octgn.Server
 				else
 					break;
 			}
+            if(OnStop != null)
+                OnStop.Invoke(this,null);
 		}
 
 		#endregion
@@ -69,12 +75,12 @@ namespace Octgn.Server
 		private void Start()
 		{
 			// Creates a new thread for the server
-			Thread thread = new Thread(Listen);
-			thread.Name = "OCTGN.net Server";
+			ServerThread = new Thread(Listen);
+            ServerThread.Name = "OCTGN.net Server";
 			// Flag used to wait until the server is really started
 			ManualResetEvent started = new ManualResetEvent(false);
 			// Start the server
-			thread.Start(started);
+            ServerThread.Start(started);
 			started.WaitOne();
 		}
 
@@ -131,8 +137,6 @@ namespace Octgn.Server
 			// Start the server and signal it
 			tcp.Start();
 			started.Set();
-            ConnectionChecker = new Thread(CheckConnections);
-            ConnectionChecker.Start();
 			try
 			{
 				while (true)
@@ -140,6 +144,11 @@ namespace Octgn.Server
 					// Accept new connections
 					Connection sc = new Connection(this, tcp.AcceptTcpClient());
 					lock (clients) clients.Add(sc);
+                    if (ConnectionChecker == null)
+                    {
+                        ConnectionChecker = new Thread(CheckConnections);
+                        ConnectionChecker.Start();
+                    }
 				}
 			}
 			catch (SocketException e)
