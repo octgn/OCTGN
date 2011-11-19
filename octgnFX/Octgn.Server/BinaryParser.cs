@@ -23,7 +23,7 @@ namespace Octgn.Server
             short length;
             handler.muted = reader.ReadInt32();
             byte method = reader.ReadByte();
-            switch(method)
+            switch (method)
             {
                 case 0:
                     {
@@ -135,15 +135,15 @@ namespace Octgn.Server
                     {
                         length = reader.ReadInt16();
                         int[] arg0 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg0[i] = reader.ReadInt32();
                         length = reader.ReadInt16();
                         ulong[] arg1 = new ulong[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadUInt64();
                         length = reader.ReadInt16();
                         int[] arg2 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg2[i] = reader.ReadInt32();
                         handler.LoadDeck(arg0, arg1, arg2);
                         break;
@@ -152,11 +152,11 @@ namespace Octgn.Server
                     {
                         length = reader.ReadInt16();
                         int[] arg0 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg0[i] = reader.ReadInt32();
                         length = reader.ReadInt16();
                         ulong[] arg1 = new ulong[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadUInt64();
                         int arg2 = reader.ReadInt32();
                         handler.CreateCard(arg0, arg1, arg2);
@@ -166,23 +166,23 @@ namespace Octgn.Server
                     {
                         length = reader.ReadInt16();
                         int[] arg0 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg0[i] = reader.ReadInt32();
                         length = reader.ReadInt16();
                         ulong[] arg1 = new ulong[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadUInt64();
                         length = reader.ReadInt16();
                         Guid[] arg2 = new Guid[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg2[i] = new Guid(reader.ReadBytes(16));
                         length = reader.ReadInt16();
                         int[] arg3 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg3[i] = reader.ReadInt32();
                         length = reader.ReadInt16();
                         int[] arg4 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg4[i] = reader.ReadInt32();
                         bool arg5 = reader.ReadBoolean();
                         bool arg6 = reader.ReadBoolean();
@@ -193,11 +193,11 @@ namespace Octgn.Server
                     {
                         length = reader.ReadInt16();
                         int[] arg0 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg0[i] = reader.ReadInt32();
                         length = reader.ReadInt16();
                         ulong[] arg1 = new ulong[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadUInt64();
                         handler.CreateAlias(arg0, arg1);
                         break;
@@ -234,12 +234,12 @@ namespace Octgn.Server
                         byte arg0 = reader.ReadByte();
                         length = reader.ReadInt16();
                         byte[] arg1 = new byte[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadByte();
                         int arg2 = reader.ReadInt32();
                         length = reader.ReadInt16();
                         ulong[] arg3 = new ulong[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg3[i] = reader.ReadUInt64();
                         handler.RevealToReq(arg0, arg1, arg2, arg3);
                         break;
@@ -295,7 +295,7 @@ namespace Octgn.Server
                         int arg0 = reader.ReadInt32();
                         length = reader.ReadInt16();
                         int[] arg1 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadInt32();
                         handler.Shuffle(arg0, arg1);
                         break;
@@ -305,11 +305,11 @@ namespace Octgn.Server
                         int arg0 = reader.ReadInt32();
                         length = reader.ReadInt16();
                         int[] arg1 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadInt32();
                         length = reader.ReadInt16();
                         short[] arg2 = new short[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg2[i] = reader.ReadInt16();
                         handler.Shuffled(arg0, arg1, arg2);
                         break;
@@ -324,11 +324,11 @@ namespace Octgn.Server
                     {
                         length = reader.ReadInt16();
                         int[] arg0 = new int[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg0[i] = reader.ReadInt32();
                         length = reader.ReadInt16();
                         ulong[] arg1 = new ulong[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadUInt64();
                         handler.Unalias(arg0, arg1);
                         break;
@@ -450,7 +450,7 @@ namespace Octgn.Server
                     {
                         length = reader.ReadInt16();
                         Guid[] arg0 = new Guid[length];
-                        for(int i = 0; i < length; ++i)
+                        for (int i = 0; i < length; ++i)
                             arg0[i] = new Guid(reader.ReadBytes(16));
                         handler.StartLimitedReq(arg0);
                         break;
@@ -466,6 +466,11 @@ namespace Octgn.Server
                         bool arg1 = reader.ReadBoolean();
                         handler.IsAlternateImage(arg0, arg1);
 
+                        break;
+                    }
+                case 255:
+                    {
+                        handler.PingReceived();
                         break;
                     }
                 default:

@@ -114,5 +114,6 @@ namespace Octgn.Server
         void StartLimitedReq(Guid[] packs);
 
         void CancelLimitedReq();
+        void Ping();
     }
 }

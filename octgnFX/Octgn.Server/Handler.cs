@@ -38,6 +38,7 @@ namespace Octgn.Server
         private int turnNumber = 0;                 // Turn number, used to validate TurnStop requests
         private Play.GameSettings gameSettings = new Octgn.Play.GameSettings();
         private HashSet<byte> turnStopPlayers = new HashSet<byte>();
+        private Server.Connection Connection;
 
         #endregion Private fields
 
@@ -84,7 +85,7 @@ namespace Octgn.Server
         }
 
         // Handle a binary message
-        internal void ReceiveMessage(byte[] data, TcpClient sender)
+        internal void ReceiveMessage(byte[] data, TcpClient sender,Server.Connection con)
         {
             // Check if this is the first message received
             if(!clients.ContainsKey(sender))
@@ -94,6 +95,7 @@ namespace Octgn.Server
             }
             // Set the sender field
             this.sender = sender;
+            this.Connection = con;
             // Parse and handle the message
             binParser.Parse(data);
         }
@@ -459,6 +461,11 @@ namespace Octgn.Server
                 this.id = id; this.nick = nick; this.rpc = rpc;
                 this.software = software; this.pkey = pkey;
             }
+        }
+
+        internal void PingReceived()
+        {
+            this.Connection.PingReceived();
         }
     }
 }

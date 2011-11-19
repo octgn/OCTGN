@@ -31,11 +31,16 @@ namespace Octgn.Server
             else
                 handler.muted = 0;
             reader.ReadStartElement();	// <method>
-            switch(method)
+            switch (method)
             {
                 case "Binary":
                     {
                         handler.Binary();
+                        break;
+                    }
+                case "Ping":
+                    {
+                        handler.PingReceived();
                         break;
                     }
                 case "Error":
@@ -150,15 +155,15 @@ namespace Octgn.Server
                 case "LoadDeck":
                     {
                         List<int> list0 = new List<int>(30);
-                        while(reader.IsStartElement("id"))
+                        while (reader.IsStartElement("id"))
                             list0.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg0 = list0.ToArray();
                         List<ulong> list1 = new List<ulong>(30);
-                        while(reader.IsStartElement("type"))
+                        while (reader.IsStartElement("type"))
                             list1.Add(ulong.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         ulong[] arg1 = list1.ToArray();
                         List<int> list2 = new List<int>(30);
-                        while(reader.IsStartElement("group"))
+                        while (reader.IsStartElement("group"))
                             list2.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg2 = list2.ToArray();
                         handler.LoadDeck(arg0, arg1, arg2);
@@ -167,11 +172,11 @@ namespace Octgn.Server
                 case "CreateCard":
                     {
                         List<int> list0 = new List<int>(30);
-                        while(reader.IsStartElement("id"))
+                        while (reader.IsStartElement("id"))
                             list0.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg0 = list0.ToArray();
                         List<ulong> list1 = new List<ulong>(30);
-                        while(reader.IsStartElement("type"))
+                        while (reader.IsStartElement("type"))
                             list1.Add(ulong.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         ulong[] arg1 = list1.ToArray();
                         int arg2 = int.Parse(reader.ReadElementString("group"), CultureInfo.InvariantCulture);
@@ -181,23 +186,23 @@ namespace Octgn.Server
                 case "CreateCardAt":
                     {
                         List<int> list0 = new List<int>(30);
-                        while(reader.IsStartElement("id"))
+                        while (reader.IsStartElement("id"))
                             list0.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg0 = list0.ToArray();
                         List<ulong> list1 = new List<ulong>(30);
-                        while(reader.IsStartElement("key"))
+                        while (reader.IsStartElement("key"))
                             list1.Add(ulong.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         ulong[] arg1 = list1.ToArray();
                         List<Guid> list2 = new List<Guid>(30);
-                        while(reader.IsStartElement("modelId"))
+                        while (reader.IsStartElement("modelId"))
                             list2.Add(new Guid(reader.ReadElementString()));
                         Guid[] arg2 = list2.ToArray();
                         List<int> list3 = new List<int>(30);
-                        while(reader.IsStartElement("x"))
+                        while (reader.IsStartElement("x"))
                             list3.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg3 = list3.ToArray();
                         List<int> list4 = new List<int>(30);
-                        while(reader.IsStartElement("y"))
+                        while (reader.IsStartElement("y"))
                             list4.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg4 = list4.ToArray();
                         bool arg5 = bool.Parse(reader.ReadElementString("faceUp"));
@@ -208,11 +213,11 @@ namespace Octgn.Server
                 case "CreateAlias":
                     {
                         List<int> list0 = new List<int>(30);
-                        while(reader.IsStartElement("id"))
+                        while (reader.IsStartElement("id"))
                             list0.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg0 = list0.ToArray();
                         List<ulong> list1 = new List<ulong>(30);
-                        while(reader.IsStartElement("type"))
+                        while (reader.IsStartElement("type"))
                             list1.Add(ulong.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         ulong[] arg1 = list1.ToArray();
                         handler.CreateAlias(arg0, arg1);
@@ -249,12 +254,12 @@ namespace Octgn.Server
                     {
                         byte arg0 = byte.Parse(reader.ReadElementString("sendTo"), CultureInfo.InvariantCulture);
                         var list1 = new List<byte>(8);
-                        while(reader.IsStartElement("revealTo"))
+                        while (reader.IsStartElement("revealTo"))
                             list1.Add(byte.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         byte[] arg1 = list1.ToArray();
                         int arg2 = int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture);
                         List<ulong> list3 = new List<ulong>(30);
-                        while(reader.IsStartElement("encrypted"))
+                        while (reader.IsStartElement("encrypted"))
                             list3.Add(ulong.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         ulong[] arg3 = list3.ToArray();
                         handler.RevealToReq(arg0, arg1, arg2, arg3);
@@ -310,7 +315,7 @@ namespace Octgn.Server
                     {
                         int arg0 = int.Parse(reader.ReadElementString("group"), CultureInfo.InvariantCulture);
                         List<int> list1 = new List<int>(30);
-                        while(reader.IsStartElement("card"))
+                        while (reader.IsStartElement("card"))
                             list1.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg1 = list1.ToArray();
                         handler.Shuffle(arg0, arg1);
@@ -320,11 +325,11 @@ namespace Octgn.Server
                     {
                         int arg0 = int.Parse(reader.ReadElementString("group"), CultureInfo.InvariantCulture);
                         List<int> list1 = new List<int>(30);
-                        while(reader.IsStartElement("card"))
+                        while (reader.IsStartElement("card"))
                             list1.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg1 = list1.ToArray();
                         List<short> list2 = new List<short>(30);
-                        while(reader.IsStartElement("pos"))
+                        while (reader.IsStartElement("pos"))
                             list2.Add(short.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         short[] arg2 = list2.ToArray();
                         handler.Shuffled(arg0, arg1, arg2);
@@ -339,11 +344,11 @@ namespace Octgn.Server
                 case "Unalias":
                     {
                         List<int> list0 = new List<int>(30);
-                        while(reader.IsStartElement("card"))
+                        while (reader.IsStartElement("card"))
                             list0.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg0 = list0.ToArray();
                         List<ulong> list1 = new List<ulong>(30);
-                        while(reader.IsStartElement("type"))
+                        while (reader.IsStartElement("type"))
                             list1.Add(ulong.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         ulong[] arg1 = list1.ToArray();
                         handler.Unalias(arg0, arg1);
@@ -465,7 +470,7 @@ namespace Octgn.Server
                 case "StartLimitedReq":
                     {
                         List<Guid> list0 = new List<Guid>(30);
-                        while(reader.IsStartElement("packs"))
+                        while (reader.IsStartElement("packs"))
                             list0.Add(new Guid(reader.ReadElementString()));
                         Guid[] arg0 = list0.ToArray();
                         handler.StartLimitedReq(arg0);

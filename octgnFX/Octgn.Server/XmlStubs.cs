@@ -38,6 +38,19 @@ namespace Octgn.Server
             Send(sb.ToString());
         }
 
+        public void Ping()
+        {
+            StringBuilder sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+
+            writer.WriteStartElement("Ping");
+            if (handler.muted != 0)
+                writer.WriteAttributeString("muted", handler.muted.ToString(CultureInfo.InvariantCulture));
+            writer.WriteEndElement();
+            writer.Close();
+            Send(sb.ToString());
+        }
+
         public void IsAlternateImage(int c, bool isAlternateImage)
         {
             StringBuilder sb = new StringBuilder();
