@@ -22,6 +22,12 @@
                 <ribbon:RibbonQuickAccessToolBar>
                 </ribbon:RibbonQuickAccessToolBar>
             </ribbon:Ribbon.QuickAccessToolBar>
+            <ribbon:RibbonTab Header="Host/Join">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton x:Name="bHost" Label="Host" LargeImageSource="/Resources/Icons/user_add.png" Click="bHost_Click" />
+                    <ribbon:RibbonButton x:Name="bJoin" Label="Join" LargeImageSource="/Resources/Icons/user_add.png" />
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="Lobby">
                 <ribbon:RibbonGroup>
                     <ribbon:RibbonButton x:Name="bAddFriend" Label="Add A Friend" LargeImageSource="/Resources/Icons/user_add.png" Click="bAddFriend_Click" />

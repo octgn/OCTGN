@@ -19,7 +19,7 @@ namespace Octgn.Launcher
     {
         private bool                        _allowDirectNavigation = false;
         private NavigatingCancelEventArgs   _navArgs = null;
-        private Duration                    _duration = new Duration(TimeSpan.FromSeconds(1));
+        private Duration                    _duration = new Duration(TimeSpan.FromSeconds(.5));
         private SetList _currentSetList;
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
@@ -182,6 +182,19 @@ namespace Octgn.Launcher
         private void bAddFriend_Click(object sender, RoutedEventArgs e)
         {
             frame1.Navigate(new AddFriendPage());
+        }
+
+        private void bHost_Click(object sender, RoutedEventArgs e)
+        {
+            GameList gl = new GameList();
+            gl.OnGameClick += new EventHandler(gl_HostGameClick);
+            frame1.Navigate(gl);
+        }
+
+        void gl_HostGameClick(object sender, EventArgs e)
+        {
+            Data.Game g = sender as Data.Game;
+            frame1.Navigate(new HostGameSettings(g));
         }
     }
 }

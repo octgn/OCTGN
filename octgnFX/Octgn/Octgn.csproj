@@ -236,6 +236,9 @@
     <Compile Include="Launcher\AddFriendPage.xaml.cs">
       <DependentUpon>AddFriendPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Launcher\HostGameSettings.xaml.cs">
+      <DependentUpon>HostGameSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Launcher\NotificationList.xaml.cs">
       <DependentUpon>NotificationList.xaml</DependentUpon>
     </Compile>
@@ -636,6 +639,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\AddFriendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\HostGameSettings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
