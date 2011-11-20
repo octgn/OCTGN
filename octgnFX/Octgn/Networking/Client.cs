@@ -70,8 +70,6 @@ namespace Octgn.Networking
             // Connect to the give address
             tcp.Connect(address, port);
             disposed = false;
-            PingThread = new Thread(DoPings);
-            PingThread.Start();
             // Start waiting for incoming data
             tcp.GetStream().BeginRead(buffer, 0, 1024, Receive, null);
         }
@@ -87,6 +85,11 @@ namespace Octgn.Networking
                 Thread.Sleep(2000);
             }
         }
+        public void StartPings()
+        {
+            PingThread = new Thread(DoPings);
+            PingThread.Start();            
+        }
         public void BeginConnect(EventHandler<ConnectedEventArgs> callback)
         {
             packetPos = 0;
@@ -99,8 +102,6 @@ namespace Octgn.Networking
                         {
                             if (tcp.Client == null) return; // was cancelled
                             tcp.EndConnect(ar);
-                            PingThread = new Thread(DoPings);
-                            PingThread.Start();
                             tcp.GetStream().BeginRead(buffer, 0, 1024, Receive, null);
                         }
                         callback(this, new ConnectedEventArgs());

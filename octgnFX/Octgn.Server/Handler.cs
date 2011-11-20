@@ -66,7 +66,7 @@ namespace Octgn.Server
         //        }
 
         // Handle an XML message
-        internal void ReceiveMessage(string msg, TcpClient sender)
+        internal void ReceiveMessage(string msg, TcpClient sender, Server.Connection con)
         {
             // Check if this is the first message received
             if(!clients.ContainsKey(sender))
@@ -80,6 +80,7 @@ namespace Octgn.Server
             }
             // Set the sender field
             this.sender = sender;
+            this.Connection = con;
             // Parse and handle the message
             xmlParser.Parse(msg);
         }
@@ -468,6 +469,7 @@ namespace Octgn.Server
         internal void PingReceived()
         {
             this.Connection.PingReceived();
+            
         }
     }
 }

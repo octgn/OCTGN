@@ -13,13 +13,13 @@ namespace Octgn.Server
 		private Handler handler;            // Message handler
 		private List<Connection> clients = new List<Connection>();  // List of all the connected clients		
 
-	    public event EventHandler OnStop;
+		public event EventHandler OnStop;
 
-	    private Thread ConnectionChecker;
+		private Thread ConnectionChecker;
 
-	    private Thread ServerThread;
+		private Thread ServerThread;
 
-	    private bool closed = false;
+		private bool closed = false;
 
 		#endregion
 
@@ -28,13 +28,13 @@ namespace Octgn.Server
 		// Creates and starts a new server
 		public Server(int port, bool useIPv6, Guid gameId, Version gameVersion)
 		{
-            if (useIPv6)
-            {
-                tcp = new TcpListener(System.Net.IPAddress.IPv6Any, port);
-                tcp.AllowNatTraversal(true);
-            }
-            else
-                tcp = new TcpListener(System.Net.IPAddress.Any, port);
+			if (useIPv6)
+			{
+				tcp = new TcpListener(System.Net.IPAddress.IPv6Any, port);
+				tcp.AllowNatTraversal(true);
+			}
+			else
+				tcp = new TcpListener(System.Net.IPAddress.Any, port);
 			this.handler = new Handler(gameId, gameVersion);
 
 			Start();
@@ -44,7 +44,7 @@ namespace Octgn.Server
 		public void Stop()
 		{
 			// Stop the server and release resources
-		    closed = true;
+			closed = true;
 			try
 			{ tcp.Server.Close(); tcp.Stop(); }
 			catch
@@ -63,8 +63,8 @@ namespace Octgn.Server
 				else
 					break;
 			}
-            if(OnStop != null)
-                OnStop.Invoke(this,null);
+			if(OnStop != null)
+				OnStop.Invoke(this,null);
 		}
 
 		#endregion
@@ -76,60 +76,60 @@ namespace Octgn.Server
 		{
 			// Creates a new thread for the server
 			ServerThread = new Thread(Listen);
-            ServerThread.Name = "OCTGN.net Server";
+			ServerThread.Name = "OCTGN.net Server";
 			// Flag used to wait until the server is really started
 			ManualResetEvent started = new ManualResetEvent(false);
 			// Start the server
-            ServerThread.Start(started);
+			ServerThread.Start(started);
 			started.WaitOne();
 		}
 
 		// Called when a client gets disconnected
 		public bool Disconnected(TcpClient lost)
 		{
-		    bool ret = false;
+			bool ret = false;
 			lock (clients)
 			{
 				// Search the client
-                foreach (Connection t in clients)
-                {
-                    if (t.client == lost)
-                    {
-                        // Remove it
-                        t.Disconnected();
-                        ret = true;
-                        break;
-                    }
-                }
+				foreach (Connection t in clients)
+				{
+					if (t.client == lost)
+					{
+						// Remove it
+						t.Disconnected();
+						ret = true;
+						break;
+					}
+				}
 			}
 			return ret;
 		}
 
-        private void CheckConnections()
-        {
-            while (!closed)
-            {
-                lock (clients)
-                {
-                    if (clients.Count == 0)
-                    {
-                        Stop();
-                    }
-                DoAgain:
-                    for (int i = 0; i < clients.Count; i++)
-                    {
-                        if (clients[i].disposed)
-                        {
-                            clients.RemoveAt(i);
-                            goto DoAgain;
-                        }
-                    }
-                }
-                Thread.Sleep(5000);
-            }
-        }
+		private void CheckConnections()
+		{
+			while (!closed)
+			{
+				lock (clients)
+				{
+					if (clients.Count == 0)
+					{
+						Stop();
+					}
+				DoAgain:
+					for (int i = 0; i < clients.Count; i++)
+					{
+						if (clients[i].disposed)
+						{
+							clients.RemoveAt(i);
+							goto DoAgain;
+						}
+					}
+				}
+				Thread.Sleep(5000);
+			}
+		}
 
-	    // Main thread function: waits and accept incoming connections
+		// Main thread function: waits and accept incoming connections
 		private void Listen(object o)
 		{
 			// Retrieve the parameter
@@ -144,11 +144,11 @@ namespace Octgn.Server
 					// Accept new connections
 					Connection sc = new Connection(this, tcp.AcceptTcpClient());
 					lock (clients) clients.Add(sc);
-                    if (ConnectionChecker == null)
-                    {
-                        ConnectionChecker = new Thread(CheckConnections);
-                        ConnectionChecker.Start();
-                    }
+					if (ConnectionChecker == null)
+					{
+						ConnectionChecker = new Thread(CheckConnections);
+						ConnectionChecker.Start();
+					}
 				}
 			}
 			catch (SocketException e)
@@ -169,41 +169,42 @@ namespace Octgn.Server
 			private int packetPos = 0;              // Current position in the packet buffer
 			private bool binary = false;            // Receives binary data ?
 			public bool disposed = false;          // Indicates if the connection has already been disposed
-		    private DateTime lastPing = DateTime.Now;
+			private DateTime lastPing = DateTime.Now;
 
-		    private Thread PingThread;
+			private Thread PingThread;
 
 			// C'tor
 			internal Connection(Server server, TcpClient client)
 			{
 				// Init fields
 				this.server = server; this.client = client;
-                //Start ping thread
-                PingThread = new Thread(DoPing);
-                PingThread.Start();
+				//Start ping thread
+				PingThread = new Thread(DoPing);
+                lastPing = DateTime.Now;
+				PingThread.Start();
 				// Start reading
 				client.GetStream().BeginRead(buffer, 0, 512, Receive, null);
 			}
 
-            public void PingReceived()
-            {
-                lastPing = DateTime.Now;
-            }
+			public void PingReceived()
+			{
+				lastPing = DateTime.Now;
+			}
 
-            private void DoPing()
-            {
-                while (!disposed)
-                {
-                    lock (this)
-                    {
-                        TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - lastPing.Ticks);
-                        if (ts.TotalSeconds > 5)
-                            Disconnect(); //TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
-                        if (disposed) return;
-                    }
-                    Thread.Sleep(1000);
-                }
-            }
+			private void DoPing()
+			{
+				while (!disposed)
+				{
+					lock (this)
+					{
+						TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - lastPing.Ticks);
+						if (ts.TotalSeconds > 10)
+							Disconnect(); //TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
+						if (disposed) return;
+					}
+					Thread.Sleep(1000);
+				}
+			}
 
 			// Callback when data is received
 			private void Receive(IAsyncResult ar)
@@ -292,7 +293,7 @@ namespace Octgn.Server
 							binary = true;
 						else
 							// Lock the handler, because it is not thread-safe
-							lock (server.handler) server.handler.ReceiveMessage(xml, client);
+							lock (server.handler) server.handler.ReceiveMessage(xml, client, this);
 						// Adjust the packet position and contents
 						count += packetPos - i - 1; packetPos = 0;
 						Array.Copy(packet, i + 1, packet, 0, count);

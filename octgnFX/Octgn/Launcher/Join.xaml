@@ -66,7 +66,7 @@
             <TextBlock Grid.Row="2" Margin="16,0,8,8" 
                    Text="Port number:" />
             <TextBox Width="200" x:Name="ipBox" Margin="8" Grid.Row="1" Grid.Column="1"
-                 Text="::1" />
+                 Text="127.0.0.1" />
             <TextBox Width="200" x:Name="portBox" Margin="8,0,8,8"  Grid.Row="2" Grid.Column="1" />
          </Grid>
       </Border>

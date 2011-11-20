@@ -471,6 +471,7 @@ namespace Octgn.Server
                 case 255:
                     {
                         handler.PingReceived();
+                        Debug.WriteLine("[Ping recieved]");
                         break;
                     }
                 default:
