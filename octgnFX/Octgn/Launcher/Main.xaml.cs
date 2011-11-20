@@ -94,9 +94,6 @@ namespace Octgn.Launcher
                         frame1.Navigate(new ContactList());
                         break;
                     case "Games":
-                        frame1.Navigate(new GameList());
-                        break;
-                    case "Sets":
                         GameList gl = new GameList();
                         gl.OnGameClick += new EventHandler(gl_OnGameDoubleClick);
                         frame1.Navigate(gl);

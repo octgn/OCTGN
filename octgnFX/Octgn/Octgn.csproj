@@ -521,6 +521,13 @@
     <Resource Include="Resources\Icons\image_delete.png" />
     <Resource Include="Resources\Icons\image_add.png" />
     <Resource Include="Resources\Icons\image_link.png" />
+    <Resource Include="Resources\Icons\bullet_arrow_down_small.png" />
+    <Resource Include="Resources\Icons\page_edit_small.png" />
+    <Resource Include="Resources\Icons\ruby_add_small.png" />
+    <Resource Include="Resources\Icons\ruby_delete_small.png" />
+    <Resource Include="Resources\Icons\image_add_small.png" />
+    <Resource Include="Resources\Icons\image_delete_small.png" />
+    <Resource Include="Resources\Icons\image_link_small.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
