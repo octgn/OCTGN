@@ -227,5 +227,20 @@ namespace Octgn.Launcher
             else
                 Program.DebugWindow.Visibility = System.Windows.Visibility.Visible;
         }
+
+        private void bJoin_Click(object sender, RoutedEventArgs e)
+        {
+            HostedGameList hgl = new HostedGameList();
+            hgl.OnGameClick += new EventHandler(hgl_OnGameClick);
+            frame1.Navigate(hgl);
+        }
+
+        void hgl_OnGameClick(object sender, EventArgs e)
+        {
+            if (Program.PlayWindow == null)
+            {
+                
+            }
+        }
     }
 }

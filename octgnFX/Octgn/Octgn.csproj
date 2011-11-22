@@ -173,6 +173,9 @@
     <Compile Include="Controls\CircularProgressBar.xaml.cs">
       <DependentUpon>CircularProgressBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\HostedGameListItem.xaml.cs">
+      <DependentUpon>HostedGameListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\FriendRequestNotification.xaml.cs">
       <DependentUpon>FriendRequestNotification.xaml</DependentUpon>
     </Compile>
@@ -235,6 +238,9 @@
     </Compile>
     <Compile Include="Launcher\AddFriendPage.xaml.cs">
       <DependentUpon>AddFriendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\HostedGameList.xaml.cs">
+      <DependentUpon>HostedGameList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
@@ -582,6 +588,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\HostedGameListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\FriendRequestNotification.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -639,6 +649,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\AddFriendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\HostedGameList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

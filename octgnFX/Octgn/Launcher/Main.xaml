@@ -25,7 +25,7 @@
             <ribbon:RibbonTab Header="Host/Join">
                 <ribbon:RibbonGroup>
                     <ribbon:RibbonButton x:Name="bHost" Label="Host" LargeImageSource="/Resources/Icons/user_add.png" Click="bHost_Click" />
-                    <ribbon:RibbonButton x:Name="bJoin" Label="Join" LargeImageSource="/Resources/Icons/user_add.png" />
+                    <ribbon:RibbonButton x:Name="bJoin" Label="Join" LargeImageSource="/Resources/Icons/user_add.png" Click="bJoin_Click" />
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="Lobby">
