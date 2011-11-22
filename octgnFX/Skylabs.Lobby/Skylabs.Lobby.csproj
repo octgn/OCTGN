@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FriendRequestNotification.cs" />
+    <Compile Include="HostedGame.cs" />
     <Compile Include="LobbyClient.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

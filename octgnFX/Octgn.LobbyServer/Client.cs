@@ -91,7 +91,7 @@ namespace Skylabs.LobbyServer
 
         public override void OnMessageReceived(SocketMessage sm)
         {
-            switch(sm.Header.ToLower())
+            switch (sm.Header.ToLower())
             {
                 case "login":
                     Login(sm);
@@ -108,9 +108,9 @@ namespace Skylabs.LobbyServer
                     break;
                 case "status":
                     UserStatus u = (UserStatus)sm["status"];
-                    if(u != null)
+                    if (u != null)
                     {
-                        if(u != UserStatus.Offline)
+                        if (u != UserStatus.Offline)
                         {
                             Me.Status = u;
                             Parent.OnUserEvent(u, this);
@@ -118,32 +118,31 @@ namespace Skylabs.LobbyServer
                     }
                     break;
                 case "hostgame":
-                    Guid g = (Guid)sm["game"];
-                    Version v = (Version)sm["version"];
-                    int port = Networking.NextPortInRange(5000, 9000);
-                    Process p = new Process();
-                    String path = Directory.GetCurrentDirectory() + "\\Octgn.StandAloneServer.exe -g=" + g.ToString() +
-                                  " -v=" + v + " -p=" + port.ToString();
-                    p.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.StandAloneServer.exe";
-                    p.StartInfo.Arguments = "-g=" + g.ToString() + " -v=" + v + " -p=" + port.ToString();
-                    if (port != -1)
                     {
-                        try
+                        Guid g = (Guid) sm["game"];
+                        Version v = (Version) sm["version"];
+                        string n = (string) sm["name"];
+                        string pass = (string) sm["password"];
+
+                        HostedGame hs = new HostedGame(Parent,g,v,n,pass);
+
+                        SocketMessage som = new SocketMessage("hostgameresponse");
+                        som.AddData("port", hs.Port);
+                        WriteMessage(som);
+                        if (hs.Port != -1 && hs.IsRunning)
                         {
-                            p.Start();
+                            Parent.Games.Add(hs);
+                            SocketMessage smm = new SocketMessage("GameHosting");
+                            smm.AddData("name",n);
+                            smm.AddData("passrequired",!String.IsNullOrEmpty(pass));
+                            smm.AddData("guid",g);
+                            smm.AddData("version",v);
+                            smm.AddData("hoster",Me);
+                            smm.AddData("port",hs.Port);
+                            Parent.AllUserMessage(smm);
                         }
-                        catch (Exception)
-                        {
-                            System.Diagnostics.Trace.TraceError(path);
-                            Parent.DebugTrace.TraceEvent(TraceEventType.Error,0,path);
-                            Trace.Flush();
-                            port = -1;
-                        }
+                        break;
                     }
-                    SocketMessage som = new SocketMessage("hostgameresponse");
-                    som.AddData("port", port);
-                    WriteMessage(som);
-                    break;
                 case "customstatus":
                     SetCustomStatus(sm);
                     break;

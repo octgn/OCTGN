@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="Ban.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="HostedGame.cs" />
     <Compile Include="MySqlCup.cs" />
     <Compile Include="Networking.cs" />
     <Compile Include="Program.cs" />
