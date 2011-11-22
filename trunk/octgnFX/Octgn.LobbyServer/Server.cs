@@ -22,6 +22,8 @@ namespace Skylabs.LobbyServer
 
         public List<Client> Clients { get; set; }
 
+        public List<HostedGame> Games { get; set; } 
+
         private int _nextId;
 
         public Version Version
@@ -40,6 +42,7 @@ namespace Skylabs.LobbyServer
             Port = port;
             ListenSocket = new TcpListener(LocalIp, Port);
             Clients = new List<Client>();
+            Games = new List<HostedGame>();
         }
 
         public void Start()

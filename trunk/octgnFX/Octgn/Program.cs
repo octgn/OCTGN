@@ -51,6 +51,7 @@ namespace Octgn
         static Program()
         {
             DebugTrace.Listeners.Add(DebugListener);
+            Trace.Listeners.Add(DebugListener);
             BasePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
 #if(DEBUG)

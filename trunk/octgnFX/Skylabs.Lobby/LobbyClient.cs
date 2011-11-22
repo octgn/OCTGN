@@ -24,12 +24,20 @@ namespace Skylabs.Lobby
         public delegate void UserStatusChanged(UserStatus eve, User u);
         public delegate void FriendRequest(User u);
         public delegate void SocketMessageResult(SocketMessage sm);
+
+        public delegate void GameHostEvent(HostedGame g);
         public event DataRecieved OnDataRecieved;
         public event UserStatusChanged OnUserStatusChanged;
         public event FriendRequest OnFriendRequest;
         public event HandleCaptcha OnCaptchaRequired;
+        public event GameHostEvent OnGameHostEvent;
+        
+
+        public List<HostedGame> Games { get; set; } 
 
         private Dictionary<string, SocketMessageResult> Callbacks; 
+
+
 
         public User Me { get; private set; }
 
@@ -58,6 +66,7 @@ namespace Skylabs.Lobby
             OnlineList = new List<User>();
             Notifications = new List<Notification>();
             Callbacks = new Dictionary<string, SocketMessageResult>();
+            Games = new List<HostedGame>();
         }
 
         public LobbyClient(TcpClient c)
@@ -66,6 +75,8 @@ namespace Skylabs.Lobby
             FriendList = new List<User>();
             OnlineList = new List<User>();
             Notifications = new List<Notification>();
+            Callbacks = new Dictionary<string, SocketMessageResult>();
+            Games = new List<HostedGame>();
         }
 
         public User GetOnlineUser(int uid)
@@ -150,11 +161,11 @@ namespace Skylabs.Lobby
                     return;
                 }
             }
-            switch(sm.Header.ToLower())
+            switch (sm.Header.ToLower())
             {
                 case "loginsuccess":
                     Me = (User)sm["me"];
-                    if(Me != null)
+                    if (Me != null)
                         _onLoginFinished.Invoke(LoginResult.Success, DateTime.Now, "");
                     else
                     {
@@ -168,46 +179,46 @@ namespace Skylabs.Lobby
                     break;
                 case "friends":
                     FriendList = new List<User>();
-                    foreach(NameValuePair p in sm.Data)
+                    foreach (NameValuePair p in sm.Data)
                     {
                         FriendList.Add((User)p.Value);
                     }
-                    if(OnDataRecieved != null)
+                    if (OnDataRecieved != null)
                         OnDataRecieved.Invoke(DataRecType.FriendList, null);
                     break;
                 case "friendrequest":
                     u = (User)sm.Data[0].Value;
-                    Notifications.Add(new FriendRequestNotification(u,this));
-                    if(OnFriendRequest != null)
+                    Notifications.Add(new FriendRequestNotification(u, this));
+                    if (OnFriendRequest != null)
                         OnFriendRequest(u);
                     break;
                 case "onlinelist":
                     OnlineList = new List<User>();
-                    foreach(NameValuePair p in sm.Data)
+                    foreach (NameValuePair p in sm.Data)
                         OnlineList.Add((User)p.Value);
-                    if(OnDataRecieved != null)
+                    if (OnDataRecieved != null)
                         OnDataRecieved.Invoke(DataRecType.OnlineList, null);
                     break;
                 case "status":
                     u = (User)sm.Data[0].Value;
-                    if(!OnlineList.Contains(u)) OnlineList.Add(u);
-                    if(OnUserStatusChanged != null)
+                    if (!OnlineList.Contains(u)) OnlineList.Add(u);
+                    if (OnUserStatusChanged != null)
                         OnUserStatusChanged.Invoke(u.Status, u);
                     break;
                 case "customstatus":
                     u = (User)sm["user"];
                     string s = (string)sm["status"];
-                    if(u != null && s != null)
+                    if (u != null && s != null)
                     {
-                        if(u.Equals(Me))
+                        if (u.Equals(Me))
                             Me.CustomStatus = s;
                         else
                         {
                             int i = FriendList.IndexOf(u);
-                            if(i > -1)
+                            if (i > -1)
                                 FriendList[i].CustomStatus = s;
                             i = OnlineList.IndexOf(u);
-                            if(i > -1)
+                            if (i > -1)
                                 OnlineList[i].CustomStatus = s;
                             this.OnDataRecieved(DataRecType.UserCustomStatus, u);
                         }
@@ -218,6 +229,26 @@ namespace Skylabs.Lobby
 
                     _onLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.FromPhpTime(time), "");
                     break;
+                case "gamehosting":
+                    {
+                        HostedGame gm = new HostedGame(sm);
+                        Games.Add(gm);
+                        if (OnGameHostEvent != null)
+                            OnGameHostEvent.Invoke(gm);
+                        break;
+                    }
+                case "gameend":
+                    {
+                        int p = (int) sm["port"];
+
+                        HostedGame gm = Games.Where(g => g.Port == p).First();
+                        gm.GameStatus = HostedGame.eHostedGame.StoppedHosting;
+                        if (OnGameHostEvent != null)
+                            OnGameHostEvent.Invoke(gm);
+                        Games.Remove(gm);
+                        break;
+                    }
+
             }
         }
 
