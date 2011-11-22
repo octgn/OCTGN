@@ -14,11 +14,11 @@ namespace Octgn.Launcher
 	{
 		public StartGame()
 		{
-      Program.GameSettings.UseTwoSidedTable = true;
+            Program.GameSettings.UseTwoSidedTable = true;
 
 			InitializeComponent();
 
-			if (Program.Server != null)
+			if (Program.IsHost)
 			{
 				descriptionLabel.Text = "The following players have joined your game.\nClick 'Start' when everyone has joined. No one will be able to join once the game has started.";
 			}
@@ -49,7 +49,8 @@ namespace Octgn.Launcher
 
 		private void SettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
+            if (!DesignerProperties.GetIsInDesignMode(this))
+			    Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
 		}
 
 		internal void Start()
@@ -59,20 +60,17 @@ namespace Octgn.Launcher
 				foreach (var player in Play.Player.AllExceptGlobal)
 					player.InvertedTable = false;
 
-      // At start the global items belong to the player with the lowest id
-      if (Player.GlobalPlayer != null)
-      {
-        var host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
-        foreach (var group in Player.GlobalPlayer.Groups)
-          group.Controller = host;
-      }
+            // At start the global items belong to the player with the lowest id
+            if (Player.GlobalPlayer != null)
+            {
+            var host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
+            foreach (var group in Player.GlobalPlayer.Groups)
+                group.Controller = host;
+            }
 
-			var launcherWnd = Application.Current.MainWindow;
-			var playWnd = new Octgn.Play.PlayWindow();
-			Application.Current.MainWindow = playWnd;
+			Program.PlayWindow = new Octgn.Play.PlayWindow();
 
-			launcherWnd.Close();
-			playWnd.Show();
+            Program.PlayWindow.Show();
 		}
 
 		private void StartClicked(object sender, RoutedEventArgs e)
@@ -80,6 +78,8 @@ namespace Octgn.Launcher
 			e.Handled = true;
 			Start();
 			Program.Client.Rpc.Start();
+            NavigationService.RemoveBackEntry();
+            NavigationService.GoBack();
 		}
 
 		private void CancelClicked(object sender, RoutedEventArgs e)
@@ -100,6 +100,11 @@ namespace Octgn.Launcher
 			MessageBox.Show("The server returned an error:\n" + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			e.Handled = true;
 			Back();
-		}		
+		}
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            Program.GameSettings.UseTwoSidedTable = (bool)cbTwoSided.IsChecked.Value;
+        }		
 	}
 }

@@ -27,7 +27,18 @@ namespace Octgn
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
 
-            Program.GamesRepository = new Octgn.Data.GamesRepository();
+            try
+            {
+                //TODO For some reason this fails sometimes. Important to fix before release.
+                Program.GamesRepository = new Octgn.Data.GamesRepository();
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("There was an error. Please reload Octgn.");
+                Program.Exit();
+                return;
+            }
+
 
             if(Program.GamesRepository.MissingFiles.Any())
             {
