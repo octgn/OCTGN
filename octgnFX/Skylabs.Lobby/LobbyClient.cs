@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using Google.GData.Client;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
@@ -22,10 +23,13 @@ namespace Skylabs.Lobby
         public delegate void DataRecieved(DataRecType type, object e);
         public delegate void UserStatusChanged(UserStatus eve, User u);
         public delegate void FriendRequest(User u);
+        public delegate void SocketMessageResult(SocketMessage sm);
         public event DataRecieved OnDataRecieved;
         public event UserStatusChanged OnUserStatusChanged;
         public event FriendRequest OnFriendRequest;
         public event HandleCaptcha OnCaptchaRequired;
+
+        private Dictionary<string, SocketMessageResult> Callbacks; 
 
         public User Me { get; private set; }
 
@@ -53,6 +57,7 @@ namespace Skylabs.Lobby
             FriendList = new List<User>();
             OnlineList = new List<User>();
             Notifications = new List<Notification>();
+            Callbacks = new Dictionary<string, SocketMessageResult>();
         }
 
         public LobbyClient(TcpClient c)
@@ -66,6 +71,17 @@ namespace Skylabs.Lobby
         public User GetOnlineUser(int uid)
         {
             return OnlineList.FirstOrDefault(u => u.Uid == uid);
+        }
+
+        public void BeginHostGame(SocketMessageResult callback, Octgn.Data.Game game, string gamename, string password)
+        {
+            Callbacks.Add("hostgameresponse",callback);
+            SocketMessage sm = new SocketMessage("hostgame");
+            sm.AddData("game",game.Id);
+            sm.AddData("version",game.Version);
+            sm.AddData("name",gamename);
+            sm.AddData("pass",password);
+            WriteMessage(sm);
         }
 
         public void AddFriend(string email)
@@ -124,6 +140,16 @@ namespace Skylabs.Lobby
         public override void OnMessageReceived(Net.SocketMessage sm)
         {
             User u;
+            if (Callbacks.ContainsKey(sm.Header.ToLower()))
+            {
+                SocketMessageResult a = Callbacks[sm.Header.ToLower()];
+                if (a != null)
+                {
+                    a.Invoke(sm);
+                    Callbacks.Remove(sm.Header.ToLower());
+                    return;
+                }
+            }
             switch(sm.Header.ToLower())
             {
                 case "loginsuccess":
