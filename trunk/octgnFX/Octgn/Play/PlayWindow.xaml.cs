@@ -63,14 +63,13 @@ namespace Octgn.Play
       Loaded += (sender, args) => Keyboard.Focus(table); // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
       // Show the Scripting console in dev only
-      if (!System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
-      {
+#if(DEBUG)
         Loaded += (sender, args) =>
         {
           var wnd = new InteractiveConsole { Owner = this };
           wnd.Show();
         };
-      }  
+#endif
     }
 
     private void InitializePlayerSummary(object sender, EventArgs e)
@@ -123,14 +122,13 @@ namespace Octgn.Play
       ribbon.IsMinimized = false;
 
       base.OnClosing(e);
-      var wnd = new Launcher.LauncherWindow();
-      Application.Current.MainWindow = wnd;
-      wnd.Show();
+      
     }
 
     protected override void OnClosed(EventArgs e)
     {
       base.OnClosed(e);
+        Program.PlayWindow = null;
       Program.StopGame(); // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
     }
 

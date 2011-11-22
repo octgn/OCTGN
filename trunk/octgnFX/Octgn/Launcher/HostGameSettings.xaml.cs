@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using Octgn.Controls;
+using Octgn.Definitions;
 using Skylabs.Lobby;
+using Skylabs.Net;
+using System.Net;
 
 namespace Octgn.Launcher
 {
@@ -12,10 +16,12 @@ namespace Octgn.Launcher
     public partial class HostGameSettings : Page
     {
         private Data.Game Game;
+        private NavigationService ns;
         public HostGameSettings(Octgn.Data.Game game)
         {
             InitializeComponent();
             Game = game;
+            
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -29,10 +35,38 @@ namespace Octgn.Launcher
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.AddFriend(textBox1.Text);
+            ns = NavigationService;
+            Program.lobbyClient.BeginHostGame(EndHostGame,Game,textBox1.Text,textBox2.Text);
             NavigationService.GoBack();
         }
-
+        private void EndHostGame(SocketMessage sm)
+        {
+            int port = (int)sm["port"];
+            if(port > -1)
+            {
+                Program.Game = new Game(GameDef.FromO8G(Game.Filename));
+                Program.IsHost = true;
+                IPAddress[] ad = Dns.GetHostAddresses("www.skylabsonline.com");
+#if(DEBUG)
+                IPAddress ip = IPAddress.Parse("127.0.0.1");
+#else
+                IPAddress ip = ad[0];
+#endif
+                
+                if(ad.Length > 0)
+                {
+                    Program.Client = new Networking.Client(ip, port);
+                    Program.Client.Connect();
+                    this.Dispatcher.Invoke(new Action(dothenavigate));
+                    
+                }
+            }            
+        }
+        private void dothenavigate()
+        {
+            
+            ns.Navigate(new StartGame());
+        }
         private void button2_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.GoBack();

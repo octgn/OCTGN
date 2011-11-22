@@ -5,6 +5,7 @@ using System.Text;
 using Skylabs.ConsoleHelper;
 using Mono.Options;
 using System.Threading;
+using Skylabs;
 
 namespace Octgn.StandAloneServer
 {
@@ -17,15 +18,17 @@ namespace Octgn.StandAloneServer
         private static bool KeepRunning = true;
         static void Main(string[] args)
         {
-#if(DEBUG)
-            args = new string[3]
+            if (args.Length == 0)
             {
-                "-p=8088",
-                "-g=A6C8D2E8-7CD8-11DD-8F94-E62B56D89593",
-                "-v=2.0.7"
-            };
-#endif
-            OptionSet set = new OptionSet()
+                args = new string[3]
+                           {
+                               "-p=8088",
+                               "-g=A6C8D2E8-7CD8-11DD-8F94-E62B56D89593",
+                               "-v=2.0.7"
+                           };
+            }
+
+        OptionSet set = new OptionSet()
                 .Add("p=|port=", "Port for the server to host on.", (v) => int.TryParse(v, out Port))
                 .Add("g=|guid=", "GUID of the game being played.", (v) => Guid.TryParse(v, out GameGuid))
                 .Add("v=|version=", "Game version.", (v) => GameVersion = Version.TryParse(v, out GameVersion) == true?GameVersion : null);
@@ -55,6 +58,7 @@ namespace Octgn.StandAloneServer
         {
             Server = new Server.Server(Port,false,GameGuid,GameVersion);
             Server.OnStop += new EventHandler(Server_OnStop);
+            Skylabs.ConsoleHelper.ConsoleWriter.WriteLine("Starting server on port " + Port,false);
             while (KeepRunning)
             {
                 Thread.Sleep(1000);

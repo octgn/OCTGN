@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
@@ -17,6 +18,7 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class Main : RibbonWindow
     {
+        public RoutedCommand DebugWindowCommand = new RoutedCommand();
         private bool                        _allowDirectNavigation = false;
         private NavigatingCancelEventArgs   _navArgs = null;
         private Duration                    _duration = new Duration(TimeSpan.FromSeconds(.5));
@@ -80,6 +82,15 @@ namespace Octgn.Launcher
         {
             InitializeComponent();
             frame1.Navigate(new ContactList());
+            DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
+
+            CommandBinding cb = new CommandBinding(DebugWindowCommand,
+                MyCommandExecute, MyCommandCanExecute);
+            this.CommandBindings.Add(cb);
+
+            KeyGesture kg = new KeyGesture(Key.M, ModifierKeys.Control);
+            InputBinding ib = new InputBinding(DebugWindowCommand, kg);
+            this.InputBindings.Add(ib);
             // Insert code required on object creation below this point.
         }
 
@@ -193,8 +204,28 @@ namespace Octgn.Launcher
 
         void gl_HostGameClick(object sender, EventArgs e)
         {
-            Data.Game g = sender as Data.Game;
-            frame1.Navigate(new HostGameSettings(g));
+            if (Program.PlayWindow == null)
+            {
+                Data.Game g = sender as Data.Game;
+                frame1.Navigate(new HostGameSettings(g));
+            }
+        }
+        private void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void MyCommandExecute(object sender, ExecutedRoutedEventArgs e)
+        {
+            //System.Diagnostics.XmlWriterTraceListener tr = new System.Diagnostics.XmlWriterTraceListener()
+            if (Program.DebugWindow == null)
+            {
+                Program.DebugWindow = new DWindow();
+            }
+            if (Program.DebugWindow.Visibility == System.Windows.Visibility.Visible)
+                Program.DebugWindow.Visibility = System.Windows.Visibility.Hidden;
+            else
+                Program.DebugWindow.Visibility = System.Windows.Visibility.Visible;
         }
     }
 }

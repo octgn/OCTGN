@@ -20,6 +20,7 @@ namespace Octgn
         public static Octgn.Launcher.Main ClientWindow;
         public static Launcher.LauncherWindow LauncherWindow;
         public static DeckBuilder.DeckBuilderWindow DeckEditor;
+        public static PlayWindow PlayWindow;
         internal static bool IsGameRunning = false;
         // TODO: Refactoring > those paths belong to the Octgn.Data or somewhere else
         internal readonly static string BasePath;
@@ -32,7 +33,7 @@ namespace Octgn
         internal static Networking.Client Client;
         internal static event EventHandler<ServerErrorEventArgs> ServerError;
 
-        internal static bool IsHost { get { return Server != null; } }
+        internal static bool IsHost { get; set; }
 
         internal static Dispatcher Dispatcher;
 
@@ -55,6 +56,7 @@ namespace Octgn
 #if(DEBUG)
             lobbyServer = new Skylabs.LobbyServer.Server(System.Net.IPAddress.Any, LobbySettings.ServerPort);
             lobbyServer.Start();
+            lobbyServer.DebugTrace.Listeners.Add(DebugListener);
 #endif
             Exception e = new Exception();
             string s = e.Message.Substring(0);

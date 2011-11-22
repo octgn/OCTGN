@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Net.Sockets;
 using Octgn.LobbyServer;
 using Skylabs.Lobby;
@@ -114,6 +116,33 @@ namespace Skylabs.LobbyServer
                             Parent.OnUserEvent(u, this);
                         }
                     }
+                    break;
+                case "hostgame":
+                    Guid g = (Guid)sm["game"];
+                    Version v = (Version)sm["version"];
+                    int port = Networking.NextPortInRange(5000, 9000);
+                    Process p = new Process();
+                    String path = Directory.GetCurrentDirectory() + "\\Octgn.StandAloneServer.exe -g=" + g.ToString() +
+                                  " -v=" + v + " -p=" + port.ToString();
+                    p.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.StandAloneServer.exe";
+                    p.StartInfo.Arguments = "-g=" + g.ToString() + " -v=" + v + " -p=" + port.ToString();
+                    if (port != -1)
+                    {
+                        try
+                        {
+                            p.Start();
+                        }
+                        catch (Exception)
+                        {
+                            System.Diagnostics.Trace.TraceError(path);
+                            Parent.DebugTrace.TraceEvent(TraceEventType.Error,0,path);
+                            Trace.Flush();
+                            port = -1;
+                        }
+                    }
+                    SocketMessage som = new SocketMessage("hostgameresponse");
+                    som.AddData("port", port);
+                    WriteMessage(som);
                     break;
                 case "customstatus":
                     SetCustomStatus(sm);

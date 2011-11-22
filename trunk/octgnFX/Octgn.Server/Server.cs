@@ -198,8 +198,8 @@ namespace Octgn.Server
 					lock (this)
 					{
 						TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - lastPing.Ticks);
-						if (ts.TotalSeconds > 10)
-							Disconnect(); //TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
+                        if (ts.TotalSeconds > 10)
+                            server.Disconnected(this.client);//TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
 						if (disposed) return;
 					}
 					Thread.Sleep(1000);

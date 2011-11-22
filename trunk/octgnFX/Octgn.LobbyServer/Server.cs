@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -11,6 +12,8 @@ namespace Skylabs.LobbyServer
 {
     public class Server
     {
+        public TraceSource DebugTrace = new TraceSource("DebugTrace", SourceLevels.All);
+
         public IPAddress LocalIp { get; private set; }
 
         public int Port { get; private set; }
