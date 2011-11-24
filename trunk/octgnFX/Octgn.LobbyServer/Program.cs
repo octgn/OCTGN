@@ -47,9 +47,20 @@ namespace Skylabs.LobbyServer
         private static void ConsoleEventLogEAddEvent(ConsoleEvent e)
         {
 #if(DEBUG)
-            System.Diagnostics.Debugger.Break();
-            //TODO Serialize and save to a file before release.
-
+            ConsoleEventError er = e as ConsoleEventError;
+            if (er != null)
+            {
+                if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                else
+                {
+                    Console.WriteLine(er.Exception.StackTrace);
+                    Console.WriteLine(e.GetConsoleString());
+                    Console.ReadKey();
+                }
+            }
+            
+#else
+            
 #endif
         }
 

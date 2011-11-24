@@ -228,6 +228,8 @@ namespace Skylabs.Net.Sockets
             }
             catch(SocketException se)
             {
+                if (se.ErrorCode == 10058)
+                    return;
 #if(!DEBUG)
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #else

@@ -81,7 +81,7 @@ namespace Skylabs.LobbyServer
         {
             if(theuser.Equals(Me))
                 return;
-            SocketMessage sm = new SocketMessage("userstatus");
+            SocketMessage sm = new SocketMessage("status");
             if(e == UserStatus.Invisible)
                 e = UserStatus.Offline;
             theuser.Status = e;
