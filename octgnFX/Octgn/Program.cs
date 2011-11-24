@@ -15,7 +15,6 @@ namespace Octgn
         public static DWindow DebugWindow;
         public static Game Game;
         public static LobbyClient lobbyClient;
-        public static Skylabs.LobbyServer.Server lobbyServer;
         public static GameSettings GameSettings = new GameSettings();
         public static Octgn.Launcher.Main ClientWindow;
         public static Launcher.LauncherWindow LauncherWindow;
@@ -42,6 +41,8 @@ namespace Octgn
         internal readonly static CacheTraceListener DebugListener = new CacheTraceListener();
         internal static System.Windows.Documents.Inline LastChatTrace;
 
+        private static Process LobbyServerProcess;
+
 #if(DEBUG)
         public static DEBUGLobbySettings LobbySettings = DEBUGLobbySettings.Default;
 #else
@@ -54,17 +55,29 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             BasePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
-#if(DEBUG)
-            lobbyServer = new Skylabs.LobbyServer.Server(System.Net.IPAddress.Any, LobbySettings.ServerPort);
-            lobbyServer.Start();
-            lobbyServer.DebugTrace.Listeners.Add(DebugListener);
-#endif
+            //StartLobbyServer();
             Exception e = new Exception();
             string s = e.Message.Substring(0);
             Program.LauncherWindow = new Launcher.LauncherWindow();
             Program.LauncherWindow.Show();
         }
-
+        public static void StartLobbyServer()
+        {
+#if(DEBUG)
+            LobbyServerProcess = new Process();
+            LobbyServerProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.LobbyServer.exe";
+            try
+            {
+                LobbyServerProcess.Start();
+                return;
+            }
+            catch (Exception e)
+            {
+                //Trace.TraceError(e.StackTrace);
+                //Trace.Flush();
+            }
+#endif
+        }
         public static void StopGame()
         {
             Client.Disconnect(); Client = null;
@@ -91,8 +104,17 @@ namespace Octgn
             if(ClientWindow != null)
                 if(ClientWindow.IsLoaded)
                     ClientWindow.Close();
-            if(lobbyServer != null)
-                lobbyServer.Stop();
+            if (LobbyServerProcess != null)
+            {
+                try
+                {
+                    LobbyServerProcess.Kill();
+                }
+                catch (Exception)
+                {
+                }
+            }
+                
         }
 
         internal static void OnServerError(string serverMessage)

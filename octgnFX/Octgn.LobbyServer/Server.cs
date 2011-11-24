@@ -72,7 +72,7 @@ namespace Skylabs.LobbyServer
 
         public void OnUserEvent(UserStatus e, Client client)
         {
-            User me = (User)client.Me.Clone();
+            User me = (User)client.Me;
             if(e == UserStatus.Offline)
                 Clients.Remove(client);
 
