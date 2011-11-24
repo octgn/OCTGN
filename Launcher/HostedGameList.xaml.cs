@@ -35,13 +35,16 @@ namespace Octgn.Launcher
         }
         private void Reload_Game_List()
         {
-            stackPanel1.Children.Clear();
-            foreach (HostedGame g in Program.lobbyClient.Games)
-            {
-                HostedGameListItem gs = new HostedGameListItem(g);
-                gs.MouseUp += new MouseButtonEventHandler(gs_MouseUp);
-                stackPanel1.Children.Add(gs);
-            }            
+            this.Dispatcher.Invoke(new Action(() =>
+                                                  {
+                                                      stackPanel1.Children.Clear();
+                                                      foreach (HostedGame g in Program.lobbyClient.Games)
+                                                      {
+                                                          HostedGameListItem gs = new HostedGameListItem(g);
+                                                          gs.MouseUp += new MouseButtonEventHandler(gs_MouseUp);
+                                                          stackPanel1.Children.Add(gs);
+                                                      }                                                                  
+                                                  }));
         }
 
         void gs_MouseUp(object sender, MouseButtonEventArgs e)
