@@ -145,9 +145,11 @@ namespace Octgn.Launcher
                 else
                     Settings.Default.Password = "";
                 Settings.Default.Email = textBox1.Text;
+                Settings.Default.NickName = Program.lobbyClient.Me.DisplayName;
                 Settings.Default.Save();
                 if(success == LoginResult.Success)
                 {
+
                     Program.ClientWindow = new Main();
                     Program.ClientWindow.Show();
                     Program.LauncherWindow.Close();
