@@ -201,9 +201,17 @@ namespace Skylabs.Lobby
                     break;
                 case "status":
                     u = (User)sm.Data[0].Value;
-                    if (!OnlineList.Contains(u)) OnlineList.Add(u);
+                    if (u.Status == UserStatus.Offline)
+                        OnlineList.Remove(u);
+                    else if (!OnlineList.Contains(u))
+                        OnlineList.Add(u);
+                    else
+                        OnlineList.Where(us => us.Equals(u)).First().Status = u.Status;
+                    FriendList.Where(us => us.Equals(u)).First().Status = u.Status;
                     if (OnUserStatusChanged != null)
                         OnUserStatusChanged.Invoke(u.Status, u);
+                    if (OnDataRecieved != null)
+                        OnDataRecieved.Invoke(DataRecType.FriendList, null);
                     break;
                 case "customstatus":
                     u = (User)sm["user"];
