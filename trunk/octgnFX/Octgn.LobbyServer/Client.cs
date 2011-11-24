@@ -184,6 +184,9 @@ namespace Skylabs.LobbyServer
             Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
             Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
             this.SendFriendsList();
+            Client rclient = Parent.GetOnlineClientByUid(requestee.Uid);
+            if(rclient != null)
+                rclient.SendFriendsList();
         }
 
         private void AddFriend(SocketMessage sm)
