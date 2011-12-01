@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -34,16 +35,10 @@ namespace Octgn.Controls
             {
                 _hostedGame = value;
                 SetValue(CustomStatusProperty, _hostedGame.UserHosting.DisplayName);
-                bool gotone = false;
-                foreach (Data.Game g in Program.GamesRepository.AllGames)
+                foreach (BitmapImage bi in from g in Program.GamesRepository.AllGames where g.Id == _hostedGame.GameGuid select new BitmapImage(g.GetCardBackUri()))
                 {
-                    if (g.Id == _hostedGame.GameGuid)
-                    {
-                        BitmapImage bi = new BitmapImage(g.GetCardBackUri());
-                        SetValue(GamePictureProperty, bi as ImageSource);
-                        gotone = true;
-                        break;
-                    }
+                    SetValue(GamePictureProperty, bi as ImageSource);
+                    break;
                 }
 
                 string guri = "";

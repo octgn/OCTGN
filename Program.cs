@@ -54,7 +54,7 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             BasePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
-            //StartLobbyServer();
+            StartLobbyServer();
             Exception e = new Exception();
             string s = e.Message.Substring(0);
             Program.LauncherWindow = new Launcher.LauncherWindow();
@@ -72,8 +72,7 @@ namespace Octgn
             }
             catch (Exception e)
             {
-                //Trace.TraceError(e.StackTrace);
-                //Trace.Flush();
+                DebugTrace.TraceEvent(TraceEventType.Error,0,e.StackTrace);
             }
 #endif
         }
@@ -94,7 +93,7 @@ namespace Octgn
             {
                 DebugWindow.Close();
             }
-            catch(Exception e)
+            catch(Exception)
             {
             }
             if(LauncherWindow != null)

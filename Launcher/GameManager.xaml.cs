@@ -67,7 +67,7 @@ namespace Octgn.Launcher
                 };
                 Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
             }
-            catch(System.IO.FileFormatException ex)
+            catch(System.IO.FileFormatException)
             {
                 //Removed ex.Message. The user doesn't need to see the exception
                 MessageBox.Show("Your game definition file is corrupt. Please redownload it.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
