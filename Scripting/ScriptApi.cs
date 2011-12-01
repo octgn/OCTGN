@@ -60,6 +60,11 @@ namespace Octgn.Scripting
                          .ToList();
         }
 
+        public bool PlayerHasInvertedTable(int id)
+        {
+            return Player.Find((byte)id).InvertedTable;
+        }
+
         #endregion Player API
 
         #region Counter API
