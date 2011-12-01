@@ -8,7 +8,7 @@ namespace Skylabs.Lobby
     public enum UserLevel { Standard = 0, Moderator = 1, Admin = 2 };
 
     [Serializable]
-    public enum UserStatus { Unknown = -1, Offline = 0, Online = 1, Away = 2, DoNotDisturb = 3, Invisible = 4 };
+    public enum UserStatus { Unknown = 0, Offline = 1, Online = 2, Away = 3, DoNotDisturb = 4, Invisible = 5 };
 
     [Serializable]
     public class User : IEquatable<User>, ICloneable

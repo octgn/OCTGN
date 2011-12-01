@@ -19,7 +19,6 @@ namespace Octgn.LobbyServer
         }
         public static bool IsPortAvailable(int port)
         {
-            bool isAvailable = true;
 
             IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
             TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();

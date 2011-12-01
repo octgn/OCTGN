@@ -108,7 +108,7 @@ namespace Skylabs.LobbyServer
                     break;
                 case "status":
                     UserStatus u = (UserStatus)sm["status"];
-                    if (u != null)
+                    if (u == 0)
                     {
                         if (u != UserStatus.Offline)
                         {

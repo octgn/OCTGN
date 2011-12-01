@@ -24,7 +24,7 @@ namespace Octgn
             {
                 if(!ApplicationDeployment.IsNetworkDeployed) return;
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return;
             }
