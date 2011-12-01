@@ -449,7 +449,7 @@ namespace Octgn.Scripting
                 WebClient client = new WebClient();
                 result = client.DownloadString(url);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 
             }

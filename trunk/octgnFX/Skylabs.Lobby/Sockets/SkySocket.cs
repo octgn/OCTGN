@@ -74,7 +74,7 @@ namespace Skylabs.Net.Sockets
                     _Connect(c);
                     return true;
                 }
-                catch(SocketException e)
+                catch(SocketException)
                 {
                     return false;
                 }
@@ -165,7 +165,7 @@ namespace Skylabs.Net.Sockets
                     HandleInput();
                 }
             }
-            catch(SocketException e)
+            catch(SocketException)
             {
                 //Skylabs.ConsoleHelper.ConsoleWriter.writeLine(e.ToString(), false);
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
@@ -189,7 +189,7 @@ namespace Skylabs.Net.Sockets
                     {
                         sm = SocketMessage.Deserialize(mdata);
                     }
-                    catch(Exception e)
+                    catch(Exception)
                     {
 #if(DEBUG)
                         if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();

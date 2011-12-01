@@ -139,7 +139,7 @@ namespace Skylabs.Lobby
                                                   string cu = (string)re.Data["CaptchaUrl"];
                                                   onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
                                               }
-                                              catch(WebException e)
+                                              catch(WebException)
                                               {
                                                   onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
                                               }
