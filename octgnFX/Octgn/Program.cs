@@ -21,7 +21,6 @@ namespace Octgn
         public static DeckBuilder.DeckBuilderWindow DeckEditor;
         public static PlayWindow PlayWindow;
         internal static bool IsGameRunning = false;
-        // TODO: Refactoring > those paths belong to the Octgn.Data or somewhere else
         internal readonly static string BasePath;
         internal readonly static string GamesPath;
         public static Data.GamesRepository GamesRepository;
@@ -129,7 +128,6 @@ namespace Octgn
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        // TODO: Does this belong here?
         internal static void Print(Player player, string text)
         {
             string finalText = text;
@@ -164,7 +162,6 @@ namespace Octgn
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player) | EventIds.Explicit, finalText, args.ToArray());
         }
 
-        // TODO: Refactoring: those helper methods belong somewhere else (near the tracing classes)
         internal static void TracePlayerEvent(Player player, string message, params object[] args)
         {
             List<object> args1 = new List<object>(args);

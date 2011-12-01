@@ -272,9 +272,9 @@ namespace Octgn.LobbyServer
                     return;
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
-                //TODO Should have some sort of logging here.
+
             }
         }
 
@@ -302,9 +302,8 @@ namespace Octgn.LobbyServer
                     return;
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
-                //TODO Should have some sort of logging here.
             }
         }
 
@@ -370,9 +369,8 @@ namespace Octgn.LobbyServer
                     return;
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
-                //TODO Should have some sort of logging here.
             }
         }
 
@@ -398,7 +396,7 @@ namespace Octgn.LobbyServer
                     return true;
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return false;
             }
