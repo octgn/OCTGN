@@ -21,7 +21,6 @@ namespace Octgn.Play.Actions
             // Turning an aliased card face up will change its id,
             // which can create bugs if one tries to execute other actions using its current id.
             // That's why scripts have to be suspended until the card is revealed.
-            // TODO: remove, as this behavior has been changed. Card.id isn't tied to its Card.Type.id anymore.
             //if (up && card.Type.alias && Script.ScriptEngine.CurrentScript != null)
             //   card.Type.revealSuspendedScript = Script.ScriptEngine.Suspend();
         }

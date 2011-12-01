@@ -104,9 +104,9 @@ namespace Skylabs.LobbyServer
                 _nextId++;
                 AcceptClients();
             }
-            catch(ObjectDisposedException de)
+            catch(ObjectDisposedException)
             {
-                //Todo Probubly should have some form of logging for this error.
+                .
             }
         }
     }

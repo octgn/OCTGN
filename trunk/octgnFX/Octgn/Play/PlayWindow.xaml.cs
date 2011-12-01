@@ -355,8 +355,6 @@ namespace Octgn.Play
     }
 
     #region Limited
-    
-    // TODO: Refactor this whole region
 
     protected void LimitedSaveClicked(object sender, EventArgs e)
     {

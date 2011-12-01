@@ -10,7 +10,6 @@ namespace Octgn.Definitions
     public byte Id { get; private set; }
     public string Name { get; private set; }
 
-    // TODO: encapsulate these 3 fields
     public string icon;
     public string background;
     public string board;

@@ -58,9 +58,8 @@ namespace Skylabs
 
                 return sb.ToString().ToLower();
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                //TODO Add some sort of logging here maybe.
                 return "";
             }
         }

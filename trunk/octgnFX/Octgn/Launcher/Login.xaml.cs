@@ -36,7 +36,6 @@ namespace Octgn.Launcher
             }
             textBox1.Text = Settings.Default.Email;
 #if(DEBUG)
-            //TODO Remove this at some point
             MenuItem m = new MenuItem();
             m.Name = "menuOldMenu";
             m.Header = "Old Menu";
