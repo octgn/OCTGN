@@ -106,7 +106,7 @@ namespace Skylabs.LobbyServer
             }
             catch(ObjectDisposedException)
             {
-                .
+                
             }
         }
     }
