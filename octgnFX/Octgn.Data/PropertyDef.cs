@@ -24,7 +24,7 @@ namespace Octgn.Data
     public PropertyDef(string name, Data.PropertyType type)
     { this.Name = name; this.Type = type; }
 
-    internal static PropertyDef LoadFromXml(XElement xml)
+    public static PropertyDef LoadFromXml(XElement xml)
     {
       string name = xml.Attr<string>("name");
 
