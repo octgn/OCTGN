@@ -270,3 +270,5 @@ del _id
 players = [Player(id) for id in _api.AllPlayers()]
 table = Table()
 cardProperties = [x.lower() for x in _api.CardProperties()]
+version = _api.OCTGN_Version()
+gameVersion = _api.GameDef_Version()

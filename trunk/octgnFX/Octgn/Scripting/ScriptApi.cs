@@ -461,6 +461,16 @@ namespace Octgn.Scripting
             return result;
         }
 
+        public string OCTGN_Version()
+        {
+            return OctgnApp.OctgnVersion.ToString();
+        }
+
+        public string GameDef_Version()
+        {
+            return Program.Game.Definition.Version.ToString();
+        }
+
         #endregion Special APIs
     }
 }
