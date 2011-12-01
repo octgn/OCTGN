@@ -260,7 +260,8 @@ class Player(object):
   def piles(self): return self._piles
   @property
   def color(self): return _api.PlayerColor(self._id)
-
+  def hasInvertedTable(self): return _api.PlayerHasInvertedTable(self._id)
+  
 _id = _api.LocalPlayerId()
 me = Player(_id) if _id >= 0 else None
 _id = _api.SharedPlayerId()
