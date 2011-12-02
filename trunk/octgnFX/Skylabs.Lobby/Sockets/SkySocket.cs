@@ -168,7 +168,7 @@ namespace Skylabs.Net.Sockets
             catch(SocketException)
             {
                 //Skylabs.ConsoleHelper.ConsoleWriter.writeLine(e.ToString(), false);
-                if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                //if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
                 Close(DisconnectReason.RemoteHostDropped);
             }
         }

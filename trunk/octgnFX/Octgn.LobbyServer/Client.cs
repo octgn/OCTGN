@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using Octgn.LobbyServer;
 using Skylabs.Lobby;
@@ -29,6 +30,12 @@ namespace Skylabs.LobbyServer
             set
             {
                 _friends = value;
+                foreach (User f in _friends)
+                {
+                    Client cl = Parent.Clients.FirstOrDefault(c => c.Me.Uid == f.Uid);
+                    if (cl != null)
+                        f.Status = cl.Me.Status;
+                }
                 if(LoggedIn) SendFriendsList();
             }
         }
