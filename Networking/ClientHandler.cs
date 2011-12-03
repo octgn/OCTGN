@@ -60,10 +60,7 @@ namespace Octgn.Networking
 
         public void Start()
         {
-            var navWnd = Application.Current.MainWindow as System.Windows.Navigation.NavigationWindow;
-            if(navWnd == null) return;
-            var startPage = navWnd.Content as Launcher.StartGame;
-            if(startPage != null) startPage.Start();
+            Program.ClientWindow.StartGame();
         }
 
         public void Settings(bool twoSidedTable)
