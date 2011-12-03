@@ -68,9 +68,12 @@ namespace Octgn.Launcher
                 group.Controller = host;
             }
 
-			Program.PlayWindow = new Octgn.Play.PlayWindow();
+            if (Program.PlayWindow == null)
+            {
+                Program.PlayWindow = new Octgn.Play.PlayWindow();
 
-            Program.PlayWindow.Show();
+                Program.PlayWindow.Show();
+            }
 		}
 
 		private void StartClicked(object sender, RoutedEventArgs e)

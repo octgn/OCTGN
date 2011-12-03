@@ -108,6 +108,7 @@ namespace Skylabs.Lobby
             {
                 Thread t = new Thread(() =>
                                           {
+                                              //TODO Need to add a method to handle 2-step signin.
                                               _onLoginFinished = onFinish;
                                               String appName = "skylabs-LobbyClient-" + Version;
                                               Service s = new Service("code", appName);
@@ -207,7 +208,12 @@ namespace Skylabs.Lobby
                         OnlineList.Add(u);
                     else
                         OnlineList.Where(us => us.Equals(u)).First().Status = u.Status;
-                    FriendList.Where(us => us.Equals(u)).First().Status = u.Status;
+
+                    User f = FriendList.FirstOrDefault(us => us.Equals(u));
+                    if (f != null)
+                    {
+                        f.Status = u.Status;
+                    }
                     if (OnUserStatusChanged != null)
                         OnUserStatusChanged.Invoke(u.Status, u);
                     if (OnDataRecieved != null)

@@ -46,14 +46,16 @@ namespace Octgn.Launcher
             {
                 Program.Game = new Game(GameDef.FromO8G(Game.Filename));
                 Program.IsHost = true;
-                IPAddress[] ad = Dns.GetHostAddresses("www.skylabsonline.com");
+                IPAddress[] ad = new IPAddress[0];
 #if(DEBUG)
+                ad = new IPAddress[1];
                 IPAddress ip = IPAddress.Parse("127.0.0.1");
 #else
+                ad = Dns.GetHostAddresses("www.skylabsonline.com");
                 IPAddress ip = ad[0];
 #endif
-                
-                if(ad.Length > 0)
+
+                if (ad.Length > 0)
                 {
                     Program.Client = new Networking.Client(ip, port);
                     Program.Client.Connect();
