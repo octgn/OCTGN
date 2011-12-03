@@ -82,6 +82,7 @@ namespace Octgn.Launcher
                     c = Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
                 if (c)
                 {
+                    //TODO Sometimes it takes forever, maybe retry if it doesn't log in in like 10 seconds.
                     Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password, "", UserStatus.Online);
                 }
                 else

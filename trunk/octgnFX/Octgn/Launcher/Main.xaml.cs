@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
@@ -8,6 +9,8 @@ using System.Windows.Navigation;
 using System.Windows.Threading;
 using Microsoft.Windows.Controls.Ribbon;
 using Octgn.DeckBuilder;
+using Octgn.Definitions;
+using Skylabs.Lobby;
 using Skylabs.Net;
 using System.IO;
 
@@ -234,12 +237,42 @@ namespace Octgn.Launcher
             hgl.OnGameClick += new EventHandler(hgl_OnGameClick);
             frame1.Navigate(hgl);
         }
-
+        public void StartGame()
+        {
+            StartGame sg = frame1.Content as StartGame;
+            if (sg != null)
+            {
+                sg.Start();
+                frame1.Navigate(new HostedGameList());
+            }
+        }
         void hgl_OnGameClick(object sender, EventArgs e)
         {
             if (Program.PlayWindow == null)
             {
-                
+                HostedGame hg = sender as HostedGame;
+                Program.IsHost = false;
+                Octgn.Data.Game theGame = Program.GamesRepository.AllGames.FirstOrDefault(g => g.Id == hg.GameGuid);
+                if(theGame != null)
+                {
+                    Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
+                    IPAddress[] ad = new IPAddress[0];
+#if(DEBUG)
+                    ad = new IPAddress[1];
+                    IPAddress ip = IPAddress.Parse("127.0.0.1");
+#else
+                ad = Dns.GetHostAddresses("www.skylabsonline.com");
+                IPAddress ip = ad[0];
+#endif
+
+                    if (ad.Length > 0)
+                    {
+                        Program.Client = new Networking.Client(ip, hg.Port);
+                        Program.Client.Connect();
+                        this.Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
+
+                    }
+                }
             }
         }
     }

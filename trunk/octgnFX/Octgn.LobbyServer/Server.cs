@@ -20,11 +20,25 @@ namespace Skylabs.LobbyServer
 
         public TcpListener ListenSocket { get; private set; }
 
-        public List<Client> Clients { get; set; }
+        public List<Client> Clients 
+        { 
+            get
+            {
+                lock (_clients)
+                    return _clients;
+            } 
+            set
+            {
+                lock (_clients)
+                    _clients = value;
+            } 
+        }
 
         public List<HostedGame> Games { get; set; } 
 
         private int _nextId;
+
+        private List<Client> _clients = new List<Client>();
 
         public Version Version
         {
@@ -41,7 +55,6 @@ namespace Skylabs.LobbyServer
             LocalIp = ip;
             Port = port;
             ListenSocket = new TcpListener(LocalIp, Port);
-            Clients = new List<Client>();
             Games = new List<HostedGame>();
         }
 

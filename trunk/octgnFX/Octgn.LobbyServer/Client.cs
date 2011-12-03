@@ -19,7 +19,7 @@ namespace Skylabs.LobbyServer
 
         public MySqlCup Cup { get; private set; }
 
-        public User Me { get; private set; }
+        public User Me { get { return _me; } private set { _me = value; } }
 
         public List<User> Friends
         {
@@ -47,6 +47,8 @@ namespace Skylabs.LobbyServer
         private bool _gotEndMessage;
 
         private List<User> _friends;
+
+        private User _me = new User();
 
         public Client(TcpClient client, int id, Server server)
             : base(client)
