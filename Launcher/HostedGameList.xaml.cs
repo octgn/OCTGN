@@ -41,7 +41,8 @@ namespace Octgn.Launcher
                                                       foreach (HostedGame g in Program.lobbyClient.Games)
                                                       {
                                                           HostedGameListItem gs = new HostedGameListItem(g);
-                                                          gs.MouseUp += new MouseButtonEventHandler(gs_MouseUp);
+                                                          if(g.GameStatus == HostedGame.eHostedGame.StartedHosting)
+                                                            gs.MouseUp += new MouseButtonEventHandler(gs_MouseUp);
                                                           stackPanel1.Children.Add(gs);
                                                       }                                                                  
                                                   }));
