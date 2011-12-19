@@ -42,6 +42,7 @@ namespace Octgn.Launcher
         private void EndHostGame(SocketMessage sm)
         {
             int port = (int)sm["port"];
+            Program.lobbyClient.CurrentHostedGamePort = port;
             if(port > -1)
             {
                 Program.Game = new Game(GameDef.FromO8G(Game.Filename));

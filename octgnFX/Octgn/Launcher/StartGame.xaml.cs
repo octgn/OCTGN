@@ -78,11 +78,13 @@ namespace Octgn.Launcher
 
 		private void StartClicked(object sender, RoutedEventArgs e)
 		{
+            Program.lobbyClient.HostedGameStarted();
 			e.Handled = true;
 			Start();
 			Program.Client.Rpc.Start();
             NavigationService.RemoveBackEntry();
             NavigationService.GoBack();
+
 		}
 
 		private void CancelClicked(object sender, RoutedEventArgs e)

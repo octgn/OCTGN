@@ -128,12 +128,12 @@ namespace Skylabs.LobbyServer
                     break;
                 case "hostgame":
                     {
-                        Guid g = (Guid) sm["game"];
-                        Version v = (Version) sm["version"];
-                        string n = (string) sm["name"];
-                        string pass = (string) sm["password"];
+                        Guid g = (Guid)sm["game"];
+                        Version v = (Version)sm["version"];
+                        string n = (string)sm["name"];
+                        string pass = (string)sm["password"];
 
-                        HostedGame hs = new HostedGame(Parent,g,v,n,pass);
+                        HostedGame hs = new HostedGame(Parent, g, v, n, pass);
 
                         SocketMessage som = new SocketMessage("hostgameresponse");
                         som.AddData("port", hs.Port);
@@ -142,14 +142,19 @@ namespace Skylabs.LobbyServer
                         {
                             Parent.Games.Add(hs);
                             SocketMessage smm = new SocketMessage("GameHosting");
-                            smm.AddData("name",n);
-                            smm.AddData("passrequired",!String.IsNullOrEmpty(pass));
-                            smm.AddData("guid",g);
-                            smm.AddData("version",v);
-                            smm.AddData("hoster",Me);
-                            smm.AddData("port",hs.Port);
+                            smm.AddData("name", n);
+                            smm.AddData("passrequired", !String.IsNullOrEmpty(pass));
+                            smm.AddData("guid", g);
+                            smm.AddData("version", v);
+                            smm.AddData("hoster", Me);
+                            smm.AddData("port", hs.Port);
                             Parent.AllUserMessage(smm);
                         }
+                        break;
+                    }
+                case "gamestarted":
+                    {
+                        Parent.AllUserMessage(sm);
                         break;
                     }
                 case "customstatus":
