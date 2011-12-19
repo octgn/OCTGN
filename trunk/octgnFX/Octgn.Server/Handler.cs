@@ -36,7 +36,7 @@ namespace Octgn.Server
         private byte playerId = 1;                  // Next free player id
         private bool acceptPlayers = true;          // When false, no new players are accepted
         private int turnNumber = 0;                 // Turn number, used to validate TurnStop requests
-        private Play.GameSettings gameSettings = new Octgn.Play.GameSettings();
+        private Octgn.Data.GameSettings gameSettings = new Octgn.Data.GameSettings();
         private HashSet<byte> turnStopPlayers = new HashSet<byte>();
         private Server.Connection Connection;
 

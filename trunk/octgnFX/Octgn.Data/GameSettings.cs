@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.ComponentModel;
 
-namespace Octgn.Play
+namespace Octgn.Data
 {
 	public class GameSettings : INotifyPropertyChanged
 	{

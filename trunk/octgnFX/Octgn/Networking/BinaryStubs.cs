@@ -1095,8 +1095,6 @@ namespace Octgn.Networking
             }
             catch
             {
-                if(Program.Server != null && Program.Server.Disconnected(to))
-                    return;
                 Program.Client.Disconnected();
             }
         }

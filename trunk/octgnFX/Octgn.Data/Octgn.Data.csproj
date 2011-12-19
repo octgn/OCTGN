@@ -94,6 +94,7 @@
     <Compile Include="DeckExceptions.cs" />
     <Compile Include="Def.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="GameSettings.cs" />
     <Compile Include="GamesRepository.cs" />
     <Compile Include="MarkerModel.cs" />
     <Compile Include="Pack.cs" />

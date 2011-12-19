@@ -162,7 +162,9 @@ namespace Octgn.Networking
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
             var player = new Player(Program.Game.Definition, nick, id, pkey);
             // Define the default table side if we are the host
-            if(Program.Server != null)
+            //TODO All references to player list should be hosted on server.
+            //And all decisions based on players should be hosted there aswell.
+            if(Program.IsHost)
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
         }
 
