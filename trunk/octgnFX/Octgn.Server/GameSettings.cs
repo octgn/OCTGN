@@ -9,7 +9,7 @@ namespace Octgn.Play
 {
 	public class GameSettings : INotifyPropertyChanged
 	{
-		private bool _useTwoSidedTable;
+		private bool _useTwoSidedTable = true;
 	    private bool _initialized = false;
 
         public GameSettings()
