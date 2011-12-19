@@ -45,6 +45,7 @@ namespace Octgn.Launcher
             Program.lobbyClient.CurrentHostedGamePort = port;
             if(port > -1)
             {
+                Program.GameSettings.UseTwoSidedTable = true;
                 Program.Game = new Game(GameDef.FromO8G(Game.Filename));
                 Program.IsHost = true;
                 IPAddress[] ad = new IPAddress[0];
