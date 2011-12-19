@@ -12,6 +12,7 @@ namespace Octgn.Launcher
 {
 	public partial class StartGame : Page
 	{
+        private bool StartingGame = false;
 		public StartGame()
 		{
             
@@ -38,10 +39,14 @@ namespace Octgn.Launcher
         // Fix: defer the call to Program.Game.Begin(), so that the trace has 
         // time to connect to the ChatControl (done inside ChatControl.Loaded).
         // Otherwise, messages notifying a disconnection may be lost
-        Dispatcher.BeginInvoke(new Action(Program.Game.Begin));
+          try { Dispatcher.BeginInvoke(new Action(Program.Game.Begin)); }
+          catch (Exception) { }
+        
       };      
       Unloaded += delegate
       {
+          if(StartingGame == false)
+              Program.StopGame();
         Program.GameSettings.PropertyChanged -= SettingsChanged;
         Program.ServerError -= HandshakeError;
       };
@@ -82,6 +87,7 @@ namespace Octgn.Launcher
 
 		private void StartClicked(object sender, RoutedEventArgs e)
 		{
+            StartingGame = true;
             Program.lobbyClient.HostedGameStarted();
 			e.Handled = true;
 			Start();
@@ -99,7 +105,6 @@ namespace Octgn.Launcher
 
 		private void Back()
 		{
-			Program.StopGame();
 			NavigationService.RemoveBackEntry();
 			NavigationService.GoBack();
 
