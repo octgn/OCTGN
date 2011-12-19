@@ -6,7 +6,7 @@ using Skylabs.ConsoleHelper;
 
 namespace Skylabs.LobbyServer
 {
-    public class Program
+    public static class Program
     {
         public static Server Server;
 #if(DEBUG)

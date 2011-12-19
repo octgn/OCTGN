@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 
-namespace Octgn.LobbyServer
+namespace Skylabs.LobbyServer
 {
     public static class Networking
     {
@@ -12,6 +12,11 @@ namespace Octgn.LobbyServer
         {
             for (int i = start; i <= end; i++)
             {
+                foreach (HostedGame hg in Program.Server.Games)
+                {
+                    if (hg.Port == i)
+                        continue;
+                }
                 if (IsPortAvailable(i))
                     return i;
             }
