@@ -106,7 +106,6 @@
       <DependentUpon>Broadcaster.tt</DependentUpon>
     </Compile>
     <Compile Include="CardOrientation.cs" />
-    <Compile Include="GameSettings.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="IClientCalls.cs">
       <AutoGen>True</AutoGen>
@@ -170,6 +169,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
+      <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
+      <Name>Octgn.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

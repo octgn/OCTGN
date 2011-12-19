@@ -59,7 +59,7 @@ namespace Octgn.Launcher
       bool isIPv6 = v6Box.IsChecked.Value;
 			isStarting = true;
 			// Open a server
-			Program.Server = new Server.Server(port, isIPv6, Program.Game.Definition.Id, Program.Game.Definition.Version);
+			//Program.Server = new Server.Server(port, isIPv6, Program.Game.Definition.Id, Program.Game.Definition.Version);
 			// Creates a client and connect to the server
 			Program.Client = new Networking.Client(isIPv6 ? IPAddress.IPv6Loopback : IPAddress.Loopback, int.Parse(portBox.Text));
 			Program.Client.Connect();

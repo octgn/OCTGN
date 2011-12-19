@@ -102,6 +102,7 @@ namespace Octgn.Launcher
 			Program.StopGame();
 			NavigationService.RemoveBackEntry();
 			NavigationService.GoBack();
+
 		}
 
 		private void HandshakeError(object sender, ServerErrorEventArgs e)

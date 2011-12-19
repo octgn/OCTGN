@@ -15,7 +15,7 @@ namespace Octgn
         public static DWindow DebugWindow;
         public static Game Game;
         public static LobbyClient lobbyClient;
-        public static GameSettings GameSettings = new GameSettings();
+        public static Octgn.Data.GameSettings GameSettings = new Octgn.Data.GameSettings();
         public static Octgn.Launcher.Main ClientWindow;
         public static Launcher.LauncherWindow LauncherWindow;
         public static DeckBuilder.DeckBuilderWindow DeckEditor;
@@ -27,7 +27,6 @@ namespace Octgn
 
         internal static ulong PrivateKey = ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
-        internal static Server.Server Server;
         internal static Networking.Client Client;
         internal static event EventHandler<ServerErrorEventArgs> ServerError;
 
@@ -79,8 +78,6 @@ namespace Octgn
         public static void StopGame()
         {
             Client.Disconnect(); Client = null;
-            if(Server != null)
-            { Server.Stop(); Server = null; }
             Game.End(); Game = null;
             Dispatcher = null;
             Database.Close();
