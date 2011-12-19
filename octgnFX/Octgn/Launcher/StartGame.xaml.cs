@@ -14,7 +14,7 @@ namespace Octgn.Launcher
 	{
 		public StartGame()
 		{
-            Program.GameSettings.UseTwoSidedTable = true;
+            
 
 			InitializeComponent();
 
@@ -31,9 +31,9 @@ namespace Octgn.Launcher
 
       Loaded += delegate
       {
+          Program.GameSettings.UseTwoSidedTable = true;
         Program.Dispatcher = this.Dispatcher;
         Program.ServerError += HandshakeError;
-        if (Program.IsHost)
           Program.GameSettings.PropertyChanged += SettingsChanged;
         // Fix: defer the call to Program.Game.Begin(), so that the trace has 
         // time to connect to the ChatControl (done inside ChatControl.Loaded).
@@ -50,7 +50,11 @@ namespace Octgn.Launcher
 		private void SettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
             if (!DesignerProperties.GetIsInDesignMode(this))
-			    Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
+            {
+                if (Program.IsHost)
+                    Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
+                cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
+            }
 		}
 
 		internal void Start()
