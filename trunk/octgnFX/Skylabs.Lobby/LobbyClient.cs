@@ -58,7 +58,9 @@ namespace Skylabs.Lobby
 
         public List<User> OnlineList { get; private set; }
 
-        public List<Notification> Notifications { get; set; } 
+        public List<Notification> Notifications { get; set; }
+
+        public int CurrentHostedGamePort { get; set; }
 
         public LobbyClient()
         {
@@ -94,7 +96,15 @@ namespace Skylabs.Lobby
             sm.AddData("pass",password);
             WriteMessage(sm);
         }
-
+        public void HostedGameStarted()
+        {
+            if (CurrentHostedGamePort != -1)
+            {
+                SocketMessage sm = new SocketMessage("gamestarted");
+                sm.AddData("port", CurrentHostedGamePort);
+                WriteMessage(sm);
+            }
+        }
         public void AddFriend(string email)
         {
             SocketMessage sm = new SocketMessage("addfriend");
@@ -248,6 +258,16 @@ namespace Skylabs.Lobby
                         HostedGame gm = new HostedGame(sm);
                         Games.Add(gm);
                         if (OnGameHostEvent != null)
+                            OnGameHostEvent.Invoke(gm);
+                        break;
+                    }
+                case "gamestarted":
+                    {
+                        int p = (int) sm["port"];
+
+                        HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
+                        gm.GameStatus = HostedGame.eHostedGame.GameInProgress;
+                        if(OnGameHostEvent != null)
                             OnGameHostEvent.Invoke(gm);
                         break;
                     }
