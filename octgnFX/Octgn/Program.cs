@@ -77,7 +77,10 @@ namespace Octgn
         }
         public static void StopGame()
         {
-            Client.Disconnect(); Client = null;
+            if (Client != null)
+            {
+                Client.Disconnect(); Client = null;
+            }
             Game.End(); Game = null;
             Dispatcher = null;
             Database.Close();

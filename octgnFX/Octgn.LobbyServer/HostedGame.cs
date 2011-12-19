@@ -27,28 +27,31 @@ namespace Skylabs.LobbyServer
             GameVersion = gameversion;
             Name = name;
             Password = password;
-            Port = Networking.NextPortInRange(5000, 9000);
-            if (Port != -1)
+            lock (Program.Server)
             {
-                StandAloneApp = new Process();
-                StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
-                StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid.ToString() + " -v=" + GameVersion + " -p=" + Port.ToString();
-                StandAloneApp.Exited += new EventHandler(StandAloneApp_Exited);
-                StandAloneApp.EnableRaisingEvents = true;
-                try
+                Port = Networking.NextPortInRange(5000, 9000);
+                if (Port != -1)
                 {
-                    StandAloneApp.Start();
-                    IsRunning = true;
-                    return;
+                    StandAloneApp = new Process();
+                    StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
+                    StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid.ToString() + " -v=" + GameVersion + " -p=" + Port.ToString();
+                    StandAloneApp.Exited += new EventHandler(StandAloneApp_Exited);
+                    StandAloneApp.EnableRaisingEvents = true;
+                    try
+                    {
+                        StandAloneApp.Start();
+                        IsRunning = true;
+                        return;
+                    }
+                    catch (Exception)
+                    {
+                        Port = -1;
+                        Trace.TraceError(StandAloneApp.StartInfo.FileName);
+                        Trace.Flush();
+                    }
                 }
-                catch (Exception)
-                {
-                    Port = -1;
-                    Trace.TraceError(StandAloneApp.StartInfo.FileName);
-                    Trace.Flush();
-                }
+                IsRunning = false;
             }
-            IsRunning = false;
         }
 
         void StandAloneApp_Exited(object sender, EventArgs e)

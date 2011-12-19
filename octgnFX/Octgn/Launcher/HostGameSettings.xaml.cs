@@ -42,6 +42,7 @@ namespace Octgn.Launcher
         private void EndHostGame(SocketMessage sm)
         {
             int port = (int)sm["port"];
+            Program.DebugTrace.TraceEvent(System.Diagnostics.TraceEventType.Information, 0, "Connecting to port: " + port.ToString());
             Program.lobbyClient.CurrentHostedGamePort = port;
             if(port > -1)
             {

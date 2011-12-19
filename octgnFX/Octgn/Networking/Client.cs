@@ -79,7 +79,8 @@ namespace Octgn.Networking
             {
                 lock (this)
                 {
-                    if (disposed) return;
+                    if (disposed) 
+                        return;
                     this.Rpc.Ping();
                 }
                 Thread.Sleep(2000);
