@@ -1,4 +1,4 @@
-﻿namespace Octgn.LobbyServer
+﻿namespace Skylabs.LobbyServer
 {
     public class Ban
     {

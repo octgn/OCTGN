@@ -8,8 +8,8 @@
     <ProjectGuid>{CBEA967B-A33D-49AF-A61C-A84137874430}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Octgn.LobbyServer</RootNamespace>
-    <AssemblyName>Octgn.LobbyServer</AssemblyName>
+    <RootNamespace>Skylabs.LobbyServer</RootNamespace>
+    <AssemblyName>Skylabs.LobbyServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -104,6 +104,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
+    <Compile Include="server.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>server.settings</DependentUpon>
+    </Compile>
     <Compile Include="serverdebug.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -113,6 +118,10 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Properties\app.config" />
+    <None Include="server.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>server.Designer.cs</LastGenOutput>
+    </None>
     <None Include="serverdebug.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>serverdebug.Designer.cs</LastGenOutput>

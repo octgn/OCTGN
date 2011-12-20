@@ -5,7 +5,7 @@ using Skylabs.ConsoleHelper;
 using Skylabs.Lobby;
 using Skylabs.LobbyServer;
 
-namespace Octgn.LobbyServer
+namespace Skylabs.LobbyServer
 {
     public class MySqlCup
     {
