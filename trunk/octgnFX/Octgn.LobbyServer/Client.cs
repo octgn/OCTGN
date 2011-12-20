@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using Octgn.LobbyServer;
 using Skylabs.Lobby;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
