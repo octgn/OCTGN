@@ -21,11 +21,20 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class GameList : Page
     {
+        public enum LoadEvent { None, InstallGame };
         public event EventHandler OnGameClick;
+
         public GameList()
         {
             InitializeComponent();
             Program.GamesRepository.GameInstalled += new EventHandler(GamesRepository_GameInstalled);
+        }
+        public GameList(LoadEvent le)
+        {
+            InitializeComponent();
+            Program.GamesRepository.GameInstalled += new EventHandler(GamesRepository_GameInstalled);
+            if (le == LoadEvent.InstallGame)
+                Install_Game();
         }
         private void Reload_Game_List()
         {
@@ -80,7 +89,16 @@ namespace Octgn.Launcher
             String newFilename = Uri.UnescapeDataString(ofd.FileName);
             if (!newFilename.ToLower().Equals(ofd.FileName.ToLower()))
             {
-                File.Move(ofd.FileName, newFilename);
+                try
+                {
+                    File.Move(ofd.FileName, newFilename);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("This file is currently in use. Please close whatever application is using it and try again.");
+                    return;
+                }
+                
             }
 
             try
