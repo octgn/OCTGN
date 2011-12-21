@@ -41,7 +41,6 @@ namespace Octgn.StandAloneServer
 
             ConsoleEventLog.EAddEvent += ConsoleEventLogEAddEvent;
             ConsoleWriter.CommandText = "StandAloneServer: ";
-            AppDomain.CurrentDomain.FirstChanceException += CurrentDomainFirstChanceException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
             
@@ -56,7 +55,7 @@ namespace Octgn.StandAloneServer
         }
         private static void StartServer()
         {
-            Server = new Server.Server(Port,false,GameGuid,GameVersion);
+            Server = new Server.Server(Port,GameGuid,GameVersion);
             Server.OnStop += new EventHandler(Server_OnStop);
             Skylabs.ConsoleHelper.ConsoleWriter.WriteLine("Starting server on port " + Port,false);
             while (KeepRunning)
@@ -82,11 +81,6 @@ namespace Octgn.StandAloneServer
             Exception ex = (Exception)e.ExceptionObject;
             ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
             Console.WriteLine(ex.StackTrace);
-        }
-
-        private static void CurrentDomainFirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
-        {
-            ConsoleEventLog.AddEvent(new ConsoleEventError(e.Exception.Message, e.Exception), false);
         }
 
         private static void ConsoleEventLogEAddEvent(ConsoleEvent e)

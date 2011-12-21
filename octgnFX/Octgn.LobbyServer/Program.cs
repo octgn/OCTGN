@@ -19,7 +19,6 @@ namespace Skylabs.LobbyServer
             ConsoleEventLog.EAddEvent += ConsoleEventLogEAddEvent;
             ConsoleWriter.CommandText = "LobbyServer: ";
             ConsoleReader.EConsoleInput += ConsoleReaderEConsoleInput;
-            AppDomain.CurrentDomain.FirstChanceException += CurrentDomainFirstChanceException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
             StartServer();
@@ -37,11 +36,6 @@ namespace Skylabs.LobbyServer
         {
             Exception ex = (Exception)e.ExceptionObject;
             ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
-        }
-
-        private static void CurrentDomainFirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
-        {
-            ConsoleEventLog.AddEvent(new ConsoleEventError(e.Exception.Message, e.Exception), false);
         }
 
         private static void ConsoleEventLogEAddEvent(ConsoleEvent e)
