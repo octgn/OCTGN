@@ -145,7 +145,11 @@ namespace Octgn.Launcher
         private void RibbonButton_Click(object sender, RoutedEventArgs e)
         {
             GameList gl = frame1.Content as GameList;
-            gl.Install_Game();
+            if (gl == null)
+            {
+                frame1.Navigate(new GameList(GameList.LoadEvent.InstallGame));
+            }
+       
         }
 
         private void RibbonButton_Click_1(object sender, RoutedEventArgs e)

@@ -253,6 +253,15 @@ namespace Skylabs.Lobby
 
                     _onLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.FromPhpTime(time), "");
                     break;
+                case "gamelist":
+                    {
+                        List<HostedGame> games = sm["list"] as List<HostedGame>;
+                        Games = games;
+                        if (games.Count > 0)
+                            if (OnGameHostEvent != null)
+                                OnGameHostEvent.Invoke(Games[0]);
+                        break;
+                    }
                 case "gamehosting":
                     {
                         HostedGame gm = new HostedGame(sm);

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Skylabs.Net;
+using Skylabs.Lobby;
 
 namespace Skylabs.LobbyServer
 {
@@ -18,14 +19,17 @@ namespace Skylabs.LobbyServer
         public Process StandAloneApp { get; set; }
         public bool IsRunning { get; private set; }
         public Server Server { get; set; }
-
-        public HostedGame(Server server, Guid gameguid,Version gameversion,string name, string password)
+        public User Hoster { get; private set; }
+        public Skylabs.Lobby.HostedGame.eHostedGame Status { get; set; }
+        public HostedGame(Server server, Guid gameguid,Version gameversion,string name, string password, User hoster)
         {
             Server = server;
             GameGuid = gameguid;
             GameVersion = gameversion;
             Name = name;
             Password = password;
+            Hoster = hoster;
+            Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
             lock (Program.Server)
             {
                 Port = Networking.NextPortInRange(5000, 9000);
@@ -46,6 +50,7 @@ namespace Skylabs.LobbyServer
                     {
                         StandAloneApp.Start();
                         IsRunning = true;
+                        Status = Lobby.HostedGame.eHostedGame.StartedHosting;
                         return;
                     }
                     catch (Exception e)
@@ -67,6 +72,7 @@ namespace Skylabs.LobbyServer
 
         void StandAloneApp_Exited(object sender, EventArgs e)
         {
+            Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
             SocketMessage sm = new SocketMessage("GameEnd");
             sm.AddData("port",Port);
             Server.AllUserMessage(sm);

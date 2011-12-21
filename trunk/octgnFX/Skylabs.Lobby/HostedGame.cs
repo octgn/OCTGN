@@ -7,8 +7,10 @@ using Skylabs.Net;
 
 namespace Skylabs.Lobby
 {
+    [Serializable]
     public class HostedGame : IEquatable<HostedGame>
     {
+        [Serializable]
         public enum eHostedGame
         {
             StartedHosting,
