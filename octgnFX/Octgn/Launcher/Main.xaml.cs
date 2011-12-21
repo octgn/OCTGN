@@ -267,9 +267,13 @@ namespace Octgn.Launcher
 
                     if (ad.Length > 0)
                     {
-                        Program.Client = new Networking.Client(ip, hg.Port);
-                        Program.Client.Connect();
-                        this.Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
+                        try
+                        {
+                            Program.Client = new Networking.Client(ip, hg.Port);
+                            Program.Client.Connect();
+                            this.Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
+                        }
+                        catch (Exception) { }
 
                     }
                 }
