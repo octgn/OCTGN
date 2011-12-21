@@ -132,7 +132,7 @@ namespace Skylabs.LobbyServer
                         string n = (string)sm["name"];
                         string pass = (string)sm["password"];
 
-                        HostedGame hs = new HostedGame(Parent, g, v, n, pass);
+                        HostedGame hs = new HostedGame(Parent, g, v, n, pass,Me);
 
                         SocketMessage som = new SocketMessage("hostgameresponse");
                         som.AddData("port", hs.Port);
@@ -153,6 +153,8 @@ namespace Skylabs.LobbyServer
                     }
                 case "gamestarted":
                     {
+                        HostedGame g = Parent.Games.FirstOrDefault(hg => hg.Hoster == Me && hg.Port == (int)sm["port"]);
+                        g.Status = Lobby.HostedGame.eHostedGame.GameInProgress;
                         Parent.AllUserMessage(sm);
                         break;
                     }
@@ -297,7 +299,17 @@ namespace Skylabs.LobbyServer
                 }
             }
         }
-
+        private void SendHostedGameList()
+        {
+            List<Skylabs.Lobby.HostedGame> sendgames = new List<Lobby.HostedGame>();
+            foreach (HostedGame hg in Parent.Games)
+            {
+                sendgames.Add(new Lobby.HostedGame(hg.GameGuid,hg.GameVersion,hg.Port,hg.Name,!String.IsNullOrWhiteSpace(hg.Password),hg.Hoster));
+            }
+            SocketMessage sm = new SocketMessage("gamelist");
+            sm.AddData("list",sendgames);
+            WriteMessage(sm);
+        }
         private void Login(SocketMessage insm)
         {
             string email = (string)insm["email"];
@@ -323,6 +335,7 @@ namespace Skylabs.LobbyServer
 
                         SendUsersOnline();
                         SendFriendRequests();
+                        SendHostedGameList();
                         return;
                     }
                     sm = new SocketMessage("banned");
@@ -353,6 +366,8 @@ namespace Skylabs.LobbyServer
                     Parent.OnUserEvent(stat, this);
 
                     SendUsersOnline();
+                    SendFriendRequests();
+                    SendHostedGameList();
                     return;
                 }
                 LoggedIn = false;

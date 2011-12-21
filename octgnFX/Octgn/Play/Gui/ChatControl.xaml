@@ -26,7 +26,7 @@
 
       <TextBox x:Name="input" Grid.Row="2"
                KeyDown="KeyDownHandler" GotFocus="InputGotFocus" LostFocus="InputLostFocus" 
-               BorderThickness="0" Background="Transparent" Style="{x:Null}" />
+               BorderThickness="1" Background="Transparent" Style="{x:Null}" />
       <TextBlock x:Name="watermark" Grid.Row="2"
                  VerticalAlignment="Center" Margin="4,0,4,0"
                  IsHitTestVisible="False"
