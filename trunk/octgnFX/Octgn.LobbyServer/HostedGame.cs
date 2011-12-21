@@ -32,8 +32,14 @@ namespace Skylabs.LobbyServer
                 if (Port != -1)
                 {
                     StandAloneApp = new Process();
+#if(DEBUG)
                     StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
                     StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid.ToString() + " -v=" + GameVersion + " -p=" + Port.ToString();
+#else
+                    StandAloneApp.StartInfo.FileName = "/opt/mono-2.10/bin/mono";
+                    StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" + GameGuid.ToString() + " -v=" + GameVersion + " -p=" + Port.ToString();
+                    
+#endif
                     StandAloneApp.Exited += new EventHandler(StandAloneApp_Exited);
                     StandAloneApp.EnableRaisingEvents = true;
                     try
@@ -42,9 +48,15 @@ namespace Skylabs.LobbyServer
                         IsRunning = true;
                         return;
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         Port = -1;
+                        //TODO Need some sort of proper error handling here.
+                        Console.WriteLine("");
+                        Console.WriteLine(StandAloneApp.StartInfo.FileName);
+                        Console.WriteLine(StandAloneApp.StartInfo.Arguments);
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine(e.StackTrace);
                         Trace.TraceError(StandAloneApp.StartInfo.FileName);
                         Trace.Flush();
                     }

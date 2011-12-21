@@ -26,15 +26,9 @@ namespace Octgn.Server
 		#region Public interface
 
 		// Creates and starts a new server
-		public Server(int port, bool useIPv6, Guid gameId, Version gameVersion)
+		public Server(int port,  Guid gameId, Version gameVersion)
 		{
-			if (useIPv6)
-			{
-				tcp = new TcpListener(System.Net.IPAddress.IPv6Any, port);
-				tcp.AllowNatTraversal(true);
-			}
-			else
-				tcp = new TcpListener(System.Net.IPAddress.Any, port);
+		    tcp = new TcpListener(System.Net.IPAddress.Any, port);
 			this.handler = new Handler(gameId, gameVersion);
 
 			Start();
