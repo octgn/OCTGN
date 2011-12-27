@@ -54,6 +54,7 @@
         <Menu Grid.Row="0" Height="23" HorizontalAlignment="Stretch" Name="menu1" VerticalAlignment="Top" >
             <MenuItem Name="menuOctgn" Header="Octgn">
                 <MenuItem Name="menuExit" Header="Exit" Click="menuExit_Click" />
+                <MenuItem Name="menuUpdate" Header="Check for updates" Click="menuUpdate_Click" />
             </MenuItem>
 
         </Menu>
