@@ -147,8 +147,12 @@ namespace Octgn.Launcher
             GameList gl = frame1.Content as GameList;
             if (gl == null)
             {
-                frame1.Navigate(new GameList(GameList.LoadEvent.InstallGame));
+                gl = new GameList(GameList.LoadEvent.InstallGame);
+                gl.OnGameClick += new EventHandler(gl_OnGameDoubleClick);
+                frame1.Navigate(gl);
             }
+            else
+                gl.Install_Game();
        
         }
 
