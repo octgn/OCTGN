@@ -54,7 +54,7 @@ namespace Octgn.Launcher
                 ad = new IPAddress[1];
                 IPAddress ip = IPAddress.Parse("127.0.0.1");
 #else
-                ad = Dns.GetHostAddresses("www.skylabsonline.com");
+                ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
                 IPAddress ip = ad[0];
 #endif
 
