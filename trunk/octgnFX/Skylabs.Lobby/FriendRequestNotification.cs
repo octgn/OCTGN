@@ -19,6 +19,18 @@ namespace Skylabs.Lobby
             sm.AddData("uid", User.Uid);
             sm.AddData("accept", true);
             LobbyClient.WriteMessage(sm);
+            for (int i = 0; i < LobbyClient.Notifications.Count; i++)
+            {
+                FriendRequestNotification fr = LobbyClient.Notifications[i] as FriendRequestNotification;
+                if (fr != null)
+                {
+                    if (fr.User.Uid == User.Uid)
+                    { 
+                        LobbyClient.Notifications.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
             Dismissed = true;
         }
         public void Decline()
@@ -27,6 +39,18 @@ namespace Skylabs.Lobby
             sm.AddData("uid", User.Uid);
             sm.AddData("accept", false);
             LobbyClient.WriteMessage(sm);
+            for (int i = 0; i < LobbyClient.Notifications.Count; i++)
+            {
+                FriendRequestNotification fr = LobbyClient.Notifications[i] as FriendRequestNotification;
+                if (fr != null)
+                {
+                    if (fr.User.Uid == User.Uid)
+                    {
+                        LobbyClient.Notifications.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
             Dismissed = true;
         }
     }
