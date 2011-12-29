@@ -97,6 +97,7 @@ namespace Octgn.Launcher
             InputBinding ib = new InputBinding(DebugWindowCommand, kg);
             this.InputBindings.Add(ib);
             Program.lobbyClient.OnFriendRequest += new LobbyClient.FriendRequest(lobbyClient_OnFriendRequest);
+            Program.lobbyClient.OnDisconnectEvent += new EventHandler(lobbyClient_OnDisconnectEvent);
             _originalBorderBrush = NotificationTab.Background;
             // Insert code required on object creation below this point.
         }
@@ -155,17 +156,25 @@ namespace Octgn.Launcher
             Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
             Program.Exit();
         }
-
+        void lobbyClient_OnDisconnectEvent(object sender, EventArgs e)
+        {
+            Dispatcher.Invoke(new Action(CloseDownShop));
+        }
         private void LogOff_Click(object sender, RoutedEventArgs e)
+        {
+            CloseDownShop();
+        }
+        private void CloseDownShop()
         {
             if (Program.DeckEditor != null)
                 Program.DeckEditor.Close();
             Program.LauncherWindow = new LauncherWindow();
             Program.LauncherWindow.Show();
             Program.ClientWindow.Close();
+            Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
+            Program.lobbyClient.OnDisconnectEvent -= lobbyClient_OnDisconnectEvent;
             Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);            
         }
-
         private void RibbonButton_Click(object sender, RoutedEventArgs e)
         {
             GameList gl = frame1.Content as GameList;

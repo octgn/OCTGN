@@ -24,6 +24,7 @@ namespace Octgn.Launcher
             InitializeComponent();
             Program.lobbyClient = new LobbyClient();
             Program.lobbyClient.OnCaptchaRequired += new LobbyClient.HandleCaptcha(lobbyClient_OnCaptchaRequired);
+            
             SpinnerRotate.CenterX = image2.Width / 2;
             SpinnerRotate.CenterY = image2.Height / 2;
             animationTimer = new DispatcherTimer(DispatcherPriority.ContextIdle, Dispatcher);
