@@ -13,6 +13,7 @@ using Octgn.Definitions;
 using Skylabs.Lobby;
 using Skylabs.Net;
 using System.IO;
+using System.Windows.Media;
 
 namespace Octgn.Launcher
 {
@@ -26,6 +27,7 @@ namespace Octgn.Launcher
         private NavigatingCancelEventArgs   _navArgs = null;
         private Duration                    _duration = new Duration(TimeSpan.FromSeconds(.5));
         private SetList _currentSetList;
+        private Brush _originalBorderBrush;
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
             if(Content != null && !_allowDirectNavigation)
@@ -94,7 +96,22 @@ namespace Octgn.Launcher
             KeyGesture kg = new KeyGesture(Key.M, ModifierKeys.Control);
             InputBinding ib = new InputBinding(DebugWindowCommand, kg);
             this.InputBindings.Add(ib);
+            Program.lobbyClient.OnFriendRequest += new LobbyClient.FriendRequest(lobbyClient_OnFriendRequest);
+            _originalBorderBrush = NotificationTab.Background;
             // Insert code required on object creation below this point.
+        }
+
+        void lobbyClient_OnFriendRequest(User u)
+        {
+            Dispatcher.Invoke(new Action(() => {
+                if (frame1.Content as NotificationList == null)
+                {
+                    NotificationTab.HeaderStyle = this.Resources["AlertHeaderColor"] as Style;
+                    NotificationTab.InvalidateVisual();
+                }
+
+            }));
+            
         }
 
         private void Ribbon_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -114,6 +131,8 @@ namespace Octgn.Launcher
                         break;
                     case "!":
                         frame1.Navigate(new NotificationList());
+                        NotificationTab.HeaderStyle = this.Resources["NormalHeaderColor"] as Style;
+                        NotificationTab.InvalidateVisual();
                         break;
                 }
             }

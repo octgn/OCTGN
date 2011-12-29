@@ -5,6 +5,20 @@
         Title="Octgn"
         x:Name="Window"
         Width="368" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="368">
+    <ribbon:RibbonWindow.Resources>
+        <LinearGradientBrush x:Key="NHigh" x:Name="NHigh" EndPoint="1,0.5" StartPoint="0,0.5" >
+            <GradientStop Color="#FFFF8600" Offset="1.5"/>
+            <GradientStop x:Name="wLine" Color="#FFFF8600" Offset="-0.5"/>
+        </LinearGradientBrush>
+        <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
+            <Setter Property="Foreground" Value="Red"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style TargetType="ribbon:RibbonTabHeader" x:Key="NormalHeaderColor" x:Name="NormalHeaderColor">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+        </Style>
+    </ribbon:RibbonWindow.Resources>
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -22,7 +36,7 @@
                 <ribbon:RibbonQuickAccessToolBar>
                 </ribbon:RibbonQuickAccessToolBar>
             </ribbon:Ribbon.QuickAccessToolBar>
-            <ribbon:RibbonTab Header="Host/Join">
+            <ribbon:RibbonTab Header="Host/Join" Foreground="Black">
                 <ribbon:RibbonGroup>
                     <ribbon:RibbonButton x:Name="bHost" Label="Host" LargeImageSource="/Resources/Icons/user_add.png" Click="bHost_Click" />
                     <ribbon:RibbonButton x:Name="bJoin" Label="Join" LargeImageSource="/Resources/Icons/user_add.png" Click="bJoin_Click" />
@@ -48,7 +62,7 @@
                     <ribbon:RibbonButton x:Name="bPatchSets" Label="Patch All Sets" LargeImageSource="/Resources/Icons/image_link.png" Click="bPatchSets_Click" SmallImageSource="/OCTGN;component/Resources/Icons/image_link_small.png" />
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
-            <ribbon:RibbonTab Header="!">
+            <ribbon:RibbonTab Header="!" x:Name="NotificationTab">
 
             </ribbon:RibbonTab>
         </ribbon:Ribbon>
