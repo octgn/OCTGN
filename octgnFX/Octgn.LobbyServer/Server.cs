@@ -85,14 +85,19 @@ namespace Skylabs.LobbyServer
 
         public void OnUserEvent(UserStatus e, Client client)
         {
+            OnUserEvent(e, client, false);
+        }
+        public void OnUserEvent(UserStatus e, Client client, bool Supress)
+        {
             User me = (User)client.Me;
             if(e == UserStatus.Offline)
                 Clients.Remove(client);
-
-            foreach(Client c in Clients)
-                c.OnUserEvent(e, me);
+            if (!Supress)
+            {
+                foreach (Client c in Clients)
+                    c.OnUserEvent(e, me);
+            }
         }
-
         private void AcceptClients()
         {
             ListenSocket.BeginAcceptTcpClient(AcceptReceiveDataCallback, ListenSocket);

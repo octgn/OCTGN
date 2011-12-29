@@ -132,7 +132,8 @@ namespace Skylabs.Net.Sockets
         /// <param name="reason">Reason why</param>
         public void Close(DisconnectReason reason)
         {
-            Sock.Client.BeginDisconnect(false, delegate
+            if(Sock != null && Sock.Client != null)
+                Sock.Client.BeginDisconnect(false, delegate
                                                    {
                                                        Connected = false;
                                                        OnDisconnect(reason);
