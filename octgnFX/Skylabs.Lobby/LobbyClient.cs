@@ -285,10 +285,13 @@ namespace Skylabs.Lobby
                         int p = (int) sm["port"];
 
                         HostedGame gm = Games.Where(g => g.Port == p).First();
-                        gm.GameStatus = HostedGame.eHostedGame.StoppedHosting;
-                        if (OnGameHostEvent != null)
-                            OnGameHostEvent.Invoke(gm);
-                        Games.Remove(gm);
+                        if (gm != null)
+                        {
+                            gm.GameStatus = HostedGame.eHostedGame.StoppedHosting;
+                            if (OnGameHostEvent != null)
+                                OnGameHostEvent.Invoke(gm);
+                            Games.Remove(gm);
+                        }
                         break;
                     }
 

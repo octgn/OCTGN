@@ -40,7 +40,10 @@ namespace Octgn.Launcher
         // time to connect to the ChatControl (done inside ChatControl.Loaded).
         // Otherwise, messages notifying a disconnection may be lost
           try { Dispatcher.BeginInvoke(new Action(Program.Game.Begin)); }
-          catch (Exception) { }
+          catch (Exception) 
+          {
+              if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+          }
         
       };      
       Unloaded += delegate
@@ -64,6 +67,7 @@ namespace Octgn.Launcher
 
 		internal void Start()
 		{
+            StartGame = true;
 			// Reset the InvertedTable flags if they were set and they are not used
 			if (!Program.GameSettings.UseTwoSidedTable)
 				foreach (var player in Play.Player.AllExceptGlobal)

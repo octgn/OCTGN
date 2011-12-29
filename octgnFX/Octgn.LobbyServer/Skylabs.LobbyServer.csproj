@@ -130,6 +130,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ban.cs" />
+    <Compile Include="ChatRoom.cs" />
+    <Compile Include="Chatting.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="HostedGame.cs" />
     <Compile Include="MySqlCup.cs" />
