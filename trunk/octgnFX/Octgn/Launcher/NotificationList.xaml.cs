@@ -28,6 +28,7 @@ namespace Octgn.Launcher
         }
         private void Reload_List()
         {
+            
             foreach (Skylabs.Lobby.Notification n in Program.lobbyClient.Notifications)
             {
                 if (n.GetType() == typeof(Skylabs.Lobby.FriendRequestNotification))
@@ -49,7 +50,8 @@ namespace Octgn.Launcher
 
         void lobbyClient_OnFriendRequest(Skylabs.Lobby.User u)
         {
-            Reload_List();
+            //Reload_List();
+            Dispatcher.Invoke(new Action(Reload_List));
         }
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
