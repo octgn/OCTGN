@@ -31,6 +31,7 @@ namespace Skylabs.Lobby
         public event FriendRequest OnFriendRequest;
         public event HandleCaptcha OnCaptchaRequired;
         public event GameHostEvent OnGameHostEvent;
+        public event EventHandler OnDisconnectEvent;
         
 
         public List<HostedGame> Games { get; set; } 
@@ -174,6 +175,11 @@ namespace Skylabs.Lobby
             }
             switch (sm.Header.ToLower())
             {
+                case "end":
+                    {
+                        Close(DisconnectReason.CleanDisconnect);
+                        break;
+                    }
                 case "loginsuccess":
                     Me = (User)sm["me"];
                     if (Me != null)
@@ -208,9 +214,9 @@ namespace Skylabs.Lobby
                                 return;
                         }
                     }
-                        Notifications.Add(new FriendRequestNotification(u, this));
-                        if (OnFriendRequest != null)
-                            OnFriendRequest(u);
+                    Notifications.Add(new FriendRequestNotification(u, this));
+                    if (OnFriendRequest != null)
+                        OnFriendRequest(u);
                     break;
                 case "onlinelist":
                     OnlineList = new List<User>();
@@ -281,17 +287,17 @@ namespace Skylabs.Lobby
                     }
                 case "gamestarted":
                     {
-                        int p = (int) sm["port"];
+                        int p = (int)sm["port"];
 
                         HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
                         gm.GameStatus = HostedGame.eHostedGame.GameInProgress;
-                        if(OnGameHostEvent != null)
+                        if (OnGameHostEvent != null)
                             OnGameHostEvent.Invoke(gm);
                         break;
                     }
                 case "gameend":
                     {
-                        int p = (int) sm["port"];
+                        int p = (int)sm["port"];
 
                         HostedGame gm = Games.Where(g => g.Port == p).First();
                         if (gm != null)
@@ -324,6 +330,8 @@ namespace Skylabs.Lobby
 
         public override void OnDisconnect(Net.DisconnectReason reason)
         {
+            if (OnDisconnectEvent != null)
+                OnDisconnectEvent(this, null);
         }
     }
 }
