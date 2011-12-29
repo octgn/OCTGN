@@ -37,10 +37,17 @@ namespace Octgn.Launcher
                     FriendRequestNotification fi = new FriendRequestNotification();
                     fi.Notification = fr;
                     fi.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
+                    fi.OnDismiss += NotificationDismissed;
                     stackPanel1.Children.Add(fi);
                 }
             }
 
+        }
+        private void NotificationDismissed(object sender, EventArgs e)
+        {
+            UIElement u = sender as UIElement;
+            if(u != null)
+                stackPanel1.Children.Remove(u);
         }
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {

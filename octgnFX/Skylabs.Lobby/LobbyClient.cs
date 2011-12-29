@@ -199,9 +199,18 @@ namespace Skylabs.Lobby
                     break;
                 case "friendrequest":
                     u = (User)sm.Data[0].Value;
-                    Notifications.Add(new FriendRequestNotification(u, this));
-                    if (OnFriendRequest != null)
-                        OnFriendRequest(u);
+                    foreach (Notification n in Notifications)
+                    {
+                        FriendRequestNotification fr = n as FriendRequestNotification;
+                        if (fr != null)
+                        {
+                            if (fr.User.Uid == u.Uid)
+                                return;
+                        }
+                    }
+                        Notifications.Add(new FriendRequestNotification(u, this));
+                        if (OnFriendRequest != null)
+                            OnFriendRequest(u);
                     break;
                 case "onlinelist":
                     OnlineList = new List<User>();

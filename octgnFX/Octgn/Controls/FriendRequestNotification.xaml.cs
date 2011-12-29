@@ -20,6 +20,7 @@ namespace Octgn.Controls
     /// </summary>
     public partial class FriendRequestNotification : UserControl
     {
+        public EventHandler OnDismiss;
         public static DependencyProperty FriendNameProperty = DependencyProperty.Register(
     "FriendName", typeof(string), typeof(FriendRequestNotification));
         public static DependencyProperty PictureProperty = DependencyProperty.Register(
@@ -60,13 +61,16 @@ namespace Octgn.Controls
         {
             _notify.Accept();
             this.Visibility = Visibility.Hidden;
-            
+            if (OnDismiss != null)
+                OnDismiss(this, null);            
         }
 
         private void button2_Click(object sender, RoutedEventArgs e)
         {
             _notify.Decline();
             this.Visibility = Visibility.Hidden;
+            if (OnDismiss != null)
+                OnDismiss(this, null);
         }
     }
 }
