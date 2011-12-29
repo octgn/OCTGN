@@ -32,7 +32,10 @@ namespace Octgn.Launcher
             animationTimer.Tick += HandleAnimationTick;
             if(Settings.Default.Password != "")
             {
-                passwordBox1.Password = Settings.Default.Password;
+                System.Security.Cryptography.RIPEMD160 hash = System.Security.Cryptography.RIPEMD160.Create();
+                byte[] hasher;
+                hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Settings.Default.NickName));
+                passwordBox1.Password = Cryptor.Decrypt(Settings.Default.Password, BitConverter.ToString(hasher));
                 cbSavePassword.IsChecked = true;
             }
             textBox1.Text = Settings.Default.Email;
@@ -136,15 +139,21 @@ namespace Octgn.Launcher
         }
 
         private void LoginFinished(LoginResult success, DateTime BanEnd, string message)
-        {
+        {                        
             Dispatcher.Invoke((Action)(() =>
-            {
+            {                
                 isLoggingIn = false;
                 Stop_Spinning();
                 if(success == LoginResult.Success)
-                {
+                {                    
                     if (cbSavePassword.IsChecked == true)
-                        Settings.Default.Password = passwordBox1.Password;
+                    {
+                        // Create a hash of current nickname to use as the Cryptographic Key
+                        System.Security.Cryptography.RIPEMD160 hash = System.Security.Cryptography.RIPEMD160.Create();
+                        byte[] hasher;
+                        hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Program.lobbyClient.Me.DisplayName));
+                        Settings.Default.Password = Cryptor.Encrypt(passwordBox1.Password, BitConverter.ToString(hasher));
+                    }
                     else
                         Settings.Default.Password = "";
                     Settings.Default.Email = textBox1.Text;
@@ -161,7 +170,7 @@ namespace Octgn.Launcher
                 }
                 else if(success == LoginResult.Failure)
                 {
-                    DoErrorMessage("Login Failed: " + message);
+                    DoErrorMessage("Login Failed: " + message);                    
                 }
             }), new object[0] { });
         }
