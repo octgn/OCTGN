@@ -14,13 +14,13 @@ namespace Octgn.Controls
     /// </summary>
     public partial class HostedGameListItem : UserControl
     {
-        public static DependencyProperty UsernameProperty = DependencyProperty.Register(
+        public static DependencyProperty GameNameProperty = DependencyProperty.Register(
     "GameName", typeof(string), typeof(HostedGameListItem));
-        public static DependencyProperty CustomStatusProperty = DependencyProperty.Register(
+        public static DependencyProperty UserNameProperty = DependencyProperty.Register(
     "UserName", typeof(string), typeof(HostedGameListItem));
         public static DependencyProperty GamePictureProperty = DependencyProperty.Register(
     "GamePicture", typeof(ImageSource), typeof(HostedGameListItem));
-        public static DependencyProperty StatusPictureProperty = DependencyProperty.Register(
+        public static DependencyProperty PictureProperty = DependencyProperty.Register(
     "Picture", typeof(ImageSource), typeof(HostedGameListItem));
 
         private HostedGame _hostedGame;
@@ -34,7 +34,7 @@ namespace Octgn.Controls
             set
             {
                 _hostedGame = value;
-                SetValue(CustomStatusProperty, _hostedGame.UserHosting.DisplayName);
+                SetValue(UserNameProperty, _hostedGame.UserHosting.DisplayName);
                 foreach (BitmapImage bi in from g in Program.GamesRepository.AllGames where g.Id == _hostedGame.GameGuid select new BitmapImage(g.GetCardBackUri()))
                 {
                     SetValue(GamePictureProperty, bi as ImageSource);
@@ -42,7 +42,7 @@ namespace Octgn.Controls
                 }
 
                 string guri = "";
-                SetValue(UsernameProperty, _hostedGame.UserHosting.DisplayName);
+                SetValue(GameNameProperty, _hostedGame.Name);
                 switch(_hostedGame.GameStatus)
                 {
                     case HostedGame.eHostedGame.GameInProgress:
@@ -55,7 +55,7 @@ namespace Octgn.Controls
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusOffline.png";
                         break;
                 }
-                SetValue(StatusPictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
+                SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
             }
         }
 
