@@ -124,6 +124,11 @@ namespace Octgn.Launcher
                     case "Lobby":
                         frame1.Navigate(new ContactList());
                         break;
+                    case "Host/Join":
+                        HostedGameList hgl = new HostedGameList();
+                        hgl.OnGameClick += new EventHandler(hgl_OnGameClick);
+                        frame1.Navigate(hgl);
+                        break;
                     case "Games":
                         GameList gl = new GameList();
                         gl.OnGameClick += new EventHandler(gl_OnGameDoubleClick);
@@ -306,6 +311,30 @@ namespace Octgn.Launcher
                     }
                 }
             }
+        }
+
+        private void bOnlineStatus_Click(object sender, RoutedEventArgs e)
+        {
+            rgStatus.LargeImageSource = bOnlineStatus.LargeImageSource;
+            Program.lobbyClient.SetStatus(UserStatus.Online);
+        }
+
+        private void bBusyStatus_Click(object sender, RoutedEventArgs e)
+        {
+            rgStatus.LargeImageSource = bBusyStatus.LargeImageSource;
+            Program.lobbyClient.SetStatus(UserStatus.DoNotDisturb);
+        }
+
+        private void bOfflineStatus_Click(object sender, RoutedEventArgs e)
+        {
+            rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
+            Program.lobbyClient.SetStatus(UserStatus.Invisible);
+        }
+
+        private void bAwayStatus_Click(object sender, RoutedEventArgs e)
+        {
+            rgStatus.LargeImageSource = bAwayStatus.LargeImageSource;
+            Program.lobbyClient.SetStatus(UserStatus.Away);
         }
     }
 }
