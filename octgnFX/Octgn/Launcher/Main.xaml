@@ -36,15 +36,26 @@
                 <ribbon:RibbonQuickAccessToolBar>
                 </ribbon:RibbonQuickAccessToolBar>
             </ribbon:Ribbon.QuickAccessToolBar>
+            <ribbon:RibbonTab Header="Lobby">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton x:Name="bAddFriend" Label="Add A Friend" LargeImageSource="/Resources/Icons/user_add.png" Click="bAddFriend_Click" />
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup x:Name="rgStatus" Header="Status" LargeImageSource="/Resources/statusOnline.png">
+                    <ribbon:RibbonGroup.GroupSizeDefinitions>
+                        <ribbon:RibbonGroupSizeDefinitionBaseCollection>
+                            <ribbon:RibbonGroupSizeDefinition IsCollapsed="True"/>
+                        </ribbon:RibbonGroupSizeDefinitionBaseCollection>
+                    </ribbon:RibbonGroup.GroupSizeDefinitions>
+                    <ribbon:RibbonRadioButton x:Name="bOnlineStatus" Label="Online" LargeImageSource="/Resources/statusOnline.png" Click="bOnlineStatus_Click" />
+                    <ribbon:RibbonRadioButton x:Name="bAwayStatus" Label="Away" LargeImageSource="/Resources/statusAway.png" Click="bAwayStatus_Click" />
+                    <ribbon:RibbonRadioButton x:Name="bBusyStatus" Label="Busy" LargeImageSource="/Resources/statusDND.png" Click="bBusyStatus_Click" />
+                    <ribbon:RibbonRadioButton x:Name="bOfflineStatus" Label="Offline" LargeImageSource="/Resources/statusOffline.png" Click="bOfflineStatus_Click" />
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="Host/Join" Foreground="Black">
                 <ribbon:RibbonGroup>
                     <ribbon:RibbonButton x:Name="bHost" Label="Host" LargeImageSource="/Resources/Icons/user_add.png" Click="bHost_Click" />
                     <ribbon:RibbonButton x:Name="bJoin" Label="Join" LargeImageSource="/Resources/Icons/user_add.png" Click="bJoin_Click" />
-                </ribbon:RibbonGroup>
-            </ribbon:RibbonTab>
-            <ribbon:RibbonTab Header="Lobby">
-                <ribbon:RibbonGroup>
-                    <ribbon:RibbonButton x:Name="bAddFriend" Label="Add A Friend" LargeImageSource="/Resources/Icons/user_add.png" Click="bAddFriend_Click" />
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="Games">

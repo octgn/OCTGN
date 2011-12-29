@@ -63,7 +63,7 @@ namespace Octgn
         {
 #if(DEBUG)
             LobbyServerProcess = new Process();
-            LobbyServerProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.LobbyServer.exe";
+            LobbyServerProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Skylabs.LobbyServer.exe";
             try
             {
                 LobbyServerProcess.Start();

@@ -226,7 +226,7 @@ namespace Skylabs.Lobby
                     else if (!OnlineList.Contains(u))
                         OnlineList.Add(u);
                     else
-                        OnlineList.Where(us => us.Equals(u)).First().Status = u.Status;
+                        OnlineList.FirstOrDefault(us => us.Equals(u)).Status = u.Status;
 
                     User f = FriendList.FirstOrDefault(us => us.Equals(u));
                     if (f != null)
