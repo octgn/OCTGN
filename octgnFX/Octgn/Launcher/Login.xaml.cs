@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Octgn.Properties;
+using Octgn.DeckBuilder;
 using Skylabs.Lobby;
 
 namespace Octgn.Launcher
@@ -245,6 +246,25 @@ namespace Octgn.Launcher
 
         private void menuOctgn_Click(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void menuDeckEditor_Click(object sender, RoutedEventArgs e)
+        {
+            if (Program.GamesRepository.Games.Count == 0)
+            {
+                MessageBox.Show("You have no game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (Program.DeckEditor == null)
+            {
+                Program.DeckEditor = new DeckBuilderWindow();
+                Program.DeckEditor.Show();
+            }
+            else if (Program.DeckEditor.IsVisible == false)
+            {
+                Program.DeckEditor = new DeckBuilderWindow();
+                Program.DeckEditor.Show();
+            }
         }
 
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
