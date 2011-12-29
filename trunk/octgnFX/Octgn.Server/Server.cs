@@ -192,7 +192,7 @@ namespace Octgn.Server
 					lock (this)
 					{
 						TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - lastPing.Ticks);
-                        if (ts.TotalSeconds > 10)
+                        if (ts.TotalSeconds > 100)
                             server.Disconnected(this.client);//TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
 						if (disposed) return;
 					}
@@ -305,6 +305,7 @@ namespace Octgn.Server
 				// Lock the disposed field
 				lock (this)
 				{
+                    Console.WriteLine("Client Disconnected.");
 					// Quit if this client is already disposed
 					if (disposed) return;
 					// Mark as disposed

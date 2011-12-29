@@ -161,6 +161,16 @@ namespace Skylabs.LobbyServer
                 case "customstatus":
                     SetCustomStatus(sm);
                     break;
+                case "joinchatroom":
+                    {
+                        Chatting.JoinChatRoom(this,sm);
+                        break;
+                    }
+                case "addusertochat":
+                    {
+                        Chatting.AddUserToChat(this, sm);
+                        break;
+                    }
             }
         }
 
