@@ -87,8 +87,8 @@ namespace Skylabs.LobbyServer
 
         public void OnUserEvent(UserStatus e, User theuser)
         {
-            if(theuser.Equals(Me))
-                return;
+            //if(theuser.Equals(Me))
+                //return;
             SocketMessage sm = new SocketMessage("status");
             if(e == UserStatus.Invisible)
                 e = UserStatus.Offline;
@@ -116,13 +116,10 @@ namespace Skylabs.LobbyServer
                     break;
                 case "status":
                     UserStatus u = (UserStatus)sm["status"];
-                    if (u == 0)
+                    if (u != UserStatus.Offline)
                     {
-                        if (u != UserStatus.Offline)
-                        {
-                            Me.Status = u;
-                            Parent.OnUserEvent(u, this);
-                        }
+                        Me.Status = u;
+                        Parent.OnUserEvent(u, this);
                     }
                     break;
                 case "hostgame":
