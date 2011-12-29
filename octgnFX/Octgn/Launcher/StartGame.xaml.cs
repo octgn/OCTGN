@@ -67,7 +67,7 @@ namespace Octgn.Launcher
 
 		internal void Start()
 		{
-            StartGame = true;
+            StartingGame = true;
 			// Reset the InvertedTable flags if they were set and they are not used
 			if (!Program.GameSettings.UseTwoSidedTable)
 				foreach (var player in Play.Player.AllExceptGlobal)
