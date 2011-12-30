@@ -144,10 +144,7 @@
             Click="EditDecks" MouseEnter="EnterBtn" MouseLeave="LeaveBtn" />
     <Button Content="Manage installed games" Tag="Install new games and cards or remove the ones you don't play anymore."  
             Margin="8,72,8,0" VerticalAlignment="Top" Height="60" Grid.Column="1" Grid.Row="1"
-            Click="ManageGames" MouseEnter="EnterBtn" MouseLeave="LeaveBtn" />
-    <Button Content="Chat on #octgn" Tag="Install new games and cards or remove the ones you don't play anymore."  
-            Margin="8,136,8,0" VerticalAlignment="Top" Height="60" Grid.Column="0" Grid.Row="1"
-            Click="ChatOnIrc" MouseEnter="EnterBtn" MouseLeave="LeaveBtn" />
+            Click="ManageGames" MouseEnter="EnterBtn" MouseLeave="LeaveBtn" />   
     <Button Content="Quit" Tag="Close OCTGN." 
             Margin="8,136,8,0" VerticalAlignment="Top" Height="60" Grid.Column="1" Grid.Row="1" 
             Click="QuitClicked" MouseEnter="EnterBtn" MouseLeave="LeaveBtn" />

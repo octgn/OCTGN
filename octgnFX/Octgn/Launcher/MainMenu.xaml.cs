@@ -39,12 +39,6 @@ namespace Octgn.Launcher
 			launcherWnd.Close();			
 		}
 
-    private void ChatOnIrc(object sender, RoutedEventArgs e)
-    {
-      var chatWnd = new IRC.IrcWindow() { Owner = Application.Current.MainWindow };
-      chatWnd.Show();
-    }
-
 		private void QuitClicked(object sender, RoutedEventArgs e)
 		{ Application.Current.MainWindow.Close(); }
 
