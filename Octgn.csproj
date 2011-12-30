@@ -249,11 +249,6 @@
     </Compile>
     <Compile Include="Game.cs" />
     <Compile Include="BigInteger.cs" />
-    <Compile Include="IRC\IrcWindow.xaml.cs">
-      <DependentUpon>IrcWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="IRC\MessageSource.cs" />
-    <Compile Include="IRC\User.cs" />
     <Compile Include="Launcher\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
@@ -659,10 +654,6 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="IRC\IrcWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\ContactList.xaml">
       <SubType>Designer</SubType>
