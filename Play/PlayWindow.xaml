@@ -8,8 +8,9 @@
     xmlns:ctrl="clr-namespace:Octgn.Controls"
     x:Name="self"
     Title="OCTGN" Icon="pack://application:,,,/Resources/Icon.ico"
-    Height="800" Width="900"
+    Height="800" Width="900"   
     DataContext="{x:Static octgn:Program.Game}"
+    
     TextOptions.TextFormattingMode="Display" UseLayoutRounding="True"
     RenderOptions.BitmapScalingMode="Fant"
     >
@@ -96,7 +97,7 @@
           <ms:RibbonButton Label="About OCTGN" LargeImageSource="/Resources/Icons/About.png"
                            Click="ShowAboutWindow" />
           <ms:RibbonButton Label="Donate" LargeImageSource="/Resources/Icons/PiggyBank.png"
-                           Click="DonateClicked" />
+                           Click="DonateClicked" Visibility="Hidden" />
         </ms:RibbonGroup>       
       </ms:RibbonTab>
     </ms:Ribbon>
