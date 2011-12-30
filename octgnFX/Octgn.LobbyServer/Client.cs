@@ -120,6 +120,11 @@ namespace Skylabs.LobbyServer
                     _gotEndMessage = true;
                     Stop();
                     break;
+                case "displayname":
+                    {
+                        SetDisplayName(sm);
+                        break;
+                    }
                 case "status":
                     UserStatus u = (UserStatus)sm["status"];
                     if (u != UserStatus.Offline)
@@ -135,7 +140,7 @@ namespace Skylabs.LobbyServer
                         string n = (string)sm["name"];
                         string pass = (string)sm["password"];
 
-                        HostedGame hs = new HostedGame(Parent, g, v, n, pass,Me);
+                        HostedGame hs = new HostedGame(Parent, g, v, n, pass, Me);
 
                         SocketMessage som = new SocketMessage("hostgameresponse");
                         som.AddData("port", hs.Port);
@@ -166,7 +171,7 @@ namespace Skylabs.LobbyServer
                     break;
                 case "joinchatroom":
                     {
-                        Chatting.JoinChatRoom(this,sm);
+                        Chatting.JoinChatRoom(this, sm);
                         break;
                     }
                 case "addusertochat":
@@ -295,7 +300,22 @@ namespace Skylabs.LobbyServer
             }
             WriteMessage(sm);
         }
-
+        private void SetDisplayName(SocketMessage sm)
+        {
+            string s = (string)sm["name"];
+            if (s != null)
+            {
+                if (s.Length > 60)
+                    s = s.Substring(0, 57) + "...";
+                else if (String.IsNullOrWhiteSpace(s))
+                    s = Me.Email;
+                if (Cup.SetDisplayName(Me.Uid, s))
+                {
+                    Me.DisplayName = s;
+                    Parent.OnUserEvent(Me.Status, this, false);
+                }
+            }
+        }
         private void SetCustomStatus(SocketMessage sm)
         {
             string s = (string)sm["customstatus"];
@@ -305,10 +325,8 @@ namespace Skylabs.LobbyServer
                     s = s.Substring(0, 197) + "...";
                 if(Cup.SetCustomStatus(Me.Uid, s))
                 {
-                    sm.Data = new NameValuePair[] { };
-                    sm.AddData("user", Me);
-                    sm.AddData("status", s);
-                    Parent.AllUserMessage(sm);
+                    Me.CustomStatus = s;
+                    Parent.OnUserEvent(Me.Status, this, false);
                 }
             }
         }

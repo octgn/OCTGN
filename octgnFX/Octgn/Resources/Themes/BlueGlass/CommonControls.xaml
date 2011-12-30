@@ -154,7 +154,30 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style TargetType="{x:Type TextBox}" >
+    <Style TargetType="{x:Type TextBox}" x:Key="LabelBoxUnSelected">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border x:Name="cBorder" BorderThickness="0" CornerRadius="0" Padding="0" SnapsToDevicePixels="True"
+									BorderBrush="Transparent"
+									Background="Transparent">
+                        <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Resources>
+            <!-- HACK: see TextBlock below -->
+            <Style TargetType="TextBlock">
+                <Setter Property="Effect" Value="{x:Null}" />
+            </Style>
+        </Style.Resources>
+    </Style>
+    <Style TargetType="{x:Type TextBox}" x:Key="{x:Type TextBox}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>

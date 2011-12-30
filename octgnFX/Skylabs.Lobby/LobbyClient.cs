@@ -237,7 +237,15 @@ namespace Skylabs.Lobby
                     User f = FriendList.FirstOrDefault(us => us.Equals(u));
                     if (f != null)
                     {
+                        f.DisplayName = u.DisplayName;
                         f.Status = u.Status;
+                        f.CustomStatus = u.CustomStatus;
+                    }
+                    if (u.Equals(Me))
+                    {
+                        Me.DisplayName = u.DisplayName;
+                        Me.Status = u.Status;
+                        Me.CustomStatus = u.CustomStatus;
                     }
                     if (OnUserStatusChanged != null)
                         OnUserStatusChanged.Invoke(u.Status, u);
@@ -327,7 +335,12 @@ namespace Skylabs.Lobby
             sm.AddData("customstatus", CustomStatus);
             WriteMessage(sm);
         }
-
+        public void SetDisplayName(string name)
+        {
+            SocketMessage sm = new SocketMessage("displayname");
+            sm.AddData("name", name);
+            WriteMessage(sm);
+        }
         public override void OnDisconnect(Net.DisconnectReason reason)
         {
             if (OnDisconnectEvent != null)

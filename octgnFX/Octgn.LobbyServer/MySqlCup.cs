@@ -401,7 +401,33 @@ namespace Skylabs.LobbyServer
                 return false;
             }
         }
-
+        public bool SetDisplayName(int uid,string name)
+        {
+            if (uid <= -1)
+                return false;
+            if (name == null)
+                return false;
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    MySqlCommand com = con.CreateCommand();
+                    com.CommandText = "UPDATE users SET name=@name WHERE uid=@uid;";
+                    com.Prepare();
+                    com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
+                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    com.Parameters["@name"].Value = name;
+                    com.Parameters["@uid"].Value = uid;
+                    com.ExecuteNonQuery();
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         public List<User> GetFriendsList(int uid)
         {
             if(uid <= -1)
