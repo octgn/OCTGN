@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Octgn.Controls;
 using System.Threading;
+using System.IO;
 
 namespace Octgn.Launcher
 {
@@ -60,6 +61,13 @@ namespace Octgn.Launcher
             };
             if (ofd.ShowDialog() != true) return;
 
+            
+            //Move the definition file to a new location, so that the old one can be deleted
+            string path = "%HOMEDRIVE%%HOMEPATH%\\My Documents\\Octgn\\Sets\\";
+            path = Environment.ExpandEnvironmentVariables(path);
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
             var wnd = new InstallSetsProgressDialog { Owner = Program.ClientWindow };
             ThreadPool.QueueUserWorkItem(_ =>
             {
@@ -71,7 +79,12 @@ namespace Octgn.Launcher
                     string shortName = System.IO.Path.GetFileName(setName);
                     try
                     {
-                        SelectedGame.InstallSet(setName);
+                        string copyto = path + shortName;
+                        if (File.Exists(copyto))
+                            File.Delete(copyto);
+                        File.Copy(setName, copyto);
+
+                        SelectedGame.InstallSet(copyto);
                         wnd.UpdateProgress(current, max, string.Format("'{0}' installed.", shortName), false);
                     }
                     catch (Exception ex)

@@ -6,7 +6,7 @@
       mc:Ignorable="d"
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="SetList" Loaded="Page_Loaded" Unloaded="Page_Unloaded">
-    <ListBox x:Name="lbSetList" >
+    <ListBox x:Name="lbSetList" SelectionMode="Multiple">
         <ListBox.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
                 <GradientStop Color="White" Offset="0" />
