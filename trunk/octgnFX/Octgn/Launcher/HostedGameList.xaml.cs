@@ -38,12 +38,23 @@ namespace Octgn.Launcher
             this.Dispatcher.Invoke(new Action(() =>
                                                   {
                                                       stackPanel1.Children.Clear();
+                                                      Guid[] gids = new Guid[Program.GamesRepository.Games.Count];
+                                                      int count = 0;
+                                                      foreach(Data.Game game in Program.GamesRepository.Games)
+                                                      {
+                                                          gids[count] = game.Id;
+                                                          count++;
+                                                      }
                                                       foreach (HostedGame g in Program.lobbyClient.Games)
                                                       {
-                                                          HostedGameListItem gs = new HostedGameListItem(g);
-                                                          if(g.GameStatus == HostedGame.eHostedGame.StartedHosting)
-                                                            gs.MouseUp += new MouseButtonEventHandler(gs_MouseUp);
-                                                          stackPanel1.Children.Add(gs);
+                                                          
+                                                          if (gids.Contains(g.GameGuid))
+                                                          {
+                                                              HostedGameListItem gs = new HostedGameListItem(g);
+                                                              if (g.GameStatus == HostedGame.eHostedGame.StartedHosting)
+                                                                  gs.MouseUp += new MouseButtonEventHandler(gs_MouseUp);
+                                                              stackPanel1.Children.Add(gs);
+                                                          }
                                                       }                                                                  
                                                   }));
         }
