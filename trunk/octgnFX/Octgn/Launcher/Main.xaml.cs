@@ -14,6 +14,7 @@ using Skylabs.Lobby;
 using Skylabs.Net;
 using System.IO;
 using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace Octgn.Launcher
 {
@@ -23,14 +24,14 @@ namespace Octgn.Launcher
     public partial class Main : RibbonWindow
     {
         public RoutedCommand DebugWindowCommand = new RoutedCommand();
-        private bool                        _allowDirectNavigation = false;
-        private NavigatingCancelEventArgs   _navArgs = null;
-        private Duration                    _duration = new Duration(TimeSpan.FromSeconds(.5));
+        private bool _allowDirectNavigation = false;
+        private NavigatingCancelEventArgs _navArgs = null;
+        private Duration _duration = new Duration(TimeSpan.FromSeconds(.5));
         private SetList _currentSetList;
         private Brush _originalBorderBrush;
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
-            if(Content != null && !_allowDirectNavigation)
+            if (Content != null && !_allowDirectNavigation)
             {
                 e.Cancel = true;
 
@@ -51,10 +52,10 @@ namespace Octgn.Launcher
         private void SlideCompleted(object sender, EventArgs e)
         {
             _allowDirectNavigation = true;
-            switch(_navArgs.NavigationMode)
+            switch (_navArgs.NavigationMode)
             {
                 case NavigationMode.New:
-                    if(_navArgs.Uri == null)
+                    if (_navArgs.Uri == null)
                         frame1.Navigate(_navArgs.Content);
                     else
                         frame1.Navigate(_navArgs.Uri);
@@ -98,13 +99,17 @@ namespace Octgn.Launcher
             this.InputBindings.Add(ib);
             Program.lobbyClient.OnFriendRequest += new LobbyClient.FriendRequest(lobbyClient_OnFriendRequest);
             Program.lobbyClient.OnDisconnectEvent += new EventHandler(lobbyClient_OnDisconnectEvent);
+            Program.lobbyClient.OnUserStatusChanged += new LobbyClient.UserStatusChanged(lobbyClient_OnUserStatusChanged);
+            tbUsername.Text = Program.lobbyClient.Me.DisplayName;
+            tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
             // Insert code required on object creation below this point.
         }
 
         void lobbyClient_OnFriendRequest(User u)
         {
-            Dispatcher.Invoke(new Action(() => {
+            Dispatcher.Invoke(new Action(() =>
+            {
                 if (frame1.Content as NotificationList == null)
                 {
                     NotificationTab.HeaderStyle = this.Resources["AlertHeaderColor"] as Style;
@@ -112,15 +117,15 @@ namespace Octgn.Launcher
                 }
 
             }));
-            
+
         }
 
         private void Ribbon_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             RibbonTab tab = Ribbon.SelectedItem as RibbonTab;
-            if(tab != null)
+            if (tab != null)
             {
-                switch((String)tab.Header)
+                switch ((String)tab.Header)
                 {
                     case "Lobby":
                         frame1.Navigate(new ContactList());
@@ -173,7 +178,8 @@ namespace Octgn.Launcher
             Program.ClientWindow.Close();
             Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
             Program.lobbyClient.OnDisconnectEvent -= lobbyClient_OnDisconnectEvent;
-            Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);            
+            Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
+            Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
         private void RibbonButton_Click(object sender, RoutedEventArgs e)
         {
@@ -186,7 +192,7 @@ namespace Octgn.Launcher
             }
             else
                 gl.Install_Game();
-       
+
         }
 
         private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
@@ -199,20 +205,20 @@ namespace Octgn.Launcher
 
         private void RibbonButton_Click_2(object sender, RoutedEventArgs e)
         {
-            if(_currentSetList != null)
-            _currentSetList.Deleted_Selected();
+            if (_currentSetList != null)
+                _currentSetList.Deleted_Selected();
         }
 
         private void bInstallSets_Click(object sender, RoutedEventArgs e)
         {
             if (_currentSetList != null)
-            _currentSetList.Install_Sets();
+                _currentSetList.Install_Sets();
         }
 
         private void bPatchSets_Click(object sender, RoutedEventArgs e)
         {
             if (_currentSetList != null)
-            _currentSetList.Patch_Selected();
+                _currentSetList.Patch_Selected();
         }
 
         private void bDeckEditor_Click(object sender, RoutedEventArgs e)
@@ -230,7 +236,7 @@ namespace Octgn.Launcher
             else if (Program.DeckEditor.IsVisible == false)
             {
                 Program.DeckEditor = new DeckBuilderWindow();
-                Program.DeckEditor.Show();                
+                Program.DeckEditor.Show();
             }
         }
 
@@ -294,14 +300,14 @@ namespace Octgn.Launcher
                 HostedGame hg = sender as HostedGame;
                 Program.IsHost = false;
                 Octgn.Data.Game theGame = Program.GamesRepository.AllGames.FirstOrDefault(g => g.Id == hg.GameGuid);
-                if(theGame != null)
+                if (theGame != null)
                 {
                     Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
                     IPAddress[] ad = new IPAddress[0];
 #if(DEBUG)
                     ad = new IPAddress[1];
                     IPAddress ip = IPAddress.Parse("127.0.0.1");
-                    
+
 #else
                 ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
                 IPAddress ip = ad[0];
@@ -345,5 +351,80 @@ namespace Octgn.Launcher
             rgStatus.LargeImageSource = bAwayStatus.LargeImageSource;
             Program.lobbyClient.SetStatus(UserStatus.Away);
         }
+        void lobbyClient_OnUserStatusChanged(UserStatus eve, User u)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                if (u.Equals(Program.lobbyClient.Me))
+                {
+                    tbUsername.Text = Program.lobbyClient.Me.DisplayName;
+                    tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
+                }
+            }));
+
+        }
+        private void tbUsername_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            tbUsername.Style = (Style)TryFindResource(typeof(TextBox));
+            tbUsername.Focus();
+            tbUsername.SelectAll();
+        }
+
+        private void tbUsername_LostFocus(object sender, RoutedEventArgs e)
+        {
+            tbUsername.Style = (Style)TryFindResource("LabelBoxUnSelected");
+            tbUsername.Text = Program.lobbyClient.Me.DisplayName;
+        }
+        private void tbUsername_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            tbUsername.Style = (Style)TryFindResource("LabelBoxUnSelected");
+            tbUsername.Text = Program.lobbyClient.Me.DisplayName;
+        }
+        private void tbUsername_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Program.lobbyClient.SetDisplayName(tbUsername.Text);
+                tbUsername.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
+            }
+        }
+
+        private void tbStatus_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            tbStatus.Style = (Style)TryFindResource(typeof(TextBox));
+            tbStatus.Focus();
+            tbStatus.SelectAll();
+        }
+
+        private void tbStatus_LostFocus(object sender, RoutedEventArgs e)
+        {
+            tbStatus.Style = (Style)TryFindResource("LabelBoxUnSelected");
+            tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
+            if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
+                tbStatus.Text = "Set a custom status here";
+        }
+        private void tbStatus_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            tbStatus.Style = (Style)TryFindResource("LabelBoxUnSelected");
+            tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
+            if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
+                tbStatus.Text = "Set a custom status here";
+        }
+
+        private void tbStatus_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Program.lobbyClient.SetCustomStatus(tbStatus.Text);
+                tbStatus.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
+            }
+        }
+
+        private void tbStatus_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
+                tbStatus.Text = "Set a custom status here";
+        }
+
     }
 }
