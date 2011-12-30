@@ -22,7 +22,7 @@
             <Border CornerRadius="10" BorderThickness="1" Grid.RowSpan="2" BorderBrush="#FFD2D2D2"
                     >
                 <Border.Background>
-                    <ImageBrush  Stretch="Fill" ImageSource="{Binding ElementName=flistitem, Path=GamePicture}" >
+                    <ImageBrush  Stretch="Uniform" ImageSource="{Binding ElementName=flistitem, Path=GamePicture}" >
                     </ImageBrush>
                 </Border.Background>
 
