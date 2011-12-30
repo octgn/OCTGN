@@ -4,12 +4,8 @@
         xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
         Title="Octgn"
         x:Name="Window"
-        Width="368" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="368">
+        Width="416" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="368">
     <ribbon:RibbonWindow.Resources>
-        <LinearGradientBrush x:Key="NHigh" x:Name="NHigh" EndPoint="1,0.5" StartPoint="0,0.5" >
-            <GradientStop Color="#FFFF8600" Offset="1.5"/>
-            <GradientStop x:Name="wLine" Color="#FFFF8600" Offset="-0.5"/>
-        </LinearGradientBrush>
         <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
             <Setter Property="Foreground" Value="Red"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -51,6 +47,15 @@
                     <ribbon:RibbonRadioButton x:Name="bBusyStatus" Label="Busy" LargeImageSource="/Resources/statusDND.png" Click="bBusyStatus_Click" />
                     <ribbon:RibbonRadioButton x:Name="bOfflineStatus" Label="Offline" LargeImageSource="/Resources/statusOffline.png" Click="bOfflineStatus_Click" />
                 </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup >
+                    <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
+                        <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbUsername" Width="200" Text="My Username" FontWeight="Bold" FontSize="16" MouseUp="tbUsername_MouseUp" LostFocus="tbUsername_LostFocus" KeyUp="tbUsername_KeyUp" LostKeyboardFocus="tbUsername_LostKeyboardFocus" />
+                    </ribbon:RibbonControlGroup>
+                    <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
+                        <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbStatus" Width="200" Text="My Username" KeyUp="tbStatus_KeyUp" LostFocus="tbStatus_LostFocus" MouseUp="tbStatus_MouseUp" TextChanged="tbStatus_TextChanged" LostKeyboardFocus="tbStatus_LostKeyboardFocus" />
+                    </ribbon:RibbonControlGroup>
+                </ribbon:RibbonGroup>
+                
             </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="Host/Join" Foreground="Black">
                 <ribbon:RibbonGroup>
