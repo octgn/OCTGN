@@ -4,7 +4,7 @@
         xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
         Title="Octgn"
         x:Name="Window"
-        Width="416" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="368">
+        Width="416" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="368" Closing="Window_Closing">
     <ribbon:RibbonWindow.Resources>
         <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
             <Setter Property="Foreground" Value="Red"/>
@@ -23,7 +23,7 @@
 
         <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="Ribbon_SelectionChanged">
             <ribbon:Ribbon.ApplicationMenu>
-                <ribbon:RibbonApplicationMenu IsMainMenu="True">
+                <ribbon:RibbonApplicationMenu IsMainMenu="True" x:Name="MainMenu">
                     <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOff_Click"></ribbon:RibbonApplicationMenuItem>
                     <ribbon:RibbonApplicationMenuItem x:Name="Quit" Header="Quit" Click="Quit_Click"></ribbon:RibbonApplicationMenuItem>
                 </ribbon:RibbonApplicationMenu>

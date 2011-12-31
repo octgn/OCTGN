@@ -29,6 +29,7 @@ namespace Octgn.Launcher
         private Duration _duration = new Duration(TimeSpan.FromSeconds(.5));
         private SetList _currentSetList;
         private Brush _originalBorderBrush;
+        private bool _isLegitClosing = false;
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
             if (Content != null && !_allowDirectNavigation)
@@ -83,7 +84,7 @@ namespace Octgn.Launcher
                     frame1.BeginAnimation(OpacityProperty, animation0);
                 });
         }
-
+        public System.Windows.Forms.NotifyIcon SystemTrayIcon;
         public Main()
         {
             InitializeComponent();
@@ -103,7 +104,32 @@ namespace Octgn.Launcher
             tbUsername.Text = Program.lobbyClient.Me.DisplayName;
             tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
+            System.Windows.Forms.ContextMenu cm = new System.Windows.Forms.ContextMenu();
+            cm.MenuItems.Add("Show", cmShow_Click);
+            cm.MenuItems.Add("Log Off", cmLogOff_Click);
+            cm.MenuItems.Add("-");
+            cm.MenuItems.Add("Quit", cmQuit_Click);
+            SystemTrayIcon = new System.Windows.Forms.NotifyIcon();
+            SystemTrayIcon.Icon = new System.Drawing.Icon("Resources/Icon.ico");
+            SystemTrayIcon.Visible = false;
+            SystemTrayIcon.ContextMenu = cm;
+            SystemTrayIcon.Text = "Octgn";
             // Insert code required on object creation below this point.
+        }
+
+        void cmQuit_Click(object sender, EventArgs e)
+        {
+            CloseDownShop();
+            Program.Exit();
+        }
+        void cmLogOff_Click(object sender, EventArgs e)
+        {
+            CloseDownShop();
+        }
+        void cmShow_Click(object sender, EventArgs e)
+        {
+            this.Visibility = System.Windows.Visibility.Visible;
+            SystemTrayIcon.Visible = false;
         }
 
         void lobbyClient_OnFriendRequest(User u)
@@ -166,7 +192,7 @@ namespace Octgn.Launcher
 
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
+            CloseDownShop();
             Program.Exit();
         }
         void lobbyClient_OnDisconnectEvent(object sender, EventArgs e)
@@ -179,6 +205,9 @@ namespace Octgn.Launcher
         }
         private void CloseDownShop()
         {
+            _isLegitClosing = true;
+            SystemTrayIcon.Visible = false;
+            SystemTrayIcon.Dispose();
             if (Program.DeckEditor != null)
                 Program.DeckEditor.Close();
             Program.LauncherWindow = new LauncherWindow();
@@ -432,6 +461,16 @@ namespace Octgn.Launcher
         {
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!_isLegitClosing)
+            {
+                SystemTrayIcon.Visible = true;
+                this.Visibility = System.Windows.Visibility.Hidden;
+                e.Cancel = true;
+            }
         }
 
     }
