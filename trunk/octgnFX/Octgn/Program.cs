@@ -25,6 +25,8 @@ namespace Octgn
         internal readonly static string GamesPath;
         public static Data.GamesRepository GamesRepository;
 
+        public static Data.GamesRepository2 GamesRepository2;
+
         internal static ulong PrivateKey = ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
         internal static Networking.Client Client;
