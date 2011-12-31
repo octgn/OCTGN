@@ -32,7 +32,7 @@ namespace Skylabs.LobbyServer
             Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
             lock (Program.Server)
             {
-                Port = Networking.NextPortInRange(5000, 9000);
+                Port = Program.Server.NextHostPort;
                 if (Port != -1)
                 {
                     StandAloneApp = new Process();
@@ -62,8 +62,6 @@ namespace Skylabs.LobbyServer
                         Console.WriteLine(StandAloneApp.StartInfo.Arguments);
                         Console.WriteLine(e.Message);
                         Console.WriteLine(e.StackTrace);
-                        Trace.TraceError(StandAloneApp.StartInfo.FileName);
-                        Trace.Flush();
                     }
                 }
                 IsRunning = false;
@@ -73,7 +71,7 @@ namespace Skylabs.LobbyServer
         void StandAloneApp_Exited(object sender, EventArgs e)
         {
             Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
-            SocketMessage sm = new SocketMessage("GameEnd");
+            SocketMessage sm = new SocketMessage("gameend");
             sm.AddData("port",Port);
             Server.AllUserMessage(sm);
             Server.Games.Remove(this);
@@ -81,7 +79,7 @@ namespace Skylabs.LobbyServer
 
         public bool Equals(HostedGame other)
         {
-            return other.Port == Port;
+            return other.Port.Equals(Port);
         }
     }
 }
