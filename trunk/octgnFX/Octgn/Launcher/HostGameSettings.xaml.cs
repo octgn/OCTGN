@@ -37,7 +37,7 @@ namespace Octgn.Launcher
         {
             ns = NavigationService;
             Program.lobbyClient.BeginHostGame(EndHostGame,Game,textBox1.Text,textBox2.Text);
-            NavigationService.GoBack();
+            Program.ClientWindow.HostJoinTab();
         }
         private void EndHostGame(SocketMessage sm)
         {
@@ -74,8 +74,7 @@ namespace Octgn.Launcher
         }
         private void button2_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.GoBack();
-            
+            Program.ClientWindow.HostJoinTab();
         }
     }
 }

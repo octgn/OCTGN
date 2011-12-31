@@ -96,8 +96,7 @@ namespace Octgn.Launcher
 			e.Handled = true;
 			Start();
 			Program.Client.Rpc.Start();
-            NavigationService.RemoveBackEntry();
-            NavigationService.GoBack();
+            Program.ClientWindow.HostJoinTab();
 
 		}
 
@@ -109,8 +108,7 @@ namespace Octgn.Launcher
 
 		private void Back()
 		{
-			NavigationService.RemoveBackEntry();
-			NavigationService.GoBack();
+            Program.ClientWindow.HostJoinTab();
 
 		}
 
