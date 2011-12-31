@@ -22,6 +22,8 @@ namespace Octgn.Play
     [Import]
     protected Scripting.Engine scriptEngine;
 
+
+    private Boolean _keyDown = false;
 #pragma warning restore 649
 
     #region Dependency Properties
@@ -210,11 +212,16 @@ namespace Octgn.Play
       menuRow.Height = new GridLength(2);
     }
 
+    protected override void OnKeyUp(KeyEventArgs e)
+    {
+        base.OnKeyUp(e);
+    }
     protected override void OnKeyDown(KeyEventArgs e)
     {
       base.OnKeyDown(e);
       if (e.OriginalSource is TextBox) return;  // Do not tinker with the keyboard events when the focus is inside a textbox
-
+      if (e.IsRepeat)
+          return;
       IInputElement mouseOver = Mouse.DirectlyOver;
       var te = new TableKeyEventArgs(this, e);
       if (mouseOver != null) mouseOver.RaiseEvent(te);
