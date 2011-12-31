@@ -21,8 +21,8 @@ namespace Octgn.Data
       static GamesRepository()
     {
       BasePath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "Octgn");
+        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+        "Octgn","Database");
       Directory.CreateDirectory(BasePath);
     }
 
