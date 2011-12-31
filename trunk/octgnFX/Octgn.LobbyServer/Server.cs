@@ -49,6 +49,29 @@ namespace Skylabs.LobbyServer
             }
         }
 
+        public int NextHostPort
+        {
+            get
+            {
+                lock(Games)
+                {
+                    while(Games.Exists(hg => hg.Port == _currentHostPort))
+                    {
+                        _currentHostPort++;
+                        if(_currentHostPort >= 8000)
+                            _currentHostPort = 5000;
+                    }
+                    while(!Networking.IsPortAvailable(_currentHostPort))
+                    {
+                        _currentHostPort++;
+                        if (_currentHostPort >= 8000)
+                            _currentHostPort = 5000;
+                    }
+                    return _currentHostPort;
+                }
+            }
+        }
+        private int _currentHostPort = 5000;
         public Server(IPAddress ip, int port)
         {
             _nextId = 0;
@@ -114,17 +137,20 @@ namespace Skylabs.LobbyServer
 
         private void AcceptReceiveDataCallback(IAsyncResult ar)
         {
-            // Get the socket that handles the client request.
-            TcpListener listener = (TcpListener)ar.AsyncState;
-            try
+            lock (Clients)
             {
-                Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId, this));
-                _nextId++;
-                AcceptClients();
-            }
-            catch(ObjectDisposedException)
-            {
-                
+                // Get the socket that handles the client request.
+                TcpListener listener = (TcpListener)ar.AsyncState;
+                try
+                {
+                    Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId, this));
+                    _nextId++;
+                    AcceptClients();
+                }
+                catch (ObjectDisposedException)
+                {
+                    Console.WriteLine("AcceptReceiveDataCallback: ObjectDisposedException");
+                }
             }
         }
     }

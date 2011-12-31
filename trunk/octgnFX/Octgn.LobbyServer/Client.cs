@@ -189,59 +189,65 @@ namespace Skylabs.LobbyServer
 
         private void AcceptFriend(SocketMessage sm)
         {
-            //incomming data
-            //int uid      uid of the requestee
-            //bool accept  should we accept it
-
-            if(sm.Data.Length != 2)
-                return;
-            int uid = (int)sm["uid"];
-            bool accept = (bool)sm["accept"];
-            User requestee = Cup.GetUser(uid);
-            if(requestee == null)
-                return;
-            if(accept)
+            lock (Parent.Clients)
             {
-                //Add friend to this list
-                Friends.Add(requestee);
-                //Add you to friends list
-                Client c = Parent.GetOnlineClientByUid(requestee.Uid);
-                if(c != null)
+                //incomming data
+                //int uid      uid of the requestee
+                //bool accept  should we accept it
+
+                if (sm.Data.Length != 2)
+                    return;
+                int uid = (int)sm["uid"];
+                bool accept = (bool)sm["accept"];
+                User requestee = Cup.GetUser(uid);
+                if (requestee == null)
+                    return;
+                if (accept)
                 {
-                    c.Friends.Add(Me);
+                    //Add friend to this list
+                    Friends.Add(requestee);
+                    //Add you to friends list
+                    Client c = Parent.GetOnlineClientByUid(requestee.Uid);
+                    if (c != null)
+                    {
+                        c.Friends.Add(Me);
+                    }
+                    //Add to database
+                    Cup.AddFriend(Me.Uid, requestee.Uid);
                 }
-                //Add to database
-                Cup.AddFriend(Me.Uid, requestee.Uid);
+                //Remove any database friend requests
+                Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
+                Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
+                this.SendFriendsList();
+                Client rclient = Parent.GetOnlineClientByUid(requestee.Uid);
+                if (rclient != null)
+                    rclient.SendFriendsList();
             }
-            //Remove any database friend requests
-            Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
-            Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
-            this.SendFriendsList();
-            Client rclient = Parent.GetOnlineClientByUid(requestee.Uid);
-            if(rclient != null)
-                rclient.SendFriendsList();
         }
 
         private void AddFriend(SocketMessage sm)
         {
-            if(sm.Data.Length <= 0)
-                return;
-            string email = (string)sm.Data[0].Value;
-            if(email == null)
-                return;
-            if(String.IsNullOrWhiteSpace(email))
-                return;
-            if(!Verify.IsEmail(email))
-                return;
-            email = email.ToLower();
-            Client c = Parent.GetOnlineClientByEmail(email);
-            //If user exists and is online
-            Cup.AddFriendRequest(Me.Uid, email);
-            if(c != null)
+            lock (Parent.Clients)
             {
-                SocketMessage smm = new SocketMessage("friendrequest");
-                smm.AddData("user", Me);
-                c.WriteMessage(smm);
+                if (sm.Data.Length <= 0)
+                    return;
+                string email = (string)sm.Data[0].Value;
+                if (email == null)
+                    return;
+                if (String.IsNullOrWhiteSpace(email))
+                    return;
+                if (!Verify.IsEmail(email))
+                    return;
+                email = email.ToLower();
+                Client c = Parent.GetOnlineClientByEmail(email);
+                //If user exists and is online
+                Cup.AddFriendRequest(Me.Uid, email);
+                if (c != null)
+                {
+                    SocketMessage smm = new SocketMessage("friendrequest");
+                    smm.AddData("user", Me);
+                    c.WriteMessage(smm);
+                }
             }
         }
 
@@ -261,44 +267,50 @@ namespace Skylabs.LobbyServer
 
         private void SendFriendsList()
         {
-            SocketMessage sm = new SocketMessage("friends");
-            foreach(User u in Friends)
+            lock (Parent.Clients)
             {
-                Client c = Parent.GetOnlineClientByUid(u.Uid);
-                User n;
-                if(c == null)
+                SocketMessage sm = new SocketMessage("friends");
+                foreach (User u in Friends)
                 {
-                    n = u;
-                    n.Status = UserStatus.Offline;
-                }
-                else
-                {
-                    n = c.Me;
-                    if(n.Status == UserStatus.Invisible)
+                    Client c = Parent.GetOnlineClientByUid(u.Uid);
+                    User n;
+                    if (c == null)
+                    {
+                        n = u;
                         n.Status = UserStatus.Offline;
+                    }
+                    else
+                    {
+                        n = c.Me;
+                        if (n.Status == UserStatus.Invisible)
+                            n.Status = UserStatus.Offline;
+                    }
+                    sm.AddData(new NameValuePair(n.Uid.ToString(), n));
                 }
-                sm.AddData(new NameValuePair(n.Uid.ToString(), n));
+                WriteMessage(sm);
             }
-            WriteMessage(sm);
         }
 
         private void SendUsersOnline()
         {
-            SocketMessage sm = new SocketMessage("onlinelist");
-            foreach(Client c in Parent.Clients)
+            lock (Parent.Clients)
             {
-                if(c.LoggedIn)
+                SocketMessage sm = new SocketMessage("onlinelist");
+                foreach (Client c in Parent.Clients)
                 {
-                    if(c.Me.Status != UserStatus.Unknown)
+                    if (c.LoggedIn)
                     {
-                        User n = (User)c.Me.Clone();
-                        if(n.Status == UserStatus.Invisible)
-                            n.Status = UserStatus.Offline;
-                        sm.AddData(new NameValuePair(c.Me.Email, c.Me));
+                        if (c.Me.Status != UserStatus.Unknown)
+                        {
+                            User n = (User)c.Me.Clone();
+                            if (n.Status == UserStatus.Invisible)
+                                n.Status = UserStatus.Offline;
+                            sm.AddData(new NameValuePair(c.Me.Email, c.Me));
+                        }
                     }
                 }
+                WriteMessage(sm);
             }
-            WriteMessage(sm);
         }
         private void SetDisplayName(SocketMessage sm)
         {
@@ -332,27 +344,42 @@ namespace Skylabs.LobbyServer
         }
         private void SendHostedGameList()
         {
-            List<Skylabs.Lobby.HostedGame> sendgames = new List<Lobby.HostedGame>();
-            foreach (HostedGame hg in Parent.Games)
+            lock (Parent.Games)
             {
-                sendgames.Add(new Lobby.HostedGame(hg.GameGuid,hg.GameVersion,hg.Port,hg.Name,!String.IsNullOrWhiteSpace(hg.Password),hg.Hoster));
+                List<Skylabs.Lobby.HostedGame> sendgames = new List<Lobby.HostedGame>();
+                foreach (HostedGame hg in Parent.Games)
+                {
+                    sendgames.Add(new Lobby.HostedGame(hg.GameGuid, hg.GameVersion, hg.Port, hg.Name, !String.IsNullOrWhiteSpace(hg.Password), hg.Hoster));
+                }
+                SocketMessage sm = new SocketMessage("gamelist");
+                sm.AddData("list", sendgames);
+                WriteMessage(sm);
             }
-            SocketMessage sm = new SocketMessage("gamelist");
-            sm.AddData("list",sendgames);
-            WriteMessage(sm);
         }
         private void Login(SocketMessage insm)
         {
-            string email = (string)insm["email"];
-            string token = (string)insm["token"];
-            UserStatus stat = (UserStatus)insm["status"];
-            SocketMessage sm;
-            if(email != null && token != null)
+            lock (Parent.Clients)
             {
-                User u = Cup.GetUser(email);
-                if(u == null)
+                string email = (string)insm["email"];
+                string token = (string)insm["token"];
+                UserStatus stat = (UserStatus)insm["status"];
+                SocketMessage sm;
+                if (email != null && token != null)
                 {
-                    if(!Cup.RegisterUser(email, email))
+                    User u = Cup.GetUser(email);
+                    if (u == null)
+                    {
+                        if (!Cup.RegisterUser(email, email))
+                        {
+                            LoggedIn = false;
+                            sm = new SocketMessage("loginfailed");
+                            sm.AddData("message", "Server error");
+                            WriteMessage(sm);
+                            return;
+                        }
+                    }
+                    u = Cup.GetUser(email);
+                    if (u == null)
                     {
                         LoggedIn = false;
                         sm = new SocketMessage("loginfailed");
@@ -360,59 +387,60 @@ namespace Skylabs.LobbyServer
                         WriteMessage(sm);
                         return;
                     }
-                }
-                Me = Cup.GetUser(email);
-                if(Me == null)
-                {
-                    LoggedIn = false;
-                    sm = new SocketMessage("loginfailed");
-                    sm.AddData("message", "Server error");
-                    WriteMessage(sm);
-                    return;
-                }
-                int banned = Cup.IsBanned(Me.Uid, this);
-                if(banned == -1)
-                {
-                    Me.Status = stat;
-                    sm = new SocketMessage("loginsuccess");
-                    sm.AddData("me", Me);
-                    WriteMessage(sm);
-                    Friends = Cup.GetFriendsList(Me.Uid);
-                    
-                    bool foundOne = false;
-                    foreach (Client c in Parent.Clients)
-                    { 
-                        if (c != null && c.LoggedIn)
+                    int banned = Cup.IsBanned(u.Uid, this);
+                    if (banned == -1)
+                    {
+                        bool foundOne = false;
+                        foreach (Client c in Parent.Clients)
                         {
-                            if (c.Me.Uid == Me.Uid)
+                            if (c != null)
                             {
-                                foundOne = true;
-                                c.Stop(true);
+                                if (c.Me.Uid == u.Uid)
+                                {
+                                    if (c.LoggedIn)
+                                        foundOne = true;
+                                    c.Stop(true);
+                                }
                             }
                         }
+                        try
+                        {
+                            Parent.Clients.RemoveAll(c => c.Me.Uid == u.Uid);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                        if (!foundOne)
+                            Parent.OnUserEvent(stat, this);
+                        Me = u;
+                        Me.Status = stat;
+                        sm = new SocketMessage("loginsuccess");
+                        sm.AddData("me", Me);
+                        WriteMessage(sm);
+                        Friends = Cup.GetFriendsList(Me.Uid);
+
+                        LoggedIn = true;
+                        SendFriendsList();
+                        SendUsersOnline();
+                        SendFriendRequests();
+                        SendHostedGameList();
+                        return;
                     }
-                    if(!foundOne)
-                        Parent.OnUserEvent(stat, this);
-                    LoggedIn = true;
-                    SendFriendsList();
-                    SendUsersOnline();
-                    SendFriendRequests();
-                    SendHostedGameList();
-                    return;
+                    else
+                    {
+                        sm = new SocketMessage("banned");
+                        sm.AddData(new NameValuePair("end", banned));
+                        WriteMessage(sm);
+                        Stop();
+                        LoggedIn = false;
+                        return;
+                    }
                 }
-                else
-                {
-                    sm = new SocketMessage("banned");
-                    sm.AddData(new NameValuePair("end", banned));
-                    WriteMessage(sm);
-                    Stop();
-                    LoggedIn = false;
-                    return;
-                }
+                sm = new SocketMessage("loginfailed");
+                sm.AddData("message", "Server error");
+                WriteMessage(sm);
             }
-            sm = new SocketMessage("loginfailed");
-            sm.AddData("message", "Server error");
-            WriteMessage(sm);
         }
     }
 }
