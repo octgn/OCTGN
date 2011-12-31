@@ -99,7 +99,7 @@ namespace Skylabs.LobbyServer
             if(e == UserStatus.Invisible)
                 e = UserStatus.Offline;
             theuser.Status = e;
-            sm.AddData(new NameValuePair("user", theuser));
+            sm.AddData("user", theuser);
             WriteMessage(sm);
         }
 
@@ -413,11 +413,11 @@ namespace Skylabs.LobbyServer
                         }
                         Me = u;
                         Me.Status = stat;
-                        if (!foundOne)
-                            Parent.OnUserEvent(stat, this);
                         sm = new SocketMessage("loginsuccess");
                         sm.AddData("me", Me);
                         WriteMessage(sm);
+                        if (!foundOne)
+                            Parent.OnUserEvent(stat, this);
                         Friends = Cup.GetFriendsList(Me.Uid);
 
                         LoggedIn = true;
