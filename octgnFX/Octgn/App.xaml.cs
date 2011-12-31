@@ -31,7 +31,6 @@ namespace Octgn
             {
                 //TODO For some reason this fails sometimes. Important to fix before release.
                 Program.GamesRepository = new Octgn.Data.GamesRepository();
-                Program.GamesRepository2 = new Octgn.Data.GamesRepository2();
             }
             catch (Exception)
             {
