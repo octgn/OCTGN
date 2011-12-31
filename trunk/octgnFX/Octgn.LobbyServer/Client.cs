@@ -411,10 +411,10 @@ namespace Skylabs.LobbyServer
                         {
 
                         }
-                        if (!foundOne)
-                            Parent.OnUserEvent(stat, this);
                         Me = u;
                         Me.Status = stat;
+                        if (!foundOne)
+                            Parent.OnUserEvent(stat, this);
                         sm = new SocketMessage("loginsuccess");
                         sm.AddData("me", Me);
                         WriteMessage(sm);
