@@ -128,12 +128,10 @@ namespace Octgn.Launcher
                 switch ((String)tab.Header)
                 {
                     case "Lobby":
-                        frame1.Navigate(new ContactList());
+                        LobbyTab();
                         break;
                     case "Host/Join":
-                        HostedGameList hgl = new HostedGameList();
-                        hgl.OnGameClick += new EventHandler(hgl_OnGameClick);
-                        frame1.Navigate(hgl);
+                        HostJoinTab();
                         break;
                     case "Games":
                         GameList gl = new GameList();
@@ -147,6 +145,16 @@ namespace Octgn.Launcher
                         break;
                 }
             }
+        }
+        public void LobbyTab()
+        {
+            frame1.Navigate(new ContactList());
+        }
+        public void HostJoinTab()
+        {
+            HostedGameList hgl = new HostedGameList();
+            hgl.OnGameClick += new EventHandler(hgl_OnGameClick);
+            frame1.Navigate(hgl);
         }
 
         void gl_OnGameDoubleClick(object sender, EventArgs e)

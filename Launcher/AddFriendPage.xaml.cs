@@ -28,12 +28,12 @@ namespace Octgn.Launcher
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             Program.lobbyClient.AddFriend(textBox1.Text);
-            NavigationService.GoBack();
+            Program.ClientWindow.LobbyTab();
         }
 
         private void button2_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.GoBack();
+            Program.ClientWindow.LobbyTab();
             
         }
     }
