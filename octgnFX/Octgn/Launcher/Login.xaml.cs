@@ -33,10 +33,7 @@ namespace Octgn.Launcher
             animationTimer.Tick += HandleAnimationTick;
             if(Settings.Default.Password != "")
             {
-                System.Security.Cryptography.RIPEMD160 hash = System.Security.Cryptography.RIPEMD160.Create();
-                byte[] hasher;
-                hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Settings.Default.NickName));
-                passwordBox1.Password = Cryptor.Decrypt(Settings.Default.Password, BitConverter.ToString(hasher));
+                passwordBox1.Password = Settings.Default.Password.Decrypt();
                 cbSavePassword.IsChecked = true;
             }
             textBox1.Text = Settings.Default.Email;
@@ -149,11 +146,7 @@ namespace Octgn.Launcher
                 {                    
                     if (cbSavePassword.IsChecked == true)
                     {
-                        // Create a hash of current nickname to use as the Cryptographic Key
-                        System.Security.Cryptography.RIPEMD160 hash = System.Security.Cryptography.RIPEMD160.Create();
-                        byte[] hasher;
-                        hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Program.lobbyClient.Me.DisplayName));
-                        Settings.Default.Password = Cryptor.Encrypt(passwordBox1.Password, BitConverter.ToString(hasher));
+                        Settings.Default.Password = passwordBox1.Password.Encrypt();
                     }
                     else
                         Settings.Default.Password = "";
@@ -330,6 +323,27 @@ namespace Octgn.Launcher
                 Settings.Default.Password = "";
                 Settings.Default.Save();
             }
+        }
+    }
+
+    public static class ExtensionMethods
+    {
+        public static string Decrypt(this string Text)
+        {
+            System.Security.Cryptography.RIPEMD160 hash = System.Security.Cryptography.RIPEMD160.Create();
+            byte[] hasher;
+            hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Settings.Default.NickName));
+            Text = Cryptor.Decrypt(Settings.Default.Password, BitConverter.ToString(hasher));
+            return Text;
+        }
+
+        public static string Encrypt(this string Text)
+        {
+            // Create a hash of current nickname to use as the Cryptographic Key
+            System.Security.Cryptography.RIPEMD160 hash = System.Security.Cryptography.RIPEMD160.Create();
+            byte[] hasher;
+            hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Program.lobbyClient.Me.DisplayName));
+            return Cryptor.Encrypt(Text, BitConverter.ToString(hasher));
         }
     }
 }
