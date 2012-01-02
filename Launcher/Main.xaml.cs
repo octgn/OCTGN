@@ -15,6 +15,7 @@ using Skylabs.Net;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace Octgn.Launcher
 {
@@ -30,6 +31,7 @@ namespace Octgn.Launcher
         private SetList _currentSetList;
         private Brush _originalBorderBrush;
         private bool _isLegitClosing = false;
+
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
             if (Content != null && !_allowDirectNavigation)
@@ -101,6 +103,7 @@ namespace Octgn.Launcher
             Program.lobbyClient.OnFriendRequest += new LobbyClient.FriendRequest(lobbyClient_OnFriendRequest);
             Program.lobbyClient.OnDisconnectEvent += new EventHandler(lobbyClient_OnDisconnectEvent);
             Program.lobbyClient.OnUserStatusChanged += new LobbyClient.UserStatusChanged(lobbyClient_OnUserStatusChanged);
+            Program.lobbyClient.Chatting.eChatEvent += new Chatting.ChatEventDelegate(Chatting_eChatEvent);
             tbUsername.Text = Program.lobbyClient.Me.DisplayName;
             tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
@@ -115,6 +118,33 @@ namespace Octgn.Launcher
             SystemTrayIcon.ContextMenu = cm;
             SystemTrayIcon.Text = "Octgn";
             // Insert code required on object creation below this point.
+        }
+
+        void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user,object data)
+        {
+            Dispatcher.Invoke(new Action(() => 
+            {
+
+                    ChatWindow cw = Program.ChatWindows.FirstOrDefault(cww => cww.ID == cr.ID);
+                    if (cw == null)
+                    {
+                        ChatWindow c = new ChatWindow(cr.ID);
+                        c.Loaded += delegate
+                        {
+                            c.ChatEvent(cr, e, user, data);
+                        };
+                        Program.ChatWindows.Add(c);
+                        if(cr.ID != 0)
+                            c.Show();
+                    }
+                    else
+                    {
+                        if (cw.ID != 0)
+                        {
+                            cw.Show();
+                        }
+                    }
+            }));
         }
 
         void cmQuit_Click(object sender, EventArgs e)
@@ -210,6 +240,11 @@ namespace Octgn.Launcher
             SystemTrayIcon.Dispose();
             if (Program.DeckEditor != null)
                 Program.DeckEditor.Close();
+            foreach (ChatWindow cw in Program.ChatWindows)
+            {
+                cw.CloseChatWindow();
+            }
+            Program.ChatWindows.Clear();
             Program.LauncherWindow = new LauncherWindow();
             Program.LauncherWindow.Show();
             Program.ClientWindow.Close();
