@@ -108,7 +108,7 @@ namespace Octgn.Launcher
             tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
             System.Windows.Forms.ContextMenu cm = new System.Windows.Forms.ContextMenu();
-            cm.MenuItems.Add("Show", cmShow_Click);
+            cm.MenuItems.Add("Show", cmShow_Click).DefaultItem = true;
             cm.MenuItems.Add("Log Off", cmLogOff_Click);
             cm.MenuItems.Add("-");
             cm.MenuItems.Add("Quit", cmQuit_Click);
@@ -117,7 +117,13 @@ namespace Octgn.Launcher
             SystemTrayIcon.Visible = false;
             SystemTrayIcon.ContextMenu = cm;
             SystemTrayIcon.Text = "Octgn";
+            SystemTrayIcon.DoubleClick += new System.EventHandler(this.SystemTrayIcon_DoubleClick);
             // Insert code required on object creation below this point.
+        }
+
+        private void SystemTrayIcon_DoubleClick(object Sender, EventArgs e)
+        {
+            cmShow_Click(Sender, e);
         }
 
         void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user,object data)
