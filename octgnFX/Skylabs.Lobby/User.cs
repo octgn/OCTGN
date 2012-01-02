@@ -69,6 +69,10 @@ namespace Skylabs.Lobby
             }
         }
 
+        public override string ToString()
+        {
+            return DisplayName;
+        }
         #region ICloneable Members
 
         public object Clone()

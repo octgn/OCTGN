@@ -75,6 +75,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatRoom.cs" />
+    <Compile Include="Chatting.cs" />
     <Compile Include="FriendRequestNotification.cs" />
     <Compile Include="HostedGame.cs" />
     <Compile Include="LobbyClient.cs" />

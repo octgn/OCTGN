@@ -7,27 +7,31 @@ using System.Windows.Threading;
 using Octgn.Play;
 using Skylabs.Lobby;
 using RE = System.Text.RegularExpressions;
+using Octgn.Launcher;
 
 namespace Octgn
 {
     public static class Program
     {
         public static DWindow DebugWindow;
-        public static Game Game;
-        public static LobbyClient lobbyClient;
-        public static Octgn.Data.GameSettings GameSettings = new Octgn.Data.GameSettings();
         public static Octgn.Launcher.Main ClientWindow;
         public static Launcher.LauncherWindow LauncherWindow;
         public static DeckBuilder.DeckBuilderWindow DeckEditor;
         public static PlayWindow PlayWindow;
+        public static List<ChatWindow> ChatWindows;
+
+        public static Game Game;
+        public static LobbyClient lobbyClient;
+        public static Octgn.Data.GameSettings GameSettings = new Octgn.Data.GameSettings();
+        public static Data.GamesRepository GamesRepository;
+        internal static Networking.Client Client;
+
         internal static bool IsGameRunning = false;
         internal readonly static string BasePath;
         internal readonly static string GamesPath;
-        public static Data.GamesRepository GamesRepository;
 
         internal static ulong PrivateKey = ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
-        internal static Networking.Client Client;
         internal static event EventHandler<ServerErrorEventArgs> ServerError;
 
         internal static bool IsHost { get; set; }
@@ -49,7 +53,9 @@ namespace Octgn
 
         static Program()
         {
+            System.Diagnostics.Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
+            System.Diagnostics.Debug.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
             BasePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
@@ -58,6 +64,7 @@ namespace Octgn
             string s = e.Message.Substring(0);
             Program.LauncherWindow = new Launcher.LauncherWindow();
             Program.LauncherWindow.Show();
+            ChatWindows = new List<ChatWindow>();
         }
         public static void StartLobbyServer()
         {

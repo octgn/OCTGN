@@ -179,6 +179,26 @@ namespace Skylabs.LobbyServer
                         Chatting.AddUserToChat(this, sm);
                         break;
                     }
+                case "twopersonchat":
+                    {
+                        Chatting.TwoPersonChat(this, sm);
+                        break;
+                    }
+                case "leavechat":
+                    {
+                        long? rid = (long?)sm["roomid"];
+                        if (rid != null)
+                        {
+                            long rid2 = (long)rid;
+                            Chatting.UserLeaves(Me, rid2);
+                        }
+                        break;
+                    }
+                case "chatmessage":
+                    {
+                        Chatting.ChatMessage(this,sm);
+                        break;
+                    }
             }
         }
 
