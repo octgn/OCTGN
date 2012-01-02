@@ -37,6 +37,8 @@ namespace Skylabs.Net.Sockets
 
         private DateTime _lastPingReceived;
 
+        private DisconnectReason _dr;
+
         /// <summary>
         /// Creates new SkySocket that isn't connected. You must call Connect to connect.
         /// </summary>
@@ -132,6 +134,7 @@ namespace Skylabs.Net.Sockets
         /// <param name="reason">Reason why</param>
         public void Close(DisconnectReason reason)
         {
+            _dr = reason;
             if(Sock != null && Sock.Client != null)
                 Sock.Client.BeginDisconnect(false, DisconnectCallback, Sock.Client);
         }
@@ -140,7 +143,7 @@ namespace Skylabs.Net.Sockets
         {
             Sock.Client.EndDisconnect(ar);
             Connected = false;
-            OnDisconnect(reason);
+            OnDisconnect(_dr);
         }
 
         private void ReceiveCallback(IAsyncResult ar)
