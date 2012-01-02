@@ -12,16 +12,27 @@ namespace Skylabs.LobbyServer
 {
     public class Client : SkySocket, IEquatable<Client>
     {
+        /// <summary>
+        /// A unique ID of the client. Server.cs decides this
+        /// </summary>
         public int Id { get; private set; }
-
+        /// <summary>
+        /// Is the user logged in?
+        /// </summary>
         public bool LoggedIn { get; private set; }
-
+        /// <summary>
+        /// A MySql class to handle all of the database work.
+        /// </summary>
         public MySqlCup Cup { get; private set; }
-
+        /// <summary>
+        /// The user information on the currently connected user
+        /// </summary>
         public User Me { get { return _me; } private set { _me = value; } }
 
         private Boolean _SupressSendOfflineStatus = false;
-        
+        /// <summary>
+        /// A list of all the users friends.
+        /// </summary>
         public List<User> Friends
         {
             get
@@ -50,7 +61,12 @@ namespace Skylabs.LobbyServer
         private List<User> _friends;
 
         private User _me = new User();
-
+        /// <summary>
+        /// Create a connection.
+        /// </summary>
+        /// <param name="client">Tcp Client</param>
+        /// <param name="id">ID provided by Server.cs</param>
+        /// <param name="server">Server.cs instance</param>
         public Client(TcpClient client, int id, Server server)
             : base(client)
         {
@@ -86,11 +102,21 @@ namespace Skylabs.LobbyServer
                 Close(DisconnectReason.CleanDisconnect);
             }
         }
+        /// <summary>
+        /// Disconnect cleanly, with the option to suppress any message sending.
+        /// Only useful if the connection is already closed, though it won't error out anyways.
+        /// </summary>
+        /// <param name="SuppressSendUserOfflineMessage"></param>
         public void Stop(bool SuppressSendUserOfflineMessage)
         {
             _SupressSendOfflineStatus = SuppressSendUserOfflineMessage;
             Stop();
         }
+        /// <summary>
+        /// This gets called when Server.cs wants to tell each client that a user event occured.
+        /// </summary>
+        /// <param name="e">User Status</param>
+        /// <param name="theuser">The user who's status changed.</param>
         public void OnUserEvent(UserStatus e, User theuser)
         {
             //if(theuser.Equals(Me))
@@ -102,7 +128,10 @@ namespace Skylabs.LobbyServer
             sm.AddData("user", theuser);
             WriteMessage(sm);
         }
-
+        /// <summary>
+        /// Whenever a message is received, it goes here.
+        /// </summary>
+        /// <param name="sm">Message</param>
         public override void OnMessageReceived(SocketMessage sm)
         {
             switch (sm.Header.ToLower())
@@ -201,12 +230,18 @@ namespace Skylabs.LobbyServer
                     }
             }
         }
-
+        /// <summary>
+        /// Don't call this, it gets called automatically on disconnect.
+        /// </summary>
+        /// <param name="reason">Reason for the disconnect</param>
         public override void OnDisconnect(DisconnectReason reason)
         {
             if(LoggedIn) Parent.OnUserEvent(UserStatus.Offline, this,_SupressSendOfflineStatus);
         }
-
+        /// <summary>
+        /// Accept a friend request. Handles the socket message data.
+        /// </summary>
+        /// <param name="sm">message</param>
         private void AcceptFriend(SocketMessage sm)
         {
             lock (Parent.Clients)
@@ -244,7 +279,10 @@ namespace Skylabs.LobbyServer
                     rclient.SendFriendsList();
             }
         }
-
+        /// <summary>
+        /// Add a friend. This happens after the friend request is accepted.
+        /// </summary>
+        /// <param name="sm">Message from client</param>
         private void AddFriend(SocketMessage sm)
         {
             lock (Parent.Clients)
@@ -270,7 +308,9 @@ namespace Skylabs.LobbyServer
                 }
             }
         }
-
+        /// <summary>
+        /// Send all the friend requests in the database for the current user, to the user.
+        /// </summary>
         private void SendFriendRequests()
         {
             List<int> r = Cup.GetFriendRequests(Me.Email);
@@ -284,7 +324,9 @@ namespace Skylabs.LobbyServer
                 WriteMessage(smm);
             }
         }
-
+        /// <summary>
+        /// Sends the user there friends list.
+        /// </summary>
         private void SendFriendsList()
         {
             lock (Parent.Clients)
@@ -310,7 +352,12 @@ namespace Skylabs.LobbyServer
                 WriteMessage(sm);
             }
         }
-
+        /// <summary>
+        /// Send the user a list of users online.
+        /// This probably doesn't need to even exist, as the user doesn't benefit from knowing everyone online
+        /// and could potentially slow things down. I don't even think that LobbyClient even cares about this list,
+        /// but I can't be sure.
+        /// </summary>
         private void SendUsersOnline()
         {
             lock (Parent.Clients)
@@ -332,6 +379,10 @@ namespace Skylabs.LobbyServer
                 WriteMessage(sm);
             }
         }
+        /// <summary>
+        /// Set the users display name
+        /// </summary>
+        /// <param name="sm">Message containting display name data.</param>
         private void SetDisplayName(SocketMessage sm)
         {
             string s = (string)sm["name"];
@@ -348,6 +399,10 @@ namespace Skylabs.LobbyServer
                 }
             }
         }
+        /// <summary>
+        /// Set users custom status
+        /// </summary>
+        /// <param name="sm">Message containing custom status</param>
         private void SetCustomStatus(SocketMessage sm)
         {
             string s = (string)sm["customstatus"];
@@ -362,6 +417,9 @@ namespace Skylabs.LobbyServer
                 }
             }
         }
+        /// <summary>
+        /// Send the user a list of current hosted games.
+        /// </summary>
         private void SendHostedGameList()
         {
             lock (Parent.Games)
@@ -376,6 +434,11 @@ namespace Skylabs.LobbyServer
                 WriteMessage(sm);
             }
         }
+        /// <summary>
+        /// Login function. When a user tries to login, the message gets sent here to get processed.
+        /// It will send a message back if they failed or not.
+        /// </summary>
+        /// <param name="insm">message</param>
         private void Login(SocketMessage insm)
         {
             lock (Parent.Clients)
