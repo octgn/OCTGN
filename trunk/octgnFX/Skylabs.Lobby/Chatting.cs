@@ -31,18 +31,31 @@ namespace Skylabs.Lobby
                 return null;
             }
         }
+        /// <summary>
+        /// Create a chat room with another user.
+        /// </summary>
+        /// <param name="otherUser"></param>
         public void CreateChatRoom(User otherUser)
         {
             SocketMessage sm = new SocketMessage("twopersonchat");
             sm.AddData("user", otherUser);
             Parent.WriteMessage(sm);
         }
+        /// <summary>
+        /// Join a chat room based on an RID
+        /// </summary>
+        /// <param name="id"></param>
         public void JoinChatRoom(long id)
         {
             SocketMessage sm = new SocketMessage("joinchatroom");
             sm.AddData("roomid", id);
             Parent.WriteMessage(sm);
         }
+        /// <summary>
+        /// Add a user to a chat room
+        /// </summary>
+        /// <param name="u"></param>
+        /// <param name="chatid"></param>
         public void AddUserToChat(User u, long chatid)
         {
             SocketMessage sm = new SocketMessage("addusertochat");
@@ -50,6 +63,10 @@ namespace Skylabs.Lobby
             sm.AddData("user", u);
             Parent.WriteMessage(sm);
         }
+        /// <summary>
+        /// Leave a chat room.
+        /// </summary>
+        /// <param name="rid"></param>
         public void LeaveChatRoom(long rid)
         {
                 SocketMessage sm = new SocketMessage("leavechat");
@@ -58,6 +75,11 @@ namespace Skylabs.Lobby
                 Rooms.RemoveAll(r => r.ID == rid);
 
         }
+        /// <summary>
+        /// Send a chat message to a room.
+        /// </summary>
+        /// <param name="rid"></param>
+        /// <param name="message"></param>
         public void SendChatMessage(long rid,string message)
         {
                 SocketMessage sm = new SocketMessage("chatmessage");
@@ -65,6 +87,12 @@ namespace Skylabs.Lobby
                 sm.AddData("mess", message);
                 Parent.WriteMessage(sm);
         }
+        /// <summary>
+        /// Don't call this, Chatting calls this.
+        /// </summary>
+        /// <param name="rid"></param>
+        /// <param name="u"></param>
+        /// <param name="allusers"></param>
         public void UserJoinedChat(long rid,User u,List<User> allusers)
         {
                 if (!Rooms.Exists(r => r.ID == rid))
@@ -83,6 +111,11 @@ namespace Skylabs.Lobby
                     if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.UserJoinedChat, u,null);
                 }
         }
+        /// <summary>
+        /// Don't call this, Chatting.cs calls this.
+        /// </summary>
+        /// <param name="rid"></param>
+        /// <param name="u"></param>
         public void UserLeftChat(long rid,User u)
         {
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
@@ -92,6 +125,12 @@ namespace Skylabs.Lobby
                     if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.UserLeftChat, u,null);
                 }
         }
+        /// <summary>
+        /// Don't call this...Chatting.cs calls this.
+        /// </summary>
+        /// <param name="rid"></param>
+        /// <param name="u"></param>
+        /// <param name="message"></param>
         public void RecieveChatMessage(long rid,User u,string message)
         {
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
