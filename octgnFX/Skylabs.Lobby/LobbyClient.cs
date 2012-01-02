@@ -24,28 +24,62 @@ namespace Skylabs.Lobby
         public delegate void UserStatusChanged(UserStatus eve, User u);
         public delegate void FriendRequest(User u);
         public delegate void SocketMessageResult(SocketMessage sm);
-
         public delegate void GameHostEvent(HostedGame g);
+
+        /// <summary>
+        /// Kind of a generic event whenever data is received. Check DataRecType for data that triggers this.
+        /// You can add more to handle other events as well.
+        /// </summary>
         public event DataRecieved OnDataRecieved;
+        /// <summary>
+        /// This happens when there is a UserStatus change of any type, be it DisplayName, Status, or CustomStatus
+        /// It's best to ignore UserStatus, and just pull the data from User.
+        /// </summary>
         public event UserStatusChanged OnUserStatusChanged;
+        /// <summary>
+        /// Happens when we receive a friend request.
+        /// </summary>
         public event FriendRequest OnFriendRequest;
+        /// <summary>
+        /// When google requires a Captcha, this gets called.
+        /// </summary>
         public event HandleCaptcha OnCaptchaRequired;
+        /// <summary>
+        /// When a game has a hosting event, this gets called. The three are Game Hosting and ready for players, game in progress, and game done.
+        /// </summary>
         public event GameHostEvent OnGameHostEvent;
+        /// <summary>
+        /// This happens when the LobbyClient disconnects for any reason.
+        /// </summary>
         public event EventHandler OnDisconnectEvent;
         
-
+        /// <summary>
+        /// A list of Hosted games
+        /// </summary>
         public List<HostedGame> Games { get; set; } 
 
+        /// <summary>
+        /// Meh, failed attempt for Asyncronus callbacks. Don't delete it, it gets used, but still.
+        /// </summary>
         private Dictionary<string, SocketMessageResult> Callbacks;
 
+        /// <summary>
+        /// This handles all chatting stuff.
+        /// </summary>
         public Chatting Chatting { get; set; }
 
+        /// <summary>
+        /// This is the current logged in user.
+        /// </summary>
         public User Me { get; private set; }
 
         private LoginFinished _onLoginFinished;
 
         private string _mCaptchaToken = "";
 
+        /// <summary>
+        /// Assembly version of the LobbySoftware I think.
+        /// </summary>
         public Version Version
         {
             get
@@ -55,12 +89,22 @@ namespace Skylabs.Lobby
             }
         }
 
+        /// <summary>
+        /// List of friends
+        /// </summary>
         public List<User> FriendList { get; private set; }
-
+        /// <summary>
+        /// List of online users(though I think this will go away)
+        /// </summary>
         public List<User> OnlineList { get; private set; }
-
+        /// <summary>
+        /// List of Notifications? I don't know offhand
+        /// </summary>
+        //TODO Figure out what this is for
         public List<Notification> Notifications { get; set; }
-
+        /// <summary>
+        /// Who knows
+        /// </summary>
         public int CurrentHostedGamePort { get; set; }
 
         public LobbyClient()
@@ -82,12 +126,22 @@ namespace Skylabs.Lobby
             Callbacks = new Dictionary<string, SocketMessageResult>();
             Games = new List<HostedGame>();
         }
-
+        /// <summary>
+        /// Get an online user from the UID
+        /// </summary>
+        /// <param name="uid">UID</param>
+        /// <returns>Online user, or NULL</returns>
         public User GetOnlineUser(int uid)
         {
             return OnlineList.FirstOrDefault(u => u.Uid == uid);
         }
-
+        /// <summary>
+        /// Start hosting a game.
+        /// </summary>
+        /// <param name="callback">Callback for when the server talks back</param>
+        /// <param name="game">Game</param>
+        /// <param name="gamename">Name of the game</param>
+        /// <param name="password">Password</param>
         public void BeginHostGame(SocketMessageResult callback, Octgn.Data.Game game, string gamename, string password)
         {
             Callbacks.Add("hostgameresponse",callback);
@@ -98,6 +152,9 @@ namespace Skylabs.Lobby
             sm.AddData("pass",password);
             WriteMessage(sm);
         }
+        /// <summary>
+        /// This gets called when the hoster of the game clicks 'Start game'
+        /// </summary>
         public void HostedGameStarted()
         {
             if (CurrentHostedGamePort != -1)
@@ -107,6 +164,10 @@ namespace Skylabs.Lobby
                 WriteMessage(sm);
             }
         }
+        /// <summary>
+        /// Send a friend request to an e-mail
+        /// </summary>
+        /// <param name="email">E-mail of the friend</param>
         public void AddFriend(string email)
         {
             SocketMessage sm = new SocketMessage("addfriend");
@@ -114,6 +175,14 @@ namespace Skylabs.Lobby
             WriteMessage(sm);
         }
 
+        /// <summary>
+        /// Login here
+        /// </summary>
+        /// <param name="onFinish">Delegate for when Login is done.</param>
+        /// <param name="email">Users e-mail address</param>
+        /// <param name="password">Password</param>
+        /// <param name="captcha">Captcha string if required</param>
+        /// <param name="status">Status to log in as</param>
         public void Login(LoginFinished onFinish, string email, string password, string captcha, UserStatus status)
         {
             if(Connected)
@@ -161,6 +230,10 @@ namespace Skylabs.Lobby
             }
         }
 
+        /// <summary>
+        /// Whenever a SkySocket gets a message, it goes here for processing.
+        /// </summary>
+        /// <param name="sm">SocketMessage</param>
         public override void OnMessageReceived(Net.SocketMessage sm)
         {
             User u;
@@ -356,7 +429,10 @@ namespace Skylabs.Lobby
 
             }
         }
-
+        /// <summary>
+        /// Sets the users status. Don't ever set to Offline, use Invisible instead.
+        /// </summary>
+        /// <param name="s">Users status</param>
         public void SetStatus(UserStatus s)
         {
             SocketMessage sm = new SocketMessage("status");
@@ -364,19 +440,30 @@ namespace Skylabs.Lobby
             WriteMessage(sm);
             Me.Status = s;
         }
-
+        /// <summary>
+        /// Sets the users custom status.
+        /// </summary>
+        /// <param name="CustomStatus"></param>
         public void SetCustomStatus(string CustomStatus)
         {
             SocketMessage sm = new SocketMessage("customstatus");
             sm.AddData("customstatus", CustomStatus);
             WriteMessage(sm);
         }
+        /// <summary>
+        /// Sets the users display name
+        /// </summary>
+        /// <param name="name"></param>
         public void SetDisplayName(string name)
         {
             SocketMessage sm = new SocketMessage("displayname");
             sm.AddData("name", name);
             WriteMessage(sm);
         }
+        /// <summary>
+        /// Happens when the SkySocket disconnects.
+        /// </summary>
+        /// <param name="reason"></param>
         public override void OnDisconnect(Net.DisconnectReason reason)
         {
             if (OnDisconnectEvent != null)

@@ -25,6 +25,10 @@ namespace Skylabs.Lobby
 
         public UserStatus Status { get; set; }
 
+        /// <summary>
+        /// Users level. Has to do with moderating and stuff.
+        /// Not currently used.
+        /// </summary>
         public UserLevel Level { get; set; }
 
         public User()
