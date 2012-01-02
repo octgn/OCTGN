@@ -133,11 +133,14 @@ namespace Skylabs.Net.Sockets
         public void Close(DisconnectReason reason)
         {
             if(Sock != null && Sock.Client != null)
-                Sock.Client.BeginDisconnect(false, delegate
-                                                   {
-                                                       Connected = false;
-                                                       OnDisconnect(reason);
-                                                   }, Sock.Client);
+                Sock.Client.BeginDisconnect(false, DisconnectCallback, Sock.Client);
+        }
+
+        private void DisconnectCallback(IAsyncResult ar)
+        {
+            Sock.Client.EndDisconnect(ar);
+            Connected = false;
+            OnDisconnect(reason);
         }
 
         private void ReceiveCallback(IAsyncResult ar)

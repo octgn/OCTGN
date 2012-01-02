@@ -36,9 +36,9 @@ namespace Skylabs.Lobby
 
         public List<HostedGame> Games { get; set; } 
 
-        private Dictionary<string, SocketMessageResult> Callbacks; 
+        private Dictionary<string, SocketMessageResult> Callbacks;
 
-
+        public Chatting Chatting { get; set; }
 
         public User Me { get; private set; }
 
@@ -70,6 +70,7 @@ namespace Skylabs.Lobby
             Notifications = new List<Notification>();
             Callbacks = new Dictionary<string, SocketMessageResult>();
             Games = new List<HostedGame>();
+            Chatting = new Lobby.Chatting(this);
         }
 
         public LobbyClient(TcpClient c)
@@ -183,7 +184,10 @@ namespace Skylabs.Lobby
                 case "loginsuccess":
                     Me = (User)sm["me"];
                     if (Me != null)
+                    {
                         _onLoginFinished.Invoke(LoginResult.Success, DateTime.Now, "");
+                        Chatting.JoinChatRoom(0);
+                    }
                     else
                     {
                         _onLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, "Data failure.");
@@ -315,6 +319,38 @@ namespace Skylabs.Lobby
                                 OnGameHostEvent.Invoke(gm);
                             Games.Remove(gm);
                         }
+                        break;
+                    }
+                case "userjoinedchatroom":
+                    {
+                        User us = (User)sm["user"];
+                        List<User> allusers = (List<User>)sm["allusers"];
+                        long? id = (long?)sm["roomid"];
+                        if (us == null || allusers == null || id == null)
+                            return;
+                        long id2 = (long)id;
+                        Chatting.UserJoinedChat(id2, us, allusers);
+                        break;
+                    }
+                case "userleftchatroom":
+                    {
+                        User us = (User)sm["user"];
+                        long? id = (long?)sm["roomid"];
+                        if (us == null || id == null)
+                            return;
+                        long id2 = (long)id;
+                        Chatting.UserLeftChat(id2, us);
+                        break;
+                    }
+                case "chatmessage":
+                    {
+                        User us = (User)sm["user"];
+                        long? id = (long?)sm["roomid"];
+                        string mess = (string)sm["mess"];
+                        if (us == null || id == null || mess == null)
+                            return;
+                        long id2 = (long)id;
+                        Chatting.RecieveChatMessage(id2, us, mess);
                         break;
                     }
 

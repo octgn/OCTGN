@@ -113,8 +113,11 @@ namespace Skylabs.LobbyServer
         public void OnUserEvent(UserStatus e, Client client, bool Supress)
         {
             User me = (User)client.Me;
-            if(e == UserStatus.Offline)
+            if (e == UserStatus.Offline)
+            {
                 Clients.Remove(client);
+                Chatting.UserOffline(me);
+            }
             if (!Supress)
             {
                 foreach (Client c in Clients)
