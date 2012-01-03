@@ -136,7 +136,8 @@ namespace Octgn
             foreach(var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
                 Variables[varDef.Name] = varDef.DefaultValue;
 
-            var mainWin = System.Windows.Application.Current.MainWindow;
+            //fix MAINWINDOW bug
+            var mainWin = Program.PlayWindow;
             mainWin.RaiseEvent(new Octgn.Play.Gui.CardEventArgs(Octgn.Play.Gui.CardControl.CardHoveredEvent, mainWin));
         }
 

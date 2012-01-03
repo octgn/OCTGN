@@ -19,7 +19,8 @@ namespace Octgn.Script
         public InputDlg(string title, string prompt, string defaultValue)
         {
             InitializeComponent();
-            this.Owner = Application.Current.MainWindow;
+            //fix MAINWINDOW bug
+            this.Owner = Program.PlayWindow;
             this.Title = title;
             promptLbl.Text  = prompt;
             inputBox.Text = defaultValue;
