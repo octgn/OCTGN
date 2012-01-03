@@ -109,7 +109,7 @@ namespace Skylabs.Net.Sockets
 
         private void Run()
         {
-            while(Connected)
+            while(true)
             {
                 DateTime temp = _lastPingReceived.AddSeconds(30);
                 if(DateTime.Now >= temp)
@@ -119,6 +119,11 @@ namespace Skylabs.Net.Sockets
                 else
                     WriteMessage(new SocketMessage("ping"));
                 Thread.Sleep(5000);
+                lock(this)
+                {
+                    if(!Connected)
+                        break;
+                }
             }
         }
 
@@ -135,14 +140,20 @@ namespace Skylabs.Net.Sockets
         public void Close(DisconnectReason reason)
         {
             _dr = reason;
-            if(Sock != null && Sock.Client != null)
+            if (Sock != null && Sock.Client != null)
                 Sock.Client.BeginDisconnect(false, DisconnectCallback, Sock.Client);
+            else
+            {
+                DisconnectCallback(null);
+            }
         }
 
         private void DisconnectCallback(IAsyncResult ar)
         {
-            Sock.Client.EndDisconnect(ar);
-            Connected = false;
+            if(ar != null)
+                Sock.Client.EndDisconnect(ar);
+            lock(this)
+                Connected = false;
             OnDisconnect(_dr);
         }
 
