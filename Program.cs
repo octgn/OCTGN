@@ -44,6 +44,7 @@ namespace Octgn
         internal static System.Windows.Documents.Inline LastChatTrace;
 
         private static Process LobbyServerProcess;
+        private static bool _locationUpdating = false;
 
 #if(DEBUG)
         public static DEBUGLobbySettings LobbySettings = DEBUGLobbySettings.Default;
@@ -94,8 +95,21 @@ namespace Octgn
             IsGameRunning = false;
         }
 
+        public static void SaveLocation()
+        {
+            if (!_locationUpdating)
+            {
+                _locationUpdating = true;
+                Properties.Settings.Default.LoginLeftLoc = LauncherWindow.Left;
+                Properties.Settings.Default.LoginTopLoc = LauncherWindow.Top;
+                Properties.Settings.Default.Save();
+                _locationUpdating = false;
+            }
+        }
+
         public static void Exit()
         {
+            SaveLocation();
             try
             {
                 DebugWindow.Close();

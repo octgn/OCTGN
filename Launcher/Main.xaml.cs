@@ -31,6 +31,7 @@ namespace Octgn.Launcher
         private SetList _currentSetList;
         private Brush _originalBorderBrush;
         private bool _isLegitClosing = false;
+        private static bool _locationUpdating = false;
 
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
@@ -89,6 +90,7 @@ namespace Octgn.Launcher
         public System.Windows.Forms.NotifyIcon SystemTrayIcon;
         public Main()
         {
+            this.Initialized += Main_Initialized;
             InitializeComponent();
             frame1.Navigate(new ContactList());
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
@@ -119,6 +121,24 @@ namespace Octgn.Launcher
             SystemTrayIcon.Text = "Octgn";
             SystemTrayIcon.DoubleClick += new System.EventHandler(this.SystemTrayIcon_DoubleClick);
             // Insert code required on object creation below this point.
+        }
+
+        private void Main_Initialized(object sender, EventArgs e)
+        {
+            this.Left = Properties.Settings.Default.MainLeftLoc;
+            this.Top = Properties.Settings.Default.MainTopLoc;
+        }
+
+        private void SaveLocation()
+        {
+            if (!_locationUpdating)
+            {
+                _locationUpdating = true;
+                Properties.Settings.Default.MainLeftLoc = this.Left;
+                Properties.Settings.Default.MainTopLoc = this.Top;
+                Properties.Settings.Default.Save();
+                _locationUpdating = false;
+            }
         }
 
         private void SystemTrayIcon_DoubleClick(object Sender, EventArgs e)
@@ -242,6 +262,7 @@ namespace Octgn.Launcher
         private void CloseDownShop()
         {
             _isLegitClosing = true;
+            SaveLocation();
             SystemTrayIcon.Visible = false;
             SystemTrayIcon.Dispose();
             if (Program.DeckEditor != null)
