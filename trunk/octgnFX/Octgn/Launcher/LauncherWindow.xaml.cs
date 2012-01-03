@@ -98,6 +98,7 @@ namespace Octgn.Launcher
 
         public LauncherWindow()
         {
+            this.Initialized += Launcher_Initialized;
             InitializeComponent();
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
 
@@ -110,6 +111,12 @@ namespace Octgn.Launcher
             this.InputBindings.Add(ib);
 
             ConstructAnim();
+        }
+
+        public void Launcher_Initialized(object sender, EventArgs e)
+        {
+            this.Top = Properties.Settings.Default.LoginTopLoc;
+            this.Left = Properties.Settings.Default.LoginLeftLoc;
         }
 
         #endregion Constructors
