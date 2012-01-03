@@ -32,8 +32,8 @@
             <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Stretch" Margin="0,0,0,37" Grid.RowSpan="2">
                 <Label Content="Game Name" Height="24" Name="label1" Width="200" />
                 <TextBox Height="27" Name="textBox1" Width="200" Margin="0,0,0,5" />
-                <Label Content="Password" Height="28" Name="label2" Width="200" />
-                <TextBox Height="27" Name="textBox2" Width="200" Margin="0,0,0,5" />
+                <Label Content="Password" Height="28" Name="label2" Width="200" Opacity="0.4" />
+                <TextBox IsEnabled="False" Height="27" Name="textBox2" Width="200" Margin="0,0,0,5" Opacity="0.4" />
             </StackPanel>
         </Grid>
     </Border>
