@@ -136,6 +136,7 @@ namespace Octgn
                 
         }
 
+        //TODO: Get rid of this method at some point
         internal static void OnServerError(string serverMessage)
         {
             var args = new ServerErrorEventArgs() { Message = serverMessage };

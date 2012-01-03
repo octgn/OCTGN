@@ -347,7 +347,8 @@ namespace Octgn.Scripting
         {
             return engine.Invoke<Tuple<string, string, int>>(() =>
             {
-                var dlg = new Octgn.Script.MarkerDlg() { Owner = Application.Current.MainWindow };
+                //fix MAINWINDOW bug
+                var dlg = new Octgn.Script.MarkerDlg() { Owner = Program.PlayWindow };
                 if(!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return Tuple.Create(dlg.MarkerModel.Name, dlg.MarkerModel.id.ToString(), dlg.Quantity);
             });
@@ -357,7 +358,8 @@ namespace Octgn.Scripting
         {
             return engine.Invoke<Tuple<string, int>>(() =>
             {
-                var dlg = new Octgn.Script.CardDlg(restriction) { Owner = Application.Current.MainWindow };
+                //fix MAINWINDOW bug
+                var dlg = new Octgn.Script.CardDlg(restriction) { Owner = Program.PlayWindow };
                 if(!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return Tuple.Create(dlg.SelectedCard.Id.ToString(), dlg.Quantity);
             });

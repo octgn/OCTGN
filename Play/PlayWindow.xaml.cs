@@ -42,7 +42,7 @@ namespace Octgn.Play
     public PlayWindow()
     {
       InitializeComponent();
-      Application.Current.MainWindow = this;
+      //Application.Current.MainWindow = this;
 
       Program.Game.ComposeParts(this);
     }

@@ -20,12 +20,14 @@ namespace Octgn.Script
 
         public static bool Confirm(string prompt)
         {
-            return MessageBox.Show(Application.Current.MainWindow, prompt, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+            //fix MAINWINDOW bug
+            return MessageBox.Show(Program.PlayWindow, prompt, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
 
         public static void Message(string msg)
         {
-            MessageBox.Show(Application.Current.MainWindow, msg, "Message", MessageBoxButton.OK, MessageBoxImage.Information);
+            //fix MAINWINDOW bug
+            MessageBox.Show(Program.PlayWindow, msg, "Message", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
