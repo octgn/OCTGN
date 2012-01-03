@@ -175,12 +175,11 @@ namespace Octgn.Launcher
 
         void cmQuit_Click(object sender, EventArgs e)
         {
-            CloseDownShop();
-            Program.Exit();
+            CloseDownShop(true);
         }
         void cmLogOff_Click(object sender, EventArgs e)
         {
-            CloseDownShop();
+            CloseDownShop(false);
         }
         void cmShow_Click(object sender, EventArgs e)
         {
@@ -248,18 +247,18 @@ namespace Octgn.Launcher
 
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
-            CloseDownShop();
+            CloseDownShop(true);
             Program.Exit();
         }
         void lobbyClient_OnDisconnectEvent(object sender, EventArgs e)
         {
-            Dispatcher.Invoke(new Action(CloseDownShop));
+            Dispatcher.Invoke(new Action<bool>(CloseDownShop),false);
         }
         private void LogOff_Click(object sender, RoutedEventArgs e)
         {
-            CloseDownShop();
+            CloseDownShop(false);
         }
-        private void CloseDownShop()
+        private void CloseDownShop(bool Exiting)
         {
             _isLegitClosing = true;
             SaveLocation();
@@ -272,8 +271,11 @@ namespace Octgn.Launcher
                 cw.CloseChatWindow();
             }
             Program.ChatWindows.Clear();
-            Program.LauncherWindow = new LauncherWindow();
-            Program.LauncherWindow.Show();
+            if (!Exiting)
+            {
+                Program.LauncherWindow = new LauncherWindow();
+                Program.LauncherWindow.Show();
+            }
             Program.ClientWindow.Close();
             Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
             Program.lobbyClient.OnDisconnectEvent -= lobbyClient_OnDisconnectEvent;
