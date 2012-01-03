@@ -55,7 +55,8 @@ namespace Octgn.Play.Gui
 
       Program.Game.ComposeParts(this);
 
-      mainWin = Application.Current.MainWindow;
+      //fix MAINWINDOW bug
+      mainWin = Program.PlayWindow;
       int markerSize = Program.Game.Definition.MarkerSize;
       if (markerSize == 0) markerSize = 20;
       markers.Margin = new Thickness(markerSize / 8);

@@ -903,7 +903,8 @@ namespace Octgn.Networking
             Program.TracePlayerEvent(player, "{0} starts a limited game.", player);
             var wnd = new Play.Dialogs.PickCardsDialog();
             wnd.OpenPacks(packs);
-            ((PlayWindow)Application.Current.MainWindow).ShowBackstage(wnd);
+            //fix MAINWINDOW bug
+            Program.PlayWindow.ShowBackstage(wnd);
         }
 
         public void CancelLimited(Player player)
