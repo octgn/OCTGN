@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Skylabs")]
 [assembly: AssemblyProduct("ConsoleHelper")]
-[assembly: AssemblyCopyright("Copyright © Skylabs 2011")]
+[assembly: AssemblyCopyright("Copyright © Skylabs 2005-2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 using System.Security;
 
 [assembly: AssemblyTitle("Octgn.Data")]
-[assembly: AssemblyDescription("Octgn 2.0 data access library")]
+[assembly: AssemblyDescription("Octgn 3.0 data access library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Octgn")]
 [assembly: AssemblyProduct("Octgn.Data")]
-[assembly: AssemblyCopyright("Copyright © jods 2006-2011")]
+[assembly: AssemblyCopyright("Copyright © Skylabs 2005-2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -30,4 +30,5 @@ using System.Security;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.10.0")]
+[assembly: AssemblyVersion("3.0.0.0")]
+[assembly: AssemblyFileVersionAttribute("3.0.0.0")]
