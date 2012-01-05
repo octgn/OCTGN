@@ -27,6 +27,8 @@ namespace Octgn.Data
 
         public string CardBack { get; set; }
 
+        public Boolean Warning { get; set; }
+
         public IEnumerable<string> DeckSections { get; set; }
 
         public IEnumerable<string> SharedDeckSections { get; set; }
@@ -293,8 +295,11 @@ namespace Octgn.Data
         {
             using(var setTable = db.OpenTable("Set", false, false))
             {
-                if(setTable.Find("id:'" + set.Id + "'", "SetPK", false, false))
-                    throw new ApplicationException(string.Format("The set '{0}' is already installed.", set.Id));
+                if (setTable.Find("id:'" + set.Id + "'", "SetPK", false, false))
+                {
+                    setTable.Delete();
+                    Warning = true;
+                }
                 setTable.Insert();
                 setTable.PutGuid("id", set.Id);
                 setTable.PutString("name", set.Name);
