@@ -63,8 +63,7 @@ namespace Octgn.Launcher
 
             
             //Move the definition file to a new location, so that the old one can be deleted
-            string path = "%HOMEDRIVE%%HOMEPATH%\\My Documents\\Octgn\\Sets\\";
-            path = Environment.ExpandEnvironmentVariables(path);
+            string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Sets");
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
@@ -79,9 +78,8 @@ namespace Octgn.Launcher
                     string shortName = System.IO.Path.GetFileName(setName);
                     try
                     {
-                        string copyto = path + shortName;
-                        if (!File.Exists(copyto))
-                            File.Copy(setName, copyto, true);
+                        string copyto = System.IO.Path.Combine(path, shortName);
+                        File.Copy(setName, copyto, true);
 
                         SelectedGame.InstallSet(copyto);
                         wnd.UpdateProgress(current, max, string.Format("'{0}' installed.", shortName), false);
