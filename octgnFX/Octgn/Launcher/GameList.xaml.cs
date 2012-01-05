@@ -104,24 +104,20 @@ namespace Octgn.Launcher
             try
             {
                 //Move the definition file to a new location, so that the old one can be deleted
-                string path = "%HOMEDRIVE%%HOMEPATH%\\My Documents\\Octgn\\Defs\\";
-                path = Environment.ExpandEnvironmentVariables(path);
+                string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Defs");
                 if(!Directory.Exists(path))
                     Directory.CreateDirectory(path);
                 FileInfo fi = new FileInfo(newFilename);
-                string copyto = path+fi.Name;
-                if(!File.Exists(copyto))
+                string copyto = System.IO.Path.Combine(path, fi.Name);
+                try
                 {
-                    try
-                    {
-                        File.Copy(newFilename, copyto, true);
-                    }
-                    catch(Exception)
-                    {
-                        MessageBox.Show("File in use. You shouldn't install games or sets when in the deck editor or when playing a game.");
-                        return;
-                    }
-                }                
+                    File.Copy(newFilename, copyto, true);
+                }
+                catch(Exception)
+                {
+                    MessageBox.Show("File in use. You shouldn't install games or sets when in the deck editor or when playing a game.");
+                    return;
+                }               
                 newFilename = copyto;
                 // Open the archive
                 Definitions.GameDef game = Definitions.GameDef.FromO8G(newFilename);

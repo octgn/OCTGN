@@ -97,7 +97,7 @@ namespace Octgn.Data
 
           string gamePath = Path.Combine(BasePath, game.Id.ToString());
           Directory.CreateDirectory(Path.Combine(gamePath, "Decks"));
-          Directory.CreateDirectory(Path.Combine(gamePath, "Sets"));
+          //Directory.CreateDirectory(Path.Combine(gamePath, "Sets"));
           game.CopyDecks(game.Filename);          
           if (!previousCompatibleVersion)
             CreateGameDatabase(dda, gamePath, properties);
