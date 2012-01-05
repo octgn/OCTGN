@@ -260,12 +260,14 @@ namespace Skylabs.LobbyServer
                 if (accept)
                 {
                     //Add friend to this list
-                    Friends.Add(requestee);
+                    if(!Friends.Contains(requestee))
+                        Friends.Add(requestee);
                     //Add you to friends list
                     Client c = Parent.GetOnlineClientByUid(requestee.Uid);
                     if (c != null)
                     {
-                        c.Friends.Add(Me);
+                        if(!c.Friends.Contains(Me))
+                            c.Friends.Add(Me);
                     }
                     //Add to database
                     Cup.AddFriend(Me.Uid, requestee.Uid);

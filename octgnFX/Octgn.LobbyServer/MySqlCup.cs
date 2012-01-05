@@ -396,16 +396,20 @@ namespace Skylabs.LobbyServer
                 {
                     con.Open();
                     MySqlCommand com = con.CreateCommand();
+                    List<User> myFriendList = GetFriendsList(useruid);
+                    List<User> oFriendlist = GetFriendsList(frienduid);
                     com.CommandText = "INSERT INTO friends(uid,fid) VALUES(@uid,@fid);";
                     com.Prepare();
                     com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
                     com.Parameters.Add("@fid", MySqlDbType.Int32, 11);
                     com.Parameters["@uid"].Value = useruid;
                     com.Parameters["@fid"].Value = frienduid;
-                    com.ExecuteNonQuery();
+                    if(!myFriendList.Exists(u => u.Uid == frienduid))
+                        com.ExecuteNonQuery();
                     com.Parameters["@uid"].Value = frienduid;
                     com.Parameters["@fid"].Value = useruid;
-                    com.ExecuteNonQuery();
+                    if (!oFriendList.Exists(u => u.Uid == useruid))
+                        com.ExecuteNonQuery();
                     return;
                 }
             }
