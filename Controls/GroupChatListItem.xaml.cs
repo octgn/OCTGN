@@ -61,9 +61,11 @@ namespace Octgn.Controls
                     if (cr.ID == 0)
                     {
                         SetValue(UsernameProperty, "Lobby Chat");
+                        image1.Opacity = 0;
                     }
                     else
                     {
+                        image1.Opacity = 1;
                         String users = String.Join<User>(",", cr.Users);
                         if (users.Length > 100)
                             users.Substring(0, 97);
