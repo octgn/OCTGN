@@ -93,8 +93,6 @@ namespace Octgn.Launcher
             });
             wnd.ShowDialog();
             Refresh_List();
-            if (SelectedGame.Warning)
-                MessageBox.Show("Please restart OCTGN to finish installation.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
         public void Patch_Selected()
         {

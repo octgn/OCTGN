@@ -296,10 +296,7 @@ namespace Octgn.Data
             using(var setTable = db.OpenTable("Set", false, false))
             {
                 if (setTable.Find("id:'" + set.Id + "'", "SetPK", false, false))
-                {
                     setTable.Delete();
-                    Warning = true;
-                }
                 setTable.Insert();
                 setTable.PutGuid("id", set.Id);
                 setTable.PutString("name", set.Name);
@@ -308,6 +305,7 @@ namespace Octgn.Data
                 setTable.PutString("package", set.PackageName);
                 setTable.Post();
             }
+            cachedSets = null;
         }
 
         private void InsertPack(Pack pack, string xml, Guid setId)
