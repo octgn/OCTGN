@@ -178,6 +178,7 @@ namespace Octgn.DeckBuilder
 			{
 				MessageBox.Show("An error occured while trying to save the deck:\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}	
+
 		}
 
 		private void SaveAs()
@@ -186,7 +187,7 @@ namespace Octgn.DeckBuilder
 			{
 				AddExtension = true,
 				Filter = "OCTGN decks|*.o8d",
-				InitialDirectory = Game.DefaultDecksPath
+                InitialDirectory = (Properties.Settings.Default.DeckDirLastUsed == "") ? Game.DefaultDecksPath : Properties.Settings.Default.DeckDirLastUsed
 			};
 			if (!sfd.ShowDialog().GetValueOrDefault()) return;
 			try
@@ -194,6 +195,8 @@ namespace Octgn.DeckBuilder
 				Deck.Save(sfd.FileName);
         unsaved = false;
 				deckFilename = sfd.FileName;
+                Properties.Settings.Default.DeckDirLastUsed = sfd.FileName.Substring(0, sfd.FileName.LastIndexOf("\\"));
+                Properties.Settings.Default.Save();
 			}
 			catch (Exception ex)
 			{
@@ -234,9 +237,11 @@ namespace Octgn.DeckBuilder
 			Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
 			{
 				Filter = "OCTGN deck files (*.o8d) | *.o8d",
-				InitialDirectory = game != null ? game.DefaultDecksPath : null
+                InitialDirectory = ((game != null) && (Properties.Settings.Default.DeckDirLastUsed) == "") ? game.DefaultDecksPath : Properties.Settings.Default.DeckDirLastUsed
 			};
 			if (ofd.ShowDialog() != true) return;
+            Properties.Settings.Default.DeckDirLastUsed = ofd.FileName.Substring(0,ofd.FileName.LastIndexOf("\\"));
+            Properties.Settings.Default.Save();
 			// Try to load the file contents
 			Deck newDeck;
 			try

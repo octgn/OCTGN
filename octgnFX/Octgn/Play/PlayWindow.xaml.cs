@@ -141,8 +141,11 @@ namespace Octgn.Play
       // Show the dialog to choose the file
       Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
       ofd.Filter = "OCTGN deck files (*.o8d) | *.o8d";
-      ofd.InitialDirectory = Program.Game.Definition.DecksPath;
+      //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
+      ofd.InitialDirectory = Properties.Settings.Default.DeckDirLastUsed;
       if (ofd.ShowDialog() != true) return;
+      Properties.Settings.Default.DeckDirLastUsed = ofd.FileName.Substring(0,ofd.FileName.LastIndexOf("\\"));
+      Properties.Settings.Default.Save();
       // Try to load the file contents
       Data.Deck newDeck;
       try
