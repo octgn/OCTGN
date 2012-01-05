@@ -110,18 +110,18 @@ namespace Octgn.Launcher
                     Directory.CreateDirectory(path);
                 FileInfo fi = new FileInfo(newFilename);
                 string copyto = path+fi.Name;
-                if(File.Exists(copyto))
+                if(!File.Exists(copyto))
                 {
-                    try{
-                        File.Delete(copyto);
+                    try
+                    {
+                        File.Copy(newFilename, copyto, true);
                     }
                     catch(Exception)
                     {
                         MessageBox.Show("File in use. You shouldn't install games or sets when in the deck editor or when playing a game.");
                         return;
                     }
-                }
-                File.Copy(newFilename,copyto);
+                }                
                 newFilename = copyto;
                 // Open the archive
                 Definitions.GameDef game = Definitions.GameDef.FromO8G(newFilename);

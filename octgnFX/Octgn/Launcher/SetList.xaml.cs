@@ -80,9 +80,8 @@ namespace Octgn.Launcher
                     try
                     {
                         string copyto = path + shortName;
-                        if (File.Exists(copyto))
-                            File.Delete(copyto);
-                        File.Copy(setName, copyto);
+                        if (!File.Exists(copyto))
+                            File.Copy(setName, copyto, true);
 
                         SelectedGame.InstallSet(copyto);
                         wnd.UpdateProgress(current, max, string.Format("'{0}' installed.", shortName), false);
