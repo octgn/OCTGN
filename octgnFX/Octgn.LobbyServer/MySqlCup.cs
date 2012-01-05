@@ -408,7 +408,7 @@ namespace Skylabs.LobbyServer
                         com.ExecuteNonQuery();
                     com.Parameters["@uid"].Value = frienduid;
                     com.Parameters["@fid"].Value = useruid;
-                    if (!oFriendList.Exists(u => u.Uid == useruid))
+                    if (!oFriendlist.Exists(u => u.Uid == useruid))
                         com.ExecuteNonQuery();
                     return;
                 }
