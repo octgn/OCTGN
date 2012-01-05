@@ -154,5 +154,17 @@ namespace Octgn.Properties {
                 this["MainLeftLoc"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DeckDirLastUsed {
+            get {
+                return ((string)(this["DeckDirLastUsed"]));
+            }
+            set {
+                this["DeckDirLastUsed"] = value;
+            }
+        }
     }
 }
