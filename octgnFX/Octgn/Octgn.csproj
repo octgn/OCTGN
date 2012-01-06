@@ -155,9 +155,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\RibbonControlsLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="RibbonControlsLibrary.Design">
-      <HintPath>..\Lib\RibbonControlsLibrary.Design.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core">
@@ -301,6 +298,9 @@
     </Compile>
     <Compile Include="Launcher\PatchProgressDialog.xaml.cs">
       <DependentUpon>PatchProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\UpdateChecker.xaml.cs">
+      <DependentUpon>UpdateChecker.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\UpgradeMessage.xaml.cs">
       <DependentUpon>UpgradeMessage.xaml</DependentUpon>
@@ -728,6 +728,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\PatchProgressDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\UpdateChecker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
