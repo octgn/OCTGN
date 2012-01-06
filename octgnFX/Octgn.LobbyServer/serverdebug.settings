@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Octgn.LobbyServer" GeneratedClassName="serverdebug">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Skylabs.LobbyServer" GeneratedClassName="serverdebug">
   <Profiles />
   <Settings>
     <Setting Name="BindTo" Type="System.String" Scope="User">
@@ -15,13 +15,13 @@
       <Value Profile="(Default)">www.skylabsonline.com</Value>
     </Setting>
     <Setting Name="dbUser" Type="System.String" Scope="User">
-      <Value Profile="(Default)">lobby</Value>
+      <Value Profile="(Default)">lobbydebug</Value>
     </Setting>
     <Setting Name="dbPass" Type="System.String" Scope="User">
-      <Value Profile="(Default)">8BAtKPVrzFqEGjdj</Value>
+      <Value Profile="(Default)">password</Value>
     </Setting>
     <Setting Name="db" Type="System.String" Scope="User">
-      <Value Profile="(Default)">lobby</Value>
+      <Value Profile="(Default)">lobbydebug</Value>
     </Setting>
     <Setting Name="webserverport" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">7530</Value>

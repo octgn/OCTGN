@@ -30,7 +30,8 @@ namespace Octgn.Server
 		{
 		    tcp = new TcpListener(System.Net.IPAddress.Any, port);
 			this.handler = new Handler(gameId, gameVersion);
-
+            ConnectionChecker = new Thread(CheckConnections);
+            ConnectionChecker.Start();
 			Start();
 		}
 
@@ -73,6 +74,7 @@ namespace Octgn.Server
 			ServerThread.Name = "OCTGN.net Server";
 			// Flag used to wait until the server is really started
 			ManualResetEvent started = new ManualResetEvent(false);
+
 			// Start the server
 			ServerThread.Start(started);
 			started.WaitOne();
@@ -103,6 +105,7 @@ namespace Octgn.Server
 		{
 			while (!closed)
 			{
+                Thread.Sleep(10000);
 				lock (clients)
 				{
 					if (clients.Count == 0)
@@ -119,7 +122,6 @@ namespace Octgn.Server
 						}
 					}
 				}
-				Thread.Sleep(5000);
 			}
 		}
 
@@ -140,8 +142,6 @@ namespace Octgn.Server
 					lock (clients) clients.Add(sc);
 					if (ConnectionChecker == null)
 					{
-						ConnectionChecker = new Thread(CheckConnections);
-						ConnectionChecker.Start();
 					}
 				}
 			}
