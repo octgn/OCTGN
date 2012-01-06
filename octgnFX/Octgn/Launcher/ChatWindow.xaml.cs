@@ -39,6 +39,8 @@ namespace Octgn.Launcher
             mi.Click += new RoutedEventHandler(mi_Click);
             cm.Items.Add(mi);
             listBox1.ContextMenu = cm;
+
+            richTextBox1.Document.LineHeight = 2;
         }
 
         public void ChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
@@ -143,7 +145,7 @@ namespace Octgn.Launcher
                             p.Inlines.Add(inn);
                         p.Inlines.Add(new Run(" "));
                     }
-                    p.Inlines.Add(new Run("\n"));
+                    //p.Inlines.Add(new Run("\n"));
                 }
             }
             else
