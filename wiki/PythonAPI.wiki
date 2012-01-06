@@ -13,9 +13,10 @@ Avoid keeping references to cards in the game. Remember that between script exec
 
 <h2 class="headline2">Tip: how to select cards</h2>
 Python has nice comprehensions to select objects. Here's a way to get all Land cards you control on the table:
-<code>cards = (card for card in table
+<code>
+cards = (card for card in table
 if card.controller == me
-and re.search(r'\bLand\b', card.type))</code>
+  and re.search(r'\bLand\b', card.type))</code>
 
 <h3>re</h3>
 re is the Regular Expression engine built-into Python, which is very useful to perform text matching. You need to import it first:
@@ -29,7 +30,8 @@ Stops OCTGN from automatically logging messages. This only applies to the contex
 If you want to "unmute" during the execution of the action
 <code>mute()</code>
 returns a context manager usable in `with` statement:
-<code>with mute()
+<code>
+with mute()
   pass # Here OCTGN is muted
 pass # Here it isn't</code>
 
@@ -62,7 +64,8 @@ Returns `True` if the user answers Yes, `False` otherwise.
 Shows a dialog box with `question` and `defaultAnswer`. The user must provide a positive integer.
 
 Returns the provided integer, or `None` if the user doesn't answer the question.
-<code>count = askInteger("Draw how many cards?", 7)
+<code>
+count = askInteger("Draw how many cards?", 7)
 if count == None: return
 for c in me.library.top(count): c.moveTo(me.hand)</code>
 
@@ -70,7 +73,8 @@ for c in me.library.top(count): c.moveTo(me.hand)</code>
 Shows a dialog box so that the user can choose a marker type and quantity.
 
 Returns a couple (marker, quantity) or `(None, 0)` if the user doesn't choose any marker.=
-<code>marker, qty = askMarker()
+<code>
+marker, qty = askMarker()
 if qty == 0: return
 card[marker] += qty</code>
 
@@ -80,7 +84,8 @@ Shows a dialog so that the user can choose a card type and quantity.
 `restriction` limits the choice of cards available. Valid syntax is "[property name]", "'string constants'", "numbers", common operators " +, -, `*`, /, <, <=, >, >=, <>, = " and logic operators "and, or, not".
 
 Returns a couple (card, quantity) or `(None, 0)` if the user doesn't choose any card.
-<code>card, quantity = askCard("[Rarity] = 'Token'")
+<code>
+card, quantity = askCard("[Rarity] = 'Token'")
 if quantity == 0: return
 table.create(card, x, y, quantity)</code>
 
@@ -115,10 +120,11 @@ Read-only; a string representing the color assigned to the `player`.  Returns a 
 Read-only; instance of `Hand`, or `None` if this game doesn't use hands.
 
 <h3>counters</h3>
-Read-only; dictionnary containing this player's counters. Keys are names (case-insensitive); Values are Counter object, that have two properties: <code>name</code> and `value` (settable).
+Read-only; dictionnary containing this player's counters. Keys are names (case-insensitive); Values are Counter object, that have two properties: `name` and `value` (settable).
 
 If the counter name is a valid Python identifier, its value can be accessed directly from the Player object.
-  <code>me.life = 10
+  <code>
+me.life = 10
 me.counters['Poison'].value += 1</code>
 
 <h3>piles</h3>
@@ -168,7 +174,8 @@ Returns `true` if the table is inverted at the y coordinated specified.
 <h1>Pile class</h1>
 <h3>top(count = None)</h3>
 If `count` is `None` returns the top card of the pile, or `None` if the pile is empty. Otherwise returns an array with the top `count` cards (as much as possible).
-<code>me.library.top().moveTo(me.hand)
+<code>
+me.library.top().moveTo(me.hand)
 for c in me.library.top(10): c.moveTo(me.graveyard)</code>
 
 <h3>bottom(count = None)</h3>
@@ -219,7 +226,8 @@ Swaps between the normal and alternate images of the card.
 Read or write the orientation of the card.
 
 One of the four constants `Rot0`, `Rot90`, `Rot180` and `Rot270` can be used. Note that those constants combine: `Rot270 = Rot180 | Rot90`.
-<code>card.orientation = Rot90 # Set orientation
+<code>
+card.orientation = Rot90 # Set orientation
 card.orientation ^= Rot90 # Toggle
 card.orientation |= Rot180 # Flip card
 card.orientation &amp;= ~Rot180 # Unflip card</code>
@@ -228,7 +236,8 @@ card.orientation &amp;= ~Rot180 # Unflip card</code>
 Read or write a color in format "#rrggbb" (hex) which is used to highlight the card, or `None`.
 
 It is advised to declare constants to ease using this property.
-<code>AttackColor = "#ff0000" # Red
+<code>
+AttackColor = "#ff0000" # Red
 card.highlight = AttackColor</code>
 
 <h3>position</h3>
@@ -249,8 +258,9 @@ Only works on `table`. Moves the card to index `index`.  Index is the z coordina
 <h3>markers</h3>
 Read-only; dictionnary containing all markers set on the card. Keys are couple `(name, guid)`; Values are quantity (can be set)
 
-  To create a key you can either use `askMarker()` or create a constant.
-  <code>ChargeMarker = ("Charge", "fabd2965-929e-4ee9-b69c-e278e3cd4098")
+To create a key you can either use `askMarker()` or create a constant.
+<code>
+ChargeMarker = ("Charge", "fabd2965-929e-4ee9-b69c-e278e3cd4098")
 card.markers[ChargeMarker] += 1</code>
 
 <h3>moveTo(group, index = None)</h3>
