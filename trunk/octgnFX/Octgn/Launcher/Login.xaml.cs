@@ -224,10 +224,10 @@ namespace Octgn.Launcher
 
         private void menuUpdate_Click(object sender, RoutedEventArgs e)
         {
-            if (FileExists("http://www.skylabsonline.com/octgn_update/update.xml"))
+            if (FileExists("http://www.skylabsonline.com/downloads/octgn/update.xml"))
             {
                 string[] update = new string[2];
-                update = ReadUpdateXML("http://www.skylabsonline.com/octgn_update/update.xml");
+                update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
                 System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
