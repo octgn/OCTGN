@@ -73,7 +73,7 @@ namespace Skylabs.LobbyServer {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("lobby")]
+        [global::System.Configuration.DefaultSettingValueAttribute("lobbydebug")]
         public string dbUser {
             get {
                 return ((string)(this["dbUser"]));
@@ -85,7 +85,7 @@ namespace Skylabs.LobbyServer {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("8BAtKPVrzFqEGjdj")]
+        [global::System.Configuration.DefaultSettingValueAttribute("password")]
         public string dbPass {
             get {
                 return ((string)(this["dbPass"]));
@@ -97,7 +97,7 @@ namespace Skylabs.LobbyServer {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("lobby")]
+        [global::System.Configuration.DefaultSettingValueAttribute("lobbydebug")]
         public string db {
             get {
                 return ((string)(this["db"]));
