@@ -111,7 +111,8 @@ namespace Octgn.Launcher
                 string copyto = System.IO.Path.Combine(path, fi.Name);
                 try
                 {
-                    File.Copy(newFilename, copyto, true);
+                    if (newFilename.ToLower() != copyto.ToLower())
+                        File.Copy(newFilename, copyto, true);
                 }
                 catch(Exception)
                 {
