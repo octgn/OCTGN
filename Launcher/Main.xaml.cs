@@ -533,6 +533,7 @@ namespace Octgn.Launcher
             {
                 SystemTrayIcon.Visible = true;
                 this.Visibility = System.Windows.Visibility.Hidden;
+                SystemTrayIcon.ShowBalloonTip(5000,"OCTGN","OCTGN has minimized to your system tray and is still running. Double click the icon to open it again.",System.Windows.Forms.ToolTipIcon.Info);
                 e.Cancel = true;
             }
         }
