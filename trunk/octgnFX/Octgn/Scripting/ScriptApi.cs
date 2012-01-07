@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using System.Windows;
+using System.IO;
 using Octgn.Play;
 using Media = System.Windows.Media;
 using System.Net;
@@ -451,15 +452,55 @@ namespace Octgn.Scripting
         public string Web_Read(string url)
         {
             string result = "";
+            WebRequest request = null;
+            WebResponse response = null;
+            StreamReader reader = null;
+
             try
             {
-                WebClient client = new WebClient();
-                result = client.DownloadString(url);
+                WebPermission perm = new WebPermission();
+                perm.AddPermission(NetworkAccess.Connect, url);
+                perm.Assert();
+                request = HttpWebRequest.Create(url);
+                response = request.GetResponse();
+                HttpStatusCode returnCode = ((HttpWebResponse)response).StatusCode;
+                if (returnCode != HttpStatusCode.OK)
+                {
+                    switch (returnCode)
+                    {
+                        case HttpStatusCode.NotFound:
+                            result = "404 error on requested url";
+                            break;
+                        case HttpStatusCode.Forbidden:
+                            result = "403 error on requested url";
+                            break;
+                        case HttpStatusCode.InternalServerError:
+                            result = "500 error on requested url";
+                            break;
+                    }
+                }
+                else
+                {
+                    reader = new StreamReader(response.GetResponseStream());
+                    result = reader.ReadToEnd();
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                
+                result = "Error on request: " + ex.Message + "\nContact devs with this.";
             }
+            finally
+            {
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+                if (request != null)
+                {
+                    //todo will finish finally block later.
+                }
+            }
+
             return result;
         }
 
