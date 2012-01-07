@@ -161,6 +161,8 @@ namespace Skylabs.LobbyServer
                 string mess = (string)sm["mess"];
                 if (rid == null || mess == null)
                     return;
+                if (String.IsNullOrWhiteSpace(mess))
+                    return;
                 long rid2 = (long)rid;
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid2);
                 if (cr != null)
