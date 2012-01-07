@@ -97,6 +97,7 @@ namespace Octgn.Launcher
         private void AddChatText(Run headerRun,string chat)
         {
             bool rtbatbottom = false;
+            bool firstAutoScroll = true;
             //check to see if the richtextbox is scrolled to the bottom.
             //----------------------------------------------------------------------------------
             double dVer = richTextBox1.VerticalOffset;
@@ -106,6 +107,12 @@ namespace Octgn.Launcher
 
             //get the vertical size of the visible content area
             double dExtent = richTextBox1.ExtentHeight;
+
+            if (dVer == 0 && dViewport < dExtent && firstAutoScroll)
+            {
+                firstAutoScroll = false;
+                rtbatbottom = true;
+            }
 
             if(dVer != 0)
             {
@@ -319,8 +326,11 @@ namespace Octgn.Launcher
         {
             if (e.Key == Key.Enter)
             {
-                Program.lobbyClient.Chatting.SendChatMessage(ID, textBox1.Text);
-                textBox1.Text = "";
+                if (textBox1.Text.Trim().Length > 0)
+                {
+                    Program.lobbyClient.Chatting.SendChatMessage(ID, textBox1.Text);
+                    textBox1.Text = "";
+                }
             }
         }
 
