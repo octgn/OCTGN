@@ -449,8 +449,9 @@ namespace Octgn.Scripting
         public bool IsTwoSided()
         { return Program.GameSettings.UseTwoSidedTable; }
 
-        public string Web_Read(string url)
+        public Tuple<String, int> Web_Read(string url)
         {
+            int statusCode = 200;
             string result = "";
             WebRequest request = null;
             WebResponse response = null;
@@ -458,51 +459,59 @@ namespace Octgn.Scripting
 
             try
             {
-                WebPermission perm = new WebPermission();
-                perm.AddPermission(NetworkAccess.Connect, url);
-                perm.Assert();
-                request =WebRequest.Create(url);
+                //asking for permission to call the specified url.
+                WebPermission permission = new WebPermission();
+                permission.AddPermission(NetworkAccess.Connect, url);
+                permission.Assert();
+
+
+                request = WebRequest.Create(url);
                 response = request.GetResponse();
-                HttpStatusCode returnCode = ((HttpWebResponse)response).StatusCode;
-                if (returnCode != HttpStatusCode.OK)
+                
+                reader = new StreamReader(response.GetResponseStream());
+                result = reader.ReadToEnd();
+            }
+            catch (WebException ex)
+            {
+                //Properly handling http errors here
+                if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null)
                 {
-                    switch (returnCode)
+                    var resp = (HttpWebResponse)ex.Response;
+                    switch (resp.StatusCode)
                     {
                         case HttpStatusCode.NotFound:
-                            result = "404 error on requested url";
+                            result = "eror";
+                            statusCode = 404;
                             break;
                         case HttpStatusCode.Forbidden:
-                            result = "403 error on requested url";
+                            result = "error";
+                            statusCode = 403;
                             break;
                         case HttpStatusCode.InternalServerError:
-                            result = "500 error on requested url";
+                            result = "error";
+                            statusCode = 500;
                             break;
                     }
-                }
-                else
-                {
-                    reader = new StreamReader(response.GetResponseStream());
-                    result = reader.ReadToEnd();
                 }
             }
             catch (Exception ex)
             {
-                result = "Error on request: " + ex.Message + "\nContact devs with this.";
+                //placeholder for other sorts of exceptions
             }
             finally
             {
+                // general cleanup
                 if (reader != null)
                 {
-                    reader.Close();
+                    reader.Close(); //closes the reader and the response stream it was working on at the same time.
                 }
                 if (request != null)
                 {
-                    //todo will finish finally block later.
-					//extra todo line to test commits.
+                    request = null; //not really needed but general cleanup
                 }
             }
 
-            return result;
+            return Tuple.Create(result, statusCode);
         }
 
         public string OCTGN_Version()
