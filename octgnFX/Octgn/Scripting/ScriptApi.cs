@@ -461,7 +461,7 @@ namespace Octgn.Scripting
                 WebPermission perm = new WebPermission();
                 perm.AddPermission(NetworkAccess.Connect, url);
                 perm.Assert();
-                request = HttpWebRequest.Create(url);
+                request =WebRequest.Create(url);
                 response = request.GetResponse();
                 HttpStatusCode returnCode = ((HttpWebResponse)response).StatusCode;
                 if (returnCode != HttpStatusCode.OK)
