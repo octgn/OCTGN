@@ -23,7 +23,8 @@ def rnd(min, max):
   return _api.Random(min, max)
 
 def webRead(url):
-  return _api.Web_Read(url)
+  apiResult = _api.Web_Read(url)
+  return (apiResult.Item1, apiResult.Item2)
 
 def confirm(message):
   return _api.Confirm(message)
