@@ -17,6 +17,8 @@ namespace Octgn.Launcher
     {
         private Data.Game Game;
         private NavigationService ns;
+        private bool beginHost = false;
+
         public HostGameSettings(Octgn.Data.Game game)
         {
             InitializeComponent();
@@ -35,9 +37,14 @@ namespace Octgn.Launcher
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            ns = NavigationService;
-            Program.lobbyClient.BeginHostGame(EndHostGame,Game,textBox1.Text,textBox2.Text);
-            Program.ClientWindow.HostJoinTab();
+            if (!beginHost)
+            {
+                e.Handled = true;
+                beginHost = true;
+                ns = NavigationService;
+                Program.lobbyClient.BeginHostGame(EndHostGame, Game, textBox1.Text, textBox2.Text);
+                Program.ClientWindow.HostJoinTab();
+            }
         }
         private void EndHostGame(SocketMessage sm)
         {
