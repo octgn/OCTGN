@@ -91,13 +91,15 @@ namespace Octgn.Launcher
 
 		private void StartClicked(object sender, RoutedEventArgs e)
 		{
-            StartingGame = true;
-            Program.lobbyClient.HostedGameStarted();
-			e.Handled = true;
-			Start();
-			Program.Client.Rpc.Start();
-            Program.ClientWindow.HostJoinTab();
-
+            if (!StartingGame)
+            {
+                StartingGame = true;
+                Program.lobbyClient.HostedGameStarted();
+                e.Handled = true;
+                Start();
+                Program.Client.Rpc.Start();
+                Program.ClientWindow.HostJoinTab();
+            }
 		}
 
 		private void CancelClicked(object sender, RoutedEventArgs e)
