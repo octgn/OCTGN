@@ -184,20 +184,17 @@ namespace Skylabs.LobbyServer
 
         private void AcceptReceiveDataCallback(IAsyncResult ar)
         {
-            lock (Clients)
+            // Get the socket that handles the client request.
+            TcpListener listener = (TcpListener)ar.AsyncState;
+            try
             {
-                // Get the socket that handles the client request.
-                TcpListener listener = (TcpListener)ar.AsyncState;
-                try
-                {
-                    Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId, this));
-                    _nextId++;
-                    AcceptClients();
-                }
-                catch (ObjectDisposedException)
-                {
-                    Console.WriteLine("AcceptReceiveDataCallback: ObjectDisposedException");
-                }
+                Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId, this));
+                _nextId++;
+                AcceptClients();
+            }
+            catch (ObjectDisposedException)
+            {
+                Console.WriteLine("AcceptReceiveDataCallback: ObjectDisposedException");
             }
         }
     }

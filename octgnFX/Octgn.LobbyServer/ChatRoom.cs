@@ -16,7 +16,21 @@ namespace Skylabs.LobbyServer
         /// <summary>
         /// List of users in the chat room.
         /// </summary>
-        public List<User> Users { get; private set; }
+        public List<User> Users 
+        { 
+            get
+            {
+                lock (_users)
+                    return _users;
+            }
+            private set
+            {
+                lock (_users)
+                    _users = value;
+            } 
+        }
+
+        private List<User> _users; 
         /// <summary>
         /// initializes a chat room, and adds the initial user.
         /// This should only be called by Chatting.cs
@@ -26,12 +40,9 @@ namespace Skylabs.LobbyServer
         public ChatRoom(long id, User initialUser)
         {
             Users = new List<User>();
-            lock(Users)
-            {
-                ID = id;
-                if(initialUser != null)
-                    AddUser(initialUser);
-            }
+            ID = id;
+            if(initialUser != null)
+                AddUser(initialUser);
         }
         /// <summary>
         /// Add a user to the room
@@ -40,23 +51,20 @@ namespace Skylabs.LobbyServer
         /// <returns>Returns true on success, or false if there was an explosion</returns>
         public bool AddUser(User u)
         {
-            lock(Users)
+            if(!Users.Exists(us => us.Uid == u.Uid))
             {
-                if(!Users.Exists(us => us.Uid == u.Uid))
+                if (Program.Server.GetOnlineClientByUid(u.Uid) != null)
                 {
-                    if (Program.Server.GetOnlineClientByUid(u.Uid) != null)
-                    {
-                        Users.Add(u);
-                        SocketMessage sm = new SocketMessage("userjoinedchatroom");
-                        sm.AddData("roomid", ID);
-                        sm.AddData("user", u);
-                        sm.AddData("allusers", Users);
-                        SendAllUsersMessage(sm);
-                        return true;
-                    }
+                    Users.Add(u);
+                    SocketMessage sm = new SocketMessage("userjoinedchatroom");
+                    sm.AddData("roomid", ID);
+                    sm.AddData("user", u);
+                    sm.AddData("allusers", Users);
+                    SendAllUsersMessage(sm);
+                    return true;
                 }
-                return false;
             }
+            return false;
         }
         /// <summary>
         /// Chatting.cs calls this when a user exits, this doesn't need to be called ever again.
@@ -64,16 +72,14 @@ namespace Skylabs.LobbyServer
         /// <param name="u">The user.</param>
         public void UserExit(User u)
         {
-            lock (Users)
+
+            if (Users.Exists(us => us.Uid == u.Uid))
             {
-                if (Users.Exists(us => us.Uid == u.Uid))
-                {
-                    Users.Remove(u);
-                    SocketMessage sm = new SocketMessage("userleftchatroom");
-                    sm.AddData("roomid", ID);
-                    sm.AddData("user", u);
-                    SendAllUsersMessage(sm);
-                }
+                Users.Remove(u);
+                SocketMessage sm = new SocketMessage("userleftchatroom");
+                sm.AddData("roomid", ID);
+                sm.AddData("user", u);
+                SendAllUsersMessage(sm);
             }
         }
         /// <summary>

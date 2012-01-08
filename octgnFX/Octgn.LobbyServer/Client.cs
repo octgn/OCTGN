@@ -244,8 +244,6 @@ namespace Skylabs.LobbyServer
         /// <param name="sm">message</param>
         private void AcceptFriend(SocketMessage sm)
         {
-            lock (Parent.Clients)
-            {
                 //incomming data
                 //int uid      uid of the requestee
                 //bool accept  should we accept it
@@ -279,7 +277,7 @@ namespace Skylabs.LobbyServer
                 Client rclient = Parent.GetOnlineClientByUid(requestee.Uid);
                 if (rclient != null)
                     rclient.SendFriendsList();
-            }
+            
         }
         /// <summary>
         /// Add a friend. This happens after the friend request is accepted.
@@ -287,8 +285,6 @@ namespace Skylabs.LobbyServer
         /// <param name="sm">Message from client</param>
         private void AddFriend(SocketMessage sm)
         {
-            lock (Parent.Clients)
-            {
                 if (sm.Data.Length <= 0)
                     return;
                 string email = (string)sm.Data[0].Value;
@@ -308,7 +304,6 @@ namespace Skylabs.LobbyServer
                     smm.AddData("user", Me);
                     c.WriteMessage(smm);
                 }
-            }
         }
         /// <summary>
         /// Send all the friend requests in the database for the current user, to the user.
@@ -331,8 +326,6 @@ namespace Skylabs.LobbyServer
         /// </summary>
         private void SendFriendsList()
         {
-            lock (Parent.Clients)
-            {
                 SocketMessage sm = new SocketMessage("friends");
                 foreach (User u in Friends)
                 {
@@ -352,7 +345,6 @@ namespace Skylabs.LobbyServer
                     sm.AddData(new NameValuePair(n.Uid.ToString(), n));
                 }
                 WriteMessage(sm);
-            }
         }
         /// <summary>
         /// Send the user a list of users online.
@@ -362,23 +354,22 @@ namespace Skylabs.LobbyServer
         /// </summary>
         private void SendUsersOnline()
         {
-            lock (Parent.Clients)
+            try
             {
                 SocketMessage sm = new SocketMessage("onlinelist");
-                foreach (Client c in Parent.Clients)
+                Parent.Clients.FindAll(c => c.LoggedIn == true && c.Me.Status != UserStatus.Unknown).
+                ForEach(delegate(Client c)
                 {
-                    if (c.LoggedIn)
-                    {
-                        if (c.Me.Status != UserStatus.Unknown)
-                        {
-                            User n = (User)c.Me.Clone();
-                            if (n.Status == UserStatus.Invisible)
-                                n.Status = UserStatus.Offline;
-                            sm.AddData(new NameValuePair(c.Me.Email, c.Me));
-                        }
-                    }
-                }
+                    User n = (User)c.Me.Clone();
+                    if (n.Status == UserStatus.Invisible)
+                        n.Status = UserStatus.Offline;
+                    sm.AddData(new NameValuePair(c.Me.Email, c.Me));                    
+                });
                 WriteMessage(sm);
+            }
+            catch
+            {
+                
             }
         }
         /// <summary>
@@ -443,8 +434,6 @@ namespace Skylabs.LobbyServer
         /// <param name="insm">message</param>
         private void Login(SocketMessage insm)
         {
-            lock (Parent.Clients)
-            {
                 string email = (string)insm["email"];
                 string token = (string)insm["token"];
                 UserStatus stat = (UserStatus)insm["status"];
@@ -525,7 +514,7 @@ namespace Skylabs.LobbyServer
                 sm = new SocketMessage("loginfailed");
                 sm.AddData("message", "Server error");
                 WriteMessage(sm);
-            }
+            
         }
     }
 }
