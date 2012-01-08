@@ -30,7 +30,7 @@ namespace Skylabs.LobbyServer
             } 
         }
 
-        private List<User> _users; 
+        private List<User> _users = new List<User>(); 
         /// <summary>
         /// initializes a chat room, and adds the initial user.
         /// This should only be called by Chatting.cs
@@ -39,7 +39,6 @@ namespace Skylabs.LobbyServer
         /// <param name="initialUser">User making the room</param>
         public ChatRoom(long id, User initialUser)
         {
-            Users = new List<User>();
             ID = id;
             if(initialUser != null)
                 AddUser(initialUser);
