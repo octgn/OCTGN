@@ -63,9 +63,13 @@ namespace Octgn
             StartLobbyServer();
             Exception e = new Exception();
             string s = e.Message.Substring(0);
-            UpdateChecker uc = new UpdateChecker();
             Program.LauncherWindow = new Launcher.LauncherWindow();
             Application.Current.MainWindow = Program.LauncherWindow;
+#if(DEBUG)
+            Program.LauncherWindow.Show();
+            ChatWindows = new List<ChatWindow>();
+#else
+            UpdateChecker uc = new UpdateChecker();
             uc.ShowDialog();
             if (!uc.IsClosingDown)
             {
@@ -78,6 +82,7 @@ namespace Octgn
                 Program.LauncherWindow.Close();
                 Program.Exit();
             }
+#endif
         }
         public static void StartLobbyServer()
         {
