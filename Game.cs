@@ -98,7 +98,7 @@ namespace Octgn
             Database.Open(Definition, true);
             // Init fields
             uniqueId = 1; TurnNumber = 0; TurnPlayer = null;
-            string nick = Properties.Settings.Default.NickName;
+            string nick = Program.lobbyClient.Me.DisplayName;
             CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
