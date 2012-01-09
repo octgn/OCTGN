@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,14 +37,6 @@ namespace Skylabs.LobbyServer
         /// </summary>
         public Process StandAloneApp { get; set; }
         /// <summary>
-        /// Is this game running?
-        /// </summary>
-        public bool IsRunning { get; private set; }
-        /// <summary>
-        /// Server.cs instance.
-        /// </summary>
-        public Server Server { get; set; }
-        /// <summary>
         /// Hoster of this crazy game.
         /// </summary>
         public User Hoster { get; private set; }
@@ -51,60 +44,58 @@ namespace Skylabs.LobbyServer
         /// The status of the hosted game.
         /// </summary>
         public Skylabs.Lobby.HostedGame.eHostedGame Status { get; set; }
+
+        public event EventHandler HostedGameDone;
         /// <summary>
         /// Host a game.
         /// </summary>
-        /// <param name="server">Server.cs instance</param>
+        /// <param name="port">Port we are hosting on. </param>
         /// <param name="gameguid">GUID of the game</param>
         /// <param name="gameversion">Version of the game</param>
         /// <param name="name">Name of the room</param>
         /// <param name="password">Password for the game</param>
         /// <param name="hoster">User hosting the game</param>
-        public HostedGame(Server server, Guid gameguid,Version gameversion,string name, string password, User hoster)
+        public HostedGame(int port,Guid gameguid,Version gameversion,string name, string password, User hoster)
         {
-            Server = server;
             GameGuid = gameguid;
             GameVersion = gameversion;
             Name = name;
             Password = password;
             Hoster = hoster;
             Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
-            lock (Program.Server)
-            {
-                Port = Program.Server.NextHostPort;
-                if (Port != -1)
-                {
-                    StandAloneApp = new Process();
+            Port = port;
+
+            StandAloneApp = new Process();
 #if(DEBUG)
-                    StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
-                    StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid.ToString() + " -v=" + GameVersion + " -p=" + Port.ToString();
+            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
+            StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" + Port.ToString(CultureInfo.InvariantCulture);
 #else
-                    StandAloneApp.StartInfo.FileName = "/opt/mono-2.10/bin/mono";
-                    StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" + GameGuid.ToString() + " -v=" + GameVersion + " -p=" + Port.ToString();
+            StandAloneApp.StartInfo.FileName = "/opt/mono-2.10/bin/mono";
+            StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" + GameGuid + " -v=" + GameVersion + " -p=" + Port.ToString(CultureInfo.InvariantCulture);
                     
 #endif
-                    StandAloneApp.Exited += new EventHandler(StandAloneApp_Exited);
-                    StandAloneApp.EnableRaisingEvents = true;
-                    try
-                    {
-                        StandAloneApp.Start();
-                        IsRunning = true;
-                        Status = Lobby.HostedGame.eHostedGame.StartedHosting;
-                        return;
-                    }
-                    catch (Exception e)
-                    {
-                        Port = -1;
-                        //TODO Need some sort of proper error handling here.
-                        Console.WriteLine("");
-                        Console.WriteLine(StandAloneApp.StartInfo.FileName);
-                        Console.WriteLine(StandAloneApp.StartInfo.Arguments);
-                        Console.WriteLine(e.Message);
-                        Console.WriteLine(e.StackTrace);
-                    }
-                }
-                IsRunning = false;
+            StandAloneApp.Exited += StandAloneApp_Exited;
+            StandAloneApp.EnableRaisingEvents = true;
+        }
+        public bool StartProcess()
+        {
+            Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
+            try
+            {
+                StandAloneApp.Start();
+                Status = Lobby.HostedGame.eHostedGame.StartedHosting;
+                return true;
             }
+            catch (Exception e)
+            {
+                //TODO Need some sort of proper error handling here.
+                Console.WriteLine("");
+                Console.WriteLine(StandAloneApp.StartInfo.FileName);
+                Console.WriteLine(StandAloneApp.StartInfo.Arguments);
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+            return false;
         }
         /// <summary>
         /// This happens when the Octgn.Server in StandAloneServer stops.
@@ -115,11 +106,8 @@ namespace Skylabs.LobbyServer
         /// <param name="e">Jesus</param>
         void StandAloneApp_Exited(object sender, EventArgs e)
         {
-            Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
-            SocketMessage sm = new SocketMessage("gameend");
-            sm.AddData("port",Port);
-            Server.AllUserMessage(sm);
-            Server.Games.Remove(this);
+            if (HostedGameDone != null)
+                HostedGameDone(this, e);
         }
         /// <summary>
         /// Just an equality verifier. 

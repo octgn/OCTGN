@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,45 +11,24 @@ using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {
-    public class Server
+    public static class Server
     {
-        /// <summary>
-        /// Probubly doesn't need to exist. Should just be able to call the main Debug Tracer or something
-        /// </summary>
-        public TraceSource DebugTrace = new TraceSource("DebugTrace", SourceLevels.All);
+        public static IPAddress LocalIp { get; private set; }
 
-        public IPAddress LocalIp { get; private set; }
+        public static int Port { get; private set; }
 
-        public int Port { get; private set; }
+        public static TcpListener ListenSocket { get; private set; }
 
-        public TcpListener ListenSocket { get; private set; }
+        private static List<Client> Clients { get; set; }
 
-        public List<Client> Clients 
-        { 
-            get
-            {
-                lock (_clients)
-                    return _clients;
-            } 
-            set
-            {
-                lock (_clients)
-                    _clients = value;
-            } 
-        }
-        /// <summary>
-        /// A list of all the current HostedGames. It should only contain those that are actually running.
-        /// </summary>
-        public List<HostedGame> Games { get; set; } 
+        private static int _nextId = 0;
 
-        private int _nextId;
-
-        private List<Client> _clients = new List<Client>();
+        private static readonly object ClientLocker = new object();
 
         /// <summary>
         /// Current assembly version of the server.
         /// </summary>
-        public Version Version
+        public static Version Version
         {
             get
             {
@@ -58,62 +38,37 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// This will get the next available port that can be hosted on.
-        /// It checks all hosted games and also what ports are being used by the system.
-        /// </summary>
-        public int NextHostPort
-        {
-            get
-            {
-                lock(Games)
-                {
-                    while(Games.Exists(hg => hg.Port == _currentHostPort))
-                    {
-                        _currentHostPort++;
-                        if(_currentHostPort >= 8000)
-                            _currentHostPort = 5000;
-                    }
-                    while(!Networking.IsPortAvailable(_currentHostPort))
-                    {
-                        _currentHostPort++;
-                        if (_currentHostPort >= 8000)
-                            _currentHostPort = 5000;
-                    }
-                    return _currentHostPort;
-                }
-            }
-        }
-        private int _currentHostPort = 5000;
-        /// <summary>
         /// Start the server
         /// </summary>
-        /// <param name="ip">Just IpAddress.Any should work</param>
-        /// <param name="port">The port to host on</param>
-        public Server(IPAddress ip, int port)
-        {
-            _nextId = 0;
-            LocalIp = ip;
-            Port = port;
-            ListenSocket = new TcpListener(LocalIp, Port);
-            Games = new List<HostedGame>();
+        static Server()
+        { 
+            Clients = new List<Client>();
         }
         /// <summary>
         /// Start listening for connections
         /// </summary>
-        public void Start()
+        /// <param name="ip">Just IpAddress.Any should work</param>
+        /// <param name="port">The port to host on</param>
+        public static void Start(IPAddress ip, int port)
         {
+            LocalIp = ip;
+            Port = port;
+            ListenSocket = new TcpListener(LocalIp, Port);
             ListenSocket.Start();
             AcceptClients();
         }
         /// <summary>
         /// Stop listening for connections and shut down ones that exist
         /// </summary>
-        public void Stop()
+        public static void Stop()
         {
             ListenSocket.Stop();
-            foreach(Client c in Clients)
+            lock (ClientLocker)
             {
-                c.Stop();
+                foreach (Client c in Clients)
+                {
+                    c.Stop();
+                }
             }
         }
         /// <summary>
@@ -121,25 +76,39 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="email">Email</param>
         /// <returns>Current online client, or Null if ones not found(I think)</returns>
-        public Client GetOnlineClientByEmail(string email)
+        public static Client GetOnlineClientByEmail(string email)
         {
-            return Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Email.ToLower().Equals(email.ToLower()));
+            lock(ClientLocker)
+                return Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Email.ToLower().Equals(email.ToLower()));
         }
         /// <summary>
         /// Gets online user by there UID
         /// </summary>
         /// <param name="uid">user uid</param>
         /// <returns>Current online Client, or Null if ones not found.</returns>
-        public Client GetOnlineClientByUid(int uid)
+        public static Client GetOnlineClientByUid(int uid)
         {
-            return Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Uid == uid);
+            lock (ClientLocker)
+                return Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Uid == uid);
+        }
+        public static UserStatus GetOnlineUserStatus(int uid)
+        {
+            lock(ClientLocker)
+            {
+                foreach(Client c in Clients)
+                {
+                    if (c.Me.Uid == uid)
+                        return c.Me.Status;
+                }
+                return UserStatus.Offline;
+            }
         }
         /// <summary>
         /// If a user event happens, call this and it will broadcast it and update the necisary users.
         /// </summary>
         /// <param name="e">User status</param>
         /// <param name="client">The client that called</param>
-        public void OnUserEvent(UserStatus e, Client client)
+        public static void OnUserEvent(UserStatus e, Client client)
         {
             OnUserEvent(e, client, false);
         }
@@ -150,22 +119,25 @@ namespace Skylabs.LobbyServer
         /// <param name="e">User status</param>
         /// <param name="client">The client that called</param>
         /// <param name="Supress">Should we supress a broadcast message</param>
-        public void OnUserEvent(UserStatus e, Client client, bool Supress)
+        public static void OnUserEvent(UserStatus e, Client client, bool Supress)
         {
-            User me = (User)client.Me;
-            if (e == UserStatus.Offline)
+            lock (ClientLocker)
             {
-                Clients.Remove(client);
-                Chatting.UserOffline(me);
-            }
-            if (!Supress)
-            {
-                foreach (Client c in Clients)
-                    c.OnUserEvent(e, me);
+                User me = (User) client.Me;
+                if (e == UserStatus.Offline)
+                {
+                    Clients.Remove(client);
+                    Chatting.UserOffline(me);
+                }
+                if (!Supress)
+                {
+                    foreach (Client c in Clients)
+                        c.OnUserEvent(e, me);
+                }
             }
         }
 
-        private void AcceptClients()
+        private static void AcceptClients()
         {
             ListenSocket.BeginAcceptTcpClient(AcceptReceiveDataCallback, ListenSocket);
         }
@@ -173,28 +145,65 @@ namespace Skylabs.LobbyServer
         /// Sends a socket message to all connected clients.
         /// </summary>
         /// <param name="sm">Message to send.</param>
-        public void AllUserMessage(SocketMessage sm)
+        public static void AllUserMessage(SocketMessage sm)
         {
-            foreach(Client c in Clients)
+            lock (ClientLocker)
             {
-                if(c.LoggedIn)
-                    c.WriteMessage(sm);
+                foreach (Client c in Clients)
+                {
+                    if (c.LoggedIn)
+                        c.WriteMessage(sm);
+                }
             }
         }
-
-        private void AcceptReceiveDataCallback(IAsyncResult ar)
+        /// <summary>
+        /// Stops and removes all clients based on a uid.
+        /// </summary>
+        /// <param name="uid">UID</param>
+        /// <returns>Tupple, where value1=number of users with UID who are logged in, and value2=Number of clients removed.</returns>
+        public static Tuple<int,int> StopAndRemoveAllByUID(int uid)
         {
-            // Get the socket that handles the client request.
-            TcpListener listener = (TcpListener)ar.AsyncState;
-            try
+            lock(ClientLocker)
             {
-                Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId, this));
-                _nextId++;
-                AcceptClients();
+                int loggedInCount = 0;
+                int removedCount = 0;
+                foreach(Client c in Clients)
+                {
+                    if (c == null) continue;
+                    if (c.Me.Uid == uid)
+                    {
+                        if (c.LoggedIn)
+                            loggedInCount++;
+                        c.Stop(true);
+                    }
+                }
+                try
+                {
+                    removedCount = Server.Clients.RemoveAll(c => c.Me.Uid == uid);
+                }
+                catch (ArgumentNullException)
+                {
+
+                }
+                return new Tuple<int, int>(loggedInCount,removedCount);
             }
-            catch (ObjectDisposedException)
+        }
+        private static void AcceptReceiveDataCallback(IAsyncResult ar)
+        {
+            lock (ClientLocker)
             {
-                Console.WriteLine("AcceptReceiveDataCallback: ObjectDisposedException");
+                // Get the socket that handles the client request.
+                TcpListener listener = (TcpListener) ar.AsyncState;
+                try
+                {
+                    Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId));
+                    _nextId++;
+                    AcceptClients();
+                }
+                catch (ObjectDisposedException)
+                {
+                    Console.WriteLine("AcceptReceiveDataCallback: ObjectDisposedException");
+                }
             }
         }
     }

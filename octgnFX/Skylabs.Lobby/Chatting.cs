@@ -140,5 +140,23 @@ namespace Skylabs.Lobby
                     if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.ChatMessage, u,message);
                 }
         }
+        public void UserStatusChange(long rid, User u, UserStatus ustatus)
+        {
+            ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
+            if(cr != null)
+            {
+                if (cr.Users.Contains(u))
+                {
+                    User utochange = cr.Users.FirstOrDefault(us => us.Uid == u.Uid);
+                    if (utochange != null)
+                    {
+                        utochange.Status = ustatus;
+                        utochange.CustomStatus = u.CustomStatus;
+                        utochange.DisplayName = u.DisplayName;
+                    }
+
+                }
+            }
+        }
     }
 }

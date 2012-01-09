@@ -13,24 +13,13 @@ namespace Skylabs.LobbyServer
         /// Unique ID of the chat room
         /// </summary>
         public long ID { get; private set; }
-        /// <summary>
-        /// List of users in the chat room.
-        /// </summary>
-        public List<User> Users 
-        { 
-            get
-            {
-                lock (_users)
-                    return _users;
-            }
-            private set
-            {
-                lock (_users)
-                    _users = value;
-            } 
-        }
 
-        private List<User> _users = new List<User>(); 
+        /// <summary>
+        /// List of users in the chat room.8
+        /// </summary>
+        private List<User> Users = new List<User>();
+
+        private object UserLocker = new object();
         /// <summary>
         /// initializes a chat room, and adds the initial user.
         /// This should only be called by Chatting.cs
@@ -50,20 +39,30 @@ namespace Skylabs.LobbyServer
         /// <returns>Returns true on success, or false if there was an explosion</returns>
         public bool AddUser(User u)
         {
-            if(!Users.Exists(us => us.Uid == u.Uid))
+            lock (UserLocker)
             {
-                if (Program.Server.GetOnlineClientByUid(u.Uid) != null)
+                if (!Users.Exists(us => us.Uid == u.Uid))
                 {
-                    Users.Add(u);
-                    SocketMessage sm = new SocketMessage("userjoinedchatroom");
-                    sm.AddData("roomid", ID);
-                    sm.AddData("user", u);
-                    sm.AddData("allusers", Users);
-                    SendAllUsersMessage(sm);
-                    return true;
+                    if (Server.GetOnlineClientByUid(u.Uid) != null)
+                    {
+                        Users.Add(u);
+                        SocketMessage sm = new SocketMessage("userjoinedchatroom");
+                        sm.AddData("roomid", ID);
+                        sm.AddData("user", u);
+                        sm.AddData("allusers", Users);
+                        SendAllUsersMessage(sm,false);
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
+        }
+        public User[] GetUserList()
+        {
+            lock(UserLocker)
+            {
+                return Users.ToArray();
+            }
         }
         /// <summary>
         /// Chatting.cs calls this when a user exits, this doesn't need to be called ever again.
@@ -71,26 +70,42 @@ namespace Skylabs.LobbyServer
         /// <param name="u">The user.</param>
         public void UserExit(User u)
         {
-
-            if (Users.Exists(us => us.Uid == u.Uid))
+            lock (UserLocker)
             {
-                Users.Remove(u);
-                SocketMessage sm = new SocketMessage("userleftchatroom");
-                sm.AddData("roomid", ID);
-                sm.AddData("user", u);
-                SendAllUsersMessage(sm);
+                if (Users.Exists(us => us.Uid == u.Uid))
+                {
+                    Users.Remove(u);
+                    SocketMessage sm = new SocketMessage("userleftchatroom");
+                    sm.AddData("roomid", ID);
+                    sm.AddData("user", u);
+                    SendAllUsersMessage(sm,false);
+                }
             }
         }
         /// <summary>
         /// Sends all users in this chat room a message
         /// </summary>
         /// <param name="sm">Message to send</param>
-        public void SendAllUsersMessage(SocketMessage sm)
+        private void SendAllUsersMessage(SocketMessage sm,bool Lock)
         {
-            foreach (User u in Users)
+            if (Lock)
             {
-                Client c = Program.Server.GetOnlineClientByUid(u.Uid);
-                c.WriteMessage(sm);
+                lock(UserLocker)
+                {
+                    foreach (User u in Users)
+                    {
+                        Client c = Server.GetOnlineClientByUid(u.Uid);
+                        c.WriteMessage(sm);
+                    }
+                }
+            }
+            else
+            {
+                foreach (User u in Users)
+                {
+                    Client c = Server.GetOnlineClientByUid(u.Uid);
+                    c.WriteMessage(sm);
+                }
             }
         }
         /// <summary>
@@ -105,7 +120,7 @@ namespace Skylabs.LobbyServer
             sm.AddData("roomid", ID);
             sm.AddData("mess", message);
             sm.AddData("user", u);
-            SendAllUsersMessage(sm);
+            SendAllUsersMessage(sm,true);
         }
         /// <summary>
         /// Compare this ChatRoom to the other room.
