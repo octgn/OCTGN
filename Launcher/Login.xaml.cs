@@ -31,12 +31,13 @@ namespace Octgn.Launcher
             animationTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             versionText.Text = string.Format("Version {0}", OctgnApp.OctgnVersion.ToString(4));
             animationTimer.Tick += HandleAnimationTick;
-            if(Settings.Default.Password != "")
+            string password = Registry.ReadValue("Password");
+            if (password != null)
             {
-                passwordBox1.Password = Settings.Default.Password.Decrypt();
+                passwordBox1.Password = password.Decrypt();
                 cbSavePassword.IsChecked = true;
             }
-            textBox1.Text = Settings.Default.Email;
+            textBox1.Text = Registry.ReadValue("E-Mail");            
 #if(DEBUG)
             MenuItem m = new MenuItem();
             m.Name = "menuOldMenu";
@@ -144,16 +145,15 @@ namespace Octgn.Launcher
                 isLoggingIn = false;
                 Stop_Spinning();
                 if(success == LoginResult.Success)
-                {                    
+                {
                     if (cbSavePassword.IsChecked == true)
                     {
-                        Settings.Default.Password = passwordBox1.Password.Encrypt();
+                        Registry.WriteValue("Password", passwordBox1.Password.Encrypt());
                     }
                     else
-                        Settings.Default.Password = "";
-                    Settings.Default.Email = textBox1.Text;
-                    Settings.Default.NickName = Program.lobbyClient.Me.DisplayName;
-                    Settings.Default.Save();
+                        Registry.WriteValue("Password", "");
+                    Registry.WriteValue("E-Mail", textBox1.Text);
+                    Registry.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
 
                     Program.ClientWindow = new Main();
                     Program.ClientWindow.Show();
@@ -333,8 +333,8 @@ namespace Octgn.Launcher
         {
             System.Security.Cryptography.RIPEMD160 hash = System.Security.Cryptography.RIPEMD160.Create();
             byte[] hasher;
-            hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Settings.Default.NickName));
-            Text = Cryptor.Decrypt(Settings.Default.Password, BitConverter.ToString(hasher));
+            hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Registry.ReadValue("Nickname")));
+            Text = Cryptor.Decrypt(Text, BitConverter.ToString(hasher));
             return Text;
         }
 
