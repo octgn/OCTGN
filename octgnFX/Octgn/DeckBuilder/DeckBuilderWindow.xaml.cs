@@ -195,8 +195,7 @@ namespace Octgn.DeckBuilder
 				Deck.Save(sfd.FileName);
         unsaved = false;
 				deckFilename = sfd.FileName;
-                Properties.Settings.Default.DeckDirLastUsed = sfd.FileName.Substring(0, sfd.FileName.LastIndexOf("\\"));
-                Properties.Settings.Default.Save();
+                Registry.WriteValue("lastFolder", System.IO.Path.GetFileName(deckFilename));
 			}
 			catch (Exception ex)
 			{
@@ -232,16 +231,15 @@ namespace Octgn.DeckBuilder
 						return;
 				}
 			}
-
 			// Show the dialog to choose the file
 			Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
 			{
 				Filter = "OCTGN deck files (*.o8d) | *.o8d",
-                InitialDirectory = ((game != null) && (Properties.Settings.Default.DeckDirLastUsed) == "") ? game.DefaultDecksPath : Properties.Settings.Default.DeckDirLastUsed
+                InitialDirectory = ((game != null) && (Registry.ReadValue("lastFolder")) == "") ? game.DefaultDecksPath : Registry.ReadValue("lastFolder")
 			};
 			if (ofd.ShowDialog() != true) return;
-            Properties.Settings.Default.DeckDirLastUsed = ofd.FileName.Substring(0,ofd.FileName.LastIndexOf("\\"));
-            Properties.Settings.Default.Save();
+            Registry.WriteValue("lastFolder", System.IO.Path.GetDirectoryName(ofd.FileName));
+
 			// Try to load the file contents
 			Deck newDeck;
 			try
