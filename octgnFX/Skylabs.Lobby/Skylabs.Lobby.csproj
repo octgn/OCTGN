@@ -84,6 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sockets\SkySocket.cs" />
     <Compile Include="Sockets\SocketMessage.cs" />
+    <Compile Include="ThreadSafeList.cs" />
     <Compile Include="User.cs" />
     <Compile Include="ValueConverters.cs" />
     <Compile Include="Verify.cs" />
