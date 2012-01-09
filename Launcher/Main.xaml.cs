@@ -277,8 +277,27 @@ namespace Octgn.Launcher
             Program.ChatWindows.Clear();
             if (!Exiting)
             {
+                if (Program.LauncherWindow != null)
+                {
+                    if (Program.LauncherWindow.IsLoaded)
+                    {
+                        Program.LauncherWindow.Close();
+                    }
+                    Program.LauncherWindow = null;
+                }
                 Program.LauncherWindow = new LauncherWindow();
                 Program.LauncherWindow.Show();
+            }
+            else
+            {
+                if (Program.LauncherWindow != null)
+                {
+                    if (Program.LauncherWindow.IsLoaded)
+                    {
+                        Program.LauncherWindow.Close();
+                    }
+                    Program.LauncherWindow = null;
+                }
             }
             Program.ClientWindow.Close();
             Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
