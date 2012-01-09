@@ -483,6 +483,7 @@ namespace Octgn.Launcher
                 {
                     tbUsername.Text = Program.lobbyClient.Me.DisplayName;
                     tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
+                    Registry.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
                 }
             }));
 
