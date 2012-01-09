@@ -94,10 +94,6 @@ namespace Skylabs.Lobby
         /// </summary>
         public List<User> FriendList { get; private set; }
         /// <summary>
-        /// List of online users(though I think this will go away)
-        /// </summary>
-        public List<User> OnlineList { get; private set; }
-        /// <summary>
         /// List of Notifications? I don't know offhand
         /// </summary>
         //TODO Figure out what this is for
@@ -110,7 +106,6 @@ namespace Skylabs.Lobby
         public LobbyClient()
         {
             FriendList = new List<User>();
-            OnlineList = new List<User>();
             Notifications = new List<Notification>();
             Callbacks = new Dictionary<string, SocketMessageResult>();
             Games = new List<HostedGame>();
@@ -121,19 +116,9 @@ namespace Skylabs.Lobby
             : base(c)
         {
             FriendList = new List<User>();
-            OnlineList = new List<User>();
             Notifications = new List<Notification>();
             Callbacks = new Dictionary<string, SocketMessageResult>();
             Games = new List<HostedGame>();
-        }
-        /// <summary>
-        /// Get an online user from the UID
-        /// </summary>
-        /// <param name="uid">UID</param>
-        /// <returns>Online user, or NULL</returns>
-        public User GetOnlineUser(int uid)
-        {
-            return OnlineList.FirstOrDefault(u => u.Uid == uid);
         }
         /// <summary>
         /// Start hosting a game.
@@ -151,6 +136,15 @@ namespace Skylabs.Lobby
             sm.AddData("name",gamename);
             sm.AddData("pass",password);
             WriteMessage(sm);
+        }
+        public User GetFriendFromUID(int uid)
+        {
+            foreach(User u in FriendList)
+            {
+                if (u.Uid == uid)
+                    return u;
+            }
+            return null;
         }
         /// <summary>
         /// This gets called when the hoster of the game clicks 'Start game'
@@ -295,22 +289,8 @@ namespace Skylabs.Lobby
                     if (OnFriendRequest != null)
                         OnFriendRequest(u);
                     break;
-                case "onlinelist":
-                    OnlineList = new List<User>();
-                    foreach (NameValuePair p in sm.Data)
-                        OnlineList.Add((User)p.Value);
-                    if (OnDataRecieved != null)
-                        OnDataRecieved.Invoke(DataRecType.OnlineList, null);
-                    break;
                 case "status":
                     u = (User)sm.Data[0].Value;
-                    if (u.Status == UserStatus.Offline)
-                        OnlineList.Remove(u);
-                    else if (!OnlineList.Contains(u))
-                        OnlineList.Add(u);
-                    else
-                        OnlineList.FirstOrDefault(us => us.Equals(u)).Status = u.Status;
-
                     User f = FriendList.FirstOrDefault(us => us.Equals(u));
                     if (f != null)
                     {
@@ -341,9 +321,6 @@ namespace Skylabs.Lobby
                             int i = FriendList.IndexOf(u);
                             if (i > -1)
                                 FriendList[i].CustomStatus = s;
-                            i = OnlineList.IndexOf(u);
-                            if (i > -1)
-                                OnlineList[i].CustomStatus = s;
                             this.OnDataRecieved(DataRecType.UserCustomStatus, u);
                         }
                     }

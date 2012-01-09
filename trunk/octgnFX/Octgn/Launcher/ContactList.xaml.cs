@@ -91,7 +91,7 @@ namespace Octgn.Launcher
                 {
                     long rid = cw.ID;
                     ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(rid);
-                    if (rid != null)
+                    if (cr != null)
                     {
                         if (cr.ID == 0)
                             continue;

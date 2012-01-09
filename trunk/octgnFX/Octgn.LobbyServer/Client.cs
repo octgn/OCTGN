@@ -44,15 +44,11 @@ namespace Skylabs.LobbyServer
                 _friends = value;
                 foreach (User f in _friends)
                 {
-                    Client cl = Parent.Clients.FirstOrDefault(c => c.Me.Uid == f.Uid);
-                    if (cl != null)
-                        f.Status = cl.Me.Status;
+                    f.Status = Server.GetOnlineUserStatus(f.Uid);
                 }
                 if(LoggedIn) SendFriendsList();
             }
         }
-
-        private Server Parent;
 
         private bool _sentEndMessage;
 
@@ -67,13 +63,12 @@ namespace Skylabs.LobbyServer
         /// <param name="client">Tcp Client</param>
         /// <param name="id">ID provided by Server.cs</param>
         /// <param name="server">Server.cs instance</param>
-        public Client(TcpClient client, int id, Server server)
+        public Client(TcpClient client, int id)
             : base(client)
         {
             Id = id;
-            Parent = server;
             LoggedIn = false;
-            Cup = new MySqlCup(Program.Settings.dbUser, Program.Settings.dbPass, Program.Settings.dbHost, Program.Settings.db);
+            Cup = new MySqlCup(Program.Settings["dbUser"], Program.Settings["dbPass"], Program.Settings["dbHost"], Program.Settings["db"]);
             _friends = new List<User>();
         }
 
@@ -159,7 +154,7 @@ namespace Skylabs.LobbyServer
                     if (u != UserStatus.Offline)
                     {
                         Me.Status = u;
-                        Parent.OnUserEvent(u, this);
+                        Server.OnUserEvent(u, this);
                     }
                     break;
                 case "hostgame":
@@ -169,30 +164,29 @@ namespace Skylabs.LobbyServer
                         string n = (string)sm["name"];
                         string pass = (string)sm["password"];
 
-                        HostedGame hs = new HostedGame(Parent, g, v, n, pass, Me);
+                        int Port = Gaming.HostGame(g, v, n, pass, Me);
 
                         SocketMessage som = new SocketMessage("hostgameresponse");
-                        som.AddData("port", hs.Port);
+                        som.AddData("port", Port);
                         WriteMessage(som);
-                        if (hs.Port != -1 && hs.IsRunning)
+
+                        if (Port != -1 )
                         {
-                            Parent.Games.Add(hs);
                             SocketMessage smm = new SocketMessage("GameHosting");
                             smm.AddData("name", n);
                             smm.AddData("passrequired", !String.IsNullOrEmpty(pass));
                             smm.AddData("guid", g);
                             smm.AddData("version", v);
                             smm.AddData("hoster", Me);
-                            smm.AddData("port", hs.Port);
-                            Parent.AllUserMessage(smm);
+                            smm.AddData("port", Port);
+                            Server.AllUserMessage(smm);
                         }
                         break;
                     }
                 case "gamestarted":
                     {
-                        HostedGame g = Parent.Games.FirstOrDefault(hg => hg.Hoster == Me && hg.Port == (int)sm["port"]);
-                        g.Status = Lobby.HostedGame.eHostedGame.GameInProgress;
-                        Parent.AllUserMessage(sm);
+                        Gaming.StartGame((int)sm["port"]);
+                        Server.AllUserMessage(sm);
                         break;
                     }
                 case "customstatus":
@@ -236,7 +230,7 @@ namespace Skylabs.LobbyServer
         /// <param name="reason">Reason for the disconnect</param>
         public override void OnDisconnect(DisconnectReason reason)
         {
-            if(LoggedIn) Parent.OnUserEvent(UserStatus.Offline, this,_SupressSendOfflineStatus);
+            if (LoggedIn) Server.OnUserEvent(UserStatus.Offline, this, _SupressSendOfflineStatus);
         }
         /// <summary>
         /// Accept a friend request. Handles the socket message data.
@@ -261,7 +255,7 @@ namespace Skylabs.LobbyServer
                     if(!Friends.Contains(requestee))
                         Friends.Add(requestee);
                     //Add you to friends list
-                    Client c = Parent.GetOnlineClientByUid(requestee.Uid);
+                    Client c = Server.GetOnlineClientByUid(requestee.Uid);
                     if (c != null)
                     {
                         if(!c.Friends.Contains(Me))
@@ -274,7 +268,7 @@ namespace Skylabs.LobbyServer
                 Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
                 Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
                 this.SendFriendsList();
-                Client rclient = Parent.GetOnlineClientByUid(requestee.Uid);
+                Client rclient = Server.GetOnlineClientByUid(requestee.Uid);
                 if (rclient != null)
                     rclient.SendFriendsList();
             
@@ -295,7 +289,7 @@ namespace Skylabs.LobbyServer
                 if (!Verify.IsEmail(email))
                     return;
                 email = email.ToLower();
-                Client c = Parent.GetOnlineClientByEmail(email);
+                Client c = Server.GetOnlineClientByEmail(email);
                 //If user exists and is online
                 Cup.AddFriendRequest(Me.Uid, email);
                 if (c != null)
@@ -329,7 +323,7 @@ namespace Skylabs.LobbyServer
                 SocketMessage sm = new SocketMessage("friends");
                 foreach (User u in Friends)
                 {
-                    Client c = Parent.GetOnlineClientByUid(u.Uid);
+                    Client c = Server.GetOnlineClientByUid(u.Uid);
                     User n;
                     if (c == null)
                     {
@@ -347,32 +341,6 @@ namespace Skylabs.LobbyServer
                 WriteMessage(sm);
         }
         /// <summary>
-        /// Send the user a list of users online.
-        /// This probably doesn't need to even exist, as the user doesn't benefit from knowing everyone online
-        /// and could potentially slow things down. I don't even think that LobbyClient even cares about this list,
-        /// but I can't be sure.
-        /// </summary>
-        private void SendUsersOnline()
-        {
-            try
-            {
-                SocketMessage sm = new SocketMessage("onlinelist");
-                Parent.Clients.FindAll(c => c.LoggedIn == true && c.Me.Status != UserStatus.Unknown).
-                ForEach(delegate(Client c)
-                {
-                    User n = (User)c.Me.Clone();
-                    if (n.Status == UserStatus.Invisible)
-                        n.Status = UserStatus.Offline;
-                    sm.AddData(new NameValuePair(c.Me.Email, c.Me));                    
-                });
-                WriteMessage(sm);
-            }
-            catch
-            {
-                
-            }
-        }
-        /// <summary>
         /// Set the users display name
         /// </summary>
         /// <param name="sm">Message containting display name data.</param>
@@ -388,7 +356,7 @@ namespace Skylabs.LobbyServer
                 if (Cup.SetDisplayName(Me.Uid, s))
                 {
                     Me.DisplayName = s;
-                    Parent.OnUserEvent(Me.Status, this, false);
+                    Server.OnUserEvent(Me.Status, this, false);
                 }
             }
         }
@@ -406,7 +374,7 @@ namespace Skylabs.LobbyServer
                 if(Cup.SetCustomStatus(Me.Uid, s))
                 {
                     Me.CustomStatus = s;
-                    Parent.OnUserEvent(Me.Status, this, false);
+                    Server.OnUserEvent(Me.Status, this, false);
                 }
             }
         }
@@ -415,17 +383,10 @@ namespace Skylabs.LobbyServer
         /// </summary>
         private void SendHostedGameList()
         {
-            lock (Parent.Games)
-            {
-                List<Skylabs.Lobby.HostedGame> sendgames = new List<Lobby.HostedGame>();
-                foreach (HostedGame hg in Parent.Games)
-                {
-                    sendgames.Add(new Lobby.HostedGame(hg.GameGuid, hg.GameVersion, hg.Port, hg.Name, !String.IsNullOrWhiteSpace(hg.Password), hg.Hoster));
-                }
-                SocketMessage sm = new SocketMessage("gamelist");
-                sm.AddData("list", sendgames);
-                WriteMessage(sm);
-            }
+            List<Skylabs.Lobby.HostedGame> sendgames = Gaming.GetLobbyList();
+            SocketMessage sm = new SocketMessage("gamelist");
+            sm.AddData("list", sendgames);
+            WriteMessage(sm);
         }
         /// <summary>
         /// Login function. When a user tries to login, the message gets sent here to get processed.
@@ -464,39 +425,18 @@ namespace Skylabs.LobbyServer
                     int banned = Cup.IsBanned(u.Uid, this);
                     if (banned == -1)
                     {
-                        bool foundOne = false;
-                        foreach (Client c in Parent.Clients)
-                        {
-                            if (c != null)
-                            {
-                                if (c.Me.Uid == u.Uid)
-                                {
-                                    if (c.LoggedIn)
-                                        foundOne = true;
-                                    c.Stop(true);
-                                }
-                            }
-                        }
-                        try
-                        {
-                            Parent.Clients.RemoveAll(c => c.Me.Uid == u.Uid);
-                        }
-                        catch (Exception)
-                        {
-
-                        }
+                        Tuple<int,int> res = Server.StopAndRemoveAllByUID(u.Uid);
                         Me = u;
                         Me.Status = stat;
                         sm = new SocketMessage("loginsuccess");
                         sm.AddData("me", Me);
                         WriteMessage(sm);
-                        if (!foundOne)
-                            Parent.OnUserEvent(stat, this);
+                        if (res.Item1 == 0)
+                            Server.OnUserEvent(stat, this);
                         Friends = Cup.GetFriendsList(Me.Uid);
 
                         LoggedIn = true;
                         SendFriendsList();
-                        SendUsersOnline();
                         SendFriendRequests();
                         SendHostedGameList();
                         return;

@@ -12,7 +12,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         /// List of all the open ChatRooms
         /// </summary>
-        public static List<ChatRoom> Rooms { get; set; }
+        private static List<ChatRoom> Rooms { get; set; }
         static Chatting()
         {
             Rooms = new List<ChatRoom>();
@@ -56,7 +56,8 @@ namespace Skylabs.LobbyServer
             {
                 foreach (ChatRoom cr in Rooms)
                 {
-                    if (cr.Users.Contains(user) && cr.Users.Contains(c.Me) && cr.Users.Count == 2)
+                    User[] ul = cr.GetUserList();
+                    if (ul.Contains(user) && ul.Contains(c.Me) && ul.Length == 2)
                         return;
                 }
             }
@@ -110,7 +111,8 @@ namespace Skylabs.LobbyServer
         /// <param name="room">Chat room to remove</param>
         public static void RemoveRoom(ChatRoom room)
         {
-            Rooms.Remove(room);
+            lock(Rooms)
+                Rooms.Remove(room);
         }
         /// <summary>
         /// Server calls this when a User goes offline.
@@ -124,7 +126,8 @@ namespace Skylabs.LobbyServer
                 foreach (ChatRoom c in Rooms)
                 {
                     c.UserExit(u);
-                    if (c.Users.Count == 0 && c.ID != 0)
+                    User[] ul = c.GetUserList();
+                    if (ul.Length == 0 && c.ID != 0)
                         roomstocan.Add(c.ID);
                 }
                 foreach (long l in roomstocan)

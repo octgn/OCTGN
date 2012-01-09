@@ -116,11 +116,14 @@ namespace Octgn
         {
             if (!_locationUpdating)
             {
-                _locationUpdating = true;
-                Properties.Settings.Default.LoginLeftLoc = LauncherWindow.Left;
-                Properties.Settings.Default.LoginTopLoc = LauncherWindow.Top;
-                Properties.Settings.Default.Save();
-                _locationUpdating = false;
+                if (LauncherWindow != null && LauncherWindow.IsLoaded)
+                {
+                    _locationUpdating = true;
+                    Properties.Settings.Default.LoginLeftLoc = LauncherWindow.Left;
+                    Properties.Settings.Default.LoginTopLoc = LauncherWindow.Top;
+                    Properties.Settings.Default.Save();
+                    _locationUpdating = false;
+                }
             }
         }
 
@@ -140,6 +143,13 @@ namespace Octgn
             if(ClientWindow != null)
                 if(ClientWindow.IsLoaded)
                     ClientWindow.Close();
+            if(PlayWindow != null)
+                if(PlayWindow.IsLoaded)
+                    PlayWindow.Close();
+            foreach(ChatWindow cw in ChatWindows)
+            {
+                cw.Close();
+            }
             if (LobbyServerProcess != null)
             {
                 try

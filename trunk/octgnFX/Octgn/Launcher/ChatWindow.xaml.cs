@@ -32,7 +32,7 @@ namespace Octgn.Launcher
             ID = id;
             if (ID == 0)
                 miLeaveChat.IsEnabled = false;
-
+            Program.lobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
             ContextMenu cm = new ContextMenu();
             MenuItem mi = new MenuItem();
             mi.Header = "Add to friends list";
@@ -41,6 +41,12 @@ namespace Octgn.Launcher
             listBox1.ContextMenu = cm;
 
             richTextBox1.Document.LineHeight = 2;
+        }
+
+        private void LobbyClientOnOnUserStatusChanged(UserStatus eve, User user)
+        {
+            Program.lobbyClient.Chatting.UserStatusChange(this.ID,user,eve);
+            ResetUserList();
         }
 
         public void ChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
@@ -168,6 +174,18 @@ namespace Octgn.Launcher
                 }
             }
             richTextBox1.Document.Blocks.Add(p);
+            if(richTextBox1.Document.Blocks.Count > 200)
+            {
+                try
+                {
+                    richTextBox1.Document.Blocks.Remove(richTextBox1.Document.Blocks.FirstBlock);
+                }
+                catch (Exception)
+                {
+                    
+                }
+                
+            }
             if(rtbatbottom)
                 richTextBox1.ScrollToEnd();
         }
@@ -297,8 +315,9 @@ namespace Octgn.Launcher
                 int uid = -1;
                 if (Int32.TryParse(s, out uid))
                 {
-                    User u = Program.lobbyClient.GetOnlineUser(uid);
-                    if (u != null)
+                    //BUG Should be pulling from FriendList
+                    User u = Program.lobbyClient.GetFriendFromUID(uid);
+                    if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
                     {
                         Program.lobbyClient.Chatting.AddUserToChat(u, ID);
                     }
@@ -317,6 +336,7 @@ namespace Octgn.Launcher
             Program.lobbyClient.Chatting.LeaveChatRoom(ID);
             Program.lobbyClient.Chatting.eChatEvent -= Chatting_eChatEvent;
             Program.ChatWindows.RemoveAll(r => r.ID == ID);
+            Program.lobbyClient.OnUserStatusChanged -= LobbyClientOnOnUserStatusChanged;
             var cl = Program.ClientWindow.frame1.Content as ContactList;
             if (cl != null)
                 cl.RefreshList();
