@@ -43,7 +43,8 @@ namespace Octgn.Play
     {
       InitializeComponent();
       //Application.Current.MainWindow = this;
-
+      Version Oversion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+      this.Title = "OCTGN  version : " + Oversion + " : " + Program.Game.Definition.Name ;
       Program.Game.ComposeParts(this);
     }
 
