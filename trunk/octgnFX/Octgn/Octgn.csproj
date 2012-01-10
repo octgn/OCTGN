@@ -569,6 +569,7 @@
     <Resource Include="Resources\Icons\image_delete_small.png" />
     <Resource Include="Resources\Icons\image_link_small.png" />
     <Resource Include="Resources\chaticon.png" />
+    <Resource Include="Resources\Icons\console.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
