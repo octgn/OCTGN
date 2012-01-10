@@ -21,6 +21,8 @@ namespace Octgn.Server
 
 		private bool closed = false;
 
+        private Timer checkConnectionDrops = null;
+
 		#endregion
 
 		#region Public interface
@@ -75,6 +77,11 @@ namespace Octgn.Server
 			// Flag used to wait until the server is really started
 			ManualResetEvent started = new ManualResetEvent(false);
 
+            //start checking for dropped connections every 60 seconds
+            TimerCallback tcb = CheckForDroppedConnection;
+            checkConnectionDrops = new Timer(tcb, null, 0, 60000);
+
+
 			// Start the server
 			ServerThread.Start(started);
 			started.WaitOne();
@@ -125,6 +132,22 @@ namespace Octgn.Server
 			}
 		}
 
+        private void CheckForDroppedConnection(object stateInfo)
+        {
+            while (!closed)
+            {
+                Connection[] connections = clients.ToArray();
+                for (int i = 0; i < connections.Length; i++)
+                {
+                    TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - connections[i].LastPingTime.Ticks);
+                    if (ts.Seconds > 60)
+                    {
+                        connections[i].Disconnected();
+                    }
+                }
+            }
+        }
+
 		// Main thread function: waits and accept incoming connections
 		private void Listen(object o)
 		{
@@ -164,6 +187,11 @@ namespace Octgn.Server
 			private bool binary = false;            // Receives binary data ?
 			public bool disposed = false;          // Indicates if the connection has already been disposed
 			private DateTime lastPing = DateTime.Now;
+
+            public DateTime LastPingTime
+            {
+                get { return (lastPing); }
+            }
 
 			private Thread PingThread;
 
