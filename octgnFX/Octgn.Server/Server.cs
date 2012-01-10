@@ -42,6 +42,10 @@ namespace Octgn.Server
 		{
 			// Stop the server and release resources
 			closed = true;
+
+            //drop connection timer cleanup
+            checkConnectionDrops.Dispose();
+
 			try
 			{ tcp.Server.Close(); tcp.Stop(); }
 			catch
