@@ -138,7 +138,7 @@ namespace Octgn.Server
 
         private void CheckForDroppedConnection(object stateInfo)
         {
-            while (!closed)
+            if (!closed)
             {
                 Connection[] connections = clients.ToArray();
                 for (int i = 0; i < connections.Length; i++)
