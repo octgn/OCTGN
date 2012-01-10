@@ -69,7 +69,8 @@ namespace Octgn.Play
       // Show the Scripting console in dev only
       if (Application.Current.Properties["ArbitraryArgName"] != null)
       {
-          string fname = Application.Current.Properties["ArbitraryArgName"].ToString();          
+          string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
+          Donate.Visibility = System.Windows.Visibility.Visible;
           if (fname == "/developer")
           {              
               Loaded += (sender, args) =>
@@ -342,7 +343,8 @@ namespace Octgn.Play
     private void DonateClicked(object sender, RoutedEventArgs e)
     {
       e.Handled = true;
-      System.Diagnostics.Process.Start("http://www.octgn.net/donate.php");
+      var wnd = new InteractiveConsole { Owner = this };
+      wnd.Show();
     }
 
     internal void ShowBackstage(UIElement ui)

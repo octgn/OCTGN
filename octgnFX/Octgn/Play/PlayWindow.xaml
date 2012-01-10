@@ -96,7 +96,7 @@
         <ms:RibbonGroup>
           <ms:RibbonButton Label="About OCTGN" LargeImageSource="/Resources/Icons/About.png"
                            Click="ShowAboutWindow" />
-          <ms:RibbonButton Label="Donate" LargeImageSource="/Resources/Icons/PiggyBank.png"
+          <ms:RibbonButton Label="Donate" x:Name="Donate" LargeImageSource="/Resources/Icons/PiggyBank.png"
                            Click="DonateClicked" Visibility="Hidden" />
         </ms:RibbonGroup>       
       </ms:RibbonTab>
