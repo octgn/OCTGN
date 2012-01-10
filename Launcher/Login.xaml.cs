@@ -333,7 +333,7 @@ namespace Octgn.Launcher
         {
             System.Security.Cryptography.RIPEMD160 hash = System.Security.Cryptography.RIPEMD160.Create();
             byte[] hasher;
-            hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Registry.ReadValue("Nickname")));
+            hasher = hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(Registry.ReadValue("Nickname") ?? "null"));
             Text = Cryptor.Decrypt(Text, BitConverter.ToString(hasher));
             return Text;
         }
