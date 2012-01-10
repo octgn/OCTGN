@@ -69,10 +69,10 @@ namespace Octgn.Play
       // Show the Scripting console in dev only
       if (Application.Current.Properties["ArbitraryArgName"] != null)
       {
-          string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
-          Donate.Visibility = System.Windows.Visibility.Visible;
+          string fname = Application.Current.Properties["ArbitraryArgName"].ToString();          
           if (fname == "/developer")
-          {              
+          {
+              Console.Visibility = System.Windows.Visibility.Visible;
               Loaded += (sender, args) =>
               {
                   var wnd = new InteractiveConsole { Owner = this };
@@ -340,9 +340,9 @@ namespace Octgn.Play
       wnd.ShowDialog();
     }
 
-    private void DonateClicked(object sender, RoutedEventArgs e)
+    private void ConsoleClicked(object sender, RoutedEventArgs e)
     {
-      e.Handled = true;
+      e.Handled = true;      
       var wnd = new InteractiveConsole { Owner = this };
       wnd.Show();
     }
