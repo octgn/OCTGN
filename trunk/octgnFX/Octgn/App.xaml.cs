@@ -52,6 +52,12 @@ namespace Octgn
                 new MessageWindow(sb.ToString()).ShowDialog();
                 ShutdownMode = oldShutdown;
             }
+
+            if (e.Args != null && e.Args.Count() > 0)
+            {
+                this.Properties["ArbitraryArgName"] = e.Args[0];
+            }
+
             base.OnStartup(e);
         }
 

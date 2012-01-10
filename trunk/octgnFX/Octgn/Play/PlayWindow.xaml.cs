@@ -66,13 +66,18 @@ namespace Octgn.Play
       Loaded += (sender, args) => Keyboard.Focus(table); // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
       // Show the Scripting console in dev only
-#if(DEBUG)
-        Loaded += (sender, args) =>
-        {
-          var wnd = new InteractiveConsole { Owner = this };
-          wnd.Show();
-        };
-#endif
+      if (Application.Current.Properties["ArbitraryArgName"] != null)
+      {
+          string fname = Application.Current.Properties["ArbitraryArgName"].ToString();          
+          if (fname == "/developer")
+          {              
+              Loaded += (sender, args) =>
+              {
+                  var wnd = new InteractiveConsole { Owner = this };
+                  wnd.Show();
+              };
+          }
+      }
     }
 
     private void InitializePlayerSummary(object sender, EventArgs e)
