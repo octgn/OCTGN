@@ -303,7 +303,8 @@ namespace Octgn.Launcher
             Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
             Program.lobbyClient.OnDisconnectEvent -= lobbyClient_OnDisconnectEvent;
             Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
-            Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
+            Program.lobbyClient.Stop();
+            //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
         private void RibbonButton_Click(object sender, RoutedEventArgs e)
         {
