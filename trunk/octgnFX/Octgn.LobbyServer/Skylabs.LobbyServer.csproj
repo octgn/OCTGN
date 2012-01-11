@@ -141,6 +141,7 @@
     <Compile Include="Client.cs" />
     <Compile Include="Gaming.cs" />
     <Compile Include="HostedGame.cs" />
+    <Compile Include="LockLogger.cs" />
     <Compile Include="MySqlCup.cs" />
     <Compile Include="Networking.cs" />
     <Compile Include="Program.cs" />
