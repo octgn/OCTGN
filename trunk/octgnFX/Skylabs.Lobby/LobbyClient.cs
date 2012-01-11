@@ -103,6 +103,10 @@ namespace Skylabs.Lobby
         /// </summary>
         public int CurrentHostedGamePort { get; set; }
 
+        private bool _sentEndMessage;
+
+        private bool _gotEndMessage;
+
         public LobbyClient()
         {
             FriendList = new List<User>();
@@ -121,6 +125,21 @@ namespace Skylabs.Lobby
             Games = new List<HostedGame>();
         }
         /// <summary>
+        /// Disconnect cleanly
+        /// </summary>
+        public void Stop()
+        {
+            if (!_sentEndMessage)
+            {
+                WriteMessage(new SocketMessage("end"));
+                _sentEndMessage = true;
+            }
+            if (_gotEndMessage)
+            {
+                Close(DisconnectReason.CleanDisconnect);
+            }
+        }
+        /// <summary>
         /// Start hosting a game.
         /// </summary>
         /// <param name="callback">Callback for when the server talks back</param>
@@ -137,6 +156,7 @@ namespace Skylabs.Lobby
             sm.AddData("pass",password);
             WriteMessage(sm);
         }
+
         public User GetFriendFromUID(int uid)
         {
             foreach(User u in FriendList)
@@ -245,7 +265,8 @@ namespace Skylabs.Lobby
             {
                 case "end":
                     {
-                        Close(DisconnectReason.CleanDisconnect);
+                        _gotEndMessage = true;
+                        Stop();
                         break;
                     }
                 case "loginsuccess":
@@ -258,7 +279,8 @@ namespace Skylabs.Lobby
                     else
                     {
                         _onLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, "Data failure.");
-                        Close(DisconnectReason.CleanDisconnect);
+                        Stop();
+                        //Close(DisconnectReason.CleanDisconnect);
                     }
                     break;
                 case "loginfailed":

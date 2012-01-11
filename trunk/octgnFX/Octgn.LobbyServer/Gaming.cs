@@ -24,6 +24,7 @@ namespace Skylabs.LobbyServer
         {
             lock(GamingLocker)
             {
+                Console.WriteLine("LOCK(HostGame)GamingLocker");
                 while (Games.ContainsKey(_currentHostPort) || !Networking.IsPortAvailable(_currentHostPort))
                 {
                     _currentHostPort++;
@@ -36,26 +37,39 @@ namespace Skylabs.LobbyServer
                 if (hs.StartProcess())
                 {
                     Games.Add(_currentHostPort, hs);
+                    Console.WriteLine("UNLOCK(HostGame)GamingLocker");
                     return _currentHostPort;
                 }
                 else
                 {
+                    Console.WriteLine("UNLOCK(HostGame)GamingLocker");
                     hs.HostedGameDone -= HostedGameExited;
                     return -1;
                 }
+                Console.WriteLine("UNLOCK(HostGame)GamingLocker");
             }
         }
         public static void StartGame(int port)
         {
             lock(GamingLocker)
             {
-                Games[port].Status = Lobby.HostedGame.eHostedGame.GameInProgress;
+                Console.WriteLine("LOCK(StartGame)GamingLocker");
+                try
+                {
+                    Games[port].Status = Lobby.HostedGame.eHostedGame.GameInProgress;
+                }
+                catch (Exception)
+                {
+
+                }
+                Console.WriteLine("UNLOCK(StartGame)GamingLocker");
             }
         }
         public static List<Skylabs.Lobby.HostedGame> GetLobbyList()
         {
             lock(GamingLocker)
             {
+                Console.WriteLine("LOCK(GetLobbyList)GamingLocker");
                 List<Lobby.HostedGame> sendgames = new List<Lobby.HostedGame>();
                 foreach(KeyValuePair<int,HostedGame> g in Games)
                 {
@@ -66,6 +80,7 @@ namespace Skylabs.LobbyServer
                     newhg.GameStatus = g.Value.Status;
                     sendgames.Add(newhg);
                 }
+                Console.WriteLine("UNLOCK(GetLobbyList)GamingLocker");
                 return sendgames;
             }
         }
@@ -73,6 +88,7 @@ namespace Skylabs.LobbyServer
         {
             lock (GamingLocker)
             {
+                Console.WriteLine("LOCK(HostedGameExited)GamingLocker");
                 HostedGame s = sender as HostedGame;
                 if (s != null)
                 {
@@ -82,6 +98,7 @@ namespace Skylabs.LobbyServer
                     Server.AllUserMessage(sm);
                     Games.Remove(s.Port);
                 }
+                Console.WriteLine("UNLOCK(HostedGameExited)GamingLocker");
             }
         }
     }

@@ -66,7 +66,8 @@ namespace Skylabs.LobbyServer
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = (Exception)e.ExceptionObject;
-            ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
         }
 
         private static void ConsoleEventLogEAddEvent(ConsoleEvent e)

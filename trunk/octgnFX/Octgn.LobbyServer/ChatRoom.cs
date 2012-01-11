@@ -41,6 +41,7 @@ namespace Skylabs.LobbyServer
         {
             lock (UserLocker)
             {
+                Console.WriteLine("LOCK(AddUser)UserLocker");
                 if (!Users.Exists(us => us.Uid == u.Uid))
                 {
                     if (Server.GetOnlineClientByUid(u.Uid) != null)
@@ -51,9 +52,11 @@ namespace Skylabs.LobbyServer
                         sm.AddData("user", u);
                         sm.AddData("allusers", Users);
                         SendAllUsersMessage(sm,false);
+                        Console.WriteLine("UNLOCK(AddUser)UserLocker");
                         return true;
                     }
                 }
+                Console.WriteLine("UNLOCK(AddUser)UserLocker");
                 return false;
             }
         }
@@ -61,7 +64,10 @@ namespace Skylabs.LobbyServer
         {
             lock(UserLocker)
             {
-                return Users.ToArray();
+                Console.WriteLine("LOCK(GetUserList)UserLocker");
+                User[] ret =  Users.ToArray();
+                Console.WriteLine("UNLOCK(GetUserList)UserLocker");
+                return ret;
             }
         }
         /// <summary>
@@ -72,6 +78,7 @@ namespace Skylabs.LobbyServer
         {
             lock (UserLocker)
             {
+                Console.WriteLine("LOCK(UserExit)UserLocker");
                 if (Users.Exists(us => us.Uid == u.Uid))
                 {
                     Users.Remove(u);
@@ -80,6 +87,7 @@ namespace Skylabs.LobbyServer
                     sm.AddData("user", u);
                     SendAllUsersMessage(sm,false);
                 }
+                Console.WriteLine("UNLOCK(UserExit)UserLocker");
             }
         }
         /// <summary>
@@ -92,12 +100,14 @@ namespace Skylabs.LobbyServer
             {
                 lock(UserLocker)
                 {
+                    Console.WriteLine("LOCK(SendAllUsersMessage)UserLocker");
                     foreach (User u in Users)
                     {
                         Client c = Server.GetOnlineClientByUid(u.Uid);
                         c.WriteMessage(sm);
                     }
                 }
+                Console.WriteLine("UNLOCK(SendAllUsersMessage)UserLocker");
             }
             else
             {
