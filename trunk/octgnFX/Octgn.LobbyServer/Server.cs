@@ -19,11 +19,21 @@ namespace Skylabs.LobbyServer
 
         public static TcpListener ListenSocket { get; private set; }
 
-        private static List<Client> Clients { get; set; }
+        private static ThreadSafeList<Client> Clients { get; set; }
 
         private static int _nextId = 0;
 
         private static readonly object ClientLocker = new object();
+
+        private static readonly DateTime ServerStartTime = DateTime.Now;
+
+        public static TimeSpan ServerRunTime
+        {
+            get
+            {
+                return new TimeSpan(DateTime.Now.Ticks - ServerStartTime.Ticks);
+            }
+        }
 
         /// <summary>
         /// Current assembly version of the server.
@@ -41,8 +51,8 @@ namespace Skylabs.LobbyServer
         /// Start the server
         /// </summary>
         static Server()
-        { 
-            Clients = new List<Client>();
+        {
+            Clients = new ThreadSafeList<Client>();
         }
         /// <summary>
         /// Start listening for connections
@@ -113,7 +123,7 @@ namespace Skylabs.LobbyServer
                 Console.WriteLine("LOCK(GetOnlineUserStatus)ClientLocker");
                 foreach(Client c in Clients)
                 {
-                    if (c.Me.Uid == uid)
+                    if (c.LoggedIn == true && c.Me.Uid == uid)
                     {
                         Console.WriteLine("UNLOCK(GetOnlineUserStatus)ClientLocker");
                         return c.Me.Status;
@@ -142,22 +152,32 @@ namespace Skylabs.LobbyServer
         public static void OnUserEvent(UserStatus e, Client client, bool Supress)
         {
             
-            lock (ClientLocker)
-            {
-                Console.WriteLine("LOCK(OnUserEvent)ClientLocker");
+            //lock (ClientLocker)
+            //{
+                //Console.WriteLine("LOCK(OnUserEvent)ClientLocker");
                 User me = (User) client.Me;
                 if (e == UserStatus.Offline)
                 {
                     Clients.Remove(client);
-                    Chatting.UserOffline(me);
+                    bool foundOne = false;
+                    foreach (Client c in Clients)
+                    {
+                        if (c.Me.Uid == me.Uid)
+                        {
+                            foundOne = true;
+                            break;
+                        }
+                    }
+                    if(foundOne)
+                        Chatting.UserOffline(me);
                 }
                 if (!Supress)
                 {
                     foreach (Client c in Clients)
                         c.OnUserEvent(e, me);
                 }
-                Console.WriteLine("UNLOCK(OnUserEvent)ClientLocker");
-            }
+                //Console.WriteLine("UNLOCK(OnUserEvent)ClientLocker");
+            //}
         }
 
         private static void AcceptClients()
@@ -193,11 +213,14 @@ namespace Skylabs.LobbyServer
                 Console.WriteLine("LOCK(StopAndRemoveAllByUID)ClientLocker");
                 int loggedInCount = 0;
                 int removedCount = 0;
+                List<Client> rlist = new List<Client>();
                 foreach(Client c in Clients)
                 {
                     if (c == null) continue;
                     if (c.Me.Uid == uid)
                     {
+                        rlist.Add(c);
+                        removedCount++;
                         if (c.LoggedIn)
                             loggedInCount++;
                         c.Stop(true);
@@ -205,7 +228,10 @@ namespace Skylabs.LobbyServer
                 }
                 try
                 {
-                    removedCount = Server.Clients.RemoveAll(c => c.Me.Uid == uid);
+                    foreach (Client r in rlist)
+                    {
+                        Clients.Remove(r);
+                    }
                 }
                 catch (ArgumentNullException)
                 {

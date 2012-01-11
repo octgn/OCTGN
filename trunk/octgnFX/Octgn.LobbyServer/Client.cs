@@ -87,6 +87,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         public void Stop()
         {
+            LoggedIn = false;
             if(!_sentEndMessage)
             {
                 WriteMessage(new SocketMessage("end"));

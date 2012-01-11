@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace Skylabs.Lobby
 {
-    class ThreadSafeList<T> : IList<T>, ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, IDisposable
+    public class ThreadSafeList<T> : IList<T>, ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, IDisposable
     {
         private List<T> _list;
         private ReaderWriterLockSlim rwLock;
