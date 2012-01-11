@@ -1,0 +1,24 @@
+#summary OCTGN Technical Reference start page.
+<h1>OCTGN Technical Reference</h1>
+
+Welcome to the online technical reference for everything related to OCTGN.
+
+OCTGN's lead developers, d0c, drilus, ralig and gravecorp, try to ensure that the content here is mostly accurate and correct.
+
+<h2>Creating game modules</h2>
+
+[open_packaging_conventions Open Packaging Conventions]
+[scripting_in_python Scripting in Python]
+[game_definition_o8g Game definition (o8g)]
+[set_definition_o8s Set definition (o8s])
+[deck_file_format_o8d Deck file format (o8d)]
+[patch_file_format_o8p Patch file format (o8p)]
+
+<h2>Software using OCTGN data</h2>
+
+If you code in .NET, you can access OCTGN data using its own assembly.<br/>
+[octgn_data_access OCTGN Data access]
+
+<h2>Bugs and Inconveniences</h2>
+
+The [http://code.google.com/p/octgn/issues/ bugtracker] is hosted on [http://code.google.com/ Google Code]
