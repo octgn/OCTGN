@@ -1,0 +1,810 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:simpleType name="guid">
+		<xs:annotation>
+			<xs:documentation>Defines a GUID, with or without the enclosing curly braces.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\{[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}\}" />
+			<xs:pattern value="[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}" />
+		</xs:restriction>
+	</xs:simpleType>
+
+  <xs:simpleType name="version">
+    <xs:annotation>
+      <xs:documentation>Defines a version number: major.minor[.build[.revision]]</xs:documentation>      
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d\.\d(\.\d(\.\d)?)?" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="variable">
+    <xs:annotation>
+      <xs:documentation>Defines a variable name (must start with a '$').</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\$\w+" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="intVariable">
+    <xs:annotation>
+      <xs:documentation>Defines either an integer constant or a variable name (must starts with '$').</xs:documentation>      
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d+" />
+      <xs:pattern value="\$\w+" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="rotation">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="0" />
+      <xs:enumeration value="90" />
+      <xs:enumeration value="180" />
+      <xs:enumeration value="270" />
+    </xs:restriction>
+  </xs:simpleType>
+
+	<xs:element name="game">
+		<xs:annotation>
+			<xs:documentation>This element defines a game for OCTGN.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+        <xs:element name="scripts" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>Defines the python scripts used by the game</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="script" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>Defines a single python script</xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="src" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>The id of the relationship pointing to the Python script</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="variables" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>Defines the persistent game variables</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="variable" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>Defines a persistent variable properties</xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="name" type="variable" use="required">
+                    <xs:annotation>
+                      <xs:documentation>The name of the variable</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="default" type="xs:integer" default="0">
+                    <xs:annotation>
+                      <xs:documentation>The value of the variable at game startup or after a reset (if reset attribute is true).</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="reset" type="xs:boolean" default="true">
+                    <xs:annotation>
+                      <xs:documentation>Indicates whether the variable should be set to its default value during a game reset.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="global" type="xs:boolean" default="true">
+                    <xs:annotation>
+                      <xs:documentation>Indicates whether the variable value should be kept per player or globally.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+				<xs:element name="card">
+					<xs:annotation>
+						<xs:documentation>Defines the format of the cards this game uses.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="property" type="propertyDef" minOccurs="0" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Defines one property of cards.</xs:documentation>
+								</xs:annotation>								
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="back" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>An image resource for the card back.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="front" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>An image resource for the default card front.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="width" type="xs:integer">
+							<xs:annotation>
+								<xs:documentation>The width in mm of the card.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="height" type="xs:integer">
+							<xs:annotation>
+								<xs:documentation>The height in mm of the card.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+            <xs:attribute name="cornerRadius" type="xs:integer" default="0" use="optional">
+              <xs:annotation>
+                <xs:documentation>The corner radius in mm of the cards.</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="table" type="group" />
+				<xs:element name="player">
+					<xs:annotation>
+						<xs:documentation>Defines what each player owns.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="counter" type="counter" minOccurs="0" maxOccurs="unbounded"/>
+							<xs:element name="hand"    type="group"   minOccurs="0"/>
+							<xs:element name="group"   type="group"   minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+            <xs:attribute name="summary" type="xs:string" use="optional">
+              <xs:annotation>
+                <xs:documentation>Format of the player state summary, displayed in the tab header.</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="shared" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Defines what is shared by all players</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="counter" type="counter" minOccurs="0" maxOccurs="unbounded"/>
+							<xs:element name="group" type="group" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="deck" type="deck" />
+        <xs:element name="sharedDeck" type="deck" minOccurs="0" />
+			</xs:sequence>
+      <xs:attribute name="id" use="required" type="guid">
+        <xs:annotation>
+          <xs:documentation>The unique identifier representing this game</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="name" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Full name of this game.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+      <xs:attribute name="version" use="required" type="version">
+        <xs:annotation>
+          <xs:documentation>Game definition version number</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+			<xs:attribute name="octgnVersion" use="required" type="version">
+				<xs:annotation>
+					<xs:documentation>Minimum version of OCTGN required to run this game</xs:documentation>
+				</xs:annotation>		
+			</xs:attribute>
+      <xs:attribute name="markersize" use="optional" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>Size of markers, relative to the table</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+  <xs:complexType name="propertyDef">
+    <xs:attribute name="name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Name of this property.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="type">
+      <xs:annotation>
+        <xs:documentation>Type of this property.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="String"/>
+          <xs:enumeration value="Integer"/>
+          <xs:enumeration value="Char"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="ignoreText" use="optional" type="xs:boolean" default="false">
+      <xs:annotation>
+        <xs:documentation>For string properties, indicate if the field should be excluded from text searches.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="textKind" use="optional" default="Free">
+      <xs:annotation>
+        <xs:documentation>Describes how the text values are structured. This determines how filters are displayed for this property.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Free" />
+          <xs:enumeration value="Enum" />
+          <xs:enumeration value="Token" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="hidden" use="optional" default="false">
+      <xs:annotation>
+        <xs:documentation>Completely hides the attribute to users.</xs:documentation>
+      </xs:annotation>      
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="propertyValue">
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="value" type="xs:string" />
+  </xs:complexType>
+
+	<xs:complexType name="counter">
+		<xs:annotation>
+			<xs:documentation>Defines the properties of one counter.</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="name" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Name of this counter.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="default" type="xs:integer" default="0">
+			<xs:annotation>
+				<xs:documentation>Starting value of this counter.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+    <xs:attribute name="reset" type="xs:boolean" default="true">
+      <xs:annotation>
+        <xs:documentation>Indicates whether the counter value should be reset to "default" during a game reset.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+		<xs:attribute name="icon" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>An image resource for this counter.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="group">
+		<xs:annotation>
+			<xs:documentation>Defines the properties of one card group.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="groupaction" type="action" />
+        <xs:element name="groupactions" type="actionSubmenu" />
+      </xs:choice>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="cardaction" type="action" />
+        <xs:element name="cardactions" type="actionSubmenu" />
+      </xs:choice>
+    </xs:sequence>
+		<xs:attribute name="name" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Name of this group.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="icon" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>An image resource for this group.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="visibility">
+			<xs:annotation>
+				<xs:documentation>The default visibility of cards in this group.</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="none"/>
+					<xs:enumeration value="me"/>
+					<xs:enumeration value="all"/>
+					<xs:enumeration value="undefined"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ordered" type="xs:boolean" default="true">
+			<xs:annotation>
+				<xs:documentation>True if the order of the cards in the group is important, false otherwise.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="width" type="xs:integer">
+			<xs:annotation>
+				<xs:documentation>The width of the group in mm.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="height" type="xs:integer">
+			<xs:annotation>
+				<xs:documentation>The height of the group in mm.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+    <xs:attribute name="shortcut" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Keyboard shortcut used to move cards to this group.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="collapsed" type="xs:boolean" use="optional" default="false">
+      <xs:annotation>
+        <xs:documentation>For piles, indicates if the group is initially collapsed or expanded.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="background" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Id of the relationship linking to a background picture (table only).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="backgroundStyle">
+      <xs:annotation>
+        <xs:documentation>Indicates how the background picture fills the table.</xs:documentation>        
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="tile" />
+          <xs:enumeration value="uniform" />
+          <xs:enumeration value="uniformToFill" />
+          <xs:enumeration value="stretch" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="board" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Id of the relationship linking to a board picture (table only).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="boardPosition">
+      <xs:annotation>
+        <xs:documentation>Size and position of the board on the table.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="\d+,\d+,\d+,\d+" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="deck">
+		<xs:annotation>
+			<xs:documentation>This type describes the deck format structure.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="section" minOccurs="1" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:string" />
+					<xs:attribute name="group" type="xs:string" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+  <xs:complexType name="baseAction" abstract="true">
+    <xs:annotation>
+      <xs:documentation>Base type for action items and sub-menus.</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="menu" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>The name displayed in the contextual menu for this item.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="actionSubmenu">
+    <xs:annotation>
+      <xs:documentation>This type represents a sub menu and contains other baseAction items.</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="baseAction">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="cardaction" type="action" />
+            <xs:element name="groupaction" type="action" />
+            <xs:element name="cardactions" type="actionSubmenu" />
+            <xs:element name="groupactions" type="actionSubmenu" />
+        </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="action">    
+		<xs:annotation>
+			<xs:documentation>This type contains XML scripts to create game-specific actions.</xs:documentation>
+		</xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="baseAction">
+        <xs:group ref="script" minOccurs="0" maxOccurs="unbounded" />
+        <xs:attribute name="default" type="xs:boolean" default="false">
+          <xs:annotation>
+            <xs:documentation>Indicates if this action is the default one (which makes it accessible with a double-click). Only one action should be defined as default per set of action.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="shortcut" use="optional" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>Keyboard shortcut for the action.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="execute" use="optional" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>The python function to call when the action is invoked.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="batchExecute" use="optional" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>The python function to call when the action is invoked. Unlike "execute" this function gets called only once with an array containing the full selection.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:group name="script">
+    <xs:choice>
+      <xs:element name="count">
+        <xs:complexType>
+          <xs:group ref="cardFilter" minOccurs="0" />
+          <xs:attribute name="group" type="xs:string" use="required" />
+          <xs:attribute name="var" type="variable" use="required" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="dec">
+        <xs:complexType>
+          <xs:attribute name="var" type="variable" use="required" />
+          <xs:attribute name="amount" type="intVariable" default="1" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="inc">
+        <xs:complexType>
+          <xs:attribute name="var" type="variable" use="required" />
+          <xs:attribute name="amount" type="intVariable" default="1" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="set">
+        <xs:complexType>
+          <xs:attribute name="var" type="variable" />
+          <xs:attribute name="value" type="xs:integer" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="if">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:group ref="boolean" />
+            <xs:element name="then">
+              <xs:complexType>
+                <xs:group ref="script" minOccurs="0" maxOccurs="unbounded" />
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="else" minOccurs="0">
+              <xs:complexType>
+                <xs:group ref="script" minOccurs="0" maxOccurs="unbounded" />
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="while">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:group ref="boolean" />
+            <xs:element name="do">
+              <xs:complexType>
+                <xs:group ref="script" maxOccurs="unbounded" />
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="move">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="to" type="xs:string" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="question">
+        <xs:complexType>
+          <xs:attribute name="text" type="xs:string" />
+          <xs:attribute name="default" type="xs:string" />
+          <xs:attribute name="var" type="variable" />
+          <xs:attribute name="answer">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="positiveInt" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="setrot">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="orientation" type="rotation" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="setrot90">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="orientation">
+            <xs:simpleType>
+              <xs:restriction base="xs:int">
+                <xs:enumeration value="0" />                   
+                <xs:enumeration value="90" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="setrot180">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="orientation">
+            <xs:simpleType>
+              <xs:restriction base="xs:int">
+                <xs:enumeration value="0" />
+                <xs:enumeration value="180" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="shuffle">
+        <xs:complexType>
+          <xs:attribute name="group" type="xs:string" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="stop">
+        <xs:complexType></xs:complexType>
+      </xs:element>
+      <xs:element name="mute">
+        <xs:complexType>
+          <xs:attribute name="muted" type="xs:boolean" default="true" use="optional" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="print">
+        <xs:complexType>
+          <xs:attribute name="text" type="xs:string" use="required" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="turn">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="face" use="optional">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="up" />
+                <xs:enumeration value="down" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="togglerot90">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="togglerot180">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="target">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="active" type="xs:boolean" use="optional" default="true" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="highlight">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="color" type="xs:string" use="required" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="rnd">
+        <xs:complexType>
+          <xs:attribute name="min" type="xs:int" use="required" />
+          <xs:attribute name="max" type="xs:int" use="required" />
+          <xs:attribute name="var" type="variable" use="required" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="newcard">
+        <xs:complexType>
+          <xs:choice>
+            <xs:element name="property" type="propertyValue" />
+            <xs:element name="this" />
+          </xs:choice>
+          <xs:attribute name="persist" type="xs:boolean" use="optional" default="false" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="addmarker">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="qty" type="intVariable" default="1" />
+          <xs:attribute name="id" type="guid" use="optional" />
+          <xs:attribute name="name" type="xs:string" use="optional" />
+        </xs:complexType>        
+      </xs:element>
+      <xs:element name="removemarker">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="qty" type="intVariable" default="1" />
+          <xs:attribute name="id" type="guid" use="required" />
+          <xs:attribute name="name" type="xs:string" use="optional" />
+          <xs:attribute name="outVar" type="variable" use="optional" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="getcounter">
+        <xs:complexType>
+          <xs:attribute name="counter" type="xs:string" use="required" />
+          <xs:attribute name="variable" type="variable" use="required" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="setcounter">
+        <xs:complexType>
+          <xs:attribute name="counter" type="xs:string" use="required" />
+          <xs:attribute name="value" type="intVariable" use="required" />
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+  </xs:group>
+
+	<xs:group name="boolean">
+		<xs:choice>
+			<xs:element name="lt">
+				<xs:complexType>
+					<xs:attribute name="left" type="intVariable" use="required" />
+					<xs:attribute name="right" type="intVariable" use="required" />
+          <xs:attribute name="type" default="int">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="int" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="not">
+				<xs:complexType>
+					<xs:group ref="boolean" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="confirm">
+        <xs:complexType>
+          <xs:attribute name="text" type="xs:string" />
+        </xs:complexType>
+      </xs:element>
+			<xs:element name="or">
+				<xs:complexType>
+          <xs:group ref="boolean" minOccurs="2" maxOccurs="unbounded" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="and">
+        <xs:complexType>
+          <xs:group ref="boolean" minOccurs="2" maxOccurs="unbounded" />
+        </xs:complexType>
+			</xs:element>
+			<xs:element name="eq">
+				<xs:complexType>
+					<xs:attribute name="left" type="intVariable"  use="required" />
+					<xs:attribute name="right" type="intVariable" use="required" />
+          <xs:attribute name="type" default="int">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="int" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+				</xs:complexType>
+			</xs:element>
+      <xs:element name="isRot90">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="isRot180">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="isFaceDown">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+        </xs:complexType>
+      </xs:element>
+		</xs:choice>
+	</xs:group>
+
+	<xs:group name="cardFilter">
+		<xs:choice>
+			<xs:element name="owned">
+				<xs:complexType>
+          <xs:group ref="cardFilter" />
+					<xs:attribute name="by" type="xs:string"  use="required" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element  name="controlled">
+				<xs:complexType>
+          <xs:group ref="cardFilter" />
+					<xs:attribute name="by" type="xs:string" use="required" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="property">
+				<xs:complexType>
+          <xs:group ref="cardFilter" />
+					<xs:attribute name="name" type="xs:string" use="required" />
+					<xs:attribute name="value" type="xs:string" use="required" />
+					<xs:attribute name="negate" type="xs:boolean" default="false" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="all">
+				<xs:complexType>
+					<xs:attribute name="group" type="xs:string" use="required" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="top">
+				<xs:complexType>
+					<xs:attribute name="pile" type="xs:string" use="required" />
+					<xs:attribute name="count" type="intVariable" default="1" />
+				</xs:complexType>
+			</xs:element>
+      <xs:element name="bottom">
+        <xs:complexType>
+          <xs:attribute name="pile" type="xs:string" use="required" />
+          <xs:attribute name="count" type="intVariable" default="1" />
+        </xs:complexType>
+      </xs:element>
+			<xs:element name="at">
+				<xs:complexType>
+					<xs:attribute name="group" type="xs:string" use="required" />
+					<xs:attribute name="position" type="intVariable" use="required" />
+				</xs:complexType>
+			</xs:element>
+      <xs:element name="random">
+        <xs:complexType>
+          <xs:attribute name="group" type="xs:string" use="required" />
+          <xs:attribute name="count" type="xs:int" default="1" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="this">
+        <xs:complexType />
+      </xs:element>
+      <xs:element name="orientation">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="rot" type="rotation" />
+          <xs:attribute name="exact" type="xs:boolean" use="optional" default="false" />
+          <xs:attribute name="negate" type="xs:boolean" use="optional" default="false" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="faceup">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="facedown">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="highlighted">
+        <xs:complexType>
+          <xs:group ref="cardFilter" />
+          <xs:attribute name="color" type="xs:string" use="optional" default="any" />
+        </xs:complexType>
+      </xs:element>
+		</xs:choice>
+	</xs:group>
+</xs:schema>

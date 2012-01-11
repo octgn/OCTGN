@@ -1,0 +1,291 @@
+#summary The Python API documentation.
+
+<h1>Python API</h1>
+<h2>Important Guidelines</h2>
+
+The Python scripts do not enforce controlship on the object they manipulate. It is not safe to change the state of cards or groups you don't control, even though the script would let you do that. The only functions that are safe to use on elements you don't control are target, highlight, counters and markers manipulations. Of course you can read the state of any element.
+
+So be very careful to always filter the cards you touch. DO NOT use `(c for c in table)`; DO use `(c for c in table if c.controller == me)`.
+
+In general you want to use OCTGN-provided `rnd(min, max)` function to randomly choose a number rather than Python's built-in functions. This is because `rnd()` is a distributed operation and other players can check that you don't cheat when choosing the number.
+
+Avoid keeping references to cards in the game. Remember that between script executions, or even during asynchronous operations such as `shuffle()` or `rnd()` the game state may change and cards may be destroyed, moved, and so on. Not following this guideline may lead to your script crashing.
+
+<h2 class="headline2">Tip: how to select cards</h2>
+Python has nice comprehensions to select objects. Here's a way to get all Land cards you control on the table:
+<code>
+cards = (card for card in table
+if card.controller == me
+  and re.search(r'\bLand\b', card.type))</code>
+
+<h3>re</h3>
+re is the Regular Expression engine built-into Python, which is very useful to perform text matching. You need to import it first:
+<code>import re</code>
+The expression below checks whether the word 'Land' (\b are marking word boundaries in a RegExp) appears into card.type.
+<code>re.search(r'\bLand\b', card.type)</code>
+<h1>Global functions</h1>
+<h3>mute()</h3>
+Stops OCTGN from automatically logging messages. This only applies to the context of the executed action and OCTGN is automatically "unmuted" when it ends.
+
+If you want to "unmute" during the execution of the action
+<code>mute()</code>
+returns a context manager usable in `with` statement:
+<code>
+with mute()
+  pass # Here OCTGN is muted
+pass # Here it isn't</code>
+
+<h3>notify(message)</h3>
+Writes `message` in the chat log.
+
+If you use the built-in `format` function to create your message, Players are automatically replaced by their nicknames and Cards are replaced by their name, in a "hoverable" way.
+<code>notify("{} plays {}".format(me, card))</code>
+<h3>whisper(message)</h3>
+Writes `message` in the chat log of the local player only. See also `notify`.
+
+<h3>rnd(min, max)</h3>
+Returns a random number between `min` and `max` inclusive.
+
+This method is generally better than Python's built-in functions because it is distributed. Other players can check that you don't cheat while choosing the number.
+
+<h3>webRead(url)</h3>
+Returns the contents of a web page at the specified `url`.
+
+The purpose is for script developers to call a text file on a webpage with the latest version of the script, so they can tell the user there is a new script available.
+
+There are other uses for this, but this is why it was created.
+	 
+<h3>confirm(message)</h3>
+Asks the user a confirmation, displaying `message` in a dialog box.
+
+Returns `True` if the user answers Yes, `False` otherwise.
+
+<h3>askInteger(question, defaultAnswer)</h3>
+Shows a dialog box with `question` and `defaultAnswer`. The user must provide a positive integer.
+
+Returns the provided integer, or `None` if the user doesn't answer the question.
+<code>
+count = askInteger("Draw how many cards?", 7)
+if count == None: return
+for c in me.library.top(count): c.moveTo(me.hand)</code>
+
+<h3>askMarker()</h3>
+Shows a dialog box so that the user can choose a marker type and quantity.
+
+Returns a couple (marker, quantity) or `(None, 0)` if the user doesn't choose any marker.=
+<code>
+marker, qty = askMarker()
+if qty == 0: return
+card[marker] += qty</code>
+
+<h3>askCard(restriction = None)</h3>
+Shows a dialog so that the user can choose a card type and quantity.
+
+`restriction` limits the choice of cards available. Valid syntax is "[property name]", "'string constants'", "numbers", common operators " +, -, `*`, /, <, <=, >, >=, <>, = " and logic operators "and, or, not".
+
+Returns a couple (card, quantity) or `(None, 0)` if the user doesn't choose any card.
+<code>
+card, quantity = askCard("[Rarity] = 'Token'")
+if quantity == 0: return
+table.create(card, x, y, quantity)</code>
+
+<h3>me</h3>
+`Player` variable representing the local player. You should not overwrite its value.<
+
+<h3>table</h3>
+`Table` variable representing the table. You should not overwrite its value.
+
+<h3>players[]</h3>
+An array of type `Player` representing an unordered list of all players in the game.
+
+<h3>version</h3>
+Returns the current version of OCTGN
+
+<h3>gameVersion</h3>
+Returns the current version of the game definition.
+
+<h1>Player class</h1>
+The `Player` class provides dynamic properties to easily access game-defined piles and counters, e.g. `me.library` or `me.life`.
+
+Those dynamic properties are case-insensitive. If the pile or counter name can't be used that way (i.e. it contains some invalid symbol such as a dot or a space), use the long syntax instead: <code>me.piles["Exiled Zone"]</code> or <code>me.counters["Victory Points"] </code>.
+Note that the `hand` is a regular property, hence it IS case-sensitive. Always use: `me.hand`.
+
+<h3>name</h3>
+Read-only; nickname of this player.
+
+<h3>color</h3>
+Read-only; a string representing the color assigned to the `player`.  Returns a color formated in html notation: #000000.
+ 
+<h3>hand</h3>
+Read-only; instance of `Hand`, or `None` if this game doesn't use hands.
+
+<h3>counters</h3>
+Read-only; dictionnary containing this player's counters. Keys are names (case-insensitive); Values are Counter object, that have two properties: `name` and `value` (settable).
+
+If the counter name is a valid Python identifier, its value can be accessed directly from the Player object.
+  <code>
+me.life = 10
+me.counters['Poison'].value += 1</code>
+
+<h3>piles</h3>
+Read-only; dictionnary containing this player's piles. Keys are names (case-insensitive); Values are `Pile` instances.
+
+<h3>hasInverteTable</h3>
+Read-only; a boolean value determining if the player has an inverted table.
+
+<h1>Group classes (all Table, Hand and Pile)</h1>
+`Group` classes behave like read-only collections. You can count the number of cards `len(table)`, access a specific card `me.library[3]`, take a slice `me.hand[2:5]` or iterate them `for c in table`.
+
+Note that you can't modify this collection directly, use `card.moveTo()` and `card.moveToTable` instead.
+
+<h3>name</h3>
+Read-only; the name of this group.
+
+<h3>player</h3>
+Read-only; the owner of this group.
+
+<h3>random()</h3>
+Returns a random card inside the group, or `None` if the group is empty.
+
+<h1>Table class</h1>
+<h3>create(model, x, y, quantity = 1, persist = False)</h3>
+Creates `quantity` new cards on the table, at position `(x, y)`.
+
+If `persist` is `False`, the cards are destroyed when they leave the table.
+
+Each card created is of type given by `model`, which is a guid (as string). You can either pass a constant, or ask the user to choose such a guid by using `askCard()`.
+
+This method returns the newly created cards for further manipulation by the script. If quantity is 1 the card is directly returned. Otherwise 
+
+<h3>offset(x,y)</h3>
+Returns a new couple `(x,y)` slightly offset with respect to the `(x,y)` input position.
+
+This method does a non-trivial work as it takes into account whether the table is two-sided, if `y` is in the inverted zone and the size of the cards.
+
+<h3>isTwoSided()</h3>
+Returns `true` if the table is two-sided.
+
+<h3>isInverted(y)</h3>
+Returns `true` if the table is inverted at the y coordinated specified.
+
+<h1>Hand class</h1>
+`Hand` doesn't add anything to `Group`
+
+<h1>Pile class</h1>
+<h3>top(count = None)</h3>
+If `count` is `None` returns the top card of the pile, or `None` if the pile is empty. Otherwise returns an array with the top `count` cards (as much as possible).
+<code>
+me.library.top().moveTo(me.hand)
+for c in me.library.top(10): c.moveTo(me.graveyard)</code>
+
+<h3>bottom(count = None)</h3>
+If `count` is `None` returns the bottom card of the pile, or `None` if the pile is empty. Otherwise returns an array with the bottom `count` cards (as much as possible).
+
+See `top` for examples.
+
+<h3>shuffle()</h3>
+Securely shuffles the pile.
+
+<h1>Card class</h1>
+The `Card` class provides dynamic properties to easily access game-defined properties, e.g. `card.type` or `card.power`.
+
+Those dynamic properties are case-insensitive. If the property name can't be used that way (i.e. it contains some invalid symbol such as a dot or a space), use the long syntax instead: <code>card.properties["White Magic"]</code>.
+
+<h3>model</h3>
+Read-only; returns the GUID (as a string) of the card type.
+
+<h3>name</h3>
+Read-only; returns the name of the card.
+
+<h3>properties</h3>
+Read-only; dictionnary of custom properties as defined by the game. Keys are property names (case-insensitive); Values are actual properties values.
+  <code>card.properties["White Magic"]</code>
+
+<h3>owner</h3>
+Read-only; player who owns that card.
+
+<h3>controller</h3>
+Read-only; player who currently controls that card.
+
+<h3>group</h3>
+Read-only; the group this card is currently in. Note: use `moveTo()` or `moveToTable` to change group.
+
+<h3>isFaceUp</h3>
+`True` if the card is face up, `False` otherwise.
+
+You can also change the card to be face up or face down.
+  <code>card.isFaceUp = not card.isFaceUp # Toggle the card face up / down</code>
+
+<h3>isAlternateImage()</h3>
+Returns `true` if the alternate image is being displayed.
+
+<h3>switchImage()</h3>
+Swaps between the normal and alternate images of the card.
+
+<h3>orientation</h3>
+Read or write the orientation of the card.
+
+One of the four constants `Rot0`, `Rot90`, `Rot180` and `Rot270` can be used. Note that those constants combine: `Rot270 = Rot180 | Rot90`.
+<code>
+card.orientation = Rot90 # Set orientation
+card.orientation ^= Rot90 # Toggle
+card.orientation |= Rot180 # Flip card
+card.orientation &amp;= ~Rot180 # Unflip card</code>
+
+<h3>highlight</h3>
+Read or write a color in format "#rrggbb" (hex) which is used to highlight the card, or `None`.
+
+It is advised to declare constants to ease using this property.
+<code>
+AttackColor = "#ff0000" # Red
+card.highlight = AttackColor</code>
+
+<h3>position</h3>
+Read-only; couple (x, y) indicating the card's position on table. Use `moveToTable(x,y)` to move the card.
+
+<h3>sendToBack()</h3>
+Only works on `table`. Sends the card behind all other cards on the table.
+
+<h3>sendToFront()</h3>
+Only works on `table`. Sends the card on top of all other cards on the table.
+
+<h3>getIndex()</h3>
+Gets the index of the card in the pile or group.  `index` is an integer value >=0.  NOTE: This can change after getting the index if a card is moved, added or removed from the table in any fashion.
+
+<h3>setIndex(index)</h3>
+Only works on `table`. Moves the card to index `index`.  Index is the z coordinate of the card, or how far from the top the card is located.  0 is the bottom of all cards.
+
+<h3>markers</h3>
+Read-only; dictionnary containing all markers set on the card. Keys are couple `(name, guid)`; Values are quantity (can be set)
+
+To create a key you can either use `askMarker()` or create a constant.
+<code>
+ChargeMarker = ("Charge", "fabd2965-929e-4ee9-b69c-e278e3cd4098")
+card.markers[ChargeMarker] += 1</code>
+
+<h3>moveTo(group, index = None)</h3>
+Move the card to `group` or change index inside `group`.
+
+If `index` is `None` the card is moved to the top of piles, and to the end of hands.
+
+<h3>moveToBottom(pile)</h3>
+Move the card to the bottom of `pile`.
+
+<h3>moveToTable(x, y, faceDown = False)</h3>
+Move the card to / on the table at position `(x, y)`.
+`faceDown` can be used to move a card to the table face down.
+
+<h3>select()</h3>
+Adds the card to current selection.
+
+<h3>target(active = True)</h3>
+Targets the card. If `active` is `False` remove all targets from the card.
+
+<h3>targetedBy</h3>
+This read-only property contains the player targeting this card, or None if the card is not targeted.
+
+<h3>width()</h3>
+Static method; returns the card width as defined by the game.
+
+<h3>height()</h3>
+Static method; returns the card height as defined by the game.
