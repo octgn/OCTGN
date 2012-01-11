@@ -108,6 +108,7 @@ namespace Skylabs.LobbyServer
         {
             if (HostedGameDone != null)
                 HostedGameDone(this, e);
+            Console.WriteLine("Ending Game[" + Port + "]");
         }
         /// <summary>
         /// Just an equality verifier. 
