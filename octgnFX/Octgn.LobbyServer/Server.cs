@@ -19,7 +19,7 @@ namespace Skylabs.LobbyServer
 
         public static TcpListener ListenSocket { get; private set; }
 
-        private static ThreadSafeList<Client> Clients { get; set; }
+        private static List<Client> Clients { get; set; }
 
         private static int _nextId = 0;
 
@@ -52,7 +52,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         static Server()
         {
-            Clients = new ThreadSafeList<Client>();
+            Clients = new List<Client>();
         }
         /// <summary>
         /// Start listening for connections
@@ -88,12 +88,12 @@ namespace Skylabs.LobbyServer
         /// <returns>Current online client, or Null if ones not found(I think)</returns>
         public static Client GetOnlineClientByEmail(string email)
         {
-
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Console.WriteLine("LOCK(GetOnlineClientByEmail)ClientLocker");
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name,"ClientLocker");
                 Client ret =  Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Email.ToLower().Equals(email.ToLower()));
-                Console.WriteLine("UNLOCK(GetOnlineClientByEmail)ClientLocker");
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return ret;
             }
             
@@ -105,31 +105,31 @@ namespace Skylabs.LobbyServer
         /// <returns>Current online Client, or Null if ones not found.</returns>
         public static Client GetOnlineClientByUid(int uid)
         {
-            
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Console.WriteLine("LOCK(GetOnlineClientByUid)ClientLocker");
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 Client ret = Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Uid == uid);
-                Console.WriteLine("UNLOCK(GetOnlineClientByUid)ClientLocker");
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return ret;
             }
             
         }
         public static UserStatus GetOnlineUserStatus(int uid)
         {
-            
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock(ClientLocker)
             {
-                Console.WriteLine("LOCK(GetOnlineUserStatus)ClientLocker");
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 foreach(Client c in Clients)
                 {
                     if (c.LoggedIn == true && c.Me.Uid == uid)
                     {
-                        Console.WriteLine("UNLOCK(GetOnlineUserStatus)ClientLocker");
+                        LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                         return c.Me.Status;
                     }
                 }
-                Console.WriteLine("UNLOCK(GetOnlineUserStatus)ClientLocker");
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return UserStatus.Offline;
             }
         }
@@ -151,10 +151,10 @@ namespace Skylabs.LobbyServer
         /// <param name="Supress">Should we supress a broadcast message</param>
         public static void OnUserEvent(UserStatus e, Client client, bool Supress)
         {
-            
-            //lock (ClientLocker)
-            //{
-                //Console.WriteLine("LOCK(OnUserEvent)ClientLocker");
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+            lock (ClientLocker)
+            {
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 User me = (User) client.Me;
                 if (e == UserStatus.Offline)
                 {
@@ -168,16 +168,19 @@ namespace Skylabs.LobbyServer
                             break;
                         }
                     }
-                    if(foundOne)
+                    if (!foundOne)
+                    {
+
                         Chatting.UserOffline(me);
+                    }
                 }
                 if (!Supress)
                 {
                     foreach (Client c in Clients)
                         c.OnUserEvent(e, me);
                 }
-                //Console.WriteLine("UNLOCK(OnUserEvent)ClientLocker");
-            //}
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+            }
         }
 
         private static void AcceptClients()
@@ -190,15 +193,16 @@ namespace Skylabs.LobbyServer
         /// <param name="sm">Message to send.</param>
         public static void AllUserMessage(SocketMessage sm)
         {
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Console.WriteLine("LOCK(AllUserMessage)ClientLocker");
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 foreach (Client c in Clients)
                 {
                     if (c.LoggedIn)
                         c.WriteMessage(sm);
                 }
-                Console.WriteLine("UNLOCK(AllUserMessage)ClientLocker");
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
         }
         /// <summary>
@@ -208,9 +212,10 @@ namespace Skylabs.LobbyServer
         /// <returns>Tupple, where value1=number of users with UID who are logged in, and value2=Number of clients removed.</returns>
         public static Tuple<int,int> StopAndRemoveAllByUID(int uid)
         {
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock(ClientLocker)
             {
-                Console.WriteLine("LOCK(StopAndRemoveAllByUID)ClientLocker");
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 int loggedInCount = 0;
                 int removedCount = 0;
                 List<Client> rlist = new List<Client>();
@@ -237,15 +242,16 @@ namespace Skylabs.LobbyServer
                 {
 
                 }
-                Console.WriteLine("UNLOCK(StopAndRemoveAllByUID)ClientLocker");
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return new Tuple<int, int>(loggedInCount,removedCount);
             }
         }
         private static void AcceptReceiveDataCallback(IAsyncResult ar)
         {
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Console.WriteLine("LOCK(AcceptReceiveDataCallback)ClientLocker");
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 // Get the socket that handles the client request.
                 TcpListener listener = (TcpListener) ar.AsyncState;
                 try
@@ -258,7 +264,7 @@ namespace Skylabs.LobbyServer
                 {
                     Console.WriteLine("AcceptReceiveDataCallback: ObjectDisposedException");
                 }
-                Console.WriteLine("UNLOCK(AcceptReceiveDataCallback)ClientLocker");
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
         }
     }
