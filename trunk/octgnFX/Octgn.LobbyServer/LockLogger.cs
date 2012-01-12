@@ -23,21 +23,21 @@ namespace Skylabs.LobbyServer
         }
         public static void TL(string MethodName, string LockObjectName)
         {
-            Console.WriteLine(String.Format("{2}[tryLock({3},{0})]{1}",LockObjectName,MethodName,tab,Thread.CurrentThread.ManagedThreadId));
+            Console.WriteLine(String.Format("{2}[{4}][tryLock({3},{0})]{1}",LockObjectName,MethodName,tab,Thread.CurrentThread.ManagedThreadId));
         }
         public static void L(string MethodName, string LockObjectName)
         {
-            Console.WriteLine(String.Format("{2}[inLock({3},{0})]{1}",LockObjectName,MethodName,tab,Thread.CurrentThread.ManagedThreadId));
+            Console.WriteLine(String.Format("{2}[{4}][inLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId,DateTime.Now.ToShortDateString()));
             curIndent++;
         }
         public static void UL(string MethodName, string LockObjectName)
         {
-            Console.WriteLine(String.Format("{2}[unLock({3},{0})]{1}",LockObjectName,MethodName,tab,Thread.CurrentThread.ManagedThreadId));
             curIndent--;
+            Console.WriteLine(String.Format("{2}[{4}][unLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId,DateTime.Now.ToShortDateString()));
         }
         public static void E(string MethodName, string LockObjectName, string e)
         {
-                Console.WriteLine(String.Format("{2}[Lockevent({3},{0})]{1}:{4}",LockObjectName,MethodName,tab,Thread.CurrentThread.ManagedThreadId,e));
+                Console.WriteLine(String.Format("{2}[{5}][Lockevent({3},{0})]{1}:{4}",LockObjectName,MethodName,tab,Thread.CurrentThread.ManagedThreadId,e,DateTime.Now.ToShortDateString()));
         }
     }
 }

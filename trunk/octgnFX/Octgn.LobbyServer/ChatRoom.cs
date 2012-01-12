@@ -134,7 +134,7 @@ namespace Skylabs.LobbyServer
             sm.AddData("roomid", ID);
             sm.AddData("mess", message);
             sm.AddData("user", u);
-            SendAllUsersMessage(sm,true);
+            SendAllUsersMessage(sm,false);
         }
         /// <summary>
         /// Compare this ChatRoom to the other room.
