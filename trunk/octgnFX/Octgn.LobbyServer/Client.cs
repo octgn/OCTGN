@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using Skylabs.Lobby;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
+using System.Threading;
 
 namespace Skylabs.LobbyServer
 {
@@ -231,7 +232,11 @@ namespace Skylabs.LobbyServer
         /// <param name="reason">Reason for the disconnect</param>
         public override void OnDisconnect(DisconnectReason reason)
         {
-            if (LoggedIn) Server.OnUserEvent(UserStatus.Offline, this, _SupressSendOfflineStatus);
+            if (LoggedIn)
+            {
+                Thread t = new Thread(new ThreadStart(new Action(() => { Server.OnUserEvent(UserStatus.Offline, this, _SupressSendOfflineStatus); })));
+                t.Start();
+            }
         }
         /// <summary>
         /// Accept a friend request. Handles the socket message data.

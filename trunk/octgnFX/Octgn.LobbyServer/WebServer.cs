@@ -6,6 +6,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Skylabs.LobbyServer
 {
@@ -93,8 +94,15 @@ namespace Skylabs.LobbyServer
         {
             string ret = rawpage;
             Version v = Assembly.GetCallingAssembly().GetName().Version;
+            Microsoft.VisualBasic.Devices.ComputerInfo ci = new Microsoft.VisualBasic.Devices.ComputerInfo();
             ret = rawpage.Replace("$version", v.ToString());
             ret = ret.Replace("$runtime", Server.ServerRunTime.ToString());
+            ret = ret.Replace("$onlineusers", Server.OnlineCount().ToString());
+            ret = ret.Replace("$hostedgames", Gaming.GameCount().ToString());
+            ret = ret.Replace("$totalhostedgames", Gaming.TotalHostedGames().ToString());
+            ret = ret.Replace("$proctime", Process.GetCurrentProcess().TotalProcessorTime.ToString());
+            ret = ret.Replace("$memusage", ToFileSize(Process.GetCurrentProcess().WorkingSet64));
+            ret = ret.Replace("$totmem", ToFileSize((long)ci.TotalPhysicalMemory));
             return ret;
         }
         private void SendItem(HttpListenerResponse res,string page)
@@ -105,6 +113,33 @@ namespace Skylabs.LobbyServer
             {
                 o.Write(buffer, 0, buffer.Length);
                 o.Close();
+            }
+        }
+        public static string ToFileSize(int source)
+        {
+            return ToFileSize(Convert.ToInt64(source));
+        }
+
+        public static string ToFileSize(long source)
+        {
+            const int byteConversion = 1024;
+            double bytes = Convert.ToDouble(source);
+
+            if (bytes >= Math.Pow(byteConversion, 3)) //GB Range
+            {
+                return string.Concat(Math.Round(bytes / Math.Pow(byteConversion, 3), 2), " GB");
+            }
+            else if (bytes >= Math.Pow(byteConversion, 2)) //MB Range
+            {
+                return string.Concat(Math.Round(bytes / Math.Pow(byteConversion, 2), 2), " MB");
+            }
+            else if (bytes >= byteConversion) //KB Range
+            {
+                return string.Concat(Math.Round(bytes / byteConversion, 2), " KB");
+            }
+            else //Bytes
+            {
+                return string.Concat(bytes, " Bytes");
             }
         }
     }

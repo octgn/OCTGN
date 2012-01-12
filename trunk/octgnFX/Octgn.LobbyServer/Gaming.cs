@@ -16,9 +16,33 @@ namespace Skylabs.LobbyServer
 
         private static int _currentHostPort = 5000;
 
+        private static long _totalHostedGames = 0;
+
         static Gaming()
         {
             Games = new Dictionary<int, HostedGame>();
+        }
+        public static int GameCount()
+        {
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            lock (GamingLocker)
+            {
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                int ret = Games.Count;
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                return ret;
+            }
+        }
+        public static long TotalHostedGames()
+        {
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            lock (GamingLocker)
+            {
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                long ret = _totalHostedGames;
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                return ret;
+            }
         }
         public static int HostGame(Guid g,Version v, string name,string pass,User u)
         {
@@ -38,6 +62,7 @@ namespace Skylabs.LobbyServer
                 if (hs.StartProcess())
                 {
                     Games.Add(_currentHostPort, hs);
+                    _totalHostedGames++;
                     LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                     return _currentHostPort;
                 }
