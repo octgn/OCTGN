@@ -23,7 +23,7 @@ namespace Skylabs.LobbyServer
         }
         public static void TL(string MethodName, string LockObjectName)
         {
-            Console.WriteLine(String.Format("{2}[{4}][tryLock({3},{0})]{1}",LockObjectName,MethodName,tab,Thread.CurrentThread.ManagedThreadId));
+            Console.WriteLine(String.Format("{2}[{4}][tryLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, DateTime.Now.ToShortDateString()));
         }
         public static void L(string MethodName, string LockObjectName)
         {

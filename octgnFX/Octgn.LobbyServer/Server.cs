@@ -115,6 +115,17 @@ namespace Skylabs.LobbyServer
             }
             
         }
+        public static int OnlineCount()
+        {
+            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+            lock (ClientLocker)
+            {
+                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+                int ret = Clients.Count(c => c.LoggedIn == true);
+                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+                return ret;
+            }
+        }
         public static UserStatus GetOnlineUserStatus(int uid)
         {
             LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
