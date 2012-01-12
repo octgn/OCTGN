@@ -129,7 +129,7 @@ namespace Octgn.DeckBuilder
 
 		private void NewDeckCommand(object sender, ExecutedRoutedEventArgs e)
 		{
-			e.Handled = true;			
+			e.Handled = true;
 			if (Game == null)
 			{
 				if (Program.GamesRepository.Games.Count == 1)
@@ -146,6 +146,21 @@ namespace Octgn.DeckBuilder
 
 		private void NewClicked(object sender, RoutedEventArgs e)
 		{
+            //Magnus: First Commit!
+            if (unsaved)
+            {
+                var result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        Save();
+                        break;
+                    case MessageBoxResult.No:
+                        break;
+                    default:
+                        return;
+                }
+            }
 			Game = (Data.Game)((MenuItem)e.OriginalSource).DataContext;
 			CommandManager.InvalidateRequerySuggested();
 			Deck = new Deck(Game);
