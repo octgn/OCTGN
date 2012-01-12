@@ -182,7 +182,7 @@ namespace Skylabs.LobbyServer
                     }
                     if (!foundOne)
                     {
-                        Thread t = new Thread(()=> Chatting.UserOffline(me));
+                        Thread t = new Thread(() => { Chatting.UserOffline((User)me.Clone()); });
                         t.Start();
                     }
                 }
