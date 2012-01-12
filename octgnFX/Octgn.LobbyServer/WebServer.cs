@@ -94,7 +94,7 @@ namespace Skylabs.LobbyServer
         {
             string ret = rawpage;
             Version v = Assembly.GetCallingAssembly().GetName().Version;
-            Microsoft.VisualBasic.Devices.ComputerInfo ci = new Microsoft.VisualBasic.Devices.ComputerInfo();
+            //Microsoft.VisualBasic.Devices.ComputerInfo ci = new Microsoft.VisualBasic.Devices.ComputerInfo();
             ret = rawpage.Replace("$version", v.ToString());
             ret = ret.Replace("$runtime", Server.ServerRunTime.ToString());
             ret = ret.Replace("$onlineusers", Server.OnlineCount().ToString());
@@ -102,7 +102,7 @@ namespace Skylabs.LobbyServer
             ret = ret.Replace("$totalhostedgames", Gaming.TotalHostedGames().ToString());
             ret = ret.Replace("$proctime", Process.GetCurrentProcess().TotalProcessorTime.ToString());
             ret = ret.Replace("$memusage", ToFileSize(Process.GetCurrentProcess().WorkingSet64));
-            ret = ret.Replace("$totmem", ToFileSize((long)ci.TotalPhysicalMemory));
+            ret = ret.Replace("$totmem", "2 GB");
             return ret;
         }
         private void SendItem(HttpListenerResponse res,string page)

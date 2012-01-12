@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Threading;
 using Skylabs.Lobby;
 using Skylabs.Net;
 
@@ -181,8 +182,8 @@ namespace Skylabs.LobbyServer
                     }
                     if (!foundOne)
                     {
-
-                        Chatting.UserOffline(me);
+                        Thread t = new Thread(()=> Chatting.UserOffline(me));
+                        t.Start();
                     }
                 }
                 if (!Supress)
