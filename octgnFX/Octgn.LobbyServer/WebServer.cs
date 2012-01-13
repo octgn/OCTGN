@@ -102,7 +102,7 @@ namespace Skylabs.LobbyServer
             ret = ret.Replace("$totalhostedgames", Gaming.TotalHostedGames().ToString());
             ret = ret.Replace("$proctime", Process.GetCurrentProcess().TotalProcessorTime.ToString());
             ret = ret.Replace("$memusage", ToFileSize(Process.GetCurrentProcess().WorkingSet64));
-            ret = ret.Replace("$totmem", "2 GB");
+            ret = ret.Replace("$totmem", "256 MB");
             return ret;
         }
         private void SendItem(HttpListenerResponse res,string page)

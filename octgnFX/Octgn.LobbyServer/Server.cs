@@ -206,16 +206,19 @@ namespace Skylabs.LobbyServer
         public static void AllUserMessage(SocketMessage sm)
         {
             LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+            List<Client> templist = new List<Client>();
             lock (ClientLocker)
             {
                 LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 foreach (Client c in Clients)
                 {
                     if (c.LoggedIn)
-                        c.WriteMessage(sm);
+                        templist.Add(c);
                 }
                 LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
+            foreach(Client c in templist)
+                c.WriteMessage(sm);
         }
         /// <summary>
         /// Stops and removes all clients based on a uid.
