@@ -200,6 +200,9 @@
     <Content Include="webserver\css\main.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="webserver\games.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="webserver\index.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

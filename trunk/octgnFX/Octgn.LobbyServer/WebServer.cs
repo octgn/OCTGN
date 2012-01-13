@@ -71,6 +71,13 @@ namespace Skylabs.LobbyServer
                             SendItem(con.Response, spage);
                             break;
                         }
+                    case "games.htm":
+                        {
+                            var spage = File.ReadAllText("webserver/games.htm");
+                            spage = InsertRunningGames(spage);
+                            SendItem(con.Response, spage);
+                            break;
+                        }
                     default:
                         {
                             var spage = "";
@@ -105,6 +112,42 @@ namespace Skylabs.LobbyServer
             ret = ret.Replace("$totmem", "256 MB");
             return ret;
         }
+
+        private string InsertRunningGames(string rawpage)
+        {
+            string insert = string.Empty;
+            List<Lobby.HostedGame> games = Gaming.GetLobbyList();
+
+            Version v = Assembly.GetCallingAssembly().GetName().Version;
+            string ret = rawpage.Replace("$version", v.ToString());
+            ret = ret.Replace("$runtime", Server.ServerRunTime.ToString());
+            ret = ret.Replace("$proctime", Process.GetCurrentProcess().TotalProcessorTime.ToString());
+            ret = ret.Replace("$memusage", ToFileSize(Process.GetCurrentProcess().WorkingSet64));
+            ret = ret.Replace("$totmem", "256 MB");
+
+            //construct game table
+            foreach (Lobby.HostedGame game in games)
+            {
+                insert = insert + "<tr>";
+                insert = insert + "<td>" + game.Name + "</td>";
+                insert = insert + "<td>" + game.Port + "</td>";
+                insert = insert + "<td>" + game.GameStatus + "</td>";
+                insert = insert + "<td>" + game.GameVersion + "</td>";
+
+                Lobby.User user = game.UserHosting;
+
+                insert = insert + "<td>Name: " + user.DisplayName + "<br />";
+                insert = insert + "Status: " + Enum.GetName(typeof(Lobby.UserStatus), user.Status) + "<br />";
+                insert = insert + "Email: " + user.Email + "<br />";
+                insert = insert + "Uid: " + user.Uid + "</td>";
+
+                insert = insert + "</tr>";
+            }
+
+            ret = ret.Replace("$hostedgames", insert);
+            return (ret);
+        }
+
         private void SendItem(HttpListenerResponse res,string page)
         {
             byte[] buffer = Encoding.UTF8.GetBytes(page);

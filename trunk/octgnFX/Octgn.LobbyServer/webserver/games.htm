@@ -1,0 +1,36 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+		<title>Lobby Server - Running games</title>
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+	</head>
+	<body>
+	    <div id="header">
+            <h2>Lobby Server - Version $version</h2>
+            <br />
+            <a>Runtime - $runtime</a>
+            <div id="right">
+                <a><pre>Processor Time     : $proctime</pre></a>
+                <a><pre>Memory Usage       : $memusage</pre></a>
+                <a><pre>Total Memory       : $totmem</pre></a>
+            </div>
+        </div>
+        <a href="/">Back to main</a>
+        <br />
+        <table cellspacing=8px border=0>
+            <tr>
+                <td>Name:
+                </td>
+                <td>Port:
+                </td>
+                <td>Status:
+                </td>
+                <td>Version:
+                </td>
+                <td>Hosting user:
+                </td>
+            </tr>
+            $hostedgames
+        </table>
+	</body>
+</html>
