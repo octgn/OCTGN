@@ -408,7 +408,7 @@ namespace Skylabs.LobbyServer
                 if (email != null && token != null)
                 {
                     User u = Cup.GetUser(email);
-                    string[] emailparts = email.Split("@");
+                    string[] emailparts = email.Split('@');
                     if (u == null)
                     {
                         if (!Cup.RegisterUser(email, emailparts[0]))
