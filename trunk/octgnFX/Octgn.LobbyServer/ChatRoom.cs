@@ -108,7 +108,8 @@ namespace Skylabs.LobbyServer
                     foreach (User u in Users)
                     {
                         Client c = Server.GetOnlineClientByUid(u.Uid);
-                        c.WriteMessage(sm);
+                        if(c != null)
+                            c.WriteMessage(sm);
                     }
                 }
                 LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
@@ -118,7 +119,8 @@ namespace Skylabs.LobbyServer
                 foreach (User u in Users)
                 {
                     Client c = Server.GetOnlineClientByUid(u.Uid);
-                    c.WriteMessage(sm);
+                    if (c != null)
+                        c.WriteMessage(sm);
                 }
             }
         }
