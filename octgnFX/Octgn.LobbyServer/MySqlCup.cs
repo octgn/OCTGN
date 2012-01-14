@@ -50,15 +50,24 @@ namespace Skylabs.LobbyServer
         {
             if(uid <= -1)
                 return -1;
+            if (c == null)
+                return -1;
             int ret = -1;
             try
             {
                 using(MySqlConnection con = new MySqlConnection(ConnectionString))
                 {
                     con.Open();
-                    String ip = c.Sock.Client.RemoteEndPoint.ToString();
+                    String ip = c.RemoteEndPoint.ToString();
                     MySqlCommand cmd = con.CreateCommand();
-                    ip = ip.Substring(0, ip.IndexOf(':'));
+                    try
+                    {
+                        ip = ip.Substring(0, ip.IndexOf(':'));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(ip);
+                    }
 
                     cmd.CommandText = "SELECT * FROM bans WHERE uid=@uid OR ip=@ip;";
                     cmd.Prepare();

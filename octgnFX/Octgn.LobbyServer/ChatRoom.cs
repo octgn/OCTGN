@@ -39,10 +39,10 @@ namespace Skylabs.LobbyServer
         /// <returns>Returns true on success, or false if there was an explosion</returns>
         public bool AddUser(User u)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             lock (UserLocker)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                 if (!Users.Exists(us => us.Uid == u.Uid))
                 {
                     if (Server.GetOnlineClientByUid(u.Uid) != null)
@@ -53,22 +53,22 @@ namespace Skylabs.LobbyServer
                         sm.AddData("user", u);
                         sm.AddData("allusers", Users);
                         SendAllUsersMessage(sm,false);
-                        LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                        Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                         return true;
                     }
                 }
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                 return false;
             }
         }
         public User[] GetUserList()
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             lock(UserLocker)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                 User[] ret =  Users.ToArray();
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                 return ret;
             }
         }
@@ -78,10 +78,10 @@ namespace Skylabs.LobbyServer
         /// <param name="u">The user.</param>
         public void UserExit(User u)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             lock (UserLocker)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                 if (Users.Exists(us => us.Uid == u.Uid))
                 {
                     Users.Remove(u);
@@ -90,7 +90,7 @@ namespace Skylabs.LobbyServer
                     sm.AddData("user", u);
                     SendAllUsersMessage(sm,false);
                 }
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             }
         }
         /// <summary>
@@ -101,10 +101,10 @@ namespace Skylabs.LobbyServer
         {
             if (Lock)
             {
-                LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                 lock(UserLocker)
                 {
-                    LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                    Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                     foreach (User u in Users)
                     {
                         Client c = Server.GetOnlineClientByUid(u.Uid);
@@ -112,7 +112,7 @@ namespace Skylabs.LobbyServer
                             c.WriteMessage(sm);
                     }
                 }
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             }
             else
             {

@@ -24,32 +24,32 @@ namespace Skylabs.LobbyServer
         }
         public static int GameCount()
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             lock (GamingLocker)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 int ret = Games.Count;
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 return ret;
             }
         }
         public static long TotalHostedGames()
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             lock (GamingLocker)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 long ret = _totalHostedGames;
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 return ret;
             }
         }
         public static int HostGame(Guid g,Version v, string name,string pass,User u)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             lock(GamingLocker)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 while (Games.ContainsKey(_currentHostPort) || !Networking.IsPortAvailable(_currentHostPort))
                 {
                     _currentHostPort++;
@@ -63,24 +63,24 @@ namespace Skylabs.LobbyServer
                 {
                     Games.Add(_currentHostPort, hs);
                     _totalHostedGames++;
-                    LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                    Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                     return _currentHostPort;
                 }
                 else
                 {
-                    LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                    Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                     hs.HostedGameDone -= HostedGameExited;
                     return -1;
                 }
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             }
         }
         public static void StartGame(int port)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             lock(GamingLocker)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 try
                 {
                     Games[port].Status = Lobby.HostedGame.eHostedGame.GameInProgress;
@@ -89,15 +89,15 @@ namespace Skylabs.LobbyServer
                 {
 
                 }
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             }
         }
         public static List<Skylabs.Lobby.HostedGame> GetLobbyList()
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             lock(GamingLocker)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 List<Lobby.HostedGame> sendgames = new List<Lobby.HostedGame>();
                 foreach(KeyValuePair<int,HostedGame> g in Games)
                 {
@@ -108,16 +108,16 @@ namespace Skylabs.LobbyServer
                     newhg.GameStatus = g.Value.Status;
                     sendgames.Add(newhg);
                 }
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 return sendgames;
             }
         }
         private static void HostedGameExited(object sender,EventArgs e)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             lock (GamingLocker)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 HostedGame s = sender as HostedGame;
                 if (s != null)
                 {
@@ -127,7 +127,7 @@ namespace Skylabs.LobbyServer
                     Server.AllUserMessage(sm);
                     Games.Remove(s.Port);
                 }
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             }
         }
     }

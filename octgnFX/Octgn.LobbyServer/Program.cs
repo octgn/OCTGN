@@ -61,6 +61,7 @@ namespace Skylabs.LobbyServer
         {
             WebServer.Stop();
             ConsoleEventLog.SerializeEvents("log.xml");
+            Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -68,6 +69,7 @@ namespace Skylabs.LobbyServer
             Exception ex = (Exception)e.ExceptionObject;
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
+            Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
         }
 
         private static void ConsoleEventLogEAddEvent(ConsoleEvent e)

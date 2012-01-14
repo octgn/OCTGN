@@ -434,6 +434,8 @@ namespace Skylabs.LobbyServer
                     {
                         Tuple<int,int> res = Server.StopAndRemoveAllByUID(u.Uid);
                         Me = u;
+                        if (stat == UserStatus.Unknown || stat == UserStatus.Offline)
+                            stat = UserStatus.Online;
                         Me.Status = stat;
                         sm = new SocketMessage("loginsuccess");
                         sm.AddData("me", Me);

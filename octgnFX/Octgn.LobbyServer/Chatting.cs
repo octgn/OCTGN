@@ -25,10 +25,10 @@ namespace Skylabs.LobbyServer
         /// <param name="s">Socket message stuffed with data.</param>
         public static void JoinChatRoom(Client c, SocketMessage s)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 var rid = (long?)s["roomid"];
                 if (rid == null)
                     return;
@@ -42,7 +42,7 @@ namespace Skylabs.LobbyServer
                     else
                         MakeRoom(c);
                 }
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }
         }
         /// <summary>
@@ -55,22 +55,23 @@ namespace Skylabs.LobbyServer
             var user = (User)s["user"];
             if (user == null)
                 return;
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+            long id = -1;
             lock(Rooms)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 foreach (ChatRoom cr in Rooms)
                 {
                     User[] ul = cr.GetUserList();
                     if (ul.Contains(user) && ul.Contains(c.Me) && ul.Length == 2)
                     {
-                        LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                        Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                         return;
                     }
                 }
+                id = MakeRoom(c);
             }
-            LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
-            long id = MakeRoom(c);
+            Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             s.AddData("roomid", id);
             AddUserToChat(c, s);
         }
@@ -81,20 +82,20 @@ namespace Skylabs.LobbyServer
         /// <param name="s">Socket message with the user data and stuff</param>
         public static void AddUserToChat(Client c, SocketMessage s)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 var rid = (long?)s["roomid"];
                 if (rid == null || rid == -1)
                 {
-                    LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                    Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                     return;
                 }
                 var user = (User)s["user"];
                 if (user == null)
                 {
-                    LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                    Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                     return;
                 }
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
@@ -102,12 +103,12 @@ namespace Skylabs.LobbyServer
                 {
                     if (cr.AddUser(user))
                     {
-                        LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                        Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                         return;
                     }
                 }
             }
-            LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+            Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
         }
         /// <summary>
         /// Make a room, hosted by Client
@@ -130,12 +131,12 @@ namespace Skylabs.LobbyServer
         /// <param name="room">Chat room to remove</param>
         public static void RemoveRoom(ChatRoom room)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 Rooms.Remove(room);
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }
         }
         /// <summary>
@@ -144,10 +145,10 @@ namespace Skylabs.LobbyServer
         /// <param name="u">User</param>
         public static void UserOffline(User u)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 List<long> roomstocan = new List<long>();
                 foreach (ChatRoom c in Rooms)
                 {
@@ -160,7 +161,7 @@ namespace Skylabs.LobbyServer
                 {
                     Rooms.RemoveAll(r => r.ID == l);
                 }
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }
         }
         /// <summary>
@@ -170,14 +171,14 @@ namespace Skylabs.LobbyServer
         /// <param name="rid">Room id</param>
         public static void UserLeaves(User u, long rid)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
                 if (cr != null)
                     cr.UserExit(u);
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }
         }
         /// <summary>
@@ -188,27 +189,27 @@ namespace Skylabs.LobbyServer
         /// <param name="sm">Data as the data.</param>
         public static void ChatMessage(Client c,SocketMessage sm)
         {
-            LockLogger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                LockLogger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 long? rid = (long?)sm["roomid"];
                 string mess = (string)sm["mess"];
                 if (rid == null || mess == null)
                 {
-                    LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                    Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                     return;
                 }
                 if (String.IsNullOrWhiteSpace(mess))
                 {
-                    LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                    Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                     return;
                 }
                 long rid2 = (long)rid;
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid2);
                 if (cr != null)
                     cr.ChatMessage(c.Me, mess);
-                LockLogger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
+using System.Net;
 
 namespace Skylabs.Net
 {
@@ -26,6 +27,26 @@ namespace Skylabs.Net.Sockets
         /// </summary>
         public TcpClient Sock { get; private set; }
 
+        public EndPoint RemoteEndPoint
+        {
+            get
+            {
+                lock (SocketLocker)
+                {
+                    try
+                    {
+                        if (Sock != null && Sock.Client != null && Sock.Client.RemoteEndPoint != null)
+                            return Sock.Client.RemoteEndPoint;
+                        return null;
+                    }
+                    catch(Exception)
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Is this connected to the remote socket
         /// </summary>
@@ -38,6 +59,8 @@ namespace Skylabs.Net.Sockets
         private DateTime _lastPingReceived;
 
         private DisconnectReason _dr;
+
+        private object SocketLocker = new object();
 
         /// <summary>
         /// Creates new SkySocket that isn't connected. You must call Connect to connect.
@@ -86,13 +109,17 @@ namespace Skylabs.Net.Sockets
 
         private void _Connect(TcpClient c)
         {
-            Connected = true;
-            Sock = c;
-            Recieve();
-            _buffer = new List<byte>();
-            _thread = new Thread(Run);
-            _lastPingReceived = DateTime.Now;
-            _thread.Start();
+            lock (SocketLocker)
+            {
+                Connected = true;
+                Sock = c;
+                _buffer = new List<byte>();
+                _thread = new Thread(Run);
+                _lastPingReceived = DateTime.Now;
+                _thread.Start();
+                Recieve();
+            }
+            
         }
 
         /// <summary>
@@ -111,26 +138,29 @@ namespace Skylabs.Net.Sockets
         {
             while(true)
             {
-                DateTime temp = _lastPingReceived.AddSeconds(30);
-                if(DateTime.Now >= temp)
+                lock (SocketLocker)
                 {
-                    Close(DisconnectReason.PingTimeout);
-                }
-                else
-                    WriteMessage(new SocketMessage("ping"));
-                Thread.Sleep(5000);
-                lock(this)
-                {
-                    if(!Connected)
+                    DateTime temp = _lastPingReceived.AddSeconds(30);
+                    if (DateTime.Now >= temp)
+                    {
+                        Close(DisconnectReason.PingTimeout);
+                    }
+                    else
+                        WriteMessage(new SocketMessage("ping"));
+                    if (!Connected)
                         break;
                 }
+                Thread.Sleep(5000);
             }
         }
 
         private void Recieve()
         {
-            StateObject state = new StateObject {WorkSocket = Sock};
-            Sock.Client.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
+            lock (SocketLocker)
+            {
+                StateObject state = new StateObject { WorkSocket = Sock };
+                Sock.Client.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
+            }
         }
 
         /// <summary>
@@ -139,93 +169,109 @@ namespace Skylabs.Net.Sockets
         /// <param name="reason">Reason why</param>
         public void Close(DisconnectReason reason)
         {
-            _dr = reason;
-            if (Sock != null && Sock.Client != null)
-                Sock.Client.BeginDisconnect(false, DisconnectCallback, Sock.Client);
-            else
+            lock (SocketLocker)
             {
-                DisconnectCallback(null);
+                _dr = reason;
+                if (Sock != null && Sock.Client != null)
+                    Sock.Client.BeginDisconnect(false, DisconnectCallback, Sock.Client);
+                else
+                {
+                    Thread t = new Thread(()=>DisconnectCallback(null));
+                    t.Start();
+                }
             }
         }
 
         private void DisconnectCallback(IAsyncResult ar)
         {
-            if(ar != null)
-                Sock.Client.EndDisconnect(ar);
-            lock(this)
+            lock (SocketLocker)
+            {
+                if (ar != null)
+                    Sock.Client.EndDisconnect(ar);
                 Connected = false;
-            OnDisconnect(_dr);
+                Thread t = new Thread(() => OnDisconnect(_dr));
+                t.Start();
+            }
         }
 
         private void ReceiveCallback(IAsyncResult ar)
         {
-            try
+            lock (SocketLocker)
             {
-                StateObject state = (StateObject)ar.AsyncState;
-                TcpClient client = state.WorkSocket;
-
-                // Read data from the remote device.
-                int bytesRead = client.Client.EndReceive(ar);
-
-                if(bytesRead > 0)
+                try
                 {
-                    // There might be more data, so store the data received so far.
-                    for(int i=0; i < bytesRead; i++)
-                        _buffer.Add(state.Buffer[i]);
-                    HandleInput();
-                    // Try and grab more data
-                    Recieve();
+                    StateObject state = (StateObject)ar.AsyncState;
+                    TcpClient client = state.WorkSocket;
+
+                    // Read data from the remote device.
+                    int bytesRead = client.Client.EndReceive(ar);
+
+                    if (bytesRead > 0)
+                    {
+                        // There might be more data, so store the data received so far.
+                        for (int i = 0; i < bytesRead; i++)
+                            _buffer.Add(state.Buffer[i]);
+                        Thread t = new Thread(() => { HandleInput(); Recieve(); });
+                        t.Start();
+                    }
+                    else
+                    {
+                        // The network input stream is closed
+                        // Handle any remaining data
+                        Thread t = new Thread(()=>HandleInput());
+                        t.Start();
+                    }
                 }
-                else
+                catch (SocketException)
                 {
-                    // The network input stream is closed
-                    // Handle any remaining data
-                    HandleInput();
+                    //Skylabs.ConsoleHelper.ConsoleWriter.writeLine(e.ToString(), false);
+                    //if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                    Thread t = new Thread(()=>Close(DisconnectReason.RemoteHostDropped));
+                    t.Start();
                 }
-            }
-            catch(SocketException)
-            {
-                //Skylabs.ConsoleHelper.ConsoleWriter.writeLine(e.ToString(), false);
-                //if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-                Close(DisconnectReason.RemoteHostDropped);
             }
         }
 
         private void HandleInput()
         {
-            if(_buffer.Count > 8)
+            lock (SocketLocker)
             {
-                byte[] mlength = new byte[8];
-                _buffer.CopyTo(0, mlength, 0, 8);
-                long count = BitConverter.ToInt64(mlength, 0);
-                if(_buffer.Count >= count + 8)
+                if (_buffer.Count > 8)
                 {
-                    byte[] mdata = new byte[count];
-                    _buffer.CopyTo(8, mdata, 0, (int)count);
-                    SocketMessage sm = null;
-                    try
+                    byte[] mlength = new byte[8];
+                    _buffer.CopyTo(0, mlength, 0, 8);
+                    long count = BitConverter.ToInt64(mlength, 0);
+                    if (_buffer.Count >= count + 8)
                     {
-                        sm = SocketMessage.Deserialize(mdata);
-                    }
-                    catch(Exception)
-                    {
+                        byte[] mdata = new byte[count];
+                        _buffer.CopyTo(8, mdata, 0, (int)count);
+                        SocketMessage sm = null;
+                        try
+                        {
+                            sm = SocketMessage.Deserialize(mdata);
+                        }
+                        catch (Exception)
+                        {
 #if(DEBUG)
                         if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
-                        Close(DisconnectReason.MalformedData);
-                    }
-                    if(sm != null)
-                    {
-                        if(sm.Header.ToLower() == "ping")
-                        {
-                            _lastPingReceived = DateTime.Now;
+                            Thread t = new Thread(() => Close(DisconnectReason.MalformedData));
+                            t.Start();
                         }
-                        else
+                        if (sm != null)
                         {
-                            OnMessageReceived(sm);
+                            if (sm.Header.ToLower() == "ping")
+                            {
+                                _lastPingReceived = DateTime.Now;
+                            }
+                            else
+                            {
+                                Thread t = new Thread(() => OnMessageReceived(sm));
+                                t.Start();
+                            }
                         }
+                        _buffer.RemoveRange(0, (int)count + 8);
                     }
-                    _buffer.RemoveRange(0, (int)count + 8);
                 }
             }
         }
@@ -236,24 +282,33 @@ namespace Skylabs.Net.Sockets
         /// <param name="message">Message to send.</param>
         public void WriteMessage(SocketMessage message)
         {
-            byte[] data = SocketMessage.Serialize(message);
-            byte[] messagesize = BitConverter.GetBytes(data.LongLength);
-            try
+            lock (SocketLocker)
             {
-                Sock.Client.Send(messagesize);
-                Sock.Client.Send(data);
-                Sock.GetStream().Flush();
-            }
-            catch(SocketException se)
-            {
-                if (se.ErrorCode == 10058)
-                    return;
+                byte[] data = SocketMessage.Serialize(message);
+                byte[] messagesize = BitConverter.GetBytes(data.LongLength);
+                try
+                {
+                    Sock.Client.Send(messagesize);
+                    Sock.Client.Send(data);
+                    Sock.GetStream().Flush();
+                }
+                catch (SocketException se)
+                {
+                    if (se.ErrorCode == 10058)
+                        return;
 #if(!DEBUG)
-                if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                    if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #else
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
-                Close(DisconnectReason.RemoteHostDropped);
+                    Thread t = new Thread(()=>Close(DisconnectReason.RemoteHostDropped));
+                    t.Start();
+                }
+                catch (ObjectDisposedException)
+                {
+                    Thread t = new Thread(() => Close(DisconnectReason.RemoteHostDropped));
+                    t.Start();
+                }
             }
         }
     }

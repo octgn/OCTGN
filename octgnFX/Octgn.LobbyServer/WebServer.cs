@@ -134,7 +134,15 @@ namespace Skylabs.LobbyServer
                 insert = insert + "<td>" + game.GameStatus + "</td>";
                 insert = insert + "<td>" + game.GameVersion + "</td>";
 
-                Lobby.User user = game.UserHosting;
+                Client c = Server.GetOnlineClientByUid(game.UserHosting.Uid);
+                Lobby.User user; 
+                if (c == null)
+                {
+                    user = game.UserHosting;
+                    user.Status = Lobby.UserStatus.Offline;
+                }
+                else
+                    user = c.Me;
 
                 insert = insert + "<td>Name: " + user.DisplayName + "<br />";
                 insert = insert + "Status: " + Enum.GetName(typeof(Lobby.UserStatus), user.Status) + "<br />";
@@ -150,12 +158,23 @@ namespace Skylabs.LobbyServer
 
         private void SendItem(HttpListenerResponse res,string page)
         {
-            byte[] buffer = Encoding.UTF8.GetBytes(page);
-            res.ContentLength64 = buffer.Length;
-            using (Stream o = res.OutputStream)
+            try
             {
-                o.Write(buffer, 0, buffer.Length);
-                o.Close();
+                byte[] buffer = Encoding.UTF8.GetBytes(page);
+                res.ContentLength64 = buffer.Length;
+                using (Stream o = res.OutputStream)
+                {
+                    o.Write(buffer, 0, buffer.Length);
+                    o.Close();
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+
+            }
+            catch (IOException)
+            {
+
             }
         }
         public static string ToFileSize(int source)
