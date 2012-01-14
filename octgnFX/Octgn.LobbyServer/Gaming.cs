@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Skylabs.Lobby;
 using Skylabs.Net;
+using System.Threading;
 
 namespace Skylabs.LobbyServer
 {
@@ -124,7 +125,8 @@ namespace Skylabs.LobbyServer
                     s.Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
                     SocketMessage sm = new SocketMessage("gameend");
                     sm.AddData("port", s.Port);
-                    Server.AllUserMessage(sm);
+                    Thread t = new Thread(()=>Server.AllUserMessage(sm));
+                    t.Start();
                     Games.Remove(s.Port);
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");

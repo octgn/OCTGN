@@ -189,7 +189,10 @@ namespace Skylabs.LobbyServer
                 if (!Supress)
                 {
                     foreach (Client c in Clients)
-                        c.OnUserEvent(e, me);
+                    { 
+                        Thread t = new Thread(()=>c.OnUserEvent(e, me));
+                        t.Start();
+                    }
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
@@ -243,7 +246,8 @@ namespace Skylabs.LobbyServer
                         removedCount++;
                         if (c.LoggedIn)
                             loggedInCount++;
-                        c.Stop(true);
+                        Thread t = new Thread(()=>c.Stop(true));
+                        t.Start();
                     }
                 }
                 try
