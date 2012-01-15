@@ -39,6 +39,11 @@ namespace Octgn.Scripting
         public string PlayerColor(int id)
         { return Player.Find((byte)id).Color.ToString().Remove(1,2); }
 
+        public bool IsActivePlayer(int id)
+        {
+            return (Program.Game.TurnPlayer.Id == id);
+        }
+
         public List<KeyValuePair<int, string>> PlayerCounters(int id)
         {
             return Player.Find((byte)id)

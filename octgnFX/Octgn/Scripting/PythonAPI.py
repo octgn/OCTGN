@@ -233,6 +233,7 @@ class Player(object):
     self._id = id
     self._counters = idict((pair.Value, Counter(pair.Key, pair.Value, self)) for pair in _api.PlayerCounters(id))
     handId = _api.PlayerHandId(id)
+
     self._hand = Hand(handId, self) if handId != 0 else None
     self._piles = idict((pair.Value, Pile(pair.Key, pair.Value, self)) for pair in _api.PlayerPiles(id))
   def __cmp__(self, other):
@@ -251,6 +252,8 @@ class Player(object):
         return
     object.__setattr__(self, name, value)
   def __format__(self, format_spec): return self.name
+  @property
+  def isActivePlayer(self): return _api.IsActivePlayer(self._id)
   @property
   def name(self): return _api.PlayerName(self._id)
   @property
