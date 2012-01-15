@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Skylabs.Lobby;
 using Skylabs.Net;
+using System.Threading;
 
 namespace Skylabs.LobbyServer
 {
@@ -108,8 +109,11 @@ namespace Skylabs.LobbyServer
                     foreach (User u in Users)
                     {
                         Client c = Server.GetOnlineClientByUid(u.Uid);
-                        if(c != null)
-                            c.WriteMessage(sm);
+                        if (c != null)
+                        {
+                            Thread t = new Thread(() => c.WriteMessage(sm));
+                            t.Start();
+                        }
                     }
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
@@ -120,7 +124,10 @@ namespace Skylabs.LobbyServer
                 {
                     Client c = Server.GetOnlineClientByUid(u.Uid);
                     if (c != null)
-                        c.WriteMessage(sm);
+                    {
+                        Thread t = new Thread(()=>c.WriteMessage(sm));
+                        t.Start();
+                    }
                 }
             }
         }

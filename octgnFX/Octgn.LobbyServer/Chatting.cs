@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Skylabs.Net;
 using Skylabs.Lobby;
+using System.Threading;
 
 namespace Skylabs.LobbyServer
 {
@@ -152,7 +153,8 @@ namespace Skylabs.LobbyServer
                 List<long> roomstocan = new List<long>();
                 foreach (ChatRoom c in Rooms)
                 {
-                    c.UserExit(u);
+                    Thread t = new Thread(()=>c.UserExit(u));
+                    t.Start();
                     User[] ul = c.GetUserList();
                     if (ul.Length == 0 && c.ID != 0)
                         roomstocan.Add(c.ID);
@@ -177,7 +179,10 @@ namespace Skylabs.LobbyServer
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
                 if (cr != null)
-                    cr.UserExit(u);
+                {
+                    Thread t = new Thread(() => cr.UserExit(u));
+                    t.Start();
+                }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }
         }
@@ -208,7 +213,10 @@ namespace Skylabs.LobbyServer
                 long rid2 = (long)rid;
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid2);
                 if (cr != null)
-                    cr.ChatMessage(c.Me, mess);
+                {
+                    Thread t = new Thread(()=>cr.ChatMessage(c.Me, mess));
+                    t.Start();
+                }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }
         }

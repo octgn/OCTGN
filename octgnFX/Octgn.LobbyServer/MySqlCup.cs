@@ -17,27 +17,25 @@ namespace Skylabs.LobbyServer
 
         public string DbName { get; private set; }
 
-        public string ConnectionString
-        {
-            get
-            {
-                MySqlConnectionStringBuilder sb = new MySqlConnectionStringBuilder
-                                                                             {
-                                                                                 Database = DbName,
-                                                                                 UserID = DbUser,
-                                                                                 Password = DbPass,
-                                                                                 Server = DbHost
-                                                                             };
-                return sb.ToString();
-            }
-        }
+        public string ConnectionString;
+
+        private object DBLocker = new object();
 
         public MySqlCup(string user, string pass, string host, string db)
         {
+
             DbUser = user;
             DbPass = pass;
             DbHost = host;
             DbName = db;
+            MySqlConnectionStringBuilder sb = new MySqlConnectionStringBuilder
+            {
+                Database = DbName,
+                UserID = DbUser,
+                Password = DbPass,
+                Server = DbHost
+            };
+            ConnectionString = sb.ToString();
         }
 
         /// <summary>
@@ -48,84 +46,87 @@ namespace Skylabs.LobbyServer
         /// <returns>-1 if not banned. Timestamp of ban end if banned. Timestamp can be converted to DateTime with fromPHPTime.</returns>
         public int IsBanned(int uid, Client c)
         {
-            if(uid <= -1)
-                return -1;
-            if (c == null)
-                return -1;
-            int ret = -1;
-            try
+            lock (DBLocker)
             {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                if (uid <= -1)
+                    return -1;
+                if (c == null)
+                    return -1;
+                int ret = -1;
+                try
                 {
-                    con.Open();
-                    String ip = c.RemoteEndPoint.ToString();
-                    MySqlCommand cmd = con.CreateCommand();
-                    try
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
                     {
-                        ip = ip.Substring(0, ip.IndexOf(':'));
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(ip);
-                    }
-
-                    cmd.CommandText = "SELECT * FROM bans WHERE uid=@uid OR ip=@ip;";
-                    cmd.Prepare();
-                    cmd.Parameters.Add("@uid", MySqlDbType.Int32);
-                    cmd.Parameters.Add("@ip", MySqlDbType.VarChar, 15);
-                    cmd.Parameters["@uid"].Value = uid;
-                    cmd.Parameters["@ip"].Value = ip;
-
-                    using(MySqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        if(dr.HasRows)
+                        con.Open();
+                        String ip = c.RemoteEndPoint.ToString();
+                        MySqlCommand cmd = con.CreateCommand();
+                        try
                         {
-                            List<Ban> bans = new List<Ban>();
-                            while(dr.Read())
-                            {
-                                Ban b = new Ban
-                                            {
-                                                Bid = dr.GetInt32("bid"),
-                                                Uid = dr.GetInt32("uid"),
-                                                EndTime = dr.GetInt32("end"),
-                                                Ip = dr.GetString("ip")
-                                            };
-
-                                bans.Add(b);
-                            }
-                            dr.Close();
-                            foreach(Ban b in bans)
-                            {
-                                string bid = b.Bid.ToString();
-                                DateTime endtime = Skylabs.ValueConverters.FromPhpTime(b.EndTime);
-                                if(DateTime.Now >= endtime)
-                                {
-                                    DeleteRow(con, "bans", "bid", bid);
-                                }
-                                else
-                                {
-                                    ret = (int)b.EndTime;
-                                    break;
-                                }
-                            }
-                            con.Close();
+                            ip = ip.Substring(0, ip.IndexOf(':'));
                         }
-                        else
+                        catch (Exception e)
                         {
-                            dr.Close();
-                            con.Close();
+                            Console.WriteLine(ip);
+                        }
+
+                        cmd.CommandText = "SELECT * FROM bans WHERE uid=@uid OR ip=@ip;";
+                        cmd.Prepare();
+                        cmd.Parameters.Add("@uid", MySqlDbType.Int32);
+                        cmd.Parameters.Add("@ip", MySqlDbType.VarChar, 15);
+                        cmd.Parameters["@uid"].Value = uid;
+                        cmd.Parameters["@ip"].Value = ip;
+
+                        using (MySqlDataReader dr = cmd.ExecuteReader())
+                        {
+                            if (dr.HasRows)
+                            {
+                                List<Ban> bans = new List<Ban>();
+                                while (dr.Read())
+                                {
+                                    Ban b = new Ban
+                                                {
+                                                    Bid = dr.GetInt32("bid"),
+                                                    Uid = dr.GetInt32("uid"),
+                                                    EndTime = dr.GetInt32("end"),
+                                                    Ip = dr.GetString("ip")
+                                                };
+
+                                    bans.Add(b);
+                                }
+                                dr.Close();
+                                foreach (Ban b in bans)
+                                {
+                                    string bid = b.Bid.ToString();
+                                    DateTime endtime = Skylabs.ValueConverters.FromPhpTime(b.EndTime);
+                                    if (DateTime.Now >= endtime)
+                                    {
+                                        DeleteRow(con, "bans", "bid", bid);
+                                    }
+                                    else
+                                    {
+                                        ret = (int)b.EndTime;
+                                        break;
+                                    }
+                                }
+                                con.Close();
+                            }
+                            else
+                            {
+                                dr.Close();
+                                con.Close();
+                            }
                         }
                     }
                 }
-            }
-            catch(MySqlException me)
-            {
-                ConsoleEventLog.AddEvent(new ConsoleEventError(me.Message, me), false);
+                catch (MySqlException me)
+                {
+                    ConsoleEventLog.AddEvent(new ConsoleEventError(me.Message, me), false);
 #if(DEBUG)
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
+                }
+                return ret;
             }
-            return ret;
         }
         /// <summary>
         /// Just a generic delete row function.
@@ -136,16 +137,19 @@ namespace Skylabs.LobbyServer
         /// <param name="columnvalue">The value, that if exists in said column, will cause the row to go bye bye.</param>
         public void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
         {
-            MySqlCommand cmd = con.CreateCommand();
-            cmd.CommandText = "DELETE FROM @table WHERE @col=@val;";
-            cmd.Prepare();
-            cmd.Parameters.Add("@table");
-            cmd.Parameters.Add("@col");
-            cmd.Parameters.Add("@val");
-            cmd.Parameters["@table"].Value = table;
-            cmd.Parameters["@col"].Value = columnname;
-            cmd.Parameters["@table"].Value = columnvalue;
-            cmd.ExecuteNonQuery();
+            lock (DBLocker)
+            {
+                MySqlCommand cmd = con.CreateCommand();
+                cmd.CommandText = "DELETE FROM @table WHERE @col=@val;";
+                cmd.Prepare();
+                cmd.Parameters.Add("@table");
+                cmd.Parameters.Add("@col");
+                cmd.Parameters.Add("@val");
+                cmd.Parameters["@table"].Value = table;
+                cmd.Parameters["@col"].Value = columnname;
+                cmd.Parameters["@table"].Value = columnvalue;
+                cmd.ExecuteNonQuery();
+            }
         }
         /// <summary>
         /// Get user information from the database.
@@ -154,47 +158,50 @@ namespace Skylabs.LobbyServer
         /// <returns>User data, such as UID and whatnot, or NULL if none found.</returns>
         public User GetUser(string email)
         {
-            if(email == null)
-                return null;
-            if(String.IsNullOrWhiteSpace(email))
-                return null;
-            User ret = null;
-            try
+            lock (DBLocker)
             {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                if (email == null)
+                    return null;
+                if (String.IsNullOrWhiteSpace(email))
+                    return null;
+                User ret = null;
+                try
                 {
-                    con.Open();
-                    using(MySqlCommand com = con.CreateCommand())
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
                     {
-                        com.CommandText = "SELECT * FROM users WHERE email=@email;";
-                        com.Prepare();
-                        com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
-                        com.Parameters["@email"].Value = email;
-                        using(MySqlDataReader dr = com.ExecuteReader())
+                        con.Open();
+                        using (MySqlCommand com = con.CreateCommand())
                         {
-                            if(dr.Read())
+                            com.CommandText = "SELECT * FROM users WHERE email=@email;";
+                            com.Prepare();
+                            com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
+                            com.Parameters["@email"].Value = email;
+                            using (MySqlDataReader dr = com.ExecuteReader())
                             {
-                                ret = new User
-                                          {
-                                              Email = dr.GetString("email"),
-                                              DisplayName = dr.GetString("name"),
-                                              Uid = dr.GetInt32("uid"),
-                                              CustomStatus = dr.GetString("status"),
-                                              Status = UserStatus.Unknown,
-                                              Level = (UserLevel) dr.GetInt32("level")
-                                          };
+                                if (dr.Read())
+                                {
+                                    ret = new User
+                                              {
+                                                  Email = dr.GetString("email"),
+                                                  DisplayName = dr.GetString("name"),
+                                                  Uid = dr.GetInt32("uid"),
+                                                  CustomStatus = dr.GetString("status"),
+                                                  Status = UserStatus.Unknown,
+                                                  Level = (UserLevel)dr.GetInt32("level")
+                                              };
+                                }
+                                dr.Close();
                             }
-                            dr.Close();
+                            con.Close();
                         }
-                        con.Close();
                     }
                 }
+                catch (Exception ex)
+                {
+                    ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
+                }
+                return ret;
             }
-            catch(Exception ex)
-            {
-                ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
-            }
-            return ret;
         }
         /// <summary>
         /// Gets a user from the database based on there UID
@@ -203,45 +210,48 @@ namespace Skylabs.LobbyServer
         /// <returns>User that matches, or null.</returns>
         public User GetUser(int uid)
         {
-            if(uid <= -1)
-                return null;
-            User ret = null;
-            try
+            lock (DBLocker)
             {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                if (uid <= -1)
+                    return null;
+                User ret = null;
+                try
                 {
-                    con.Open();
-                    using(MySqlCommand com = con.CreateCommand())
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
                     {
-                        com.CommandText = "SELECT * FROM users WHERE uid=@uid;";
-                        com.Prepare();
-                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                        com.Parameters["@uid"].Value = uid;
-                        using(MySqlDataReader dr = com.ExecuteReader())
+                        con.Open();
+                        using (MySqlCommand com = con.CreateCommand())
                         {
-                            if(dr.Read())
+                            com.CommandText = "SELECT * FROM users WHERE uid=@uid;";
+                            com.Prepare();
+                            com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                            com.Parameters["@uid"].Value = uid;
+                            using (MySqlDataReader dr = com.ExecuteReader())
                             {
-                                ret = new User
-                                          {
-                                              Email = dr.GetString("email"),
-                                              DisplayName = dr.GetString("name"),
-                                              Uid = dr.GetInt32("uid"),
-                                              CustomStatus = dr.GetString("status"),
-                                              Status = UserStatus.Unknown,
-                                              Level = (UserLevel) dr.GetInt32("level")
-                                          };
+                                if (dr.Read())
+                                {
+                                    ret = new User
+                                              {
+                                                  Email = dr.GetString("email"),
+                                                  DisplayName = dr.GetString("name"),
+                                                  Uid = dr.GetInt32("uid"),
+                                                  CustomStatus = dr.GetString("status"),
+                                                  Status = UserStatus.Unknown,
+                                                  Level = (UserLevel)dr.GetInt32("level")
+                                              };
+                                }
+                                dr.Close();
                             }
-                            dr.Close();
+                            con.Close();
                         }
-                        con.Close();
                     }
                 }
+                catch (Exception ex)
+                {
+                    ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
+                }
+                return ret;
             }
-            catch(Exception ex)
-            {
-                ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
-            }
-            return ret;
         }
         /// <summary>
         /// Register a user to the database.
@@ -251,31 +261,34 @@ namespace Skylabs.LobbyServer
         /// <returns>true on success, false on failure.</returns>
         public bool RegisterUser(string email, string name)
         {
-            if(email == null || name == null)
-                return false;
-            if(String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(name))
-                return false;
-            try
+            lock (DBLocker)
             {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                if (email == null || name == null)
+                    return false;
+                if (String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(name))
+                    return false;
+                try
                 {
-                    con.Open();
-                    MySqlCommand com = con.CreateCommand();
-                    com.CommandText = "INSERT INTO users(email,name) VALUES(@email,@name);";
-                    com.Prepare();
-                    com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
-                    com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
-                    com.Parameters["@email"].Value = email;
-                    com.Parameters["@name"].Value = name;
-                    com.ExecuteNonQuery();
-                    return true;
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    {
+                        con.Open();
+                        MySqlCommand com = con.CreateCommand();
+                        com.CommandText = "INSERT INTO users(email,name) VALUES(@email,@name);";
+                        com.Prepare();
+                        com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
+                        com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
+                        com.Parameters["@email"].Value = email;
+                        com.Parameters["@name"].Value = name;
+                        com.ExecuteNonQuery();
+                        return true;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
+                }
+                return false;
             }
-            catch(Exception ex)
-            {
-                ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
-            }
-            return false;
         }
         /// <summary>
         /// Remove a friend request from the database.
@@ -284,29 +297,32 @@ namespace Skylabs.LobbyServer
         /// <param name="friendemail">To be friends email</param>
         public void RemoveFriendRequest(int requesteeuid, string friendemail)
         {
-            if(requesteeuid <= -1 || friendemail == null)
-                return;
-            if(String.IsNullOrWhiteSpace(friendemail))
-                return;
-            try
+            lock (DBLocker)
             {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
-                {
-                    con.Open();
-                    MySqlCommand cmd = con.CreateCommand();
-                    cmd.CommandText = "DELETE FROM friendrequests WHERE uid=@uid AND email=@email;";
-                    cmd.Prepare();
-                    cmd.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                    cmd.Parameters.Add("@email", MySqlDbType.String, 100);
-                    cmd.Parameters["@uid"].Value = requesteeuid;
-                    cmd.Parameters["@email"].Value = friendemail;
-                    cmd.ExecuteNonQuery();
+                if (requesteeuid <= -1 || friendemail == null)
                     return;
+                if (String.IsNullOrWhiteSpace(friendemail))
+                    return;
+                try
+                {
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    {
+                        con.Open();
+                        MySqlCommand cmd = con.CreateCommand();
+                        cmd.CommandText = "DELETE FROM friendrequests WHERE uid=@uid AND email=@email;";
+                        cmd.Prepare();
+                        cmd.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                        cmd.Parameters.Add("@email", MySqlDbType.String, 100);
+                        cmd.Parameters["@uid"].Value = requesteeuid;
+                        cmd.Parameters["@email"].Value = friendemail;
+                        cmd.ExecuteNonQuery();
+                        return;
+                    }
                 }
-            }
-            catch(Exception)
-            {
+                catch (Exception)
+                {
 
+                }
             }
         }
         /// <summary>
@@ -319,30 +335,33 @@ namespace Skylabs.LobbyServer
         /// <param name="friendemail">Friend-to-bes e-mail</param>
         public void AddFriendRequest(int uid, string friendemail)
         {
-            if(uid <= -1)
-                return;
-            if(friendemail == null)
-                return;
-            if(String.IsNullOrWhiteSpace(friendemail))
-                return;
-            try
+            lock (DBLocker)
             {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
-                {
-                    con.Open();
-                    MySqlCommand com = con.CreateCommand();
-                    com.CommandText = "INSERT INTO friendrequests(uid,email) VALUES(@uid,@email);";
-                    com.Prepare();
-                    com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
-                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                    com.Parameters["@email"].Value = friendemail;
-                    com.Parameters["@uid"].Value = uid;
-                    com.ExecuteNonQuery();
+                if (uid <= -1)
                     return;
+                if (friendemail == null)
+                    return;
+                if (String.IsNullOrWhiteSpace(friendemail))
+                    return;
+                try
+                {
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    {
+                        con.Open();
+                        MySqlCommand com = con.CreateCommand();
+                        com.CommandText = "INSERT INTO friendrequests(uid,email) VALUES(@uid,@email);";
+                        com.Prepare();
+                        com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
+                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                        com.Parameters["@email"].Value = friendemail;
+                        com.Parameters["@uid"].Value = uid;
+                        com.ExecuteNonQuery();
+                        return;
+                    }
                 }
-            }
-            catch(Exception)
-            {
+                catch (Exception)
+                {
+                }
             }
         }
         /// <summary>
@@ -352,41 +371,44 @@ namespace Skylabs.LobbyServer
         /// <returns>List of UID's of users that want to be the users friend.</returns>
         public List<int> GetFriendRequests(string email)
         {
-            if (email == null)
-                return null;
-            if (String.IsNullOrWhiteSpace(email))
-                return null;
-            List<int >ret = null;
-            try
+            lock (DBLocker)
             {
-                using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                if (email == null)
+                    return null;
+                if (String.IsNullOrWhiteSpace(email))
+                    return null;
+                List<int> ret = null;
+                try
                 {
-                    con.Open();
-                    MySqlCommand com = con.CreateCommand();
-                    com.CommandText = "SELECT * FROM friendrequests WHERE email=@email;";
-                    com.Prepare();
-                    com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
-                    com.Parameters["@email"].Value = email;
-                    using (MySqlDataReader dr = com.ExecuteReader())
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
                     {
-                        while (dr.Read())
+                        con.Open();
+                        MySqlCommand com = con.CreateCommand();
+                        com.CommandText = "SELECT * FROM friendrequests WHERE email=@email;";
+                        com.Prepare();
+                        com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
+                        com.Parameters["@email"].Value = email;
+                        using (MySqlDataReader dr = com.ExecuteReader())
                         {
-                            if(ret == null)
-                                ret = new List<int>();
-                            int uid = dr.GetInt32("uid");
-                            ret.Add(uid);
+                            while (dr.Read())
+                            {
+                                if (ret == null)
+                                    ret = new List<int>();
+                                int uid = dr.GetInt32("uid");
+                                ret.Add(uid);
+                            }
+                            dr.Close();
                         }
-                        dr.Close();
+                        con.Close();
+                        return ret;
                     }
-                    con.Close();
-                    return ret;
                 }
-            }
-            catch (Exception)
-            {
+                catch (Exception)
+                {
 
+                }
+                return null;
             }
-            return null;
         }
         /// <summary>
         /// Add a friend. This happens after a successful friend request.
@@ -397,33 +419,36 @@ namespace Skylabs.LobbyServer
         /// <param name="frienduid">Friend id</param>
         public void AddFriend(int useruid, int frienduid)
         {
-            if(useruid <= -1 || frienduid <= -1)
-                return;
-            try
+            lock (DBLocker)
             {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
-                {
-                    con.Open();
-                    MySqlCommand com = con.CreateCommand();
-                    List<User> myFriendList = GetFriendsList(useruid);
-                    List<User> oFriendlist = GetFriendsList(frienduid);
-                    com.CommandText = "INSERT INTO friends(uid,fid) VALUES(@uid,@fid);";
-                    com.Prepare();
-                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                    com.Parameters.Add("@fid", MySqlDbType.Int32, 11);
-                    com.Parameters["@uid"].Value = useruid;
-                    com.Parameters["@fid"].Value = frienduid;
-                    if(!myFriendList.Exists(u => u.Uid == frienduid))
-                        com.ExecuteNonQuery();
-                    com.Parameters["@uid"].Value = frienduid;
-                    com.Parameters["@fid"].Value = useruid;
-                    if (!oFriendlist.Exists(u => u.Uid == useruid))
-                        com.ExecuteNonQuery();
+                if (useruid <= -1 || frienduid <= -1)
                     return;
+                try
+                {
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    {
+                        con.Open();
+                        MySqlCommand com = con.CreateCommand();
+                        List<User> myFriendList = GetFriendsList(useruid);
+                        List<User> oFriendlist = GetFriendsList(frienduid);
+                        com.CommandText = "INSERT INTO friends(uid,fid) VALUES(@uid,@fid);";
+                        com.Prepare();
+                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                        com.Parameters.Add("@fid", MySqlDbType.Int32, 11);
+                        com.Parameters["@uid"].Value = useruid;
+                        com.Parameters["@fid"].Value = frienduid;
+                        if (!myFriendList.Exists(u => u.Uid == frienduid))
+                            com.ExecuteNonQuery();
+                        com.Parameters["@uid"].Value = frienduid;
+                        com.Parameters["@fid"].Value = useruid;
+                        if (!oFriendlist.Exists(u => u.Uid == useruid))
+                            com.ExecuteNonQuery();
+                        return;
+                    }
                 }
-            }
-            catch(Exception)
-            {
+                catch (Exception)
+                {
+                }
             }
         }
         /// <summary>
@@ -434,29 +459,32 @@ namespace Skylabs.LobbyServer
         /// <returns>Returns a false if the data it got was bullshit.</returns>
         public bool SetCustomStatus(int uid, string status)
         {
-            if(uid <= -1)
-                return false;
-            if(status == null)
-                return false;
-            try
+            lock (DBLocker)
             {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                if (uid <= -1)
+                    return false;
+                if (status == null)
+                    return false;
+                try
                 {
-                    con.Open();
-                    MySqlCommand com = con.CreateCommand();
-                    com.CommandText = "UPDATE users SET status=@status WHERE uid=@uid;";
-                    com.Prepare();
-                    com.Parameters.Add("@status", MySqlDbType.VarChar, 200);
-                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                    com.Parameters["@status"].Value = status;
-                    com.Parameters["@uid"].Value = uid;
-                    com.ExecuteNonQuery();
-                    return true;
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    {
+                        con.Open();
+                        MySqlCommand com = con.CreateCommand();
+                        com.CommandText = "UPDATE users SET status=@status WHERE uid=@uid;";
+                        com.Prepare();
+                        com.Parameters.Add("@status", MySqlDbType.VarChar, 200);
+                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                        com.Parameters["@status"].Value = status;
+                        com.Parameters["@uid"].Value = uid;
+                        com.ExecuteNonQuery();
+                        return true;
+                    }
                 }
-            }
-            catch(Exception)
-            {
-                return false;
+                catch (Exception)
+                {
+                    return false;
+                }
             }
         }
         /// <summary>
@@ -467,29 +495,32 @@ namespace Skylabs.LobbyServer
         /// <returns>True on success, or false if the data is fucked.</returns>
         public bool SetDisplayName(int uid,string name)
         {
-            if (uid <= -1)
-                return false;
-            if (name == null)
-                return false;
-            try
+            lock (DBLocker)
             {
-                using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                if (uid <= -1)
+                    return false;
+                if (name == null)
+                    return false;
+                try
                 {
-                    con.Open();
-                    MySqlCommand com = con.CreateCommand();
-                    com.CommandText = "UPDATE users SET name=@name WHERE uid=@uid;";
-                    com.Prepare();
-                    com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
-                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                    com.Parameters["@name"].Value = name;
-                    com.Parameters["@uid"].Value = uid;
-                    com.ExecuteNonQuery();
-                    return true;
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    {
+                        con.Open();
+                        MySqlCommand com = con.CreateCommand();
+                        com.CommandText = "UPDATE users SET name=@name WHERE uid=@uid;";
+                        com.Prepare();
+                        com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
+                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                        com.Parameters["@name"].Value = name;
+                        com.Parameters["@uid"].Value = uid;
+                        com.ExecuteNonQuery();
+                        return true;
+                    }
                 }
-            }
-            catch (Exception)
-            {
-                return false;
+                catch (Exception)
+                {
+                    return false;
+                }
             }
         }
         /// <summary>
@@ -499,39 +530,42 @@ namespace Skylabs.LobbyServer
         /// <returns>List of friends as Users, or NULL.</returns>
         public List<User> GetFriendsList(int uid)
         {
-            if(uid <= -1)
-                return null;
-            try
+            lock (DBLocker)
             {
-                using(MySqlConnection con = new MySqlConnection(ConnectionString))
+                if (uid <= -1)
+                    return null;
+                try
                 {
-                    con.Open();
-                    using(MySqlCommand com = con.CreateCommand())
+                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
                     {
-                        com.CommandText = "SELECT * FROM friends WHERE uid=@uid;";
-                        com.Prepare();
-                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                        com.Parameters["@uid"].Value = uid;
-                        using(MySqlDataReader dr = com.ExecuteReader())
+                        con.Open();
+                        using (MySqlCommand com = con.CreateCommand())
                         {
-                            List<User> friends = new List<User>();
-                            while(dr.Read())
+                            com.CommandText = "SELECT * FROM friends WHERE uid=@uid;";
+                            com.Prepare();
+                            com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                            com.Parameters["@uid"].Value = uid;
+                            using (MySqlDataReader dr = com.ExecuteReader())
                             {
-                                User temp = GetUser(dr.GetInt32("fid"));
-                                friends.Add(temp);
+                                List<User> friends = new List<User>();
+                                while (dr.Read())
+                                {
+                                    User temp = GetUser(dr.GetInt32("fid"));
+                                    friends.Add(temp);
+                                }
+                                dr.Close();
+                                con.Close();
+                                return friends;
                             }
-                            dr.Close();
-                            con.Close();
-                            return friends;
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
+                }
+                return null;
             }
-            catch(Exception ex)
-            {
-                ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
-            }
-            return null;
         }
     }
 }
