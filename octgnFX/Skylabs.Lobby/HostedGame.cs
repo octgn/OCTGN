@@ -24,7 +24,8 @@ namespace Skylabs.Lobby
         public bool PasswordRequired { get; private set; }
         public User UserHosting { get; private set; }
         public eHostedGame GameStatus { get; set; }
-        public HostedGame(Guid gameguid, Version gameversion, int port, string name, bool passreq, User huser)
+        public DateTime TimeStarted { get; private set; }
+        public HostedGame(Guid gameguid, Version gameversion, int port, string name, bool passreq, User huser, DateTime startTime)
         {
             GameGuid = gameguid;
             GameVersion = gameversion;
@@ -33,6 +34,7 @@ namespace Skylabs.Lobby
             PasswordRequired = passreq;
             UserHosting = huser;
             GameStatus = eHostedGame.StartedHosting;
+            TimeStarted = startTime;
         }
         public HostedGame(SocketMessage sm)
         {
@@ -43,6 +45,7 @@ namespace Skylabs.Lobby
             PasswordRequired = (bool) sm["passrequired"];
             UserHosting = (User) sm["hoster"];
             GameStatus = eHostedGame.StartedHosting;
+            TimeStarted = new DateTime(DateTime.Now.Ticks);
         }
 
         public bool Equals(HostedGame other)

@@ -105,7 +105,7 @@ namespace Skylabs.LobbyServer
                     Lobby.HostedGame newhg =
                         new Lobby.HostedGame(g.Value.GameGuid, (Version)g.Value.GameVersion.Clone(),
                             g.Value.Port, (string)g.Value.Name.Clone(),
-                            !String.IsNullOrWhiteSpace(g.Value.Password), (User)g.Value.Hoster.Clone());
+                            !String.IsNullOrWhiteSpace(g.Value.Password), (User)g.Value.Hoster.Clone(),g.Value.TimeStarted);
                     newhg.GameStatus = g.Value.Status;
                     sendgames.Add(newhg);
                 }

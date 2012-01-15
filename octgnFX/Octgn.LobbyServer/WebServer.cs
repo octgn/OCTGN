@@ -128,12 +128,13 @@ namespace Skylabs.LobbyServer
             //construct game table
             foreach (Lobby.HostedGame game in games)
             {
+                TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - game.TimeStarted.Ticks);
                 insert = insert + "<tr>";
                 insert = insert + "<td>" + game.Name + "</td>";
                 insert = insert + "<td>" + game.Port + "</td>";
                 insert = insert + "<td>" + game.GameStatus + "</td>";
                 insert = insert + "<td>" + game.GameVersion + "</td>";
-
+                insert = insert + "<td>" + ts.ToString() + "</td>";
                 Client c = Server.GetOnlineClientByUid(game.UserHosting.Uid);
                 Lobby.User user; 
                 if (c == null)

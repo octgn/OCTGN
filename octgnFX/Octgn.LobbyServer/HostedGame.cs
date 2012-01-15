@@ -44,7 +44,7 @@ namespace Skylabs.LobbyServer
         /// The status of the hosted game.
         /// </summary>
         public Skylabs.Lobby.HostedGame.eHostedGame Status { get; set; }
-
+        public DateTime TimeStarted { get; private set; }
         public event EventHandler HostedGameDone;
         /// <summary>
         /// Host a game.
@@ -64,7 +64,7 @@ namespace Skylabs.LobbyServer
             Hoster = hoster;
             Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
             Port = port;
-
+            TimeStarted = new DateTime(0);
             StandAloneApp = new Process();
 #if(DEBUG)
             StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
@@ -84,6 +84,7 @@ namespace Skylabs.LobbyServer
             {
                 StandAloneApp.Start();
                 Status = Lobby.HostedGame.eHostedGame.StartedHosting;
+                TimeStarted = new DateTime(DateTime.Now.Ticks);
                 return true;
             }
             catch (Exception e)
