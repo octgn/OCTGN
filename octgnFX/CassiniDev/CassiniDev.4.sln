@@ -1,0 +1,142 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.4", "CassiniDev\CassiniDev.4.csproj", "{9AAD02EE-FE79-46BE-87EB-E3D2A376A043}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.Console4", "CassiniDev\CassiniDev.Console4.csproj", "{539F0304-F14A-413F-A56A-AFB7724EA1A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.Lib4", "CassiniDev\CassiniDev.Lib4.csproj", "{070AE36D-4CE1-4708-BD0F-2896A6F117FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.VisualStudio44", "CassiniDev\CassiniDev.VisualStudio44.csproj", "{73C76E4C-426C-45C2-9D37-1E46FA29CE66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{2CAE734F-8505-48A3-889F-9859E7F323BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DOCS", "DOCS", "{3DB9A222-C0B5-415B-88A4-B625EF257FA7}"
+	ProjectSection(SolutionItems) = preProject
+		deploy.txt = deploy.txt
+		installation.txt = installation.txt
+		license.txt = license.txt
+		readme.txt = readme.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{68D6E86F-BEFB-42C4-BC21-2DE374A86D3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.Tests4", "Tests\CassiniDev.Tests\CassiniDev.Tests4.csproj", "{1A81ACBC-6BBF-4F49-9E7C-8AF029DAB2AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelfHostingCassiniDev4", "Samples\SelfHostingCassiniDev\SelfHostingCassiniDev4.csproj", "{1725D36C-91B3-451B-A740-D003A8B766E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.NUnitFixtures.Tests4", "Samples\FixtureSamples\CassiniDev.NUnitFixtures.Tests\CassiniDev.NUnitFixtures.Tests4.csproj", "{56024885-BF49-48B1-A714-278B98ECBA2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.TestSite4", "Samples\FixtureSamples\CassiniDev.TestSite4\CassiniDev.TestSite4.csproj", "{EE6B6146-79D7-4708-B7C5-A4DB6D667CB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.TestSite2", "Samples\FixtureSamples\CassiniDev.TestSite2\CassiniDev.TestSite2.csproj", "{48DD15C8-5B57-4412-AC38-220955926289}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.VisualStudio42", "CassiniDev\CassiniDev.VisualStudio42.csproj", "{06764838-9B08-4254-AFA6-2B790E110DFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.MSTests", "Tests\CassiniDev.MSTests\CassiniDev.MSTests.csproj", "{700EE334-34C9-4A4D-8A7E-D235997F5D96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{29271476-28DD-4894-B689-9CEC89C6225A}"
+	ProjectSection(SolutionItems) = preProject
+		CassiniDev.4.vsmdi = CassiniDev.4.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev", "CassiniDev\CassiniDev.csproj", "{0D9F0FEA-45F7-4CE4-9868-6FB9BBE3DD4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.Lib", "CassiniDev\CassiniDev.Lib.csproj", "{4EF6FE65-0BDE-4AC4-B9CF-F2D8FFE886C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.VisualStudio", "CassiniDev\CassiniDev.VisualStudio.csproj", "{F50EB799-6DED-4906-9DB0-B8FBE5C14028}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.Console", "CassiniDev\CassiniDev.Console.csproj", "{BD44099A-24A0-4A7D-BE42-99AB755724CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.Tests", "Tests\CassiniDev.Tests\CassiniDev.Tests.csproj", "{4EB08266-54EB-462D-A782-9918E94490FB}"
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = CassiniDev.4.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9AAD02EE-FE79-46BE-87EB-E3D2A376A043}.Debug|x86.ActiveCfg = Debug|x86
+		{9AAD02EE-FE79-46BE-87EB-E3D2A376A043}.Debug|x86.Build.0 = Debug|x86
+		{9AAD02EE-FE79-46BE-87EB-E3D2A376A043}.Release|x86.ActiveCfg = Release|x86
+		{9AAD02EE-FE79-46BE-87EB-E3D2A376A043}.Release|x86.Build.0 = Release|x86
+		{539F0304-F14A-413F-A56A-AFB7724EA1A7}.Debug|x86.ActiveCfg = Debug|x86
+		{539F0304-F14A-413F-A56A-AFB7724EA1A7}.Debug|x86.Build.0 = Debug|x86
+		{539F0304-F14A-413F-A56A-AFB7724EA1A7}.Release|x86.ActiveCfg = Release|x86
+		{539F0304-F14A-413F-A56A-AFB7724EA1A7}.Release|x86.Build.0 = Release|x86
+		{070AE36D-4CE1-4708-BD0F-2896A6F117FC}.Debug|x86.ActiveCfg = Debug|x86
+		{070AE36D-4CE1-4708-BD0F-2896A6F117FC}.Debug|x86.Build.0 = Debug|x86
+		{070AE36D-4CE1-4708-BD0F-2896A6F117FC}.Release|x86.ActiveCfg = Release|x86
+		{070AE36D-4CE1-4708-BD0F-2896A6F117FC}.Release|x86.Build.0 = Release|x86
+		{73C76E4C-426C-45C2-9D37-1E46FA29CE66}.Debug|x86.ActiveCfg = Debug|x86
+		{73C76E4C-426C-45C2-9D37-1E46FA29CE66}.Debug|x86.Build.0 = Debug|x86
+		{73C76E4C-426C-45C2-9D37-1E46FA29CE66}.Release|x86.ActiveCfg = Release|x86
+		{73C76E4C-426C-45C2-9D37-1E46FA29CE66}.Release|x86.Build.0 = Release|x86
+		{1A81ACBC-6BBF-4F49-9E7C-8AF029DAB2AA}.Debug|x86.ActiveCfg = Debug|x86
+		{1A81ACBC-6BBF-4F49-9E7C-8AF029DAB2AA}.Debug|x86.Build.0 = Debug|x86
+		{1A81ACBC-6BBF-4F49-9E7C-8AF029DAB2AA}.Release|x86.ActiveCfg = Release|x86
+		{1A81ACBC-6BBF-4F49-9E7C-8AF029DAB2AA}.Release|x86.Build.0 = Release|x86
+		{1725D36C-91B3-451B-A740-D003A8B766E5}.Debug|x86.ActiveCfg = Debug|x86
+		{1725D36C-91B3-451B-A740-D003A8B766E5}.Debug|x86.Build.0 = Debug|x86
+		{1725D36C-91B3-451B-A740-D003A8B766E5}.Release|x86.ActiveCfg = Release|x86
+		{1725D36C-91B3-451B-A740-D003A8B766E5}.Release|x86.Build.0 = Release|x86
+		{56024885-BF49-48B1-A714-278B98ECBA2F}.Debug|x86.ActiveCfg = Debug|x86
+		{56024885-BF49-48B1-A714-278B98ECBA2F}.Debug|x86.Build.0 = Debug|x86
+		{56024885-BF49-48B1-A714-278B98ECBA2F}.Release|x86.ActiveCfg = Release|x86
+		{56024885-BF49-48B1-A714-278B98ECBA2F}.Release|x86.Build.0 = Release|x86
+		{EE6B6146-79D7-4708-B7C5-A4DB6D667CB6}.Debug|x86.ActiveCfg = Debug|x86
+		{EE6B6146-79D7-4708-B7C5-A4DB6D667CB6}.Debug|x86.Build.0 = Debug|x86
+		{EE6B6146-79D7-4708-B7C5-A4DB6D667CB6}.Release|x86.ActiveCfg = Release|x86
+		{EE6B6146-79D7-4708-B7C5-A4DB6D667CB6}.Release|x86.Build.0 = Release|x86
+		{48DD15C8-5B57-4412-AC38-220955926289}.Debug|x86.ActiveCfg = Debug|x86
+		{48DD15C8-5B57-4412-AC38-220955926289}.Debug|x86.Build.0 = Debug|x86
+		{48DD15C8-5B57-4412-AC38-220955926289}.Release|x86.ActiveCfg = Release|x86
+		{48DD15C8-5B57-4412-AC38-220955926289}.Release|x86.Build.0 = Release|x86
+		{06764838-9B08-4254-AFA6-2B790E110DFB}.Debug|x86.ActiveCfg = Debug|x86
+		{06764838-9B08-4254-AFA6-2B790E110DFB}.Debug|x86.Build.0 = Debug|x86
+		{06764838-9B08-4254-AFA6-2B790E110DFB}.Release|x86.ActiveCfg = Release|x86
+		{06764838-9B08-4254-AFA6-2B790E110DFB}.Release|x86.Build.0 = Release|x86
+		{700EE334-34C9-4A4D-8A7E-D235997F5D96}.Debug|x86.ActiveCfg = Debug|x86
+		{700EE334-34C9-4A4D-8A7E-D235997F5D96}.Debug|x86.Build.0 = Debug|x86
+		{700EE334-34C9-4A4D-8A7E-D235997F5D96}.Release|x86.ActiveCfg = Release|x86
+		{700EE334-34C9-4A4D-8A7E-D235997F5D96}.Release|x86.Build.0 = Release|x86
+		{0D9F0FEA-45F7-4CE4-9868-6FB9BBE3DD4C}.Debug|x86.ActiveCfg = Debug|x86
+		{0D9F0FEA-45F7-4CE4-9868-6FB9BBE3DD4C}.Debug|x86.Build.0 = Debug|x86
+		{0D9F0FEA-45F7-4CE4-9868-6FB9BBE3DD4C}.Release|x86.ActiveCfg = Release|x86
+		{0D9F0FEA-45F7-4CE4-9868-6FB9BBE3DD4C}.Release|x86.Build.0 = Release|x86
+		{4EF6FE65-0BDE-4AC4-B9CF-F2D8FFE886C1}.Debug|x86.ActiveCfg = Debug|x86
+		{4EF6FE65-0BDE-4AC4-B9CF-F2D8FFE886C1}.Debug|x86.Build.0 = Debug|x86
+		{4EF6FE65-0BDE-4AC4-B9CF-F2D8FFE886C1}.Release|x86.ActiveCfg = Release|x86
+		{4EF6FE65-0BDE-4AC4-B9CF-F2D8FFE886C1}.Release|x86.Build.0 = Release|x86
+		{F50EB799-6DED-4906-9DB0-B8FBE5C14028}.Debug|x86.ActiveCfg = Debug|x86
+		{F50EB799-6DED-4906-9DB0-B8FBE5C14028}.Debug|x86.Build.0 = Debug|x86
+		{F50EB799-6DED-4906-9DB0-B8FBE5C14028}.Release|x86.ActiveCfg = Release|x86
+		{F50EB799-6DED-4906-9DB0-B8FBE5C14028}.Release|x86.Build.0 = Release|x86
+		{BD44099A-24A0-4A7D-BE42-99AB755724CD}.Debug|x86.ActiveCfg = Debug|x86
+		{BD44099A-24A0-4A7D-BE42-99AB755724CD}.Debug|x86.Build.0 = Debug|x86
+		{BD44099A-24A0-4A7D-BE42-99AB755724CD}.Release|x86.ActiveCfg = Release|x86
+		{BD44099A-24A0-4A7D-BE42-99AB755724CD}.Release|x86.Build.0 = Release|x86
+		{4EB08266-54EB-462D-A782-9918E94490FB}.Debug|x86.ActiveCfg = Debug|x86
+		{4EB08266-54EB-462D-A782-9918E94490FB}.Debug|x86.Build.0 = Debug|x86
+		{4EB08266-54EB-462D-A782-9918E94490FB}.Release|x86.ActiveCfg = Release|x86
+		{4EB08266-54EB-462D-A782-9918E94490FB}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1725D36C-91B3-451B-A740-D003A8B766E5} = {2CAE734F-8505-48A3-889F-9859E7F323BF}
+		{EE6B6146-79D7-4708-B7C5-A4DB6D667CB6} = {2CAE734F-8505-48A3-889F-9859E7F323BF}
+		{48DD15C8-5B57-4412-AC38-220955926289} = {2CAE734F-8505-48A3-889F-9859E7F323BF}
+		{1A81ACBC-6BBF-4F49-9E7C-8AF029DAB2AA} = {68D6E86F-BEFB-42C4-BC21-2DE374A86D3C}
+		{700EE334-34C9-4A4D-8A7E-D235997F5D96} = {68D6E86F-BEFB-42C4-BC21-2DE374A86D3C}
+		{29271476-28DD-4894-B689-9CEC89C6225A} = {68D6E86F-BEFB-42C4-BC21-2DE374A86D3C}
+		{56024885-BF49-48B1-A714-278B98ECBA2F} = {68D6E86F-BEFB-42C4-BC21-2DE374A86D3C}
+		{4EB08266-54EB-462D-A782-9918E94490FB} = {68D6E86F-BEFB-42C4-BC21-2DE374A86D3C}
+	EndGlobalSection
+EndGlobal

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using CassiniDev;
 
 namespace Skylabs.LobbyServer
 {
@@ -15,10 +16,15 @@ namespace Skylabs.LobbyServer
         private Thread _thread;
         private HttpListener _server;
         private bool _running;
+
+        private CassiniDevServer _webServer = null;
         public WebServer()
         {
+            //_webServer = new CassiniDevServer();
+            //_webServer.StartServer(Environment.CurrentDirectory, int.Parse(Program.Settings["webserverport"]), "/", Environment.MachineName);
+
             _running = false;
-            _thread =new Thread(Run);
+            _thread = new Thread(Run);
             _server = new HttpListener();
             int port = 8901;
             try
@@ -29,7 +35,7 @@ namespace Skylabs.LobbyServer
             {
                 port = 8901;
             }
-            _server.Prefixes.Add(String.Format("http://+:{0}/",port));
+            _server.Prefixes.Add(String.Format("http://+:{0}/", port));
         }
         public bool Start()
         {

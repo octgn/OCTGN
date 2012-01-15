@@ -1,0 +1,13 @@
+I:\Visual Studio Projects\CassiniDev\CassiniDev\bin\x86\debug\CassiniDev4.exe.config
+I:\Visual Studio Projects\CassiniDev\CassiniDev\bin\x86\debug\CassiniDev4.exe
+I:\Visual Studio Projects\CassiniDev\CassiniDev\bin\x86\debug\CassiniDev4.pdb
+I:\Visual Studio Projects\CassiniDev\CassiniDev\bin\x86\debug\Common.Logging.dll
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\ResolveAssemblyReference.cache
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\CassiniDev.Resources.CassiniDev.resources
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\CassiniDev.ServerLog.BodyView.resources
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\CassiniDev.FormView.resources
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\CassiniDev.ServerLog.LogView.resources
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\GenerateResource-ResGen.read.1.tlog
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\GenerateResource-ResGen.write.1.tlog
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\CassiniDev4.exe
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\CassiniDev4.pdb

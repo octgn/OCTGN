@@ -11,7 +11,8 @@
     <RootNamespace>Skylabs.LobbyServer</RootNamespace>
     <AssemblyName>Skylabs.LobbyServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -187,6 +188,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CassiniDev\CassiniDev\CassiniDev.Lib4.csproj">
+      <Project>{070AE36D-4CE1-4708-BD0F-2896A6F117FC}</Project>
+      <Name>CassiniDev.Lib4</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ConsoleHelper\ConsoleHelper.csproj">
       <Project>{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}</Project>
       <Name>ConsoleHelper</Name>

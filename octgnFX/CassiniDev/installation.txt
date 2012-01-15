@@ -1,0 +1,46 @@
+UNDER CONSTRUCTION
+
+
+Builds tailed with '4' are built on .Net 4.0, the reset are 3.5sp1.
+Each directory contains a self contained binary and an accompanying configuration file.
+The different builds are intended as a convenience. The binary files are not dependent
+upon each other.
+------------------------------------------------------------------------------------------
+
+CassiniDev.exe and CassiniDev4.exe are suitable as standalone interactive server for 
+hosting all types of web content including static files, ASP.Net content, and WCF. 
+Note: WCF is hostable only on localhost due to a limitation of the SimpleWorkerRequest.
+
+CassiniDev-console.exe and CassiniDev4-console.exe are provided primarily to support an
+out-of-process testing fixture but may be used to host content just the same if desired.
+
+CassiniDev-lib.dll and CassiniDev4-lib.dll provide a platform for easily and elegantly 
+embedding ASP.Net hosting. This can be useful for testing amongst other things.
+
+WebDev.WebServer.EXE, WebDev.WebServer20.EXE and WebDev.WebServer40.EXE are simply 
+CassiniDev.exe and CassiniDev4.exe built with a different name to facilitate drop-in 
+replacement of the Visual Studio development server.
+------------------------------------------------------------------------------------------
+
+
+The only external dependency is optional System.Data.SQLite to enable persistent
+logging. Without this provider traffic is only captured when the log window is active
+and is discarded when the window is closed. When SQLite is absent all traffic monitored
+is stored in memory and it may be wise to occasionally close the window or clear the log
+if you are dealing with heavy content.
+------------------------------------------------------------------------------------------
+
+To replace your instances of Visual Studio 2008/2010 development server(s) simply drop
+the corresponding files into place. Be sure to make a copy of the existing files and
+clearly mark them as original so that you may replace them should there be a problem
+with CassiniDev.
+
+You will find the Visual Studio development servers in the following directories:
+
+C:\Program Files\Common Files\microsoft shared\DevServer\9.0   <-- Visual Studio 2008
+C:\Program Files\Common Files\microsoft shared\DevServer\10.0  <-- Visual Studio 2010
+------------------------------------------------------------------------------------------
+
+
+
+

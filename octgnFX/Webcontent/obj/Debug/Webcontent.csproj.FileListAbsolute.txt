@@ -1,0 +1,14 @@
+X:\octgnclientsource\trunk\octgnFX\Webcontent\obj\Debug\ResolveAssemblyReference.cache
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\webserver\css\main.css
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\webserver\games.htm
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\webserver\index.htm
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\serversettings.ini
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\serversettingsdebug.ini
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\css\main.css
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\Default.aspx
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\Default.aspx.cs
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\Default.aspx.designer.cs
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\Webcontent.dll
+X:\octgnclientsource\trunk\octgnFX\Octgn\bin\Debug\Webcontent.pdb
+X:\octgnclientsource\trunk\octgnFX\Webcontent\obj\Debug\Webcontent.dll
+X:\octgnclientsource\trunk\octgnFX\Webcontent\obj\Debug\Webcontent.pdb

@@ -1,0 +1,10 @@
+I:\Visual Studio Projects\CassiniDev\CassiniDev\bin\x86\debug\CassiniDev-lib.dll.config
+I:\Visual Studio Projects\CassiniDev\CassiniDev\bin\x86\debug\CassiniDev-lib.dll
+I:\Visual Studio Projects\CassiniDev\CassiniDev\bin\x86\debug\CassiniDev-lib.pdb
+I:\Visual Studio Projects\CassiniDev\CassiniDev\bin\x86\debug\Common.Logging.dll
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\ResolveAssemblyReference.cache
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\CassiniDev.Resources.CassiniDev.resources
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\GenerateResource-ResGen.read.1.tlog
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\GenerateResource-ResGen.write.1.tlog
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\CassiniDev-lib.dll
+I:\Visual Studio Projects\CassiniDev\CassiniDev\obj\x86\Debug\CassiniDev-lib.pdb

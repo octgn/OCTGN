@@ -1,0 +1,202 @@
+Index: CassiniDev/CassiniDev.4.csproj
+===================================================================
+--- CassiniDev/CassiniDev.4.csproj	(revision 70191)
++++ CassiniDev/CassiniDev.4.csproj	(working copy)
+@@ -74,6 +74,9 @@
+     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+   </PropertyGroup>
+   <ItemGroup>
++    <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
++      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
++    </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.configuration" />
+     <Reference Include="System.Configuration.Install" />
+@@ -115,6 +118,12 @@
+     <Compile Include="Views\BodyView.Designer.cs">
+       <DependentUpon>BodyView.cs</DependentUpon>
+     </Compile>
++    <Compile Include="Views\HelpView.cs">
++      <SubType>Form</SubType>
++    </Compile>
++    <Compile Include="Views\HelpView.Designer.cs">
++      <DependentUpon>HelpView.cs</DependentUpon>
++    </Compile>
+     <Compile Include="Views\FormView.cs">
+       <SubType>Form</SubType>
+     </Compile>
+@@ -133,6 +142,9 @@
+     <EmbeddedResource Include="Views\BodyView.resx">
+       <DependentUpon>BodyView.cs</DependentUpon>
+     </EmbeddedResource>
++    <EmbeddedResource Include="Views\HelpView.resx">
++      <DependentUpon>HelpView.cs</DependentUpon>
++    </EmbeddedResource>
+     <EmbeddedResource Include="Views\FormView.resx">
+       <DependentUpon>FormView.cs</DependentUpon>
+     </EmbeddedResource>
+@@ -164,6 +176,7 @@
+     <None Include="CassiniDev4.exe.config">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </None>
++    <None Include="packages.config" />
+   </ItemGroup>
+   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+Index: CassiniDev/CassiniDev.Console4.csproj
+===================================================================
+--- CassiniDev/CassiniDev.Console4.csproj	(revision 70191)
++++ CassiniDev/CassiniDev.Console4.csproj	(working copy)
+@@ -79,6 +79,9 @@
+     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+   </PropertyGroup>
+   <ItemGroup>
++    <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
++      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
++    </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.configuration" />
+     <Reference Include="System.Configuration.Install" />
+@@ -123,6 +126,7 @@
+     <None Include="CassiniDev4-console.exe.config">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </None>
++    <None Include="packages.config" />
+   </ItemGroup>
+   <ItemGroup>
+     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+Index: CassiniDev/CassiniDev.Lib4.csproj
+===================================================================
+--- CassiniDev/CassiniDev.Lib4.csproj	(revision 70191)
++++ CassiniDev/CassiniDev.Lib4.csproj	(working copy)
+@@ -71,6 +71,9 @@
+     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+   </PropertyGroup>
+   <ItemGroup>
++    <Reference Include="Common.Logging">
++      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
++    </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.configuration" />
+     <Reference Include="System.Configuration.Install" />
+@@ -132,6 +135,7 @@
+     <None Include="CassiniDev4-lib.dll.config">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </None>
++    <None Include="packages.config" />
+   </ItemGroup>
+   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+Index: CassiniDev/CassiniDev.VisualStudio44.csproj
+===================================================================
+--- CassiniDev/CassiniDev.VisualStudio44.csproj	(revision 70191)
++++ CassiniDev/CassiniDev.VisualStudio44.csproj	(working copy)
+@@ -71,6 +71,9 @@
+     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+   </PropertyGroup>
+   <ItemGroup>
++    <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
++      <HintPath>..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
++    </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.configuration" />
+     <Reference Include="System.Configuration.Install" />
+@@ -166,6 +169,7 @@
+     </BootstrapperPackage>
+   </ItemGroup>
+   <ItemGroup>
++    <None Include="packages.config" />
+     <None Include="WebDev.WebServer40.exe.config">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+       <SubType>Designer</SubType>
+Index: CassiniDev/Core/Server.cs
+===================================================================
+--- CassiniDev/Core/Server.cs	(revision 70191)
++++ CassiniDev/Core/Server.cs	(working copy)
+@@ -23,10 +23,12 @@
+ using System.Runtime.Remoting;
+ using System.Security.Permissions;
+ using System.Security.Principal;
++using System.Text;
+ using System.Threading;
+ using System.Web;
+ using System.Web.Hosting;
+ using CassiniDev.ServerLog;
++using Common.Logging;
+ 
+ #endregion
+ 
+@@ -452,13 +454,43 @@
+         {
+             EventHandler<RequestEventArgs> complete = RequestComplete;
+ 
++            PublishLogToCommonLogging(requestLog);
++            PublishLogToCommonLogging(responseLog);
++
+             if (complete != null)
+             {
+                 complete(this, new RequestEventArgs(id, requestLog, responseLog));
+             }
+         }
+ 
++        readonly ILog _logger = LogManager.GetCurrentClassLogger();
++        private void PublishLogToCommonLogging(LogInfo item)
++        {
++            var bodyAsString = String.Empty;
++            try
++            {
++                bodyAsString = Encoding.UTF8.GetString(item.Body);
++            }
++// ReSharper disable EmptyGeneralCatchClause
++            catch (Exception e)
++// ReSharper restore EmptyGeneralCatchClause
++            {
++                /* empty bodies should be allowed */
++            }
+ 
++            var type = item.RowType == 0 ? "" : item.RowType == 1 ? "Request" : "Response";
++            _logger.Debug(type + " | " +
++                          item.Created + " | " +
++                          item.StatusCode + " | " +
++                          item.Url + " | " +
++                          item.PathTranslated + " | " +
++                          item.Identity + " | " +
++                          "\n===>Headers<====\n" + item.Headers +
++                          "\n===>Body<=======\n" + bodyAsString
++                );
++        }
++
++
+         public void ShutDown()
+         {
+             _shutdownInProgress = true;
+Index: packages/Common.Logging.2.0.0/Common.Logging.2.0.0.nupkg
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: packages\Common.Logging.2.0.0\Common.Logging.2.0.0.nupkg
+___________________________________________________________________
+Added: svn:mime-type
+   + application/octet-stream
+
+Index: packages/Common.Logging.2.0.0/lib/2.0/Common.Logging.dll
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+
+Property changes on: packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll
+___________________________________________________________________
+Added: svn:mime-type
+   + application/octet-stream
+
+Index: packages/repositories.config
+===================================================================
+--- packages/repositories.config	(revision 0)
++++ packages/repositories.config	(revision 0)
+@@ -0,0 +1,4 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<repositories>
++  <repository path="..\CassiniDev\packages.config" />
++</repositories>
+\ No newline at end of file
