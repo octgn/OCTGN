@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using Skylabs.ConsoleHelper;
 using Skylabs.Lobby;
 using Skylabs.LobbyServer;
+using System.Net;
 
 namespace Skylabs.LobbyServer
 {
@@ -58,7 +59,17 @@ namespace Skylabs.LobbyServer
                     using (MySqlConnection con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        String ip = c.RemoteEndPoint.ToString();
+                        EndPoint endpoint = c.RemoteEndPoint;
+                        String ip = "0.0.0.0";
+                        if (endpoint == null)
+                        {
+                            Console.WriteLine("####REMOTE ENDPOINT WAS NULL, WTF##############");
+                        }
+                        else
+                        {
+                            ip = endpoint.ToString();
+                        }
+                        
                         MySqlCommand cmd = con.CreateCommand();
                         try
                         {
@@ -135,10 +146,8 @@ namespace Skylabs.LobbyServer
         /// <param name="table">Table to delete from</param>
         /// <param name="columnname">Column name to check against.</param>
         /// <param name="columnvalue">The value, that if exists in said column, will cause the row to go bye bye.</param>
-        public void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
+        private void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
         {
-            lock (DBLocker)
-            {
                 MySqlCommand cmd = con.CreateCommand();
                 cmd.CommandText = "DELETE FROM @table WHERE @col=@val;";
                 cmd.Prepare();
@@ -149,7 +158,6 @@ namespace Skylabs.LobbyServer
                 cmd.Parameters["@col"].Value = columnname;
                 cmd.Parameters["@table"].Value = columnvalue;
                 cmd.ExecuteNonQuery();
-            }
         }
         /// <summary>
         /// Get user information from the database.
