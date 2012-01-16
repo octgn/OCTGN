@@ -154,7 +154,8 @@ namespace Skylabs.LobbyServer
                 List<long> roomstocan = new List<long>();
                 foreach (ChatRoom c in Rooms)
                 {
-                    Thread t = new Thread(()=>c.UserExit(u));
+                    ChatRoom cr = c;
+                    Thread t = new Thread(()=>cr.UserExit(u));
                     t.Start();
                     User[] ul = c.GetUserList();
                     if (ul.Length - 1 <= 0 && c.ID != 0)
