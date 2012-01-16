@@ -22,8 +22,13 @@ namespace Octgn.Launcher
         public Login()
         {
             InitializeComponent();
+            if (Program.lobbyClient != null)
+            {
+                Program.lobbyClient.Stop();
+                Program.lobbyClient = null;
+            }
             Program.lobbyClient = new LobbyClient();
-            Program.lobbyClient.OnCaptchaRequired += new LobbyClient.HandleCaptcha(lobbyClient_OnCaptchaRequired);
+            
             
             SpinnerRotate.CenterX = image2.Width / 2;
             SpinnerRotate.CenterY = image2.Height / 2;
@@ -76,25 +81,41 @@ namespace Octgn.Launcher
         {
             if (!isLoggingIn)
             {
+
                 isLoggingIn = true;
                 Start_Spinning();
-
+                Program.LauncherWindow.Closing += new System.ComponentModel.CancelEventHandler(LauncherWindow_Closing);
                 bError.Visibility = Visibility.Hidden;
                 bool c = Program.lobbyClient.Connected;
                 if (!c)
+                {
+                    UpdateLoginStatus("Connecting to server...");
                     c = Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
+                }
                 if (c)
                 {
                     Program.SaveLocation();
                     //TODO Sometimes it takes forever, maybe retry if it doesn't log in in like 10 seconds.
-                    Program.lobbyClient.Login(LoginFinished, textBox1.Text, passwordBox1.Password, "", UserStatus.Online);
+                    Program.lobbyClient.OnCaptchaRequired += new LobbyClient.HandleCaptcha(lobbyClient_OnCaptchaRequired);
+                    Program.lobbyClient.Login(LoginFinished, UpdateLoginStatus,textBox1.Text, passwordBox1.Password, "", UserStatus.Online);
                 }
                 else
                 {
+                    UpdateLoginStatus("");
                     isLoggingIn = false;
                     DoErrorMessage("Could not connect to the server.");
                 }
             }
+        }
+
+        void LauncherWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (isLoggingIn)
+                e.Cancel = true;
+        }
+        private void UpdateLoginStatus(string message)
+        {
+            Dispatcher.Invoke(new Action(() => lblLoginStatus.Content = message));
         }
         private void lobbyClient_OnCaptchaRequired(string Fullurl, string Imageurl)
         {
@@ -141,7 +162,9 @@ namespace Octgn.Launcher
         private void LoginFinished(LoginResult success, DateTime BanEnd, string message)
         {                        
             Dispatcher.Invoke((Action)(() =>
-            {                
+            {
+                Program.lobbyClient.OnCaptchaRequired -= lobbyClient_OnCaptchaRequired;
+                Program.LauncherWindow.Closing -= LauncherWindow_Closing;
                 isLoggingIn = false;
                 Stop_Spinning();
                 if(success == LoginResult.Success)
@@ -157,6 +180,7 @@ namespace Octgn.Launcher
 
                     Program.ClientWindow = new Main();
                     Program.ClientWindow.Show();
+                    Application.Current.MainWindow = Program.ClientWindow;
                     Program.LauncherWindow.Close();
                 }
                 else if(success == LoginResult.Banned)
@@ -172,7 +196,10 @@ namespace Octgn.Launcher
 
         private void menuExit_Click(object sender, RoutedEventArgs e)
         {
-            Program.Exit();
+            if (!isLoggingIn)
+            {
+                Program.Exit();
+            }
         }
 
         private bool FileExists(string URL)
@@ -323,6 +350,25 @@ namespace Octgn.Launcher
                 cbSavePassword.IsChecked = false;
                 Settings.Default.Password = "";
                 Settings.Default.Save();
+            }
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateLoginStatus("Connecting to server...");
+            if (Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort))
+            {
+                UpdateLoginStatus("Server available");
+            }
+            else
+            {
+                UpdateLoginStatus("");
+                DoErrorMessage("Server Unavailable");
             }
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Skylabs.Net;
+using System.Diagnostics;
 
 namespace Skylabs.Lobby
 {
@@ -47,6 +48,7 @@ namespace Skylabs.Lobby
         /// <param name="id"></param>
         public void JoinChatRoom(long id)
         {
+            Debug.WriteLine("Joining chat room {0}", id);
             SocketMessage sm = new SocketMessage("joinchatroom");
             sm.AddData("roomid", id);
             Parent.WriteMessage(sm);
@@ -104,6 +106,7 @@ namespace Skylabs.Lobby
                 cr.ResetUserList(allusers);
                 if (u.Uid == Parent.Me.Uid)
                 {
+                    System.Diagnostics.Debug.WriteLine("Connected to room.");
                     if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.MeJoinedChat, u,null);
                 }
                 else

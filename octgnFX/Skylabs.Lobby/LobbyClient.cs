@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Google.GData.Client;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
+using System.Diagnostics;
 
 namespace Skylabs.Lobby
 {
@@ -19,6 +20,7 @@ namespace Skylabs.Lobby
     public class LobbyClient : SkySocket
     {
         public delegate void LoginFinished(LoginResult success, DateTime banEnd, string message);
+        public delegate void LoginProgressUpdate(string message);
         public delegate void HandleCaptcha(string fullurl, string imageurl);
         public delegate void DataRecieved(DataRecType type, object e);
         public delegate void UserStatusChanged(UserStatus eve, User u);
@@ -105,7 +107,7 @@ namespace Skylabs.Lobby
 
         private bool _sentEndMessage;
 
-        private bool _gotEndMessage;
+        private bool _didCallStop = false;
 
         public LobbyClient()
         {
@@ -129,13 +131,14 @@ namespace Skylabs.Lobby
         /// </summary>
         public void Stop()
         {
-            if (!_sentEndMessage)
+            if (!_didCallStop)
             {
-                WriteMessage(new SocketMessage("end"));
-                _sentEndMessage = true;
-            }
-            if (_gotEndMessage)
-            {
+                _didCallStop = true;
+                if (!_sentEndMessage)
+                {
+                    WriteMessage(new SocketMessage("end"));
+                    _sentEndMessage = true;
+                }
                 Close(DisconnectReason.CleanDisconnect);
             }
         }
@@ -197,7 +200,7 @@ namespace Skylabs.Lobby
         /// <param name="password">Password</param>
         /// <param name="captcha">Captcha string if required</param>
         /// <param name="status">Status to log in as</param>
-        public void Login(LoginFinished onFinish, string email, string password, string captcha, UserStatus status)
+        public void Login(LoginFinished onFinish, LoginProgressUpdate onUpdate, string email, string password, string captcha, UserStatus status)
         {
             if(Connected)
             {
@@ -210,6 +213,7 @@ namespace Skylabs.Lobby
                                               s.setUserCredentials(email, password);
                                               if(captcha != null && _mCaptchaToken != null)
                                               {
+                                                  onUpdate.Invoke("Verifying captcha");
                                                   if(!String.IsNullOrWhiteSpace(captcha) || !String.IsNullOrWhiteSpace(_mCaptchaToken))
                                                   {
                                                       s.Credentials.CaptchaToken = _mCaptchaToken;
@@ -218,7 +222,11 @@ namespace Skylabs.Lobby
                                               }
                                               try
                                               {
+                                                  Debug.WriteLine("Querying Google...");
+                                                  onUpdate.Invoke("Logging into Google...");
                                                   string ret = s.QueryClientLoginToken();
+                                                  onUpdate.Invoke("Sending login token to Server...");
+                                                  Debug.WriteLine("Received login token.");
                                                   SocketMessage sm = new SocketMessage("login");
                                                   sm.AddData(new NameValuePair("email", email));
                                                   sm.AddData(new NameValuePair("token", ret));
@@ -265,7 +273,6 @@ namespace Skylabs.Lobby
             {
                 case "end":
                     {
-                        _gotEndMessage = true;
                         Stop();
                         break;
                     }

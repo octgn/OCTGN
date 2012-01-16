@@ -76,6 +76,7 @@ namespace Octgn.Launcher
                 if (gi.ThisRoom.ID == 0)
                 {
                     ChatWindow cw = new ChatWindow(0);
+                    Program.ChatWindows.Add(cw);
                     cw.Show();
                 }
             }
@@ -124,6 +125,7 @@ namespace Octgn.Launcher
         {
             Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
             Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
+            Program.lobbyClient.Chatting.eChatEvent -= Chatting_eChatEvent;
         }
     }
 }

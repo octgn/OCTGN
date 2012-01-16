@@ -56,7 +56,6 @@ namespace Octgn
         {
             System.Diagnostics.Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
-            System.Diagnostics.Debug.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
             BasePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
@@ -129,6 +128,10 @@ namespace Octgn
 
         public static void Exit()
         {
+            Application.Current.MainWindow = null;
+            if (Program.lobbyClient != null && Program.lobbyClient.Connected)
+                Program.lobbyClient.Stop();
+
             SaveLocation();
             try
             {
@@ -140,15 +143,15 @@ namespace Octgn
             if(LauncherWindow != null)
                 if(LauncherWindow.IsLoaded)
                     LauncherWindow.Close();
-            if(ClientWindow != null)
-                if(ClientWindow.IsLoaded)
+            if (ClientWindow != null)
+                if (ClientWindow.IsLoaded)
                     ClientWindow.Close();
             if(PlayWindow != null)
                 if(PlayWindow.IsLoaded)
                     PlayWindow.Close();
             foreach(ChatWindow cw in ChatWindows)
             {
-                cw.Close();
+                cw.CloseChatWindow();
             }
             if (LobbyServerProcess != null)
             {
@@ -160,7 +163,7 @@ namespace Octgn
                 {
                 }
             }
-                
+            Application.Current.Shutdown(0);
         }
 
         //TODO: Get rid of this method at some point

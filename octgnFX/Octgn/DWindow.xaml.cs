@@ -70,12 +70,12 @@ namespace Octgn
             var p = new Paragraph()
             {
                 TextAlignment = TextAlignment.Left,
-                Margin = new Thickness(2),
+                Margin = new Thickness(0),
                 Inlines =
                         {
-                            new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush },
-                            new Run(System.Environment.NewLine + te.ToString() + System.Environment.NewLine) { Foreground = TurnBrush, FontWeight = FontWeights.Bold  },
-                            new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush }
+                            //new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush },
+                            new Run(te.ToString()) { Foreground = TurnBrush, FontWeight = FontWeights.Bold  }
+                            //new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush }
                         }
             };
             if(output.Document.Blocks.LastBlock != null)

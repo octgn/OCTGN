@@ -18,16 +18,12 @@ namespace Octgn.Controls
     /// </summary>
     public partial class GroupChatListItem : UserControl
     {
-        private Point _startPoint;
         private bool _isDragging;
-        Cursor _allOpsCursor = null;
         public bool IsDragging
         {
             get { return _isDragging; }
             set { _isDragging = value; }
         } 
-        DragAdorner _adorner = null;
-        AdornerLayer _layer;
         FrameworkElement _dragScope;
         public FrameworkElement DragScope
         {

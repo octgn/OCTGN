@@ -14,7 +14,7 @@ namespace Octgn
 
         private void GoToWebSite(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://www.octgn.net");
+            System.Diagnostics.Process.Start("http://www.octgn.info");
             e.Handled = true;
         }
     }

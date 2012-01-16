@@ -19,7 +19,6 @@ namespace Octgn.Controls
     {
         private Point _startPoint;
         private bool _isDragging;
-        Cursor _allOpsCursor = null;
         public bool IsDragging
         {
             get { return _isDragging; }
@@ -246,7 +245,7 @@ namespace Octgn.Controls
         {
 
             // Let's define our DragScope .. In this case it is every thing inside our main window .. 
-            DragScope = Application.Current.MainWindow.Content as FrameworkElement;
+            DragScope = Program.ClientWindow.Content as FrameworkElement;
             System.Diagnostics.Debug.Assert(DragScope != null);
 
             // We enable Drag & Drop in our scope ...  We are not implementing Drop, so it is OK, but this allows us to get DragOver 

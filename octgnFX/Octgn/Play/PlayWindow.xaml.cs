@@ -23,7 +23,6 @@ namespace Octgn.Play
     protected Scripting.Engine scriptEngine;
 
 
-    private Boolean _keyDown = false;
 #pragma warning restore 649
 
     #region Dependency Properties
@@ -336,8 +335,9 @@ namespace Octgn.Play
     private void ShowAboutWindow(object sender, RoutedEventArgs e)
     {
       e.Handled = true;
-      var wnd = new AboutWindow() { Owner = this };
-      wnd.ShowDialog();
+      //var wnd = new AboutWindow() { Owner = this };
+      //wnd.ShowDialog();
+      System.Diagnostics.Process.Start("http://www.octgn.info");
     }
 
     private void ConsoleClicked(object sender, RoutedEventArgs e)

@@ -81,6 +81,7 @@
     <Compile Include="HostedGame.cs" />
     <Compile Include="LobbyClient.cs" />
     <Compile Include="Notification.cs" />
+    <Compile Include="Pair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sockets\SkySocket.cs" />
     <Compile Include="Sockets\SocketMessage.cs" />

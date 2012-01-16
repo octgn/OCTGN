@@ -287,6 +287,7 @@ namespace Octgn.Launcher
                 }
                 Program.LauncherWindow = new LauncherWindow();
                 Program.LauncherWindow.Show();
+                Application.Current.MainWindow = Program.LauncherWindow;
             }
             else
             {
@@ -298,6 +299,7 @@ namespace Octgn.Launcher
                     }
                     Program.LauncherWindow = null;
                 }
+                Application.Current.MainWindow = Program.ClientWindow;
             }
             Program.ClientWindow.Close();
             Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;

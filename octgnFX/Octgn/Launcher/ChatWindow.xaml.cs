@@ -207,14 +207,14 @@ namespace Octgn.Launcher
                 {
                     h.NavigateUri = new Uri(s);
                 }
-                catch (UriFormatException e)
+                catch (UriFormatException)
                 {
                     s = "http://" + s;
                     try
                     {
                         h.NavigateUri = new Uri(s);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         r.Foreground = b;
                         System.Windows.Documents.Underline ul = new Underline(r);

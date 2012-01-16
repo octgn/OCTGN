@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using Skylabs.ConsoleHelper;
+using System.Threading;
+using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {
@@ -11,6 +13,9 @@ namespace Skylabs.LobbyServer
     {
         public static Dictionary<string, string> Settings; 
         public static WebServer WebServer;
+        private static DateTime _killTime;
+        private static Timer _killTimer;
+
         private static void Main(string[] args)
         {
             if (!LoadSettings())
@@ -23,7 +28,7 @@ namespace Skylabs.LobbyServer
             StartServer();
             WebServer = new WebServer();
             WebServer.Start();
-
+            //_killTimer = new Timer(CheckKillTime, _killTime, 1000, 1000);
             ConsoleReader.Start();
             ConsoleWriter.WriteCt();
         }
@@ -56,6 +61,23 @@ namespace Skylabs.LobbyServer
                     Settings.Add(parts[0],parts[1]);
             }
             return true;
+        }
+        public static void KillServerInTime(int seconds)
+        {
+            _killTime = DateTime.Now.AddSeconds((int)seconds);
+            SocketMessage sm = new SocketMessage("servermessage");
+            //sm.AddData("message","Server will be shutting down in )
+            //Server.AllUserMessage(sm);
+        }
+        private static void CheckKillTime(Object stateInfo)
+        {
+            if (_killTime == null)
+                return;
+            if (_killTime == new DateTime(0))
+                return;
+            if (_killTime.Ticks > DateTime.Now.Ticks)
+                return;
+            Quit();
         }
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
         {
@@ -104,6 +126,8 @@ namespace Skylabs.LobbyServer
 
         private static void Quit()
         {
+            Gaming.Stop();
+            Server.Stop();
             ConsoleReader.Stop();
         }
 

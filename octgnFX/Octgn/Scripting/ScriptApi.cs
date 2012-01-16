@@ -499,7 +499,7 @@ namespace Octgn.Scripting
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //placeholder for other sorts of exceptions
             }

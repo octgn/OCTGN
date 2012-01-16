@@ -23,21 +23,25 @@ namespace Skylabs.LobbyServer
         }
         public static void TL(string MethodName, string LockObjectName)
         {
-            Console.WriteLine(String.Format("{2}[{4}:{5}][tryLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, DateTime.Now.ToShortDateString(),DateTime.Now.ToShortTimeString()));
+            //Console.WriteLine(String.Format("{2}[{4}:{5}][tryLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, DateTime.Now.ToShortDateString(),DateTime.Now.ToShortTimeString()));
         }
         public static void L(string MethodName, string LockObjectName)
         {
-            Console.WriteLine(String.Format("{2}[{4}:{5}][inLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
+            //Console.WriteLine(String.Format("{2}[{4}:{5}][inLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
             curIndent++;
         }
         public static void UL(string MethodName, string LockObjectName)
         {
             curIndent--;
-            Console.WriteLine(String.Format("{2}[{4}:{5}][unLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
+            //Console.WriteLine(String.Format("{2}[{4}:{5}][unLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
         }
         public static void LE(string MethodName, string LockObjectName, string e)
         {
-            Console.WriteLine(String.Format("{2}[{5}:{6}][Lockevent({3},{0})]{1}:{4}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, e, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
+            //Console.WriteLine(String.Format("{2}[{5}:{6}][Lockevent({3},{0})]{1}:{4}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, e, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
+        }
+        public static void log(string MethodName, string e)
+        {
+            Console.WriteLine(String.Format("{1}[{4}:{5}][LOG({2})]{0}:{3}", MethodName, tab, Thread.CurrentThread.ManagedThreadId, e, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
         }
     }
 }

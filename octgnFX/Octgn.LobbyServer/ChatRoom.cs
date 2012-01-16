@@ -18,7 +18,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         /// List of users in the chat room.8
         /// </summary>
-        private List<User> Users = new List<User>();
+        private List<Pair<int, User>> Users = new List<Pair<int, User>>();
 
         private object UserLocker = new object();
         /// <summary>
@@ -44,16 +44,31 @@ namespace Skylabs.LobbyServer
             lock (UserLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
-                if (!Users.Exists(us => us.Uid == u.Uid))
+                Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Adding User " + u.Uid.ToString() + " to room " + ID.ToString());
+                Client c = Server.GetOnlineClientByUid(u.Uid);
+                if (c != null)
                 {
-                    if (Server.GetOnlineClientByUid(u.Uid) != null)
+                    SocketMessage sm = new SocketMessage("userjoinedchatroom");
+                    sm.AddData("roomid", ID);
+                    sm.AddData("user", u);
+                    List<User> ulist = new List<User>();
+                    foreach (Pair<int, User> p in Users)
+                        ulist.Add(p.Item2);
+                    Pair<int, User> ou = Users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
+                    if (ou == null)
                     {
-                        Users.Add(u);
-                        SocketMessage sm = new SocketMessage("userjoinedchatroom");
-                        sm.AddData("roomid", ID);
-                        sm.AddData("user", u);
-                        sm.AddData("allusers", Users);
-                        SendAllUsersMessage(sm,false);
+                        Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User not in room already. Adding.");
+                        Users.Add(new Pair<int, User>(1, u));
+                        ulist.Add(u);
+                        sm.AddData("allusers", ulist);
+                        SendAllUsersMessage(sm, false);
+                    }
+                    else
+                    {
+                        ou.Item1++;
+                        Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User found in room. Incrementing to " + ou.Item1.ToString());
+                        sm.AddData("allusers", ulist);
+                        c.WriteMessage(sm);
                         Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                         return true;
                     }
@@ -68,7 +83,11 @@ namespace Skylabs.LobbyServer
             lock(UserLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
-                User[] ret =  Users.ToArray();
+                User[] ret = new User[Users.Count];
+                for (int i = 0; i < Users.Count; i++)
+                {
+                    ret[i] = Users[i].Item2;
+                }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                 return ret;
             }
@@ -82,14 +101,22 @@ namespace Skylabs.LobbyServer
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             lock (UserLocker)
             {
+                Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User " + u.Uid.ToString() + " Exiting room " + ID.ToString());
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
-                if (Users.Exists(us => us.Uid == u.Uid))
+                Pair<int, User> ou = Users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
+                if (ou != null)
                 {
-                    Users.Remove(u);
-                    SocketMessage sm = new SocketMessage("userleftchatroom");
-                    sm.AddData("roomid", ID);
-                    sm.AddData("user", u);
-                    SendAllUsersMessage(sm,false);
+                    ou.Item1--;
+                    Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User room decremented to " + ou.Item1.ToString());
+                    if (ou.Item1 == 0)
+                    {
+                        Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Removing user " + u.Uid.ToString() + " from room " + ID.ToString());
+                        Users.Remove(ou);
+                        SocketMessage sm = new SocketMessage("userleftchatroom");
+                        sm.AddData("roomid", ID);
+                        sm.AddData("user", u);
+                        SendAllUsersMessage(sm, false);
+                    }
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             }
@@ -106,9 +133,9 @@ namespace Skylabs.LobbyServer
                 lock(UserLocker)
                 {
                     Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
-                    foreach (User u in Users)
+                    foreach (Pair<int, User> u in Users)
                     {
-                        Client c = Server.GetOnlineClientByUid(u.Uid);
+                        Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
                         if (c != null)
                         {
                             Thread t = new Thread(() => c.WriteMessage(sm));
@@ -120,9 +147,9 @@ namespace Skylabs.LobbyServer
             }
             else
             {
-                foreach (User u in Users)
+                foreach (Pair<int, User> u in Users)
                 {
-                    Client c = Server.GetOnlineClientByUid(u.Uid);
+                    Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
                     if (c != null)
                     {
                         Thread t = new Thread(()=>c.WriteMessage(sm));

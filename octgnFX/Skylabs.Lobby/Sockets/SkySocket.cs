@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using System.Net;
+using System.Diagnostics;
 
 namespace Skylabs.Net
 {
@@ -284,6 +285,8 @@ namespace Skylabs.Net.Sockets
         {
             lock (SocketLocker)
             {
+                if(message.Header.ToLower() != "ping")
+                    Debug.WriteLine("Writing message({0}):", message.Header,message.Data);
                 byte[] data = SocketMessage.Serialize(message);
                 byte[] messagesize = BitConverter.GetBytes(data.LongLength);
                 try
@@ -296,18 +299,21 @@ namespace Skylabs.Net.Sockets
                 {
                     if (se.ErrorCode == 10058)
                         return;
-#if(!DEBUG)
-                    if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-#else
-                if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-#endif
-                    Thread t = new Thread(()=>Close(DisconnectReason.RemoteHostDropped));
+                    Thread t = new Thread(() => Close(DisconnectReason.RemoteHostDropped));
                     t.Start();
                 }
                 catch (ObjectDisposedException)
                 {
                     Thread t = new Thread(() => Close(DisconnectReason.RemoteHostDropped));
                     t.Start();
+                }
+                catch (NullReferenceException)
+                {
+
+                }
+                catch (Exception)
+                {
+                    if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
                 }
             }
         }

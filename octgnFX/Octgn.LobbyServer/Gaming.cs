@@ -34,6 +34,20 @@ namespace Skylabs.LobbyServer
                 return ret;
             }
         }
+        public static void Stop()
+        {
+            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            lock (GamingLocker)
+            {
+                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+                foreach (KeyValuePair<int,HostedGame> g in Games)
+                {
+                    g.Value.Stop();
+                }
+                Games.Clear();
+                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
+            }
+        }
         public static long TotalHostedGames()
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
@@ -73,7 +87,6 @@ namespace Skylabs.LobbyServer
                     hs.HostedGameDone -= HostedGameExited;
                     return -1;
                 }
-                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             }
         }
         public static void StartGame(int port)

@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace Skylabs.LobbyServer
 {
-    public class Client : SkySocket, IEquatable<Client>
+    public class Client : SkySocket, IEqualityComparer<Client>
     {
         /// <summary>
         /// A unique ID of the client. Server.cs decides this
@@ -53,9 +53,9 @@ namespace Skylabs.LobbyServer
 
         private bool _sentEndMessage;
 
-        private bool _gotEndMessage;
-
         private List<User> _friends;
+
+        private bool _didCallStop = false;
 
         private User _me = new User();
         /// <summary>
@@ -88,14 +88,16 @@ namespace Skylabs.LobbyServer
         /// </summary>
         public void Stop()
         {
-            LoggedIn = false;
-            if(!_sentEndMessage)
+            if (!_didCallStop)
             {
-                WriteMessage(new SocketMessage("end"));
-                _sentEndMessage = true;
-            }
-            if(_gotEndMessage)
-            {
+                Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Stopping client " + Id.ToString());
+                _didCallStop = true;
+                LoggedIn = false;
+                if (!_sentEndMessage)
+                {
+                    WriteMessage(new SocketMessage("end"));
+                    _sentEndMessage = true;
+                }
                 Close(DisconnectReason.CleanDisconnect);
             }
         }
@@ -131,6 +133,7 @@ namespace Skylabs.LobbyServer
         /// <param name="sm">Message</param>
         public override void OnMessageReceived(SocketMessage sm)
         {
+            //Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Got message(" + this.Id + "):" + sm.Header);
             switch (sm.Header.ToLower())
             {
                 case "login":
@@ -143,7 +146,6 @@ namespace Skylabs.LobbyServer
                     AcceptFriend(sm);
                     break;
                 case "end":
-                    _gotEndMessage = true;
                     Stop();
                     break;
                 case "displayname":
@@ -196,6 +198,7 @@ namespace Skylabs.LobbyServer
                     break;
                 case "joinchatroom":
                     {
+                        Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "joinchatroom Message Recieved");
                         Chatting.JoinChatRoom(this, sm);
                         break;
                     }
@@ -464,6 +467,16 @@ namespace Skylabs.LobbyServer
                 sm.AddData("message", "Server error");
                 WriteMessage(sm);
             
+        }
+
+        public bool Equals(Client x, Client y)
+        {
+            return (x.Id == y.Id);
+        }
+
+        public int GetHashCode(Client obj)
+        {
+            return Id;
         }
     }
 }

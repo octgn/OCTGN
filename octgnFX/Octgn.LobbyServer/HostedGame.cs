@@ -77,6 +77,17 @@ namespace Skylabs.LobbyServer
             StandAloneApp.Exited += StandAloneApp_Exited;
             StandAloneApp.EnableRaisingEvents = true;
         }
+        public void Stop()
+        {
+            try
+            {
+                StandAloneApp.Close();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
         public bool StartProcess()
         {
             Status = Lobby.HostedGame.eHostedGame.StoppedHosting;

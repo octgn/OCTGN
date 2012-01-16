@@ -75,7 +75,7 @@ namespace Skylabs.LobbyServer
                         {
                             ip = ip.Substring(0, ip.IndexOf(':'));
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             Console.WriteLine(ip);
                         }

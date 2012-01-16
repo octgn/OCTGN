@@ -15,6 +15,11 @@ namespace Octgn
         public static string ReadValue(string valName)
         {
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN");
+            if (key == null)
+            {
+                key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\OCTGN");
+                return null;
+            }
             if (key != null)
                 return (string)key.GetValue(valName);
             else return null;
@@ -28,7 +33,7 @@ namespace Octgn
         public static void WriteValue(string valName, string value)
         {
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN", true);
-            if (key == null) key.CreateSubKey(@"Software\OCTGN");
+            if (key == null) key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\OCTGN");
             key.SetValue(valName, value, Microsoft.Win32.RegistryValueKind.String);
             key.Close();
         }

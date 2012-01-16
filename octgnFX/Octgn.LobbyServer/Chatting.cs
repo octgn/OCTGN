@@ -33,6 +33,7 @@ namespace Skylabs.LobbyServer
                 var rid = (long?)s["roomid"];
                 if (rid == null)
                     return;
+                Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User trying to join room " + rid);
                 if (rid == -1)
                     MakeRoom(c);
                 else
@@ -156,7 +157,7 @@ namespace Skylabs.LobbyServer
                     Thread t = new Thread(()=>c.UserExit(u));
                     t.Start();
                     User[] ul = c.GetUserList();
-                    if (ul.Length == 0 && c.ID != 0)
+                    if (ul.Length - 1 <= 0 && c.ID != 0)
                         roomstocan.Add(c.ID);
                 }
                 foreach (long l in roomstocan)
@@ -182,6 +183,9 @@ namespace Skylabs.LobbyServer
                 {
                     Thread t = new Thread(() => cr.UserExit(u));
                     t.Start();
+                    User[] ul = cr.GetUserList();
+                    if (ul.Length - 1 <= 0 && cr.ID != 0)
+                        Rooms.RemoveAll(r => r.ID == cr.ID);
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }

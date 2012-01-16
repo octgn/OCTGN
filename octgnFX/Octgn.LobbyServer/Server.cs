@@ -236,25 +236,27 @@ namespace Skylabs.LobbyServer
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 int loggedInCount = 0;
                 int removedCount = 0;
-                List<Client> rlist = new List<Client>();
-                foreach(Client c in Clients)
+                List<int> rlist = new List<int>();
+                for (int i = 0; i < Clients.Count;i++ )
                 {
-                    if (c == null) continue;
-                    if (c.Me.Uid == uid)
+                    if (Clients[i] == null) continue;
+                    if (Clients[i].Me.Uid == uid)
                     {
-                        rlist.Add(c);
+                        rlist.Add(Clients[i].Id);
                         removedCount++;
-                        if (c.LoggedIn)
+                        if (Clients[i].LoggedIn)
                             loggedInCount++;
-                        Thread t = new Thread(()=>c.Stop(true));
+                        Client sClient = Clients[i];
+                        Thread t = new Thread(() => sClient.Stop(true));
+                        Logger.log(MethodInfo.GetCurrentMethod().Name, "Stoping client " + Clients[i].Id.ToString());
                         t.Start();
                     }
                 }
                 try
                 {
-                    foreach (Client r in rlist)
+                    foreach (int r in rlist)
                     {
-                        Clients.Remove(r);
+                        Clients.RemoveAll(c => c.Id == r);
                     }
                 }
                 catch (ArgumentNullException)
@@ -276,6 +278,7 @@ namespace Skylabs.LobbyServer
                 try
                 {
                     Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId));
+                    Logger.log(MethodInfo.GetCurrentMethod().Name, "Client " + _nextId.ToString() + " connected.");
                     _nextId++;
                     AcceptClients();
                 }
