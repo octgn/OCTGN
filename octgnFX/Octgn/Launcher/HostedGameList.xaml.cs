@@ -45,7 +45,8 @@ namespace Octgn.Launcher
                                                           gids[count] = game.Id;
                                                           count++;
                                                       }
-                                                      foreach (HostedGame g in Program.lobbyClient.Games)
+                                                      HostedGame[] gl = Program.lobbyClient.GetHostedGames();
+                                                      foreach (HostedGame g in gl)
                                                       {
                                                           
                                                           if (gids.Contains(g.GameGuid))

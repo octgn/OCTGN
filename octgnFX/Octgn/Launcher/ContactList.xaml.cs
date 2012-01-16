@@ -31,7 +31,8 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
             {
                 stackPanel1.Children.Clear();
-                foreach (User u in Program.lobbyClient.FriendList)
+                User[] flist = Program.lobbyClient.GetFriendsList();
+                foreach (User u in flist)
                 {
                     FriendListItem f = new FriendListItem();
                     f.ThisUser = u;
@@ -41,7 +42,7 @@ namespace Octgn.Launcher
                 }
                 foreach (ChatRoom cr in Program.lobbyClient.Chatting.Rooms)
                 {
-                    if (cr.ID == 0 || (cr.Users.Count > 2))
+                    if (cr.ID == 0 || (cr.UserCount > 2))
                     {
                         GroupChatListItem gi = new GroupChatListItem();
                         gi.ThisRoom = cr;
@@ -96,7 +97,7 @@ namespace Octgn.Launcher
                     {
                         if (cr.ID == 0)
                             continue;
-                        if (cr.Users.Count == 2 && cr.Users.Contains(Program.lobbyClient.Me) && cr.Users.Contains(fi.ThisUser))
+                        if (cr.UserCount == 2 && cr.ContainsUser(Program.lobbyClient.Me) && cr.ContainsUser(fi.ThisUser))
                         {
                             if (cw.Visibility != System.Windows.Visibility.Visible)
                             {

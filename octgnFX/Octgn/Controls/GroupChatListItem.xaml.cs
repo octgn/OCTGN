@@ -62,7 +62,7 @@ namespace Octgn.Controls
                     else
                     {
                         image1.Opacity = 1;
-                        String users = String.Join<User>(",", cr.Users);
+                        String users = String.Join<User>(",", cr.GetUserList());
                         if (users.Length > 100)
                             users.Substring(0, 97);
                         users += "...";

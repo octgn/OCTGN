@@ -8,7 +8,7 @@ using Skylabs.Net;
 namespace Skylabs.Lobby
 {
     [Serializable]
-    public class HostedGame : IEquatable<HostedGame>
+    public class HostedGame : IEquatable<HostedGame>,IEqualityComparer<HostedGame>
     {
         [Serializable]
         public enum eHostedGame
@@ -51,6 +51,16 @@ namespace Skylabs.Lobby
         public bool Equals(HostedGame other)
         {
             return other.Port == Port;
+        }
+
+        public bool Equals(HostedGame x, HostedGame y)
+        {
+            return x.Port == y.Port;
+        }
+
+        public int GetHashCode(HostedGame obj)
+        {
+            return obj.Port;
         }
     }
 }

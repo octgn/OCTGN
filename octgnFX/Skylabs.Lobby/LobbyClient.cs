@@ -58,7 +58,8 @@ namespace Skylabs.Lobby
         /// <summary>
         /// A list of Hosted games
         /// </summary>
-        public List<HostedGame> Games { get; set; } 
+        private List<HostedGame> Games { get; set; }
+        private object gameLocker = new object();
 
         /// <summary>
         /// Meh, failed attempt for Asyncronus callbacks. Don't delete it, it gets used, but still.
@@ -94,12 +95,14 @@ namespace Skylabs.Lobby
         /// <summary>
         /// List of friends
         /// </summary>
-        public List<User> FriendList { get; private set; }
+        private List<User> FriendList { get; set; }
+        private object friendLocker = new object();
         /// <summary>
         /// List of Notifications? I don't know offhand
         /// </summary>
         //TODO Figure out what this is for
-        public List<Notification> Notifications { get; set; }
+        private List<Notification> Notifications { get; set; }
+        private object noteLocker = new object();
         /// <summary>
         /// Who knows
         /// </summary>
@@ -108,7 +111,7 @@ namespace Skylabs.Lobby
         private bool _sentEndMessage;
 
         private bool _didCallStop = false;
-
+        private int _nextNoteId = 0;
         public LobbyClient()
         {
             FriendList = new List<User>();
@@ -160,14 +163,49 @@ namespace Skylabs.Lobby
             WriteMessage(sm);
         }
 
+        public Notification[] GetNotificationList()
+        {
+            lock (noteLocker)
+            {
+                return Notifications.ToArray();
+            }
+        }
+
+        public void RemoveNotification(Notification note)
+        {
+            lock (noteLocker)
+            {
+                Notifications.Remove(note);
+            }
+        }
+
+        public HostedGame[] GetHostedGames()
+        {
+            lock (gameLocker)
+            {
+                return Games.ToArray();
+            }
+        }
+
+        public User[] GetFriendsList()
+        {
+            lock (friendLocker)
+            {
+                return FriendList.ToArray();
+            }
+        }
+
         public User GetFriendFromUID(int uid)
         {
-            foreach(User u in FriendList)
+            lock (friendLocker)
             {
-                if (u.Uid == uid)
-                    return u;
+                foreach (User u in FriendList)
+                {
+                    if (u.Uid == uid)
+                        return u;
+                }
+                return null;
             }
-            return null;
         }
         /// <summary>
         /// This gets called when the hoster of the game clicks 'Start game'
@@ -295,62 +333,83 @@ namespace Skylabs.Lobby
                     _onLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, (sm["message"] != null) ? (string)sm["message"] : "");
                     break;
                 case "friends":
-                    FriendList = new List<User>();
-                    foreach (NameValuePair p in sm.Data)
+                    lock (friendLocker)
                     {
-                        FriendList.Add((User)p.Value);
-                    }
-                    if (OnDataRecieved != null)
-                        OnDataRecieved.Invoke(DataRecType.FriendList, null);
-                    break;
-                case "friendrequest":
-                    u = (User)sm.Data[0].Value;
-                    foreach (Notification n in Notifications)
-                    {
-                        FriendRequestNotification fr = n as FriendRequestNotification;
-                        if (fr != null)
+                        FriendList = new List<User>();
+                        foreach (NameValuePair p in sm.Data)
                         {
-                            if (fr.User.Uid == u.Uid)
-                                return;
+                            FriendList.Add((User)p.Value);
+                        }
+                        if (OnDataRecieved != null)
+                        {
+                            foreach (DataRecieved d in OnDataRecieved.GetInvocationList())
+                                d.BeginInvoke(DataRecType.FriendList, null, new AsyncCallback((IAsyncResult r) => { }), null);
                         }
                     }
-                    Notifications.Add(new FriendRequestNotification(u, this));
-                    if (OnFriendRequest != null)
-                        OnFriendRequest(u);
+                    break;
+                case "friendrequest":
+                    lock (noteLocker)
+                    {
+                        u = (User)sm.Data[0].Value;
+                        foreach (Notification n in Notifications)
+                        {
+                            FriendRequestNotification fr = n as FriendRequestNotification;
+                            if (fr != null)
+                            {
+                                if (fr.User.Uid == u.Uid)
+                                    return;
+                            }
+                        }
+                        Notifications.Add(new FriendRequestNotification(u, this,_nextNoteId));
+                        _nextNoteId++;
+                        if (OnFriendRequest != null)
+                            foreach(FriendRequest fr in OnFriendRequest.GetInvocationList())
+                                fr.BeginInvoke(u, new AsyncCallback((IAsyncResult r) => { }), null);
+                    }
                     break;
                 case "status":
-                    u = (User)sm.Data[0].Value;
-                    User f = FriendList.FirstOrDefault(us => us.Equals(u));
-                    if (f != null)
+                    lock (friendLocker)
                     {
-                        f.DisplayName = u.DisplayName;
-                        f.Status = u.Status;
-                        f.CustomStatus = u.CustomStatus;
+                        u = (User)sm.Data[0].Value;
+                        User f = FriendList.FirstOrDefault(us => us.Equals(u));
+                        if (f != null)
+                        {
+                            f.DisplayName = u.DisplayName;
+                            f.Status = u.Status;
+                            f.CustomStatus = u.CustomStatus;
+                        }
+                        if (u.Equals(Me))
+                        {
+                            Me.DisplayName = u.DisplayName;
+                            Me.Status = u.Status;
+                            Me.CustomStatus = u.CustomStatus;
+                        }
+                        if (OnUserStatusChanged != null)
+                            foreach(UserStatusChanged usc in OnUserStatusChanged.GetInvocationList())
+                                usc.BeginInvoke(u.Status, u, new AsyncCallback((IAsyncResult r) => { }), null);
+                        if (OnDataRecieved != null)
+                            foreach(DataRecieved dr in OnDataRecieved.GetInvocationList())
+                                dr.BeginInvoke(DataRecType.FriendList, null, new AsyncCallback((IAsyncResult r) => { }), null);
                     }
-                    if (u.Equals(Me))
-                    {
-                        Me.DisplayName = u.DisplayName;
-                        Me.Status = u.Status;
-                        Me.CustomStatus = u.CustomStatus;
-                    }
-                    if (OnUserStatusChanged != null)
-                        OnUserStatusChanged.Invoke(u.Status, u);
-                    if (OnDataRecieved != null)
-                        OnDataRecieved.Invoke(DataRecType.FriendList, null);
                     break;
                 case "customstatus":
-                    u = (User)sm["user"];
-                    string s = (string)sm["status"];
-                    if (u != null && s != null)
+                    lock (friendLocker)
                     {
-                        if (u.Equals(Me))
-                            Me.CustomStatus = s;
-                        else
+                        u = (User)sm["user"];
+                        string s = (string)sm["status"];
+                        if (u != null && s != null)
                         {
-                            int i = FriendList.IndexOf(u);
-                            if (i > -1)
-                                FriendList[i].CustomStatus = s;
-                            this.OnDataRecieved(DataRecType.UserCustomStatus, u);
+                            if (u.Equals(Me))
+                                Me.CustomStatus = s;
+                            else
+                            {
+                                int i = FriendList.IndexOf(u);
+                                if (i > -1)
+                                    FriendList[i].CustomStatus = s;
+                                if(OnDataRecieved != null)
+                                    foreach(DataRecieved dr in OnDataRecieved.GetInvocationList())
+                                        dr.BeginInvoke(DataRecType.UserCustomStatus, u, new AsyncCallback((IAsyncResult r) => { }), null);
+                            }
                         }
                     }
                     break;
@@ -361,42 +420,58 @@ namespace Skylabs.Lobby
                     break;
                 case "gamelist":
                     {
-                        List<HostedGame> games = sm["list"] as List<HostedGame>;
-                        Games = games;
-                        if (games.Count > 0)
-                            if (OnGameHostEvent != null)
-                                OnGameHostEvent.Invoke(Games[0]);
+                        lock (gameLocker)
+                        {
+                            List<HostedGame> games = sm["list"] as List<HostedGame>;
+                            Games = games;
+                            if (games.Count > 0)
+                                if (OnGameHostEvent != null)
+                                    foreach(GameHostEvent ge in OnGameHostEvent.GetInvocationList())
+                                        ge.BeginInvoke(Games[0], new AsyncCallback((IAsyncResult r) => { }), null);
+                        }
                         break;
                     }
                 case "gamehosting":
                     {
-                        HostedGame gm = new HostedGame(sm);
-                        Games.Add(gm);
-                        if (OnGameHostEvent != null)
-                            OnGameHostEvent.Invoke(gm);
+                        lock (gameLocker)
+                        {
+                            HostedGame gm = new HostedGame(sm);
+                            Games.Add(gm);
+                            if (OnGameHostEvent != null)
+                                foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
+                                    ge.BeginInvoke(gm, new AsyncCallback((IAsyncResult r) => { }), null);
+                        }
                         break;
                     }
                 case "gamestarted":
                     {
-                        int p = (int)sm["port"];
+                        lock (gameLocker)
+                        {
+                            int p = (int)sm["port"];
 
-                        HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
-                        gm.GameStatus = HostedGame.eHostedGame.GameInProgress;
-                        if (OnGameHostEvent != null)
-                            OnGameHostEvent.Invoke(gm);
+                            HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
+                            gm.GameStatus = HostedGame.eHostedGame.GameInProgress;
+                            if (OnGameHostEvent != null)
+                                foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
+                                    ge.BeginInvoke(gm, new AsyncCallback((IAsyncResult r) => { }), null);
+                        }
                         break;
                     }
                 case "gameend":
                     {
-                        int p = (int)sm["port"];
-
-                        HostedGame gm = Games.Where(g => g.Port == p).First();
-                        if (gm != null)
+                        lock (gameLocker)
                         {
-                            gm.GameStatus = HostedGame.eHostedGame.StoppedHosting;
-                            if (OnGameHostEvent != null)
-                                OnGameHostEvent.Invoke(gm);
-                            Games.Remove(gm);
+                            int p = (int)sm["port"];
+
+                            HostedGame gm = Games.Where(g => g.Port == p).First();
+                            if (gm != null)
+                            {
+                                gm.GameStatus = HostedGame.eHostedGame.StoppedHosting;
+                                if (OnGameHostEvent != null)
+                                    foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
+                                        ge.BeginInvoke(gm, new AsyncCallback((IAsyncResult r) => { }), null);
+                                Games.Remove(gm);
+                            }
                         }
                         break;
                     }

@@ -299,7 +299,8 @@ namespace Octgn.Launcher
                 {
                     listBox1.Items.Clear();
                     Users = new List<User>();
-                    foreach (User u in cr.Users)
+
+                    foreach (User u in cr.GetUserList())
                     {
                         listBox1.Items.Add(u);
                         Users.Add(u);

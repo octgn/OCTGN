@@ -148,17 +148,8 @@ namespace Skylabs.Lobby
             ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
             if(cr != null)
             {
-                if (cr.Users.Contains(u))
-                {
-                    User utochange = cr.Users.FirstOrDefault(us => us.Uid == u.Uid);
-                    if (utochange != null)
-                    {
-                        utochange.Status = ustatus;
-                        utochange.CustomStatus = u.CustomStatus;
-                        utochange.DisplayName = u.DisplayName;
-                    }
-
-                }
+                cr.UserStatusChange(u, ustatus);
+                
             }
         }
     }
