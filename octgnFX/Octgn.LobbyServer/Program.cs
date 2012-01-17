@@ -109,7 +109,7 @@ namespace Skylabs.LobbyServer
         }
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
         {
-            WebServer.Stop();
+            Quit();
             ConsoleEventLog.SerializeEvents("log.xml");
             Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
         }
@@ -155,10 +155,12 @@ namespace Skylabs.LobbyServer
 
         private static void Quit()
         {
-            Gaming.Stop();
-            Server.Stop();
-            ConsoleReader.Stop();
-            _killTimer.Dispose();
+            try { Gaming.Stop(); }
+            catch { }
+            try {Server.Stop();}
+            catch { }
+            try { _killTimer.Dispose(); }
+            catch { }
             _running = false;
         }
 
