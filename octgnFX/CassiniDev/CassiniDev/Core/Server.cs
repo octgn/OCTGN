@@ -45,6 +45,11 @@ namespace CassiniDev
         public List<string> Plugins = new List<string>();
         private readonly ApplicationManager _appManager;
 
+        public ApplicationManager GetManager()
+        {
+            return (_appManager);
+        }
+
         private readonly bool _disableDirectoryListing = true;
 
         private readonly string _hostName;
@@ -74,6 +79,20 @@ namespace CassiniDev
         private Socket _socket;
 
         private Timer _timer;
+
+        private List<Assembly> _assemblies = new List<Assembly>();
+
+        public List<Assembly> Assemblies
+        {
+            get
+            {
+                return (_assemblies);
+            }
+            set
+            {
+                _assemblies = value;
+            }
+        }
 
         public Server(int port, string virtualPath, string physicalPath)
             : this(port, virtualPath, physicalPath, false, false)
@@ -309,6 +328,66 @@ namespace CassiniDev
 
         public void Start()
         {
+            if (_assemblies.Count == 0)
+            {
+                StartWithoutAssemblies();
+            }
+            else
+            {
+                StartWithAssemblies();
+            }
+        }
+
+        public void StartWithAssemblies()
+        {
+            _socket = CreateSocketBindAndListen(AddressFamily.InterNetwork, _ipAddress, _port);
+
+            //start the timer
+            DecrementRequestCount();
+
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                while (!_shutdownInProgress)
+                {
+                    try
+                    {
+                        Socket acceptedSocket = _socket.Accept();
+
+                        ThreadPool.QueueUserWorkItem(delegate
+                        {
+                            if (!_shutdownInProgress)
+                            {
+                                Connection conn = new Connection(this, acceptedSocket);
+
+                                if (conn.WaitForRequestBytes() == 0)
+                                {
+                                    conn.WriteErrorAndClose(400);
+                                    return;
+                                }
+
+                                Host host = GetHostAndInjectAssemblies();
+
+                                if (host == null)
+                                {
+                                    conn.WriteErrorAndClose(500);
+                                    return;
+                                }
+
+                                IncrementRequestCount();
+                                host.ProcessRequest(conn);
+                            }
+                        });
+                    }
+                    catch
+                    {
+                        Thread.Sleep(100);
+                    }
+                }
+            });
+        }
+        
+        public void StartWithoutAssemblies()
+        {
             _socket = CreateSocketBindAndListen(AddressFamily.InterNetwork, _ipAddress, _port);
 
             //start the timer
@@ -401,6 +480,41 @@ namespace CassiniDev
                                               null,
                                               buildManagerHost,
                                               new object[] { hostType.Assembly.FullName, hostType.Assembly.Location });
+            
+            // create Host in the worker app domain
+            // FIXME: getting FileLoadException Could not load file or assembly 'WebDev.WebServer20, Version=4.0.1.6, Culture=neutral, PublicKeyToken=f7f6e0b4240c7c27' or one of its dependencies. Failed to grant permission to execute. (Exception from HRESULT: 0x80131418)
+            // when running dnoa 3.4 samples - webdev is registering trust somewhere that we are not
+            return _appManager.CreateObject(appId, hostType, virtualPath, physicalPath, false);
+        }
+
+        private object CreateWorkerAppDomainWithHostAndInjectedAssemblies(string virtualPath, string physicalPath, Type hostType)
+        {
+            // this creates worker app domain in a way that host doesn't need to be in GAC or bin
+            // using BuildManagerHost via private reflection
+            string uniqueAppString = string.Concat(virtualPath, physicalPath).ToLowerInvariant();
+            string appId = (uniqueAppString.GetHashCode()).ToString("x", CultureInfo.InvariantCulture);
+
+            // create BuildManagerHost in the worker app domain
+            //ApplicationManager appManager = ApplicationManager.GetApplicationManager();
+            Type buildManagerHostType = typeof(HttpRuntime).Assembly.GetType("System.Web.Compilation.BuildManagerHost");
+            IRegisteredObject buildManagerHost = _appManager.CreateObject(appId, buildManagerHostType, virtualPath,
+                                                                          physicalPath, false);
+
+            // call BuildManagerHost.RegisterAssembly to make Host type loadable in the worker app domain
+            buildManagerHostType.InvokeMember("RegisterAssembly",
+                                              BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic,
+                                              null,
+                                              buildManagerHost,
+                                              new object[] { hostType.Assembly.FullName, hostType.Assembly.Location });
+
+            foreach (Assembly ass in _assemblies)
+            {
+                buildManagerHostType.InvokeMember("RegisterAssembly",
+                    BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic,
+                    null,
+                    buildManagerHost,
+                    new object[] { ass.FullName, ass.Location });
+            }
 
             // create Host in the worker app domain
             // FIXME: getting FileLoadException Could not load file or assembly 'WebDev.WebServer20, Version=4.0.1.6, Culture=neutral, PublicKeyToken=f7f6e0b4240c7c27' or one of its dependencies. Failed to grant permission to execute. (Exception from HRESULT: 0x80131418)
@@ -443,6 +557,53 @@ namespace CassiniDev
                     if (host == null)
                     {
                         host = (Host)CreateWorkerAppDomainWithHost(_virtualPath, _physicalPath, typeof(Host));
+                        host.Configure(this, _port, _virtualPath, _physicalPath, _requireAuthentication, _disableDirectoryListing);
+                        _host = host;
+                    }
+                }
+                finally
+                {
+                    if (flag)
+                    {
+                        Monitor.Exit(obj2);
+                    }
+                }
+#else
+
+                lock (_lockObject)
+                {
+                    host = _host;
+                    if (host == null)
+                    {
+                        host = (Host)CreateWorkerAppDomainWithHost(_virtualPath, _physicalPath, typeof(Host));
+                        host.Configure(this, _port, _virtualPath, _physicalPath, _requireAuthentication, _disableDirectoryListing);
+                        _host = host;
+                    }
+                }
+
+#endif
+            }
+
+            return host;
+        }
+
+        private Host GetHostAndInjectAssemblies()
+        {
+            if (_shutdownInProgress)
+                return null;
+            Host host = _host;
+            if (host == null)
+            {
+#if NET40
+                object obj2 = new object();
+                bool flag = false;
+                try
+                {
+                    Monitor.Enter(obj2 = _lockObject, ref flag);
+                    host = _host;
+                    if (host == null)
+                    {
+                        host = (Host)CreateWorkerAppDomainWithHostAndInjectedAssemblies(_virtualPath, _physicalPath, typeof(Host));
                         host.Configure(this, _port, _virtualPath, _physicalPath, _requireAuthentication, _disableDirectoryListing);
                         _host = host;
                     }
@@ -610,7 +771,7 @@ namespace CassiniDev
 
         public void TimeOut()
         {
-            ShutDown();
+            //ShutDown();
             OnTimeOut();
         }
 

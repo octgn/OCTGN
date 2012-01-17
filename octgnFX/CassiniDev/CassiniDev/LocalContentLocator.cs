@@ -20,7 +20,7 @@ namespace CassiniDev
         {
             var path = Environment.CurrentDirectory;
 
-            while (!Directory.Exists(Path.Combine(path + "", "web")) &&
+            if (!Directory.Exists(Path.Combine(path + "", "web")) &&
                    !Directory.Exists(Path.Combine(path + "", @"deploy\web")))
             {
                 path = Path.GetDirectoryName(path);
@@ -34,10 +34,10 @@ namespace CassiniDev
             {
                 path = Path.Combine(path + "", @"deploy\web");
             }
-            else
-            {
-                throw new Exception("could not find content");
-            }
+            //else
+            //{
+            //    throw new Exception("could not find content");
+            //}
 
             return path;
         }

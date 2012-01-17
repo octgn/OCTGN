@@ -122,15 +122,15 @@ namespace CassiniDev
                 throw new InvalidOperationException("Server already started");
             }
             _server = new Server(port, virtualPath, applicationPath, ipAddress, hostname, 60000);
-            try
-            {
-                _server.Start();
-            }
-            catch (Exception ex)
-            {
+            //try
+            //{
+            //    _server.Start();
+            //}
+            //catch (Exception ex)
+            //{
 
-                throw new InvalidOperationException("Error starting server instance.", ex);
-            }
+            //    throw new InvalidOperationException("Error starting server instance.", ex);
+            //}
 
         }
 
