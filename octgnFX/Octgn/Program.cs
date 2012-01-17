@@ -149,9 +149,15 @@ namespace Octgn
             if(PlayWindow != null)
                 if(PlayWindow.IsLoaded)
                     PlayWindow.Close();
-            foreach(ChatWindow cw in ChatWindows)
+            try
             {
-                cw.CloseChatWindow();
+                foreach (ChatWindow cw in ChatWindows)
+                {
+                    cw.CloseChatWindow();
+                }
+            }
+            catch (Exception)
+            {
             }
             if (LobbyServerProcess != null)
             {
