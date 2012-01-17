@@ -519,6 +519,27 @@ namespace Octgn.Scripting
             return Tuple.Create(result, statusCode);
         }
 
+        public bool Open_URL(string url)
+        {
+            if (url.StartsWith("http://") || url.StartsWith("https://") || url.StartsWith("ftp://"))
+            {
+                if (engine.Invoke<bool>(() => Octgn.Script.OCTGN.Confirm("Do you wish to go to the site: " + url + "?")))
+                {
+                    try
+                    {
+                        engine.Invoke(new Action(() => { System.Diagnostics.Process.Start(url); }));
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                }
+                else return false;
+            }
+            else return false;
+        }
+
         public string OCTGN_Version()
         {
             return OctgnApp.OctgnVersion.ToString();

@@ -26,6 +26,9 @@ def webRead(url):
   apiResult = _api.Web_Read(url)
   return (apiResult.Item1, apiResult.Item2)
 
+def openUrl(url):
+  return _api.Open_URL(url)
+
 def confirm(message):
   return _api.Confirm(message)
 
