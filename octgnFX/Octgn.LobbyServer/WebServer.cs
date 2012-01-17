@@ -28,7 +28,7 @@ namespace Skylabs.LobbyServer
             assemblyList.Add(Assembly.GetAssembly(typeof(Skylabs.Lobby.HostedGame)));
             assemblyList.Add(Assembly.GetAssembly(typeof(Skylabs.LobbyServer.Server)));
             //s.Assemblies = assemblyList;
-            s.Start();
+            
 
             //_running = false;
             //_server = new HttpListener();
@@ -49,8 +49,9 @@ namespace Skylabs.LobbyServer
             {
                 try
                 {
-                    _server.Start();
-                    AcceptConnections();
+                    //_server.Start();
+                    //AcceptConnections();
+                    _webServer.Server.Start();
                     return true;
                 }
                 catch (Exception)
@@ -65,9 +66,10 @@ namespace Skylabs.LobbyServer
             _running = false;
             try
             {
-                _server.Abort();
-                _server.Close();
-                _server.Stop();
+                //_server.Abort();
+                //_server.Close();
+                //_server.Stop();
+                _webServer.StopServer();
             }
             catch (Exception)
             {
