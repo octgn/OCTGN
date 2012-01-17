@@ -15,7 +15,7 @@ namespace Skylabs.Lobby
 {
     public enum LoginResult { Success, Failure, Banned };
 
-    public enum DataRecType { FriendList, OnlineList, UserCustomStatus };
+    public enum DataRecType { FriendList, OnlineList, UserCustomStatus ,ServerMessage};
 
     public class LobbyClient : SkySocket
     {
@@ -347,6 +347,16 @@ namespace Skylabs.Lobby
                         }
                     }
                     break;
+                case "servermessage":
+                    {
+                        string mess = sm["message"] as string;
+                        if (mess != null && OnDataRecieved != null)
+                        {
+                            foreach(DataRecieved d in OnDataRecieved.GetInvocationList())
+                                d.BeginInvoke(DataRecType.ServerMessage, mess, new AsyncCallback((IAsyncResult r) => { }), null);
+                        }
+                        break;
+                    }
                 case "friendrequest":
                     lock (noteLocker)
                     {
@@ -360,10 +370,10 @@ namespace Skylabs.Lobby
                                     return;
                             }
                         }
-                        Notifications.Add(new FriendRequestNotification(u, this,_nextNoteId));
+                        Notifications.Add(new FriendRequestNotification(u, this, _nextNoteId));
                         _nextNoteId++;
                         if (OnFriendRequest != null)
-                            foreach(FriendRequest fr in OnFriendRequest.GetInvocationList())
+                            foreach (FriendRequest fr in OnFriendRequest.GetInvocationList())
                                 fr.BeginInvoke(u, new AsyncCallback((IAsyncResult r) => { }), null);
                     }
                     break;
@@ -385,10 +395,10 @@ namespace Skylabs.Lobby
                             Me.CustomStatus = u.CustomStatus;
                         }
                         if (OnUserStatusChanged != null)
-                            foreach(UserStatusChanged usc in OnUserStatusChanged.GetInvocationList())
+                            foreach (UserStatusChanged usc in OnUserStatusChanged.GetInvocationList())
                                 usc.BeginInvoke(u.Status, u, new AsyncCallback((IAsyncResult r) => { }), null);
                         if (OnDataRecieved != null)
-                            foreach(DataRecieved dr in OnDataRecieved.GetInvocationList())
+                            foreach (DataRecieved dr in OnDataRecieved.GetInvocationList())
                                 dr.BeginInvoke(DataRecType.FriendList, null, new AsyncCallback((IAsyncResult r) => { }), null);
                     }
                     break;
@@ -406,8 +416,8 @@ namespace Skylabs.Lobby
                                 int i = FriendList.IndexOf(u);
                                 if (i > -1)
                                     FriendList[i].CustomStatus = s;
-                                if(OnDataRecieved != null)
-                                    foreach(DataRecieved dr in OnDataRecieved.GetInvocationList())
+                                if (OnDataRecieved != null)
+                                    foreach (DataRecieved dr in OnDataRecieved.GetInvocationList())
                                         dr.BeginInvoke(DataRecType.UserCustomStatus, u, new AsyncCallback((IAsyncResult r) => { }), null);
                             }
                         }
@@ -426,7 +436,7 @@ namespace Skylabs.Lobby
                             Games = games;
                             if (games.Count > 0)
                                 if (OnGameHostEvent != null)
-                                    foreach(GameHostEvent ge in OnGameHostEvent.GetInvocationList())
+                                    foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
                                         ge.BeginInvoke(Games[0], new AsyncCallback((IAsyncResult r) => { }), null);
                         }
                         break;

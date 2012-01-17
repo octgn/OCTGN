@@ -28,7 +28,7 @@ namespace Octgn.Launcher
                 Program.lobbyClient = null;
             }
             Program.lobbyClient = new LobbyClient();
-            
+            Program.lobbyClient.OnDataRecieved += new LobbyClient.DataRecieved(lobbyClient_OnDataRecieved);
             
             SpinnerRotate.CenterX = image2.Width / 2;
             SpinnerRotate.CenterY = image2.Height / 2;
@@ -50,6 +50,18 @@ namespace Octgn.Launcher
             m.Click += new RoutedEventHandler(menuOldMenu_Click);
             menuOctgn.Items.Add(m);
 #endif
+        }
+
+        void lobbyClient_OnDataRecieved(DataRecType type, object e)
+        {
+            if (type == DataRecType.ServerMessage)
+            {
+                string m = e as string;
+                if (m != null && !String.IsNullOrWhiteSpace(m))
+                {
+                    MessageBox.Show(m,"Server Message",MessageBoxButton.OK,MessageBoxImage.Information);
+                }
+            }
         }
 
         private void Start_Spinning()
@@ -111,7 +123,10 @@ namespace Octgn.Launcher
         void LauncherWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (isLoggingIn)
+            {
                 e.Cancel = true;
+                return;
+            }
         }
         private void UpdateLoginStatus(string message)
         {
@@ -355,7 +370,7 @@ namespace Octgn.Launcher
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            
+            Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

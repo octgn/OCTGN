@@ -110,6 +110,7 @@ namespace Octgn.Launcher
             Program.lobbyClient.OnDisconnectEvent += new EventHandler(lobbyClient_OnDisconnectEvent);
             Program.lobbyClient.OnUserStatusChanged += new LobbyClient.UserStatusChanged(lobbyClient_OnUserStatusChanged);
             Program.lobbyClient.Chatting.eChatEvent += new Chatting.ChatEventDelegate(Chatting_eChatEvent);
+            Program.lobbyClient.OnDataRecieved += new LobbyClient.DataRecieved(lobbyClient_OnDataRecieved);
             tbUsername.Text = Program.lobbyClient.Me.DisplayName;
             tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
@@ -125,6 +126,18 @@ namespace Octgn.Launcher
             SystemTrayIcon.Text = "Octgn";
             SystemTrayIcon.DoubleClick += new System.EventHandler(this.SystemTrayIcon_DoubleClick);
             // Insert code required on object creation below this point.
+        }
+
+        void lobbyClient_OnDataRecieved(DataRecType type, object e)
+        {
+            if (type == DataRecType.ServerMessage)
+            {
+                string m = e as string;
+                if (m != null && !String.IsNullOrWhiteSpace(m))
+                {
+                    MessageBox.Show(m, "Server Message", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
         }
 
         private void Main_Initialized(object sender, EventArgs e)
@@ -305,6 +318,7 @@ namespace Octgn.Launcher
             Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
             Program.lobbyClient.OnDisconnectEvent -= lobbyClient_OnDisconnectEvent;
             Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
+            Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
             Program.lobbyClient.Stop();
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
