@@ -19,21 +19,29 @@ namespace Skylabs.LobbyServer
         private CassiniDevServer _webServer = null;
         public WebServer()
         {
-            //_webServer = new CassiniDevServer();
-            //_webServer.StartServer(Environment.CurrentDirectory, int.Parse(Program.Settings["webserverport"]), "/", Environment.MachineName);
+            _webServer = new CassiniDevServer();
+            _webServer.StartServer(Path.Combine(Environment.CurrentDirectory, "webserver"), int.Parse(Program.Settings["webserverport"]), "/", Environment.MachineName);
 
-            _running = false;
-            _server = new HttpListener();
-            int port = 8901;
-            try
-            {
-                port = Int32.Parse(Program.Settings["webserverport"]);
-            }
-            catch (Exception)
-            {
-                port = 8901;
-            }
-            _server.Prefixes.Add(String.Format("http://+:{0}/", port));
+
+            CassiniDev.Server s = _webServer.Server;
+            List<Assembly> assemblyList = new List<Assembly>();
+            assemblyList.Add(Assembly.GetAssembly(typeof(Skylabs.Lobby.HostedGame)));
+            assemblyList.Add(Assembly.GetAssembly(typeof(Skylabs.LobbyServer.Server)));
+            //s.Assemblies = assemblyList;
+            s.Start();
+
+            //_running = false;
+            //_server = new HttpListener();
+            //int port = 8901;
+            //try
+            //{
+            //    port = Int32.Parse(Program.Settings["webserverport"]);
+            //}
+            //catch (Exception)
+            //{
+            //    port = 8901;
+            //}
+            //_server.Prefixes.Add(String.Format("http://+:{0}/", port));
         }
         public bool Start()
         {
