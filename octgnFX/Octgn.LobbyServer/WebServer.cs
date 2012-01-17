@@ -13,7 +13,6 @@ namespace Skylabs.LobbyServer
 {
     public class WebServer
     {
-        private Thread _thread;
         private HttpListener _server;
         private bool _running;
 
@@ -24,7 +23,6 @@ namespace Skylabs.LobbyServer
             //_webServer.StartServer(Environment.CurrentDirectory, int.Parse(Program.Settings["webserverport"]), "/", Environment.MachineName);
 
             _running = false;
-            _thread = new Thread(Run);
             _server = new HttpListener();
             int port = 8901;
             try
@@ -44,7 +42,7 @@ namespace Skylabs.LobbyServer
                 try
                 {
                     _server.Start();
-                    _thread.Start();
+                    AcceptConnections();
                     return true;
                 }
                 catch (Exception)
@@ -57,51 +55,94 @@ namespace Skylabs.LobbyServer
         public void Stop()
         {
             _running = false;
-        }
-        private void Run()
-        {
-            _running = true;
-            while(_running)
+            try
             {
-                HttpListenerContext con = _server.GetContext();
-                HttpListenerRequest req = con.Request;
-
-                var page = req.Url.AbsolutePath.Trim('/');
-                page = page.ToLower();
-                switch (page)
-                {
-                    case "":
-                        {
-                            var spage = File.ReadAllText("webserver/index.htm");
-                            spage = ReplaceVariables(spage);
-                            SendItem(con.Response, spage);
-                            break;
-                        }
-                    case "games.htm":
-                        {
-                            var spage = File.ReadAllText("webserver/games.htm");
-                            spage = InsertRunningGames(spage);
-                            SendItem(con.Response, spage);
-                            break;
-                        }
-                    default:
-                        {
-                            var spage = "";
-                            try
-                            {
-                                spage = File.ReadAllText("webserver/" + page);
-                            }
-                            catch (Exception)
-                            {
-                                spage = "";
-                                con.Response.StatusCode = 404;
-                            }
-                            spage = ReplaceVariables(spage);
-                            SendItem(con.Response, spage);
-                            break;
-                        }
-                }
+                _server.Abort();
+                _server.Close();
+                _server.Stop();
             }
+            catch (Exception)
+            {
+
+            }
+        }
+        private void AcceptConnections()
+        {
+            try
+            {
+                _server.BeginGetContext(HandleConnection, _server);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+        private void HandleConnection(IAsyncResult res)
+        {
+            try
+            {
+                HttpListenerContext con = _server.EndGetContext(res);
+                    HttpListenerRequest req = con.Request;
+
+                    var page = req.Url.AbsolutePath.Trim('/');
+                    page = page.ToLower();
+                    switch (page)
+                    {
+                        case "":
+                            {
+                                var spage = File.ReadAllText("webserver/index.htm");
+                                spage = ReplaceVariables(spage);
+                                SendItem(con.Response, spage);
+                                break;
+                            }
+                        case "games.htm":
+                            {
+                                var spage = File.ReadAllText("webserver/games.htm");
+                                spage = InsertRunningGames(spage);
+                                SendItem(con.Response, spage);
+                                break;
+                            }
+                        case "index.htm":
+                            {
+                                string time = req.QueryString["time"];
+                                if (time != null)
+                                {
+                                    int t = 0;
+                                    if (Int32.TryParse(time, out t))
+                                    {
+                                        Program.KillServerInTime(t);
+                                        SendItem(con.Response, "1");
+                                        break;
+                                    }
+                                }
+                                var spage = File.ReadAllText("webserver/index.htm");
+                                spage = ReplaceVariables(spage);
+                                SendItem(con.Response, spage);
+                                break;
+                            }
+                        default:
+                            {
+                                var spage = "";
+                                try
+                                {
+                                    spage = File.ReadAllText("webserver/" + page);
+                                }
+                                catch (Exception)
+                                {
+                                    spage = "";
+                                    con.Response.StatusCode = 404;
+                                }
+                                spage = ReplaceVariables(spage);
+                                SendItem(con.Response, spage);
+                                break;
+                            }
+                    }
+            }
+            catch(Exception)
+            {
+            
+            }
+            AcceptConnections();
         }
         private string ReplaceVariables(string rawpage)
         {

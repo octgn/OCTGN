@@ -3,6 +3,35 @@
 	<head>
 		<title>Lobby Server - $version</title>
         <link rel="stylesheet" type="text/css" href="css/main.css" />
+        <script type="text/javascript" src="jquery-1.7.min.js"></script>
+        <script type="text/javascript">
+            var restartTimeout = null;
+            var timeLeft = 0;
+            var totalTime = 0;
+            function startRestart() {
+                var rtime = $("#RestartTime").val();
+                totalTime = rtime;
+                $.ajax({
+                    type: 'GET',
+                    url: "index.htm",
+                    data: { "time": rtime.toString() },
+                    success: restartDone
+                });
+            }
+            function restartDone(data) {
+                if (data != "1")
+                    return;
+                timeLeft = totalTime * 60;
+                restartTimeout = setInterval("displayTimeLeft()",1000);
+            }
+            function displayTimeLeft()
+            {
+                timeLeft--;
+                if (timeLeft <= 0)
+                    location.reload(true);
+                $("#uRestartTime").html(timeLeft.toString());
+            }
+        </script>
 	</head>
 	<body>
 	    <div id="header">
@@ -19,6 +48,11 @@
         <br />
         <a>Users Online: $onlineusers</a><br />
         <a>Games Hosted: $hostedgames</a><br />
-        <a>Total Games Hosted: $totalhostedgames</a><br />
+        <a>Total Games Hosted: $totalhostedgames</a><br /><Br />
+        <h3>Restart</h3>
+        <label>Minutes: </label>
+        <input type="text" id="RestartTime"/>
+        <button onclick="startRestart();">Restart</button><br />
+        <a>Time Until Restart(Seconds): </a><a id="uRestartTime"></a><br />
 	</body>
 </html>

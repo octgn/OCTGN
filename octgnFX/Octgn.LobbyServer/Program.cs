@@ -15,22 +15,32 @@ namespace Skylabs.LobbyServer
         public static WebServer WebServer;
         private static DateTime _killTime;
         private static Timer _killTimer;
-
+        private static bool _sentMinuteWarning =false;
+        private static Thread _runThread = new Thread(runner);
+        private static bool _running = true;
         private static void Main(string[] args)
         {
+            _runThread.Start();
             if (!LoadSettings())
                 return;
             ConsoleEventLog.EAddEvent += ConsoleEventLogEAddEvent;
             ConsoleWriter.CommandText = "LobbyServer: ";
-            ConsoleReader.EConsoleInput += ConsoleReaderEConsoleInput;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
             StartServer();
             WebServer = new WebServer();
             WebServer.Start();
-            //_killTimer = new Timer(CheckKillTime, _killTime, 1000, 1000);
-            ConsoleReader.Start();
+            _killTimer = new Timer(CheckKillTime, _killTime, 1000, 1000);
             ConsoleWriter.WriteCt();
+        }
+        private static void runner()
+        {
+            while (_running)
+            {
+                if (!_running)
+                    return;
+                Thread.Sleep(10);
+            }
         }
         private static bool LoadSettings()
         {
@@ -62,12 +72,18 @@ namespace Skylabs.LobbyServer
             }
             return true;
         }
-        public static void KillServerInTime(int seconds)
+        public static void KillServerInTime(int minutes)
         {
-            _killTime = DateTime.Now.AddSeconds((int)seconds);
+            if(minutes == 0)
+            {
+                _sentMinuteWarning = false;
+                _killTime = new DateTime(0);
+                return;
+            }
+            _killTime = DateTime.Now.AddMinutes((int)minutes);
             SocketMessage sm = new SocketMessage("servermessage");
-            //sm.AddData("message","Server will be shutting down in )
-            //Server.AllUserMessage(sm);
+            sm.AddData("message", "Server will be shutting down in " + minutes.ToString() + " minutes");
+            Server.AllUserMessage(sm);
         }
         private static void CheckKillTime(Object stateInfo)
         {
@@ -76,7 +92,19 @@ namespace Skylabs.LobbyServer
             if (_killTime == new DateTime(0))
                 return;
             if (_killTime.Ticks > DateTime.Now.Ticks)
+            {
+                if(new TimeSpan(_killTime.Ticks - DateTime.Now.Ticks).TotalMinutes <= 1)
+                {
+                    if(!_sentMinuteWarning)
+                    {
+                        SocketMessage sm = new SocketMessage("servermessage");
+                        sm.AddData("message","Server will be shutting down in about a minute.");
+                        Server.AllUserMessage(sm);
+                        _sentMinuteWarning = true;
+                    }
+                }
                 return;
+            }
             Quit();
         }
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
@@ -92,6 +120,7 @@ namespace Skylabs.LobbyServer
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
             Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
+            Quit();
         }
 
         private static void ConsoleEventLogEAddEvent(ConsoleEvent e)
@@ -129,34 +158,13 @@ namespace Skylabs.LobbyServer
             Gaming.Stop();
             Server.Stop();
             ConsoleReader.Stop();
+            _killTimer.Dispose();
+            _running = false;
         }
 
         private static void Tester()
         {
         }
 
-        private static void ConsoleReaderEConsoleInput(ConsoleMessage input)
-        {
-            switch(input.Header.ToLower())
-            {
-                case "test":
-                    Tester();
-                    break;
-                case "start":
-                    StartServer();
-                    ConsoleWriter.WriteLine("Hosting", true);
-                    break;
-                case "stop":
-                    Server.Stop();
-                    ConsoleWriter.WriteLine("Hosting Stopped.", true);
-                    break;
-                case "quit":
-                    Quit();
-                    break;
-                default:
-                    ConsoleWriter.WriteLine("", true);
-                    break;
-            }
-        }
     }
 }

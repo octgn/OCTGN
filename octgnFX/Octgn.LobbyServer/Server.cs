@@ -200,7 +200,14 @@ namespace Skylabs.LobbyServer
 
         private static void AcceptClients()
         {
-            ListenSocket.BeginAcceptTcpClient(AcceptReceiveDataCallback, ListenSocket);
+            try
+            {
+                ListenSocket.BeginAcceptTcpClient(AcceptReceiveDataCallback, ListenSocket);
+            }
+            catch (Exception)
+            {
+
+            }
         }
         /// <summary>
         /// Sends a socket message to all connected clients.
@@ -274,18 +281,19 @@ namespace Skylabs.LobbyServer
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 // Get the socket that handles the client request.
-                TcpListener listener = (TcpListener) ar.AsyncState;
+                
                 try
                 {
+                    TcpListener listener = (TcpListener)ar.AsyncState;
                     Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId));
                     Logger.log(MethodInfo.GetCurrentMethod().Name, "Client " + _nextId.ToString() + " connected.");
                     _nextId++;
-                    AcceptClients();
                 }
                 catch (ObjectDisposedException)
                 {
                     Console.WriteLine("AcceptReceiveDataCallback: ObjectDisposedException");
                 }
+                AcceptClients();
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
         }
