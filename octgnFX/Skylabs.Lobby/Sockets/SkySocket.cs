@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Net;
 using System.Diagnostics;
+using System.Collections.Concurrent;
 
 namespace Skylabs.Net
 {
@@ -27,6 +28,10 @@ namespace Skylabs.Net.Sockets
         /// Underlying TcpClient
         /// </summary>
         public TcpClient Sock { get; private set; }
+
+        private ConcurrentQueue<Action> DelegateQueue = new ConcurrentQueue<Action>();
+
+        private Timer DelegateTimer;
 
         public EndPoint RemoteEndPoint
         {
@@ -68,10 +73,12 @@ namespace Skylabs.Net.Sockets
         /// </summary>
         protected SkySocket()
         {
+            DelegateQueue = new ConcurrentQueue<Action>();
             Connected = false;
             Sock = null;
             _buffer = new List<Byte>();
             _thread = new Thread(Run);
+            DelegateTimer = new Timer(DelegateTimerTick,null,5,5);
         }
 
         /// <summary>
@@ -107,7 +114,19 @@ namespace Skylabs.Net.Sockets
             }
             return false;
         }
-
+        private void DelegateTimerTick(object state)
+        {
+            try
+            {
+                Action o = null;
+                if (DelegateQueue.TryDequeue(out o))
+                    o.Invoke();
+            }
+            catch (Exception e)
+            {
+                if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+            }
+        }
         private void _Connect(TcpClient c)
         {
             lock (SocketLocker)
@@ -144,10 +163,10 @@ namespace Skylabs.Net.Sockets
                     DateTime temp = _lastPingReceived.AddSeconds(30);
                     if (DateTime.Now >= temp)
                     {
-                        Close(DisconnectReason.PingTimeout);
+                        DelegateQueue.Enqueue(()=>Close(DisconnectReason.PingTimeout));
                     }
                     else
-                        WriteMessage(new SocketMessage("ping"));
+                        DelegateQueue.Enqueue(() => WriteMessage(new SocketMessage("ping")));
                     if (!Connected)
                         break;
                 }
@@ -177,8 +196,7 @@ namespace Skylabs.Net.Sockets
                     Sock.Client.BeginDisconnect(false, DisconnectCallback, Sock.Client);
                 else
                 {
-                    Thread t = new Thread(()=>DisconnectCallback(null));
-                    t.Start();
+                    DelegateQueue.Enqueue(()=>DisconnectCallback(null));
                 }
             }
         }
@@ -190,8 +208,7 @@ namespace Skylabs.Net.Sockets
                 if (ar != null)
                     Sock.Client.EndDisconnect(ar);
                 Connected = false;
-                Thread t = new Thread(() => OnDisconnect(_dr));
-                t.Start();
+                DelegateQueue.Enqueue(()=>OnDisconnect(_dr));
             }
         }
 
@@ -212,23 +229,20 @@ namespace Skylabs.Net.Sockets
                         // There might be more data, so store the data received so far.
                         for (int i = 0; i < bytesRead; i++)
                             _buffer.Add(state.Buffer[i]);
-                        Thread t = new Thread(() => { HandleInput(); Recieve(); });
-                        t.Start();
+                        DelegateQueue.Enqueue(()=> { HandleInput(); Recieve(); });
                     }
                     else
                     {
                         // The network input stream is closed
                         // Handle any remaining data
-                        Thread t = new Thread(()=>HandleInput());
-                        t.Start();
+                        DelegateQueue.Enqueue(()=>HandleInput());
                     }
                 }
                 catch (SocketException)
                 {
                     //Skylabs.ConsoleHelper.ConsoleWriter.writeLine(e.ToString(), false);
                     //if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-                    Thread t = new Thread(()=>Close(DisconnectReason.RemoteHostDropped));
-                    t.Start();
+                    DelegateQueue.Enqueue(()=>Close(DisconnectReason.RemoteHostDropped));
                 }
             }
         }
@@ -256,8 +270,7 @@ namespace Skylabs.Net.Sockets
 #if(DEBUG)
                         if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
-                            Thread t = new Thread(() => Close(DisconnectReason.MalformedData));
-                            t.Start();
+                            DelegateQueue.Enqueue(()=> Close(DisconnectReason.MalformedData));
                         }
                         if (sm != null)
                         {
@@ -267,8 +280,7 @@ namespace Skylabs.Net.Sockets
                             }
                             else
                             {
-                                Thread t = new Thread(() => OnMessageReceived(sm));
-                                t.Start();
+                                DelegateQueue.Enqueue(()=>OnMessageReceived(sm));
                             }
                         }
                         _buffer.RemoveRange(0, (int)count + 8);
@@ -299,17 +311,14 @@ namespace Skylabs.Net.Sockets
                 {
                     if (se.ErrorCode == 10058)
                         return;
-                    Thread t = new Thread(() => Close(DisconnectReason.RemoteHostDropped));
-                    t.Start();
+                    DelegateQueue.Enqueue(()=>Close(DisconnectReason.RemoteHostDropped));
                 }
                 catch (ObjectDisposedException)
                 {
-                    Thread t = new Thread(() => Close(DisconnectReason.RemoteHostDropped));
-                    t.Start();
+                    DelegateQueue.Enqueue(()=>Close(DisconnectReason.RemoteHostDropped));
                 }
                 catch (NullReferenceException)
                 {
-
                 }
                 catch (Exception)
                 {
