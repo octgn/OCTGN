@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using Skylabs.ConsoleHelper;
 using System.Threading;
 using Skylabs.Net;
+using System.Reflection;
 
 namespace Skylabs.LobbyServer
 {
@@ -23,15 +23,13 @@ namespace Skylabs.LobbyServer
             _runThread.Start();
             if (!LoadSettings())
                 return;
-            ConsoleEventLog.EAddEvent += ConsoleEventLogEAddEvent;
-            ConsoleWriter.CommandText = "LobbyServer: ";
+            Console.WriteLine(String.Format("[LobbyServer] V{0}",Assembly.GetExecutingAssembly().GetName().Version.ToString()));
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
             StartServer();
             WebServer = new WebServer();
             WebServer.Start();
             _killTimer = new Timer(CheckKillTime, _killTime, 1000, 1000);
-            ConsoleWriter.WriteCt();
         }
         private static void runner()
         {
@@ -39,7 +37,7 @@ namespace Skylabs.LobbyServer
             {
                 if (!_running)
                     return;
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
         private static bool LoadSettings()
@@ -110,7 +108,6 @@ namespace Skylabs.LobbyServer
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
         {
             Quit();
-            ConsoleEventLog.SerializeEvents("log.xml");
             Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
         }
 
@@ -121,30 +118,6 @@ namespace Skylabs.LobbyServer
             Console.WriteLine(ex.StackTrace);
             Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
             Quit();
-        }
-
-        private static void ConsoleEventLogEAddEvent(ConsoleEvent e)
-        {
-            ConsoleEventError er = e as ConsoleEventError;
-#if(DEBUG)
-            if (er != null)
-            {
-                if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-                else
-                {
-                    Console.WriteLine(er.Exception.StackTrace);
-                    Console.WriteLine(e.GetConsoleString());
-                    Console.ReadKey();
-                }
-            }
-            
-#else
-            if (er != null)
-            {
-                Console.WriteLine(er.Exception.StackTrace);
-                Console.WriteLine(e.GetConsoleString());
-            }
-#endif
         }
 
         private static void StartServer()

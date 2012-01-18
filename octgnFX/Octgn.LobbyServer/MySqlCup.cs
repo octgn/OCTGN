@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
-using Skylabs.ConsoleHelper;
 using Skylabs.Lobby;
 using Skylabs.LobbyServer;
 using System.Net;
@@ -131,7 +130,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (MySqlException me)
                 {
-                    ConsoleEventLog.AddEvent(new ConsoleEventError(me.Message, me), false);
+                    Logger.ER(me.InnerException);
 #if(DEBUG)
                 if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
@@ -206,7 +205,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (Exception ex)
                 {
-                    ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
+                    Logger.ER(ex);
                 }
                 return ret;
             }
@@ -256,7 +255,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (Exception ex)
                 {
-                    ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
+                    Logger.ER(ex);
                 }
                 return ret;
             }
@@ -293,7 +292,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (Exception ex)
                 {
-                    ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
+                    Logger.ER(ex);
                 }
                 return false;
             }
@@ -570,7 +569,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (Exception ex)
                 {
-                    ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
+                    Logger.ER(ex);
                 }
                 return null;
             }

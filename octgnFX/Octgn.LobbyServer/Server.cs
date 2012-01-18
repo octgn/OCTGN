@@ -62,6 +62,7 @@ namespace Skylabs.LobbyServer
         /// <param name="port">The port to host on</param>
         public static void Start(IPAddress ip, int port)
         {
+            Logger.log("Start", "Start listening");
             LocalIp = ip;
             Port = port;
             ListenSocket = new TcpListener(LocalIp, Port);

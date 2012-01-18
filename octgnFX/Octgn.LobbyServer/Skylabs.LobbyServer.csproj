@@ -192,10 +192,6 @@
       <Project>{070AE36D-4CE1-4708-BD0F-2896A6F117FC}</Project>
       <Name>CassiniDev.Lib4</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ConsoleHelper\ConsoleHelper.csproj">
-      <Project>{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}</Project>
-      <Name>ConsoleHelper</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
       <Name>Skylabs.Lobby</Name>
