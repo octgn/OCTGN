@@ -417,35 +417,38 @@ namespace Octgn.Scripting
             engine.Invoke(() =>
             {
                 var model = Database.GetCardById(modelGuid);
-                int[] ids = new int[quantity];
-                ulong[] keys = new ulong[quantity];
-                Guid[] models = new Guid[quantity];
-                int[] xs = new int[quantity], ys = new int[quantity];
-
-                var def = Program.Game.Definition.CardDefinition;
-
-                if(Player.LocalPlayer.InvertedTable)
+                if (model != null)
                 {
-                    x -= def.Width; y -= def.Height;
+                    int[] ids = new int[quantity];
+                    ulong[] keys = new ulong[quantity];
+                    Guid[] models = new Guid[quantity];
+                    int[] xs = new int[quantity], ys = new int[quantity];
+
+                    var def = Program.Game.Definition.CardDefinition;
+
+                    if (Player.LocalPlayer.InvertedTable)
+                    {
+                        x -= def.Width; y -= def.Height;
+                    }
+                    int offset = (int)(Math.Min(def.Width, def.Height) * 0.2);
+                    if (Program.GameSettings.UseTwoSidedTable && Play.Gui.TableControl.IsInInvertedZone(y))
+                        offset = -offset;
+
+                    for (int i = 0; i < quantity; ++i)
+                    {
+                        ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
+                        int id = Program.Game.GenerateCardId();
+
+                        new Play.Actions.CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
+
+                        ids[i] = id; keys[i] = key; models[i] = model.Id; xs[i] = x; ys[i] = y;
+                        result.Add(id);
+
+                        x += offset; y += offset;
+                    }
+
+                    Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, true, persist);
                 }
-                int offset = (int)(Math.Min(def.Width, def.Height) * 0.2);
-                if(Program.GameSettings.UseTwoSidedTable && Play.Gui.TableControl.IsInInvertedZone(y))
-                    offset = -offset;
-
-                for(int i = 0; i < quantity; ++i)
-                {
-                    ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                    int id = Program.Game.GenerateCardId();
-
-                    new Play.Actions.CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
-
-                    ids[i] = id; keys[i] = key; models[i] = model.Id; xs[i] = x; ys[i] = y;
-                    result.Add(id);
-
-                    x += offset; y += offset;
-                }
-
-                Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, true, persist);
             });
 
             return result;

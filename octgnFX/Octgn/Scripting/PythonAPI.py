@@ -189,6 +189,7 @@ class Table(Group):
     Group.__init__(self, 0x01000000, 'Table')
   def create(self, model, x, y, quantity = 1, persist = False):
     ids = _api.CreateOnTable(model, x, y, persist, quantity)
+    #if ids == None or ids == []: return None
     if quantity != 1:
       return [Card(id) for id in ids]
     else:
