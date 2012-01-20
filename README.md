@@ -25,8 +25,6 @@ To work on the web component
 express editions, and we want to keep the development process open to all.
 * Get Visual Web Developer Express (http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-web-developer-express)
 * Open the subproject file under Webcontent/Webcontent.csproj
-* **Important** This project references two components from the main project, if you rebuild the main project, you have to 
-  update these, are they are copied into the local project space.
-    * OCTGN\octgnFX\Skylabs.Lobby\bin\Debug\Skylabs.Lobby.dll
-    * OCTGN\octgnFX\Octgn\bin\Debug\Skylabs.LobbyServer.exe
+* **Important** This project references two components from the main project, you will have to add them as references
+  OCTGN\octgnFX\Skylabs.Lobby\bin\Debug\Skylabs.Lobby.dll AND OCTGN\octgnFX\Octgn\bin\Debug\Skylabs.LobbyServer.exe
 * Do the greatness! 
