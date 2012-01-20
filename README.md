@@ -27,6 +27,6 @@ express editions, and we want to keep the development process open to all.
 * Open the subproject file under Webcontent/Webcontent.csproj
 * **Important** This project references two components from the main project, if you rebuild the main project, you have to 
   update these, are they are copied into the local project space.
-- OCTGN\octgnFX\Skylabs.Lobby\bin\Debug\Skylabs.Lobby.dll
-- OCTGN\octgnFX\Octgn\bin\Debug\Skylabs.LobbyServer.exe
+    * OCTGN\octgnFX\Skylabs.Lobby\bin\Debug\Skylabs.Lobby.dll
+    * OCTGN\octgnFX\Octgn\bin\Debug\Skylabs.LobbyServer.exe
 * Do the greatness! 
