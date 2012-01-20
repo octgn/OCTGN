@@ -42,7 +42,7 @@ namespace Skylabs.Net
     }
 
     [Serializable]
-    public class SocketMessage
+    public class SocketMessage: ICloneable
     {
         public NameValuePair[] Data { get { return _data; } set { _data = value; } }
 
@@ -100,6 +100,13 @@ namespace Skylabs.Net
                 BinaryFormatter bf = new BinaryFormatter();
                 return (SocketMessage)bf.Deserialize(ms);
             }
+        }
+
+        public object Clone()
+        {
+            SocketMessage sm = new SocketMessage(Header.Clone() as String);
+            sm.Data = Data.Clone() as NameValuePair[];
+            return sm;
         }
     }
 }

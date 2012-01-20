@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-using Skylabs.Threading;
+using Skylabs.Lobby.Threading;
 using System.Diagnostics;
 using Skylabs.Net;
 using Skylabs.Lobby.Threading;
@@ -17,7 +17,11 @@ namespace Skylabs.Lobby.Sockets
     {
         public delegate void MessageReceived(SkySocket2 socket, SocketMessage message);
 
+        public delegate void ConnectionClosed(SkySocket2 socket);
+
         public event MessageReceived OnMessageReceived;
+
+        public event ConnectionClosed OnConnectionClosed;
 
         public bool Connected { get;private set ;}
 
@@ -27,7 +31,7 @@ namespace Skylabs.Lobby.Sockets
 
         private TcpClient Sock { get; set; }
 
-        private EndPoint RemoteEndPoint;
+        public EndPoint RemoteEndPoint { get; private set; }
 
         private object SocketLocker = new object();
 
@@ -60,6 +64,7 @@ namespace Skylabs.Lobby.Sockets
                     try
                     {
                         Sock.Connect(host, port);
+                        RemoteEndPoint = Sock.Client.RemoteEndPoint;
                         SocketThread.Start();
                         return true;
                     }
@@ -80,11 +85,45 @@ namespace Skylabs.Lobby.Sockets
             }
         }
 
+        public void WriteMessage(SocketMessage message)
+        {
+            lock (SocketLocker)
+            {
+                if (IsDisposed)
+                    throw new ObjectDisposedException("SkySocket","SkySocket is disposed.");
+                byte[] data = SocketMessage.Serialize(message);
+                byte[] messagesize = BitConverter.GetBytes(data.LongLength);
+                try
+                {
+                    Sock.Client.Send(messagesize);
+                    Sock.Client.Send(data);
+                    Sock.GetStream().Flush();
+                }
+                catch (SocketException se)
+                {
+                    if (se.ErrorCode == 10058)
+                        return;
+                    Conductor.Add(()=>Stop());
+                }
+                catch (ObjectDisposedException)
+                {
+                    Conductor.Add(()=>Stop());
+                }
+                catch (NullReferenceException)
+                {
+                }
+                catch (Exception)
+                {
+                    if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                }
+            }
+        }
+
         private void ReadThreadRunner()
         {
             while (true)
             {
-                lock (SockerLocker)
+                lock (SocketLocker)
                 {
                     if (Stopping)
                         break;
@@ -94,7 +133,7 @@ namespace Skylabs.Lobby.Sockets
                     {
                         if (Sock.Client.Available >= 8)
                         {
-                            Sock.Client.Receive(buffer, 0, 8, SocketFlags.None, err);
+                            Sock.Client.Receive(buffer, 0, 8, SocketFlags.None, out err);
                             if (err != SocketError.Success)
                             {
                                 Trace.TraceError(err.ToString());
@@ -107,7 +146,7 @@ namespace Skylabs.Lobby.Sockets
                                 break;
                             }
                             buffer = new byte[count];
-                            Sock.Client.Receive(buffer, 0, count, SocketFlags.None, err);
+                            Sock.Client.Receive(buffer, 0, (int)count, SocketFlags.None, out err);
                             if (err != SocketError.Success)
                             {
                                 Trace.TraceError(err.ToString());
@@ -129,6 +168,7 @@ namespace Skylabs.Lobby.Sockets
                 }
                 Thread.Sleep(10);
             }
+            this.Conductor.Add(() => { if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); });
             //Call disconnection bullhonkey here.
         }
     

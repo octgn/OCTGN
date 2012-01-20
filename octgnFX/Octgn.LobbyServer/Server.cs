@@ -166,7 +166,7 @@ namespace Skylabs.LobbyServer
         /// <param name="e">User status</param>
         /// <param name="client">The client that called</param>
         /// <param name="Supress">Should we supress a broadcast message</param>
-        public static void OnUserEvent(UserStatus e, Client client, bool Supress)
+        public static void OnUserEvent(UserStatus e, Client2 client, bool Supress)
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)

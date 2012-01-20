@@ -48,13 +48,13 @@ namespace Skylabs.LobbyServer
         /// <param name="uid">User ID</param>
         /// <param name="c">client</param>
         /// <returns>-1 if not banned. Timestamp of ban end if banned. Timestamp can be converted to DateTime with fromPHPTime.</returns>
-        public int IsBanned(int uid, Client c)
+        public int IsBanned(int uid, EndPoint endpoint)
         {
             lock (DBLocker)
             {
                 if (uid <= -1)
                     return -1;
-                if (c == null)
+                if (endpoint == null)
                     return -1;
                 int ret = -1;
                 try
@@ -62,7 +62,6 @@ namespace Skylabs.LobbyServer
                     using (MySqlConnection con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        EndPoint endpoint = c.RemoteEndPoint;
                         String ip = "0.0.0.0";
                         if (endpoint == null)
                         {
