@@ -22,9 +22,12 @@ Your own awesome changes
 To work on the web component
 -------------------------------------------------
 **Note:** This project is not included in the main project, because having it included makes it unable to be opened from 
-express editions, and we want to keep the development process open to all.
+express editions, and we want to keep the development process open to all.  It requires the main project to be built so 
+it can include the required assemblies.
+
 * Get Visual Web Developer Express (http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-web-developer-express)
 * Open the subproject file under Webcontent/Webcontent.csproj
 * **Important** This project references two components from the main project, you will have to add them as references
-  OCTGN\octgnFX\Skylabs.Lobby\bin\Debug\Skylabs.Lobby.dll AND OCTGN\octgnFX\Octgn\bin\Debug\Skylabs.LobbyServer.exe
+  * OCTGN\octgnFX\Skylabs.Lobby\bin\Debug\Skylabs.Lobby.dll 
+  * OCTGN\octgnFX\Octgn\bin\Debug\Skylabs.LobbyServer.exe
 * Do the greatness! 
