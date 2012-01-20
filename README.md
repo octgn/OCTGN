@@ -15,7 +15,7 @@ Get Involved!
 Your own awesome changes
 -------------------------------------------------
 * Get Visual Studio Express C# (http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-csharp-express)
-* Open the main project file under OCTGN/octgnFX/Octgn/OCTGN.sln
+* Open the main project file under **OCTGN/octgnFX/Octgn/OCTGN.sln** with Visual Studio Express C#
 * Do the greatness!
 
 
@@ -26,7 +26,7 @@ express editions, and we want to keep the development process open to all.  It r
 it can include the required assemblies.
 
 * Get Visual Web Developer Express (http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-web-developer-express)
-* Open the subproject file under Webcontent/Webcontent.csproj
+* Open the subproject file under **Webcontent/Webcontent.csproj** with the web developer version of Visual Studio Express
 * **Important** This project references two components from the main project, you will have to add them as references
   * OCTGN\octgnFX\Skylabs.Lobby\bin\Debug\Skylabs.Lobby.dll 
   * OCTGN\octgnFX\Octgn\bin\Debug\Skylabs.LobbyServer.exe
