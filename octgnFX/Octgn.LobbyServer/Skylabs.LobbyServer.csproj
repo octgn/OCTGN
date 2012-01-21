@@ -143,8 +143,8 @@
     <Compile Include="Ban.cs" />
     <Compile Include="ChatRoom.cs" />
     <Compile Include="Chatting.cs" />
+    <Compile Include="Clientold.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="Client2.cs" />
     <Compile Include="Gaming.cs" />
     <Compile Include="HostedGame.cs" />
     <Compile Include="Logger.cs" />

@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Threading;
 using Skylabs.Lobby;
 using Skylabs.Net;
+using Skylabs.Lobby.Sockets;
 
 namespace Skylabs.LobbyServer
 {
@@ -104,6 +105,26 @@ namespace Skylabs.LobbyServer
             }
             
         }
+        public static void WriteMessageToClient(SocketMessage sm,string email)
+        {
+            lock (ClientLocker)
+            {
+                Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower() == email.ToLower());
+                if (cl != null)
+                    cl.WriteMessage(sm);
+            }
+        }
+        public static void WriteMessageToClient(SocketMessage sm,int uid)
+        {
+            lock (ClientLocker)
+            {
+                Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
+                if (cl != null)
+                {
+                    cl.WriteMessage(sm);
+                }
+            }
+        }
         /// <summary>
         /// Gets online user by there UID
         /// </summary>
@@ -166,7 +187,7 @@ namespace Skylabs.LobbyServer
         /// <param name="e">User status</param>
         /// <param name="client">The client that called</param>
         /// <param name="Supress">Should we supress a broadcast message</param>
-        public static void OnUserEvent(UserStatus e, Client2 client, bool Supress)
+        public static void OnUserEvent(UserStatus e, Client client, bool Supress)
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
@@ -259,7 +280,7 @@ namespace Skylabs.LobbyServer
                         if (Clients[i].LoggedIn)
                             loggedInCount++;
                         Client sClient = Clients[i];
-                        Thread t = new Thread(() => sClient.Stop(true));
+                        Thread t = new Thread(() => sClient.Stop());
                         Logger.log(MethodInfo.GetCurrentMethod().Name, "Stoping client " + Clients[i].Id.ToString());
                         t.Start();
                     }
@@ -290,7 +311,8 @@ namespace Skylabs.LobbyServer
                 try
                 {
                     TcpListener listener = (TcpListener)ar.AsyncState;
-                    Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId));
+                    SkySocket ss = new SkySocket(listener.EndAcceptTcpClient(ar));
+                    Clients.Add(new Client(ss, _nextId));
                     Logger.log(MethodInfo.GetCurrentMethod().Name, "Client " + _nextId.ToString() + " connected.");
                     _nextId++;
                 }

@@ -21,7 +21,7 @@ namespace Skylabs.Lobby
 
     public enum DataRecType { FriendList, OnlineList, UserCustomStatus ,ServerMessage};
 
-    public class LobbyClient : SkySocket
+    public class LobbyClient : SkySocketOld
     {
         public delegate void LoginFinished(LoginResult success, DateTime banEnd, string message);
         public delegate void LoginProgressUpdate(string message);
