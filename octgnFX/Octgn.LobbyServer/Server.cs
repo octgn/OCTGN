@@ -23,7 +23,7 @@ namespace Skylabs.LobbyServer
 
         public static int Port { get; private set; }
 
-        public static TcpListener ListenSocket { get; private set; }
+        private static TcpListener ListenSocket { get; set; }
 
         private static List<Client> Clients { get; set; }
 
@@ -44,14 +44,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         /// Current assembly version of the server.
         /// </summary>
-        public static Version Version
-        {
-            get
-            {
-                Assembly asm = Assembly.GetCallingAssembly();
-                return asm.GetName().Version;
-            }
-        }
+        public static Version Version = Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Start the server
