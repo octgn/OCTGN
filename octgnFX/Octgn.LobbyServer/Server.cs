@@ -14,6 +14,7 @@ using System.Threading;
 using Skylabs.Lobby;
 using Skylabs.Net;
 using Skylabs.Lobby.Sockets;
+using Skylabs.Lobby.Threading;
 
 namespace Skylabs.LobbyServer
 {
@@ -41,6 +42,8 @@ namespace Skylabs.LobbyServer
             }
         }
 
+        private static Conductor Conductor;
+
         /// <summary>
         /// Current assembly version of the server.
         /// </summary>
@@ -52,6 +55,7 @@ namespace Skylabs.LobbyServer
         static Server()
         {
             Clients = new List<Client>();
+            Conductor = new Conductor();
         }
         /// <summary>
         /// Start listening for connections
@@ -80,6 +84,7 @@ namespace Skylabs.LobbyServer
                     c.Stop();
                 }
             }
+            Conductor.Dispose();
         }
         /// <summary>
         /// Get an online user by there e-mail address
@@ -92,7 +97,7 @@ namespace Skylabs.LobbyServer
             lock (ClientLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name,"ClientLocker");
-                Client ret =  Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Email.ToLower().Equals(email.ToLower()));
+                Client ret = Clients.FirstOrDefault(c => c.LoggedIn == true && c.Me.Email.ToLower().Equals(email.ToLower()));
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return ret;
             }
@@ -104,7 +109,7 @@ namespace Skylabs.LobbyServer
             {
                 Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower() == email.ToLower());
                 if (cl != null)
-                    cl.WriteMessage(sm);
+                    Conductor.Add(()=>cl.WriteMessage(sm));
             }
         }
         public static void WriteMessageToClient(SocketMessage sm,int uid)
@@ -114,7 +119,7 @@ namespace Skylabs.LobbyServer
                 Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
                 if (cl != null)
                 {
-                    cl.WriteMessage(sm);
+                    Conductor.Add(()=>cl.WriteMessage(sm));
                 }
             }
         }
@@ -129,7 +134,7 @@ namespace Skylabs.LobbyServer
             lock (ClientLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
-                Client ret = Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Uid == uid);
+                Client ret = Clients.FirstOrDefault(c => c.LoggedIn == true && c.Me.Uid == uid);
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return ret;
             }
@@ -201,16 +206,14 @@ namespace Skylabs.LobbyServer
                     }
                     if (!foundOne)
                     {
-                        Thread t = new Thread(() => { Chatting.UserOffline((User)me.Clone()); });
-                        t.Start();
+                        Conductor.Add(()=>Chatting.UserOffline((User)me.Clone()));
                     }
                 }
                 if (!Supress)
                 {
                     foreach (Client c in Clients)
                     { 
-                        Thread t = new Thread(()=>c.OnUserEvent(e, me));
-                        t.Start();
+                        Conductor.Add(()=>c.OnUserEvent(e, me.Clone() as User));
                     }
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
@@ -247,7 +250,7 @@ namespace Skylabs.LobbyServer
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
             foreach(Client c in templist)
-                c.WriteMessage(sm);
+                Conductor.Add(()=>c.WriteMessage(sm));
         }
         /// <summary>
         /// Stops and removes all clients based on a uid.
@@ -273,9 +276,8 @@ namespace Skylabs.LobbyServer
                         if (Clients[i].LoggedIn)
                             loggedInCount++;
                         Client sClient = Clients[i];
-                        Thread t = new Thread(() => sClient.Stop());
+                        Conductor.Add(() => sClient.Stop());
                         Logger.log(MethodInfo.GetCurrentMethod().Name, "Stoping client " + Clients[i].Id.ToString());
-                        t.Start();
                     }
                 }
                 try
