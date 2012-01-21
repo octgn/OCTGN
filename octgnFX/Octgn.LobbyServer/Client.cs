@@ -60,6 +60,7 @@ namespace Skylabs.LobbyServer
             _stopping = false;
             Id = id;
             LoggedIn = false;
+            Me = new User();
             Cup = new MySqlCup(Program.Settings["dbUser"], Program.Settings["dbPass"], Program.Settings["dbHost"], Program.Settings["db"]);
             Socket = socket;
             Socket.OnMessageReceived += new SkySocket.MessageReceived(Socket_OnMessageReceived);
@@ -131,7 +132,7 @@ namespace Skylabs.LobbyServer
                         Guid g = (Guid)message["game"];
                         Version v = (Version)message["version"];
                         string n = (string)message["name"];
-                        string pass = (string)message["password"];
+                        string pass = (string)message["pass"];
                         if(g != null && v != null && n != null && pass != null)
                             HostGame(g,v,n,pass);
                         break;
@@ -187,6 +188,7 @@ namespace Skylabs.LobbyServer
             {
                 if (!_stopping)
                 {
+                    _stopping = true;
                     Trace.TraceInformation("Stopping Client.");
                     LoggedIn = false;
                     Socket.WriteMessage(new SocketMessage("end"));
@@ -326,7 +328,7 @@ namespace Skylabs.LobbyServer
             lock (ClientLocker)
             {
                 SocketMessage sm;
-                if (email == null || token == null)
+                if (email != null && token != null)
                 {
                     //Authenticate Google Token
                     try

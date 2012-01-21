@@ -86,7 +86,7 @@ namespace Skylabs.Lobby
         public object Clone()
         {
             User ret = new User
-                           {Email = Email, Uid = Uid, Password = Password, Level = Level, DisplayName = DisplayName};
+                           {Email = Email.Clone() as string, Uid = Uid, Password = Password.Clone() as string, Level = Level, DisplayName = DisplayName.Clone() as string,CustomStatus = CustomStatus.Clone() as string,Status = Status};
             return ret;
         }
 

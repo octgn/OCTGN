@@ -60,11 +60,13 @@ namespace Skylabs.Lobby.Sockets
             {
                 Conductor = new Threading.Conductor();
                 IsDisposed = false;
-                Connected = false;
                 Stopping = false;
                 Sock = c;
                 SocketThread = new Thread(ReadThreadRunner);
                 SocketThread.Name = "SkySocket Read Thread";
+                RemoteEndPoint = Sock.Client.RemoteEndPoint;
+                SocketThread.Start();
+                Connected = true;
             }
         }
         public bool Connect(string host, int port)
@@ -78,6 +80,7 @@ namespace Skylabs.Lobby.Sockets
                         Sock.Connect(host, port);
                         RemoteEndPoint = Sock.Client.RemoteEndPoint;
                         SocketThread.Start();
+                        Connected = true;
                         return true;
                     }
                     catch (SocketException)
@@ -109,7 +112,7 @@ namespace Skylabs.Lobby.Sockets
                 {
                     Sock.Client.Send(messagesize);
                     Sock.Client.Send(data);
-                    Sock.GetStream().Flush();
+                    //Sock.GetStream().Flush();
                 }
                 catch (SocketException se)
                 {
@@ -167,7 +170,11 @@ namespace Skylabs.Lobby.Sockets
                             SocketMessage sm = SocketMessage.Deserialize(buffer);
                             if (sm != null)
                             {
-                                this.Conductor.Add(() => { if (OnMessageReceived != null)OnMessageReceived.Invoke(this, (SocketMessage)sm.Clone()); });
+                                this.Conductor.Add(() => 
+                                { 
+                                    if (OnMessageReceived != null)
+                                        OnMessageReceived.Invoke(this, (SocketMessage)sm.Clone()); 
+                                });
                             }
                         }
                     }

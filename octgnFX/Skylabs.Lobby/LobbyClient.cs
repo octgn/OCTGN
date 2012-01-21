@@ -14,6 +14,8 @@ using Google.GData.Client;
 using Skylabs.Net;
 using Skylabs.Net.Sockets;
 using System.Diagnostics;
+using Skylabs.Lobby.Threading;
+using Skylabs.Lobby.Sockets;
 
 namespace Skylabs.Lobby
 {
@@ -21,7 +23,7 @@ namespace Skylabs.Lobby
 
     public enum DataRecType { FriendList, OnlineList, UserCustomStatus ,ServerMessage};
 
-    public class LobbyClient : SkySocketOld
+    public class LobbyClient
     {
         public delegate void LoginFinished(LoginResult success, DateTime banEnd, string message);
         public delegate void LoginProgressUpdate(string message);
@@ -31,6 +33,7 @@ namespace Skylabs.Lobby
         public delegate void FriendRequest(User u);
         public delegate void SocketMessageResult(SocketMessage sm);
         public delegate void GameHostEvent(HostedGame g);
+        public event EventHandler OnDisconnect;
 
         /// <summary>
         /// Kind of a generic event whenever data is received. Check DataRecType for data that triggers this.
@@ -54,16 +57,15 @@ namespace Skylabs.Lobby
         /// When a game has a hosting event, this gets called. The three are Game Hosting and ready for players, game in progress, and game done.
         /// </summary>
         public event GameHostEvent OnGameHostEvent;
-        /// <summary>
-        /// This happens when the LobbyClient disconnects for any reason.
-        /// </summary>
-        public event EventHandler OnDisconnectEvent;
+
         
         /// <summary>
         /// A list of Hosted games
         /// </summary>
         private List<HostedGame> Games { get; set; }
         private object gameLocker = new object();
+
+        public bool Connected { get { return Socket.Connected != null ? Socket.Connected : false; } }
 
         /// <summary>
         /// Meh, failed attempt for Asyncronus callbacks. Don't delete it, it gets used, but still.
@@ -87,14 +89,7 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Assembly version of the LobbySoftware I think.
         /// </summary>
-        public Version Version
-        {
-            get
-            {
-                Assembly asm = Assembly.GetCallingAssembly();
-                return asm.GetName().Version;
-            }
-        }
+        public Version Version = Assembly.GetCallingAssembly().GetName().Version;
 
         /// <summary>
         /// List of friends
@@ -116,22 +111,39 @@ namespace Skylabs.Lobby
 
         private bool _didCallStop = false;
         private int _nextNoteId = 0;
+        private Conductor Conductor;
+        private SkySocket Socket;
         public LobbyClient()
         {
+            Conductor = new Threading.Conductor();
             FriendList = new List<User>();
             Notifications = new List<Notification>();
             Callbacks = new Dictionary<string, SocketMessageResult>();
             Games = new List<HostedGame>();
             Chatting = new Lobby.Chatting(this);
+            Socket = new SkySocket();
+            Socket.OnMessageReceived += new SkySocket.MessageReceived(this.OnMessageReceived);
+            Socket.OnConnectionClosed += new SkySocket.ConnectionClosed(Socket_OnConnectionClosed);
+        }
+        public bool Connect(string host, int port)
+        {
+            return Socket.Connect(host, port);
+        }
+        void Socket_OnConnectionClosed(SkySocket socket)
+        {
+            if (OnDisconnect != null)
+                Conductor.Add(() => OnDisconnect.Invoke(this, null));
+            Socket.Dispose();
         }
 
-        public LobbyClient(TcpClient c)
-            : base(c)
+        public LobbyClient(SkySocket c)
         {
+            Conductor = new Threading.Conductor();
             FriendList = new List<User>();
             Notifications = new List<Notification>();
             Callbacks = new Dictionary<string, SocketMessageResult>();
             Games = new List<HostedGame>();
+            Socket = c;
         }
         /// <summary>
         /// Disconnect cleanly
@@ -141,13 +153,13 @@ namespace Skylabs.Lobby
             if (!_didCallStop)
             {
                 _didCallStop = true;
-                if (!_sentEndMessage)
-                {
-                    WriteMessage(new SocketMessage("end"));
-                    _sentEndMessage = true;
-                }
-                Close(DisconnectReason.CleanDisconnect);
+                WriteMessage(new SocketMessage("end"));
+                Socket.Stop();
             }
+        }
+        public void WriteMessage(SocketMessage sm)
+        {
+            Socket.WriteMessage(sm);
         }
         /// <summary>
         /// Start hosting a game.
@@ -244,7 +256,7 @@ namespace Skylabs.Lobby
         /// <param name="status">Status to log in as</param>
         public void Login(LoginFinished onFinish, LoginProgressUpdate onUpdate, string email, string password, string captcha, UserStatus status)
         {
-            if(Connected)
+            if(Socket.Connected)
             {
                 Thread t = new Thread(() =>
                                           {
@@ -270,10 +282,11 @@ namespace Skylabs.Lobby
                                                   onUpdate.Invoke("Sending login token to Server...");
                                                   Debug.WriteLine("Received login token.");
                                                   SocketMessage sm = new SocketMessage("login");
-                                                  sm.AddData(new NameValuePair("email", email));
-                                                  sm.AddData(new NameValuePair("token", ret));
+                                                  sm.AddData("email", email);
+                                                  sm.AddData("token", ret);
                                                   sm.AddData("status", status);
                                                   WriteMessage(sm);
+                                                  onUpdate.Invoke("Waiting for server response...");
                                               }
                                               catch(CaptchaRequiredException ce)
                                               {
@@ -298,7 +311,7 @@ namespace Skylabs.Lobby
         /// Whenever a SkySocket gets a message, it goes here for processing.
         /// </summary>
         /// <param name="sm">SocketMessage</param>
-        public override void OnMessageReceived(Net.SocketMessage sm)
+        private void OnMessageReceived(SkySocket ss,Net.SocketMessage sm)
         {
             User u;
             if (Callbacks.ContainsKey(sm.Header.ToLower()))
@@ -554,15 +567,6 @@ namespace Skylabs.Lobby
             SocketMessage sm = new SocketMessage("displayname");
             sm.AddData("name", name);
             WriteMessage(sm);
-        }
-        /// <summary>
-        /// Happens when the SkySocket disconnects.
-        /// </summary>
-        /// <param name="reason"></param>
-        public override void OnDisconnect(Net.DisconnectReason reason)
-        {
-            if (OnDisconnectEvent != null)
-                OnDisconnectEvent(this, null);
         }
     }
 }
