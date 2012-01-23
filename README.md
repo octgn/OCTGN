@@ -1,6 +1,6 @@
 OCTGN 3.0
 =================================================
-This is the new home for the OCTGN open source project.  It is released under a **GPL3** license.
+This is the new home for the OCTGN open source project.  The project's license is in LICENSE.md
 
 
 Get Involved! 
@@ -8,7 +8,7 @@ Get Involved!
 * Create a github account (https://github.com/signup/free)
 * Setup git locally (http://help.github.com/win-set-up-git/)
 * Fork the repository (http://help.github.com/fork-a-repo/)
-* Make your awesome change! (more details below)
+* Make your awesome change! (see PLAN.md to see future plans)
 * Request we pull it in (http://help.github.com/send-pull-requests/)
 
 

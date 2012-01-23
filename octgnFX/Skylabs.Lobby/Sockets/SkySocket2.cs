@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-using Skylabs.Threading;
 using System.Diagnostics;
 using Skylabs.Net;
 using Skylabs.Lobby.Threading;
