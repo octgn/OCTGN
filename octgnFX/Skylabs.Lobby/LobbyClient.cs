@@ -165,6 +165,7 @@ namespace Skylabs.Lobby
         /// <param name="password">Password</param>
         public void BeginHostGame(SocketMessageResult callback, Octgn.Data.Game game, string gamename, string password)
         {
+            Callbacks.Clear();
             Callbacks.Add("hostgameresponse",callback);
             SocketMessage sm = new SocketMessage("hostgame");
             sm.AddData("game",game.Id);
