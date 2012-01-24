@@ -473,10 +473,13 @@ namespace Skylabs.Lobby
                             int p = (int)sm["port"];
 
                             HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
-                            gm.GameStatus = HostedGame.eHostedGame.GameInProgress;
-                            if (OnGameHostEvent != null)
-                                foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
-                                    ge.BeginInvoke(gm, new AsyncCallback((IAsyncResult r) => { }), null);
+                            if (gm != null)
+                            {
+                                gm.GameStatus = HostedGame.eHostedGame.GameInProgress;
+                                if (OnGameHostEvent != null)
+                                    foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
+                                        ge.BeginInvoke(gm, new AsyncCallback((IAsyncResult r) => { }), null);
+                            }
                         }
                         break;
                     }
@@ -486,7 +489,7 @@ namespace Skylabs.Lobby
                         {
                             int p = (int)sm["port"];
 
-                            HostedGame gm = Games.Where(g => g.Port == p).First();
+                            HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
                             {
                                 gm.GameStatus = HostedGame.eHostedGame.StoppedHosting;
