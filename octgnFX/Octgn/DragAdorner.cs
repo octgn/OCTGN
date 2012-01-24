@@ -11,7 +11,7 @@ namespace SimplestDragDrop
     class DragAdorner : Adorner
     {
         protected UIElement _child;
-        protected VisualBrush _brush;
+        //protected VisualBrush _brush; // never used
         protected UIElement _owner;
         protected double XCenter;
         protected double YCenter;

@@ -61,7 +61,18 @@ namespace Skylabs.Lobby
         private List<HostedGame> Games { get; set; }
         private object gameLocker = new object();
 
-        public bool Connected { get { return Socket.Connected != null ? Socket.Connected : false; } }
+        public bool Connected { 
+            get {
+                if (Socket != null)
+                {
+                    return Socket.Connected;
+                }
+                else
+                {
+                    return false;
+                }
+            } 
+        }
 
         /// <summary>
         /// Meh, failed attempt for Asyncronus callbacks. Don't delete it, it gets used, but still.
@@ -103,7 +114,7 @@ namespace Skylabs.Lobby
         /// </summary>
         public int CurrentHostedGamePort { get; set; }
 
-        private bool _sentEndMessage;
+        // private bool _sentEndMessage; // not used right now
 
         private bool _didCallStop = false;
         private int _nextNoteId = 0;

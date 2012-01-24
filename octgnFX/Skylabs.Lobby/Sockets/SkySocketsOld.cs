@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
@@ -124,6 +124,7 @@ namespace Skylabs.Net.Sockets
             }
             catch (Exception e)
             {
+                Debug.WriteLine(e);
                 if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
             }
         }
