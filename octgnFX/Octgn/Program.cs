@@ -46,8 +46,10 @@ namespace Octgn
         private static Process LobbyServerProcess;
         private static bool _locationUpdating = false;
 
-#if(DEBUG)
+#if(TestServer)
         public static DEBUGLobbySettings LobbySettings = DEBUGLobbySettings.Default;
+#elif(Debug)
+        public static TestServerSettings LobbySettings = TestServerSettings.Default;
 #else
         public static lobbysettings LobbySettings = lobbysettings.Default;
 #endif
