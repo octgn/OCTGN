@@ -155,8 +155,8 @@ namespace Skylabs.LobbyServer
                 foreach (ChatRoom c in Rooms)
                 {
                     ChatRoom cr = c;
-                    Thread t = new Thread(()=>cr.UserExit(u));
-                    t.Start();
+                    Action t = new Action(()=>cr.UserExit(u));
+                    t.BeginInvoke(null, null);
                     User[] ul = c.GetUserList();
                     if (ul.Length - 1 <= 0 && c.ID != 0)
                         roomstocan.Add(c.ID);
@@ -182,8 +182,8 @@ namespace Skylabs.LobbyServer
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
                 if (cr != null)
                 {
-                    Thread t = new Thread(() => cr.UserExit(u));
-                    t.Start();
+                    Action a = new Action(() => cr.UserExit(u));
+                    a.BeginInvoke(null,null);
                     User[] ul = cr.GetUserList();
                     if (ul.Length - 1 <= 0 && cr.ID != 0)
                         Rooms.RemoveAll(r => r.ID == cr.ID);
@@ -219,8 +219,8 @@ namespace Skylabs.LobbyServer
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid2);
                 if (cr != null)
                 {
-                    Thread t = new Thread(()=>cr.ChatMessage(c.Me, mess));
-                    t.Start();
+                    Action a = new Action(()=>cr.ChatMessage(c.Me, mess));
+                    a.BeginInvoke(null,null);
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }

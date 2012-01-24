@@ -3,6 +3,7 @@
   <PropertyGroup>
     <ReferencePath>
     </ReferencePath>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>

@@ -20,9 +20,7 @@ namespace Skylabs.LobbyServer
         private static bool _running = true;
         private static void Main(string[] args)
         {
-#if(DEBUG)
             Trace.Listeners.Add(new ConsoleTraceListener());
-#endif
             Trace.WriteLine(String.Format("[LobbyServer] V{0}", Assembly.GetExecutingAssembly().GetName().Version.ToString()));
             _runThread.Start();
             if (!LoadSettings())

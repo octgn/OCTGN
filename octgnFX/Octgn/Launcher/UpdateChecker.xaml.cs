@@ -20,29 +20,42 @@ namespace Octgn.Launcher
     public partial class UpdateChecker : Window
     {
         public bool IsClosingDown { get; set; }
+        private Timer timer;
         public UpdateChecker()
         {
             IsClosingDown = false;
             InitializeComponent();
             Thread t = new Thread(CheckForUpdates);
             t.Start();
+            timer = new Timer(new TimerCallback((object o) => 
+            {
+                t.Abort();
+                timer.Dispose();
+            }), null, 10000, 10000);
         }
         private void CheckForUpdates()
         {
-            bool isupdate = false;
-            string ustring = "";
-            if (FileExists("http://www.skylabsonline.com/downloads/octgn/update.xml"))
+            try
             {
-                string[] update = new string[2];
-                update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
+                bool isupdate = false;
+                string ustring = "";
+                if (FileExists("http://www.skylabsonline.com/downloads/octgn/update.xml"))
+                {
+                    string[] update = new string[2];
+                    update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                Version local = assembly.GetName().Version;
-                Version online = new Version(update[0]);
-                isupdate = online > local;
-                ustring = update[1];
+                    System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                    Version local = assembly.GetName().Version;
+                    Version online = new Version(update[0]);
+                    isupdate = online > local;
+                    ustring = update[1];
+                }
+                Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), isupdate, ustring);
             }
-            Dispatcher.BeginInvoke(new Action<bool,string>(UpdateCheckDone), isupdate, ustring);
+            catch (ThreadAbortException)
+            {
+
+            }
         }
         private void UpdateCheckDone(bool result,string url)
         {
@@ -58,6 +71,7 @@ namespace Octgn.Launcher
                         break;
                 }
             }
+            timer.Dispose();
             this.Close();
         }
         private bool FileExists(string URL)

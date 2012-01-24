@@ -138,8 +138,8 @@ namespace Skylabs.LobbyServer
                         Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
                         if (c != null)
                         {
-                            Thread t = new Thread(() => c.WriteMessage(sm));
-                            t.Start();
+                            Action t = new Action(() => c.WriteMessage(sm));
+                            t.BeginInvoke(null, null);
                         }
                     }
                 }
@@ -152,8 +152,8 @@ namespace Skylabs.LobbyServer
                     Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
                     if (c != null)
                     {
-                        Thread t = new Thread(()=>c.WriteMessage(sm));
-                        t.Start();
+                        Action t = new Action(() => c.WriteMessage(sm));
+                        t.BeginInvoke(null, null);
                     }
                 }
             }
