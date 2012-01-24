@@ -30,5 +30,5 @@ using System.Security;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.0.0.4")]
-[assembly: AssemblyFileVersionAttribute("3.0.0.4")]
+[assembly: AssemblyVersion("3.0.0.5")]
+[assembly: AssemblyFileVersionAttribute("3.0.0.5")]
