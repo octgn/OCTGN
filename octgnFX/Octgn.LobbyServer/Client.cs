@@ -338,6 +338,7 @@ namespace Skylabs.LobbyServer
                     }
                     catch (AuthenticationException e)
                     {
+                        Debug.WriteLine(e);
                         sm = new SocketMessage("loginfailed");
                         sm.AddData("message", "Invalid Token");
                         Socket.WriteMessage(sm);
