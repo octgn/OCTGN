@@ -101,7 +101,7 @@ namespace Skylabs.Lobby.Sockets
             lock (SocketLocker)
             {
                 if (IsDisposed)
-                    throw new ObjectDisposedException("SkySocket","SkySocket is disposed.");
+                    return;
                 byte[] data = SocketMessage.Serialize(message);
                 byte[] messagesize = BitConverter.GetBytes(data.LongLength);
                 try
