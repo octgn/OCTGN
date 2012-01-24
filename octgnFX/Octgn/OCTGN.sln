@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn", "Octgn.csproj", "{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Server", "..\Octgn.Server\Octgn.Server.csproj", "{6DD203AF-5003-4AF3-A982-67F10B704D4A}"
@@ -18,8 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.MultiLogin", "..\Skylabs.MultiLogin\Skylabs.MultiLogin.csproj", "{96C9ABEF-70FB-40CC-99D7-67F73C0AF726}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.Lib4", "..\CassiniDev\CassiniDev\CassiniDev.Lib4.csproj", "{070AE36D-4CE1-4708-BD0F-2896A6F117FC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webcontent", "..\Webcontent\Webcontent.csproj", "{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -187,23 +185,12 @@ Global
 		{070AE36D-4CE1-4708-BD0F-2896A6F117FC}.ReleaseMode with Debug|Mixed Platforms.Build.0 = Release|x86
 		{070AE36D-4CE1-4708-BD0F-2896A6F117FC}.ReleaseMode with Debug|x86.ActiveCfg = Debug|x86
 		{070AE36D-4CE1-4708-BD0F-2896A6F117FC}.ReleaseMode with Debug|x86.Build.0 = Debug|x86
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.Release|x86.ActiveCfg = Release|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.ReleaseMode with Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.ReleaseMode with Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.ReleaseMode with Debug|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.ReleaseMode with Debug|Mixed Platforms.Build.0 = Release|Any CPU
-		{B11637AD-9986-4DFB-A2A8-2CF0A76066C8}.ReleaseMode with Debug|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
