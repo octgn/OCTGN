@@ -113,13 +113,11 @@ namespace Skylabs.Lobby.Sockets
                 {
                     if (se.ErrorCode == 10058)
                         return;
-                    Action a = new Action(() => Stop());
-                    a.BeginInvoke(null, null);
+                    LazyAsync.Invoke(() => Stop());
                 }
                 catch (ObjectDisposedException)
                 {
-                    Action a = new Action(() => Stop());
-                    a.BeginInvoke(null, null);
+                    LazyAsync.Invoke(() => Stop());
                 }
                 catch (NullReferenceException)
                 {
@@ -182,8 +180,7 @@ namespace Skylabs.Lobby.Sockets
                 }
                 Thread.Sleep(10);
             }
-            Action a = new Action(()=>{ if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); });
-            a.BeginInvoke(null,null);
+            LazyAsync.Invoke(()=>{ if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); });
             //Call disconnection bullhonkey here.
         }
     

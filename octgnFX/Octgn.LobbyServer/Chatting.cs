@@ -5,6 +5,7 @@ using System.Text;
 using Skylabs.Net;
 using Skylabs.Lobby;
 using System.Threading;
+using Skylabs.Lobby.Threading;
 
 namespace Skylabs.LobbyServer
 {
@@ -155,8 +156,7 @@ namespace Skylabs.LobbyServer
                 foreach (ChatRoom c in Rooms)
                 {
                     ChatRoom cr = c;
-                    Action t = new Action(()=>cr.UserExit(u));
-                    t.BeginInvoke(null, null);
+                    LazyAsync.Invoke(()=>cr.UserExit(u));
                     User[] ul = c.GetUserList();
                     if (ul.Length - 1 <= 0 && c.ID != 0)
                         roomstocan.Add(c.ID);
@@ -182,8 +182,7 @@ namespace Skylabs.LobbyServer
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
                 if (cr != null)
                 {
-                    Action a = new Action(() => cr.UserExit(u));
-                    a.BeginInvoke(null,null);
+                    LazyAsync.Invoke(() => cr.UserExit(u));
                     User[] ul = cr.GetUserList();
                     if (ul.Length - 1 <= 0 && cr.ID != 0)
                         Rooms.RemoveAll(r => r.ID == cr.ID);
@@ -219,8 +218,7 @@ namespace Skylabs.LobbyServer
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid2);
                 if (cr != null)
                 {
-                    Action a = new Action(()=>cr.ChatMessage(c.Me, mess));
-                    a.BeginInvoke(null,null);
+                    LazyAsync.Invoke(()=>cr.ChatMessage(c.Me, mess));
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }

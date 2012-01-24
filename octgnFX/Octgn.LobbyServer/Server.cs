@@ -101,7 +101,7 @@ namespace Skylabs.LobbyServer
             {
                 Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower() == email.ToLower());
                 if (cl != null)
-                    new Action(()=>cl.WriteMessage(sm)).BeginInvoke(null,null);
+                    LazyAsync.Invoke(()=>cl.WriteMessage(sm));
             }
         }
         public static void WriteMessageToClient(SocketMessage sm,int uid)
@@ -111,7 +111,7 @@ namespace Skylabs.LobbyServer
                 Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
                 if (cl != null)
                 {
-                    new Action(()=>cl.WriteMessage(sm)).BeginInvoke(null,null);
+                    LazyAsync.Invoke(()=>cl.WriteMessage(sm));
                 }
             }
         }
@@ -198,14 +198,14 @@ namespace Skylabs.LobbyServer
                     }
                     if (!foundOne)
                     {
-                        new Action(()=>Chatting.UserOffline((User)me.Clone())).BeginInvoke(null,null);
+                        LazyAsync.Invoke(()=>Chatting.UserOffline((User)me.Clone()));
                     }
                 }
                 if (!Supress)
                 {
                     foreach (Client c in Clients)
                     { 
-                        new Action(()=>c.OnUserEvent(e, me.Clone() as User)).BeginInvoke(null,null);
+                        LazyAsync.Invoke(()=>c.OnUserEvent(e, me.Clone() as User));
                     }
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
@@ -242,7 +242,7 @@ namespace Skylabs.LobbyServer
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
             foreach(Client c in templist)
-                new Action(()=>c.WriteMessage(sm)).BeginInvoke(null,null);
+                LazyAsync.Invoke(()=>c.WriteMessage(sm));
         }
         /// <summary>
         /// Stops and removes all clients based on a uid.
@@ -268,7 +268,7 @@ namespace Skylabs.LobbyServer
                         if (Clients[i].LoggedIn)
                             loggedInCount++;
                         Client sClient = Clients[i];
-                        new Action(() => sClient.Stop()).BeginInvoke(null,null);
+                        LazyAsync.Invoke(() => sClient.Stop());
                         Logger.log(MethodInfo.GetCurrentMethod().Name, "Stoping client " + Clients[i].Id.ToString());
                     }
                 }
