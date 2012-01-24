@@ -19,6 +19,13 @@ Your own awesome changes
 * Do the greatness!
 
 
+Other places to get involved
+-------------------------------------------------
+* Forums
+* Mailing List
+* Trello
+
+
 To work on the web component
 -------------------------------------------------
 **Note:** This project is not included in the main project, because having it included makes it unable to be opened from 
