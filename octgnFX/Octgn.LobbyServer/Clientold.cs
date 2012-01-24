@@ -333,7 +333,7 @@ namespace Skylabs.LobbyServer
                 foreach (User u in Friends)
                 {
                     //Clientold c = Server.GetOnlineClientByUid(u.Uid);
-                    User n;
+                    //User n;
                     //if (c == null)
                     //{
                         //n = u;

@@ -9,7 +9,6 @@ using System.Threading;
 using Skylabs.Lobby.Threading;
 using System.Diagnostics;
 using Skylabs.Net;
-using Skylabs.Lobby.Threading;
 
 namespace Skylabs.Lobby.Sockets
 {
@@ -125,8 +124,9 @@ namespace Skylabs.Lobby.Sockets
                 catch (NullReferenceException)
                 {
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
                     if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
                 }
             }

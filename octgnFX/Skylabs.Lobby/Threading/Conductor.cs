@@ -47,7 +47,11 @@ namespace Skylabs.Lobby.Threading
                 }
                 catch (Exception e)
                 {
-                    if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                    Debug.WriteLine(e);
+                    if (System.Diagnostics.Debugger.IsAttached)
+                    {
+                        System.Diagnostics.Debugger.Break();
+                    } 
                 }
             }
         }
