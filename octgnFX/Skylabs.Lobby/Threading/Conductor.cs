@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace Skylabs.Lobby.Threading
 {
-    public sealed class Conductor : IDisposable
+    public sealed class Conductor2 : IDisposable
     {
         public bool IsDisposed { get; private set; }
 
@@ -22,7 +22,7 @@ namespace Skylabs.Lobby.Threading
 
         private object Locker = new object();
 
-        public Conductor()
+        public Conductor2()
         {
             Q = new Queue<ConductorAction>();
             IsDisposed = false;

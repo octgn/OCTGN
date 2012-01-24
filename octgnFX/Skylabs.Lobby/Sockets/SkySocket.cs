@@ -35,8 +35,6 @@ namespace Skylabs.Lobby.Sockets
 
         private object SocketLocker = new object();
 
-        private Conductor Conductor;
-
         private Thread SocketThread;
 
         private bool Stopping;
@@ -45,7 +43,6 @@ namespace Skylabs.Lobby.Sockets
         {
             lock(SocketLocker)
             {
-                Conductor = new Threading.Conductor();
                 IsDisposed = false;
                 Connected = false;
                 Stopping = false;
@@ -58,7 +55,6 @@ namespace Skylabs.Lobby.Sockets
         {
             lock (SocketLocker)
             {
-                Conductor = new Threading.Conductor();
                 IsDisposed = false;
                 Stopping = false;
                 Sock = c;
@@ -118,11 +114,13 @@ namespace Skylabs.Lobby.Sockets
                 {
                     if (se.ErrorCode == 10058)
                         return;
-                    Conductor.Add(()=>Stop());
+                    Action a = new Action(() => Stop());
+                    a.BeginInvoke(null, null);
                 }
                 catch (ObjectDisposedException)
                 {
-                    Conductor.Add(()=>Stop());
+                    Action a = new Action(() => Stop());
+                    a.BeginInvoke(null, null);
                 }
                 catch (NullReferenceException)
                 {
@@ -170,11 +168,8 @@ namespace Skylabs.Lobby.Sockets
                             SocketMessage sm = SocketMessage.Deserialize(buffer);
                             if (sm != null)
                             {
-                                this.Conductor.Add(() => 
-                                { 
-                                    if (OnMessageReceived != null)
-                                        OnMessageReceived.Invoke(this, (SocketMessage)sm.Clone()); 
-                                });
+                                if (OnMessageReceived != null)
+                                    OnMessageReceived.BeginInvoke(this, (SocketMessage)sm.Clone(),null,null); 
                             }
                         }
                     }
@@ -187,7 +182,8 @@ namespace Skylabs.Lobby.Sockets
                 }
                 Thread.Sleep(10);
             }
-            this.Conductor.Add(() => { if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); });
+            Action a = new Action(()=>{ if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); });
+            a.BeginInvoke(null,null);
             //Call disconnection bullhonkey here.
         }
     
@@ -199,7 +195,6 @@ namespace Skylabs.Lobby.Sockets
                 {
                     Sock.Close();
                     IsDisposed = true;
-                    Conductor.Dispose();
                 }
             }
         }

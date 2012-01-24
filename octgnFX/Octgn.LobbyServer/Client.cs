@@ -50,13 +50,10 @@ namespace Skylabs.LobbyServer
 
         private bool _stopping;
 
-        private Conductor Conductor;
-
         private readonly Version Version = Assembly.GetExecutingAssembly().GetName().Version;
 
         public Client(SkySocket socket,int id)
         {
-            Conductor = new Lobby.Threading.Conductor();
             _stopping = false;
             Id = id;
             LoggedIn = false;
@@ -72,7 +69,7 @@ namespace Skylabs.LobbyServer
         void Socket_OnConnectionClosed(SkySocket socket)
         {
             if(OnDisconnect != null)
-                Conductor.Add(()=>OnDisconnect.Invoke(this,null));
+                new Action(()=>OnDisconnect.Invoke(this,null)).BeginInvoke(null,null);
             Socket.Dispose();
             //TODO make and call disconnected event.
         }
@@ -107,7 +104,7 @@ namespace Skylabs.LobbyServer
                     }
                 case "end":
                     {
-                        Conductor.Add(()=>Stop());
+                        new Action(()=>Stop()).BeginInvoke(null,null);
                         break;
                     }
                 case "displayname":
@@ -123,7 +120,7 @@ namespace Skylabs.LobbyServer
                         if(u != UserStatus.Offline && u != UserStatus.Unknown)
                         {
                             Me.Status = u;
-                            Conductor.Add(()=>Server.OnUserEvent(u,this));
+                            new Action(()=>Server.OnUserEvent(u,this)).BeginInvoke(null,null);
                         }
                         break;
                     }
@@ -140,7 +137,7 @@ namespace Skylabs.LobbyServer
                 case "gamestarted":
                     {
                         Gaming.StartGame((int)message["port"]);
-                        Conductor.Add(()=>Server.AllUserMessage(message.Clone() as SocketMessage));
+                        new Action(()=>Server.AllUserMessage(message.Clone() as SocketMessage)).BeginInvoke(null,null);
                         break;
                     }
                 case "customstatus":
@@ -152,17 +149,17 @@ namespace Skylabs.LobbyServer
                     }
                 case "joinchatroom":
                     {
-                        Conductor.Add(()=>Chatting.JoinChatRoom(this,message));
+                        new Action(()=>Chatting.JoinChatRoom(this,message)).BeginInvoke(null,null);
                         break;
                     }
                 case "addusertochat":
                     {
-                        Conductor.Add(()=>Chatting.AddUserToChat(this, message));
+                        new Action(()=>Chatting.AddUserToChat(this, message)).BeginInvoke(null,null);
                         break;
                     }
                 case "twopersonchat":
                     {
-                        Conductor.Add(()=>Chatting.TwoPersonChat(this, message));
+                        new Action(()=>Chatting.TwoPersonChat(this, message)).BeginInvoke(null,null);
                         break;
                     }
                 case "leavechat":
@@ -171,13 +168,13 @@ namespace Skylabs.LobbyServer
                         if (rid != null)
                         {
                             long rid2 = (long)rid;
-                            Conductor.Add(()=>Chatting.UserLeaves(Me.Clone() as User, rid2));
+                            new Action(()=>Chatting.UserLeaves(Me.Clone() as User, rid2)).BeginInvoke(null,null);
                         }
                         break;
                     }
                 case "chatmessage":
                     {
-                        Conductor.Add(()=>Chatting.ChatMessage(this,message));
+                        new Action(()=>Chatting.ChatMessage(this,message)).BeginInvoke(null,null);
                         break;
                     }
             }
@@ -205,7 +202,7 @@ namespace Skylabs.LobbyServer
                 if(Cup.SetCustomStatus(Me.Uid, status))
                 {
                     Me.CustomStatus = status;
-                    Conductor.Add(()=>Server.OnUserEvent(Me.Status, this, false));
+                    new Action(()=>Server.OnUserEvent(Me.Status, this, false)).BeginInvoke(null,null);
                 }
             }
         }
@@ -227,7 +224,7 @@ namespace Skylabs.LobbyServer
                     smm.AddData("version", v);
                     smm.AddData("hoster", Me);
                     smm.AddData("port", port);
-                    Conductor.Add(()=>Server.AllUserMessage(smm.Clone() as SocketMessage));
+                    new Action(()=>Server.AllUserMessage(smm.Clone() as SocketMessage)).BeginInvoke(null,null);
                 }
             }
         }
@@ -249,7 +246,7 @@ namespace Skylabs.LobbyServer
                     e = UserStatus.Offline;
                 theuser.Status = e;
                 sm.AddData("user", theuser);
-                Conductor.Add(()=>WriteMessage(sm));
+                new Action(()=>WriteMessage(sm)).BeginInvoke(null,null);
             }
         }
         void SetDisplayName(string name)
@@ -263,7 +260,7 @@ namespace Skylabs.LobbyServer
                 if (Cup.SetDisplayName(Me.Uid, name))
                 {
                     Me.DisplayName = name;
-                    Conductor.Add(()=>Server.OnUserEvent(Me.Status, this, false));
+                    new Action(()=>Server.OnUserEvent(Me.Status, this, false)).BeginInvoke(null,null);
                 }
             }
         }
@@ -292,7 +289,7 @@ namespace Skylabs.LobbyServer
                 Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
                 if (!Me.Equals(requestee))
                     Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
-                Conductor.Add(()=>SendFriendsList());
+                new Action(()=>SendFriendsList()).BeginInvoke(null,null);
             }
         }
         public void AddFriend(User friend)
@@ -303,7 +300,7 @@ namespace Skylabs.LobbyServer
                 {
                     _friends.Add(friend);
                     if (LoggedIn)
-                        Conductor.Add(() => SendFriendsList());
+                        new Action(() => SendFriendsList()).BeginInvoke(null,null);
                 }
             }
         }
@@ -389,13 +386,13 @@ namespace Skylabs.LobbyServer
                         sm.AddData("me", Me);
                         Socket.WriteMessage(sm);
                         if (res.Item1 == 0)
-                            Conductor.Add(()=>Server.OnUserEvent(status, this));
+                            new Action(()=>Server.OnUserEvent(status, this)).BeginInvoke(null,null);
                         _friends = Cup.GetFriendsList(Me.Uid);
 
                         LoggedIn = true;
-                        Conductor.Add(()=>SendFriendsList());
-                        Conductor.Add(()=>SendFriendRequests());
-                        Conductor.Add(()=>SendHostedGameList());
+                        new Action(()=>SendFriendsList()).BeginInvoke(null,null);
+                        new Action(()=>SendFriendRequests()).BeginInvoke(null,null);
+                        new Action(()=>SendHostedGameList()).BeginInvoke(null,null);
                         return;
                     }
                     else
@@ -403,7 +400,7 @@ namespace Skylabs.LobbyServer
                         sm = new SocketMessage("banned");
                         sm.AddData("end", banned);
                         Socket.WriteMessage(sm);
-                        Conductor.Add(()=>Stop());
+                        new Action(()=>Stop()).BeginInvoke(null,null);
                         LoggedIn = false;
                         return;
                     }
@@ -492,7 +489,6 @@ namespace Skylabs.LobbyServer
                     Cup = null;
                     if (Socket != null)
                         Socket.Dispose();
-                    Conductor.Dispose();
                     IsDisposed = true;
                 }
             }

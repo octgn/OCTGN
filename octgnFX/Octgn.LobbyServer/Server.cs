@@ -38,8 +38,6 @@ namespace Skylabs.LobbyServer
             }
         }
 
-        private static Conductor Conductor;
-
         /// <summary>
         /// Current assembly version of the server.
         /// </summary>
@@ -51,7 +49,6 @@ namespace Skylabs.LobbyServer
         static Server()
         {
             Clients = new List<Client>();
-            Conductor = new Conductor();
         }
         /// <summary>
         /// Start listening for connections
@@ -80,7 +77,6 @@ namespace Skylabs.LobbyServer
                     c.Stop();
                 }
             }
-            Conductor.Dispose();
         }
         /// <summary>
         /// Get an online user by there e-mail address
@@ -105,7 +101,7 @@ namespace Skylabs.LobbyServer
             {
                 Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower() == email.ToLower());
                 if (cl != null)
-                    Conductor.Add(()=>cl.WriteMessage(sm));
+                    new Action(()=>cl.WriteMessage(sm)).BeginInvoke(null,null);
             }
         }
         public static void WriteMessageToClient(SocketMessage sm,int uid)
@@ -115,7 +111,7 @@ namespace Skylabs.LobbyServer
                 Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
                 if (cl != null)
                 {
-                    Conductor.Add(()=>cl.WriteMessage(sm));
+                    new Action(()=>cl.WriteMessage(sm)).BeginInvoke(null,null);
                 }
             }
         }
@@ -202,14 +198,14 @@ namespace Skylabs.LobbyServer
                     }
                     if (!foundOne)
                     {
-                        Conductor.Add(()=>Chatting.UserOffline((User)me.Clone()));
+                        new Action(()=>Chatting.UserOffline((User)me.Clone())).BeginInvoke(null,null);
                     }
                 }
                 if (!Supress)
                 {
                     foreach (Client c in Clients)
                     { 
-                        Conductor.Add(()=>c.OnUserEvent(e, me.Clone() as User));
+                        new Action(()=>c.OnUserEvent(e, me.Clone() as User)).BeginInvoke(null,null);
                     }
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
@@ -246,7 +242,7 @@ namespace Skylabs.LobbyServer
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
             foreach(Client c in templist)
-                Conductor.Add(()=>c.WriteMessage(sm));
+                new Action(()=>c.WriteMessage(sm)).BeginInvoke(null,null);
         }
         /// <summary>
         /// Stops and removes all clients based on a uid.
@@ -272,7 +268,7 @@ namespace Skylabs.LobbyServer
                         if (Clients[i].LoggedIn)
                             loggedInCount++;
                         Client sClient = Clients[i];
-                        Conductor.Add(() => sClient.Stop());
+                        new Action(() => sClient.Stop()).BeginInvoke(null,null);
                         Logger.log(MethodInfo.GetCurrentMethod().Name, "Stoping client " + Clients[i].Id.ToString());
                     }
                 }

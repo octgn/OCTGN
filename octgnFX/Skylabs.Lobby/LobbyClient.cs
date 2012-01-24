@@ -107,11 +107,9 @@ namespace Skylabs.Lobby
 
         private bool _didCallStop = false;
         private int _nextNoteId = 0;
-        private Conductor Conductor;
         private SkySocket Socket;
         public LobbyClient()
         {
-            Conductor = new Threading.Conductor();
             FriendList = new List<User>();
             Notifications = new List<Notification>();
             Callbacks = new Dictionary<string, SocketMessageResult>();
@@ -128,13 +126,14 @@ namespace Skylabs.Lobby
         void Socket_OnConnectionClosed(SkySocket socket)
         {
             if (OnDisconnect != null)
-                Conductor.Add(() => OnDisconnect.Invoke(this, null));
+            {
+                OnDisconnect.BeginInvoke(null, null, null, null);
+            }
             Socket.Dispose();
         }
 
         public LobbyClient(SkySocket c)
         {
-            Conductor = new Threading.Conductor();
             FriendList = new List<User>();
             Notifications = new List<Notification>();
             Callbacks = new Dictionary<string, SocketMessageResult>();
