@@ -561,7 +561,7 @@
     <EmbeddedResource Include="Scripting\PythonAPI.py" />
     <EmbeddedResource Include="Scripting\CaseInsensitiveDict.py" />
     <None Include="TestServerSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>TestServerSettings.Designer.cs</LastGenOutput>
     </None>
     <Resource Include="Resources\eye.png" />

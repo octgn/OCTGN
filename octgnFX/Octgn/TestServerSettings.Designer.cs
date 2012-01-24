@@ -13,7 +13,7 @@ namespace Octgn {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
-    internal sealed partial class TestServerSettings : global::System.Configuration.ApplicationSettingsBase {
+    public sealed partial class TestServerSettings : global::System.Configuration.ApplicationSettingsBase {
         
         private static TestServerSettings defaultInstance = ((TestServerSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new TestServerSettings())));
         
@@ -38,9 +38,9 @@ namespace Octgn {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("7535")]
-        public string ServerPort {
+        public int ServerPort {
             get {
-                return ((string)(this["ServerPort"]));
+                return ((int)(this["ServerPort"]));
             }
             set {
                 this["ServerPort"] = value;

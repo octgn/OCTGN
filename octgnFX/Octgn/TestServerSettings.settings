@@ -5,7 +5,7 @@
     <Setting Name="Server" Type="System.String" Scope="User">
       <Value Profile="(Default)">www.fileorchard.com</Value>
     </Setting>
-    <Setting Name="ServerPort" Type="System.String" Scope="User">
+    <Setting Name="ServerPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">7535</Value>
     </Setting>
   </Settings>
