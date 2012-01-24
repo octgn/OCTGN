@@ -290,7 +290,8 @@ namespace Skylabs.LobbyServer
                 }
                 //Remove any database friend requests
                 Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
-                Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
+                if (!Me.Equals(requestee))
+                    Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
                 Conductor.Add(()=>SendFriendsList());
             }
         }
