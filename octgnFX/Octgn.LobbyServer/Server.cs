@@ -1,8 +1,4 @@
-﻿//Copyright 2012 Skylabs
-//In order to use this software, in any manor, you must first contact Skylabs.
-//Website: http://www.skylabsonline.com
-//Email:   skylabsonline@gmail.com
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +9,8 @@ using System.Reflection;
 using System.Threading;
 using Skylabs.Lobby;
 using Skylabs.Net;
+using Skylabs.Lobby.Sockets;
+using Skylabs.Lobby.Threading;
 
 namespace Skylabs.LobbyServer
 {
@@ -22,7 +20,7 @@ namespace Skylabs.LobbyServer
 
         public static int Port { get; private set; }
 
-        public static TcpListener ListenSocket { get; private set; }
+        private static TcpListener ListenSocket { get; set; }
 
         private static List<Client> Clients { get; set; }
 
@@ -43,14 +41,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         /// Current assembly version of the server.
         /// </summary>
-        public static Version Version
-        {
-            get
-            {
-                Assembly asm = Assembly.GetCallingAssembly();
-                return asm.GetName().Version;
-            }
-        }
+        public static Version Version = Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Start the server
@@ -98,11 +89,31 @@ namespace Skylabs.LobbyServer
             lock (ClientLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name,"ClientLocker");
-                Client ret =  Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Email.ToLower().Equals(email.ToLower()));
+                Client ret = Clients.FirstOrDefault(c => c.LoggedIn == true && c.Me.Email.ToLower().Equals(email.ToLower()));
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return ret;
             }
             
+        }
+        public static void WriteMessageToClient(SocketMessage sm,string email)
+        {
+            lock (ClientLocker)
+            {
+                Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower() == email.ToLower());
+                if (cl != null)
+                    new Action(()=>cl.WriteMessage(sm)).BeginInvoke(null,null);
+            }
+        }
+        public static void WriteMessageToClient(SocketMessage sm,int uid)
+        {
+            lock (ClientLocker)
+            {
+                Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
+                if (cl != null)
+                {
+                    new Action(()=>cl.WriteMessage(sm)).BeginInvoke(null,null);
+                }
+            }
         }
         /// <summary>
         /// Gets online user by there UID
@@ -115,7 +126,7 @@ namespace Skylabs.LobbyServer
             lock (ClientLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
-                Client ret = Clients.Where(c => c.LoggedIn).FirstOrDefault(c => c.Me.Uid == uid);
+                Client ret = Clients.FirstOrDefault(c => c.LoggedIn == true && c.Me.Uid == uid);
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return ret;
             }
@@ -187,16 +198,14 @@ namespace Skylabs.LobbyServer
                     }
                     if (!foundOne)
                     {
-                        Thread t = new Thread(() => { Chatting.UserOffline((User)me.Clone()); });
-                        t.Start();
+                        new Action(()=>Chatting.UserOffline((User)me.Clone())).BeginInvoke(null,null);
                     }
                 }
                 if (!Supress)
                 {
                     foreach (Client c in Clients)
                     { 
-                        Thread t = new Thread(()=>c.OnUserEvent(e, me));
-                        t.Start();
+                        new Action(()=>c.OnUserEvent(e, me.Clone() as User)).BeginInvoke(null,null);
                     }
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
@@ -233,7 +242,7 @@ namespace Skylabs.LobbyServer
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
             foreach(Client c in templist)
-                c.WriteMessage(sm);
+                new Action(()=>c.WriteMessage(sm)).BeginInvoke(null,null);
         }
         /// <summary>
         /// Stops and removes all clients based on a uid.
@@ -259,9 +268,8 @@ namespace Skylabs.LobbyServer
                         if (Clients[i].LoggedIn)
                             loggedInCount++;
                         Client sClient = Clients[i];
-                        Thread t = new Thread(() => sClient.Stop(true));
+                        new Action(() => sClient.Stop()).BeginInvoke(null,null);
                         Logger.log(MethodInfo.GetCurrentMethod().Name, "Stoping client " + Clients[i].Id.ToString());
-                        t.Start();
                     }
                 }
                 try
@@ -290,7 +298,8 @@ namespace Skylabs.LobbyServer
                 try
                 {
                     TcpListener listener = (TcpListener)ar.AsyncState;
-                    Clients.Add(new Client(listener.EndAcceptTcpClient(ar), _nextId));
+                    SkySocket ss = new SkySocket(listener.EndAcceptTcpClient(ar));
+                    Clients.Add(new Client(ss, _nextId));
                     Logger.log(MethodInfo.GetCurrentMethod().Name, "Client " + _nextId.ToString() + " connected.");
                     _nextId++;
                 }

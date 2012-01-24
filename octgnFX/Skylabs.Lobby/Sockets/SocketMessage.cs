@@ -1,8 +1,4 @@
-﻿//Copyright 2012 Skylabs
-//In order to use this software, in any manor, you must first contact Skylabs.
-//Website: http://www.skylabsonline.com
-//Email:   skylabsonline@gmail.com
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -42,7 +38,7 @@ namespace Skylabs.Net
     }
 
     [Serializable]
-    public class SocketMessage
+    public class SocketMessage: ICloneable
     {
         public NameValuePair[] Data { get { return _data; } set { _data = value; } }
 
@@ -100,6 +96,13 @@ namespace Skylabs.Net
                 BinaryFormatter bf = new BinaryFormatter();
                 return (SocketMessage)bf.Deserialize(ms);
             }
+        }
+
+        public object Clone()
+        {
+            SocketMessage sm = new SocketMessage(Header.Clone() as String);
+            sm.Data = Data.Clone() as NameValuePair[];
+            return sm;
         }
     }
 }

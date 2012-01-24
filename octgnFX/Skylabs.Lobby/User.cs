@@ -1,8 +1,4 @@
-﻿//Copyright 2012 Skylabs
-//In order to use this software, in any manor, you must first contact Skylabs.
-//Website: http://www.skylabsonline.com
-//Email:   skylabsonline@gmail.com
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -86,7 +82,7 @@ namespace Skylabs.Lobby
         public object Clone()
         {
             User ret = new User
-                           {Email = Email, Uid = Uid, Password = Password, Level = Level, DisplayName = DisplayName};
+                           {Email = Email.Clone() as string, Uid = Uid, Password = Password.Clone() as string, Level = Level, DisplayName = DisplayName.Clone() as string,CustomStatus = CustomStatus.Clone() as string,Status = Status};
             return ret;
         }
 

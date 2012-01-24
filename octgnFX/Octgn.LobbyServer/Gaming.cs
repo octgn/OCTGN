@@ -1,8 +1,4 @@
-﻿//Copyright 2012 Skylabs
-//In order to use this software, in any manor, you must first contact Skylabs.
-//Website: http://www.skylabsonline.com
-//Email:   skylabsonline@gmail.com
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -142,8 +138,8 @@ namespace Skylabs.LobbyServer
                     s.Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
                     SocketMessage sm = new SocketMessage("gameend");
                     sm.AddData("port", s.Port);
-                    Thread t = new Thread(()=>Server.AllUserMessage(sm));
-                    t.Start();
+                    Action t = new Action(()=>Server.AllUserMessage(sm));
+                    t.BeginInvoke(null, null);
                     Games.Remove(s.Port);
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");

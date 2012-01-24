@@ -107,7 +107,7 @@ namespace Octgn.Launcher
             InputBinding ib = new InputBinding(DebugWindowCommand, kg);
             this.InputBindings.Add(ib);
             Program.lobbyClient.OnFriendRequest += new LobbyClient.FriendRequest(lobbyClient_OnFriendRequest);
-            Program.lobbyClient.OnDisconnectEvent += new EventHandler(lobbyClient_OnDisconnectEvent);
+            Program.lobbyClient.OnDisconnect += new EventHandler(lobbyClient_OnDisconnectEvent);
             Program.lobbyClient.OnUserStatusChanged += new LobbyClient.UserStatusChanged(lobbyClient_OnUserStatusChanged);
             Program.lobbyClient.Chatting.eChatEvent += new Chatting.ChatEventDelegate(Chatting_eChatEvent);
             Program.lobbyClient.OnDataRecieved += new LobbyClient.DataRecieved(lobbyClient_OnDataRecieved);
@@ -316,7 +316,7 @@ namespace Octgn.Launcher
             }
             Program.ClientWindow.Close();
             Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
-            Program.lobbyClient.OnDisconnectEvent -= lobbyClient_OnDisconnectEvent;
+            Program.lobbyClient.OnDisconnect -= lobbyClient_OnDisconnectEvent;
             Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
             Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
             Program.lobbyClient.Stop();

@@ -1,8 +1,4 @@
-﻿//Copyright 2012 Skylabs
-//In order to use this software, in any manor, you must first contact Skylabs.
-//Website: http://www.skylabsonline.com
-//Email:   skylabsonline@gmail.com
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -142,8 +138,8 @@ namespace Skylabs.LobbyServer
                         Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
                         if (c != null)
                         {
-                            Thread t = new Thread(() => c.WriteMessage(sm));
-                            t.Start();
+                            Action t = new Action(() => c.WriteMessage(sm));
+                            t.BeginInvoke(null, null);
                         }
                     }
                 }
@@ -156,8 +152,8 @@ namespace Skylabs.LobbyServer
                     Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
                     if (c != null)
                     {
-                        Thread t = new Thread(()=>c.WriteMessage(sm));
-                        t.Start();
+                        Action t = new Action(() => c.WriteMessage(sm));
+                        t.BeginInvoke(null, null);
                     }
                 }
             }
