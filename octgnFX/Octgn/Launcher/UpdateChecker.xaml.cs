@@ -44,6 +44,7 @@ namespace Octgn.Launcher
                     string[] update = new string[2];
                     update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
+
                     System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
                     Version local = assembly.GetName().Version;
                     Version online = new Version(update[0]);
@@ -52,9 +53,9 @@ namespace Octgn.Launcher
                 }
                 Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), isupdate, ustring);
             }
-            catch (ThreadAbortException)
+            catch (Exception)
             {
-
+                Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), false, "");
             }
         }
         private void UpdateCheckDone(bool result,string url)
