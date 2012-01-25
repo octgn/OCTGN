@@ -100,6 +100,7 @@
     <Compile Include="Sockets\SkySocket.cs" />
     <Compile Include="Sockets\SkySocketsOld.cs" />
     <Compile Include="Sockets\SocketMessage.cs" />
+    <Compile Include="Sockets\SocketMessageBuilder.cs" />
     <Compile Include="Threading\Conductor.cs" />
     <Compile Include="Threading\LazyAsync.cs" />
     <Compile Include="ThreadSafeList.cs" />

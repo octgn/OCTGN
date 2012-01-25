@@ -135,6 +135,7 @@ namespace Skylabs.Lobby.Sockets
             List<byte> sizebuffer = new List<byte>();
             List<byte> messagebuffer = new List<byte>();
             int messagesize = -1;
+            SocketMessageBuilder Builder = new SocketMessageBuilder();
             while (true)
             {
                 lock (SocketLocker)
@@ -144,50 +145,95 @@ namespace Skylabs.Lobby.Sockets
                         break;
                     try
                     {
-                        NetworkStream ns = Sock.GetStream();
-                        if (ns.DataAvailable)
+                        int av = Sock.Client.Available;
+                        if (av > 0)
                         {
-                            int ib = ns.ReadByte();
-                            if (ib == -1)
-                                break;
-                            byte b = (byte)ib;
-                            if (sizebuffer.Count < 8)
-                            {
-                                sizebuffer.Add(b);
-                            }
-                            else
-                            {
-                                messagebuffer.Add(b);
-                            }
-                            if (sizebuffer.Count == 8 && messagesize == -1)
-                            {
-                                messagesize = (int)BitConverter.ToInt64(sizebuffer.ToArray(), 0);
-                            }
-                            if (messagebuffer.Count == messagesize)
-                            {
-                                SocketMessage sm = SocketMessage.Deserialize(messagebuffer.ToArray());
-                                sizebuffer = new List<byte>();
-                                messagebuffer = new List<byte>();
-                                messagesize = -1;
-                                if (sm != null)
-                                {
-                                    if (OnMessageReceived != null)
-                                        OnMessageReceived.BeginInvoke(this, (SocketMessage)sm.Clone(), null, null);
-                                }
-                            }
-
+                            byte[] buf = new byte[av];
+                            int rec = Sock.Client.Receive(buf, 0, av, SocketFlags.None);
+                            if (rec != av)
+                                Array.Resize(ref buf, rec);
+                            Builder.AddBytes(buf);
                         }
-                        else
-                            Thread.Sleep(10);
+                        if(Builder.SMQueue.Count > 0)
+                        {
+                            SocketMessage sm = Builder.SMQueue.Dequeue();
+                            if (sm != null)
+                            {
+                                if (OnMessageReceived != null)
+                                    OnMessageReceived.BeginInvoke(this, (SocketMessage)sm.Clone(), null, null);
+                            }
+                        }
+                        Thread.Sleep(3);
                     }
                     catch (SocketException se)
                     {
+                        switch (se.SocketErrorCode)
+                        {
+                            case SocketError.ConnectionAborted:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.ConnectionReset:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.Disconnecting:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.NetworkDown:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.NetworkReset:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.NoRecovery:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.NotConnected:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.OperationAborted:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.Shutdown:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.SocketError:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                            case SocketError.TimedOut:
+                                {
+                                    LazyAsync.Invoke(Stop);
+                                    break;
+                                }
+                        }
                         Trace.TraceError("ss0:" + se.Message, se);
+                        Thread.Sleep(10);
                     }
                     catch (Exception e)
                     {
                         Trace.TraceError("ss1" + e.Message, e);
+                        Thread.Sleep(10);
                     }
+                    
                 }
             }
             LazyAsync.Invoke(()=>{ if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); });
