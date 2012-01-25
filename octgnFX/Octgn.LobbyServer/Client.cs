@@ -235,7 +235,8 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                LazyAsync.Invoke(()=>Socket.WriteMessage((SocketMessage)sm.Clone()));
+                Trace.WriteLine("#WriteTo[" + Id + "](" + sm.Header + ")");
+                Socket.WriteMessage(sm);
             }
         }
         public void OnUserEvent(UserStatus e, User theuser)

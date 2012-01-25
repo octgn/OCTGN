@@ -5,6 +5,7 @@ using System.Text;
 using Skylabs.Lobby;
 using Skylabs.Net;
 using System.Threading;
+using Skylabs.Lobby.Threading;
 
 namespace Skylabs.LobbyServer
 {
@@ -132,8 +133,7 @@ namespace Skylabs.LobbyServer
                         Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
                         if (c != null)
                         {
-                            Action t = new Action(() => c.WriteMessage(sm));
-                            t.BeginInvoke(null, null);
+                            LazyAsync.Invoke(() => c.WriteMessage(sm));
                         }
                     }
                 }
@@ -146,8 +146,7 @@ namespace Skylabs.LobbyServer
                     Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
                     if (c != null)
                     {
-                        Action t = new Action(() => c.WriteMessage(sm));
-                        t.BeginInvoke(null, null);
+                        LazyAsync.Invoke(() => c.WriteMessage(sm));
                     }
                 }
             }

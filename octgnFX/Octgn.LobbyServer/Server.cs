@@ -204,8 +204,9 @@ namespace Skylabs.LobbyServer
                 if (!Supress)
                 {
                     foreach (Client c in Clients)
-                    { 
-                        LazyAsync.Invoke(()=>c.OnUserEvent(e, me.Clone() as User));
+                    {
+                        Client cl2 = c;
+                        LazyAsync.Invoke(() => cl2.OnUserEvent(e, me.Clone() as User));
                     }
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
@@ -229,18 +230,18 @@ namespace Skylabs.LobbyServer
         /// <param name="sm">Message to send.</param>
         public static void AllUserMessage(SocketMessage sm)
         {
-            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
-            List<Client> templist = new List<Client>();
             lock (ClientLocker)
             {
                 Trace.WriteLine("#WriteAll: " + sm.Header);
-                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 foreach (Client c in Clients)
                 {
-                    if (c.LoggedIn)
-                        c.WriteMessage(sm);
+                    Client cl2 = c;
+                    if (cl2.LoggedIn)
+                    {
+                        Trace.WriteLine("#TryWriteTo[" + cl2.Id + "](" + sm.Header + ")");
+                        LazyAsync.Invoke(() => cl2.WriteMessage(sm));
+                    }
                 }
-                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
         }
         private static void StopClient(int clientID)
@@ -274,16 +275,16 @@ namespace Skylabs.LobbyServer
                 int StartCount = Clients.Count;
                 foreach (Client cl in Clients)
                 {
-                    if (cl == null) continue;
-                    if (cl.Id == caller.Id) continue;
-                    if (cl.Me.Uid == uid)
+                    Client cl2 = cl;
+                    if (cl2 == null) continue;
+                    if (cl2.Id == caller.Id) continue;
+                    if (cl2.Me.Uid == uid)
                     {
                         removedCount++;
-                        if (cl.LoggedIn)
+                        if (cl2.LoggedIn)
                             loggedInCount++;
-                        Trace.WriteLine(String.Format("#Try stop client[{0}]", cl.Id));
-                        int rid = cl.Id;
-                        LazyAsync.Invoke(() => StopClient(rid));
+                        Trace.WriteLine(String.Format("#Try stop client[{0}]", cl2.Id));
+                        LazyAsync.Invoke(() => cl2.Stop());
                     }
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
@@ -297,7 +298,7 @@ namespace Skylabs.LobbyServer
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 // Get the socket that handles the client request.
-                
+
                 try
                 {
                     TcpListener listener = (TcpListener)ar.AsyncState;
@@ -311,6 +312,10 @@ namespace Skylabs.LobbyServer
                 catch (ObjectDisposedException)
                 {
                     Console.WriteLine("AcceptReceiveDataCallback: ObjectDisposedException");
+                }
+                catch (SocketException e)
+                {
+                    Trace.TraceError("AcceptReceiveDataCallback:" + e.Message, e);
                 }
                 AcceptClients();
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
