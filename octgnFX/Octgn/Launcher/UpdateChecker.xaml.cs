@@ -20,18 +20,13 @@ namespace Octgn.Launcher
     public partial class UpdateChecker : Window
     {
         public bool IsClosingDown { get; set; }
-        private Timer timer;
+        private bool stopReading = false;
         public UpdateChecker()
         {
             IsClosingDown = false;
             InitializeComponent();
             Thread t = new Thread(CheckForUpdates);
             t.Start();
-            timer = new Timer(new TimerCallback((object o) => 
-            {
-                t.Abort();
-                timer.Dispose();
-            }), null, 10000, 10000);
         }
         private void CheckForUpdates()
         {
@@ -39,18 +34,15 @@ namespace Octgn.Launcher
             {
                 bool isupdate = false;
                 string ustring = "";
-                if (FileExists("http://www.skylabsonline.com/downloads/octgn/update.xml"))
-                {
-                    string[] update = new string[2];
-                    update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
+                string[] update = new string[2];
+                update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
 
-                    System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                    Version local = assembly.GetName().Version;
-                    Version online = new Version(update[0]);
-                    isupdate = online > local;
-                    ustring = update[1];
-                }
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                Version local = assembly.GetName().Version;
+                Version online = new Version(update[0]);
+                isupdate = online > local;
+                ustring = update[1];
                 Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), isupdate, ustring);
             }
             catch (Exception)
@@ -72,7 +64,6 @@ namespace Octgn.Launcher
                         break;
                 }
             }
-            timer.Dispose();
             this.Close();
         }
         private bool FileExists(string URL)
@@ -95,28 +86,43 @@ namespace Octgn.Launcher
         private string[] ReadUpdateXML(string URL)
         {
             string[] values = new string[2];
-
-            using (System.Xml.XmlReader reader = System.Xml.XmlReader.Create(System.Net.WebRequest.Create(URL).GetResponse().GetResponseStream()))
+            try
             {
-                while (reader.Read())
+                System.Net.WebRequest wr = System.Net.WebRequest.Create(URL);
+                wr.Timeout = 15000;
+                System.Net.WebResponse resp = wr.GetResponse();
+                using (System.Xml.XmlReader reader = System.Xml.XmlReader.Create(resp.GetResponseStream()))
                 {
-                    if (reader.IsStartElement())
+                    while (reader.Read())
                     {
-                        if (!reader.IsEmptyElement)
+                        if (stopReading)
+                            break;
+                        if (reader.IsStartElement())
                         {
-                            switch (reader.Name)
+                            if (!reader.IsEmptyElement)
                             {
-                                case "Version":
-                                    values = new string[2];
-                                    if (reader.Read()) { values[0] = reader.Value; }
-                                    break;
-                                case "Location":
-                                    if (reader.Read()) { values[1] = reader.Value; }
-                                    break;
+                                switch (reader.Name)
+                                {
+                                    case "Version":
+                                        values = new string[2];
+                                        if (reader.Read()) { values[0] = reader.Value; }
+                                        break;
+                                    case "Location":
+                                        if (reader.Read()) { values[1] = reader.Value; }
+                                        break;
+                                }
                             }
                         }
                     }
                 }
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                
             }
             return values;
         }

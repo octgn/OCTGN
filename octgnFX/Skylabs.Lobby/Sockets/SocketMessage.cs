@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
 
 namespace Skylabs.Net
 {
@@ -82,11 +83,19 @@ namespace Skylabs.Net
         {
             using(MemoryStream ms = new MemoryStream())
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, message);
-                ms.Flush();
-                return ms.ToArray();
+                try
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    bf.Serialize(ms, message);
+                    ms.Flush();
+                    return ms.ToArray();
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError("sm1:" + e.Message, e);
+                }
             }
+            return null;
         }
 
         public static SocketMessage Deserialize(byte[] data)
@@ -94,7 +103,17 @@ namespace Skylabs.Net
             using(MemoryStream ms = new MemoryStream(data))
             {
                 BinaryFormatter bf = new BinaryFormatter();
-                return (SocketMessage)bf.Deserialize(ms);
+                try
+                {
+                    SocketMessage sm = bf.Deserialize(ms) as SocketMessage;
+                    return sm;
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError("sm0:" + e.Message, e);
+                    return null;
+                }
+                return null;
             }
         }
 

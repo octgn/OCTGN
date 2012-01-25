@@ -138,7 +138,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release w Debug vs TestServer|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Release w Debug vs TestServer\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;TestServer</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisLogFile>bin\Debug\Octgn.LobbyServer.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>

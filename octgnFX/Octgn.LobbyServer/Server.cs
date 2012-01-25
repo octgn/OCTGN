@@ -233,23 +233,37 @@ namespace Skylabs.LobbyServer
             List<Client> templist = new List<Client>();
             lock (ClientLocker)
             {
+                Trace.WriteLine("#WriteAll: " + sm.Header);
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 foreach (Client c in Clients)
                 {
                     if (c.LoggedIn)
-                        templist.Add(c);
+                        c.WriteMessage(sm);
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
-            foreach(Client c in templist)
-                LazyAsync.Invoke(()=>c.WriteMessage(sm));
+        }
+        private static void StopClient(int clientID)
+        {
+            lock(ClientLocker)
+            {
+                Trace.WriteLine(String.Format("#Stopping client[{0}]", clientID));
+                Client c = Clients.FirstOrDefault(cl => cl.Id == clientID);
+                if(c != null)
+                {
+                    Trace.WriteLine("Stopping client[" + c.Id.ToString() + "]");
+                    LazyAsync.Invoke(()=>c.Stop());
+                    Clients.Remove(c);
+                }
+
+            }
         }
         /// <summary>
         /// Stops and removes all clients based on a uid.
         /// </summary>
         /// <param name="uid">UID</param>
         /// <returns>Tupple, where value1=number of users with UID who are logged in, and value2=Number of clients removed.</returns>
-        public static Tuple<int,int> StopAndRemoveAllByUID(int uid)
+        public static Tuple<int,int> StopAndRemoveAllByUID(Client caller, int uid)
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock(ClientLocker)
@@ -257,31 +271,20 @@ namespace Skylabs.LobbyServer
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 int loggedInCount = 0;
                 int removedCount = 0;
-                List<int> rlist = new List<int>();
-                for (int i = 0; i < Clients.Count;i++ )
+                int StartCount = Clients.Count;
+                foreach (Client cl in Clients)
                 {
-                    if (Clients[i] == null) continue;
-                    if (Clients[i].Me.Uid == uid)
+                    if (cl == null) continue;
+                    if (cl.Id == caller.Id) continue;
+                    if (cl.Me.Uid == uid)
                     {
-                        rlist.Add(Clients[i].Id);
                         removedCount++;
-                        if (Clients[i].LoggedIn)
+                        if (cl.LoggedIn)
                             loggedInCount++;
-                        Client sClient = Clients[i];
-                        LazyAsync.Invoke(() => sClient.Stop());
-                        Logger.log(MethodInfo.GetCurrentMethod().Name, "Stoping client " + Clients[i].Id.ToString());
+                        Trace.WriteLine(String.Format("#Try stop client[{0}]", cl.Id));
+                        int rid = cl.Id;
+                        LazyAsync.Invoke(() => StopClient(rid));
                     }
-                }
-                try
-                {
-                    foreach (int r in rlist)
-                    {
-                        Clients.RemoveAll(c => c.Id == r);
-                    }
-                }
-                catch (ArgumentNullException)
-                {
-
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return new Tuple<int, int>(loggedInCount,removedCount);
@@ -299,7 +302,9 @@ namespace Skylabs.LobbyServer
                 {
                     TcpListener listener = (TcpListener)ar.AsyncState;
                     SkySocket ss = new SkySocket(listener.EndAcceptTcpClient(ar));
-                    Clients.Add(new Client(ss, _nextId));
+                    Client c = new Client(ss, _nextId);
+                    c.OnDisconnect += new EventHandler(c_OnDisconnect);
+                    Clients.Add(c);
                     Logger.log(MethodInfo.GetCurrentMethod().Name, "Client " + _nextId.ToString() + " connected.");
                     _nextId++;
                 }
@@ -309,6 +314,25 @@ namespace Skylabs.LobbyServer
                 }
                 AcceptClients();
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+            }
+        }
+
+        static void  c_OnDisconnect(object sender, EventArgs e)
+        {
+ 	        lock(ClientLocker)
+            {
+                Client c = sender as Client;
+                if(c == null)
+                    return;
+                c.OnDisconnect -= c_OnDisconnect;
+                if(Clients.Exists(cl => cl.Id != c.Id && cl.LoggedIn && c.Me.Equals(cl.Me)))
+                {
+                
+                }
+                else
+                {
+                    LazyAsync.Invoke(()=>OnUserEvent(UserStatus.Offline,c));
+                }
             }
         }
     }

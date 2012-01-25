@@ -66,7 +66,7 @@ namespace Skylabs.LobbyServer
             Port = port;
             TimeStarted = new DateTime(0);
             StandAloneApp = new Process();
-#if(DEBUG)
+#if(DEBUG || TestServer)
             StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
             StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" + Port.ToString(CultureInfo.InvariantCulture);
 #else

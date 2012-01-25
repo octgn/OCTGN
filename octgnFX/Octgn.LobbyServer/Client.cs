@@ -69,6 +69,7 @@ namespace Skylabs.LobbyServer
 
         void Socket_OnConnectionClosed(SkySocket socket)
         {
+            LoggedIn = false;
             if(OnDisconnect != null)
                 LazyAsync.Invoke(()=>OnDisconnect.Invoke(this,null));
             Socket.Dispose();
@@ -188,7 +189,7 @@ namespace Skylabs.LobbyServer
                 if (!_stopping)
                 {
                     _stopping = true;
-                    Trace.TraceInformation("Stopping Client.");
+                    Trace.WriteLine(String.Format("Client[{0}]Client.Stop",Id));
                     LoggedIn = false;
                     Socket.WriteMessage(new SocketMessage("end"));
                     Socket.Stop();
@@ -234,7 +235,7 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                Socket.WriteMessage(sm);
+                LazyAsync.Invoke(()=>Socket.WriteMessage((SocketMessage)sm.Clone()));
             }
         }
         public void OnUserEvent(UserStatus e, User theuser)
@@ -335,10 +336,12 @@ namespace Skylabs.LobbyServer
                     //Authenticate Google Token
                     try
                     {
+                        Trace.WriteLine(String.Format("Client[{0}]:Verifying Token",Id));
                         String appName = "skylabs-LobbyServer-" + Version;
                         Service s = new Service("code", appName);
                         s.SetAuthenticationToken(token);
                         s.QueryClientLoginToken();
+                        Trace.WriteLine(String.Format("Client[{0}]:Token Verified", Id));
                     }
                     catch (AuthenticationException e)
                     {
@@ -357,12 +360,14 @@ namespace Skylabs.LobbyServer
                         Trace.TraceError("Client.Login: ",e);
                         return;
                     }
+                    Trace.WriteLine(String.Format("Client[{0}]:Getting db User", Id));
                     User u = Cup.GetUser(email);
                     string[] emailparts = email.Split('@');
                     if (u == null)
                     {
                         if (!Cup.RegisterUser(email, emailparts[0]))
                         {
+                            Trace.WriteLine(String.Format("Client[{0}]:Registering User", Id));
                             LoggedIn = false;
                             sm = new SocketMessage("loginfailed");
                             sm.AddData("message", "Server error");
@@ -371,18 +376,23 @@ namespace Skylabs.LobbyServer
                         }
                     }
                     u = Cup.GetUser(email);
+                    
                     if (u == null)
                     {
+                        Trace.WriteLine(String.Format("Client[{0}]:User = {1}", u.DisplayName));
                         LoggedIn = false;
                         sm = new SocketMessage("loginfailed");
                         sm.AddData("message", "Server error");
                         Socket.WriteMessage(sm);
+                        Trace.WriteLine(String.Format("Client[{0}]:Login Failed", Id));
                         return;
                     }
                     int banned = Cup.IsBanned(u.Uid, Socket.RemoteEndPoint);
                     if (banned == -1)
                     {
-                        Tuple<int, int> res = Server.StopAndRemoveAllByUID(u.Uid);
+                        Trace.WriteLine(String.Format("Client[{0}]:Starting to Stop and remove by uid={1}", Id,u.Uid));
+                        Tuple<int, int> res = Server.StopAndRemoveAllByUID(this,u.Uid);
+                        Trace.WriteLine(String.Format("Client[{0}]:Done Stop and remove by uid={1}", Id, u.Uid));
                         Me = u;
                         if (status == UserStatus.Unknown || status == UserStatus.Offline)
                             status = UserStatus.Online;
@@ -390,11 +400,13 @@ namespace Skylabs.LobbyServer
                         sm = new SocketMessage("loginsuccess");
                         sm.AddData("me", Me);
                         Socket.WriteMessage(sm);
+                        Trace.WriteLine(String.Format("Client[{0}]:Login Success", Id));
+                        LoggedIn = true;
                         if (res.Item1 == 0)
                             LazyAsync.Invoke(()=>Server.OnUserEvent(status, this));
                         _friends = Cup.GetFriendsList(Me.Uid);
 
-                        LoggedIn = true;
+                        
                         LazyAsync.Invoke(()=>SendFriendsList());
                         LazyAsync.Invoke(()=>SendFriendRequests());
                         LazyAsync.Invoke(()=>SendHostedGameList());

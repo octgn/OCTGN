@@ -132,53 +132,63 @@ namespace Skylabs.Lobby.Sockets
 
         private void ReadThreadRunner()
         {
+            List<byte> sizebuffer = new List<byte>();
+            List<byte> messagebuffer = new List<byte>();
+            int messagesize = -1;
             while (true)
             {
                 lock (SocketLocker)
                 {
+                    
                     if (Stopping)
                         break;
-                    byte[] buffer = new byte[8];
-                    SocketError err;
                     try
                     {
-                        if (Sock.Client.Available >= 8)
+                        NetworkStream ns = Sock.GetStream();
+                        if (ns.DataAvailable)
                         {
-                            Sock.Client.Receive(buffer, 0, 8, SocketFlags.None, out err);
-                            if (err != SocketError.Success)
-                            {
-                                Trace.TraceError(err.ToString());
+                            int ib = ns.ReadByte();
+                            if (ib == -1)
                                 break;
-                            }
-                            long count = BitConverter.ToInt64(buffer, 0);
-                            if (count > MaxReceiveSize)
+                            byte b = (byte)ib;
+                            if (sizebuffer.Count < 8)
                             {
-                                Trace.TraceError("Tried to receive a message that was greater than {0} from endpoint {1}", MaxReceiveSize, RemoteEndPoint.ToString());
-                                break;
+                                sizebuffer.Add(b);
                             }
-                            buffer = new byte[count];
-                            Sock.Client.Receive(buffer, 0, (int)count, SocketFlags.None, out err);
-                            if (err != SocketError.Success)
+                            else
                             {
-                                Trace.TraceError(err.ToString());
-                                break;
+                                messagebuffer.Add(b);
                             }
-                            SocketMessage sm = SocketMessage.Deserialize(buffer);
-                            if (sm != null)
+                            if (sizebuffer.Count == 8 && messagesize == -1)
                             {
-                                if (OnMessageReceived != null)
-                                    OnMessageReceived.BeginInvoke(this, (SocketMessage)sm.Clone(),null,null); 
+                                messagesize = (int)BitConverter.ToInt64(sizebuffer.ToArray(), 0);
                             }
+                            if (messagebuffer.Count == messagesize)
+                            {
+                                SocketMessage sm = SocketMessage.Deserialize(messagebuffer.ToArray());
+                                sizebuffer = new List<byte>();
+                                messagebuffer = new List<byte>();
+                                messagesize = -1;
+                                if (sm != null)
+                                {
+                                    if (OnMessageReceived != null)
+                                        OnMessageReceived.BeginInvoke(this, (SocketMessage)sm.Clone(), null, null);
+                                }
+                            }
+
                         }
+                        else
+                            Thread.Sleep(10);
+                    }
+                    catch (SocketException se)
+                    {
+                        Trace.TraceError("ss0:" + se.Message, se);
                     }
                     catch (Exception e)
                     {
-                        Trace.TraceError("Error(ReadThreadRunner):{0}\n{1}", e.Message, e.StackTrace);
-                        break;
+                        Trace.TraceError("ss1" + e.Message, e);
                     }
-
                 }
-                Thread.Sleep(10);
             }
             LazyAsync.Invoke(()=>{ if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); });
             //Call disconnection bullhonkey here.

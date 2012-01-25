@@ -7,6 +7,8 @@ using System.Windows.Threading;
 using Octgn.Properties;
 using Octgn.DeckBuilder;
 using Skylabs.Lobby;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Octgn.Launcher
 {
@@ -18,6 +20,7 @@ namespace Octgn.Launcher
         private readonly DispatcherTimer animationTimer;
         private bool bSpin = false;
         private bool isLoggingIn = false;
+        private Timer LoginTimer;
 
         public Login()
         {
@@ -119,7 +122,6 @@ namespace Octgn.Launcher
                 }
             }
         }
-
         void LauncherWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (isLoggingIn)
@@ -175,7 +177,21 @@ namespace Octgn.Launcher
         }
 
         private void LoginFinished(LoginResult success, DateTime BanEnd, string message)
-        {                        
+        {
+            if (success == LoginResult.WaitingForResponse)
+            {
+                LoginTimer = new Timer((object o) =>
+                {
+                    LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again.");
+                }, null, 10000, 10000);
+                return;
+            }
+            Trace.TraceInformation("Login finished.");
+            if (LoginTimer != null)
+            {
+                LoginTimer.Dispose();
+                LoginTimer = null;
+            }
             Dispatcher.Invoke((Action)(() =>
             {
                 Program.lobbyClient.OnCaptchaRequired -= lobbyClient_OnCaptchaRequired;

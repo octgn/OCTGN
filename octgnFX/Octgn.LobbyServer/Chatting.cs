@@ -34,7 +34,6 @@ namespace Skylabs.LobbyServer
                 var rid = (long?)s["roomid"];
                 if (rid == null)
                     return;
-                Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User trying to join room " + rid);
                 if (rid == -1)
                     MakeRoom(c);
                 else
@@ -62,7 +61,6 @@ namespace Skylabs.LobbyServer
             long id = -1;
             lock(Rooms)
             {
-                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 foreach (ChatRoom cr in Rooms)
                 {
                     User[] ul = cr.GetUserList();
@@ -88,7 +86,6 @@ namespace Skylabs.LobbyServer
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 var rid = (long?)s["roomid"];
                 if (rid == null || rid == -1)
                 {
@@ -137,7 +134,6 @@ namespace Skylabs.LobbyServer
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 Rooms.Remove(room);
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }
@@ -151,7 +147,6 @@ namespace Skylabs.LobbyServer
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 List<long> roomstocan = new List<long>();
                 foreach (ChatRoom c in Rooms)
                 {
@@ -178,7 +173,6 @@ namespace Skylabs.LobbyServer
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
                 if (cr != null)
                 {
@@ -201,7 +195,6 @@ namespace Skylabs.LobbyServer
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
                 long? rid = (long?)sm["roomid"];
                 string mess = (string)sm["mess"];
                 if (rid == null || mess == null)

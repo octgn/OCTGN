@@ -436,7 +436,7 @@ namespace Skylabs.LobbyServer
                     int banned = -1;
                     if (banned == -1)
                     {
-                        Tuple<int,int> res = Server.StopAndRemoveAllByUID(u.Uid);
+                        Tuple<int,int> res = Server.StopAndRemoveAllByUID(null,u.Uid);
                         Me = u;
                         if (stat == UserStatus.Unknown || stat == UserStatus.Offline)
                             stat = UserStatus.Online;

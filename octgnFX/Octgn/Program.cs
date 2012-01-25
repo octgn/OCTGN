@@ -49,9 +49,9 @@ namespace Octgn
 #if(TestServer)
         public static TestServerSettings LobbySettings = TestServerSettings.Default;
 #else
-    #if(Debug)
+    #if(DEBUG)
         public static DEBUGLobbySettings LobbySettings = DEBUGLobbySettings.Default;
-#else
+    #else
         public static lobbysettings LobbySettings = lobbysettings.Default;
 #endif
 #endif

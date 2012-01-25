@@ -15,7 +15,7 @@ using Skylabs.Lobby.Sockets;
 
 namespace Skylabs.Lobby
 {
-    public enum LoginResult { Success, Failure, Banned };
+    public enum LoginResult { Success, Failure, Banned, WaitingForResponse };
 
     public enum DataRecType { FriendList, OnlineList, UserCustomStatus ,ServerMessage};
 
@@ -309,6 +309,7 @@ namespace Skylabs.Lobby
                                               {
                                                   onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
                                               }
+                                              onFinish.Invoke(LoginResult.WaitingForResponse, DateTime.Now, "");
                                           });
                 t.Start();
             }
@@ -339,6 +340,7 @@ namespace Skylabs.Lobby
                         break;
                     }
                 case "loginsuccess":
+                    Trace.TraceInformation("Got LoginSuccess");
                     Me = (User)sm["me"];
                     if (Me != null)
                     {
@@ -353,7 +355,7 @@ namespace Skylabs.Lobby
                     }
                     break;
                 case "loginfailed":
-
+                    Trace.TraceInformation("Got LoginFailed");
                     _onLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, (sm["message"] != null) ? (string)sm["message"] : "");
                     break;
                 case "friends":
@@ -472,8 +474,7 @@ namespace Skylabs.Lobby
                             HostedGame gm = new HostedGame(sm);
                             Games.Add(gm);
                             if (OnGameHostEvent != null)
-                                foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
-                                    ge.BeginInvoke(gm, new AsyncCallback((IAsyncResult r) => { }), null);
+                                LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
                         }
                         break;
                     }
@@ -488,8 +489,7 @@ namespace Skylabs.Lobby
                             {
                                 gm.GameStatus = HostedGame.eHostedGame.GameInProgress;
                                 if (OnGameHostEvent != null)
-                                    foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
-                                        ge.BeginInvoke(gm, new AsyncCallback((IAsyncResult r) => { }), null);
+                                    LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
                             }
                         }
                         break;
@@ -505,8 +505,7 @@ namespace Skylabs.Lobby
                             {
                                 gm.GameStatus = HostedGame.eHostedGame.StoppedHosting;
                                 if (OnGameHostEvent != null)
-                                    foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
-                                        ge.BeginInvoke(gm, new AsyncCallback((IAsyncResult r) => { }), null);
+                                    LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
                                 Games.Remove(gm);
                             }
                         }
