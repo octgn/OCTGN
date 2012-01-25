@@ -132,9 +132,6 @@ namespace Skylabs.Lobby.Sockets
 
         private void ReadThreadRunner()
         {
-            List<byte> sizebuffer = new List<byte>();
-            List<byte> messagebuffer = new List<byte>();
-            int messagesize = -1;
             SocketMessageBuilder Builder = new SocketMessageBuilder();
             while (true)
             {
