@@ -91,9 +91,10 @@ namespace Octgn.Launcher
                         case Chatting.ChatEvent.UserLeftChat:
                             {
                                 Run r = new Run("#" + user.DisplayName + ": ");
-                                Brush b = Brushes.Red;
+                                Brush b = Brushes.LightGray;
                                 r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
-                                AddChatText(r, "Left the chat.");
+                                r.Foreground = b;
+                                AddChatText(r, "Left the chat.", b);
                                 ResetUserList();
                                 break;
                             }
