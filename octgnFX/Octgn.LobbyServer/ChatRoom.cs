@@ -128,27 +128,27 @@ namespace Skylabs.LobbyServer
                 lock(UserLocker)
                 {
                     Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                    int[] slist = new int[Users.Count];
+                    int i = 0;
                     foreach (Pair<int, User> u in Users)
                     {
-                        Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
-                        if (c != null)
-                        {
-                            LazyAsync.Invoke(() => c.WriteMessage(sm));
-                        }
+                        slist[i] = u.Item2.Uid;
+                        i++;
                     }
+                    LazyAsync.Invoke(()=>Server.AllUserMessageUidList(slist,sm));
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             }
             else
             {
+                int[] slist = new int[Users.Count];
+                int i = 0;
                 foreach (Pair<int, User> u in Users)
                 {
-                    Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
-                    if (c != null)
-                    {
-                        LazyAsync.Invoke(() => c.WriteMessage(sm));
-                    }
+                    slist[i] = u.Item2.Uid;
+                    i++;
                 }
+                LazyAsync.Invoke(() => Server.AllUserMessageUidList(slist, sm));
             }
         }
         /// <summary>
