@@ -115,10 +115,12 @@ namespace Skylabs.LobbyServer
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            Console.WriteLine("------UNHANDLED EXCEPTION-------");
             Exception ex = (Exception)e.ExceptionObject;
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
             Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
+            Console.WriteLine("--------------------------------");
             Quit();
         }
 

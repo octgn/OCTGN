@@ -73,7 +73,9 @@ namespace Skylabs.LobbyServer
             {
                 LoggedIn = false;
                 if (OnDisconnect != null)
-                    LazyAsync.Invoke(() => OnDisconnect.Invoke(this, null));
+                {
+                    OnDisconnect.Invoke(this, null);
+                }
                 Socket.Dispose();
             }
             catch (Exception e)
@@ -83,7 +85,6 @@ namespace Skylabs.LobbyServer
                 Trace.WriteLine(e.StackTrace);
                 Trace.WriteLine("-------------------------------------");
             }
-            //TODO make and call disconnected event.
         }
 
         void Socket_OnMessageReceived(SkySocket socket, Net.SocketMessage message)
