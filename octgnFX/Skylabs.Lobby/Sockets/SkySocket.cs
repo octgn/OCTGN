@@ -195,6 +195,8 @@ namespace Skylabs.Lobby.Sockets
                 try
                 {
                     byte[] buff = (byte[])ar.AsyncState;
+                    if (buff == null)
+                        return;
                     int rin = Sock.Client.EndReceive(ar);
                     if (rin > 0)
                     {

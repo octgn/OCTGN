@@ -69,10 +69,20 @@ namespace Skylabs.LobbyServer
 
         void Socket_OnConnectionClosed(SkySocket socket)
         {
-            LoggedIn = false;
-            if(OnDisconnect != null)
-                LazyAsync.Invoke(()=>OnDisconnect.Invoke(this,null));
-            Socket.Dispose();
+            try
+            {
+                LoggedIn = false;
+                if (OnDisconnect != null)
+                    LazyAsync.Invoke(() => OnDisconnect.Invoke(this, null));
+                Socket.Dispose();
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine("Socket_OnConnectionClosed error");
+                Trace.WriteLine(e.Message);
+                Trace.WriteLine(e.StackTrace);
+                Trace.WriteLine("-------------------------------------");
+            }
             //TODO make and call disconnected event.
         }
 
