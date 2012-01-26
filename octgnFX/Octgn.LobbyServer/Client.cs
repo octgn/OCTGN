@@ -189,7 +189,9 @@ namespace Skylabs.LobbyServer
                 if (!_stopping)
                 {
                     _stopping = true;
+#if(TestServer)
                     Trace.WriteLine(String.Format("Client[{0}]Client.Stop",Id));
+#endif
                     LoggedIn = false;
                     Socket.WriteMessage(new SocketMessage("end"));
                     Socket.Stop();
@@ -235,7 +237,9 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
+                #if(TestServer)
                 Trace.WriteLine("#WriteTo[" + Id + "](" + sm.Header + ")");
+#endif
                 Socket.WriteMessage(sm);
             }
         }

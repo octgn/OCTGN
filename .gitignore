@@ -60,3 +60,4 @@ packages/
 
 *.ctl
 *.vsp
+*.psess

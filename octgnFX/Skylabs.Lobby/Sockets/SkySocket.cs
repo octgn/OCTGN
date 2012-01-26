@@ -34,9 +34,11 @@ namespace Skylabs.Lobby.Sockets
 
         private object SocketLocker = new object();
 
-        private Thread SocketThread;
+        //private Thread SocketThread;
 
         private bool Stopping;
+
+        private SocketMessageBuilder Builder;
 
         public SkySocket()
         {
@@ -45,9 +47,10 @@ namespace Skylabs.Lobby.Sockets
                 IsDisposed = false;
                 Connected = false;
                 Stopping = false;
+                Builder = new SocketMessageBuilder();
                 Sock = new TcpClient();
-                SocketThread = new Thread(ReadThreadRunner);
-                SocketThread.Name = "SkySocket Read Thread";
+                //SocketThread = new Thread(ReadThreadRunner);
+                //SocketThread.Name = "SkySocket Read Thread";
             }
         }
         public SkySocket(TcpClient c)
@@ -57,11 +60,13 @@ namespace Skylabs.Lobby.Sockets
                 IsDisposed = false;
                 Stopping = false;
                 Sock = c;
-                SocketThread = new Thread(ReadThreadRunner);
-                SocketThread.Name = "SkySocket Read Thread";
+                Builder = new SocketMessageBuilder();
+                //SocketThread = new Thread(ReadThreadRunner);
+                //SocketThread.Name = "SkySocket Read Thread";
                 RemoteEndPoint = Sock.Client.RemoteEndPoint;
-                SocketThread.Start();
+                //SocketThread.Start();
                 Connected = true;
+                LazyAsync.Invoke(AsyncRead);
             }
         }
         public bool Connect(string host, int port)
@@ -72,10 +77,12 @@ namespace Skylabs.Lobby.Sockets
                 {
                     try
                     {
+                        Sock = new TcpClient();
                         Sock.Connect(host, port);
                         RemoteEndPoint = Sock.Client.RemoteEndPoint;
-                        SocketThread.Start();
+                        //SocketThread.Start();
                         Connected = true;
+                        LazyAsync.Invoke(AsyncRead);
                         return true;
                     }
                     catch (SocketException)
@@ -92,9 +99,203 @@ namespace Skylabs.Lobby.Sockets
             lock (SocketLocker)
             {
                 Stopping = true;
+                LazyAsync.Invoke(() => { if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); Dispose(); });
             }
         }
+        private void AsyncRead()
+        {
+            lock (SocketLocker)
+            {
+                if (Stopping)
+                    return;
+                try
+                {
+                    byte[] buffer = new byte[256];
+                    Sock.Client.BeginReceive(buffer, 0, 256, SocketFlags.None, AsyncReadDone, buffer);
+                }
+                catch (SocketException se)
+                {
+                    #region "SocketErrors"
+                    switch (se.SocketErrorCode)
+                    {
+                        case SocketError.ConnectionAborted:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.ConnectionReset:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.Disconnecting:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.NetworkDown:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.NetworkReset:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.NoRecovery:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.NotConnected:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.OperationAborted:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.Shutdown:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.SocketError:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.TimedOut:
+                            {
+                                break;
+                            }
+                        default:
+                            {
+                                Trace.TraceError("ss0:" + se.Message, se);
+                                Thread.Sleep(10);
+                                break;
+                            }
+                    }
+                    #endregion
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError("ss1" + e.Message, e);
+                    Thread.Sleep(10);
+                }
+            }
+        }
+        private void AsyncReadDone(IAsyncResult ar)
+        {
+            lock (SocketLocker)
+            {
+                try
+                {
+                    byte[] buff = (byte[])ar.AsyncState;
+                    int rin = Sock.Client.EndReceive(ar);
+                    if (rin > 0)
+                    {
+                        if (rin != 256)
+                            Array.Resize(ref buff, rin);
+                        Builder.AddBytes(buff);
+                    }
+                    else
+                    {
+                        LazyAsync.Invoke(Stop);
+                    }
+                }
+                catch (SocketException se)
+                {
+                    #region "SocketErrors"
+                    switch (se.SocketErrorCode)
+                    {
+                        case SocketError.ConnectionAborted:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.ConnectionReset:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.Disconnecting:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.NetworkDown:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.NetworkReset:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.NoRecovery:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.NotConnected:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.OperationAborted:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.Shutdown:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.SocketError:
+                            {
+                                LazyAsync.Invoke(Stop);
+                                break;
+                            }
+                        case SocketError.TimedOut:
+                            {
+                                break;
+                            }
+                        default:
+                            {
+                                Trace.TraceError("ss2:" + se.Message, se);
+                                Thread.Sleep(10);
+                                break;
+                            }
+                    }
+                    #endregion
+                }
+                catch (ObjectDisposedException)
+                {
 
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError("ss3" + e.Message, e);
+                    Thread.Sleep(10);
+                }
+                while(Builder.SMQueue.Count > 0)
+                {
+                    SocketMessage sm = Builder.SMQueue.Dequeue();
+                    if (sm != null)
+                    {
+                        if (OnMessageReceived != null)
+                            OnMessageReceived.BeginInvoke(this, (SocketMessage)sm.Clone(), null, null);
+                    }
+                }
+                LazyAsync.Invoke(AsyncRead);
+            }
+        }
         public void WriteMessage(SocketMessage message)
         {
             lock (SocketLocker)
@@ -128,113 +329,6 @@ namespace Skylabs.Lobby.Sockets
                     if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
                 }
             }
-        }
-
-        private void ReadThreadRunner()
-        {
-            SocketMessageBuilder Builder = new SocketMessageBuilder();
-            while (true)
-            {
-                lock (SocketLocker)
-                {
-                    
-                    if (Stopping)
-                        break;
-                    try
-                    {
-                        int av = Sock.Client.Available;
-                        if (av > 0)
-                        {
-                            byte[] buf = new byte[av];
-                            int rec = Sock.Client.Receive(buf, 0, av, SocketFlags.None);
-                            if (rec != av)
-                                Array.Resize(ref buf, rec);
-                            Builder.AddBytes(buf);
-                        }
-                        if(Builder.SMQueue.Count > 0)
-                        {
-                            SocketMessage sm = Builder.SMQueue.Dequeue();
-                            if (sm != null)
-                            {
-                                if (OnMessageReceived != null)
-                                    OnMessageReceived.BeginInvoke(this, (SocketMessage)sm.Clone(), null, null);
-                            }
-                        }
-                        Thread.Sleep(3);
-                    }
-                    catch (SocketException se)
-                    {
-                        switch (se.SocketErrorCode)
-                        {
-                            case SocketError.ConnectionAborted:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.ConnectionReset:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.Disconnecting:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.NetworkDown:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.NetworkReset:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.NoRecovery:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.NotConnected:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.OperationAborted:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.Shutdown:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.SocketError:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                            case SocketError.TimedOut:
-                                {
-                                    LazyAsync.Invoke(Stop);
-                                    break;
-                                }
-                        }
-                        Trace.TraceError("ss0:" + se.Message, se);
-                        Thread.Sleep(10);
-                    }
-                    catch (Exception e)
-                    {
-                        Trace.TraceError("ss1" + e.Message, e);
-                        Thread.Sleep(10);
-                    }
-                    
-                }
-            }
-            LazyAsync.Invoke(()=>{ if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); });
-            //Call disconnection bullhonkey here.
         }
     
         public void Dispose()

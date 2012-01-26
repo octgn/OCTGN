@@ -232,13 +232,31 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                Trace.WriteLine("#WriteAll: " + sm.Header);
+                #if(TestServer)
+                    Trace.WriteLine("#WriteAll: " + sm.Header);
+                #endif
                 foreach (Client c in Clients)
                 {
                     Client cl2 = c;
                     if (cl2.LoggedIn)
                     {
-                        Trace.WriteLine("#TryWriteTo[" + cl2.Id + "](" + sm.Header + ")");
+                        #if(TestServer)
+                            Trace.WriteLine("#TryWriteTo[" + cl2.Id + "](" + sm.Header + ")");
+                        #endif
+                        LazyAsync.Invoke(() => cl2.WriteMessage(sm));
+                    }
+                }
+            }
+        }
+        public static void AllUserMessageUidList(int[] uids, SocketMessage sm)
+        {
+            lock (ClientLocker)
+            {
+                foreach (Client c in Clients)
+                {
+                    Client cl2 = c;
+                    if (cl2.LoggedIn && uids.Contains(cl2.Me.Uid))
+                    {
                         LazyAsync.Invoke(() => cl2.WriteMessage(sm));
                     }
                 }
@@ -266,10 +284,10 @@ namespace Skylabs.LobbyServer
         /// <returns>Tupple, where value1=number of users with UID who are logged in, and value2=Number of clients removed.</returns>
         public static Tuple<int,int> StopAndRemoveAllByUID(Client caller, int uid)
         {
-            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+            //Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock(ClientLocker)
             {
-                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+                //Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 int loggedInCount = 0;
                 int removedCount = 0;
                 int StartCount = Clients.Count;
@@ -287,16 +305,16 @@ namespace Skylabs.LobbyServer
                         LazyAsync.Invoke(() => cl2.Stop());
                     }
                 }
-                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+                //Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return new Tuple<int, int>(loggedInCount,removedCount);
             }
         }
         private static void AcceptReceiveDataCallback(IAsyncResult ar)
         {
-            Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+           // Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+                //Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 // Get the socket that handles the client request.
 
                 try
@@ -306,7 +324,7 @@ namespace Skylabs.LobbyServer
                     Client c = new Client(ss, _nextId);
                     c.OnDisconnect += new EventHandler(c_OnDisconnect);
                     Clients.Add(c);
-                    Logger.log(MethodInfo.GetCurrentMethod().Name, "Client " + _nextId.ToString() + " connected.");
+                    //Logger.log(MethodInfo.GetCurrentMethod().Name, "Client " + _nextId.ToString() + " connected.");
                     _nextId++;
                 }
                 catch (ObjectDisposedException)
@@ -318,7 +336,7 @@ namespace Skylabs.LobbyServer
                     Trace.TraceError("AcceptReceiveDataCallback:" + e.Message, e);
                 }
                 AcceptClients();
-                Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
+                //Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             }
         }
 
