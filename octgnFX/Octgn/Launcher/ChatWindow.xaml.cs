@@ -80,23 +80,31 @@ namespace Octgn.Launcher
                             }
                         case Chatting.ChatEvent.UserJoinedChat:
                             {
-                                Run r = new Run("#" + user.DisplayName + ": ");
-                                Brush b = Brushes.DarkGray;
-                                r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
-                                r.Foreground = b;
-                                AddChatText(r, "Joined the chat.", b);
-                                ResetUserList();
+                                string reg = Registry.ReadValue("Options_HideLoginNotifications");
+                                if (reg == "false" || reg == null)
+                                {
+                                    Run r = new Run("#" + user.DisplayName + ": ");
+                                    Brush b = Brushes.DarkGray;
+                                    r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
+                                    r.Foreground = b;
+                                    AddChatText(r, "Joined the chat.", b);
+                                    ResetUserList();
+                                }
                                 break;
                             }
                         case Chatting.ChatEvent.UserLeftChat:
                             {
-                                Run r = new Run("#" + user.DisplayName + ": ");
-                                Brush b = Brushes.LightGray;
-                                r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
-                                r.Foreground = b;
-                                AddChatText(r, "Left the chat.", b);
-                                ResetUserList();
-                                break;
+                                string reg = Registry.ReadValue("Options_HideLoginNotifications");
+                                if (reg == "false" || reg == null)
+                                {
+                                    Run r = new Run("#" + user.DisplayName + ": ");
+                                    Brush b = Brushes.LightGray;
+                                    r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
+                                    r.Foreground = b;
+                                    AddChatText(r, "Left the chat.", b);
+                                    ResetUserList();
+                                }
+                                    break;
                             }
                     }
                 }));

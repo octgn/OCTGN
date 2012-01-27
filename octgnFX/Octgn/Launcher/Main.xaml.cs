@@ -32,6 +32,7 @@ namespace Octgn.Launcher
         private Brush _originalBorderBrush;
         private bool _isLegitClosing = false;
         private static bool _locationUpdating = false;
+        private static string _hideLoginNotifications = Registry.ReadValue("Options_HideLoginNotifications") == null || Registry.ReadValue("Options_HideLoginNotifications") == "false" ? "false" : "true";
 
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
@@ -87,6 +88,16 @@ namespace Octgn.Launcher
                     frame1.BeginAnimation(OpacityProperty, animation0);
                 });
         }
+
+        public static readonly DependencyProperty IsHideLoginNotificationsCheckedProperty =
+         DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof(string), typeof(Window), new UIPropertyMetadata(_hideLoginNotifications));
+
+        public string IsHideJoinsChecked
+        {
+            get { return (string)GetValue(IsHideLoginNotificationsCheckedProperty); }
+            set { SetValue(IsHideLoginNotificationsCheckedProperty, value); }
+        }
+
         public System.Windows.Forms.NotifyIcon SystemTrayIcon;
         public Main()
         {
@@ -566,6 +577,18 @@ namespace Octgn.Launcher
         {
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
+        }
+
+        private void bHideLoginNotifications_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Registry.WriteValue("Options_HideLoginNotifications", "false");
+            _hideLoginNotifications = "false";
+        }
+
+        private void bHideLoginNotifications_Checked(object sender, RoutedEventArgs e)
+        {
+            Registry.WriteValue("Options_HideLoginNotifications", "true");
+            _hideLoginNotifications = "true";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
