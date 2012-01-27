@@ -174,7 +174,8 @@ namespace Skylabs.Lobby.Sockets
                             }
                         default:
                             {
-                                Trace.TraceError("ss0:" + se.Message, se);
+                                Trace.WriteLine("ss0:" + se.Message);
+                                Trace.WriteLine(se.StackTrace);
                                 Thread.Sleep(10);
                                 break;
                             }
@@ -183,7 +184,8 @@ namespace Skylabs.Lobby.Sockets
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError("ss1" + e.Message, e);
+                    Trace.WriteLine("ss1:" + e.Message);
+                    Trace.WriteLine(e.StackTrace);
                     Thread.Sleep(10);
                 }
             }
@@ -197,6 +199,12 @@ namespace Skylabs.Lobby.Sockets
                     byte[] buff = (byte[])ar.AsyncState;
                     if (buff == null)
                         return;
+                    if(Sock == null)
+                        Trace.WriteLine("Sock == null in AsyncReadDone?");
+                    if (Sock.Client == null)
+                        Trace.WriteLine("Sock.Client == null in AsyncReadDone?");
+                    if(ar == null)
+                        Trace.WriteLine("ar == null in AsyncReadDone?");
                     int rin = Sock.Client.EndReceive(ar);
                     if (rin > 0)
                     {
@@ -270,21 +278,27 @@ namespace Skylabs.Lobby.Sockets
                             }
                         default:
                             {
-                                Trace.TraceError("ss2:" + se.Message, se);
-                                Thread.Sleep(10);
+                                Trace.WriteLine("ss2:" + se.Message);
+                                Trace.WriteLine(se.StackTrace);
                                 break;
                             }
                     }
                     #endregion
                 }
-                catch (ObjectDisposedException)
+                catch (ObjectDisposedException oe)
                 {
-
+                    Trace.WriteLine("ss5:" + oe.Message);
+                    Trace.WriteLine(oe.StackTrace);
+                }
+                catch (NullReferenceException ne)
+                {
+                    Trace.WriteLine("ss3:" + ne.Message);
+                    Trace.WriteLine(ne.StackTrace);
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError("ss3" + e.Message, e);
-                    Thread.Sleep(10);
+                    Trace.WriteLine("ss4:" + e.Message);
+                    Trace.WriteLine(e.StackTrace);
                 }
                 while(Builder.SMQueue.Count > 0)
                 {
