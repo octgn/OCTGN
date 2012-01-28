@@ -905,6 +905,36 @@ namespace Octgn.Server
             writer.Close();
             Send(sb.ToString());
         }
+        public void PlayerSetGlobalVariable(byte from, byte p, string n, string v)
+        {
+            StringBuilder sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+
+            writer.WriteStartElement("PlayerSetGlobalVariable");
+            if (handler.muted != 0)
+                writer.WriteAttributeString("muted", handler.muted.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("from", from.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("who", p.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("name", n);
+            writer.WriteElementString("value", v);
+            writer.WriteEndElement();
+            writer.Close();
+            Send(sb.ToString());
+        }
+        public void SetGlobalVariable(string n, string v)
+        {
+            StringBuilder sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+
+            writer.WriteStartElement("SetGlobalVariable");
+            if (handler.muted != 0)
+                writer.WriteAttributeString("muted", handler.muted.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("name", n);
+            writer.WriteElementString("value", v);
+            writer.WriteEndElement();
+            writer.Close();
+            Send(sb.ToString());
+        }
     }
 
     internal class XmlSenderStub : BaseXmlStub

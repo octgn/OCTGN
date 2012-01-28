@@ -472,6 +472,21 @@ namespace Octgn.Server
 
                             break;
                         }
+                    case 88:
+                        {
+                            byte b = reader.ReadByte();
+                            string n = reader.ReadString();
+                            string v = reader.ReadString();
+                            handler.PlayerSetGlobalVariable(b, n, v);
+                            break;
+                        }
+                    case 89:
+                        {
+                            string n = reader.ReadString();
+                            string v = reader.ReadString();
+                            handler.SetGlobalVariable(n, v);
+                            break;
+                        }
                     case 255:
                         {
                             handler.PingReceived();

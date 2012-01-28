@@ -83,6 +83,8 @@ namespace Octgn
 
         public Dictionary<string, int> Variables
         { get; private set; }
+        public Dictionary<string, string> GlobalVariables
+        { get; private set; }
 
         public Game(GameDef def)
         {
@@ -91,6 +93,9 @@ namespace Octgn
             Variables = new Dictionary<string, int>();
             foreach (var varDef in def.Variables.Where(v => v.Global))
                 Variables.Add(varDef.Name, varDef.DefaultValue);
+            GlobalVariables = new Dictionary<string, string>();
+            foreach (var varDef in def.GlobalVariables)
+                GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
         }
 
         public void Begin()
@@ -128,6 +133,8 @@ namespace Octgn
                     c.Reset();
                 foreach (var varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
                     p.Variables[varDef.Name] = varDef.DefaultValue;
+                foreach (var g in Definition.PlayerDefinition.GlobalVariables)
+                    p.GlobalVariables[g.Name] = g.DefaultValue;
             }
             Table.Reset();
             Card.Reset(); CardIdentity.Reset();
@@ -135,7 +142,8 @@ namespace Octgn
             RandomRequests.Clear();
             foreach (var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
                 Variables[varDef.Name] = varDef.DefaultValue;
-
+            foreach (var g in Definition.GlobalVariables)
+                GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug
             var mainWin = Program.PlayWindow;
             mainWin.RaiseEvent(new Octgn.Play.Gui.CardEventArgs(Octgn.Play.Gui.CardControl.CardHoveredEvent, mainWin));

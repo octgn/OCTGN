@@ -45,6 +45,12 @@ def askCard(restriction = None):
   if apiResult == None: return (None, 0)
   return (apiResult.Item1, apiResult.Item2)
 
+def getGlobalVariable(gname):
+  return _api.GetGlobalVariable(gname)
+
+def setGlobalVariable(gname,gvalue): 
+  _api.SetGlobalVariable(gname,gvalue)
+
 class Markers(object):
   def __init__(self, card):
     self._cardId = card._id
@@ -269,7 +275,11 @@ class Player(object):
   @property
   def color(self): return _api.PlayerColor(self._id)
   def hasInvertedTable(self): return _api.PlayerHasInvertedTable(self._id)
-  
+  def getGlobalVariable(self,gname):
+    return _api.PlayerGetGlobalVariable(self._id,gname)
+  def setGlobalVariable(self,gname,gvalue): 
+    _api.PlayerSetGlobalVariable(self._id,gname,gvalue)
+
 _id = _api.LocalPlayerId()
 me = Player(_id) if _id >= 0 else None
 _id = _api.SharedPlayerId()

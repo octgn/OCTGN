@@ -701,7 +701,7 @@ namespace Octgn.Networking
             Pile g = group as Pile;
             if(g == null)
             { Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "[UnaliasGrp] Group is not a pile."); return; }
-            // Collect aliases which we know
+            // Collect aliases which we p
             List<int> cards = new List<int>(g.Count);
             List<ulong> types = new List<ulong>(g.Count);
             bool hasAlias = false;
@@ -910,6 +910,24 @@ namespace Octgn.Networking
         public void CancelLimited(Player player)
         {
             Program.TracePlayerEvent(player, "{0} cancels out of the limited game.", player);
+        }
+
+        public void PlayerSetGlobalVariable(Player fromp, Player p, string name, string value)
+        {
+            if (fromp.Id == p.Id)
+            {
+                if (p.GlobalVariables.ContainsKey(name))
+                    p.GlobalVariables[name] = value;
+                else
+                    p.GlobalVariables.Add(name, value);
+            }
+        }
+        public void SetGlobalVariable(string name, string value)
+        {
+            if (Program.Game.GlobalVariables.ContainsKey(name))
+                Program.Game.GlobalVariables[name] = value;
+            else
+                Program.Game.GlobalVariables.Add(name, value);
         }
     }
 }

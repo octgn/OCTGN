@@ -14,6 +14,7 @@ using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
 using System.Windows;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Octgn.Scripting
 {
@@ -46,8 +47,17 @@ namespace Octgn.Scripting
       // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
       foreach (var s in Program.Game.Definition.Scripts)
       {
-        var src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
-        src.Execute(ActionsScope);
+          try
+          {
+              var src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+              src.Execute(ActionsScope);
+          }
+          catch (Exception e)
+          {
+              ExceptionOperations eo = engine.GetService<ExceptionOperations>();
+              string error = eo.FormatException(e);
+              Debug.WriteLine(error);
+          }
       }
     }
 
@@ -61,36 +71,63 @@ namespace Octgn.Scripting
 
     public bool TryExecuteInteractiveCode(string code, ScriptScope scope, Action<ExecutionResult> continuation)
     {
-      var src = engine.CreateScriptSourceFromString(code, SourceCodeKind.InteractiveCode);
-      switch (src.GetCodeProperties())
-      {
-        case ScriptCodeParseResult.IncompleteToken: return false;
-        case ScriptCodeParseResult.IncompleteStatement:
-          // An empty line ends the statement
-          if (!code.TrimEnd(' ', '\t').EndsWith("\n"))
-            return false;
-          break;
-      }
-      StartExecution(src, scope, continuation);
+        try
+        {
+            var src = engine.CreateScriptSourceFromString(code, SourceCodeKind.InteractiveCode);
+            switch (src.GetCodeProperties())
+            {
+                case ScriptCodeParseResult.IncompleteToken: return false;
+                case ScriptCodeParseResult.IncompleteStatement:
+                    // An empty line ends the statement
+                    if (!code.TrimEnd(' ', '\t').EndsWith("\n"))
+                        return false;
+                    break;
+            }
+            StartExecution(src, scope, continuation);
+        }
+        catch (Exception e)
+        {
+            ExceptionOperations eo = engine.GetService<ExceptionOperations>();
+            string error = eo.FormatException(e);
+            Debug.WriteLine(error);
+        }
       return true;
     }
 
     public void ExecuteOnGroup(string function, Play.Group group)
     {
       string pythonGroup = ScriptApi.GroupCtor(group);
-      var src = engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup), SourceCodeKind.Statements);
-      StartExecution(src, ActionsScope, null);
+      try
+      {
+          var src = engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup), SourceCodeKind.Statements);
+          StartExecution(src, ActionsScope, null);
+      }
+      catch (Exception e)
+      {
+          ExceptionOperations eo = engine.GetService<ExceptionOperations>();
+          string error = eo.FormatException(e);
+          Debug.WriteLine(error);
+      }
     }
 
     public void ExecuteOnGroup(string function, Play.Group group, Point position)
     {
       string pythonGroup = ScriptApi.GroupCtor(group);
-      var src = engine.CreateScriptSourceFromString(
-        string.Format(System.Globalization.CultureInfo.InvariantCulture,
-          "{0}({1}, {2:F3}, {3:F3})", 
-          function, pythonGroup, position.X, position.Y), 
-        SourceCodeKind.Statements);
-      StartExecution(src, ActionsScope, null);
+      try
+      {
+          var src = engine.CreateScriptSourceFromString(
+            string.Format(System.Globalization.CultureInfo.InvariantCulture,
+              "{0}({1}, {2:F3}, {3:F3})",
+              function, pythonGroup, position.X, position.Y),
+            SourceCodeKind.Statements);
+          StartExecution(src, ActionsScope, null);
+      }
+      catch (Exception e)
+      {
+          ExceptionOperations eo = engine.GetService<ExceptionOperations>();
+          string error = eo.FormatException(e);
+          Debug.WriteLine(error);
+      }
     }
 
     public void ExecuteOnCards(string function, IEnumerable<Play.Card> cards, Point? position = null)
@@ -102,8 +139,17 @@ namespace Octgn.Scripting
         sb.AppendFormat(CultureInfo.InvariantCulture,
                         "{0}(Card({1}){2})\n", 
                         function, card.Id, posArguments);
-      var src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
-      StartExecution(src, ActionsScope, null);
+      try
+      {
+          var src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
+          StartExecution(src, ActionsScope, null);
+      }
+      catch (Exception e)
+      {
+          ExceptionOperations eo = engine.GetService<ExceptionOperations>();
+          string error = eo.FormatException(e);
+          Debug.WriteLine(error);
+      }
     }
 
     public void ExecuteOnBatch(string function, IEnumerable<Play.Card> cards, Point? position = null)
@@ -116,9 +162,17 @@ namespace Octgn.Scripting
       if (position != null)
         sb.AppendFormat(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}", position.Value.X, position.Value.Y);
       sb.Append(")\n");
-
-      var src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
-      StartExecution(src, ActionsScope, null);
+      try
+      {
+          var src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
+          StartExecution(src, ActionsScope, null);
+      }
+      catch (Exception e)
+      {
+          ExceptionOperations eo = engine.GetService<ExceptionOperations>();
+          string error = eo.FormatException(e);
+          Debug.WriteLine(error);
+      }
     }
 
     private void StartExecution(ScriptSource src, ScriptScope scope, Action<ExecutionResult> continuation)
@@ -251,7 +305,7 @@ namespace Octgn.Scripting
 
     private static AppDomain CreateSandbox()
     {
-      var permissions = new PermissionSet(PermissionState.None);
+      var permissions = new PermissionSet(PermissionState.Unrestricted);
       permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
       permissions.AddPermission(new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery, AppDomain.CurrentDomain.BaseDirectory));
       

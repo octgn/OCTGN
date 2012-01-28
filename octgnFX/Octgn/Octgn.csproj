@@ -257,6 +257,7 @@
       <DependentUpon>DEBUGLobbySettings.settings</DependentUpon>
     </Compile>
     <Compile Include="CacheTraceListener.cs" />
+    <Compile Include="Definitions\GlobalVariableDef.cs" />
     <Compile Include="DragAdorner.cs" />
     <Compile Include="DWindow.xaml.cs">
       <DependentUpon>DWindow.xaml</DependentUpon>
