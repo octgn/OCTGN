@@ -32,7 +32,6 @@ namespace Octgn.Launcher
         private Brush _originalBorderBrush;
         private bool _isLegitClosing = false;
         private static bool _locationUpdating = false;
-        private static string _hideLoginNotifications = Registry.ReadValue("Options_HideLoginNotifications") == null || Registry.ReadValue("Options_HideLoginNotifications") == "false" ? "false" : "true";
 
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
@@ -90,7 +89,7 @@ namespace Octgn.Launcher
         }
 
         public static readonly DependencyProperty IsHideLoginNotificationsCheckedProperty =
-         DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof(string), typeof(Window), new UIPropertyMetadata(_hideLoginNotifications));
+         DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof(string), typeof(Window), new UIPropertyMetadata(Program.prefs.HideLoginNotifications));
 
         public string IsHideJoinsChecked
         {
@@ -581,14 +580,12 @@ namespace Octgn.Launcher
 
         private void bHideLoginNotifications_Unchecked(object sender, RoutedEventArgs e)
         {
-            Registry.WriteValue("Options_HideLoginNotifications", "false");
-            _hideLoginNotifications = "false";
+            Program.prefs.HideLoginNotifications = "false";
         }
 
         private void bHideLoginNotifications_Checked(object sender, RoutedEventArgs e)
         {
-            Registry.WriteValue("Options_HideLoginNotifications", "true");
-            _hideLoginNotifications = "true";
+            Program.prefs.HideLoginNotifications = "true";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
