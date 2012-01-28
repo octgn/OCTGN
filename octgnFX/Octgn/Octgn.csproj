@@ -461,6 +461,7 @@
     <Compile Include="Play\Pile.cs" />
     <Compile Include="Play\Table.cs" />
     <Compile Include="Play\RandomRequest.cs" />
+    <Compile Include="Prefs.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
