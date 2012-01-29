@@ -80,28 +80,39 @@ namespace Octgn.Launcher
                             }
                         case Chatting.ChatEvent.UserJoinedChat:
                             {
-                                Run r = new Run("#" + user.DisplayName + ": ");
-                                Brush b = Brushes.Red;
-                                r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
-                                AddChatText(r, "Joined the chat.");
-                                ResetUserList();
+                                string reg = Registry.ReadValue("Options_HideLoginNotifications");
+                                if (reg == "false" || reg == null)
+                                {
+                                    Run r = new Run("#" + user.DisplayName + ": ");
+                                    Brush b = Brushes.DarkGray;
+                                    r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
+                                    r.Foreground = b;
+                                    AddChatText(r, "Joined the chat.", b);
+                                    ResetUserList();
+                                }
                                 break;
                             }
                         case Chatting.ChatEvent.UserLeftChat:
                             {
-                                Run r = new Run("#" + user.DisplayName + ": ");
-                                Brush b = Brushes.Red;
-                                r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
-                                AddChatText(r, "Left the chat.");
-                                ResetUserList();
-                                break;
+                                string reg = Registry.ReadValue("Options_HideLoginNotifications");
+                                if (reg == "false" || reg == null)
+                                {
+                                    Run r = new Run("#" + user.DisplayName + ": ");
+                                    Brush b = Brushes.LightGray;
+                                    r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
+                                    r.Foreground = b;
+                                    AddChatText(r, "Left the chat.", b);
+                                    ResetUserList();
+                                }
+                                    break;
                             }
                     }
                 }));
             }
         }
-        private void AddChatText(Run headerRun,string chat)
+        private void AddChatText(Run headerRun,string chat, Brush b = null)
         {
+            if (b == null) b = Brushes.Black;
             bool rtbatbottom = false;
             bool firstAutoScroll = true;
             //check to see if the richtextbox is scrolled to the bottom.
@@ -152,7 +163,7 @@ namespace Octgn.Launcher
                     String[] words = line.Split(new char[1] { ' ' });
                     foreach(String word in words)
                     {
-                        Inline inn = StringToRun(word);
+                        Inline inn = StringToRun(word ,b);
 
                         if(inn != null)
                             p.Inlines.Add(inn);
@@ -166,7 +177,7 @@ namespace Octgn.Launcher
                 String[] words = chat.Split(new char[1] { ' ' });
                 foreach(String word in words)
                 {
-                    Inline inn = StringToRun(word);
+                    Inline inn = StringToRun(word,b);
 
                     if(inn != null)
                         p.Inlines.Add(inn);
@@ -189,14 +200,13 @@ namespace Octgn.Launcher
             if(rtbatbottom)
                 richTextBox1.ScrollToEnd();
         }
-        public Inline StringToRun(String s)
+        public Inline StringToRun(String s, Brush b)
         {
-            Brush b;
             Inline ret = null;
             String strUrlRegex = "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
             Regex reg = new Regex(strUrlRegex);
             s = s.Trim();
-            b = Brushes.Black;
+            //b = Brushes.Black;
             Inline r = new Run(s);
             if (reg.IsMatch(s))
             {
