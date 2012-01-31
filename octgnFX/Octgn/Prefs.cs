@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Octgn
 {
-    public class Prefs
+    public static class Prefs
     {
         private static string _hideLoginNotifications;
 
-        public string HideLoginNotifications
+        public static string HideLoginNotifications
         {
             get { return _hideLoginNotifications; }
             set 
@@ -19,7 +19,7 @@ namespace Octgn
             }
         }
 
-        public Prefs()
+        static Prefs()
         {
            string _hln = Registry.ReadValue("Options_HideLoginNotifications");
             _hideLoginNotifications = _hln == null || _hln == "false" ? "false" : "true";
