@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Skylabs.ConsoleHelper;
 using Mono.Options;
 using System.Threading;
-using Skylabs;
 
 namespace Octgn.StandAloneServer
 {
@@ -39,8 +37,6 @@ namespace Octgn.StandAloneServer
             }
 
 
-            ConsoleEventLog.EAddEvent += ConsoleEventLogEAddEvent;
-            ConsoleWriter.CommandText = "StandAloneServer: ";
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
             
@@ -57,7 +53,7 @@ namespace Octgn.StandAloneServer
         {
             Server = new Server.Server(Port,GameGuid,GameVersion);
             Server.OnStop += new EventHandler(Server_OnStop);
-            Skylabs.ConsoleHelper.ConsoleWriter.WriteLine("Starting server on port " + Port,false);
+            Console.WriteLine("Starting server on port " + Port);
             while (KeepRunning)
             {
                 Thread.Sleep(1000);
@@ -79,18 +75,8 @@ namespace Octgn.StandAloneServer
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = (Exception)e.ExceptionObject;
-            ConsoleEventLog.AddEvent(new ConsoleEventError(ex.Message, ex), false);
             Console.WriteLine(ex.StackTrace);
         }
 
-        private static void ConsoleEventLogEAddEvent(ConsoleEvent e)
-        {
-#if(DEBUG)
-            //System.Diagnostics.Debugger.Break();
-            //TODO Serialize and save to a file before release.
-            //Console.WriteLine(e.);
-
-#endif
-        }
     }
 }

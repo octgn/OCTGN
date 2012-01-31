@@ -1,14 +1,11 @@
-﻿//Copyright 2012 Skylabs
-//In order to use this software, in any manor, you must first contact Skylabs.
-//Website: http://www.skylabsonline.com
-//Email:   skylabsonline@gmail.com
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Skylabs.Lobby;
 using Skylabs.Net;
 using System.Threading;
+using Skylabs.Lobby.Threading;
 
 namespace Skylabs.LobbyServer
 {
@@ -48,7 +45,6 @@ namespace Skylabs.LobbyServer
             lock (UserLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
-                Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Adding User " + u.Uid.ToString() + " to room " + ID.ToString());
                 Client c = Server.GetOnlineClientByUid(u.Uid);
                 if (c != null)
                 {
@@ -61,7 +57,6 @@ namespace Skylabs.LobbyServer
                     Pair<int, User> ou = Users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
                     if (ou == null)
                     {
-                        Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User not in room already. Adding.");
                         Users.Add(new Pair<int, User>(1, u));
                         ulist.Add(u);
                         sm.AddData("allusers", ulist);
@@ -70,7 +65,6 @@ namespace Skylabs.LobbyServer
                     else
                     {
                         ou.Item1++;
-                        Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User found in room. Incrementing to " + ou.Item1.ToString());
                         sm.AddData("allusers", ulist);
                         c.WriteMessage(sm);
                         Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
@@ -105,16 +99,13 @@ namespace Skylabs.LobbyServer
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             lock (UserLocker)
             {
-                Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User " + u.Uid.ToString() + " Exiting room " + ID.ToString());
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                 Pair<int, User> ou = Users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
                 if (ou != null)
                 {
                     ou.Item1--;
-                    Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "User room decremented to " + ou.Item1.ToString());
                     if (ou.Item1 == 0)
                     {
-                        Logger.log(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Removing user " + u.Uid.ToString() + " from room " + ID.ToString());
                         Users.Remove(ou);
                         SocketMessage sm = new SocketMessage("userleftchatroom");
                         sm.AddData("roomid", ID);
@@ -137,29 +128,27 @@ namespace Skylabs.LobbyServer
                 lock(UserLocker)
                 {
                     Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
+                    int[] slist = new int[Users.Count];
+                    int i = 0;
                     foreach (Pair<int, User> u in Users)
                     {
-                        Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
-                        if (c != null)
-                        {
-                            Thread t = new Thread(() => c.WriteMessage(sm));
-                            t.Start();
-                        }
+                        slist[i] = u.Item2.Uid;
+                        i++;
                     }
+                    LazyAsync.Invoke(()=>Server.AllUserMessageUidList(slist,sm));
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             }
             else
             {
+                int[] slist = new int[Users.Count];
+                int i = 0;
                 foreach (Pair<int, User> u in Users)
                 {
-                    Client c = Server.GetOnlineClientByUid(u.Item2.Uid);
-                    if (c != null)
-                    {
-                        Thread t = new Thread(()=>c.WriteMessage(sm));
-                        t.Start();
-                    }
+                    slist[i] = u.Item2.Uid;
+                    i++;
                 }
+                LazyAsync.Invoke(() => Server.AllUserMessageUidList(slist, sm));
             }
         }
         /// <summary>

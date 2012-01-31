@@ -70,7 +70,6 @@ namespace Octgn.Scripting
         {
             return Player.Find((byte)id).InvertedTable;
         }
-
         #endregion Player API
 
         #region Counter API
@@ -554,5 +553,44 @@ namespace Octgn.Scripting
         }
 
         #endregion Special APIs
+
+        #region GlobalVariables
+            public void PlayerSetGlobalVariable(int id, string name, object value)
+            {
+                string val = String.Format("{0}", value);
+                Player p = Player.Find((byte)id);
+                if(p == null || p.Id != Player.LocalPlayer.Id)
+                    return;
+                if (Player.LocalPlayer.GlobalVariables.ContainsKey(name))
+                    engine.Invoke(() => Player.LocalPlayer.GlobalVariables[name] = val);
+                else
+                    engine.Invoke(() => Player.LocalPlayer.GlobalVariables.Add(name, val));
+                Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, val);
+            }
+            public string PlayerGetGlobalVariable(int id,string name)
+            {
+                Player p = Player.Find((byte)id);
+                if (p == null)
+                    return "";
+                if (p.GlobalVariables.ContainsKey(name))
+                    return p.GlobalVariables[name];
+                return "";
+            }
+            public void SetGlobalVariable( string name, object value)
+            {
+                string val = String.Format("{0}", value);
+                if (Program.Game.GlobalVariables.ContainsKey(name))
+                    engine.Invoke(() => Program.Game.GlobalVariables[name] = val);
+                else
+                    engine.Invoke(() => Program.Game.GlobalVariables.Add(name, val));
+                Program.Client.Rpc.SetGlobalVariable(name, val);
+            }
+            public string GetGlobalVariable(string name)
+            {
+                if (Program.Game.GlobalVariables.ContainsKey(name))
+                    return Program.Game.GlobalVariables[name];
+                return "";
+            }
+        #endregion
     }
 }

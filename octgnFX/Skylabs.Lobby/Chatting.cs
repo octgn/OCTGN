@@ -1,8 +1,4 @@
-﻿//Copyright 2012 Skylabs
-//In order to use this software, in any manor, you must first contact Skylabs.
-//Website: http://www.skylabsonline.com
-//Email:   skylabsonline@gmail.com
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -52,7 +48,6 @@ namespace Skylabs.Lobby
         /// <param name="id"></param>
         public void JoinChatRoom(long id)
         {
-            Debug.WriteLine("Joining chat room {0}", id);
             SocketMessage sm = new SocketMessage("joinchatroom");
             sm.AddData("roomid", id);
             Parent.WriteMessage(sm);
@@ -104,13 +99,11 @@ namespace Skylabs.Lobby
                 if (!Rooms.Exists(r => r.ID == rid))
                 {
                     Rooms.Add(new ChatRoom(rid));
-                    System.Diagnostics.Debug.Write("new chat with rid=" + rid.ToString());
                 }
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
                 cr.ResetUserList(allusers);
                 if (u.Uid == Parent.Me.Uid)
                 {
-                    System.Diagnostics.Debug.WriteLine("Connected to room.");
                     if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.MeJoinedChat, u,null);
                 }
                 else

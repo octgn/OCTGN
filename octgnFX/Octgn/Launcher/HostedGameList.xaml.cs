@@ -49,7 +49,8 @@ namespace Octgn.Launcher
                                                       foreach (HostedGame g in gl)
                                                       {
                                                           
-                                                          if (gids.Contains(g.GameGuid))
+                                                          if (gids.Contains(g.GameGuid) &&  g.GameStatus == HostedGame.eHostedGame.StartedHosting 
+                                                              && g.UserHosting.Status != UserStatus.Offline && g.UserHosting.Status != UserStatus.Unknown)
                                                           {
                                                               HostedGameListItem gs = new HostedGameListItem(g);
                                                               if (g.GameStatus == HostedGame.eHostedGame.StartedHosting)

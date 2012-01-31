@@ -78,6 +78,11 @@
                     <ribbon:RibbonButton x:Name="bPatchSets" Label="Patch All Sets" LargeImageSource="/Resources/Icons/image_link.png" Click="bPatchSets_Click" SmallImageSource="/OCTGN;component/Resources/Icons/image_link_small.png" />
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
+            <ribbon:RibbonTab Header="Options" Foreground="Black">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonCheckBox x:Name="bHideLoginNotifications" Label="Hide user login notifications" IsChecked="{Binding ElementName=Window, Path=IsHideLoginNotificationsChecked}" Checked="bHideLoginNotifications_Checked" Unchecked="bHideLoginNotifications_Unchecked" />
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
             <ribbon:RibbonTab Header="!" x:Name="NotificationTab">
 
             </ribbon:RibbonTab>

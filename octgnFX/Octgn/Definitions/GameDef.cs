@@ -26,6 +26,7 @@ namespace Octgn.Definitions
     public int MarkerSize { get; private set; }
     public List<ScriptDef> Scripts { get; private set; }
     public List<VariableDef> Variables { get; private set; }
+    public List<GlobalVariableDef> GlobalVariables { get; private set; }
 
     internal string FileName
     { get; set; }
@@ -90,6 +91,7 @@ namespace Octgn.Definitions
         TableDefinition = GroupDef.LoadFromXml(xml.Child("table"), part, 0),
         PlayerDefinition = PlayerDef.LoadFromXml(xml.Child("player"), part),
         GlobalDefinition = SharedDef.LoadFromXml(xml.Child("shared"), part),
+        GlobalVariables = GlobalVariableDef.LoadAllFromXml(xml.Child("globalvariables")),
         Variables = VariableDef.LoadAllFromXml(xml.Child("variables")),
         Scripts = ScriptDef.LoadAllFromXml(xml.Child("scripts"), part)
       };

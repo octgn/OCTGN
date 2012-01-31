@@ -250,6 +250,7 @@ namespace Octgn.Server
 						packet = newPacket;
 					}
 					Array.Copy(buffer, 0, packet, packetPos, count);
+
 					// Handle the received data, either as binary or xml, depending on current status
 					if (binary)
 						BinaryReceive(count);
@@ -292,9 +293,12 @@ namespace Octgn.Server
 					{
 						// Copy the packet data in an array
 						byte[] data = new byte[length - 4]; Array.Copy(packet, 4, data, 0, length - 4);
-						// Lock the handler, because it is not thread-safe
-						lock (server.handler)
-							server.handler.ReceiveMessage(data, client,this);
+
+
+                            // Lock the handler, because it is not thread-safe
+                            lock (server.handler)
+                                server.handler.ReceiveMessage(data, client, this);
+
 						// Adjust the packet pos and contents
 						packetPos -= length;
 						Array.Copy(packet, length, packet, 0, packetPos);
@@ -316,11 +320,13 @@ namespace Octgn.Server
 						string xml = System.Text.Encoding.UTF8.GetString(packet, 0, i);
 						// Check if it's a request to switch to binary mode
 						if (xml == "<Binary />")
+                        {
 							binary = true;
-						else
+						}else{
 							// Lock the handler, because it is not thread-safe
 							lock (server.handler) server.handler.ReceiveMessage(xml, client, this);
-						// Adjust the packet position and contents
+                        }
+                        // Adjust the packet position and contents
 						count += packetPos - i - 1; packetPos = 0;
 						Array.Copy(packet, i + 1, packet, 0, count);
 						// Continue the loop

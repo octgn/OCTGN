@@ -973,6 +973,38 @@ namespace Octgn.Server
             writer.Close();
             Send(stream.ToArray());
         }
+        public void PlayerSetGlobalVariable(byte from,byte p, string name, string value)
+        {
+            MemoryStream stream = new MemoryStream(512);
+            stream.Seek(4, SeekOrigin.Begin);
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(handler.muted);
+            writer.Write((byte)88);
+            writer.Write(from);
+            writer.Write(p);
+            writer.Write(name);
+            writer.Write(value);
+            writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+            writer.Write((int)stream.Length);
+            writer.Close();
+            Send(stream.ToArray());
+        }
+        public void SetGlobalVariable( string name, string value)
+        {
+            MemoryStream stream = new MemoryStream(512);
+            stream.Seek(4, SeekOrigin.Begin);
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(handler.muted);
+            writer.Write((byte)89);
+            writer.Write(name);
+            writer.Write(value);
+            writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+            writer.Write((int)stream.Length);
+            writer.Close();
+            Send(stream.ToArray());
+        }
     }
 
     internal class BinarySenderStub : BaseBinaryStub

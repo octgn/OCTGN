@@ -288,6 +288,14 @@ namespace Octgn.Server
             broadcaster.NextTurn(nextPlayer);
         }
 
+        public void PlayerSetGlobalVariable( byte p, string name, string value)
+        {
+            broadcaster.PlayerSetGlobalVariable(clients[sender].id, p, name, value);
+        }
+        public void SetGlobalVariable(string name, string value)
+        {
+            broadcaster.SetGlobalVariable(name, value);
+        }
         public void StopTurnReq(int turnNumber, bool stop)
         {
             if(turnNumber != this.turnNumber) return;  // Message StopTurn crossed a NextTurn message

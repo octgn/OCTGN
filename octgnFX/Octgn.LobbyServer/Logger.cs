@@ -1,8 +1,4 @@
-﻿//Copyright 2012 Skylabs
-//In order to use this software, in any manor, you must first contact Skylabs.
-//Website: http://www.skylabsonline.com
-//Email:   skylabsonline@gmail.com
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,11 +29,11 @@ namespace Skylabs.LobbyServer
         public static void L(string MethodName, string LockObjectName)
         {
             //Console.WriteLine(String.Format("{2}[{4}:{5}][inLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
-            curIndent++;
+            //curIndent++;
         }
         public static void UL(string MethodName, string LockObjectName)
         {
-            curIndent--;
+            //curIndent--;
             //Console.WriteLine(String.Format("{2}[{4}:{5}][unLock({3},{0})]{1}", LockObjectName, MethodName, tab, Thread.CurrentThread.ManagedThreadId, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
         }
         public static void LE(string MethodName, string LockObjectName, string e)
@@ -46,7 +42,7 @@ namespace Skylabs.LobbyServer
         }
         public static void log(string MethodName, string e)
         {
-            Console.WriteLine(String.Format("{1}[{4}:{5}][LOG({2})]{0}:{3}", MethodName, tab, Thread.CurrentThread.ManagedThreadId, e, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
+            //Console.WriteLine(String.Format("{1}[{4}:{5}][LOG({2})]{0}:{3}", MethodName, tab, Thread.CurrentThread.ManagedThreadId, e, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
         }
         public static void ER(Exception e, params string[] extras)
         {

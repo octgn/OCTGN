@@ -87,6 +87,16 @@ namespace Octgn.Launcher
                     frame1.BeginAnimation(OpacityProperty, animation0);
                 });
         }
+
+        public static readonly DependencyProperty IsHideLoginNotificationsCheckedProperty =
+         DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof(string), typeof(Window), new UIPropertyMetadata(Prefs.HideLoginNotifications));
+
+        public string IsHideJoinsChecked
+        {
+            get { return (string)GetValue(IsHideLoginNotificationsCheckedProperty); }
+            set { SetValue(IsHideLoginNotificationsCheckedProperty, value); }
+        }
+
         public System.Windows.Forms.NotifyIcon SystemTrayIcon;
         public Main()
         {
@@ -107,7 +117,7 @@ namespace Octgn.Launcher
             InputBinding ib = new InputBinding(DebugWindowCommand, kg);
             this.InputBindings.Add(ib);
             Program.lobbyClient.OnFriendRequest += new LobbyClient.FriendRequest(lobbyClient_OnFriendRequest);
-            Program.lobbyClient.OnDisconnectEvent += new EventHandler(lobbyClient_OnDisconnectEvent);
+            Program.lobbyClient.OnDisconnect += new EventHandler(lobbyClient_OnDisconnectEvent);
             Program.lobbyClient.OnUserStatusChanged += new LobbyClient.UserStatusChanged(lobbyClient_OnUserStatusChanged);
             Program.lobbyClient.Chatting.eChatEvent += new Chatting.ChatEventDelegate(Chatting_eChatEvent);
             Program.lobbyClient.OnDataRecieved += new LobbyClient.DataRecieved(lobbyClient_OnDataRecieved);
@@ -316,7 +326,7 @@ namespace Octgn.Launcher
             }
             Program.ClientWindow.Close();
             Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
-            Program.lobbyClient.OnDisconnectEvent -= lobbyClient_OnDisconnectEvent;
+            Program.lobbyClient.OnDisconnect -= lobbyClient_OnDisconnectEvent;
             Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
             Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
             Program.lobbyClient.Stop();
@@ -566,6 +576,16 @@ namespace Octgn.Launcher
         {
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
+        }
+
+        private void bHideLoginNotifications_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Prefs.HideLoginNotifications = "false";
+        }
+
+        private void bHideLoginNotifications_Checked(object sender, RoutedEventArgs e)
+        {
+            Prefs.HideLoginNotifications = "true";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
