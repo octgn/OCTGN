@@ -5,11 +5,14 @@ This is the new home for the OCTGN open source project.  The project's license i
 
 Get Involved! 
 -------------------------------------------------
-* Create a github account (https://github.com/signup/free)
-* Setup git locally (http://help.github.com/win-set-up-git/)
-* Fork the repository (http://help.github.com/fork-a-repo/)
-* Make your awesome change! (see PLAN.md to see future plans)
-* Request we pull it in (http://help.github.com/send-pull-requests/)
+* *REPORT BUGS:* https://github.com/kellyelton/OCTGN/issues
+* *VOTE ON FEATURES:* https://trello.com/board/octgn-v3-0-0-x/4efffbacce6a25c1792b8ee2
+* *HELP US CODE:*
+  * Create a github account (https://github.com/signup/free)
+  * Setup git locally (http://help.github.com/win-set-up-git/)
+  * Fork the repository (http://help.github.com/fork-a-repo/)
+  * Make your awesome change! (see PLAN.md to see future plans)
+  * Request we pull it in (http://help.github.com/send-pull-requests/)
 
 
 Your own awesome changes
