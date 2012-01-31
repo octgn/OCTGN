@@ -20,8 +20,6 @@ namespace Octgn
         public static PlayWindow PlayWindow;
         public static List<ChatWindow> ChatWindows;
 
-        public static Prefs prefs = new Prefs();
-
         public static Game Game;
         public static LobbyClient lobbyClient;
         public static Octgn.Data.GameSettings GameSettings = new Octgn.Data.GameSettings();
