@@ -1,3 +1,10 @@
+This will be the license pending the original authors approval... for now see 
+the wiki under License to learn more about the current licensing.
+
+https://github.com/kellyelton/OCTGN/wiki/License
+
+===============================================================================
+
 Non-Profit Open Software License 3.0 (NPOSL-3.0)
 
 This Non-Profit Open Software License (“Non-Profit OSL”) version 3.0 (the
