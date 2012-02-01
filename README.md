@@ -34,3 +34,11 @@ it can include the required assemblies.
   * OCTGN\octgnFX\Skylabs.Lobby\bin\Debug\Skylabs.Lobby.dll 
   * OCTGN\octgnFX\Octgn\bin\Debug\Skylabs.LobbyServer.exe
 * Do the greatness! 
+
+Useful Links
+-------------------------------------------------
+* *REPORT BUGS:* https://github.com/kellyelton/OCTGN/issues
+* *VOTE ON FEATURES:* https://trello.com/board/octgn-v3-0-0-x/4efffbacce6a25c1792b8ee2
+* *Original Site:* http://www.octgn.net/
+* *Skylabs Site*: https://www.skylabsonline.com/index.php?page=octgn (http://octgn.info)
+* *Discussion about OCTGN games*: http://octgn.gamersjudgement.com/
