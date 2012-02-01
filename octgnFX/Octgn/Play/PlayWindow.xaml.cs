@@ -409,6 +409,13 @@ namespace Octgn.Play
     }
 
     #endregion
+
+    private void ShowRules(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+        var wnd = new RulesWindow() { Owner = this };
+        wnd.ShowDialog();
+    }
   }
 
   internal class CanPlayConverter : IMultiValueConverter
