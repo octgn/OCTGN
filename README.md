@@ -11,7 +11,7 @@ Get Involved!
   * Create a github account (https://github.com/signup/free)
   * Setup git locally (http://help.github.com/win-set-up-git/)
   * Fork the repository (http://help.github.com/fork-a-repo/)
-  * Make your awesome change! (see PLAN.md to see future plans)
+  * Make your awesome change! (see HACK.md get a grip on the project)
   * Request we pull it in (http://help.github.com/send-pull-requests/)
 
 
