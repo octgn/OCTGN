@@ -694,7 +694,7 @@ namespace CassiniDev
                 bodyAsString = Encoding.UTF8.GetString(item.Body);
             }
             // ReSharper disable EmptyGeneralCatchClause
-            catch (Exception e)
+            catch (Exception)
             // ReSharper restore EmptyGeneralCatchClause
             {
                 /* empty bodies should be allowed */
