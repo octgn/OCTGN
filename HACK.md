@@ -48,7 +48,7 @@ For example, the following code found in [PythonApi.py](https://github.com/kelly
 ```def rnd(min, max):
   return _api.Random(min, max)```
 
-It calls Random with a min and max value that is location in [ScriptApi.cs](https://github.com/kellyelton/OCTGN/blob/master/octgnFX/Octgn/Scripting/ScriptAPI.cs).
+It calls Random with a min and max value that is located in [ScriptApi.cs](https://github.com/kellyelton/OCTGN/blob/master/octgnFX/Octgn/Scripting/ScriptAPI.cs).
 
 # octgnFX/CassiniDev
 ...
