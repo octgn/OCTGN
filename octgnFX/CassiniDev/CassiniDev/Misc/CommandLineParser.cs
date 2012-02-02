@@ -1347,7 +1347,8 @@ namespace CassiniDev
 
         private class HelpArgument
         {
-            [Argument(ArgumentType.AtMostOnce, ShortName = "?")] public bool help;
+            [Argument(ArgumentType.AtMostOnce, ShortName = "?")] 
+            public bool help = false;
         }
 
         #endregion
