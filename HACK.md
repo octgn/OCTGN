@@ -9,7 +9,14 @@ a little more nitty gritty about each major piece and how they flow.
 ...
 
 # Python
-...
+Octgn uses IronPython for its in-game scripting engine.
+
+The python definitions go in PythonApi.py. You can call outside code with the following syntax:  _api.<function_name> and it will call the corresponding function in ScriptApi.cs.
+For example, the following code found in PythonApi.py is the random function:
+```def rnd(min, max):
+  return _api.Random(min, max)```
+
+It calls Random with a min and max value that is location in ScriptApi.cs.
 
 # octgnFX/CassiniDev
 ...
