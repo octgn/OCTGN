@@ -95,7 +95,7 @@ namespace Skylabs.LobbyServer
             {
                 StandAloneApp.Start();
                 Status = Lobby.HostedGame.eHostedGame.StartedHosting;
-                TimeStarted = new DateTime(DateTime.Now.Ticks);
+                TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
                 return true;
             }
             catch (Exception e)
