@@ -41,4 +41,4 @@ Useful Links
 * *VOTE ON FEATURES:* https://trello.com/board/octgn-v3-0-0-x/4efffbacce6a25c1792b8ee2
 * *Original Site:* http://www.octgn.net/
 * *Skylabs Site*: https://www.skylabsonline.com/index.php?page=octgn (http://octgn.info)
-* *Discussion about OCTGN games*: http://octgn.gamersjudgement.com/
+* *Discussion about OCTGN games*: Try googling for "octgn3 forum F.A.Q"

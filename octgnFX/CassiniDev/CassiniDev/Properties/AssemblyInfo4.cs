@@ -15,5 +15,5 @@ using System.Security.Permissions;
 [assembly: AssemblyFileVersion("4.0.1.6")]
 [assembly: ComVisible(false)]
 [assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
-[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
+// [assembly: SecurityPermission(SecurityAction.RequestMinimum)] // does nothing on modern CLR
 [assembly: CLSCompliant(true)]
