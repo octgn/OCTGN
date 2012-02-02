@@ -53,6 +53,7 @@ namespace Octgn.Play
     {
       base.OnInitialized(e);
       Program.Dispatcher = this.Dispatcher;
+      this.DataContext = Octgn.Program.Game;
 
       fadeIn = (Storyboard)Resources["ImageFadeIn"];
       fadeOut = (Storyboard)Resources["ImageFadeOut"];
