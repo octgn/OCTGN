@@ -16,7 +16,7 @@
                 <scm:SortDescription PropertyName="Name" />
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
-        <CollectionViewSource Source="{Binding AllGames, Source={x:Static oct:Program.GamesRepository}}" x:Key="gamesDataView">
+        <CollectionViewSource x:Key="gamesDataView">
             <CollectionViewSource.SortDescriptions>
                 <scm:SortDescription PropertyName="Name" />
             </CollectionViewSource.SortDescriptions>
