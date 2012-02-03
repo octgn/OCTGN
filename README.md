@@ -2,7 +2,7 @@ OCTGN 3.0
 =================================================
 This is the new home for the OCTGN open source project.
 
-* Say Hi: irc.freenode.net #octgn
+* Say Hi: http://webchat.freenode.net/?channels=octgn (for those with IRC clients -> irc://irc.freenode.net/#octgn)
 * Report bugs or request features: https://github.com/kellyelton/OCTGN/issues
 * License: https://github.com/kellyelton/OCTGN/blob/master/LICENSE.md
 * Get Involved: https://github.com/kellyelton/OCTGN/blob/master/HACK.md

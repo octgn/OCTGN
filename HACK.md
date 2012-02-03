@@ -1,6 +1,6 @@
 Get Involved! 
 -------------------------------------------------
-* *SAY HI:* irc.freenode.net #octgn
+* *Say Hi:* http://webchat.freenode.net/?channels=octgn (for those with IRC clients -> irc://irc.freenode.net/#octgn)
 * *REPORT BUGS & Request Features:* https://github.com/kellyelton/OCTGN/issues
 * *HELP US CODE:*
   * Create a github account (https://github.com/signup/free)
