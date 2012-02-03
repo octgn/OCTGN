@@ -44,7 +44,9 @@ namespace Octgn.DeckBuilder
 		private static SqlComparison[] StringComparisons = new SqlComparison[] 
 		{
 			new SqlComparison("Contains", "Card.[{0}] LIKE '%{1}%'") { EscapeQuotes = true },
+            new SqlComparison("Does Not Contain", "Card.[{0}] NOT LIKE '%{1}%'") { EscapeQuotes = true },
 			new SqlComparison("Starts with", "Card.[{0}] LIKE '{1}%'") { EscapeQuotes = true },
+            new SqlComparison("Ends with", "Card.[{0}] LIKE '%{1}'") { EscapeQuotes = true },
 			new SqlComparison("Equals", "Card.[{0}] = '{1}'") { EscapeQuotes = true}
 		};
 

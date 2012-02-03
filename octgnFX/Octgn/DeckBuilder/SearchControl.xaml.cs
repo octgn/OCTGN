@@ -120,6 +120,7 @@ namespace Octgn.DeckBuilder
 				var filterCtrl = (FilterControl)VisualTreeHelper.GetChild(container, 0);
 				conditions[i] = filterCtrl.GetSqlCondition();
 			}
+            
 			resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
 		}
 	}
