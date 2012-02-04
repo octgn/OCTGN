@@ -12,3 +12,4 @@ Useful Links
 * *Original Site:* http://www.octgn.net/
 * *Skylabs Site*: https://www.skylabsonline.com/index.php?page=octgn (http://octgn.info)
 * *Discussion about OCTGN games*: Try googling for "octgn3 forum F.A.Q"
+* *Test*: Forcing an IRC message
