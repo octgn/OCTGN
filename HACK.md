@@ -61,7 +61,7 @@ It calls Random with a min and max value that is located in [ScriptApi.cs](https
 
 
 # octgnFX/Octgn
-...
+Most of the work in this project is shouldered by Game.cs. Inside Game.cs is a IVistaDBDatabase that has all card data installed in it. Card data is read and dropped into a CardModel format, which is stored in a Dictionary<Guid, CardModel> cardModelCache.
 
 
 # octgnFX/Octgn.Data
