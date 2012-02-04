@@ -72,6 +72,7 @@
                     <ribbon:RibbonButton Label="Install Game" LargeImageSource="/Resources/Icons/ruby_Add.png" Click="RibbonButton_Click" SmallImageSource="/OCTGN;component/Resources/Icons/ruby_add_small.png" />
                     <ribbon:RibbonButton Label="Remove Game" LargeImageSource="/Resources/Icons/ruby_delete.png" IsEnabled="False" SmallImageSource="/OCTGN;component/Resources/Icons/ruby_delete_small.png" />
                 </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup Header="Filter Games" LargeImageSource="/Resources/Icons/FilterGames.png" />
                 <ribbon:RibbonGroup>
                     <ribbon:RibbonButton x:Name ="bInstallSets" Label="Install Sets" LargeImageSource="/Resources/Icons/image_add.png" Click="bInstallSets_Click" SmallImageSource="/OCTGN;component/Resources/Icons/image_add_small.png" />
                     <ribbon:RibbonButton x:Name="bRemoveSets" Label="Remove Sets" LargeImageSource="/Resources/Icons/image_delete.png" Click="RibbonButton_Click_2" SmallImageSource="/OCTGN;component/Resources/Icons/image_delete_small.png" />

@@ -229,6 +229,9 @@
     <Compile Include="Controls\GroupChatListItem.xaml.cs">
       <DependentUpon>GroupChatListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\HostedGameListFilterItem.xaml.cs">
+      <DependentUpon>HostedGameListFilterItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\HostedGameListItem.xaml.cs">
       <DependentUpon>HostedGameListItem.xaml</DependentUpon>
     </Compile>
@@ -609,6 +612,7 @@
     <Resource Include="Resources\Icons\image_link_small.png" />
     <Resource Include="Resources\chaticon.png" />
     <Resource Include="Resources\Icons\console.png" />
+    <Resource Include="Resources\Icons\FilterGames.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -661,6 +665,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\GroupChatListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\HostedGameListFilterItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

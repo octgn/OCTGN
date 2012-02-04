@@ -136,6 +136,13 @@ namespace Octgn.Launcher
             SystemTrayIcon.Text = "Octgn";
             SystemTrayIcon.DoubleClick += new System.EventHandler(this.SystemTrayIcon_DoubleClick);
             // Insert code required on object creation below this point.
+            foreach (Octgn.Data.Game g in Program.GamesRepository.AllGames)
+            {
+                Controls.HostedGameListFilterItem hglfi = new Controls.HostedGameListFilterItem();
+                hglfi.Game = g;
+                hglfi.Content = g.Name;
+                hglfi.LargeImageSource = new ImageSourceConverter().ConvertFrom(g.GetCardBackUri()) as ImageSource;
+            }
         }
 
         void lobbyClient_OnDataRecieved(DataRecType type, object e)
