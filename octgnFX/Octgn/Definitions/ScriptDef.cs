@@ -14,6 +14,8 @@ namespace Octgn.Definitions
   {
     public string Python { get; private set; }
 
+    public string FileName { get; private set; }
+
     public static List<ScriptDef> LoadAllFromXml(XElement xml, PackagePart part)
     {
       if (xml == null) return new List<ScriptDef>(0);
@@ -30,7 +32,7 @@ namespace Octgn.Definitions
 
       using (var stream = scriptPart.GetStream(FileMode.Open, FileAccess.Read))
       using (var textReader = new StreamReader(stream))
-        return new ScriptDef { Python = textReader.ReadToEnd() };
+        return new ScriptDef { Python = textReader.ReadToEnd(),FileName = srcUri };
     }
   }
 }

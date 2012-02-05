@@ -121,7 +121,29 @@ namespace Octgn
 
             Program.IsGameRunning = true;
         }
+        public void TestBegin()
+        {
+            Database.Open(Definition, true);
+            // Init fields
+            uniqueId = 1; TurnNumber = 0; TurnPlayer = null;
+            string nick = "TestPlayer";
+            //CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
+            //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
+            // Create the global player, if any
+            if (Program.Game.Definition.GlobalDefinition != null)
+                Player.GlobalPlayer = new Player(Program.Game.Definition);
+            // Create the local player
+            Player.LocalPlayer = new Player(Program.Game.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            // Register oneself to the server
+            //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
+             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
+              //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
+            // Load all game markers
+            foreach (Data.MarkerModel m in Database.GetAllMarkers())
+                markersById.Add(m.id, m);
 
+            //Program.IsGameRunning = true;
+        }
         public void Reset()
         {
             TurnNumber = 0; TurnPlayer = null;
