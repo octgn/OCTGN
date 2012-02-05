@@ -9,5 +9,5 @@ This is the new home for the OCTGN open source project.
 
 Useful Links
 -------------------------------------------------
-* *Original Site:* http://www.octgn.net/
-* *Skylabs Site*: https://www.skylabsonline.com/index.php?page=octgn (http://octgn.info)
+* *Download Site*: http://octgn.info/
+* *Octgn 2:* http://www.octgn.net/
