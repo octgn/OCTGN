@@ -81,7 +81,6 @@ namespace Octgn.Data
 
         public void OpenDatabase(bool readOnly)
         {
-            System.Diagnostics.Debug.Assert(IsDatabaseOpen == false, "The database is already open");
             if (!IsDatabaseOpen)
             {
                 try
@@ -91,7 +90,7 @@ namespace Octgn.Data
                     dbc.Open();
                     using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                     {
-                        com.CommandText = "PRAGMA foreign_keys = ON;";
+                        com.CommandText = "PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys = ON; PRAGMA encoding='UTF-8'; PRAGMA temp_store = MEMORY;";
                         com.ExecuteScalar();
                     }
                     IsDatabaseOpen = true;
@@ -421,7 +420,7 @@ namespace Octgn.Data
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "DELETE FROM [sets] WHERE [id]=@id;";
+                    com.CommandText = "BEGIN; DELETE FROM [sets] WHERE [id]=@id; COMMIT;";
 
                     com.Parameters.AddWithValue("@id", set.Id.ToString());
                     com.ExecuteNonQuery();
@@ -496,7 +495,7 @@ namespace Octgn.Data
                     //Build Query
                     StringBuilder sb = new StringBuilder();
                     sb.Append("INSERT OR REPLACE INTO [markers](");
-                    sb.Append("[id],[set_id],[name], [icon]");
+                    sb.Append("[id],[set_id],[game_id],[name],[icon]");
                     sb.Append(") VALUES(");
                     sb.Append("@id,@set_id,@game_id,@name,@icon");
                     sb.Append(");\n");
@@ -542,7 +541,7 @@ namespace Octgn.Data
                 //Add custom properties for the card.
                 sb = new StringBuilder();
                 sb.Append("INSERT INTO [custom_properties](");
-                sb.Append("[id],[card_id],[game_id],[name], [type],[vint],[vstr]");
+                sb.Append("[id],[card_id],[game_id],[name],[type],[vint],[vstr]");
                 sb.Append(") VALUES(");
                 sb.Append("@id,@card_id,@game_id,@name,@type,@vint,@vstr");
                 sb.Append(");\n");
