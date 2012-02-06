@@ -8,7 +8,7 @@
             <TextBox x:Name="search" MaxLines="1"  PreviewKeyDown="FindText" />
         </DockPanel>
         <ScrollViewer x:Name="scroller">
-            <RichTextBox x:Name="rules" VerticalAlignment="Top" AcceptsTab="True" />           
+            <RichTextBox x:Name="rules" VerticalAlignment="Top" PreviewKeyDown="FindNext" />           
         </ScrollViewer>
     </DockPanel>
 </Window>

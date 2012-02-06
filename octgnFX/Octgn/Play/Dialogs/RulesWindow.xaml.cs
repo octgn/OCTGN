@@ -114,6 +114,19 @@ namespace Octgn.Play.Dialogs
           return null;
         }
 
+        private void FindNext(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                DoSearch(rules, search.Text, true);
+                // WPF RichTextBox doesn't include "scrolltocaret"
+                Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+                double totaloffset = thisposition.Top + rules.VerticalOffset;
+                scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight / 2);
+            }
+            e.Handled = true;
+        }
+
         /* Credits go to StackOverflow and it's authors for helping me fix some of these annoying problems
          * http://stackoverflow.com/questions/1756844/making-a-simple-search-function-making-the-cursor-jump-to-or-highlight-the-wo
          * http://stackoverflow.com/questions/837086/c-sharp-loading-a-large-file-into-a-wpf-richtextbox
