@@ -420,7 +420,7 @@ namespace Octgn.Data
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "BEGIN; DELETE FROM [sets] WHERE [id]=@id; COMMIT;";
+                    com.CommandText = "DELETE FROM [sets] WHERE [id]=@id;";
 
                     com.Parameters.AddWithValue("@id", set.Id.ToString());
                     com.ExecuteNonQuery();
