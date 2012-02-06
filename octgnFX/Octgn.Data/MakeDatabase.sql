@@ -1,10 +1,10 @@
-﻿begin transaction;
-
-PRAGMA auto_vacuum=INCREMENTAL;
+﻿PRAGMA auto_vacuum=INCREMENTAL;
 PRAGMA encoding='UTF-8';
 PRAGMA foreign_keys = ON;
 PRAGMA synchronous = OFF; 
 PRAGMA temp_store = MEMORY;
+
+begin transaction;
 
 CREATE TABLE [dbinfo] (
   [version] INTEGER NOT NULL
