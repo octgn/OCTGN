@@ -87,6 +87,8 @@ namespace Octgn.DeckBuilder
 				deckFilename = null;
 			}
             Version Oversion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            this.newSubMenu.ItemsSource = Program.GamesRepository.AllGames;
+            this.loadSubMenu.ItemsSource = Program.GamesRepository.AllGames;
             this.Title = "OCTGN Deck Editor  version " + Oversion;
 		}
 

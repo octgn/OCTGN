@@ -89,7 +89,7 @@ namespace Octgn.Launcher
         }
 
         public static readonly DependencyProperty IsHideLoginNotificationsCheckedProperty =
-         DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof(string), typeof(Window), new UIPropertyMetadata(Program.prefs.HideLoginNotifications));
+         DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof(string), typeof(Window), new UIPropertyMetadata(Prefs.HideLoginNotifications));
 
         public string IsHideJoinsChecked
         {
@@ -587,12 +587,12 @@ namespace Octgn.Launcher
 
         private void bHideLoginNotifications_Unchecked(object sender, RoutedEventArgs e)
         {
-            Program.prefs.HideLoginNotifications = "false";
+            Prefs.HideLoginNotifications = "false";
         }
 
         private void bHideLoginNotifications_Checked(object sender, RoutedEventArgs e)
         {
-            Program.prefs.HideLoginNotifications = "true";
+            Prefs.HideLoginNotifications = "true";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

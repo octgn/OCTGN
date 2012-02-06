@@ -295,14 +295,9 @@ namespace Octgn.Server
 						byte[] data = new byte[length - 4]; Array.Copy(packet, 4, data, 0, length - 4);
 
 
-                        byte[] verify = Array.FindAll(data, val => val.Equals(((byte)0x00)));
-                        //check if the null values does not exceed 20% of the message else do not process it.
-                        if (!(verify.Length > (data.Length / 5)))
-                        {
                             // Lock the handler, because it is not thread-safe
                             lock (server.handler)
                                 server.handler.ReceiveMessage(data, client, this);
-                        }
 
 						// Adjust the packet pos and contents
 						packetPos -= length;

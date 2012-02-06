@@ -83,6 +83,8 @@ namespace Octgn
 
         public Dictionary<string, int> Variables
         { get; private set; }
+        public Dictionary<string, string> GlobalVariables
+        { get; private set; }
 
         public Game(GameDef def)
         {
@@ -91,6 +93,9 @@ namespace Octgn
             Variables = new Dictionary<string, int>();
             foreach (var varDef in def.Variables.Where(v => v.Global))
                 Variables.Add(varDef.Name, varDef.DefaultValue);
+            GlobalVariables = new Dictionary<string, string>();
+            foreach (var varDef in def.GlobalVariables)
+                GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
         }
 
         public void Begin()
@@ -116,7 +121,29 @@ namespace Octgn
 
             Program.IsGameRunning = true;
         }
+        public void TestBegin()
+        {
+            Database.Open(Definition, true);
+            // Init fields
+            uniqueId = 1; TurnNumber = 0; TurnPlayer = null;
+            string nick = "TestPlayer";
+            //CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
+            //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
+            // Create the global player, if any
+            if (Program.Game.Definition.GlobalDefinition != null)
+                Player.GlobalPlayer = new Player(Program.Game.Definition);
+            // Create the local player
+            Player.LocalPlayer = new Player(Program.Game.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            // Register oneself to the server
+            //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
+             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
+              //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
+            // Load all game markers
+            foreach (Data.MarkerModel m in Database.GetAllMarkers())
+                markersById.Add(m.id, m);
 
+            //Program.IsGameRunning = true;
+        }
         public void Reset()
         {
             TurnNumber = 0; TurnPlayer = null;
@@ -128,6 +155,8 @@ namespace Octgn
                     c.Reset();
                 foreach (var varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
                     p.Variables[varDef.Name] = varDef.DefaultValue;
+                foreach (var g in Definition.PlayerDefinition.GlobalVariables)
+                    p.GlobalVariables[g.Name] = g.DefaultValue;
             }
             Table.Reset();
             Card.Reset(); CardIdentity.Reset();
@@ -135,7 +164,8 @@ namespace Octgn
             RandomRequests.Clear();
             foreach (var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
                 Variables[varDef.Name] = varDef.DefaultValue;
-
+            foreach (var g in Definition.GlobalVariables)
+                GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug
             var mainWin = Program.PlayWindow;
             mainWin.RaiseEvent(new Octgn.Play.Gui.CardEventArgs(Octgn.Play.Gui.CardControl.CardHoveredEvent, mainWin));

@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Octgn.Definitions;
+using System.IO;
+using Skylabs.Lobby.Threading;
 
 namespace Octgn.Launcher
 {
@@ -21,12 +24,15 @@ namespace Octgn.Launcher
     {
         public bool IsClosingDown { get; set; }
         private bool stopReading = false;
+        private List<string> Errors = new List<string>();
         public UpdateChecker()
         {
             IsClosingDown = false;
             InitializeComponent();
-            Thread t = new Thread(CheckForUpdates);
-            t.Start();
+            LazyAsync.Invoke(VerifyAllDefs);
+            lblStatus.Content = "";
+            //Thread t = new Thread(VerifyAllDefs);
+            //t.Start();
         }
         private void CheckForUpdates()
         {
@@ -65,6 +71,71 @@ namespace Octgn.Launcher
                 }
             }
             this.Close();
+        }
+        private void VerifyAllDefs()
+        {
+            UpdateStatus("Loading Game Definitions...");
+            try
+            {
+                if (Program.GamesRepository == null)
+                    Program.GamesRepository = new Octgn.Data.GamesRepository();
+                Octgn.Scripting.Engine engine;
+                List<Data.Game> g2r = new List<Data.Game>();
+                foreach (Octgn.Data.Game g in Program.GamesRepository.Games)
+                {
+                    UpdateStatus("Checking Game: " + g.Name);
+                    if (!File.Exists(g.Filename))
+                    {
+                        Errors.Add("[" + g.Name + "]: Def file doesn't exist at " + g.Filename);
+                        continue;
+                    }
+                    Program.Game = new Game(GameDef.FromO8G(g.Filename));
+                    Program.Game.TestBegin();
+                    IEnumerable<Play.Player> plz = Play.Player.All;
+                    engine = new Scripting.Engine(true);
+                    string[] terr = engine.TestScripts(Program.Game);
+                    Program.Game.End();
+                    if (terr.Length > 0)
+                    {
+                        Errors.AddRange(terr);
+                        g2r.Add(g);
+                        
+                    }
+                }
+                foreach(Octgn.Data.Game g in g2r)
+                    Program.GamesRepository.Games.Remove(g);
+                if (Errors.Count > 0)
+                {
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        String ewe = "";
+                        foreach (string s in Errors)
+                            ewe += s + Environment.NewLine;
+                        ErrorWindow er = new ErrorWindow(ewe);
+                        er.ShowDialog();
+                    }));
+
+                }
+                UpdateStatus("Checking for updates...");
+            }
+            catch (Exception)
+            {
+                //System.Diagnostics.Debugger.Break();
+            }
+            CheckForUpdates();
+        }
+        private void UpdateStatus(string stat)
+        {
+            Dispatcher.BeginInvoke(new Action(() => {
+                try
+                {
+                    lblStatus.Content = stat;
+                }
+                catch (Exception)
+                {
+                    System.Diagnostics.Debugger.Break();
+                }
+            }));
         }
         private bool FileExists(string URL)
         {

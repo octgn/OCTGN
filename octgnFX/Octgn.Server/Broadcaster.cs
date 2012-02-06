@@ -583,5 +583,21 @@ namespace Octgn.Server
                 bin.CancelLimited(player);
             Send();
         }
+        public void PlayerSetGlobalVariable(byte from, byte p, string n, string v)
+        {
+            if (xml != null)
+                xml.PlayerSetGlobalVariable(from,p,n,v);
+            if (bin != null)
+                bin.PlayerSetGlobalVariable(from, p, n, v);
+            Send();
+        }
+        public void SetGlobalVariable( string n, string v)
+        {
+            if (xml != null)
+                xml.SetGlobalVariable( n, v);
+            if (bin != null)
+                bin.SetGlobalVariable( n, v);
+            Send();
+        }
     }
 }

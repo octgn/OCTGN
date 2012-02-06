@@ -14,6 +14,8 @@ using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
 using System.Windows;
 using System.Globalization;
+using System.Diagnostics;
+using System.Security.Policy;
 
 namespace Octgn.Scripting
 {
@@ -32,23 +34,50 @@ namespace Octgn.Scripting
     // is an aweful and ugly mess.
     private Sponsor sponsor;
 
-    public Engine()
+    public Engine():this(false)
     {      
-      AppDomain sandbox = CreateSandbox();
-      engine = Python.CreateEngine(sandbox);
-      outputWriter = new StreamWriter(outputStream);
-      engine.Runtime.IO.SetOutput(outputStream, outputWriter);
-      engine.SetSearchPaths(new string[] { Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib") });
+        
+    }
+    public Engine(bool forTesting)
+    {
+        AppDomain sandbox = CreateSandbox(forTesting);
+        engine = Python.CreateEngine(sandbox);
+        outputWriter = new StreamWriter(outputStream);
+        engine.Runtime.IO.SetOutput(outputStream, outputWriter);
+        engine.SetSearchPaths(new string[] { Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib") });
 
-      api = new ScriptApi(this);
+        api = new ScriptApi(this);
 
-      ActionsScope = CreateScope();
-      // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
-      foreach (var s in Program.Game.Definition.Scripts)
-      {
-        var src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
-        src.Execute(ActionsScope);
-      }
+        ActionsScope = CreateScope();
+        // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
+        if (Program.Game != null && !forTesting)
+        {
+            foreach (var s in Program.Game.Definition.Scripts)
+            {
+                var src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+                src.Execute(ActionsScope);
+            }
+        }
+    }
+
+    public String[] TestScripts(Octgn.Game game)
+    {
+        List<string> errors = new List<string>();
+        foreach (var s in game.Definition.Scripts)
+        {
+            try
+            {
+                var src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+                src.Execute(ActionsScope);
+            }
+            catch (Exception e)
+            {
+                ExceptionOperations eo = engine.GetService<ExceptionOperations>();
+                string error = eo.FormatException(e);
+                errors.Add(String.Format("[{2}:{0}]: Python Error:\n{1}", game.Definition.Name, error, s.FileName));
+            }
+        }
+        return errors.ToArray();
     }
 
     public ScriptScope CreateScope(bool injectApi = true)
@@ -61,36 +90,36 @@ namespace Octgn.Scripting
 
     public bool TryExecuteInteractiveCode(string code, ScriptScope scope, Action<ExecutionResult> continuation)
     {
-      var src = engine.CreateScriptSourceFromString(code, SourceCodeKind.InteractiveCode);
-      switch (src.GetCodeProperties())
-      {
-        case ScriptCodeParseResult.IncompleteToken: return false;
-        case ScriptCodeParseResult.IncompleteStatement:
-          // An empty line ends the statement
-          if (!code.TrimEnd(' ', '\t').EndsWith("\n"))
-            return false;
-          break;
-      }
-      StartExecution(src, scope, continuation);
+        var src = engine.CreateScriptSourceFromString(code, SourceCodeKind.InteractiveCode);
+        switch (src.GetCodeProperties())
+        {
+            case ScriptCodeParseResult.IncompleteToken: return false;
+            case ScriptCodeParseResult.IncompleteStatement:
+                // An empty line ends the statement
+                if (!code.TrimEnd(' ', '\t').EndsWith("\n"))
+                    return false;
+                break;
+        }
+        StartExecution(src, scope, continuation);
       return true;
     }
 
     public void ExecuteOnGroup(string function, Play.Group group)
     {
       string pythonGroup = ScriptApi.GroupCtor(group);
-      var src = engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup), SourceCodeKind.Statements);
-      StartExecution(src, ActionsScope, null);
+        var src = engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup), SourceCodeKind.Statements);
+        StartExecution(src, ActionsScope, null);
     }
 
     public void ExecuteOnGroup(string function, Play.Group group, Point position)
     {
       string pythonGroup = ScriptApi.GroupCtor(group);
-      var src = engine.CreateScriptSourceFromString(
+        var src = engine.CreateScriptSourceFromString(
         string.Format(System.Globalization.CultureInfo.InvariantCulture,
-          "{0}({1}, {2:F3}, {3:F3})", 
-          function, pythonGroup, position.X, position.Y), 
+            "{0}({1}, {2:F3}, {3:F3})",
+            function, pythonGroup, position.X, position.Y),
         SourceCodeKind.Statements);
-      StartExecution(src, ActionsScope, null);
+        StartExecution(src, ActionsScope, null);
     }
 
     public void ExecuteOnCards(string function, IEnumerable<Play.Card> cards, Point? position = null)
@@ -102,8 +131,8 @@ namespace Octgn.Scripting
         sb.AppendFormat(CultureInfo.InvariantCulture,
                         "{0}(Card({1}){2})\n", 
                         function, card.Id, posArguments);
-      var src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
-      StartExecution(src, ActionsScope, null);
+        var src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
+        StartExecution(src, ActionsScope, null);
     }
 
     public void ExecuteOnBatch(string function, IEnumerable<Play.Card> cards, Point? position = null)
@@ -116,9 +145,8 @@ namespace Octgn.Scripting
       if (position != null)
         sb.AppendFormat(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}", position.Value.X, position.Value.Y);
       sb.Append(")\n");
-
-      var src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
-      StartExecution(src, ActionsScope, null);
+        var src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
+        StartExecution(src, ActionsScope, null);
     }
 
     private void StartExecution(ScriptSource src, ScriptScope scope, Action<ExecutionResult> continuation)
@@ -159,7 +187,10 @@ namespace Octgn.Scripting
           job.signal2.Set();
           job.signal.WaitOne();
         }
-
+        if (job.result != null && !String.IsNullOrWhiteSpace(job.result.Error))
+        {
+            Program.TraceWarning("----Python Error----\n{0}\n----End Error----\n", job.result.Error);
+        }
         if (job.suspended) return;
         job.signal.Dispose();
         job.signal2.Dispose();
@@ -186,7 +217,11 @@ namespace Octgn.Scripting
       }
       catch (Exception ex)
       {
-        result.Error = ex.Message;
+        ExceptionOperations eo = engine.GetService<ExceptionOperations>();
+        string error = eo.FormatException(ex);
+        result.Error = error + Environment.NewLine + job.source.GetCode();
+        //result.Error = String.Format("{0}\n{1}",ex.Message,ex.StackTrace);
+        //Program.TraceWarning("----Python Error----\n{0}\n----End Error----\n", result.Error);
       }
       job.result = result;
       job.signal.Set();
@@ -249,16 +284,19 @@ namespace Octgn.Scripting
       }
     }
 
-    private static AppDomain CreateSandbox()
+    private static AppDomain CreateSandbox(bool forTesting)
     {
-      var permissions = new PermissionSet(PermissionState.None);
-      permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
-      permissions.AddPermission(new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery, AppDomain.CurrentDomain.BaseDirectory));
-      
-      var appinfo = new AppDomainSetup();
-      appinfo.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
+        var permissions = new PermissionSet(PermissionState.None);
+        if (forTesting)
+            permissions = new PermissionSet(PermissionState.Unrestricted);
+        permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.SerializationFormatter | SecurityPermissionFlag.Execution));
+        permissions.AddPermission(new UIPermission(UIPermissionWindow.AllWindows));
+        permissions.AddPermission(new TypeDescriptorPermission(TypeDescriptorPermissionFlags.RestrictedRegistrationAccess));
+        permissions.AddPermission(new FileIOPermission(FileIOPermissionAccess.Read| FileIOPermissionAccess.PathDiscovery, AppDomain.CurrentDomain.BaseDirectory));
+        var appinfo = new AppDomainSetup();
+        appinfo.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
 
-      return AppDomain.CreateDomain("Scripting sandbox", null, appinfo, permissions);
+        return AppDomain.CreateDomain("Scripting sandbox", null, appinfo, permissions);
     }
 
     #region IDisposable

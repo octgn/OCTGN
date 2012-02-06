@@ -83,9 +83,10 @@ namespace Octgn.Launcher
 
             if (Program.PlayWindow == null)
             {
+                Program.Client.Rpc.Start();
                 Program.PlayWindow = new Octgn.Play.PlayWindow();
-
                 Program.PlayWindow.Show();
+                Program.ClientWindow.HostJoinTab();
             }
 		}
 
@@ -97,8 +98,6 @@ namespace Octgn.Launcher
                 Program.lobbyClient.HostedGameStarted();
                 e.Handled = true;
                 Start();
-                Program.Client.Rpc.Start();
-                Program.ClientWindow.HostJoinTab();
             }
 		}
 

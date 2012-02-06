@@ -51,7 +51,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\Octgn\bin\Debug\</OutputPath>
+    <OutputPath>..\Octgn\bin\x86\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -171,7 +171,6 @@
     <Compile Include="Ban.cs" />
     <Compile Include="ChatRoom.cs" />
     <Compile Include="Chatting.cs" />
-    <Compile Include="Clientold.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Gaming.cs" />
     <Compile Include="HostedGame.cs" />

@@ -22,6 +22,7 @@ namespace Octgn.Launcher
                 // (e.g. after playing a game or browsing a deck), releases it
                 GC.Collect(GC.MaxGeneration);
                 GC.WaitForPendingFinalizers();
+                this.gamesList.DataContext = Program.GamesRepository.AllGames;
             };
         }
 

@@ -72,13 +72,18 @@
 							AlternatingRowBackground="#ffffc7"
 							VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
 							SelectionChanged="ResultCardSelected"
-							Keyboard.PreviewKeyDown="ResultKeyDownHandler" MouseDoubleClick="ResultDoubleClick">
-			<DataGrid.Columns>
+							Keyboard.PreviewKeyDown="ResultKeyDownHandler">
+            <DataGrid.RowStyle>
+                <Style>
+                    <EventSetter Event="DataGridRow.MouseDoubleClick" Handler="ResultDoubleClick"/>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
 				<DataGridTextColumn Binding="{Binding name, Mode=OneTime}" Header="Name" Width="Auto" />
-				<DataGridTextColumn Header="Set" Width="Auto" SortMemberPath="setId">
+				<DataGridTextColumn Header="Set" Width="Auto" SortMemberPath="set_id">
 					<DataGridTextColumn.Binding>
 						<MultiBinding Converter="{StaticResource SetConverter}">
-							<Binding Path="setId" />
+							<Binding Path="set_id" />
 							<Binding Path="Game" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type deck:SearchControl}}" />
 						</MultiBinding>
 					</DataGridTextColumn.Binding>

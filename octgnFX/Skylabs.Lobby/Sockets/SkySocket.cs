@@ -199,12 +199,8 @@ namespace Skylabs.Lobby.Sockets
                     byte[] buff = (byte[])ar.AsyncState;
                     if (buff == null)
                         return;
-                    if(Sock == null)
-                        Trace.WriteLine("Sock == null in AsyncReadDone?");
                     if (Sock.Client == null)
-                        Trace.WriteLine("Sock.Client == null in AsyncReadDone?");
-                    if(ar == null)
-                        Trace.WriteLine("ar == null in AsyncReadDone?");
+                        return;
                     int rin = Sock.Client.EndReceive(ar);
                     if (rin > 0)
                     {

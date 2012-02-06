@@ -7,42 +7,43 @@
     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     WindowTitle="OCTGN - Manage games" Height="400"
     >
-    
-	<Page.Resources>
-    <CollectionViewSource Source="{Binding AllGames, Source={x:Static oct:Program.GamesRepository}}" x:Key="gamesDataView">
-      <CollectionViewSource.SortDescriptions>
-        <scm:SortDescription PropertyName="Name" />
-      </CollectionViewSource.SortDescriptions>
-    </CollectionViewSource>
-    <CollectionViewSource Source="{Binding SelectedItem.Sets, ElementName=gamesList}" x:Key="setsView"                          
+
+    <Page.Resources>
+
+        <CollectionViewSource Source="{Binding SelectedItem.Sets, ElementName=gamesList}" x:Key="setsView"                          
                           CollectionViewType="my:DispatchedCollectionView">
-      <CollectionViewSource.SortDescriptions>
-        <scm:SortDescription PropertyName="Name" />
-      </CollectionViewSource.SortDescriptions>
-    </CollectionViewSource>
-  </Page.Resources>
-  
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="200" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-	    
-		<Border Style="{StaticResource Panel}" Margin="8,8,4,8">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				
-				<TextBlock Margin="5" TextWrapping="Wrap" Text="Installed Games" />
-				
-				<Border Style="{StaticResource PanelControl}" Margin="5" Grid.Row="1">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Name" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+        <CollectionViewSource x:Key="gamesDataView">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Name" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource Panel}" Margin="8,8,4,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Margin="5" TextWrapping="Wrap" Text="Installed Games" />
+
+                <Border Style="{StaticResource PanelControl}" Margin="5" Grid.Row="1">
                     <ListBox x:Name="gamesList"
 							 ItemsSource="{Binding Source={StaticResource gamesDataView}}">
                         <ListBox.ItemTemplate>
@@ -51,61 +52,61 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                </Border>	  				
-				
-				<Button Margin="5" Grid.Row="2"
-						Click="InstallGame" Content="Install a new game" />
-			</Grid>
-		</Border>			
-	    
-		<Border Grid.Column="2" Style="{StaticResource Panel}" Margin="4,8,8,8">
-			<Grid DataContext="{Binding ElementName=gamesList,Path=SelectedItem}">
-				<Grid.ColumnDefinitions>
-				  <ColumnDefinition Width="*" />
-				  <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-				  <RowDefinition Height="Auto" />
-				  <RowDefinition Height="Auto" />
-				  <RowDefinition Height="*" />
-				  <RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
+                </Border>
 
-        <TextBlock Foreground="White" Grid.ColumnSpan="3" Margin="5">
+                <Button Margin="5" Grid.Row="2"
+						Click="InstallGame" Content="Install a new game" />
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="2" Style="{StaticResource Panel}" Margin="4,8,8,8">
+            <Grid DataContext="{Binding ElementName=gamesList,Path=SelectedItem}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Foreground="White" Grid.ColumnSpan="3" Margin="5">
           <Run Text="{Binding Name}" FontWeight="Bold" />
           <Run Text="{Binding Version, StringFormat= (v. \{0\})}" FontSize="12" />
-        </TextBlock>
+                </TextBlock>
 
-        <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Margin="5"
+                <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Margin="5"
 						   Text="Card sets" />
-				
-				<Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Margin="5" Style="{StaticResource PanelControl}">
-          <ListBox x:Name="setsList"  
+
+                <Border Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Margin="5" Style="{StaticResource PanelControl}">
+                    <ListBox x:Name="setsList"  
 							     ItemsSource="{Binding Source={StaticResource setsView}}" >
-            <ListBox.ItemTemplate>
-              <DataTemplate>
-                <TextBlock ToolTipService.ToolTip="{Binding Path=PackageName}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock ToolTipService.ToolTip="{Binding Path=PackageName}">
                   <Run Text="{Binding Name, Mode=OneTime}" />
                   <Run Text="{Binding Version, StringFormat= (v. \{0\}), Mode=OneTime}" 
                        Foreground="#888888" FontSize="12" />
-                </TextBlock>
-              </DataTemplate>              
-            </ListBox.ItemTemplate>
-          </ListBox>
-				</Border>
-				
-				<Button Grid.Row="3" Margin="5" 
-						Click="InstallCards" Content="Install new cards" />
-				<Button Grid.Column="1" Grid.Row="3" Margin="5" 
-						Click="DeleteSet" Content="Delete set" />
-        <Button Grid.Column="2" Grid.Row="3" Margin="5"
-                Click="PatchSets" Content="Patch sets" />
-		  </Grid>	  
-		</Border>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
 
-		<Button Grid.Row="1" Grid.ColumnSpan="2"
+                <Button Grid.Row="3" Margin="5" 
+						Click="InstallCards" Content="Install new cards" />
+                <Button Grid.Column="1" Grid.Row="3" Margin="5" 
+						Click="DeleteSet" Content="Delete set" />
+                <Button Grid.Column="2" Grid.Row="3" Margin="5"
+                Click="PatchSets" Content="Patch sets" />
+            </Grid>
+        </Border>
+
+        <Button Grid.Row="1" Grid.ColumnSpan="2"
 				Command="BrowseBack" Content="Close" 
 				Margin="5" MinWidth="128" HorizontalAlignment="Center" />
-	</Grid>			
+    </Grid>
 </Page>

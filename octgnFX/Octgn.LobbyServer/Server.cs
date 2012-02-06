@@ -331,9 +331,9 @@ namespace Skylabs.LobbyServer
                 {
                     Console.WriteLine("AcceptReceiveDataCallback: ObjectDisposedException");
                 }
-                catch (SocketException e)
+                catch (SocketException)
                 {
-                    Trace.TraceError("AcceptReceiveDataCallback:" + e.Message, e);
+                    
                 }
                 AcceptClients();
                 //Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");

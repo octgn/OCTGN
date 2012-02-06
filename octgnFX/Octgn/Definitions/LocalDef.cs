@@ -2,6 +2,7 @@ using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
 using Octgn.Data;
+using System.Collections.Generic;
 
 namespace Octgn.Definitions
 {
@@ -27,13 +28,15 @@ namespace Octgn.Definitions
 	{
       public string IndicatorsFormat { get; private set; }
       public GroupDef Hand { get; private set; }
+      public List<GlobalVariableDef> GlobalVariables { get; private set; }
 
       internal static PlayerDef LoadFromXml(XElement xml, PackagePart part)
       {
          var res = new PlayerDef
          {
             IndicatorsFormat = xml.Attr<string>("summary"),
-            Hand = GroupDef.LoadFromXml(xml.Child("hand"), part, 0)
+            Hand = GroupDef.LoadFromXml(xml.Child("hand"), part, 0),
+            GlobalVariables = GlobalVariableDef.LoadAllFromXml(xml)
          };
          res.LoadBaseXml(xml, part);
          return res;

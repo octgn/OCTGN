@@ -75,6 +75,8 @@ namespace Octgn.Play
 
     public Dictionary<string, int> Variables
     { get; private set; }
+    public Dictionary<string, string> GlobalVariables
+    { get; private set; }
 
 		private readonly Hand hand;              // Hand of this player (may be null)
 		public Hand Hand
@@ -217,6 +219,10 @@ namespace Octgn.Play
             Variables = new Dictionary<string, int>();
             foreach (var varDef in g.Variables.Where(v => !v.Global))
                 Variables.Add(varDef.Name, varDef.DefaultValue);
+            // Create global variables
+            GlobalVariables = new Dictionary<string, string>();
+            foreach (var varD in g.PlayerDefinition.GlobalVariables)
+                GlobalVariables.Add(varD.Name, varD.Value);
 			// Create a hand, if any
 			if (g.PlayerDefinition.Hand != null)
 				hand = new Hand(this, g.PlayerDefinition.Hand);
@@ -237,6 +243,13 @@ namespace Octgn.Play
 			all.Add(this);
 			// Init fields
 			name = "Global"; Id = 0; PublicKey = 0;
+            if (GlobalVariables == null)
+            {
+                // Create global variables
+                GlobalVariables = new Dictionary<string, string>();
+                foreach (var varD in g.PlayerDefinition.GlobalVariables)
+                    GlobalVariables.Add(varD.Name, varD.Value);
+            }
 			// Create counters
 			counters = new Counter[globalDef.Counters != null ? globalDef.Counters.Length : 0];
 			for (int i = 0; i < Counters.Length; i++)

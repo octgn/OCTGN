@@ -485,6 +485,21 @@ namespace Octgn.Server
                             handler.CancelLimitedReq();
                             break;
                         }
+                    case "PlayerSetGlobalVariable":
+                        {
+                            byte p = byte.Parse(reader.ReadElementString("who"), CultureInfo.InvariantCulture);
+                            string n = reader.ReadElementString("name");
+                            string v = reader.ReadElementString("value");
+                            handler.PlayerSetGlobalVariable(p, n, v);
+                            break;
+                        }
+                    case "SetGlobalVariable":
+                        {
+                            string n = reader.ReadElementString("name");
+                            string v = reader.ReadElementString("value");
+                            handler.SetGlobalVariable(n, v);
+                            break;
+                        }
                     default:
                         Debug.WriteLine("[Client Parser] Unknown message: " + method);
                         break;

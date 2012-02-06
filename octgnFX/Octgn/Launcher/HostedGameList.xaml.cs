@@ -45,11 +45,12 @@ namespace Octgn.Launcher
                                                           gids[count] = game.Id;
                                                           count++;
                                                       }
-                                                      HostedGame[] gl = Program.lobbyClient.GetHostedGames();
+                                                      HostedGame[] gl = Program.lobbyClient.GetHostedGames().OrderByDescending(item => item.TimeStarted).ToArray();
                                                       foreach (HostedGame g in gl)
                                                       {
                                                           
-                                                          if (gids.Contains(g.GameGuid))
+                                                          if (gids.Contains(g.GameGuid) &&  g.GameStatus == HostedGame.eHostedGame.StartedHosting 
+                                                              && g.UserHosting.Status != UserStatus.Offline && g.UserHosting.Status != UserStatus.Unknown)
                                                           {
                                                               HostedGameListItem gs = new HostedGameListItem(g);
                                                               if (g.GameStatus == HostedGame.eHostedGame.StartedHosting)

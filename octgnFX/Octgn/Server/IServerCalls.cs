@@ -114,6 +114,10 @@ namespace Octgn.Server
         void StartLimitedReq(Guid[] packs);
 
         void CancelLimitedReq();
+
+        void PlayerSetGlobalVariable(Player p, string n, string v);
+        void SetGlobalVariable(string n, string v);
+
         void Ping();
     }
 }

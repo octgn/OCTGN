@@ -113,7 +113,6 @@ namespace Skylabs.Net
                     Trace.TraceError("sm0:" + e.Message, e);
                     return null;
                 }
-                return null;
             }
         }
 

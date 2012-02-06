@@ -14,7 +14,10 @@ namespace Octgn
         {
             detailsBox.Text = ex.ToString();
         }
-
+        public ErrorWindow(string ex) : this()
+        {
+            detailsBox.Text = ex;
+        }
         private void CopyDetails(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
