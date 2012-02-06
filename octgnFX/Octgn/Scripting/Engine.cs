@@ -34,40 +34,50 @@ namespace Octgn.Scripting
     // is an aweful and ugly mess.
     private Sponsor sponsor;
 
-    public Engine()
+    public Engine():this(false)
     {      
-      AppDomain sandbox = CreateSandbox();
-      engine = Python.CreateEngine(sandbox);
-      outputWriter = new StreamWriter(outputStream);
-      engine.Runtime.IO.SetOutput(outputStream, outputWriter);
-      engine.SetSearchPaths(new string[] { Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib") });
-
-      api = new ScriptApi(this);
-
-      ActionsScope = CreateScope();
-      // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
-      foreach (var s in Program.Game.Definition.Scripts)
-      {
-          var src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
-          src.Execute(ActionsScope);
-      }
+        
     }
-
-
-    public void TestScripts()
+    public Engine(bool forTesting)
     {
-        foreach (var s in Program.Game.Definition.Scripts)
+        AppDomain sandbox = CreateSandbox(forTesting);
+        engine = Python.CreateEngine(sandbox);
+        outputWriter = new StreamWriter(outputStream);
+        engine.Runtime.IO.SetOutput(outputStream, outputWriter);
+        engine.SetSearchPaths(new string[] { Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib") });
+
+        api = new ScriptApi(this);
+
+        ActionsScope = CreateScope();
+        // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
+        if (Program.Game != null && !forTesting)
         {
-            ObjectHandle ex;
-            engine.ExecuteAndWrap(s.Python, ActionsScope, out ex);
-            if (ex != null)
+            foreach (var s in Program.Game.Definition.Scripts)
             {
-                ExceptionOperations eo = engine.GetService<ExceptionOperations>();
-                string error = eo.FormatException(ex);
-                ErrorWindow ew = new ErrorWindow("Python Error:\n" + error);
-                ew.ShowDialog();
+                var src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+                src.Execute(ActionsScope);
             }
         }
+    }
+
+    public String[] TestScripts(Octgn.Game game)
+    {
+        List<string> errors = new List<string>();
+        foreach (var s in game.Definition.Scripts)
+        {
+            try
+            {
+                var src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+                src.Execute(ActionsScope);
+            }
+            catch (Exception e)
+            {
+                ExceptionOperations eo = engine.GetService<ExceptionOperations>();
+                string error = eo.FormatException(e);
+                errors.Add(String.Format("[{2}:{0}]: Python Error:\n{1}", game.Definition.Name, error, s.FileName));
+            }
+        }
+        return errors.ToArray();
     }
 
     public ScriptScope CreateScope(bool injectApi = true)
@@ -274,9 +284,11 @@ namespace Octgn.Scripting
       }
     }
 
-    private static AppDomain CreateSandbox()
+    private static AppDomain CreateSandbox(bool forTesting)
     {
         var permissions = new PermissionSet(PermissionState.None);
+        if (forTesting)
+            permissions = new PermissionSet(PermissionState.Unrestricted);
         permissions.AddPermission(new SecurityPermission(SecurityPermissionFlag.SerializationFormatter | SecurityPermissionFlag.Execution));
         permissions.AddPermission(new UIPermission(UIPermissionWindow.AllWindows));
         permissions.AddPermission(new TypeDescriptorPermission(TypeDescriptorPermissionFlags.RestrictedRegistrationAccess));

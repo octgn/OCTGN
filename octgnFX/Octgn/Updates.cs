@@ -62,7 +62,7 @@ namespace Octgn
                     Application.Current.ShutdownMode = oldShutdownMode;
                 }
 
-                Data.GamesRepository.UpgradeFrom(ver);
+                //Data.GamesRepository.UpgradeFrom(ver);
             }
 
             Settings.Default.PreviousVersion = OctgnApp.OctgnVersion.ToString();

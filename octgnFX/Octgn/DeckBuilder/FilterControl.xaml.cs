@@ -29,7 +29,7 @@ namespace Octgn.DeckBuilder
 			DataContextChanged += delegate
 			{
 				property = DataContext as PropertyDef;
-        if (property == null) return; // Happens when the control is unloaded
+		if (property == null) return; // Happens when the control is unloaded
 				CreateComparisons();
 			};
 		}
@@ -37,32 +37,30 @@ namespace Octgn.DeckBuilder
 		public string GetSqlCondition()
 		{
 			if (property is SetPropertyDef)
-				return "Card.setId = '" + ((Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
+				return "set_id = '" + ((Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
 			return ((SqlComparison)comparisonList.SelectedItem).GetSql(property.Name, comparisonText.Text);
 		}
 
 		private static SqlComparison[] StringComparisons = new SqlComparison[] 
 		{
-			new SqlComparison("Contains", "Card.[{0}] LIKE '%{1}%'") { EscapeQuotes = true },
-            new SqlComparison("Does Not Contain", "Card.[{0}] NOT LIKE '%{1}%'") { EscapeQuotes = true },
-			new SqlComparison("Starts with", "Card.[{0}] LIKE '{1}%'") { EscapeQuotes = true },
-            new SqlComparison("Ends with", "Card.[{0}] LIKE '%{1}'") { EscapeQuotes = true },
-			new SqlComparison("Equals", "Card.[{0}] = '{1}'") { EscapeQuotes = true}
+			new SqlComparison("Contains", "{0} LIKE '*{1}*'") { EscapeQuotes = true },
+			new SqlComparison("Starts with", "{0} LIKE '{1}*'") { EscapeQuotes = true },
+			new SqlComparison("Equals", "{0} = '{1}'") { EscapeQuotes = true}
 		};
 
 		private static SqlComparison[] IntegerComparisons = new SqlComparison[]
 		{
-			new IntegerComparison("Equals", "Card.[{0}] = {1}"),
-			new IntegerComparison("Greater than", "Card.[{0}] > {1}"),
-			new IntegerComparison("Less than", "Card.[{0}] < {1}")
+			new IntegerComparison("Equals", "{0} = {1}"),
+			new IntegerComparison("Greater than", "{0} > {1}"),
+			new IntegerComparison("Less than", "{0} < {1}")
 		};
 
 		private static SqlComparison[] CharComparisons = new SqlComparison[]
 		{
-			new SqlComparison("Equals", "Card.[{0}] = '{1}'") { EscapeQuotes = true },
-			new SqlComparison("Greater than", "Card.[{0}] > '{1}'") { EscapeQuotes = true },
-			new SqlComparison("Less than", "Card.[{0}] < '{1}'") { EscapeQuotes = true },
-			new CharInComparison("One of", "Card.[{0}] IN ({1})")
+			new SqlComparison("Equals", "{0} = '{1}'") { EscapeQuotes = true },
+			new SqlComparison("Greater than", "{0} > '{1}'") { EscapeQuotes = true },
+			new SqlComparison("Less than", "{0} < '{1}'") { EscapeQuotes = true },
+			new CharInComparison("One of", "{0} IN ({1})")
 		};
 
 		private void CreateComparisons()
@@ -104,10 +102,10 @@ namespace Octgn.DeckBuilder
 				RemoveFilter(this.TemplatedParent, e);
 		}
 
-        private void comparisonText_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.OemOpenBrackets || e.Key == Key.OemCloseBrackets) e.Handled = true;
-        }
+		private void comparisonText_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.OemOpenBrackets || e.Key == Key.OemCloseBrackets) e.Handled = true;
+		}
 	}
 
 	internal class SqlComparison

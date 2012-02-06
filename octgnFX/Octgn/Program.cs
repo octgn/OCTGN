@@ -8,6 +8,7 @@ using Octgn.Play;
 using Skylabs.Lobby;
 using RE = System.Text.RegularExpressions;
 using Octgn.Launcher;
+using Skylabs.Lobby.Threading;
 
 namespace Octgn
 {
@@ -68,24 +69,6 @@ namespace Octgn
             string s = e.Message.Substring(0);
             Program.LauncherWindow = new Launcher.LauncherWindow();
             Application.Current.MainWindow = Program.LauncherWindow;
-#if(DEBUG)
-            Program.LauncherWindow.Show();
-            ChatWindows = new List<ChatWindow>();
-#else
-            UpdateChecker uc = new UpdateChecker();
-            uc.ShowDialog();
-            if (!uc.IsClosingDown)
-            {
-                Program.LauncherWindow.Show();
-                ChatWindows = new List<ChatWindow>();
-            }
-            else
-            {
-                Application.Current.MainWindow = null;
-                Program.LauncherWindow.Close();
-                Program.Exit();
-            }
-#endif
         }
         public static void StartLobbyServer()
         {

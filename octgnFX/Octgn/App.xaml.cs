@@ -3,6 +3,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
+using System.Collections.Generic;
+using Octgn.Launcher;
 
 namespace Octgn
 {
@@ -26,20 +28,8 @@ namespace Octgn
             Updates.PerformHouskeeping();
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
-
-            try
-            {
-                //TODO For some reason this fails sometimes. Important to fix before release.
-                Program.GamesRepository = new Octgn.Data.GamesRepository();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("There was an error. Please reload Octgn.");
-                Program.Exit();
-                return;
-            }
-
-
+            Program.GamesRepository = new Octgn.Data.GamesRepository();
+            
             if(Program.GamesRepository.MissingFiles.Any())
             {
                 var sb = new StringBuilder("OCTGN cannot find the following files. The corresponding games have been disabled.\n\n");
@@ -52,6 +42,25 @@ namespace Octgn
                 new MessageWindow(sb.ToString()).ShowDialog();
                 ShutdownMode = oldShutdown;
             }
+
+#if(DEBUG)
+            Program.LauncherWindow.Show();
+            Program.ChatWindows = new List<ChatWindow>();
+#else
+            UpdateChecker uc = new UpdateChecker();
+            uc.ShowDialog();
+            if (!uc.IsClosingDown)
+            {
+                Program.LauncherWindow.Show();
+                Program.ChatWindows = new List<ChatWindow>();
+            }
+            else
+            {
+                Application.Current.MainWindow = null;
+                Program.LauncherWindow.Close();
+                Program.Exit();
+            }
+#endif
 
             if (e.Args != null && e.Args.Count() > 0)
             {
