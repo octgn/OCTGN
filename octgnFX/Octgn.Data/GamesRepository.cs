@@ -142,7 +142,7 @@ namespace Octgn.Data
                 sc.Close();
             }
         }
-        catch (Exception e) 
+        catch (Exception) 
         {
             if (trans != null)
                 trans.Rollback();

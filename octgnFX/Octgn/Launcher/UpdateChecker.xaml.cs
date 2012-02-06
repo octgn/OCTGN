@@ -118,7 +118,7 @@ namespace Octgn.Launcher
                 }
                 UpdateStatus("Checking for updates...");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //System.Diagnostics.Debugger.Break();
             }
@@ -131,7 +131,7 @@ namespace Octgn.Launcher
                 {
                     lblStatus.Content = stat;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     System.Diagnostics.Debugger.Break();
                 }
