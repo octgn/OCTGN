@@ -215,7 +215,11 @@ namespace Octgn.Data
     private Game ReadGameFromTable(SQLiteDataReader read)
     {
         var temp = read["shared_deck_sections"];
-        string sharedDeckSections = (string)read["shared_deck_sections"];
+        string sharedDeckSections = "";
+        if(temp == DBNull.Value)
+            sharedDeckSections = null;
+        else
+            sharedDeckSections = (string)read["shared_deck_sections"];
         Game g = new Game();
 
         g.Id = Guid.Parse((string)read["id"]);

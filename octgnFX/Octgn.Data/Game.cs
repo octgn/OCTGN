@@ -59,10 +59,12 @@ namespace Octgn.Data
         {
             get
             {
-                return GetCustomProperties();
+                if (cacheCustomProperties == null)
+                    cacheCustomProperties = GetCustomProperties();
+                return cacheCustomProperties;
             }
         }
-
+        private IList<PropertyDef> cacheCustomProperties;
         public IEnumerable<PropertyDef> AllProperties
         {
             get
@@ -518,7 +520,7 @@ namespace Octgn.Data
                 {
 
                     //Build Query
-                    sb.Append("INSERT OR REPLACE INTO [cards](");
+                    sb.Append("INSERT INTO [cards](");
                     sb.Append("[id],[game_id],[set_id],[name], [image]");
                     sb.Append(") VALUES(");
                     sb.Append("@id,@game_id,@set_id,@name,@image");
@@ -534,7 +536,7 @@ namespace Octgn.Data
                 }
                 //Add custom properties for the card.
                 sb = new StringBuilder();
-                sb.Append("INSERT OR REPLACE INTO [custom_properties](");
+                sb.Append("INSERT INTO [custom_properties](");
                 sb.Append("[id],[card_id],[game_id],[name], [type],[vint],[vstr]");
                 sb.Append(") VALUES(");
                 sb.Append("@id,@card_id,@game_id,@name,@type,@vint,@vstr");
