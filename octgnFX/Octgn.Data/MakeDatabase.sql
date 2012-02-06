@@ -47,14 +47,12 @@ CREATE TABLE [custom_properties] (
   [vint] INTEGER, 
   [vstr] TEXT);
 
-
 CREATE TABLE [markers] (
   [id] TEXT PRIMARY KEY, 
   [game_id] TEXT NOT NULL, 
   [set_id] TEXT CONSTRAINT [id_set_id2] REFERENCES [sets]([id]) ON DELETE CASCADE ON UPDATE CASCADE MATCH SIMPLE NOT DEFERRABLE INITIALLY IMMEDIATE, 
   [name] TEXT NOT NULL, 
   [icon] TEXT NOT NULL);
-
 
 CREATE TABLE [packs] (
   [id] TEXT PRIMARY KEY, 
