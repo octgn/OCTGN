@@ -89,6 +89,11 @@ namespace Octgn.Data
                     string conString = "URI=file:" + Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Octgn","Database","master.db3");
                     dbc = new SQLiteConnection(conString);
                     dbc.Open();
+                    using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                    {
+                        com.CommandText = "PRAGMA foreign_keys = ON;";
+                        com.ExecuteScalar();
+                    }
                     IsDatabaseOpen = true;
                 }
                 catch 
