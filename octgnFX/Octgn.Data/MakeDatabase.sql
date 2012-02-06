@@ -1,10 +1,10 @@
 ﻿begin transaction;
 
-pragma auto_vacuum=1;
-pragma default_cache_size=2000;
-pragma encoding='UTF-8';
-pragma page_size=1024;
+PRAGMA auto_vacuum=INCREMENTAL;
+PRAGMA encoding='UTF-8';
 PRAGMA foreign_keys = ON;
+PRAGMA synchronous = OFF; 
+PRAGMA temp_store = MEMORY;
 
 CREATE TABLE [dbinfo] (
   [version] INTEGER NOT NULL
