@@ -1,4 +1,4 @@
-Get Involved! 
+Get Involved!
 -------------------------------------------------
 * Read the https://github.com/kellyelton/OCTGN/blob/master/README.md -- IRC, Mailing List, Issues, etc.
 * *HELP US CODE:*
