@@ -29,7 +29,7 @@ namespace Octgn.DeckBuilder
 			DataContextChanged += delegate
 			{
 				property = DataContext as PropertyDef;
-        if (property == null) return; // Happens when the control is unloaded
+		if (property == null) return; // Happens when the control is unloaded
 				CreateComparisons();
 			};
 		}
@@ -102,10 +102,10 @@ namespace Octgn.DeckBuilder
 				RemoveFilter(this.TemplatedParent, e);
 		}
 
-        private void comparisonText_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.OemOpenBrackets || e.Key == Key.OemCloseBrackets) e.Handled = true;
-        }
+		private void comparisonText_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.OemOpenBrackets || e.Key == Key.OemCloseBrackets) e.Handled = true;
+		}
 	}
 
 	internal class SqlComparison

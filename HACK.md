@@ -1,7 +1,7 @@
 Get Involved! 
 -------------------------------------------------
-* *REPORT BUGS:* https://github.com/kellyelton/OCTGN/issues
-* *VOTE ON FEATURES:* https://trello.com/board/octgn-v3-0-0-x/4efffbacce6a25c1792b8ee2
+* *Say Hi:* http://webchat.freenode.net/?channels=octgn (for those with IRC clients -> irc://irc.freenode.net/#octgn)
+* *REPORT BUGS & Request Features:* https://github.com/kellyelton/OCTGN/issues
 * *HELP US CODE:*
   * Create a github account (https://github.com/signup/free)
   * Setup git locally (http://help.github.com/win-set-up-git/)
@@ -27,12 +27,6 @@ it can include the required assemblies.
   * OCTGN\octgnFX\Skylabs.Lobby\bin\Debug\Skylabs.Lobby.dll 
   * OCTGN\octgnFX\Octgn\bin\Debug\Skylabs.LobbyServer.exe
 * Do the greatness! 
-
-Important Flows
--------------------------------------------------
-# Python
-...
-
 
 Components
 -------------------------------------------------
@@ -67,7 +61,7 @@ It calls Random with a min and max value that is located in [ScriptApi.cs](https
 
 
 # octgnFX/Octgn
-...
+Most of the work in this project is shouldered by Game.cs. Inside Game.cs is a IVistaDBDatabase that has all card data installed in it. Card data is read and dropped into a CardModel format, which is stored in a Dictionary<Guid, CardModel> cardModelCache. CardModels are wrapped in a CardIdentity class (apparently for anti-cheating), which is wrapped in a Card class. Cards are placed into Piles and manipulated according to the gamedef.
 
 
 # octgnFX/Octgn.Data
