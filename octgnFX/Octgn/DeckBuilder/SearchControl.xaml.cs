@@ -48,14 +48,14 @@ namespace Octgn.DeckBuilder
 				case Key.Add:
 				case Key.Enter:
 					if (CardAdded != null)
-						CardAdded(this, new SearchCardIdEventArgs { CardId = (Guid)row["id"] });
+                        CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(row["id"] as string) });
 					e.Handled = true;
 					break;
 
 				case Key.Delete:
 				case Key.Subtract:
 					if (CardRemoved != null)
-						CardRemoved(this, new SearchCardIdEventArgs { CardId = (Guid)row["id"] });
+                        CardRemoved(this, new SearchCardIdEventArgs { CardId = Guid.Parse(row["id"] as string) });
 					e.Handled = true;
 					break;
 			}
@@ -67,7 +67,7 @@ namespace Octgn.DeckBuilder
 			var row = (System.Data.DataRowView)resultsGrid.SelectedItem;
 			if (row == null) return;
 			if (CardAdded != null)
-				CardAdded(this, new SearchCardIdEventArgs { CardId = (Guid)row["id"] });
+				CardAdded(this, new SearchCardIdEventArgs { CardId = Guid.Parse(row["id"] as string) });
 		}
 
 		private void ResultCardSelected(object sender, SelectionChangedEventArgs e)
@@ -78,7 +78,7 @@ namespace Octgn.DeckBuilder
 			if (CardSelected != null)
 				CardSelected(this, 
 					row != null ?
-					new SearchCardImageEventArgs { SetId = (Guid)row["setId"], Image = (string)row["image"] } :
+					new SearchCardImageEventArgs { SetId = Guid.Parse(row["set_id"] as string), Image = (string)row["image"] } :
 					new SearchCardImageEventArgs());
 		}
 
@@ -120,6 +120,7 @@ namespace Octgn.DeckBuilder
 				var filterCtrl = (FilterControl)VisualTreeHelper.GetChild(container, 0);
 				conditions[i] = filterCtrl.GetSqlCondition();
 			}
+            
 			resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
 		}
 	}
@@ -144,7 +145,7 @@ namespace Octgn.DeckBuilder
 					values[1] == DependencyProperty.UnsetValue)
 				return Binding.DoNothing;
 
-			var setId = (Guid)values[0];
+			var setId = Guid.Parse(values[0] as string);
 			var game = (Data.Game)values[1];
 			var set = game.GetSet(setId);
 			return set != null ? set.Name : "(unknown)";

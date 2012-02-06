@@ -8,8 +8,7 @@
     xmlns:ctrl="clr-namespace:Octgn.Controls"
     x:Name="self"
     Title="OCTGN" Icon="pack://application:,,,/Resources/Icon.ico"
-    Height="800" Width="900"   
-    DataContext="{x:Static octgn:Program.Game}"
+    Height="800" Width="900" 
     
     TextOptions.TextFormattingMode="Display" UseLayoutRounding="True"
     RenderOptions.BitmapScalingMode="Fant"

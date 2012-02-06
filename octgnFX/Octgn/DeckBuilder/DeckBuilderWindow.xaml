@@ -36,10 +36,8 @@
 		<Menu Grid.ColumnSpan="2">
 			<MenuItem Header="Deck">
 				<MenuItem Header="New" x:Name="newSubMenu"
-									ItemsSource="{Binding Games, Source={x:Static o8:Program.GamesRepository}}" 
 									DisplayMemberPath="Name" Click="NewClicked" />
 				<MenuItem Header="Load..." x:Name="loadSubMenu"
-									ItemsSource="{Binding Games, Source={x:Static o8:Program.GamesRepository}}" 
 									DisplayMemberPath="Name" Click="LoadClicked" />
 				<MenuItem Header="Save" Command="gui:Commands.SaveDeck" />
 				<MenuItem Header="Save as..." Command="gui:Commands.SaveDeckAs" />

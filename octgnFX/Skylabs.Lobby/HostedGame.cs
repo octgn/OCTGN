@@ -45,7 +45,7 @@ namespace Skylabs.Lobby
             PasswordRequired = (bool) sm["passrequired"];
             UserHosting = (User) sm["hoster"];
             GameStatus = eHostedGame.StartedHosting;
-            TimeStarted = new DateTime(DateTime.Now.Ticks);
+            TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
         }
 
         public bool Equals(HostedGame other)

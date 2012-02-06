@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO.Packaging;
 using System.Linq;
 using System.Xml;
-using VistaDB.DDA;
 
 namespace Octgn.Data
 {
@@ -37,7 +36,7 @@ namespace Octgn.Data
             }
         }
 
-        private CardModel()
+        public CardModel()
         { }
 
         public CardModel(XmlReader reader, Game game, Data.Set set, PackagePart definition, Package package)
@@ -95,21 +94,6 @@ namespace Octgn.Data
                 Properties = Properties,
                 set = set
             };
-        }
-
-        internal static CardModel FromDataRow(Game game, IVistaDBRow row)
-        {
-            var result = new CardModel
-            {
-                Id = (Guid)row["id"].Value,
-                Name = (string)row["name"].Value,
-                ImageUri = (string)row["image"].Value,
-                set = game.GetSet((Guid)row["setId"].Value),
-                Properties = new SortedList<string, object>(row.Count - 4, StringComparer.InvariantCultureIgnoreCase)
-            };
-            for(int i = 4; i < row.Count; ++i)
-                result.Properties.Add(row[i].Name, row[i].Value);
-            return result;
         }
 
         internal static CardModel FromDataRow(Game game, System.Data.DataRow row)

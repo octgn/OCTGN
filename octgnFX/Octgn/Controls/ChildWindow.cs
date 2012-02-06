@@ -129,7 +129,10 @@ namespace Octgn.Controls
     protected override void OnVisualParentChanged(DependencyObject oldParent)
     {
       // The window is added to the visual tree -> perform a small animation
-      var scale = (ScaleTransform)RenderTransform;
+      /* FIXME: Unable to cast object of type 'System.Windows.Media.MatrixTransform' 
+       * to type 'System.Windows.Media.ScaleTransform'.
+ 
+      var scale = (MatrixTransform)RenderTransform;
       scale.CenterX = Width / 2; scale.CenterY = Height / 2;
       var fadeIn = new DoubleAnimation(0, 1, FadeOutDuration, FillBehavior.Stop);
       var expand = new DoubleAnimation(0.8, 1, FadeOutDuration, FillBehavior.Stop);
@@ -137,6 +140,7 @@ namespace Octgn.Controls
       RenderTransform.BeginAnimation(ScaleTransform.ScaleYProperty, expand);
       BeginAnimation(UIElement.OpacityProperty, fadeIn);
       base.OnVisualParentChanged(oldParent);
+      */
     }
 
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)

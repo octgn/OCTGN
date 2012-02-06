@@ -8,6 +8,7 @@ using Octgn.Data;
 using Octgn.Properties;
 using System.Xml;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace Octgn.Definitions
 {
@@ -17,6 +18,7 @@ namespace Octgn.Definitions
     private Version OctgnVersion { get; set; }
     public string Name { get; private set; }
     public Guid Id { get; private set; }    
+    public string FileHash {get;private set;}
     public DeckDef DeckDefinition { get; private set; }
     public DeckDef SharedDeckDefinition { get; private set; }
     public CardDef CardDefinition { get; private set; }
@@ -31,7 +33,7 @@ namespace Octgn.Definitions
     internal string FileName
     { get; set; }
     internal string BasePath
-    { get { return Path.Combine(GamesRepository.BasePath, Id.ToString()) + '\\'; } }
+    { get { return GamesRepository.BasePath + '\\'; } }
     internal string DecksPath
     { get { return BasePath + @"Decks\"; } }
     internal string SetsPath
@@ -99,22 +101,30 @@ namespace Octgn.Definitions
 
     public static GameDef FromO8G(string filename)
     {
-      // HACK: workaround for the BitmapDecoder bug (see also GameManager.xaml.cs, in c'tor)
-      GC.Collect(GC.MaxGeneration);
-      GC.WaitForPendingFinalizers();
-
-      using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-      {
-        var defRelationship = package.GetRelationshipsByType("http://schemas.octgn.org/game/definition").First();
-        var definition = package.GetPart(defRelationship.TargetUri);
-        using (var reader = XmlReader.Create(definition.GetStream(FileMode.Open, FileAccess.Read)))
+        // HACK: workaround for the BitmapDecoder bug (see also GameManager.xaml.cs, in c'tor)
+        GC.Collect(GC.MaxGeneration);
+        GC.WaitForPendingFinalizers();
+        string fhash = "";
+        //Get hash for file.
+        //using (MD5 md5 = new MD5CryptoServiceProvider()) {
+        //    using (FileStream file = new FileStream(filename, FileMode.Open)) {
+        //        byte[] retVal = md5.ComputeHash(file);
+        //        fhash =  BitConverter.ToString(retVal).Replace("-", "");	// hex string
+        //    }
+        //}
+        using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-          var xDoc = XDocument.Load(reader);
-          GameDef result = LoadFromXml(xDoc.Root, definition);
-          result.FileName = filename;
-          return result;
+            var defRelationship = package.GetRelationshipsByType("http://schemas.octgn.org/game/definition").First();
+            var definition = package.GetPart(defRelationship.TargetUri);
+            using (var reader = XmlReader.Create(definition.GetStream(FileMode.Open, FileAccess.Read)))
+            {
+                var xDoc = XDocument.Load(reader);
+                GameDef result = LoadFromXml(xDoc.Root, definition);
+                result.FileHash = fhash;
+                result.FileName = filename;
+                return result;
+            }
         }
-      }
     }
   }
 }
