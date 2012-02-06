@@ -1,6 +1,5 @@
 using System;
 using System.Xml;
-using VistaDB.DDA;
 
 namespace Octgn.Data
 {
@@ -41,19 +40,16 @@ namespace Octgn.Data
 		private MarkerModel()
 		{ }
 
+        public MarkerModel(Guid id, string name, string icon, Set set)
+        {
+            this.set = set;
+            this.iconUri = icon;
+            this.name = name;
+            this.id = id;
+        }
+
 		public override string ToString()
 		{ return name; }
 
-		internal static MarkerModel FromDataRow(Game game, IVistaDBRow row)
-		{
-			var result = new MarkerModel
-			{
-				id = (Guid)row["id"].Value,
-				name = (string)row["name"].Value,
-				iconUri = (string)row["icon"].Value,
-				set = game.GetSet((Guid)row["setId"].Value)
-			};
-			return result;
-		}
 	}	
 }

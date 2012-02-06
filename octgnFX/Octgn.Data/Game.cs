@@ -6,8 +6,8 @@ using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using VistaDB;
-using VistaDB.DDA;
+using System.Data.SQLite;
+using System.Data;
 
 namespace Octgn.Data
 {
@@ -29,19 +29,16 @@ namespace Octgn.Data
 
         public Boolean Warning { get; set; }
 
+        public string FileHash { get; set; }
+
         public IEnumerable<string> DeckSections { get; set; }
 
         public IEnumerable<string> SharedDeckSections { get; set; }
 
-        internal string basePath;
-        internal GamesRepository repository;
-        private ObservableCollection<Set> cachedSets;
-        private IList<PropertyDef> cachedProperties;
-        private IVistaDBDDA dda;
-        internal IVistaDBDatabase db;
-        private IVistaDBTable packTable, markerTable, cardTable;
-        private Dictionary<Guid, CardModel> cardModelCache;
-        private Dictionary<Guid, Set> setCache;
+        internal string basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Octgn");
+        public GamesRepository repository;
+
+        public SQLiteConnection dbc;
 
         public Uri GetCardBackUri()
         {
@@ -54,9 +51,7 @@ namespace Octgn.Data
         {
             get
             {
-                if(cachedSets == null)
-                    cachedSets = GetAllSets();
-                return cachedSets;
+                return GetAllSets();
             }
         }
 
@@ -64,9 +59,7 @@ namespace Octgn.Data
         {
             get
             {
-                if(cachedProperties == null)
-                    cachedProperties = GetCustomProperties();
-                return cachedProperties;
+                return GetCustomProperties();
             }
         }
 
@@ -82,99 +75,250 @@ namespace Octgn.Data
         { get { return Path.Combine(basePath, "Decks"); } }
 
         public bool IsDatabaseOpen
-        { get { return dda != null; } }
+        { get; private set; }
 
         public void OpenDatabase(bool readOnly)
         {
-            System.Diagnostics.Debug.Assert(dda == null, "The database is already open");
+            System.Diagnostics.Debug.Assert(IsDatabaseOpen == false, "The database is already open");
+            if (!IsDatabaseOpen)
+            {
+                try
+                {
+                    string conString = "URI=file:" + Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Octgn","Database","master.db3");
+                    dbc = new SQLiteConnection(conString);
+                    dbc.Open();
+                    IsDatabaseOpen = true;
+                }
+                catch 
+                {
+                    throw;
+                }
+            }
 
-            dda = VistaDBEngine.Connections.OpenDDA();
-            db = dda.OpenDatabase(Path.Combine(basePath, "game.vdb3"),
-              readOnly ? VistaDBDatabaseOpenMode.NonexclusiveReadOnly : VistaDBDatabaseOpenMode.ExclusiveReadWrite, null);
-            packTable = db.OpenTable("Pack", false, readOnly);
-            markerTable = db.OpenTable("Marker", false, readOnly);
-            cardTable = db.OpenTable("Card", false, readOnly);
-            cardModelCache = new Dictionary<Guid, CardModel>();
-            setCache = new Dictionary<Guid, Set>();
         }
 
         public void CloseDatabase()
         {
-            packTable.Dispose(); packTable = null;
-            cardTable.Dispose(); cardTable = null;
-            markerTable.Dispose(); markerTable = null;
-            db.Dispose(); db = null;
-            dda.Dispose(); dda = null;
-            cardModelCache = null;
-            setCache = null;
+            if (IsDatabaseOpen)
+            {
+                dbc.Close();
+                dbc.Dispose();
+                IsDatabaseOpen = false;
+            }
         }
 
         public Set GetSet(Guid id)
         {
-            Set cachedSet;
-            if(setCache.TryGetValue(id, out cachedSet))
-                return cachedSet;
-            using(var setTable = db.OpenTable("Set", false, true))
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            try
             {
-                if(!setTable.Find("id:'" + id.ToString() + "'", "SetPK", false, false)) return null;
-                var newSet = Set.FromDataRow(this, setTable.CurrentRow);
-                setCache.Add(newSet.Id, newSet);
-                return newSet;
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+                    com.CommandText = "SElECT * FROM [sets] WHERE [id]=@id;";
+
+                    com.Parameters.AddWithValue("@id", id.ToString());
+                    using(SQLiteDataReader dr = com.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            Set s = new Set
+                            {
+                                Id = Guid.Parse(dr["id"] as string),
+                                Name = (string)dr["name"],
+                                Game = this,
+                                GameVersion = new Version((string)dr["game_version"]),
+                                Version = new Version((string)dr["version"]),
+                                PackageName = (string)dr["package"]
+                            };
+                            return s;
+                        }
+                    }
+                }
             }
+            catch { throw; }
+            return null;
         }
 
         public CardModel GetCardByName(string name)
         {
-            if(!cardTable.Find("name:'" + name.Replace("'", "''") + "'", "CardNameIX", false, false)) return null;
-            CardModel cachedModel;
-            if(cardModelCache.TryGetValue((Guid)cardTable.Get("id").Value, out cachedModel))
-                return cachedModel;
-            var newModel = CardModel.FromDataRow(this, cardTable.CurrentRow);
-            cardModelCache.Add(newModel.Id, newModel);
-            return newModel;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+
+            try
+            {
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+                    com.CommandText = "SElECT * FROM [cards] WHERE [name]=@name;";
+
+                    com.Parameters.AddWithValue("@name", name);
+                    using (SQLiteDataReader dr = com.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            var result = new CardModel
+                            {
+                                Id = Guid.Parse(dr["id"] as string),
+                                Name = (string)dr["name"],
+                                ImageUri = (string)dr["image"],
+                                set = GetSet(Guid.Parse(dr["set_id"] as string)),
+                                Properties = GetCardProperties(Guid.Parse(dr["id"] as string))
+                            };
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch { throw; }
+            return null;
+        }
+        public SortedList<string,object> GetCardProperties(Guid cardId)
+        {
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            SortedList<string, object> ret = new SortedList<string, object>();
+            try
+            {
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+                    com.CommandText = "SElECT * FROM [custom_properties] WHERE [card_id]=@card_id;";
+
+                    com.Parameters.AddWithValue("@card_id", cardId.ToString());
+                    using (SQLiteDataReader dr = com.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            int vt = (int)((long)dr["type"]);
+                            switch (vt)
+                            {
+                                case 0: // String
+                                    {
+                                        string name = dr["name"] as string;
+                                        string val = dr["vstr"] as string;
+                                        ret.Add(name, val);
+                                        break;
+                                    }
+                                case 1: // int
+                                    {
+                                        string name = dr["name"] as string;
+                                        int val = (int)((long)dr["vint"]);
+                                        ret.Add(name, val);
+                                        break;
+                                    }
+                                case 2: //char
+                                    {
+                                        string name = dr["name"] as string;
+                                        string val = dr["vstr"] as string;
+                                        ret.Add(name, val);
+                                        break;
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { throw; }
+            return ret;
         }
 
         public CardModel GetCardById(Guid id)
         {
-            CardModel cachedModel;
-            if(cardModelCache.TryGetValue(id, out cachedModel))
-                return cachedModel;
-            if(!cardTable.Find("id:'" + id.ToString() + "'", "CardPK", false, false)) return null;
-            var newModel = CardModel.FromDataRow(this, cardTable.CurrentRow);
-            cardModelCache.Add(newModel.Id, newModel);
-            return newModel;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+
+            try
+            {
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+                    com.CommandText = "SElECT * FROM [cards] WHERE [id]=@id;";
+
+                    com.Parameters.AddWithValue("@id", id.ToString());
+                    using (SQLiteDataReader dr = com.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            var result = new CardModel
+                            {
+                                Id = Guid.Parse(dr["id"] as string),
+                                Name = (string)dr["name"],
+                                ImageUri = (string)dr["image"],
+                                set = GetSet(Guid.Parse(dr["set_id"] as string)),
+                                Properties = GetCardProperties(id)
+                            };
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch { throw; }
+            return null;
         }
 
         public IEnumerable<MarkerModel> GetAllMarkers()
         {
-            var result = new List<MarkerModel>();
-            var previousGuid = Guid.Empty;
-            markerTable.First();
-            while(!markerTable.EndOfTable)
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            List<MarkerModel> ret = new List<MarkerModel>();
+            try
             {
-                if(previousGuid != (Guid)markerTable.Get("id").Value)
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    result.Add(MarkerModel.FromDataRow(this, markerTable.CurrentRow));
-                    previousGuid = (Guid)markerTable.Get("id").Value;
+                    com.CommandText = "SElECT * FROM [markers] WHERE [game_id]=@game_id;";
+
+                    com.Parameters.AddWithValue("@game_id", this.Id.ToString());
+                    using (SQLiteDataReader dr = com.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            var result = new MarkerModel(
+                                Guid.Parse(dr["id"]as string),
+                                (string)dr["name"],
+                                (string)dr["icon"],
+                                GetSet(Guid.Parse(dr["set_id"] as string))
+                            );
+                            ret.Add(result);
+                        }
+                    }
                 }
-                markerTable.Next();
             }
-            return result;
+            catch { throw; }
+            return ret;
         }
 
         public Pack GetPackById(Guid id)
         {
-            if(!packTable.Find("id:'" + id.ToString() + "'", "PackPK", false, false)) return null;
-            var set = GetSet((Guid)packTable.Get("setId").Value);
-            return new Pack(set, (string)packTable.Get("xml").Value);
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+
+            try
+            {
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+                    com.CommandText = "SElECT * FROM [packs] WHERE [id]=@id;";
+
+                    com.Parameters.AddWithValue("@id", id.ToString());
+                    using (SQLiteDataReader dr = com.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            var set = GetSet(Guid.Parse(dr["set_id"] as string));
+                            string xml = dr["xml"] as string;
+                            return new Pack(set, xml);
+                        }
+                    }
+                }
+            }
+            catch { throw; }
+            return null;
         }
 
         public void InstallSet(string filename)
         {
             OpenDatabase(false);
+            SQLiteTransaction trans = dbc.BeginTransaction();
             try
             {
-                db.BeginTransaction();
+                
                 using(var package = Package.Open(filename, FileMode.Open, FileAccess.Read))
                 {
                     var defRelationship = package.GetRelationshipsByType("http://schemas.octgn.org/set/definition").First();
@@ -248,14 +392,13 @@ namespace Octgn.Data
                     package.Close();
 
                     // Commit the changes
-                    db.CommitTransaction();
-                    if(cachedSets != null)
-                        cachedSets.Add(set);
+                    trans.Commit();
+                    
                 }
             }
             catch
             {
-                db.RollbackTransaction();
+                trans.Rollback();
                 throw;
             }
             finally
@@ -264,140 +407,256 @@ namespace Octgn.Data
 
         public void DeleteSet(Set set)
         {
-            OpenDatabase(false);
+            bool wasdbopen = IsDatabaseOpen;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
             try
             {
-                using(var setTable = db.OpenTable("Set", false, false))
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    if(setTable.Find("id:'" + set.Id + "'", "SetPK", false, false))
-                    {
-                        db.BeginTransaction();
-                        try
-                        {
-                            setTable.Delete();
-                            db.CommitTransaction();
-                        }
-                        catch
-                        {
-                            db.RollbackTransaction();
-                            throw;
-                        }
-                        if(cachedSets != null)
-                            cachedSets.Remove(set);
-                    }
+                    com.CommandText = "DELETE FROM [sets] WHERE [id]=@id;";
+
+                    com.Parameters.AddWithValue("@id", set.Id.ToString());
+                    com.ExecuteNonQuery();
                 }
             }
-            finally
-            { CloseDatabase(); }
+            catch { throw; }
+            if(!wasdbopen)
+                CloseDatabase();
         }
 
         private void InsertSet(Set set)
         {
-            using(var setTable = db.OpenTable("Set", false, false))
+            try
             {
-                if (setTable.Find("id:'" + set.Id + "'", "SetPK", false, false))
-                    setTable.Delete();
-                setTable.Insert();
-                setTable.PutGuid("id", set.Id);
-                setTable.PutString("name", set.Name);
-                setTable.PutString("gameVersion", set.GameVersion.ToString());
-                setTable.PutString("version", set.Version.ToString());
-                setTable.PutString("package", set.PackageName);
-                setTable.Post();
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+
+                    //Build Query
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("INSERT OR REPLACE INTO [sets](");
+                    sb.Append("[id],[name],[game_id],[game_version], [version],[package]");
+                    sb.Append(") VALUES(");
+                    sb.Append("@id,@name,@game_id,@game_version,@version,@package");
+                    sb.Append(");\n");
+                    com.CommandText = sb.ToString();
+
+                    com.Parameters.AddWithValue("@id", set.Id.ToString());
+                    com.Parameters.AddWithValue("@name", set.Name);
+                    com.Parameters.AddWithValue("@game_id", set.Game.Id.ToString());
+                    com.Parameters.AddWithValue("@game_version", set.GameVersion.ToString());
+                    com.Parameters.AddWithValue("@version", set.Version.ToString());
+                    com.Parameters.AddWithValue("@package", set.PackageName);
+                    com.ExecuteNonQuery();
+                }
             }
-            cachedSets = null;
+            catch { throw; }
         }
 
         private void InsertPack(Pack pack, string xml, Guid setId)
         {
-            packTable.Insert();
-            packTable.PutGuid("id", pack.Id);
-            packTable.PutString("name", pack.Name);
-            packTable.PutGuid("setId", setId);
-            packTable.PutString("xml", xml);
-            packTable.Post();
+            try
+            {
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+
+                    //Build Query
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("INSERT OR REPLACE INTO [packs](");
+                    sb.Append("[id],[set_id],[name], [xml]");
+                    sb.Append(") VALUES(");
+                    sb.Append("@id,@set_id,@name,@xml");
+                    sb.Append(");\n");
+                    com.CommandText = sb.ToString();
+
+                    com.Parameters.AddWithValue("@id", pack.Id.ToString());
+                    com.Parameters.AddWithValue("@set_id", setId.ToString());
+                    com.Parameters.AddWithValue("@name", pack.Name);
+                    com.Parameters.AddWithValue("@xml", xml);
+                    com.ExecuteNonQuery();
+                }
+            }
+            catch { throw; }
         }
 
         private void InsertMarker(Guid id, string name, string iconUri, Guid setId)
         {
-            markerTable.Insert();
-            markerTable.PutGuid("id", id);
-            markerTable.PutString("name", name);
-            markerTable.PutString("icon", iconUri);
-            markerTable.PutGuid("setId", setId);
-            markerTable.Post();
+            try
+            {
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+
+                    //Build Query
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("INSERT OR REPLACE INTO [markers](");
+                    sb.Append("[id],[set_id],[name], [icon]");
+                    sb.Append(") VALUES(");
+                    sb.Append("@id,@set_id,@game_id,@name,@icon");
+                    sb.Append(");\n");
+                    com.CommandText = sb.ToString();
+
+                    com.Parameters.AddWithValue("@id", id.ToString());
+                    com.Parameters.AddWithValue("@set_id", setId.ToString());
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    com.Parameters.AddWithValue("@name", name);
+                    com.Parameters.AddWithValue("@icon", iconUri);
+                    com.ExecuteNonQuery();
+                }
+            }
+            catch { throw; }
         }
 
         private void InsertCard(CardModel card)
         {
-            cardTable.Insert();
-            cardTable.PutGuid("id", card.Id);
-            cardTable.PutString("name", card.Name);
-            cardTable.PutString("image", card.ImageUri);
-            cardTable.PutGuid("setId", card.set.Id);
-            foreach(KeyValuePair<string, object> pair in card.Properties)
+            bool wasdbopen = IsDatabaseOpen;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            try
             {
-                if(pair.Value is string)
-                    cardTable.PutString(pair.Key, (string)pair.Value);
-                else if(pair.Value is int)
-                    cardTable.PutInt32(pair.Key, (int)pair.Value);
-                else		// char
-                    cardTable.PutString(pair.Key, pair.Value.ToString());
+                StringBuilder sb = new StringBuilder();
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+
+                    //Build Query
+                    sb.Append("INSERT OR REPLACE INTO [cards](");
+                    sb.Append("[id],[game_id],[set_id],[name], [image]");
+                    sb.Append(") VALUES(");
+                    sb.Append("@id,@game_id,@set_id,@name,@image");
+                    sb.Append(");\n");
+                    com.CommandText = sb.ToString();
+
+                    com.Parameters.AddWithValue("@id", card.Id.ToString());
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    com.Parameters.AddWithValue("@set_id", card.set.Id.ToString());
+                    com.Parameters.AddWithValue("@name", card.Name);
+                    com.Parameters.AddWithValue("@image", card.ImageUri);
+                    com.ExecuteNonQuery();
+                }
+                //Add custom properties for the card.
+                sb = new StringBuilder();
+                sb.Append("INSERT OR REPLACE INTO [custom_properties](");
+                sb.Append("[id],[card_id],[game_id],[name], [type],[vint],[vstr]");
+                sb.Append(") VALUES(");
+                sb.Append("@id,@card_id,@game_id,@name,@type,@vint,@vstr");
+                sb.Append(");\n");
+                string command = sb.ToString();
+                foreach (KeyValuePair<string, object> pair in card.Properties)
+                {
+                    using (SQLiteCommand com = dbc.CreateCommand())
+                    {
+                        com.CommandText = command;
+                        com.Parameters.AddWithValue("@id", pair.Key + card.Id.ToString());
+                        com.Parameters.AddWithValue("@card_id", card.Id.ToString());
+                        com.Parameters.AddWithValue("@game_id", Id.ToString());
+                        com.Parameters.AddWithValue("@name", pair.Key);
+                        if (pair.Value is string)
+                        {
+                            com.Parameters.AddWithValue("@type", 0);
+                            com.Parameters.AddWithValue("@vstr", pair.Value);
+                            com.Parameters.AddWithValue("@vint", null);
+                        }
+                        else if (pair.Value is int)
+                        {
+                            com.Parameters.AddWithValue("@type", 1);
+                            com.Parameters.AddWithValue("@vstr", null);
+                            com.Parameters.AddWithValue("@vint", (int)pair.Value);
+                        }
+                        else		// char
+                        {
+                            com.Parameters.AddWithValue("@type", 2);
+                            com.Parameters.AddWithValue("@vstr", pair.Value.ToString());
+                            com.Parameters.AddWithValue("@vint", null);
+                        }
+                        com.ExecuteNonQuery();
+                    }
+                }
             }
-            cardTable.Post();
+            catch { throw; }
+            if (!wasdbopen)
+                CloseDatabase();
         }
 
         private ObservableCollection<Set> GetAllSets()
         {
             var result = new ObservableCollection<Set>();
-            bool wasDbOpen = IsDatabaseOpen;
-            if(!wasDbOpen)
+            bool wasdbopen = IsDatabaseOpen;
+            if(!IsDatabaseOpen)
                 OpenDatabase(true);
+
             try
             {
-                using(var setTable = db.OpenTable("Set", false, true))
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    setTable.First();
-                    while(!setTable.EndOfTable)
+                    com.CommandText = "SElECT * FROM [sets] WHERE [game_id]=@game_id;";
+
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    using (SQLiteDataReader dr = com.ExecuteReader())
                     {
-                        result.Add(Set.FromDataRow(this, setTable.CurrentRow));
-                        setTable.Next();
+                        while (dr.Read())
+                        {
+                            Set s = new Set
+                            {
+                                Id = Guid.Parse(dr["id"] as string),
+                                Name = (string)dr["name"],
+                                Game = this,
+                                GameVersion = new Version((string)dr["game_version"]),
+                                Version = new Version((string)dr["version"]),
+                                PackageName = (string)dr["package"]
+                            };
+                            result.Add(s);
+                        }
                     }
                 }
             }
-            finally
-            {
-                if(!wasDbOpen)
-                    CloseDatabase();
-            }
+            catch { throw; }
 
+            if(!wasdbopen)
+                CloseDatabase();
             return result;
         }
 
         private List<PropertyDef> GetCustomProperties()
         {
-            bool shouldClose = false;
-            if(db == null)
-            {
-                OpenDatabase(true);
-                shouldClose = true;
-            }
+            bool wasdbopen = IsDatabaseOpen;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            List<PropertyDef> ret = new List<PropertyDef>();
             try
             {
-                var result = new List<PropertyDef>();
-                var schema = db.TableSchema("Card");
-                var columns = from IVistaDBColumnAttributes col in schema
-                              where col.Description != null && col.Description.StartsWith("Custom property")
-                              select col;
-                foreach(var col in columns)
-                    result.Add(new PropertyDef(col.Name,
-                        col.Type == VistaDBType.NVarChar ? PropertyType.String :
-                        col.Type == VistaDBType.Int ? PropertyType.Integer :
-                        PropertyType.Char));
-                return result;
+                using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
+                {
+                    com.CommandText = "SElECT * FROM [custom_properties] WHERE [game_id]=@game_id AND [card_id]='';";
+
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    using (SQLiteDataReader dr = com.ExecuteReader())
+                    {
+                        Dictionary<string, PropertyType> dl = new Dictionary<string, PropertyType>();
+                        while (dr.Read())
+                        {
+                            string name = dr["name"] as string;
+                            int t = (int)((long)dr["type"]);
+                            PropertyType pt;
+                            if(t == 0)
+                                pt = PropertyType.String;
+                            else if(t == 1)
+                                pt = PropertyType.Integer;
+                            else
+                                pt = PropertyType.Char;
+                            if(!dl.ContainsKey(name))
+                                dl.Add(name,pt);
+                        }
+                        foreach (KeyValuePair<string, PropertyType> d in dl)
+                        {
+                            ret.Add(new PropertyDef(d.Key, d.Value));
+                        }
+                    }
+                }
             }
-            finally
-            { if(shouldClose) CloseDatabase(); }
+            catch { throw; }
+
+            if(!wasdbopen)
+                CloseDatabase();
+            return ret;
         }
 
         internal void CopyDecks(string filename)
@@ -431,11 +690,59 @@ namespace Octgn.Data
 
         public System.Data.DataTable SelectCards(string[] conditions)
         {
-            var sb = new StringBuilder();
-            sb.Append("SELECT * FROM Card");
-            if(conditions != null)
+            bool wasdbopen = IsDatabaseOpen;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            System.Data.DataTable ret = new System.Data.DataTable();
+            try
             {
-                string connector = " WHERE ";
+                using (SQLiteCommand com = dbc.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM cards WHERE(game_id=@game_id);";
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    ret.Load(com.ExecuteReader());
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            foreach (PropertyDef d in CustomProperties)
+            {
+                ret.Columns.Add(d.Name);
+            }
+            int i = 0;
+            foreach (DataRow r in ret.Rows)
+            {
+                string cid = r["id"] as string;
+                using (SQLiteCommand com = dbc.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM [custom_properties] WHERE [card_id]=@cid;";
+                    com.Parameters.AddWithValue("@cid", cid);
+                    using (SQLiteDataReader dr = com.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            string cname = dr["name"] as string;
+                            if (!ret.Columns.Contains(cname))
+                                continue;
+                            int t = (int)((long)dr["type"]);
+                            if (t == 0)
+                                ret.Rows[i][cname] = dr["vstr"] as string;
+                            else if (t == 1)
+                                ret.Rows[i][cname] = (int)((long)dr["vint"]);
+                            else
+                                ret.Rows[i][cname] = dr["vstr"] as string;
+                        }
+                    }
+                }
+                i++;
+            }
+            //Now apply the search query to it
+            var sb = new StringBuilder();
+            if(conditions != null && conditions.Length > 0)
+            {
+                string connector = "";
                 foreach(string condition in conditions)
                 {
                     sb.Append(connector);
@@ -444,16 +751,22 @@ namespace Octgn.Data
                     sb.Append(")");
                     connector = " AND ";
                 }
+                ret.CaseSensitive = false;
+
+                DataTable dtnw = ret.Clone();
+                dtnw.Rows.Clear();
+
+                DataRow[] rows = (DataRow[])ret.Select(sb.ToString());
+
+                foreach (DataRow r in rows)
+                    dtnw.ImportRow(r);
+                
+                ret.Rows.Clear();
+                ret = dtnw;
             }
-            using(var conn = new VistaDB.Provider.VistaDBConnection(db))
-            {
-                var cmd = new VistaDB.Provider.VistaDBCommand();
-                cmd.Connection = conn;
-                cmd.CommandText = sb.ToString();
-                var result = new System.Data.DataTable();
-                result.Load(cmd.ExecuteReader());
-                return result;
-            }
+            if (!wasdbopen)
+                CloseDatabase();
+            return ret;
         }
 
         public IEnumerable<CardModel> SelectCardModels(params string[] conditions)
@@ -483,5 +796,6 @@ namespace Octgn.Data
             }
             return candidates.Select(r => CardModel.FromDataRow(this, r));
         }
+
     }
 }

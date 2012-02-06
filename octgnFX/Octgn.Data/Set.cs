@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.IO;
-using VistaDB.DDA;
+using System.Data.SQLite;
 
 namespace Octgn.Data
 {
@@ -54,33 +54,19 @@ namespace Octgn.Data
 			return "pack://file:,,," + PackageName.Replace('\\', ',');
 		}
 
-		internal static Set FromDataRow(Game game, IVistaDBRow row)
-		{
-			return new Set
-			{
-				Id = (Guid)row["id"].Value,
-				Name = (string)row["name"].Value,
-				Game = game,
-				GameVersion = new Version((string)row["gameVersion"].Value),
-        Version = new Version((string)row["version"].Value),
-				PackageName = (string)row["package"].Value
-			};
-		}
-
     private void LoadPacks()
     {
       cachedPacks = new List<Pack>();
       bool wasDbOpen = Game.IsDatabaseOpen;
-      if (!wasDbOpen)
+      if (!Game.IsDatabaseOpen)
         Game.OpenDatabase(true);
       try
       {
-        using (var conn = new VistaDB.Provider.VistaDBConnection(Game.db))
+        using (SQLiteCommand com = Game.dbc.CreateCommand())
         {
-          var cmd = conn.CreateCommand();
-          cmd.CommandText = "SELECT [xml] FROM Pack WHERE setId = @setId ORDER BY name";
-          cmd.Parameters.Add("setId", Id);
-          using (var reader = cmd.ExecuteReader())
+          com.CommandText = "SELECT [xml] FROM [packs] WHERE [set_id]=@set_id ORDER BY [name]";
+          com.Parameters.AddWithValue("@set_id", Id.ToString());
+          using (var reader = com.ExecuteReader())
           {
             while (reader.Read())
               cachedPacks.Add(new Pack(this, reader.GetString(0)));

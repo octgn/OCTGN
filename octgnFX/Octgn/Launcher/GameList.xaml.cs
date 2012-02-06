@@ -139,7 +139,8 @@ namespace Octgn.Launcher
                     CardHeight = game.CardDefinition.Height,
                     CardBack = game.CardDefinition.back,
                     DeckSections = game.DeckDefinition.Sections.Keys,
-                    SharedDeckSections = game.SharedDeckDefinition == null ? null : game.SharedDeckDefinition.Sections.Keys
+                    SharedDeckSections = game.SharedDeckDefinition == null ? null : game.SharedDeckDefinition.Sections.Keys,
+                    repository = Program.GamesRepository
                 };
                 Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
             }

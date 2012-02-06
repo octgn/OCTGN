@@ -9,8 +9,8 @@ namespace Octgn
 	{
 		private static Data.Game openedGame;
 
-    public static Data.Game OpenedGame
-    { get { return openedGame; } }
+        public static Data.Game OpenedGame
+        { get { return openedGame; } }
 
 		public static void Open(Definitions.GameDef game, bool readOnly)
 		{
