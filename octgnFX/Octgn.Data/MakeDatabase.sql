@@ -1,9 +1,10 @@
 ﻿begin transaction;
 
-pragma auto_vacuum=1;
-pragma default_cache_size=2000;
-pragma encoding='UTF-8';
-pragma page_size=1024;
+PRAGMA auto_vacuum=INCREMENTAL;
+PRAGMA encoding='UTF-8';
+PRAGMA foreign_keys = ON;
+PRAGMA synchronous = OFF; 
+PRAGMA temp_store = MEMORY;
 
 CREATE TABLE [dbinfo] (
   [version] INTEGER NOT NULL
@@ -12,7 +13,7 @@ CREATE TABLE [dbinfo] (
 INSERT INTO dbinfo([version]) VALUES(1);
 
 CREATE TABLE [games] (
-  [id] TEXT PRIMARY KEY, 
+  [id] TEXT PRIMARY KEY NOT NULL, 
   [name] TEXT NOT NULL,
   [filename] TEXT NOT NULL, 
   [version] TEXT NOT NULL, 
@@ -24,41 +25,39 @@ CREATE TABLE [games] (
   [file_hash] TEXT);
 
 CREATE TABLE [sets] (
-  [id] TEXT PRIMARY KEY, 
+  [id] TEXT PRIMARY KEY NOT NULL, 
   [name] TEXT NOT NULL,
-  [game_id] TEXT CONSTRAINT [id_game_id] REFERENCES [games]([id]) ON DELETE CASCADE ON UPDATE CASCADE MATCH SIMPLE NOT DEFERRABLE INITIALLY IMMEDIATE, 
+  [game_id] TEXT REFERENCES [games]([id]) ON DELETE CASCADE ON UPDATE CASCADE, 
   [game_version] TEXT NOT NULL, 
   [version] TEXT NOT NULL, 
   [package] TEXT);
 
 CREATE TABLE [cards] (
-  [id] TEXT PRIMARY KEY, 
+  [id] TEXT PRIMARY KEY NOT NULL, 
   [game_id] TEXT NOT NULL,
-  [set_id] TEXT CONSTRAINT [id_set_id] REFERENCES [sets]([id]) ON DELETE CASCADE ON UPDATE CASCADE MATCH SIMPLE NOT DEFERRABLE INITIALLY IMMEDIATE, 
+  [set_id] TEXT REFERENCES [sets]([id]) ON DELETE CASCADE ON UPDATE CASCADE, 
   [name] TEXT NOT NULL, 
   [image] TEXT NOT NULL);
 
 CREATE TABLE [custom_properties] (
-  [id] TEXT PRIMARY KEY, 
-  [card_id] TEXT CONSTRAINT [id_card_id] REFERENCES [cards]([id]) ON DELETE CASCADE ON UPDATE CASCADE MATCH SIMPLE NOT DEFERRABLE INITIALLY IMMEDIATE,
+  [id] TEXT PRIMARY KEY NOT NULL, 
+  [card_id] TEXT REFERENCES [cards]([id]) ON DELETE CASCADE ON UPDATE CASCADE,
   [game_id] TEXT NOT NULL, 
   [name] TEXT NOT NULL, 
   [type] INTEGER NOT NULL, 
   [vint] INTEGER, 
   [vstr] TEXT);
-
-
+  
 CREATE TABLE [markers] (
-  [id] TEXT PRIMARY KEY, 
+  [id] TEXT PRIMARY KEY NOT NULL, 
   [game_id] TEXT NOT NULL, 
-  [set_id] TEXT CONSTRAINT [id_set_id2] REFERENCES [sets]([id]) ON DELETE CASCADE ON UPDATE CASCADE MATCH SIMPLE NOT DEFERRABLE INITIALLY IMMEDIATE, 
+  [set_id] TEXT REFERENCES [sets]([id]) ON DELETE CASCADE ON UPDATE CASCADE, 
   [name] TEXT NOT NULL, 
   [icon] TEXT NOT NULL);
 
-
 CREATE TABLE [packs] (
-  [id] TEXT PRIMARY KEY, 
-  [set_id] TEXT CONSTRAINT [id_set_id3] REFERENCES [sets]([id]) ON DELETE CASCADE ON UPDATE CASCADE MATCH SIMPLE NOT DEFERRABLE INITIALLY IMMEDIATE, 
+  [id] TEXT PRIMARY KEY NOT NULL, 
+  [set_id] TEXT REFERENCES [sets]([id]) ON DELETE CASCADE ON UPDATE CASCADE, 
   [name] TEXT NOT NULL, 
   [xml] TEXT NOT NULL);
 
