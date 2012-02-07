@@ -1,16 +1,4 @@
-﻿// /* **********************************************************************************
-//  *
-//  * Copyright (c) Sky Sanders. All rights reserved.
-//  * 
-//  * This source code is subject to terms and conditions of the Microsoft Public
-//  * License (Ms-PL). A copy of the license can be found in the license.htm file
-//  * included in this distribution.
-//  *
-//  * You must not remove this notice, or any other, from this software.
-//  *
-//  * **********************************************************************************/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -64,8 +52,7 @@ namespace CassiniDev
     }
 
     /// <summary>
-    ///   NOTE: there seems to be a 7k limit on data posted from the test so
-    ///   be concious of the data you log
+    ///   NOTE: there seems to be a 7k limit on data posted from the test so be concious of the data you log
     /// </summary>
     [Serializable]
     public class QUnitExBrowserTestResultItem : BrowserTestResultItem

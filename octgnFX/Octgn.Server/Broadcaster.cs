@@ -1,9 +1,4 @@
-﻿/*
- * This file was automatically generated.
- * Do not modify, changes will get lots when the file is regenerated!
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;

@@ -5,10 +5,10 @@ namespace Octgn
     internal class Registry
     {
         /// <summary>
-        /// Reads a string value from the OCTGN registry
+        ///   Reads a string value from the OCTGN registry
         /// </summary>
-        /// <param name="valName">The name of the value</param>
-        /// <returns>A string value</returns>
+        /// <param name="valName"> The name of the value </param>
+        /// <returns> A string value </returns>
         public static string ReadValue(string valName)
         {
             RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN");
@@ -21,10 +21,10 @@ namespace Octgn
         }
 
         /// <summary>
-        /// Writes a string value to the OCTGN registry
+        ///   Writes a string value to the OCTGN registry
         /// </summary>
-        /// <param name="valName">Name of the value</param>
-        /// <param name="value">String to write for value</param>
+        /// <param name="valName"> Name of the value </param>
+        /// <param name="value"> String to write for value </param>
         public static void WriteValue(string valName, string value)
         {
             RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN", true);

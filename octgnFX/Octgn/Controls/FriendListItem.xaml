@@ -20,8 +20,7 @@
       </Grid.ColumnDefinitions>
       <Border CornerRadius="10" BorderThickness="1" Grid.RowSpan="2" BorderBrush="#FFD2D2D2">
         <Border.Background>
-          <ImageBrush Stretch="UniformToFill" ImageSource="{Binding ElementName=flistitem, Path=Picture}">
-          </ImageBrush>
+          <ImageBrush Stretch="UniformToFill" ImageSource="{Binding ElementName=flistitem, Path=Picture}"></ImageBrush>
         </Border.Background>
 
       </Border>
@@ -31,8 +30,8 @@
                  HorizontalAlignment="Left" Name="tbStatus" VerticalAlignment="Top" Foreground="Silver" Margin="2" />
       <Image Grid.Column="3" Height="16" HorizontalAlignment="Center" Name="image1" Stretch="Fill"
              VerticalAlignment="Top" Width="16" Source="/OCTGN;component/Resources/cross.png" Opacity="0" />
-      <Image Source="{Binding ElementName=flistitem, Path=StatusPicture}" Grid.Column="1" Height="32"
-             Name="image2" Stretch="Fill" Width="32" />
+      <Image Source="{Binding ElementName=flistitem, Path=StatusPicture}" Grid.Column="1" Height="32" Name="image2"
+             Stretch="Fill" Width="32" />
     </Grid>
   </Border>
   <UserControl.Resources>

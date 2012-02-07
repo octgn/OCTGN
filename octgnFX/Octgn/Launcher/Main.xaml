@@ -42,18 +42,18 @@
           </ribbon:RibbonGroup.GroupSizeDefinitions>
           <ribbon:RibbonRadioButton x:Name="bOnlineStatus" Label="Online"
                                     LargeImageSource="/Resources/statusOnline.png" Click="bOnlineStatus_Click" />
-          <ribbon:RibbonRadioButton x:Name="bAwayStatus" Label="Away"
-                                    LargeImageSource="/Resources/statusAway.png" Click="bAwayStatus_Click" />
-          <ribbon:RibbonRadioButton x:Name="bBusyStatus" Label="Busy"
-                                    LargeImageSource="/Resources/statusDND.png" Click="bBusyStatus_Click" />
+          <ribbon:RibbonRadioButton x:Name="bAwayStatus" Label="Away" LargeImageSource="/Resources/statusAway.png"
+                                    Click="bAwayStatus_Click" />
+          <ribbon:RibbonRadioButton x:Name="bBusyStatus" Label="Busy" LargeImageSource="/Resources/statusDND.png"
+                                    Click="bBusyStatus_Click" />
           <ribbon:RibbonRadioButton x:Name="bOfflineStatus" Label="Offline"
                                     LargeImageSource="/Resources/statusOffline.png" Click="bOfflineStatus_Click" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup>
           <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
-            <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbUsername"
-                     Width="200" Text="My Username" FontWeight="Bold" FontSize="16" MouseUp="tbUsername_MouseUp"
-                     LostFocus="tbUsername_LostFocus" KeyUp="tbUsername_KeyUp" LostKeyboardFocus="tbUsername_LostKeyboardFocus" />
+            <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbUsername" Width="200"
+                     Text="My Username" FontWeight="Bold" FontSize="16" MouseUp="tbUsername_MouseUp" LostFocus="tbUsername_LostFocus"
+                     KeyUp="tbUsername_KeyUp" LostKeyboardFocus="tbUsername_LostKeyboardFocus" />
           </ribbon:RibbonControlGroup>
           <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
             <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbStatus" Width="200"

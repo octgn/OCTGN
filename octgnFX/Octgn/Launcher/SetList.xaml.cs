@@ -9,7 +9,7 @@ using Octgn.Data;
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for GameList.xaml
+    ///   Interaction logic for GameList.xaml
     /// </summary>
     public partial class SetList : Page
     {

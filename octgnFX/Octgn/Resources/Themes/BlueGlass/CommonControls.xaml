@@ -7,19 +7,17 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type CheckBox}">
           <StackPanel Orientation="Horizontal" Height="{TemplateBinding Height}" Background="Transparent">
-            <Border x:Name="border" Padding="0" VerticalAlignment="Center"
-                    Style="{StaticResource ControlBorder}" Height="16" Width="16">
-              <Path x:Name="mark"
-                    Data="M4.3333333,9.0833333 L7.2503335,13.750333 14.916999,0.00033337181" Margin="1,-3,0,1" Stretch="Fill"
-                    Stroke="{StaticResource ColoredGlyphBrush}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                    StrokeLineJoin="Round" Visibility="Collapsed" />
+            <Border x:Name="border" Padding="0" VerticalAlignment="Center" Style="{StaticResource ControlBorder}"
+                    Height="16" Width="16">
+              <Path x:Name="mark" Data="M4.3333333,9.0833333 L7.2503335,13.750333 14.916999,0.00033337181"
+                    Margin="1,-3,0,1" Stretch="Fill" Stroke="{StaticResource ColoredGlyphBrush}" StrokeThickness="2"
+                    StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Visibility="Collapsed" />
             </Border>
             <ContentPresenter Margin="4,0,0,0" VerticalAlignment="Center" />
           </StackPanel>
           <ControlTemplate.Triggers>
             <Trigger Property="IsEnabled" Value="False">
-              <Setter TargetName="border" Property="Background"
-                      Value="{StaticResource DarkGlassPanelBrush}" />
+              <Setter TargetName="border" Property="Background" Value="{StaticResource DarkGlassPanelBrush}" />
               <Setter TargetName="mark" Property="Stroke" Value="#FF6C6C6C" />
             </Trigger>
             <Trigger Property="IsChecked" Value="True">
@@ -36,17 +34,15 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type RadioButton}">
           <StackPanel Orientation="Horizontal" Height="{TemplateBinding Height}" Background="Transparent">
-            <Border x:Name="border" Padding="0" Style="{StaticResource ControlBorder}" Width="16"
-                    Height="16" CornerRadius="8">
-              <Ellipse x:Name="mark" Margin="4" Fill="{StaticResource ColoredGlyphBrush}"
-                       Visibility="Collapsed" />
+            <Border x:Name="border" Padding="0" Style="{StaticResource ControlBorder}" Width="16" Height="16"
+                    CornerRadius="8">
+              <Ellipse x:Name="mark" Margin="4" Fill="{StaticResource ColoredGlyphBrush}" Visibility="Collapsed" />
             </Border>
             <ContentPresenter Margin="4,0,0,0" VerticalAlignment="Center" />
           </StackPanel>
           <ControlTemplate.Triggers>
             <Trigger Property="IsEnabled" Value="False">
-              <Setter TargetName="border" Property="Background"
-                      Value="{StaticResource DarkGlassPanelBrush}" />
+              <Setter TargetName="border" Property="Background" Value="{StaticResource DarkGlassPanelBrush}" />
               <Setter TargetName="mark" Property="Fill" Value="#FF6C6C6C" />
             </Trigger>
             <Trigger Property="IsChecked" Value="True">
@@ -68,9 +64,8 @@
         <ControlTemplate TargetType="{x:Type ToggleButton}">
           <Border x:Name="outerBorder" Style="{StaticResource PanelControl}"
                   BorderBrush="{StaticResource RaisedBorderBrush}">
-            <Border x:Name="border" Width="24" HorizontalAlignment="Right"
-                    Style="{StaticResource PanelControl}" BorderBrush="{StaticResource RaisedBorderBrush}" CornerRadius="0,2,2,0"
-                    Margin="-1">
+            <Border x:Name="border" Width="24" HorizontalAlignment="Right" Style="{StaticResource PanelControl}"
+                    BorderBrush="{StaticResource RaisedBorderBrush}" CornerRadius="0,2,2,0" Margin="-1">
               <Path x:Name="glyph" Data="M 4,4 l4,-4 h-8 Z" Fill="{StaticResource GlyphBrush}"
                     HorizontalAlignment="Center" VerticalAlignment="Center" />
             </Border>
@@ -81,8 +76,7 @@
               <Setter TargetName="border" Property="Background" Value="{StaticResource PressedBrush}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
-              <Setter TargetName="outerBorder" Property="Background"
-                      Value="{StaticResource DarkGlassPanelBrush}" />
+              <Setter TargetName="outerBorder" Property="Background" Value="{StaticResource DarkGlassPanelBrush}" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -100,11 +94,9 @@
                    PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" Placement="Bottom">
               <Microsoft_Windows_Themes:SystemDropShadowChrome x:Name="Shdw" Color="Transparent"
                                                                MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{Binding ActualWidth, ElementName=grid}">
-                <Border x:Name="DropDownBorder" BorderBrush="#FF727272" BorderThickness="1,0,1,1"
-                        Background="White">
+                <Border x:Name="DropDownBorder" BorderBrush="#FF727272" BorderThickness="1,0,1,1" Background="White">
                   <ScrollViewer x:Name="DropDownScrollViewer" RenderOptions.ClearTypeHint="Enabled">
-                    <ItemsPresenter x:Name="ItemsPresenter"
-                                    KeyboardNavigation.DirectionalNavigation="Contained" />
+                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" />
                   </ScrollViewer>
                 </Border>
               </Microsoft_Windows_Themes:SystemDropShadowChrome>
@@ -127,8 +119,7 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
               <Setter Property="Height" TargetName="DropDownBorder" Value="95" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
-              <Setter Property="Foreground"
-                      Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+              <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
             </Trigger>
             <Trigger Property="IsGrouping" Value="true">
               <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
@@ -142,8 +133,8 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate>
-          <Border x:Name="cBorder" BorderThickness="0" CornerRadius="0" Padding="0"
-                  SnapsToDevicePixels="True" BorderBrush="Transparent" Background="Transparent">
+          <Border x:Name="cBorder" BorderThickness="0" CornerRadius="0" Padding="0" SnapsToDevicePixels="True"
+                  BorderBrush="Transparent" Background="Transparent">
             <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
           </Border>
         </ControlTemplate>
@@ -164,9 +155,8 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate>
-          <Border x:Name="cBorder" BorderThickness="1" CornerRadius="2" Padding="2"
-                  SnapsToDevicePixels="True" BorderBrush="{StaticResource ControlBorderBrush}"
-                  Background="{StaticResource ControlFillBrush}">
+          <Border x:Name="cBorder" BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
+                  BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}">
             <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
           </Border>
           <ControlTemplate.Triggers>
@@ -196,9 +186,8 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate>
-          <Border x:Name="cBorder" BorderThickness="1" CornerRadius="2" Padding="2"
-                  SnapsToDevicePixels="True" BorderBrush="{StaticResource ControlBorderBrush}"
-                  Background="{StaticResource ControlFillBrush}">
+          <Border x:Name="cBorder" BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
+                  BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}">
             <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
           </Border>
           <ControlTemplate.Triggers>

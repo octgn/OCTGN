@@ -6,7 +6,7 @@ using System.Windows.Media;
 namespace Octgn.Controls
 {
     /// <summary>
-    /// Interaction logic for NotificationListItem.xaml
+    ///   Interaction logic for NotificationListItem.xaml
     /// </summary>
     public partial class NotificationListItem : UserControl
     {

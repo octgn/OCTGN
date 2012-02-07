@@ -38,11 +38,11 @@ namespace Skylabs.LobbyServer
         public string DbName { get; private set; }
 
         /// <summary>
-        /// Is the current user banned?
+        ///   Is the current user banned?
         /// </summary>
-        /// <param name="uid">User ID</param>
-        /// <param name="endpoint">The Endpoint</param>
-        /// <returns>-1 if not banned. Timestamp of ban end if banned. Timestamp can be converted to DateTime with fromPHPTime.</returns>
+        /// <param name="uid"> User ID </param>
+        /// <param name="endpoint"> The Endpoint </param>
+        /// <returns> -1 if not banned. Timestamp of ban end if banned. Timestamp can be converted to DateTime with fromPHPTime. </returns>
         public int IsBanned(int uid, EndPoint endpoint)
         {
             lock (DBLocker)
@@ -130,12 +130,12 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Just a generic delete row function.
+        ///   Just a generic delete row function.
         /// </summary>
-        /// <param name="con">Connection</param>
-        /// <param name="table">Table to delete from</param>
-        /// <param name="columnname">Column name to check against.</param>
-        /// <param name="columnvalue">The value, that if exists in said column, will cause the row to go bye bye.</param>
+        /// <param name="con"> Connection </param>
+        /// <param name="table"> Table to delete from </param>
+        /// <param name="columnname"> Column name to check against. </param>
+        /// <param name="columnvalue"> The value, that if exists in said column, will cause the row to go bye bye. </param>
         private void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
         {
             MySqlCommand cmd = con.CreateCommand();
@@ -151,10 +151,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Get user information from the database.
+        ///   Get user information from the database.
         /// </summary>
-        /// <param name="email">Users e-mail</param>
-        /// <returns>User data, such as UID and whatnot, or NULL if none found.</returns>
+        /// <param name="email"> Users e-mail </param>
+        /// <returns> User data, such as UID and whatnot, or NULL if none found. </returns>
         public User GetUser(string email)
         {
             lock (DBLocker)
@@ -204,10 +204,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Gets a user from the database based on there UID
+        ///   Gets a user from the database based on there UID
         /// </summary>
-        /// <param name="uid">UID of the user</param>
-        /// <returns>User that matches, or null.</returns>
+        /// <param name="uid"> UID of the user </param>
+        /// <returns> User that matches, or null. </returns>
         public User GetUser(int uid)
         {
             lock (DBLocker)
@@ -255,11 +255,11 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Register a user to the database.
+        ///   Register a user to the database.
         /// </summary>
-        /// <param name="email">users e-mail</param>
-        /// <param name="name">display name</param>
-        /// <returns>true on success, false on failure.</returns>
+        /// <param name="email"> users e-mail </param>
+        /// <param name="name"> display name </param>
+        /// <returns> true on success, false on failure. </returns>
         public bool RegisterUser(string email, string name)
         {
             lock (DBLocker)
@@ -293,10 +293,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Remove a friend request from the database.
+        ///   Remove a friend request from the database.
         /// </summary>
-        /// <param name="requesteeuid">Requestee's UID</param>
-        /// <param name="friendemail">To be friends email</param>
+        /// <param name="requesteeuid"> Requestee's UID </param>
+        /// <param name="friendemail"> To be friends email </param>
         public void RemoveFriendRequest(int requesteeuid, string friendemail)
         {
             lock (DBLocker)
@@ -327,13 +327,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Add a friend request.
-        /// We use the friends email, because they might not have an account yet.
-        /// So when they get an account, the system will realize it and send them a 
-        /// friend request.
+        ///   Add a friend request. We use the friends email, because they might not have an account yet. So when they get an account, the system will realize it and send them a friend request.
         /// </summary>
-        /// <param name="uid">Users UID.</param>
-        /// <param name="friendemail">Friend-to-bes e-mail</param>
+        /// <param name="uid"> Users UID. </param>
+        /// <param name="friendemail"> Friend-to-bes e-mail </param>
         public void AddFriendRequest(int uid, string friendemail)
         {
             lock (DBLocker)
@@ -366,10 +363,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Get a list of friend requests based on your e-mail address.
+        ///   Get a list of friend requests based on your e-mail address.
         /// </summary>
-        /// <param name="email">The users e-mail address</param>
-        /// <returns>List of UID's of users that want to be the users friend.</returns>
+        /// <param name="email"> The users e-mail address </param>
+        /// <returns> List of UID's of users that want to be the users friend. </returns>
         public List<int> GetFriendRequests(string email)
         {
             lock (DBLocker)
@@ -412,12 +409,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Add a friend. This happens after a successful friend request.
-        /// It only needs to be called once, as it saves the friendship both ways.
-        /// Even the order of userid, and friendid don't matter.
+        ///   Add a friend. This happens after a successful friend request. It only needs to be called once, as it saves the friendship both ways. Even the order of userid, and friendid don't matter.
         /// </summary>
-        /// <param name="useruid">User id</param>
-        /// <param name="frienduid">Friend id</param>
+        /// <param name="useruid"> User id </param>
+        /// <param name="frienduid"> Friend id </param>
         public void AddFriend(int useruid, int frienduid)
         {
             lock (DBLocker)
@@ -453,11 +448,11 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Saves the users custom stats to the database.
+        ///   Saves the users custom stats to the database.
         /// </summary>
-        /// <param name="uid">Users uid</param>
-        /// <param name="status">Custom status.</param>
-        /// <returns>Returns a false if the data it got was bullshit.</returns>
+        /// <param name="uid"> Users uid </param>
+        /// <param name="status"> Custom status. </param>
+        /// <returns> Returns a false if the data it got was bullshit. </returns>
         public bool SetCustomStatus(int uid, string status)
         {
             lock (DBLocker)
@@ -490,11 +485,11 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Saves the users display name to the database
+        ///   Saves the users display name to the database
         /// </summary>
-        /// <param name="uid">Users uid</param>
-        /// <param name="name">Users display name</param>
-        /// <returns>True on success, or false if the data is fucked.</returns>
+        /// <param name="uid"> Users uid </param>
+        /// <param name="name"> Users display name </param>
+        /// <returns> True on success, or false if the data is fucked. </returns>
         public bool SetDisplayName(int uid, string name)
         {
             lock (DBLocker)
@@ -527,10 +522,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Gets a list of friends based on your uid.
+        ///   Gets a list of friends based on your uid.
         /// </summary>
-        /// <param name="uid">Users UID</param>
-        /// <returns>List of friends as Users, or NULL.</returns>
+        /// <param name="uid"> Users UID </param>
+        /// <returns> List of friends as Users, or NULL. </returns>
         public List<User> GetFriendsList(int uid)
         {
             lock (DBLocker)

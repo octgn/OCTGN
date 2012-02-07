@@ -50,9 +50,9 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Create a chat room with another user.
+        ///   Create a chat room with another user.
         /// </summary>
-        /// <param name="otherUser"></param>
+        /// <param name="otherUser"> </param>
         public void CreateChatRoom(User otherUser)
         {
             var sm = new SocketMessage("twopersonchat");
@@ -61,9 +61,9 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Join a chat room based on an RID
+        ///   Join a chat room based on an RID
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id"> </param>
         public void JoinChatRoom(long id)
         {
             var sm = new SocketMessage("joinchatroom");
@@ -72,10 +72,10 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Add a user to a chat room
+        ///   Add a user to a chat room
         /// </summary>
-        /// <param name="u"></param>
-        /// <param name="chatid"></param>
+        /// <param name="u"> </param>
+        /// <param name="chatid"> </param>
         public void AddUserToChat(User u, long chatid)
         {
             var sm = new SocketMessage("addusertochat");
@@ -85,9 +85,9 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Leave a chat room.
+        ///   Leave a chat room.
         /// </summary>
-        /// <param name="rid"></param>
+        /// <param name="rid"> </param>
         public void LeaveChatRoom(long rid)
         {
             var sm = new SocketMessage("leavechat");
@@ -97,10 +97,10 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Send a chat message to a room.
+        ///   Send a chat message to a room.
         /// </summary>
-        /// <param name="rid"></param>
-        /// <param name="message"></param>
+        /// <param name="rid"> </param>
+        /// <param name="message"> </param>
         public void SendChatMessage(long rid, string message)
         {
             var sm = new SocketMessage("chatmessage");
@@ -110,11 +110,11 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Don't call this, Chatting calls this.
+        ///   Don't call this, Chatting calls this.
         /// </summary>
-        /// <param name="rid"></param>
-        /// <param name="u"></param>
-        /// <param name="allusers"></param>
+        /// <param name="rid"> </param>
+        /// <param name="u"> </param>
+        /// <param name="allusers"> </param>
         public void UserJoinedChat(long rid, User u, List<User> allusers)
         {
             if (!Rooms.Exists(r => r.ID == rid))
@@ -137,10 +137,10 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Don't call this, Chatting.cs calls this.
+        ///   Don't call this, Chatting.cs calls this.
         /// </summary>
-        /// <param name="rid"></param>
-        /// <param name="u"></param>
+        /// <param name="rid"> </param>
+        /// <param name="u"> </param>
         public void UserLeftChat(long rid, User u)
         {
             ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
@@ -152,11 +152,11 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Don't call this...Chatting.cs calls this.
+        ///   Don't call this...Chatting.cs calls this.
         /// </summary>
-        /// <param name="rid"></param>
-        /// <param name="u"></param>
-        /// <param name="message"></param>
+        /// <param name="rid"> </param>
+        /// <param name="u"> </param>
+        /// <param name="message"> </param>
         public void RecieveChatMessage(long rid, User u, string message)
         {
             ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);

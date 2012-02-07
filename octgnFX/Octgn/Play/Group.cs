@@ -18,22 +18,22 @@ namespace Octgn.Play
         private static readonly KeyGestureConverter keyConverter = new KeyGestureConverter();
 
         protected ObservableCollection<Card> cards = new ObservableCollection<Card>();
-                                             // List of cards in this group        
+        // List of cards in this group        
 
         internal GroupDef def;
         internal int filledShuffleSlots;
         internal bool hasReceivedFirstShuffledMessage;
 
         private bool locked;
-                     // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
+        // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
 
         internal Dictionary<int, List<Card>> lookedAt = new Dictionary<int, List<Card>>();
-                                             // Cards being looked at, key is a unique identifier for each "look"; Note: cards may have left the group in the meantime, which is not important
+        // Cards being looked at, key is a unique identifier for each "look"; Note: cards may have left the group in the meantime, which is not important
 
         internal short[] myShufflePos; // Stores positions suggested by this client during a shuffle [transient]
 
         internal List<Player> viewers = new List<Player>(2);
-                              // List of players who can see cards in this group, or null where this is irrelevant (Visibility.Undefined)
+        // List of players who can see cards in this group, or null where this is irrelevant (Visibility.Undefined)
 
         protected GroupVisibility visibility; // Visibility of the group
 

@@ -144,7 +144,7 @@ namespace Octgn.DeckBuilder
             if (!int.TryParse(value, out parsedValue))
                 return "1 = 0";
             value = parsedValue.ToString(CultureInfo.InvariantCulture);
-                // Prevents culture related problem, e.g. someone enters 1,000 which is valid in english, or 1'000 (same in french)
+            // Prevents culture related problem, e.g. someone enters 1,000 which is valid in english, or 1'000 (same in french)
             return string.Format(SqlFormat, field, value);
         }
     }

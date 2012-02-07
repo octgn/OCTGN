@@ -74,7 +74,7 @@ namespace Octgn.Play
             AddHandler(CardRun.ViewCardModelEvent, new EventHandler<CardModelEventArgs>(ViewCardModel));
 
             Loaded += (sender, args) => Keyboard.Focus(table);
-                // Solve various issues, like disabled menus or non-available keyboard shortcuts
+            // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
             // Show the Scripting console in dev only
             if (Application.Current.Properties["ArbitraryArgName"] != null)
@@ -118,7 +118,8 @@ namespace Octgn.Play
                                                                   if (player != null)
                                                                   {
                                                                       Counter counter =
-                                                                          player.Counters.FirstOrDefault(c => c.Name == name);
+                                                                          player.Counters.FirstOrDefault(
+                                                                              c => c.Name == name);
                                                                       if (counter != null)
                                                                       {
                                                                           multi.Bindings.Add(new Binding("Value")
@@ -163,7 +164,7 @@ namespace Octgn.Play
             base.OnClosed(e);
             Program.PlayWindow = null;
             Program.StopGame();
-                // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
+            // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
         }
 
         private void Open(object sender, RoutedEventArgs e)
@@ -311,7 +312,10 @@ namespace Octgn.Play
                 var ctrl = e.OriginalSource as CardControl;
                 BitmapImage img = e.Card != null
                                       ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
-                                                                                                  e.Card.PeekingPlayers.Contains(Player.LocalPlayer)))
+                                                                                                  e.Card.PeekingPlayers.
+                                                                                                      Contains(
+                                                                                                          Player.
+                                                                                                              LocalPlayer)))
                                       : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture));
                 ShowCardPicture(img);
             }

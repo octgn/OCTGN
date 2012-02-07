@@ -27,8 +27,8 @@
       </Grid.RowDefinitions>
       <Button Content="Ok" Grid.Row="1" Height="26" HorizontalAlignment="Left" Margin="149,8,0,0" Name="button1"
               VerticalAlignment="Top" Width="71" Click="button1_Click" />
-      <Button Content="Cancel" Grid.Row="1" Height="25" HorizontalAlignment="Left" Margin="6,8,0,0"
-              Name="button2" VerticalAlignment="Top" Width="75" Click="button2_Click" />
+      <Button Content="Cancel" Grid.Row="1" Height="25" HorizontalAlignment="Left" Margin="6,8,0,0" Name="button2"
+              VerticalAlignment="Top" Width="75" Click="button2_Click" />
       <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Stretch" Margin="0,0,0,37"
                   Grid.RowSpan="2">
         <Label Content="Game Name" Height="24" Name="label1" Width="200" />

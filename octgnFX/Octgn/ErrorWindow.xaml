@@ -26,8 +26,8 @@
           </TextBlock.Inlines>
         </TextBlock>
 
-        <TextBox x:Name="detailsBox" Grid.Row="1" IsReadOnly="True" Margin="0,8,0,0"
-                 VerticalScrollBarVisibility="Auto" TextWrapping="Wrap">
+        <TextBox x:Name="detailsBox" Grid.Row="1" IsReadOnly="True" Margin="0,8,0,0" VerticalScrollBarVisibility="Auto"
+                 TextWrapping="Wrap">
           (no details)
         </TextBox>
       </Grid>

@@ -15,7 +15,7 @@ using Skylabs.Lobby;
 namespace Octgn.Controls
 {
     /// <summary>
-    /// Interaction logic for FriendListItem.xaml
+    ///   Interaction logic for FriendListItem.xaml
     /// </summary>
     public partial class FriendListItem : UserControl
     {
@@ -161,7 +161,8 @@ namespace Octgn.Controls
                                                          {
                                                              IntPtr handle = hwndSource.Handle;
 
-                                                             Int32 styles = Win32.GetWindowLong(handle, Win32.GWL_EXSTYLE);
+                                                             Int32 styles = Win32.GetWindowLong(handle,
+                                                                                                Win32.GWL_EXSTYLE);
                                                              Win32.SetWindowLong(handle, Win32.GWL_EXSTYLE,
                                                                                  styles | Win32.WS_EX_LAYERED |
                                                                                  Win32.WS_EX_TRANSPARENT);

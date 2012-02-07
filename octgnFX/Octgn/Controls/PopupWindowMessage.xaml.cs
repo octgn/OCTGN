@@ -7,7 +7,7 @@ using System.Windows.Media.Animation;
 namespace Octgn.Controls
 {
     /// <summary>
-    /// Interaction logic for PopupWindowMessage.xaml
+    ///   Interaction logic for PopupWindowMessage.xaml
     /// </summary>
     public partial class PopupWindowMessage : UserControl
     {

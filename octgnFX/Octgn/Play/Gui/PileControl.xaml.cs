@@ -31,7 +31,7 @@ namespace Octgn.Play.Gui
             {
                 pile.AnimateInsertion = false;
                 var doubleAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
-                               {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
+                                          {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
                 scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
             }
         }
@@ -44,12 +44,12 @@ namespace Octgn.Play.Gui
             // Fix: capture the pile, it may sometimes be null when Completed executes.
             var capturedPile = (Pile) group;
             var doubleAnimation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
-                           {EasingFunction = new ExponentialEase {EasingMode = EasingMode.EaseIn}};
+                                      {EasingFunction = new ExponentialEase {EasingMode = EasingMode.EaseIn}};
             doubleAnimation.Completed += delegate
-                                  {
-                                      capturedPile.AnimateInsertion = true;
-                                      capturedPile.Collapsed = true;
-                                  };
+                                             {
+                                                 capturedPile.AnimateInsertion = true;
+                                                 capturedPile.Collapsed = true;
+                                             };
             scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
         }
 

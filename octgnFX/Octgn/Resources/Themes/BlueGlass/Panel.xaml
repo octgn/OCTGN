@@ -94,8 +94,8 @@
     <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
     <Setter Property="Effect">
       <Setter.Value>
-        <DropShadowEffect ShadowDepth="1.25" Direction="330" RenderingBias="Quality" Color="#000000"
-                          Opacity="0.8" BlurRadius="2.5" />
+        <DropShadowEffect ShadowDepth="1.25" Direction="330" RenderingBias="Quality" Color="#000000" Opacity="0.8"
+                          BlurRadius="2.5" />
       </Setter.Value>
     </Setter>
     <Style.Triggers>

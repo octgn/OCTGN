@@ -17,15 +17,15 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// List of all the open ChatRooms
+        ///   List of all the open ChatRooms
         /// </summary>
         private static List<ChatRoom> Rooms { get; set; }
 
         /// <summary>
-        /// Join a chat room.
+        ///   Join a chat room.
         /// </summary>
-        /// <param name="c">Client that wants to join</param>
-        /// <param name="s">Socket message stuffed with data.</param>
+        /// <param name="c"> Client that wants to join </param>
+        /// <param name="s"> Socket message stuffed with data. </param>
         public static void JoinChatRoom(Client c, SocketMessage s)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
@@ -50,10 +50,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// This starts up a two person chat.
+        ///   This starts up a two person chat.
         /// </summary>
-        /// <param name="c">Client starting the room</param>
-        /// <param name="s">Socket message full of data</param>
+        /// <param name="c"> Client starting the room </param>
+        /// <param name="s"> Socket message full of data </param>
         public static void TwoPersonChat(Client c, SocketMessage s)
         {
             var user = (User) s["user"];
@@ -80,10 +80,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Add a user to a chat room
+        ///   Add a user to a chat room
         /// </summary>
-        /// <param name="c">Client adding a user</param>
-        /// <param name="s">Socket message with the user data and stuff</param>
+        /// <param name="c"> Client adding a user </param>
+        /// <param name="s"> Socket message with the user data and stuff </param>
         public static void AddUserToChat(Client c, SocketMessage s)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
@@ -115,10 +115,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Make a room, hosted by Client
+        ///   Make a room, hosted by Client
         /// </summary>
-        /// <param name="c">Client "hosting"</param>
-        /// <returns>The unique chat room id.</returns>
+        /// <param name="c"> Client "hosting" </param>
+        /// <returns> The unique chat room id. </returns>
         private static long MakeRoom(Client c)
         {
             long newID = DateTime.Now.Ticks;
@@ -131,9 +131,9 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Removes a chat room from the list.
+        ///   Removes a chat room from the list.
         /// </summary>
-        /// <param name="room">Chat room to remove</param>
+        /// <param name="room"> Chat room to remove </param>
         public static void RemoveRoom(ChatRoom room)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
@@ -145,9 +145,9 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Server calls this when a User goes offline.
+        ///   Server calls this when a User goes offline.
         /// </summary>
-        /// <param name="u">User</param>
+        /// <param name="u"> User </param>
         public static void UserOffline(User u)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
@@ -171,10 +171,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Gets called when a user expressely leaves a chat room.
+        ///   Gets called when a user expressely leaves a chat room.
         /// </summary>
-        /// <param name="u">User</param>
-        /// <param name="rid">Room id</param>
+        /// <param name="u"> User </param>
+        /// <param name="rid"> Room id </param>
         public static void UserLeaves(User u, long rid)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
@@ -193,11 +193,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Whenever a chat message request comes in, it goes through here
-        /// and gets filtered to the appropriate room.
+        ///   Whenever a chat message request comes in, it goes through here and gets filtered to the appropriate room.
         /// </summary>
-        /// <param name="c">Client as the sender</param>
-        /// <param name="sm">Data as the data.</param>
+        /// <param name="c"> Client as the sender </param>
+        /// <param name="sm"> Data as the data. </param>
         public static void ChatMessage(Client c, SocketMessage sm)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");

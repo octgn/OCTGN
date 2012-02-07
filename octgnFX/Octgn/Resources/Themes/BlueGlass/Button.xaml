@@ -34,8 +34,8 @@
             </Storyboard>
           </ControlTemplate.Resources>
           <Grid>
-            <Rectangle Stroke="#FF707ABB" RadiusX="5" RadiusY="5" HorizontalAlignment="Stretch"
-                       Width="Auto" x:Name="fillRec">
+            <Rectangle Stroke="#FF707ABB" RadiusX="5" RadiusY="5" HorizontalAlignment="Stretch" Width="Auto"
+                       x:Name="fillRec">
               <Rectangle.Fill>
                 <RadialGradientBrush>
                   <RadialGradientBrush.RelativeTransform>
@@ -46,8 +46,8 @@
                 </RadialGradientBrush>
               </Rectangle.Fill>
             </Rectangle>
-            <Rectangle RadiusX="5" RadiusY="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                       Width="Auto" Height="Auto" x:Name="highlight">
+            <Rectangle RadiusX="5" RadiusY="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto"
+                       Height="Auto" x:Name="highlight">
               <Rectangle.Fill>
                 <LinearGradientBrush EndPoint="0.50,0" StartPoint="0.5,1">
                   <GradientStop Color="#7E00BAFF" Offset="1" />
@@ -56,9 +56,8 @@
                 </LinearGradientBrush>
               </Rectangle.Fill>
             </Rectangle>
-            <ContentPresenter RecognizesAccessKey="True"
-                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                              Margin="{TemplateBinding Padding}" x:Name="contentPresenter" />
+            <ContentPresenter RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" x:Name="contentPresenter" />
           </Grid>
           <ControlTemplate.Triggers>
             <Trigger Property="IsEnabled" Value="False">
@@ -197,8 +196,7 @@
                 <LinearGradientBrush StartPoint="0.360512,0.0260379" EndPoint="1.35835,0.0260379">
                   <LinearGradientBrush.RelativeTransform>
                     <TransformGroup>
-                      <SkewTransform CenterX="0.360512" CenterY="0.0260379" AngleX="-2.47444"
-                                     AngleY="0" />
+                      <SkewTransform CenterX="0.360512" CenterY="0.0260379" AngleX="-2.47444" AngleY="0" />
                       <RotateTransform CenterX="0.360512" CenterY="0.0260379" Angle="74.4977" />
                     </TransformGroup>
                   </LinearGradientBrush.RelativeTransform>
@@ -295,8 +293,7 @@
           <ControlTemplate.Triggers>
             <Trigger Property="IsChecked" Value="True">
               <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
-              <Setter TargetName="border" Property="BorderBrush"
-                      Value="{StaticResource ControlBorderBrush}" />
+              <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
               <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
@@ -320,8 +317,7 @@
           <ControlTemplate.Triggers>
             <Trigger Property="IsChecked" Value="True">
               <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
-              <Setter TargetName="border" Property="BorderBrush"
-                      Value="{StaticResource ControlBorderBrush}" />
+              <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
               <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
@@ -345,8 +341,7 @@
           <ControlTemplate.Triggers>
             <Trigger Property="IsChecked" Value="True">
               <Setter TargetName="border" Property="Background" Value="#a0dddddd" />
-              <Setter TargetName="border" Property="BorderBrush"
-                      Value="{StaticResource ControlBorderBrush}" />
+              <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
               <Setter TargetName="content" Property="Margin" Value="0,2,0,0" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">

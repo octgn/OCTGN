@@ -12,8 +12,8 @@
               <Setter Property="Template">
                 <Setter.Value>
                   <ControlTemplate TargetType="{x:Type TextBox}">
-                    <Border SnapsToDevicePixels="True"
-                            BorderBrush="{DynamicResource ControlBorderBrush}" BorderThickness="0,0,1,0">
+                    <Border SnapsToDevicePixels="True" BorderBrush="{DynamicResource ControlBorderBrush}"
+                            BorderThickness="0,0,1,0">
                       <ScrollViewer SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                     x:Name="PART_ContentHost" />
                     </Border>
@@ -29,14 +29,12 @@
                   <ControlTemplate TargetType="{x:Type ButtonBase}">
                     <Border x:Name="Bd" SnapsToDevicePixels="True" HorizontalAlignment="Stretch"
                             BorderBrush="{DynamicResource ControlBorderBrush}" BorderThickness="0,0,0,1" Background="Transparent">
-                      <ContentPresenter
-SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" HorizontalAlignment="Center" Margin="0,-1,0,0"
-VerticalAlignment="Center" />
+                      <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                        HorizontalAlignment="Center" Margin="0,-1,0,0" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                       <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" TargetName="Bd"
-                                Value="{StaticResource PressedBrush}" />
+                        <Setter Property="Background" TargetName="Bd" Value="{StaticResource PressedBrush}" />
                       </Trigger>
                     </ControlTemplate.Triggers>
                   </ControlTemplate>
@@ -51,14 +49,12 @@ VerticalAlignment="Center" />
                   <ControlTemplate TargetType="{x:Type ButtonBase}">
                     <Border x:Name="Bd" SnapsToDevicePixels="True" HorizontalAlignment="Stretch"
                             BorderBrush="{DynamicResource ControlBorderBrush}" BorderThickness="0,1,0,0" Background="Transparent">
-                      <ContentPresenter
-SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" HorizontalAlignment="Center" Margin="0,-1,0,0"
-VerticalAlignment="Center" />
+                      <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                        HorizontalAlignment="Center" Margin="0,-1,0,0" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                       <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" TargetName="Bd"
-                                Value="{StaticResource PressedBrush}" />
+                        <Setter Property="Background" TargetName="Bd" Value="{StaticResource PressedBrush}" />
                       </Trigger>
                     </ControlTemplate.Triggers>
                   </ControlTemplate>

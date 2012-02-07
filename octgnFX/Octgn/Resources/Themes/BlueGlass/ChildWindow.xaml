@@ -32,11 +32,9 @@
               <Trigger.EnterActions>
                 <BeginStoryboard>
                   <Storyboard>
-                    <ColorAnimation To="#FFFF1B1B" Duration="0:0:0.4"
-                                    Storyboard.TargetName="border"
+                    <ColorAnimation To="#FFFF1B1B" Duration="0:0:0.4" Storyboard.TargetName="border"
                                     Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" />
-                    <ColorAnimation To="#FFBA0000" Duration="0:0:0.4"
-                                    Storyboard.TargetName="border"
+                    <ColorAnimation To="#FFBA0000" Duration="0:0:0.4" Storyboard.TargetName="border"
                                     Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" />
                     <ColorAnimation To="#FFFFFFFF" Duration="0:0:0.4" Storyboard.TargetName="path"
                                     Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" />
@@ -52,8 +50,8 @@
                     <ColorAnimation To="#FF980000" Duration="0:0:0.4" FillBehavior="Stop"
                                     Storyboard.TargetName="border"
                                     Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" />
-                    <ColorAnimation To="#FFD0D0D0" Duration="0:0:0.4" FillBehavior="Stop"
-                                    Storyboard.TargetName="path" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" />
+                    <ColorAnimation To="#FFD0D0D0" Duration="0:0:0.4" FillBehavior="Stop" Storyboard.TargetName="path"
+                                    Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" />
                   </Storyboard>
                 </BeginStoryboard>
               </Trigger.ExitActions>

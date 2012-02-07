@@ -7,10 +7,10 @@ namespace Skylabs
     public static class ValueConverters
     {
         /// <summary>
-        /// Converts a DateTime to a long of seconds since the epoch.
+        ///   Converts a DateTime to a long of seconds since the epoch.
         /// </summary>
-        /// <param name="time">Time to convert.</param>
-        /// <returns>Seconds since the epoch.</returns>
+        /// <param name="time"> Time to convert. </param>
+        /// <returns> Seconds since the epoch. </returns>
         public static long ToPhpTime(DateTime time)
         {
             var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
@@ -20,10 +20,10 @@ namespace Skylabs
         }
 
         /// <summary>
-        /// Returns a DateTime from a long representing seconds elapsed since the epoch
+        ///   Returns a DateTime from a long representing seconds elapsed since the epoch
         /// </summary>
-        /// <param name="secondsSinceEpoch">Seconds</param>
-        /// <returns>DateTime representation of the seconds.</returns>
+        /// <param name="secondsSinceEpoch"> Seconds </param>
+        /// <returns> DateTime representation of the seconds. </returns>
         public static DateTime FromPhpTime(long secondsSinceEpoch)
         {
             var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);

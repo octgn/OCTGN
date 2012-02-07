@@ -8,7 +8,7 @@ using Skylabs;
 namespace Octgn.Controls
 {
     /// <summary>
-    /// Interaction logic for GameListItem.xaml
+    ///   Interaction logic for GameListItem.xaml
     /// </summary>
     public partial class FriendRequestNotification : UserControl
     {

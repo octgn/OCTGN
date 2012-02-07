@@ -402,7 +402,7 @@ namespace Octgn.Play.Gui
         private static Point mousePt; // mousePt is useful to determine the mouse pointer offset inside the card
 
         private static Point mouseWindowPt;
-                             // mouesWindowPt should be use to determine movement, because the card origin itself may move (e.g. scroll in a list)
+        // mouesWindowPt should be use to determine movement, because the card origin itself may move (e.g. scroll in a list)
 
         private static ArrowAdorner draggedArrow;
         private static bool isDragging, isOverCount;
@@ -565,7 +565,7 @@ namespace Octgn.Play.Gui
         protected void DragCardStarted()
         {
             draggedCards.Clear();
-                // in theory draggedCards should already be empty, but it's better to recover if there was a problem during last DnD						
+            // in theory draggedCards should already be empty, but it's better to recover if there was a problem during last DnD						
             if (!Selection.IsEmpty())
                 draggedCards.AddRange(Selection.Cards);
             else if (isOverCount)
@@ -574,7 +574,7 @@ namespace Octgn.Play.Gui
                 draggedCards.Add(Card);
             else
                 return;
-                    // Fix: Card == null can occur, e.g. hold the mouse down but don't move, dismiss the card with a keyboard shortcut (e.g. Delete) and move the mouse after that (with the left button still down).
+            // Fix: Card == null can occur, e.g. hold the mouse down but don't move, dismiss the card with a keyboard shortcut (e.g. Delete) and move the mouse after that (with the left button still down).
 
             isDragging = true;
 
@@ -1061,7 +1061,7 @@ namespace Octgn.Play.Gui
 
             if (!color.HasValue)
                 return Brushes.White;
-                    // White should never appear on screen -> the card is neither selected nor has a highlight      
+            // White should never appear on screen -> the card is neither selected nor has a highlight      
             var brush = new SolidColorBrush(color.Value);
             brush.Freeze();
             return brush;

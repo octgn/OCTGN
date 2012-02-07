@@ -5,8 +5,8 @@
 
   <Window.Resources>
     <Storyboard x:Key="LogoTimeline">
-      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever"
-                                     Storyboard.TargetName="whiteRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="whiteRing"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
         <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
         <SplineDoubleKeyFrame KeySpline="0.5,0,0.5,0.5" KeyTime="00:00:00.5000000" Value="0" />
         <SplineDoubleKeyFrame KeyTime="00:00:01" Value="1" KeySpline="0.5,0.5,0.5,1" />
@@ -16,8 +16,8 @@
         <SplineDoubleKeyFrame KeySpline="0.5,0.5,0.5,1" KeyTime="00:00:03" Value="1" />
         <SplineDoubleKeyFrame KeyTime="00:00:06" Value="1" KeySpline="0.5,0,0.5,0.5" />
       </DoubleAnimationUsingKeyFrames>
-      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever"
-                                     Storyboard.TargetName="logoRays" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="logoRays"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
         <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
         <SplineDoubleKeyFrame KeySpline="0.5,0,0.5,0.5" KeyTime="00:00:00.5000000" Value="0" />
         <SplineDoubleKeyFrame KeySpline="0.5,0.5,0.5,1" KeyTime="00:00:01" Value="1" />
@@ -27,8 +27,8 @@
         <SplineDoubleKeyFrame KeySpline="0.5,0.5,0.5,1" KeyTime="00:00:03" Value="1" />
         <SplineDoubleKeyFrame KeySpline="0.5,0,0.5,1" KeyTime="00:00:06" Value="1" />
       </DoubleAnimationUsingKeyFrames>
-      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever"
-                                     Storyboard.TargetName="redRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="redRing"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
         <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
         <SplineDoubleKeyFrame KeyTime="00:00:00.7500000" Value="0" KeySpline="0.5,0,0.5,0.5" />
         <SplineDoubleKeyFrame KeyTime="00:00:01.5000000" Value="1" KeySpline="0.5,0.5,0.5,1" />
@@ -80,8 +80,8 @@
                 <ScaleTransform />
               </Path.RenderTransform>
             </Path>
-            <Path x:Name="redRing" Stretch="Fill" StrokeThickness="0.640004" StrokeLineJoin="Round"
-                  Stroke="#FF000000" Fill="#FFFF0000"
+            <Path x:Name="redRing" Stretch="Fill" StrokeThickness="0.640004" StrokeLineJoin="Round" Stroke="#FF000000"
+                  Fill="#FFFF0000"
                   Data="F1 M 33.6633,32.5853L 36.6005,25.4943L 33.6633,18.4032L 26.5722,15.466L 19.4812,18.4032L 16.544,25.4943L 19.4812,32.5853L 26.5722,35.5225L 33.6633,32.5853 Z M 43.2023,18.7694L 43.2023,32.7361L 33.3264,42.612L 19.3597,42.612L 9.48378,32.7361L 9.48378,18.7694L 19.3597,8.89349L 33.3264,8.89349L 43.2023,18.7694 Z "
                   RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"
                   Width="34.358" Height="34.358" Canvas.Left="6.994" Canvas.Top="7.231">
@@ -89,8 +89,8 @@
                 <ScaleTransform />
               </Path.RenderTransform>
             </Path>
-            <Canvas RenderTransformOrigin="0.5,0.5" x:Name="logoRays" Width="48.367" Height="48.317"
-                    Canvas.Left="0.16" Canvas.Top="0.16">
+            <Canvas RenderTransformOrigin="0.5,0.5" x:Name="logoRays" Width="48.367" Height="48.317" Canvas.Left="0.16"
+                    Canvas.Top="0.16">
               <Canvas.RenderTransform>
                 <ScaleTransform />
               </Canvas.RenderTransform>
@@ -127,23 +127,23 @@
           <Viewbox.Clip>
             <PathGeometry>
               <PathFigure IsClosed="True" IsFilled="True" StartPoint="70.9767921257703,72.993">
-                <BezierSegment Point1="69.2045566867662,67.4701525016921"
-                               Point2="72.2450285030409,62.993" Point3="77.7678760013489,62.993" IsSmoothJoin="True" IsStroked="True" />
+                <BezierSegment Point1="69.2045566867662,67.4701525016921" Point2="72.2450285030409,62.993"
+                               Point3="77.7678760013489,62.993" IsSmoothJoin="True" IsStroked="True" />
                 <LineSegment IsSmoothJoin="True" IsStroked="True" Point="671.447876001349,62.993" />
-                <BezierSegment Point1="676.970723499657,62.993"
-                               Point2="682.884556686766,67.4701525016921" Point3="684.65679212577,72.993" IsSmoothJoin="True" IsStroked="True" />
+                <BezierSegment Point1="676.970723499657,62.993" Point2="682.884556686766,67.4701525016921"
+                               Point3="684.65679212577,72.993" IsSmoothJoin="True" IsStroked="True" />
                 <LineSegment IsSmoothJoin="True" IsStroked="True" Point="708.941869355392,148.673" />
-                <BezierSegment Point1="710.714104794396,154.195847498308"
-                               Point2="707.673632978121,158.673" Point3="702.150785479813,158.673" IsSmoothJoin="True" IsStroked="True" />
+                <BezierSegment Point1="710.714104794396,154.195847498308" Point2="707.673632978121,158.673"
+                               Point3="702.150785479813,158.673" IsSmoothJoin="True" IsStroked="True" />
                 <LineSegment IsSmoothJoin="True" IsStroked="True" Point="108.470785479814,158.673" />
-                <BezierSegment Point1="102.947937981506,158.673"
-                               Point2="97.0341047943961,154.195847498308" Point3="95.261869355392,148.673" IsSmoothJoin="True" IsStroked="True" />
+                <BezierSegment Point1="102.947937981506,158.673" Point2="97.0341047943961,154.195847498308"
+                               Point3="95.261869355392,148.673" IsSmoothJoin="True" IsStroked="True" />
               </PathFigure>
             </PathGeometry>
           </Viewbox.Clip>
           <Canvas Width="48.637" Height="48.637" SnapsToDevicePixels="True" Background="{x:Null}">
-            <Path x:Name="Path1" Stretch="Fill" StrokeThickness="0.640004" StrokeLineJoin="Round"
-                  Stroke="#FF000000" Fill="#4DFFFFFF"
+            <Path x:Name="Path1" Stretch="Fill" StrokeThickness="0.640004" StrokeLineJoin="Round" Stroke="#FF000000"
+                  Fill="#4DFFFFFF"
                   Data="F1 M 43.4584,42.6305L 26.4889,49.6595L 9.51936,42.6305L 2.49036,25.6609L 9.51936,8.69142L 26.4889,1.66241L 43.4584,8.69142L 50.4874,25.6609L 43.4584,42.6305 Z M 10.5534,25.4313L 26.4819,41.3599L 42.4105,25.4313L 26.4819,9.50277L 10.5534,25.4313 Z "
                   RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch"
                   Width="48.637" Height="48.637">
@@ -170,8 +170,8 @@
                 </TransformGroup>
               </Path.RenderTransform>
             </Path>
-            <Canvas RenderTransformOrigin="0.5,0.5" x:Name="canvas1" Width="48.367" Height="48.317"
-                    Canvas.Left="0.16" Canvas.Top="0.16">
+            <Canvas RenderTransformOrigin="0.5,0.5" x:Name="canvas1" Width="48.367" Height="48.317" Canvas.Left="0.16"
+                    Canvas.Top="0.16">
               <Canvas.RenderTransform>
                 <TransformGroup>
                   <ScaleTransform ScaleX="1" ScaleY="1" />
@@ -180,16 +180,14 @@
                   <TranslateTransform X="0" Y="0" />
                 </TransformGroup>
               </Canvas.RenderTransform>
-              <Path x:Name="Path_Copy7" Stretch="Fill" StrokeThickness="0.32" StrokeLineJoin="Round"
-                    Stroke="#4D000000" Data="F1 M 26.4889,1.66241L 9.51936,42.6305L 43.4584,42.6305L 26.4889,1.66241 Z "
-                    HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="34.259" Height="41.288"
-                    Canvas.Left="7.029" />
-              <Path x:Name="Path_Copy8" Stretch="Fill" StrokeThickness="0.32" StrokeLineJoin="Round"
-                    Stroke="#4D000000" Data="F1 M 9.51936,8.69142L 43.4584,8.69142L 26.4889,49.6595L 9.51936,8.69142 Z "
-                    HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="34.259" Height="41.288"
-                    Canvas.Left="7.029" Canvas.Top="7.029" />
-              <Path x:Name="Path_Copy9" Stretch="Fill" StrokeThickness="0.32" StrokeLineJoin="Round"
-                    Stroke="#4D000000" Data="F1 M 2.49036,25.6609L 26.4889,1.66241L 50.4874,25.6609L 26.4889,49.6595L 2.49036,25.6609 Z "
+              <Path x:Name="Path_Copy7" Stretch="Fill" StrokeThickness="0.32" StrokeLineJoin="Round" Stroke="#4D000000"
+                    Data="F1 M 26.4889,1.66241L 9.51936,42.6305L 43.4584,42.6305L 26.4889,1.66241 Z " HorizontalAlignment="Stretch"
+                    Margin="0,0,0,0" VerticalAlignment="Stretch" Width="34.259" Height="41.288" Canvas.Left="7.029" />
+              <Path x:Name="Path_Copy8" Stretch="Fill" StrokeThickness="0.32" StrokeLineJoin="Round" Stroke="#4D000000"
+                    Data="F1 M 9.51936,8.69142L 43.4584,8.69142L 26.4889,49.6595L 9.51936,8.69142 Z " HorizontalAlignment="Stretch"
+                    Margin="0,0,0,0" VerticalAlignment="Stretch" Width="34.259" Height="41.288" Canvas.Left="7.029" Canvas.Top="7.029" />
+              <Path x:Name="Path_Copy9" Stretch="Fill" StrokeThickness="0.32" StrokeLineJoin="Round" Stroke="#4D000000"
+                    Data="F1 M 2.49036,25.6609L 26.4889,1.66241L 50.4874,25.6609L 26.4889,49.6595L 2.49036,25.6609 Z "
                     HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="48.317" Height="48.317" />
               <Path x:Name="Path_Copy10" Stretch="Fill" StrokeThickness="0.32" StrokeLineJoin="Round"
                     Stroke="#4D000000"

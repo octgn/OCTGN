@@ -68,22 +68,22 @@
                   <Rectangle RadiusX="2" RadiusY="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <Rectangle.Fill>
                       <LinearGradientBrush EndPoint="0,1" StartPoint="0,0" Opacity="0.8">
-                        <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}"
-                                      Offset="0" />
-                        <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}"
-                                      Offset="0.8" />
-                        <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.5}"
-                                      Offset="1" />
+                        <GradientStop
+Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}" Offset="0" />
+                        <GradientStop
+Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}" Offset="0.8" />
+                        <GradientStop
+Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.5}" Offset="1" />
                       </LinearGradientBrush>
                     </Rectangle.Fill>
                     <Rectangle.Stroke>
                       <LinearGradientBrush EndPoint="0,0" StartPoint="0,1" Opacity="0.8">
-                        <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}"
-                                      Offset="0" />
-                        <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}"
-                                      Offset="0.8" />
-                        <GradientStop Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.5}"
-                                      Offset="1" />
+                        <GradientStop
+Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.15}" Offset="0" />
+                        <GradientStop
+Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.4}" Offset="0.8" />
+                        <GradientStop
+Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParameter=0.5}" Offset="1" />
                       </LinearGradientBrush>
                     </Rectangle.Stroke>
                   </Rectangle>
@@ -98,8 +98,8 @@
                     </Rectangle.Fill>
                   </Rectangle>
 
-                  <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="12" Margin="8" HorizontalAlignment="Stretch"
-                             Foreground="#eee" />
+                  <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="12" Margin="8"
+                             HorizontalAlignment="Stretch" Foreground="#eee" />
 
                   <CheckBox HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0"
                             IsChecked="{Binding InvertedTable}"
@@ -108,8 +108,8 @@
                       <ControlTemplate TargetType="CheckBox">
                         <Border Padding="2" SnapsToDevicePixels="True" BorderBrush="#eee" BorderThickness="1"
                                 Background="Transparent">
-                          <TextBlock x:Name="sideLabel" Text="A" TextAlignment="Center" Foreground="#eee" FontWeight="Bold"
-                                     Width="14" />
+                          <TextBlock x:Name="sideLabel" Text="A" TextAlignment="Center" Foreground="#eee"
+                                     FontWeight="Bold" Width="14" />
                         </Border>
                         <ControlTemplate.Triggers>
                           <Trigger Property="IsChecked" Value="True">

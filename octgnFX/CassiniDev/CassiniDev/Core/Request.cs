@@ -1,17 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
@@ -1113,9 +1099,9 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// TODO: defer response until request is written
+        ///   TODO: defer response until request is written
         /// </summary>
-        /// <returns></returns>
+        /// <returns> </returns>
         private bool TryParseRequest()
         {
             Reset();

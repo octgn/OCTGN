@@ -1,17 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
@@ -301,7 +287,7 @@ namespace CassiniDev
         // and allow GC to pick it up
         /// <summary>
         /// </summary>
-        /// <param name="conn"></param>
+        /// <param name="conn"> </param>
         public void OnRequestEnd(Connection conn)
         {
             try
@@ -465,15 +451,13 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="virtualPath"></param>
-        /// <param name="physicalPath"></param>
-        /// <param name="hostType"></param>
-        /// <returns></returns>
+        /// <param name="virtualPath"> </param>
+        /// <param name="physicalPath"> </param>
+        /// <param name="hostType"> </param>
+        /// <returns> </returns>
         /// <remarks>
-        /// This is Dmitry's hack to enable running outside of GAC.
-        /// There are some errors being thrown when running in proc
+        ///   This is Dmitry's hack to enable running outside of GAC. There are some errors being thrown when running in proc
         /// </remarks>
         private object CreateWorkerAppDomainWithHost(string virtualPath, string physicalPath, Type hostType)
         {

@@ -26,10 +26,10 @@ namespace Octgn.Play.Gui
         private readonly CollectionContainer cardMenu = new CollectionContainer();
 
         protected Card contextCard;
-                       // don't make this static. Timing with Keep/ReleaseControl and ContextMenu can create bug when field is shared amongst groups.
+        // don't make this static. Timing with Keep/ReleaseControl and ContextMenu can create bug when field is shared amongst groups.
 
         protected Group contextGroup;
-                        // obviously this is equal to group. But as the control gets unload / reloaded, group gets null/non null in .NET 4.
+        // obviously this is equal to group. But as the control gets unload / reloaded, group gets null/non null in .NET 4.
 
         // now if a context menu is open when the group is unloaded (e.g. change player tab), group gets null before ReleaseControl gets called => NPE.
         private MenuItem cardHeader;
@@ -179,7 +179,7 @@ namespace Octgn.Play.Gui
             var menuItems = new CompositeCollection();
             contextGroup = group;
             ContextMenu = new ContextMenu {ItemsSource = menuItems, Tag = card};
-                // card has to captured somehow, otherwise it may be overwritten before released in the OnClosed handler, e.g. when rightclicking on a card, then directly right-clicking on another card.
+            // card has to captured somehow, otherwise it may be overwritten before released in the OnClosed handler, e.g. when rightclicking on a card, then directly right-clicking on another card.
             ContextMenu.Opened += (sender, args) =>
                                       {
                                           contextGroup.KeepControl();
@@ -253,7 +253,7 @@ namespace Octgn.Play.Gui
                 return;
 
             ContextMenu.IsOpen = false;
-                // Required to trigger the ReleaseControl calls if the ContextMenu was already open
+            // Required to trigger the ReleaseControl calls if the ContextMenu was already open
             ContextMenu.UpdateLayout(); // Required if the ContextMenu was already open
             ContextMenu.IsOpen = true;
         }

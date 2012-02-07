@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 namespace Octgn.Controls
 {
     /// <summary>
-    /// Interaction logic for GameListItem.xaml
+    ///   Interaction logic for GameListItem.xaml
     /// </summary>
     public partial class GameListItem : UserControl
     {

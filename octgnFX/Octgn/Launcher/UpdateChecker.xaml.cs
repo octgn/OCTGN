@@ -15,7 +15,7 @@ using Skylabs.Lobby.Threading;
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for UpdateChecker.xaml
+    ///   Interaction logic for UpdateChecker.xaml
     /// </summary>
     public partial class UpdateChecker : Window
     {
@@ -90,7 +90,7 @@ namespace Octgn.Launcher
                     Program.Game = new Game(GameDef.FromO8G(g.Filename));
                     Program.Game.TestBegin();
                     IEnumerable<Player> plz = Player.All;
-                    Engine engine = new Engine(true);
+                    var engine = new Engine(true);
                     string[] terr = engine.TestScripts(Program.Game);
                     Program.Game.End();
                     if (terr.Length > 0)

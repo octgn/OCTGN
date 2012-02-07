@@ -1,17 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
@@ -27,190 +13,13 @@ using System.Text.RegularExpressions;
 
 namespace CassiniDev
 {
-    /// <summary>
-    /// Parser for command line arguments.
-    ///
-    /// The parser specification is infered from the instance fields of the object
-    /// specified as the destination of the parse.
-    /// Valid argument types are: int, uint, string, bool, enums
-    /// Also argument types of Array of the above types are also valid.
-    /// 
-    /// Error checking options can be controlled by adding a ArgumentAttribute
-    /// to the instance fields of the destination object.
-    ///
-    /// At most one field may be marked with the DefaultArgumentAttribute
-    /// indicating that arguments without a '-' or '/' prefix will be parsed as that argument.
-    ///
-    /// If not specified then the parser will infer default options for parsing each
-    /// instance field. The default long name of the argument is the field name. The
-    /// default short name is the first character of the long name. Long names and explicitly
-    /// specified short names must be unique. Default short names will be used provided that
-    /// the default short name does not conflict with a long name or an explicitly
-    /// specified short name.
-    ///
-    /// Arguments which are array types are collection arguments. Collection
-    /// arguments can be specified multiple times.
-    /// 
-    /// 
-    ///    Usage
-    ///    -----
-    ///
-    ///    Parsing command line arguments to a console application is a common problem. 
-    ///    This library handles the common task of reading arguments from a command line 
-    ///    and filling in the values in a type.
-    ///
-    ///    To use this library, define a class whose fields represent the data that your 
-    ///    application wants to receive from arguments on the command line. Then call 
-    ///    CommandLine.ParseArguments() to fill the object with the data 
-    ///    from the command line. Each field in the class defines a command line argument. 
-    ///    The type of the field is used to validate the data read from the command line. 
-    ///    The name of the field defines the name of the command line option.
-    ///
-    ///    The parser can handle fields of the following types:
-    ///
-    ///    - string
-    ///    - int
-    ///    - uint
-    ///    - bool
-    ///    - enum
-    ///    - array of the above type
-    ///
-    ///    For example, suppose you want to read in the argument list for wc (word count). 
-    ///    wc takes three optional boolean arguments: -l, -w, and -c and a list of files.
-    ///
-    ///    You could parse these arguments using the following code:
-    ///
-    ///    class WCArguments
-    ///    {
-    ///        public bool lines;
-    ///        public bool words;
-    ///        public bool chars;
-    ///        public string[] files;
-    ///    }
-    ///
-    ///    class WC
-    ///    {
-    ///        static void Main(string[] args)
-    ///        {
-    ///            if (CommandLine.ParseArgumentsWithUsage(args, parsedArgs))
-    ///            {
-    ///            //     insert application code here
-    ///            }
-    ///        }
-    ///    }
-    ///
-    ///    So you could call this aplication with the following command line to count 
-    ///    lines in the foo and bar files:
-    ///
-    ///        wc.exe /lines /files:foo /files:bar
-    ///
-    ///    The program will display the following usage message when bad command line 
-    ///    arguments are used:
-    ///
-    ///        wc.exe -x
-    ///
-    ///    Unrecognized command line argument '-x'
-    ///        /lines[+|-]                         short form /l
-    ///        /words[+|-]                         short form /w
-    ///        /chars[+|-]                         short form /c
-    ///        /files:&lt;string>                     short form /f
-    ///        @&lt;file>                             Read response file for more options
-    ///
-    ///    That was pretty easy. However, you realy want to omit the "/files:" for the 
-    ///    list of files. The details of field parsing can be controled using custom 
-    ///    attributes. The attributes which control parsing behaviour are:
-    ///
-    ///    ArgumentAttribute 
-    ///        - controls short name, long name, required, allow duplicates, default value
-    ///        and help text
-    ///    DefaultArgumentAttribute 
-    ///        - allows omition of the "/name".
-    ///        - This attribute is allowed on only one field in the argument class.
-    ///
-    ///    So for the wc.exe program we want this:
-    ///
-    ///    using System;
-    ///    using Utilities;
-    ///
-    ///    class WCArguments
-    ///    {
-    ///        [Argument(ArgumentType.AtMostOnce, HelpText="Count number of lines in the input text.")]
-    ///        public bool lines;
-    ///        [Argument(ArgumentType.AtMostOnce, HelpText="Count number of words in the input text.")]
-    ///        public bool words;
-    ///        [Argument(ArgumentType.AtMostOnce, HelpText="Count number of chars in the input text.")]
-    ///        public bool chars;
-    ///        [DefaultArgument(ArgumentType.MultipleUnique, HelpText="Input files to count.")]
-    ///        public string[] files;
-    ///    }
-    ///
-    ///    class WC
-    ///    {
-    ///        static void Main(string[] args)
-    ///        {
-    ///            WCArguments parsedArgs = new WCArguments();
-    ///            if (CommandLine.ParseArgumentsWithUsage(args, parsedArgs))
-    ///            {
-    ///            //     insert application code here
-    ///            }
-    ///        }
-    ///    }
-    ///
-    ///
-    ///
-    ///    So now we have the command line we want:
-    ///
-    ///        wc.exe /lines foo bar
-    ///
-    ///    This will set lines to true and will set files to an array containing the 
-    ///    strings "foo" and "bar".
-    ///
-    ///    The new usage message becomes:
-    ///
-    ///        wc.exe -x
-    ///
-    ///    Unrecognized command line argument '-x'
-    ///    /lines[+|-]  Count number of lines in the input text. (short form /l)
-    ///    /words[+|-]  Count number of words in the input text. (short form /w)
-    ///    /chars[+|-]  Count number of chars in the input text. (short form /c)
-    ///    @&lt;file>      Read response file for more options
-    ///    &lt;files>      Input files to count. (short form /f)
-    ///
-    ///    If you want more control over how error messages are reported, how /help is 
-    ///    dealt with, etc you can instantiate the CommandLine.Parser class.
-    ///
-    ///
-    ///
-    ///    Cheers,
-    ///    Peter Hallam
-    ///    C# Compiler Developer
-    ///    Microsoft Corp.
-    ///
-    ///
-    ///
-    ///
-    ///    Release Notes
-    ///    -------------
-    ///
-    ///    10/02/2002 Initial Release
-    ///    10/14/2002 Bug Fix
-    ///    01/08/2003 Bug Fix in @ include files
-    ///    10/23/2004 Added user specified help text, formatting of help text to 
-    ///            screen width. Added ParseHelp for /?.
-    ///    11/23/2004 Added support for default values.
-    ///    02/23/2005 Fix bug with short name and default arguments.
-    ///
-    ///    12/24/2009 sky: Added ushort as valid argument type. 
-    ///    12/27/2009 sky: todo: expose out and err to enable use in forms app.
-    ///    12/29/2009 sky: added ArgumentsAttribute and GetGenericUsageString to allow attaching generic help text
-    ///    01/01/2010 sky: split classes into seperate files
-    ///    01/01/2010 sky: cleaned up Parser.cs
-    ///    05/22/2010 sky: major cleanup - more to come.
-    /// </summary>
+    ///<summary>
+    ///  Parser for command line arguments. The parser specification is infered from the instance fields of the object specified as the destination of the parse. Valid argument types are: int, uint, string, bool, enums Also argument types of Array of the above types are also valid. Error checking options can be controlled by adding a ArgumentAttribute to the instance fields of the destination object. At most one field may be marked with the DefaultArgumentAttribute indicating that arguments without a '-' or '/' prefix will be parsed as that argument. If not specified then the parser will infer default options for parsing each instance field. The default long name of the argument is the field name. The default short name is the first character of the long name. Long names and explicitly specified short names must be unique. Default short names will be used provided that the default short name does not conflict with a long name or an explicitly specified short name. Arguments which are array types are collection arguments. Collection arguments can be specified multiple times. Usage ----- Parsing command line arguments to a console application is a common problem. This library handles the common task of reading arguments from a command line and filling in the values in a type. To use this library, define a class whose fields represent the data that your application wants to receive from arguments on the command line. Then call CommandLine.ParseArguments() to fill the object with the data from the command line. Each field in the class defines a command line argument. The type of the field is used to validate the data read from the command line. The name of the field defines the name of the command line option. The parser can handle fields of the following types: - string - int - uint - bool - enum - array of the above type For example, suppose you want to read in the argument list for wc (word count). wc takes three optional boolean arguments: -l, -w, and -c and a list of files. You could parse these arguments using the following code: class WCArguments { public bool lines; public bool words; public bool chars; public string[] files; } class WC { static void Main(string[] args) { if (CommandLine.ParseArgumentsWithUsage(args, parsedArgs)) { // insert application code here } } } So you could call this aplication with the following command line to count lines in the foo and bar files: wc.exe /lines /files:foo /files:bar The program will display the following usage message when bad command line arguments are used: wc.exe -x Unrecognized command line argument '-x' /lines[+|-] short form /l /words[+|-] short form /w /chars[+|-] short form /c /files:&lt;string> short form /f @&lt;file> Read response file for more options That was pretty easy. However, you realy want to omit the "/files:" for the list of files. The details of field parsing can be controled using custom attributes. The attributes which control parsing behaviour are: ArgumentAttribute - controls short name, long name, required, allow duplicates, default value and help text DefaultArgumentAttribute - allows omition of the "/name". - This attribute is allowed on only one field in the argument class. So for the wc.exe program we want this: using System; using Utilities; class WCArguments { [Argument(ArgumentType.AtMostOnce, HelpText="Count number of lines in the input text.")] public bool lines; [Argument(ArgumentType.AtMostOnce, HelpText="Count number of words in the input text.")] public bool words; [Argument(ArgumentType.AtMostOnce, HelpText="Count number of chars in the input text.")] public bool chars; [DefaultArgument(ArgumentType.MultipleUnique, HelpText="Input files to count.")] public string[] files; } class WC { static void Main(string[] args) { WCArguments parsedArgs = new WCArguments(); if (CommandLine.ParseArgumentsWithUsage(args, parsedArgs)) { // insert application code here } } } So now we have the command line we want: wc.exe /lines foo bar This will set lines to true and will set files to an array containing the strings "foo" and "bar". The new usage message becomes: wc.exe -x Unrecognized command line argument '-x' /lines[+|-] Count number of lines in the input text. (short form /l) /words[+|-] Count number of words in the input text. (short form /w) /chars[+|-] Count number of chars in the input text. (short form /c) @&lt;file> Read response file for more options &lt;files> Input files to count. (short form /f) If you want more control over how error messages are reported, how /help is dealt with, etc you can instantiate the CommandLine.Parser class. Cheers, Peter Hallam C# Compiler Developer Microsoft Corp. Release Notes ------------- 10/02/2002 Initial Release 10/14/2002 Bug Fix 01/08/2003 Bug Fix in @ include files 10/23/2004 Added user specified help text, formatting of help text to screen width. Added ParseHelp for /?. 11/23/2004 Added support for default values. 02/23/2005 Fix bug with short name and default arguments. 12/24/2009 sky: Added ushort as valid argument type. 12/27/2009 sky: todo: expose out and err to enable use in forms app. 12/29/2009 sky: added ArgumentsAttribute and GetGenericUsageString to allow attaching generic help text 01/01/2010 sky: split classes into seperate files 01/01/2010 sky: cleaned up Parser.cs 05/22/2010 sky: major cleanup - more to come.
+    ///</summary>
     public sealed class CommandLineParser
     {
         /// <summary>
-        /// The System Defined new line string.
+        ///   The System Defined new line string.
         /// </summary>
         public const string NewLine = "\r\n";
 
@@ -228,7 +37,7 @@ namespace CassiniDev
         private readonly ErrorReporter _reporter;
 
         /// <summary>
-        /// Don't ever call this.
+        ///   Don't ever call this.
         /// </summary>
         // ReSharper disable UnusedMember.Local
         private CommandLineParser()
@@ -238,9 +47,9 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Creates a new command line argument parser.
+        ///   Creates a new command line argument parser.
         /// </summary>
-        /// <param name="argumentSpecification"> The type of object to  parse. </param>
+        /// <param name="argumentSpecification"> The type of object to parse. </param>
         /// <param name="reporter"> The destination for parse errors. </param>
         public CommandLineParser(Type argumentSpecification, ErrorReporter reporter)
         {
@@ -299,7 +108,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Does this parser have a default argument.
+        ///   Does this parser have a default argument.
         /// </summary>
         /// <value> Does this parser have a default argument. </value>
         public bool HasDefaultArgument
@@ -308,9 +117,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Returns a Usage string for command line argument parsing.
-        /// Use ArgumentAttributes to control parsing behaviour.
-        /// Formats the output to the width of the current console window.
+        ///   Returns a Usage string for command line argument parsing. Use ArgumentAttributes to control parsing behaviour. Formats the output to the width of the current console window.
         /// </summary>
         /// <param name="argumentType"> The type of the arguments to display usage for. </param>
         /// <returns> Printable string containing a user friendly description of command line arguments. </returns>
@@ -323,8 +130,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Returns a Usage string for command line argument parsing.
-        /// Use ArgumentAttributes to control parsing behaviour.
+        ///   Returns a Usage string for command line argument parsing. Use ArgumentAttributes to control parsing behaviour.
         /// </summary>
         /// <param name="argumentType"> The type of the arguments to display usage for. </param>
         /// <param name="columns"> The number of columns to format the output to. </param>
@@ -335,9 +141,9 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Returns the number of columns in the current console window
+        ///   Returns the number of columns in the current console window
         /// </summary>
-        /// <returns>Returns the number of columns in the current console window</returns>
+        /// <returns> Returns the number of columns in the current console window </returns>
         public static int GetConsoleWindowWidth()
         {
             var csbi = new Interop.CONSOLE_SCREEN_BUFFER_INFO();
@@ -350,7 +156,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// A user firendly usage string describing the command line argument syntax.
+        ///   A user firendly usage string describing the command line argument syntax.
         /// </summary>
         public string GetUsageString(int screenWidth)
         {
@@ -446,7 +252,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Searches a StringBuilder for a character
+        ///   Searches a StringBuilder for a character
         /// </summary>
         /// <param name="text"> The text to search. </param>
         /// <param name="value"> The character value to search for. </param>
@@ -464,12 +270,12 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Searches a StringBuilder for a character in reverse
+        ///   Searches a StringBuilder for a character in reverse
         /// </summary>
         /// <param name="text"> The text to search. </param>
         /// <param name="value"> The character to search for. </param>
         /// <param name="startIndex"> The index to start the search at. </param>
-        /// <returns>The index of the last occurence of value in text or -1 if it is not found. </returns>
+        /// <returns> The index of the last occurence of value in text or -1 if it is not found. </returns>
         public static int LastIndexOf(StringBuilder text, char value, int startIndex)
         {
             for (int index = Math.Min(startIndex, text.Length - 1); index >= 0; index--)
@@ -482,7 +288,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Parses an argument list.
+        ///   Parses an argument list.
         /// </summary>
         /// <param name="args"> The arguments to parse. </param>
         /// <param name="destination"> The destination of the parsed arguments. </param>
@@ -505,9 +311,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Parses Command Line Arguments. 
-        /// Errors are output on Console.Error.
-        /// Use ArgumentAttributes to control parsing behaviour.
+        ///   Parses Command Line Arguments. Errors are output on Console.Error. Use ArgumentAttributes to control parsing behaviour.
         /// </summary>
         /// <param name="arguments"> The actual arguments. </param>
         /// <param name="destination"> The resulting parsed arguments. </param>
@@ -518,8 +322,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Parses Command Line Arguments. 
-        /// Use ArgumentAttributes to control parsing behaviour.
+        ///   Parses Command Line Arguments. Use ArgumentAttributes to control parsing behaviour.
         /// </summary>
         /// <param name="arguments"> The actual arguments. </param>
         /// <param name="destination"> The resulting parsed arguments. </param>
@@ -532,10 +335,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Parses Command Line Arguments. Displays usage message to Console.Out
-        /// if /?, /help or invalid arguments are encounterd.
-        /// Errors are output on Console.Error.
-        /// Use ArgumentAttributes to control parsing behaviour.
+        ///   Parses Command Line Arguments. Displays usage message to Console.Out if /?, /help or invalid arguments are encounterd. Errors are output on Console.Error. Use ArgumentAttributes to control parsing behaviour.
         /// </summary>
         /// <param name="arguments"> The actual arguments. </param>
         /// <param name="destination"> The resulting parsed arguments. </param>
@@ -553,14 +353,14 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Checks if a set of arguments asks for help.
+        ///   Checks if a set of arguments asks for help.
         /// </summary>
         /// <param name="args"> Args to check for help. </param>
         /// <returns> Returns true if args contains /? or /help. </returns>
         public static bool ParseHelp(string[] args)
         {
             var helpParser = new CommandLineParser(typeof (HelpArgument), NullErrorReporter);
-            var helpArgument = new HelpArgument();
+            var helpArgument = new HelpArgument(false);
             helpParser.Parse(args, helpArgument);
             return helpArgument.help;
         }
@@ -626,7 +426,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// 01/01/2010 sky
+        ///   01/01/2010 sky
         /// </summary>
         private static string GetGenericUsageString(ICustomAttributeProvider type, int cols)
         {
@@ -825,10 +625,10 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Parses an argument list into an object
+        ///   Parses an argument list into an object
         /// </summary>
-        /// <param name="args"></param>
-        /// <param name="destination"></param>
+        /// <param name="args"> </param>
+        /// <param name="destination"> </param>
         /// <returns> true if an error occurred </returns>
         private bool ParseArgumentList(IEnumerable<string> args, object destination)
         {
@@ -1347,28 +1147,29 @@ namespace CassiniDev
         private class HelpArgument
         {
             [Argument(ArgumentType.AtMostOnce, ShortName = "?")] public bool help;
+
+            public HelpArgument(bool help)
+            {
+                this.help = help;
+            }
         }
 
         #endregion
     }
 
     /// <summary>
-    /// A delegate used in error reporting.
+    ///   A delegate used in error reporting.
     /// </summary>
     public delegate void ErrorReporter(string message);
 
     /// <summary>
-    /// Indicates that this argument is the default argument.
-    /// '/' or '-' prefix only the argument value is specified.
-    /// The ShortName property should not be set for DefaultArgumentAttribute
-    /// instances. The LongName property is used for usage text only and
-    /// does not affect the usage of the argument.
+    ///   Indicates that this argument is the default argument. '/' or '-' prefix only the argument value is specified. The ShortName property should not be set for DefaultArgumentAttribute instances. The LongName property is used for usage text only and does not affect the usage of the argument.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class DefaultArgumentAttribute : ArgumentAttribute
     {
         /// <summary>
-        /// Indicates that this argument is the default argument.
+        ///   Indicates that this argument is the default argument.
         /// </summary>
         /// <param name="type"> Specifies the error checking to be done on the argument. </param>
         public DefaultArgumentAttribute(ArgumentType type)
@@ -1378,54 +1179,44 @@ namespace CassiniDev
     }
 
     /// <summary>
-    /// Used to control parsing of command line arguments.
+    ///   Used to control parsing of command line arguments.
     /// </summary>
     [Flags]
     public enum ArgumentType
     {
         /// <summary>
-        /// Indicates that this field is required. An error will be displayed
-        /// if it is not present when parsing arguments.
+        ///   Indicates that this field is required. An error will be displayed if it is not present when parsing arguments.
         /// </summary>
         Required = 0x01,
 
         /// <summary>
-        /// Only valid in conjunction with Multiple.
-        /// Duplicate values will result in an error.
+        ///   Only valid in conjunction with Multiple. Duplicate values will result in an error.
         /// </summary>
         Unique = 0x02,
 
         /// <summary>
-        /// Inidicates that the argument may be specified more than once.
-        /// Only valid if the argument is a collection
+        ///   Inidicates that the argument may be specified more than once. Only valid if the argument is a collection
         /// </summary>
         Multiple = 0x04,
 
         /// <summary>
-        /// The default type for non-collection arguments.
-        /// The argument is not required, but an error will be reported if it is specified more than once.
+        ///   The default type for non-collection arguments. The argument is not required, but an error will be reported if it is specified more than once.
         /// </summary>
         AtMostOnce = 0x00,
 
         /// <summary>
-        /// For non-collection arguments, when the argument is specified more than
-        /// once no error is reported and the value of the argument is the last
-        /// value which occurs in the argument list.
+        ///   For non-collection arguments, when the argument is specified more than once no error is reported and the value of the argument is the last value which occurs in the argument list.
         /// </summary>
         LastOccurenceWins = Multiple,
 
         /// <summary>
-        /// The default type for collection arguments.
-        /// The argument is permitted to occur multiple times, but duplicate 
-        /// values will cause an error to be reported.
+        ///   The default type for collection arguments. The argument is permitted to occur multiple times, but duplicate values will cause an error to be reported.
         /// </summary>
         MultipleUnique = Multiple | Unique,
     }
 
     /// <summary>
-    /// Allows attaching generic help text to arguments class
-    /// 
-    /// 12/29/09 sky: added 
+    ///   Allows attaching generic help text to arguments class 12/29/09 sky: added
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class ArgumentsAttribute : Attribute
@@ -1433,7 +1224,7 @@ namespace CassiniDev
         private string _helpText;
 
         /// <summary>
-        /// Returns true if the argument has help text specified.
+        ///   Returns true if the argument has help text specified.
         /// </summary>
         public bool HasHelpText
         {
@@ -1441,7 +1232,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// The help text for the argument.
+        ///   The help text for the argument.
         /// </summary>
         public string HelpText
         {
@@ -1451,9 +1242,7 @@ namespace CassiniDev
     }
 
     /// <summary>
-    /// Allows control of command line parsing.
-    /// Attach this attribute to instance fields of types used
-    /// as the destination of command line argument parsing.
+    ///   Allows control of command line parsing. Attach this attribute to instance fields of types used as the destination of command line argument parsing.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class ArgumentAttribute : Attribute
@@ -1474,7 +1263,7 @@ namespace CassiniDev
         #region Constructors
 
         /// <summary>
-        /// Allows control of command line parsing.
+        ///   Allows control of command line parsing.
         /// </summary>
         /// <param name="type"> Specifies the error checking to be done on the argument. </param>
         public ArgumentAttribute(ArgumentType type)
@@ -1487,7 +1276,7 @@ namespace CassiniDev
         #region Properties
 
         /// <summary>
-        /// Returns true if the argument did not have an explicit long name specified.
+        ///   Returns true if the argument did not have an explicit long name specified.
         /// </summary>
         public bool DefaultLongName
         {
@@ -1495,7 +1284,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Returns true if the argument did not have an explicit short name specified.
+        ///   Returns true if the argument did not have an explicit short name specified.
         /// </summary>
         public bool DefaultShortName
         {
@@ -1503,7 +1292,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// The default value of the argument.
+        ///   The default value of the argument.
         /// </summary>
         public object DefaultValue
         {
@@ -1512,7 +1301,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Returns true if the argument has a default value.
+        ///   Returns true if the argument has a default value.
         /// </summary>
         public bool HasDefaultValue
         {
@@ -1520,7 +1309,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Returns true if the argument has help text specified.
+        ///   Returns true if the argument has help text specified.
         /// </summary>
         public bool HasHelpText
         {
@@ -1528,7 +1317,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// The help text for the argument.
+        ///   The help text for the argument.
         /// </summary>
         public string HelpText
         {
@@ -1537,10 +1326,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// The long name of the argument.
-        /// Set to null means use the default long name.
-        /// The long name for every argument must be unique.
-        /// It is an error to specify a long name of String.Empty.
+        ///   The long name of the argument. Set to null means use the default long name. The long name for every argument must be unique. It is an error to specify a long name of String.Empty.
         /// </summary>
         public string LongName
         {
@@ -1557,11 +1343,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// The short name of the argument.
-        /// Set to null means use the default short name if it does not
-        /// conflict with any other parameter name.
-        /// Set to String.Empty for no short name.
-        /// This property should not be set for DefaultArgumentAttributes.
+        ///   The short name of the argument. Set to null means use the default short name if it does not conflict with any other parameter name. Set to String.Empty for no short name. This property should not be set for DefaultArgumentAttributes.
         /// </summary>
         public string ShortName
         {
@@ -1574,7 +1356,7 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// The error checking to be done on the argument.
+        ///   The error checking to be done on the argument.
         /// </summary>
         public ArgumentType Type
         {

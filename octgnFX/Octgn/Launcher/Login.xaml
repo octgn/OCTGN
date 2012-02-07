@@ -6,8 +6,8 @@
       Unloaded="Page_Unloaded" Loaded="Page_Loaded">
   <Page.Resources>
     <Storyboard x:Key="LogoTimeline">
-      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever"
-                                     Storyboard.TargetName="whiteRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="whiteRing"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
         <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
         <SplineDoubleKeyFrame KeySpline="0.5,0,0.5,0.5" KeyTime="00:00:00.5000000" Value="0" />
         <SplineDoubleKeyFrame KeyTime="00:00:01" Value="1" KeySpline="0.5,0.5,0.5,1" />
@@ -17,8 +17,8 @@
         <SplineDoubleKeyFrame KeySpline="0.5,0.5,0.5,1" KeyTime="00:00:03" Value="1" />
         <SplineDoubleKeyFrame KeyTime="00:00:06" Value="1" KeySpline="0.5,0,0.5,0.5" />
       </DoubleAnimationUsingKeyFrames>
-      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever"
-                                     Storyboard.TargetName="logoRays" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="logoRays"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
         <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
         <SplineDoubleKeyFrame KeySpline="0.5,0,0.5,0.5" KeyTime="00:00:00.5000000" Value="0" />
         <SplineDoubleKeyFrame KeySpline="0.5,0.5,0.5,1" KeyTime="00:00:01" Value="1" />
@@ -28,8 +28,8 @@
         <SplineDoubleKeyFrame KeySpline="0.5,0.5,0.5,1" KeyTime="00:00:03" Value="1" />
         <SplineDoubleKeyFrame KeySpline="0.5,0,0.5,1" KeyTime="00:00:06" Value="1" />
       </DoubleAnimationUsingKeyFrames>
-      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever"
-                                     Storyboard.TargetName="redRing" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+      <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="redRing"
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
         <SplineDoubleKeyFrame KeyTime="00:00:00" Value="1" />
         <SplineDoubleKeyFrame KeyTime="00:00:00.7500000" Value="0" KeySpline="0.5,0,0.5,0.5" />
         <SplineDoubleKeyFrame KeyTime="00:00:01.5000000" Value="1" KeySpline="0.5,0.5,0.5,1" />
@@ -88,8 +88,8 @@
           </TextBlock>
           <TextBlock Foreground="#FFF00000" HorizontalAlignment="Right" Margin="0,0,232,6" Name="versionText"
                      Style="{x:Null}" TextWrapping="Wrap" VerticalAlignment="Bottom">Version 0.2.0.1</TextBlock>
-          <Viewbox Height="82.137" HorizontalAlignment="Left" Margin="50,0,0,0"
-                   RenderTransformOrigin="0.5,0.5" Stretch="UniformToFill" VerticalAlignment="Center" Width="82.137">
+          <Viewbox Height="82.137" HorizontalAlignment="Left" Margin="50,0,0,0" RenderTransformOrigin="0.5,0.5"
+                   Stretch="UniformToFill" VerticalAlignment="Center" Width="82.137">
             <Viewbox.RenderTransform>
               <TransformGroup>
                 <SkewTransform AngleX="-17.791" AngleY="0" />
@@ -136,30 +136,28 @@ StrokeThickness="0.32" VerticalAlignment="Stretch" Width="48.317" />
                       Data="F1 M 9.51936,42.6305L 50.5375,25.2319L 9.51936,8.69142L 43.4584,8.69142L 9.51936,8.69142L 9.51936,42.6305"
                       Height="34.259" HorizontalAlignment="Stretch" Margin="0,0,0,0" Stretch="Fill" Stroke="#4D000000" StrokeLineJoin="Round"
                       StrokeThickness="0.32" VerticalAlignment="Stretch" Width="41.338" />
-                <Path Canvas.Top="7.029"
-                      Data="F1 M 43.4584,8.69142L 2.49036,25.6609L 43.4584,42.6305L 43.4584,8.69142" Height="34.259"
-                      HorizontalAlignment="Stretch" Margin="0,0,0,0" Stretch="Fill" Stroke="#4D000000" StrokeLineJoin="Round"
+                <Path Canvas.Top="7.029" Data="F1 M 43.4584,8.69142L 2.49036,25.6609L 43.4584,42.6305L 43.4584,8.69142"
+                      Height="34.259" HorizontalAlignment="Stretch" Margin="0,0,0,0" Stretch="Fill" Stroke="#4D000000" StrokeLineJoin="Round"
                       StrokeThickness="0.32" VerticalAlignment="Stretch" Width="41.288" />
               </Canvas>
             </Canvas>
           </Viewbox>
-          <Viewbox HorizontalAlignment="Left" Margin="-99,-62.833,0,-160.625" Opacity="0.295"
-                   Panel.ZIndex="-1" RenderTransformOrigin="0.5,0.5" Stretch="UniformToFill" VerticalAlignment="Stretch" Width="322.134"
-                   Height="Auto">
+          <Viewbox HorizontalAlignment="Left" Margin="-99,-62.833,0,-160.625" Opacity="0.295" Panel.ZIndex="-1"
+                   RenderTransformOrigin="0.5,0.5" Stretch="UniformToFill" VerticalAlignment="Stretch" Width="322.134" Height="Auto">
             <Viewbox.Clip>
               <PathGeometry>
                 <PathFigure IsClosed="True" IsFilled="True" StartPoint="70.9767921257703,72.993">
-                  <BezierSegment IsSmoothJoin="True" IsStroked="True"
-                                 Point1="69.2045566867662,67.4701525016921" Point2="72.2450285030409,62.993" Point3="77.7678760013489,62.993" />
+                  <BezierSegment IsSmoothJoin="True" IsStroked="True" Point1="69.2045566867662,67.4701525016921"
+                                 Point2="72.2450285030409,62.993" Point3="77.7678760013489,62.993" />
                   <LineSegment IsSmoothJoin="True" IsStroked="True" Point="671.447876001349,62.993" />
-                  <BezierSegment IsSmoothJoin="True" IsStroked="True"
-                                 Point1="676.970723499657,62.993" Point2="682.884556686766,67.4701525016921" Point3="684.65679212577,72.993" />
+                  <BezierSegment IsSmoothJoin="True" IsStroked="True" Point1="676.970723499657,62.993"
+                                 Point2="682.884556686766,67.4701525016921" Point3="684.65679212577,72.993" />
                   <LineSegment IsSmoothJoin="True" IsStroked="True" Point="708.941869355392,148.673" />
-                  <BezierSegment IsSmoothJoin="True" IsStroked="True"
-                                 Point1="710.714104794396,154.195847498308" Point2="707.673632978121,158.673" Point3="702.150785479813,158.673" />
+                  <BezierSegment IsSmoothJoin="True" IsStroked="True" Point1="710.714104794396,154.195847498308"
+                                 Point2="707.673632978121,158.673" Point3="702.150785479813,158.673" />
                   <LineSegment IsSmoothJoin="True" IsStroked="True" Point="108.470785479814,158.673" />
-                  <BezierSegment IsSmoothJoin="True" IsStroked="True"
-                                 Point1="102.947937981506,158.673" Point2="97.0341047943961,154.195847498308" Point3="95.261869355392,148.673" />
+                  <BezierSegment IsSmoothJoin="True" IsStroked="True" Point1="102.947937981506,158.673"
+                                 Point2="97.0341047943961,154.195847498308" Point3="95.261869355392,148.673" />
                 </PathFigure>
               </PathGeometry>
             </Viewbox.Clip>
@@ -195,16 +193,14 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
                       Data="F1 M 9.51936,42.6305L 50.5375,25.2319L 9.51936,8.69142L 43.4584,8.69142L 9.51936,8.69142L 9.51936,42.6305"
                       Height="34.259" HorizontalAlignment="Stretch" Margin="0,0,0,0" Name="Path_Copy10" Stretch="Fill" Stroke="#4D000000"
                       StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width="41.338" />
-                <Path Canvas.Top="7.029"
-                      Data="F1 M 43.4584,8.69142L 2.49036,25.6609L 43.4584,42.6305L 43.4584,8.69142" Height="34.259"
-                      HorizontalAlignment="Stretch" Margin="0,0,0,0" Name="Path_Copy11" Stretch="Fill" Stroke="#4D000000"
+                <Path Canvas.Top="7.029" Data="F1 M 43.4584,8.69142L 2.49036,25.6609L 43.4584,42.6305L 43.4584,8.69142"
+                      Height="34.259" HorizontalAlignment="Stretch" Margin="0,0,0,0" Name="Path_Copy11" Stretch="Fill" Stroke="#4D000000"
                       StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width="41.288" />
               </Canvas>
             </Canvas>
           </Viewbox>
-          <Image Height="99" HorizontalAlignment="Center" Name="image2" Stretch="None"
-                 VerticalAlignment="Center" Width="93" Source="/OCTGN;component/Resources/logoback.png" Margin="521,-1,5,-1"
-                 Grid.ColumnSpan="2">
+          <Image Height="99" HorizontalAlignment="Center" Name="image2" Stretch="None" VerticalAlignment="Center"
+                 Width="93" Source="/OCTGN;component/Resources/logoback.png" Margin="521,-1,5,-1" Grid.ColumnSpan="2">
             <Image.RenderTransform>
               <RotateTransform x:Name="SpinnerRotate" Angle="0" />
             </Image.RenderTransform>
@@ -214,8 +210,8 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
 
         </Grid>
       </Border>
-      <Line Grid.Row="2" StrokeThickness="4" HorizontalAlignment="Center" X1="1" X2="1" Y1="1" Y2="217"
-            Margin="308,0" Grid.ColumnSpan="2" Grid.RowSpan="2">
+      <Line Grid.Row="2" StrokeThickness="4" HorizontalAlignment="Center" X1="1" X2="1" Y1="1" Y2="217" Margin="308,0"
+            Grid.ColumnSpan="2" Grid.RowSpan="2">
         <Line.Stroke>
           <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
             <RadialGradientBrush.GradientStops>
@@ -225,17 +221,16 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
           </RadialGradientBrush>
         </Line.Stroke>
       </Line>
-      <Border BorderBrush="Silver" BorderThickness="1" Height="32" HorizontalAlignment="Center"
-              Margin="12,7,18,0" Name="border2" Style="{StaticResource Panel}" VerticalAlignment="Top" Visibility="Visible"
-              Width="279" Grid.Row="2">
+      <Border BorderBrush="Silver" BorderThickness="1" Height="32" HorizontalAlignment="Center" Margin="12,7,18,0"
+              Name="border2" Style="{StaticResource Panel}" VerticalAlignment="Top" Visibility="Visible" Width="279" Grid.Row="2">
         <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock1"
                    Text="Google Signin" VerticalAlignment="Stretch" FontSize="20" />
       </Border>
       <Image Height="43" HorizontalAlignment="Left" Margin="23,1,0,0" Name="image1" Stretch="Uniform"
              VerticalAlignment="Top" Width="82" Source="/OCTGN;component/Resources/google.png" ClipToBounds="False" Grid.Row="2" />
       <StackPanel x:Name="spleft" Grid.Row="3">
-        <Label Content="E-mail Address" Height="26" HorizontalAlignment="Left" Name="label1"
-               VerticalAlignment="Top" Width="119" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10,0" />
+        <Label Content="E-mail Address" Height="26" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top"
+               Width="119" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10,0" />
         <TextBox Height="23" HorizontalAlignment="Stretch" Name="textBox1" VerticalAlignment="Top"
                  TextChanged="textBox1_TextChanged" Margin="10,0" KeyUp="textBox1_KeyUp" />
         <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White" Height="28"
@@ -245,8 +240,8 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
         <Grid>
           <Button Content="Sign In" Height="37" Name="button1" Width="103" Click="button1_Click" Margin="10"
                   HorizontalAlignment="Right" IsEnabled="True" />
-          <CheckBox x:Name="cbSavePassword" Content="Save Password" Foreground="White" FontWeight="Bold"
-                    FontSize="14" HorizontalAlignment="Left" Margin="10,0" />
+          <CheckBox x:Name="cbSavePassword" Content="Save Password" Foreground="White" FontWeight="Bold" FontSize="14"
+                    HorizontalAlignment="Left" Margin="10,0" />
         </Grid>
         <Label Height="28" Name="lblLoginStatus" Foreground="Yellow" HorizontalContentAlignment="Right" />
       </StackPanel>

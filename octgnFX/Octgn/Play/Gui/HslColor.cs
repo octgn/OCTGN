@@ -86,7 +86,7 @@ namespace Octgn.Play.Gui
 
         private void FromRgba(float red, float green, float blue, byte lAlpha)
         {
-            this.alpha = lAlpha;
+            alpha = lAlpha;
 
             // Compute Max, Min and Delta
             float max, min;

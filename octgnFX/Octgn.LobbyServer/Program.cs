@@ -87,7 +87,8 @@ namespace Skylabs.LobbyServer
             }
             _killTime = DateTime.Now.AddMinutes(minutes);
             var sm = new SocketMessage("servermessage");
-            sm.AddData("message", "Server will be shutting down in " + minutes.ToString(CultureInfo.InvariantCulture) + " minutes");
+            sm.AddData("message",
+                       "Server will be shutting down in " + minutes.ToString(CultureInfo.InvariantCulture) + " minutes");
             Server.AllUserMessage(sm);
         }
 

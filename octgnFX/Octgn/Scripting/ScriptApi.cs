@@ -388,7 +388,8 @@ namespace Octgn.Scripting
         {
             return engine.Invoke<int?>(() =>
                                            {
-                                               var dlg = new InputDlg("Question", question, defaultValue.ToString(CultureInfo.InvariantCulture));
+                                               var dlg = new InputDlg("Question", question,
+                                                                      defaultValue.ToString(CultureInfo.InvariantCulture));
                                                int result = dlg.GetPositiveInt();
                                                return dlg.DialogResult.GetValueOrDefault() ? result : (int?) null;
                                            });

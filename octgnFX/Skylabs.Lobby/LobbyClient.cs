@@ -52,7 +52,7 @@ namespace Skylabs.Lobby
         #endregion
 
         /// <summary>
-        /// Meh, failed attempt for Asyncronus callbacks. Don't delete it, it gets used, but still.
+        ///   Meh, failed attempt for Asyncronus callbacks. Don't delete it, it gets used, but still.
         /// </summary>
         private readonly Dictionary<string, SocketMessageResult> Callbacks;
 
@@ -63,7 +63,7 @@ namespace Skylabs.Lobby
         private readonly object noteLocker = new object();
 
         /// <summary>
-        /// Assembly version of the LobbySoftware I think.
+        ///   Assembly version of the LobbySoftware I think.
         /// </summary>
         public Version Version = Assembly.GetCallingAssembly().GetName().Version;
 
@@ -94,7 +94,7 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// A list of Hosted games
+        ///   A list of Hosted games
         /// </summary>
         private List<HostedGame> Games { get; set; }
 
@@ -111,57 +111,55 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// This handles all chatting stuff.
+        ///   This handles all chatting stuff.
         /// </summary>
         public Chatting Chatting { get; set; }
 
         /// <summary>
-        /// This is the current logged in user.
+        ///   This is the current logged in user.
         /// </summary>
         public User Me { get; private set; }
 
         /// <summary>
-        /// List of friends
+        ///   List of friends
         /// </summary>
         private List<User> FriendList { get; set; }
 
         /// <summary>
-        /// List of Notifications? I don't know offhand
+        ///   List of Notifications? I don't know offhand
         /// </summary>
         //TODO Figure out what this is for
         private List<Notification> Notifications { get; set; }
 
         /// <summary>
-        /// Who knows
+        ///   Who knows
         /// </summary>
         public int CurrentHostedGamePort { get; set; }
 
         public event EventHandler OnDisconnect;
 
         /// <summary>
-        /// Kind of a generic event whenever data is received. Check DataRecType for data that triggers this.
-        /// You can add more to handle other events as well.
+        ///   Kind of a generic event whenever data is received. Check DataRecType for data that triggers this. You can add more to handle other events as well.
         /// </summary>
         public event DataRecieved OnDataRecieved;
 
         /// <summary>
-        /// This happens when there is a UserStatus change of any type, be it DisplayName, Status, or CustomStatus
-        /// It's best to ignore UserStatus, and just pull the data from User.
+        ///   This happens when there is a UserStatus change of any type, be it DisplayName, Status, or CustomStatus It's best to ignore UserStatus, and just pull the data from User.
         /// </summary>
         public event UserStatusChanged OnUserStatusChanged;
 
         /// <summary>
-        /// Happens when we receive a friend request.
+        ///   Happens when we receive a friend request.
         /// </summary>
         public event FriendRequest OnFriendRequest;
 
         /// <summary>
-        /// When google requires a Captcha, this gets called.
+        ///   When google requires a Captcha, this gets called.
         /// </summary>
         public event HandleCaptcha OnCaptchaRequired;
 
         /// <summary>
-        /// When a game has a hosting event, this gets called. The three are Game Hosting and ready for players, game in progress, and game done.
+        ///   When a game has a hosting event, this gets called. The three are Game Hosting and ready for players, game in progress, and game done.
         /// </summary>
         public event GameHostEvent OnGameHostEvent;
 
@@ -182,7 +180,7 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Disconnect cleanly
+        ///   Disconnect cleanly
         /// </summary>
         public void Stop()
         {
@@ -200,12 +198,12 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Start hosting a game.
+        ///   Start hosting a game.
         /// </summary>
-        /// <param name="callback">Callback for when the server talks back</param>
-        /// <param name="game">Game</param>
-        /// <param name="gamename">Name of the game</param>
-        /// <param name="password">Password</param>
+        /// <param name="callback"> Callback for when the server talks back </param>
+        /// <param name="game"> Game </param>
+        /// <param name="gamename"> Name of the game </param>
+        /// <param name="password"> Password </param>
         public void BeginHostGame(SocketMessageResult callback, Game game, string gamename, string password)
         {
             Callbacks.Clear();
@@ -264,7 +262,7 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// This gets called when the hoster of the game clicks 'Start game'
+        ///   This gets called when the hoster of the game clicks 'Start game'
         /// </summary>
         public void HostedGameStarted()
         {
@@ -277,9 +275,9 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Send a friend request to an e-mail
+        ///   Send a friend request to an e-mail
         /// </summary>
-        /// <param name="email">E-mail of the friend</param>
+        /// <param name="email"> E-mail of the friend </param>
         public void AddFriend(string email)
         {
             var sm = new SocketMessage("addfriend");
@@ -288,14 +286,14 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Login here
+        ///   Login here
         /// </summary>
-        /// <param name="onFinish">Delegate for when Login is done.</param>
+        /// <param name="onFinish"> Delegate for when Login is done. </param>
         /// <param name="onUpdate"> </param>
-        /// <param name="email">Users e-mail address</param>
-        /// <param name="password">Password</param>
-        /// <param name="captcha">Captcha string if required</param>
-        /// <param name="status">Status to log in as</param>
+        /// <param name="email"> Users e-mail address </param>
+        /// <param name="password"> Password </param>
+        /// <param name="captcha"> Captcha string if required </param>
+        /// <param name="status"> Status to log in as </param>
         public void Login(LoginFinished onFinish, LoginProgressUpdate onUpdate, string email, string password,
                           string captcha, UserStatus status)
         {
@@ -355,10 +353,10 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Whenever a SkySocket gets a message, it goes here for processing.
+        ///   Whenever a SkySocket gets a message, it goes here for processing.
         /// </summary>
-        /// <param name="ss">SkySocket </param>
-        /// <param name="sm">SocketMessage</param>
+        /// <param name="ss"> SkySocket </param>
+        /// <param name="sm"> SocketMessage </param>
         private void OnMessageReceived(SkySocket ss, SocketMessage sm)
         {
             User u;
@@ -588,9 +586,9 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Sets the users status. Don't ever set to Offline, use Invisible instead.
+        ///   Sets the users status. Don't ever set to Offline, use Invisible instead.
         /// </summary>
-        /// <param name="s">Users status</param>
+        /// <param name="s"> Users status </param>
         public void SetStatus(UserStatus s)
         {
             var sm = new SocketMessage("status");
@@ -600,9 +598,9 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Sets the users custom status.
+        ///   Sets the users custom status.
         /// </summary>
-        /// <param name="CustomStatus"></param>
+        /// <param name="CustomStatus"> </param>
         public void SetCustomStatus(string CustomStatus)
         {
             var sm = new SocketMessage("customstatus");
@@ -611,9 +609,9 @@ namespace Skylabs.Lobby
         }
 
         /// <summary>
-        /// Sets the users display name
+        ///   Sets the users display name
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name"> </param>
         public void SetDisplayName(string name)
         {
             var sm = new SocketMessage("displayname");

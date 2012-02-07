@@ -64,11 +64,9 @@
   <ControlTemplate x:Key="VerticalScrollBarControlTemplate" TargetType="{x:Type ScrollBar}">
     <Grid>
       <Grid.RowDefinitions>
-        <RowDefinition
-MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}" />
+        <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}" />
         <RowDefinition Height="*" />
-        <RowDefinition
-MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}" />
+        <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}" />
       </Grid.RowDefinitions>
       <RepeatButton Command="ScrollBar.LineUpCommand" Style="{StaticResource ScrollBarUpButton}" />
       <Border Grid.Row="1" Background="#10333333" BorderBrush="#DAAAAAAA" BorderThickness="1,0,1,0" />

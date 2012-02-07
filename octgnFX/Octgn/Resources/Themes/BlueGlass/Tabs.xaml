@@ -12,13 +12,12 @@
               <RowDefinition Height="Auto" />
               <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TabPanel Name="HeaderPanel" Grid.Row="0" Margin="0,0,4,0" Background="Transparent"
-                      IsItemsHost="True" KeyboardNavigation.TabIndex="1" />
+            <TabPanel Name="HeaderPanel" Grid.Row="0" Margin="0,0,4,0" Background="Transparent" IsItemsHost="True"
+                      KeyboardNavigation.TabIndex="1" />
             <Border Name="Border" Grid.Row="1" Style="{StaticResource Panel}" BorderThickness="1,0,1,1"
                     CornerRadius="0,10,10,10" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.DirectionalNavigation="Contained"
                     KeyboardNavigation.TabIndex="2">
-              <ContentPresenter Name="PART_SelectedContentHost" Margin="5"
-                                ContentSource="SelectedContent" />
+              <ContentPresenter Name="PART_SelectedContentHost" Margin="5" ContentSource="SelectedContent" />
             </Border>
           </Grid>
         </ControlTemplate>
@@ -37,13 +36,12 @@
               <RowDefinition Height="Auto" />
               <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TabPanel Name="HeaderPanel" Grid.Row="0" Margin="0,0,4,0" Background="Transparent"
-                      IsItemsHost="True" KeyboardNavigation.TabIndex="1" />
+            <TabPanel Name="HeaderPanel" Grid.Row="0" Margin="0,0,4,0" Background="Transparent" IsItemsHost="True"
+                      KeyboardNavigation.TabIndex="1" />
             <Border Name="Border" Grid.Row="1" Style="{StaticResource Panel}" BorderThickness="1,0,1,1"
                     CornerRadius="0,2,2,2" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.DirectionalNavigation="Contained"
                     KeyboardNavigation.TabIndex="2">
-              <ContentPresenter Name="PART_SelectedContentHost" Margin="0"
-                                ContentSource="SelectedContent" />
+              <ContentPresenter Name="PART_SelectedContentHost" Margin="0" ContentSource="SelectedContent" />
             </Border>
           </Grid>
         </ControlTemplate>
@@ -98,8 +96,7 @@
                 <Button.Template>
                   <ControlTemplate>
                     <Border Background="Transparent">
-                      <Path Data="M 0,0 L 10,10 M 10,0 L 0,10" Stroke="#e84000"
-                            StrokeThickness="3" />
+                      <Path Data="M 0,0 L 10,10 M 10,0 L 0,10" Stroke="#e84000" StrokeThickness="3" />
                     </Border>
                     <ControlTemplate.Triggers>
                       <Trigger Property="IsEnabled" Value="False">
@@ -139,12 +136,11 @@
               </StackPanel.Resources>
               <TabPanel Name="HeaderPanel" Background="Transparent" Margin="0,0,4,0" IsItemsHost="True"
                         KeyboardNavigation.TabIndex="1" VerticalAlignment="Stretch" />
-              <Button VerticalAlignment="Stretch" Command="{x:Static ctrl:TabCommands.NewTabCommand}"
-                      Cursor="Hand">
+              <Button VerticalAlignment="Stretch" Command="{x:Static ctrl:TabCommands.NewTabCommand}" Cursor="Hand">
                 <Button.Template>
                   <ControlTemplate>
-                    <Border Name="Border" Style="{StaticResource Panel}" Background="#969D9D9D"
-                            Padding="7,3" CornerRadius="2,2,0,0" BorderThickness="1">
+                    <Border Name="Border" Style="{StaticResource Panel}" Background="#969D9D9D" Padding="7,3"
+                            CornerRadius="2,2,0,0" BorderThickness="1">
                       <Path Data="M 5,0 L 5,10 M 0,5 L 10,5" Stroke="#00c860" StrokeThickness="3" />
                     </Border>
                   </ControlTemplate>
@@ -154,8 +150,7 @@
             <Border Name="Border" Grid.Row="1" Style="{StaticResource Panel}" BorderThickness="1,0,1,1"
                     CornerRadius="0,10,10,10" KeyboardNavigation.TabNavigation="Local" KeyboardNavigation.DirectionalNavigation="Contained"
                     KeyboardNavigation.TabIndex="2">
-              <ContentPresenter Name="PART_SelectedContentHost" Margin="5"
-                                ContentSource="SelectedContent" />
+              <ContentPresenter Name="PART_SelectedContentHost" Margin="5" ContentSource="SelectedContent" />
             </Border>
           </Grid>
         </ControlTemplate>

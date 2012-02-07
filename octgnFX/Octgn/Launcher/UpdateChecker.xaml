@@ -6,8 +6,7 @@
   <Border BorderBrush="Silver" BorderThickness="1" Name="border1">
     <Grid>
       <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Margin="6,36,6,6" />
-      <Label Content="Checking for updates..." Height="28" Margin="6,6,0,0" Name="lblStatus"
-             VerticalAlignment="Top" />
+      <Label Content="Checking for updates..." Height="28" Margin="6,6,0,0" Name="lblStatus" VerticalAlignment="Top" />
     </Grid>
   </Border>
 </Window>

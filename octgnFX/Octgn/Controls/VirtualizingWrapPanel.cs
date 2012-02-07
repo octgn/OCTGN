@@ -139,7 +139,7 @@ namespace Octgn.Controls
 
         #region Layout specific code
 
-        /// Calculate the extent of the view based on the available size    
+        /// Calculate the extent of the view based on the available size
         private Size CalculateExtent(Size availableSize, int itemCount)
         {
             int childrenPerRow = CalculateChildrenPerRow(availableSize);
@@ -148,7 +148,7 @@ namespace Octgn.Controls
                             ChildHeight*Math.Ceiling((double) itemCount/childrenPerRow));
         }
 
-        /// Get the range of children that are visible    
+        /// Get the range of children that are visible
         private void GetVisibleRange(out int firstVisibleItemIndex, out int lastVisibleItemIndex)
         {
             int childrenPerRow = CalculateChildrenPerRow(_extent);
@@ -201,10 +201,7 @@ namespace Octgn.Controls
         public ScrollViewer ScrollOwner
         {
             get { return _owner; }
-            set
-            {
-                _owner = value;
-            }
+            set { _owner = value; }
         }
 
         public bool CanHorizontallyScroll { get; set; }

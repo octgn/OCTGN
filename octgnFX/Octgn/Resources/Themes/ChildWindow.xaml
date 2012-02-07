@@ -8,8 +8,7 @@
         <Trigger.EnterActions>
           <BeginStoryboard>
             <Storyboard>
-              <DoubleAnimation To="0.65" Storyboard.TargetProperty="(UIElement.Opacity)"
-                               Duration="0:0:0.4" />
+              <DoubleAnimation To="0.65" Storyboard.TargetProperty="(UIElement.Opacity)" Duration="0:0:0.4" />
             </Storyboard>
           </BeginStoryboard>
         </Trigger.EnterActions>
@@ -42,11 +41,10 @@
 
             <Thumb x:Name="PART_MoveThumb" Template="{DynamicResource TitleBarTemplate}" />
 
-            <TextBlock VerticalAlignment="Center" Style="{DynamicResource TitleStyle}"
-                       Text="{TemplateBinding Title}" IsHitTestVisible="False" />
+            <TextBlock VerticalAlignment="Center" Style="{DynamicResource TitleStyle}" Text="{TemplateBinding Title}"
+                       IsHitTestVisible="False" />
 
-            <Button x:Name="PART_CloseButton" VerticalAlignment="Center"
-                    Style="{DynamicResource CloseButtonStyle}" />
+            <Button x:Name="PART_CloseButton" VerticalAlignment="Center" Style="{DynamicResource CloseButtonStyle}" />
 
             <Border Grid.Row="1" TextElement.FontWeight="Normal" TextElement.Foreground="#FF000000"
                     BorderBrush="#FF1B0E4C" BorderThickness="1,1,1,1" CornerRadius="0,0,2,2"
@@ -54,8 +52,7 @@
               <ContentPresenter Grid.Row="1" Content="{TemplateBinding Content}" />
             </Border>
 
-            <Thumb x:Name="PART_ResizeThumb" Style="{DynamicResource ResizeStyle}" Grid.Row="1"
-                   Cursor="SizeNWSE" />
+            <Thumb x:Name="PART_ResizeThumb" Style="{DynamicResource ResizeStyle}" Grid.Row="1" Cursor="SizeNWSE" />
           </Grid>
         </ControlTemplate>
       </Setter.Value>

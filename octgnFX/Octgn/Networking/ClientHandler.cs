@@ -185,10 +185,12 @@ namespace Octgn.Networking
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
         }
 
-        /// <summary>Loads a player deck.</summary>
-        /// <param name="id">An array containing the loaded CardIdentity ids.</param>
-        /// <param name="type">An array containing the corresponding CardModel guids (encrypted).</param>
-        /// <param name="group">An array indicating the group the cards must be loaded into.</param>
+        /// <summary>
+        ///   Loads a player deck.
+        /// </summary>
+        /// <param name="id"> An array containing the loaded CardIdentity ids. </param>
+        /// <param name="type"> An array containing the corresponding CardModel guids (encrypted). </param>
+        /// <param name="group"> An array indicating the group the cards must be loaded into. </param>
         public void LoadDeck(int[] id, ulong[] type, Group[] group)
         {
             if (id.Length != type.Length || id.Length != group.Length)
@@ -211,11 +213,13 @@ namespace Octgn.Networking
             CreateCard(id, type, group);
         }
 
-        /// <summary>Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.</summary>
-        /// <param name="id">An array with the new CardIdentity ids.</param>
-        /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
-        /// <param name="groups">An array indicating the group the cards must be loaded into.</param>
-        /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
+        /// <summary>
+        ///   Creates new Cards as well as the corresponding CardIdentities. The cards may be in different groups.
+        /// </summary>
+        /// <param name="id"> An array with the new CardIdentity ids. </param>
+        /// <param name="type"> An array containing the corresponding CardModel guids (encrypted) </param>
+        /// <param name="groups"> An array indicating the group the cards must be loaded into. </param>
+        /// <seealso cref="CreateCard(int[], ulong[], Group)">for a more efficient way to insert cards inside one group.</seealso>
         private void CreateCard(int[] id, ulong[] type, Group[] groups)
         {
             Player owner = Player.Find((byte) (id[0] >> 16));
@@ -234,11 +238,13 @@ namespace Octgn.Networking
             }
         }
 
-        /// <summary>Creates new Cards as well as the corresponding CardIdentities. All cards are created in the same group.</summary>
-        /// <param name="id">An array with the new CardIdentity ids.</param>
-        /// <param name="type">An array containing the corresponding CardModel guids (encrypted)</param>
-        /// <param name="group">The group, in which the cards are added.</param>
-        /// <seealso cref="CreateCard(int[], ulong[], Group[])"> to add cards to several groups</seealso>
+        /// <summary>
+        ///   Creates new Cards as well as the corresponding CardIdentities. All cards are created in the same group.
+        /// </summary>
+        /// <param name="id"> An array with the new CardIdentity ids. </param>
+        /// <param name="type"> An array containing the corresponding CardModel guids (encrypted) </param>
+        /// <param name="group"> The group, in which the cards are added. </param>
+        /// <seealso cref="CreateCard(int[], ulong[], Group[])">to add cards to several groups</seealso>
         public void CreateCard(int[] id, ulong[] type, Group group)
         {
             Player owner = Player.Find((byte) (id[0] >> 16));
@@ -314,9 +320,11 @@ namespace Octgn.Networking
                                              "{0} creates a '{1}'", owner, Database.GetCardById(m));
         }
 
-        /// <summary>Create new CardIdentities, which hide aliases to other CardIdentities</summary>
-        /// <param name="id">An array containing the new CardIdentity ids</param>
-        /// <param name="type">An array with the aliased CardIdentity ids (encrypted)</param>
+        /// <summary>
+        ///   Create new CardIdentities, which hide aliases to other CardIdentities
+        /// </summary>
+        /// <param name="id"> An array containing the new CardIdentity ids </param>
+        /// <param name="type"> An array with the aliased CardIdentity ids (encrypted) </param>
         public void CreateAlias(int[] id, ulong[] type)
         {
             var playerId = (byte) (id[0] >> 16);
@@ -352,7 +360,7 @@ namespace Octgn.Networking
                 // was in group A is just plain wrong and may crash depending on the index.
                 if (card.Group == to)
                     card.SetIndex(idx);
-                        // This is done to preserve stack order consistency with other players (should be a noop most of the time)
+                // This is done to preserve stack order consistency with other players (should be a noop most of the time)
             }
         }
 
@@ -373,7 +381,7 @@ namespace Octgn.Networking
                 // See remark in MoveCard
                 if (card.Group == table)
                     card.SetIndex(idx);
-                        // This is done to preserve stack order consistency with other players (should be a noop most of the time)
+                // This is done to preserve stack order consistency with other players (should be a noop most of the time)
                 return;
             }
             // Find the old position on the table, if any
@@ -455,10 +463,12 @@ namespace Octgn.Networking
             player.Name = nick;
         }
 
-        /// <summary>Reveal one card's identity</summary>
-        /// <param name="card">The card, whose identity is revealed</param>
-        /// <param name="revealed">Either the salted CardIdentity id (in the case of an alias), or the salted, condensed Card GUID.</param>
-        /// <param name="guid">If the revealed identity is a model, the non-condensed CardModel guid. Otherwise this parameter should be Guid.Empty.</param>
+        /// <summary>
+        ///   Reveal one card's identity
+        /// </summary>
+        /// <param name="card"> The card, whose identity is revealed </param>
+        /// <param name="revealed"> Either the salted CardIdentity id (in the case of an alias), or the salted, condensed Card GUID. </param>
+        /// <param name="guid"> If the revealed identity is a model, the non-condensed CardModel guid. Otherwise this parameter should be Guid.Empty. </param>
         public void Reveal(Card card, ulong revealed, Guid guid)
         {
             // Save old id
@@ -637,9 +647,11 @@ namespace Octgn.Networking
             new Rotate(player, card, rot).Do();
         }
 
-        /// <summary>Part of a shuffle process.</summary>
-        /// <param name="group">The group being shuffled.</param>
-        /// <param name="card">An array containing the CardIdentity ids to shuffle.</param>
+        /// <summary>
+        ///   Part of a shuffle process.
+        /// </summary>
+        /// <param name="group"> The group being shuffled. </param>
+        /// <param name="card"> An array containing the CardIdentity ids to shuffle. </param>
         public void Shuffle(Group group, int[] card)
         {
             // Array to hold the new aliases (sent to CreateAlias)
@@ -735,8 +747,10 @@ namespace Octgn.Networking
                 group.OnShuffled();
         }
 
-        /// <summary>Completely remove all aliases from a group, e.g. before performing a shuffle.</summary>
-        /// <param name="group">The group to remove all aliases from.</param>
+        /// <summary>
+        ///   Completely remove all aliases from a group, e.g. before performing a shuffle.
+        /// </summary>
+        /// <param name="group"> The group to remove all aliases from. </param>
         public void UnaliasGrp(Group group)
         {
             // Get the group
@@ -781,9 +795,11 @@ namespace Octgn.Networking
                 g.ShuffledTrace += (new ShuffleTraceChatHandler {Line = Program.LastChatTrace}).ReplaceText;
         }
 
-        /// <summary>Unalias some Cards, e.g. before a shuffle</summary>
-        /// <param name="card">An array containing the Card ids to unalias.</param>
-        /// <param name="type">An array containing the corresponding revealed CardIdentity ids.</param>
+        /// <summary>
+        ///   Unalias some Cards, e.g. before a shuffle
+        /// </summary>
+        /// <param name="card"> An array containing the Card ids to unalias. </param>
+        /// <param name="type"> An array containing the corresponding revealed CardIdentity ids. </param>
         public void Unalias(int[] card, ulong[] type)
         {
             if (card.Length != type.Length)

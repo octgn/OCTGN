@@ -276,14 +276,14 @@ namespace Octgn.Controls
         #region Events
 
         /// <summary>
-        /// Identifies the ValueChanged routed event.
+        ///   Identifies the ValueChanged routed event.
         /// </summary>
         public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
             "ValueChanged", RoutingStrategy.Bubble,
             typeof (RoutedPropertyChangedEventHandler<decimal>), typeof (NumericUpDown));
 
         /// <summary>
-        /// Occurs when the Value property changes.
+        ///   Occurs when the Value property changes.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<decimal> ValueChanged
         {

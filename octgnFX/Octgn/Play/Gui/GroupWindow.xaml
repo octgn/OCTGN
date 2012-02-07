@@ -16,12 +16,12 @@
                    VerticalAlignment="Center" Margin="8,0,0,0" Style="{x:Null}" FontStyle="Italic" Foreground="#619AEF"
                    Text="Search cards" />
 
-        <ToggleButton x:Name="positionOrderBtn" Checked="PositionOrderChecked" Content="#" IsChecked="True"
-                      Width="32" Margin="165,0,0,0" HorizontalAlignment="Left" FontWeight="Bold" Foreground="{StaticResource GlyphBrush}"
+        <ToggleButton x:Name="positionOrderBtn" Checked="PositionOrderChecked" Content="#" IsChecked="True" Width="32"
+                      Margin="165,0,0,0" HorizontalAlignment="Left" FontWeight="Bold" Foreground="{StaticResource GlyphBrush}"
                       ToolTip="Sort by position" Style="{StaticResource GroupStartToggleButton}" />
-        <ToggleButton x:Name="alphaOrderBtn" Checked="AlphaOrderChecked" Content="A-Z" Width="32"
-                      Margin="196,0,0,0" HorizontalAlignment="Left" Foreground="{StaticResource GlyphBrush}" FontWeight="Bold"
-                      ToolTip="Sort by name" Style="{StaticResource GroupEndToggleButton}" />
+        <ToggleButton x:Name="alphaOrderBtn" Checked="AlphaOrderChecked" Content="A-Z" Width="32" Margin="196,0,0,0"
+                      HorizontalAlignment="Left" Foreground="{StaticResource GlyphBrush}" FontWeight="Bold" ToolTip="Sort by name"
+                      Style="{StaticResource GroupEndToggleButton}" />
 
         <TextBlock x:Name="shuffleLink" VerticalAlignment="Center" HorizontalAlignment="Right"
                    Visibility="{Binding Controller, Converter={StaticResource IsControlledConverter}}">

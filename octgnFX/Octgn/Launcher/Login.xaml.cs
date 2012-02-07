@@ -22,7 +22,7 @@ using Skylabs.Lobby;
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for Login.xaml
+    ///   Interaction logic for Login.xaml
     /// </summary>
     public partial class Login : Page
     {

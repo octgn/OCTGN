@@ -32,7 +32,7 @@ namespace Octgn
 
         public void SetName(string lName)
         {
-            this.name = lName;
+            name = lName;
         }
 
         public DefaultMarkerModel Clone()

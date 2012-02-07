@@ -6,7 +6,7 @@ using Skylabs.Lobby;
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for GameList.xaml
+    ///   Interaction logic for GameList.xaml
     /// </summary>
     public partial class NotificationList : Page
     {

@@ -5,7 +5,7 @@ namespace CassiniDev.Configuration
     public class CassiniDevProfileElement : ConfigurationElement
     {
         /// <summary>
-        /// Port is used as profile selector
+        ///   Port is used as profile selector
         /// </summary>
         [ConfigurationProperty("port", DefaultValue = "*", IsKey = true, IsRequired = true)]
         public string Port

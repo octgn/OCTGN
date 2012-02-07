@@ -46,8 +46,7 @@ namespace Octgn.Data
         }
 
         /// <summary>
-        /// All games. Includes games where the DEF file is missing.
-        /// PROBUBLY SHOULDN'T USE THIS ONE DAWG.
+        ///   All games. Includes games where the DEF file is missing. PROBUBLY SHOULDN'T USE THIS ONE DAWG.
         /// </summary>
         public ObservableCollection<Game> AllGames
         {

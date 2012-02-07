@@ -12,7 +12,7 @@ using Skylabs.Net;
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for ContactList.xaml
+    ///   Interaction logic for ContactList.xaml
     /// </summary>
     public partial class HostGameSettings : Page
     {
@@ -49,7 +49,8 @@ namespace Octgn.Launcher
         private void EndHostGame(SocketMessage sm)
         {
             var port = (int) sm["port"];
-            Program.DebugTrace.TraceEvent(TraceEventType.Information, 0, "Connecting to port: " + port.ToString(CultureInfo.InvariantCulture));
+            Program.DebugTrace.TraceEvent(TraceEventType.Information, 0,
+                                          "Connecting to port: " + port.ToString(CultureInfo.InvariantCulture));
             Program.lobbyClient.CurrentHostedGamePort = port;
             if (port > -1)
             {
@@ -57,7 +58,7 @@ namespace Octgn.Launcher
                 Program.Game = new Game(GameDef.FromO8G(Game.Filename));
                 Program.IsHost = true;
 #if(DEBUG)
-                IPAddress[] ad = new IPAddress[1];
+                var ad = new IPAddress[1];
                 IPAddress ip = IPAddress.Parse("127.0.0.1");
 #else
                 ad = Dns.GetHostAddresses(Program.LobbySettings.Server);

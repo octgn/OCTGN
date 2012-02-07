@@ -14,7 +14,7 @@ using Skylabs.Lobby;
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for ChatWindow.xaml
+    ///   Interaction logic for ChatWindow.xaml
     /// </summary>
     public partial class ChatWindow : Window
     {
@@ -209,7 +209,8 @@ namespace Octgn.Launcher
         public Inline StringToRun(String s, Brush b)
         {
             Inline ret = null;
-            const string strUrlRegex = "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
+            const string strUrlRegex =
+                "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
             var reg = new Regex(strUrlRegex);
             s = s.Trim();
             //b = Brushes.Black;

@@ -1,5 +1,3 @@
-/* TODO: I think this is unused, maybe it should be removed from SVN */
-
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -35,10 +33,10 @@ namespace Octgn.Play.Gui
         }
 
         /// <summary>
-        /// Measure the children
+        ///   Measure the children
         /// </summary>
-        /// <param name="availableSize">Size available</param>
-        /// <returns>Size desired</returns>
+        /// <param name="availableSize"> Size available </param>
+        /// <returns> Size desired </returns>
         protected override Size MeasureOverride(Size availableSize)
         {
             UpdateScrollInfo(availableSize);
@@ -100,10 +98,10 @@ namespace Octgn.Play.Gui
         }
 
         /// <summary>
-        /// Arrange the children
+        ///   Arrange the children
         /// </summary>
-        /// <param name="finalSize">Size available</param>
-        /// <returns>Size used</returns>
+        /// <param name="finalSize"> Size available </param>
+        /// <returns> Size used </returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
             IItemContainerGenerator generator = ItemContainerGenerator;
@@ -124,10 +122,10 @@ namespace Octgn.Play.Gui
         }
 
         /// <summary>
-        /// Revirtualize items that are no longer visible
+        ///   Revirtualize items that are no longer visible
         /// </summary>
-        /// <param name="minDesiredGenerated">first item index that should be visible</param>
-        /// <param name="maxDesiredGenerated">last item index that should be visible</param>
+        /// <param name="minDesiredGenerated"> first item index that should be visible </param>
+        /// <param name="maxDesiredGenerated"> last item index that should be visible </param>
         private void CleanUpItems(int minDesiredGenerated, int maxDesiredGenerated)
         {
             UIElementCollection children = InternalChildren;
@@ -146,10 +144,10 @@ namespace Octgn.Play.Gui
         }
 
         /// <summary>
-        /// When items are removed, remove the corresponding UI if necessary
+        ///   When items are removed, remove the corresponding UI if necessary
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
+        /// <param name="sender"> </param>
+        /// <param name="args"> </param>
         protected override void OnItemsChanged(object sender, ItemsChangedEventArgs args)
         {
             switch (args.Action)
@@ -168,11 +166,11 @@ namespace Octgn.Play.Gui
         // where you'll make your changes
 
         /// <summary>
-        /// Calculate the extent of the view based on the available size
+        ///   Calculate the extent of the view based on the available size
         /// </summary>
-        /// <param name="availableSize">available size</param>
-        /// <param name="itemCount">number of data items</param>
-        /// <returns></returns>
+        /// <param name="availableSize"> available size </param>
+        /// <param name="itemCount"> number of data items </param>
+        /// <returns> </returns>
         private Size CalculateExtent(Size availableSize, int itemCount)
         {
             int childrenPerRow = CalculateChildrenPerRow(availableSize);
@@ -183,10 +181,10 @@ namespace Octgn.Play.Gui
         }
 
         /// <summary>
-        /// Get the range of children that are visible
+        ///   Get the range of children that are visible
         /// </summary>
-        /// <param name="firstVisibleItemIndex">The item index of the first visible item</param>
-        /// <param name="lastVisibleItemIndex">The item index of the last visible item</param>
+        /// <param name="firstVisibleItemIndex"> The item index of the first visible item </param>
+        /// <param name="lastVisibleItemIndex"> The item index of the last visible item </param>
         private void GetVisibleRange(out int firstVisibleItemIndex, out int lastVisibleItemIndex)
         {
             int childrenPerRow = CalculateChildrenPerRow(_extent);
@@ -201,20 +199,20 @@ namespace Octgn.Play.Gui
         }
 
         /// <summary>
-        /// Get the size of the children. We assume they are all the same
+        ///   Get the size of the children. We assume they are all the same
         /// </summary>
-        /// <returns>The size</returns>
+        /// <returns> The size </returns>
         private Size GetChildSize()
         {
             return new Size(ChildSize, ChildSize);
         }
 
         /// <summary>
-        /// Position a child
+        ///   Position a child
         /// </summary>
-        /// <param name="itemIndex">The data item index of the child</param>
-        /// <param name="child">The element to position</param>
-        /// <param name="finalSize">The size of the panel</param>
+        /// <param name="itemIndex"> The data item index of the child </param>
+        /// <param name="child"> The element to position </param>
+        /// <param name="finalSize"> The size of the panel </param>
         private void ArrangeChild(int itemIndex, UIElement child, Size finalSize)
         {
             int childrenPerRow = CalculateChildrenPerRow(finalSize);
@@ -226,10 +224,10 @@ namespace Octgn.Play.Gui
         }
 
         /// <summary>
-        /// Helper function for tiling layout
+        ///   Helper function for tiling layout
         /// </summary>
-        /// <param name="availableSize">Size available</param>
-        /// <returns></returns>
+        /// <param name="availableSize"> Size available </param>
+        /// <returns> </returns>
         private int CalculateChildrenPerRow(Size availableSize)
         {
             // Figure out how many children fit on each row

@@ -40,8 +40,8 @@
         <Ellipse Stroke="{TemplateBinding Foreground}" StrokeThickness="2" HorizontalAlignment="Center"
                  VerticalAlignment="Top" Width="66" Height="66" Canvas.Left="3" Canvas.Top="3" />
         <!--                         Width="56.126" Height="55.634" Canvas.Left="7.164" Canvas.Top="7.999"/> -->
-        <Path RenderTransformOrigin="0.5,0.5" Fill="{TemplateBinding Foreground}" Stretch="Fill"
-              StrokeThickness="3" x:Name="path"
+        <Path RenderTransformOrigin="0.5,0.5" Fill="{TemplateBinding Foreground}" Stretch="Fill" StrokeThickness="3"
+              x:Name="path"
               Data="M8.942844,-2.8122468E-06 L1.06406E-06,31.665993 16.666997,31.665993 z M-30.001,-36.224157 L-61.667,-45.167001 -61.667,-28.499997 z M7.7241575,-76.001 L16.666999,-107.667 -1.8160322E-06,-107.667 z M45.505001,-37.442841 L77.171003,-28.499999 77.171003,-45.167 z"
               Canvas.Left="-7" Canvas.Top="-7" Width="84" Height="84">
           <!--                      HorizontalAlignment="Left" VerticalAlignment="Top" Width="70.083" Height="70.333"> -->

@@ -605,7 +605,8 @@ namespace Octgn.Play.Gui
                                   InputGestureText =
                                       string.IsNullOrEmpty(groupDef.Shortcut) ? null : "Alt+" + groupDef.Shortcut
                               };
-                subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, indexedGroup.Count), contextCard); };
+                subItem.Click +=
+                    delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, indexedGroup.Count), contextCard); };
                 moveToBottomItems.Add(subItem);
             }
             if (moveToBottomItems.Count > 0) item.Items.Add(new Separator());
@@ -662,7 +663,7 @@ namespace Octgn.Play.Gui
             {
                 target.Offset += delta/target.logicalRatio;
                 target.BeginAnimation(OffsetProperty, null);
-                    // Stop any animation, which could override the current Offset
+                // Stop any animation, which could override the current Offset
             }
 
             protected override void EndDragCore()

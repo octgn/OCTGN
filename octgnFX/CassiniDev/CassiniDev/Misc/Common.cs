@@ -1,18 +1,4 @@
-﻿//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
-#region
+﻿#region
 
 using System;
 using System.Collections.Generic;
@@ -79,10 +65,10 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// CassiniDev FIX: #12506
+        ///   CassiniDev FIX: #12506
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
+        /// <param name="fileName"> </param>
+        /// <returns> </returns>
         public static string GetContentType(string fileName)
         {
             if (!File.Exists(fileName))
@@ -1683,10 +1669,10 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// CassiniDev FIX: #12506
+        ///   CassiniDev FIX: #12506
         /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
+        /// <param name="file"> </param>
+        /// <returns> </returns>
         private static string GetMimeFromFile(string file)
         {
             IntPtr mimeout;

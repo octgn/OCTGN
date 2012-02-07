@@ -8,12 +8,12 @@ namespace Octgn
     internal class Cryptor
     {
         /// <summary>
-        /// Encrypts an array of bytes using a Key and an Initialization Vector
+        ///   Encrypts an array of bytes using a Key and an Initialization Vector
         /// </summary>
-        /// <param name="clearData">The data to be encrypted</param>
-        /// <param name="Key">The key to encrypt it with</param>
-        /// <param name="IV">The Initialization Vector</param>
-        /// <returns>An encrypted byte array</returns>
+        /// <param name="clearData"> The data to be encrypted </param>
+        /// <param name="Key"> The key to encrypt it with </param>
+        /// <param name="IV"> The Initialization Vector </param>
+        /// <returns> An encrypted byte array </returns>
         public static byte[] Encrypt(byte[] clearData, byte[] Key, byte[] IV)
         {
             var ms = new MemoryStream();
@@ -42,12 +42,12 @@ namespace Octgn
         }
 
         /// <summary>
-        /// Decrypts an array of data that has been encrypted using the Encrypt command.
+        ///   Decrypts an array of data that has been encrypted using the Encrypt command.
         /// </summary>
-        /// <param name="cipherData">The data to decrypt</param>
-        /// <param name="Key">The Key to decrypt it with</param>
-        /// <param name="IV">An Initialization Vector</param>
-        /// <returns>A decrypted data byte array</returns>
+        /// <param name="cipherData"> The data to decrypt </param>
+        /// <param name="Key"> The Key to decrypt it with </param>
+        /// <param name="IV"> An Initialization Vector </param>
+        /// <returns> A decrypted data byte array </returns>
         public static byte[] Decrypt(byte[] cipherData, byte[] Key, byte[] IV)
         {
             var ms = new MemoryStream();

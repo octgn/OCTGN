@@ -9,14 +9,14 @@ namespace Skylabs.LobbyServer
     public class HostedGame : IEquatable<HostedGame>
     {
         /// <summary>
-        /// Host a game.
+        ///   Host a game.
         /// </summary>
-        /// <param name="port">Port we are hosting on. </param>
-        /// <param name="gameguid">GUID of the game</param>
-        /// <param name="gameversion">Version of the game</param>
-        /// <param name="name">Name of the room</param>
-        /// <param name="password">Password for the game</param>
-        /// <param name="hoster">User hosting the game</param>
+        /// <param name="port"> Port we are hosting on. </param>
+        /// <param name="gameguid"> GUID of the game </param>
+        /// <param name="gameversion"> Version of the game </param>
+        /// <param name="name"> Name of the room </param>
+        /// <param name="password"> Password for the game </param>
+        /// <param name="hoster"> User hosting the game </param>
         public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, User hoster)
         {
             GameGuid = gameguid;
@@ -42,42 +42,42 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Games GUID. Based on the GameDefinitionFiles.
+        ///   Games GUID. Based on the GameDefinitionFiles.
         /// </summary>
         public Guid GameGuid { get; private set; }
 
         /// <summary>
-        /// Games Version. Based on the GameDefinitionFiles.
+        ///   Games Version. Based on the GameDefinitionFiles.
         /// </summary>
         public Version GameVersion { get; private set; }
 
         /// <summary>
-        /// Port we're hosting on.
+        ///   Port we're hosting on.
         /// </summary>
         public int Port { get; private set; }
 
         /// <summary>
-        /// Name of the hosted game.
+        ///   Name of the hosted game.
         /// </summary>
         public String Name { get; private set; }
 
         /// <summary>
-        /// Password for the hosted game.
+        ///   Password for the hosted game.
         /// </summary>
         public String Password { get; private set; }
 
         /// <summary>
-        /// The process of the StandAloneServer that hosts the game.
+        ///   The process of the StandAloneServer that hosts the game.
         /// </summary>
         public Process StandAloneApp { get; set; }
 
         /// <summary>
-        /// Hoster of this crazy game.
+        ///   Hoster of this crazy game.
         /// </summary>
         public User Hoster { get; private set; }
 
         /// <summary>
-        /// The status of the hosted game.
+        ///   The status of the hosted game.
         /// </summary>
         public Lobby.HostedGame.eHostedGame Status { get; set; }
 
@@ -86,11 +86,10 @@ namespace Skylabs.LobbyServer
         #region IEquatable<HostedGame> Members
 
         /// <summary>
-        /// Just an equality verifier. 
-        /// All hosted games are uniquly identified by there port.
+        ///   Just an equality verifier. All hosted games are uniquly identified by there port.
         /// </summary>
-        /// <param name="other">Hosted game to check against.</param>
-        /// <returns></returns>
+        /// <param name="other"> Hosted game to check against. </param>
+        /// <returns> </returns>
         public bool Equals(HostedGame other)
         {
             return other.Port.Equals(Port);
@@ -134,12 +133,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// This happens when the Octgn.Server in StandAloneServer stops.
-        /// This means eather all of the users disconnected, or it crashed.
-        /// Eaither way, its unjoinable at this point.
+        ///   This happens when the Octgn.Server in StandAloneServer stops. This means eather all of the users disconnected, or it crashed. Eaither way, its unjoinable at this point.
         /// </summary>
-        /// <param name="sender">Who knows</param>
-        /// <param name="e">Jesus</param>
+        /// <param name="sender"> Who knows </param>
+        /// <param name="e"> Jesus </param>
         private void StandAloneApp_Exited(object sender, EventArgs e)
         {
             if (HostedGameDone != null)

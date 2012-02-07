@@ -1,16 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
@@ -26,11 +13,10 @@ namespace CassiniDev
     public static class HostsFile
     {
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="ipAddress"></param>
-        /// <param name="hostname"></param>
-        /// <returns></returns>
+        /// <param name="ipAddress"> </param>
+        /// <param name="hostname"> </param>
+        /// <returns> </returns>
         public static int AddHostEntry(string ipAddress, string hostname)
         {
             try
@@ -48,11 +34,10 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="ipAddress"></param>
-        /// <param name="hostname"></param>
-        /// <returns></returns>
+        /// <param name="ipAddress"> </param>
+        /// <param name="hostname"> </param>
+        /// <returns> </returns>
         public static int RemoveHostEntry(string ipAddress, string hostname)
         {
             try

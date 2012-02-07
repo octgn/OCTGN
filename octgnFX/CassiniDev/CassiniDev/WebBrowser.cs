@@ -1,28 +1,11 @@
-﻿// /* **********************************************************************************
-//  *
-//  * Copyright (c) Sky Sanders. All rights reserved.
-//  * 
-//  * This source code is subject to terms and conditions of the Microsoft Public
-//  * License (Ms-PL). A copy of the license can be found in the license.htm file
-//  * included in this distribution.
-//  *
-//  * You must not remove this notice, or any other, from this software.
-//  *
-//  * **********************************************************************************/
-
-using System;
+﻿using System;
 using System.IO;
 using Microsoft.Win32;
 
 namespace CassiniDev
 {
     /// <summary>
-    /// A simple user agent locator - derived from Nikhil Kothari's Script#
-    /// http://projects.nikhilk.net/ScriptSharp
-    /// I would have written it, but how many ways are there to get paths from
-    /// the registry?
-    /// 
-    /// TODO:  Add Opera
+    ///   A simple user agent locator - derived from Nikhil Kothari's Script# http://projects.nikhilk.net/ScriptSharp I would have written it, but how many ways are there to get paths from the registry? TODO: Add Opera
     /// </summary>
     public sealed class WebBrowser
     {

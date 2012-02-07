@@ -21,12 +21,12 @@ namespace Skylabs.LobbyServer
         private static readonly DateTime ServerStartTime = DateTime.Now;
 
         /// <summary>
-        /// Current assembly version of the server.
+        ///   Current assembly version of the server.
         /// </summary>
         public static Version Version = Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
-        /// Start the server
+        ///   Start the server
         /// </summary>
         static Server()
         {
@@ -47,10 +47,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Start listening for connections
+        ///   Start listening for connections
         /// </summary>
-        /// <param name="ip">Just IpAddress.Any should work</param>
-        /// <param name="port">The port to host on</param>
+        /// <param name="ip"> Just IpAddress.Any should work </param>
+        /// <param name="port"> The port to host on </param>
         public static void Start(IPAddress ip, int port)
         {
             Logger.log("Start", "Start listening");
@@ -62,7 +62,7 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Stop listening for connections and shut down ones that exist
+        ///   Stop listening for connections and shut down ones that exist
         /// </summary>
         public static void Stop()
         {
@@ -77,10 +77,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Get an online user by there e-mail address
+        ///   Get an online user by there e-mail address
         /// </summary>
-        /// <param name="email">Email</param>
-        /// <returns>Current online client, or Null if ones not found(I think)</returns>
+        /// <param name="email"> Email </param>
+        /// <returns> Current online client, or Null if ones not found(I think) </returns>
         public static Client GetOnlineClientByEmail(string email)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
@@ -116,10 +116,10 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Gets online user by there UID
+        ///   Gets online user by there UID
         /// </summary>
-        /// <param name="uid">user uid</param>
-        /// <returns>Current online Client, or Null if ones not found.</returns>
+        /// <param name="uid"> user uid </param>
+        /// <returns> Current online Client, or Null if ones not found. </returns>
         public static Client GetOnlineClientByUid(int uid)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
@@ -164,22 +164,21 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// If a user event happens, call this and it will broadcast it and update the necisary users.
+        ///   If a user event happens, call this and it will broadcast it and update the necisary users.
         /// </summary>
-        /// <param name="e">User status</param>
-        /// <param name="client">The client that called</param>
+        /// <param name="e"> User status </param>
+        /// <param name="client"> The client that called </param>
         public static void OnUserEvent(UserStatus e, Client client)
         {
             OnUserEvent(e, client, false);
         }
 
         /// <summary>
-        /// If a user event happens, call this and it will broadcast it and update the necisary users.
-        /// This gives you the option to supress a broadcast message.
+        ///   If a user event happens, call this and it will broadcast it and update the necisary users. This gives you the option to supress a broadcast message.
         /// </summary>
-        /// <param name="e">User status</param>
-        /// <param name="client">The client that called</param>
-        /// <param name="Supress">Should we supress a broadcast message</param>
+        /// <param name="e"> User status </param>
+        /// <param name="client"> The client that called </param>
+        /// <param name="Supress"> Should we supress a broadcast message </param>
         public static void OnUserEvent(UserStatus e, Client client, bool Supress)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
@@ -228,9 +227,9 @@ namespace Skylabs.LobbyServer
         }
 
         /// <summary>
-        /// Sends a socket message to all connected clients.
+        ///   Sends a socket message to all connected clients.
         /// </summary>
-        /// <param name="sm">Message to send.</param>
+        /// <param name="sm"> Message to send. </param>
         public static void AllUserMessage(SocketMessage sm)
         {
             lock (ClientLocker)
@@ -287,11 +286,11 @@ namespace Skylabs.LobbyServer
         */
 
         /// <summary>
-        /// Stops and removes all clients based on a uid.
+        ///   Stops and removes all clients based on a uid.
         /// </summary>
-        /// <param name="caller">The Caller</param>
-        /// <param name="uid">UID</param>
-        /// <returns>Tupple, where value1=number of users with UID who are logged in, and value2=Number of clients removed.</returns>
+        /// <param name="caller"> The Caller </param>
+        /// <param name="uid"> UID </param>
+        /// <returns> Tupple, where value1=number of users with UID who are logged in, and value2=Number of clients removed. </returns>
         public static Tuple<int, int> StopAndRemoveAllByUID(Client caller, int uid)
         {
             //Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");

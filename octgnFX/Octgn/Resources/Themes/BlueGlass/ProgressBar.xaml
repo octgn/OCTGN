@@ -23,8 +23,8 @@
                     Background="{StaticResource ControlFillBrush}" BorderBrush="{StaticResource ControlBorderBrush}">
               <Decorator x:Name="PART_Track" ClipToBounds="True">
                 <StackPanel Orientation="Horizontal">
-                  <Rectangle Width="{Binding ActualWidth, ElementName=PART_Track}"
-                             x:Name="Computation" Visibility="Collapsed">
+                  <Rectangle Width="{Binding ActualWidth, ElementName=PART_Track}" x:Name="Computation"
+                             Visibility="Collapsed">
                     <Rectangle.LayoutTransform>
                       <ScaleTransform />
                     </Rectangle.LayoutTransform>
@@ -45,17 +45,17 @@
               <Trigger.EnterActions>
                 <BeginStoryboard x:Name="IndeterminateLoop">
                   <Storyboard RepeatBehavior="Forever">
-                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                   Storyboard.TargetName="PART_Indicator" Storyboard.TargetProperty="(FrameworkElement.Width)" Duration="00:00:00.0010000">
+                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PART_Indicator"
+                                                   Storyboard.TargetProperty="(FrameworkElement.Width)" Duration="00:00:00.0010000">
                       <SplineDoubleKeyFrame KeyTime="00:00:00" Value="80" />
                     </DoubleAnimationUsingKeyFrames>
-                    <ThicknessAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                      Storyboard.TargetName="PART_Indicator" Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                    <ThicknessAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PART_Indicator"
+                                                      Storyboard.TargetProperty="(FrameworkElement.Margin)">
                       <SplineThicknessKeyFrame KeyTime="00:00:00" Value="-80,0,0,0" />
                       <SplineThicknessKeyFrame KeyTime="00:00:02" Value="0,0,0,0" />
                     </ThicknessAnimationUsingKeyFrames>
-                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00"
-                                                   Storyboard.TargetName="Computation" Storyboard.TargetProperty="LayoutTransform.(ScaleTransform.ScaleX)">
+                    <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Computation"
+                                                   Storyboard.TargetProperty="LayoutTransform.(ScaleTransform.ScaleX)">
                       <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
                       <SplineDoubleKeyFrame KeyTime="00:00:02" Value="1" />
                     </DoubleAnimationUsingKeyFrames>

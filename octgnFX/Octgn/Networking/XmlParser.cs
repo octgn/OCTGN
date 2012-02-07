@@ -1,9 +1,4 @@
-﻿/*
- * This file was automatically generated.
- * Do not modify, changes will get lost when the file is regenerated!
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;

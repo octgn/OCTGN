@@ -1,15 +1,3 @@
-// /* **********************************************************************************
-//  *
-//  * Copyright (c) Sky Sanders. All rights reserved.
-//  * 
-//  * This source code is subject to terms and conditions of the Microsoft Public
-//  * License (Ms-PL). A copy of the license can be found in the license.htm file
-//  * included in this distribution.
-//  *
-//  * You must not remove this notice, or any other, from this software.
-//  *
-//  * **********************************************************************************/
-
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -18,11 +6,7 @@ using CassiniDev.ServerLog;
 namespace CassiniDev
 {
     /// <summary>
-    /// A web test executor base on an idea from Nikhil Kothari's Script#
-    /// http://projects.nikhilk.net/ScriptSharp
-    /// 
-    /// TODO: finer grained control over browser instances.
-    /// TODO: create parser/abstraction for RequestEventArgs
+    ///   A web test executor base on an idea from Nikhil Kothari's Script# http://projects.nikhilk.net/ScriptSharp TODO: finer grained control over browser instances. TODO: create parser/abstraction for RequestEventArgs
     /// </summary>
     public class CassiniDevBrowserTest : CassiniDevServer
     {

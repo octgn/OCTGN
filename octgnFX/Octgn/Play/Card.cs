@@ -58,7 +58,7 @@ namespace Octgn.Play
         private readonly int id;
 
         private readonly ObservableCollection<Player> playersPeeking = new ObservableCollection<Player>();
-                                                      // List of players, who had peeked at this card. The list is reset when the card changes group.
+        // List of players, who had peeked at this card. The list is reset when the card changes group.
 
         private Color? _highlight;
 
@@ -71,7 +71,7 @@ namespace Octgn.Play
         private bool isAlternateImage;
 
         internal bool mayBeConsideredFaceUp;
-                      /* For better responsiveness, turning a card face down is applied immediately,
+        /* For better responsiveness, turning a card face down is applied immediately,
 															   without waiting on the server.
 															   If a script tries to print the card's lName, when the message arrives the card is already
 															   face down although it should still be up. */
@@ -79,7 +79,7 @@ namespace Octgn.Play
         private bool overrideGroupVisibility;
 
         internal List<Player> playersLooking = new List<Player>(1);
-                              // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
+        // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
 
         private CardOrientation rot;
         private CardIdentity type;
@@ -433,9 +433,9 @@ namespace Octgn.Play
 
         internal void SetFaceUp(bool lFaceUp)
         {
-            if (this.faceUp != lFaceUp)
+            if (faceUp != lFaceUp)
             {
-                this.faceUp = lFaceUp;
+                faceUp = lFaceUp;
                 OnPropertyChanged("FaceUp");
                 if (lFaceUp) PeekingPlayers.Clear();
             }
@@ -576,7 +576,7 @@ namespace Octgn.Play
 
             public int Compare(object x, object y)
             {
-                return System.String.CompareOrdinal(((Card) x).Name, ((Card) y).Name);
+                return String.CompareOrdinal(((Card) x).Name, ((Card) y).Name);
             }
 
             #endregion
@@ -592,7 +592,7 @@ namespace Octgn.Play
 
             public int Compare(object x, object y)
             {
-                return System.String.CompareOrdinal(((Card) x).RealName, ((Card) y).RealName);
+                return String.CompareOrdinal(((Card) x).RealName, ((Card) y).RealName);
             }
 
             #endregion

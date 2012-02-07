@@ -22,8 +22,9 @@
           <ItemsControl.Resources>
             <DataTemplate DataType="{x:Type sys:String}">
               <TextBlock FontWeight="Bold" Foreground="#333333" Margin="0,-1,7,0">
-                <Path Data="M 0,3 l 14,0 -6,7 0,6 -2,0 0,-6 Z" Fill="#333333" StrokeLineJoin="Round" SnapsToDevicePixels="True"
-                      StrokeDashCap="Round" StrokeEndLineCap="Round" StrokeStartLineCap="Round" StrokeThickness="2" Stroke="#333333" />
+                <Path Data="M 0,3 l 14,0 -6,7 0,6 -2,0 0,-6 Z" Fill="#333333" StrokeLineJoin="Round"
+                      SnapsToDevicePixels="True" StrokeDashCap="Round" StrokeEndLineCap="Round" StrokeStartLineCap="Round"
+                      StrokeThickness="2" Stroke="#333333" />
                 <Run Text="Filters" BaselineAlignment="Center" />
               </TextBlock>
             </DataTemplate>
@@ -79,7 +80,8 @@
           <DataGridTextColumn.Binding>
             <MultiBinding Converter="{StaticResource SetConverter}">
               <Binding Path="set_id" />
-              <Binding Path="Game" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type deck:SearchControl}}" />
+              <Binding Path="Game"
+                       RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type deck:SearchControl}}" />
             </MultiBinding>
           </DataGridTextColumn.Binding>
         </DataGridTextColumn>

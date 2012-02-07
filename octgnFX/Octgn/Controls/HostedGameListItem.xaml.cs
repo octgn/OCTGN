@@ -10,7 +10,7 @@ using Skylabs.Lobby;
 namespace Octgn.Controls
 {
     /// <summary>
-    /// Interaction logic for FriendListItem.xaml
+    ///   Interaction logic for FriendListItem.xaml
     /// </summary>
     public partial class HostedGameListItem : UserControl
     {

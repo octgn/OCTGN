@@ -8,7 +8,7 @@ using Skylabs.Lobby;
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for ContactList.xaml
+    ///   Interaction logic for ContactList.xaml
     /// </summary>
     public partial class ContactList : Page
     {

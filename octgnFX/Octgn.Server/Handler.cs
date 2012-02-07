@@ -81,7 +81,7 @@ namespace Octgn.Server
                 }
             }
             // Set the lSender field
-            this.sender = lSender;
+            sender = lSender;
             Connection = con;
             // Parse and handle the message
             xmlParser.Parse(msg);
@@ -98,7 +98,7 @@ namespace Octgn.Server
                 return;
             }
             // Set the lSender field
-            this.sender = lSender;
+            sender = lSender;
             Connection = con;
             // Parse and handle the message
             binParser.Parse(data);
@@ -227,10 +227,10 @@ namespace Octgn.Server
                 return;
             }
             // Check if the client wants to play the correct game
-            if (lGameId != this.gameId)
+            if (lGameId != gameId)
             {
                 var rpc = new XmlSenderStub(sender, this);
-                rpc.Error(string.Format("Invalid game. This server is hosting another game (game id: {0}).", this.gameId));
+                rpc.Error(string.Format("Invalid game. This server is hosting another game (game id: {0}).", gameId));
                 try
                 {
                     sender.Client.Close();
@@ -341,7 +341,7 @@ namespace Octgn.Server
 
         public void StopTurnReq(int lTurnNumber, bool stop)
         {
-            if (lTurnNumber != this.turnNumber) return; // Message StopTurn crossed a NextTurn message
+            if (lTurnNumber != turnNumber) return; // Message StopTurn crossed a NextTurn message
             byte id = clients[sender].id;
             if (stop)
                 turnStopPlayers.Add(id);
@@ -571,7 +571,7 @@ namespace Octgn.Server
             internal bool binary; // Send binary data ?
 
             internal bool invertedTable;
-                          // When using a two-sided table, indicates whether this player plays on the opposite side
+            // When using a two-sided table, indicates whether this player plays on the opposite side
 
             internal string nick; // Player nick
             internal IClientCalls rpc; // Stub to send messages to the player

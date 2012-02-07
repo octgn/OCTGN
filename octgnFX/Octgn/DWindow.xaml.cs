@@ -9,7 +9,7 @@ using System.Windows.Threading;
 namespace Octgn
 {
     /// <summary>
-    /// Interaction logic for DebugWindow.xaml
+    ///   Interaction logic for DebugWindow.xaml
     /// </summary>
     public partial class DWindow : Window
     {

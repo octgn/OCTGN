@@ -8,8 +8,7 @@ using System.Windows.Threading;
 namespace ThreadingComponent
 {
     /// <summary>
-    /// A circular type progress bar, that is simliar to popular web based
-    /// progress bars
+    ///   A circular type progress bar, that is simliar to popular web based progress bars
     /// </summary>
     public partial class CircularProgressBar
     {

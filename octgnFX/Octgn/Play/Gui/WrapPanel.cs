@@ -17,7 +17,8 @@ namespace Octgn.Play.Gui
         private static readonly DoubleAnimation animation = new DoubleAnimation
                                                                 {
                                                                     DecelerationRatio = 0.7,
-                                                                    Duration = new Duration(TimeSpan.FromMilliseconds(300))
+                                                                    Duration =
+                                                                        new Duration(TimeSpan.FromMilliseconds(300))
                                                                 };
 
         private InsertAdorner insertAdorner;
@@ -91,7 +92,7 @@ namespace Octgn.Play.Gui
             if (insertAdorner == null)
             {
                 insertAdorner = new InsertAdorner(this) {Height = 106, ClippingVisual = ClippingVisual};
-                    // HACK: currently WarpPanel is only used by the group window, but card height should be a property and not hard-coded like that
+                // HACK: currently WarpPanel is only used by the group window, but card height should be a property and not hard-coded like that
                 AdornerLayer layer = AdornerLayer.GetAdornerLayer(AdornerLayerVisual ?? this);
                 layer.Add(insertAdorner);
             }

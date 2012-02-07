@@ -48,22 +48,22 @@ namespace Skylabs.LobbyServer
         public bool IsDisposed { get; private set; }
 
         /// <summary>
-        /// A unique ID of the client. Server.cs decides this
+        ///   A unique ID of the client. Server.cs decides this
         /// </summary>
         public int Id { get; private set; }
 
         /// <summary>
-        /// Is the user logged in?
+        ///   Is the user logged in?
         /// </summary>
         public bool LoggedIn { get; private set; }
 
         /// <summary>
-        /// A MySql class to handle all of the database work.
+        ///   A MySql class to handle all of the database work.
         /// </summary>
         private MySqlCup Cup { get; set; }
 
         /// <summary>
-        /// The user information on the currently connected user
+        ///   The user information on the currently connected user
         /// </summary>
         public User Me { get; private set; }
 

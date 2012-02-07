@@ -28,7 +28,7 @@ using TextBox = System.Windows.Controls.TextBox;
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for Main.xaml
+    ///   Interaction logic for Main.xaml
     /// </summary>
     public partial class Main : RibbonWindow
     {
@@ -467,12 +467,13 @@ namespace Octgn.Launcher
             {
                 var hg = sender as HostedGame;
                 Program.IsHost = false;
-                Data.Game theGame = Program.GamesRepository.AllGames.FirstOrDefault(g => hg != null && g.Id == hg.GameGuid);
+                Data.Game theGame =
+                    Program.GamesRepository.AllGames.FirstOrDefault(g => hg != null && g.Id == hg.GameGuid);
                 if (theGame != null)
                 {
                     Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
 #if(DEBUG)
-                    IPAddress[] ad = new IPAddress[1];
+                    var ad = new IPAddress[1];
                     IPAddress ip = IPAddress.Parse("127.0.0.1");
 
 #else
