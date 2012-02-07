@@ -173,30 +173,30 @@ namespace Octgn.Launcher
             cmShow_Click(Sender, e);
         }
 
-        void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user,object data)
+        void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
-            Dispatcher.Invoke(new Action(() => 
+            Dispatcher.Invoke(new Action(() =>
             {
 
-                    ChatWindow cw = Program.ChatWindows.FirstOrDefault(cww => cww.ID == cr.ID);
-                    if (cw == null)
+                ChatWindow cw = Program.ChatWindows.FirstOrDefault(cww => cww.ID == cr.ID);
+                if (cw == null)
+                {
+                    ChatWindow c = new ChatWindow(cr.ID);
+                    c.Loaded += delegate
                     {
-                        ChatWindow c = new ChatWindow(cr.ID);
-                        c.Loaded += delegate
-                        {
-                            c.ChatEvent(cr, e, user, data);
-                        };
-                        Program.ChatWindows.Add(c);
-                        if(cr.ID != 0)
-                            c.Show();
-                    }
-                    else
+                        c.ChatEvent(cr, e, user, data);
+                    };
+                    Program.ChatWindows.Add(c);
+                    if (cr.ID != 0)
+                        c.Show();
+                }
+                else
+                {
+                    if (cw.ID != 0)
                     {
-                        if (cw.ID != 0)
-                        {
-                            cw.Show();
-                        }
+                        cw.Show();
                     }
+                }
             }));
         }
 
@@ -279,7 +279,7 @@ namespace Octgn.Launcher
         }
         void lobbyClient_OnDisconnectEvent(object sender, EventArgs e)
         {
-            Dispatcher.Invoke(new Action<bool>(CloseDownShop),false);
+            Dispatcher.Invoke(new Action<bool>(CloseDownShop), false);
         }
         private void LogOff_Click(object sender, RoutedEventArgs e)
         {
@@ -594,7 +594,7 @@ namespace Octgn.Launcher
             {
                 SystemTrayIcon.Visible = true;
                 this.Visibility = System.Windows.Visibility.Hidden;
-                SystemTrayIcon.ShowBalloonTip(5000,"OCTGN","OCTGN has minimized to your system tray and is still running. Double click the icon to open it again.",System.Windows.Forms.ToolTipIcon.Info);
+                SystemTrayIcon.ShowBalloonTip(5000, "OCTGN", "OCTGN has minimized to your system tray and is still running. Double click the icon to open it again.", System.Windows.Forms.ToolTipIcon.Info);
                 e.Cancel = true;
             }
         }

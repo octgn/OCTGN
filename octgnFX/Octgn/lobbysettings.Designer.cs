@@ -8,41 +8,51 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Octgn {
-    
-    
+namespace Octgn
+{
+
+
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
-    public sealed partial class lobbysettings : global::System.Configuration.ApplicationSettingsBase {
-        
+    public sealed partial class lobbysettings : global::System.Configuration.ApplicationSettingsBase
+    {
+
         private static lobbysettings defaultInstance = ((lobbysettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new lobbysettings())));
-        
-        public static lobbysettings Default {
-            get {
+
+        public static lobbysettings Default
+        {
+            get
+            {
                 return defaultInstance;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("www.skylabsonline.com")]
-        public string Server {
-            get {
+        public string Server
+        {
+            get
+            {
                 return ((string)(this["Server"]));
             }
-            set {
+            set
+            {
                 this["Server"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("7535")]
-        public int ServerPort {
-            get {
+        public int ServerPort
+        {
+            get
+            {
                 return ((int)(this["ServerPort"]));
             }
-            set {
+            set
+            {
                 this["ServerPort"] = value;
             }
         }

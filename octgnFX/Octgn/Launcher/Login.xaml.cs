@@ -32,7 +32,7 @@ namespace Octgn.Launcher
             }
             Program.lobbyClient = new LobbyClient();
             Program.lobbyClient.OnDataRecieved += new LobbyClient.DataRecieved(lobbyClient_OnDataRecieved);
-            
+
             SpinnerRotate.CenterX = image2.Width / 2;
             SpinnerRotate.CenterY = image2.Height / 2;
             animationTimer = new DispatcherTimer(DispatcherPriority.ContextIdle, Dispatcher);
@@ -45,7 +45,7 @@ namespace Octgn.Launcher
                 passwordBox1.Password = password.Decrypt();
                 cbSavePassword.IsChecked = true;
             }
-            textBox1.Text = Registry.ReadValue("E-Mail");            
+            textBox1.Text = Registry.ReadValue("E-Mail");
 #if(DEBUG)
             MenuItem m = new MenuItem();
             m.Name = "menuOldMenu";
@@ -62,14 +62,14 @@ namespace Octgn.Launcher
                 string m = e as string;
                 if (m != null && !String.IsNullOrWhiteSpace(m))
                 {
-                    MessageBox.Show(m,"Server Message",MessageBoxButton.OK,MessageBoxImage.Information);
+                    MessageBox.Show(m, "Server Message", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
 
         private void Start_Spinning()
         {
-            if(!bSpin && animationTimer.IsEnabled == false)
+            if (!bSpin && animationTimer.IsEnabled == false)
             {
                 bSpin = true;
                 animationTimer.Start();
@@ -84,7 +84,7 @@ namespace Octgn.Launcher
         private void HandleAnimationTick(object sender, EventArgs e)
         {
             SpinnerRotate.Angle = (SpinnerRotate.Angle + 10) % 360;
-            if(SpinnerRotate.Angle == 0 && bSpin == false)
+            if (SpinnerRotate.Angle == 0 && bSpin == false)
                 animationTimer.Stop();
         }
 
@@ -112,7 +112,7 @@ namespace Octgn.Launcher
                     Program.SaveLocation();
                     //TODO Sometimes it takes forever, maybe retry if it doesn't log in in like 10 seconds.
                     Program.lobbyClient.OnCaptchaRequired += new LobbyClient.HandleCaptcha(lobbyClient_OnCaptchaRequired);
-                    Program.lobbyClient.Login(LoginFinished, UpdateLoginStatus,textBox1.Text, passwordBox1.Password, "", UserStatus.Online);
+                    Program.lobbyClient.Login(LoginFinished, UpdateLoginStatus, textBox1.Text, passwordBox1.Password, "", UserStatus.Online);
                 }
                 else
                 {
@@ -160,7 +160,7 @@ namespace Octgn.Launcher
                 pm.OnPopupWindowClose += new Octgn.Controls.PopupWindowMessage.HandlePopupWindowClose(delegate(object sender, bool xClosed)
                 {
                     isLoggingIn = false;
-                    if(!xClosed)
+                    if (!xClosed)
                     {
                         button1_Click(null, null);
                     }
@@ -198,7 +198,7 @@ namespace Octgn.Launcher
                 Program.LauncherWindow.Closing -= LauncherWindow_Closing;
                 isLoggingIn = false;
                 Stop_Spinning();
-                if(success == LoginResult.Success)
+                if (success == LoginResult.Success)
                 {
                     if (cbSavePassword.IsChecked == true)
                     {
@@ -214,13 +214,13 @@ namespace Octgn.Launcher
                     Application.Current.MainWindow = Program.ClientWindow;
                     Program.LauncherWindow.Close();
                 }
-                else if(success == LoginResult.Banned)
+                else if (success == LoginResult.Banned)
                 {
                     DoErrorMessage("You have been banned until " + BanEnd.ToShortTimeString() + " on " + BanEnd.ToShortDateString());
                 }
-                else if(success == LoginResult.Failure)
+                else if (success == LoginResult.Failure)
                 {
-                    DoErrorMessage("Login Failed: " + message);                    
+                    DoErrorMessage("Login Failed: " + message);
                 }
             }), new object[0] { });
         }
@@ -270,7 +270,7 @@ namespace Octgn.Launcher
                                     if (reader.Read()) { values[0] = reader.Value; }
                                     break;
                                 case "Location":
-                                    if (reader.Read()) { values[1] = reader.Value; }                                    
+                                    if (reader.Read()) { values[1] = reader.Value; }
                                     break;
                             }
                         }
@@ -302,7 +302,7 @@ namespace Octgn.Launcher
                             //
                             break;
                     }
-                } 
+                }
             }
         }
 
@@ -362,7 +362,7 @@ namespace Octgn.Launcher
 
         private void textBox1_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(cbSavePassword.IsChecked == true)
+            if (cbSavePassword.IsChecked == true)
             {
                 cbSavePassword.IsChecked = false;
                 Settings.Default.Password = "";

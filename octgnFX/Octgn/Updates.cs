@@ -22,14 +22,14 @@ namespace Octgn
 
             try
             {
-                if(!ApplicationDeployment.IsNetworkDeployed) return;
+                if (!ApplicationDeployment.IsNetworkDeployed) return;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return;
             }
 
-            if(new Version(Settings.Default.PreviousVersion) == OctgnApp.OctgnVersion) return;
+            if (new Version(Settings.Default.PreviousVersion) == OctgnApp.OctgnVersion) return;
 
             Settings.Default.Upgrade();
             Settings.Default.Save();
@@ -38,7 +38,7 @@ namespace Octgn
             string dataFolder = ApplicationDeployment.CurrentDeployment.DataDirectory;
             string[] allVersionsFolder = Directory.GetDirectories(Path.Combine(dataFolder, ".."));
             Array.Sort(allVersionsFolder, StrCmpLogicalW);
-            for(int i = 0; i < allVersionsFolder.Length - 2; ++i)
+            for (int i = 0; i < allVersionsFolder.Length - 2; ++i)
                 Directory.Delete(allVersionsFolder[i], true);
         }
 
@@ -49,11 +49,11 @@ namespace Octgn
 
             bool isFirstRun = !Settings.Default.IsUserConfigured;
             Version ver = new Version(Settings.Default.PreviousVersion);
-            if(ver == OctgnApp.OctgnVersion) return;
+            if (ver == OctgnApp.OctgnVersion) return;
 
-            if(!isFirstRun)
+            if (!isFirstRun)
             {
-                if(ver < new Version(0, 7, 3))
+                if (ver < new Version(0, 7, 3))
                 {
                     // Database is re-created
                     var oldShutdownMode = Application.Current.ShutdownMode;

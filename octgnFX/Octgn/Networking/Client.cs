@@ -34,7 +34,7 @@ namespace Octgn.Networking
         #endregion
 
         #region Public interface
-      
+
         // Indicates if this client is connected
         public bool IsConnected
         { get { return tcp.Client != null && tcp.Connected; } }
@@ -56,11 +56,11 @@ namespace Octgn.Networking
             // Init fields
             this.port = port;
             this.address = address;
-            tcp = new TcpClient(address.AddressFamily); 
+            tcp = new TcpClient(address.AddressFamily);
             handler = new Handler();
             xmlHandler = new XmlReceiveDelegate(handler.ReceiveMessage);
             // Create a remote call interface
-            rpc = new XmlSenderStub(tcp); 
+            rpc = new XmlSenderStub(tcp);
         }
 
         // Try to connect the client to the server
@@ -79,7 +79,7 @@ namespace Octgn.Networking
             {
                 lock (this)
                 {
-                    if (disposed) 
+                    if (disposed)
                         return;
                     this.Rpc.Ping();
                 }
@@ -89,14 +89,14 @@ namespace Octgn.Networking
         public void StartPings()
         {
             PingThread = new Thread(DoPings);
-            PingThread.Start();            
+            PingThread.Start();
         }
         public void BeginConnect(EventHandler<ConnectedEventArgs> callback)
         {
             packetPos = 0;
-            tcp.BeginConnect(address, port, 
-                delegate(IAsyncResult ar) 
-                {                                            
+            tcp.BeginConnect(address, port,
+                delegate(IAsyncResult ar)
+                {
                     try
                     {
                         lock (this)
@@ -170,9 +170,9 @@ namespace Octgn.Networking
             }
 
             if (Program.Dispatcher != null)
-              Program.Dispatcher.Invoke(new Action<string>(Program.TraceWarning), "You have been disconnected from server.");
+                Program.Dispatcher.Invoke(new Action<string>(Program.TraceWarning), "You have been disconnected from server.");
             else
-              Program.TraceWarning("You have been disconnected from server.");            
+                Program.TraceWarning("You have been disconnected from server.");
         }
 
         // Receive data
@@ -182,7 +182,7 @@ namespace Octgn.Networking
             {
                 int count = tcp.GetStream().EndRead(ar);
                 // If count <= 0 the connection has been closed, or there was an error
-                if (count < 1) 
+                if (count < 1)
                 { Disconnected(); return; }
                 // Copy the new data to the packet buffer (make it bigger if needed)
                 if ((packetPos + count) > packet.Length)

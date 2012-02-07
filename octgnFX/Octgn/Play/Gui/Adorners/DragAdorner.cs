@@ -8,10 +8,10 @@ using System.Windows.Shapes;
 namespace Octgn.Play.Gui
 {
     public class DragAdorner : Adorner
-    {      
+    {
         public DragAdorner(UIElement adorned)
             : base(adorned)
-        {            
+        {
             VisualBrush brush = new VisualBrush(adorned);
             // HACK: this makes the markers work properly, 
             // even after adding 4+ markers and then removing to 3-,
@@ -19,7 +19,7 @@ namespace Octgn.Play.Gui
             // but the VisualBrush tries to render the now invisible number.
             brush.Stretch = Stretch.None; brush.AlignmentX = AlignmentX.Left;
             child = new Rectangle();
-            child.BeginInit();            
+            child.BeginInit();
             child.Width = adorned.RenderSize.Width;
             child.Height = adorned.RenderSize.Height;
             child.Fill = brush;
@@ -41,7 +41,7 @@ namespace Octgn.Play.Gui
         protected override Size MeasureOverride(Size constraint)
         {
             child.Measure(constraint);
-            return child.DesiredSize; 
+            return child.DesiredSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -54,7 +54,7 @@ namespace Octgn.Play.Gui
         { return child; }
 
         protected override int VisualChildrenCount
-        { get { return 1; } } 
+        { get { return 1; } }
 
         #endregion
 
@@ -65,8 +65,8 @@ namespace Octgn.Play.Gui
         public double LeftOffset
         {
             get { return leftOffset; }
-            set 
-            { 
+            set
+            {
                 leftOffset = value;
                 UpdatePosition();
             }
@@ -92,7 +92,7 @@ namespace Octgn.Play.Gui
         {
             GeneralTransformGroup result = new GeneralTransformGroup();
             result.Children.Add(new TranslateTransform(leftOffset, topOffset));
-            result.Children.Add(base.GetDesiredTransform(transform));            
+            result.Children.Add(base.GetDesiredTransform(transform));
             return result;
         }
 

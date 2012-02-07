@@ -13,36 +13,36 @@ using System.Windows.Shapes;
 
 namespace Octgn.Launcher
 {
-  public partial class PatchProgressDialog : Window
-  {
-    public PatchProgressDialog()
+    public partial class PatchProgressDialog : Window
     {
-      InitializeComponent();
-    }
-
-    public void UpdateProgress(int current, int max, string message, bool isError)
-    {
-      Dispatcher.BeginInvoke(new Action(delegate
+        public PatchProgressDialog()
         {
-          progress.Maximum = max;
-          progress.Value = current;
+            InitializeComponent();
+        }
 
-          if (message != null)
-          {
-            var p = (Paragraph)output.Document.Blocks.LastBlock;
-            if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
-            var run = new Run(message);
-            if (isError) run.Foreground = Brushes.Red;
-            p.Inlines.Add(run);
-          }
+        public void UpdateProgress(int current, int max, string message, bool isError)
+        {
+            Dispatcher.BeginInvoke(new Action(delegate
+              {
+                  progress.Maximum = max;
+                  progress.Value = current;
 
-          if (current == max) okBtn.Visibility = Visibility.Visible;
-        }));
+                  if (message != null)
+                  {
+                      var p = (Paragraph)output.Document.Blocks.LastBlock;
+                      if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
+                      var run = new Run(message);
+                      if (isError) run.Foreground = Brushes.Red;
+                      p.Inlines.Add(run);
+                  }
+
+                  if (current == max) okBtn.Visibility = Visibility.Visible;
+              }));
+        }
+
+        private void OKClicked(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
     }
-
-    private void OKClicked(object sender, RoutedEventArgs e)
-    {
-      Close();
-    }
-  }
 }

@@ -8,7 +8,7 @@ namespace Skylabs.Lobby
     public class ChatRoom
     {
         public long ID { get; private set; }
-        private List<User> Users {get;set;}
+        private List<User> Users { get; set; }
 
         public int UserCount
         {
@@ -36,7 +36,7 @@ namespace Skylabs.Lobby
         }
         public User[] GetUserList()
         {
-            lock(userLocker)
+            lock (userLocker)
                 return Users.ToArray();
         }
         public void UserStatusChange(User userToChange, UserStatus newUserData)

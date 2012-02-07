@@ -385,7 +385,7 @@ namespace CassiniDev
                 }
             });
         }
-        
+
         public void StartWithoutAssemblies()
         {
             _socket = CreateSocketBindAndListen(AddressFamily.InterNetwork, _ipAddress, _port);
@@ -480,7 +480,7 @@ namespace CassiniDev
                                               null,
                                               buildManagerHost,
                                               new object[] { hostType.Assembly.FullName, hostType.Assembly.Location });
-            
+
             // create Host in the worker app domain
             // FIXME: getting FileLoadException Could not load file or assembly 'WebDev.WebServer20, Version=4.0.1.6, Culture=neutral, PublicKeyToken=f7f6e0b4240c7c27' or one of its dependencies. Failed to grant permission to execute. (Exception from HRESULT: 0x80131418)
             // when running dnoa 3.4 samples - webdev is registering trust somewhere that we are not
@@ -681,7 +681,7 @@ namespace CassiniDev
 
         private void PublishLogToCommonLogging(LogInfo item)
         {
-            if(!_useLogger )
+            if (!_useLogger)
             {
                 return;
             }
@@ -761,7 +761,7 @@ namespace CassiniDev
             {
                 // TODO: what am i afraid of here?
             }
-  
+
         }
 
         private void TimeOut(object ignored)

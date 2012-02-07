@@ -34,7 +34,7 @@ namespace Octgn.Launcher
         private void button2_Click(object sender, RoutedEventArgs e)
         {
             Program.ClientWindow.LobbyTab();
-            
+
         }
     }
 }

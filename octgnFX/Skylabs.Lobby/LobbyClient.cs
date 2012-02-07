@@ -17,7 +17,7 @@ namespace Skylabs.Lobby
 {
     public enum LoginResult { Success, Failure, Banned, WaitingForResponse };
 
-    public enum DataRecType { FriendList, OnlineList, UserCustomStatus ,ServerMessage};
+    public enum DataRecType { FriendList, OnlineList, UserCustomStatus, ServerMessage };
 
     public class LobbyClient
     {
@@ -54,15 +54,17 @@ namespace Skylabs.Lobby
         /// </summary>
         public event GameHostEvent OnGameHostEvent;
 
-        
+
         /// <summary>
         /// A list of Hosted games
         /// </summary>
         private List<HostedGame> Games { get; set; }
         private object gameLocker = new object();
 
-        public bool Connected { 
-            get {
+        public bool Connected
+        {
+            get
+            {
                 if (Socket != null)
                 {
                     return Socket.Connected;
@@ -71,7 +73,7 @@ namespace Skylabs.Lobby
                 {
                     return false;
                 }
-            } 
+            }
         }
 
         /// <summary>
@@ -177,12 +179,12 @@ namespace Skylabs.Lobby
         public void BeginHostGame(SocketMessageResult callback, Octgn.Data.Game game, string gamename, string password)
         {
             Callbacks.Clear();
-            Callbacks.Add("hostgameresponse",callback);
+            Callbacks.Add("hostgameresponse", callback);
             SocketMessage sm = new SocketMessage("hostgame");
-            sm.AddData("game",game.Id);
-            sm.AddData("version",game.Version);
-            sm.AddData("name",gamename);
-            sm.AddData("pass",password);
+            sm.AddData("game", game.Id);
+            sm.AddData("version", game.Version);
+            sm.AddData("name", gamename);
+            sm.AddData("pass", password);
             WriteMessage(sm);
         }
 
@@ -263,7 +265,7 @@ namespace Skylabs.Lobby
         /// <param name="status">Status to log in as</param>
         public void Login(LoginFinished onFinish, LoginProgressUpdate onUpdate, string email, string password, string captcha, UserStatus status)
         {
-            if(Socket.Connected)
+            if (Socket.Connected)
             {
                 Thread t = new Thread(() =>
                                           {
@@ -272,10 +274,10 @@ namespace Skylabs.Lobby
                                               String appName = "skylabs-LobbyClient-" + Version;
                                               Service s = new Service("code", appName);
                                               s.setUserCredentials(email, password);
-                                              if(captcha != null && _mCaptchaToken != null)
+                                              if (captcha != null && _mCaptchaToken != null)
                                               {
                                                   onUpdate.Invoke("Verifying captcha");
-                                                  if(!String.IsNullOrWhiteSpace(captcha) || !String.IsNullOrWhiteSpace(_mCaptchaToken))
+                                                  if (!String.IsNullOrWhiteSpace(captcha) || !String.IsNullOrWhiteSpace(_mCaptchaToken))
                                                   {
                                                       s.Credentials.CaptchaToken = _mCaptchaToken;
                                                       s.Credentials.CaptchaAnswer = captcha;
@@ -295,17 +297,17 @@ namespace Skylabs.Lobby
                                                   WriteMessage(sm);
                                                   onUpdate.Invoke("Waiting for server response...");
                                               }
-                                              catch(CaptchaRequiredException ce)
+                                              catch (CaptchaRequiredException ce)
                                               {
                                                   _mCaptchaToken = ce.Token;
-                                                  if(OnCaptchaRequired != null) OnCaptchaRequired.Invoke("https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
+                                                  if (OnCaptchaRequired != null) OnCaptchaRequired.Invoke("https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
                                               }
-                                              catch(AuthenticationException re)
+                                              catch (AuthenticationException re)
                                               {
                                                   string cu = (string)re.Data["CaptchaUrl"];
                                                   onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
                                               }
-                                              catch(WebException)
+                                              catch (WebException)
                                               {
                                                   onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
                                               }
@@ -319,7 +321,7 @@ namespace Skylabs.Lobby
         /// Whenever a SkySocket gets a message, it goes here for processing.
         /// </summary>
         /// <param name="sm">SocketMessage</param>
-        private void OnMessageReceived(SkySocket ss,Net.SocketMessage sm)
+        private void OnMessageReceived(SkySocket ss, Net.SocketMessage sm)
         {
             User u;
             if (Callbacks.ContainsKey(sm.Header.ToLower()))
@@ -378,7 +380,7 @@ namespace Skylabs.Lobby
                         string mess = sm["message"] as string;
                         if (mess != null && OnDataRecieved != null)
                         {
-                            foreach(DataRecieved d in OnDataRecieved.GetInvocationList())
+                            foreach (DataRecieved d in OnDataRecieved.GetInvocationList())
                                 d.BeginInvoke(DataRecType.ServerMessage, mess, new AsyncCallback((IAsyncResult r) => { }), null);
                         }
                         break;

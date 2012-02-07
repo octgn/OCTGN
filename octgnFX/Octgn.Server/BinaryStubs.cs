@@ -340,13 +340,13 @@ namespace Octgn.Server
             writer.Write(handler.muted);
             writer.Write((byte)28);
             writer.Write((short)id.Length);
-            foreach(int p in id)
+            foreach (int p in id)
                 writer.Write(p);
             writer.Write((short)type.Length);
-            foreach(ulong p in type)
+            foreach (ulong p in type)
                 writer.Write(p);
             writer.Write((short)group.Length);
-            foreach(int p in group)
+            foreach (int p in group)
                 writer.Write(p);
             writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int)stream.Length);
@@ -363,10 +363,10 @@ namespace Octgn.Server
             writer.Write(handler.muted);
             writer.Write((byte)29);
             writer.Write((short)id.Length);
-            foreach(int p in id)
+            foreach (int p in id)
                 writer.Write(p);
             writer.Write((short)type.Length);
-            foreach(ulong p in type)
+            foreach (ulong p in type)
                 writer.Write(p);
             writer.Write(group);
             writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
@@ -384,19 +384,19 @@ namespace Octgn.Server
             writer.Write(handler.muted);
             writer.Write((byte)30);
             writer.Write((short)id.Length);
-            foreach(int p in id)
+            foreach (int p in id)
                 writer.Write(p);
             writer.Write((short)key.Length);
-            foreach(ulong p in key)
+            foreach (ulong p in key)
                 writer.Write(p);
             writer.Write((short)modelId.Length);
-            foreach(Guid g in modelId)
+            foreach (Guid g in modelId)
                 writer.Write(g.ToByteArray());
             writer.Write((short)x.Length);
-            foreach(int p in x)
+            foreach (int p in x)
                 writer.Write(p);
             writer.Write((short)y.Length);
-            foreach(int p in y)
+            foreach (int p in y)
                 writer.Write(p);
             writer.Write(faceUp);
             writer.Write(persist);
@@ -415,10 +415,10 @@ namespace Octgn.Server
             writer.Write(handler.muted);
             writer.Write((byte)31);
             writer.Write((short)id.Length);
-            foreach(int p in id)
+            foreach (int p in id)
                 writer.Write(p);
             writer.Write((short)type.Length);
-            foreach(ulong p in type)
+            foreach (ulong p in type)
                 writer.Write(p);
             writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int)stream.Length);
@@ -491,11 +491,11 @@ namespace Octgn.Server
             writer.Write(handler.muted);
             writer.Write((byte)38);
             writer.Write((short)players.Length);
-            foreach(byte p in players)
+            foreach (byte p in players)
                 writer.Write(p);
             writer.Write(card);
             writer.Write((short)encrypted.Length);
-            foreach(ulong p in encrypted)
+            foreach (ulong p in encrypted)
                 writer.Write(p);
             writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int)stream.Length);
@@ -628,7 +628,7 @@ namespace Octgn.Server
             writer.Write((byte)52);
             writer.Write(group);
             writer.Write((short)card.Length);
-            foreach(int p in card)
+            foreach (int p in card)
                 writer.Write(p);
             writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int)stream.Length);
@@ -646,10 +646,10 @@ namespace Octgn.Server
             writer.Write((byte)53);
             writer.Write(group);
             writer.Write((short)card.Length);
-            foreach(int p in card)
+            foreach (int p in card)
                 writer.Write(p);
             writer.Write((short)pos.Length);
-            foreach(short p in pos)
+            foreach (short p in pos)
                 writer.Write(p);
             writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int)stream.Length);
@@ -681,10 +681,10 @@ namespace Octgn.Server
             writer.Write(handler.muted);
             writer.Write((byte)55);
             writer.Write((short)card.Length);
-            foreach(int p in card)
+            foreach (int p in card)
                 writer.Write(p);
             writer.Write((short)type.Length);
-            foreach(ulong p in type)
+            foreach (ulong p in type)
                 writer.Write(p);
             writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int)stream.Length);
@@ -951,7 +951,7 @@ namespace Octgn.Server
             writer.Write((byte)84);
             writer.Write(player);
             writer.Write((short)packs.Length);
-            foreach(Guid g in packs)
+            foreach (Guid g in packs)
                 writer.Write(g.ToByteArray());
             writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int)stream.Length);
@@ -973,7 +973,7 @@ namespace Octgn.Server
             writer.Close();
             Send(stream.ToArray());
         }
-        public void PlayerSetGlobalVariable(byte from,byte p, string name, string value)
+        public void PlayerSetGlobalVariable(byte from, byte p, string name, string value)
         {
             MemoryStream stream = new MemoryStream(512);
             stream.Seek(4, SeekOrigin.Begin);
@@ -990,7 +990,7 @@ namespace Octgn.Server
             writer.Close();
             Send(stream.ToArray());
         }
-        public void SetGlobalVariable( string name, string value)
+        public void SetGlobalVariable(string name, string value)
         {
             MemoryStream stream = new MemoryStream(512);
             stream.Seek(4, SeekOrigin.Begin);

@@ -28,16 +28,16 @@ namespace Octgn.Controls
         }
 
         #region Properties
-        
+
         #region Value
-        
+
         public decimal Value
         {
             get { return (decimal)GetValue(ValueProperty); }
             set { SetValue(ValueProperty, value); }
         }
 
-        public static readonly DependencyProperty ValueProperty = 
+        public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(
                 "Value", typeof(decimal), typeof(NumericUpDown),
                 new FrameworkPropertyMetadata(DefaultValue,
@@ -337,7 +337,7 @@ namespace Octgn.Controls
             {
                 editBox.GotFocus += delegate(object sender, RoutedEventArgs e)
                 {
-                    var box = (TextBox)sender; 
+                    var box = (TextBox)sender;
                     box.SelectAll();
                 };
                 editBox.PreviewMouseDown += delegate(object sender, MouseButtonEventArgs e)
@@ -352,7 +352,7 @@ namespace Octgn.Controls
                         e.Handled = true;
                     }
                 };
-                editBox.LostKeyboardFocus += delegate (object sender, KeyboardFocusChangedEventArgs e)
+                editBox.LostKeyboardFocus += delegate(object sender, KeyboardFocusChangedEventArgs e)
                 {
                     var box = (TextBox)sender;
                     BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
@@ -393,7 +393,7 @@ namespace Octgn.Controls
     {
         public NumericUpDownAutomationPeer(NumericUpDown control)
             : base(control)
-        {}
+        { }
 
         protected override string GetClassNameCore()
         { return "NumericUpDown"; }

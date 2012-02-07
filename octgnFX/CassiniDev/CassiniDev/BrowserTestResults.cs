@@ -14,7 +14,7 @@ using System.Text;
 
 namespace CassiniDev
 {
-    
+
     public class BrowserTestResults
     {
         public BrowserTestResults()

@@ -31,7 +31,7 @@ namespace Octgn.Launcher
             OutAnimation.Completed += delegate
             {
                 isInTransition = false;
-                if(transitionTarget == BackTarget)
+                if (transitionTarget == BackTarget)
                     GoBack();
                 else
                     Navigate(transitionTarget);
@@ -44,19 +44,19 @@ namespace Octgn.Launcher
             {
                 // FIX (jods): prevent further navigation when a navigation is already in progress
                 //						 (e.g. double-click a button in the main menu). This would break the transitions.
-                if(isInTransition)
+                if (isInTransition)
                 { e.Cancel = true; return; }
 
-                if(transitionTarget != null)
+                if (transitionTarget != null)
                 {
                     transitionTarget = null;
                     return;
                 }
 
                 var page = Content as Page;
-                if(page == null) return;
+                if (page == null) return;
 
-                if(clientWidth == 0)
+                if (clientWidth == 0)
                 {
                     clientWidth = page.ActualWidth;
                     bordersHeight = ActualHeight - page.ActualHeight;
@@ -65,7 +65,7 @@ namespace Octgn.Launcher
 
                 e.Cancel = true;
                 isInTransition = true;
-                if(e.NavigationMode == NavigationMode.Back)
+                if (e.NavigationMode == NavigationMode.Back)
                     transitionTarget = BackTarget;
                 else
                     transitionTarget = e.Content;
@@ -75,9 +75,9 @@ namespace Octgn.Launcher
             Navigated += delegate
             {
                 var page = Content as Page;
-                if(page == null) return;
+                if (page == null) return;
 
-                if(isFirstLoad)
+                if (isFirstLoad)
                 {
                     isFirstLoad = false;
                     return;
@@ -129,11 +129,11 @@ namespace Octgn.Launcher
         private void MyCommandExecute(object sender, ExecutedRoutedEventArgs e)
         {
             //System.Diagnostics.XmlWriterTraceListener tr = new System.Diagnostics.XmlWriterTraceListener()
-            if(Program.DebugWindow == null)
+            if (Program.DebugWindow == null)
             {
                 Program.DebugWindow = new DWindow();
             }
-            if(Program.DebugWindow.Visibility == System.Windows.Visibility.Visible)
+            if (Program.DebugWindow.Visibility == System.Windows.Visibility.Visible)
                 Program.DebugWindow.Visibility = System.Windows.Visibility.Hidden;
             else
                 Program.DebugWindow.Visibility = System.Windows.Visibility.Visible;

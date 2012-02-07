@@ -287,7 +287,7 @@ namespace CassiniDev
 
         private void WaitForPendingCallsToFinish()
         {
-            for (;;)
+            for (; ; )
             {
                 if (_pendingCallsCount <= 0)
                 {

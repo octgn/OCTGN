@@ -29,7 +29,7 @@ namespace Octgn.Controls
 
         private void imgDismiss_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if(OnClose != null)
+            if (OnClose != null)
                 OnClose.Invoke(this, new MouseEventArgs(e.MouseDevice, e.Timestamp));
         }
     }
