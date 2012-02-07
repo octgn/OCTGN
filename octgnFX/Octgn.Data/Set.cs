@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml;
-using System.IO;
 using System.Data.SQLite;
 
 namespace Octgn.Data
@@ -30,7 +28,7 @@ namespace Octgn.Data
 
         public override string ToString()
         {
-            return Name + " " + "(" + Version.ToString() + ")";
+            return Name + " " + "(" + Version + ")";
         }
         internal Set()
         { }

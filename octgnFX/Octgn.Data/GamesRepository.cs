@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.IO.Packaging;
 using System.Collections.ObjectModel;
-using System.Resources;
 using System.Diagnostics;
 using System.Data.SQLite;
-using System.Data;
 
 namespace Octgn.Data
 {
@@ -167,14 +164,14 @@ namespace Octgn.Data
                 com.CommandText = md;
                 try
                 {
-                    int ret = com.ExecuteNonQuery();
+                    com.ExecuteNonQuery();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     if (Debugger.IsAttached)
                         Debugger.Break();
                     else
-                        throw e;
+                        throw;
                 }
                 sc.Close();
             }
@@ -206,33 +203,33 @@ namespace Octgn.Data
                             where !File.Exists(fullname)
                             select fullname).ToList();
 
-            if (missingFiles.Count > 0)
-                cachedGames = new ObservableCollection<Game>(allCachedGames.Where(g => !missingFiles.Contains(Path.Combine(g.basePath, "Defs", g.Filename))));
-            else
-                cachedGames = allCachedGames;
+            cachedGames = missingFiles.Count > 0 ? new ObservableCollection<Game>(allCachedGames.Where(g => !missingFiles.Contains(Path.Combine(g.basePath, "Defs", g.Filename)))) : allCachedGames;
         }
 
         private Game ReadGameFromTable(SQLiteDataReader read)
         {
             var temp = read["shared_deck_sections"];
-            string sharedDeckSections = "";
+            string sharedDeckSections;
             if (temp == DBNull.Value)
                 sharedDeckSections = null;
             else
                 sharedDeckSections = (string)read["shared_deck_sections"];
-            Game g = new Game();
+            Game g = new Game
+                         {
+                             Id = Guid.Parse((string) read["id"]),
+                             Name = (string) read["name"],
+                             Version = new Version((string) read["version"]),
+                             Filename = (string) read["filename"],
+                             CardWidth = (int) ((long) read["card_width"]),
+                             CardHeight = (int) ((long) read["card_height"]),
+                             CardBack = (string) read["card_back"],
+                             DeckSections = DeserializeList((string) read["deck_sections"]),
+                             SharedDeckSections =
+                                 sharedDeckSections == null ? null : DeserializeList(sharedDeckSections),
+                             basePath = BasePath,
+                             repository = this
+                         };
 
-            g.Id = Guid.Parse((string)read["id"]);
-            g.Name = (string)read["name"];
-            g.Version = new Version((string)read["version"]);
-            g.Filename = (string)read["filename"];
-            g.CardWidth = (int)((long)read["card_width"]);
-            g.CardHeight = (int)((long)read["card_height"]);
-            g.CardBack = (string)read["card_back"];
-            g.DeckSections = DeserializeList((string)read["deck_sections"]);
-            g.SharedDeckSections = sharedDeckSections == null ? null : DeserializeList(sharedDeckSections);
-            g.basePath = BasePath;
-            g.repository = this;
 
             return g;
         }

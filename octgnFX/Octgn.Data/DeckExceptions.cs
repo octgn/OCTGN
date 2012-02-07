@@ -4,7 +4,7 @@ namespace Octgn.Data
 {
     public abstract class DeckException : Exception
     {
-        public DeckException(string message)
+        protected DeckException(string message)
             : base(message)
         { }
 

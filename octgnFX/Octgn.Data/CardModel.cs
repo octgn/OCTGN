@@ -127,7 +127,7 @@ namespace Octgn.Data
         public int Compare(CardModel x, CardModel y)
         {
             if (isName)
-                return x.Name.CompareTo(y.Name);
+                return System.String.CompareOrdinal(x.Name, y.Name);
 
             object px = x.Properties[propertyName];
             object py = y.Properties[propertyName];

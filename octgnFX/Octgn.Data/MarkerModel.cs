@@ -37,9 +37,6 @@ namespace Octgn.Data
         protected MarkerModel(Guid id)
         { this.id = id; }
 
-        private MarkerModel()
-        { }
-
         public MarkerModel(Guid id, string name, string icon, Set set)
         {
             this.set = set;

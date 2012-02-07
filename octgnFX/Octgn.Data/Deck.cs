@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Octgn.Data
@@ -58,7 +54,7 @@ namespace Octgn.Data
                 if (e.PropertyName == "Quantity")
                 {
                     var element = sender as Element;
-                    if (element.Quantity <= 0) Cards.Remove(element);
+                    if (element != null && element.Quantity <= 0) Cards.Remove(element);
                     OnPropertyChanged("CardCount");
                 }
             }
@@ -199,19 +195,23 @@ namespace Octgn.Data
         private static XDocument LoadDoc(string file, out Guid gameId)
         {
             XDocument doc;
+            gameId = new Guid();
             try
             { doc = XDocument.Load(file); }
             catch (Exception e)
             { throw new FileNotReadableException(e); }
 
-            XAttribute gameAttribute = doc.Root.Attribute("game");
-            if (gameAttribute == null)
-                throw new InvalidFileFormatException("The <deck> tag is missing the 'game' attribute");
+            if (doc.Root != null)
+            {
+                XAttribute gameAttribute = doc.Root.Attribute("game");
+                if (gameAttribute == null)
+                    throw new InvalidFileFormatException("The <deck> tag is missing the 'game' attribute");
 
-            try
-            { gameId = new Guid(gameAttribute.Value); }
-            catch
-            { throw new InvalidFileFormatException("The game attribute is not a valid GUID"); }
+                try
+                { gameId = new Guid(gameAttribute.Value); }
+                catch
+                { throw new InvalidFileFormatException("The game attribute is not a valid GUID"); }
+            }
 
             return doc;
         }
@@ -225,28 +225,33 @@ namespace Octgn.Data
                 var defSections = isShared ? game.SharedDeckSections : game.DeckSections;
 
                 deck = new Deck { GameId = game.Id, IsShared = isShared };
-                var sections = from section in doc.Root.Elements("section")
-                               select new Section(false)
-                               {
-                                   Name = section.Attribute("name").Value,
-                                   Cards = new ObservableCollection<Element>
-                                                   (from card in section.Elements("card")
-                                                    select new Element
-                                                    {
-                                                        loadedId = card.Attr<string>("id"),
-                                                        loadedName = card.Value,
-                                                        Quantity = card.Attr<byte>("qty", 1)
-                                                    })
-                               };
-                Section[] allSections = new Section[defSections.Count()];
-                int i = 0;
-                foreach (string sectionName in defSections)
+                if (doc.Root != null)
                 {
-                    allSections[i] = sections.FirstOrDefault(x => x.Name == sectionName);
-                    if (allSections[i] == null) allSections[i] = new Section { Name = sectionName };
-                    ++i;
+                    var sections = from section in doc.Root.Elements("section")
+                                   let xAttribute = section.Attribute("name")
+                                   where xAttribute != null
+                                   select new Section(false)
+                                              {
+                                                  Name = xAttribute.Value,
+                                                  Cards = new ObservableCollection<Element>
+                                                      (from card in section.Elements("card")
+                                                       select new Element
+                                                                  {
+                                                                      loadedId = card.Attr<string>("id"),
+                                                                      loadedName = card.Value,
+                                                                      Quantity = card.Attr<byte>("qty", 1)
+                                                                  })
+                                              };
+                    Section[] allSections = new Section[defSections.Count()];
+                    int i = 0;
+                    foreach (string sectionName in defSections)
+                    {
+                        allSections[i] = sections.FirstOrDefault(x => x.Name == sectionName);
+                        if (allSections[i] == null) allSections[i] = new Section { Name = sectionName };
+                        ++i;
+                    }
+                    deck.Sections = allSections;
                 }
-                deck.Sections = allSections;
             }
             catch
             { throw new InvalidFileFormatException(); }

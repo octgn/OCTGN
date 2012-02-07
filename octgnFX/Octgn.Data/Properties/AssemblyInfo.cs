@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
 
 [assembly: AssemblyTitle("Octgn.Data")]
 [assembly: AssemblyDescription("Octgn 3.0 data access library")]

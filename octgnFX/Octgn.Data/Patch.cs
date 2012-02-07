@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -40,40 +39,43 @@ namespace Octgn.Data
 
                 // Get the list of sets to potentially patch
                 game = repository.Games.FirstOrDefault(g => g.Id == gameId);
-                var installedSets = game.Sets.Select(s => s.PackageName).ToList();
-                List<string> uninstalledSets;
-
-                if (patchFolder != null)
+                if (game != null)
                 {
-                    string[] files = Directory.GetFiles(patchFolder, "*.o8s");
-                    uninstalledSets = files.Except(installedSets).ToList();
-                    if (!patchInstalledSets)
-                        installedSets = files.Intersect(installedSets).ToList();
+                    var installedSets = game.Sets.Select(s => s.PackageName).ToList();
+                    List<string> uninstalledSets;
+
+                    if (patchFolder != null)
+                    {
+                        string[] files = Directory.GetFiles(patchFolder, "*.o8s");
+                        uninstalledSets = files.Except(installedSets).ToList();
+                        if (!patchInstalledSets)
+                            installedSets = files.Intersect(installedSets).ToList();
+                    }
+                    else
+                        uninstalledSets = new List<string>(0);
+
+                    current = 0;
+                    max = installedSets.Count + uninstalledSets.Count;
+                    OnProgress();
+
+                    foreach (string set in installedSets)
+                        SafeApply(package, set, true);
+
+                    foreach (string set in uninstalledSets)
+                        SafeApply(package, set, false);
                 }
-                else
-                    uninstalledSets = new List<string>(0);
-
-                current = 0;
-                max = installedSets.Count + uninstalledSets.Count;
-                OnProgress();
-
-                foreach (string set in installedSets)
-                    SafeApply(package, set, true);
-
-                foreach (string set in uninstalledSets)
-                    SafeApply(package, set, false);
             }
         }
 
-        private void SafeApply(Package package, string filename, bool installed)
+        private void SafeApply(Package package, string localFilename, bool installed)
         {
             try
             {
-                Apply(package, filename, installed);
+                Apply(package, localFilename, installed);
             }
             catch (Exception ex)
             {
-                OnProgress(string.Format("Error while patching: {0}\nDetails: {1}", filename, ex.Message), true);
+                OnProgress(string.Format("Error while patching: {0}\nDetails: {1}", localFilename, ex.Message), true);
             }
             finally
             {
@@ -82,9 +84,9 @@ namespace Octgn.Data
             }
         }
 
-        private void Apply(Package package, string filename, bool installed)
+        private void Apply(Package package, string localFilename, bool installed)
         {
-            using (var setPkg = Package.Open(filename, FileMode.Open, FileAccess.ReadWrite))
+            using (var setPkg = Package.Open(localFilename, FileMode.Open, FileAccess.ReadWrite))
             {
                 // Extract information about the target set
                 var defRelationship = setPkg.GetRelationshipsByType("http://schemas.octgn.org/set/definition").First();
@@ -93,7 +95,7 @@ namespace Octgn.Data
                 using (var reader = XmlReader.Create(definition.GetStream(), xmlSettings))
                 {
                     reader.ReadToFollowing("set");  // <?xml ... ?>
-                    set = new Set(filename, reader, game.repository);
+                    set = new Set(localFilename, reader, game.repository);
                     // Check if the set game matches the patch
                     if (set.Game != game) return;
                 }
@@ -112,52 +114,54 @@ namespace Octgn.Data
                 if (set.Version > patchDoc.Root.Attr<Version>("maxVersion")) return;
 
                 if (installed)
-                    game.DeleteSet(game.Sets.Single(s => s.PackageName == filename));
+                    game.DeleteSet(game.Sets.Single(s => s.PackageName == localFilename));
 
                 // Process the set 
-                foreach (XElement action in patchDoc.Root.Elements())
-                    switch (action.Name.LocalName)
-                    {
-                        case "new":
-                            {
-                                Uri targetUri = new Uri(action.Attr<string>("targetUri"), UriKind.Relative);
-                                string relationshipId = action.Attr<string>("relationshipId");
-                                string contentType = action.Attr<string>("contentType");
-                                PackagePart part = setPkg.PartExists(targetUri) ?
-                                  setPkg.GetPart(targetUri) :
-                                  setPkg.CreatePart(targetUri, contentType, CompressionOption.Normal);
-                                using (var targetStream = part.GetStream(FileMode.Create, FileAccess.Write))
-                                using (var srcStream = package.GetPart(patchPart.GetRelationship(relationshipId).TargetUri).GetStream())
-                                    srcStream.CopyTo(targetStream);
-                                break;
-                            }
+                if (patchDoc.Root != null)
+                    foreach (XElement action in patchDoc.Root.Elements())
+                        switch (action.Name.LocalName)
+                        {
+                            case "new":
+                                {
+                                    Uri targetUri = new Uri(action.Attr<string>("targetUri"), UriKind.Relative);
+                                    string relationshipId = action.Attr<string>("relationshipId");
+                                    string contentType = action.Attr<string>("contentType");
+                                    PackagePart part = setPkg.PartExists(targetUri) ?
+                                                                                        setPkg.GetPart(targetUri) :
+                                                                                                                      setPkg.CreatePart(targetUri, contentType, CompressionOption.Normal);
+                                    if (part != null)
+                                        using (var targetStream = part.GetStream(FileMode.Create, FileAccess.Write))
+                                        using (var srcStream = package.GetPart(patchPart.GetRelationship(relationshipId).TargetUri).GetStream())
+                                            srcStream.CopyTo(targetStream);
+                                    break;
+                                }
 
-                        case "newrel":
-                            {
-                                Uri partUri = new Uri(action.Attr<string>("partUri"), UriKind.Relative);
-                                string relationshipId = action.Attr<string>("relationshipId");
-                                Uri targetUri = new Uri(action.Attr<string>("targetUri"), UriKind.Relative);
-                                string relationshipType = action.Attr<string>("relationshipType");
+                            case "newrel":
+                                {
+                                    Uri partUri = new Uri(action.Attr<string>("partUri"), UriKind.Relative);
+                                    string relationshipId = action.Attr<string>("relationshipId");
+                                    Uri targetUri = new Uri(action.Attr<string>("targetUri"), UriKind.Relative);
+                                    string relationshipType = action.Attr<string>("relationshipType");
 
-                                PackagePart part = setPkg.GetPart(partUri);
-                                if (part.RelationshipExists(relationshipId)) part.DeleteRelationship(relationshipId);
-                                part.CreateRelationship(targetUri, TargetMode.Internal, relationshipType, relationshipId);
-                                break;
-                            }
+                                    PackagePart part = setPkg.GetPart(partUri);
+                                    if (part.RelationshipExists(relationshipId)) part.DeleteRelationship(relationshipId);
+                                    part.CreateRelationship(targetUri, TargetMode.Internal, relationshipType, relationshipId);
+                                    break;
+                                }
 
-                        default:
-                            throw new InvalidFileFormatException("Unknown patch action: " + action.Name);
-                    }
+                            default:
+                                throw new InvalidFileFormatException("Unknown patch action: " + action.Name);
+                        }
             }
 
-            OnProgress(string.Format("{0} patched.", System.IO.Path.GetFileName(filename)));
+            OnProgress(string.Format("{0} patched.", System.IO.Path.GetFileName(localFilename)));
 
             if (installed)
                 try
-                { game.InstallSet(filename); }
+                { game.InstallSet(localFilename); }
                 catch (Exception ex)
                 {
-                    OnProgress(string.Format("{0} can't be re-installed.\nDetails: {1}", filename, ex.Message), true);
+                    OnProgress(string.Format("{0} can't be re-installed.\nDetails: {1}", localFilename, ex.Message), true);
                 }
         }
 
@@ -167,15 +171,17 @@ namespace Octgn.Data
             using (var reader = XmlReader.Create(part.GetStream(FileMode.Open, FileAccess.Read)))
             {
                 var doc = XDocument.Load(reader);
-                gameId = new Guid(doc.Root.Attribute("gameId").Value);
+                if (doc.Root != null)
+                {
+                    var xAttribute = doc.Root.Attribute("gameId");
+                    if (xAttribute != null) gameId = new Guid(xAttribute.Value);
+                }
             }
         }
 
         private static XmlReaderSettings GetXmlReaderSettings()
         {
-            var result = new XmlReaderSettings();
-            result.ValidationType = ValidationType.Schema;
-            result.IgnoreWhitespace = true;
+            var result = new XmlReaderSettings {ValidationType = ValidationType.Schema, IgnoreWhitespace = true};
             using (Stream s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(GamesRepository), "CardSet.xsd"))
             using (XmlReader reader = XmlReader.Create(s))
                 result.Schemas.Add(null, reader);

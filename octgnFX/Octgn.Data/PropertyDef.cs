@@ -1,7 +1,4 @@
-﻿using System;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace Octgn.Data
 {
@@ -28,7 +25,7 @@ namespace Octgn.Data
         {
             string name = xml.Attr<string>("name");
 
-            string kindStr = xml.Attr<string>("textKind", "Free");
+            string kindStr = xml.Attr("textKind", "Free");
             PropertyTextKind kind;
             switch (kindStr)
             {
