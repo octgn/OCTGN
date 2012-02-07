@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -122,7 +123,7 @@ namespace Octgn.Controls
             IsDragging = true;
             CreateDragDropWindow(this);
             //DataObject data = new DataObject(System.Windows.DataFormats.Text.ToString(), "abcd");
-            var data = new DataObject(DataFormats.Text, m_User.Uid.ToString());
+            var data = new DataObject(DataFormats.Text, m_User.Uid.ToString(CultureInfo.InvariantCulture));
             //DataObject data = new DataObject(this.m_User);
             _dragdropWindow.Show();
             DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);

@@ -19,7 +19,7 @@ namespace Octgn.Networking
     {
         protected XmlWriterSettings xmlSettings = new XmlWriterSettings();
 
-        public BaseXmlStub()
+        protected BaseXmlStub()
         {
             xmlSettings.OmitXmlDeclaration = true;
         }
@@ -60,8 +60,8 @@ namespace Octgn.Networking
             writer.WriteStartElement("IsAlternateImage");
             if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("cardid", c.Id.ToString());
-            writer.WriteElementString("isalternateimage", isAlternateImage.ToString());
+            writer.WriteElementString("cardid", c.Id.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("isalternateimage", isAlternateImage.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
             Send(sb.ToString());

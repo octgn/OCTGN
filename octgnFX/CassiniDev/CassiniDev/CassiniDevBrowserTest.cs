@@ -62,7 +62,7 @@ namespace CassiniDev
             {
                 throw new InvalidOperationException("The specified browser could not be located.");
             }
-            if (timeout.TotalMilliseconds == 0.0)
+            if (Math.Abs(timeout.TotalMilliseconds - 0.0) < double.Epsilon)
             {
                 timeout = TimeSpan.FromMinutes(1.0);
             }

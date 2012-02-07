@@ -106,7 +106,7 @@ namespace CassiniDev
         public static IPAddress GetExternalIPV4()
         {
             return GetIPAdresses().ToList()
-                .FirstOrDefault(i => i.ToString().IndexOf(":") == -1);
+                .FirstOrDefault(i => i.ToString().IndexOf(":", System.StringComparison.Ordinal) == -1);
         }
 
         ///<summary>

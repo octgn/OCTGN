@@ -177,11 +177,10 @@ namespace Octgn.Play
             if (ofd.ShowDialog() != true) return;
             Registry.WriteValue("lastFolder", Path.GetDirectoryName(ofd.FileName));
             // Try to load the file contents
-            Deck newDeck;
             try
             {
-                newDeck = Deck.Load(ofd.FileName,
-                                    Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
+                Deck newDeck = Deck.Load(ofd.FileName,
+                                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
                 Program.Game.LoadDeck(newDeck);
             }
@@ -311,10 +310,8 @@ namespace Octgn.Play
 
                 var ctrl = e.OriginalSource as CardControl;
                 BitmapImage img = e.Card != null
-                                      ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp
-                                                                  ? true
-                                                                  : e.Card.FaceUp ||
-                                                                    e.Card.PeekingPlayers.Contains(Player.LocalPlayer))
+                                      ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
+                                                                                                  e.Card.PeekingPlayers.Contains(Player.LocalPlayer)))
                                       : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture));
                 ShowCardPicture(img);
             }

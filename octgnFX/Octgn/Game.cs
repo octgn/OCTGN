@@ -147,7 +147,7 @@ namespace Octgn
             uniqueId = 1;
             TurnNumber = 0;
             TurnPlayer = null;
-            string nick = "TestPlayer";
+            const string nick = "TestPlayer";
             //CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any

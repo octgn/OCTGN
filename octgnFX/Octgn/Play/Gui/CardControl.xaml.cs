@@ -202,7 +202,7 @@ namespace Octgn.Play.Gui
         private static void IsAlwaysUpChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var cardCtrl = (CardControl) sender;
-            cardCtrl.IsUp = (bool) e.NewValue ? true : cardCtrl.Card != null ? cardCtrl.Card.FaceUp : false;
+            cardCtrl.IsUp = (bool) e.NewValue ? true : cardCtrl.Card != null && cardCtrl.Card.FaceUp;
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -964,7 +964,9 @@ namespace Octgn.Play.Gui
                 while (iter != null)
                 {
                     iter = iter.Parent as FrameworkElement;
-                    if (iter is GroupControl) return (GroupControl) iter;
+                    var groupControl = iter as GroupControl;
+                    if (groupControl != null)
+                        return groupControl;
                 }
                 return null;
             }

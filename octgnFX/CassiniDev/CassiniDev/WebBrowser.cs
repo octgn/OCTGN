@@ -95,7 +95,7 @@ namespace CassiniDev
                     RegistryKey key2 = key.OpenSubKey(string.Format(@"{0}\Main", str2));
                     if (key2 == null)
                     {
-                        return path;
+                        return null;
                     }
                     path = (string) key2.GetValue("PathToExe");
                     if (!File.Exists(path))

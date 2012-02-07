@@ -13,7 +13,7 @@ namespace Octgn.Server
     {
         private readonly Handler handler;
 
-        public BaseBinaryStub(Handler handler)
+        protected BaseBinaryStub(Handler handler)
         {
             this.handler = handler;
         }

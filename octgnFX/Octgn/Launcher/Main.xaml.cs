@@ -471,9 +471,8 @@ namespace Octgn.Launcher
                 if (theGame != null)
                 {
                     Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
-                    IPAddress[] ad;
 #if(DEBUG)
-                    ad = new IPAddress[1];
+                    IPAddress[] ad = new IPAddress[1];
                     IPAddress ip = IPAddress.Parse("127.0.0.1");
 
 #else

@@ -18,7 +18,7 @@ namespace Octgn.Play
         #region Public interface
 
         // Id of this object 
-        public ControllableObject(Player owner)
+        protected ControllableObject(Player owner)
         {
             this.owner = Controller = owner;
             keepControl = 0;

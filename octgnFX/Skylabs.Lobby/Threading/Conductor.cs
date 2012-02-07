@@ -51,12 +51,11 @@ namespace Skylabs.Lobby.Threading
         {
             lock (Locker)
             {
-                ConductorAction ca;
                 try
                 {
                     if (Q.Count > 0)
                     {
-                        ca = Q.Dequeue();
+                        ConductorAction ca = Q.Dequeue();
                         ca.Action.BeginInvoke(InvokeDone, null);
                     }
                 }

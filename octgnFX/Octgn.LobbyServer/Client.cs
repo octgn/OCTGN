@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Reflection;
 using Google.GData.Client;
@@ -534,7 +535,7 @@ namespace Skylabs.LobbyServer
                         if (n.Status == UserStatus.Invisible)
                             n.Status = UserStatus.Offline;
                     }
-                    sm.AddData(n.Uid.ToString(), n);
+                    sm.AddData(n.Uid.ToString(CultureInfo.InvariantCulture), n);
                 }
                 Socket.WriteMessage(sm);
             }

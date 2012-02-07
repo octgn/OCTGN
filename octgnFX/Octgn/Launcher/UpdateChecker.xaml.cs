@@ -38,17 +38,14 @@ namespace Octgn.Launcher
         {
             try
             {
-                bool isupdate;
-                string ustring;
-                string[] update;
-                update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
+                string[] update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
                 var online = new Version(update[0]);
-                isupdate = online > local;
-                ustring = update[1];
+                bool isupdate = online > local;
+                string ustring = update[1];
                 Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), isupdate, ustring);
             }
             catch (Exception)
@@ -81,7 +78,6 @@ namespace Octgn.Launcher
             {
                 if (Program.GamesRepository == null)
                     Program.GamesRepository = new GamesRepository();
-                Engine engine;
                 var g2r = new List<Data.Game>();
                 foreach (Data.Game g in Program.GamesRepository.Games)
                 {
@@ -94,7 +90,7 @@ namespace Octgn.Launcher
                     Program.Game = new Game(GameDef.FromO8G(g.Filename));
                     Program.Game.TestBegin();
                     IEnumerable<Player> plz = Player.All;
-                    engine = new Engine(true);
+                    Engine engine = new Engine(true);
                     string[] terr = engine.TestScripts(Program.Game);
                     Program.Game.End();
                     if (terr.Length > 0)

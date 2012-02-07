@@ -16,7 +16,7 @@ namespace Octgn.StandAloneServer
         {
             if (args.Length == 0)
             {
-                args = new string[]
+                args = new[]
                            {
                                "-p=8088",
                                "-g=A6C8D2E8-7CD8-11DD-8F94-E62B56D89593",

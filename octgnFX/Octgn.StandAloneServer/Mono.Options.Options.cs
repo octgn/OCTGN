@@ -130,6 +130,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -177,10 +178,10 @@ namespace Mono.Options
             {
                 bool? hw = null;
                 int width = GetNextWidth(ewidths, int.MaxValue, ref hw);
-                int start = 0, end;
+                int start = 0;
                 do
                 {
-                    end = GetLineEnd(start, width, self);
+                    int end = GetLineEnd(start, width, self);
                     char c = self[end - 1];
                     if (char.IsWhiteSpace(c))
                         --end;
@@ -661,7 +662,7 @@ namespace Mono.Options
                         break;
                     default:
                         if (start == -1)
-                            seps.Add(name[i].ToString());
+                            seps.Add(name[i].ToString(CultureInfo.InvariantCulture));
                         break;
                 }
             }
@@ -822,7 +823,7 @@ namespace Mono.Options
         }
     }
 
-    public delegate void OptionAction<TKey, TValue>(TKey key, TValue value);
+    public delegate void OptionAction<in TKey, in TValue>(TKey key, TValue value);
 
     public class OptionSet : KeyedCollection<string, Option>
     {
@@ -1099,10 +1100,9 @@ namespace Mono.Options
             if (!GetOptionParts(argument, out f, out n, out s, out v))
                 return false;
 
-            Option p;
             if (Contains(n))
             {
-                p = this[n];
+                Option p = this[n];
                 c.OptionName = f + n;
                 c.Option = p;
                 switch (p.OptionValueType)
@@ -1153,12 +1153,11 @@ namespace Mono.Options
 
         private bool ParseBool(string option, string n, OptionContext c)
         {
-            Option p;
             string rn;
             if (n.Length >= 1 && (n[n.Length - 1] == '+' || n[n.Length - 1] == '-') &&
                 Contains((rn = n.Substring(0, n.Length - 1))))
             {
-                p = this[rn];
+                Option p = this[rn];
                 string v = n[n.Length - 1] == '+' ? option : null;
                 c.OptionName = option;
                 c.Option = p;
@@ -1175,9 +1174,8 @@ namespace Mono.Options
                 return false;
             for (int i = 0; i < n.Length; ++i)
             {
-                Option p;
-                string opt = f + n[i].ToString();
-                string rn = n[i].ToString();
+                string opt = f + n[i].ToString(CultureInfo.InvariantCulture);
+                string rn = n[i].ToString(CultureInfo.InvariantCulture);
                 if (!Contains(rn))
                 {
                     if (i == 0)
@@ -1185,7 +1183,7 @@ namespace Mono.Options
                     throw new OptionException(string.Format(localizer(
                         "Cannot bundle unregistered option '{0}'."), opt), opt);
                 }
-                p = this[rn];
+                Option p = this[rn];
                 switch (p.OptionValueType)
                 {
                     case OptionValueType.None:
@@ -1364,11 +1362,11 @@ namespace Mono.Options
                 int start, j = 0;
                 do
                 {
-                    start = description.IndexOf(nameStart[i], j);
-                } while (start >= 0 && j != 0 ? description[j++ - 1] == '{' : false);
+                    start = description.IndexOf(nameStart[i], j, System.StringComparison.Ordinal);
+                } while (start >= 0 && j != 0 && description[j++ - 1] == '{');
                 if (start == -1)
                     continue;
-                int end = description.IndexOf("}", start);
+                int end = description.IndexOf("}", start, System.StringComparison.Ordinal);
                 if (end == -1)
                     continue;
                 return description.Substring(start + nameStart[i].Length, end - start - nameStart[i].Length);

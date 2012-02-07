@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -155,14 +156,13 @@ namespace Skylabs.LobbyServer
 
         private string ReplaceVariables(string rawpage)
         {
-            string ret;
             Version v = Assembly.GetCallingAssembly().GetName().Version;
             //Microsoft.VisualBasic.Devices.ComputerInfo ci = new Microsoft.VisualBasic.Devices.ComputerInfo();
-            ret = rawpage.Replace("$version", v.ToString());
+            string ret = rawpage.Replace("$version", v.ToString());
             ret = ret.Replace("$runtime", Server.ServerRunTime.ToString());
-            ret = ret.Replace("$onlineusers", Server.OnlineCount().ToString());
-            ret = ret.Replace("$hostedgames", Gaming.GameCount().ToString());
-            ret = ret.Replace("$totalhostedgames", Gaming.TotalHostedGames().ToString());
+            ret = ret.Replace("$onlineusers", Server.OnlineCount().ToString(CultureInfo.InvariantCulture));
+            ret = ret.Replace("$hostedgames", Gaming.GameCount().ToString(CultureInfo.InvariantCulture));
+            ret = ret.Replace("$totalhostedgames", Gaming.TotalHostedGames().ToString(CultureInfo.InvariantCulture));
             ret = ret.Replace("$proctime", Process.GetCurrentProcess().TotalProcessorTime.ToString());
             ret = ret.Replace("$memusage", ToFileSize(Process.GetCurrentProcess().WorkingSet64));
             ret = ret.Replace("$totmem", "256 MB");

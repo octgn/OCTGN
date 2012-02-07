@@ -14,7 +14,7 @@ namespace Octgn.Play.Gui
         private Point oldPos;
         protected T target;
 
-        public DragOperation(T target)
+        protected DragOperation(T target)
         {
             this.target = target;
             oldPos = Mouse.GetPosition(target);

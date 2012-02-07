@@ -173,7 +173,7 @@ namespace Octgn.Play.Dialogs
                 var element = src.DataContext as Deck.Element;
                 if (element != null)
                 {
-                    CardModel model = src.DataContext as CardModel ?? element.Card;
+                    CardModel model = element.Card;
                     RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
                 }
             }

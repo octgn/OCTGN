@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,16 +49,15 @@ namespace Octgn.Launcher
         private void EndHostGame(SocketMessage sm)
         {
             var port = (int) sm["port"];
-            Program.DebugTrace.TraceEvent(TraceEventType.Information, 0, "Connecting to port: " + port.ToString());
+            Program.DebugTrace.TraceEvent(TraceEventType.Information, 0, "Connecting to port: " + port.ToString(CultureInfo.InvariantCulture));
             Program.lobbyClient.CurrentHostedGamePort = port;
             if (port > -1)
             {
                 Program.GameSettings.UseTwoSidedTable = true;
                 Program.Game = new Game(GameDef.FromO8G(Game.Filename));
                 Program.IsHost = true;
-                IPAddress[] ad;
 #if(DEBUG)
-                ad = new IPAddress[1];
+                IPAddress[] ad = new IPAddress[1];
                 IPAddress ip = IPAddress.Parse("127.0.0.1");
 #else
                 ad = Dns.GetHostAddresses(Program.LobbySettings.Server);

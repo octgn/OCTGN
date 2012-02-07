@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -278,9 +279,7 @@ namespace Octgn.Scripting
         public void CardMoveToTable(int cardId, double x, double y, bool forceFaceDown)
         {
             Card c = Card.Find(cardId);
-            bool faceUp = forceFaceDown
-                              ? false
-                              : c.Group is Table ? c.FaceUp : true;
+            bool faceUp = !forceFaceDown && (!(c.Group is Table) || c.FaceUp);
             engine.Invoke(() => c.MoveToTable((int) x, (int) y, faceUp, Program.Game.Table.Count));
         }
 
@@ -389,7 +388,7 @@ namespace Octgn.Scripting
         {
             return engine.Invoke<int?>(() =>
                                            {
-                                               var dlg = new InputDlg("Question", question, defaultValue.ToString());
+                                               var dlg = new InputDlg("Question", question, defaultValue.ToString(CultureInfo.InvariantCulture));
                                                int result = dlg.GetPositiveInt();
                                                return dlg.DialogResult.GetValueOrDefault() ? result : (int?) null;
                                            });
@@ -521,8 +520,6 @@ namespace Octgn.Scripting
         {
             int statusCode = 200;
             string result = "";
-            WebRequest request = null;
-            WebResponse response;
             StreamReader reader = null;
 
             try
@@ -533,8 +530,8 @@ namespace Octgn.Scripting
                 permission.Assert();
 
 
-                request = WebRequest.Create(url);
-                response = request.GetResponse();
+                WebRequest request = WebRequest.Create(url);
+                WebResponse response = request.GetResponse();
 
                 reader = new StreamReader(response.GetResponseStream());
                 result = reader.ReadToEnd();
@@ -594,9 +591,9 @@ namespace Octgn.Scripting
                         return false;
                     }
                 }
-                else return false;
+                return false;
             }
-            else return false;
+            return false;
         }
 
         public string OCTGN_Version()

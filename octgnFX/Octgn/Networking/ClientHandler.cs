@@ -392,8 +392,9 @@ namespace Octgn.Networking
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count)
         {
             MarkerModel model = Program.Game.GetMarkerModel(id);
-            if (model is DefaultMarkerModel)
-                ((DefaultMarkerModel) model).SetName(name);
+            var defaultMarkerModel = model as DefaultMarkerModel;
+            if (defaultMarkerModel != null)
+                (defaultMarkerModel).SetName(name);
             // Ignore markers created by oneself (already created for responsiveness issues)
             if (player != Player.LocalPlayer)
                 card.AddMarker(model, count);
@@ -807,7 +808,6 @@ namespace Octgn.Networking
                     Program.TraceWarning("[Unalias] Not all cards belong to the same group!");
                     continue;
                 }
-                CardIdentity ci;
                 // Check nobody cheated
                 if (!c.Type.mySecret)
                 {
@@ -815,7 +815,7 @@ namespace Octgn.Networking
                         Program.TraceWarning("[Unalias] Card identity doesn't match.");
                 }
                 // Substitue the card's identity
-                ci = CardIdentity.Find((int) type[i]);
+                CardIdentity ci = CardIdentity.Find((int) type[i]);
                 if (ci == null)
                 {
                     Program.TraceWarning("[Unalias] Card identity not found.");

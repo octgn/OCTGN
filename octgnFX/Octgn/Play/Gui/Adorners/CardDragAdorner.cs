@@ -60,7 +60,7 @@ namespace Octgn.Play.Gui
             //fix MAINWINDOW bug
             basePt = anchor.TranslatePoint(cardOrigin, Program.PlayWindow.Content as UIElement);
 
-            _faceUp = sourceCard.IsAlwaysUp ? true : sourceCard.Card.FaceUp;
+            _faceUp = sourceCard.IsAlwaysUp || sourceCard.Card.FaceUp;
             lightRedBrush = Brushes.Red.Clone();
             faceDownBrush = new ImageBrush(sourceCard.Card.GetBitmapImage(false));
             faceUpBrush = _faceUp

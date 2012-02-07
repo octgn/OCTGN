@@ -576,7 +576,7 @@ namespace Octgn.Play
 
             public int Compare(object x, object y)
             {
-                return string.Compare(((Card) x).Name, ((Card) y).Name);
+                return System.String.CompareOrdinal(((Card) x).Name, ((Card) y).Name);
             }
 
             #endregion
@@ -592,7 +592,7 @@ namespace Octgn.Play
 
             public int Compare(object x, object y)
             {
-                return string.Compare(((Card) x).RealName, ((Card) y).RealName);
+                return System.String.CompareOrdinal(((Card) x).RealName, ((Card) y).RealName);
             }
 
             #endregion
@@ -664,7 +664,9 @@ namespace Octgn.Play
             else if (count > 0)
             {
                 MarkerModel model = Program.Game.GetMarkerModel(lId);
-                if (model is DefaultMarkerModel) ((DefaultMarkerModel) model).SetName(name);
+                var defaultMarkerModel = model as DefaultMarkerModel;
+                if (defaultMarkerModel != null)
+                    (defaultMarkerModel).SetName(name);
                 AddMarker(model, (ushort) count);
             }
             if (count != oldCount)

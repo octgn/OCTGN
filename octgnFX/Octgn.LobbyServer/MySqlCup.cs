@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using MySql.Data.MySqlClient;
 using Skylabs.Lobby;
@@ -56,8 +57,7 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        String ip;
-                        ip = endpoint.ToString();
+                        string ip = endpoint.ToString();
 
                         MySqlCommand cmd = con.CreateCommand();
                         try
@@ -96,7 +96,7 @@ namespace Skylabs.LobbyServer
                                 dr.Close();
                                 foreach (Ban b in bans)
                                 {
-                                    string bid = b.Bid.ToString();
+                                    string bid = b.Bid.ToString(CultureInfo.InvariantCulture);
                                     DateTime endtime = ValueConverters.FromPhpTime(b.EndTime);
                                     if (DateTime.Now >= endtime)
                                     {

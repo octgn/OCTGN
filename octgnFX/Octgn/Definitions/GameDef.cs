@@ -117,7 +117,7 @@ namespace Octgn.Definitions
             // HACK: workaround for the BitmapDecoder bug (see also GameManager.xaml.cs, in c'tor)
             GC.Collect(GC.MaxGeneration);
             GC.WaitForPendingFinalizers();
-            string fhash = "";
+            const string fhash = "";
             //Get hash for file.
             //using (MD5 md5 = new MD5CryptoServiceProvider()) {
             //    using (FileStream file = new FileStream(filename, FileMode.Open)) {

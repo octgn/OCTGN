@@ -9,7 +9,7 @@ namespace Octgn.Data
         {
         }
 
-        public DeckException(string message, Exception innerException)
+        protected DeckException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

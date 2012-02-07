@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using Octgn.Definitions;
 
 namespace Octgn.Play
@@ -86,7 +87,7 @@ namespace Octgn.Play
             state = value;
             OnPropertyChanged("Value");
             // Display a notification in the chat
-            string deltaString = (delta > 0 ? "+" : "") + delta.ToString();
+            string deltaString = (delta > 0 ? "+" : "") + delta.ToString(CultureInfo.InvariantCulture);
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
                                      "{0} sets {1} counter to {2} ({3})", who, this, value, deltaString);
         }

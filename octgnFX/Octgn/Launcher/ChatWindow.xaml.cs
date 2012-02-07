@@ -164,10 +164,10 @@ namespace Octgn.Launcher
             p.Inlines.Add(headerRun);
             if (chat.Contains("\n"))
             {
-                String[] lines = chat.Split(new char[] {'\n'});
+                String[] lines = chat.Split(new[] {'\n'});
                 foreach (String line in lines)
                 {
-                    String[] words = line.Split(new char[] {' '});
+                    String[] words = line.Split(new[] {' '});
                     foreach (String word in words)
                     {
                         Inline inn = StringToRun(word, b);
@@ -181,7 +181,7 @@ namespace Octgn.Launcher
             }
             else
             {
-                String[] words = chat.Split(new char[] {' '});
+                String[] words = chat.Split(new[] {' '});
                 foreach (String word in words)
                 {
                     Inline inn = StringToRun(word, b);
@@ -209,8 +209,7 @@ namespace Octgn.Launcher
         public Inline StringToRun(String s, Brush b)
         {
             Inline ret = null;
-            String strUrlRegex =
-                "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
+            const string strUrlRegex = "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
             var reg = new Regex(strUrlRegex);
             s = s.Trim();
             //b = Brushes.Black;

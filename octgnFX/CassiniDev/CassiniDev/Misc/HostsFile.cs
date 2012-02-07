@@ -102,12 +102,8 @@ namespace CassiniDev
             try
             {
                 Process p = Process.Start(startInfo);
-                if (p != null)
-                {
-                    p.WaitForExit();
-                    return p.ExitCode;
-                }
-                return -2;
+                p.WaitForExit();
+                return p.ExitCode;
             }
             catch
             {

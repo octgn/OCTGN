@@ -45,17 +45,16 @@ namespace Octgn.Play.Gui
         public static implicit operator Color(HslColor c)
         {
             double red, green, blue;
-            double m1, m2;
 
             if (Math.Abs(c.saturation - 0) < float.Epsilon)
                 red = green = blue = c.luminance;
             else
             {
-                m2 = c.luminance <= 0.5f
-                         ? c.luminance*(1 + c.saturation)
-                         : c.luminance + c.saturation - c.luminance*c.saturation;
+                double m2 = c.luminance <= 0.5f
+                                ? c.luminance*(1 + c.saturation)
+                                : c.luminance + c.saturation - c.luminance*c.saturation;
 
-                m1 = (2*c.luminance) - m2;
+                double m1 = (2*c.luminance) - m2;
 
                 red = HueToRgb(m1, m2, c.hue + (1/3f));
                 green = HueToRgb(m1, m2, c.hue);
@@ -77,7 +76,7 @@ namespace Octgn.Play.Gui
 
             if (6*hue < 1)
                 return m1 + (m2 - m1)*hue*6;
-            else if (2*hue < 1)
+            if (2*hue < 1)
                 return m2;
             if (3*hue < 2)
                 return m1 + (m2 - m1)*(2/3f - hue)*6;
@@ -90,7 +89,7 @@ namespace Octgn.Play.Gui
             this.alpha = lAlpha;
 
             // Compute Max, Min and Delta
-            float max, min, delta;
+            float max, min;
             if (red > green)
             {
                 max = red > blue ? red : blue;
@@ -101,7 +100,7 @@ namespace Octgn.Play.Gui
                 max = green > blue ? green : blue;
                 min = red < blue ? red : blue;
             }
-            delta = max - min;
+            float delta = max - min;
 
             // Compute Luminance
             luminance = (max + min)/2f;

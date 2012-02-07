@@ -294,8 +294,7 @@ namespace Octgn.Launcher
         {
             if (FileExists("http://www.skylabsonline.com/downloads/octgn/update.xml"))
             {
-                string[] update;
-                update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
+                string[] update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
@@ -411,8 +410,7 @@ namespace Octgn.Launcher
         public static string Decrypt(this string Text)
         {
             RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher;
-            hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Registry.ReadValue("Nickname") ?? "null"));
+            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Registry.ReadValue("Nickname") ?? "null"));
             Text = Cryptor.Decrypt(Text, BitConverter.ToString(hasher));
             return Text;
         }
@@ -421,8 +419,7 @@ namespace Octgn.Launcher
         {
             // Create a hash of current nickname to use as the Cryptographic Key
             RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher;
-            hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.lobbyClient.Me.DisplayName));
+            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.lobbyClient.Me.DisplayName));
             return Cryptor.Encrypt(Text, BitConverter.ToString(hasher));
         }
     }

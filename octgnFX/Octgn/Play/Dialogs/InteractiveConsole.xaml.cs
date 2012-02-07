@@ -102,7 +102,7 @@ namespace Octgn.Play.Dialogs
 
             // Find the indentation of the current line
             if (position < input.Length && input[position] == '\n') position--;
-            int lineStart = input.LastIndexOf("\n", position) + 1;
+            int lineStart = input.LastIndexOf("\n", position, System.StringComparison.Ordinal) + 1;
             string curLine = input.Substring(lineStart, position - lineStart);
             string newIndent = "";
             match = Regex.Match(curLine, "^\\s+");

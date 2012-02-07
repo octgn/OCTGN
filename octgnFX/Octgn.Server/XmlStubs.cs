@@ -17,7 +17,7 @@ namespace Octgn.Server
         private readonly Handler handler;
         protected XmlWriterSettings xmlSettings = new XmlWriterSettings();
 
-        public BaseXmlStub(Handler handler)
+        protected BaseXmlStub(Handler handler)
         {
             xmlSettings.OmitXmlDeclaration = true;
             this.handler = handler;
@@ -903,8 +903,8 @@ namespace Octgn.Server
             writer.WriteStartElement("IsAlternateImage");
             if (handler.muted != 0)
                 writer.WriteAttributeString("muted", handler.muted.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("cardid", c.ToString());
-            writer.WriteElementString("isalternateimage", isAlternateImage.ToString());
+            writer.WriteElementString("cardid", c.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("isalternateimage", isAlternateImage.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
             Send(sb.ToString());

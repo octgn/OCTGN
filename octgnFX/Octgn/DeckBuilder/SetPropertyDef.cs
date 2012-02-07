@@ -8,7 +8,7 @@ namespace Octgn.DeckBuilder
     {
         private readonly IList<Set> allSets;
 
-        public SetPropertyDef(IList<Set> allSets)
+        public SetPropertyDef(IEnumerable<Set> allSets)
             : base("Set", 0)
         {
             this.allSets = allSets.OrderBy(s => s.Name).ToList();

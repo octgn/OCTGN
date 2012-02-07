@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -49,7 +50,7 @@ namespace Skylabs.LobbyServer
         {
             Settings = new Dictionary<string, string>();
 #if(DEBUG)
-            string sname = "serversettingsdebug.ini";
+            const string sname = "serversettingsdebug.ini";
 #else
             string sname = "serversettings.ini";
 #endif
@@ -86,7 +87,7 @@ namespace Skylabs.LobbyServer
             }
             _killTime = DateTime.Now.AddMinutes(minutes);
             var sm = new SocketMessage("servermessage");
-            sm.AddData("message", "Server will be shutting down in " + minutes.ToString() + " minutes");
+            sm.AddData("message", "Server will be shutting down in " + minutes.ToString(CultureInfo.InvariantCulture) + " minutes");
             Server.AllUserMessage(sm);
         }
 

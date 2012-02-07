@@ -61,7 +61,7 @@ namespace CassiniDev
                 Assembly assembly = Assembly.GetAssembly(type);
 
                 object[] customAttributes = assembly.GetCustomAttributes(typeof (AssemblyFileVersionAttribute), true);
-                if ((customAttributes != null) && (customAttributes.GetLength(0) > 0))
+                if ((customAttributes.GetLength(0) > 0))
                 {
                     version = ((AssemblyFileVersionAttribute) customAttributes[0]).Version;
                 }
@@ -1710,7 +1710,7 @@ namespace CassiniDev
             return mime;
         }
 
-        private static IList<string> SplitIntoChunks(this string text, int chunkSize)
+        private static IEnumerable<string> SplitIntoChunks(this string text, int chunkSize)
         {
             var chunks = new List<string>();
             int offset = 0;
