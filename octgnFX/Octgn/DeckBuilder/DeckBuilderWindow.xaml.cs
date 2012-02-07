@@ -421,7 +421,12 @@ namespace Octgn.DeckBuilder
 		private void PreventExpanderBehavior(object sender, MouseButtonEventArgs e)
 		{
 			e.Handled = true;
-		}		
+		}
+
+        private void DeckSort_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }		
 	}
 
 	public class ActiveSectionConverter : IMultiValueConverter

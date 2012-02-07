@@ -53,13 +53,12 @@
 
 		<Border Grid.Row="2" Margin="4,2,2,4" Padding="6" Style="{StaticResource Panel}">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">
-				<ItemsControl ItemsSource="{Binding Deck.Sections, ElementName=self}"
-										ScrollViewer.VerticalScrollBarVisibility="Visible" Height="139">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate>
-							<Expander IsExpanded="True" GotFocus="SetActiveSection">
-								<Expander.Header>
-									<TextBlock>
+                <ItemsControl ItemsSource="{Binding Deck.Sections, ElementName=self}" ScrollViewer.VerticalScrollBarVisibility="Visible" Height="152">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Expander IsExpanded="True" GotFocus="SetActiveSection">
+                                <Expander.Header>
+                                    <TextBlock>
 									<TextBlock.Text>
 										<MultiBinding StringFormat="{}{0} ({1})">
 											<Binding Path="Name" Mode="OneTime" />
@@ -71,25 +70,19 @@
 											<Binding Path="ActiveSection" ElementName="self" />
 											<Binding />
 										</MultiBinding>
-									</TextBlock.FontWeight>
-									</TextBlock>
-								</Expander.Header>
-								<DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
-										  CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden"
-										  AlternatingRowBackground="#e1ffd7"
-										  VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray"
-										  SelectionChanged="ElementSelected" Keyboard.PreviewKeyDown="DeckKeyDownHandler"
-										  CellEditEnding="ElementEditEnd">
-							        <DataGrid.Columns>
-										<DataGridTextColumn Binding="{Binding Card.Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
-										<DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
-									</DataGrid.Columns>
-								</DataGrid>
-							</Expander>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</ScrollViewer>
+									</TextBlock.FontWeight></TextBlock>
+                                </Expander.Header>
+                                <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None" CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7" VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected" Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Binding="{Binding Card.Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
+                                        <DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Expander>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
 		</Border>
 
 		<TabControl x:Name="searchTabs" Style="{StaticResource EditableTabControl}"
@@ -103,6 +96,7 @@
 		</TabControl>
 
 		<GridSplitter Grid.Row="1" Grid.RowSpan="2" ResizeDirection="Columns" Width="4" HorizontalAlignment="Right" Background="Transparent" />
-        <ComboBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="12,171,0,0" Name="DeckSort" VerticalAlignment="Top" Width="229" ItemsSource="{Binding}" />
+        <ComboBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="11,181,0,0" Name="DeckSort" VerticalAlignment="Top" Width="229" ItemsSource="{Binding Deck.}" SelectionChanged="DeckSort_SelectionChanged" />
+    <!--TODO: Fill in Combobox with properties. On selection re-sort deck according to selected property-->
     </Grid>
 </Window>
