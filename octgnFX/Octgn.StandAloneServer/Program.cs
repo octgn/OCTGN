@@ -16,7 +16,7 @@ namespace Octgn.StandAloneServer
         {
             if (args.Length == 0)
             {
-                args = new string[3]
+                args = new string[]
                            {
                                "-p=8088",
                                "-g=A6C8D2E8-7CD8-11DD-8F94-E62B56D89593",
@@ -25,10 +25,10 @@ namespace Octgn.StandAloneServer
             }
 
             OptionSet set = new OptionSet()
-                .Add("p=|port=", "Port for the server to host on.", (v) => int.TryParse(v, out Port))
-                .Add("g=|guid=", "GUID of the game being played.", (v) => Guid.TryParse(v, out GameGuid))
+                .Add("p=|port=", "Port for the server to host on.", v => int.TryParse(v, out Port))
+                .Add("g=|guid=", "GUID of the game being played.", v => Guid.TryParse(v, out GameGuid))
                 .Add("v=|version=", "Game version.",
-                     (v) => GameVersion = Version.TryParse(v, out GameVersion) ? GameVersion : null);
+                     v => GameVersion = Version.TryParse(v, out GameVersion) ? GameVersion : null);
             if (!HandleArgs(args, set) || Port == 0 || GameGuid.Equals(Guid.Empty) || GameVersion == null)
             {
                 set.WriteOptionDescriptions(Console.Out);

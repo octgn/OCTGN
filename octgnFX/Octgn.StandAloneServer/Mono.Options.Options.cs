@@ -203,7 +203,7 @@ namespace Mono.Options
 
         private static int GetNextWidth(IEnumerator<int> ewidths, int curWidth, ref bool? eValid)
         {
-            if (!eValid.HasValue || (eValid.HasValue && eValid.Value))
+            if (!eValid.HasValue || (eValid.Value))
             {
                 curWidth = (eValid = ewidths.MoveNext()).Value ? ewidths.Current : curWidth;
                 // '.' is any character, - is for a continuation
@@ -1054,17 +1054,15 @@ namespace Mono.Options
             return false;
         }
 
-        private static bool Unprocessed(ICollection<string> extra, Option def, OptionContext c, string argument)
+        private static void Unprocessed(ICollection<string> extra, Option def, OptionContext c, string argument)
         {
             if (def == null)
             {
                 extra.Add(argument);
-                return false;
             }
             c.OptionValues.Add(argument);
             c.Option = def;
             c.Option.Invoke(c);
-            return false;
         }
 
         protected bool GetOptionParts(string argument, out string flag, out string name, out string sep,
