@@ -24,10 +24,8 @@ namespace Octgn.Data
         public string FileHash { get; set; }
         public IEnumerable<string> DeckSections { get; set; }
         public IEnumerable<string> SharedDeckSections { get; set; }
-
         internal string basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
         public GamesRepository repository;
-
         public SQLiteConnection dbc;
 
         public Uri GetCardBackUri()
@@ -90,7 +88,6 @@ namespace Octgn.Data
                     throw;
                 }
             }
-
         }
 
         public void CloseDatabase()
@@ -406,6 +403,8 @@ namespace Octgn.Data
             bool wasdbopen = IsDatabaseOpen;
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
+
+            SQLiteTransaction trans = dbc.BeginTransaction();
             try
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
@@ -414,10 +413,18 @@ namespace Octgn.Data
                     com.Parameters.AddWithValue("@id", set.Id.ToString());
                     com.ExecuteNonQuery();
                 }
+                trans.Commit();
             }
-            catch { throw; }
-            if (!wasdbopen)
-                CloseDatabase();
+            catch
+            {
+                trans.Rollback();
+                throw;
+            }
+            finally
+            {
+                if (!wasdbopen)
+                    CloseDatabase();
+            }
         }
 
         private void InsertSet(Set set)
@@ -620,7 +627,7 @@ namespace Octgn.Data
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "SElECT DISTINCT name, type FROM [custom_properties] WHERE [game_id]=@game_id;";
+                    com.CommandText = "SElECT DISTINCT name, type FROM [custom_properties] WHERE [game_id]=@game_id;"; // Not sure if this is equiv to below line
                     //com.CommandText = "SElECT * FROM [custom_properties] WHERE [game_id]=@game_id AND [card_id]='';";
 
                     com.Parameters.AddWithValue("@game_id", Id.ToString());

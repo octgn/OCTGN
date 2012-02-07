@@ -498,10 +498,6 @@
     </Compile>
     <Compile Include="Networking\ServerErrorEventArgs.cs" />
     <Compile Include="GroupVisibility.cs" />
-    <Compile Include="Launcher\MainMenu.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>MainMenu.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Launcher\Serve.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>Serve.xaml</DependentUpon>
@@ -799,10 +795,6 @@
     <Page Include="Launcher\LauncherWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Launcher\MainMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
