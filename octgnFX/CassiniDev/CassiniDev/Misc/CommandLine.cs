@@ -66,7 +66,7 @@ namespace CassiniDev.UIComponents
                     }
                 }
             }
-            _arguments = (string[]) list.ToArray(typeof (string));
+            _arguments = (string[])list.ToArray(typeof(string));
         }
 
         #endregion

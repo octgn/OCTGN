@@ -46,7 +46,7 @@ namespace Octgn.Launcher
         private void NotificationDismissed(object sender, EventArgs e)
         {
             UIElement u = sender as UIElement;
-            if(u != null)
+            if (u != null)
                 stackPanel1.Children.Remove(u);
         }
         private void Page_Loaded(object sender, RoutedEventArgs e)

@@ -46,21 +46,21 @@ namespace Octgn.Script
 
             // A double-click can only select a marker in its own list
             // (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
-            if(sender is ListBox && ((ListBox)sender).SelectedIndex == -1) return;
+            if (sender is ListBox && ((ListBox)sender).SelectedIndex == -1) return;
 
-            if(recentList.SelectedIndex != -1) result = (Data.MarkerModel)recentList.SelectedItem;
-            if(allList.SelectedIndex != -1) result = (Data.MarkerModel)allList.SelectedItem;
-            if(defaultList.SelectedIndex != -1)
+            if (recentList.SelectedIndex != -1) result = (Data.MarkerModel)recentList.SelectedItem;
+            if (allList.SelectedIndex != -1) result = (Data.MarkerModel)allList.SelectedItem;
+            if (defaultList.SelectedIndex != -1)
             {
                 DefaultMarkerModel m = ((DefaultMarkerModel)defaultList.SelectedItem);
                 m.SetName(nameBox.Text);
                 result = m.Clone();
             }
 
-            if(result == null) return;
+            if (result == null) return;
 
             int qty;
-            if(!int.TryParse(quantityBox.Text, out qty) || qty < 0)
+            if (!int.TryParse(quantityBox.Text, out qty) || qty < 0)
             {
                 var anim = new ColorAnimation(Colors.Red, new Duration(TimeSpan.FromMilliseconds(800))) { AutoReverse = true };
                 validationBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.Compose);
@@ -75,11 +75,11 @@ namespace Octgn.Script
         {
             e.Handled = true;
             ListBox list = (ListBox)sender;
-            if(list.SelectedIndex != -1)
+            if (list.SelectedIndex != -1)
             {
-                if(list != recentList) recentList.SelectedIndex = -1;
-                if(list != allList) allList.SelectedIndex = -1;
-                if(list != defaultList) defaultList.SelectedIndex = -1;
+                if (list != recentList) recentList.SelectedIndex = -1;
+                if (list != allList) allList.SelectedIndex = -1;
+                if (list != defaultList) defaultList.SelectedIndex = -1;
             }
             IsModelSelected = recentList.SelectedIndex != -1 || allList.SelectedIndex != -1 || defaultList.SelectedIndex != -1;
         }
@@ -92,7 +92,7 @@ namespace Octgn.Script
 
         private void PreviewFilterKeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Escape && filterBox.Text.Length > 0)
+            if (e.Key == Key.Escape && filterBox.Text.Length > 0)
             {
                 filterBox.Clear();
                 e.Handled = true;

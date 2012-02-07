@@ -185,14 +185,14 @@ namespace Octgn.Play.Gui
         {
             int childrenPerRow = CalculateChildrenPerRow(_extent);
 
-            firstVisibleItemIndex = (int) Math.Floor(_offset.Y / this.ChildSize) * childrenPerRow;
-            lastVisibleItemIndex = (int) Math.Ceiling((_offset.Y + _viewport.Height) / this.ChildSize) * childrenPerRow - 1;
+            firstVisibleItemIndex = (int)Math.Floor(_offset.Y / this.ChildSize) * childrenPerRow;
+            lastVisibleItemIndex = (int)Math.Ceiling((_offset.Y + _viewport.Height) / this.ChildSize) * childrenPerRow - 1;
 
             ItemsControl itemsControl = ItemsControl.GetItemsOwner(this);
             int itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
             if (lastVisibleItemIndex >= itemCount)
-                lastVisibleItemIndex = itemCount-1;
-            
+                lastVisibleItemIndex = itemCount - 1;
+
         }
 
         /// <summary>

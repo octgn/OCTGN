@@ -12,16 +12,16 @@ namespace Octgn
         public static string HideLoginNotifications
         {
             get { return _hideLoginNotifications; }
-            set 
-            { 
-                _hideLoginNotifications = value; 
-                Registry.WriteValue("Options_HideLoginNotifications",value); 
+            set
+            {
+                _hideLoginNotifications = value;
+                Registry.WriteValue("Options_HideLoginNotifications", value);
             }
         }
 
         static Prefs()
         {
-           string _hln = Registry.ReadValue("Options_HideLoginNotifications");
+            string _hln = Registry.ReadValue("Options_HideLoginNotifications");
             _hideLoginNotifications = _hln == null || _hln == "false" ? "false" : "true";
         }
 

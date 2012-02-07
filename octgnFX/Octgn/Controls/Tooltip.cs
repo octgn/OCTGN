@@ -11,7 +11,7 @@ namespace Octgn.Controls
     {
         private static ToolTip ttip = new ToolTip();
 
-        private static DispatcherTimer timer;            
+        private static DispatcherTimer timer;
 
         static Tooltip()
         {
@@ -33,7 +33,7 @@ namespace Octgn.Controls
         {
             timer.Stop();
             ttip.IsOpen = false;
-            ttip.Content = msg;            
+            ttip.Content = msg;
             ttip.IsOpen = true;
             timer.Start();
         }

@@ -11,11 +11,11 @@ namespace Skylabs.LobbyServer
 {
     public static class Program
     {
-        public static Dictionary<string, string> Settings; 
+        public static Dictionary<string, string> Settings;
         public static WebServer WebServer;
         private static DateTime _killTime;
         private static Timer _killTimer;
-        private static bool _sentMinuteWarning =false;
+        private static bool _sentMinuteWarning = false;
         private static Thread _runThread = new Thread(runner);
         private static bool _running = true;
         private static void Main(string[] args)
@@ -50,31 +50,31 @@ namespace Skylabs.LobbyServer
 #else
             string sname = "serversettings.ini";
 #endif
-            if(!File.Exists(sname))
+            if (!File.Exists(sname))
             {
                 Console.WriteLine("Can't find settings file.");
                 return false;
             }
-            foreach(string l in File.ReadLines(sname))
+            foreach (string l in File.ReadLines(sname))
             {
                 string s = l.Trim();
-                if(s[0] == '#')
+                if (s[0] == '#')
                     continue;
-                String[] parts = s.Split(new char[1] {':'}, StringSplitOptions.RemoveEmptyEntries);
+                String[] parts = s.Split(new char[1] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length != 2)
                     continue;
                 parts[0] = parts[0].Trim();
                 parts[1] = parts[1].Trim();
-                if(Settings.ContainsKey(parts[0]))
+                if (Settings.ContainsKey(parts[0]))
                     Settings[parts[0]] = parts[1];
                 else
-                    Settings.Add(parts[0],parts[1]);
+                    Settings.Add(parts[0], parts[1]);
             }
             return true;
         }
         public static void KillServerInTime(int minutes)
         {
-            if(minutes == 0)
+            if (minutes == 0)
             {
                 _sentMinuteWarning = false;
                 _killTime = new DateTime(0);
@@ -93,12 +93,12 @@ namespace Skylabs.LobbyServer
                 return;
             if (_killTime.Ticks > DateTime.Now.Ticks)
             {
-                if(new TimeSpan(_killTime.Ticks - DateTime.Now.Ticks).TotalMinutes <= 1)
+                if (new TimeSpan(_killTime.Ticks - DateTime.Now.Ticks).TotalMinutes <= 1)
                 {
-                    if(!_sentMinuteWarning)
+                    if (!_sentMinuteWarning)
                     {
                         SocketMessage sm = new SocketMessage("servermessage");
-                        sm.AddData("message","Server will be shutting down in about a minute.");
+                        sm.AddData("message", "Server will be shutting down in about a minute.");
                         Server.AllUserMessage(sm);
                         _sentMinuteWarning = true;
                     }
@@ -134,7 +134,7 @@ namespace Skylabs.LobbyServer
         {
             try { Gaming.Stop(); }
             catch { }
-            try {Server.Stop();}
+            try { Server.Stop(); }
             catch { }
             try { _killTimer.Dispose(); }
             catch { }

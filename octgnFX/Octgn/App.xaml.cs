@@ -29,11 +29,11 @@ namespace Octgn
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
             Program.GamesRepository = new Octgn.Data.GamesRepository();
-            
-            if(Program.GamesRepository.MissingFiles.Any())
+
+            if (Program.GamesRepository.MissingFiles.Any())
             {
                 var sb = new StringBuilder("OCTGN cannot find the following files. The corresponding games have been disabled.\n\n");
-                foreach(var file in Program.GamesRepository.MissingFiles)
+                foreach (var file in Program.GamesRepository.MissingFiles)
                     sb.Append(file).Append("\n\n");
                 sb.Append("You should restore those files, or re-install the corresponding games.");
 
@@ -80,17 +80,17 @@ namespace Octgn
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Exception ex = (Exception)e.ExceptionObject;
-            if(!System.Diagnostics.Debugger.IsAttached)
+            if (!System.Diagnostics.Debugger.IsAttached)
             {
                 var wnd = new ErrorWindow(ex);
                 wnd.ShowDialog();
             }
             else
             {
-                if(e.IsTerminating)
+                if (e.IsTerminating)
                     System.Diagnostics.Debugger.Break();
             }
-            if(!e.IsTerminating)
+            if (!e.IsTerminating)
                 Program.DebugTrace.TraceEvent(System.Diagnostics.TraceEventType.Error, 0, ex.ToString());
         }
 
@@ -99,7 +99,7 @@ namespace Octgn
             // Fix: this can happen when the user uses the system close button.
             // If a game is running (e.g. in StartGame.xaml) some threads don't
             // stop (i.e. the database thread and/or the networking threads)
-            if(Program.IsGameRunning) Program.StopGame();
+            if (Program.IsGameRunning) Program.StopGame();
             base.OnExit(e);
         }
     }

@@ -67,7 +67,7 @@ namespace Skylabs.LobbyServer
                         {
                             ip = endpoint.ToString();
                         }
-                        
+
                         MySqlCommand cmd = con.CreateCommand();
                         try
                         {
@@ -131,7 +131,7 @@ namespace Skylabs.LobbyServer
                 {
                     Logger.ER(me.InnerException);
 #if(DEBUG)
-                if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                    if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
 #endif
                 }
                 return ret;
@@ -146,16 +146,16 @@ namespace Skylabs.LobbyServer
         /// <param name="columnvalue">The value, that if exists in said column, will cause the row to go bye bye.</param>
         private void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
         {
-                MySqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = "DELETE FROM @table WHERE @col=@val;";
-                cmd.Prepare();
-                cmd.Parameters.Add("@table");
-                cmd.Parameters.Add("@col");
-                cmd.Parameters.Add("@val");
-                cmd.Parameters["@table"].Value = table;
-                cmd.Parameters["@col"].Value = columnname;
-                cmd.Parameters["@table"].Value = columnvalue;
-                cmd.ExecuteNonQuery();
+            MySqlCommand cmd = con.CreateCommand();
+            cmd.CommandText = "DELETE FROM @table WHERE @col=@val;";
+            cmd.Prepare();
+            cmd.Parameters.Add("@table");
+            cmd.Parameters.Add("@col");
+            cmd.Parameters.Add("@val");
+            cmd.Parameters["@table"].Value = table;
+            cmd.Parameters["@col"].Value = columnname;
+            cmd.Parameters["@table"].Value = columnvalue;
+            cmd.ExecuteNonQuery();
         }
         /// <summary>
         /// Get user information from the database.
@@ -499,7 +499,7 @@ namespace Skylabs.LobbyServer
         /// <param name="uid">Users uid</param>
         /// <param name="name">Users display name</param>
         /// <returns>True on success, or false if the data is fucked.</returns>
-        public bool SetDisplayName(int uid,string name)
+        public bool SetDisplayName(int uid, string name)
         {
             lock (DBLocker)
             {

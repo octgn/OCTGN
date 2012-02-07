@@ -40,7 +40,7 @@ namespace Skylabs.LobbyServer
             lock (GamingLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
-                foreach (KeyValuePair<int,HostedGame> g in Games)
+                foreach (KeyValuePair<int, HostedGame> g in Games)
                 {
                     g.Value.Stop();
                 }
@@ -59,10 +59,10 @@ namespace Skylabs.LobbyServer
                 return ret;
             }
         }
-        public static int HostGame(Guid g,Version v, string name,string pass,User u)
+        public static int HostGame(Guid g, Version v, string name, string pass, User u)
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
-            lock(GamingLocker)
+            lock (GamingLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 while (Games.ContainsKey(_currentHostPort) || !Networking.IsPortAvailable(_currentHostPort))
@@ -70,9 +70,9 @@ namespace Skylabs.LobbyServer
                     _currentHostPort++;
                     if (_currentHostPort >= 8000)
                         _currentHostPort = 5000;
-                    
+
                 }
-                HostedGame hs = new HostedGame(_currentHostPort,g,v,name,pass,u);
+                HostedGame hs = new HostedGame(_currentHostPort, g, v, name, pass, u);
                 hs.HostedGameDone += HostedGameExited;
                 if (hs.StartProcess())
                 {
@@ -92,7 +92,7 @@ namespace Skylabs.LobbyServer
         public static void StartGame(int port)
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
-            lock(GamingLocker)
+            lock (GamingLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 try
@@ -109,16 +109,16 @@ namespace Skylabs.LobbyServer
         public static List<Skylabs.Lobby.HostedGame> GetLobbyList()
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
-            lock(GamingLocker)
+            lock (GamingLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
                 List<Lobby.HostedGame> sendgames = new List<Lobby.HostedGame>();
-                foreach(KeyValuePair<int,HostedGame> g in Games)
+                foreach (KeyValuePair<int, HostedGame> g in Games)
                 {
                     Lobby.HostedGame newhg =
                         new Lobby.HostedGame(g.Value.GameGuid, (Version)g.Value.GameVersion.Clone(),
                             g.Value.Port, (string)g.Value.Name.Clone(),
-                            !String.IsNullOrWhiteSpace(g.Value.Password), (User)g.Value.Hoster.Clone(),g.Value.TimeStarted);
+                            !String.IsNullOrWhiteSpace(g.Value.Password), (User)g.Value.Hoster.Clone(), g.Value.TimeStarted);
                     newhg.GameStatus = g.Value.Status;
                     sendgames.Add(newhg);
                 }
@@ -126,7 +126,7 @@ namespace Skylabs.LobbyServer
                 return sendgames;
             }
         }
-        private static void HostedGameExited(object sender,EventArgs e)
+        private static void HostedGameExited(object sender, EventArgs e)
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "GamingLocker");
             lock (GamingLocker)
@@ -138,7 +138,7 @@ namespace Skylabs.LobbyServer
                     s.Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
                     SocketMessage sm = new SocketMessage("gameend");
                     sm.AddData("port", s.Port);
-                    Action t = new Action(()=>Server.AllUserMessage(sm));
+                    Action t = new Action(() => Server.AllUserMessage(sm));
                     t.BeginInvoke(null, null);
                     Games.Remove(s.Port);
                 }

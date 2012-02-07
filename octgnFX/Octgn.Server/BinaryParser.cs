@@ -497,7 +497,7 @@ namespace Octgn.Server
                         Debug.WriteLine("[Server Parser] Unknown message: " + method);
                         break;
                 }
-                
+
             }
             catch (Exception ex)
             {

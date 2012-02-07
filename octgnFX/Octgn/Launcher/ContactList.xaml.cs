@@ -55,7 +55,7 @@ namespace Octgn.Launcher
         }
         private void lobbyClient_OnDataRecieved(DataRecType type, object e)
         {
-            if(type == DataRecType.FriendList)
+            if (type == DataRecType.FriendList)
             {
                 RefreshList();
             }
@@ -109,7 +109,7 @@ namespace Octgn.Launcher
                 }
                 Program.lobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
             }
-                
+
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

@@ -69,10 +69,10 @@ namespace Octgn.Server
         internal void ReceiveMessage(string msg, TcpClient sender, Server.Connection con)
         {
             // Check if this is the first message received
-            if(!clients.ContainsKey(sender))
+            if (!clients.ContainsKey(sender))
             {
                 // A new connection must always start with a <Hello> message.
-                if(!msg.StartsWith("<Hello>", StringComparison.Ordinal))
+                if (!msg.StartsWith("<Hello>", StringComparison.Ordinal))
                 {
                     // Refuse the connection
                     sender.GetStream().Close(); return;
@@ -86,10 +86,10 @@ namespace Octgn.Server
         }
 
         // Handle a binary message
-        internal void ReceiveMessage(byte[] data, TcpClient sender,Server.Connection con)
+        internal void ReceiveMessage(byte[] data, TcpClient sender, Server.Connection con)
         {
             // Check if this is the first message received
-            if(!clients.ContainsKey(sender))
+            if (!clients.ContainsKey(sender))
             {
                 // A new connection must always start with a <Hello> xml message, refuse the connection
                 sender.GetStream().Close(); return;
@@ -106,7 +106,7 @@ namespace Octgn.Server
         {
             PlayerInfo info;
             // If the client is not registered, do nothing
-            if(!clients.TryGetValue(client, out info)) return;
+            if (!clients.TryGetValue(client, out info)) return;
             // Remove the client from our lists
             clients.Remove(client);
             players.Remove(info.id);
@@ -140,7 +140,7 @@ namespace Octgn.Server
         {
             PlayerInfo p;
             // The player may have left the game concurently
-            if(players.TryGetValue(player, out p))
+            if (players.TryGetValue(player, out p))
             {
                 p.invertedTable = invertedTable;
                 broadcaster.PlayerSettings(player, invertedTable);
@@ -174,7 +174,7 @@ namespace Octgn.Server
         public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVer)
         {
             // One should say Hello only once
-            if(clients.ContainsKey(sender))
+            if (clients.ContainsKey(sender))
             {
                 clients[sender].rpc.Error("[Hello]You may say hello only once.");
                 return;
@@ -191,7 +191,7 @@ namespace Octgn.Server
             }
 #endif
             // Check if we accept new players
-            if(!acceptPlayers)
+            if (!acceptPlayers)
             {
                 XmlSenderStub rpc = new XmlSenderStub(sender, this);
                 rpc.Error("No more players are accepted in this game.");
@@ -200,7 +200,7 @@ namespace Octgn.Server
                 return;
             }
             // Check if the client wants to play the correct game
-            if(gameId != this.gameId)
+            if (gameId != this.gameId)
             {
                 XmlSenderStub rpc = new XmlSenderStub(sender, this);
                 rpc.Error(string.Format("Invalid game. This server is hosting another game (game id: {0}).", this.gameId));
@@ -209,7 +209,7 @@ namespace Octgn.Server
                 return;
             }
             // Check if the client's major game version matches ours
-            if(gameVer.Major != this.gameVersion.Major)
+            if (gameVer.Major != this.gameVersion.Major)
             {
                 XmlSenderStub rpc = new XmlSenderStub(sender, this);
                 rpc.Error(string.Format("Incompatible game version. This server is hosting game version {0:3}.", this.gameVersion));
@@ -222,7 +222,7 @@ namespace Octgn.Server
             string software = client + " (" + clientVer.ToString() + ')';
             PlayerInfo pi = new PlayerInfo(playerId++, nick, pkey, senderRpc, software);
             // Check if one can switch to binary mode
-            if(client == ServerName)
+            if (client == ServerName)
             {
                 pi.rpc.Binary(); pi.rpc = senderRpc = new BinarySenderStub(sender, this);
                 pi.binary = true;
@@ -230,12 +230,12 @@ namespace Octgn.Server
             // Notify everybody of the newcomer
             broadcaster.NewPlayer(pi.id, nick, pkey);
             // Add everybody to the newcomer
-            foreach(PlayerInfo player in clients.Values)
+            foreach (PlayerInfo player in clients.Values)
                 senderRpc.NewPlayer(player.id, player.nick, player.pkey);
             senderRpc.Welcome(pi.id);
             // Notify the newcomer of some shared settings
             senderRpc.Settings(gameSettings.UseTwoSidedTable);
-            foreach(PlayerInfo player in players.Values.Where(p => p.invertedTable))
+            foreach (PlayerInfo player in players.Values.Where(p => p.invertedTable))
                 senderRpc.PlayerSettings(player.id, true);
             // Add it to our lists
             clients.Add(sender, pi);
@@ -246,7 +246,7 @@ namespace Octgn.Server
         public void LoadDeck(int[] id, ulong[] type, int[] group)
         {
             short playerId = clients[sender].id;
-            for(int i = 0; i < id.Length; i++)
+            for (int i = 0; i < id.Length; i++)
                 id[i] = playerId << 16 | (id[i] & 0xffff);
             broadcaster.LoadDeck(id, type, group);
         }
@@ -254,7 +254,7 @@ namespace Octgn.Server
         public void CreateCard(int[] id, ulong[] type, int group)
         {
             short playerId = clients[sender].id;
-            for(int i = 0; i < id.Length; i++)
+            for (int i = 0; i < id.Length; i++)
                 id[i] = playerId << 16 | (id[i] & 0xffff);
             broadcaster.CreateCard(id, type, group);
         }
@@ -262,7 +262,7 @@ namespace Octgn.Server
         public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             short playerId = clients[sender].id;
-            for(int i = 0; i < id.Length; i++)
+            for (int i = 0; i < id.Length; i++)
                 id[i] = playerId << 16 | (id[i] & 0xffff);
             broadcaster.CreateCardAt(id, key, modelId, x, y, faceUp, persist);
         }
@@ -270,14 +270,14 @@ namespace Octgn.Server
         public void CreateAlias(int[] id, ulong[] type)
         {
             short playerId = clients[sender].id;
-            for(int i = 0; i < id.Length; i++)
+            for (int i = 0; i < id.Length; i++)
                 id[i] = playerId << 16 | (id[i] & 0xffff);
             broadcaster.CreateAlias(id, type);
         }
 
         public void NextTurn(byte nextPlayer)
         {
-            if(turnStopPlayers.Count > 0)
+            if (turnStopPlayers.Count > 0)
             {
                 byte stopPlayerId = turnStopPlayers.First();
                 turnStopPlayers.Remove(stopPlayerId);
@@ -288,7 +288,7 @@ namespace Octgn.Server
             broadcaster.NextTurn(nextPlayer);
         }
 
-        public void PlayerSetGlobalVariable( byte p, string name, string value)
+        public void PlayerSetGlobalVariable(byte p, string name, string value)
         {
             broadcaster.PlayerSetGlobalVariable(clients[sender].id, p, name, value);
         }
@@ -298,9 +298,9 @@ namespace Octgn.Server
         }
         public void StopTurnReq(int turnNumber, bool stop)
         {
-            if(turnNumber != this.turnNumber) return;  // Message StopTurn crossed a NextTurn message
+            if (turnNumber != this.turnNumber) return;  // Message StopTurn crossed a NextTurn message
             var playerId = clients[sender].id;
-            if(stop)
+            if (stop)
                 turnStopPlayers.Add(playerId);
             else
                 turnStopPlayers.Remove(playerId);
@@ -341,7 +341,7 @@ namespace Octgn.Server
 
         public void RevealToReq(byte sendTo, byte[] revealTo, int card, ulong[] encrypted)
         {
-            if(encrypted.Length != 2 && encrypted.Length != 5)
+            if (encrypted.Length != 2 && encrypted.Length != 5)
                 Debug.WriteLine("[RevealToReq] Invalid encrypted length.");
             players[sendTo].rpc.RevealTo(revealTo, card, encrypted);
         }
@@ -370,7 +370,7 @@ namespace Octgn.Server
         public void Shuffle(int group, int[] card)
         {
             // Special case: solo playing
-            if(clients.Count == 1)
+            if (clients.Count == 1)
             {
                 clients[sender].rpc.Shuffle(group, card);
                 return;
@@ -379,12 +379,12 @@ namespace Octgn.Server
             int nCards = card.Length / (clients.Count - 1);
             int from = 0, client = 1;
             int[] someCard = new int[nCards];
-            foreach(KeyValuePair<TcpClient, PlayerInfo> kvp in clients)
+            foreach (KeyValuePair<TcpClient, PlayerInfo> kvp in clients)
             {
-                if(kvp.Key == sender) continue;
-                if(client < clients.Count - 1)
+                if (kvp.Key == sender) continue;
+                if (client < clients.Count - 1)
                 {
-                    if(nCards > 0)
+                    if (nCards > 0)
                     {
                         Array.Copy(card, from, someCard, 0, nCards);
                         kvp.Value.rpc.Shuffle(group, someCard);
@@ -395,7 +395,7 @@ namespace Octgn.Server
                 else
                 {
                     int rest = card.Length - from;
-                    if(rest > 0)
+                    if (rest > 0)
                     {
                         someCard = new int[rest];
                         Array.Copy(card, from, someCard, 0, rest);
@@ -477,7 +477,7 @@ namespace Octgn.Server
         internal void PingReceived()
         {
             this.Connection.PingReceived();
-            
+
         }
     }
 }

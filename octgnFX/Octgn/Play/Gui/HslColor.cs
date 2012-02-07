@@ -10,19 +10,19 @@ namespace Octgn.Play.Gui
         private byte alpha;
 
         public float Hue
-        { 
+        {
             get { return hue; }
             set { Clamp(value, out hue); }
         }
 
         public float Saturation
-        { 
+        {
             get { return saturation; }
-            set { Clamp(value, out saturation); }                
+            set { Clamp(value, out saturation); }
         }
 
         public float Luminance
-        { 
+        {
             get { return luminance; }
             set { Clamp(value, out luminance); }
         }
@@ -32,7 +32,7 @@ namespace Octgn.Play.Gui
 
         public HslColor(Color c)
         {
-            hue = saturation = luminance = 0; 
+            hue = saturation = luminance = 0;
             alpha = 0;
             FromRgba(c.ScR, c.ScG, c.ScB, c.A);
         }
@@ -46,7 +46,7 @@ namespace Octgn.Play.Gui
                 red = green = blue = c.luminance;
             else
             {
-                m2 = c.luminance <= 0.5f ? 
+                m2 = c.luminance <= 0.5f ?
                     c.luminance * (1 + c.saturation) :
                     c.luminance + c.saturation - c.luminance * c.saturation;
 
@@ -127,9 +127,9 @@ namespace Octgn.Play.Gui
 
         private void Clamp(float source, out float target)
         {
-            if (source > 1)         target = 1;
-            else if (source < 0)    target = 0;
-            else                    target = source;
+            if (source > 1) target = 1;
+            else if (source < 0) target = 0;
+            else target = source;
         }
     }
 

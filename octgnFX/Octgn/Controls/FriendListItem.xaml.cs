@@ -23,7 +23,7 @@ namespace Octgn.Controls
         {
             get { return _isDragging; }
             set { _isDragging = value; }
-        } 
+        }
         DragAdorner _adorner = null;
         AdornerLayer _layer;
         FrameworkElement _dragScope;
@@ -57,7 +57,7 @@ namespace Octgn.Controls
                 string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x";
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
                 SetValue(UsernameProperty, value.DisplayName);
-                switch(value.Status)
+                switch (value.Status)
                 {
                     case UserStatus.Away:
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusAway.png";
@@ -110,7 +110,7 @@ namespace Octgn.Controls
                     StartDragWindow(e);
 
                 }
-            }   
+            }
         }
         void DragSource_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
@@ -212,7 +212,7 @@ namespace Octgn.Controls
         {
             System.Diagnostics.Debug.WriteLine("DragSource_GiveFeedback " + e.Effects.ToString());
 
-            if ( this.DragScope == null)
+            if (this.DragScope == null)
             {
                 try
                 {

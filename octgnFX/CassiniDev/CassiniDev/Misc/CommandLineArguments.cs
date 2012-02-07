@@ -34,76 +34,95 @@ namespace CassiniDev
         #region Properties
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "ah", DefaultValue = false,
-            HelpText = "If true add entry to Windows hosts file. Requires write permissions to hosts file.")] public
+            HelpText = "If true add entry to Windows hosts file. Requires write permissions to hosts file.")]
+        public
             bool AddHost;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "a", LongName = "path",
-            HelpText = "Physical location of content.")] public string
+            HelpText = "Physical location of content.")]
+        public string
             ApplicationPath;
 
-        [Argument(ArgumentType.AtMostOnce, LongName = "log", DefaultValue = false, HelpText = "Enable logging.")] public
+        [Argument(ArgumentType.AtMostOnce, LongName = "log", DefaultValue = false, HelpText = "Enable logging.")]
+        public
             bool EnableLogging;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "h", LongName = "host",
-            HelpText = "Host name used for app root url. Optional unless AddHost is true.")] public string HostName;
+            HelpText = "Host name used for app root url. Optional unless AddHost is true.")]
+        public string HostName;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "i", LongName = "ip",
-            HelpText = "IP address to listen to. Ignored if IPMode != Specific")] public string IPAddress;
+            HelpText = "IP address to listen to. Ignored if IPMode != Specific")]
+        public string IPAddress;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "im", DefaultValue = IPMode.Loopback, HelpText = "",
-            LongName = "ipMode")] public
+            LongName = "ipMode")]
+        public
             IPMode IPMode;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "v6", DefaultValue = false,
-            HelpText = "If IPMode 'Any' or 'LoopBack' are specified use the V6 address", LongName = "ipV6")] public bool
+            HelpText = "If IPMode 'Any' or 'LoopBack' are specified use the V6 address", LongName = "ipV6")]
+        public bool
             IPv6;
 
 
         [Argument(ArgumentType.AtMostOnce, LongName = "nodirlist", DefaultValue = false,
-            HelpText = "Disable diretory listing")] public bool Nodirlist;
+            HelpText = "Disable diretory listing")]
+        public bool Nodirlist;
 
         [Argument(ArgumentType.AtMostOnce, LongName = "ntlm", DefaultValue = false, HelpText = "Run as current identity"
-            )] public bool Ntlm;
+            )]
+        public bool Ntlm;
 
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "p", LongName = "port",
-            HelpText = "Port to listen to. Ignored if PortMode=FirstAvailable.", DefaultValue = 0)] public int Port;
+            HelpText = "Port to listen to. Ignored if PortMode=FirstAvailable.", DefaultValue = 0)]
+        public int Port;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "pm", HelpText = "", LongName = "portMode",
-            DefaultValue = PortMode.FirstAvailable)] public PortMode PortMode;
+            DefaultValue = PortMode.FirstAvailable)]
+        public PortMode PortMode;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "pre", DefaultValue = 65535, LongName = "highPort",
-            HelpText = "End of port range. Ignored if PortMode != FirstAvailable")] public int PortRangeEnd = 9000;
+            HelpText = "End of port range. Ignored if PortMode != FirstAvailable")]
+        public int PortRangeEnd = 9000;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "prs", DefaultValue = 32768, LongName = "lowPort",
-            HelpText = "Start of port range. Ignored if PortMode != FirstAvailable")] public int PortRangeStart =
-                8080;
+            HelpText = "Start of port range. Ignored if PortMode != FirstAvailable")]
+        public int PortRangeStart =
+            8080;
 
-        [DefaultArgument(ArgumentType.AtMostOnce, DefaultValue = RunMode.Server, HelpText = "[Server|Hostsfile]")] public RunMode RunMode;
-        [Argument(ArgumentType.AtMostOnce, LongName = "silent", DefaultValue = false, HelpText = "Fail silently")] public bool Silent;
+        [DefaultArgument(ArgumentType.AtMostOnce, DefaultValue = RunMode.Server, HelpText = "[Server|Hostsfile]")]
+        public RunMode RunMode;
+        [Argument(ArgumentType.AtMostOnce, LongName = "silent", DefaultValue = false, HelpText = "Fail silently")]
+        public bool Silent;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "t", DefaultValue = 0, LongName = "timeout",
-            HelpText = "Length of time, in ms, to wait for a request before stopping the server. 0 = no timeout.")] public int TimeOut;
+            HelpText = "Length of time, in ms, to wait for a request before stopping the server. 0 = no timeout.")]
+        public int TimeOut;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "v", LongName = "vpath", DefaultValue = "/",
             HelpText = "Optional. default value '/'"
-            )] public string VirtualPath = "/";
+            )]
+        public string VirtualPath = "/";
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "vs", DefaultValue = false,
             HelpText = "If true run in Visual Studio Development Server mode - readonly UI with single option to quit.."
-            )] public
+            )]
+        public
             bool VisualStudio;
 
         [Argument(ArgumentType.AtMostOnce, ShortName = "w", DefaultValue = 0, LongName = "wait",
             HelpText =
                 "Length of time, in ms, to wait for a specific port before throwing an exception or exiting. 0 = don't wait."
-            )] public int WaitForPort;
+            )]
+        public int WaitForPort;
 
         #endregion
 
         public string[] ToArgs()
         {
-            List<string>  result = new List<string>();
+            List<string> result = new List<string>();
             if (RunMode != RunMode.Server)
             {
                 result.Add(string.Format("{0}", RunMode));

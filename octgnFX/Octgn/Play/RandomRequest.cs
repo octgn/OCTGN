@@ -29,7 +29,7 @@ namespace Octgn.Play
 
         public void Answer1()
         {
-            System.Diagnostics.Debug.Assert(myValue == null);            
+            System.Diagnostics.Debug.Assert(myValue == null);
 
             myValue = new RandomValue();
             Program.Client.Rpc.RandomAnswer1Req(Id, myValue.encrypted);
@@ -97,7 +97,7 @@ namespace Octgn.Play
             public ulong encrypted, decrypted;
 
             public RandomValue()
-            {                
+            {
                 player = Player.LocalPlayer;
                 decrypted = (ulong)Crypto.PositiveRandom() << 32 | Crypto.Random();
                 encrypted = Crypto.ModExp(decrypted);

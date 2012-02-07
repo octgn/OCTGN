@@ -50,9 +50,9 @@ namespace Octgn
 #if(TestServer)
         public static TestServerSettings LobbySettings = TestServerSettings.Default;
 #else
-    #if(DEBUG)
+#if(DEBUG)
         public static DEBUGLobbySettings LobbySettings = DEBUGLobbySettings.Default;
-    #else
+#else
         public static lobbysettings LobbySettings = lobbysettings.Default;
 #endif
 #endif
@@ -82,7 +82,7 @@ namespace Octgn
             }
             catch (Exception e)
             {
-                DebugTrace.TraceEvent(TraceEventType.Error,0,e.StackTrace);
+                DebugTrace.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
             }
 #endif
         }
@@ -124,17 +124,17 @@ namespace Octgn
             {
                 DebugWindow.Close();
             }
-            catch(Exception)
+            catch (Exception)
             {
             }
-            if(LauncherWindow != null)
-                if(LauncherWindow.IsLoaded)
+            if (LauncherWindow != null)
+                if (LauncherWindow.IsLoaded)
                     LauncherWindow.Close();
             if (ClientWindow != null)
                 if (ClientWindow.IsLoaded)
                     ClientWindow.Close();
-            if(PlayWindow != null)
-                if(PlayWindow.IsLoaded)
+            if (PlayWindow != null)
+                if (PlayWindow.IsLoaded)
                     PlayWindow.Close();
             try
             {
@@ -163,9 +163,9 @@ namespace Octgn
         internal static void OnServerError(string serverMessage)
         {
             var args = new ServerErrorEventArgs() { Message = serverMessage };
-            if(ServerError != null)
+            if (ServerError != null)
                 ServerError(null, args);
-            if(args.Handled) return;
+            if (args.Handled) return;
 
             MessageBox.Show(Application.Current.MainWindow,
                 "The server has returned an error:\n" + serverMessage,
@@ -178,22 +178,22 @@ namespace Octgn
             int i = 0;
             List<object> args = new List<object>(2);
             RE.Match match = RE.Regex.Match(text, "{([^}]*)}");
-            while(match.Success)
+            while (match.Success)
             {
                 string token = match.Groups[1].Value;
                 finalText = finalText.Replace(match.Groups[0].Value, "{" + i + "}");
                 i++;
                 object tokenValue = token;
-                switch(token)
+                switch (token)
                 {
                     case "me": tokenValue = player; break;
                     default:
-                        if(token.StartsWith("#"))
+                        if (token.StartsWith("#"))
                         {
                             int id;
-                            if(!int.TryParse(token.Substring(1), out id)) break;
+                            if (!int.TryParse(token.Substring(1), out id)) break;
                             var obj = ControllableObject.Find(id);
-                            if(obj == null) break;
+                            if (obj == null) break;
                             tokenValue = obj;
                             break;
                         }

@@ -23,7 +23,7 @@ namespace Octgn.Controls
         {
             get { return _isDragging; }
             set { _isDragging = value; }
-        } 
+        }
         FrameworkElement _dragScope;
         public FrameworkElement DragScope
         {
@@ -90,11 +90,11 @@ namespace Octgn.Controls
 
         private void image1_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if(ChatRoomID != 0)
+            if (ChatRoomID != 0)
             {
                 Program.ChatWindows.FirstOrDefault(cw => cw.ID == ThisRoom.ID).CloseChatWindow();
                 StackPanel sp = Parent as StackPanel;
-                if(sp != null)
+                if (sp != null)
                     sp.Children.Remove(this);
             }
         }

@@ -22,9 +22,9 @@ namespace Skylabs.Lobby.Sockets
 
         public event ConnectionClosed OnConnectionClosed;
 
-        public bool Connected { get;private set ;}
+        public bool Connected { get; private set; }
 
-        public bool IsDisposed {get;private set;}
+        public bool IsDisposed { get; private set; }
 
         public const long MaxReceiveSize = 5242880;
 
@@ -42,7 +42,7 @@ namespace Skylabs.Lobby.Sockets
 
         public SkySocket()
         {
-            lock(SocketLocker)
+            lock (SocketLocker)
             {
                 IsDisposed = false;
                 Connected = false;
@@ -296,7 +296,7 @@ namespace Skylabs.Lobby.Sockets
                     Trace.WriteLine("ss4:" + e.Message);
                     Trace.WriteLine(e.StackTrace);
                 }
-                while(Builder.SMQueue.Count > 0)
+                while (Builder.SMQueue.Count > 0)
                 {
                     SocketMessage sm = Builder.SMQueue.Dequeue();
                     if (sm != null)
@@ -342,12 +342,12 @@ namespace Skylabs.Lobby.Sockets
                 }
             }
         }
-    
+
         public void Dispose()
         {
-            lock(SocketLocker)
+            lock (SocketLocker)
             {
-                if(!IsDisposed)
+                if (!IsDisposed)
                 {
                     Sock.Close();
                     IsDisposed = true;

@@ -36,7 +36,7 @@ namespace ThreadingComponent
         private void Start()
         {
             animationTimer.Tick += HandleAnimationTick;
-            if(!DesignerProperties.GetIsInDesignMode(this))
+            if (!DesignerProperties.GetIsInDesignMode(this))
             {
                 animationTimer.Start();
             }
@@ -108,7 +108,7 @@ namespace ThreadingComponent
         {
             bool isVisible = (bool)e.NewValue;
 
-            if(isVisible)
+            if (isVisible)
                 Start();
             else
                 Stop();
