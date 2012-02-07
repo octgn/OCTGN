@@ -776,7 +776,7 @@ namespace Octgn.Server
             Send(stream.ToArray());
         }
 
-        public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count)
+        public void TransferMarker(byte player, int from, int lTo, Guid id, string name, ushort count)
         {
             var stream = new MemoryStream(512);
             stream.Seek(4, SeekOrigin.Begin);
@@ -786,7 +786,7 @@ namespace Octgn.Server
             writer.Write((byte) 63);
             writer.Write(player);
             writer.Write(from);
-            writer.Write(to);
+            writer.Write(lTo);
             writer.Write(id.ToByteArray());
             writer.Write(name);
             writer.Write(count);
@@ -797,7 +797,7 @@ namespace Octgn.Server
             Send(stream.ToArray());
         }
 
-        public void PassTo(byte player, int id, byte to, bool requested)
+        public void PassTo(byte player, int id, byte lTo, bool requested)
         {
             var stream = new MemoryStream(512);
             stream.Seek(4, SeekOrigin.Begin);
@@ -807,7 +807,7 @@ namespace Octgn.Server
             writer.Write((byte) 65);
             writer.Write(player);
             writer.Write(id);
-            writer.Write(to);
+            writer.Write(lTo);
             writer.Write(requested);
             writer.Flush();
             writer.Seek(0, SeekOrigin.Begin);
@@ -816,7 +816,7 @@ namespace Octgn.Server
             Send(stream.ToArray());
         }
 
-        public void TakeFrom(int id, byte to)
+        public void TakeFrom(int id, byte lTo)
         {
             var stream = new MemoryStream(512);
             stream.Seek(4, SeekOrigin.Begin);
@@ -825,7 +825,7 @@ namespace Octgn.Server
             writer.Write(handler.muted);
             writer.Write((byte) 67);
             writer.Write(id);
-            writer.Write(to);
+            writer.Write(lTo);
             writer.Flush();
             writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int) stream.Length);
@@ -1093,7 +1093,7 @@ namespace Octgn.Server
             catch
             {
                 // TODO: Notify disconnection
-                //				if (Program.Server != null && Program.Server.Disconnected(to))
+                //				if (Program.Server != null && Program.Server.Disconnected(lTo))
                 //					return;
                 //				Program.Client.Disconnected();
             }

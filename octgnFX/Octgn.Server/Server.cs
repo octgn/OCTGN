@@ -345,7 +345,6 @@ namespace Octgn.Server
                         Array.Copy(packet, i + 1, packet, 0, count);
                         // Continue the loop
                         i = -1;
-                        continue;
                     }
                 }
                 // Ajust packet position

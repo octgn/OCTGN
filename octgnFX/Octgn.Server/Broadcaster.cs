@@ -399,30 +399,30 @@ namespace Octgn.Server
             Send();
         }
 
-        public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count)
+        public void TransferMarker(byte player, int from, int lTo, Guid id, string name, ushort count)
         {
             if (xml != null)
-                xml.TransferMarker(player, from, to, id, name, count);
+                xml.TransferMarker(player, from, lTo, id, name, count);
             if (bin != null)
-                bin.TransferMarker(player, from, to, id, name, count);
+                bin.TransferMarker(player, from, lTo, id, name, count);
             Send();
         }
 
-        public void PassTo(byte player, int id, byte to, bool requested)
+        public void PassTo(byte player, int id, byte lTo, bool requested)
         {
             if (xml != null)
-                xml.PassTo(player, id, to, requested);
+                xml.PassTo(player, id, lTo, requested);
             if (bin != null)
-                bin.PassTo(player, id, to, requested);
+                bin.PassTo(player, id, lTo, requested);
             Send();
         }
 
-        public void TakeFrom(int id, byte to)
+        public void TakeFrom(int id, byte lTo)
         {
             if (xml != null)
-                xml.TakeFrom(id, to);
+                xml.TakeFrom(id, lTo);
             if (bin != null)
-                bin.TakeFrom(id, to);
+                bin.TakeFrom(id, lTo);
             Send();
         }
 

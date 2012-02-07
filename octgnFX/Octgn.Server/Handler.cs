@@ -13,12 +13,12 @@ namespace Octgn.Server
         #region Statics
 
         private const string ServerName = "OCTGN.NET";
-        private static Version ServerVersion = GetServerVersion();
+        //private static Version ServerVersion = GetServerVersion(); //unused
 
         private static Version GetServerVersion()
         {
             Assembly asm = typeof (Server).Assembly;
-            var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0];
+            //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0]; //unused
             return asm.GetName().Version;
         }
 
@@ -67,38 +67,38 @@ namespace Octgn.Server
         //        }
 
         // Handle an XML message
-        internal void ReceiveMessage(string msg, TcpClient sender, Server.Connection con)
+        internal void ReceiveMessage(string msg, TcpClient lSender, Server.Connection con)
         {
             // Check if this is the first message received
-            if (!clients.ContainsKey(sender))
+            if (!clients.ContainsKey(lSender))
             {
                 // A new connection must always start with a <Hello> message.
                 if (!msg.StartsWith("<Hello>", StringComparison.Ordinal))
                 {
                     // Refuse the connection
-                    sender.GetStream().Close();
+                    lSender.GetStream().Close();
                     return;
                 }
             }
-            // Set the sender field
-            this.sender = sender;
+            // Set the lSender field
+            this.sender = lSender;
             Connection = con;
             // Parse and handle the message
             xmlParser.Parse(msg);
         }
 
         // Handle a binary message
-        internal void ReceiveMessage(byte[] data, TcpClient sender, Server.Connection con)
+        internal void ReceiveMessage(byte[] data, TcpClient lSender, Server.Connection con)
         {
             // Check if this is the first message received
-            if (!clients.ContainsKey(sender))
+            if (!clients.ContainsKey(lSender))
             {
                 // A new connection must always start with a <Hello> xml message, refuse the connection
-                sender.GetStream().Close();
+                lSender.GetStream().Close();
                 return;
             }
-            // Set the sender field
-            this.sender = sender;
+            // Set the lSender field
+            this.sender = lSender;
             Connection = con;
             // Parse and handle the message
             binParser.Parse(data);
@@ -191,7 +191,7 @@ namespace Octgn.Server
             broadcaster.Counter(clients[sender].id, counter, value);
         }
 
-        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId,
+        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
                           Version gameVer)
         {
             // One should say Hello only once
@@ -227,7 +227,7 @@ namespace Octgn.Server
                 return;
             }
             // Check if the client wants to play the correct game
-            if (gameId != this.gameId)
+            if (lGameId != this.gameId)
             {
                 var rpc = new XmlSenderStub(sender, this);
                 rpc.Error(string.Format("Invalid game. This server is hosting another game (game id: {0}).", this.gameId));
@@ -286,33 +286,33 @@ namespace Octgn.Server
 
         public void LoadDeck(int[] id, ulong[] type, int[] group)
         {
-            short playerId = clients[sender].id;
+            short s = clients[sender].id;
             for (int i = 0; i < id.Length; i++)
-                id[i] = playerId << 16 | (id[i] & 0xffff);
+                id[i] = s << 16 | (id[i] & 0xffff);
             broadcaster.LoadDeck(id, type, group);
         }
 
         public void CreateCard(int[] id, ulong[] type, int group)
         {
-            short playerId = clients[sender].id;
+            short s = clients[sender].id;
             for (int i = 0; i < id.Length; i++)
-                id[i] = playerId << 16 | (id[i] & 0xffff);
+                id[i] = s << 16 | (id[i] & 0xffff);
             broadcaster.CreateCard(id, type, group);
         }
 
         public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
-            short playerId = clients[sender].id;
+            short s = clients[sender].id;
             for (int i = 0; i < id.Length; i++)
-                id[i] = playerId << 16 | (id[i] & 0xffff);
+                id[i] = s << 16 | (id[i] & 0xffff);
             broadcaster.CreateCardAt(id, key, modelId, x, y, faceUp, persist);
         }
 
         public void CreateAlias(int[] id, ulong[] type)
         {
-            short playerId = clients[sender].id;
+            short s = clients[sender].id;
             for (int i = 0; i < id.Length; i++)
-                id[i] = playerId << 16 | (id[i] & 0xffff);
+                id[i] = s << 16 | (id[i] & 0xffff);
             broadcaster.CreateAlias(id, type);
         }
 
@@ -339,14 +339,14 @@ namespace Octgn.Server
             broadcaster.SetGlobalVariable(name, value);
         }
 
-        public void StopTurnReq(int turnNumber, bool stop)
+        public void StopTurnReq(int lTurnNumber, bool stop)
         {
-            if (turnNumber != this.turnNumber) return; // Message StopTurn crossed a NextTurn message
-            byte playerId = clients[sender].id;
+            if (lTurnNumber != this.turnNumber) return; // Message StopTurn crossed a NextTurn message
+            byte id = clients[sender].id;
             if (stop)
-                turnStopPlayers.Add(playerId);
+                turnStopPlayers.Add(id);
             else
-                turnStopPlayers.Remove(playerId);
+                turnStopPlayers.Remove(id);
         }
 
         public void IsAlternateImage(int c, bool isAlternateImage)
@@ -576,7 +576,7 @@ namespace Octgn.Server
             internal string nick; // Player nick
             internal IClientCalls rpc; // Stub to send messages to the player
 
-            internal bool spectates; // Is a spectator rather than a player?
+            // internal bool spectates; // Is a spectator rather than a player?  Not even used
 
             // C'tor
             internal PlayerInfo(byte id, string nick, ulong pkey, IClientCalls rpc, string software)

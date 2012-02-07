@@ -680,7 +680,7 @@ namespace Octgn.Server
             Send(sb.ToString());
         }
 
-        public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count)
+        public void TransferMarker(byte player, int from, int lTo, Guid id, string name, ushort count)
         {
             var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
@@ -690,7 +690,7 @@ namespace Octgn.Server
                 writer.WriteAttributeString("muted", handler.muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("player", player.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("from", from.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("to", to.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("lTo", lTo.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString());
             writer.WriteElementString("name", name);
             writer.WriteElementString("count", count.ToString(CultureInfo.InvariantCulture));
@@ -699,7 +699,7 @@ namespace Octgn.Server
             Send(sb.ToString());
         }
 
-        public void PassTo(byte player, int id, byte to, bool requested)
+        public void PassTo(byte player, int id, byte lTo, bool requested)
         {
             var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
@@ -709,14 +709,14 @@ namespace Octgn.Server
                 writer.WriteAttributeString("muted", handler.muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("player", player.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("to", to.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("lTo", lTo.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("requested", requested.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
             Send(sb.ToString());
         }
 
-        public void TakeFrom(int id, byte to)
+        public void TakeFrom(int id, byte lTo)
         {
             var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
@@ -725,7 +725,7 @@ namespace Octgn.Server
             if (handler.muted != 0)
                 writer.WriteAttributeString("muted", handler.muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("to", to.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("lTo", lTo.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
             Send(sb.ToString());
@@ -969,7 +969,7 @@ namespace Octgn.Server
             catch
             {
                 // TODO: notify disconnections
-                //				if (Program.Server != null && Program.Server.Disconnected(to))
+                //				if (Program.Server != null && Program.Server.Disconnected(lTo))
                 //					return;
                 //				Program.Client.Disconnected();
             }
