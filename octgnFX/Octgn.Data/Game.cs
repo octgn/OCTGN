@@ -111,7 +111,7 @@ namespace Octgn.Data
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "SElECT * FROM [sets] WHERE [id]=@id;";
+                    com.CommandText = "SElECT id, name, game_version, version, package FROM [sets] WHERE [id]=@id;";
 
                     com.Parameters.AddWithValue("@id", id.ToString());
                     using (SQLiteDataReader dr = com.ExecuteReader())
@@ -145,7 +145,7 @@ namespace Octgn.Data
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "SElECT * FROM [cards] WHERE [name]=@name;";
+                    com.CommandText = "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id WHERE [name]=@name;";
 
                     com.Parameters.AddWithValue("@name", name);
                     using (SQLiteDataReader dr = com.ExecuteReader())
@@ -177,7 +177,7 @@ namespace Octgn.Data
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "SElECT * FROM [custom_properties] WHERE [card_real_id]=(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1);";
+                    com.CommandText = "SElECT type, name, vstr, vint FROM [custom_properties] WHERE [card_real_id]=(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1);";
 
                     com.Parameters.AddWithValue("@card_id", cardId.ToString());
                     using (SQLiteDataReader dr = com.ExecuteReader())
@@ -226,7 +226,7 @@ namespace Octgn.Data
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "SElECT * FROM [cards] WHERE [id]=@id;";
+                    com.CommandText = "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id;";
 
                     com.Parameters.AddWithValue("@id", id.ToString());
                     using (SQLiteDataReader dr = com.ExecuteReader())
@@ -259,7 +259,7 @@ namespace Octgn.Data
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "SElECT * FROM [markers] WHERE [game_id]=@game_id;";
+                    com.CommandText = "SElECT id, name, icon, (SELECT id FROM sets WHERE real_id=markers.[set_real_id]) as set_id FROM [markers] WHERE [game_id]=@game_id;";
 
                     com.Parameters.AddWithValue("@game_id", this.Id.ToString());
                     using (SQLiteDataReader dr = com.ExecuteReader())
@@ -290,7 +290,7 @@ namespace Octgn.Data
             {
                 using (System.Data.SQLite.SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "SElECT * FROM [packs] WHERE [id]=@id;";
+                    com.CommandText = "SElECT xml, (SELECT id FROM sets WHERE real_id=packs.[set_real_id]) as set_id FROM [packs] WHERE [id]=@id;";
 
                     com.Parameters.AddWithValue("@id", id.ToString());
                     using (SQLiteDataReader dr = com.ExecuteReader())
@@ -694,7 +694,7 @@ namespace Octgn.Data
             {
                 using (SQLiteCommand com = dbc.CreateCommand())
                 {
-                    com.CommandText = "SELECT * FROM cards WHERE game_id=@game_id;";
+                    com.CommandText = "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE game_id=@game_id;";
                     com.Parameters.AddWithValue("@game_id", Id.ToString());
                     ret.Load(com.ExecuteReader());
                 }
