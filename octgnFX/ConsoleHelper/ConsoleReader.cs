@@ -26,24 +26,24 @@ namespace Skylabs.ConsoleHelper
 
         public static void Start()
         {
-            _thread = new Thread(Run) {Name = "ConsoleHandThread"};
+            _thread = new Thread(Run) { Name = "ConsoleHandThread" };
             _thread.Start();
         }
 
         private static void HandleInput(ConsoleMessage cm)
         {
-            if(EConsoleInput != null)
+            if (EConsoleInput != null)
             {
-                if(EConsoleInput.GetInvocationList().Length > 0)
+                if (EConsoleInput.GetInvocationList().Length > 0)
                     EConsoleInput.Invoke(cm);
             }
         }
 
         public static void Stop()
         {
-            if(_thread != null)
+            if (_thread != null)
             {
-                if(_thread.ThreadState == ThreadState.Running)
+                if (_thread.ThreadState == ThreadState.Running)
                 {
                     Console.In.Close();
 
@@ -58,12 +58,12 @@ namespace Skylabs.ConsoleHelper
         {
             Boolean endLine = false;
             StringBuilder sb = new StringBuilder();
-            while(true)
+            while (true)
             {
-                if(Console.KeyAvailable)
+                if (Console.KeyAvailable)
                 {
                     ConsoleKeyInfo r = Console.ReadKey();
-                    switch(r.Key)
+                    switch (r.Key)
                     {
                         case ConsoleKey.Enter:
                             endLine = true;
@@ -73,7 +73,7 @@ namespace Skylabs.ConsoleHelper
                             break;
                     }
                 }
-                if(!String.IsNullOrEmpty(sb.ToString()) && endLine)
+                if (!String.IsNullOrEmpty(sb.ToString()) && endLine)
                 {
                     HandleInput(new ConsoleMessage(sb.ToString()));
                     sb = new StringBuilder();

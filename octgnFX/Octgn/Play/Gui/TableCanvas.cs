@@ -15,12 +15,12 @@ namespace Octgn.Play.Gui
             MoveCard.Doing += CardMoving;
             Target.CreatingArrow += Targetting;
             Target.DeletingArrows += Untargetting;
-            Unloaded += delegate 
-            { 
+            Unloaded += delegate
+            {
                 MoveCard.Doing -= CardMoving;
                 Target.CreatingArrow -= Targetting;
                 Target.DeletingArrows -= Untargetting;
-            };   
+            };
         }
 
         protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
@@ -33,7 +33,7 @@ namespace Octgn.Play.Gui
                 {
                     var scale = new ScaleTransform();
                     child.RenderTransformOrigin = new Point(0.5, 0.5);
-                    child.RenderTransform = scale;                    
+                    child.RenderTransform = scale;
                     var anim = new DoubleAnimation()
                     {
                         Duration = new Duration(TimeSpan.FromMilliseconds(400)),
@@ -41,7 +41,8 @@ namespace Octgn.Play.Gui
                         RepeatBehavior = new RepeatBehavior(2.166),
                         AccelerationRatio = 0.2,
                         DecelerationRatio = 0.7,
-                        To = 1.2, From = 0.9,
+                        To = 1.2,
+                        From = 0.9,
                         FillBehavior = FillBehavior.Stop
                     };
                     scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
@@ -68,13 +69,21 @@ namespace Octgn.Play.Gui
                     var duration = new Duration(TimeSpan.FromMilliseconds(500));
                     var anim = new DoubleAnimation()
                     {
-                        AccelerationRatio = 0.2, DecelerationRatio = 0.7, Duration = duration,
-                        From = Canvas.GetLeft(child), To = x, FillBehavior = FillBehavior.Stop
-                    };                    
+                        AccelerationRatio = 0.2,
+                        DecelerationRatio = 0.7,
+                        Duration = duration,
+                        From = Canvas.GetLeft(child),
+                        To = x,
+                        FillBehavior = FillBehavior.Stop
+                    };
                     var anim2 = new DoubleAnimation()
                     {
-                       AccelerationRatio = 0.2, DecelerationRatio = 0.7, Duration = duration,
-                       From = Canvas.GetTop(child), To = y, FillBehavior = FillBehavior.Stop
+                        AccelerationRatio = 0.2,
+                        DecelerationRatio = 0.7,
+                        Duration = duration,
+                        From = Canvas.GetTop(child),
+                        To = y,
+                        FillBehavior = FillBehavior.Stop
                     };
                     child.BeginAnimation(Canvas.LeftProperty, anim, HandoffBehavior.SnapshotAndReplace);
                     child.BeginAnimation(Canvas.TopProperty, anim2, HandoffBehavior.SnapshotAndReplace);
@@ -102,7 +111,7 @@ namespace Octgn.Play.Gui
             }
 
             if (fromCard != null && toCard != null)     // Opponent may have moved the card out of the table concurently
-            {                
+            {
                 fromCard.CreateArrowTo(targetAction.who, toCard);
                 targetAction.fromCard.TargetsOtherCards = true;
             }

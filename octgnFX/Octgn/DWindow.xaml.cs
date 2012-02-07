@@ -47,11 +47,11 @@ namespace Octgn
         private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             bool v = (bool)e.NewValue;
-            if(v)
+            if (v)
             {
                 Program.DebugListener.OnEventAdd += new CacheTraceListener.EventAdded(Add_Event);
                 output.Document.Blocks.Clear();
-                foreach(TraceEvent te in Program.DebugListener.Events)
+                foreach (TraceEvent te in Program.DebugListener.Events)
                 {
                     Add_Event(te);
                 }
@@ -78,8 +78,8 @@ namespace Octgn
                             //new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush }
                         }
             };
-            if(output.Document.Blocks.LastBlock != null)
-                if(((Paragraph)output.Document.Blocks.LastBlock).Inlines.Count == 0)
+            if (output.Document.Blocks.LastBlock != null)
+                if (((Paragraph)output.Document.Blocks.LastBlock).Inlines.Count == 0)
                     output.Document.Blocks.Remove(output.Document.Blocks.LastBlock);
             output.Document.Blocks.Add(p);
             output.Document.Blocks.Add(new Paragraph() { Margin = new Thickness() });    // Restore left alignment

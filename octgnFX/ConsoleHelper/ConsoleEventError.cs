@@ -22,7 +22,7 @@ namespace Skylabs.ConsoleHelper
         {
             get
             {
-                if(Exception.StackTrace != null)
+                if (Exception.StackTrace != null)
                     return Exception.StackTrace;
                 return "No Stack Trace Message Data.";
             }

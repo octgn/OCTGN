@@ -4,44 +4,44 @@ using System.Windows.Input;
 
 namespace Octgn.Play.Gui
 {
-	internal interface IDragOperation
-	{
-		void Dragging(MouseEventArgs e);
-		void EndDrag();
-	}
+    internal interface IDragOperation
+    {
+        void Dragging(MouseEventArgs e);
+        void EndDrag();
+    }
 
-	internal abstract class DragOperation<T> : IDragOperation where T: UIElement
-	{
-		private Point oldPos;
-		protected T target;
+    internal abstract class DragOperation<T> : IDragOperation where T : UIElement
+    {
+        private Point oldPos;
+        protected T target;
 
-		public DragOperation(T target)
-		{
-			this.target = target;
-			oldPos = Mouse.GetPosition(target);
-			target.CaptureMouse();
-			StartDragCore(oldPos);
-		}		
+        public DragOperation(T target)
+        {
+            this.target = target;
+            oldPos = Mouse.GetPosition(target);
+            target.CaptureMouse();
+            StartDragCore(oldPos);
+        }
 
-		public void Dragging(MouseEventArgs e)
-		{
-			Point newPos = e.GetPosition(target);
-			Vector delta = newPos - oldPos;
-			oldPos = newPos;
-			DraggingCore(newPos, delta);
-			e.Handled = true;
-		}
+        public void Dragging(MouseEventArgs e)
+        {
+            Point newPos = e.GetPosition(target);
+            Vector delta = newPos - oldPos;
+            oldPos = newPos;
+            DraggingCore(newPos, delta);
+            e.Handled = true;
+        }
 
-		public void EndDrag()
-		{
-			target.ReleaseMouseCapture();
-			EndDragCore();
-		}
+        public void EndDrag()
+        {
+            target.ReleaseMouseCapture();
+            EndDragCore();
+        }
 
-		protected abstract void StartDragCore(Point position);
+        protected abstract void StartDragCore(Point position);
 
-		protected abstract void DraggingCore(Point position, Vector delta);
+        protected abstract void DraggingCore(Point position, Vector delta);
 
-		protected abstract void EndDragCore();
-	}
+        protected abstract void EndDragCore();
+    }
 }

@@ -136,8 +136,8 @@ namespace Octgn
             Player.LocalPlayer = new Player(Program.Game.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
-             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
-              //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
+            //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
+            //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
             foreach (Data.MarkerModel m in Database.GetAllMarkers())
                 markersById.Add(m.id, m);

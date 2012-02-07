@@ -40,7 +40,7 @@ namespace Octgn.Launcher
                                                       stackPanel1.Children.Clear();
                                                       Guid[] gids = new Guid[Program.GamesRepository.Games.Count];
                                                       int count = 0;
-                                                      foreach(Data.Game game in Program.GamesRepository.Games)
+                                                      foreach (Data.Game game in Program.GamesRepository.Games)
                                                       {
                                                           gids[count] = game.Id;
                                                           count++;
@@ -48,8 +48,8 @@ namespace Octgn.Launcher
                                                       HostedGame[] gl = Program.lobbyClient.GetHostedGames().OrderByDescending(item => item.TimeStarted).ToArray();
                                                       foreach (HostedGame g in gl)
                                                       {
-                                                          
-                                                          if (gids.Contains(g.GameGuid) &&  g.GameStatus == HostedGame.eHostedGame.StartedHosting 
+
+                                                          if (gids.Contains(g.GameGuid) && g.GameStatus == HostedGame.eHostedGame.StartedHosting
                                                               && g.UserHosting.Status != UserStatus.Offline && g.UserHosting.Status != UserStatus.Unknown)
                                                           {
                                                               HostedGameListItem gs = new HostedGameListItem(g);
@@ -57,7 +57,7 @@ namespace Octgn.Launcher
                                                                   gs.MouseUp += new MouseButtonEventHandler(gs_MouseUp);
                                                               stackPanel1.Children.Add(gs);
                                                           }
-                                                      }                                                                  
+                                                      }
                                                   }));
         }
 
@@ -79,7 +79,7 @@ namespace Octgn.Launcher
             HostedGameListItem gs = (HostedGameListItem)sender;
             if (OnGameClick != null)
             {
-                OnGameClick.Invoke(gs.Game,new EventArgs());
+                OnGameClick.Invoke(gs.Game, new EventArgs());
             }
         }
         private void Page_Loaded(object sender, RoutedEventArgs e)

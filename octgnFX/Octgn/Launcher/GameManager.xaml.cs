@@ -28,17 +28,17 @@ namespace Octgn.Launcher
 
         protected void InstallGame(object sender, RoutedEventArgs e)
         {
-            if(!Settings.Default.DontShowInstallNotice)
+            if (!Settings.Default.DontShowInstallNotice)
                 new InstallNoticeDialog { Owner = Program.ClientWindow }.ShowDialog();
 
             // Get the definition file
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.Filter = "Game definition files (*.o8g)|*.o8g";
-            if(ofd.ShowDialog() != true) return;
+            if (ofd.ShowDialog() != true) return;
 
             //Fix def filename
             String newFilename = Uri.UnescapeDataString(ofd.FileName);
-            if(!newFilename.ToLower().Equals(ofd.FileName.ToLower()))
+            if (!newFilename.ToLower().Equals(ofd.FileName.ToLower()))
             {
                 File.Move(ofd.FileName, newFilename);
             }
@@ -47,11 +47,11 @@ namespace Octgn.Launcher
             {
                 // Open the archive
                 Definitions.GameDef game = Definitions.GameDef.FromO8G(newFilename);
-                if(!game.CheckVersion()) return;
+                if (!game.CheckVersion()) return;
 
                 // Check if the game already exists
-                if(Program.GamesRepository.Games.Any(g => g.Id == game.Id))
-                    if(MessageBox.Show("This game already exists.\r\nDo you want to overwrite it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+                if (Program.GamesRepository.Games.Any(g => g.Id == game.Id))
+                    if (MessageBox.Show("This game already exists.\r\nDo you want to overwrite it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
                         return;
 
                 var gameData = new Data.Game()
@@ -68,7 +68,7 @@ namespace Octgn.Launcher
                 };
                 Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
             }
-            catch(System.IO.FileFormatException)
+            catch (System.IO.FileFormatException)
             {
                 //Removed ex.Message. The user doesn't need to see the exception
                 MessageBox.Show("Your game definition file is corrupt. Please redownload it.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -77,12 +77,12 @@ namespace Octgn.Launcher
 
         private void InstallCards(object sender, RoutedEventArgs e)
         {
-            if(!Settings.Default.DontShowInstallNotice)
+            if (!Settings.Default.DontShowInstallNotice)
                 new InstallNoticeDialog { Owner = Program.ClientWindow }.ShowDialog();
 
             // Open the DB
             Data.Game gameDb = (Data.Game)gamesList.SelectedItem;
-            if(gameDb == null)
+            if (gameDb == null)
             {
                 MessageBox.Show("Select a game in the list first");
                 return;
@@ -94,14 +94,14 @@ namespace Octgn.Launcher
                 Filter = "Cards set definition files (*.o8s)|*.o8s",
                 Multiselect = true
             };
-            if(ofd.ShowDialog() != true) return;
+            if (ofd.ShowDialog() != true) return;
 
             var wnd = new InstallSetsProgressDialog { Owner = Program.ClientWindow };
             ThreadPool.QueueUserWorkItem(_ =>
               {
                   int current = 0, max = ofd.FileNames.Length;
                   wnd.UpdateProgress(current, max, null, false);
-                  foreach(string setName in ofd.FileNames)
+                  foreach (string setName in ofd.FileNames)
                   {
                       ++current;
                       string shortName = System.IO.Path.GetFileName(setName);
@@ -110,7 +110,7 @@ namespace Octgn.Launcher
                           gameDb.InstallSet(setName);
                           wnd.UpdateProgress(current, max, string.Format("'{0}' installed.", shortName), false);
                       }
-                      catch(Exception ex)
+                      catch (Exception ex)
                       {
                           wnd.UpdateProgress(current, max, string.Format("'{0}' an error occured during installation:", shortName), true);
                           wnd.UpdateProgress(current, max, ex.Message, true);
@@ -124,9 +124,9 @@ namespace Octgn.Launcher
         {
             e.Handled = true;
             var game = (Data.Game)gamesList.SelectedItem;
-            if(game == null) return;
+            if (game == null) return;
             Data.Set set = (Data.Set)setsList.SelectedItem;
-            if(set == null) return;
+            if (set == null) return;
             game.DeleteSet(set);
         }
 

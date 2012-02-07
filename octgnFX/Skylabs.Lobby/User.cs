@@ -55,7 +55,7 @@ namespace Skylabs.Lobby
 
         public byte[] Serialize()
         {
-            using(MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 bf.Serialize(ms, this);
@@ -66,7 +66,7 @@ namespace Skylabs.Lobby
 
         public static User Deserialize(byte[] data)
         {
-            using(MemoryStream ms = new MemoryStream(data))
+            using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 return (User)bf.Deserialize(ms);
@@ -81,8 +81,7 @@ namespace Skylabs.Lobby
 
         public object Clone()
         {
-            User ret = new User
-                           {Email = Email.Clone() as string, Uid = Uid, Password = Password.Clone() as string, Level = Level, DisplayName = DisplayName.Clone() as string,CustomStatus = CustomStatus.Clone() as string,Status = Status};
+            User ret = new User { Email = Email.Clone() as string, Uid = Uid, Password = Password.Clone() as string, Level = Level, DisplayName = DisplayName.Clone() as string, CustomStatus = CustomStatus.Clone() as string, Status = Status };
             return ret;
         }
 

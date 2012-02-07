@@ -55,7 +55,7 @@ namespace Skylabs.LobbyServer
         /// <param name="name">Name of the room</param>
         /// <param name="password">Password for the game</param>
         /// <param name="hoster">User hosting the game</param>
-        public HostedGame(int port,Guid gameguid,Version gameversion,string name, string password, User hoster)
+        public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, User hoster)
         {
             GameGuid = gameguid;
             GameVersion = gameversion;

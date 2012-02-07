@@ -59,7 +59,7 @@ namespace Skylabs.LobbyServer
                 return;
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             long id = -1;
-            lock(Rooms)
+            lock (Rooms)
             {
                 foreach (ChatRoom cr in Rooms)
                 {
@@ -151,7 +151,7 @@ namespace Skylabs.LobbyServer
                 foreach (ChatRoom c in Rooms)
                 {
                     ChatRoom cr = c;
-                    LazyAsync.Invoke(()=>cr.UserExit(u));
+                    LazyAsync.Invoke(() => cr.UserExit(u));
                     User[] ul = c.GetUserList();
                     if (ul.Length - 1 <= 0 && c.ID != 0)
                         roomstocan.Add(c.ID);
@@ -190,7 +190,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="c">Client as the sender</param>
         /// <param name="sm">Data as the data.</param>
-        public static void ChatMessage(Client c,SocketMessage sm)
+        public static void ChatMessage(Client c, SocketMessage sm)
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
@@ -211,7 +211,7 @@ namespace Skylabs.LobbyServer
                 ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid2);
                 if (cr != null)
                 {
-                    LazyAsync.Invoke(()=>cr.ChatMessage(c.Me, mess));
+                    LazyAsync.Invoke(() => cr.ChatMessage(c.Me, mess));
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "Rooms");
             }

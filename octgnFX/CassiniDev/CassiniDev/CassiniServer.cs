@@ -63,7 +63,7 @@ namespace CassiniDev
 
         /// <summary>
         /// Will start specified application as "localhost" on loopback and first available port in the range 8000-10000 with vpath "/"
-        
+
         /// </summary>
         /// <param name="applicationPath">Physical path to application.</param>
         /// <param name="virtualPath">Optional. defaults to "/"</param>

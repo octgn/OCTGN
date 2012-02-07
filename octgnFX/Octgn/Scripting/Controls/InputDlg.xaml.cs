@@ -22,13 +22,13 @@ namespace Octgn.Script
             //fix MAINWINDOW bug
             this.Owner = Program.PlayWindow;
             this.Title = title;
-            promptLbl.Text  = prompt;
+            promptLbl.Text = prompt;
             inputBox.Text = defaultValue;
 
             Loaded += delegate
             {
-               inputBox.Focus();
-               inputBox.SelectAll();
+                inputBox.Focus();
+                inputBox.SelectAll();
             };
         }
 
@@ -58,7 +58,7 @@ namespace Octgn.Script
                     break;
                 case Kind.Positive:
                 case Kind.Integer:
-                    if (!int.TryParse(inputBox.Text, out intResult) || 
+                    if (!int.TryParse(inputBox.Text, out intResult) ||
                         (kind == Kind.Positive && intResult < 0))
                     {
                         e.Cancel = true;

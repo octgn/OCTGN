@@ -13,17 +13,17 @@ using System.Windows.Shapes;
 
 namespace Octgn
 {
-  public partial class MessageWindow : Window
-  {
-    public MessageWindow(string text)
+    public partial class MessageWindow : Window
     {
-      InitializeComponent();
-      contentBlock.Text = text;
-    }
+        public MessageWindow(string text)
+        {
+            InitializeComponent();
+            contentBlock.Text = text;
+        }
 
-    protected void OKClicked(object sender, EventArgs e)
-    {
-      DialogResult = true;
+        protected void OKClicked(object sender, EventArgs e)
+        {
+            DialogResult = true;
+        }
     }
-  }
 }

@@ -31,7 +31,7 @@ namespace Octgn.Controls
         public Skylabs.Lobby.FriendRequestNotification Notification
         {
             get { return _notify; }
-            set 
+            set
             {
                 _notify = value;
                 string h = ValueConverters.HashEmailAddress(_notify.User.Email.ToLower().Trim());
@@ -62,7 +62,7 @@ namespace Octgn.Controls
             _notify.Accept();
             this.Visibility = Visibility.Hidden;
             if (OnDismiss != null)
-                OnDismiss(this, null);            
+                OnDismiss(this, null);
         }
 
         private void button2_Click(object sender, RoutedEventArgs e)

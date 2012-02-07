@@ -28,7 +28,7 @@ namespace Octgn.Networking
             reader.Read();
             string method = reader.Name;
             string muted = reader.GetAttribute("muted");
-            if(!string.IsNullOrEmpty(muted))
+            if (!string.IsNullOrEmpty(muted))
                 Program.Client.Muted = int.Parse(muted);
             else
                 Program.Client.Muted = 0;
@@ -681,7 +681,7 @@ namespace Octgn.Networking
                     {
                         string n = reader.ReadElementString("name");
                         string v = reader.ReadElementString("value");
-                        handler.SetGlobalVariable( n, v);
+                        handler.SetGlobalVariable(n, v);
                         break;
                     }
                 default:

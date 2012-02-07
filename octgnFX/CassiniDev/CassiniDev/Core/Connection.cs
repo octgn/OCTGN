@@ -63,7 +63,7 @@ namespace CassiniDev
         {
             get
             {
-                IPEndPoint ep = (IPEndPoint) _socket.LocalEndPoint;
+                IPEndPoint ep = (IPEndPoint)_socket.LocalEndPoint;
                 return (ep != null && ep.Address != null) ? ep.Address.ToString() : "127.0.0.1";
             }
         }
@@ -72,7 +72,7 @@ namespace CassiniDev
         {
             get
             {
-                IPEndPoint ep = (IPEndPoint) _socket.RemoteEndPoint;
+                IPEndPoint ep = (IPEndPoint)_socket.RemoteEndPoint;
                 return (ep != null && ep.Address != null) ? ep.Address.ToString() : "127.0.0.1";
             }
         }
@@ -96,9 +96,9 @@ namespace CassiniDev
                 _socket.Shutdown(SocketShutdown.Both);
                 _socket.Close();
             }
-                // ReSharper disable EmptyGeneralCatchClause
+            // ReSharper disable EmptyGeneralCatchClause
             catch
-                // ReSharper restore EmptyGeneralCatchClause
+            // ReSharper restore EmptyGeneralCatchClause
             {
             }
             finally
@@ -194,9 +194,9 @@ namespace CassiniDev
 
                 availBytes = _socket.Available;
             }
-                // ReSharper disable EmptyGeneralCatchClause
+            // ReSharper disable EmptyGeneralCatchClause
             catch
-                // ReSharper restore EmptyGeneralCatchClause
+            // ReSharper restore EmptyGeneralCatchClause
             {
             }
 
@@ -250,7 +250,7 @@ namespace CassiniDev
             try
             {
                 fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                int len = (int) fs.Length;
+                int len = (int)fs.Length;
                 byte[] fileBytes = new byte[len];
                 int bytesRead = fs.Read(fileBytes, 0, len);
 
@@ -346,9 +346,9 @@ namespace CassiniDev
                 _responseLog.Identity = _requestLog.Identity;
                 _responseLog.PhysicalPath = _requestLog.PhysicalPath;
             }
-                // ReSharper disable EmptyGeneralCatchClause
+            // ReSharper disable EmptyGeneralCatchClause
             catch
-                // ReSharper restore EmptyGeneralCatchClause
+            // ReSharper restore EmptyGeneralCatchClause
             {
                 // log error to text
             }

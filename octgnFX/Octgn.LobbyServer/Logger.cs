@@ -49,7 +49,7 @@ namespace Skylabs.LobbyServer
             StackTrace st = new StackTrace();
             StackFrame[] frames = st.GetFrames();
             string methodName = "UnknownMethod";
-            for(int i=0;i< frames.Length;i++)
+            for (int i = 0; i < frames.Length; i++)
             {
                 if (frames[i].GetMethod().Name == System.Reflection.MethodInfo.GetCurrentMethod().Name)
                 {

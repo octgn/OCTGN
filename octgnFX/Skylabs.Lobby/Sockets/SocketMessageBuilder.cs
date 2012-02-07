@@ -8,7 +8,7 @@ namespace Skylabs.Lobby.Sockets
 {
     public class SocketMessageBuilder
     {
-        public Queue<SocketMessage> SMQueue{get;set;}
+        public Queue<SocketMessage> SMQueue { get; set; }
         private byte[] _messageSizeBuffer;
         private byte[] _messageBuffer;
         private int _messageSize;
@@ -25,7 +25,7 @@ namespace Skylabs.Lobby.Sockets
             _messageBuffer = null;
             _messageSize = -1;
             _msbAdded = 0;
-            _mbAdded = 0;        
+            _mbAdded = 0;
         }
         public void AddBytes(byte[] toadd)
         {

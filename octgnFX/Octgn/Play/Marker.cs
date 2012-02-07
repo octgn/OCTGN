@@ -28,9 +28,9 @@ namespace Octgn.Play
             get { return _count; }
             set
             {
-                if(value < _count)
+                if (value < _count)
                     Program.Client.Rpc.RemoveMarkerReq(card, Model.id, Model.Name, (ushort)(_count - value));
-                else if(value > _count)
+                else if (value > _count)
                     Program.Client.Rpc.AddMarkerReq(card, Model.id, Model.Name, (ushort)(value - _count));
                 else
                     return;
@@ -58,9 +58,9 @@ namespace Octgn.Play
 
         internal void SetCount(ushort value)
         {
-            if(value == 0)
+            if (value == 0)
                 card.RemoveMarker(this);
-            else if(value != _count)
+            else if (value != _count)
             {
                 _count = value;
                 OnPropertyChanged("Count");
@@ -74,7 +74,7 @@ namespace Octgn.Play
 
         private void OnPropertyChanged(string property)
         {
-            if(PropertyChanged != null)
+            if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
 

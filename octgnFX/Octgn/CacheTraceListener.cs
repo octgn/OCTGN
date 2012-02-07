@@ -19,14 +19,14 @@ namespace Octgn
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("<{0}>", Type);
-            if(Cache != null)
-                if(Cache.DateTime != null)
+            if (Cache != null)
+                if (Cache.DateTime != null)
                     sb.AppendFormat("[{0} {1}]", Cache.DateTime.ToShortTimeString(), Cache.DateTime.ToShortDateString());
-            if(Source != null)
+            if (Source != null)
                 sb.AppendFormat("'{0}'", Source);
             sb.Append(ID);
             sb.Append(" - ");
-            if(Message == null && Args != null && Format != null)
+            if (Message == null && Args != null && Format != null)
             {
                 sb.AppendFormat(Format, Args);
             }
@@ -57,7 +57,7 @@ namespace Octgn
             te.Message = message;
             te.Type = TraceEventType.Information;
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
 
@@ -68,7 +68,7 @@ namespace Octgn
             te.Message = message + System.Environment.NewLine;
             te.Type = TraceEventType.Information;
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
 
@@ -81,7 +81,7 @@ namespace Octgn
             te.ID = id;
             te.Message = message;
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
 
@@ -93,7 +93,7 @@ namespace Octgn
             te.Type = eventType;
             te.ID = id;
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
 
@@ -107,7 +107,7 @@ namespace Octgn
             te.Format = format;
             te.Args = args;
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
     }

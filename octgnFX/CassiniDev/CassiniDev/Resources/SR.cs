@@ -26,8 +26,8 @@ namespace CassiniDev
 {
     internal sealed class SR
     {
-        
-        internal const string ErrInvalidIPMode="SR.ErrInvalidIPMode";
+
+        internal const string ErrInvalidIPMode = "SR.ErrInvalidIPMode";
         internal const string ErrInvalidIPAddress = "ErrInvalidIPAddress";
         internal const string ErrInvalidPortMode = "ErrInvalidPortMode";
         internal const string ErrPortIsInUse = "ErrPortIsInUse";

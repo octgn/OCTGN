@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace SimplestDragDrop 
+namespace SimplestDragDrop
 {
     class DragAdorner : Adorner
     {
@@ -22,7 +22,7 @@ namespace SimplestDragDrop
             : base(owner)
         {
             System.Diagnostics.Debug.Assert(owner != null);
-            System.Diagnostics.Debug.Assert(adornElement != null); 
+            System.Diagnostics.Debug.Assert(adornElement != null);
             _owner = owner;
             if (useVisualBrush)
             {

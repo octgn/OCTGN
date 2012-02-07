@@ -19,7 +19,7 @@ namespace Octgn
         public static byte[] Encrypt(byte[] clearData, byte[] Key, byte[] IV)
         {
             MemoryStream ms = new MemoryStream();
-            TripleDES alg = TripleDES.Create(); 
+            TripleDES alg = TripleDES.Create();
             alg.Key = Key;
             alg.IV = IV;
             CryptoStream cs = new CryptoStream(ms, alg.CreateEncryptor(), CryptoStreamMode.Write);
@@ -57,7 +57,7 @@ namespace Octgn
             MemoryStream ms = new MemoryStream();
             TripleDES alg = TripleDES.Create();
             alg.Key = Key;
-            alg.IV = IV; 
+            alg.IV = IV;
             CryptoStream cs = new CryptoStream(ms, alg.CreateDecryptor(), CryptoStreamMode.Write);
             try
             {
@@ -68,8 +68,8 @@ namespace Octgn
             }
             catch (CryptographicException)
             {
-                return null; 
-            }                        
+                return null;
+            }
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Octgn
                 new byte[] {0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 
                 0x64, 0x76, 0x65, 0x64, 0x65, 0x76});
             byte[] decryptedData = Decrypt(cryptedBytes, pdb.GetBytes(16), pdb.GetBytes(8));
-            return Encoding.Unicode.GetString(decryptedData ?? new byte[] {});
+            return Encoding.Unicode.GetString(decryptedData ?? new byte[] { });
         }
     }
 }
