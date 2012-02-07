@@ -27,6 +27,7 @@ namespace Octgn
         private SortedList<Guid, Data.MarkerModel> markersById = new SortedList<Guid, Data.MarkerModel>();
         private List<Data.MarkerModel> recentMarkers = new List<Data.MarkerModel>(MaxRecentMarkers);
         private List<Data.CardModel> recentCards = new List<Data.CardModel>(MaxRecentCards);
+        //wouldn't a heap be best for these caches? 
 
         public int TurnNumber
         { get; set; }

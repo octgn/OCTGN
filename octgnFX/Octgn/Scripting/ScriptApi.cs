@@ -156,7 +156,6 @@ namespace Octgn.Scripting
             //alternate may be considered the "back" of the card, or another card entirely - up to Game Definer.
             Card c = Card.Find(id);
             Guid alternateCard = (Guid)c.GetProperty("Alternate");
-            foreach (Card c in All
             engine.Invoke(() => { c.IsAlternate = (c.IsAlternate != true); });
  //           Data.CardModel newModel = new Data.CardModel c.GetProperty;
  //           c.IsAlternate = !c.IsAlternate;
