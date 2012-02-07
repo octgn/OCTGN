@@ -1,12 +1,8 @@
-﻿/* 
- * This file was automatically generated.
- * Do not modify, changes will get lost when the file is regenerated!
- */
-using System;
+﻿using System;
 
 namespace Octgn.Server
 {
-    interface IClientCalls
+    internal interface IClientCalls
     {
         void Binary();
         void Error(string msg);
@@ -48,9 +44,9 @@ namespace Octgn.Server
         void AddMarker(byte player, int card, Guid id, string name, ushort count);
         void RemoveMarker(byte player, int card, Guid id, string name, ushort count);
         void SetMarker(byte player, int card, Guid id, string name, ushort count);
-        void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count);
-        void PassTo(byte player, int id, byte to, bool requested);
-        void TakeFrom(int id, byte to);
+        void TransferMarker(byte player, int from, int lTo, Guid id, string name, ushort count);
+        void PassTo(byte player, int id, byte lTo, bool requested);
+        void TakeFrom(int id, byte lTo);
         void DontTake(int id);
         void FreezeCardsVisibility(int group);
         void GroupVis(byte player, int group, bool defined, bool visible);

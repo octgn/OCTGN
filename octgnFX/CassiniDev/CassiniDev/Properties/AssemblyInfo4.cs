@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 
 [assembly: AssemblyTitle("CassiniDev")]
 [assembly: AssemblyDescription("Cassini For Developers")]
@@ -16,4 +15,5 @@ using System.Security.Permissions;
 [assembly: ComVisible(false)]
 [assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
 // [assembly: SecurityPermission(SecurityAction.RequestMinimum)] // does nothing on modern CLR
+
 [assembly: CLSCompliant(true)]

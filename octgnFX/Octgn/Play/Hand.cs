@@ -1,4 +1,3 @@
-using System;
 using Octgn.Definitions;
 
 namespace Octgn.Play
@@ -7,6 +6,7 @@ namespace Octgn.Play
     {
         public Hand(Player owner, GroupDef def)
             : base(owner, def)
-        { }
+        {
+        }
     }
 }

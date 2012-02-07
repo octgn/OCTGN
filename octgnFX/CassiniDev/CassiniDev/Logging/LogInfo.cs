@@ -1,17 +1,4 @@
-﻿//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
-#region
+﻿#region
 
 using System;
 
@@ -20,7 +7,7 @@ using System;
 namespace CassiniDev.ServerLog
 {
     /// <summary>
-    /// TODO: get rid of status code and url in the database and simply parse the headers
+    ///   TODO: get rid of status code and url in the database and simply parse the headers
     /// </summary>
     [Serializable]
     public class LogInfo : ICloneable
@@ -60,7 +47,7 @@ namespace CassiniDev.ServerLog
 
         public LogInfo Clone()
         {
-            LogInfo result = (LogInfo)((ICloneable)this).Clone();
+            var result = (LogInfo) ((ICloneable) this).Clone();
             if (Body != null)
             {
                 result.Body = new byte[Body.Length];

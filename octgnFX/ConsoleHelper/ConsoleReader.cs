@@ -1,5 +1,4 @@
 ﻿using System;
-
 using System.Text;
 using System.Threading;
 
@@ -7,9 +6,12 @@ namespace Skylabs.ConsoleHelper
 {
     public class ConsoleReader
     {
+        #region Delegates
+
         public delegate void ConsoleInputDelegate(ConsoleMessage input);
 
-        public static event ConsoleInputDelegate EConsoleInput;
+        #endregion
+
         //public static ConsoleColor InputColor { get { return _InputColor; } set { _InputColor = value; } }
 
         //private static ConsoleColor _InputColor = ConsoleColor.Gray;
@@ -18,15 +20,14 @@ namespace Skylabs.ConsoleHelper
 
         public static ThreadState ThreadState
         {
-            get
-            {
-                return _thread.ThreadState;
-            }
+            get { return _thread.ThreadState; }
         }
+
+        public static event ConsoleInputDelegate EConsoleInput;
 
         public static void Start()
         {
-            _thread = new Thread(Run) { Name = "ConsoleHandThread" };
+            _thread = new Thread(Run) {Name = "ConsoleHandThread"};
             _thread.Start();
         }
 
@@ -57,7 +58,7 @@ namespace Skylabs.ConsoleHelper
         private static void Run()
         {
             Boolean endLine = false;
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             while (true)
             {
                 if (Console.KeyAvailable)

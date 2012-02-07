@@ -5,12 +5,11 @@ using System.Windows.Shapes;
 
 namespace Octgn.Play.Gui
 {
-    class SelectAdorner : Adorner
+    internal class SelectAdorner : Adorner
     {
-        private Rectangle child;
-        private Rect position;
-
         private static readonly Brush BorderBrush, FillBrush;
+        private readonly Rectangle child;
+        private Rect position;
 
         static SelectAdorner()
         {
@@ -25,7 +24,8 @@ namespace Octgn.Play.Gui
         public SelectAdorner(UIElement adornedElement)
             : base(adornedElement)
         {
-            child = new Rectangle() { StrokeThickness = 3, Stroke = BorderBrush, Fill = FillBrush, IsHitTestVisible = false };
+            child = new Rectangle
+                        {StrokeThickness = 3, Stroke = BorderBrush, Fill = FillBrush, IsHitTestVisible = false};
         }
 
         public Rect Rectangle
@@ -35,6 +35,11 @@ namespace Octgn.Play.Gui
                 position = value;
                 InvalidateVisual();
             }
+        }
+
+        protected override int VisualChildrenCount
+        {
+            get { return 1; }
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -48,10 +53,9 @@ namespace Octgn.Play.Gui
             return position.Size;
         }
 
-        protected override System.Windows.Media.Visual GetVisualChild(int index)
-        { return child; }
-
-        protected override int VisualChildrenCount
-        { get { return 1; } }
+        protected override Visual GetVisualChild(int index)
+        {
+            return child;
+        }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Octgn.Utils
 {
@@ -24,7 +22,7 @@ namespace Octgn.Utils
             {
                 yield return item;
 
-                var childItems = children(item);
+                IEnumerable<T> childItems = children(item);
                 if (childItems == null) continue;
 
                 foreach (T child in childItems.Flatten(children))

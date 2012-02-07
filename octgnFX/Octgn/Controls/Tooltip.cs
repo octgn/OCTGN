@@ -9,15 +9,19 @@ namespace Octgn.Controls
 {
     internal static class Tooltip
     {
-        private static ToolTip ttip = new ToolTip();
+        private static readonly ToolTip ttip = new ToolTip();
 
-        private static DispatcherTimer timer;
+        private static readonly DispatcherTimer timer;
 
         static Tooltip()
         {
             timer = new DispatcherTimer(TimeSpan.FromMilliseconds(1500), DispatcherPriority.Normal,
-                delegate { timer.Stop(); ttip.IsOpen = false; },
-                Application.Current.Dispatcher);
+                                        delegate
+                                            {
+                                                timer.Stop();
+                                                ttip.IsOpen = false;
+                                            },
+                                        Application.Current.Dispatcher);
 
             var fillBrush = new LinearGradientBrush(Color.FromRgb(223, 20, 20), Color.FromRgb(255, 116, 116), 90);
             fillBrush.Freeze();

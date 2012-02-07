@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using Octgn.Data.Properties;
 
 namespace Octgn.Server
 {
@@ -9,19 +13,16 @@ namespace Octgn.Server
     {
         #region Private fields
 
-        private TcpListener tcp;            // Underlying windows socket
-        private Handler handler;            // Message handler
-        private List<Connection> clients = new List<Connection>();  // List of all the connected clients		
-
-        public event EventHandler OnStop;
-
-        private Thread ConnectionChecker;
+        private readonly Thread ConnectionChecker;
+        private readonly List<Connection> clients = new List<Connection>(); // List of all the connected clients		
+        private readonly Handler handler; // Message handler
+        private readonly TcpListener tcp; // Underlying windows socket
 
         private Thread ServerThread;
 
-        private bool closed = false;
-
-        private Timer checkConnectionDrops = null;
+        private Timer checkConnectionDrops;
+        private bool closed;
+        public event EventHandler OnStop;
 
         #endregion
 
@@ -30,8 +31,8 @@ namespace Octgn.Server
         // Creates and starts a new server
         public Server(int port, Guid gameId, Version gameVersion)
         {
-            tcp = new TcpListener(System.Net.IPAddress.Any, port);
-            this.handler = new Handler(gameId, gameVersion);
+            tcp = new TcpListener(IPAddress.Any, port);
+            handler = new Handler(gameId, gameVersion);
             ConnectionChecker = new Thread(CheckConnections);
             ConnectionChecker.Start();
             Start();
@@ -47,9 +48,13 @@ namespace Octgn.Server
             checkConnectionDrops.Dispose();
 
             try
-            { tcp.Server.Close(); tcp.Stop(); }
+            {
+                tcp.Server.Close();
+                tcp.Stop();
+            }
             catch
-            { }
+            {
+            }
             // Close all open connections
             while (true)
             {
@@ -79,7 +84,7 @@ namespace Octgn.Server
             ServerThread = new Thread(Listen);
             ServerThread.Name = "OCTGN.net Server";
             // Flag used to wait until the server is really started
-            ManualResetEvent started = new ManualResetEvent(false);
+            var started = new ManualResetEvent(false);
 
             //start checking for dropped connections every 60 seconds
             TimerCallback tcb = CheckForDroppedConnection;
@@ -123,7 +128,7 @@ namespace Octgn.Server
                     {
                         Stop();
                     }
-                DoAgain:
+                    DoAgain:
                     for (int i = 0; i < clients.Count; i++)
                     {
                         if (clients[i].disposed)
@@ -143,7 +148,7 @@ namespace Octgn.Server
                 Connection[] connections = clients.ToArray();
                 for (int i = 0; i < connections.Length; i++)
                 {
-                    TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - connections[i].LastPingTime.Ticks);
+                    var ts = new TimeSpan(DateTime.Now.Ticks - connections[i].LastPingTime.Ticks);
                     if (ts.Seconds > 60)
                     {
                         connections[i].Disconnected();
@@ -156,7 +161,7 @@ namespace Octgn.Server
         private void Listen(object o)
         {
             // Retrieve the parameter
-            ManualResetEvent started = (ManualResetEvent)o;
+            var started = (ManualResetEvent) o;
             // Start the server and signal it
             tcp.Start();
             started.Set();
@@ -165,7 +170,7 @@ namespace Octgn.Server
                 while (true)
                 {
                     // Accept new connections
-                    Connection sc = new Connection(this, tcp.AcceptTcpClient());
+                    var sc = new Connection(this, tcp.AcceptTcpClient());
                     lock (clients) clients.Add(sc);
                     if (ConnectionChecker == null)
                     {
@@ -181,35 +186,37 @@ namespace Octgn.Server
 
         #endregion
 
+        #region Nested type: Connection
+
         public class Connection
         {
-            private Server server;                  // The containing server
-            internal readonly TcpClient client;     // The underlying Windows socket            
-            private byte[] buffer = new byte[512];  // Buffer to receive data
-            private byte[] packet = new byte[512];  // Buffer where received data is processed in packets
-            private int packetPos = 0;              // Current position in the packet buffer
-            private bool binary = false;            // Receives binary data ?
-            public bool disposed = false;          // Indicates if the connection has already been disposed
+            private readonly Thread PingThread;
+            private readonly byte[] buffer = new byte[512]; // Buffer to receive data
+            internal readonly TcpClient client; // The underlying Windows socket            
+            private readonly Server server; // The containing server
+            private bool binary; // Receives binary data ?
+            public bool disposed; // Indicates if the connection has already been disposed
             private DateTime lastPing = DateTime.Now;
-
-            public DateTime LastPingTime
-            {
-                get { return (lastPing); }
-            }
-
-            private Thread PingThread;
+            private byte[] packet = new byte[512]; // Buffer where received data is processed in packets
+            private int packetPos; // Current position in the packet buffer
 
             // C'tor
             internal Connection(Server server, TcpClient client)
             {
                 // Init fields
-                this.server = server; this.client = client;
+                this.server = server;
+                this.client = client;
                 //Start ping thread
                 PingThread = new Thread(DoPing);
                 lastPing = DateTime.Now;
                 PingThread.Start();
                 // Start reading
                 client.GetStream().BeginRead(buffer, 0, 512, Receive, null);
+            }
+
+            public DateTime LastPingTime
+            {
+                get { return (lastPing); }
             }
 
             public void PingReceived()
@@ -223,9 +230,10 @@ namespace Octgn.Server
                 {
                     lock (this)
                     {
-                        TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - lastPing.Ticks);
+                        var ts = new TimeSpan(DateTime.Now.Ticks - lastPing.Ticks);
                         if (ts.TotalSeconds > 20)
-                            server.Disconnected(this.client);//TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
+                            server.Disconnected(client);
+                        //TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
                         if (disposed) return;
                     }
                     Thread.Sleep(1000);
@@ -241,11 +249,14 @@ namespace Octgn.Server
                     int count = client.GetStream().EndRead(ar);
                     // 0 or less mean we were disconnected, or an error happened
                     if (count < 1)
-                    { Disconnected(); return; }
+                    {
+                        Disconnected();
+                        return;
+                    }
                     // Copy the new data in the packet buffer. Make the buffer larger if necessary.
                     if ((packetPos + count) > packet.Length)
                     {
-                        byte[] newPacket = new byte[packetPos + count];
+                        var newPacket = new byte[packetPos + count];
                         Array.Copy(packet, newPacket, packetPos);
                         packet = newPacket;
                     }
@@ -272,8 +283,8 @@ namespace Octgn.Server
                     // If an unexpected error arose during processing, log it
                     if (!(e is SocketException) && !(e is ObjectDisposedException))
                     {
-                        System.Diagnostics.Debug.WriteLine("Unexpected exception in Server.Receive:");
-                        System.Diagnostics.Debug.WriteLine(e.Message + Environment.NewLine + e.StackTrace);
+                        Debug.WriteLine("Unexpected exception in Server.Receive:");
+                        Debug.WriteLine(e.Message + Environment.NewLine + e.StackTrace);
                     }
                     // Disconnect the client
                     Disconnected();
@@ -288,11 +299,12 @@ namespace Octgn.Server
                 // Packet starts with size as a 32 bits int.
                 while (packetPos > 4)
                 {
-                    int length = packet[0] | (int)packet[1] << 8 | (int)packet[2] << 16 | (int)packet[3] << 24;
+                    int length = packet[0] | packet[1] << 8 | packet[2] << 16 | packet[3] << 24;
                     if (packetPos >= length)
                     {
                         // Copy the packet data in an array
-                        byte[] data = new byte[length - 4]; Array.Copy(packet, 4, data, 0, length - 4);
+                        var data = new byte[length - 4];
+                        Array.Copy(packet, 4, data, 0, length - 4);
 
 
                         // Lock the handler, because it is not thread-safe
@@ -317,7 +329,7 @@ namespace Octgn.Server
                     if (packet[i] == 0)
                     {
                         // Get the message as xml
-                        string xml = System.Text.Encoding.UTF8.GetString(packet, 0, i);
+                        string xml = Encoding.UTF8.GetString(packet, 0, i);
                         // Check if it's a request to switch to binary mode
                         if (xml == "<Binary />")
                         {
@@ -329,10 +341,11 @@ namespace Octgn.Server
                             lock (server.handler) server.handler.ReceiveMessage(xml, client, this);
                         }
                         // Adjust the packet position and contents
-                        count += packetPos - i - 1; packetPos = 0;
+                        count += packetPos - i - 1;
+                        packetPos = 0;
                         Array.Copy(packet, i + 1, packet, 0, count);
                         // Continue the loop
-                        i = -1; continue;
+                        i = -1;
                     }
                 }
                 // Ajust packet position
@@ -345,7 +358,7 @@ namespace Octgn.Server
                 // Lock the disposed field
                 lock (this)
                 {
-                    Console.WriteLine("Client Disconnected.");
+                    Console.WriteLine(Resource1.Connection_Disconnect_Client_Disconnected_);
                     // Quit if this client is already disposed
                     if (disposed) return;
                     // Mark as disposed
@@ -359,7 +372,8 @@ namespace Octgn.Server
                         client.Close();
                     }
                     catch
-                    { }
+                    {
+                    }
                 // Remove it from the list
                 lock (server.clients)
                     server.clients.Remove(this);
@@ -380,5 +394,7 @@ namespace Octgn.Server
                 }
             }
         }
+
+        #endregion
     }
 }

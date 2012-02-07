@@ -1,15 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Octgn.Play.Gui
 {
-    static class Selection
+    internal static class Selection
     {
-        private static List<Card> selected = new List<Card>(4);
+        private static readonly List<Card> selected = new List<Card>(4);
 
         public static Group Source { get; private set; }
+
+        public static IEnumerable<Card> Cards
+        {
+            get { return selected; }
+        }
 
         public static void Add(Card c)
         {
@@ -44,10 +52,14 @@ namespace Octgn.Play.Gui
         }
 
         public static bool IsEmpty()
-        { return selected.Count == 0; }
+        {
+            return selected.Count == 0;
+        }
 
         public static void ForEach(Action<Card> action)
-        { selected.ForEach(action); }
+        {
+            selected.ForEach(action);
+        }
 
         public static void ForEachModifiable(Action<Card> action)
         {
@@ -58,13 +70,13 @@ namespace Octgn.Play.Gui
         public static IEnumerable<CardControl> GetCardControls(GroupControl ctrl)
         {
             if (IsEmpty()) yield break;
-            var groupCards = ctrl.Group.Cards;
-            var generator = ctrl.GetItemContainerGenerator();
+            ObservableCollection<Card> groupCards = ctrl.Group.Cards;
+            ItemContainerGenerator generator = ctrl.GetItemContainerGenerator();
             for (int i = 0; i < groupCards.Count; ++i)
                 if (groupCards[i].Selected)
                 {
-                    var container = generator.ContainerFromIndex(i);
-                    var cardCtrl = (CardControl)System.Windows.Media.VisualTreeHelper.GetChild(container, 0);
+                    DependencyObject container = generator.ContainerFromIndex(i);
+                    var cardCtrl = (CardControl) VisualTreeHelper.GetChild(container, 0);
                     yield return cardCtrl;
                 }
         }
@@ -74,7 +86,7 @@ namespace Octgn.Play.Gui
             if (IsEmpty())
                 yield return empty;
             else
-                foreach (var cardCtrl in GetCardControls(ctrl))
+                foreach (CardControl cardCtrl in GetCardControls(ctrl))
                     yield return cardCtrl;
         }
 
@@ -84,14 +96,11 @@ namespace Octgn.Play.Gui
             return Enumerable.Repeat(card, 1);
         }
 
-        public static IEnumerable<Card> Cards
-        { get { return selected; } }
-
         public static void Do(Action<Card> action, Card card)
         {
             // Because some actions may modify the selection (which breaks the enumeration),
             // we make a local copy of the selection
-            var cards = ExtendToSelection(card).ToList();
+            List<Card> cards = ExtendToSelection(card).ToList();
             foreach (Card c in cards)
                 action(c);
         }

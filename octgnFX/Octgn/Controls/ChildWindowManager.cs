@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace Octgn.Controls
 {
@@ -9,9 +8,10 @@ namespace Octgn.Controls
 
         public void Show(ChildWindow wnd)
         {
-            var x = (ActualWidth - wnd.Width) / 2;
-            var y = (ActualHeight - wnd.Height) / 2;
-            SetLeft(wnd, x); SetTop(wnd, y);
+            double x = (ActualWidth - wnd.Width)/2;
+            double y = (ActualHeight - wnd.Height)/2;
+            SetLeft(wnd, x);
+            SetTop(wnd, y);
             Children.Add(wnd);
             Activate(wnd);
         }
@@ -25,9 +25,9 @@ namespace Octgn.Controls
         internal void Activate(ChildWindow wnd)
         {
             if (topWindow == wnd) return;
-            if (topWindow != null) topWindow.SetValue(Panel.ZIndexProperty, 0);
+            if (topWindow != null) topWindow.SetValue(ZIndexProperty, 0);
             topWindow = wnd;
-            wnd.SetValue(Panel.ZIndexProperty, 1);
+            wnd.SetValue(ZIndexProperty, 1);
         }
     }
 }

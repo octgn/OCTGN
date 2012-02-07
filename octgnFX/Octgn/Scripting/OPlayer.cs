@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Dynamic;
-using System.Linq.Expressions;
-using System.Runtime.Remoting.Lifetime;
 using System.Security;
+using Octgn.Play;
 
 namespace Octgn.Scripting
 {
-
     public class ScriptObject : MarshalByRefObject
     {
         [SecurityCritical]
@@ -22,16 +16,22 @@ namespace Octgn.Scripting
     [SecuritySafeCritical]
     public class OPlayer : MarshalByRefObject //, IDynamicMetaObjectProvider
     {
-        private Play.Player player;
+        private readonly Player player;
 
-        public OPlayer(Play.Player player)
-        { this.player = player; }
+        public OPlayer(Player player)
+        {
+            this.player = player;
+        }
 
         public string name
-        { get { return player.Name; } }
+        {
+            get { return player.Name; }
+        }
 
         public OCounter counters
-        { get { return new OCounter(player); } }
+        {
+            get { return new OCounter(player); }
+        }
 
         //[SecurityCritical]
         //public override object InitializeLifetimeService()

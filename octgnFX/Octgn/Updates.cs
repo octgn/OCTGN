@@ -3,6 +3,7 @@ using System.Deployment.Application;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using Octgn.Launcher;
 using Octgn.Properties;
 
 namespace Octgn
@@ -48,7 +49,7 @@ namespace Octgn
             //if (!ApplicationDeployment.IsNetworkDeployed) return;
 
             bool isFirstRun = !Settings.Default.IsUserConfigured;
-            Version ver = new Version(Settings.Default.PreviousVersion);
+            var ver = new Version(Settings.Default.PreviousVersion);
             if (ver == OctgnApp.OctgnVersion) return;
 
             if (!isFirstRun)
@@ -56,9 +57,9 @@ namespace Octgn
                 if (ver < new Version(0, 7, 3))
                 {
                     // Database is re-created
-                    var oldShutdownMode = Application.Current.ShutdownMode;
+                    ShutdownMode oldShutdownMode = Application.Current.ShutdownMode;
                     Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                    new Octgn.Launcher.UpgradeMessage().ShowDialog();
+                    new UpgradeMessage().ShowDialog();
                     Application.Current.ShutdownMode = oldShutdownMode;
                 }
 

@@ -4,16 +4,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Octgn.Data;
 
 namespace Octgn.Play.Dialogs
 {
     public partial class LimitedDialog : Window
     {
-        public static LimitedDialog Singleton { get; private set; }
-
-        public ObservableCollection<SelectedPack> Packs { get; set; }
-        public IEnumerable<Data.Set> Sets { get; set; }
-
         public LimitedDialog()
         {
             Singleton = this;
@@ -21,6 +17,11 @@ namespace Octgn.Play.Dialogs
             Sets = Database.GetAllSets();
             InitializeComponent();
         }
+
+        public static LimitedDialog Singleton { get; private set; }
+
+        public ObservableCollection<SelectedPack> Packs { get; set; }
+        public IEnumerable<Set> Sets { get; set; }
 
         protected override void OnClosed(EventArgs e)
         {
@@ -35,8 +36,8 @@ namespace Octgn.Play.Dialogs
             // I am creating lightweight "clones" of the pack, because the 
             // WPF ListBox doesn't like having multiple copies of the same 
             // instance and messes up selection
-            var pack = (Data.Pack)packsCombo.SelectedItem;
-            Packs.Add(new SelectedPack { Id = pack.Id, FullName = pack.FullName });
+            var pack = (Pack) packsCombo.SelectedItem;
+            Packs.Add(new SelectedPack {Id = pack.Id, FullName = pack.FullName});
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
@@ -46,8 +47,9 @@ namespace Octgn.Play.Dialogs
             if (Player.All.Any(p => p.Groups.Any(x => x.Count > 0)))
             {
                 if (MessageBoxResult.Yes ==
-                    MessageBox.Show("Some players have cards currently loaded.\n\nReset the game before starting limited game?",
-                      "Warning", MessageBoxButton.YesNo))
+                    MessageBox.Show(
+                        "Some players have cards currently loaded.\n\nReset the game before starting limited game?",
+                        "Warning", MessageBoxButton.YesNo))
                     Program.Client.Rpc.ResetReq();
             }
 
@@ -67,13 +69,17 @@ namespace Octgn.Play.Dialogs
         private void RemoveClicked(object sender, EventArgs e)
         {
             var btn = sender as Button;
-            Packs.Remove((SelectedPack)btn.DataContext);
+            if (btn != null) Packs.Remove((SelectedPack) btn.DataContext);
         }
+
+        #region Nested type: SelectedPack
 
         public class SelectedPack
         {
             public Guid Id { get; set; }
             public string FullName { get; set; }
         }
+
+        #endregion
     }
 }

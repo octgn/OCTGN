@@ -1,17 +1,13 @@
-<UserControl x:Class="Octgn.Play.Gui.PlayerControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:gui="clr-namespace:Octgn.Play.Gui"
-    xmlns:play="clr-namespace:Octgn.Play"
-    xmlns:ctrl="clr-namespace:Octgn.Controls"
-    > 
+<UserControl x:Class="Octgn.Play.Gui.PlayerControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui"
+             xmlns:play="clr-namespace:Octgn.Play" xmlns:ctrl="clr-namespace:Octgn.Controls">
 
-	<UserControl.Resources>
-		<CollectionViewSource x:Key="ExpandedGroups" Source="{Binding Groups}" Filter="IsExpandedPile" />
-		
-		<CollectionViewSource x:Key="CollapsedGroups" Source="{Binding Groups}" Filter="IsCollapsedPile" />
-	</UserControl.Resources>
-	
+  <UserControl.Resources>
+    <CollectionViewSource x:Key="ExpandedGroups" Source="{Binding Groups}" Filter="IsExpandedPile" />
+
+    <CollectionViewSource x:Key="CollapsedGroups" Source="{Binding Groups}" Filter="IsCollapsedPile" />
+  </UserControl.Resources>
+
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
@@ -20,18 +16,20 @@
     <Grid.ColumnDefinitions>
       <ColumnDefinition />
       <ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="Auto" />
     </Grid.ColumnDefinitions>
-        
+
     <ItemsControl ItemsSource="{Binding Path=Counters}" Grid.ColumnSpan="3" Focusable="False">
       <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate><WrapPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
       </ItemsControl.ItemsPanel>
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
             <ctrl:TextOrIcon Text="{Binding Name}" Icon="{Binding Definition.Icon}" />
-            <ctrl:NumericUpDown Value="{Binding Path=Value, Mode=TwoWay}" Minimum="-1000000" Maximum="1000000" 
+            <ctrl:NumericUpDown Value="{Binding Path=Value, Mode=TwoWay}" Minimum="-1000000" Maximum="1000000"
                                 Width="60" Margin="3,0,8,0" />
           </StackPanel>
         </DataTemplate>
@@ -40,31 +38,32 @@
 
     <gui:HandControl Grid.Row="1" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Top" />
 
-    <ItemsControl ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" Grid.Row="1" Grid.Column="1" Margin="0,3,0,3"  VerticalAlignment="Top" Focusable="False">
+    <ItemsControl ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" Grid.Row="1" Grid.Column="1"
+                  Margin="0,3,0,3" VerticalAlignment="Top" Focusable="False">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
           <StackPanel Orientation="Horizontal" />
         </ItemsPanelTemplate>
       </ItemsControl.ItemsPanel>
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<gui:PileControl Margin="3,0,0,0" />
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
-    		
-		<ItemsControl ItemsSource="{Binding Source={StaticResource CollapsedGroups}}" Grid.Row="1" Grid.Column="2" Margin="0,3,3,3" VerticalAlignment="Top" Focusable="False"
-									x:Name="collapsedList">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<WrapPanel Orientation="Vertical" />
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<gui:PileCollapsedControl Margin="3,0,0,3" />
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <gui:PileControl Margin="3,0,0,0" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <ItemsControl ItemsSource="{Binding Source={StaticResource CollapsedGroups}}" Grid.Row="1" Grid.Column="2"
+                  Margin="0,3,3,3" VerticalAlignment="Top" Focusable="False" x:Name="collapsedList">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Vertical" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <gui:PileCollapsedControl Margin="3,0,0,3" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
   </Grid>
 </UserControl>

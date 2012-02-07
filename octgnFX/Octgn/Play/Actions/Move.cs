@@ -3,35 +3,41 @@ using System.Diagnostics;
 
 namespace Octgn.Play.Actions
 {
-    class MoveCard : ActionBase
+    internal class MoveCard : ActionBase
     {
-        internal static event EventHandler Done;
-        internal static event EventHandler Doing;
-
-        internal Player who;
         internal Card card;
-        internal Group to, from;
+        internal bool faceUp;
+        internal Group from;
+        internal int idx;
+        internal Group to;
+        internal Player who;
         //        private int fromIdx;
         internal int x, y;
-        internal int idx;
-        internal bool faceUp;
 
         public MoveCard(Player who, Card card, Group to, int idx, bool faceUp)
         {
-            this.who = who; this.card = card;
-            this.to = to; this.from = card.Group;
+            this.who = who;
+            this.card = card;
+            this.to = to;
+            @from = card.Group;
             this.idx = idx;
             this.faceUp = faceUp;
         }
 
         public MoveCard(Player who, Card card, int x, int y, int idx, bool faceUp)
         {
-            this.who = who; this.card = card;
-            this.to = Program.Game.Table; this.from = card.Group;
-            this.x = x; this.y = y;
+            this.who = who;
+            this.card = card;
+            to = Program.Game.Table;
+            @from = card.Group;
+            this.x = x;
+            this.y = y;
             this.idx = idx;
             this.faceUp = faceUp;
         }
+
+        internal static event EventHandler Done;
+        internal static event EventHandler Doing;
 
         public override void Do()
         {
@@ -49,19 +55,21 @@ namespace Octgn.Play.Actions
                 {
                     card.SetFaceUp(faceUp);
                     card.SetOverrideGroupVisibility(false);
-                    card.X = x; card.Y = y;
+                    card.X = x;
+                    card.Y = y;
                     to.AddAt(card, idx);
                 }
             }
             else
             {
                 shouldLog = false;
-                card.X = x; card.Y = y;
+                card.X = x;
+                card.Y = y;
                 if (to.Cards.IndexOf(card) != idx)
                 {
                     if (to.Ordered)
                         Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
-                                "{0} reorders {1}", who, to);
+                                                 "{0} reorders {1}", who, to);
                     card.SetIndex(idx);
                 }
             }
@@ -70,12 +78,11 @@ namespace Octgn.Play.Actions
             // Prepare the message
             if (shouldLog)
                 Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
-                        "{0} moves '{1}' to {3}{2}",
-                                who, shouldSee ? card.Type : (object)"Card",
-                                to, to is Pile && idx > 0 && idx + 1 == to.Count ? "the bottom of " : "");
+                                         "{0} moves '{1}' to {3}{2}",
+                                         who, shouldSee ? card.Type : (object) "Card",
+                                         to, to is Pile && idx > 0 && idx + 1 == to.Count ? "the bottom of " : "");
 
             if (Done != null) Done(this, EventArgs.Empty);
         }
-
     }
 }

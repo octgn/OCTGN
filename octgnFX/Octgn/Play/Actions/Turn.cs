@@ -1,14 +1,18 @@
+using System.Diagnostics;
+
 namespace Octgn.Play.Actions
 {
-    sealed class Turn : ActionBase
+    internal sealed class Turn : ActionBase
     {
-        private Player who;
-        private Card card;
-        private bool up;
+        private readonly Card card;
+        private readonly bool up;
+        private readonly Player who;
 
         public Turn(Player who, Card card, bool up)
         {
-            this.who = who; this.card = card; this.up = up;
+            this.who = who;
+            this.card = card;
+            this.up = up;
         }
 
         public override void Do()
@@ -16,7 +20,8 @@ namespace Octgn.Play.Actions
             base.Do();
             card.SetFaceUp(up);
             if (up) card.Reveal();
-            Program.Trace.TraceEvent(System.Diagnostics.TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} turns '{1}' face {2}", who, card, up ? "up" : "down");
+            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
+                                     "{0} turns '{1}' face {2}", who, card, up ? "up" : "down");
 
             // Turning an aliased card face up will change its id,
             // which can create bugs if one tries to execute other actions using its current id.

@@ -1,148 +1,87 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using Google.GData.Client;
-using Skylabs.Net;
-using Skylabs.Net.Sockets;
-using System.Diagnostics;
-using Skylabs.Lobby.Threading;
+using Octgn.Data;
 using Skylabs.Lobby.Sockets;
+using Skylabs.Lobby.Threading;
+using Skylabs.Net;
 
 namespace Skylabs.Lobby
 {
-    public enum LoginResult { Success, Failure, Banned, WaitingForResponse };
+    public enum LoginResult
+    {
+        Success,
+        Failure,
+        Banned,
+        WaitingForResponse
+    };
 
-    public enum DataRecType { FriendList, OnlineList, UserCustomStatus, ServerMessage };
+    public enum DataRecType
+    {
+        FriendList,
+        OnlineList,
+        UserCustomStatus,
+        ServerMessage
+    };
 
     public class LobbyClient
     {
-        public delegate void LoginFinished(LoginResult success, DateTime banEnd, string message);
-        public delegate void LoginProgressUpdate(string message);
-        public delegate void HandleCaptcha(string fullurl, string imageurl);
+        #region Delegates
+
         public delegate void DataRecieved(DataRecType type, object e);
-        public delegate void UserStatusChanged(UserStatus eve, User u);
+
         public delegate void FriendRequest(User u);
-        public delegate void SocketMessageResult(SocketMessage sm);
+
         public delegate void GameHostEvent(HostedGame g);
-        public event EventHandler OnDisconnect;
+
+        public delegate void HandleCaptcha(string fullurl, string imageurl);
+
+        public delegate void LoginFinished(LoginResult success, DateTime banEnd, string message);
+
+        public delegate void LoginProgressUpdate(string message);
+
+        public delegate void SocketMessageResult(SocketMessage sm);
+
+        public delegate void UserStatusChanged(UserStatus eve, User u);
+
+        #endregion
 
         /// <summary>
-        /// Kind of a generic event whenever data is received. Check DataRecType for data that triggers this.
-        /// You can add more to handle other events as well.
+        ///   Meh, failed attempt for Asyncronus callbacks. Don't delete it, it gets used, but still.
         /// </summary>
-        public event DataRecieved OnDataRecieved;
-        /// <summary>
-        /// This happens when there is a UserStatus change of any type, be it DisplayName, Status, or CustomStatus
-        /// It's best to ignore UserStatus, and just pull the data from User.
-        /// </summary>
-        public event UserStatusChanged OnUserStatusChanged;
-        /// <summary>
-        /// Happens when we receive a friend request.
-        /// </summary>
-        public event FriendRequest OnFriendRequest;
-        /// <summary>
-        /// When google requires a Captcha, this gets called.
-        /// </summary>
-        public event HandleCaptcha OnCaptchaRequired;
-        /// <summary>
-        /// When a game has a hosting event, this gets called. The three are Game Hosting and ready for players, game in progress, and game done.
-        /// </summary>
-        public event GameHostEvent OnGameHostEvent;
+        private readonly Dictionary<string, SocketMessageResult> Callbacks;
 
+        private readonly SkySocket Socket;
+        private readonly object friendLocker = new object();
+
+        private readonly object gameLocker = new object();
+        private readonly object noteLocker = new object();
 
         /// <summary>
-        /// A list of Hosted games
-        /// </summary>
-        private List<HostedGame> Games { get; set; }
-        private object gameLocker = new object();
-
-        public bool Connected
-        {
-            get
-            {
-                if (Socket != null)
-                {
-                    return Socket.Connected;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Meh, failed attempt for Asyncronus callbacks. Don't delete it, it gets used, but still.
-        /// </summary>
-        private Dictionary<string, SocketMessageResult> Callbacks;
-
-        /// <summary>
-        /// This handles all chatting stuff.
-        /// </summary>
-        public Chatting Chatting { get; set; }
-
-        /// <summary>
-        /// This is the current logged in user.
-        /// </summary>
-        public User Me { get; private set; }
-
-        private LoginFinished _onLoginFinished;
-
-        private string _mCaptchaToken = "";
-
-        /// <summary>
-        /// Assembly version of the LobbySoftware I think.
+        ///   Assembly version of the LobbySoftware I think.
         /// </summary>
         public Version Version = Assembly.GetCallingAssembly().GetName().Version;
 
-        /// <summary>
-        /// List of friends
-        /// </summary>
-        private List<User> FriendList { get; set; }
-        private object friendLocker = new object();
-        /// <summary>
-        /// List of Notifications? I don't know offhand
-        /// </summary>
-        //TODO Figure out what this is for
-        private List<Notification> Notifications { get; set; }
-        private object noteLocker = new object();
-        /// <summary>
-        /// Who knows
-        /// </summary>
-        public int CurrentHostedGamePort { get; set; }
+        private bool _didCallStop;
+        private string _mCaptchaToken = "";
+        private int _nextNoteId;
+        private LoginFinished _onLoginFinished;
 
-        // private bool _sentEndMessage; // not used right now
-
-        private bool _didCallStop = false;
-        private int _nextNoteId = 0;
-        private SkySocket Socket;
         public LobbyClient()
         {
             FriendList = new List<User>();
             Notifications = new List<Notification>();
             Callbacks = new Dictionary<string, SocketMessageResult>();
             Games = new List<HostedGame>();
-            Chatting = new Lobby.Chatting(this);
+            Chatting = new Chatting(this);
             Socket = new SkySocket();
-            Socket.OnMessageReceived += new SkySocket.MessageReceived(this.OnMessageReceived);
-            Socket.OnConnectionClosed += new SkySocket.ConnectionClosed(Socket_OnConnectionClosed);
-        }
-        public bool Connect(string host, int port)
-        {
-            return Socket.Connect(host, port);
-        }
-        void Socket_OnConnectionClosed(SkySocket socket)
-        {
-            if (OnDisconnect != null)
-            {
-                OnDisconnect.BeginInvoke(null, null, null, null);
-            }
-            Socket.Dispose();
+            Socket.OnMessageReceived += OnMessageReceived;
+            Socket.OnConnectionClosed += Socket_OnConnectionClosed;
         }
 
         public LobbyClient(SkySocket c)
@@ -153,8 +92,95 @@ namespace Skylabs.Lobby
             Games = new List<HostedGame>();
             Socket = c;
         }
+
         /// <summary>
-        /// Disconnect cleanly
+        ///   A list of Hosted games
+        /// </summary>
+        private List<HostedGame> Games { get; set; }
+
+        public bool Connected
+        {
+            get
+            {
+                if (Socket != null)
+                {
+                    return Socket.Connected;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        ///   This handles all chatting stuff.
+        /// </summary>
+        public Chatting Chatting { get; set; }
+
+        /// <summary>
+        ///   This is the current logged in user.
+        /// </summary>
+        public User Me { get; private set; }
+
+        /// <summary>
+        ///   List of friends
+        /// </summary>
+        private List<User> FriendList { get; set; }
+
+        /// <summary>
+        ///   List of Notifications? I don't know offhand
+        /// </summary>
+        //TODO Figure out what this is for
+        private List<Notification> Notifications { get; set; }
+
+        /// <summary>
+        ///   Who knows
+        /// </summary>
+        public int CurrentHostedGamePort { get; set; }
+
+        public event EventHandler OnDisconnect;
+
+        /// <summary>
+        ///   Kind of a generic event whenever data is received. Check DataRecType for data that triggers this. You can add more to handle other events as well.
+        /// </summary>
+        public event DataRecieved OnDataRecieved;
+
+        /// <summary>
+        ///   This happens when there is a UserStatus change of any type, be it DisplayName, Status, or CustomStatus It's best to ignore UserStatus, and just pull the data from User.
+        /// </summary>
+        public event UserStatusChanged OnUserStatusChanged;
+
+        /// <summary>
+        ///   Happens when we receive a friend request.
+        /// </summary>
+        public event FriendRequest OnFriendRequest;
+
+        /// <summary>
+        ///   When google requires a Captcha, this gets called.
+        /// </summary>
+        public event HandleCaptcha OnCaptchaRequired;
+
+        /// <summary>
+        ///   When a game has a hosting event, this gets called. The three are Game Hosting and ready for players, game in progress, and game done.
+        /// </summary>
+        public event GameHostEvent OnGameHostEvent;
+
+        // private bool _sentEndMessage; // not used right now
+
+        public bool Connect(string host, int port)
+        {
+            return Socket.Connect(host, port);
+        }
+
+        private void Socket_OnConnectionClosed(SkySocket socket)
+        {
+            if (OnDisconnect != null)
+            {
+                OnDisconnect.BeginInvoke(null, null, null, null);
+            }
+            Socket.Dispose();
+        }
+
+        /// <summary>
+        ///   Disconnect cleanly
         /// </summary>
         public void Stop()
         {
@@ -165,22 +191,24 @@ namespace Skylabs.Lobby
                 Socket.Stop();
             }
         }
+
         public void WriteMessage(SocketMessage sm)
         {
             Socket.WriteMessage(sm);
         }
+
         /// <summary>
-        /// Start hosting a game.
+        ///   Start hosting a game.
         /// </summary>
-        /// <param name="callback">Callback for when the server talks back</param>
-        /// <param name="game">Game</param>
-        /// <param name="gamename">Name of the game</param>
-        /// <param name="password">Password</param>
-        public void BeginHostGame(SocketMessageResult callback, Octgn.Data.Game game, string gamename, string password)
+        /// <param name="callback"> Callback for when the server talks back </param>
+        /// <param name="game"> Game </param>
+        /// <param name="gamename"> Name of the game </param>
+        /// <param name="password"> Password </param>
+        public void BeginHostGame(SocketMessageResult callback, Game game, string gamename, string password)
         {
             Callbacks.Clear();
             Callbacks.Add("hostgameresponse", callback);
-            SocketMessage sm = new SocketMessage("hostgame");
+            var sm = new SocketMessage("hostgame");
             sm.AddData("game", game.Id);
             sm.AddData("version", game.Version);
             sm.AddData("name", gamename);
@@ -232,96 +260,104 @@ namespace Skylabs.Lobby
                 return null;
             }
         }
+
         /// <summary>
-        /// This gets called when the hoster of the game clicks 'Start game'
+        ///   This gets called when the hoster of the game clicks 'Start game'
         /// </summary>
         public void HostedGameStarted()
         {
             if (CurrentHostedGamePort != -1)
             {
-                SocketMessage sm = new SocketMessage("gamestarted");
+                var sm = new SocketMessage("gamestarted");
                 sm.AddData("port", CurrentHostedGamePort);
                 WriteMessage(sm);
             }
         }
+
         /// <summary>
-        /// Send a friend request to an e-mail
+        ///   Send a friend request to an e-mail
         /// </summary>
-        /// <param name="email">E-mail of the friend</param>
+        /// <param name="email"> E-mail of the friend </param>
         public void AddFriend(string email)
         {
-            SocketMessage sm = new SocketMessage("addfriend");
+            var sm = new SocketMessage("addfriend");
             sm.AddData("email", email);
             WriteMessage(sm);
         }
 
         /// <summary>
-        /// Login here
+        ///   Login here
         /// </summary>
-        /// <param name="onFinish">Delegate for when Login is done.</param>
-        /// <param name="email">Users e-mail address</param>
-        /// <param name="password">Password</param>
-        /// <param name="captcha">Captcha string if required</param>
-        /// <param name="status">Status to log in as</param>
-        public void Login(LoginFinished onFinish, LoginProgressUpdate onUpdate, string email, string password, string captcha, UserStatus status)
+        /// <param name="onFinish"> Delegate for when Login is done. </param>
+        /// <param name="onUpdate"> </param>
+        /// <param name="email"> Users e-mail address </param>
+        /// <param name="password"> Password </param>
+        /// <param name="captcha"> Captcha string if required </param>
+        /// <param name="status"> Status to log in as </param>
+        public void Login(LoginFinished onFinish, LoginProgressUpdate onUpdate, string email, string password,
+                          string captcha, UserStatus status)
         {
             if (Socket.Connected)
             {
-                Thread t = new Thread(() =>
-                                          {
-                                              //TODO Need to add a method to handle 2-step signin.
-                                              _onLoginFinished = onFinish;
-                                              String appName = "skylabs-LobbyClient-" + Version;
-                                              Service s = new Service("code", appName);
-                                              s.setUserCredentials(email, password);
-                                              if (captcha != null && _mCaptchaToken != null)
-                                              {
-                                                  onUpdate.Invoke("Verifying captcha");
-                                                  if (!String.IsNullOrWhiteSpace(captcha) || !String.IsNullOrWhiteSpace(_mCaptchaToken))
-                                                  {
-                                                      s.Credentials.CaptchaToken = _mCaptchaToken;
-                                                      s.Credentials.CaptchaAnswer = captcha;
-                                                  }
-                                              }
-                                              try
-                                              {
-                                                  Debug.WriteLine("Querying Google...");
-                                                  onUpdate.Invoke("Logging into Google...");
-                                                  string ret = s.QueryClientLoginToken();
-                                                  onUpdate.Invoke("Sending login token to Server...");
-                                                  Debug.WriteLine("Received login token.");
-                                                  SocketMessage sm = new SocketMessage("login");
-                                                  sm.AddData("email", email);
-                                                  sm.AddData("token", ret);
-                                                  sm.AddData("status", status);
-                                                  WriteMessage(sm);
-                                                  onUpdate.Invoke("Waiting for server response...");
-                                              }
-                                              catch (CaptchaRequiredException ce)
-                                              {
-                                                  _mCaptchaToken = ce.Token;
-                                                  if (OnCaptchaRequired != null) OnCaptchaRequired.Invoke("https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
-                                              }
-                                              catch (AuthenticationException re)
-                                              {
-                                                  string cu = (string)re.Data["CaptchaUrl"];
-                                                  onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
-                                              }
-                                              catch (WebException)
-                                              {
-                                                  onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
-                                              }
-                                              onFinish.Invoke(LoginResult.WaitingForResponse, DateTime.Now, "");
-                                          });
+                var t = new Thread(() =>
+                                       {
+                                           //TODO Need to add a method to handle 2-step signin.
+                                           _onLoginFinished = onFinish;
+                                           String appName = "skylabs-LobbyClient-" + Version;
+                                           var s = new Service("code", appName);
+                                           s.setUserCredentials(email, password);
+                                           if (captcha != null && _mCaptchaToken != null)
+                                           {
+                                               onUpdate.Invoke("Verifying captcha");
+                                               if (!String.IsNullOrWhiteSpace(captcha) ||
+                                                   !String.IsNullOrWhiteSpace(_mCaptchaToken))
+                                               {
+                                                   s.Credentials.CaptchaToken = _mCaptchaToken;
+                                                   s.Credentials.CaptchaAnswer = captcha;
+                                               }
+                                           }
+                                           try
+                                           {
+                                               Debug.WriteLine("Querying Google...");
+                                               onUpdate.Invoke("Logging into Google...");
+                                               string ret = s.QueryClientLoginToken();
+                                               onUpdate.Invoke("Sending login token to Server...");
+                                               Debug.WriteLine("Received login token.");
+                                               var sm = new SocketMessage("login");
+                                               sm.AddData("email", email);
+                                               sm.AddData("token", ret);
+                                               sm.AddData("status", status);
+                                               WriteMessage(sm);
+                                               onUpdate.Invoke("Waiting for server response...");
+                                           }
+                                           catch (CaptchaRequiredException ce)
+                                           {
+                                               _mCaptchaToken = ce.Token;
+                                               if (OnCaptchaRequired != null)
+                                                   OnCaptchaRequired.Invoke(
+                                                       "https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
+                                           }
+                                           catch (AuthenticationException re)
+                                           {
+                                               // var cu = (string) re.Data["CaptchaUrl"]; // unused
+                                               onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
+                                           }
+                                           catch (WebException)
+                                           {
+                                               onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
+                                           }
+                                           onFinish.Invoke(LoginResult.WaitingForResponse, DateTime.Now, "");
+                                       });
                 t.Start();
             }
         }
 
         /// <summary>
-        /// Whenever a SkySocket gets a message, it goes here for processing.
+        ///   Whenever a SkySocket gets a message, it goes here for processing.
         /// </summary>
-        /// <param name="sm">SocketMessage</param>
-        private void OnMessageReceived(SkySocket ss, Net.SocketMessage sm)
+        /// <param name="ss"> SkySocket </param>
+        /// <param name="sm"> SocketMessage </param>
+        private void OnMessageReceived(SkySocket ss, SocketMessage sm)
         {
             User u;
             if (Callbacks.ContainsKey(sm.Header.ToLower()))
@@ -343,7 +379,7 @@ namespace Skylabs.Lobby
                     }
                 case "loginsuccess":
                     Trace.TraceInformation("Got LoginSuccess");
-                    Me = (User)sm["me"];
+                    Me = (User) sm["me"];
                     if (Me != null)
                     {
                         _onLoginFinished.Invoke(LoginResult.Success, DateTime.Now, "");
@@ -358,7 +394,8 @@ namespace Skylabs.Lobby
                     break;
                 case "loginfailed":
                     Trace.TraceInformation("Got LoginFailed");
-                    _onLoginFinished.Invoke(LoginResult.Failure, DateTime.Now, (sm["message"] != null) ? (string)sm["message"] : "");
+                    _onLoginFinished.Invoke(LoginResult.Failure, DateTime.Now,
+                                            (sm["message"] != null) ? (string) sm["message"] : "");
                     break;
                 case "friends":
                     lock (friendLocker)
@@ -366,32 +403,32 @@ namespace Skylabs.Lobby
                         FriendList = new List<User>();
                         foreach (NameValuePair p in sm.Data)
                         {
-                            FriendList.Add((User)p.Value);
+                            FriendList.Add((User) p.Value);
                         }
                         if (OnDataRecieved != null)
                         {
                             foreach (DataRecieved d in OnDataRecieved.GetInvocationList())
-                                d.BeginInvoke(DataRecType.FriendList, null, new AsyncCallback((IAsyncResult r) => { }), null);
+                                d.BeginInvoke(DataRecType.FriendList, null, r => { }, null);
                         }
                     }
                     break;
                 case "servermessage":
                     {
-                        string mess = sm["message"] as string;
+                        var mess = sm["message"] as string;
                         if (mess != null && OnDataRecieved != null)
                         {
                             foreach (DataRecieved d in OnDataRecieved.GetInvocationList())
-                                d.BeginInvoke(DataRecType.ServerMessage, mess, new AsyncCallback((IAsyncResult r) => { }), null);
+                                d.BeginInvoke(DataRecType.ServerMessage, mess, r => { }, null);
                         }
                         break;
                     }
                 case "friendrequest":
                     lock (noteLocker)
                     {
-                        u = (User)sm.Data[0].Value;
+                        u = (User) sm.Data[0].Value;
                         foreach (Notification n in Notifications)
                         {
-                            FriendRequestNotification fr = n as FriendRequestNotification;
+                            var fr = n as FriendRequestNotification;
                             if (fr != null)
                             {
                                 if (fr.User.Uid == u.Uid)
@@ -402,13 +439,13 @@ namespace Skylabs.Lobby
                         _nextNoteId++;
                         if (OnFriendRequest != null)
                             foreach (FriendRequest fr in OnFriendRequest.GetInvocationList())
-                                fr.BeginInvoke(u, new AsyncCallback((IAsyncResult r) => { }), null);
+                                fr.BeginInvoke(u, r => { }, null);
                     }
                     break;
                 case "status":
                     lock (friendLocker)
                     {
-                        u = (User)sm.Data[0].Value;
+                        u = (User) sm.Data[0].Value;
                         User f = FriendList.FirstOrDefault(us => us.Equals(u));
                         if (f != null)
                         {
@@ -424,17 +461,17 @@ namespace Skylabs.Lobby
                         }
                         if (OnUserStatusChanged != null)
                             foreach (UserStatusChanged usc in OnUserStatusChanged.GetInvocationList())
-                                usc.BeginInvoke(u.Status, u, new AsyncCallback((IAsyncResult r) => { }), null);
+                                usc.BeginInvoke(u.Status, u, r => { }, null);
                         if (OnDataRecieved != null)
                             foreach (DataRecieved dr in OnDataRecieved.GetInvocationList())
-                                dr.BeginInvoke(DataRecType.FriendList, null, new AsyncCallback((IAsyncResult r) => { }), null);
+                                dr.BeginInvoke(DataRecType.FriendList, null, r => { }, null);
                     }
                     break;
                 case "customstatus":
                     lock (friendLocker)
                     {
-                        u = (User)sm["user"];
-                        string s = (string)sm["status"];
+                        u = (User) sm["user"];
+                        var s = (string) sm["status"];
                         if (u != null && s != null)
                         {
                             if (u.Equals(Me))
@@ -446,26 +483,26 @@ namespace Skylabs.Lobby
                                     FriendList[i].CustomStatus = s;
                                 if (OnDataRecieved != null)
                                     foreach (DataRecieved dr in OnDataRecieved.GetInvocationList())
-                                        dr.BeginInvoke(DataRecType.UserCustomStatus, u, new AsyncCallback((IAsyncResult r) => { }), null);
+                                        dr.BeginInvoke(DataRecType.UserCustomStatus, u, r => { }, null);
                             }
                         }
                     }
                     break;
                 case "banned":
-                    int time = (int)sm["end"];
+                    var time = (int) sm["end"];
 
-                    _onLoginFinished.Invoke(LoginResult.Banned, Skylabs.ValueConverters.FromPhpTime(time), "");
+                    _onLoginFinished.Invoke(LoginResult.Banned, ValueConverters.FromPhpTime(time), "");
                     break;
                 case "gamelist":
                     {
                         lock (gameLocker)
                         {
-                            List<HostedGame> games = sm["list"] as List<HostedGame>;
+                            var games = sm["list"] as List<HostedGame>;
                             Games = games;
-                            if (games.Count > 0)
+                            if (games != null && games.Count > 0)
                                 if (OnGameHostEvent != null)
                                     foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
-                                        ge.BeginInvoke(Games[0], new AsyncCallback((IAsyncResult r) => { }), null);
+                                        ge.BeginInvoke(Games[0], r => { }, null);
                         }
                         break;
                     }
@@ -473,7 +510,7 @@ namespace Skylabs.Lobby
                     {
                         lock (gameLocker)
                         {
-                            HostedGame gm = new HostedGame(sm);
+                            var gm = new HostedGame(sm);
                             Games.Add(gm);
                             if (OnGameHostEvent != null)
                                 LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
@@ -484,7 +521,7 @@ namespace Skylabs.Lobby
                     {
                         lock (gameLocker)
                         {
-                            int p = (int)sm["port"];
+                            var p = (int) sm["port"];
 
                             HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
@@ -500,7 +537,7 @@ namespace Skylabs.Lobby
                     {
                         lock (gameLocker)
                         {
-                            int p = (int)sm["port"];
+                            var p = (int) sm["port"];
 
                             HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
@@ -515,67 +552,69 @@ namespace Skylabs.Lobby
                     }
                 case "userjoinedchatroom":
                     {
-                        User us = (User)sm["user"];
-                        List<User> allusers = (List<User>)sm["allusers"];
-                        long? id = (long?)sm["roomid"];
+                        var us = (User) sm["user"];
+                        var allusers = (List<User>) sm["allusers"];
+                        var id = (long?) sm["roomid"];
                         if (us == null || allusers == null || id == null)
                             return;
-                        long id2 = (long)id;
+                        var id2 = (long) id;
                         Chatting.UserJoinedChat(id2, us, allusers);
                         break;
                     }
                 case "userleftchatroom":
                     {
-                        User us = (User)sm["user"];
-                        long? id = (long?)sm["roomid"];
+                        var us = (User) sm["user"];
+                        var id = (long?) sm["roomid"];
                         if (us == null || id == null)
                             return;
-                        long id2 = (long)id;
+                        var id2 = (long) id;
                         Chatting.UserLeftChat(id2, us);
                         break;
                     }
                 case "chatmessage":
                     {
-                        User us = (User)sm["user"];
-                        long? id = (long?)sm["roomid"];
-                        string mess = (string)sm["mess"];
+                        var us = (User) sm["user"];
+                        var id = (long?) sm["roomid"];
+                        var mess = (string) sm["mess"];
                         if (us == null || id == null || mess == null)
                             return;
-                        long id2 = (long)id;
+                        var id2 = (long) id;
                         Chatting.RecieveChatMessage(id2, us, mess);
                         break;
                     }
-
             }
         }
+
         /// <summary>
-        /// Sets the users status. Don't ever set to Offline, use Invisible instead.
+        ///   Sets the users status. Don't ever set to Offline, use Invisible instead.
         /// </summary>
-        /// <param name="s">Users status</param>
+        /// <param name="s"> Users status </param>
         public void SetStatus(UserStatus s)
         {
-            SocketMessage sm = new SocketMessage("status");
+            var sm = new SocketMessage("status");
             sm.AddData("status", s);
             WriteMessage(sm);
             Me.Status = s;
         }
+
         /// <summary>
-        /// Sets the users custom status.
+        ///   Sets the users custom status.
         /// </summary>
-        /// <param name="CustomStatus"></param>
+        /// <param name="CustomStatus"> </param>
         public void SetCustomStatus(string CustomStatus)
         {
-            SocketMessage sm = new SocketMessage("customstatus");
+            var sm = new SocketMessage("customstatus");
             sm.AddData("customstatus", CustomStatus);
             WriteMessage(sm);
         }
+
         /// <summary>
-        /// Sets the users display name
+        ///   Sets the users display name
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="name"> </param>
         public void SetDisplayName(string name)
         {
-            SocketMessage sm = new SocketMessage("displayname");
+            var sm = new SocketMessage("displayname");
             sm.AddData("name", name);
             WriteMessage(sm);
         }

@@ -9,12 +9,21 @@ namespace Skylabs.ConsoleHelper
 {
     public class ConsoleEventLog
     {
-        public delegate void EventEventDelegate(ConsoleEvent e);
-        public static event EventEventDelegate EAddEvent = null;
+        #region Delegates
 
-        public static List<ConsoleEvent> Events { get { return _events; } set { _events = value; } }
+        public delegate void EventEventDelegate(ConsoleEvent e);
+
+        #endregion
 
         private static List<ConsoleEvent> _events = new List<ConsoleEvent>();
+
+        public static List<ConsoleEvent> Events
+        {
+            get { return _events; }
+            set { _events = value; }
+        }
+
+        public static event EventEventDelegate EAddEvent = null;
 
         public static void AddEvent(ConsoleEvent con, Boolean writeToConsole)
         {
@@ -34,8 +43,9 @@ namespace Skylabs.ConsoleHelper
             {
                 using (Stream stream = File.Open(filename, FileMode.Create, FileAccess.ReadWrite, FileShare.Write))
                 {
-                    XmlTextWriter xmlTextWriter = new XmlTextWriter(stream, Encoding.ASCII) { Formatting = Formatting.Indented, Indentation = 4 };
-                    List<Type> cTypes = new List<Type>();
+                    var xmlTextWriter = new XmlTextWriter(stream, Encoding.ASCII)
+                                            {Formatting = Formatting.Indented, Indentation = 4};
+                    var cTypes = new List<Type>();
                     foreach (ConsoleEvent c in Events)
                     {
                         bool foundit = false;
@@ -50,7 +60,8 @@ namespace Skylabs.ConsoleHelper
                         if (!foundit)
                             cTypes.Add(c.GetType());
                     }
-                    XmlSerializer xs = new XmlSerializer(Events.GetType(), new XmlAttributeOverrides(), cTypes.ToArray(), new XmlRootAttribute("Events"), "Skylabs.olobby");
+                    var xs = new XmlSerializer(Events.GetType(), new XmlAttributeOverrides(), cTypes.ToArray(),
+                                               new XmlRootAttribute("Events"), "Skylabs.olobby");
                     xs.Serialize(xmlTextWriter, Events);
                 }
             }

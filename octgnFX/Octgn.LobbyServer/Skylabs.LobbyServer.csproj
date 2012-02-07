@@ -151,7 +151,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Google.GData.Client, Version=1.9.0.0, Culture=neutral, PublicKeyToken=04a59ca9b0273830, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Google.GData.Client.dll</HintPath>
+      <HintPath>..\Lib\Google.GData.Client.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic">
       <Private>True</Private>
