@@ -116,7 +116,6 @@ namespace Octgn.Controls
         private void StartDragWindow(MouseEventArgs e)
         {
             GiveFeedbackEventHandler feedbackhandler = DragSource_GiveFeedback;
-            ;
             GiveFeedback += feedbackhandler;
             QueryContinueDragEventHandler queryhandler = DragSource_QueryContinueDrag;
             QueryContinueDrag += queryhandler;
@@ -156,12 +155,16 @@ namespace Octgn.Controls
                                                          //TODO assert that we can do this.. 
                                                          PresentationSource windowSource =
                                                              PresentationSource.FromVisual(_dragdropWindow);
-                                                         IntPtr handle = ((HwndSource) windowSource).Handle;
+                                                         var hwndSource = (HwndSource) windowSource;
+                                                         if (hwndSource != null)
+                                                         {
+                                                             IntPtr handle = hwndSource.Handle;
 
-                                                         Int32 styles = Win32.GetWindowLong(handle, Win32.GWL_EXSTYLE);
-                                                         Win32.SetWindowLong(handle, Win32.GWL_EXSTYLE,
-                                                                             styles | Win32.WS_EX_LAYERED |
-                                                                             Win32.WS_EX_TRANSPARENT);
+                                                             Int32 styles = Win32.GetWindowLong(handle, Win32.GWL_EXSTYLE);
+                                                             Win32.SetWindowLong(handle, Win32.GWL_EXSTYLE,
+                                                                                 styles | Win32.WS_EX_LAYERED |
+                                                                                 Win32.WS_EX_TRANSPARENT);
+                                                         }
                                                      };
 
             var r = new Rectangle();
@@ -204,10 +207,8 @@ namespace Octgn.Controls
 
             if (DragScope == null)
             {
-                try
-                {
-                    //This loads the cursor from a stream .. 
-                    /*
+                //This loads the cursor from a stream .. 
+                /*
                     if (_allOpsCursor == null)
                     {
                         using (Stream cursorStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SimplestDragDrop.DDIcon.cur"))
@@ -219,11 +220,7 @@ namespace Octgn.Controls
                     
                     e.UseDefaultCursors = false;
                      * */
-                    e.Handled = true;
-                }
-                finally
-                {
-                }
+                e.Handled = true;
             }
             else // This code is called when we are using a custom cursor  (either a window or adorner ) 
             {

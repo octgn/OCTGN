@@ -62,7 +62,8 @@ namespace Octgn.Play.Gui
                 bottomTriangle.Visibility = clipping.Contains(testPt) ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            (Parent as AdornerLayer).Update();
+            var adornerLayer = Parent as AdornerLayer;
+            if (adornerLayer != null) adornerLayer.Update();
         }
 
         protected override Visual GetVisualChild(int index)

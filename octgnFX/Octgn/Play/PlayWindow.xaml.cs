@@ -96,7 +96,7 @@ namespace Octgn.Play
         {
             var textBlock = (TextBlock) sender;
             var player = textBlock.DataContext as Player;
-            if (player.IsGlobalPlayer)
+            if (player != null && player.IsGlobalPlayer)
             {
                 textBlock.Visibility = Visibility.Collapsed;
                 return;
@@ -115,13 +115,16 @@ namespace Octgn.Play
             format = Regex.Replace(format, @"{#([^}]*)}", delegate(Match match)
                                                               {
                                                                   string name = match.Groups[1].Value;
-                                                                  Counter counter =
-                                                                      player.Counters.FirstOrDefault(c => c.Name == name);
-                                                                  if (counter != null)
+                                                                  if (player != null)
                                                                   {
-                                                                      multi.Bindings.Add(new Binding("Value")
-                                                                                             {Source = counter});
-                                                                      return "{" + placeholder++ + "}";
+                                                                      Counter counter =
+                                                                          player.Counters.FirstOrDefault(c => c.Name == name);
+                                                                      if (counter != null)
+                                                                      {
+                                                                          multi.Bindings.Add(new Binding("Value")
+                                                                                                 {Source = counter});
+                                                                          return "{" + placeholder++ + "}";
+                                                                      }
                                                                   }
                                                                   Group group =
                                                                       player.IndexedGroups.FirstOrDefault(
@@ -349,8 +352,8 @@ namespace Octgn.Play
                 Program.Client.Rpc.NextTurn(targetPlayer);
             else
             {
-                Program.Client.Rpc.StopTurnReq(Program.Game.TurnNumber, btn.IsChecked.Value);
-                Program.Game.StopTurn = btn.IsChecked.Value;
+                Program.Client.Rpc.StopTurnReq(Program.Game.TurnNumber, btn.IsChecked != null && btn.IsChecked.Value);
+                if (btn.IsChecked != null) Program.Game.StopTurn = btn.IsChecked.Value;
             }
         }
 
@@ -415,7 +418,7 @@ namespace Octgn.Play
             var dlg = backstage.Child as PickCardsDialog;
             try
             {
-                dlg.LimitedDeck.Save(sfd.FileName);
+                if (dlg != null) dlg.LimitedDeck.Save(sfd.FileName);
             }
             catch (Exception ex)
             {
@@ -427,7 +430,7 @@ namespace Octgn.Play
         protected void LimitedOkClicked(object sender, EventArgs e)
         {
             var dlg = backstage.Child as PickCardsDialog;
-            Program.Game.LoadDeck(dlg.LimitedDeck);
+            if (dlg != null) Program.Game.LoadDeck(dlg.LimitedDeck);
             HideBackstage();
         }
 

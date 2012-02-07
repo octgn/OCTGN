@@ -14,12 +14,10 @@ namespace Octgn
             RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN");
             if (key == null)
             {
-                key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\OCTGN");
+                Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\OCTGN");
                 return null;
             }
-            if (key != null)
-                return (string) key.GetValue(valName);
-            else return null;
+            return (string) key.GetValue(valName);
         }
 
         /// <summary>
@@ -31,8 +29,11 @@ namespace Octgn
         {
             RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN", true);
             if (key == null) key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\OCTGN");
-            key.SetValue(valName, value, RegistryValueKind.String);
-            key.Close();
+            if (key != null)
+            {
+                key.SetValue(valName, value, RegistryValueKind.String);
+                key.Close();
+            }
         }
     }
 }

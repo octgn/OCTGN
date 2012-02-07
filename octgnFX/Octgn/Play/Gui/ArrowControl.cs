@@ -75,14 +75,15 @@ namespace Octgn.Play.Gui
 
         private static void PointChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            (sender as ArrowControl).ComputeShape();
+            var arrowControl = sender as ArrowControl;
+            if (arrowControl != null) arrowControl.ComputeShape();
         }
 
         private void ComputeShape()
         {
-            double ArrowHalfWidth = Program.Game.Definition.TableDefinition.Height*0.017; // 1/60th
-            double HeadHalfWidth = ArrowHalfWidth*HeadHalfWidthFactor;
-            double HeadLength = ArrowHalfWidth*HeadLengthFactor;
+            double arrowHalfWidth = Program.Game.Definition.TableDefinition.Height*0.017; // 1/60th
+            double HeadHalfWidth = arrowHalfWidth*HeadHalfWidthFactor;
+            double HeadLength = arrowHalfWidth*HeadLengthFactor;
 
             // Compute the arrow base point so that the arrow tip is approximately at the ToPoint
             Vector dir = ToPoint - FromPoint;
@@ -95,7 +96,7 @@ namespace Octgn.Play.Gui
             double length = dir.Length;
             dir /= length;
             ortho = new Vector(-dir.Y, dir.X);
-            Vector widthVec = ortho*ArrowHalfWidth;
+            Vector widthVec = ortho*arrowHalfWidth;
             // Compute the base bezier control points (actually compute vectors)
             Vector bezierBase = (dir*CurvatureAlong + ortho*CurvatureOrtho)*length;
             Vector bezierTip = (-dir*CurvatureAlong + ortho*CurvatureOrtho)*length;

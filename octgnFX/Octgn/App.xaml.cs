@@ -67,7 +67,7 @@ namespace Octgn
             }
 #endif
 
-            if (e.Args != null && e.Args.Count() > 0)
+            if (e.Args.Any())
             {
                 Properties["ArbitraryArgName"] = e.Args[0];
             }

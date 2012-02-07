@@ -120,7 +120,9 @@ namespace Octgn.Launcher
         {
             if (b == null) b = Brushes.Black;
             bool rtbatbottom = false;
-            bool firstAutoScroll = true;
+
+            // bool firstAutoScroll = true; // never used 
+
             //check to see if the richtextbox is scrolled to the bottom.
             //----------------------------------------------------------------------------------
             double dVer = richTextBox1.VerticalOffset;
@@ -131,9 +133,8 @@ namespace Octgn.Launcher
             //get the vertical size of the visible content area
             double dExtent = richTextBox1.ExtentHeight;
 
-            if (dVer == 0 && dViewport < dExtent && firstAutoScroll)
+            if (dVer == 0 && dViewport < dExtent)
             {
-                firstAutoScroll = false;
                 rtbatbottom = true;
             }
 
@@ -163,10 +164,10 @@ namespace Octgn.Launcher
             p.Inlines.Add(headerRun);
             if (chat.Contains("\n"))
             {
-                String[] lines = chat.Split(new char[1] {'\n'});
+                String[] lines = chat.Split(new char[] {'\n'});
                 foreach (String line in lines)
                 {
-                    String[] words = line.Split(new char[1] {' '});
+                    String[] words = line.Split(new char[] {' '});
                     foreach (String word in words)
                     {
                         Inline inn = StringToRun(word, b);
@@ -180,7 +181,7 @@ namespace Octgn.Launcher
             }
             else
             {
-                String[] words = chat.Split(new char[1] {' '});
+                String[] words = chat.Split(new char[] {' '});
                 foreach (String word in words)
                 {
                     Inline inn = StringToRun(word, b);
@@ -324,7 +325,7 @@ namespace Octgn.Launcher
             var s = e.Data.GetData(typeof (String)) as String;
             if (s != null)
             {
-                int uid = -1;
+                int uid;
                 if (Int32.TryParse(s, out uid))
                 {
                     //BUG Should be pulling from FriendList

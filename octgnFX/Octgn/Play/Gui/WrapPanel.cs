@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -51,16 +52,20 @@ namespace Octgn.Play.Gui
             if (VisualChildrenCount == 0) return 0;
             // Assuming all items have the same size, get the size of the first one
             var firstChild = (FrameworkElement) GetVisualChild(0);
-            double itemHeight = firstChild.ActualHeight + firstChild.Margin.Top + firstChild.Margin.Bottom;
-            double itemWidth = firstChild.ActualWidth + firstChild.Margin.Left + firstChild.Margin.Right;
-            int rowSize = Math.Max(1, (int) (ActualWidth/itemWidth));
+            if (firstChild != null)
+            {
+                double itemHeight = firstChild.ActualHeight + firstChild.Margin.Top + firstChild.Margin.Bottom;
+                double itemWidth = firstChild.ActualWidth + firstChild.Margin.Left + firstChild.Margin.Right;
+                int rowSize = Math.Max(1, (int) (ActualWidth/itemWidth));
 
-            int hOffset = Math.Min(rowSize, (int) (position.X/itemWidth + 0.5));
-            insertAtEndOfRow = hOffset == rowSize;
-            int index = (int) (position.Y/itemHeight)*rowSize + hOffset;
+                int hOffset = Math.Min(rowSize, (int) (position.X/itemWidth + 0.5));
+                insertAtEndOfRow = hOffset == rowSize;
+                int index = (int) (position.Y/itemHeight)*rowSize + hOffset;
 
-            if (index > VisualChildrenCount) index = VisualChildrenCount;
-            return index;
+                if (index > VisualChildrenCount) index = VisualChildrenCount;
+                return index;
+            }
+            return 0;
         }
 
         public void DisplayInsertIndicator(Card source, int idx)
@@ -68,12 +73,14 @@ namespace Octgn.Play.Gui
             // If the index corresponds to the card being dragged, it's a NOP so don't provide any visual feedback
             if (idx < VisualChildrenCount)
             {
-                if (((FrameworkElement) GetVisualChild(idx)).DataContext == source)
+                var frameworkElement = (FrameworkElement) GetVisualChild(idx);
+                if (frameworkElement != null && frameworkElement.DataContext == source)
                 {
                     HideInsertIndicator();
                     return;
                 }
-                if (idx > 0 && ((FrameworkElement) GetVisualChild(idx - 1)).DataContext == source)
+                var visualChild = (FrameworkElement) GetVisualChild(idx - 1);
+                if (visualChild != null && (idx > 0 && visualChild.DataContext == source))
                 {
                     HideInsertIndicator();
                     return;
@@ -90,7 +97,8 @@ namespace Octgn.Play.Gui
             }
 
             // Assuming all items have the same size, get the size of the first one
-            double itemHeight, itemWidth;
+            double itemHeight = 0;
+            Double itemWidth = 0;
             int rowSize;
             if (VisualChildrenCount == 0)
             {
@@ -100,8 +108,11 @@ namespace Octgn.Play.Gui
             else
             {
                 var firstChild = (FrameworkElement) GetVisualChild(0);
-                itemHeight = firstChild.ActualHeight + firstChild.Margin.Top + firstChild.Margin.Bottom;
-                itemWidth = firstChild.ActualWidth + firstChild.Margin.Left + firstChild.Margin.Right;
+                if (firstChild != null)
+                {
+                    itemHeight = firstChild.ActualHeight + firstChild.Margin.Top + firstChild.Margin.Bottom;
+                    itemWidth = firstChild.ActualWidth + firstChild.Margin.Left + firstChild.Margin.Right;
+                }
                 rowSize = Math.Max(1, (int) (ActualWidth/itemWidth));
             }
 
@@ -175,7 +186,8 @@ namespace Octgn.Play.Gui
             var group = (TransformGroup) element.RenderTransform;
 
             Point currentPos = element.TransformToAncestor(this).Transform(new Point());
-            arrangePosition = group.Inverse.Transform(currentPos);
+            Debug.Assert(@group.Inverse != null, "@group.Inverse != null");
+            arrangePosition = @group.Inverse.Transform(currentPos);
 
             return group.Children[1];
         }

@@ -14,6 +14,7 @@ using Octgn.Play.Gui;
 
 namespace Octgn.Play
 {
+    [Flags]
     public enum CardOrientation
     {
         Rot0 = 0,
@@ -72,7 +73,7 @@ namespace Octgn.Play
         internal bool mayBeConsideredFaceUp;
                       /* For better responsiveness, turning a card face down is applied immediately,
 															   without waiting on the server.
-															   If a script tries to print the card's name, when the message arrives the card is already
+															   If a script tries to print the card's lName, when the message arrives the card is already
 															   face down although it should still be up. */
 
         private bool overrideGroupVisibility;
@@ -135,8 +136,8 @@ namespace Octgn.Play
                     // Free the old identity
                     type.inUse = false;
                     // Make changes in the Card hashtable
-                    // jods: tying the id to the CardIdentity is buggy. Trying to change behavior.
-                    // All.Remove(type.id);
+                    // jods: tying the lId to the CardIdentity is buggy. Trying to change behavior.
+                    // All.Remove(type.lId);
                 }
                 if (value != null)
                 {
@@ -146,8 +147,8 @@ namespace Octgn.Play
                     // Acquire the new identity
                     value.inUse = true;
                     // Make changes in the Card hashtable
-                    // jods: tying the id to the CardIdentity is buggy. Trying to change behavior.
-                    //All.Add(value.id, this);
+                    // jods: tying the lId to the CardIdentity is buggy. Trying to change behavior.
+                    //All.Add(value.lId, this);
                 }
                 // Set the value
                 type = value;
@@ -239,7 +240,7 @@ namespace Octgn.Play
             get { return _x; }
             set
             {
-                if (_x != value)
+                if (Math.Abs(_x - value) > double.Epsilon)
                 {
                     _x = value;
                     OnPropertyChanged("X");
@@ -252,7 +253,7 @@ namespace Octgn.Play
             get { return _y; }
             set
             {
-                if (_y != value)
+                if (Math.Abs(_y - value) > double.Epsilon)
                 {
                     _y = value;
                     OnPropertyChanged("Y");
@@ -345,27 +346,27 @@ namespace Octgn.Play
             return type.model.Properties[name];
         }
 
-        public void MoveTo(Group to, bool faceUp)
+        public void MoveTo(Group to, bool lFaceUp)
         {
             // Default: move cards to the end of hand, top of table; but top of piles (which is index 0)
             int toIdx = to is Pile ? 0 : to.Cards.Count;
-            MoveTo(to, faceUp, toIdx);
+            MoveTo(to, lFaceUp, toIdx);
         }
 
-        public void MoveTo(Group to, bool faceUp, int idx)
+        public void MoveTo(Group to, bool lFaceUp, int idx)
         {
             if (to != Group || idx >= Group.Count || Group[idx] != this)
             {
-                if (to.Visibility != GroupVisibility.Undefined) faceUp = FaceUp;
-                Program.Client.Rpc.MoveCardReq(this, to, idx, faceUp);
-                new MoveCard(Player.LocalPlayer, this, to, idx, faceUp).Do();
+                if (to.Visibility != GroupVisibility.Undefined) lFaceUp = FaceUp;
+                Program.Client.Rpc.MoveCardReq(this, to, idx, lFaceUp);
+                new MoveCard(Player.LocalPlayer, this, to, idx, lFaceUp).Do();
             }
         }
 
-        public void MoveToTable(int x, int y, bool faceUp, int idx)
+        public void MoveToTable(int x, int y, bool lFaceUp, int idx)
         {
-            Program.Client.Rpc.MoveCardAtReq(this, x, y, idx, faceUp);
-            new MoveCard(Player.LocalPlayer, this, x, y, idx, faceUp).Do();
+            Program.Client.Rpc.MoveCardAtReq(this, x, y, idx, lFaceUp);
+            new MoveCard(Player.LocalPlayer, this, x, y, idx, lFaceUp).Do();
         }
 
         public int GetIndex()
@@ -430,13 +431,13 @@ namespace Octgn.Play
             }
         }
 
-        internal void SetFaceUp(bool faceUp)
+        internal void SetFaceUp(bool lFaceUp)
         {
-            if (this.faceUp != faceUp)
+            if (this.faceUp != lFaceUp)
             {
-                this.faceUp = faceUp;
+                this.faceUp = lFaceUp;
                 OnPropertyChanged("FaceUp");
-                if (faceUp) PeekingPlayers.Clear();
+                if (lFaceUp) PeekingPlayers.Clear();
             }
         }
 
@@ -644,17 +645,17 @@ namespace Octgn.Play
             markers.Remove(marker);
         }
 
-        internal Marker FindMarker(Guid id, string name)
+        internal Marker FindMarker(Guid lId, string name)
         {
             return markers.FirstOrDefault(m =>
-                                          m.Model.id == id &&
+                                          m.Model.id == lId &&
                                           (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
         }
 
-        internal void SetMarker(Player player, Guid id, string name, int count)
+        internal void SetMarker(Player player, Guid lId, string name, int count)
         {
             int oldCount = 0;
-            Marker marker = FindMarker(id, name);
+            Marker marker = FindMarker(lId, name);
             if (marker != null)
             {
                 oldCount = marker.Count;
@@ -662,7 +663,7 @@ namespace Octgn.Play
             }
             else if (count > 0)
             {
-                MarkerModel model = Program.Game.GetMarkerModel(id);
+                MarkerModel model = Program.Game.GetMarkerModel(lId);
                 if (model is DefaultMarkerModel) ((DefaultMarkerModel) model).SetName(name);
                 AddMarker(model, (ushort) count);
             }

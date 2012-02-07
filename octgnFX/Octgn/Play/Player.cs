@@ -15,7 +15,7 @@ namespace Octgn.Play
         // Contains all players in this game
         private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
         public static Player LocalPlayer;
-        // May be null if there's no global player in the game definition
+        // May be null if there's no global lPlayer in the game definition
         public static Player GlobalPlayer;
 
         // Get all players in the game
@@ -24,7 +24,7 @@ namespace Octgn.Play
             get { return all; }
         }
 
-        // Get all players in the game, except a possible Global player
+        // Get all players in the game, except a possible Global lPlayer
         public static IEnumerable<Player> AllExceptGlobal
         {
             get { return All.Where(p => p != GlobalPlayer); }
@@ -36,7 +36,7 @@ namespace Octgn.Play
             get { return GlobalPlayer == null ? all.Count : all.Count - 1; }
         }
 
-        // Find a player with his id
+        // Find a lPlayer with his id
         internal static Player Find(byte id)
         {
             foreach (Player p in all)
@@ -44,7 +44,7 @@ namespace Octgn.Play
             return null;
         }
 
-        // Resets the player list
+        // Resets the lPlayer list
         internal static void Reset()
         {
             all.Clear();
@@ -61,10 +61,10 @@ namespace Octgn.Play
         #region Public fields and properties
 
         internal readonly ulong PublicKey; // Public cryptographic key
-        private readonly Counter[] counters; // Counters this player owns
+        private readonly Counter[] counters; // Counters this lPlayer owns
 
-        private readonly Group[] groups; // Groups this player owns
-        private readonly Hand hand; // Hand of this player (may be null)
+        private readonly Group[] groups; // Groups this lPlayer owns
+        private readonly Hand hand; // Hand of this lPlayer (may be null)
         private readonly Brush solidBrush;
         private readonly Brush transparentBrush;
         private bool _invertedTable;
@@ -115,7 +115,7 @@ namespace Octgn.Play
         }
 
         public bool InvertedTable
-            // True if the player plays on the opposite side of the table (for two-sided table only)
+            // True if the lPlayer plays on the opposite side of the table (for two-sided table only)
         {
             get { return _invertedTable; }
             set
@@ -192,7 +192,7 @@ namespace Octgn.Play
             this.name = name;
             Id = id;
             PublicKey = pkey;
-            // Register the player
+            // Register the lPlayer
             all.Add(this);
             OnPropertyChanged("Color");
             //Create the color brushes           
@@ -207,7 +207,8 @@ namespace Octgn.Play
             // Create counters
             counters = new Counter[g.PlayerDefinition.Counters != null ? g.PlayerDefinition.Counters.Length : 0];
             for (int i = 0; i < Counters.Length; i++)
-                Counters[i] = new Counter(this, g.PlayerDefinition.Counters[i]);
+                if (g.PlayerDefinition.Counters != null)
+                    Counters[i] = new Counter(this, g.PlayerDefinition.Counters[i]);
             // Create variables
             Variables = new Dictionary<string, int>();
             foreach (VariableDef varDef in g.Variables.Where(v => !v.Global))
@@ -223,7 +224,7 @@ namespace Octgn.Play
             groups = new Group[g.PlayerDefinition.Groups != null ? g.PlayerDefinition.Groups.Length + 1 : 1];
             groups[0] = hand;
             for (int i = 1; i < IndexedGroups.Length; i++)
-                groups[i] = new Pile(this, g.PlayerDefinition.Groups[i - 1]);
+                if (g.PlayerDefinition.Groups != null) groups[i] = new Pile(this, g.PlayerDefinition.Groups[i - 1]);
             // Raise the event
             if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
         }
@@ -232,7 +233,7 @@ namespace Octgn.Play
         internal Player(GameDef g)
         {
             SharedDef globalDef = g.GlobalDefinition;
-            // Register the player
+            // Register the lPlayer
             all.Add(this);
             // Init fields
             name = "Global";
@@ -248,14 +249,14 @@ namespace Octgn.Play
             // Create counters
             counters = new Counter[globalDef.Counters != null ? globalDef.Counters.Length : 0];
             for (int i = 0; i < Counters.Length; i++)
-                Counters[i] = new Counter(this, globalDef.Counters[i]);
-            // Create global's player groups
+                if (globalDef.Counters != null) Counters[i] = new Counter(this, globalDef.Counters[i]);
+            // Create global's lPlayer groups
             groups = new Pile[globalDef.Groups != null ? g.GlobalDefinition.Groups.Length + 1 : 0];
             for (int i = 1; i < IndexedGroups.Length; i++)
-                groups[i] = new Pile(this, globalDef.Groups[i - 1]);
+                if (globalDef.Groups != null) groups[i] = new Pile(this, globalDef.Groups[i - 1]);
         }
 
-        // Remove the player from the game
+        // Remove the lPlayer from the game
         internal void Delete()
         {
             // Remove from the list

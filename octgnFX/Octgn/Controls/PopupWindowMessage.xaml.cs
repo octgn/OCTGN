@@ -48,7 +48,7 @@ namespace Octgn.Controls
             Visibility = Visibility.Visible;
             ParentControl.Children.Add(this);
             var a = FindResource("sbShow") as Storyboard;
-            a.Begin();
+            if (a != null) a.Begin();
         }
 
         public void AddControl(UIElement e)
@@ -59,8 +59,11 @@ namespace Octgn.Controls
         public void HideMessage()
         {
             var a = FindResource("sbHide") as Storyboard;
-            a.Completed += a_Completed;
-            a.Begin();
+            if (a != null)
+            {
+                a.Completed += a_Completed;
+                a.Begin();
+            }
         }
 
         private void a_Completed(object sender, EventArgs e)

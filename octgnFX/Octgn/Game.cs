@@ -389,8 +389,7 @@ namespace Octgn
             {
                 if (@group == gg.group)
                     return true;
-                else
-                    return false;
+                return false;
             }
 
             #endregion

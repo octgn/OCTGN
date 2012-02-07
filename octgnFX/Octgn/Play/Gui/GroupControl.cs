@@ -280,7 +280,7 @@ namespace Octgn.Play.Gui
             var items = new List<Control>();
             items.Add(CreateGroupHeader());
             for (int i = 0; i < nGroupActions; i++)
-                items.Add(CreateGroupMenuItem(def.groupActions[i]));
+                if (def.groupActions != null) items.Add(CreateGroupMenuItem(def.groupActions[i]));
 
             if (nGroupActions > 0)
                 items.Add(new Separator());
@@ -313,7 +313,7 @@ namespace Octgn.Play.Gui
             if (nCardActions > 0)
             {
                 for (int i = 0; i < nCardActions; i++)
-                    items.Add(CreateCardMenuItem(def.cardActions[i]));
+                    if (def.cardActions != null) items.Add(CreateCardMenuItem(def.cardActions[i]));
                 if (group.Controller == null)
                     items.Add(new Separator());
             }
@@ -460,21 +460,24 @@ namespace Octgn.Play.Gui
         {
             var item = new MenuItem {Header = baseAction.Name};
 
-            var group = baseAction as ActionGroupDef;
-            if (group != null)
+            var actionGroupDef = baseAction as ActionGroupDef;
+            if (actionGroupDef != null)
             {
-                foreach (MenuItem subItem in group.Children.Select(x => CreateGroupMenuItem(x)))
+                foreach (MenuItem subItem in actionGroupDef.Children.Select(x => CreateGroupMenuItem(x)))
                     item.Items.Add(subItem);
                 return item;
             }
 
             var action = baseAction as ActionDef;
             item.Tag = action;
-            item.InputGestureText = action.Shortcut;
-            if (action.DefaultAction)
+            if (action != null)
             {
-                item.FontWeight = FontWeights.Bold;
-                defaultGroupAction = action;
+                item.InputGestureText = action.Shortcut;
+                if (action.DefaultAction)
+                {
+                    item.FontWeight = FontWeights.Bold;
+                    defaultGroupAction = action;
+                }
             }
             item.Click += GroupActionClicked;
             return item;
@@ -484,21 +487,24 @@ namespace Octgn.Play.Gui
         {
             var item = new MenuItem {Header = baseAction.Name};
 
-            var group = baseAction as ActionGroupDef;
-            if (group != null)
+            var actionGroupDef = baseAction as ActionGroupDef;
+            if (actionGroupDef != null)
             {
-                foreach (MenuItem subItem in group.Children.Select(x => CreateCardMenuItem(x)))
+                foreach (MenuItem subItem in actionGroupDef.Children.Select(x => CreateCardMenuItem(x)))
                     item.Items.Add(subItem);
                 return item;
             }
 
             var action = baseAction as ActionDef;
             item.Tag = action;
-            item.InputGestureText = action.Shortcut;
-            if (action.DefaultAction)
+            if (action != null)
             {
-                item.FontWeight = FontWeights.Bold;
-                defaultCardAction = action;
+                item.InputGestureText = action.Shortcut;
+                if (action.DefaultAction)
+                {
+                    item.FontWeight = FontWeights.Bold;
+                    defaultCardAction = action;
+                }
             }
             item.Click += CardActionClicked;
             return item;

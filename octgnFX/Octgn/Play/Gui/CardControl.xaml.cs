@@ -329,13 +329,13 @@ namespace Octgn.Play.Gui
         {
             double target90 = (newOrientation & CardOrientation.Rot90) != 0 ? 90 : 0;
             double target180 = (newOrientation & CardOrientation.Rot180) != 0 ? 180 : 0;
-            if (target90 != rotate90.Angle)
+            if (Math.Abs(target90 - rotate90.Angle) > double.Epsilon)
             {
                 var anim = new DoubleAnimation(target90, TimeSpan.FromMilliseconds(300), FillBehavior.HoldEnd)
                                {EasingFunction = new ExponentialEase()};
                 rotate90.BeginAnimation(RotateTransform.AngleProperty, anim);
             }
-            if (target180 != rotate180.Angle)
+            if (Math.Abs(target180 - rotate180.Angle) > double.Epsilon)
             {
                 var anim = new DoubleAnimation(target180, TimeSpan.FromMilliseconds(600), FillBehavior.HoldEnd)
                                {EasingFunction = new ExponentialEase()};
@@ -422,7 +422,9 @@ namespace Octgn.Play.Gui
                 isOverCount = false;
                 if (!Card.Selected) Selection.Clear();
                 mousePt = e.GetPosition(this);
-                mouseWindowPt = TranslatePoint(mousePt, (UIElement) Window.GetWindow(this).Content);
+                var window = Window.GetWindow(this);
+                if (window != null)
+                    mouseWindowPt = TranslatePoint(mousePt, (UIElement) window.Content);
                 dragSource = Keyboard.Modifiers == ModifierKeys.Shift ? DragSource.Target : DragSource.Card;
                 CaptureMouse();
             }
@@ -495,8 +497,12 @@ namespace Octgn.Play.Gui
             {
                 if (dragSource == DragSource.Card)
                 {
-                    Point windowPt = e.GetPosition((IInputElement) Window.GetWindow(this).Content);
-                    DragMouseDelta(windowPt.X - mouseWindowPt.X, windowPt.Y - mouseWindowPt.Y);
+                    var window = Window.GetWindow(this);
+                    if (window != null)
+                    {
+                        Point windowPt = e.GetPosition((IInputElement) window.Content);
+                        DragMouseDelta(windowPt.X - mouseWindowPt.X, windowPt.Y - mouseWindowPt.Y);
+                    }
                 }
                 else if (dragSource == DragSource.Target)
                     DragTargetDelta(pt);
@@ -539,18 +545,18 @@ namespace Octgn.Play.Gui
                             isDragging = false;
                         }
 
-                        var target = Mouse.DirectlyOver as DependencyObject;
-                        while (target != null && !(target is CardControl))
+                        var dependencyObject = Mouse.DirectlyOver as DependencyObject;
+                        while (dependencyObject != null && !(dependencyObject is CardControl))
                         {
-                            DependencyObject parent = LogicalTreeHelper.GetParent(target);
-                            if (parent == null) parent = VisualTreeHelper.GetParent(target);
-                            target = parent;
+                            DependencyObject parent = LogicalTreeHelper.GetParent(dependencyObject);
+                            if (parent == null) parent = VisualTreeHelper.GetParent(dependencyObject);
+                            dependencyObject = parent;
                         }
 
-                        if (target == this)
+                        if (dependencyObject == this)
                             Card.ToggleTarget();
-                        else if (target != null && ((CardControl) target).Card.Group is Table)
-                            Card.Target(((CardControl) target).Card);
+                        else if (dependencyObject != null && ((CardControl) dependencyObject).Card.Group is Table)
+                            Card.Target(((CardControl) dependencyObject).Card);
                     }
                     break;
             }
@@ -595,7 +601,8 @@ namespace Octgn.Play.Gui
             if (GroupControl is HandControl)
             {
                 var parent = VisualTreeHelper.GetParent(this) as ContentPresenter;
-                step = 1.05*parent.RenderTransform.TransformBounds(new Rect(0, 0, ActualWidth, 0)).Width;
+                if (parent != null)
+                    step = 1.05*parent.RenderTransform.TransformBounds(new Rect(0, 0, ActualWidth, 0)).Width;
             }
             foreach (CardControl cardCtrl in Selection.GetCardControls(GroupControl, this))
             {
@@ -853,8 +860,7 @@ namespace Octgn.Play.Gui
                         Card.Peek();
                         break;
                     }
-                    else
-                        goto default;
+                    goto default;
                 default:
                     // Look for a custom shortcut in the game definition
                     ActionShortcut[] shortcuts = Card.Group.CardShortcuts;
@@ -992,8 +998,7 @@ namespace Octgn.Play.Gui
             var axis = parameter as string;
             if (axis == "X")
                 return ((double) values[0])/2;
-            else // axis == "Y"
-                return ((double) values[1]) - ((double) values[0])/2;
+            return ((double) values[1]) - ((double) values[0])/2;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

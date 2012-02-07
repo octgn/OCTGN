@@ -64,7 +64,7 @@ namespace Octgn.Play.Gui
 
         public int GetIndexFromPoint(Point position)
         {
-            if (itemSkipSize == 0) return 0;
+            if (Math.Abs(itemSkipSize - 0) < double.Epsilon) return 0;
             int idx = position.X < 0 ? 0 : (int) (position.X/itemSkipSize + 0.5);
             if (idx > Children.Count) idx = Children.Count;
             return idx;
@@ -210,8 +210,7 @@ namespace Octgn.Play.Gui
             // EID calls us with infinity, but framework doesn't like us to return infinity
             if (double.IsInfinity(availableSize.Height) || double.IsInfinity(availableSize.Width))
                 return idealSize;
-            else
-                return availableSize;
+            return availableSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -228,7 +227,7 @@ namespace Octgn.Play.Gui
             }
 
             // Assume all children have the same width
-            if (Children[0].DesiredSize.Height == 0) return finalSize;
+            if (Math.Abs(Children[0].DesiredSize.Height - 0) < double.Epsilon) return finalSize;
             double ratio = finalSize.Height/Children[0].DesiredSize.Height;
             double childWidth = Children[0].DesiredSize.Width*ratio;
 

@@ -282,7 +282,6 @@ namespace Octgn.Networking
                     packetPos = 0;
                     Array.Copy(packet, i + 1, packet, 0, count);
                     i = -1;
-                    continue;
                 }
             }
             // Adjust the position in the packet buffer

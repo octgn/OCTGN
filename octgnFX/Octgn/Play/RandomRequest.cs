@@ -43,15 +43,15 @@ namespace Octgn.Play
             Program.Client.Rpc.RandomAnswer2Req(Id, myValue.decrypted);
         }
 
-        public void AddAnswer1(Player player, ulong encrypted)
+        public void AddAnswer1(Player lPlayer, ulong encrypted)
         {
-            values.Add(new RandomValue(player, encrypted));
+            values.Add(new RandomValue(lPlayer, encrypted));
         }
 
-        public void AddAnswer2(Player player, ulong decrypted)
+        public void AddAnswer2(Player lPlayer, ulong decrypted)
         {
             foreach (RandomValue v in values)
-                if (v.player == player)
+                if (v.player == lPlayer)
                 {
                     v.decrypted = decrypted;
                     v.CheckConsistency();

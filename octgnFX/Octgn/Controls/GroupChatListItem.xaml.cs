@@ -57,7 +57,7 @@ namespace Octgn.Controls
                         image1.Opacity = 1;
                         String users = String.Join<User>(",", cr.GetUserList());
                         if (users.Length > 100)
-                            users.Substring(0, 97);
+                            users = users.Substring(0, 97);
                         users += "...";
                         SetValue(UsernameProperty, users);
                     }
@@ -79,7 +79,9 @@ namespace Octgn.Controls
         {
             if (ChatRoomID != 0)
             {
-                Program.ChatWindows.FirstOrDefault(cw => cw.ID == ThisRoom.ID).CloseChatWindow();
+                var firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.ID == ThisRoom.ID);
+                if (firstOrDefault != null)
+                    firstOrDefault.CloseChatWindow();
                 var sp = Parent as StackPanel;
                 if (sp != null)
                     sp.Children.Remove(this);

@@ -467,11 +467,11 @@ namespace Octgn.Launcher
             {
                 var hg = sender as HostedGame;
                 Program.IsHost = false;
-                Data.Game theGame = Program.GamesRepository.AllGames.FirstOrDefault(g => g.Id == hg.GameGuid);
+                Data.Game theGame = Program.GamesRepository.AllGames.FirstOrDefault(g => hg != null && g.Id == hg.GameGuid);
                 if (theGame != null)
                 {
                     Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
-                    var ad = new IPAddress[0];
+                    IPAddress[] ad;
 #if(DEBUG)
                     ad = new IPAddress[1];
                     IPAddress ip = IPAddress.Parse("127.0.0.1");
@@ -485,7 +485,7 @@ namespace Octgn.Launcher
                     {
                         try
                         {
-                            Program.Client = new Client(ip, hg.Port);
+                            if (hg != null) Program.Client = new Client(ip, hg.Port);
                             Program.Client.Connect();
                             Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
                         }

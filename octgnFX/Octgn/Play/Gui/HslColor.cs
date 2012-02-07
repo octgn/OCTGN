@@ -47,7 +47,7 @@ namespace Octgn.Play.Gui
             double red, green, blue;
             double m1, m2;
 
-            if (c.saturation == 0)
+            if (Math.Abs(c.saturation - 0) < float.Epsilon)
                 red = green = blue = c.luminance;
             else
             {
@@ -85,9 +85,9 @@ namespace Octgn.Play.Gui
             return m1;
         }
 
-        private void FromRgba(float red, float green, float blue, byte alpha)
+        private void FromRgba(float red, float green, float blue, byte lAlpha)
         {
-            this.alpha = alpha;
+            this.alpha = lAlpha;
 
             // Compute Max, Min and Delta
             float max, min, delta;
@@ -107,7 +107,7 @@ namespace Octgn.Play.Gui
             luminance = (max + min)/2f;
 
             // Compute Saturation
-            if (luminance == 0 || delta == 0)
+            if (Math.Abs(luminance - 0) < float.Epsilon || Math.Abs(delta - 0) < float.Epsilon)
                 saturation = 0;
             else if (luminance <= 0.5f)
                 saturation = delta/(2*luminance);
@@ -115,14 +115,14 @@ namespace Octgn.Play.Gui
                 saturation = delta/(2 - 2*luminance);
 
             // Compute Hue
-            if (delta == 0)
+            if (Math.Abs(delta - 0) < float.Epsilon)
                 hue = 0;
-            else if (max == red)
+            else if (Math.Abs(max - red) < float.Epsilon)
             {
                 hue = (green - blue)/delta;
                 if (green < blue) hue += 6;
             }
-            else if (max == green)
+            else if (Math.Abs(max - green) < float.Epsilon)
                 hue = (blue - red)/delta + 2;
             else
                 hue = (red - green)/delta + 4;

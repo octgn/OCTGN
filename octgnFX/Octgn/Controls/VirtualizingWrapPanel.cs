@@ -86,7 +86,7 @@ namespace Octgn.Controls
                         Debug.Assert(child == children[childIndex], "Wrong child was generated");
                     }
                     // Measurements will depend on layout algorithm
-                    child.Measure(GetChildSize());
+                    if (child != null) child.Measure(GetChildSize());
                 }
             }
             // Note: this could be deferred to idle time for efficiency
@@ -179,7 +179,7 @@ namespace Octgn.Controls
         {
             // Figure out how many children fit on each row
             int childrenPerRow;
-            if (availableSize.Width == Double.PositiveInfinity)
+            if (double.IsPositiveInfinity(availableSize.Width))
                 childrenPerRow = Children.Count;
             else
                 childrenPerRow = Math.Max(1, (int) Math.Floor(availableSize.Width/ChildWidth));
@@ -203,10 +203,7 @@ namespace Octgn.Controls
             get { return _owner; }
             set
             {
-                if (_owner != value)
-                {
-                    _owner = value;
-                }
+                _owner = value;
             }
         }
 
@@ -383,7 +380,7 @@ namespace Octgn.Controls
                                                             DependencyPropertyChangedEventArgs e)
         {
             var ctrl = sender as VirtualizingWrapPanel;
-            ctrl.SetVerticalOffset((double) e.NewValue);
+            if (ctrl != null) ctrl.SetVerticalOffset((double) e.NewValue);
         }
 
         private void SmoothScroll(int delta)

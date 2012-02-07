@@ -261,13 +261,6 @@ namespace Octgn.Networking
             c.IsAlternateImage = isAlternateImage;
         }
 
-        /// <summary>Creates new cards on the table, as well as the corresponding CardIdentities.</summary>
-        /// <param name="id">An array with the new CardIdentity ids</param>
-        /// <param name="type">An array containing the corresponding CardModel guids (encrypted or not, depending on the faceup parameter)</param>
-        /// <param name="x">The x position of the cards on the table.</param>
-        /// <param name="y">The y position of the cards on the table.</param>
-        /// <param name="faceUp">Whether the cards are face up or not.</param>
-        /// <param name="tableOnly">Whether the card should be deleted if it leaves the table.</param>
         public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
             if (id.Length == 0)
@@ -464,7 +457,7 @@ namespace Octgn.Networking
         /// <summary>Reveal one card's identity</summary>
         /// <param name="card">The card, whose identity is revealed</param>
         /// <param name="revealed">Either the salted CardIdentity id (in the case of an alias), or the salted, condensed Card GUID.</param>
-        /// <param name="id">If the revealed identity is a model, the non-condensed CardModel guid. Otherwise this parameter should be Guid.Empty.</param>
+        /// <param name="guid">If the revealed identity is a model, the non-condensed CardModel guid. Otherwise this parameter should be Guid.Empty.</param>
         public void Reveal(Card card, ulong revealed, Guid guid)
         {
             // Save old id
@@ -840,7 +833,7 @@ namespace Octgn.Networking
             }
             if (cards.Count > 0)
                 Program.Client.Rpc.Unalias(cards.ToArray(), types.ToArray());
-            if (!g.PreparingShuffle)
+            if (g != null && !g.PreparingShuffle)
             {
                 Program.TraceWarning("[Unalias] Cards revealed are not in a group prepared for shuffle.");
                 return;

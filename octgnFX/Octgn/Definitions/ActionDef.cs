@@ -12,8 +12,7 @@ namespace Octgn.Definitions
         {
             if (xml.Name.LocalName.EndsWith("actions"))
                 return ActionGroupDef.LoadFromXml(xml);
-            else
-                return ActionDef.LoadFromXml(xml);
+            return ActionDef.LoadFromXml(xml);
         }
     }
 

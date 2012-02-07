@@ -100,7 +100,7 @@ namespace Octgn.Script
             // Filter asynchronously (so the UI doesn't freeze on huge lists)
             // TODO .NET 4: use PLINQ to make this filter more efficient, and include cancellation of unrequired work
             if (allCards == null) return;
-            ThreadPool.QueueUserWorkItem((searchObj) =>
+            ThreadPool.QueueUserWorkItem(searchObj =>
                                              {
                                                  var search = (string) searchObj;
                                                  List<CardModel> filtered =
@@ -126,15 +126,18 @@ namespace Octgn.Script
         private void SetPicture(object sender, RoutedEventArgs e)
         {
             var img = sender as Image;
-            var model = img.DataContext as CardModel;
-            ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
+            if (img != null)
+            {
+                var model = img.DataContext as CardModel;
+                if (model != null) ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
+            }
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
             CardDef cardDef = Program.Game.Definition.CardDefinition;
-            panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
+            if (panel != null) panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
         }
     }
 }

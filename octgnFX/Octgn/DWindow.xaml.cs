@@ -62,7 +62,7 @@ namespace Octgn
 
         private void Add_Event(TraceEvent te)
         {
-            Dispatcher.Invoke(new Action<TraceEvent>(i_Add_Event), new object[1] {te});
+            Dispatcher.Invoke(new Action<TraceEvent>(i_Add_Event), new object[] {te});
         }
 
         private void i_Add_Event(TraceEvent te)

@@ -52,7 +52,7 @@ namespace Octgn.Play.Gui
             set
             {
                 _filterCards = value;
-                View.Filter = value == null ? (Predicate<object>) null : (object o) => _filterCards((Card) o);
+                View.Filter = value == null ? (Predicate<object>) null : o => _filterCards((Card) o);
                 View.Refresh();
             }
         }
@@ -71,12 +71,13 @@ namespace Octgn.Play.Gui
                     if (value)
                     {
                         View.CustomSort = IsAlwaysUp ? (IComparer) new Card.RealNameComparer() : new Card.NameComparer();
-                        View.GroupDescriptions.Add(new PropertyGroupDescription(IsAlwaysUp ? "RealName" : "Name"));
+                        if (View.GroupDescriptions != null)
+                            View.GroupDescriptions.Add(new PropertyGroupDescription(IsAlwaysUp ? "RealName" : "Name"));
                     }
                     else
                     {
                         View.CustomSort = null;
-                        View.GroupDescriptions.Clear();
+                        if (View.GroupDescriptions != null) View.GroupDescriptions.Clear();
                     }
                 }
             }
@@ -192,7 +193,7 @@ namespace Octgn.Play.Gui
                 {
                     // Fix the target index if the card is already in the group at a lower index
                     if (c.Group == group && c.GetIndex() < idx) --idx;
-                    c.MoveTo(group, e.FaceUp.Value, idx++);
+                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, idx++);
                 }
             }
         }
@@ -252,7 +253,7 @@ namespace Octgn.Play.Gui
                                                             DependencyPropertyChangedEventArgs e)
         {
             var ctrl = sender as CardListControl;
-            ctrl.scroller.ScrollToVerticalOffset((double) e.NewValue);
+            if (ctrl != null) ctrl.scroller.ScrollToVerticalOffset((double) e.NewValue);
         }
 
         private void SmoothScroll(object sender, MouseWheelEventArgs e)

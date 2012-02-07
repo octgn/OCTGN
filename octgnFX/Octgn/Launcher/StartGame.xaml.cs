@@ -123,7 +123,7 @@ namespace Octgn.Launcher
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
+            if (cbTwoSided.IsChecked != null) Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
         }
     }
 }

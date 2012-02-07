@@ -106,7 +106,8 @@ namespace Octgn.Controls
             if (currentTransform != null && currentTransform != Transform.Identity)
             {
                 // Undo any transform we applied
-                arrangePosition = currentTransform.Inverse.Transform(arrangePosition);
+                if (currentTransform.Inverse != null)
+                    arrangePosition = currentTransform.Inverse.Transform(arrangePosition);
             }
 
             return currentTransform;

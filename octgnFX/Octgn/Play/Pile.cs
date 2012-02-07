@@ -62,11 +62,8 @@ namespace Octgn.Play
                     DoShuffle();
                 return true;
             }
-            else
-            {
-                ShuffleAlone();
-                return false;
-            }
+            ShuffleAlone();
+            return false;
         }
 
         // Do the shuffle

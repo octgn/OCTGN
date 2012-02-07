@@ -127,7 +127,7 @@ namespace Octgn.Play.Gui
                     .Where(p => p.Type == PropertyType.String && !p.IgnoreText)
                     .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;
-                cardsList.FilterCards = (c) =>
+                cardsList.FilterCards = c =>
                                             {
                                                 if (!cardsList.IsAlwaysUp && !c.FaceUp)
                                                     return false;

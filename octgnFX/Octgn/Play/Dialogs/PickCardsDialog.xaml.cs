@@ -70,14 +70,21 @@ namespace Octgn.Play.Dialogs
         {
             var panel = sender as VirtualizingWrapPanel;
             CardDef cardDef = Program.Game.Definition.CardDefinition;
-            panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
+            if (panel != null) panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
         }
 
         private void SetPicture(object sender, RoutedEventArgs e)
         {
             var img = sender as Image;
-            CardModel model = img.DataContext as CardModel ?? (img.DataContext as Deck.Element).Card;
-            ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
+            if (img != null)
+            {
+                var element = img.DataContext as Deck.Element;
+                if (element != null)
+                {
+                    CardModel model = element.Card;
+                    ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
+                }
+            }
         }
 
         private void PickPoolCard(object sender, RoutedEventArgs e)
@@ -138,8 +145,7 @@ namespace Octgn.Play.Dialogs
                                           int actuallyRemoved = Math.Min(qty, element.Quantity);
                                           if (element.Quantity > qty)
                                               element.Quantity -= (byte) qty;
-                                          else
-                                              section.Cards.Remove(element);
+                                          else if (section != null) section.Cards.Remove(element);
                                           if (!UnlimitedPool.Contains(element.Card))
                                               for (int i = 0; i < actuallyRemoved; ++i)
                                                   // When there are multiple copies of the same card, we insert clones of the CardModel.
@@ -153,8 +159,7 @@ namespace Octgn.Play.Dialogs
             {
                 if (element.Quantity > 1)
                     element.Quantity--;
-                else
-                    section.Cards.Remove(element);
+                else if (section != null) section.Cards.Remove(element);
                 if (!UnlimitedPool.Contains(element.Card))
                     CardPool.Add(element.Card);
             }
@@ -163,8 +168,15 @@ namespace Octgn.Play.Dialogs
         private void MouseEnterCard(object sender, MouseEventArgs e)
         {
             var src = e.Source as FrameworkElement;
-            CardModel model = src.DataContext as CardModel ?? (src.DataContext as Deck.Element).Card;
-            RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
+            if (src != null)
+            {
+                var element = src.DataContext as Deck.Element;
+                if (element != null)
+                {
+                    CardModel model = src.DataContext as CardModel ?? element.Card;
+                    RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
+                }
+            }
         }
 
         private void MouseLeaveCard(object sender, MouseEventArgs e)
@@ -237,6 +249,7 @@ namespace Octgn.Play.Dialogs
                     switch (prop.TextKind)
                     {
                         case PropertyTextKind.Enumeration:
+                            Filter filter2 = filter;
                             IEnumerable<EnumFilterValue> q = from CardModel c in CardPoolView
                                                              group c by (string) c.Properties[prop.Name]
                                                              into g
@@ -244,7 +257,7 @@ namespace Octgn.Play.Dialogs
                                                              select
                                                                  new EnumFilterValue
                                                                      {
-                                                                         Property = filter.Property,
+                                                                         Property = filter2.Property,
                                                                          Value = g.Key,
                                                                          Count = g.Count()
                                                                      };
@@ -252,6 +265,7 @@ namespace Octgn.Play.Dialogs
                                 filter.Values.Add(filterValue);
                             break;
                         case PropertyTextKind.Tokens:
+                            Filter filter1 = filter;
                             IEnumerable<TokenFilterValue> q2 = from CardModel c in CardPoolView
                                                                let all = (string) c.Properties[prop.Name]
                                                                where all != null
@@ -264,7 +278,7 @@ namespace Octgn.Play.Dialogs
                                                                select
                                                                    new TokenFilterValue
                                                                        {
-                                                                           Property = filter.Property,
+                                                                           Property = filter1.Property,
                                                                            Value = g.Key,
                                                                            Count = g.Count()
                                                                        };
@@ -451,12 +465,13 @@ namespace Octgn.Play.Dialogs
             switch (filter.Property.Type)
             {
                 case PropertyType.String:
-                    return ctrl.FindResource("TextTemplate") as DataTemplate;
+                    if (ctrl != null) return ctrl.FindResource("TextTemplate") as DataTemplate;
+                    break;
                 case PropertyType.Integer:
-                    return ctrl.FindResource("IntTemplate") as DataTemplate;
-                default:
-                    throw new InvalidOperationException("Unexpected property type: " + filter.Property.Type);
+                    if (ctrl != null) return ctrl.FindResource("IntTemplate") as DataTemplate;
+                    break;
             }
+            throw new InvalidOperationException("Unexpected property type: " + filter.Property.Type);
         }
     }
 }

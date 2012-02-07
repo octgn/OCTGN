@@ -20,7 +20,7 @@ namespace Octgn.Launcher
     public partial class UpdateChecker : Window
     {
         private readonly List<string> Errors = new List<string>();
-        private bool stopReading;
+        // private bool stopReading; // not used
 
         public UpdateChecker()
         {
@@ -38,9 +38,9 @@ namespace Octgn.Launcher
         {
             try
             {
-                bool isupdate = false;
-                string ustring = "";
-                var update = new string[2];
+                bool isupdate;
+                string ustring;
+                string[] update;
                 update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
 
@@ -142,7 +142,7 @@ namespace Octgn.Launcher
 
         private bool FileExists(string URL)
         {
-            bool result = false;
+            bool result;
             using (var client = new WebClient())
             {
                 try
@@ -171,8 +171,6 @@ namespace Octgn.Launcher
                 {
                     while (reader.Read())
                     {
-                        if (stopReading)
-                            break;
                         if (reader.IsStartElement())
                         {
                             if (!reader.IsEmptyElement)
@@ -199,9 +197,6 @@ namespace Octgn.Launcher
                 }
             }
             catch
-            {
-            }
-            finally
             {
             }
             return values;

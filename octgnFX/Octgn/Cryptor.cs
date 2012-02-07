@@ -27,12 +27,7 @@ namespace Octgn
             return encryptedData;
         }
 
-        /// <summary>
-        /// Encrypts a string using a password
-        /// </summary>
-        /// <param name="clearText">The text to be encrypted</param>
-        /// <param name="Password">The encryption password</param>
-        /// <returns>An encrypted string</returns>
+
         public static string Encrypt(string Text, string Key)
         {
             byte[] Bytes = Encoding.Unicode.GetBytes(Text);

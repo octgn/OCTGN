@@ -185,8 +185,8 @@ namespace Octgn.Play.Gui
             int delta = cardDef.Height - cardDef.Width;
             Table table = Program.Game.Table;
             Vector mouseOffset;
-            if (cardCtrl.IsInverted ||
-                (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas))
+            if (cardCtrl != null && (cardCtrl.IsInverted ||
+                                     (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas)))
                 mouseOffset = new Vector(cardDef.Width - e.MouseOffset.X, cardDef.Height - e.MouseOffset.Y);
             else
                 mouseOffset = e.MouseOffset;
@@ -199,7 +199,7 @@ namespace Octgn.Play.Gui
                 {
                     // We have to offset the position if we cross the middle line
                     bool newPosInverted = IsInInvertedZone(pt.Y);
-                    if (!cardCtrl.IsInverted && newPosInverted)
+                    if (cardCtrl != null && (!cardCtrl.IsInverted && newPosInverted))
                     {
                         pt.X += delta;
                         pt.Y += delta;
@@ -216,7 +216,7 @@ namespace Octgn.Play.Gui
                     e.FaceUp = e.ClickedCard.FaceUp;
                 if (idx == -1)
                     idx = table.Cards.Count;
-                e.ClickedCard.MoveToTable((int) pt.X, (int) pt.Y, e.FaceUp.Value, idx);
+                e.ClickedCard.MoveToTable((int) pt.X, (int) pt.Y, e.FaceUp != null && e.FaceUp.Value, idx);
 
                 // If there were other cards (i.e. dragging from a count number in GroupWindow), move them accordingly
                 double xOffset = Program.Game.Definition.CardDefinition.Width*1.05;
@@ -224,7 +224,7 @@ namespace Octgn.Play.Gui
                 {
                     if (c == e.ClickedCard) continue;
                     pt.X += xOffset;
-                    c.MoveToTable((int) pt.X, (int) pt.Y, e.FaceUp.Value, idx);
+                    c.MoveToTable((int) pt.X, (int) pt.Y, e.FaceUp != null && e.FaceUp.Value, idx);
                 }
             }
             else
@@ -595,9 +595,9 @@ namespace Octgn.Play.Gui
             for (int i = 0; i < groupDefs.Length; ++i)
             {
                 GroupDef groupDef = groupDefs[i];
-                Group group = Player.LocalPlayer.IndexedGroups[i + 1]; // 0 is hand
+                Group indexedGroup = Player.LocalPlayer.IndexedGroups[i + 1]; // 0 is hand
                 subItem = new MenuItem {Header = groupDef.Name, InputGestureText = groupDef.Shortcut};
-                subItem.Click += delegate { Selection.Do(c => c.MoveTo(group, true), contextCard); };
+                subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true), contextCard); };
                 item.Items.Add(subItem);
                 subItem = new MenuItem
                               {
@@ -605,7 +605,7 @@ namespace Octgn.Play.Gui
                                   InputGestureText =
                                       string.IsNullOrEmpty(groupDef.Shortcut) ? null : "Alt+" + groupDef.Shortcut
                               };
-                subItem.Click += delegate { Selection.Do(c => c.MoveTo(group, true, group.Count), contextCard); };
+                subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, indexedGroup.Count), contextCard); };
                 moveToBottomItems.Add(subItem);
             }
             if (moveToBottomItems.Count > 0) item.Items.Add(new Separator());

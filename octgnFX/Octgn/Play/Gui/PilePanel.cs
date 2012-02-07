@@ -36,8 +36,11 @@ namespace Octgn.Play.Gui
                     AddInternalChild(child);
                     generator.PrepareItemContainer(child);
                 }
-                child.Measure(availableSize);
-                desiredSize = child.DesiredSize;
+                if (child != null)
+                {
+                    child.Measure(availableSize);
+                    desiredSize = child.DesiredSize;
+                }
             }
 
             // Remove all other items than the top one
@@ -59,7 +62,7 @@ namespace Octgn.Play.Gui
             if (VisualChildrenCount > 0)
             {
                 var child = GetVisualChild(0) as UIElement;
-                child.Arrange(new Rect(finalSize));
+                if (child != null) child.Arrange(new Rect(finalSize));
             }
             return finalSize;
         }

@@ -35,24 +35,36 @@ namespace Octgn.Play.Gui
         protected void ViewAllCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            ChildWindowManager manager = ((PlayWindow) Window.GetWindow(this)).wndManager;
-            manager.Show(new GroupWindow(group, PilePosition.All, 0));
+            var playWindow = (PlayWindow) Window.GetWindow(this);
+            if (playWindow != null)
+            {
+                ChildWindowManager manager = playWindow.wndManager;
+                manager.Show(new GroupWindow(@group, PilePosition.All, 0));
+            }
         }
 
         protected void ViewTopCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             int count = OCTGN.InputPositiveInt("View top cards", "How many cards do you want to see?", 1);
-            ChildWindowManager manager = ((PlayWindow) Window.GetWindow(this)).wndManager;
-            manager.Show(new GroupWindow(group, PilePosition.Top, count));
+            var playWindow = (PlayWindow) Window.GetWindow(this);
+            if (playWindow != null)
+            {
+                ChildWindowManager manager = playWindow.wndManager;
+                manager.Show(new GroupWindow(@group, PilePosition.Top, count));
+            }
         }
 
         protected void ViewBottomCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             int count = OCTGN.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1);
-            ChildWindowManager manager = ((PlayWindow) Window.GetWindow(this)).wndManager;
-            manager.Show(new GroupWindow(group, PilePosition.Bottom, count));
+            var playWindow = (PlayWindow) Window.GetWindow(this);
+            if (playWindow != null)
+            {
+                ChildWindowManager manager = playWindow.wndManager;
+                manager.Show(new GroupWindow(@group, PilePosition.Bottom, count));
+            }
         }
     }
 }

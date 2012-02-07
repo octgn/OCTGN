@@ -131,7 +131,6 @@ namespace Octgn.Launcher
             if (isLoggingIn)
             {
                 e.Cancel = true;
-                return;
             }
         }
 
@@ -153,7 +152,7 @@ namespace Octgn.Launcher
                                                 b.HorizontalAlignment = HorizontalAlignment.Right;
 
                                                 b.Content = "Ok";
-                                                b.Click += (object o, RoutedEventArgs e) => { pm.HideMessage(); };
+                                                b.Click += (o, e) => { pm.HideMessage(); };
                                                 tb.Name = "tbCaptcha";
 
                                                 i.Source = new BitmapImage(new Uri(Imageurl));
@@ -184,7 +183,7 @@ namespace Octgn.Launcher
             if (success == LoginResult.WaitingForResponse)
             {
                 LoginTimer =
-                    new Timer((object o) => { LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again."); },
+                    new Timer(o => { LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again."); },
                               null, 10000, 10000);
                 return;
             }
@@ -226,7 +225,7 @@ namespace Octgn.Launcher
                                                 {
                                                     DoErrorMessage("Login Failed: " + message);
                                                 }
-                                            }), new object[0] {});
+                                            }), new object[] {});
         }
 
         private void menuExit_Click(object sender, RoutedEventArgs e)
@@ -239,7 +238,7 @@ namespace Octgn.Launcher
 
         private bool FileExists(string URL)
         {
-            bool result = false;
+            bool result;
             using (var client = new WebClient())
             {
                 try
@@ -295,7 +294,7 @@ namespace Octgn.Launcher
         {
             if (FileExists("http://www.skylabsonline.com/downloads/octgn/update.xml"))
             {
-                var update = new string[2];
+                string[] update;
                 update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -317,10 +316,6 @@ namespace Octgn.Launcher
                     }
                 }
             }
-        }
-
-        private void menuOctgn_Click(object sender, RoutedEventArgs e)
-        {
         }
 
         private void menuDeckEditor_Click(object sender, RoutedEventArgs e)
@@ -353,7 +348,7 @@ namespace Octgn.Launcher
                                             {
                                                 lError.Text = message;
                                                 bError.Visibility = Visibility.Visible;
-                                            }), new object[0] {});
+                                            }), new object[] {});
         }
 
         private void passwordBox1_PasswordChanged(object sender, RoutedEventArgs e)

@@ -522,7 +522,7 @@ namespace Octgn.Scripting
             int statusCode = 200;
             string result = "";
             WebRequest request = null;
-            WebResponse response = null;
+            WebResponse response;
             StreamReader reader = null;
 
             try
@@ -572,10 +572,6 @@ namespace Octgn.Scripting
                 if (reader != null)
                 {
                     reader.Close(); //closes the reader and the response stream it was working on at the same time.
-                }
-                if (request != null)
-                {
-                    request = null; //not really needed but general cleanup
                 }
             }
 

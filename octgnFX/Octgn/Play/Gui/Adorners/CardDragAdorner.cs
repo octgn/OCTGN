@@ -169,7 +169,7 @@ namespace Octgn.Play.Gui
 
             invertTransform.ScaleX = invertTransform.ScaleY = isInverted ? -1 : 1;
 
-            if (size != Size.Empty && (size.Width != child.Width || size.Height != child.Height))
+            if (size != Size.Empty && (Math.Abs(size.Width - child.Width) > double.Epsilon || Math.Abs(size.Height - child.Height) > float.Epsilon))
             {
                 mouseAdjustment +=
                     new Vector(mouseOffset.X*(size.Width - child.Width)/Program.Game.Definition.CardDefinition.Width,

@@ -30,9 +30,9 @@ namespace Octgn.Play.Gui
             if (pile.AnimateInsertion)
             {
                 pile.AnimateInsertion = false;
-                var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
+                var doubleAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
                                {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
             }
         }
 
@@ -43,14 +43,14 @@ namespace Octgn.Play.Gui
 
             // Fix: capture the pile, it may sometimes be null when Completed executes.
             var capturedPile = (Pile) group;
-            var anim = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
+            var doubleAnimation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
                            {EasingFunction = new ExponentialEase {EasingMode = EasingMode.EaseIn}};
-            anim.Completed += delegate
+            doubleAnimation.Completed += delegate
                                   {
                                       capturedPile.AnimateInsertion = true;
                                       capturedPile.Collapsed = true;
                                   };
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
         }
 
         #region Card DnD
@@ -85,7 +85,7 @@ namespace Octgn.Play.Gui
             e.Handled = e.CanDrop = true;
             if (group.TryToManipulate())
                 foreach (Card c in e.Cards)
-                    c.MoveTo(group, e.FaceUp.Value, 0);
+                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0);
         }
 
         private void OnCardDroppedBottom(object sender, CardsEventArgs e)
@@ -93,7 +93,7 @@ namespace Octgn.Play.Gui
             e.Handled = e.CanDrop = true;
             if (group.TryToManipulate())
                 foreach (Card c in e.Cards)
-                    c.MoveTo(group, e.FaceUp.Value, group.Count);
+                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, group.Count);
         }
 
         private void OnCardOverBottom(object sender, CardsEventArgs e)

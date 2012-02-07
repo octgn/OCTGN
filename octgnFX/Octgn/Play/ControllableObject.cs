@@ -147,11 +147,8 @@ namespace Octgn.Play
         {
             if (CanManipulate())
                 return true;
-            else
-            {
-                NotControlledError();
-                return false;
-            }
+            NotControlledError();
+            return false;
         }
 
         protected void OnPropertyChanged(string propertyName)

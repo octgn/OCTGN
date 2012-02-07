@@ -58,7 +58,7 @@ namespace Octgn.Controls
                     break;
                 }
 
-                string guri = "";
+                string guri;
                 SetValue(GameNameProperty, _hostedGame.Name);
                 switch (_hostedGame.GameStatus)
                 {

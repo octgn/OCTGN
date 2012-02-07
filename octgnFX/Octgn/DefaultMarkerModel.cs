@@ -30,9 +30,9 @@ namespace Octgn
             return id.GetHashCode() ^ (name != null ? name.GetHashCode() : 0);
         }
 
-        public void SetName(string name)
+        public void SetName(string lName)
         {
-            this.name = name;
+            this.name = lName;
         }
 
         public DefaultMarkerModel Clone()

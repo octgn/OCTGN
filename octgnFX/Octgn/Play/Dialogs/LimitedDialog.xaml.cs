@@ -69,7 +69,7 @@ namespace Octgn.Play.Dialogs
         private void RemoveClicked(object sender, EventArgs e)
         {
             var btn = sender as Button;
-            Packs.Remove((SelectedPack) btn.DataContext);
+            if (btn != null) Packs.Remove((SelectedPack) btn.DataContext);
         }
 
         #region Nested type: SelectedPack

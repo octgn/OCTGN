@@ -89,7 +89,7 @@ namespace Octgn.Play.Gui
                     }
 
                     // Measurements will depend on layout algorithm
-                    child.Measure(GetChildSize());
+                    if (child != null) child.Measure(GetChildSize());
                 }
             }
 
@@ -234,7 +234,7 @@ namespace Octgn.Play.Gui
         {
             // Figure out how many children fit on each row
             int childrenPerRow;
-            if (availableSize.Width == Double.PositiveInfinity)
+            if (double.IsPositiveInfinity(availableSize.Width))
                 childrenPerRow = Children.Count;
             else
                 childrenPerRow = Math.Max(1, (int) Math.Floor(availableSize.Width/ChildSize));

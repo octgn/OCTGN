@@ -26,7 +26,7 @@ namespace Octgn.Script
             InitializeComponent();
             allMarkersView = CollectionViewSource.GetDefaultView(Program.Game.Markers);
             allMarkersView.Filter =
-                (object marker) =>
+                marker =>
                 ((MarkerModel) marker).Name.IndexOf(filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
             allList.ItemsSource = allMarkersView;
             defaultList.ItemsSource = Marker.DefaultMarkers;

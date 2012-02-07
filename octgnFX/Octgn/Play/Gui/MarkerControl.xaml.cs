@@ -31,12 +31,14 @@ namespace Octgn.Play.Gui
             if (e.Key == Key.Add)
             {
                 te.Handled = e.Handled = true;
-                (DataContext as Marker).Count++;
+                var marker = DataContext as Marker;
+                if (marker != null) marker.Count++;
             }
             else if (e.Key == Key.Subtract)
             {
                 te.Handled = e.Handled = true;
-                (DataContext as Marker).Count--;
+                var marker = DataContext as Marker;
+                if (marker != null) marker.Count--;
             }
         }
 

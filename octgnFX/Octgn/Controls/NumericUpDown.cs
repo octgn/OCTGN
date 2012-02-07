@@ -387,9 +387,12 @@ namespace Octgn.Controls
                                                      var box = (TextBox) sender;
                                                      BindingExpression be =
                                                          box.GetBindingExpression(TextBox.TextProperty);
-                                                     be.UpdateSource();
-                                                     be.UpdateTarget();
-                                                         // if the value has been reject (e.g. bad format)
+                                                     if (be != null)
+                                                     {
+                                                         be.UpdateSource();
+                                                         be.UpdateTarget();
+                                                     }
+                                                     // if the value has been reject (e.g. bad format)
                                                  };
                 editBox.KeyDown += delegate(object sender, KeyEventArgs e)
                                        {
@@ -397,18 +400,25 @@ namespace Octgn.Controls
                                            {
                                                var box = (TextBox) sender;
                                                BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
-                                               be.UpdateSource();
-                                               be.UpdateTarget(); // if the value has been reject (e.g. bad format)
-                                               ((UIElement) Window.GetWindow(box).Content).MoveFocus(
-                                                   new TraversalRequest(FocusNavigationDirection.First));
+                                               if (be != null)
+                                               {
+                                                   be.UpdateSource();
+                                                   be.UpdateTarget(); // if the value has been reject (e.g. bad format)
+                                               }
+                                               var window = Window.GetWindow(box);
+                                               if (window != null)
+                                                   ((UIElement) window.Content).MoveFocus(
+                                                       new TraversalRequest(FocusNavigationDirection.First));
                                            }
                                            else if (e.Key == Key.Escape)
                                            {
                                                var box = (TextBox) sender;
                                                BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
-                                               be.UpdateTarget();
-                                               ((UIElement) Window.GetWindow(box).Content).MoveFocus(
-                                                   new TraversalRequest(FocusNavigationDirection.First));
+                                               if (be != null) be.UpdateTarget();
+                                               var window = Window.GetWindow(box);
+                                               if (window != null)
+                                                   ((UIElement) window.Content).MoveFocus(
+                                                       new TraversalRequest(FocusNavigationDirection.First));
                                            }
                                        };
             }

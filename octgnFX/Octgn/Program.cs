@@ -84,7 +84,6 @@ namespace Octgn
             try
             {
                 LobbyServerProcess.Start();
-                return;
             }
             catch (Exception e)
             {

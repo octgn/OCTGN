@@ -55,7 +55,7 @@ namespace Octgn.Launcher
                 Program.GameSettings.UseTwoSidedTable = true;
                 Program.Game = new Game(GameDef.FromO8G(Game.Filename));
                 Program.IsHost = true;
-                var ad = new IPAddress[0];
+                IPAddress[] ad;
 #if(DEBUG)
                 ad = new IPAddress[1];
                 IPAddress ip = IPAddress.Parse("127.0.0.1");

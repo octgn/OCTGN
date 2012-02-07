@@ -45,8 +45,10 @@ namespace Octgn.Play.Gui
             {
                 e.Handled = true;
                 input.Clear();
-                ((UIElement) Window.GetWindow(this).Content).MoveFocus(
-                    new TraversalRequest(FocusNavigationDirection.First));
+                var window = Window.GetWindow(this);
+                if (window != null)
+                    ((UIElement) window.Content).MoveFocus(
+                        new TraversalRequest(FocusNavigationDirection.First));
             }
         }
 
@@ -229,8 +231,7 @@ namespace Octgn.Play.Gui
                     }
                     return result;
                 }
-                else
-                    format = format.Replace(placeholder, arg == null ? "[?]" : arg.ToString());
+                format = format.Replace(placeholder, arg == null ? "[?]" : arg.ToString());
             }
             return new Run(format);
         }
