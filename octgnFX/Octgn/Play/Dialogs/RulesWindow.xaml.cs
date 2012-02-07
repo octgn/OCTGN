@@ -25,7 +25,9 @@ namespace Octgn.Play.Dialogs
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {           
+        {
+            Uri test = new Uri(Program.Game.Definition.PackUri.Replace(",", "/").Replace("///",",,,"));
+            Boolean f = test.IsFile;
             // Get Stream of the file
             StreamReader fileReader = new StreamReader(File.Open(@"C:\Downloads\rules.txt", FileMode.Open));
             FileInfo fileInfo = new FileInfo(@"C:\Downloads\rules.txt");
