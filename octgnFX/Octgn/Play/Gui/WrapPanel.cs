@@ -12,7 +12,7 @@ namespace Octgn.Play.Gui
         #region Private vars
 
         private InsertAdorner insertAdorner = null;
-        private static DoubleAnimation animation = new DoubleAnimation() { DecelerationRatio = 0.7, Duration = new Duration(TimeSpan.FromMilliseconds(300)) };         
+        private static DoubleAnimation animation = new DoubleAnimation() { DecelerationRatio = 0.7, Duration = new Duration(TimeSpan.FromMilliseconds(300)) };
         private UIElement spacedItem1 = null, spacedItem2 = null;
         private const int SpacingWidth = 8;
 
@@ -37,7 +37,7 @@ namespace Octgn.Play.Gui
         #region Insertion related
 
         private bool insertAtEndOfRow;  // indicates wheter the insertion adorner should preferably 
-                                        // get displayed at the end of row or at the beginning of the next one
+        // get displayed at the end of row or at the beginning of the next one
 
         public int GetIndexFromPoint(Point position)
         {
@@ -153,9 +153,9 @@ namespace Octgn.Play.Gui
         protected override Transform GetCurrentLayoutInfo(UIElement element, out Point arrangePosition)
         {
             var group = (TransformGroup)element.RenderTransform;
-            
+
             var currentPos = element.TransformToAncestor(this).Transform(new Point());
-            arrangePosition = group.Inverse.Transform(currentPos);            
+            arrangePosition = group.Inverse.Transform(currentPos);
 
             return group.Children[1];
         }

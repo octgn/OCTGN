@@ -7,43 +7,43 @@ using System.ComponentModel;
 
 namespace Octgn.Data
 {
-	public class GameSettings : INotifyPropertyChanged
-	{
-		private bool _useTwoSidedTable = true;
-	    private bool _initialized = false;
+    public class GameSettings : INotifyPropertyChanged
+    {
+        private bool _useTwoSidedTable = true;
+        private bool _initialized = false;
 
         public GameSettings()
         {
             _initialized = true;
         }
 
-		public bool UseTwoSidedTable
-		{ 
-			get
-			{
-			    return _useTwoSidedTable;
-			}
-			set
-			{
-				if (value != _useTwoSidedTable)
-				{
-					_useTwoSidedTable = value;
-                    if(_initialized)
-					    OnPropertyChanged("UseTwoSidedTable");
-				}
-			}
-		}
+        public bool UseTwoSidedTable
+        {
+            get
+            {
+                return _useTwoSidedTable;
+            }
+            set
+            {
+                if (value != _useTwoSidedTable)
+                {
+                    _useTwoSidedTable = value;
+                    if (_initialized)
+                        OnPropertyChanged("UseTwoSidedTable");
+                }
+            }
+        }
 
-		#region INotifyPropertyChanged Members
+        #region INotifyPropertyChanged Members
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		protected void OnPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

@@ -26,7 +26,7 @@ namespace Skylabs.LobbyServer
             //List<Assembly> assemblyList = new List<Assembly>();
             //assemblyList.Add(Assembly.GetExecutingAssembly());
             //_webServer.Server.Assemblies = assemblyList;
-            
+
 
             _running = false;
             _server = new HttpListener();
@@ -43,7 +43,7 @@ namespace Skylabs.LobbyServer
         }
         public bool Start()
         {
-            if(!_running)
+            if (!_running)
             {
                 try
                 {
@@ -91,65 +91,65 @@ namespace Skylabs.LobbyServer
             try
             {
                 HttpListenerContext con = _server.EndGetContext(res);
-                    HttpListenerRequest req = con.Request;
+                HttpListenerRequest req = con.Request;
 
-                    var page = req.Url.AbsolutePath.Trim('/');
-                    page = page.ToLower();
-                    switch (page)
-                    {
-                        case "":
+                var page = req.Url.AbsolutePath.Trim('/');
+                page = page.ToLower();
+                switch (page)
+                {
+                    case "":
+                        {
+                            var spage = File.ReadAllText("webserver/index.htm");
+                            spage = ReplaceVariables(spage);
+                            SendItem(con.Response, spage);
+                            break;
+                        }
+                    case "games.htm":
+                        {
+                            var spage = File.ReadAllText("webserver/games.htm");
+                            spage = InsertRunningGames(spage);
+                            SendItem(con.Response, spage);
+                            break;
+                        }
+                    case "index.htm":
+                        {
+                            string time = req.QueryString["time"];
+                            if (time != null)
                             {
-                                var spage = File.ReadAllText("webserver/index.htm");
-                                spage = ReplaceVariables(spage);
-                                SendItem(con.Response, spage);
-                                break;
-                            }
-                        case "games.htm":
-                            {
-                                var spage = File.ReadAllText("webserver/games.htm");
-                                spage = InsertRunningGames(spage);
-                                SendItem(con.Response, spage);
-                                break;
-                            }
-                        case "index.htm":
-                            {
-                                string time = req.QueryString["time"];
-                                if (time != null)
+                                int t = 0;
+                                if (Int32.TryParse(time, out t))
                                 {
-                                    int t = 0;
-                                    if (Int32.TryParse(time, out t))
-                                    {
-                                        Program.KillServerInTime(t);
-                                        SendItem(con.Response, "1");
-                                        break;
-                                    }
+                                    Program.KillServerInTime(t);
+                                    SendItem(con.Response, "1");
+                                    break;
                                 }
-                                var spage = File.ReadAllText("webserver/index.htm");
-                                spage = ReplaceVariables(spage);
-                                SendItem(con.Response, spage);
-                                break;
                             }
-                        default:
+                            var spage = File.ReadAllText("webserver/index.htm");
+                            spage = ReplaceVariables(spage);
+                            SendItem(con.Response, spage);
+                            break;
+                        }
+                    default:
+                        {
+                            var spage = "";
+                            try
                             {
-                                var spage = "";
-                                try
-                                {
-                                    spage = File.ReadAllText("webserver/" + page);
-                                }
-                                catch (Exception)
-                                {
-                                    spage = "";
-                                    con.Response.StatusCode = 404;
-                                }
-                                spage = ReplaceVariables(spage);
-                                SendItem(con.Response, spage);
-                                break;
+                                spage = File.ReadAllText("webserver/" + page);
                             }
-                    }
+                            catch (Exception)
+                            {
+                                spage = "";
+                                con.Response.StatusCode = 404;
+                            }
+                            spage = ReplaceVariables(spage);
+                            SendItem(con.Response, spage);
+                            break;
+                        }
+                }
             }
-            catch(Exception)
+            catch (Exception)
             {
-            
+
             }
             AcceptConnections();
         }
@@ -192,7 +192,7 @@ namespace Skylabs.LobbyServer
                 insert = insert + "<td>" + game.GameVersion + "</td>";
                 insert = insert + "<td>" + ts.ToString() + "</td>";
                 Client c = Server.GetOnlineClientByUid(game.UserHosting.Uid);
-                Lobby.User user; 
+                Lobby.User user;
                 if (c == null)
                 {
                     user = game.UserHosting;
@@ -213,7 +213,7 @@ namespace Skylabs.LobbyServer
             return (ret);
         }
 
-        private void SendItem(HttpListenerResponse res,string page)
+        private void SendItem(HttpListenerResponse res, string page)
         {
             try
             {

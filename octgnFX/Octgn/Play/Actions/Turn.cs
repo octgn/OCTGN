@@ -13,8 +13,8 @@ namespace Octgn.Play.Actions
 
         public override void Do()
         {
-            base.Do();            
-            card.SetFaceUp(up);            
+            base.Do();
+            card.SetFaceUp(up);
             if (up) card.Reveal();
             Program.Trace.TraceEvent(System.Diagnostics.TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} turns '{1}' face {2}", who, card, up ? "up" : "down");
 

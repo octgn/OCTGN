@@ -14,7 +14,8 @@ namespace Octgn.Play.Gui
         public FrameworkElement ClippingVisual
         { get; set; }
 
-        public InsertAdorner(UIElement adornedElement) : base(adornedElement)
+        public InsertAdorner(UIElement adornedElement)
+            : base(adornedElement)
         {
             IsHitTestVisible = false;
             topTriangle = new Polygon()
@@ -34,7 +35,7 @@ namespace Octgn.Play.Gui
                 Effect = new DropShadowEffect() { ShadowDepth = 2 }
             };
         }
-       
+
         public void MoveTo(Point to)
         {
             position = to;
@@ -45,7 +46,7 @@ namespace Octgn.Play.Gui
             if (ClippingVisual != null)
             {
                 var clipping = new Rect(
-                    ClippingVisual.PointToScreen(new Point(-4, -4)), 
+                    ClippingVisual.PointToScreen(new Point(-4, -4)),
                     ClippingVisual.PointToScreen(new Point(ClippingVisual.ActualWidth + 4, ClippingVisual.ActualHeight + 4)));
                 var testPt = PointToScreen(position);
                 topTriangle.Visibility = clipping.Contains(testPt) ? Visibility.Visible : Visibility.Collapsed;

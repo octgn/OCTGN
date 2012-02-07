@@ -46,7 +46,7 @@ namespace Skylabs.ConsoleHelper
             //Console.ForegroundColor = Color;
             ConsoleWriter.WriteLine(Header + Message, false);
             ConsoleWriter.WriteCt();
-            if(addToEventLog)
+            if (addToEventLog)
                 ConsoleEventLog.AddEvent(this, false);
         }
     }

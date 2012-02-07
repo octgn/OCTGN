@@ -32,7 +32,7 @@ namespace Skylabs
 
         public static string CreateShaHash(string password)
         {
-            using(SHA512Managed hashTool = new SHA512Managed())
+            using (SHA512Managed hashTool = new SHA512Managed())
             {
                 Byte[] passwordAsByte = Encoding.ASCII.GetBytes(password);
                 Byte[] encryptedBytes = hashTool.ComputeHash(passwordAsByte);
@@ -51,14 +51,14 @@ namespace Skylabs
 
                 var sb = new StringBuilder();
 
-                for(var i = 0; i < hasedBytes.Length; i++)
+                for (var i = 0; i < hasedBytes.Length; i++)
                 {
                     sb.Append(hasedBytes[i].ToString("X2"));
                 }
 
                 return sb.ToString().ToLower();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return "";
             }
@@ -70,9 +70,9 @@ namespace Skylabs
             MD5CryptoServiceProvider cryptHandler = new MD5CryptoServiceProvider();
             byte[] hash = cryptHandler.ComputeHash(textBytes);
             string ret = "";
-            foreach(byte a in hash)
+            foreach (byte a in hash)
             {
-                if(a < 16)
+                if (a < 16)
                     ret += "0" + a.ToString("x");
                 else
                     ret += a.ToString("x");

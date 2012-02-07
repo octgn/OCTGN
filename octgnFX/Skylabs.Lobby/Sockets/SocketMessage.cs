@@ -39,7 +39,7 @@ namespace Skylabs.Net
     }
 
     [Serializable]
-    public class SocketMessage: ICloneable
+    public class SocketMessage : ICloneable
     {
         public NameValuePair[] Data { get { return _data; } set { _data = value; } }
 
@@ -61,7 +61,7 @@ namespace Skylabs.Net
             {
                 foreach (NameValuePair t in _data)
                 {
-                    if(t.Key == key)
+                    if (t.Key == key)
                         t.Value = value;
                 }
             }
@@ -81,7 +81,7 @@ namespace Skylabs.Net
 
         public static byte[] Serialize(SocketMessage message)
         {
-            using(MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
                 try
                 {
@@ -100,7 +100,7 @@ namespace Skylabs.Net
 
         public static SocketMessage Deserialize(byte[] data)
         {
-            using(MemoryStream ms = new MemoryStream(data))
+            using (MemoryStream ms = new MemoryStream(data))
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 try

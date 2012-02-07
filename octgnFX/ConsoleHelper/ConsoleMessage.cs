@@ -53,7 +53,7 @@ namespace Skylabs.ConsoleHelper
             int ws = RawData.IndexOf(' ');
             Header = "";
             Args = new List<ConsoleArgument>();
-            if(ws == -1)
+            if (ws == -1)
             {
                 Header = RawData;
             }
@@ -64,18 +64,18 @@ namespace Skylabs.ConsoleHelper
                 {
                     String args = RawData.Substring(ws + 1);
                     args = args.TrimStart(new[] { ' ' });
-                    if(!args.Equals(""))
+                    if (!args.Equals(""))
                     {
                         String[] araw = args.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
-                        if(araw.Length != 0)
+                        if (araw.Length != 0)
                         {
-                            foreach(String a in araw)
+                            foreach (String a in araw)
                             {
                                 string temp = a.Trim();
                                 ws = temp.IndexOf(' ');
-                                if(ws == -1)
+                                if (ws == -1)
                                 {
-                                    ConsoleArgument ca = new ConsoleArgument {Argument = temp};
+                                    ConsoleArgument ca = new ConsoleArgument { Argument = temp };
                                     Args.Add(ca);
                                 }
                                 else
@@ -91,7 +91,7 @@ namespace Skylabs.ConsoleHelper
                         }
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     new ConsoleEventError("Error parsing arguments. ", e).WriteEvent(true);
                 }

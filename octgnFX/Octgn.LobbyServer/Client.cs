@@ -14,10 +14,10 @@ using System.Threading;
 
 namespace Skylabs.LobbyServer
 {
-    public class Client : IEqualityComparer<Client>,IDisposable
+    public class Client : IEqualityComparer<Client>, IDisposable
     {
         public event EventHandler OnDisconnect;
-        public List<User>Friends
+        public List<User> Friends
         {
             get
             {
@@ -41,7 +41,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         /// The user information on the currently connected user
         /// </summary>
-        public User Me {get;private set; }
+        public User Me { get; private set; }
 
         private SkySocket Socket;
 
@@ -53,7 +53,7 @@ namespace Skylabs.LobbyServer
 
         private readonly Version Version = Assembly.GetExecutingAssembly().GetName().Version;
 
-        public Client(SkySocket socket,int id)
+        public Client(SkySocket socket, int id)
         {
             _stopping = false;
             Id = id;
@@ -110,30 +110,30 @@ namespace Skylabs.LobbyServer
                     {
                         int? uid = (int?)message["uid"];
                         bool? accept = (bool?)message["accept"];
-                        if(uid == null || accept == null)
+                        if (uid == null || accept == null)
                             break;
-                        AcceptFriend((int)uid,(bool)accept);
+                        AcceptFriend((int)uid, (bool)accept);
                         break;
                     }
                 case "end":
                     {
-                        LazyAsync.Invoke(()=>Stop());
+                        LazyAsync.Invoke(() => Stop());
                         break;
                     }
                 case "displayname":
                     {
                         string s = (string)message["name"];
-                        if(message != null)
+                        if (message != null)
                             SetDisplayName(s);
                         break;
                     }
                 case "status":
                     {
                         UserStatus u = (UserStatus)message["status"];
-                        if(u != UserStatus.Offline && u != UserStatus.Unknown)
+                        if (u != UserStatus.Offline && u != UserStatus.Unknown)
                         {
                             Me.Status = u;
-                            LazyAsync.Invoke(()=>Server.OnUserEvent(u,this));
+                            LazyAsync.Invoke(() => Server.OnUserEvent(u, this));
                         }
                         break;
                     }
@@ -143,37 +143,37 @@ namespace Skylabs.LobbyServer
                         Version v = (Version)message["version"];
                         string n = (string)message["name"];
                         string pass = (string)message["pass"];
-                        if(g != null && v != null && n != null && pass != null)
-                            HostGame(g,v,n,pass);
+                        if (g != null && v != null && n != null && pass != null)
+                            HostGame(g, v, n, pass);
                         break;
                     }
                 case "gamestarted":
                     {
                         Gaming.StartGame((int)message["port"]);
-                        LazyAsync.Invoke(()=>Server.AllUserMessage(message.Clone() as SocketMessage));
+                        LazyAsync.Invoke(() => Server.AllUserMessage(message.Clone() as SocketMessage));
                         break;
                     }
                 case "customstatus":
                     {
                         string s = (string)message["customstatus"];
-                        if(s != null)
+                        if (s != null)
                             SetCustomStatus(s);
                         break;
                     }
                 case "joinchatroom":
                     {
-                        LazyAsync.Invoke(()=>Chatting.JoinChatRoom(this,message));
+                        LazyAsync.Invoke(() => Chatting.JoinChatRoom(this, message));
                         break;
                     }
                 case "addusertochat":
                     {
 
-                        LazyAsync.Invoke(()=>Chatting.AddUserToChat(this, message));
+                        LazyAsync.Invoke(() => Chatting.AddUserToChat(this, message));
                         break;
                     }
                 case "twopersonchat":
                     {
-                        LazyAsync.Invoke(()=>Chatting.TwoPersonChat(this, message));
+                        LazyAsync.Invoke(() => Chatting.TwoPersonChat(this, message));
                         break;
                     }
                 case "leavechat":
@@ -182,13 +182,13 @@ namespace Skylabs.LobbyServer
                         if (rid != null)
                         {
                             long rid2 = (long)rid;
-                            LazyAsync.Invoke(()=>Chatting.UserLeaves(Me.Clone() as User, rid2));
+                            LazyAsync.Invoke(() => Chatting.UserLeaves(Me.Clone() as User, rid2));
                         }
                         break;
                     }
                 case "chatmessage":
                     {
-                        LazyAsync.Invoke(()=>Chatting.ChatMessage(this,message));
+                        LazyAsync.Invoke(() => Chatting.ChatMessage(this, message));
                         break;
                     }
             }
@@ -211,27 +211,27 @@ namespace Skylabs.LobbyServer
         }
         void SetCustomStatus(string status)
         {
-            lock(ClientLocker)
+            lock (ClientLocker)
             {
-                if(status.Length > 200)
+                if (status.Length > 200)
                     status = status.Substring(0, 197) + "...";
-                if(Cup.SetCustomStatus(Me.Uid, status))
+                if (Cup.SetCustomStatus(Me.Uid, status))
                 {
                     Me.CustomStatus = status;
-                    LazyAsync.Invoke(()=>Server.OnUserEvent(Me.Status, this, false));
+                    LazyAsync.Invoke(() => Server.OnUserEvent(Me.Status, this, false));
                 }
             }
         }
         void HostGame(Guid g, Version v, String name, String pass)
         {
-            lock(ClientLocker)
+            lock (ClientLocker)
             {
-                int port = Gaming.HostGame(g,v,name,pass,Me);
+                int port = Gaming.HostGame(g, v, name, pass, Me);
                 SocketMessage som = new SocketMessage("hostgameresponse");
                 som.AddData("port", port);
                 Socket.WriteMessage(som);
 
-                if (port != -1 )
+                if (port != -1)
                 {
                     SocketMessage smm = new SocketMessage("GameHosting");
                     smm.AddData("name", name);
@@ -240,7 +240,7 @@ namespace Skylabs.LobbyServer
                     smm.AddData("version", v);
                     smm.AddData("hoster", Me);
                     smm.AddData("port", port);
-                    LazyAsync.Invoke(()=>Server.AllUserMessage(smm.Clone() as SocketMessage));
+                    LazyAsync.Invoke(() => Server.AllUserMessage(smm.Clone() as SocketMessage));
                 }
             }
         }
@@ -248,7 +248,7 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                #if(TestServer)
+#if(TestServer)
                 Trace.WriteLine("#WriteTo[" + Id + "](" + sm.Header + ")");
 #endif
                 Socket.WriteMessage(sm);
@@ -259,18 +259,18 @@ namespace Skylabs.LobbyServer
             lock (ClientLocker)
             {
                 //if (theuser.Equals(Me))
-                    //return;
+                //return;
                 SocketMessage sm = new SocketMessage("status");
                 if (e == UserStatus.Invisible)
                     e = UserStatus.Offline;
                 theuser.Status = e;
                 sm.AddData("user", theuser);
-                LazyAsync.Invoke(()=>WriteMessage(sm));
+                LazyAsync.Invoke(() => WriteMessage(sm));
             }
         }
         void SetDisplayName(string name)
         {
-            lock(ClientLocker)
+            lock (ClientLocker)
             {
                 if (name.Length > 60)
                     name = name.Substring(0, 57) + "...";
@@ -283,9 +283,9 @@ namespace Skylabs.LobbyServer
                 }
             }
         }
-        void AcceptFriend(int uid,bool accept)
+        void AcceptFriend(int uid, bool accept)
         {
-            lock(ClientLocker)
+            lock (ClientLocker)
             {
                 User requestee = Cup.GetUser(uid);
                 if (requestee == null)
@@ -293,7 +293,7 @@ namespace Skylabs.LobbyServer
                 if (accept)
                 {
                     //Add friend to this list
-                    if(!_friends.Contains(requestee))
+                    if (!_friends.Contains(requestee))
                         _friends.Add(requestee);
                     //Add you to friends list
                     Client c = Server.GetOnlineClientByUid(requestee.Uid);
@@ -308,7 +308,7 @@ namespace Skylabs.LobbyServer
                 Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
                 if (!Me.Equals(requestee))
                     Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
-                LazyAsync.Invoke(()=>SendFriendsList());
+                LazyAsync.Invoke(() => SendFriendsList());
             }
         }
         public void AddFriend(User friend)
@@ -352,7 +352,7 @@ namespace Skylabs.LobbyServer
                     //Authenticate Google Token
                     try
                     {
-                        Trace.WriteLine(String.Format("Client[{0}]:Verifying Token",Id));
+                        Trace.WriteLine(String.Format("Client[{0}]:Verifying Token", Id));
                         String appName = "skylabs-LobbyServer-" + Version;
                         Service s = new Service("code", appName);
                         s.SetAuthenticationToken(token);
@@ -373,7 +373,7 @@ namespace Skylabs.LobbyServer
                         sm = new SocketMessage("loginfailed");
                         sm.AddData("message", "Server error");
                         Socket.WriteMessage(sm);
-                        Trace.TraceError("Client.Login: ",e);
+                        Trace.TraceError("Client.Login: ", e);
                         return;
                     }
                     Trace.WriteLine(String.Format("Client[{0}]:Getting db User", Id));
@@ -392,7 +392,7 @@ namespace Skylabs.LobbyServer
                         }
                     }
                     u = Cup.GetUser(email);
-                    
+
                     if (u == null)
                     {
                         Trace.WriteLine(String.Format("Client[{0}]:User = {1}", u.DisplayName));
@@ -406,8 +406,8 @@ namespace Skylabs.LobbyServer
                     int banned = Cup.IsBanned(u.Uid, Socket.RemoteEndPoint);
                     if (banned == -1)
                     {
-                        Trace.WriteLine(String.Format("Client[{0}]:Starting to Stop and remove by uid={1}", Id,u.Uid));
-                        Tuple<int, int> res = Server.StopAndRemoveAllByUID(this,u.Uid);
+                        Trace.WriteLine(String.Format("Client[{0}]:Starting to Stop and remove by uid={1}", Id, u.Uid));
+                        Tuple<int, int> res = Server.StopAndRemoveAllByUID(this, u.Uid);
                         Trace.WriteLine(String.Format("Client[{0}]:Done Stop and remove by uid={1}", Id, u.Uid));
                         Me = u;
                         if (status == UserStatus.Unknown || status == UserStatus.Offline)
@@ -419,13 +419,13 @@ namespace Skylabs.LobbyServer
                         Trace.WriteLine(String.Format("Client[{0}]:Login Success", Id));
                         LoggedIn = true;
                         if (res.Item1 == 0)
-                            LazyAsync.Invoke(()=>Server.OnUserEvent(status, this));
+                            LazyAsync.Invoke(() => Server.OnUserEvent(status, this));
                         _friends = Cup.GetFriendsList(Me.Uid);
 
-                        
-                        LazyAsync.Invoke(()=>SendFriendsList());
-                        LazyAsync.Invoke(()=>SendFriendRequests());
-                        LazyAsync.Invoke(()=>SendHostedGameList());
+
+                        LazyAsync.Invoke(() => SendFriendsList());
+                        LazyAsync.Invoke(() => SendFriendRequests());
+                        LazyAsync.Invoke(() => SendHostedGameList());
                         return;
                     }
                     else
@@ -433,7 +433,7 @@ namespace Skylabs.LobbyServer
                         sm = new SocketMessage("banned");
                         sm.AddData("end", banned);
                         Socket.WriteMessage(sm);
-                        LazyAsync.Invoke(()=>Stop());
+                        LazyAsync.Invoke(() => Stop());
                         LoggedIn = false;
                         return;
                     }
@@ -497,7 +497,7 @@ namespace Skylabs.LobbyServer
                 }
                 Socket.WriteMessage(sm);
             }
-            
+
         }
         public bool Equals(Client x, Client y)
         {
@@ -511,11 +511,11 @@ namespace Skylabs.LobbyServer
 
         public void Dispose()
         {
-            lock(ClientLocker)
+            lock (ClientLocker)
             {
                 if (!IsDisposed)
                 {
-                    Socket.OnMessageReceived  -= Socket_OnMessageReceived;
+                    Socket.OnMessageReceived -= Socket_OnMessageReceived;
                     Socket.OnConnectionClosed -= Socket_OnConnectionClosed;
                     _friends.Clear();
                     _friends = null;

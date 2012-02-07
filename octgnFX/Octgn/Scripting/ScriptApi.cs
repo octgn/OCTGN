@@ -37,7 +37,7 @@ namespace Octgn.Scripting
         { return Player.Find((byte)id).Name; }
 
         public string PlayerColor(int id)
-        { return Player.Find((byte)id).Color.ToString().Remove(1,2); }
+        { return Player.Find((byte)id).Color.ToString().Remove(1, 2); }
 
         public bool IsActivePlayer(int id)
         {
@@ -89,8 +89,8 @@ namespace Octgn.Scripting
 
         internal static string GroupCtor(Group group)
         {
-            if(group is Table) return "table";
-            if(group is Hand) return string.Format("Hand({0}, Player({1}))", group.Id, group.Owner.Id);
+            if (group is Table) return "table";
+            if (group is Hand) return string.Format("Hand({0}, Player({1}))", group.Id, group.Owner.Id);
             return string.Format("Pile({0}, '{1}', Player({2}))", group.Id, group.Name.Replace("'", @"\'"), group.Owner.Id);
         }
 
@@ -111,7 +111,7 @@ namespace Octgn.Scripting
             var pile = (Pile)Group.Find(id);
 
             bool isAsync = engine.Invoke<bool>(() => pile.Shuffle());
-            if(!isAsync) return;
+            if (!isAsync) return;
 
             pile.Shuffled += new ShuffleAsync { engine = engine }.Continuation;
             engine.Suspend();
@@ -159,14 +159,14 @@ namespace Octgn.Scripting
         public string CardModel(int id)
         {
             var c = Card.Find(id);
-            if(!c.FaceUp || c.Type.model == null) return null;
+            if (!c.FaceUp || c.Type.model == null) return null;
             return c.Type.model.Id.ToString();
         }
 
         public object CardProperty(int id, string property)
         {
             var c = Card.Find(id);
-            if(!c.FaceUp || c.Type.model == null) return "?";
+            if (!c.FaceUp || c.Type.model == null) return "?";
             return c.Type.model.Properties[property];
         }
 
@@ -193,7 +193,7 @@ namespace Octgn.Scripting
 
         public void CardSetOrientation(int id, int rot)
         {
-            if(rot < 0 || rot > 3) throw new IndexOutOfRangeException("orientation must be between 0 and 3");
+            if (rot < 0 || rot > 3) throw new IndexOutOfRangeException("orientation must be between 0 and 3");
             var card = Card.Find(id);
             engine.Invoke(() => card.Orientation = (CardOrientation)rot);
         }
@@ -201,7 +201,7 @@ namespace Octgn.Scripting
         public string CardGetHighlight(int id)
         {
             var colorOrNull = Card.Find(id).HighlightColor;
-            if(colorOrNull == null) return null;
+            if (colorOrNull == null) return null;
             var color = colorOrNull.Value;
             return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
         }
@@ -225,7 +225,7 @@ namespace Octgn.Scripting
             var group = Group.Find(groupId);
             engine.Invoke(() =>
             {
-                if(position == null) card.MoveTo(group, true);
+                if (position == null) card.MoveTo(group, true);
                 else card.MoveTo(group, true, position.Value);
             });
         }
@@ -244,7 +244,7 @@ namespace Octgn.Scripting
             // At the moment, only table and hand support multiple selection
             engine.Invoke(() =>
             {
-                if(c.Group is Table || c.Group is Hand)
+                if (c.Group is Table || c.Group is Hand)
                     Play.Gui.Selection.Add(c);
                 else
                     Play.Gui.Selection.Clear();
@@ -266,7 +266,7 @@ namespace Octgn.Scripting
             if (TableOnly)
             {
                 if (c.Group is Table)
-                    engine.Invoke(() => c.MoveToTable((int)c.X, (int)c.Y, c.FaceUp, idx)); 
+                    engine.Invoke(() => c.MoveToTable((int)c.X, (int)c.Y, c.FaceUp, idx));
             }
             else
                 engine.Invoke(() => c.MoveToTable((int)c.X, (int)c.Y, c.FaceUp, idx));
@@ -277,7 +277,7 @@ namespace Octgn.Scripting
             var c = Card.Find(id);
             engine.Invoke(() =>
             {
-                if(active) c.Target(); else c.Untarget();
+                if (active) c.Target(); else c.Untarget();
             });
         }
 
@@ -296,13 +296,13 @@ namespace Octgn.Scripting
         {
             var card = Card.Find(cardId);
             var marker = card.FindMarker(Guid.Parse(markerId), markerName);
-            if(marker == null) return 0;
+            if (marker == null) return 0;
             return marker.Count;
         }
 
         public void MarkerSetCount(int cardId, int count, string markerName, string markerId)
         {
-            if(count < 0) count = 0;
+            if (count < 0) count = 0;
             var card = Card.Find(cardId);
             Guid guid = Guid.Parse(markerId);
             var marker = card.FindMarker(guid, markerName);
@@ -354,7 +354,7 @@ namespace Octgn.Scripting
             {
                 //fix MAINWINDOW bug
                 var dlg = new Octgn.Script.MarkerDlg() { Owner = Program.PlayWindow };
-                if(!dlg.ShowDialog().GetValueOrDefault()) return null;
+                if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return Tuple.Create(dlg.MarkerModel.Name, dlg.MarkerModel.id.ToString(), dlg.Quantity);
             });
         }
@@ -365,7 +365,7 @@ namespace Octgn.Scripting
             {
                 //fix MAINWINDOW bug
                 var dlg = new Octgn.Script.CardDlg(restriction) { Owner = Program.PlayWindow };
-                if(!dlg.ShowDialog().GetValueOrDefault()) return null;
+                if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                 return Tuple.Create(dlg.SelectedCard.Id.ToString(), dlg.Quantity);
             });
         }
@@ -378,7 +378,7 @@ namespace Octgn.Scripting
         {
             var capture = new RandomAsync { engine = engine, reqId = RandomRequest.GenerateId() };
             RandomRequest.Completed += capture.Continuation;
-            using(new Networking.Mute(engine.CurrentJob.muted))
+            using (new Networking.Mute(engine.CurrentJob.muted))
                 Program.Client.Rpc.RandomReq(capture.reqId, min, max);
             engine.Suspend();
             return capture.result;
@@ -393,7 +393,7 @@ namespace Octgn.Scripting
             public void Continuation(object sender, EventArgs e)
             {
                 var req = (RandomRequest)sender;
-                if(req.Id != reqId) return;
+                if (req.Id != reqId) return;
                 RandomRequest.Completed -= Continuation;
 
                 result = req.Result;
@@ -410,7 +410,7 @@ namespace Octgn.Scripting
             var result = new List<int>();
 
             Guid modelGuid;
-            if(!Guid.TryParse(modelId, out modelGuid))
+            if (!Guid.TryParse(modelId, out modelGuid))
                 return result;   // e.g. modelId may be null if the cloned card is face down.
 
             engine.Invoke(() =>
@@ -474,7 +474,7 @@ namespace Octgn.Scripting
 
                 request = WebRequest.Create(url);
                 response = request.GetResponse();
-                
+
                 reader = new StreamReader(response.GetResponseStream());
                 result = reader.ReadToEnd();
             }
@@ -555,42 +555,42 @@ namespace Octgn.Scripting
         #endregion Special APIs
 
         #region GlobalVariables
-            public void PlayerSetGlobalVariable(int id, string name, object value)
-            {
-                string val = String.Format("{0}", value);
-                Player p = Player.Find((byte)id);
-                if(p == null || p.Id != Player.LocalPlayer.Id)
-                    return;
-                if (Player.LocalPlayer.GlobalVariables.ContainsKey(name))
-                    engine.Invoke(() => Player.LocalPlayer.GlobalVariables[name] = val);
-                else
-                    engine.Invoke(() => Player.LocalPlayer.GlobalVariables.Add(name, val));
-                Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, val);
-            }
-            public string PlayerGetGlobalVariable(int id,string name)
-            {
-                Player p = Player.Find((byte)id);
-                if (p == null)
-                    return "";
-                if (p.GlobalVariables.ContainsKey(name))
-                    return p.GlobalVariables[name];
+        public void PlayerSetGlobalVariable(int id, string name, object value)
+        {
+            string val = String.Format("{0}", value);
+            Player p = Player.Find((byte)id);
+            if (p == null || p.Id != Player.LocalPlayer.Id)
+                return;
+            if (Player.LocalPlayer.GlobalVariables.ContainsKey(name))
+                engine.Invoke(() => Player.LocalPlayer.GlobalVariables[name] = val);
+            else
+                engine.Invoke(() => Player.LocalPlayer.GlobalVariables.Add(name, val));
+            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, val);
+        }
+        public string PlayerGetGlobalVariable(int id, string name)
+        {
+            Player p = Player.Find((byte)id);
+            if (p == null)
                 return "";
-            }
-            public void SetGlobalVariable( string name, object value)
-            {
-                string val = String.Format("{0}", value);
-                if (Program.Game.GlobalVariables.ContainsKey(name))
-                    engine.Invoke(() => Program.Game.GlobalVariables[name] = val);
-                else
-                    engine.Invoke(() => Program.Game.GlobalVariables.Add(name, val));
-                Program.Client.Rpc.SetGlobalVariable(name, val);
-            }
-            public string GetGlobalVariable(string name)
-            {
-                if (Program.Game.GlobalVariables.ContainsKey(name))
-                    return Program.Game.GlobalVariables[name];
-                return "";
-            }
+            if (p.GlobalVariables.ContainsKey(name))
+                return p.GlobalVariables[name];
+            return "";
+        }
+        public void SetGlobalVariable(string name, object value)
+        {
+            string val = String.Format("{0}", value);
+            if (Program.Game.GlobalVariables.ContainsKey(name))
+                engine.Invoke(() => Program.Game.GlobalVariables[name] = val);
+            else
+                engine.Invoke(() => Program.Game.GlobalVariables.Add(name, val));
+            Program.Client.Rpc.SetGlobalVariable(name, val);
+        }
+        public string GetGlobalVariable(string name)
+        {
+            if (Program.Game.GlobalVariables.ContainsKey(name))
+                return Program.Game.GlobalVariables[name];
+            return "";
+        }
         #endregion
     }
 }

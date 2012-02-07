@@ -23,7 +23,7 @@ namespace Octgn.Launcher
         {
             InitializeComponent();
             Game = game;
-            
+
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -51,7 +51,7 @@ namespace Octgn.Launcher
             int port = (int)sm["port"];
             Program.DebugTrace.TraceEvent(System.Diagnostics.TraceEventType.Information, 0, "Connecting to port: " + port.ToString());
             Program.lobbyClient.CurrentHostedGamePort = port;
-            if(port > -1)
+            if (port > -1)
             {
                 Program.GameSettings.UseTwoSidedTable = true;
                 Program.Game = new Game(GameDef.FromO8G(Game.Filename));
@@ -70,13 +70,13 @@ namespace Octgn.Launcher
                     Program.Client = new Networking.Client(ip, port);
                     Program.Client.Connect();
                     this.Dispatcher.Invoke(new Action(dothenavigate));
-                    
+
                 }
-            }            
+            }
         }
         private void dothenavigate()
         {
-            
+
             ns.Navigate(new StartGame());
         }
         private void button2_Click(object sender, RoutedEventArgs e)

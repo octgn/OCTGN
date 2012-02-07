@@ -58,9 +58,9 @@ namespace Octgn.Controls
         private void a_Completed(object sender, System.EventArgs e)
         {
             this.Visibility = Visibility.Hidden;
-            if(parentControl != null)
+            if (parentControl != null)
                 parentControl.Children.Remove(this);
-            if(OnPopupWindowClose != null)
+            if (OnPopupWindowClose != null)
                 OnPopupWindowClose(this, xclosed);
         }
 

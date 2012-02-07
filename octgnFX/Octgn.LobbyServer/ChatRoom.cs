@@ -9,7 +9,7 @@ using Skylabs.Lobby.Threading;
 
 namespace Skylabs.LobbyServer
 {
-    public class ChatRoom : IComparable<ChatRoom>,IEquatable<ChatRoom>
+    public class ChatRoom : IComparable<ChatRoom>, IEquatable<ChatRoom>
     {
         /// <summary>
         /// Unique ID of the chat room
@@ -31,7 +31,7 @@ namespace Skylabs.LobbyServer
         public ChatRoom(long id, User initialUser)
         {
             ID = id;
-            if(initialUser != null)
+            if (initialUser != null)
                 AddUser(initialUser);
         }
         /// <summary>
@@ -78,7 +78,7 @@ namespace Skylabs.LobbyServer
         public User[] GetUserList()
         {
             Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
-            lock(UserLocker)
+            lock (UserLocker)
             {
                 Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                 User[] ret = new User[Users.Count];
@@ -120,12 +120,12 @@ namespace Skylabs.LobbyServer
         /// Sends all users in this chat room a message
         /// </summary>
         /// <param name="sm">Message to send</param>
-        private void SendAllUsersMessage(SocketMessage sm,bool Lock)
+        private void SendAllUsersMessage(SocketMessage sm, bool Lock)
         {
             if (Lock)
             {
                 Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
-                lock(UserLocker)
+                lock (UserLocker)
                 {
                     Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
                     int[] slist = new int[Users.Count];
@@ -135,7 +135,7 @@ namespace Skylabs.LobbyServer
                         slist[i] = u.Item2.Uid;
                         i++;
                     }
-                    LazyAsync.Invoke(()=>Server.AllUserMessageUidList(slist,sm));
+                    LazyAsync.Invoke(() => Server.AllUserMessageUidList(slist, sm));
                 }
                 Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "UserLocker");
             }
@@ -163,7 +163,7 @@ namespace Skylabs.LobbyServer
             sm.AddData("roomid", ID);
             sm.AddData("mess", message);
             sm.AddData("user", u);
-            SendAllUsersMessage(sm,false);
+            SendAllUsersMessage(sm, false);
         }
         /// <summary>
         /// Compare this ChatRoom to the other room.

@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Octgn.Scripting
 {
-  public class ExecutionResult
-  {
-    public string Error;
-    public string Output;
-  }
+    public class ExecutionResult
+    {
+        public string Error;
+        public string Output;
+    }
 }

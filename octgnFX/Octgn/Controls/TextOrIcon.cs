@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 namespace Octgn.Controls
 {
     public class TextOrIcon : ContentControl
-    {       
+    {
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(TextOrIcon));
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof(string), typeof(TextOrIcon));
 
@@ -20,11 +20,11 @@ namespace Octgn.Controls
         public string Icon
         {
             get { return (string)GetValue(IconProperty); }
-            set { SetValue(IconProperty, value);  }
+            set { SetValue(IconProperty, value); }
         }
 
         private Image img = new Image();
-				private TextBlock tb = new TextBlock() { Style = null };
+        private TextBlock tb = new TextBlock() { Style = null };
 
         public TextOrIcon()
         {

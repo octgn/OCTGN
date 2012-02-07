@@ -26,11 +26,11 @@ namespace Octgn.StandAloneServer
                            };
             }
 
-        OptionSet set = new OptionSet()
-                .Add("p=|port=", "Port for the server to host on.", (v) => int.TryParse(v, out Port))
-                .Add("g=|guid=", "GUID of the game being played.", (v) => Guid.TryParse(v, out GameGuid))
-                .Add("v=|version=", "Game version.", (v) => GameVersion = Version.TryParse(v, out GameVersion) == true?GameVersion : null);
-            if(!HandleArgs(args,set) || Port == 0 || GameGuid.Equals(Guid.Empty) || GameVersion == null)
+            OptionSet set = new OptionSet()
+                    .Add("p=|port=", "Port for the server to host on.", (v) => int.TryParse(v, out Port))
+                    .Add("g=|guid=", "GUID of the game being played.", (v) => Guid.TryParse(v, out GameGuid))
+                    .Add("v=|version=", "Game version.", (v) => GameVersion = Version.TryParse(v, out GameVersion) == true ? GameVersion : null);
+            if (!HandleArgs(args, set) || Port == 0 || GameGuid.Equals(Guid.Empty) || GameVersion == null)
             {
                 set.WriteOptionDescriptions(Console.Out);
                 return;
@@ -39,7 +39,7 @@ namespace Octgn.StandAloneServer
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
-            
+
             StartServer();
         }
         private static bool HandleArgs(string[] args, OptionSet set)
@@ -51,7 +51,7 @@ namespace Octgn.StandAloneServer
         }
         private static void StartServer()
         {
-            Server = new Server.Server(Port,GameGuid,GameVersion);
+            Server = new Server.Server(Port, GameGuid, GameVersion);
             Server.OnStop += new EventHandler(Server_OnStop);
             Console.WriteLine("Starting server on port " + Port);
             while (KeepRunning)
@@ -68,7 +68,7 @@ namespace Octgn.StandAloneServer
 
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
         {
-            
+
             //ConsoleEventLog.SerializeEvents("sologs/"+DateTime.Now.ToFileTime().ToString() + "SOServer.xml");
         }
 

@@ -8,7 +8,7 @@ using Skylabs.Net;
 namespace Skylabs.Lobby
 {
     [Serializable]
-    public class HostedGame : IEquatable<HostedGame>,IEqualityComparer<HostedGame>
+    public class HostedGame : IEquatable<HostedGame>, IEqualityComparer<HostedGame>
     {
         [Serializable]
         public enum eHostedGame
@@ -38,12 +38,12 @@ namespace Skylabs.Lobby
         }
         public HostedGame(SocketMessage sm)
         {
-            GameGuid = (Guid) sm["guid"];
-            GameVersion = (Version) sm["version"];
-            Port = (int) sm["port"];
-            Name = (string) sm["name"];
-            PasswordRequired = (bool) sm["passrequired"];
-            UserHosting = (User) sm["hoster"];
+            GameGuid = (Guid)sm["guid"];
+            GameVersion = (Version)sm["version"];
+            Port = (int)sm["port"];
+            Name = (string)sm["name"];
+            PasswordRequired = (bool)sm["passrequired"];
+            UserHosting = (User)sm["hoster"];
             GameStatus = eHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
         }

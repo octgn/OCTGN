@@ -7,16 +7,17 @@ using System.Collections.ObjectModel;
 
 namespace Octgn.DeckBuilder
 {
-	public class SetPropertyDef : PropertyDef
-	{
-		private IList<Set> allSets;
+    public class SetPropertyDef : PropertyDef
+    {
+        private IList<Set> allSets;
 
-		public IList<Set> Sets
-		{ get { return allSets; } }
+        public IList<Set> Sets
+        { get { return allSets; } }
 
-		public SetPropertyDef(IList<Set> allSets) : base("Set", 0)
-		{
-			this.allSets = allSets.OrderBy(s => s.Name).ToList();
-		}
-	}
+        public SetPropertyDef(IList<Set> allSets)
+            : base("Set", 0)
+        {
+            this.allSets = allSets.OrderBy(s => s.Name).ToList();
+        }
+    }
 }

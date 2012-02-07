@@ -45,13 +45,13 @@ namespace Octgn.Launcher
 
         private void LobbyClientOnOnUserStatusChanged(UserStatus eve, User user)
         {
-            Program.lobbyClient.Chatting.UserStatusChange(this.ID,user,eve);
+            Program.lobbyClient.Chatting.UserStatusChange(this.ID, user, eve);
             ResetUserList();
         }
 
         public void ChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
-            Chatting_eChatEvent(cr,  e,user,data);
+            Chatting_eChatEvent(cr, e, user, data);
         }
         void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
@@ -104,13 +104,13 @@ namespace Octgn.Launcher
                                     AddChatText(r, "Left the chat.", b);
                                     ResetUserList();
                                 }
-                                    break;
+                                break;
                             }
                     }
                 }));
             }
         }
-        private void AddChatText(Run headerRun,string chat, Brush b = null)
+        private void AddChatText(Run headerRun, string chat, Brush b = null)
         {
             if (b == null) b = Brushes.Black;
             bool rtbatbottom = false;
@@ -131,16 +131,16 @@ namespace Octgn.Launcher
                 rtbatbottom = true;
             }
 
-            if(dVer != 0)
+            if (dVer != 0)
             {
-                if(dVer + dViewport == dExtent)
+                if (dVer + dViewport == dExtent)
                 {
                     rtbatbottom = true;
                     justScrolledToBottom = false;
                 }
                 else
                 {
-                    if(!justScrolledToBottom)
+                    if (!justScrolledToBottom)
                     {
                         Paragraph pa = new Paragraph();
                         Run ru = new Run("------------------------------");
@@ -155,17 +155,17 @@ namespace Octgn.Launcher
 
             Paragraph p = new Paragraph();
             p.Inlines.Add(headerRun);
-            if(chat.Contains("\n"))
+            if (chat.Contains("\n"))
             {
                 String[] lines = chat.Split(new char[1] { '\n' });
-                foreach(String line in lines)
+                foreach (String line in lines)
                 {
                     String[] words = line.Split(new char[1] { ' ' });
-                    foreach(String word in words)
+                    foreach (String word in words)
                     {
-                        Inline inn = StringToRun(word ,b);
+                        Inline inn = StringToRun(word, b);
 
-                        if(inn != null)
+                        if (inn != null)
                             p.Inlines.Add(inn);
                         p.Inlines.Add(new Run(" "));
                     }
@@ -175,17 +175,17 @@ namespace Octgn.Launcher
             else
             {
                 String[] words = chat.Split(new char[1] { ' ' });
-                foreach(String word in words)
+                foreach (String word in words)
                 {
-                    Inline inn = StringToRun(word,b);
+                    Inline inn = StringToRun(word, b);
 
-                    if(inn != null)
+                    if (inn != null)
                         p.Inlines.Add(inn);
                     p.Inlines.Add(new Run(" "));
                 }
             }
             richTextBox1.Document.Blocks.Add(p);
-            if(richTextBox1.Document.Blocks.Count > 200)
+            if (richTextBox1.Document.Blocks.Count > 200)
             {
                 try
                 {
@@ -193,11 +193,11 @@ namespace Octgn.Launcher
                 }
                 catch (Exception)
                 {
-                    
+
                 }
-                
+
             }
-            if(rtbatbottom)
+            if (rtbatbottom)
                 richTextBox1.ScrollToEnd();
         }
         public Inline StringToRun(String s, Brush b)
@@ -302,7 +302,7 @@ namespace Octgn.Launcher
 
         private void ResetUserList()
         {
-            Dispatcher.Invoke(new Action(()=>
+            Dispatcher.Invoke(new Action(() =>
             {
                 ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(ID);
                 if (cr != null)

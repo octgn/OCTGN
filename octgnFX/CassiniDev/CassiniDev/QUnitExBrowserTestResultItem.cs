@@ -50,7 +50,7 @@ namespace CassiniDev
         }
 
 
-        
+
         public void RunTest()
         {
             //ContentLocator locator = new ContentLocator(@"RESTWebServices\RESTWebServices");
@@ -81,7 +81,7 @@ namespace CassiniDev
         public override void Parse(string log)
         {
             // parse it line by line
-            var lines = log.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
+            var lines = log.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             Log.AddRange(lines);
             BrowserTestResultItem currentItem = this;
             BrowserTestResultItem lastItem = null;

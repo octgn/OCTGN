@@ -42,7 +42,7 @@ namespace Skylabs.Lobby.Threading
                     if (Q.Count > 0)
                     {
                         ca = Q.Dequeue();
-                        ca.Action.BeginInvoke(InvokeDone,null);
+                        ca.Action.BeginInvoke(InvokeDone, null);
                     }
                 }
                 catch (Exception e)
@@ -51,13 +51,13 @@ namespace Skylabs.Lobby.Threading
                     if (System.Diagnostics.Debugger.IsAttached)
                     {
                         System.Diagnostics.Debugger.Break();
-                    } 
+                    }
                 }
             }
         }
         private void InvokeDone(IAsyncResult result)
         {
-            
+
         }
         public void Dispose()
         {

@@ -2,32 +2,32 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ctrl="clr-namespace:Octgn.Controls"
     >
-  <Style TargetType="{x:Type ctrl:NumericUpDown}">
-    <Setter Property="HorizontalAlignment" Value="Center"/>
-    <Setter Property="VerticalAlignment" Value="Center"/>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ctrl:NumericUpDown}">
-          <Grid Margin="3">
-            <Grid.RowDefinitions>
-              <RowDefinition/>
-              <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition/>
-              <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+    <Style TargetType="{x:Type ctrl:NumericUpDown}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ctrl:NumericUpDown}">
+                    <Grid Margin="3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
 
-            <Border BorderThickness="1" BorderBrush="Gray" Margin="2" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-              <TextBox x:Name="PART_TextBox" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value, UpdateSourceTrigger=Explicit}"  TextAlignment="Right" Padding="5"/>
-            </Border>
-            <RepeatButton Command="{x:Static ctrl:NumericUpDown.IncreaseCommand}"  Grid.Column="1" Grid.Row="0">Up</RepeatButton>
-            <RepeatButton Command="{x:Static ctrl:NumericUpDown.DecreaseCommand}"  Grid.Column="1" Grid.Row="1">Down</RepeatButton>
+                        <Border BorderThickness="1" BorderBrush="Gray" Margin="2" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                            <TextBox x:Name="PART_TextBox" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value, UpdateSourceTrigger=Explicit}"  TextAlignment="Right" Padding="5"/>
+                        </Border>
+                        <RepeatButton Command="{x:Static ctrl:NumericUpDown.IncreaseCommand}"  Grid.Column="1" Grid.Row="0">Up</RepeatButton>
+                        <RepeatButton Command="{x:Static ctrl:NumericUpDown.DecreaseCommand}"  Grid.Column="1" Grid.Row="1">Down</RepeatButton>
 
-          </Grid>
+                    </Grid>
 
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

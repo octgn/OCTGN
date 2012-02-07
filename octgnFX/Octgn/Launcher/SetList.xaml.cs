@@ -38,11 +38,11 @@ namespace Octgn.Launcher
             foreach (Octgn.Data.Set s in SelectedGame.Sets)
             {
                 lbSetList.Items.Add(s);
-            }            
+            }
         }
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            
+
         }
         public void Deleted_Selected()
         {
@@ -61,7 +61,7 @@ namespace Octgn.Launcher
             };
             if (ofd.ShowDialog() != true) return;
 
-            
+
             //Move the definition file to a new location, so that the old one can be deleted
             string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Sets");
             if (!Directory.Exists(path))
@@ -97,7 +97,7 @@ namespace Octgn.Launcher
         }
         public void Patch_Selected()
         {
-            new PatchDialog { Owner = Program.ClientWindow}.ShowDialog();
+            new PatchDialog { Owner = Program.ClientWindow }.ShowDialog();
             Refresh_List();
         }
     }

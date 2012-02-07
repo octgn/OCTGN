@@ -31,13 +31,13 @@ namespace Octgn.Controls
         public Octgn.Data.Game Game
         {
             get { return _game; }
-            set 
-            { 
+            set
+            {
                 _game = value;
                 BitmapImage bi = new BitmapImage(_game.GetCardBackUri());
                 SetValue(PictureProperty, bi as ImageSource);
                 SetValue(GameNameProperty, _game.Name);
-                SetValue(VersionProperty,_game.Version.ToString());
+                SetValue(VersionProperty, _game.Version.ToString());
             }
         }
 

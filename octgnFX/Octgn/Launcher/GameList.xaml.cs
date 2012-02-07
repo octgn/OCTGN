@@ -46,7 +46,7 @@ namespace Octgn.Launcher
                 //gs.MouseDoubleClick += new MouseButtonEventHandler(gs_MouseDoubleClick);
                 gs.MouseUp += new MouseButtonEventHandler(gs_MouseUp);
                 stackPanel1.Children.Add(gs);
-            }            
+            }
         }
 
         void gs_MouseUp(object sender, MouseButtonEventArgs e)
@@ -64,10 +64,10 @@ namespace Octgn.Launcher
 
         void gs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            GameListItem gs = (GameListItem) sender;
+            GameListItem gs = (GameListItem)sender;
             if (OnGameClick != null)
             {
-                OnGameClick.Invoke(gs.Game,new EventArgs());
+                OnGameClick.Invoke(gs.Game, new EventArgs());
             }
         }
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -98,14 +98,14 @@ namespace Octgn.Launcher
                     MessageBox.Show("This file is currently in use. Please close whatever application is using it and try again.");
                     return;
                 }
-                
+
             }
 
             try
             {
                 //Move the definition file to a new location, so that the old one can be deleted
                 string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Defs");
-                if(!Directory.Exists(path))
+                if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
                 FileInfo fi = new FileInfo(newFilename);
                 string copyto = System.IO.Path.Combine(path, fi.Name);
@@ -114,11 +114,11 @@ namespace Octgn.Launcher
                     if (newFilename.ToLower() != copyto.ToLower())
                         File.Copy(newFilename, copyto, true);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     MessageBox.Show("File in use. You shouldn't install games or sets when in the deck editor or when playing a game.");
                     return;
-                }               
+                }
                 newFilename = copyto;
                 // Open the archive
                 Definitions.GameDef game = Definitions.GameDef.FromO8G(newFilename);

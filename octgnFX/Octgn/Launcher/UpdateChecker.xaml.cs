@@ -56,7 +56,7 @@ namespace Octgn.Launcher
                 Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), false, "");
             }
         }
-        private void UpdateCheckDone(bool result,string url)
+        private void UpdateCheckDone(bool result, string url)
         {
             if (result)
             {
@@ -99,10 +99,10 @@ namespace Octgn.Launcher
                     {
                         Errors.AddRange(terr);
                         g2r.Add(g);
-                        
+
                     }
                 }
-                foreach(Octgn.Data.Game g in g2r)
+                foreach (Octgn.Data.Game g in g2r)
                     Program.GamesRepository.Games.Remove(g);
                 if (Errors.Count > 0)
                 {
@@ -126,7 +126,8 @@ namespace Octgn.Launcher
         }
         private void UpdateStatus(string stat)
         {
-            Dispatcher.BeginInvoke(new Action(() => {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
                 try
                 {
                     lblStatus.Content = stat;
@@ -193,7 +194,7 @@ namespace Octgn.Launcher
             }
             finally
             {
-                
+
             }
             return values;
         }

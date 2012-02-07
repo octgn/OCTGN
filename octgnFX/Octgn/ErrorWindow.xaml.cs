@@ -10,11 +10,13 @@ namespace Octgn
             InitializeComponent();
         }
 
-        public ErrorWindow(Exception ex) : this()
+        public ErrorWindow(Exception ex)
+            : this()
         {
             detailsBox.Text = ex.ToString();
         }
-        public ErrorWindow(string ex) : this()
+        public ErrorWindow(string ex)
+            : this()
         {
             detailsBox.Text = ex;
         }
