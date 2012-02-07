@@ -60,7 +60,8 @@
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
-				<Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="343,10,1,1" Padding="5"
+                <TextBox Height="23" Name="SearchString" Width="367" DataContext="{Binding}" Text="Combined SQL Search command here." AcceptsTab="True" />
+                <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="343,10,1,1" Padding="5"
 								Click="RefreshSearch" IsDefault="True" />
 			</StackPanel>
 		</Border>
