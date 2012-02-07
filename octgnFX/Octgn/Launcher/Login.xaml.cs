@@ -55,13 +55,6 @@ namespace Octgn.Launcher
                 cbSavePassword.IsChecked = true;
             }
             textBox1.Text = Registry.ReadValue("E-Mail");
-#if(DEBUG)
-            var m = new MenuItem();
-            m.Name = "menuOldMenu";
-            m.Header = "Old Menu";
-            m.Click += menuOldMenu_Click;
-            menuOctgn.Items.Add(m);
-#endif
         }
 
         private void lobbyClient_OnDataRecieved(DataRecType type, object e)
@@ -366,12 +359,6 @@ namespace Octgn.Launcher
         private void passwordBox1_PasswordChanged(object sender, RoutedEventArgs e)
         {
             bError.Visibility = Visibility.Hidden;
-        }
-
-        private void menuOldMenu_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO This event and the menu need to be removed before release. This is only here for debugging purposes
-            NavigationService.Navigate(new MainMenu());
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
