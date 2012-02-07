@@ -122,14 +122,17 @@ namespace Skylabs.Lobby
                 Rooms.Add(new ChatRoom(rid));
             }
             ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
-            cr.ResetUserList(allusers);
-            if (u.Uid == Parent.Me.Uid)
+            if (cr != null)
             {
-                if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.MeJoinedChat, u, null);
-            }
-            else
-            {
-                if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.UserJoinedChat, u, null);
+                cr.ResetUserList(allusers);
+                if (u.Uid == Parent.Me.Uid)
+                {
+                    if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.MeJoinedChat, u, null);
+                }
+                else
+                {
+                    if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.UserJoinedChat, u, null);
+                }
             }
         }
 

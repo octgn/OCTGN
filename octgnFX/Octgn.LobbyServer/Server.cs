@@ -289,6 +289,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         /// Stops and removes all clients based on a uid.
         /// </summary>
+        /// <param name="caller">The Caller</param>
         /// <param name="uid">UID</param>
         /// <returns>Tupple, where value1=number of users with UID who are logged in, and value2=Number of clients removed.</returns>
         public static Tuple<int, int> StopAndRemoveAllByUID(Client caller, int uid)

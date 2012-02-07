@@ -8,7 +8,7 @@ namespace Skylabs.LobbyServer
 {
     public static class Logger
     {
-        private static int curIndent;
+        private static int curIndent = 1;
 
         private static string tab
         {

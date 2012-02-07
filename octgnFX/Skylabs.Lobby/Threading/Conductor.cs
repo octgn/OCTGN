@@ -83,14 +83,17 @@ namespace Skylabs.Lobby.Threading
             var st = new StackTrace();
             StackFrame[] frames = st.GetFrames();
             CalledFromMethod = "UnknownMethod";
-            for (int i = 0; i < frames.Length; i++)
+            if (frames != null)
             {
-                if (frames[i].GetMethod().Name == MethodBase.GetCurrentMethod().Name)
+                for (int i = 0; i < frames.Length; i++)
                 {
-                    if (i + 2 < frames.Length)
+                    if (frames[i].GetMethod().Name == MethodBase.GetCurrentMethod().Name)
                     {
-                        CalledFromMethod = frames[i + 2].GetMethod().Name;
-                        break;
+                        if (i + 2 < frames.Length)
+                        {
+                            CalledFromMethod = frames[i + 2].GetMethod().Name;
+                            break;
+                        }
                     }
                 }
             }

@@ -40,7 +40,7 @@ namespace Skylabs.LobbyServer
         /// Is the current user banned?
         /// </summary>
         /// <param name="uid">User ID</param>
-        /// <param name="c">client</param>
+        /// <param name="endpoint">The Endpoint</param>
         /// <returns>-1 if not banned. Timestamp of ban end if banned. Timestamp can be converted to DateTime with fromPHPTime.</returns>
         public int IsBanned(int uid, EndPoint endpoint)
         {

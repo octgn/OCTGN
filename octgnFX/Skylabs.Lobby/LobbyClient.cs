@@ -106,10 +106,7 @@ namespace Skylabs.Lobby
                 {
                     return Socket.Connected;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -343,7 +340,7 @@ namespace Skylabs.Lobby
                                            }
                                            catch (AuthenticationException re)
                                            {
-                                               var cu = (string) re.Data["CaptchaUrl"];
+                                               // var cu = (string) re.Data["CaptchaUrl"]; // unused
                                                onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
                                            }
                                            catch (WebException)
@@ -411,7 +408,7 @@ namespace Skylabs.Lobby
                         if (OnDataRecieved != null)
                         {
                             foreach (DataRecieved d in OnDataRecieved.GetInvocationList())
-                                d.BeginInvoke(DataRecType.FriendList, null, (IAsyncResult r) => { }, null);
+                                d.BeginInvoke(DataRecType.FriendList, null, r => { }, null);
                         }
                     }
                     break;
@@ -421,7 +418,7 @@ namespace Skylabs.Lobby
                         if (mess != null && OnDataRecieved != null)
                         {
                             foreach (DataRecieved d in OnDataRecieved.GetInvocationList())
-                                d.BeginInvoke(DataRecType.ServerMessage, mess, (IAsyncResult r) => { }, null);
+                                d.BeginInvoke(DataRecType.ServerMessage, mess, r => { }, null);
                         }
                         break;
                     }
@@ -442,7 +439,7 @@ namespace Skylabs.Lobby
                         _nextNoteId++;
                         if (OnFriendRequest != null)
                             foreach (FriendRequest fr in OnFriendRequest.GetInvocationList())
-                                fr.BeginInvoke(u, (IAsyncResult r) => { }, null);
+                                fr.BeginInvoke(u, r => { }, null);
                     }
                     break;
                 case "status":
@@ -464,10 +461,10 @@ namespace Skylabs.Lobby
                         }
                         if (OnUserStatusChanged != null)
                             foreach (UserStatusChanged usc in OnUserStatusChanged.GetInvocationList())
-                                usc.BeginInvoke(u.Status, u, (IAsyncResult r) => { }, null);
+                                usc.BeginInvoke(u.Status, u, r => { }, null);
                         if (OnDataRecieved != null)
                             foreach (DataRecieved dr in OnDataRecieved.GetInvocationList())
-                                dr.BeginInvoke(DataRecType.FriendList, null, (IAsyncResult r) => { }, null);
+                                dr.BeginInvoke(DataRecType.FriendList, null, r => { }, null);
                     }
                     break;
                 case "customstatus":
@@ -486,7 +483,7 @@ namespace Skylabs.Lobby
                                     FriendList[i].CustomStatus = s;
                                 if (OnDataRecieved != null)
                                     foreach (DataRecieved dr in OnDataRecieved.GetInvocationList())
-                                        dr.BeginInvoke(DataRecType.UserCustomStatus, u, (IAsyncResult r) => { }, null);
+                                        dr.BeginInvoke(DataRecType.UserCustomStatus, u, r => { }, null);
                             }
                         }
                     }
@@ -502,10 +499,10 @@ namespace Skylabs.Lobby
                         {
                             var games = sm["list"] as List<HostedGame>;
                             Games = games;
-                            if (games.Count > 0)
+                            if (games != null && games.Count > 0)
                                 if (OnGameHostEvent != null)
                                     foreach (GameHostEvent ge in OnGameHostEvent.GetInvocationList())
-                                        ge.BeginInvoke(Games[0], (IAsyncResult r) => { }, null);
+                                        ge.BeginInvoke(Games[0], r => { }, null);
                         }
                         break;
                     }

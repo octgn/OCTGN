@@ -153,6 +153,7 @@ namespace Skylabs.LobbyServer
         /// Sends all users in this chat room a message
         /// </summary>
         /// <param name="sm">Message to send</param>
+        /// <param name="lock">Should we lock?</param>
         private void SendAllUsersMessage(SocketMessage sm, bool Lock)
         {
             if (Lock)
