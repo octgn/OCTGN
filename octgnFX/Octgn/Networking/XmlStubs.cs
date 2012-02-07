@@ -11,10 +11,11 @@ using System.Text;
 using System.Windows.Media;
 using System.Xml;
 using Octgn.Play;
+using Octgn.Server;
 
 namespace Octgn.Networking
 {
-    internal abstract class BaseXmlStub : Octgn.Server.IServerCalls
+    internal abstract class BaseXmlStub : IServerCalls
     {
         protected XmlWriterSettings xmlSettings = new XmlWriterSettings();
 
@@ -23,11 +24,11 @@ namespace Octgn.Networking
             xmlSettings.OmitXmlDeclaration = true;
         }
 
-        protected abstract void Send(string xml);
+        #region IServerCalls Members
 
         public void Binary()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Binary");
@@ -40,7 +41,7 @@ namespace Octgn.Networking
 
         public void Ping()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Ping");
@@ -53,7 +54,7 @@ namespace Octgn.Networking
 
         public void IsAlternateImage(Card c, bool isAlternateImage)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("IsAlternateImage");
@@ -68,7 +69,7 @@ namespace Octgn.Networking
 
         public void Error(string msg)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Error");
@@ -80,9 +81,10 @@ namespace Octgn.Networking
             Send(sb.ToString());
         }
 
-        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion)
+        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId,
+                          Version gameVersion)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Hello");
@@ -102,7 +104,7 @@ namespace Octgn.Networking
 
         public void Settings(bool twoSidedTable)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Settings");
@@ -116,7 +118,7 @@ namespace Octgn.Networking
 
         public void PlayerSettings(Player playerId, bool invertedTable)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("PlayerSettings");
@@ -131,7 +133,7 @@ namespace Octgn.Networking
 
         public void NickReq(string nick)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("NickReq");
@@ -145,7 +147,7 @@ namespace Octgn.Networking
 
         public void Start()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Start");
@@ -158,7 +160,7 @@ namespace Octgn.Networking
 
         public void ResetReq()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("ResetReq");
@@ -171,7 +173,7 @@ namespace Octgn.Networking
 
         public void NextTurn(Player nextPlayer)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("NextTurn");
@@ -185,7 +187,7 @@ namespace Octgn.Networking
 
         public void StopTurnReq(int turnNumber, bool stop)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("StopTurnReq");
@@ -200,7 +202,7 @@ namespace Octgn.Networking
 
         public void ChatReq(string text)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("ChatReq");
@@ -214,7 +216,7 @@ namespace Octgn.Networking
 
         public void PrintReq(string text)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("PrintReq");
@@ -228,7 +230,7 @@ namespace Octgn.Networking
 
         public void RandomReq(int id, int min, int max)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("RandomReq");
@@ -244,7 +246,7 @@ namespace Octgn.Networking
 
         public void RandomAnswer1Req(int id, ulong value)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("RandomAnswer1Req");
@@ -259,7 +261,7 @@ namespace Octgn.Networking
 
         public void RandomAnswer2Req(int id, ulong value)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("RandomAnswer2Req");
@@ -274,7 +276,7 @@ namespace Octgn.Networking
 
         public void CounterReq(Counter counter, int value)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("CounterReq");
@@ -289,7 +291,7 @@ namespace Octgn.Networking
 
         public void LoadDeck(int[] id, ulong[] type, Group[] group)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("LoadDeck");
@@ -308,7 +310,7 @@ namespace Octgn.Networking
 
         public void CreateCard(int[] id, ulong[] type, Group group)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("CreateCard");
@@ -326,7 +328,7 @@ namespace Octgn.Networking
 
         public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("CreateCardAt");
@@ -351,7 +353,7 @@ namespace Octgn.Networking
 
         public void CreateAlias(int[] id, ulong[] type)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("CreateAlias");
@@ -368,7 +370,7 @@ namespace Octgn.Networking
 
         public void MoveCardReq(Card card, Group group, int idx, bool faceUp)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("MoveCardReq");
@@ -385,7 +387,7 @@ namespace Octgn.Networking
 
         public void MoveCardAtReq(Card card, int x, int y, int idx, bool faceUp)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("MoveCardAtReq");
@@ -403,7 +405,7 @@ namespace Octgn.Networking
 
         public void Reveal(Card card, ulong revealed, Guid guid)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Reveal");
@@ -419,7 +421,7 @@ namespace Octgn.Networking
 
         public void RevealToReq(Player sendTo, Player[] revealTo, Card card, ulong[] encrypted)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("RevealToReq");
@@ -438,7 +440,7 @@ namespace Octgn.Networking
 
         public void PeekReq(Card card)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("PeekReq");
@@ -452,7 +454,7 @@ namespace Octgn.Networking
 
         public void UntargetReq(Card card)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("UntargetReq");
@@ -466,7 +468,7 @@ namespace Octgn.Networking
 
         public void TargetReq(Card card)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("TargetReq");
@@ -480,7 +482,7 @@ namespace Octgn.Networking
 
         public void TargetArrowReq(Card card, Card otherCard)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("TargetArrowReq");
@@ -495,7 +497,7 @@ namespace Octgn.Networking
 
         public void Highlight(Card card, Color? color)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Highlight");
@@ -510,7 +512,7 @@ namespace Octgn.Networking
 
         public void TurnReq(Card card, bool up)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("TurnReq");
@@ -525,7 +527,7 @@ namespace Octgn.Networking
 
         public void RotateReq(Card card, CardOrientation rot)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("RotateReq");
@@ -540,7 +542,7 @@ namespace Octgn.Networking
 
         public void Shuffle(Group group, int[] card)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Shuffle");
@@ -556,7 +558,7 @@ namespace Octgn.Networking
 
         public void Shuffled(Group group, int[] card, short[] pos)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Shuffled");
@@ -574,7 +576,7 @@ namespace Octgn.Networking
 
         public void UnaliasGrp(Group group)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("UnaliasGrp");
@@ -588,7 +590,7 @@ namespace Octgn.Networking
 
         public void Unalias(int[] card, ulong[] type)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("Unalias");
@@ -605,7 +607,7 @@ namespace Octgn.Networking
 
         public void AddMarkerReq(Card card, Guid id, string name, ushort count)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("AddMarkerReq");
@@ -622,7 +624,7 @@ namespace Octgn.Networking
 
         public void RemoveMarkerReq(Card card, Guid id, string name, ushort count)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("RemoveMarkerReq");
@@ -639,7 +641,7 @@ namespace Octgn.Networking
 
         public void SetMarkerReq(Card card, Guid id, string name, ushort count)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("SetMarkerReq");
@@ -656,7 +658,7 @@ namespace Octgn.Networking
 
         public void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("TransferMarkerReq");
@@ -674,7 +676,7 @@ namespace Octgn.Networking
 
         public void PassToReq(ControllableObject id, Player to, bool requested)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("PassToReq");
@@ -690,7 +692,7 @@ namespace Octgn.Networking
 
         public void TakeFromReq(ControllableObject id, Player from)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("TakeFromReq");
@@ -705,7 +707,7 @@ namespace Octgn.Networking
 
         public void DontTakeReq(ControllableObject id, Player to)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("DontTakeReq");
@@ -720,7 +722,7 @@ namespace Octgn.Networking
 
         public void FreezeCardsVisibility(Group group)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("FreezeCardsVisibility");
@@ -734,7 +736,7 @@ namespace Octgn.Networking
 
         public void GroupVisReq(Group group, bool defined, bool visible)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("GroupVisReq");
@@ -750,7 +752,7 @@ namespace Octgn.Networking
 
         public void GroupVisAddReq(Group group, Player who)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("GroupVisAddReq");
@@ -765,7 +767,7 @@ namespace Octgn.Networking
 
         public void GroupVisRemoveReq(Group group, Player who)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("GroupVisRemoveReq");
@@ -780,7 +782,7 @@ namespace Octgn.Networking
 
         public void LookAtReq(int uid, Group group, bool look)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("LookAtReq");
@@ -796,7 +798,7 @@ namespace Octgn.Networking
 
         public void LookAtTopReq(int uid, Group group, int count, bool look)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("LookAtTopReq");
@@ -813,7 +815,7 @@ namespace Octgn.Networking
 
         public void LookAtBottomReq(int uid, Group group, int count, bool look)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("LookAtBottomReq");
@@ -830,7 +832,7 @@ namespace Octgn.Networking
 
         public void StartLimitedReq(Guid[] packs)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("StartLimitedReq");
@@ -845,7 +847,7 @@ namespace Octgn.Networking
 
         public void CancelLimitedReq()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("CancelLimitedReq");
@@ -855,9 +857,10 @@ namespace Octgn.Networking
             writer.Close();
             Send(sb.ToString());
         }
+
         public void PlayerSetGlobalVariable(Player p, string n, string v)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("PlayerSetGlobalVariable");
@@ -870,9 +873,10 @@ namespace Octgn.Networking
             writer.Close();
             Send(sb.ToString());
         }
+
         public void SetGlobalVariable(string n, string v)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
 
             writer.WriteStartElement("SetGlobalVariable");
@@ -884,15 +888,21 @@ namespace Octgn.Networking
             writer.Close();
             Send(sb.ToString());
         }
+
+        #endregion
+
+        protected abstract void Send(string xml);
     }
 
     internal class XmlSenderStub : BaseXmlStub
     {
-        private TcpClient to;
+        private readonly TcpClient to;
         private byte[] buffer = new byte[1024];
 
         public XmlSenderStub(TcpClient to)
-        { this.to = to; }
+        {
+            this.to = to;
+        }
 
         protected override void Send(string xml)
         {
@@ -903,7 +913,8 @@ namespace Octgn.Networking
             try
             {
                 Stream stream = to.GetStream();
-                stream.Write(buffer, 0, length); stream.Flush();
+                stream.Write(buffer, 0, length);
+                stream.Flush();
             }
             catch
             {

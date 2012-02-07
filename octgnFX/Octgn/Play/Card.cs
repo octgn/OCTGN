@@ -1,13 +1,26 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Octgn.Controls;
+using Octgn.Data;
+using Octgn.Definitions;
+using Octgn.Play.Actions;
+using Octgn.Play.Gui;
 
 namespace Octgn.Play
 {
-    public enum CardOrientation { Rot0 = 0, Rot90 = 1, Rot180 = 2, Rot270 = 3 };
+    public enum CardOrientation
+    {
+        Rot0 = 0,
+        Rot90 = 1,
+        Rot180 = 2,
+        Rot270 = 3
+    };
 
     public sealed class Card : ControllableObject
     {
@@ -15,7 +28,17 @@ namespace Octgn.Play
 
         private static readonly Dictionary<int, Card> All = new Dictionary<int, Card>();
 
-        internal static new Card Find(int id)
+        public static string DefaultFront
+        {
+            get { return Program.Game.Definition.CardDefinition.Front; }
+        }
+
+        public static string DefaultBack
+        {
+            get { return Program.Game.Definition.CardDefinition.Back; }
+        }
+
+        internal new static Card Find(int id)
         {
             Card res;
             bool success = All.TryGetValue(id, out res);
@@ -23,37 +46,54 @@ namespace Octgn.Play
         }
 
         internal static void Reset()
-        { All.Clear(); }
-
-        public static string DefaultFront
-        { get { return Program.Game.Definition.CardDefinition.Front; } }
-
-        public static string DefaultBack
-        { get { return Program.Game.Definition.CardDefinition.Back; } }
+        {
+            All.Clear();
+        }
 
         #endregion Static interface
 
         #region Private fields
 
-        private int id;
-        private Group group;
-        private CardOrientation rot;
-        private bool faceUp, overrideGroupVisibility;
-        internal List<Player> playersLooking = new List<Player>(1);    // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
-        private ObservableCollection<Player> playersPeeking = new ObservableCollection<Player>();    // List of players, who had peeked at this card. The list is reset when the card changes group.
-        private CardIdentity type;
-        private Definitions.CardDef definition;
-        private bool _selected;
-        private double _x, _y;
-        private Player _target;
+        private readonly int id;
+
+        private readonly ObservableCollection<Player> playersPeeking = new ObservableCollection<Player>();
+                                                      // List of players, who had peeked at this card. The list is reset when the card changes group.
+
         private Color? _highlight;
-        private bool isAlternateImage = false;
-        internal bool mayBeConsideredFaceUp;   /* For better responsiveness, turning a card face down is applied immediately,
+
+        private bool _selected;
+        private Player _target;
+        private double _x, _y;
+        private CardDef definition;
+        private bool faceUp;
+        private Group group;
+        private bool isAlternateImage;
+
+        internal bool mayBeConsideredFaceUp;
+                      /* For better responsiveness, turning a card face down is applied immediately,
 															   without waiting on the server.
 															   If a script tries to print the card's name, when the message arrives the card is already
 															   face down although it should still be up. */
 
+        private bool overrideGroupVisibility;
+
+        internal List<Player> playersLooking = new List<Player>(1);
+                              // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
+
+        private CardOrientation rot;
+        private CardIdentity type;
+
         #endregion Private fields
+
+        internal Card(Player owner, int id, ulong key, CardDef def, CardModel model, bool mySecret)
+            : base(owner)
+        {
+            this.id = id;
+            Type = new CardIdentity(id) {alias = false, key = key, model = model, mySecret = mySecret};
+            definition = def;
+            All.Add(id, this);
+            isAlternateImage = false;
+        }
 
         public bool IsAlternateImage
         {
@@ -71,18 +111,19 @@ namespace Octgn.Play
         }
 
         internal override int Id
-        { get { return id; } }
+        {
+            get { return id; }
+        }
 
         public override string Name
         {
-            get
-            {
-                return FaceUp && type.model != null ? type.model.Name : "Card";
-            }
+            get { return FaceUp && type.model != null ? type.model.Name : "Card"; }
         }
 
         public string RealName
-        { get { return type.model != null ? type.model.Name : "Card"; } }
+        {
+            get { return type.model != null ? type.model.Name : "Card"; }
+        }
 
         internal CardIdentity Type
         {
@@ -100,7 +141,8 @@ namespace Octgn.Play
                 if (value != null)
                 {
                     if (value.inUse)
-                        Program.Trace.TraceEvent(System.Diagnostics.TraceEventType.Warning, EventIds.Event, "The same card identity is used for two different cards!");
+                        Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
+                                                 "The same card identity is used for two different cards!");
                     // Acquire the new identity
                     value.inUse = true;
                     // Make changes in the Card hashtable
@@ -113,8 +155,7 @@ namespace Octgn.Play
             }
         }
 
-        internal bool DeleteWhenLeavesGroup
-        { get; set; }
+        internal bool DeleteWhenLeavesGroup { get; set; }
 
         public Group Group
         {
@@ -137,7 +178,7 @@ namespace Octgn.Play
                     // Remove all markers (TODO: should this be configurable per game?)
                     markers.Clear();
                     // Remove from selection (if any)
-                    Gui.Selection.Remove(this);
+                    Selection.Remove(this);
                     // Remove any player looking at the card (if any)
                     playersLooking.Clear();
                     // Clear peeking (if any)
@@ -156,14 +197,16 @@ namespace Octgn.Play
                 if (faceUp != value)
                 {
                     Program.Client.Rpc.TurnReq(this, value);
-                    if (faceUp) mayBeConsideredFaceUp = true;   // See comment for mayBeConsideredFaceUp
-                    new Actions.Turn(Player.LocalPlayer, this, value).Do();
+                    if (faceUp) mayBeConsideredFaceUp = true; // See comment for mayBeConsideredFaceUp
+                    new Turn(Player.LocalPlayer, this, value).Do();
                 }
             }
         }
 
         public bool OverrideGroupVisibility
-        { get { return overrideGroupVisibility; } }
+        {
+            get { return overrideGroupVisibility; }
+        }
 
         public CardOrientation Orientation
         {
@@ -173,7 +216,7 @@ namespace Octgn.Play
                 if (value != rot)
                 {
                     Program.Client.Rpc.RotateReq(this, value);
-                    new Actions.Rotate(Player.LocalPlayer, this, value).Do();
+                    new Rotate(Player.LocalPlayer, this, value).Do();
                 }
             }
         }
@@ -218,7 +261,9 @@ namespace Octgn.Play
         }
 
         public Player TargetedBy
-        { get { return _target; } }
+        {
+            get { return _target; }
+        }
 
         internal bool TargetsOtherCards { get; set; }
 
@@ -237,7 +282,22 @@ namespace Octgn.Play
             get { return _selected || _highlight != null; }
         }
 
-        public ObservableCollection<Player> PeekingPlayers { get { return playersPeeking; } }
+        public ObservableCollection<Player> PeekingPlayers
+        {
+            get { return playersPeeking; }
+        }
+
+        public string Picture
+        {
+            get
+            {
+                if (IsAlternateImage)
+                    return Type.model.AlternatePicture;
+                if (!FaceUp) return DefaultBack;
+                if (Type.model == null) return DefaultFront;
+                return Type.model.Picture;
+            }
+        }
 
         public void ToggleTarget()
         {
@@ -251,26 +311,31 @@ namespace Octgn.Play
         {
             if (TargetedBy == Player.LocalPlayer) return;
             Program.Client.Rpc.TargetReq(this);
-            new Actions.Target(Player.LocalPlayer, this, null, true).Do();
+            new Target(Player.LocalPlayer, this, null, true).Do();
         }
 
         public void Untarget()
         {
             if (TargetedBy == null && !TargetsOtherCards) return;
             Program.Client.Rpc.UntargetReq(this);
-            new Actions.Target(Player.LocalPlayer, this, null, false).Do();
+            new Target(Player.LocalPlayer, this, null, false).Do();
         }
 
         public void Target(Card otherCard)
         {
             if (otherCard == null)
-            { Target(); return; }
+            {
+                Target();
+                return;
+            }
             Program.Client.Rpc.TargetArrowReq(this, otherCard);
-            new Actions.Target(Player.LocalPlayer, this, otherCard, true).Do();
+            new Target(Player.LocalPlayer, this, otherCard, true).Do();
         }
 
         public override string ToString()
-        { return Name; }
+        {
+            return Name;
+        }
 
         public object GetProperty(string name)
         {
@@ -293,14 +358,14 @@ namespace Octgn.Play
             {
                 if (to.Visibility != GroupVisibility.Undefined) faceUp = FaceUp;
                 Program.Client.Rpc.MoveCardReq(this, to, idx, faceUp);
-                new Actions.MoveCard(Player.LocalPlayer, this, to, idx, faceUp).Do();
+                new MoveCard(Player.LocalPlayer, this, to, idx, faceUp).Do();
             }
         }
 
         public void MoveToTable(int x, int y, bool faceUp, int idx)
         {
             Program.Client.Rpc.MoveCardAtReq(this, x, y, idx, faceUp);
-            new Actions.MoveCard(Player.LocalPlayer, this, x, y, idx, faceUp).Do();
+            new MoveCard(Player.LocalPlayer, this, x, y, idx, faceUp).Do();
         }
 
         public int GetIndex()
@@ -322,7 +387,7 @@ namespace Octgn.Play
 
         private void PeekContinuation(object sender, RevealEventArgs e)
         {
-            var identity = (CardIdentity)sender;
+            var identity = (CardIdentity) sender;
             identity.Revealed -= PeekContinuation;
             if (e.NewIdentity.model == null)
             {
@@ -330,18 +395,6 @@ namespace Octgn.Play
                 return;
             }
             Program.TracePlayerEvent(Player.LocalPlayer, "You peeked at {0}.", e.NewIdentity.model);
-        }
-
-        public string Picture
-        {
-            get
-            {
-                if (IsAlternateImage)
-                    return Type.model.AlternatePicture;
-                if (!FaceUp) return DefaultBack;
-                if (Type.model == null) return DefaultFront;
-                return Type.model.Picture;
-            }
         }
 
         internal string GetPicture(bool up)
@@ -357,25 +410,15 @@ namespace Octgn.Play
         {
             if (IsAlternateImage)
             {
-                var bmp = new BitmapImage(new Uri(Type.model.AlternatePicture)) { CacheOption = BitmapCacheOption.OnLoad };
+                var bmp = new BitmapImage(new Uri(Type.model.AlternatePicture)) {CacheOption = BitmapCacheOption.OnLoad};
                 bmp.Freeze();
                 return bmp;
             }
             if (!up) return Program.Game.CardBackBitmap;
             if (Type == null || Type.model == null) return Program.Game.CardFrontBitmap;
-            var bmpo = new BitmapImage(new Uri(Type.model.Picture)) { CacheOption = BitmapCacheOption.OnLoad };
+            var bmpo = new BitmapImage(new Uri(Type.model.Picture)) {CacheOption = BitmapCacheOption.OnLoad};
             bmpo.Freeze();
             return bmpo;
-        }
-
-        internal Card(Player owner, int id, ulong key, Definitions.CardDef def, Data.CardModel model, bool mySecret)
-            : base(owner)
-        {
-            this.id = id;
-            this.Type = new CardIdentity(id) { alias = false, key = key, model = model, mySecret = mySecret };
-            definition = def;
-            All.Add(id, this);
-            isAlternateImage = false;
         }
 
         internal void SetOrientation(CardOrientation value)
@@ -404,7 +447,7 @@ namespace Octgn.Play
 
         internal void SetTargetedBy(Player player)
         {
-            if (this._target != player)
+            if (_target != player)
             {
                 _target = player;
                 OnPropertyChanged("TargetedBy");
@@ -438,79 +481,13 @@ namespace Octgn.Play
                     SetFaceUp(viewers.Contains(Player.LocalPlayer));
                     RevealTo(viewers);
                     break;
-                default:    // could be GroupVisibilty.Owner
-                    System.Diagnostics.Debug.Fail("[Card.SetVisibility] Invalid visibility!");
+                default: // could be GroupVisibilty.Owner
+                    Debug.Fail("[Card.SetVisibility] Invalid visibility!");
                     return;
             }
         }
 
-        #region Markers
-
-        private ObservableCollection<Marker> markers = new ObservableCollection<Marker>();
-
-        public IList<Marker> Markers
-        { get { return markers; } }
-
-        internal void AddMarker(Data.MarkerModel model, ushort count)
-        {
-            Marker marker = markers.FirstOrDefault(m => m.Model.Equals(model));
-            if (marker != null)
-                marker.SetCount((ushort)(marker.Count + count));
-            else if (count > 0)
-                markers.Add(new Marker(this, model, count));
-        }
-
-        internal void AddMarker(Data.MarkerModel model)
-        { AddMarker(model, 1); }
-
-        internal int RemoveMarker(Marker marker, ushort count)
-        {
-            if (!markers.Contains(marker)) return 0;
-
-            if (marker.Count <= count)
-            {
-                int realCount = marker.Count;
-                markers.Remove(marker);
-                return realCount;
-            }
-
-            marker.SetCount((ushort)(marker.Count - count));
-            return count;
-        }
-
-        internal void RemoveMarker(Marker marker)
-        { markers.Remove(marker); }
-
-        internal Marker FindMarker(Guid id, string name)
-        {
-            return markers.FirstOrDefault(m =>
-              m.Model.id == id &&
-              (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
-        }
-
-        internal void SetMarker(Player player, Guid id, string name, int count)
-        {
-            int oldCount = 0;
-            Marker marker = FindMarker(id, name);
-            if (marker != null)
-            {
-                oldCount = marker.Count;
-                marker.SetCount((ushort)count);
-            }
-            else if (count > 0)
-            {
-                Data.MarkerModel model = Program.Game.GetMarkerModel(id);
-                if (model is DefaultMarkerModel) ((DefaultMarkerModel)model).SetName(name);
-                AddMarker(model, (ushort)count);
-            }
-            if (count != oldCount)
-                Program.TracePlayerEvent(player, "{0} sets {1} ({2}) markers {3} on {4}.",
-                  player, count, (count - oldCount).ToString("+#;-#"), marker != null ? marker.Model.Name : name, this);
-        }
-
-        #endregion Markers
-
-        internal void SetModel(Data.CardModel model)
+        internal void SetModel(CardModel model)
         {
             Type.model = model;
             OnPropertyChanged("Picture");
@@ -518,19 +495,19 @@ namespace Octgn.Play
 
         internal bool IsVisibleToAll()
         {
-            Group g = this.Group;
+            Group g = Group;
             return g.Visibility == GroupVisibility.Everybody || (g.Visibility == GroupVisibility.Undefined && FaceUp);
         }
 
         protected override void OnControllerChanged()
         {
             if (Selected && Controller != Player.LocalPlayer)
-                Gui.Selection.Remove(this);
+                Selection.Remove(this);
         }
 
         internal override void NotControlledError()
         {
-            Controls.Tooltip.PopupError("You don't control this card.");
+            Tooltip.PopupError("You don't control this card.");
         }
 
         internal override bool TryToManipulate()
@@ -568,13 +545,13 @@ namespace Octgn.Play
             // If it's an alias pass it to the one who created it
             if (Type.alias)
             {
-                Player p = Player.Find((byte)(Type.key >> 16));
+                Player p = Player.Find((byte) (Type.key >> 16));
                 Program.Client.Rpc.RevealToReq(p, players.ToArray(), this, Crypto.Encrypt(Type.key, p.PublicKey));
             }
-            // Else pass to every viewer
+                // Else pass to every viewer
             else
             {
-                Player[] pArray = new Player[1];
+                var pArray = new Player[1];
                 foreach (Player p in players)
                 {
                     if (p == Player.LocalPlayer)
@@ -590,22 +567,111 @@ namespace Octgn.Play
 
         #region Comparers
 
-        public class NameComparer : System.Collections.IComparer
+        #region Nested type: NameComparer
+
+        public class NameComparer : IComparer
         {
+            #region IComparer Members
+
             public int Compare(object x, object y)
             {
-                return string.Compare(((Card)x).Name, ((Card)y).Name);
+                return string.Compare(((Card) x).Name, ((Card) y).Name);
             }
+
+            #endregion
         }
 
-        public class RealNameComparer : System.Collections.IComparer
+        #endregion
+
+        #region Nested type: RealNameComparer
+
+        public class RealNameComparer : IComparer
         {
+            #region IComparer Members
+
             public int Compare(object x, object y)
             {
-                return string.Compare(((Card)x).RealName, ((Card)y).RealName);
+                return string.Compare(((Card) x).RealName, ((Card) y).RealName);
             }
+
+            #endregion
         }
+
+        #endregion
 
         #endregion Comparers
+
+        #region Markers
+
+        private readonly ObservableCollection<Marker> markers = new ObservableCollection<Marker>();
+
+        public IList<Marker> Markers
+        {
+            get { return markers; }
+        }
+
+        internal void AddMarker(MarkerModel model, ushort count)
+        {
+            Marker marker = markers.FirstOrDefault(m => m.Model.Equals(model));
+            if (marker != null)
+                marker.SetCount((ushort) (marker.Count + count));
+            else if (count > 0)
+                markers.Add(new Marker(this, model, count));
+        }
+
+        internal void AddMarker(MarkerModel model)
+        {
+            AddMarker(model, 1);
+        }
+
+        internal int RemoveMarker(Marker marker, ushort count)
+        {
+            if (!markers.Contains(marker)) return 0;
+
+            if (marker.Count <= count)
+            {
+                int realCount = marker.Count;
+                markers.Remove(marker);
+                return realCount;
+            }
+
+            marker.SetCount((ushort) (marker.Count - count));
+            return count;
+        }
+
+        internal void RemoveMarker(Marker marker)
+        {
+            markers.Remove(marker);
+        }
+
+        internal Marker FindMarker(Guid id, string name)
+        {
+            return markers.FirstOrDefault(m =>
+                                          m.Model.id == id &&
+                                          (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
+        }
+
+        internal void SetMarker(Player player, Guid id, string name, int count)
+        {
+            int oldCount = 0;
+            Marker marker = FindMarker(id, name);
+            if (marker != null)
+            {
+                oldCount = marker.Count;
+                marker.SetCount((ushort) count);
+            }
+            else if (count > 0)
+            {
+                MarkerModel model = Program.Game.GetMarkerModel(id);
+                if (model is DefaultMarkerModel) ((DefaultMarkerModel) model).SetName(name);
+                AddMarker(model, (ushort) count);
+            }
+            if (count != oldCount)
+                Program.TracePlayerEvent(player, "{0} sets {1} ({2}) markers {3} on {4}.",
+                                         player, count, (count - oldCount).ToString("+#;-#"),
+                                         marker != null ? marker.Model.Name : name, this);
+        }
+
+        #endregion Markers
     }
 }

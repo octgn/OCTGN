@@ -1,11 +1,11 @@
 using System;
-using System.IO;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Windows.Threading;
-using Octgn.Play;
+using System.Text;
 using System.Threading;
-
+using System.Windows.Threading;
+using Octgn.Server;
 
 namespace Octgn.Networking
 {
@@ -13,44 +13,38 @@ namespace Octgn.Networking
     {
         #region Private fields
 
-        private IPAddress address;                  // Address to connect to
-        private int port;                           // Port number to connect to
-        private TcpClient tcp;                      // Underlying windows socket        
-        private byte[] buffer = new byte[1024];     // Receive buffer
-        private byte[] packet = new byte[1024];     // Packet buffer (gets the receive buffer's content)
-        private int packetPos;                      // Position in the packet buffer
-        private Handler handler;                    // Message handler
-        private BinaryReceiveDelegate binHandler;   // Receive delegate when in binary mode
-        private XmlReceiveDelegate xmlHandler;      // Receive delegate when in xml mode
-        private Server.IServerCalls rpc;
-        private bool disposed = false;              // True when the client has been closed
-
+        private readonly IPAddress address; // Address to connect to
+        private readonly byte[] buffer = new byte[1024]; // Receive buffer
+        private readonly Handler handler; // Message handler
+        private readonly int port; // Port number to connect to
+        private readonly TcpClient tcp; // Underlying windows socket        
         private Thread PingThread;
+        private BinaryReceiveDelegate binHandler; // Receive delegate when in binary mode
+        private bool disposed; // True when the client has been closed
+        private byte[] packet = new byte[1024]; // Packet buffer (gets the receive buffer's content)
+        private int packetPos; // Position in the packet buffer
+        private IServerCalls rpc;
+        private XmlReceiveDelegate xmlHandler; // Receive delegate when in xml mode
 
         // Delegates definitions
+
+        #region Nested type: BinaryReceiveDelegate
+
         private delegate void BinaryReceiveDelegate(byte[] data);
+
+        #endregion
+
+        #region Nested type: XmlReceiveDelegate
+
         private delegate void XmlReceiveDelegate(string xmlMsg);
+
+        #endregion
 
         #endregion
 
         #region Public interface
 
         // Indicates if this client is connected
-        public bool IsConnected
-        { get { return tcp.Client != null && tcp.Connected; } }
-
-        // Used to send messages to the server
-        internal Server.IServerCalls Rpc
-        { get { return rpc; } }
-
-        public int Muted
-        { get; set; }
-
-        // Gets the underlying windows socket
-        //public TcpClient Socket
-        //{ get { return tcp; } }
-
-        // C'tor
         public Client(IPAddress address, int port)
         {
             // Init fields
@@ -58,10 +52,29 @@ namespace Octgn.Networking
             this.address = address;
             tcp = new TcpClient(address.AddressFamily);
             handler = new Handler();
-            xmlHandler = new XmlReceiveDelegate(handler.ReceiveMessage);
+            xmlHandler = handler.ReceiveMessage;
             // Create a remote call interface
             rpc = new XmlSenderStub(tcp);
         }
+
+        public bool IsConnected
+        {
+            get { return tcp.Client != null && tcp.Connected; }
+        }
+
+        // Used to send messages to the server
+        internal IServerCalls Rpc
+        {
+            get { return rpc; }
+        }
+
+        public int Muted { get; set; }
+
+        // Gets the underlying windows socket
+        //public TcpClient Socket
+        //{ get { return tcp; } }
+
+        // C'tor
 
         // Try to connect the client to the server
         public void Connect()
@@ -73,6 +86,7 @@ namespace Octgn.Networking
             // Start waiting for incoming data
             tcp.GetStream().BeginRead(buffer, 0, 1024, Receive, null);
         }
+
         private void DoPings()
         {
             while (!disposed)
@@ -81,37 +95,39 @@ namespace Octgn.Networking
                 {
                     if (disposed)
                         return;
-                    this.Rpc.Ping();
+                    Rpc.Ping();
                 }
                 Thread.Sleep(2000);
             }
         }
+
         public void StartPings()
         {
             PingThread = new Thread(DoPings);
             PingThread.Start();
         }
+
         public void BeginConnect(EventHandler<ConnectedEventArgs> callback)
         {
             packetPos = 0;
             tcp.BeginConnect(address, port,
-                delegate(IAsyncResult ar)
-                {
-                    try
-                    {
-                        lock (this)
-                        {
-                            if (tcp.Client == null) return; // was cancelled
-                            tcp.EndConnect(ar);
-                            tcp.GetStream().BeginRead(buffer, 0, 1024, Receive, null);
-                        }
-                        callback(this, new ConnectedEventArgs());
-                    }
-                    catch (System.Net.Sockets.SocketException se)
-                    {
-                        callback(this, new ConnectedEventArgs(se));
-                    }
-                }, null);
+                             delegate(IAsyncResult ar)
+                                 {
+                                     try
+                                     {
+                                         lock (this)
+                                         {
+                                             if (tcp.Client == null) return; // was cancelled
+                                             tcp.EndConnect(ar);
+                                             tcp.GetStream().BeginRead(buffer, 0, 1024, Receive, null);
+                                         }
+                                         callback(this, new ConnectedEventArgs());
+                                     }
+                                     catch (SocketException se)
+                                     {
+                                         callback(this, new ConnectedEventArgs(se));
+                                     }
+                                 }, null);
         }
 
         public void CancelConnect()
@@ -141,7 +157,8 @@ namespace Octgn.Networking
                         tcp.Close();
                     }
                     catch
-                    { }
+                    {
+                    }
                 // Set disposed to 0
                 disposed = true;
             }
@@ -170,7 +187,8 @@ namespace Octgn.Networking
             }
 
             if (Program.Dispatcher != null)
-                Program.Dispatcher.Invoke(new Action<string>(Program.TraceWarning), "You have been disconnected from server.");
+                Program.Dispatcher.Invoke(new Action<string>(Program.TraceWarning),
+                                          "You have been disconnected from server.");
             else
                 Program.TraceWarning("You have been disconnected from server.");
         }
@@ -183,12 +201,16 @@ namespace Octgn.Networking
                 int count = tcp.GetStream().EndRead(ar);
                 // If count <= 0 the connection has been closed, or there was an error
                 if (count < 1)
-                { Disconnected(); return; }
+                {
+                    Disconnected();
+                    return;
+                }
                 // Copy the new data to the packet buffer (make it bigger if needed)
                 if ((packetPos + count) > packet.Length)
                 {
-                    byte[] newPacket = new byte[packetPos + count];
-                    Array.Copy(packet, newPacket, packetPos); packet = newPacket;
+                    var newPacket = new byte[packetPos + count];
+                    Array.Copy(packet, newPacket, packetPos);
+                    packet = newPacket;
                 }
                 Array.Copy(buffer, 0, packet, packetPos, count);
                 // Handle the message
@@ -204,8 +226,8 @@ namespace Octgn.Networking
                 // Log the error if it was not socket related
                 if (!(e is SocketException) && !(e is ObjectDisposedException))
                 {
-                    System.Diagnostics.Debug.WriteLine("Unexpected exception in Client.Receive:");
-                    System.Diagnostics.Debug.WriteLine(e.Message + Environment.NewLine + e.StackTrace);
+                    Debug.WriteLine("Unexpected exception in Client.Receive:");
+                    Debug.WriteLine(e.Message + Environment.NewLine + e.StackTrace);
                 }
                 // Disconnect the client if something went wrong
                 Disconnected();
@@ -220,11 +242,12 @@ namespace Octgn.Networking
             // Packet starts with Int32 size
             while (packetPos > 4)
             {
-                int length = packet[0] | (int)packet[1] << 8 | (int)packet[2] << 16 | (int)packet[3] << 24;
+                int length = packet[0] | packet[1] << 8 | packet[2] << 16 | packet[3] << 24;
                 if (packetPos >= length)
                 {
                     // Copy the message into a new array
-                    byte[] data = new byte[length - 4]; Array.Copy(packet, 4, data, 0, length - 4);
+                    var data = new byte[length - 4];
+                    Array.Copy(packet, 4, data, 0, length - 4);
                     // Invoke the handler
                     Program.Dispatcher.BeginInvoke(DispatcherPriority.Normal, binHandler, data);
                     // Adjust packet buffer contents
@@ -245,19 +268,21 @@ namespace Octgn.Networking
                 if (packet[i] == 0)
                 {
                     // Extract the xml
-                    string xml = System.Text.Encoding.UTF8.GetString(packet, 0, i);
+                    string xml = Encoding.UTF8.GetString(packet, 0, i);
                     // Invoke the handler                                        
                     Program.Dispatcher.BeginInvoke(DispatcherPriority.Normal, xmlHandler, xml);
                     // Switch to a binary handler if the message asked for it
                     if (xml == "<Binary />")
                     {
-                        binHandler = new BinaryReceiveDelegate(handler.ReceiveMessage);
+                        binHandler = handler.ReceiveMessage;
                         xmlHandler = null;
                     }
                     // Adjust the packet buffer
-                    count += packetPos - i - 1; packetPos = 0;
+                    count += packetPos - i - 1;
+                    packetPos = 0;
                     Array.Copy(packet, i + 1, packet, 0, count);
-                    i = -1; continue;
+                    i = -1;
+                    continue;
                 }
             }
             // Adjust the position in the packet buffer
@@ -269,12 +294,16 @@ namespace Octgn.Networking
 
     public class ConnectedEventArgs : EventArgs
     {
-        public Exception exception;    // null for success
+        public Exception exception; // null for success
 
         public ConnectedEventArgs()
-        { exception = null; }
+        {
+            exception = null;
+        }
 
         public ConnectedEventArgs(Exception error)
-        { exception = error; }
+        {
+            exception = error;
+        }
     }
 }

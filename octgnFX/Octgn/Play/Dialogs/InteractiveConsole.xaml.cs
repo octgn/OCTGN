@@ -7,6 +7,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Scripting.Hosting;
+using Octgn.Scripting;
 
 namespace Octgn.Play.Dialogs
 {
@@ -14,12 +15,11 @@ namespace Octgn.Play.Dialogs
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
-        [Import]
-        private Scripting.Engine scriptEngine;
+        [Import] private Engine scriptEngine;
 
 #pragma warning restore 649
 
-        private ScriptScope scope;
+        private readonly ScriptScope scope;
 
         public InteractiveConsole()
         {
@@ -47,13 +47,23 @@ namespace Octgn.Play.Dialogs
             string input = prompt.Text;
 
             if (input.EndsWith("\\")) // \ is the line continuation character in Python
-            { PromptNewIndentedLine(); return; }
+            {
+                PromptNewIndentedLine();
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(input))
-            { prompt.Text = ""; return; }
+            {
+                prompt.Text = "";
+                return;
+            }
 
-            if (prompt.CaretIndex < input.Length) // Don't try to execute the script if the caret isn't at the end of the input
-            { PromptNewIndentedLine(); return; }
+            if (prompt.CaretIndex < input.Length)
+                // Don't try to execute the script if the caret isn't at the end of the input
+            {
+                PromptNewIndentedLine();
+                return;
+            }
 
             prompt.IsEnabled = false;
             if (!scriptEngine.TryExecuteInteractiveCode(input, scope, ExecutionCompleted))
@@ -63,7 +73,7 @@ namespace Octgn.Play.Dialogs
             }
         }
 
-        private void ExecutionCompleted(Scripting.ExecutionResult result)
+        private void ExecutionCompleted(ExecutionResult result)
         {
             PrintCommand(prompt.Text);
             PrintResult(result.Output);
@@ -72,7 +82,7 @@ namespace Octgn.Play.Dialogs
             prompt.IsEnabled = true;
         }
 
-        private readonly static string[] terminators = new string[] { "pass", "break", "continue", "return" };
+        private static readonly string[] terminators = new[] {"pass", "break", "continue", "return"};
 
         private void PromptNewIndentedLine()
         {
@@ -86,7 +96,7 @@ namespace Octgn.Play.Dialogs
         {
             string indent = "    ";
             // Find the first indented line (if any), to find out how wide the indentation is (usually four spaces)
-            var match = Regex.Match(input, "^\\s+", RegexOptions.Multiline);
+            Match match = Regex.Match(input, "^\\s+", RegexOptions.Multiline);
             if (match.Success)
                 indent = match.Value;
 
@@ -117,14 +127,14 @@ namespace Octgn.Play.Dialogs
         private void PrintResult(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
-            results.Inlines.Add(new Run("\n" + text.Trim()) { Foreground = Brushes.DarkBlue });
+            results.Inlines.Add(new Run("\n" + text.Trim()) {Foreground = Brushes.DarkBlue});
             scroller.ScrollToBottom();
         }
 
         private void PrintError(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
-            results.Inlines.Add(new Run("\n" + text) { Foreground = Brushes.DarkRed });
+            results.Inlines.Add(new Run("\n" + text) {Foreground = Brushes.DarkRed});
             scroller.ScrollToBottom();
         }
     }

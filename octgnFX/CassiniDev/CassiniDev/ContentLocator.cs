@@ -21,7 +21,7 @@ namespace CassiniDev
 
         public string LocateContent()
         {
-            var path = Environment.CurrentDirectory;
+            string path = Environment.CurrentDirectory;
 
             while (!Directory.Exists(Path.Combine(path + "", _directoryName)))
             {

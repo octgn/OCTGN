@@ -1,4 +1,3 @@
-using System;
 using System.Windows;
 
 namespace Octgn.Script
@@ -8,20 +7,22 @@ namespace Octgn.Script
     {
         public static int InputInt(string title, string prompt, int n)
         {
-            InputDlg dlg = new InputDlg(title, prompt, n.ToString());
+            var dlg = new InputDlg(title, prompt, n.ToString());
             return dlg.GetInteger();
         }
 
         public static int InputPositiveInt(string title, string prompt, int n)
         {
-            InputDlg dlg = new InputDlg(title, prompt, n.ToString());
+            var dlg = new InputDlg(title, prompt, n.ToString());
             return dlg.GetPositiveInt();
         }
 
         public static bool Confirm(string prompt)
         {
             //fix MAINWINDOW bug
-            return MessageBox.Show(Program.PlayWindow, prompt, "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+            return
+                MessageBox.Show(Program.PlayWindow, prompt, "Confirmation", MessageBoxButton.YesNo,
+                                MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
 
         public static void Message(string msg)

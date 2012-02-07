@@ -9,12 +9,12 @@
 //  * You must not remove this notice, or any other, from this software.
 //  *
 //  * **********************************************************************************/
+
 using System;
 using System.Text;
 
 namespace CassiniDev
 {
-
     public class BrowserTestResults
     {
         public BrowserTestResults()

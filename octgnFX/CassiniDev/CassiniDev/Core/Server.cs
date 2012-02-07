@@ -16,7 +16,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -31,7 +30,7 @@ using System.Web;
 using System.Web.Hosting;
 using CassiniDev.Configuration;
 using CassiniDev.ServerLog;
-
+using Common.Logging;
 
 #endregion
 
@@ -41,14 +40,7 @@ namespace CassiniDev
      PermissionSet(SecurityAction.InheritanceDemand, Name = "FullTrust")]
     public class Server : MarshalByRefObject, IDisposable
     {
-        private bool _useLogger;
-        public List<string> Plugins = new List<string>();
         private readonly ApplicationManager _appManager;
-
-        public ApplicationManager GetManager()
-        {
-            return (_appManager);
-        }
 
         private readonly bool _disableDirectoryListing = true;
 
@@ -63,7 +55,10 @@ namespace CassiniDev
         private readonly int _port;
         private readonly bool _requireAuthentication;
         private readonly int _timeoutInterval;
+        private readonly bool _useLogger;
         private readonly string _virtualPath;
+        public List<string> Plugins = new List<string>();
+        private List<Assembly> _assemblies = new List<Assembly>();
         private bool _disposed;
 
         private Host _host;
@@ -79,20 +74,6 @@ namespace CassiniDev
         private Socket _socket;
 
         private Timer _timer;
-
-        private List<Assembly> _assemblies = new List<Assembly>();
-
-        public List<Assembly> Assemblies
-        {
-            get
-            {
-                return (_assemblies);
-            }
-            set
-            {
-                _assemblies = value;
-            }
-        }
 
         public Server(int port, string virtualPath, string physicalPath)
             : this(port, virtualPath, physicalPath, false, false)
@@ -147,9 +128,9 @@ namespace CassiniDev
                 Assembly.ReflectionOnlyLoad("Common.Logging");
                 _useLogger = true;
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
             }
             _ipAddress = IPAddress.Loopback;
@@ -168,24 +149,6 @@ namespace CassiniDev
             ObtainProcessToken();
         }
 
-        private void ProcessConfiguration()
-        {
-            var config = CassiniDevConfigurationSection.Instance;
-            if (config != null)
-            {
-                foreach (CassiniDevProfileElement profile in config.Profiles)
-                {
-                    if (profile.Port == "*" || Convert.ToInt64(profile.Port) == _port)
-                    {
-                        foreach (PluginElement plugin in profile.Plugins)
-                        {
-                            Plugins.Insert(0, plugin.Type);
-                        }
-                    }
-                }
-            }
-        }
-
         public Server(string physicalPath, bool requireAuthentication)
             : this(
                 CassiniNetworkUtils.GetAvailablePort(32768, 65535, IPAddress.Loopback, false), "/", physicalPath,
@@ -197,6 +160,12 @@ namespace CassiniDev
                       int timeout)
             : this(port, virtualPath, physicalPath, ipAddress, hostName, timeout, false, false)
         {
+        }
+
+        public List<Assembly> Assemblies
+        {
+            get { return (_assemblies); }
+            set { _assemblies = value; }
         }
 
         public bool DisableDirectoryListing
@@ -253,10 +222,8 @@ namespace CassiniDev
                 }
 
                 return _port != 80
-                           ?
-                               String.Format("http://{0}:{1}{2}", hostname, _port, _virtualPath)
-                           :
-                    //FIX: #12017 - TODO:TEST
+                           ? String.Format("http://{0}:{1}{2}", hostname, _port, _virtualPath)
+                           : //FIX: #12017 - TODO:TEST
                        string.Format("http://{0}{1}", hostname, _virtualPath);
             }
         }
@@ -279,6 +246,29 @@ namespace CassiniDev
         }
 
         #endregion
+
+        public ApplicationManager GetManager()
+        {
+            return (_appManager);
+        }
+
+        private void ProcessConfiguration()
+        {
+            CassiniDevConfigurationSection config = CassiniDevConfigurationSection.Instance;
+            if (config != null)
+            {
+                foreach (CassiniDevProfileElement profile in config.Profiles)
+                {
+                    if (profile.Port == "*" || Convert.ToInt64(profile.Port) == _port)
+                    {
+                        foreach (PluginElement plugin in profile.Plugins)
+                        {
+                            Plugins.Insert(0, plugin.Type);
+                        }
+                    }
+                }
+            }
+        }
 
         public event EventHandler<RequestEventArgs> RequestComplete;
 
@@ -346,44 +336,57 @@ namespace CassiniDev
             DecrementRequestCount();
 
             ThreadPool.QueueUserWorkItem(delegate
-            {
-                while (!_shutdownInProgress)
-                {
-                    try
-                    {
-                        Socket acceptedSocket = _socket.Accept();
+                                             {
+                                                 while (!_shutdownInProgress)
+                                                 {
+                                                     try
+                                                     {
+                                                         Socket acceptedSocket = _socket.Accept();
 
-                        ThreadPool.QueueUserWorkItem(delegate
-                        {
-                            if (!_shutdownInProgress)
-                            {
-                                Connection conn = new Connection(this, acceptedSocket);
+                                                         ThreadPool.QueueUserWorkItem(delegate
+                                                                                          {
+                                                                                              if (!_shutdownInProgress)
+                                                                                              {
+                                                                                                  var conn =
+                                                                                                      new Connection(
+                                                                                                          this,
+                                                                                                          acceptedSocket);
 
-                                if (conn.WaitForRequestBytes() == 0)
-                                {
-                                    conn.WriteErrorAndClose(400);
-                                    return;
-                                }
+                                                                                                  if (
+                                                                                                      conn.
+                                                                                                          WaitForRequestBytes
+                                                                                                          () == 0)
+                                                                                                  {
+                                                                                                      conn.
+                                                                                                          WriteErrorAndClose
+                                                                                                          (400);
+                                                                                                      return;
+                                                                                                  }
 
-                                Host host = GetHostAndInjectAssemblies();
+                                                                                                  Host host =
+                                                                                                      GetHostAndInjectAssemblies
+                                                                                                          ();
 
-                                if (host == null)
-                                {
-                                    conn.WriteErrorAndClose(500);
-                                    return;
-                                }
+                                                                                                  if (host == null)
+                                                                                                  {
+                                                                                                      conn.
+                                                                                                          WriteErrorAndClose
+                                                                                                          (500);
+                                                                                                      return;
+                                                                                                  }
 
-                                IncrementRequestCount();
-                                host.ProcessRequest(conn);
-                            }
-                        });
-                    }
-                    catch
-                    {
-                        Thread.Sleep(100);
-                    }
-                }
-            });
+                                                                                                  IncrementRequestCount();
+                                                                                                  host.ProcessRequest(
+                                                                                                      conn);
+                                                                                              }
+                                                                                          });
+                                                     }
+                                                     catch
+                                                     {
+                                                         Thread.Sleep(100);
+                                                     }
+                                                 }
+                                             });
         }
 
         public void StartWithoutAssemblies()
@@ -394,44 +397,55 @@ namespace CassiniDev
             DecrementRequestCount();
 
             ThreadPool.QueueUserWorkItem(delegate
-                {
-                    while (!_shutdownInProgress)
-                    {
-                        try
-                        {
-                            Socket acceptedSocket = _socket.Accept();
+                                             {
+                                                 while (!_shutdownInProgress)
+                                                 {
+                                                     try
+                                                     {
+                                                         Socket acceptedSocket = _socket.Accept();
 
-                            ThreadPool.QueueUserWorkItem(delegate
-                                {
-                                    if (!_shutdownInProgress)
-                                    {
-                                        Connection conn = new Connection(this, acceptedSocket);
+                                                         ThreadPool.QueueUserWorkItem(delegate
+                                                                                          {
+                                                                                              if (!_shutdownInProgress)
+                                                                                              {
+                                                                                                  var conn =
+                                                                                                      new Connection(
+                                                                                                          this,
+                                                                                                          acceptedSocket);
 
-                                        if (conn.WaitForRequestBytes() == 0)
-                                        {
-                                            conn.WriteErrorAndClose(400);
-                                            return;
-                                        }
+                                                                                                  if (
+                                                                                                      conn.
+                                                                                                          WaitForRequestBytes
+                                                                                                          () == 0)
+                                                                                                  {
+                                                                                                      conn.
+                                                                                                          WriteErrorAndClose
+                                                                                                          (400);
+                                                                                                      return;
+                                                                                                  }
 
-                                        Host host = GetHost();
+                                                                                                  Host host = GetHost();
 
-                                        if (host == null)
-                                        {
-                                            conn.WriteErrorAndClose(500);
-                                            return;
-                                        }
+                                                                                                  if (host == null)
+                                                                                                  {
+                                                                                                      conn.
+                                                                                                          WriteErrorAndClose
+                                                                                                          (500);
+                                                                                                      return;
+                                                                                                  }
 
-                                        IncrementRequestCount();
-                                        host.ProcessRequest(conn);
-                                    }
-                                });
-                        }
-                        catch
-                        {
-                            Thread.Sleep(100);
-                        }
-                    }
-                });
+                                                                                                  IncrementRequestCount();
+                                                                                                  host.ProcessRequest(
+                                                                                                      conn);
+                                                                                              }
+                                                                                          });
+                                                     }
+                                                     catch
+                                                     {
+                                                         Thread.Sleep(100);
+                                                     }
+                                                 }
+                                             });
         }
 
 
@@ -443,10 +457,10 @@ namespace CassiniDev
 
         private static Socket CreateSocketBindAndListen(AddressFamily family, IPAddress address, int port)
         {
-            Socket socket = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
+            var socket = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             socket.Bind(new IPEndPoint(address, port));
-            socket.Listen((int)SocketOptionName.MaxConnections);
+            socket.Listen((int) SocketOptionName.MaxConnections);
             return socket;
         }
 
@@ -470,7 +484,7 @@ namespace CassiniDev
 
             // create BuildManagerHost in the worker app domain
             //ApplicationManager appManager = ApplicationManager.GetApplicationManager();
-            Type buildManagerHostType = typeof(HttpRuntime).Assembly.GetType("System.Web.Compilation.BuildManagerHost");
+            Type buildManagerHostType = typeof (HttpRuntime).Assembly.GetType("System.Web.Compilation.BuildManagerHost");
             IRegisteredObject buildManagerHost = _appManager.CreateObject(appId, buildManagerHostType, virtualPath,
                                                                           physicalPath, false);
 
@@ -479,7 +493,7 @@ namespace CassiniDev
                                               BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic,
                                               null,
                                               buildManagerHost,
-                                              new object[] { hostType.Assembly.FullName, hostType.Assembly.Location });
+                                              new object[] {hostType.Assembly.FullName, hostType.Assembly.Location});
 
             // create Host in the worker app domain
             // FIXME: getting FileLoadException Could not load file or assembly 'WebDev.WebServer20, Version=4.0.1.6, Culture=neutral, PublicKeyToken=f7f6e0b4240c7c27' or one of its dependencies. Failed to grant permission to execute. (Exception from HRESULT: 0x80131418)
@@ -487,7 +501,8 @@ namespace CassiniDev
             return _appManager.CreateObject(appId, hostType, virtualPath, physicalPath, false);
         }
 
-        private object CreateWorkerAppDomainWithHostAndInjectedAssemblies(string virtualPath, string physicalPath, Type hostType)
+        private object CreateWorkerAppDomainWithHostAndInjectedAssemblies(string virtualPath, string physicalPath,
+                                                                          Type hostType)
         {
             // this creates worker app domain in a way that host doesn't need to be in GAC or bin
             // using BuildManagerHost via private reflection
@@ -496,7 +511,7 @@ namespace CassiniDev
 
             // create BuildManagerHost in the worker app domain
             //ApplicationManager appManager = ApplicationManager.GetApplicationManager();
-            Type buildManagerHostType = typeof(HttpRuntime).Assembly.GetType("System.Web.Compilation.BuildManagerHost");
+            Type buildManagerHostType = typeof (HttpRuntime).Assembly.GetType("System.Web.Compilation.BuildManagerHost");
             IRegisteredObject buildManagerHost = _appManager.CreateObject(appId, buildManagerHostType, virtualPath,
                                                                           physicalPath, false);
 
@@ -505,15 +520,16 @@ namespace CassiniDev
                                               BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic,
                                               null,
                                               buildManagerHost,
-                                              new object[] { hostType.Assembly.FullName, hostType.Assembly.Location });
+                                              new object[] {hostType.Assembly.FullName, hostType.Assembly.Location});
 
             foreach (Assembly ass in _assemblies)
             {
                 buildManagerHostType.InvokeMember("RegisterAssembly",
-                    BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic,
-                    null,
-                    buildManagerHost,
-                    new object[] { ass.FullName, ass.Location });
+                                                  BindingFlags.Instance | BindingFlags.InvokeMethod |
+                                                  BindingFlags.NonPublic,
+                                                  null,
+                                                  buildManagerHost,
+                                                  new object[] {ass.FullName, ass.Location});
             }
 
             // create Host in the worker app domain
@@ -548,7 +564,7 @@ namespace CassiniDev
             if (host == null)
             {
 #if NET40
-                object obj2 = new object();
+                var obj2 = new object();
                 bool flag = false;
                 try
                 {
@@ -556,8 +572,9 @@ namespace CassiniDev
                     host = _host;
                     if (host == null)
                     {
-                        host = (Host)CreateWorkerAppDomainWithHost(_virtualPath, _physicalPath, typeof(Host));
-                        host.Configure(this, _port, _virtualPath, _physicalPath, _requireAuthentication, _disableDirectoryListing);
+                        host = (Host) CreateWorkerAppDomainWithHost(_virtualPath, _physicalPath, typeof (Host));
+                        host.Configure(this, _port, _virtualPath, _physicalPath, _requireAuthentication,
+                                       _disableDirectoryListing);
                         _host = host;
                     }
                 }
@@ -595,7 +612,7 @@ namespace CassiniDev
             if (host == null)
             {
 #if NET40
-                object obj2 = new object();
+                var obj2 = new object();
                 bool flag = false;
                 try
                 {
@@ -603,8 +620,12 @@ namespace CassiniDev
                     host = _host;
                     if (host == null)
                     {
-                        host = (Host)CreateWorkerAppDomainWithHostAndInjectedAssemblies(_virtualPath, _physicalPath, typeof(Host));
-                        host.Configure(this, _port, _virtualPath, _physicalPath, _requireAuthentication, _disableDirectoryListing);
+                        host =
+                            (Host)
+                            CreateWorkerAppDomainWithHostAndInjectedAssemblies(_virtualPath, _physicalPath,
+                                                                               typeof (Host));
+                        host.Configure(this, _port, _virtualPath, _physicalPath, _requireAuthentication,
+                                       _disableDirectoryListing);
                         _host = host;
                     }
                 }
@@ -636,14 +657,12 @@ namespace CassiniDev
 
         private void IncrementRequestCount()
         {
-
             lock (_lockObject)
             {
                 _requestCount++;
 
                 if (_timer != null)
                 {
-
                     _timer.Dispose();
                     _timer = null;
                 }
@@ -678,7 +697,6 @@ namespace CassiniDev
         }
 
 
-
         private void PublishLogToCommonLogging(LogInfo item)
         {
             if (!_useLogger)
@@ -686,29 +704,29 @@ namespace CassiniDev
                 return;
             }
 
-            Common.Logging.ILog logger = Common.Logging.LogManager.GetCurrentClassLogger();
+            ILog logger = LogManager.GetCurrentClassLogger();
 
-            var bodyAsString = String.Empty;
+            string bodyAsString = String.Empty;
             try
             {
                 bodyAsString = Encoding.UTF8.GetString(item.Body);
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch (Exception)
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
                 /* empty bodies should be allowed */
             }
 
-            var type = item.RowType == 0 ? "" : item.RowType == 1 ? "Request" : "Response";
+            string type = item.RowType == 0 ? "" : item.RowType == 1 ? "Request" : "Response";
             logger.Debug(type + " | " +
-                          item.Created + " | " +
-                          item.StatusCode + " | " +
-                          item.Url + " | " +
-                          item.PathTranslated + " | " +
-                          item.Identity + " | " +
-                          "\n===>Headers<====\n" + item.Headers +
-                          "\n===>Body<=======\n" + bodyAsString
+                         item.Created + " | " +
+                         item.StatusCode + " | " +
+                         item.Url + " | " +
+                         item.PathTranslated + " | " +
+                         item.Identity + " | " +
+                         "\n===>Headers<====\n" + item.Headers +
+                         "\n===>Body<=======\n" + bodyAsString
                 );
         }
 
@@ -729,9 +747,9 @@ namespace CassiniDev
                     _socket.Close();
                 }
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
                 // TODO: why the swallow?
             }
@@ -755,13 +773,12 @@ namespace CassiniDev
                     new AutoResetEvent(false).WaitOne(100);
                 }
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
                 // TODO: what am i afraid of here?
             }
-
         }
 
         private void TimeOut(object ignored)

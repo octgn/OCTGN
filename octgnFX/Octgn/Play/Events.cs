@@ -1,7 +1,6 @@
-using System;
 namespace Octgn.Play
 {
-    static class EventIds
+    internal static class EventIds
     {
         public const int NonGame = 0;
         public const int Event = 1;

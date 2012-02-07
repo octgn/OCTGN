@@ -1,21 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using Octgn.Networking;
 using Octgn.Properties;
 
 namespace Octgn.Launcher
 {
     public sealed partial class Serve : Page
     {
-        private bool isStarting = false;
-        private WebClient webClient = new WebClient();
-        private static string externalIPCache = null;    // cache, most ip services refuse to repeteadly answer requests (bots protection).
+        private static string externalIPCache;
+                              // cache, most ip services refuse to repeteadly answer requests (bots protection).
+
+        private readonly WebClient webClient = new WebClient();
+        private bool isStarting;
 
         public Serve()
         {
@@ -61,10 +67,17 @@ namespace Octgn.Launcher
             // Open a server
             //Program.Server = new Server.Server(port, isIPv6, Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Creates a client and connect to the server
-            Program.Client = new Networking.Client(isIPv6 ? IPAddress.IPv6Loopback : IPAddress.Loopback, int.Parse(portBox.Text));
+            Program.Client = new Client(isIPv6 ? IPAddress.IPv6Loopback : IPAddress.Loopback, int.Parse(portBox.Text));
             Program.Client.Connect();
             // Show the start game window
             NavigationService.Navigate(new StartGame());
+        }
+
+        private void GoToWebSite(object sender, RoutedEventArgs e)
+        {
+            var link = sender as Hyperlink;
+            Process.Start((string) link.Tag);
+            e.Handled = true;
         }
 
         #region IP display
@@ -90,16 +103,16 @@ namespace Octgn.Launcher
                             from unicast in netInterface.GetIPProperties().UnicastAddresses
                             select unicast.Address;
             }
-            var ips = from ip in addresses
-                      // Keep only IPv6 addresses
-                      where ip.AddressFamily == AddressFamily.InterNetworkV6
-                          // Which are global (not local sites or links)
-                      && ip.ScopeId == 0
-                          // Exclude the Loopback IP as well
-                      && !IPAddress.IsLoopback(ip)
-                      // Print Teredo address first (for NAT traversal)
-                      orderby ip.IsIPv6Teredo descending
-                      select ip;
+            IOrderedEnumerable<IPAddress> ips = from ip in addresses
+                                                // Keep only IPv6 addresses
+                                                where ip.AddressFamily == AddressFamily.InterNetworkV6
+                                                      // Which are global (not local sites or links)
+                                                      && ip.ScopeId == 0
+                                                      // Exclude the Loopback IP as well
+                                                      && !IPAddress.IsLoopback(ip)
+                                                // Print Teredo address first (for NAT traversal)
+                                                orderby ip.IsIPv6Teredo descending
+                                                select ip;
             ipList.ItemsSource = ips;
             if (!ipList.HasItems)
             {
@@ -128,7 +141,7 @@ namespace Octgn.Launcher
             // Grab the local IP
             IPAddress[] ips = Dns.GetHostAddresses(Dns.GetHostName());
             ipv4List.ItemsSource = ips.Select(ip => ip.ToString())
-                                      .Where(ip => Regex.IsMatch(ip, @"^\d+\.\d+\.\d+\.\d+$"));
+                .Where(ip => Regex.IsMatch(ip, @"^\d+\.\d+\.\d+\.\d+$"));
 
             if (externalIPCache != null)
                 UpdateNATStatus();
@@ -137,13 +150,22 @@ namespace Octgn.Launcher
         private void GetExternalIPv6Address(object sender, DownloadStringCompletedEventArgs e)
         {
             if (e.Cancelled)
-            { webIPBlock.DataContext = "Cancelled"; return; }
+            {
+                webIPBlock.DataContext = "Cancelled";
+                return;
+            }
             if (e.Error != null)
-            { webIPBlock.DataContext = "External service unavailable"; return; }
+            {
+                webIPBlock.DataContext = "External service unavailable";
+                return;
+            }
 
             Match m = Regex.Match(e.Result, @"(\d+\.\d+\.\d+\.\d+)");
             if (!m.Success)
-            { webIPBlock.DataContext = "Error: no IP returned"; return; }
+            {
+                webIPBlock.DataContext = "Error: no IP returned";
+                return;
+            }
 
             webIPBlock.DataContext = externalIPCache = m.ToString();
             webIPText.FontStyle = FontStyles.Normal;
@@ -158,7 +180,7 @@ namespace Octgn.Launcher
 
         private void CopyIP(object sender, RoutedEventArgs e)
         {
-            var link = sender as System.Windows.Documents.Hyperlink;
+            var link = sender as Hyperlink;
             var ipString = link.DataContext as string;
             if (ipString == null)
             {
@@ -181,18 +203,13 @@ namespace Octgn.Launcher
                     Clipboard.SetText(text);
                     return;
                 }
-                catch { }
-                System.Threading.Thread.Sleep(100);
+                catch
+                {
+                }
+                Thread.Sleep(100);
             }
         }
 
         #endregion
-
-        private void GoToWebSite(object sender, RoutedEventArgs e)
-        {
-            var link = sender as System.Windows.Documents.Hyperlink;
-            System.Diagnostics.Process.Start((string)link.Tag);
-            e.Handled = true;
-        }
     }
 }

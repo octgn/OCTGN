@@ -102,6 +102,18 @@ namespace CassiniDev
 
         #endregion
 
+        #region Nested type: SMALL_RECT
+
+        public struct SMALL_RECT
+        {
+            internal Int16 Bottom;
+            internal Int16 Left;
+            internal Int16 Right;
+            internal Int16 Top;
+        }
+
+        #endregion
+
         #region Nested type: SecBuffer
 
         [StructLayout(LayoutKind.Sequential)]
@@ -139,18 +151,6 @@ namespace CassiniDev
             public IntPtr dwLower;
             public IntPtr dwUpper;
             // ReSharper restore InconsistentNaming
-        }
-
-        #endregion
-
-        #region Nested type: SMALL_RECT
-
-        public struct SMALL_RECT
-        {
-            internal Int16 Bottom;
-            internal Int16 Left;
-            internal Int16 Right;
-            internal Int16 Top;
         }
 
         #endregion

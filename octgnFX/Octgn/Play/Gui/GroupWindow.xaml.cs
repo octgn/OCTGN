@@ -1,25 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
-using Octgn.Controls;
-using Octgn.Utils;
-using System;
-using System.Windows.Input;
-using System.Collections.Specialized;
+using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
+using Octgn.Controls;
+using Octgn.Data;
+using Octgn.Utils;
 
 namespace Octgn.Play.Gui
 {
     public enum PilePosition
-    { All, Top, Bottom }
+    {
+        All,
+        Top,
+        Bottom
+    }
 
     public partial class GroupWindow : ChildWindow
     {
-        private PilePosition position;
-        private int count, id;
-        private Group group;
-        private bool shouldNotifyClose = false;
+        private readonly Group group;
+        private readonly int id;
+        private readonly PilePosition position;
+        private int count;
+        private bool shouldNotifyClose;
 
         public GroupWindow()
         {
@@ -53,7 +61,7 @@ namespace Octgn.Play.Gui
             }
 
             if (cardsList.Cards != group.Cards)
-                ((INotifyCollectionChanged)group.Cards).CollectionChanged += CardsChanged;
+                ((INotifyCollectionChanged) group.Cards).CollectionChanged += CardsChanged;
 
             // The shuffle link is confusing at best when a subset of the group is displayed
             if (position != PilePosition.All)
@@ -71,7 +79,7 @@ namespace Octgn.Play.Gui
             base.OnClose();
             if (shouldNotifyClose)
                 SendLookAtRpc(false);
-            ((INotifyCollectionChanged)group.Cards).CollectionChanged -= CardsChanged;
+            ((INotifyCollectionChanged) group.Cards).CollectionChanged -= CardsChanged;
         }
 
         private void SendLookAtRpc(bool look)
@@ -91,17 +99,19 @@ namespace Octgn.Play.Gui
             }
         }
 
-        private void CloseClicked(object sender, System.Windows.RoutedEventArgs e)
-        { Close(); }
+        private void CloseClicked(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
 
-        private void CloseAndShuffleClicked(object sender, System.Windows.RoutedEventArgs e)
+        private void CloseAndShuffleClicked(object sender, RoutedEventArgs e)
         {
             Close();
             var pile = group as Pile;
             if (pile != null) pile.Shuffle();
         }
 
-        private void FilterChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        private void FilterChanged(object sender, TextChangedEventArgs e)
         {
             CardControl.SetAnimateLoad(this, false);
 
@@ -113,30 +123,35 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                var textProperties = Program.Game.Definition.CardDefinition.Properties.Values
-                                            .Where(p => p.Type == Octgn.Data.PropertyType.String && !p.IgnoreText)
-                                            .Select(p => p.Name);
+                IEnumerable<string> textProperties = Program.Game.Definition.CardDefinition.Properties.Values
+                    .Where(p => p.Type == PropertyType.String && !p.IgnoreText)
+                    .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;
                 cardsList.FilterCards = (c) =>
-                {
-                    if (!cardsList.IsAlwaysUp && !c.FaceUp)
-                        return false;
-                    if (c.RealName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0)
-                        return true;
-                    foreach (string property in textProperties)
-                    {
-                        var propertyValue = (string)c.GetProperty(property);
-                        if (propertyValue == null) continue;
-                        if (propertyValue.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0)
-                            return true;
-                    }
-                    return false;
-                };
+                                            {
+                                                if (!cardsList.IsAlwaysUp && !c.FaceUp)
+                                                    return false;
+                                                if (
+                                                    c.RealName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=
+                                                    0)
+                                                    return true;
+                                                foreach (string property in textProperties)
+                                                {
+                                                    var propertyValue = (string) c.GetProperty(property);
+                                                    if (propertyValue == null) continue;
+                                                    if (
+                                                        propertyValue.IndexOf(filter,
+                                                                              StringComparison.CurrentCultureIgnoreCase) >=
+                                                        0)
+                                                        return true;
+                                                }
+                                                return false;
+                                            };
                 alphaOrderBtn.IsChecked = true;
             }
         }
 
-        private void FilterBoxPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void FilterBoxPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
@@ -147,7 +162,8 @@ namespace Octgn.Play.Gui
 
         private void PositionOrderChecked(object sender, RoutedEventArgs e)
         {
-            if (alphaOrderBtn == null) return;  // Happens during the control initialization, when the event is first called
+            if (alphaOrderBtn == null)
+                return; // Happens during the control initialization, when the event is first called
             alphaOrderBtn.IsChecked = false;
             cardsList.SortByName = false;
             filterBox.Text = "";
@@ -199,17 +215,21 @@ namespace Octgn.Play.Gui
         }
     }
 
-    [ValueConversion(typeof(Player), typeof(Visibility))]
+    [ValueConversion(typeof (Player), typeof (Visibility))]
     public class ControllerConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        #region IValueConverter Members
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value == Player.LocalPlayer ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        { throw new NotImplementedException(); }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
-
-
 }

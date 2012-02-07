@@ -1,16 +1,48 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Data;
-using System.Globalization;
 
 namespace Octgn.DeckBuilder
 {
     public partial class FilterControl : UserControl
     {
-        public event EventHandler RemoveFilter;
+        private static readonly SqlComparison[] StringComparisons = new[]
+                                                                        {
+                                                                            new SqlComparison("Contains",
+                                                                                              "{0} LIKE '*{1}*'")
+                                                                                {EscapeQuotes = true},
+                                                                            new SqlComparison("Starts with",
+                                                                                              "{0} LIKE '{1}*'")
+                                                                                {EscapeQuotes = true},
+                                                                            new SqlComparison("Equals", "{0} = '{1}'")
+                                                                                {EscapeQuotes = true}
+                                                                        };
+
+        private static readonly SqlComparison[] IntegerComparisons = new SqlComparison[]
+                                                                         {
+                                                                             new IntegerComparison("Equals", "{0} = {1}")
+                                                                             ,
+                                                                             new IntegerComparison("Greater than",
+                                                                                                   "{0} > {1}"),
+                                                                             new IntegerComparison("Less than",
+                                                                                                   "{0} < {1}")
+                                                                         };
+
+        private static readonly SqlComparison[] CharComparisons = new[]
+                                                                      {
+                                                                          new SqlComparison("Equals", "{0} = '{1}'")
+                                                                              {EscapeQuotes = true},
+                                                                          new SqlComparison("Greater than",
+                                                                                            "{0} > '{1}'")
+                                                                              {EscapeQuotes = true},
+                                                                          new SqlComparison("Less than", "{0} < '{1}'")
+                                                                              {EscapeQuotes = true},
+                                                                          new CharInComparison("One of", "{0} IN ({1})")
+                                                                      };
 
         private PropertyDef property;
 
@@ -18,41 +50,21 @@ namespace Octgn.DeckBuilder
         {
             InitializeComponent();
             DataContextChanged += delegate
-            {
-                property = DataContext as PropertyDef;
-                if (property == null) return; // Happens when the control is unloaded
-                CreateComparisons();
-            };
+                                      {
+                                          property = DataContext as PropertyDef;
+                                          if (property == null) return; // Happens when the control is unloaded
+                                          CreateComparisons();
+                                      };
         }
+
+        public event EventHandler RemoveFilter;
 
         public string GetSqlCondition()
         {
             if (property is SetPropertyDef)
-                return "set_id = '" + ((Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
-            return ((SqlComparison)comparisonList.SelectedItem).GetSql(property.Name, comparisonText.Text);
+                return "set_id = '" + ((Set) comparisonList.SelectedItem).Id.ToString("D") + "'";
+            return ((SqlComparison) comparisonList.SelectedItem).GetSql(property.Name, comparisonText.Text);
         }
-
-        private static SqlComparison[] StringComparisons = new SqlComparison[] 
-		{
-			new SqlComparison("Contains", "{0} LIKE '*{1}*'") { EscapeQuotes = true },
-			new SqlComparison("Starts with", "{0} LIKE '{1}*'") { EscapeQuotes = true },
-			new SqlComparison("Equals", "{0} = '{1}'") { EscapeQuotes = true}
-		};
-
-        private static SqlComparison[] IntegerComparisons = new SqlComparison[]
-		{
-			new IntegerComparison("Equals", "{0} = {1}"),
-			new IntegerComparison("Greater than", "{0} > {1}"),
-			new IntegerComparison("Less than", "{0} < {1}")
-		};
-
-        private static SqlComparison[] CharComparisons = new SqlComparison[]
-		{
-			new SqlComparison("Equals", "{0} = '{1}'") { EscapeQuotes = true },
-			new SqlComparison("Greater than", "{0} > '{1}'") { EscapeQuotes = true },
-			new SqlComparison("Less than", "{0} < '{1}'") { EscapeQuotes = true },
-			new CharInComparison("One of", "{0} IN ({1})")
-		};
 
         private void CreateComparisons()
         {
@@ -61,7 +73,7 @@ namespace Octgn.DeckBuilder
                 comparisonList.Width = 262;
                 comparisonText.Visibility = Visibility.Collapsed;
 
-                comparisonList.ItemsSource = ((SetPropertyDef)property).Sets;
+                comparisonList.ItemsSource = ((SetPropertyDef) property).Sets;
             }
             else
             {
@@ -90,7 +102,7 @@ namespace Octgn.DeckBuilder
         {
             e.Handled = true;
             if (RemoveFilter != null)
-                RemoveFilter(this.TemplatedParent, e);
+                RemoveFilter(TemplatedParent, e);
         }
 
         private void comparisonText_KeyDown(object sender, KeyEventArgs e)
@@ -101,15 +113,16 @@ namespace Octgn.DeckBuilder
 
     internal class SqlComparison
     {
-        public string Name { get; protected set; }
         public readonly string SqlFormat;
-        public bool EscapeQuotes = false;
+        public bool EscapeQuotes;
 
         public SqlComparison(string name, string sql)
         {
             Name = name;
             SqlFormat = sql;
         }
+
+        public string Name { get; protected set; }
 
         public virtual string GetSql(string field, string value)
         {
@@ -122,14 +135,16 @@ namespace Octgn.DeckBuilder
     {
         public IntegerComparison(string name, string sql)
             : base(name, sql)
-        { }
+        {
+        }
 
         public override string GetSql(string field, string value)
         {
             int parsedValue;
             if (!int.TryParse(value, out parsedValue))
                 return "1 = 0";
-            value = parsedValue.ToString(CultureInfo.InvariantCulture);	// Prevents culture related problem, e.g. someone enters 1,000 which is valid in english, or 1'000 (same in french)
+            value = parsedValue.ToString(CultureInfo.InvariantCulture);
+                // Prevents culture related problem, e.g. someone enters 1,000 which is valid in english, or 1'000 (same in french)
             return string.Format(SqlFormat, field, value);
         }
     }
@@ -138,7 +153,8 @@ namespace Octgn.DeckBuilder
     {
         public CharInComparison(string name, string sql)
             : base(name, sql)
-        { }
+        {
+        }
 
         public override string GetSql(string field, string value)
         {
@@ -146,9 +162,9 @@ namespace Octgn.DeckBuilder
             foreach (char c in value)
             {
                 if (sb.Length > 0) sb.AppendFormat(",");
-                sb.AppendFormat("'{0}'", c == '\'' ? "''" : (object)c);
+                sb.AppendFormat("'{0}'", c == '\'' ? "''" : (object) c);
             }
-            return string.Format(SqlFormat, field, sb.ToString());
+            return string.Format(SqlFormat, field, sb);
         }
     }
 }

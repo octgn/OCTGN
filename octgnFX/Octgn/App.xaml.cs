@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Windows;
-using System.Collections.Generic;
+using Octgn.Data;
 using Octgn.Launcher;
 
 namespace Octgn
@@ -16,8 +19,8 @@ namespace Octgn
 
         private static Version GetClientVersion()
         {
-            Assembly asm = typeof(OctgnApp).Assembly;
-            AssemblyProductAttribute at = (AssemblyProductAttribute)asm.GetCustomAttributes(typeof(AssemblyProductAttribute), false)[0];
+            Assembly asm = typeof (OctgnApp).Assembly;
+            var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0];
             return asm.GetName().Version;
         }
 
@@ -26,19 +29,21 @@ namespace Octgn
             Updates.UpgradeSettings();
 
             Updates.PerformHouskeeping();
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
-            Program.GamesRepository = new Octgn.Data.GamesRepository();
+            Program.GamesRepository = new GamesRepository();
 
             if (Program.GamesRepository.MissingFiles.Any())
             {
-                var sb = new StringBuilder("OCTGN cannot find the following files. The corresponding games have been disabled.\n\n");
-                foreach (var file in Program.GamesRepository.MissingFiles)
+                var sb =
+                    new StringBuilder(
+                        "OCTGN cannot find the following files. The corresponding games have been disabled.\n\n");
+                foreach (string file in Program.GamesRepository.MissingFiles)
                     sb.Append(file).Append("\n\n");
                 sb.Append("You should restore those files, or re-install the corresponding games.");
 
-                var oldShutdown = ShutdownMode;
-                ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+                ShutdownMode oldShutdown = ShutdownMode;
+                ShutdownMode = ShutdownMode.OnExplicitShutdown;
                 new MessageWindow(sb.ToString()).ShowDialog();
                 ShutdownMode = oldShutdown;
             }
@@ -64,23 +69,23 @@ namespace Octgn
 
             if (e.Args != null && e.Args.Count() > 0)
             {
-                this.Properties["ArbitraryArgName"] = e.Args[0];
+                Properties["ArbitraryArgName"] = e.Args[0];
             }
 
             base.OnStartup(e);
         }
 
-        private void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+        private void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
-            Program.DebugTrace.TraceEvent(System.Diagnostics.TraceEventType.Error, 0, e.Exception.ToString());
+            Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, e.Exception.ToString());
 #endif
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Exception ex = (Exception)e.ExceptionObject;
-            if (!System.Diagnostics.Debugger.IsAttached)
+            var ex = (Exception) e.ExceptionObject;
+            if (!Debugger.IsAttached)
             {
                 var wnd = new ErrorWindow(ex);
                 wnd.ShowDialog();
@@ -88,10 +93,10 @@ namespace Octgn
             else
             {
                 if (e.IsTerminating)
-                    System.Diagnostics.Debugger.Break();
+                    Debugger.Break();
             }
             if (!e.IsTerminating)
-                Program.DebugTrace.TraceEvent(System.Diagnostics.TraceEventType.Error, 0, ex.ToString());
+                Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, ex.ToString());
         }
 
         protected override void OnExit(ExitEventArgs e)

@@ -1,14 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 using MySql.Data.MySqlClient;
 using Skylabs.Lobby;
-using Skylabs.LobbyServer;
-using System.Net;
 
 namespace Skylabs.LobbyServer
 {
     public class MySqlCup
     {
+        private readonly object DBLocker = new object();
+        public string ConnectionString;
+
+        public MySqlCup(string user, string pass, string host, string db)
+        {
+            DbUser = user;
+            DbPass = pass;
+            DbHost = host;
+            DbName = db;
+            var sb = new MySqlConnectionStringBuilder
+                         {
+                             Database = DbName,
+                             UserID = DbUser,
+                             Password = DbPass,
+                             Server = DbHost
+                         };
+            ConnectionString = sb.ToString();
+        }
+
         public string DbUser { get; private set; }
 
         public string DbPass { get; private set; }
@@ -16,27 +35,6 @@ namespace Skylabs.LobbyServer
         public string DbHost { get; private set; }
 
         public string DbName { get; private set; }
-
-        public string ConnectionString;
-
-        private object DBLocker = new object();
-
-        public MySqlCup(string user, string pass, string host, string db)
-        {
-
-            DbUser = user;
-            DbPass = pass;
-            DbHost = host;
-            DbName = db;
-            MySqlConnectionStringBuilder sb = new MySqlConnectionStringBuilder
-            {
-                Database = DbName,
-                UserID = DbUser,
-                Password = DbPass,
-                Server = DbHost
-            };
-            ConnectionString = sb.ToString();
-        }
 
         /// <summary>
         /// Is the current user banned?
@@ -55,18 +53,11 @@ namespace Skylabs.LobbyServer
                 int ret = -1;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        String ip = "0.0.0.0";
-                        if (endpoint == null)
-                        {
-                            Console.WriteLine("####REMOTE ENDPOINT WAS NULL, WTF##############");
-                        }
-                        else
-                        {
-                            ip = endpoint.ToString();
-                        }
+                        String ip;
+                        ip = endpoint.ToString();
 
                         MySqlCommand cmd = con.CreateCommand();
                         try
@@ -89,10 +80,10 @@ namespace Skylabs.LobbyServer
                         {
                             if (dr.HasRows)
                             {
-                                List<Ban> bans = new List<Ban>();
+                                var bans = new List<Ban>();
                                 while (dr.Read())
                                 {
-                                    Ban b = new Ban
+                                    var b = new Ban
                                                 {
                                                     Bid = dr.GetInt32("bid"),
                                                     Uid = dr.GetInt32("uid"),
@@ -106,14 +97,14 @@ namespace Skylabs.LobbyServer
                                 foreach (Ban b in bans)
                                 {
                                     string bid = b.Bid.ToString();
-                                    DateTime endtime = Skylabs.ValueConverters.FromPhpTime(b.EndTime);
+                                    DateTime endtime = ValueConverters.FromPhpTime(b.EndTime);
                                     if (DateTime.Now >= endtime)
                                     {
                                         DeleteRow(con, "bans", "bid", bid);
                                     }
                                     else
                                     {
-                                        ret = (int)b.EndTime;
+                                        ret = (int) b.EndTime;
                                         break;
                                     }
                                 }
@@ -131,12 +122,13 @@ namespace Skylabs.LobbyServer
                 {
                     Logger.ER(me.InnerException);
 #if(DEBUG)
-                    if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                    if (Debugger.IsAttached) Debugger.Break();
 #endif
                 }
                 return ret;
             }
         }
+
         /// <summary>
         /// Just a generic delete row function.
         /// </summary>
@@ -157,6 +149,7 @@ namespace Skylabs.LobbyServer
             cmd.Parameters["@table"].Value = columnvalue;
             cmd.ExecuteNonQuery();
         }
+
         /// <summary>
         /// Get user information from the database.
         /// </summary>
@@ -173,7 +166,7 @@ namespace Skylabs.LobbyServer
                 User ret = null;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         using (MySqlCommand com = con.CreateCommand())
@@ -193,7 +186,7 @@ namespace Skylabs.LobbyServer
                                                   Uid = dr.GetInt32("uid"),
                                                   CustomStatus = dr.GetString("status"),
                                                   Status = UserStatus.Unknown,
-                                                  Level = (UserLevel)dr.GetInt32("level")
+                                                  Level = (UserLevel) dr.GetInt32("level")
                                               };
                                 }
                                 dr.Close();
@@ -209,6 +202,7 @@ namespace Skylabs.LobbyServer
                 return ret;
             }
         }
+
         /// <summary>
         /// Gets a user from the database based on there UID
         /// </summary>
@@ -223,7 +217,7 @@ namespace Skylabs.LobbyServer
                 User ret = null;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         using (MySqlCommand com = con.CreateCommand())
@@ -243,7 +237,7 @@ namespace Skylabs.LobbyServer
                                                   Uid = dr.GetInt32("uid"),
                                                   CustomStatus = dr.GetString("status"),
                                                   Status = UserStatus.Unknown,
-                                                  Level = (UserLevel)dr.GetInt32("level")
+                                                  Level = (UserLevel) dr.GetInt32("level")
                                               };
                                 }
                                 dr.Close();
@@ -259,6 +253,7 @@ namespace Skylabs.LobbyServer
                 return ret;
             }
         }
+
         /// <summary>
         /// Register a user to the database.
         /// </summary>
@@ -275,7 +270,7 @@ namespace Skylabs.LobbyServer
                     return false;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         MySqlCommand com = con.CreateCommand();
@@ -296,6 +291,7 @@ namespace Skylabs.LobbyServer
                 return false;
             }
         }
+
         /// <summary>
         /// Remove a friend request from the database.
         /// </summary>
@@ -311,7 +307,7 @@ namespace Skylabs.LobbyServer
                     return;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         MySqlCommand cmd = con.CreateCommand();
@@ -322,15 +318,14 @@ namespace Skylabs.LobbyServer
                         cmd.Parameters["@uid"].Value = requesteeuid;
                         cmd.Parameters["@email"].Value = friendemail;
                         cmd.ExecuteNonQuery();
-                        return;
                     }
                 }
-                catch (Exception)
+                catch
                 {
-
                 }
             }
         }
+
         /// <summary>
         /// Add a friend request.
         /// We use the friends email, because they might not have an account yet.
@@ -351,7 +346,7 @@ namespace Skylabs.LobbyServer
                     return;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         MySqlCommand com = con.CreateCommand();
@@ -362,14 +357,14 @@ namespace Skylabs.LobbyServer
                         com.Parameters["@email"].Value = friendemail;
                         com.Parameters["@uid"].Value = uid;
                         com.ExecuteNonQuery();
-                        return;
                     }
                 }
-                catch (Exception)
+                catch
                 {
                 }
             }
         }
+
         /// <summary>
         /// Get a list of friend requests based on your e-mail address.
         /// </summary>
@@ -386,7 +381,7 @@ namespace Skylabs.LobbyServer
                 List<int> ret = null;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         MySqlCommand com = con.CreateCommand();
@@ -409,13 +404,13 @@ namespace Skylabs.LobbyServer
                         return ret;
                     }
                 }
-                catch (Exception)
+                catch
                 {
-
                 }
                 return null;
             }
         }
+
         /// <summary>
         /// Add a friend. This happens after a successful friend request.
         /// It only needs to be called once, as it saves the friendship both ways.
@@ -431,7 +426,7 @@ namespace Skylabs.LobbyServer
                     return;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         MySqlCommand com = con.CreateCommand();
@@ -449,14 +444,14 @@ namespace Skylabs.LobbyServer
                         com.Parameters["@fid"].Value = useruid;
                         if (!oFriendlist.Exists(u => u.Uid == useruid))
                             com.ExecuteNonQuery();
-                        return;
                     }
                 }
-                catch (Exception)
+                catch
                 {
                 }
             }
         }
+
         /// <summary>
         /// Saves the users custom stats to the database.
         /// </summary>
@@ -473,7 +468,7 @@ namespace Skylabs.LobbyServer
                     return false;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         MySqlCommand com = con.CreateCommand();
@@ -493,6 +488,7 @@ namespace Skylabs.LobbyServer
                 }
             }
         }
+
         /// <summary>
         /// Saves the users display name to the database
         /// </summary>
@@ -509,7 +505,7 @@ namespace Skylabs.LobbyServer
                     return false;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         MySqlCommand com = con.CreateCommand();
@@ -529,6 +525,7 @@ namespace Skylabs.LobbyServer
                 }
             }
         }
+
         /// <summary>
         /// Gets a list of friends based on your uid.
         /// </summary>
@@ -542,7 +539,7 @@ namespace Skylabs.LobbyServer
                     return null;
                 try
                 {
-                    using (MySqlConnection con = new MySqlConnection(ConnectionString))
+                    using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
                         using (MySqlCommand com = con.CreateCommand())
@@ -553,7 +550,7 @@ namespace Skylabs.LobbyServer
                             com.Parameters["@uid"].Value = uid;
                             using (MySqlDataReader dr = com.ExecuteReader())
                             {
-                                List<User> friends = new List<User>();
+                                var friends = new List<User>();
                                 while (dr.Read())
                                 {
                                     User temp = GetUser(dr.GetInt32("fid"));

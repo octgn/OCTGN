@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Octgn.Data;
 using Octgn.Definitions;
 using Octgn.Play;
+using Octgn.Play.Gui;
 
 namespace Octgn
 {
@@ -17,19 +20,30 @@ namespace Octgn
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
 
-        private ushort uniqueId;
         private readonly GameDef _definition;
+        private readonly List<RandomRequest> _random = new List<RandomRequest>();
         private readonly Table _table;
-        private Player _turnPlayer;
-        private bool _stopTurn;
-        private List<RandomRequest> _random = new List<RandomRequest>();
         // TODO: why a SortedList? Wouldn't a Dictionary be sufficient?
-        private SortedList<Guid, Data.MarkerModel> markersById = new SortedList<Guid, Data.MarkerModel>();
-        private List<Data.MarkerModel> recentMarkers = new List<Data.MarkerModel>(MaxRecentMarkers);
-        private List<Data.CardModel> recentCards = new List<Data.CardModel>(MaxRecentCards);
+        private readonly SortedList<Guid, MarkerModel> markersById = new SortedList<Guid, MarkerModel>();
+        private readonly List<CardModel> recentCards = new List<CardModel>(MaxRecentCards);
+        private readonly List<MarkerModel> recentMarkers = new List<MarkerModel>(MaxRecentMarkers);
+        private bool _stopTurn;
+        private Player _turnPlayer;
+        private ushort uniqueId;
 
-        public int TurnNumber
-        { get; set; }
+        public Game(GameDef def)
+        {
+            _definition = def;
+            _table = new Table(def.TableDefinition);
+            Variables = new Dictionary<string, int>();
+            foreach (VariableDef varDef in def.Variables.Where(v => v.Global))
+                Variables.Add(varDef.Name, varDef.DefaultValue);
+            GlobalVariables = new Dictionary<string, string>();
+            foreach (GlobalVariableDef varDef in def.GlobalVariables)
+                GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
+        }
+
+        public int TurnNumber { get; set; }
 
         public Player TurnPlayer
         {
@@ -58,51 +72,55 @@ namespace Octgn
         }
 
         public Table Table
-        { get { return _table; } }
+        {
+            get { return _table; }
+        }
 
         public GameDef Definition
-        { get { return _definition; } }
+        {
+            get { return _definition; }
+        }
 
-        public BitmapImage CardFrontBitmap
-        { get; private set; }
+        public BitmapImage CardFrontBitmap { get; private set; }
 
-        public BitmapImage CardBackBitmap
-        { get; private set; }
+        public BitmapImage CardBackBitmap { get; private set; }
 
         public IList<RandomRequest> RandomRequests
-        { get { return _random; } }
-
-        public IList<Data.MarkerModel> Markers
-        { get { return markersById.Values; } }
-
-        public IList<Data.MarkerModel> RecentMarkers
-        { get { return recentMarkers; } }
-
-        public IList<Data.CardModel> RecentCards
-        { get { return recentCards; } }
-
-        public Dictionary<string, int> Variables
-        { get; private set; }
-        public Dictionary<string, string> GlobalVariables
-        { get; private set; }
-
-        public Game(GameDef def)
         {
-            _definition = def;
-            _table = new Table(def.TableDefinition);
-            Variables = new Dictionary<string, int>();
-            foreach (var varDef in def.Variables.Where(v => v.Global))
-                Variables.Add(varDef.Name, varDef.DefaultValue);
-            GlobalVariables = new Dictionary<string, string>();
-            foreach (var varDef in def.GlobalVariables)
-                GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
+            get { return _random; }
         }
+
+        public IList<MarkerModel> Markers
+        {
+            get { return markersById.Values; }
+        }
+
+        public IList<MarkerModel> RecentMarkers
+        {
+            get { return recentMarkers; }
+        }
+
+        public IList<CardModel> RecentCards
+        {
+            get { return recentCards; }
+        }
+
+        public Dictionary<string, int> Variables { get; private set; }
+        public Dictionary<string, string> GlobalVariables { get; private set; }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
 
         public void Begin()
         {
             Database.Open(Definition, true);
             // Init fields
-            uniqueId = 1; TurnNumber = 0; TurnPlayer = null;
+            uniqueId = 1;
+            TurnNumber = 0;
+            TurnPlayer = null;
             string nick = Program.lobbyClient.Me.DisplayName;
             CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
@@ -113,19 +131,22 @@ namespace Octgn
             Player.LocalPlayer = new Player(Program.Game.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
-                                    OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
-                                    Program.Game.Definition.Id, Program.Game.Definition.Version);
+                                     OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
+                                     Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
-            foreach (Data.MarkerModel m in Database.GetAllMarkers())
+            foreach (MarkerModel m in Database.GetAllMarkers())
                 markersById.Add(m.id, m);
 
             Program.IsGameRunning = true;
         }
+
         public void TestBegin()
         {
             Database.Open(Definition, true);
             // Init fields
-            uniqueId = 1; TurnNumber = 0; TurnPlayer = null;
+            uniqueId = 1;
+            TurnNumber = 0;
+            TurnPlayer = null;
             string nick = "TestPlayer";
             //CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
@@ -139,120 +160,106 @@ namespace Octgn
             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
             //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
-            foreach (Data.MarkerModel m in Database.GetAllMarkers())
+            foreach (MarkerModel m in Database.GetAllMarkers())
                 markersById.Add(m.id, m);
 
             //Program.IsGameRunning = true;
         }
+
         public void Reset()
         {
-            TurnNumber = 0; TurnPlayer = null;
+            TurnNumber = 0;
+            TurnPlayer = null;
             foreach (Player p in Player.All)
             {
                 foreach (Group g in p.Groups)
                     g.Reset();
                 foreach (Counter c in p.Counters)
                     c.Reset();
-                foreach (var varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
+                foreach (VariableDef varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
                     p.Variables[varDef.Name] = varDef.DefaultValue;
-                foreach (var g in Definition.PlayerDefinition.GlobalVariables)
+                foreach (GlobalVariableDef g in Definition.PlayerDefinition.GlobalVariables)
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
             Table.Reset();
-            Card.Reset(); CardIdentity.Reset();
-            Play.Gui.Selection.Clear();
+            Card.Reset();
+            CardIdentity.Reset();
+            Selection.Clear();
             RandomRequests.Clear();
-            foreach (var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
+            foreach (VariableDef varDef in Definition.Variables.Where(v => v.Global && v.Reset))
                 Variables[varDef.Name] = varDef.DefaultValue;
-            foreach (var g in Definition.GlobalVariables)
+            foreach (GlobalVariableDef g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug
-            var mainWin = Program.PlayWindow;
-            mainWin.RaiseEvent(new Octgn.Play.Gui.CardEventArgs(Octgn.Play.Gui.CardControl.CardHoveredEvent, mainWin));
+            PlayWindow mainWin = Program.PlayWindow;
+            mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
         }
 
         public void End()
         {
             Player.Reset();
-            Card.Reset(); CardIdentity.Reset();
+            Card.Reset();
+            CardIdentity.Reset();
             History.Reset();
-            Play.Gui.Selection.Clear();
+            Selection.Clear();
         }
 
         public ushort GetUniqueId()
-        { return uniqueId++; }
+        {
+            return uniqueId++;
+        }
 
         internal int GenerateCardId()
         {
-            return ((int)Player.LocalPlayer.Id) << 16 | GetUniqueId();
+            return (Player.LocalPlayer.Id) << 16 | GetUniqueId();
         }
 
         public RandomRequest FindRandomRequest(int id)
         {
-            foreach (var r in RandomRequests)
+            foreach (RandomRequest r in RandomRequests)
                 if (r.Id == id) return r;
             return null;
         }
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20
-        private struct grp_tmp : IEquatable<grp_tmp>
+
+        public void LoadDeck(Deck deck)
         {
-            public Group group;
-            public GroupVisibility visibility;
-            public List<Player> viewers;
-
-            public bool Equals(grp_tmp gg)
-            {
-                if (this.group == gg.group)
-                    return true;
-                else
-                    return false;
-            }
-
-            public grp_tmp(Group g, GroupVisibility vis, List<Player> v)
-            {
-                group = g;
-                visibility = vis;
-                viewers = v;
-            }
-        }
-
-        public void LoadDeck(Data.Deck deck)
-        {
-            var player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
-            var def = Program.Game.Definition;
-            var deckDef = deck.IsShared ? def.SharedDeckDefinition : def.DeckDefinition;
-            var cardDef = def.CardDefinition;
+            Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
+            GameDef def = Program.Game.Definition;
+            DeckDef deckDef = deck.IsShared ? def.SharedDeckDefinition : def.DeckDefinition;
+            CardDef cardDef = def.CardDefinition;
             int nCards = deck.CardCount;
-            int[] ids = new int[nCards];
-            ulong[] keys = new ulong[nCards];
-            Card[] cards = new Card[nCards];
-            Group[] groups = new Group[nCards];
-            List<grp_tmp> gtmps = new List<grp_tmp>();  //for temp groups visibility
+            var ids = new int[nCards];
+            var keys = new ulong[nCards];
+            var cards = new Card[nCards];
+            var groups = new Group[nCards];
+            var gtmps = new List<grp_tmp>(); //for temp groups visibility
             int j = 0;
-            foreach (Data.Deck.Section section in deck.Sections)
+            foreach (Deck.Section section in deck.Sections)
             {
-                var sectionDef = deckDef.Sections[section.Name];
+                DeckSectionDef sectionDef = deckDef.Sections[section.Name];
                 if (sectionDef == null)
-                    throw new Data.InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
-                var group = player.Groups.First(x => x.Name == sectionDef.Group);
+                    throw new InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
+                Group group = player.Groups.First(x => x.Name == sectionDef.Group);
 
                 //In order to make the clients know what the card is (if visibility is set so that they can see it),
                 //we have to set the visibility to Nobody, and then after the cards are sent, set the visibility back
                 //to what it was. //bug (google) #20
-                grp_tmp gt = new grp_tmp(group, group.Visibility, group.viewers.ToList());
+                var gt = new grp_tmp(group, group.Visibility, group.viewers.ToList());
                 if (!gtmps.Contains(gt))
                 {
                     gtmps.Add(gt);
                     group.SetVisibility(false, false);
                 }
-                foreach (Data.Deck.Element element in section.Cards)
+                foreach (Deck.Element element in section.Cards)
                 {
                     for (int i = 0; i < element.Quantity; i++)
                     {
-                        ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | element.Card.Id.Condense();
+                        ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | element.Card.Id.Condense();
                         int id = GenerateCardId();
-                        ids[j] = id; keys[j] = Crypto.ModExp(key);
+                        ids[j] = id;
+                        keys[j] = Crypto.ModExp(key);
                         groups[j] = group;
                         var card = new Card(player, id, key, cardDef, element.Card, true);
                         cards[j++] = card;
@@ -262,8 +269,8 @@ namespace Octgn
                     // Load images in the background
                     string pictureUri = element.Card.Picture;
                     Dispatcher.CurrentDispatcher.BeginInvoke(
-                       new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
-                       DispatcherPriority.ApplicationIdle, pictureUri);
+                        new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
+                        DispatcherPriority.ApplicationIdle, pictureUri);
                 }
             }
             Program.Client.Rpc.LoadDeck(ids, keys, groups);
@@ -287,7 +294,7 @@ namespace Octgn
             gtmps.TrimExcess();
         }
 
-        internal void AddRecentCard(Data.CardModel card)
+        internal void AddRecentCard(CardModel card)
         {
             int idx = recentCards.FindIndex(c => c.Id == card.Id);
             if (idx == 0) return;
@@ -303,7 +310,7 @@ namespace Octgn
             recentCards.Insert(0, card);
         }
 
-        internal void AddRecentMarker(Data.MarkerModel marker)
+        internal void AddRecentMarker(MarkerModel marker)
         {
             int idx = recentMarkers.IndexOf(marker);
             if (idx == 0) return;
@@ -319,9 +326,9 @@ namespace Octgn
             recentMarkers.Insert(0, marker);
         }
 
-        internal Data.MarkerModel GetMarkerModel(Guid id)
+        internal MarkerModel GetMarkerModel(Guid id)
         {
-            Data.MarkerModel model;
+            MarkerModel model;
             if (id.CompareTo(new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10)) < 0)
             {
                 // Get a standard model
@@ -333,7 +340,8 @@ namespace Octgn
             // Try to find the marker model
             if (!markersById.TryGetValue(id, out model))
             {
-                Program.Trace.TraceEvent(System.Diagnostics.TraceEventType.Verbose, (int)EventIds.NonGame, "Marker model '{0}' not found, using default marker instead", id);
+                Program.Trace.TraceEvent(TraceEventType.Verbose, EventIds.NonGame,
+                                         "Marker model '{0}' not found, using default marker instead", id);
                 DefaultMarkerModel defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
                 model = defaultModel.Clone();
                 model.id = id;
@@ -342,10 +350,16 @@ namespace Octgn
             return model;
         }
 
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         #region MEF stuff for easy services composition
 
-        private static AssemblyCatalog catalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-        private CompositionContainer container = new CompositionContainer(catalog);
+        private static readonly AssemblyCatalog catalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
+        private readonly CompositionContainer container = new CompositionContainer(catalog);
 
         public void ComposeParts(params object[] attributedParts)
         {
@@ -354,16 +368,34 @@ namespace Octgn
 
         #endregion MEF stuff for easy services composition
 
-        #region INotifyPropertyChanged Members
+        #region Nested type: grp_tmp
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
+        private struct grp_tmp : IEquatable<grp_tmp>
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            public readonly Group group;
+            public readonly List<Player> viewers;
+            public readonly GroupVisibility visibility;
+
+            public grp_tmp(Group g, GroupVisibility vis, List<Player> v)
+            {
+                group = g;
+                visibility = vis;
+                viewers = v;
+            }
+
+            #region IEquatable<grp_tmp> Members
+
+            public bool Equals(grp_tmp gg)
+            {
+                if (@group == gg.group)
+                    return true;
+                else
+                    return false;
+            }
+
+            #endregion
         }
 
-        #endregion INotifyPropertyChanged Members
+        #endregion
     }
 }

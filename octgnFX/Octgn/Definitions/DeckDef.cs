@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using Octgn.Data;
-using System.Collections.Generic;
 
 namespace Octgn.Definitions
 {
@@ -14,11 +14,11 @@ namespace Octgn.Definitions
             if (xml == null) return null;
 
             return new DeckDef
-            {
-                Sections = xml.Elements(Defs.xmlnsOctgn + "section")
-                              .Select(x => DeckSectionDef.LoadFromXml(x))
-                              .ToDictionary(x => x.Name)
-            };
+                       {
+                           Sections = xml.Elements(Defs.xmlnsOctgn + "section")
+                               .Select(x => DeckSectionDef.LoadFromXml(x))
+                               .ToDictionary(x => x.Name)
+                       };
         }
     }
 
@@ -30,10 +30,10 @@ namespace Octgn.Definitions
         internal static DeckSectionDef LoadFromXml(XElement xml)
         {
             return new DeckSectionDef
-            {
-                Name = xml.Attr<string>("name"),
-                Group = xml.Attr<string>("group")
-            };
+                       {
+                           Name = xml.Attr<string>("name"),
+                           Group = xml.Attr<string>("group")
+                       };
         }
     }
 }

@@ -170,7 +170,7 @@ namespace CassiniDev
 
         public SecurityIdentifier GetProcessSid()
         {
-            using (WindowsIdentity identity = new WindowsIdentity(_server.GetProcessToken()))
+            using (var identity = new WindowsIdentity(_server.GetProcessToken()))
             {
                 return identity.User;
             }
@@ -287,7 +287,7 @@ namespace CassiniDev
 
         private void WaitForPendingCallsToFinish()
         {
-            for (; ; )
+            for (;;)
             {
                 if (_pendingCallsCount <= 0)
                 {

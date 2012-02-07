@@ -37,7 +37,7 @@ namespace CassiniDev.UIComponents
 
         public CommandLine(string[] args)
         {
-            ArrayList list = new ArrayList();
+            var list = new ArrayList();
             for (int i = 0; i < args.Length; i++)
             {
                 char ch = args[i][0];
@@ -66,7 +66,7 @@ namespace CassiniDev.UIComponents
                     }
                 }
             }
-            _arguments = (string[])list.ToArray(typeof(string));
+            _arguments = (string[]) list.ToArray(typeof (string));
         }
 
         #endregion

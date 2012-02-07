@@ -12,12 +12,13 @@ namespace Octgn.Play.Gui
         public DragAdorner(UIElement adorned)
             : base(adorned)
         {
-            VisualBrush brush = new VisualBrush(adorned);
+            var brush = new VisualBrush(adorned);
             // HACK: this makes the markers work properly, 
             // even after adding 4+ markers and then removing to 3-,
             // and then shift-dragging (in which case the size of the adorner is correct, 
             // but the VisualBrush tries to render the now invisible number.
-            brush.Stretch = Stretch.None; brush.AlignmentX = AlignmentX.Left;
+            brush.Stretch = Stretch.None;
+            brush.AlignmentX = AlignmentX.Left;
             child = new Rectangle();
             child.BeginInit();
             child.Width = adorned.RenderSize.Width;
@@ -26,7 +27,7 @@ namespace Octgn.Play.Gui
             child.IsHitTestVisible = false;
             child.EndInit();
 
-            DoubleAnimation animation = new DoubleAnimation(0.6, 0.85, new Duration(TimeSpan.FromMilliseconds(500)));
+            var animation = new DoubleAnimation(0.6, 0.85, new Duration(TimeSpan.FromMilliseconds(500)));
             animation.AutoReverse = true;
             animation.RepeatBehavior = RepeatBehavior.Forever;
             animation.Freeze();
@@ -36,7 +37,12 @@ namespace Octgn.Play.Gui
 
         #region Content Management
 
-        private Rectangle child;
+        private readonly Rectangle child;
+
+        protected override int VisualChildrenCount
+        {
+            get { return 1; }
+        }
 
         protected override Size MeasureOverride(Size constraint)
         {
@@ -51,10 +57,9 @@ namespace Octgn.Play.Gui
         }
 
         protected override Visual GetVisualChild(int index)
-        { return child; }
-
-        protected override int VisualChildrenCount
-        { get { return 1; } }
+        {
+            return child;
+        }
 
         #endregion
 
@@ -84,13 +89,13 @@ namespace Octgn.Play.Gui
 
         private void UpdatePosition()
         {
-            AdornerLayer layer = (AdornerLayer)Parent;
+            var layer = (AdornerLayer) Parent;
             if (layer != null) layer.Update(AdornedElement);
         }
 
         public override GeneralTransform GetDesiredTransform(GeneralTransform transform)
         {
-            GeneralTransformGroup result = new GeneralTransformGroup();
+            var result = new GeneralTransformGroup();
             result.Children.Add(new TranslateTransform(leftOffset, topOffset));
             result.Children.Add(base.GetDesiredTransform(transform));
             return result;

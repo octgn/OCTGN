@@ -9,7 +9,7 @@ using Octgn.Play;
 
 namespace Octgn.Server
 {
-    interface IServerCalls
+    internal interface IServerCalls
     {
         void IsAlternateImage(Card c, bool isAlternateImage);
 
@@ -17,7 +17,8 @@ namespace Octgn.Server
 
         void Error(string msg);
 
-        void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion);
+        void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId,
+                   Version gameVersion);
 
         void Settings(bool twoSidedTable);
 

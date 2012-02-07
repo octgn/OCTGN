@@ -1,4 +1,4 @@
-<protocol  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:noNamespaceSchemaLocation="protocol.xsd">
+<protocol xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="protocol.xsd">
   <msg name="Binary" server="true" client="true" />
 
   <msg name="Error" server="true" client="true">
@@ -105,12 +105,12 @@
 
   <msg name="CounterReq" server="true">
     <param name="counter" type="Counter" />
-    <param name="value" type="int"/>
+    <param name="value" type="int" />
   </msg>
   <msg name="Counter" client="true">
     <param name="player" type="Player" />
     <param name="counter" type="Counter" />
-    <param name="value" type="int"/>
+    <param name="value" type="int" />
   </msg>
 
   <msg name="LoadDeck" server="true" client="true">
@@ -144,7 +144,7 @@
     <param name="faceUp" type="bool" />
   </msg>
   <msg name="MoveCard" client="true">
-    <param name="player" type="Player"/>
+    <param name="player" type="Player" />
     <param name="card" type="Card" />
     <param name="group" type="Group" />
     <param name="idx" type="int" />
@@ -231,22 +231,22 @@
 
   <msg name="RotateReq" server="true">
     <param name="card" type="Card" />
-    <param name="rot" type="CardOrientation"/>
+    <param name="rot" type="CardOrientation" />
   </msg>
   <msg name="Rotate" client="true">
     <param name="player" type="Player" />
     <param name="card" type="Card" />
-    <param name="rot" type="CardOrientation"/>
+    <param name="rot" type="CardOrientation" />
   </msg>
 
   <msg name="Shuffle" client="true" server="true">
     <param name="group" type="Group" />
-    <param name="card" type="int[]"/>
+    <param name="card" type="int[]" />
   </msg>
   <msg name="Shuffled" client="true" server="true">
     <param name="group" type="Group" />
     <param name="card" type="int[]" />
-    <param name="pos" type="short[]"/>
+    <param name="pos" type="short[]" />
   </msg>
   <msg name="UnaliasGrp" client="true" server="true">
     <param name="group" type="Group" />
@@ -313,54 +313,54 @@
   </msg>
 
   <msg name="PassToReq" server="true">
-    <param name="id" type="ControllableObject"/>
+    <param name="id" type="ControllableObject" />
     <param name="to" type="Player" />
     <param name="requested" type="bool" />
   </msg>
   <msg name="PassTo" client="true">
     <param name="player" type="Player" />
-    <param name="id" type="ControllableObject"/>
+    <param name="id" type="ControllableObject" />
     <param name="to" type="Player" />
     <param name="requested" type="bool" />
   </msg>
   <msg name="TakeFromReq" server="true">
-    <param name="id" type="ControllableObject"/>
-    <param name="from" type="Player"/>
+    <param name="id" type="ControllableObject" />
+    <param name="from" type="Player" />
   </msg>
   <msg name="TakeFrom" client="true">
-    <param name="id" type="ControllableObject"/>
-    <param name="to" type="Player"/>
+    <param name="id" type="ControllableObject" />
+    <param name="to" type="Player" />
   </msg>
   <msg name="DontTakeReq" server="true">
-    <param name="id" type="ControllableObject"/>
-    <param name="to" type="Player"/>
+    <param name="id" type="ControllableObject" />
+    <param name="to" type="Player" />
   </msg>
   <msg name="DontTake" client="true">
-    <param name="id" type="ControllableObject"/>
+    <param name="id" type="ControllableObject" />
   </msg>
 
   <msg name="FreezeCardsVisibility" server="true" client="true">
     <param name="group" type="Group" />
   </msg>
   <msg name="GroupVisReq" server="true">
-    <param name="group" type="Group"/>
-    <param name="defined" type="bool"/>
-    <param name="visible" type="bool"/>
+    <param name="group" type="Group" />
+    <param name="defined" type="bool" />
+    <param name="visible" type="bool" />
   </msg>
   <msg name="GroupVis" client="true">
-    <param name="player" type="Player"/>
-    <param name="group" type="Group"/>
-    <param name="defined" type="bool"/>
-    <param name="visible" type="bool"/>
+    <param name="player" type="Player" />
+    <param name="group" type="Group" />
+    <param name="defined" type="bool" />
+    <param name="visible" type="bool" />
   </msg>
   <msg name="GroupVisAddReq" server="true">
-    <param name="group" type="Group"/>
-    <param name="who" type="Player"/>
+    <param name="group" type="Group" />
+    <param name="who" type="Player" />
   </msg>
   <msg name="GroupVisAdd" client="true">
-    <param name="player" type="Player"/>
-    <param name="group" type="Group"/>
-    <param name="who" type="Player"/>
+    <param name="player" type="Player" />
+    <param name="group" type="Group" />
+    <param name="who" type="Player" />
   </msg>
   <msg name="GroupVisRemoveReq" server="true">
     <param name="group" type="Group" />
@@ -417,8 +417,7 @@
     <param name="player" type="Player" />
     <param name="packs" type="Guid[]" />
   </msg>
-  <msg name="CancelLimitedReq" server="true">
-  </msg>
+  <msg name="CancelLimitedReq" server="true"></msg>
   <msg name="CancelLimited" client="true">
     <param name="player" type="Player" />
   </msg>

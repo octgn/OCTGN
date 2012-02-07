@@ -1,18 +1,17 @@
-﻿*
-{
-    margin:0px;
-    padding:0px;
+﻿* {
+    margin: 0px;
+    padding: 0px;
 }
-#header
-{
-    padding:10px;
-    width:100%;
-    background-color:#333333;
-    color:White;
+
+#header {
+    background-color: #333333;
+    color: White;
+    padding: 10px;
+    width: 100%;
 }
-#right
-{
-    position:absolute;
-    right:10px;
-    top:10px;
+
+#right {
+    position: absolute;
+    right: 10px;
+    top: 10px;
 }

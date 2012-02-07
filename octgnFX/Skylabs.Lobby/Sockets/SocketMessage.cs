@@ -1,18 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Diagnostics;
 
 namespace Skylabs.Net
 {
     [Serializable]
     public class NameValuePair
     {
-        public string Key { get; set; }
-
-        public object Value { get; set; }
-
         public NameValuePair()
         {
             Key = "";
@@ -36,15 +32,15 @@ namespace Skylabs.Net
             Key = key;
             Value = value;
         }
+
+        public string Key { get; set; }
+
+        public object Value { get; set; }
     }
 
     [Serializable]
     public class SocketMessage : ICloneable
     {
-        public NameValuePair[] Data { get { return _data; } set { _data = value; } }
-
-        public string Header { get; set; }
-
         private NameValuePair[] _data;
 
         public SocketMessage(string header)
@@ -53,10 +49,17 @@ namespace Skylabs.Net
             Data = new NameValuePair[0];
         }
 
+        public NameValuePair[] Data
+        {
+            get { return _data; }
+            set { _data = value; }
+        }
+
+        public string Header { get; set; }
+
         public object this[string key]
         {
-            get
-            { return (from t in _data where t.Key == key select t.Value).FirstOrDefault(); }
+            get { return (from t in _data where t.Key == key select t.Value).FirstOrDefault(); }
             set
             {
                 foreach (NameValuePair t in _data)
@@ -66,6 +69,17 @@ namespace Skylabs.Net
                 }
             }
         }
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            var sm = new SocketMessage(Header.Clone() as String);
+            sm.Data = Data.Clone() as NameValuePair[];
+            return sm;
+        }
+
+        #endregion
 
         public void AddData(NameValuePair data)
         {
@@ -81,11 +95,11 @@ namespace Skylabs.Net
 
         public static byte[] Serialize(SocketMessage message)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
                 try
                 {
-                    BinaryFormatter bf = new BinaryFormatter();
+                    var bf = new BinaryFormatter();
                     bf.Serialize(ms, message);
                     ms.Flush();
                     return ms.ToArray();
@@ -100,12 +114,12 @@ namespace Skylabs.Net
 
         public static SocketMessage Deserialize(byte[] data)
         {
-            using (MemoryStream ms = new MemoryStream(data))
+            using (var ms = new MemoryStream(data))
             {
-                BinaryFormatter bf = new BinaryFormatter();
+                var bf = new BinaryFormatter();
                 try
                 {
-                    SocketMessage sm = bf.Deserialize(ms) as SocketMessage;
+                    var sm = bf.Deserialize(ms) as SocketMessage;
                     return sm;
                 }
                 catch (Exception e)
@@ -114,13 +128,6 @@ namespace Skylabs.Net
                     return null;
                 }
             }
-        }
-
-        public object Clone()
-        {
-            SocketMessage sm = new SocketMessage(Header.Clone() as String);
-            sm.Data = Data.Clone() as NameValuePair[];
-            return sm;
         }
     }
 }

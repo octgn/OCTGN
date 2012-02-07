@@ -9,6 +9,7 @@
 //  * You must not remove this notice, or any other, from this software.
 //  *
 //  * **********************************************************************************/
+
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -26,20 +27,19 @@ namespace CassiniDev
     public class CassiniDevBrowserTest : CassiniDevServer
     {
         private readonly string _postKey = "testresults.axd";
-        public string PostKey
-        {
-            get
-            {
-                return _postKey;
-            }
 
-        }
         public CassiniDevBrowserTest(string postKey)
         {
             _postKey = postKey;
         }
+
         public CassiniDevBrowserTest()
         {
+        }
+
+        public string PostKey
+        {
+            get { return _postKey; }
         }
 
         public RequestEventArgs RunTest(string url)
@@ -54,7 +54,6 @@ namespace CassiniDev
 
         public RequestEventArgs RunTest(string url, WebBrowser browser, TimeSpan timeout)
         {
-
             if (browser == null)
             {
                 throw new ArgumentNullException("browser");
@@ -73,28 +72,28 @@ namespace CassiniDev
             EventHandler<RequestEventArgs> logEventHandler = null;
             EventHandler<RequestEventArgs> handler = logEventHandler;
             logEventHandler = delegate(object sender, RequestEventArgs e)
-            {
-                if (e.RequestLog.Url.ToLower().Contains(_postKey))
-                {
-                    Server.RequestComplete -= handler;
-                    result = e;
-                    waitHandle.Set();
-                }
-            };
+                                  {
+                                      if (e.RequestLog.Url.ToLower().Contains(_postKey))
+                                      {
+                                          Server.RequestComplete -= handler;
+                                          result = e;
+                                          waitHandle.Set();
+                                      }
+                                  };
             try
             {
                 var startInfo = new ProcessStartInfo(browser.ExecutablePath, url)
-                {
-                    UseShellExecute = true,
-                    WindowStyle = ProcessWindowStyle.Minimized
-                };
+                                    {
+                                        UseShellExecute = true,
+                                        WindowStyle = ProcessWindowStyle.Minimized
+                                    };
                 Server.RequestComplete += logEventHandler;
                 process = Process.Start(startInfo);
             }
             catch (Exception ex)
             {
                 Server.RequestComplete -= logEventHandler;
-                return new RequestEventArgs(Guid.Empty, new LogInfo { StatusCode = -1, Exception = ex.ToString() },
+                return new RequestEventArgs(Guid.Empty, new LogInfo {StatusCode = -1, Exception = ex.ToString()},
                                             new LogInfo());
             }
             bool flag = waitHandle.WaitOne(timeout);
@@ -108,8 +107,7 @@ namespace CassiniDev
             catch
             {
             }
-            return flag ? result : new RequestEventArgs(Guid.Empty, new LogInfo { StatusCode = -2 }, new LogInfo());
+            return flag ? result : new RequestEventArgs(Guid.Empty, new LogInfo {StatusCode = -2}, new LogInfo());
         }
-
     }
 }

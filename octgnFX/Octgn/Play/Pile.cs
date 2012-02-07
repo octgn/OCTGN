@@ -1,7 +1,6 @@
 using System;
-//using Octgn.Play.GUI;
 using Octgn.Definitions;
-using Octgn.Networking;
+//using Octgn.Play.GUI;
 
 namespace Octgn.Play
 {
@@ -10,6 +9,13 @@ namespace Octgn.Play
         #region Public interface
 
         private bool _collapsed;
+
+        internal Pile(Player owner, GroupDef def)
+            : base(owner, def)
+        {
+            _collapsed = def.Collapsed;
+        }
+
         public bool Collapsed
         {
             get { return _collapsed; }
@@ -22,15 +28,14 @@ namespace Octgn.Play
         }
 
         // Dummy property to allow animations in the player panel
-        internal bool AnimateInsertion
-        { get; set; }
+        internal bool AnimateInsertion { get; set; }
+
+        public Card TopCard
+        {
+            get { return cards.Count > 0 ? null : cards[0]; }
+        }
 
         // C'tor
-        internal Pile(Player owner, GroupDef def)
-            : base(owner, def)
-        {
-            _collapsed = def.Collapsed;
-        }
 
         // Prepare for a shuffle
         // Returns true if the shuffle is asynchronous and should be waited for completion.
@@ -72,7 +77,7 @@ namespace Octgn.Play
             filledShuffleSlots = 0;
             hasReceivedFirstShuffledMessage = false;
             // Create aliases
-            CardIdentity[] cis = new CardIdentity[cards.Count];
+            var cis = new CardIdentity[cards.Count];
             for (int i = 0; i < cards.Count; i++)
             {
                 if (cards[i].IsVisibleToAll())
@@ -83,14 +88,15 @@ namespace Octgn.Play
                 else
                 {
                     CardIdentity ci = cis[i] = new CardIdentity(Program.Game.GenerateCardId());
-                    ci.alias = ci.mySecret = true; ci.key = ((ulong)Crypto.PositiveRandom()) << 32 | (uint)cards[i].Type.id;
+                    ci.alias = ci.mySecret = true;
+                    ci.key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) cards[i].Type.id;
                     ci.visible = false;
                 }
             }
             // Shuffle
-            int[] cardIds = new int[cards.Count];
-            ulong[] cardAliases = new ulong[cards.Count];
-            Random rnd = new Random();
+            var cardIds = new int[cards.Count];
+            var cardAliases = new ulong[cards.Count];
+            var rnd = new Random();
             for (int i = cards.Count - 1; i >= 0; i--)
             {
                 int r = rnd.Next(i);
@@ -103,16 +109,11 @@ namespace Octgn.Play
             Program.Client.Rpc.Shuffle(this, cardIds);
         }
 
-        public Card TopCard
-        {
-            get { return cards.Count > 0 ? null : cards[0]; }
-        }
-
         #endregion
 
         private void ShuffleAlone()
         {
-            Random rnd = new Random();
+            var rnd = new Random();
             for (int i = cards.Count - 1; i >= 0; i--)
             {
                 int r = rnd.Next(i);

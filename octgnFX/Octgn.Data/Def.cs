@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Xml.Linq;
 using System.ComponentModel;
+using System.Xml.Linq;
 
 namespace Octgn.Data
 {
@@ -16,15 +16,15 @@ namespace Octgn.Data
             XAttribute attr = xml.Attribute(xmlnsOctgn + name);
             if (attr == null) return default(T);
             // HACK: Strangely, .NET 3.5 SP1 doesn't support conversion from string to Version by its TypeConverter
-            if (typeof(T) == typeof(Version)) return (T)(object)new Version(attr.Value);
-            return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(attr.Value);
+            if (typeof (T) == typeof (Version)) return (T) (object) new Version(attr.Value);
+            return (T) TypeDescriptor.GetConverter(typeof (T)).ConvertFromInvariantString(attr.Value);
         }
 
         public static T Attr<T>(this XElement xml, string name, T defaultValue)
         {
             XAttribute attr = xml.Attribute(xmlnsOctgn + name);
             if (attr == null) return defaultValue;
-            return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(attr.Value);
+            return (T) TypeDescriptor.GetConverter(typeof (T)).ConvertFromInvariantString(attr.Value);
         }
 
         public static XElement Child(this XElement xml, string name)
@@ -37,6 +37,7 @@ namespace Octgn.Data
     {
         public InvalidFormatException(string message)
             : base(message)
-        { }
+        {
+        }
     }
 }

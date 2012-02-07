@@ -1,11 +1,7 @@
-﻿<Window x:Class="Octgn.Launcher.InstallNoticeDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="About installing games or sets" 
-        Width="446" SizeToContent="Height"
-        Style="{StaticResource DialogWindow}"
-        ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
-        x:Name="Me">
+﻿<Window x:Class="Octgn.Launcher.InstallNoticeDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="About installing games or sets" Width="446"
+        SizeToContent="Height" Style="{StaticResource DialogWindow}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize" x:Name="Me">
   <Grid Margin="4">
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
@@ -14,8 +10,11 @@
     <Border Style="{StaticResource Panel}" Margin="0,0,0,4" Padding="4">
       <StackPanel>
         <TextBlock VerticalAlignment="Top" Margin="0,0,0,8">
-          When you install a game or a set, OCTGN doesn't copy the file. It only takes note of where the file is.<LineBreak />
-          You should <Italic>not</Italic> move a game or set file after it has been installed into OCTGN! Moving (or removing) a file may produce errors.
+          When you install a game or a set, OCTGN doesn't copy the file. It only takes note of where the file is.
+          <LineBreak />
+          You should
+          <Italic>not</Italic>
+          move a game or set file after it has been installed into OCTGN! Moving (or removing) a file may produce errors.
         </TextBlock>
         <CheckBox IsChecked="{Binding DontShowAgain, ElementName=Me}">
           <TextBlock Text="Don't show this message again." Margin="0,0,0,6" />
@@ -23,8 +22,7 @@
       </StackPanel>
     </Border>
 
-    <Button x:Name="okBtn" Content="OK" MinWidth="100" Click="OKClicked"
-            HorizontalAlignment="Center" VerticalAlignment="Bottom"
-            Grid.Row="1" />
+    <Button x:Name="okBtn" Content="OK" MinWidth="100" Click="OKClicked" HorizontalAlignment="Center"
+            VerticalAlignment="Bottom" Grid.Row="1" />
   </Grid>
 </Window>

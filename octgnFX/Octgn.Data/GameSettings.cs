@@ -4,8 +4,8 @@ namespace Octgn.Data
 {
     public class GameSettings : INotifyPropertyChanged
     {
+        private readonly bool _initialized;
         private bool _useTwoSidedTable = true;
-        private bool _initialized = false;
 
         public GameSettings()
         {
@@ -14,10 +14,7 @@ namespace Octgn.Data
 
         public bool UseTwoSidedTable
         {
-            get
-            {
-                return _useTwoSidedTable;
-            }
+            get { return _useTwoSidedTable; }
             set
             {
                 if (value != _useTwoSidedTable)
@@ -33,12 +30,12 @@ namespace Octgn.Data
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #endregion
+
         protected void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        #endregion
     }
 }

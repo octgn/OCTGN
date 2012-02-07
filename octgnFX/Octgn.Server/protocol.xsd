@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="protocol">
     <xs:complexType>
@@ -8,7 +9,7 @@
             <xs:sequence>
               <xs:element name="param" maxOccurs="unbounded" minOccurs="0">
                 <xs:complexType>
-                  <xs:attribute name="name" use="required"  type="xs:string" />
+                  <xs:attribute name="name" use="required" type="xs:string" />
                   <xs:attribute name="type" use="required">
                     <xs:simpleType>
                       <xs:restriction base="xs:string">

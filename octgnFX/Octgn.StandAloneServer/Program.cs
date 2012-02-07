@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Mono.Options;
 using System.Threading;
+using Mono.Options;
 
 namespace Octgn.StandAloneServer
 {
     public class Program
     {
-        public static Octgn.Server.Server Server;
+        public static Server.Server Server;
         public static int Port;
         public static Guid GameGuid;
         public static Version GameVersion;
         private static bool KeepRunning = true;
-        static void Main(string[] args)
+
+        private static void Main(string[] args)
         {
             if (args.Length == 0)
             {
@@ -27,9 +25,10 @@ namespace Octgn.StandAloneServer
             }
 
             OptionSet set = new OptionSet()
-                    .Add("p=|port=", "Port for the server to host on.", (v) => int.TryParse(v, out Port))
-                    .Add("g=|guid=", "GUID of the game being played.", (v) => Guid.TryParse(v, out GameGuid))
-                    .Add("v=|version=", "Game version.", (v) => GameVersion = Version.TryParse(v, out GameVersion) == true ? GameVersion : null);
+                .Add("p=|port=", "Port for the server to host on.", (v) => int.TryParse(v, out Port))
+                .Add("g=|guid=", "GUID of the game being played.", (v) => Guid.TryParse(v, out GameGuid))
+                .Add("v=|version=", "Game version.",
+                     (v) => GameVersion = Version.TryParse(v, out GameVersion) ? GameVersion : null);
             if (!HandleArgs(args, set) || Port == 0 || GameGuid.Equals(Guid.Empty) || GameVersion == null)
             {
                 set.WriteOptionDescriptions(Console.Out);
@@ -42,6 +41,7 @@ namespace Octgn.StandAloneServer
 
             StartServer();
         }
+
         private static bool HandleArgs(string[] args, OptionSet set)
         {
             if (args.Length < 2)
@@ -49,10 +49,11 @@ namespace Octgn.StandAloneServer
             set.Parse(args);
             return true;
         }
+
         private static void StartServer()
         {
             Server = new Server.Server(Port, GameGuid, GameVersion);
-            Server.OnStop += new EventHandler(Server_OnStop);
+            Server.OnStop += Server_OnStop;
             Console.WriteLine("Starting server on port " + Port);
             while (KeepRunning)
             {
@@ -60,7 +61,7 @@ namespace Octgn.StandAloneServer
             }
         }
 
-        static void Server_OnStop(object sender, EventArgs e)
+        private static void Server_OnStop(object sender, EventArgs e)
         {
             Server = null;
             KeepRunning = false;
@@ -68,15 +69,13 @@ namespace Octgn.StandAloneServer
 
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
         {
-
             //ConsoleEventLog.SerializeEvents("sologs/"+DateTime.Now.ToFileTime().ToString() + "SOServer.xml");
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Exception ex = (Exception)e.ExceptionObject;
+            var ex = (Exception) e.ExceptionObject;
             Console.WriteLine(ex.StackTrace);
         }
-
     }
 }

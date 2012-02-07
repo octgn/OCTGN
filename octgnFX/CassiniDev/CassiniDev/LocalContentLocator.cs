@@ -18,10 +18,10 @@ namespace CassiniDev
 
         public string LocateContent()
         {
-            var path = Environment.CurrentDirectory;
+            string path = Environment.CurrentDirectory;
 
             if (!Directory.Exists(Path.Combine(path + "", "web")) &&
-                   !Directory.Exists(Path.Combine(path + "", @"deploy\web")))
+                !Directory.Exists(Path.Combine(path + "", @"deploy\web")))
             {
                 path = Path.GetDirectoryName(path);
             }

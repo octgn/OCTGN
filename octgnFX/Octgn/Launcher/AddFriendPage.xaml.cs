@@ -1,8 +1,5 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using Octgn.Controls;
-using Skylabs.Lobby;
 
 namespace Octgn.Launcher
 {
@@ -18,7 +15,6 @@ namespace Octgn.Launcher
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -34,7 +30,6 @@ namespace Octgn.Launcher
         private void button2_Click(object sender, RoutedEventArgs e)
         {
             Program.ClientWindow.LobbyTab();
-
         }
     }
 }

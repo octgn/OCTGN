@@ -6,6 +6,18 @@ namespace Skylabs.ConsoleHelper
     [Serializable]
     public class ConsoleEventError : ConsoleEvent
     {
+        private ConsoleEventError()
+        {
+        }
+
+        public ConsoleEventError(String message, Exception e)
+            : base(message)
+        {
+            Header = "!Error: ";
+            //Color = ConsoleColor.Red;
+            Exception = e;
+        }
+
         [XmlElement("ExceptionMessage")]
         public String ExceptionMessage
         {
@@ -30,17 +42,5 @@ namespace Skylabs.ConsoleHelper
 
         [XmlIgnore]
         public Exception Exception { get; set; }
-
-        private ConsoleEventError()
-        {
-        }
-
-        public ConsoleEventError(String message, Exception e)
-            : base(message)
-        {
-            Header = "!Error: ";
-            //Color = ConsoleColor.Red;
-            Exception = e;
-        }
     }
 }

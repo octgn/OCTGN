@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.ComponentModel;
+using System.Diagnostics;
+using Octgn.Controls;
 
 namespace Octgn.Play
 {
@@ -9,42 +9,31 @@ namespace Octgn.Play
     {
         #region Private fields
 
-        private Player owner;
-        private Player controller;      // The player who controlls this object (null for the table)
-        private byte keepControl;       // > 0 if this object should not be passed to someone else
+        private readonly Player owner;
+        private Player controller; // The player who controlls this object (null for the table)
+        private byte keepControl; // > 0 if this object should not be passed to someone else
 
         #endregion
 
         #region Public interface
 
-        public static ControllableObject Find(int id)
+        // Id of this object 
+        public ControllableObject(Player owner)
         {
-            switch ((byte)(id >> 24))
-            {
-                case 0:
-                    return Card.Find(id);
-                case 1:
-                    return Group.Find(id);
-                case 2:
-                    //TODO: make counters controllable objects    
-                    //return Counter.Find(id);
-                    return null;
-                default:
-                    return null;
-            }
+            this.owner = Controller = owner;
+            keepControl = 0;
         }
 
-        // Id of this object 
-        internal abstract int Id
-        { get; }
+        internal abstract int Id { get; }
 
         // Name of this object 
-        public abstract string Name
-        { get; }
+        public abstract string Name { get; }
 
         // Name of this object, including owner
         public virtual string FullName
-        { get { return Owner == null ? Name : String.Format("{0}'s {1}", Owner.Name, Name); } }
+        {
+            get { return Owner == null ? Name : String.Format("{0}'s {1}", Owner.Name, Name); }
+        }
 
         // Player who owns this object (if any)
         public Player Owner
@@ -67,12 +56,24 @@ namespace Octgn.Play
             }
         }
 
-        // C'tor
-        public ControllableObject(Player owner)
+        public static ControllableObject Find(int id)
         {
-            this.owner = Controller = owner;
-            keepControl = 0;
+            switch ((byte) (id >> 24))
+            {
+                case 0:
+                    return Card.Find(id);
+                case 1:
+                    return Group.Find(id);
+                case 2:
+                    //TODO: make counters controllable objects    
+                    //return Counter.Find(id);
+                    return null;
+                default:
+                    return null;
+            }
         }
+
+        // C'tor
 
         // Pass control to player p exclusively
         public void PassControlTo(Player p)
@@ -85,6 +86,12 @@ namespace Octgn.Play
             if (Controller == Player.LocalPlayer) return;
             Program.Client.Rpc.TakeFromReq(this, Controller);
         }
+
+        #endregion
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -107,34 +114,26 @@ namespace Octgn.Play
             }
             Controller = p;
             if (requested)
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(p), "{0} takes control of {1}", p, this);
+                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(p),
+                                         "{0} takes control of {1}", p, this);
             else
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} gives control of {1} to {2}", who, this, p);
+                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
+                                         "{0} gives control of {1} to {2}", who, this, p);
         }
-
-        #region Controllers (internal)
-
-        protected virtual void OnControllerChanged()
-        { }
-
-        // Give to the parameter the same controller as this object
-        internal void CopyControllersTo(ControllableObject other)
-        {
-            if (Controller == null) return;
-            other.Controller = Controller;
-        }
-
-        #endregion
 
         // Prevents others from acquiring control of this object
         internal void KeepControl()
-        { keepControl++; }
+        {
+            keepControl++;
+        }
 
         // Allow others to take control of this object
         internal void ReleaseControl()
         {
             if (keepControl > 0) keepControl--;
-            else Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "[ReleaseControl] Called with no matching call to KeepControl().");
+            else
+                Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame,
+                                         "[ReleaseControl] Called with no matching call to KeepControl().");
         }
 
         // Return true if the object can be manipulated by the local player
@@ -155,6 +154,12 @@ namespace Octgn.Play
             }
         }
 
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         #region Error (internal)
 
         // Show an "Not controlled by you" error tooltip
@@ -163,19 +168,22 @@ namespace Octgn.Play
         // Show an "Controlship was refused" error tooltip
         internal void DontTakeError()
         {
-            Controls.Tooltip.PopupError(string.Format("Controlship of {0} was refused to you.", FullName));
+            Tooltip.PopupError(string.Format("Controlship of {0} was refused to you.", FullName));
         }
 
         #endregion
 
-        #region INotifyPropertyChanged Members
+        #region Controllers (internal)
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
+        protected virtual void OnControllerChanged()
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        // Give to the parameter the same controller as this object
+        internal void CopyControllersTo(ControllableObject other)
+        {
+            if (Controller == null) return;
+            other.Controller = Controller;
         }
 
         #endregion

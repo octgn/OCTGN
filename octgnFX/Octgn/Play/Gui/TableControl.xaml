@@ -1,64 +1,61 @@
 <gui:GroupControl x:Class="Octgn.Play.Gui.TableControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:gui="clr-namespace:Octgn.Play.Gui"
-    xmlns:play="clr-namespace:Octgn.Play" 
-    x:Name="This" FocusVisualStyle="{x:Null}"
-    Background="Beige" 
-    TextOptions.TextFormattingMode="Ideal"
-    ClipToBounds="True" Focusable="True">
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:gui="clr-namespace:Octgn.Play.Gui"
+                  xmlns:play="clr-namespace:Octgn.Play" x:Name="This" FocusVisualStyle="{x:Null}" Background="Beige"
+                  TextOptions.TextFormattingMode="Ideal" ClipToBounds="True" Focusable="True">
 
-   <UserControl.Resources>
-      <DataTemplate x:Key="CardTemplate">
-         <gui:CardControl           
-             Width="{Binding ElementName=This,Path=DefaultCardWidth}" 
-             Height="{Binding ElementName=This,Path=DefaultCardHeight}" />
-      </DataTemplate>
-   </UserControl.Resources>
+  <UserControl.Resources>
+    <DataTemplate x:Key="CardTemplate">
+      <gui:CardControl Width="{Binding ElementName=This,Path=DefaultCardWidth}"
+                       Height="{Binding ElementName=This,Path=DefaultCardHeight}" />
+    </DataTemplate>
+  </UserControl.Resources>
 
-   <Grid>
-      <Line x:Name="middleLine" X1="0" Y1="0" X2="1" Y2="0" Stretch="Fill" SnapsToDevicePixels="True"
-               VerticalAlignment="Top" HorizontalAlignment="Stretch" StrokeThickness="1">
-         <Line.Stroke>
-            <LinearGradientBrush SpreadMethod="Repeat" MappingMode="Absolute" StartPoint="0,0" EndPoint="30,0">
-               <GradientStop Offset="0" Color="#80ffffff" />
-               <GradientStop Offset="0.45" Color="#80ffffff" />
-               <GradientStop Offset="0.55" Color="#80000000" />
-               <GradientStop Offset="1" Color="#80000000" />
-            </LinearGradientBrush>
-         </Line.Stroke>
-         <Line.RenderTransform>
-            <TranslateTransform Y="{Binding ElementName=This, Path=YCenterOffset}" />
-         </Line.RenderTransform>
-      </Line>
-      <Viewbox x:Name="viewbox">
-         <!--<Grid>-->
-         <AdornerDecorator>
-            <AdornerDecorator.RenderTransform>
-               <TransformGroup x:Name="transforms">
-                  <ScaleTransform ScaleX="{Binding ElementName=This,Path=Zoom}" ScaleY="{Binding ElementName=This,Path=Zoom}" 
-                               CenterX="0" CenterY="0" />
-                  <TranslateTransform X="{Binding ElementName=This,Path=Offset.X}" Y="{Binding ElementName=This,Path=Offset.Y}" />
-               </TransformGroup>
-            </AdornerDecorator.RenderTransform>
-            <Grid x:Name="boardContainer" ClipToBounds="False">               
-               <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}" ItemTemplate="{StaticResource CardTemplate}" Focusable="False">
-                  <ItemsControl.ItemsPanel>
-                     <ItemsPanelTemplate>
-                        <gui:TableCanvas Width="{Binding Definition.Width}" Height="{Binding Definition.Height}" 
-   											  ClipToBounds="False" />
-                     </ItemsPanelTemplate>
-                  </ItemsControl.ItemsPanel>
-                  <ItemsControl.ItemContainerStyle>
-                     <Style>
-                        <Setter Property="Canvas.Left" Value="{Binding X}" />
-                        <Setter Property="Canvas.Top"  Value="{Binding Y}" />
-                     </Style>
-                  </ItemsControl.ItemContainerStyle>
-               </ItemsControl>
-            </Grid>
-         </AdornerDecorator>
-         <!--</Grid>-->
-      </Viewbox>
-   </Grid>
+  <Grid>
+    <Line x:Name="middleLine" X1="0" Y1="0" X2="1" Y2="0" Stretch="Fill" SnapsToDevicePixels="True"
+          VerticalAlignment="Top" HorizontalAlignment="Stretch" StrokeThickness="1">
+      <Line.Stroke>
+        <LinearGradientBrush SpreadMethod="Repeat" MappingMode="Absolute" StartPoint="0,0" EndPoint="30,0">
+          <GradientStop Offset="0" Color="#80ffffff" />
+          <GradientStop Offset="0.45" Color="#80ffffff" />
+          <GradientStop Offset="0.55" Color="#80000000" />
+          <GradientStop Offset="1" Color="#80000000" />
+        </LinearGradientBrush>
+      </Line.Stroke>
+      <Line.RenderTransform>
+        <TranslateTransform Y="{Binding ElementName=This, Path=YCenterOffset}" />
+      </Line.RenderTransform>
+    </Line>
+    <Viewbox x:Name="viewbox">
+      <!--<Grid>-->
+      <AdornerDecorator>
+        <AdornerDecorator.RenderTransform>
+          <TransformGroup x:Name="transforms">
+            <ScaleTransform ScaleX="{Binding ElementName=This,Path=Zoom}"
+                            ScaleY="{Binding ElementName=This,Path=Zoom}" CenterX="0" CenterY="0" />
+            <TranslateTransform X="{Binding ElementName=This,Path=Offset.X}"
+                                Y="{Binding ElementName=This,Path=Offset.Y}" />
+          </TransformGroup>
+        </AdornerDecorator.RenderTransform>
+        <Grid x:Name="boardContainer" ClipToBounds="False">
+          <ItemsControl x:Name="cardsView" ItemsSource="{Binding Cards}"
+                        ItemTemplate="{StaticResource CardTemplate}" Focusable="False">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <gui:TableCanvas Width="{Binding Definition.Width}" Height="{Binding Definition.Height}"
+                                 ClipToBounds="False" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+              <Style>
+                <Setter Property="Canvas.Left" Value="{Binding X}" />
+                <Setter Property="Canvas.Top" Value="{Binding Y}" />
+              </Style>
+            </ItemsControl.ItemContainerStyle>
+          </ItemsControl>
+        </Grid>
+      </AdornerDecorator>
+      <!--</Grid>-->
+    </Viewbox>
+  </Grid>
 </gui:GroupControl>

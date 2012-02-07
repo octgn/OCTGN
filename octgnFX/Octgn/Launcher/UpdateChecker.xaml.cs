@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Octgn.Definitions;
+using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Windows;
+using System.Xml;
+using Octgn.Data;
+using Octgn.Definitions;
+using Octgn.Play;
+using Octgn.Scripting;
 using Skylabs.Lobby.Threading;
 
 namespace Octgn.Launcher
@@ -22,9 +19,9 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class UpdateChecker : Window
     {
-        public bool IsClosingDown { get; set; }
-        private bool stopReading = false;
-        private List<string> Errors = new List<string>();
+        private readonly List<string> Errors = new List<string>();
+        private bool stopReading;
+
         public UpdateChecker()
         {
             IsClosingDown = false;
@@ -34,19 +31,22 @@ namespace Octgn.Launcher
             //Thread t = new Thread(VerifyAllDefs);
             //t.Start();
         }
+
+        public bool IsClosingDown { get; set; }
+
         private void CheckForUpdates()
         {
             try
             {
                 bool isupdate = false;
                 string ustring = "";
-                string[] update = new string[2];
+                var update = new string[2];
                 update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
 
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                Assembly assembly = Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
-                Version online = new Version(update[0]);
+                var online = new Version(update[0]);
                 isupdate = online > local;
                 ustring = update[1];
                 Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), isupdate, ustring);
@@ -56,6 +56,7 @@ namespace Octgn.Launcher
                 Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), false, "");
             }
         }
+
         private void UpdateCheckDone(bool result, string url)
         {
             if (result)
@@ -66,22 +67,23 @@ namespace Octgn.Launcher
                                     MessageBoxButton.YesNo, MessageBoxImage.Question))
                 {
                     case MessageBoxResult.Yes:
-                        System.Diagnostics.Process.Start(url);
+                        Process.Start(url);
                         break;
                 }
             }
-            this.Close();
+            Close();
         }
+
         private void VerifyAllDefs()
         {
             UpdateStatus("Loading Game Definitions...");
             try
             {
                 if (Program.GamesRepository == null)
-                    Program.GamesRepository = new Octgn.Data.GamesRepository();
-                Octgn.Scripting.Engine engine;
-                List<Data.Game> g2r = new List<Data.Game>();
-                foreach (Octgn.Data.Game g in Program.GamesRepository.Games)
+                    Program.GamesRepository = new GamesRepository();
+                Engine engine;
+                var g2r = new List<Data.Game>();
+                foreach (Data.Game g in Program.GamesRepository.Games)
                 {
                     UpdateStatus("Checking Game: " + g.Name);
                     if (!File.Exists(g.Filename))
@@ -91,30 +93,28 @@ namespace Octgn.Launcher
                     }
                     Program.Game = new Game(GameDef.FromO8G(g.Filename));
                     Program.Game.TestBegin();
-                    IEnumerable<Play.Player> plz = Play.Player.All;
-                    engine = new Scripting.Engine(true);
+                    IEnumerable<Player> plz = Player.All;
+                    engine = new Engine(true);
                     string[] terr = engine.TestScripts(Program.Game);
                     Program.Game.End();
                     if (terr.Length > 0)
                     {
                         Errors.AddRange(terr);
                         g2r.Add(g);
-
                     }
                 }
-                foreach (Octgn.Data.Game g in g2r)
+                foreach (Data.Game g in g2r)
                     Program.GamesRepository.Games.Remove(g);
                 if (Errors.Count > 0)
                 {
                     Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        String ewe = "";
-                        foreach (string s in Errors)
-                            ewe += s + Environment.NewLine;
-                        ErrorWindow er = new ErrorWindow(ewe);
-                        er.ShowDialog();
-                    }));
-
+                                                          {
+                                                              String ewe = "";
+                                                              foreach (string s in Errors)
+                                                                  ewe += s + Environment.NewLine;
+                                                              var er = new ErrorWindow(ewe);
+                                                              er.ShowDialog();
+                                                          }));
                 }
                 UpdateStatus("Checking for updates...");
             }
@@ -124,29 +124,32 @@ namespace Octgn.Launcher
             }
             CheckForUpdates();
         }
+
         private void UpdateStatus(string stat)
         {
             Dispatcher.BeginInvoke(new Action(() =>
-            {
-                try
-                {
-                    lblStatus.Content = stat;
-                }
-                catch (Exception)
-                {
-                    System.Diagnostics.Debugger.Break();
-                }
-            }));
+                                                  {
+                                                      try
+                                                      {
+                                                          lblStatus.Content = stat;
+                                                      }
+                                                      catch (Exception)
+                                                      {
+                                                          Debugger.Break();
+                                                      }
+                                                  }));
         }
+
         private bool FileExists(string URL)
         {
             bool result = false;
-            using (System.Net.WebClient client = new System.Net.WebClient())
+            using (var client = new WebClient())
             {
                 try
                 {
-                    System.IO.Stream str = client.OpenRead(URL);
-                    if (str != null) result = true; else result = false;
+                    Stream str = client.OpenRead(URL);
+                    if (str != null) result = true;
+                    else result = false;
                 }
                 catch
                 {
@@ -155,15 +158,16 @@ namespace Octgn.Launcher
             }
             return result;
         }
+
         private string[] ReadUpdateXML(string URL)
         {
-            string[] values = new string[2];
+            var values = new string[2];
             try
             {
-                System.Net.WebRequest wr = System.Net.WebRequest.Create(URL);
+                WebRequest wr = WebRequest.Create(URL);
                 wr.Timeout = 15000;
-                System.Net.WebResponse resp = wr.GetResponse();
-                using (System.Xml.XmlReader reader = System.Xml.XmlReader.Create(resp.GetResponseStream()))
+                WebResponse resp = wr.GetResponse();
+                using (XmlReader reader = XmlReader.Create(resp.GetResponseStream()))
                 {
                     while (reader.Read())
                     {
@@ -177,10 +181,16 @@ namespace Octgn.Launcher
                                 {
                                     case "Version":
                                         values = new string[2];
-                                        if (reader.Read()) { values[0] = reader.Value; }
+                                        if (reader.Read())
+                                        {
+                                            values[0] = reader.Value;
+                                        }
                                         break;
                                     case "Location":
-                                        if (reader.Read()) { values[1] = reader.Value; }
+                                        if (reader.Read())
+                                        {
+                                            values[1] = reader.Value;
+                                        }
                                         break;
                                 }
                             }
@@ -190,11 +200,9 @@ namespace Octgn.Launcher
             }
             catch
             {
-
             }
             finally
             {
-
             }
             return values;
         }

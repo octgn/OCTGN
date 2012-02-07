@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.Win32;
 
 namespace Octgn
 {
-    class Registry
+    internal class Registry
     {
         /// <summary>
         /// Reads a string value from the OCTGN registry
@@ -14,14 +11,14 @@ namespace Octgn
         /// <returns>A string value</returns>
         public static string ReadValue(string valName)
         {
-            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN");
+            RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN");
             if (key == null)
             {
                 key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\OCTGN");
                 return null;
             }
             if (key != null)
-                return (string)key.GetValue(valName);
+                return (string) key.GetValue(valName);
             else return null;
         }
 
@@ -32,9 +29,9 @@ namespace Octgn
         /// <param name="value">String to write for value</param>
         public static void WriteValue(string valName, string value)
         {
-            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN", true);
+            RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN", true);
             if (key == null) key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\OCTGN");
-            key.SetValue(valName, value, Microsoft.Win32.RegistryValueKind.String);
+            key.SetValue(valName, value, RegistryValueKind.String);
             key.Close();
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -6,8 +7,17 @@ namespace Octgn.Play.Gui
 {
     public struct HslColor
     {
-        private float hue, saturation, luminance;
         private byte alpha;
+        private float hue;
+        private float luminance;
+        private float saturation;
+
+        public HslColor(Color c)
+        {
+            hue = saturation = luminance = 0;
+            alpha = 0;
+            FromRgba(c.ScR, c.ScG, c.ScB, c.A);
+        }
 
         public float Hue
         {
@@ -28,13 +38,8 @@ namespace Octgn.Play.Gui
         }
 
         public byte Alpha
-        { get { return alpha; } }
-
-        public HslColor(Color c)
         {
-            hue = saturation = luminance = 0;
-            alpha = 0;
-            FromRgba(c.ScR, c.ScG, c.ScB, c.A);
+            get { return alpha; }
         }
 
         public static implicit operator Color(HslColor c)
@@ -46,23 +51,22 @@ namespace Octgn.Play.Gui
                 red = green = blue = c.luminance;
             else
             {
-                m2 = c.luminance <= 0.5f ?
-                    c.luminance * (1 + c.saturation) :
-                    c.luminance + c.saturation - c.luminance * c.saturation;
+                m2 = c.luminance <= 0.5f
+                         ? c.luminance*(1 + c.saturation)
+                         : c.luminance + c.saturation - c.luminance*c.saturation;
 
-                m1 = (2 * c.luminance) - m2;
+                m1 = (2*c.luminance) - m2;
 
-                red = HueToRgb(m1, m2, c.hue + (1 / 3f));
+                red = HueToRgb(m1, m2, c.hue + (1/3f));
                 green = HueToRgb(m1, m2, c.hue);
-                blue = HueToRgb(m1, m2, c.hue - (1 / 3f));
-
+                blue = HueToRgb(m1, m2, c.hue - (1/3f));
             }
 
             return Color.FromArgb(
                 c.alpha,
-                (byte)Math.Round(red * 255),
-                (byte)Math.Round(green * 255),
-                (byte)Math.Round(blue * 255)
+                (byte) Math.Round(red*255),
+                (byte) Math.Round(green*255),
+                (byte) Math.Round(blue*255)
                 );
         }
 
@@ -71,12 +75,12 @@ namespace Octgn.Play.Gui
             if (hue < 0) hue += 1;
             if (hue > 1) hue -= 1;
 
-            if (6 * hue < 1)
-                return m1 + (m2 - m1) * hue * 6;
-            else if (2 * hue < 1)
+            if (6*hue < 1)
+                return m1 + (m2 - m1)*hue*6;
+            else if (2*hue < 1)
                 return m2;
-            if (3 * hue < 2)
-                return m1 + (m2 - m1) * (2 / 3f - hue) * 6;
+            if (3*hue < 2)
+                return m1 + (m2 - m1)*(2/3f - hue)*6;
 
             return m1;
         }
@@ -100,28 +104,28 @@ namespace Octgn.Play.Gui
             delta = max - min;
 
             // Compute Luminance
-            luminance = (max + min) / 2f;
+            luminance = (max + min)/2f;
 
             // Compute Saturation
             if (luminance == 0 || delta == 0)
                 saturation = 0;
             else if (luminance <= 0.5f)
-                saturation = delta / (2 * luminance);
+                saturation = delta/(2*luminance);
             else
-                saturation = delta / (2 - 2 * luminance);
+                saturation = delta/(2 - 2*luminance);
 
             // Compute Hue
             if (delta == 0)
                 hue = 0;
             else if (max == red)
             {
-                hue = (green - blue) / delta;
+                hue = (green - blue)/delta;
                 if (green < blue) hue += 6;
             }
             else if (max == green)
-                hue = (blue - red) / delta + 2;
+                hue = (blue - red)/delta + 2;
             else
-                hue = (red - green) / delta + 4;
+                hue = (red - green)/delta + 4;
             hue /= 6f;
         }
 
@@ -133,17 +137,23 @@ namespace Octgn.Play.Gui
         }
     }
 
-    [ValueConversion(typeof(Color), typeof(Color))]
+    [ValueConversion(typeof (Color), typeof (Color))]
     public class LuminanceConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        #region IValueConverter Members
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            HslColor c = new HslColor((Color)value);
-            c.Luminance = System.Convert.ToSingle(parameter, System.Globalization.CultureInfo.InvariantCulture);
-            return (Color)c;
+            var c = new HslColor((Color) value);
+            c.Luminance = System.Convert.ToSingle(parameter, CultureInfo.InvariantCulture);
+            return (Color) c;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        { throw new NotImplementedException("LuminanceConverter.ConvertBack"); }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException("LuminanceConverter.ConvertBack");
+        }
+
+        #endregion
     }
 }

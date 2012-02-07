@@ -109,11 +109,11 @@ namespace CassiniDev
 </html>
 ";
 
-        public static string VersionString = typeof(Server).Assembly.GetName().Version.ToString();
+        public static string VersionString = typeof (Server).Assembly.GetName().Version.ToString();
 
         public static string FormatDirectoryListing(string dirPath, string parentPath, FileSystemInfo[] elements)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.Append(string.Format(_dirListingFormat1, dirPath));
             sb.Append(_httpStyle);
@@ -135,13 +135,13 @@ namespace CassiniDev
                 {
                     if (elements[i] is FileInfo)
                     {
-                        FileInfo fi = (FileInfo)elements[i];
+                        var fi = (FileInfo) elements[i];
                         sb.Append(string.Format(_dirListingFileFormat,
                                                 fi.LastWriteTime, fi.Length, fi.Name, fi.Name));
                     }
                     else if (elements[i] is DirectoryInfo)
                     {
-                        DirectoryInfo di = (DirectoryInfo)elements[i];
+                        var di = (DirectoryInfo) elements[i];
                         sb.Append(string.Format(_dirListingDirFormat,
                                                 di.LastWriteTime, di.Name, di.Name));
                     }

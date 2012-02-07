@@ -1,16 +1,11 @@
 ﻿using System;
+using Octgn.Data;
 
 namespace Octgn
 {
-    public class DefaultMarkerModel : Data.MarkerModel
+    public class DefaultMarkerModel : MarkerModel
     {
-        private string key;
-
-        public override string Picture
-        {
-            get
-            { return "pack://application:,,,/Resources/Markers/" + key + ".png"; }
-        }
+        private readonly string key;
 
         public DefaultMarkerModel(string key, Guid id)
             : base(id)
@@ -18,9 +13,14 @@ namespace Octgn
             this.key = key;
         }
 
+        public override string Picture
+        {
+            get { return "pack://application:,,,/Resources/Markers/" + key + ".png"; }
+        }
+
         public override bool Equals(object obj)
         {
-            DefaultMarkerModel other = obj as DefaultMarkerModel;
+            var other = obj as DefaultMarkerModel;
             if (other == null) return false;
             return other.id == id && other.name == name;
         }
@@ -31,12 +31,14 @@ namespace Octgn
         }
 
         public void SetName(string name)
-        { this.name = name; }
+        {
+            this.name = name;
+        }
 
         public DefaultMarkerModel Clone()
         {
-            DefaultMarkerModel result = new DefaultMarkerModel(key, id);
-            result.name = this.name;
+            var result = new DefaultMarkerModel(key, id);
+            result.name = name;
             return result;
         }
     }

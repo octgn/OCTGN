@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
+﻿using System.Net.NetworkInformation;
 
 namespace Skylabs.LobbyServer
 {
@@ -17,7 +13,6 @@ namespace Skylabs.LobbyServer
         /// <returns>Is the port available</returns>
         public static bool IsPortAvailable(int port)
         {
-
             IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
             TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
 
@@ -29,7 +24,6 @@ namespace Skylabs.LobbyServer
                 }
             }
             return true;
-
         }
     }
 }

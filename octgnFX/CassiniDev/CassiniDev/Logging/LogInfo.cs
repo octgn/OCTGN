@@ -60,7 +60,7 @@ namespace CassiniDev.ServerLog
 
         public LogInfo Clone()
         {
-            LogInfo result = (LogInfo)((ICloneable)this).Clone();
+            var result = (LogInfo) ((ICloneable) this).Clone();
             if (Body != null)
             {
                 result.Body = new byte[Body.Length];

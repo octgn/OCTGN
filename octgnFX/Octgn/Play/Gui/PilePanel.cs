@@ -9,13 +9,13 @@ namespace Octgn.Play.Gui
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            Size desiredSize = new Size();
+            var desiredSize = new Size();
             ItemsControl parent = ItemsControl.GetItemsOwner(this);
             int count = parent != null && parent.HasItems ? parent.Items.Count : 0;
 
             // Next line needed otherwise ItemContainerGenerator is null (bug in WinFX ?)
             UIElementCollection children = base.InternalChildren;
-            IItemContainerGenerator generator = this.ItemContainerGenerator;
+            IItemContainerGenerator generator = ItemContainerGenerator;
 
             if (count == 0)
             {
@@ -30,7 +30,7 @@ namespace Octgn.Play.Gui
             {
                 bool newlyRealized;
                 // Get or create the child
-                UIElement child = generator.GenerateNext(out newlyRealized) as UIElement;
+                var child = generator.GenerateNext(out newlyRealized) as UIElement;
                 if (newlyRealized)
                 {
                     AddInternalChild(child);
@@ -43,7 +43,7 @@ namespace Octgn.Play.Gui
             // Remove all other items than the top one
             for (int i = children.Count - 1; i >= 0; i--)
             {
-                GeneratorPosition childGeneratorPos = new GeneratorPosition(i, 0);
+                var childGeneratorPos = new GeneratorPosition(i, 0);
                 int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
                 if (itemIndex != count - 1)
                 {
@@ -58,7 +58,7 @@ namespace Octgn.Play.Gui
         {
             if (VisualChildrenCount > 0)
             {
-                UIElement child = GetVisualChild(0) as UIElement;
+                var child = GetVisualChild(0) as UIElement;
                 child.Arrange(new Rect(finalSize));
             }
             return finalSize;

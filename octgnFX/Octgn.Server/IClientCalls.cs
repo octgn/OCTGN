@@ -2,11 +2,12 @@
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
+
 using System;
 
 namespace Octgn.Server
 {
-    interface IClientCalls
+    internal interface IClientCalls
     {
         void Binary();
         void Error(string msg);

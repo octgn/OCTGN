@@ -11,37 +11,43 @@ namespace Octgn.Controls
 {
     public class VirtualizingWrapPanel : VirtualizingPanel, IScrollInfo
     {
+        public static readonly DependencyProperty ChildWidthProperty =
+            DependencyProperty.RegisterAttached("ChildWidth", typeof (double), typeof (VirtualizingWrapPanel),
+                                                new FrameworkPropertyMetadata(100.0d,
+                                                                              FrameworkPropertyMetadataOptions.
+                                                                                  AffectsMeasure |
+                                                                              FrameworkPropertyMetadataOptions.
+                                                                                  AffectsArrange));
+
+        public static readonly DependencyProperty ChildHeightProperty =
+            DependencyProperty.RegisterAttached("ChildHeight", typeof (double), typeof (VirtualizingWrapPanel),
+                                                new FrameworkPropertyMetadata(100.0d,
+                                                                              FrameworkPropertyMetadataOptions.
+                                                                                  AffectsMeasure |
+                                                                              FrameworkPropertyMetadataOptions.
+                                                                                  AffectsArrange));
+
         public VirtualizingWrapPanel()
         {
             // For use in the IScrollInfo implementation
-            this.RenderTransform = _trans;
+            RenderTransform = _trans;
         }
-
-        public static readonly DependencyProperty ChildWidthProperty =
-          DependencyProperty.RegisterAttached("ChildWidth", typeof(double), typeof(VirtualizingWrapPanel),
-            new FrameworkPropertyMetadata(100.0d, FrameworkPropertyMetadataOptions.AffectsMeasure |
-              FrameworkPropertyMetadataOptions.AffectsArrange));
 
         public double ChildWidth
         {
-            get { return (double)GetValue(ChildWidthProperty); }
+            get { return (double) GetValue(ChildWidthProperty); }
             set { SetValue(ChildWidthProperty, value); }
         }
 
-        public static readonly DependencyProperty ChildHeightProperty =
-          DependencyProperty.RegisterAttached("ChildHeight", typeof(double), typeof(VirtualizingWrapPanel),
-            new FrameworkPropertyMetadata(100.0d, FrameworkPropertyMetadataOptions.AffectsMeasure |
-              FrameworkPropertyMetadataOptions.AffectsArrange));
-
         public double ChildHeight
         {
-            get { return (double)GetValue(ChildHeightProperty); }
+            get { return (double) GetValue(ChildHeightProperty); }
             set { SetValue(ChildHeightProperty, value); }
         }
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            ItemsControl itemCtrl = (ItemsControl)ItemsControl.GetItemsOwner(this);
+            ItemsControl itemCtrl = ItemsControl.GetItemsOwner(this);
             if (itemCtrl.Items.Count == 0)
                 return new Size();
 
@@ -50,8 +56,8 @@ namespace Octgn.Controls
             int firstVisibleItemIndex, lastVisibleItemIndex;
             GetVisibleRange(out firstVisibleItemIndex, out lastVisibleItemIndex);
             // We need to access InternalChildren before the generator to work around a bug
-            UIElementCollection children = this.InternalChildren;
-            IItemContainerGenerator generator = this.ItemContainerGenerator;
+            UIElementCollection children = InternalChildren;
+            IItemContainerGenerator generator = ItemContainerGenerator;
             // Get the generator position of the first visible data item
             GeneratorPosition startPos = generator.GeneratorPositionFromIndex(firstVisibleItemIndex);
             // Get index where we'd insert the child for this position. If the item is realized
@@ -60,7 +66,9 @@ namespace Octgn.Controls
             int childIndex = (startPos.Offset == 0) ? startPos.Index : startPos.Index + 1;
             using (generator.StartAt(startPos, GeneratorDirection.Forward, true))
             {
-                for (int itemIndex = firstVisibleItemIndex; itemIndex <= lastVisibleItemIndex; itemIndex++, childIndex++)
+                for (int itemIndex = firstVisibleItemIndex;
+                     itemIndex <= lastVisibleItemIndex;
+                     itemIndex++, childIndex++)
                 {
                     bool isNewlyRealized;
                     var child = generator.GenerateNext(out isNewlyRealized) as UIElement;
@@ -88,11 +96,11 @@ namespace Octgn.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            IItemContainerGenerator generator = this.ItemContainerGenerator;
+            IItemContainerGenerator generator = ItemContainerGenerator;
             UpdateScrollInfo(finalSize);
-            for (int i = 0; i < this.Children.Count; i++)
+            for (int i = 0; i < Children.Count; i++)
             {
-                UIElement child = this.Children[i];
+                UIElement child = Children[i];
                 // Map the child offset to an item offset
                 int itemIndex = generator.IndexFromGeneratorPosition(new GeneratorPosition(i, 0));
                 ArrangeChild(itemIndex, child, finalSize);
@@ -102,11 +110,11 @@ namespace Octgn.Controls
 
         private void CleanUpItems(int minDesiredGenerated, int maxDesiredGenerated)
         {
-            UIElementCollection children = this.InternalChildren;
-            IItemContainerGenerator generator = this.ItemContainerGenerator;
+            UIElementCollection children = InternalChildren;
+            IItemContainerGenerator generator = ItemContainerGenerator;
             for (int i = children.Count - 1; i >= 0; i--)
             {
-                GeneratorPosition childGeneratorPos = new GeneratorPosition(i, 0);
+                var childGeneratorPos = new GeneratorPosition(i, 0);
                 int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
                 if (itemIndex < minDesiredGenerated || itemIndex > maxDesiredGenerated)
                 {
@@ -136,16 +144,16 @@ namespace Octgn.Controls
         {
             int childrenPerRow = CalculateChildrenPerRow(availableSize);
             // See how big we are
-            return new Size(childrenPerRow * this.ChildWidth,
-            this.ChildHeight * Math.Ceiling((double)itemCount / childrenPerRow));
+            return new Size(childrenPerRow*ChildWidth,
+                            ChildHeight*Math.Ceiling((double) itemCount/childrenPerRow));
         }
 
         /// Get the range of children that are visible    
         private void GetVisibleRange(out int firstVisibleItemIndex, out int lastVisibleItemIndex)
         {
             int childrenPerRow = CalculateChildrenPerRow(_extent);
-            firstVisibleItemIndex = (int)Math.Floor(_offset.Y / this.ChildHeight) * childrenPerRow;
-            lastVisibleItemIndex = (int)Math.Ceiling((_offset.Y + _viewport.Height) / this.ChildHeight) * childrenPerRow - 1;
+            firstVisibleItemIndex = (int) Math.Floor(_offset.Y/ChildHeight)*childrenPerRow;
+            lastVisibleItemIndex = (int) Math.Ceiling((_offset.Y + _viewport.Height)/ChildHeight)*childrenPerRow - 1;
             ItemsControl itemsControl = ItemsControl.GetItemsOwner(this);
             int itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
             if (lastVisibleItemIndex >= itemCount)
@@ -155,16 +163,16 @@ namespace Octgn.Controls
         /// Get the size of the children. We assume they are all the same
         private Size GetChildSize()
         {
-            return new Size(this.ChildWidth, this.ChildHeight);
+            return new Size(ChildWidth, ChildHeight);
         }
 
         /// Position a child
         private void ArrangeChild(int itemIndex, UIElement child, Size finalSize)
         {
             int childrenPerRow = CalculateChildrenPerRow(finalSize);
-            int row = itemIndex / childrenPerRow;
-            int column = itemIndex % childrenPerRow;
-            child.Arrange(new Rect(column * this.ChildWidth, row * this.ChildHeight, this.ChildWidth, this.ChildHeight));
+            int row = itemIndex/childrenPerRow;
+            int column = itemIndex%childrenPerRow;
+            child.Arrange(new Rect(column*ChildWidth, row*ChildHeight, ChildWidth, ChildHeight));
         }
 
         private int CalculateChildrenPerRow(Size availableSize)
@@ -172,9 +180,9 @@ namespace Octgn.Controls
             // Figure out how many children fit on each row
             int childrenPerRow;
             if (availableSize.Width == Double.PositiveInfinity)
-                childrenPerRow = this.Children.Count;
+                childrenPerRow = Children.Count;
             else
-                childrenPerRow = Math.Max(1, (int)Math.Floor(availableSize.Width / this.ChildWidth));
+                childrenPerRow = Math.Max(1, (int) Math.Floor(availableSize.Width/ChildWidth));
             return childrenPerRow;
         }
 
@@ -183,27 +191,12 @@ namespace Octgn.Controls
         #region IScrollInfo implementation
 
         // See Ben Constable's series of posts at http://blogs.msdn.com/bencon/
-        private void UpdateScrollInfo(Size availableSize)
-        {
-            // See how many items there are
-            ItemsControl itemsControl = ItemsControl.GetItemsOwner(this);
-            int itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
-            Size extent = CalculateExtent(availableSize, itemCount);
-            // Update extent
-            if (extent != _extent)
-            {
-                _extent = extent;
-                if (_owner != null)
-                    _owner.InvalidateScrollInfo();
-            }
-            // Update viewport
-            if (availableSize != _viewport)
-            {
-                _viewport = availableSize;
-                if (_owner != null)
-                    _owner.InvalidateScrollInfo();
-            }
-        }
+
+        private readonly TranslateTransform _trans = new TranslateTransform();
+        private Size _extent = new Size(0, 0);
+        private Point _offset;
+        private ScrollViewer _owner;
+        private Size _viewport = new Size(0, 0);
 
         public ScrollViewer ScrollOwner
         {
@@ -217,17 +210,9 @@ namespace Octgn.Controls
             }
         }
 
-        public bool CanHorizontallyScroll
-        {
-            get { return _canHScroll; }
-            set { _canHScroll = value; }
-        }
+        public bool CanHorizontallyScroll { get; set; }
 
-        public bool CanVerticallyScroll
-        {
-            get { return _canVScroll; }
-            set { _canVScroll = value; }
-        }
+        public bool CanVerticallyScroll { get; set; }
 
         public double HorizontalOffset
         {
@@ -261,22 +246,22 @@ namespace Octgn.Controls
 
         public void LineUp()
         {
-            SetVerticalOffset(this.VerticalOffset - 10);
+            SetVerticalOffset(VerticalOffset - 10);
         }
 
         public void LineDown()
         {
-            SetVerticalOffset(this.VerticalOffset + 10);
+            SetVerticalOffset(VerticalOffset + 10);
         }
 
         public void PageUp()
         {
-            SetVerticalOffset(this.VerticalOffset - _viewport.Height);
+            SetVerticalOffset(VerticalOffset - _viewport.Height);
         }
 
         public void PageDown()
         {
-            SetVerticalOffset(this.VerticalOffset + _viewport.Height);
+            SetVerticalOffset(VerticalOffset + _viewport.Height);
         }
 
         public void MouseWheelUp()
@@ -352,45 +337,60 @@ namespace Octgn.Controls
             InvalidateMeasure();
         }
 
-        private TranslateTransform _trans = new TranslateTransform();
-        private ScrollViewer _owner;
-        private bool _canHScroll = false;
-        private bool _canVScroll = false;
-        private Size _extent = new Size(0, 0);
-        private Size _viewport = new Size(0, 0);
-        private Point _offset;
+        private void UpdateScrollInfo(Size availableSize)
+        {
+            // See how many items there are
+            ItemsControl itemsControl = ItemsControl.GetItemsOwner(this);
+            int itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
+            Size extent = CalculateExtent(availableSize, itemCount);
+            // Update extent
+            if (extent != _extent)
+            {
+                _extent = extent;
+                if (_owner != null)
+                    _owner.InvalidateScrollInfo();
+            }
+            // Update viewport
+            if (availableSize != _viewport)
+            {
+                _viewport = availableSize;
+                if (_owner != null)
+                    _owner.InvalidateScrollInfo();
+            }
+        }
 
         #endregion
 
-        // TODO: this code duplicated from CardListControl.xaml.cs
         #region Smooth scrolling
 
         private static readonly Duration SmoothScrollDuration = TimeSpan.FromMilliseconds(500);
-        private double scrollTarget;
-        private int scrollDirection = 0;
+
+        private static readonly DependencyProperty AnimatableVerticalOffsetProperty =
+            DependencyProperty.Register("AnimatableVerticalOffset", typeof (double), typeof (VirtualizingWrapPanel),
+                                        new UIPropertyMetadata(0.0, AnimatableVerticalOffsetChanged));
+
         private DoubleAnimation scrollAnimation;
+        private int scrollDirection;
+        private double scrollTarget;
 
         private double AnimatableVerticalOffset
         {
-            get { return (double)GetValue(AnimatableVerticalOffsetProperty); }
+            get { return (double) GetValue(AnimatableVerticalOffsetProperty); }
             set { SetValue(AnimatableVerticalOffsetProperty, value); }
         }
 
-        private static readonly DependencyProperty AnimatableVerticalOffsetProperty =
-            DependencyProperty.Register("AnimatableVerticalOffset", typeof(double), typeof(VirtualizingWrapPanel),
-              new UIPropertyMetadata(0.0, AnimatableVerticalOffsetChanged));
-
-        private static void AnimatableVerticalOffsetChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void AnimatableVerticalOffsetChanged(DependencyObject sender,
+                                                            DependencyPropertyChangedEventArgs e)
         {
             var ctrl = sender as VirtualizingWrapPanel;
-            ctrl.SetVerticalOffset((double)e.NewValue);
+            ctrl.SetVerticalOffset((double) e.NewValue);
         }
 
         private void SmoothScroll(int delta)
         {
             // Add inerita to scrolling for a very smooth effect      
             int sign = Math.Sign(delta);
-            double offset = -sign * 48.0;
+            double offset = -sign*48.0;
             if (sign == scrollDirection)
                 scrollTarget += offset;
             else
@@ -406,11 +406,16 @@ namespace Octgn.Controls
 
         private void EnsureScrollAnimation()
         {
-            scrollAnimation = new DoubleAnimation { Duration = SmoothScrollDuration, DecelerationRatio = 0.5 };
-            scrollAnimation.Completed += delegate { scrollAnimation = null; scrollDirection = 0; };
+            scrollAnimation = new DoubleAnimation {Duration = SmoothScrollDuration, DecelerationRatio = 0.5};
+            scrollAnimation.Completed += delegate
+                                             {
+                                                 scrollAnimation = null;
+                                                 scrollDirection = 0;
+                                             };
         }
 
         #endregion
 
+        // TODO: this code duplicated from CardListControl.xaml.cs
     }
 }

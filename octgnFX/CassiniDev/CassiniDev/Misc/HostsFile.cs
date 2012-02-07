@@ -38,9 +38,9 @@ namespace CassiniDev
                 SetHostsEntry(true, ipAddress, hostname);
                 return 0;
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
             }
             string executablePath = Assembly.GetExecutingAssembly().Location;
@@ -60,9 +60,9 @@ namespace CassiniDev
                 SetHostsEntry(false, ipAddress, hostname);
                 return 0;
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
             }
             string executablePath = Assembly.GetExecutingAssembly().Location;
@@ -91,14 +91,14 @@ namespace CassiniDev
 
         private static int StartElevated(string filename, string args)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    UseShellExecute = true,
-                    WorkingDirectory = Environment.CurrentDirectory,
-                    FileName = filename,
-                    Arguments = args,
-                    Verb = "runas"
-                };
+            var startInfo = new ProcessStartInfo
+                                {
+                                    UseShellExecute = true,
+                                    WorkingDirectory = Environment.CurrentDirectory,
+                                    FileName = filename,
+                                    Arguments = args,
+                                    Verb = "runas"
+                                };
             try
             {
                 Process p = Process.Start(startInfo);

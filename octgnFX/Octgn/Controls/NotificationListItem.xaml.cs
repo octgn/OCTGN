@@ -10,17 +10,20 @@ namespace Octgn.Controls
     /// </summary>
     public partial class NotificationListItem : UserControl
     {
-        public event MouseEventHandler OnClose;
-        public int NotificationNumber = -1;
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
-    "Message", typeof(string), typeof(FriendListItem));
+            "Message", typeof (string), typeof (FriendListItem));
+
         public static DependencyProperty PictureProperty = DependencyProperty.Register(
-    "Picture", typeof(ImageSource), typeof(FriendListItem));
+            "Picture", typeof (ImageSource), typeof (FriendListItem));
+
+        public int NotificationNumber = -1;
 
         public NotificationListItem()
         {
             InitializeComponent();
         }
+
+        public event MouseEventHandler OnClose;
 
         private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
         {

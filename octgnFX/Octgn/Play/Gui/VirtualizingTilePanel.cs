@@ -1,33 +1,36 @@
 /* TODO: I think this is unused, maybe it should be removed from SVN */
 
-using System.Windows.Controls.Primitives;
-using System.Windows.Controls;
-using System.Windows;
-using System.Windows.Media;
 using System;
-using System.Diagnostics;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace Octgn.Play.Gui
 {
-    class VirtualizingTilePanel : VirtualizingPanel, IScrollInfo
+    internal class VirtualizingTilePanel : VirtualizingPanel, IScrollInfo
     {
+        // Dependency property that controls the size of the child elements
+        public static readonly DependencyProperty ChildSizeProperty
+            = DependencyProperty.RegisterAttached("ChildSize", typeof (double), typeof (VirtualizingTilePanel),
+                                                  new FrameworkPropertyMetadata(200.0d,
+                                                                                FrameworkPropertyMetadataOptions.
+                                                                                    AffectsMeasure |
+                                                                                FrameworkPropertyMetadataOptions.
+                                                                                    AffectsArrange));
+
         public VirtualizingTilePanel()
         {
             // For use in the IScrollInfo implementation
-            this.RenderTransform = _trans;
+            RenderTransform = _trans;
         }
-
-        // Dependency property that controls the size of the child elements
-        public static readonly DependencyProperty ChildSizeProperty
-           = DependencyProperty.RegisterAttached("ChildSize", typeof(double), typeof(VirtualizingTilePanel),
-              new FrameworkPropertyMetadata(200.0d, FrameworkPropertyMetadataOptions.AffectsMeasure |
-              FrameworkPropertyMetadataOptions.AffectsArrange));
 
         // Accessor for the child size dependency property
         public double ChildSize
         {
-            get { return (double)GetValue(ChildSizeProperty); }
+            get { return (double) GetValue(ChildSizeProperty); }
             set { SetValue(ChildSizeProperty, value); }
         }
 
@@ -45,8 +48,8 @@ namespace Octgn.Play.Gui
             GetVisibleRange(out firstVisibleItemIndex, out lastVisibleItemIndex);
 
             // We need to access InternalChildren before the generator to work around a bug
-            UIElementCollection children = this.InternalChildren;
-            IItemContainerGenerator generator = this.ItemContainerGenerator;
+            UIElementCollection children = InternalChildren;
+            IItemContainerGenerator generator = ItemContainerGenerator;
 
             // Get the generator position of the first visible data item
             GeneratorPosition startPos = generator.GeneratorPositionFromIndex(firstVisibleItemIndex);
@@ -58,12 +61,14 @@ namespace Octgn.Play.Gui
 
             using (generator.StartAt(startPos, GeneratorDirection.Forward, true))
             {
-                for (int itemIndex = firstVisibleItemIndex; itemIndex <= lastVisibleItemIndex; ++itemIndex, ++childIndex)
+                for (int itemIndex = firstVisibleItemIndex;
+                     itemIndex <= lastVisibleItemIndex;
+                     ++itemIndex, ++childIndex)
                 {
                     bool newlyRealized;
 
                     // Get or create the child
-                    UIElement child = generator.GenerateNext(out newlyRealized) as UIElement;
+                    var child = generator.GenerateNext(out newlyRealized) as UIElement;
                     if (newlyRealized)
                     {
                         // Figure out if we need to insert the child at the end or somewhere in the middle
@@ -101,13 +106,13 @@ namespace Octgn.Play.Gui
         /// <returns>Size used</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            IItemContainerGenerator generator = this.ItemContainerGenerator;
+            IItemContainerGenerator generator = ItemContainerGenerator;
 
             UpdateScrollInfo(finalSize);
 
-            for (int i = 0; i < this.Children.Count; i++)
+            for (int i = 0; i < Children.Count; i++)
             {
-                UIElement child = this.Children[i];
+                UIElement child = Children[i];
 
                 // Map the child offset to an item offset
                 int itemIndex = generator.IndexFromGeneratorPosition(new GeneratorPosition(i, 0));
@@ -125,12 +130,12 @@ namespace Octgn.Play.Gui
         /// <param name="maxDesiredGenerated">last item index that should be visible</param>
         private void CleanUpItems(int minDesiredGenerated, int maxDesiredGenerated)
         {
-            UIElementCollection children = this.InternalChildren;
-            IItemContainerGenerator generator = this.ItemContainerGenerator;
+            UIElementCollection children = InternalChildren;
+            IItemContainerGenerator generator = ItemContainerGenerator;
 
             for (int i = children.Count - 1; i >= 0; i--)
             {
-                GeneratorPosition childGeneratorPos = new GeneratorPosition(i, 0);
+                var childGeneratorPos = new GeneratorPosition(i, 0);
                 int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
                 if (itemIndex < minDesiredGenerated || itemIndex > maxDesiredGenerated)
                 {
@@ -158,6 +163,7 @@ namespace Octgn.Play.Gui
         }
 
         #region Layout specific code
+
         // I've isolated the layout specific code to this region. If you want to do something other than tiling, this is
         // where you'll make your changes
 
@@ -172,8 +178,8 @@ namespace Octgn.Play.Gui
             int childrenPerRow = CalculateChildrenPerRow(availableSize);
 
             // See how big we are
-            return new Size(childrenPerRow * this.ChildSize,
-                this.ChildSize * Math.Ceiling((double)itemCount / childrenPerRow));
+            return new Size(childrenPerRow*ChildSize,
+                            ChildSize*Math.Ceiling((double) itemCount/childrenPerRow));
         }
 
         /// <summary>
@@ -185,14 +191,13 @@ namespace Octgn.Play.Gui
         {
             int childrenPerRow = CalculateChildrenPerRow(_extent);
 
-            firstVisibleItemIndex = (int)Math.Floor(_offset.Y / this.ChildSize) * childrenPerRow;
-            lastVisibleItemIndex = (int)Math.Ceiling((_offset.Y + _viewport.Height) / this.ChildSize) * childrenPerRow - 1;
+            firstVisibleItemIndex = (int) Math.Floor(_offset.Y/ChildSize)*childrenPerRow;
+            lastVisibleItemIndex = (int) Math.Ceiling((_offset.Y + _viewport.Height)/ChildSize)*childrenPerRow - 1;
 
             ItemsControl itemsControl = ItemsControl.GetItemsOwner(this);
             int itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
             if (lastVisibleItemIndex >= itemCount)
                 lastVisibleItemIndex = itemCount - 1;
-
         }
 
         /// <summary>
@@ -201,7 +206,7 @@ namespace Octgn.Play.Gui
         /// <returns>The size</returns>
         private Size GetChildSize()
         {
-            return new Size(this.ChildSize, this.ChildSize);
+            return new Size(ChildSize, ChildSize);
         }
 
         /// <summary>
@@ -214,10 +219,10 @@ namespace Octgn.Play.Gui
         {
             int childrenPerRow = CalculateChildrenPerRow(finalSize);
 
-            int row = itemIndex / childrenPerRow;
-            int column = itemIndex % childrenPerRow;
+            int row = itemIndex/childrenPerRow;
+            int column = itemIndex%childrenPerRow;
 
-            child.Arrange(new Rect(column * this.ChildSize, row * this.ChildSize, this.ChildSize, this.ChildSize));
+            child.Arrange(new Rect(column*ChildSize, row*ChildSize, ChildSize, ChildSize));
         }
 
         /// <summary>
@@ -230,41 +235,24 @@ namespace Octgn.Play.Gui
             // Figure out how many children fit on each row
             int childrenPerRow;
             if (availableSize.Width == Double.PositiveInfinity)
-                childrenPerRow = this.Children.Count;
+                childrenPerRow = Children.Count;
             else
-                childrenPerRow = Math.Max(1, (int)Math.Floor(availableSize.Width / this.ChildSize));
+                childrenPerRow = Math.Max(1, (int) Math.Floor(availableSize.Width/ChildSize));
             return childrenPerRow;
         }
 
         #endregion
 
         #region IScrollInfo implementation
+
         // See Ben Constable's series of posts at http://blogs.msdn.com/bencon/
 
 
-        private void UpdateScrollInfo(Size availableSize)
-        {
-            // See how many items there are
-            ItemsControl itemsControl = ItemsControl.GetItemsOwner(this);
-            int itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
-
-            Size extent = CalculateExtent(availableSize, itemCount);
-            // Update extent
-            if (extent != _extent)
-            {
-                _extent = extent;
-                if (_owner != null)
-                    _owner.InvalidateScrollInfo();
-            }
-
-            // Update viewport
-            if (availableSize != _viewport)
-            {
-                _viewport = availableSize;
-                if (_owner != null)
-                    _owner.InvalidateScrollInfo();
-            }
-        }
+        private readonly TranslateTransform _trans = new TranslateTransform();
+        private Size _extent = new Size(0, 0);
+        private Point _offset;
+        private ScrollViewer _owner;
+        private Size _viewport = new Size(0, 0);
 
         public ScrollViewer ScrollOwner
         {
@@ -272,17 +260,9 @@ namespace Octgn.Play.Gui
             set { _owner = value; }
         }
 
-        public bool CanHorizontallyScroll
-        {
-            get { return _canHScroll; }
-            set { _canHScroll = value; }
-        }
+        public bool CanHorizontallyScroll { get; set; }
 
-        public bool CanVerticallyScroll
-        {
-            get { return _canVScroll; }
-            set { _canVScroll = value; }
-        }
+        public bool CanVerticallyScroll { get; set; }
 
         public double HorizontalOffset
         {
@@ -316,32 +296,32 @@ namespace Octgn.Play.Gui
 
         public void LineUp()
         {
-            SetVerticalOffset(this.VerticalOffset - 10);
+            SetVerticalOffset(VerticalOffset - 10);
         }
 
         public void LineDown()
         {
-            SetVerticalOffset(this.VerticalOffset + 10);
+            SetVerticalOffset(VerticalOffset + 10);
         }
 
         public void PageUp()
         {
-            SetVerticalOffset(this.VerticalOffset - _viewport.Height);
+            SetVerticalOffset(VerticalOffset - _viewport.Height);
         }
 
         public void PageDown()
         {
-            SetVerticalOffset(this.VerticalOffset + _viewport.Height);
+            SetVerticalOffset(VerticalOffset + _viewport.Height);
         }
 
         public void MouseWheelUp()
         {
-            SetVerticalOffset(this.VerticalOffset - 10);
+            SetVerticalOffset(VerticalOffset - 10);
         }
 
         public void MouseWheelDown()
         {
-            SetVerticalOffset(this.VerticalOffset + 10);
+            SetVerticalOffset(VerticalOffset + 10);
         }
 
         public void LineLeft()
@@ -409,15 +389,30 @@ namespace Octgn.Play.Gui
             InvalidateMeasure();
         }
 
-        private TranslateTransform _trans = new TranslateTransform();
-        private ScrollViewer _owner;
-        private bool _canHScroll = false;
-        private bool _canVScroll = false;
-        private Size _extent = new Size(0, 0);
-        private Size _viewport = new Size(0, 0);
-        private Point _offset;
+        private void UpdateScrollInfo(Size availableSize)
+        {
+            // See how many items there are
+            ItemsControl itemsControl = ItemsControl.GetItemsOwner(this);
+            int itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
+
+            Size extent = CalculateExtent(availableSize, itemCount);
+            // Update extent
+            if (extent != _extent)
+            {
+                _extent = extent;
+                if (_owner != null)
+                    _owner.InvalidateScrollInfo();
+            }
+
+            // Update viewport
+            if (availableSize != _viewport)
+            {
+                _viewport = availableSize;
+                if (_owner != null)
+                    _owner.InvalidateScrollInfo();
+            }
+        }
 
         #endregion
-
     }
 }

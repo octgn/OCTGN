@@ -37,11 +37,11 @@ namespace CassiniDev
             List<string> hexSplit = BitConverter.ToString(value)
                 .Replace('-', ' ')
                 .Trim()
-                .SplitIntoChunks(numBytesPerRow * 3)
+                .SplitIntoChunks(numBytesPerRow*3)
                 .ToList();
 
             int byteAddress = 0;
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             for (int i = 0; i < hexSplit.Count; i++)
             {
@@ -57,22 +57,22 @@ namespace CassiniDev
             string version = null;
             try
             {
-                Type type = typeof(Page);
+                Type type = typeof (Page);
                 Assembly assembly = Assembly.GetAssembly(type);
 
-                object[] customAttributes = assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), true);
+                object[] customAttributes = assembly.GetCustomAttributes(typeof (AssemblyFileVersionAttribute), true);
                 if ((customAttributes != null) && (customAttributes.GetLength(0) > 0))
                 {
-                    version = ((AssemblyFileVersionAttribute)customAttributes[0]).Version;
+                    version = ((AssemblyFileVersionAttribute) customAttributes[0]).Version;
                 }
                 else
                 {
                     version = assembly.GetName().Version.ToString();
                 }
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
             }
             return version;
@@ -92,22 +92,22 @@ namespace CassiniDev
 
             string contentType;
 
-            FileInfo info = new FileInfo(fileName);
+            var info = new FileInfo(fileName);
             string extension = info.Extension.ToLowerInvariant();
 
             switch (extension)
             {
-                //NOTE: these are fallbacks - and should be refined as needed
-                // Only if the request does not already know
-                // the content-type will this switch be hit - meaning that 
-                // served content-types for extensions listed here may not match
-                // as this method may not be polled.
+                    //NOTE: these are fallbacks - and should be refined as needed
+                    // Only if the request does not already know
+                    // the content-type will this switch be hit - meaning that 
+                    // served content-types for extensions listed here may not match
+                    // as this method may not be polled.
 
                 case ".svgz":
                     contentType = "image/svg+xml";
                     break;
 
-                // from registry - last resort - verified mappings follow
+                    // from registry - last resort - verified mappings follow
 
                 case ".3g2":
                     contentType = "video/3gpp2";
@@ -1072,7 +1072,7 @@ namespace CassiniDev
                     contentType = "application/xml";
                     break;
 
-                // standard mappings from http://www.w3schools.com/media/media_mimeref.asp
+                    // standard mappings from http://www.w3schools.com/media/media_mimeref.asp
 
                 case ".323":
                     contentType = "text/h323";
@@ -1661,16 +1661,16 @@ namespace CassiniDev
 
         public static T GetValueOrDefault<T>(this IDataRecord row, int ordinal)
         {
-            return (T)(row.IsDBNull(ordinal) ? default(T) : row.GetValue(ordinal));
+            return (T) (row.IsDBNull(ordinal) ? default(T) : row.GetValue(ordinal));
         }
 
         public static byte[] StreamToBytes(this Stream input)
         {
-            int capacity = input.CanSeek ? (int)input.Length : 0;
-            using (MemoryStream output = new MemoryStream(capacity))
+            int capacity = input.CanSeek ? (int) input.Length : 0;
+            using (var output = new MemoryStream(capacity))
             {
                 int readLength;
-                byte[] buffer = new byte[4096];
+                var buffer = new byte[4096];
 
                 do
                 {
@@ -1694,11 +1694,11 @@ namespace CassiniDev
                 return null;
             //throw new FileNotFoundException(file + " not found");
 
-            int maxContent = (int)new FileInfo(file).Length;
+            var maxContent = (int) new FileInfo(file).Length;
             if (maxContent > 4096) maxContent = 4096;
             FileStream fs = File.OpenRead(file);
 
-            byte[] buf = new byte[maxContent];
+            var buf = new byte[maxContent];
             fs.Read(buf, 0, maxContent);
             fs.Close();
             int result = Interop.FindMimeFromData(IntPtr.Zero, file, buf, maxContent, null, 0, out mimeout, 0);
@@ -1712,7 +1712,7 @@ namespace CassiniDev
 
         private static IList<string> SplitIntoChunks(this string text, int chunkSize)
         {
-            List<string> chunks = new List<string>();
+            var chunks = new List<string>();
             int offset = 0;
             while (offset < text.Length)
             {

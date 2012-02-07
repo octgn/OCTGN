@@ -58,7 +58,7 @@ namespace CassiniDev
                                                            IPAddress.IPv6Loopback.
                                                                Equals(i);
             // get all active ports on specified IP. 
-            List<ushort> excludedPorts = new List<ushort>();
+            var excludedPorts = new List<ushort>();
 
             // if a port is open on an 'any' or 'loopback' interface then include it in the excludedPorts
             excludedPorts.AddRange(from n in ipProps.GetActiveTcpConnections()
@@ -69,27 +69,27 @@ namespace CassiniDev
                                                                                n.LocalEndPoint.Address.Equals(ip) ||
                                                                                isIpAnyOrLoopBack(n.LocalEndPoint.Address)) &&
                                        (!includeIdlePorts || n.State != TcpState.TimeWait)
-                                   select (ushort)n.LocalEndPoint.Port);
+                                   select (ushort) n.LocalEndPoint.Port);
 
             excludedPorts.AddRange(from n in ipProps.GetActiveTcpListeners()
                                    where n.Port >= rangeStart && n.Port <= rangeEnd && (
                                                                                            isIpAnyOrLoopBack(ip) ||
                                                                                            n.Address.Equals(ip) ||
                                                                                            isIpAnyOrLoopBack(n.Address))
-                                   select (ushort)n.Port);
+                                   select (ushort) n.Port);
 
             excludedPorts.AddRange(from n in ipProps.GetActiveUdpListeners()
                                    where n.Port >= rangeStart && n.Port <= rangeEnd && (
                                                                                            isIpAnyOrLoopBack(ip) ||
                                                                                            n.Address.Equals(ip) ||
                                                                                            isIpAnyOrLoopBack(n.Address))
-                                   select (ushort)n.Port);
+                                   select (ushort) n.Port);
 
             excludedPorts.Sort();
 
             for (int port = rangeStart; port <= rangeEnd; port++)
             {
-                if (!excludedPorts.Contains((ushort)port))
+                if (!excludedPorts.Contains((ushort) port))
                 {
                     return port;
                 }
@@ -157,7 +157,6 @@ namespace CassiniDev
         /// <returns></returns>
         public static string NormalizeUrl(string rootUrl, string relativeUrl)
         {
-
             relativeUrl = relativeUrl.TrimStart('/');
 
             if (!rootUrl.EndsWith("/"))
@@ -213,7 +212,7 @@ namespace CassiniDev
         /// http://en.wikipedia.org/wiki/Hostname#Restrictions_on_valid_host_names
         public static bool ValidateHostName(string hostname)
         {
-            Regex hostnameRx =
+            var hostnameRx =
                 new Regex(
                     @"^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$");
             return hostnameRx.IsMatch(hostname);

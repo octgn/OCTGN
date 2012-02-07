@@ -90,7 +90,7 @@ namespace CassiniDev
         {
             _blob = null;
             byte[] buffer = Convert.FromBase64String(blobString);
-            byte[] inArray = new byte[0x4000];
+            var inArray = new byte[0x4000];
             fixed (void* ptrRef = &_securityContext)
             {
                 fixed (void* ptrRef2 = &_inputBuffer)
@@ -104,20 +104,20 @@ namespace CassiniDev
                                 IntPtr zero = IntPtr.Zero;
                                 if (_securityContextAcquired)
                                 {
-                                    zero = (IntPtr)ptrRef;
+                                    zero = (IntPtr) ptrRef;
                                 }
                                 _inputBufferDesc.ulVersion = 0;
                                 _inputBufferDesc.cBuffers = 1;
-                                _inputBufferDesc.pBuffers = (IntPtr)ptrRef2;
-                                _inputBuffer.cbBuffer = (uint)buffer.Length;
+                                _inputBufferDesc.pBuffers = (IntPtr) ptrRef2;
+                                _inputBuffer.cbBuffer = (uint) buffer.Length;
                                 _inputBuffer.BufferType = 2;
-                                _inputBuffer.pvBuffer = (IntPtr)ptrRef4;
+                                _inputBuffer.pvBuffer = (IntPtr) ptrRef4;
                                 _outputBufferDesc.ulVersion = 0;
                                 _outputBufferDesc.cBuffers = 1;
-                                _outputBufferDesc.pBuffers = (IntPtr)ptrRef3;
-                                _outputBuffer.cbBuffer = (uint)inArray.Length;
+                                _outputBufferDesc.pBuffers = (IntPtr) ptrRef3;
+                                _outputBuffer.cbBuffer = (uint) inArray.Length;
                                 _outputBuffer.BufferType = 2;
-                                _outputBuffer.pvBuffer = (IntPtr)ptrRef5;
+                                _outputBuffer.pvBuffer = (IntPtr) ptrRef5;
                                 int num = Interop.AcceptSecurityContext(ref _credentialsHandle, zero,
                                                                         ref _inputBufferDesc, 20,
                                                                         0, ref _securityContext, ref _outputBufferDesc,
@@ -125,7 +125,7 @@ namespace CassiniDev
                                 if (num == 0x90312)
                                 {
                                     _securityContextAcquired = true;
-                                    _blob = Convert.ToBase64String(inArray, 0, (int)_outputBuffer.cbBuffer);
+                                    _blob = Convert.ToBase64String(inArray, 0, (int) _outputBuffer.cbBuffer);
                                 }
                                 else
                                 {
@@ -140,7 +140,7 @@ namespace CassiniDev
                                     }
                                     try
                                     {
-                                        using (WindowsIdentity identity = new WindowsIdentity(phToken))
+                                        using (var identity = new WindowsIdentity(phToken))
                                         {
                                             _sid = identity.User;
                                         }

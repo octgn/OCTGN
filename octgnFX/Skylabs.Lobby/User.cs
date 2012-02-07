@@ -5,14 +5,38 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace Skylabs.Lobby
 {
     [Serializable]
-    public enum UserLevel { Standard = 0, Moderator = 1, Admin = 2 };
+    public enum UserLevel
+    {
+        Standard = 0,
+        Moderator = 1,
+        Admin = 2
+    };
 
     [Serializable]
-    public enum UserStatus { Unknown = 0, Offline = 1, Online = 2, Away = 3, DoNotDisturb = 4, Invisible = 5 };
+    public enum UserStatus
+    {
+        Unknown = 0,
+        Offline = 1,
+        Online = 2,
+        Away = 3,
+        DoNotDisturb = 4,
+        Invisible = 5
+    };
 
     [Serializable]
     public class User : IEquatable<User>, ICloneable
     {
+        public User()
+        {
+            Uid = -1;
+            Email = "";
+            Password = "";
+            DisplayName = "";
+            CustomStatus = "";
+            Status = UserStatus.Unknown;
+            Level = UserLevel.Standard;
+        }
+
         public int Uid { get; set; }
 
         public string Email { get; set; }
@@ -31,16 +55,26 @@ namespace Skylabs.Lobby
         /// </summary>
         public UserLevel Level { get; set; }
 
-        public User()
+        #region ICloneable Members
+
+        public object Clone()
         {
-            Uid = -1;
-            Email = "";
-            Password = "";
-            DisplayName = "";
-            CustomStatus = "";
-            Status = UserStatus.Unknown;
-            Level = UserLevel.Standard;
+            var ret = new User
+                          {
+                              Email = Email.Clone() as string,
+                              Uid = Uid,
+                              Password = Password.Clone() as string,
+                              Level = Level,
+                              DisplayName = DisplayName.Clone() as string,
+                              CustomStatus = CustomStatus.Clone() as string,
+                              Status = Status
+                          };
+            return ret;
         }
+
+        #endregion
+
+        #region IEquatable<User> Members
 
         public bool Equals(User u)
         {
@@ -53,11 +87,13 @@ namespace Skylabs.Lobby
             return (Uid == u.Uid);
         }
 
+        #endregion
+
         public byte[] Serialize()
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                BinaryFormatter bf = new BinaryFormatter();
+                var bf = new BinaryFormatter();
                 bf.Serialize(ms, this);
                 ms.Flush();
                 return ms.ToArray();
@@ -66,10 +102,10 @@ namespace Skylabs.Lobby
 
         public static User Deserialize(byte[] data)
         {
-            using (MemoryStream ms = new MemoryStream(data))
+            using (var ms = new MemoryStream(data))
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                return (User)bf.Deserialize(ms);
+                var bf = new BinaryFormatter();
+                return (User) bf.Deserialize(ms);
             }
         }
 
@@ -77,14 +113,5 @@ namespace Skylabs.Lobby
         {
             return DisplayName;
         }
-        #region ICloneable Members
-
-        public object Clone()
-        {
-            User ret = new User { Email = Email.Clone() as string, Uid = Uid, Password = Password.Clone() as string, Level = Level, DisplayName = DisplayName.Clone() as string, CustomStatus = CustomStatus.Clone() as string, Status = Status };
-            return ret;
-        }
-
-        #endregion ICloneable Members
     }
 }

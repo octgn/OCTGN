@@ -1,8 +1,6 @@
-using System;
-using System.Linq;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.ComponentModel;
 using System.Windows.Input;
 
 namespace Octgn.Play.Gui
@@ -18,12 +16,16 @@ namespace Octgn.Play.Gui
         }
 
         internal override ItemContainerGenerator GetItemContainerGenerator()
-        { return list.ItemContainerGenerator; }
+        {
+            return list.ItemContainerGenerator;
+        }
 
         protected override void OnCardOver(object sender, CardsEventArgs e)
         {
             base.OnCardOver(sender, e);
-            e.CardSize = new Size(100 * Program.Game.Definition.CardDefinition.Width / Program.Game.Definition.CardDefinition.Height, 100);
+            e.CardSize =
+                new Size(
+                    100*Program.Game.Definition.CardDefinition.Width/Program.Game.Definition.CardDefinition.Height, 100);
             fanPanel.DisplayInsertIndicator(e.ClickedCard, fanPanel.GetIndexFromPoint(Mouse.GetPosition(fanPanel)));
         }
 
@@ -53,6 +55,8 @@ namespace Octgn.Play.Gui
         }
 
         private void SaveFanPanel(object sender, RoutedEventArgs e)
-        { fanPanel = (FanPanel)sender; }
+        {
+            fanPanel = (FanPanel) sender;
+        }
     }
 }

@@ -220,9 +220,8 @@ namespace CassiniDev
 
         private readonly Hashtable _argumentMap;
 
-        private readonly ArrayList _arguments;
-
         private readonly Type _argumentSpecification;
+        private readonly ArrayList _arguments;
 
         private readonly Argument _defaultArgument;
 
@@ -233,7 +232,7 @@ namespace CassiniDev
         /// </summary>
         // ReSharper disable UnusedMember.Local
         private CommandLineParser()
-        // ReSharper restore UnusedMember.Local
+            // ReSharper restore UnusedMember.Local
         {
             //noop
         }
@@ -341,7 +340,7 @@ namespace CassiniDev
         /// <returns>Returns the number of columns in the current console window</returns>
         public static int GetConsoleWindowWidth()
         {
-            Interop.CONSOLE_SCREEN_BUFFER_INFO csbi = new Interop.CONSOLE_SCREEN_BUFFER_INFO();
+            var csbi = new Interop.CONSOLE_SCREEN_BUFFER_INFO();
 
 #pragma warning disable 168
             int rc = Interop.GetConsoleScreenBufferInfo(Interop.GetStdHandle(StdOutputHandle), ref csbi);
@@ -374,7 +373,7 @@ namespace CassiniDev
                                      : idealMinimumHelpTextColumn;
 
             const string newLine = "\n";
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             // 01/01/2010 sky
             string genericUsage = GetGenericUsageString(_argumentSpecification, screenWidth);
@@ -528,7 +527,7 @@ namespace CassiniDev
         /// <returns> true if no errors were detected. </returns>
         public static bool ParseArguments(string[] arguments, object destination, ErrorReporter reporter)
         {
-            CommandLineParser parser = new CommandLineParser(destination.GetType(), reporter);
+            var parser = new CommandLineParser(destination.GetType(), reporter);
             return parser.Parse(arguments, destination);
         }
 
@@ -560,8 +559,8 @@ namespace CassiniDev
         /// <returns> Returns true if args contains /? or /help. </returns>
         public static bool ParseHelp(string[] args)
         {
-            CommandLineParser helpParser = new CommandLineParser(typeof(HelpArgument), NullErrorReporter);
-            HelpArgument helpArgument = new HelpArgument();
+            var helpParser = new CommandLineParser(typeof (HelpArgument), NullErrorReporter);
+            var helpArgument = new HelpArgument();
             helpParser.Parse(args, helpArgument);
             return helpArgument.help;
         }
@@ -599,7 +598,7 @@ namespace CassiniDev
 
         private ArgumentHelpStrings[] GetAllHelpStrings()
         {
-            ArgumentHelpStrings[] strings = new ArgumentHelpStrings[NumberOfParametersToDisplay()];
+            var strings = new ArgumentHelpStrings[NumberOfParametersToDisplay()];
 
             int index = 0;
             foreach (Argument arg in _arguments)
@@ -618,9 +617,9 @@ namespace CassiniDev
 
         private static ArgumentAttribute GetAttribute(ICustomAttributeProvider field)
         {
-            object[] attributes = field.GetCustomAttributes(typeof(ArgumentAttribute), false);
+            object[] attributes = field.GetCustomAttributes(typeof (ArgumentAttribute), false);
             if (attributes.Length == 1)
-                return (ArgumentAttribute)attributes[0];
+                return (ArgumentAttribute) attributes[0];
 
             Debug.Assert(attributes.Length == 0);
             return null;
@@ -631,14 +630,14 @@ namespace CassiniDev
         /// </summary>
         private static string GetGenericUsageString(ICustomAttributeProvider type, int cols)
         {
-            object[] attributes = type.GetCustomAttributes(typeof(ArgumentsAttribute), true);
-            if (attributes.Length == 0 || !((ArgumentsAttribute)attributes[0]).HasHelpText)
+            object[] attributes = type.GetCustomAttributes(typeof (ArgumentsAttribute), true);
+            if (attributes.Length == 0 || !((ArgumentsAttribute) attributes[0]).HasHelpText)
             {
                 return string.Empty;
             }
 
-            StringBuilder sb = new StringBuilder();
-            string usage = ((ArgumentsAttribute)attributes[0]).HelpText;
+            var sb = new StringBuilder();
+            string usage = ((ArgumentsAttribute) attributes[0]).HelpText;
             // simple width formatter
             string[] lines = Regex.Split(usage, Environment.NewLine);
             foreach (string line in lines)
@@ -688,11 +687,11 @@ namespace CassiniDev
         {
             //SKY:12/25/09 - added ushort
             return type != null && (
-                                       type == typeof(int) ||
-                                       type == typeof(uint) ||
-                                       type == typeof(ushort) ||
-                                       type == typeof(string) ||
-                                       type == typeof(bool) ||
+                                       type == typeof (int) ||
+                                       type == typeof (uint) ||
+                                       type == typeof (ushort) ||
+                                       type == typeof (string) ||
+                                       type == typeof (bool) ||
                                        type.IsEnum);
         }
 
@@ -702,7 +701,7 @@ namespace CassiniDev
 
             try
             {
-                using (FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                using (var file = new FileStream(fileName, FileMode.Open, FileAccess.Read))
                 {
                     args = (new StreamReader(file)).ReadToEnd();
                 }
@@ -716,8 +715,8 @@ namespace CassiniDev
             }
 
             bool hadError = false;
-            ArrayList argArray = new ArrayList();
-            StringBuilder currentArg = new StringBuilder();
+            var argArray = new ArrayList();
+            var currentArg = new StringBuilder();
             bool inQuotes = false;
             int index = 0;
 
@@ -802,7 +801,7 @@ namespace CassiniDev
                 }
             }
 
-            argumentsOut = (string[])argArray.ToArray(typeof(string));
+            argumentsOut = (string[]) argArray.ToArray(typeof (string));
             return hadError;
         }
 
@@ -844,7 +843,7 @@ namespace CassiniDev
                         {
                             case '-':
                             case '/':
-                                int endIndex = argument.IndexOfAny(new[] { ':', '+', '-' }, 1);
+                                int endIndex = argument.IndexOfAny(new[] {':', '+', '-'}, 1);
                                 string option = argument.Substring(1,
                                                                    endIndex == -1 ? argument.Length - 1 : endIndex - 1);
                                 string optionArgument;
@@ -861,7 +860,7 @@ namespace CassiniDev
                                     optionArgument = argument.Substring(option.Length + 1);
                                 }
 
-                                Argument arg = (Argument)_argumentMap[option];
+                                var arg = (Argument) _argumentMap[option];
                                 if (arg == null)
                                 {
                                     ReportUnrecognizedArgument(argument);
@@ -1010,7 +1009,7 @@ namespace CassiniDev
             {
                 get
                 {
-                    StringBuilder builder = new StringBuilder();
+                    var builder = new StringBuilder();
                     if (HasHelpText)
                     {
                         builder.Append(HelpText);
@@ -1039,7 +1038,7 @@ namespace CassiniDev
             {
                 get
                 {
-                    StringBuilder builder = new StringBuilder();
+                    var builder = new StringBuilder();
 
                     if (IsDefault)
                     {
@@ -1052,19 +1051,19 @@ namespace CassiniDev
                         builder.Append("/");
                         builder.Append(LongName);
                         Type valueType = ValueType;
-                        if (valueType == typeof(int))
+                        if (valueType == typeof (int))
                         {
                             builder.Append(":<int>");
                         }
-                        else if (valueType == typeof(uint))
+                        else if (valueType == typeof (uint))
                         {
                             builder.Append(":<uint>");
                         }
-                        else if (valueType == typeof(bool))
+                        else if (valueType == typeof (bool))
                         {
                             builder.Append("[+|-]");
                         }
-                        else if (valueType == typeof(string))
+                        else if (valueType == typeof (string))
                         {
                             builder.Append(":<string>");
                         }
@@ -1208,19 +1207,19 @@ namespace CassiniDev
             {
                 // null is only valid for bool variables
                 // empty string is never valid
-                if (!string.IsNullOrEmpty(stringData) || type == typeof(bool))
+                if (!string.IsNullOrEmpty(stringData) || type == typeof (bool))
                 {
                     try
                     {
                         do //omed loop
                         {
-                            if (type == typeof(string))
+                            if (type == typeof (string))
                             {
                                 value = stringData;
                                 return true;
                             }
 
-                            if (type == typeof(bool))
+                            if (type == typeof (bool))
                             {
                                 if (stringData == null || stringData == "+")
                                 {
@@ -1242,20 +1241,20 @@ namespace CassiniDev
                                 break;
                             }
 
-                            if (type == typeof(int))
+                            if (type == typeof (int))
                             {
                                 value = int.Parse(stringData);
                                 return true;
                             }
 
-                            if (type == typeof(uint))
+                            if (type == typeof (uint))
                             {
                                 value = int.Parse(stringData);
                                 return true;
                             }
 
                             //SKY:12/25/09 - added ushort
-                            if (type == typeof(ushort))
+                            if (type == typeof (ushort))
                             {
                                 value = ushort.Parse(stringData);
                                 return true;
@@ -1280,9 +1279,9 @@ namespace CassiniDev
                             }
                         } while (false);
                     }
-                    // ReSharper disable EmptyGeneralCatchClause
+                        // ReSharper disable EmptyGeneralCatchClause
                     catch
-                    // ReSharper restore EmptyGeneralCatchClause
+                        // ReSharper restore EmptyGeneralCatchClause
                     {
                         // catch parse errors
                     }
@@ -1302,12 +1301,12 @@ namespace CassiniDev
                 }
                 else if (value is bool)
                 {
-                    builder.Append((bool)value ? "+" : "-");
+                    builder.Append((bool) value ? "+" : "-");
                 }
                 else
                 {
                     bool first = true;
-                    foreach (object o in (Array)value)
+                    foreach (object o in (Array) value)
                     {
                         if (!first)
                         {
@@ -1347,8 +1346,7 @@ namespace CassiniDev
 
         private class HelpArgument
         {
-            [Argument(ArgumentType.AtMostOnce, ShortName = "?")]
-            public bool help = false;
+            [Argument(ArgumentType.AtMostOnce, ShortName = "?")] public bool help;
         }
 
         #endregion
@@ -1390,11 +1388,13 @@ namespace CassiniDev
         /// if it is not present when parsing arguments.
         /// </summary>
         Required = 0x01,
+
         /// <summary>
         /// Only valid in conjunction with Multiple.
         /// Duplicate values will result in an error.
         /// </summary>
         Unique = 0x02,
+
         /// <summary>
         /// Inidicates that the argument may be specified more than once.
         /// Only valid if the argument is a collection

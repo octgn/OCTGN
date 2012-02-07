@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Octgn
 {
-    class Cryptor
+    internal class Cryptor
     {
         /// <summary>
         /// Encrypts an array of bytes using a Key and an Initialization Vector
@@ -18,11 +16,11 @@ namespace Octgn
         /// <returns>An encrypted byte array</returns>
         public static byte[] Encrypt(byte[] clearData, byte[] Key, byte[] IV)
         {
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
             TripleDES alg = TripleDES.Create();
             alg.Key = Key;
             alg.IV = IV;
-            CryptoStream cs = new CryptoStream(ms, alg.CreateEncryptor(), CryptoStreamMode.Write);
+            var cs = new CryptoStream(ms, alg.CreateEncryptor(), CryptoStreamMode.Write);
             cs.Write(clearData, 0, clearData.Length);
             cs.Close();
             byte[] encryptedData = ms.ToArray();
@@ -38,9 +36,12 @@ namespace Octgn
         public static string Encrypt(string Text, string Key)
         {
             byte[] Bytes = Encoding.Unicode.GetBytes(Text);
-            PasswordDeriveBytes pdb = new PasswordDeriveBytes(Key,
-                new byte[] {0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 
-                0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76});
+            var pdb = new PasswordDeriveBytes(Key,
+                                              new byte[]
+                                                  {
+                                                      0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d,
+                                                      0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
+                                                  });
             byte[] encryptedData = Encrypt(Bytes, pdb.GetBytes(16), pdb.GetBytes(8));
             return Convert.ToBase64String(encryptedData);
         }
@@ -54,11 +55,11 @@ namespace Octgn
         /// <returns>A decrypted data byte array</returns>
         public static byte[] Decrypt(byte[] cipherData, byte[] Key, byte[] IV)
         {
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
             TripleDES alg = TripleDES.Create();
             alg.Key = Key;
             alg.IV = IV;
-            CryptoStream cs = new CryptoStream(ms, alg.CreateDecryptor(), CryptoStreamMode.Write);
+            var cs = new CryptoStream(ms, alg.CreateDecryptor(), CryptoStreamMode.Write);
             try
             {
                 cs.Write(cipherData, 0, cipherData.Length);
@@ -81,11 +82,14 @@ namespace Octgn
         public static string Decrypt(string EncryptedText, string Key)
         {
             byte[] cryptedBytes = Convert.FromBase64String(EncryptedText);
-            PasswordDeriveBytes pdb = new PasswordDeriveBytes(Key,
-                new byte[] {0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 
-                0x64, 0x76, 0x65, 0x64, 0x65, 0x76});
+            var pdb = new PasswordDeriveBytes(Key,
+                                              new byte[]
+                                                  {
+                                                      0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65,
+                                                      0x64, 0x76, 0x65, 0x64, 0x65, 0x76
+                                                  });
             byte[] decryptedData = Decrypt(cryptedBytes, pdb.GetBytes(16), pdb.GetBytes(8));
-            return Encoding.Unicode.GetString(decryptedData ?? new byte[] { });
+            return Encoding.Unicode.GetString(decryptedData ?? new byte[] {});
         }
     }
 }

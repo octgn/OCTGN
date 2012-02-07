@@ -9,6 +9,7 @@
 //  * You must not remove this notice, or any other, from this software.
 //  *
 //  * **********************************************************************************/
+
 using System;
 using System.IO;
 using Microsoft.Win32;
@@ -25,13 +26,13 @@ namespace CassiniDev
     /// </summary>
     public sealed class WebBrowser
     {
-        private readonly string _executablePath;
-        private readonly string _name;
         public static readonly WebBrowser Chrome = new WebBrowser("Chrome", GetChromeExecutablePath());
         public static readonly WebBrowser Firefox = new WebBrowser("Firefox", GetFirefoxExecutablePath());
         public static readonly WebBrowser InternetExplorer = new WebBrowser("Internet Explorer", "iexplore.exe");
         public static readonly WebBrowser Safari = new WebBrowser("Safari", GetSafariExecutablePath());
         public static readonly WebBrowser Opera = new WebBrowser("Opera", GetOperaExecutablePath());
+        private readonly string _executablePath;
+        private readonly string _name;
 
 
         //HKEY_CURRENT_USER\Software\Opera Software
@@ -40,13 +41,24 @@ namespace CassiniDev
             _name = name;
             _executablePath = executablePath;
         }
+
+        internal string ExecutablePath
+        {
+            get { return _executablePath; }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+        }
+
         private static string GetOperaExecutablePath()
         {
             string path = null;
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Opera Software\");
             if (key != null)
             {
-                path = (string)key.GetValue("Last CommandLine v2");
+                path = (string) key.GetValue("Last CommandLine v2");
                 if (!File.Exists(path))
                 {
                     path = null;
@@ -54,13 +66,15 @@ namespace CassiniDev
             }
             return path;
         }
+
         private static string GetChromeExecutablePath()
         {
             string path = null;
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome\");
+            RegistryKey key =
+                Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome\");
             if (key != null)
             {
-                path = Path.Combine((string)key.GetValue("InstallLocation"), "chrome.exe");
+                path = Path.Combine((string) key.GetValue("InstallLocation"), "chrome.exe");
                 if (!File.Exists(path))
                 {
                     path = null;
@@ -75,7 +89,7 @@ namespace CassiniDev
             RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\Mozilla\Mozilla Firefox");
             if (key != null)
             {
-                var str2 = (string)key.GetValue("CurrentVersion");
+                var str2 = (string) key.GetValue("CurrentVersion");
                 if (!string.IsNullOrEmpty(str2))
                 {
                     RegistryKey key2 = key.OpenSubKey(string.Format(@"{0}\Main", str2));
@@ -83,7 +97,7 @@ namespace CassiniDev
                     {
                         return path;
                     }
-                    path = (string)key2.GetValue("PathToExe");
+                    path = (string) key2.GetValue("PathToExe");
                     if (!File.Exists(path))
                     {
                         path = null;
@@ -91,12 +105,14 @@ namespace CassiniDev
                 }
                 return path;
             }
-            string str3 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Mozilla FireFox\FireFox.exe");
+            string str3 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                                       @"Mozilla FireFox\FireFox.exe");
             if (File.Exists(str3))
             {
                 return str3;
             }
-            str3 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + " (x86)", @"Mozilla FireFox\FireFox.exe");
+            str3 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + " (x86)",
+                                @"Mozilla FireFox\FireFox.exe");
             if (!File.Exists(str3))
             {
                 path = str3;
@@ -110,29 +126,13 @@ namespace CassiniDev
             RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\Apple Computer, Inc.\Safari");
             if (key != null)
             {
-                path = (string)key.GetValue("BrowserExe");
+                path = (string) key.GetValue("BrowserExe");
                 if (!File.Exists(path))
                 {
                     path = null;
                 }
             }
             return path;
-        }
-
-        internal string ExecutablePath
-        {
-            get
-            {
-                return _executablePath;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
         }
     }
 }

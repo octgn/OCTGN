@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Skylabs.Lobby
 {
     public class Notification : IEqualityComparer<Notification>
     {
-        public DateTime Time { get; set; }
-        public LobbyClient LobbyClient { get; set; }
-        public bool Dismissed { get; set; }
-        public int ID { get; private set; }
         public Notification(LobbyClient lc, int id)
         {
             ID = id;
@@ -18,6 +12,13 @@ namespace Skylabs.Lobby
             LobbyClient = lc;
             Dismissed = false;
         }
+
+        public DateTime Time { get; set; }
+        public LobbyClient LobbyClient { get; set; }
+        public bool Dismissed { get; set; }
+        public int ID { get; private set; }
+
+        #region IEqualityComparer<Notification> Members
 
         public bool Equals(Notification x, Notification y)
         {
@@ -28,5 +29,7 @@ namespace Skylabs.Lobby
         {
             return obj.ID;
         }
+
+        #endregion
     }
 }

@@ -9,6 +9,7 @@
 //  * You must not remove this notice, or any other, from this software.
 //  *
 //  * **********************************************************************************/
+
 using System;
 using System.IO;
 using System.Net;
@@ -17,14 +18,11 @@ namespace CassiniDev
 {
     public class CassiniDevServer
     {
-
         private Server _server;
+
         public Server Server
         {
-            get
-            {
-                return _server;
-            }
+            get { return _server; }
         }
 
         public string ApplicationPath
@@ -40,12 +38,12 @@ namespace CassiniDev
             get
             {
                 return new UriBuilder
-                    {
-                        Scheme = "http",
-                        Host = _server.HostName,
-                        Port = _server.Port,
-                        Path = _server.VirtualPath
-                    }.ToString();
+                           {
+                               Scheme = "http",
+                               Host = _server.HostName,
+                               Port = _server.Port,
+                               Path = _server.VirtualPath
+                           }.ToString();
             }
         }
 
@@ -63,13 +61,13 @@ namespace CassiniDev
 
         /// <summary>
         /// Will start specified application as "localhost" on loopback and first available port in the range 8000-10000 with vpath "/"
-
         /// </summary>
         /// <param name="applicationPath">Physical path to application.</param>
         /// <param name="virtualPath">Optional. defaults to "/"</param>
         public void StartServer(string applicationPath, string virtualPath)
         {
-            StartServer(applicationPath, CassiniNetworkUtils.GetAvailablePort(8000, 10000, IPAddress.Loopback, true), virtualPath, "localhost");
+            StartServer(applicationPath, CassiniNetworkUtils.GetAvailablePort(8000, 10000, IPAddress.Loopback, true),
+                        virtualPath, "localhost");
         }
 
         /// <summary>
@@ -78,7 +76,8 @@ namespace CassiniDev
         /// <param name="applicationPath">Physical path to application.</param>
         public void StartServer(string applicationPath)
         {
-            StartServer(applicationPath, CassiniNetworkUtils.GetAvailablePort(8000, 10000, IPAddress.Loopback, true), "/", "localhost");
+            StartServer(applicationPath, CassiniNetworkUtils.GetAvailablePort(8000, 10000, IPAddress.Loopback, true),
+                        "/", "localhost");
         }
 
         /// <summary>
@@ -104,8 +103,6 @@ namespace CassiniDev
             hostName = string.IsNullOrEmpty(hostName) ? "localhost" : hostName;
 
             StartServer(applicationPath, ipAddress, port, virtualPath, hostName);
-
-
         }
 
         /// <summary>
@@ -115,7 +112,8 @@ namespace CassiniDev
         /// <param name="port">Port to listen on.</param>
         /// <param name="virtualPath">Optional. default value '/'</param>
         /// <param name="hostname">Optional. Used to construct RootUrl. Defaults to 'localhost'</param>
-        public void StartServer(string applicationPath, IPAddress ipAddress, int port, string virtualPath, string hostname)
+        public void StartServer(string applicationPath, IPAddress ipAddress, int port, string virtualPath,
+                                string hostname)
         {
             if (_server != null)
             {
@@ -131,7 +129,6 @@ namespace CassiniDev
 
             //    throw new InvalidOperationException("Error starting server instance.", ex);
             //}
-
         }
 
 

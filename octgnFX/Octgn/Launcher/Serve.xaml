@@ -1,10 +1,8 @@
-﻿<Page x:Class="Octgn.Launcher.Serve"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
-    xmlns:l="clr-namespace:Octgn.Launcher" 
-    xmlns:ctrl="clr-namespace:Octgn.Controls"
-    WindowTitle="OCTGN - Start a new game" 
-    mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignWidth="642">
+﻿<Page x:Class="Octgn.Launcher.Serve" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:l="clr-namespace:Octgn.Launcher"
+      xmlns:ctrl="clr-namespace:Octgn.Controls" WindowTitle="OCTGN - Start a new game" mc:Ignorable="d"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignWidth="642">
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
@@ -23,9 +21,8 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Your nickname:" Margin="16,8,8,8" VerticalAlignment="Center" />
-        <TextBox x:Name="nickBox" Grid.Column="1" Margin="0,8,16,8" 
-                     VerticalAlignment="Center" HorizontalAlignment="Left"
-                     Width="200" />
+        <TextBox x:Name="nickBox" Grid.Column="1" Margin="0,8,16,8" VerticalAlignment="Center"
+                 HorizontalAlignment="Left" Width="200" />
       </Grid>
     </Border>
 
@@ -44,10 +41,9 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Margin="16,8,8,8" Text="Port number to use:" VerticalAlignment="Center" />
-        <TextBox x:Name="portBox" Margin="0,8,16,8" Grid.Column="1" Width="100"
-                     VerticalAlignment="Center" HorizontalAlignment="Left" />
-        <TextBlock Margin="16,0,16,8" Grid.ColumnSpan="2" Grid.Row="1"
-                   FontStyle="Italic" 
+        <TextBox x:Name="portBox" Margin="0,8,16,8" Grid.Column="1" Width="100" VerticalAlignment="Center"
+                 HorizontalAlignment="Left" />
+        <TextBlock Margin="16,0,16,8" Grid.ColumnSpan="2" Grid.Row="1" FontStyle="Italic"
                    Text="(If you don't know what this is, the default value should be fine.)" />
 
         <StackPanel Margin="16,8,16,8" Grid.ColumnSpan="2" Grid.Row="2">
@@ -63,14 +59,15 @@
         <RadioButton Grid.Row="3" Margin="16,0,0,0" IsChecked="True" x:Name="v6Box" VerticalAlignment="Top">
           <TextBlock Text="Use IPv6" VerticalAlignment="Center" />
         </RadioButton>
-        
-        <ItemsControl x:Name="ipList" Grid.Row="3" Grid.Column="1"
-                      Margin="0,0,16,8">
+
+        <ItemsControl x:Name="ipList" Grid.Row="3" Grid.Column="1" Margin="0,0,16,8">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
               <TextBlock Style="{StaticResource PanelText}">
                 <Run x:Name="ipText" Text="{Binding Mode=OneTime}" />
-                (<Hyperlink Click="CopyIP" Style="{StaticResource PanelHyperlink}">copy</Hyperlink>)
+                (
+                <Hyperlink Click="CopyIP" Style="{StaticResource PanelHyperlink}">copy</Hyperlink>
+                )
               </TextBlock>
               <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsIPv6Teredo, Mode=OneTime}" Value="True">
@@ -80,19 +77,19 @@
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <TextBlock x:Name="noIpLabel" Grid.Row="3" Grid.Column="1"
-                   Foreground="Red" Visibility="Collapsed"
+        <TextBlock x:Name="noIpLabel" Grid.Row="3" Grid.Column="1" Foreground="Red" Visibility="Collapsed"
                    Margin="0,0,16,8">
-          No IPv6 adresses found.<LineBreak />
+          No IPv6 adresses found.
+          <LineBreak />
           You may find some help getting IPv6 working
-          <Hyperlink Tag="http://www.octgn.net/forum/index.php?topic=480"
-                     Click="GoToWebSite">here</Hyperlink>.
+          <Hyperlink Tag="http://www.octgn.net/forum/index.php?topic=480" Click="GoToWebSite">here</Hyperlink>
+          .
         </TextBlock>
 
         <RadioButton Grid.Row="4" Margin="16,0,0,4" x:Name="v4Box" VerticalAlignment="Top">
           <TextBlock Text="Use IPv4" VerticalAlignment="Center" />
         </RadioButton>
-        
+
         <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,0,0,8">
           <ItemsControl x:Name="ipv4List">
             <ItemsControl.ItemTemplate>
@@ -100,16 +97,22 @@
                 <TextBlock Style="{StaticResource PanelText}">
                   <TextBlock Text="LAN address:" Style="{x:Null}" Width="130" />
                   <Run Text="{Binding Mode=OneTime}" />
-                  (<Hyperlink Click="CopyIP" Style="{StaticResource PanelHyperlink}">copy</Hyperlink>)
+                  (
+                  <Hyperlink Click="CopyIP" Style="{StaticResource PanelHyperlink}">copy</Hyperlink>
+                  )
                 </TextBlock>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
-          
+
           <TextBlock x:Name="webIPBlock" Margin="0,0,0,8" DataContext="querying external service">
-            <TextBlock Text="Internet address:" Style="{x:Null}" Width="130" /> <Run x:Name="webIPText" Text="{Binding Mode=OneWay}" FontStyle="Italic" /> (<Hyperlink Click="CopyIP" Style="{StaticResource PanelHyperlink}">copy</Hyperlink>)
+            <TextBlock Text="Internet address:" Style="{x:Null}" Width="130" />
+            <Run x:Name="webIPText" Text="{Binding Mode=OneWay}" FontStyle="Italic" />
+            (
+            <Hyperlink Click="CopyIP" Style="{StaticResource PanelHyperlink}">copy</Hyperlink>
+            )
           </TextBlock>
-        </StackPanel>        
+        </StackPanel>
       </Grid>
     </Border>
 

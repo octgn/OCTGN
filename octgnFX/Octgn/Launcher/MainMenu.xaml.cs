@@ -1,9 +1,6 @@
-using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Reflection;
+using Octgn.DeckBuilder;
 
 namespace Octgn.Launcher
 {
@@ -16,13 +13,19 @@ namespace Octgn.Launcher
         }
 
         private void StartGame(object sender, RoutedEventArgs e)
-        { NavigationService.Navigate(new Serve()); }
+        {
+            NavigationService.Navigate(new Serve());
+        }
 
         private void JoinGame(object sender, RoutedEventArgs e)
-        { NavigationService.Navigate(new Join()); }
+        {
+            NavigationService.Navigate(new Join());
+        }
 
         private void ManageGames(object sender, RoutedEventArgs e)
-        { NavigationService.Navigate(new GameManager()); }
+        {
+            NavigationService.Navigate(new GameManager());
+        }
 
         private void EditDecks(object sender, RoutedEventArgs e)
         {
@@ -32,26 +35,30 @@ namespace Octgn.Launcher
                 return;
             }
 
-            var launcherWnd = Application.Current.MainWindow;
-            var deckWnd = new DeckBuilder.DeckBuilderWindow();
+            Window launcherWnd = Application.Current.MainWindow;
+            var deckWnd = new DeckBuilderWindow();
             deckWnd.Show();
             Application.Current.MainWindow = deckWnd;
             launcherWnd.Close();
         }
 
         private void QuitClicked(object sender, RoutedEventArgs e)
-        { Application.Current.MainWindow.Close(); }
+        {
+            Application.Current.MainWindow.Close();
+        }
 
         #region Hint texts
 
         private void EnterBtn(object sender, RoutedEventArgs e)
         {
-            Button btn = (Button)sender;
-            hintText.Text = (string)btn.Tag;
+            var btn = (Button) sender;
+            hintText.Text = (string) btn.Tag;
         }
 
         private void LeaveBtn(object sender, RoutedEventArgs e)
-        { hintText.Text = ""; }
+        {
+            hintText.Text = "";
+        }
 
         #endregion
     }

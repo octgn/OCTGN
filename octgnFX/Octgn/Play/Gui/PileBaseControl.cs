@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using Octgn.Controls;
+using Octgn.Script;
 
 namespace Octgn.Play.Gui
 {
@@ -13,17 +11,17 @@ namespace Octgn.Play.Gui
 
         private void BuildLookAtCardsMenuItem()
         {
-            LookAtCardsMenuItem = new MenuItem { Header = "Look at" };
+            LookAtCardsMenuItem = new MenuItem {Header = "Look at"};
 
-            var top = new MenuItem { Header = "Top X cards..." };
+            var top = new MenuItem {Header = "Top X cards..."};
             top.Click += ViewTopCards;
             LookAtCardsMenuItem.Items.Add(top);
 
-            var all = new MenuItem { Header = "All cards" };
+            var all = new MenuItem {Header = "All cards"};
             all.Click += ViewAllCards;
             LookAtCardsMenuItem.Items.Add(all);
 
-            var bottom = new MenuItem { Header = "Bottom X cards..." };
+            var bottom = new MenuItem {Header = "Bottom X cards..."};
             bottom.Click += ViewBottomCards;
             LookAtCardsMenuItem.Items.Add(bottom);
         }
@@ -37,23 +35,23 @@ namespace Octgn.Play.Gui
         protected void ViewAllCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            var manager = ((PlayWindow)Window.GetWindow(this)).wndManager;
+            ChildWindowManager manager = ((PlayWindow) Window.GetWindow(this)).wndManager;
             manager.Show(new GroupWindow(group, PilePosition.All, 0));
         }
 
         protected void ViewTopCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            int count = Octgn.Script.OCTGN.InputPositiveInt("View top cards", "How many cards do you want to see?", 1);
-            var manager = ((PlayWindow)Window.GetWindow(this)).wndManager;
+            int count = OCTGN.InputPositiveInt("View top cards", "How many cards do you want to see?", 1);
+            ChildWindowManager manager = ((PlayWindow) Window.GetWindow(this)).wndManager;
             manager.Show(new GroupWindow(group, PilePosition.Top, count));
         }
 
         protected void ViewBottomCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            int count = Octgn.Script.OCTGN.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1);
-            var manager = ((PlayWindow)Window.GetWindow(this)).wndManager;
+            int count = OCTGN.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1);
+            ChildWindowManager manager = ((PlayWindow) Window.GetWindow(this)).wndManager;
             manager.Show(new GroupWindow(group, PilePosition.Bottom, count));
         }
     }

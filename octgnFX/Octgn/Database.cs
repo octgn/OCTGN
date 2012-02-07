@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Octgn.Data;
+using Octgn.Definitions;
 
 namespace Octgn
 {
@@ -10,9 +11,11 @@ namespace Octgn
         private static Data.Game openedGame;
 
         public static Data.Game OpenedGame
-        { get { return openedGame; } }
+        {
+            get { return openedGame; }
+        }
 
-        public static void Open(Definitions.GameDef game, bool readOnly)
+        public static void Open(GameDef game, bool readOnly)
         {
             openedGame = Program.GamesRepository.Games.First(g => g.Id == game.Id);
             openedGame.OpenDatabase(readOnly);

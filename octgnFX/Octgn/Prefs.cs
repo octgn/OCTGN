@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Octgn
+﻿namespace Octgn
 {
     public static class Prefs
     {
         private static string _hideLoginNotifications;
+
+        static Prefs()
+        {
+            string _hln = Registry.ReadValue("Options_HideLoginNotifications");
+            _hideLoginNotifications = _hln == null || _hln == "false" ? "false" : "true";
+        }
 
         public static string HideLoginNotifications
         {
@@ -18,12 +19,5 @@ namespace Octgn
                 Registry.WriteValue("Options_HideLoginNotifications", value);
             }
         }
-
-        static Prefs()
-        {
-            string _hln = Registry.ReadValue("Options_HideLoginNotifications");
-            _hideLoginNotifications = _hln == null || _hln == "false" ? "false" : "true";
-        }
-
     }
 }

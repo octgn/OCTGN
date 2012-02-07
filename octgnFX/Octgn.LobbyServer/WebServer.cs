@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Diagnostics;
-using CassiniDev;
+using Skylabs.Lobby;
 
 namespace Skylabs.LobbyServer
 {
     public class WebServer
     {
-        private HttpListener _server;
+        private readonly HttpListener _server;
         private bool _running;
 
         //private CassiniDevServer _webServer = null;
@@ -30,7 +28,7 @@ namespace Skylabs.LobbyServer
 
             _running = false;
             _server = new HttpListener();
-            int port = 8901;
+            int port;
             try
             {
                 port = Int32.Parse(Program.Settings["webserverport"]);
@@ -41,6 +39,7 @@ namespace Skylabs.LobbyServer
             }
             _server.Prefixes.Add(String.Format("http://+:{0}/", port));
         }
+
         public bool Start()
         {
             if (!_running)
@@ -60,6 +59,7 @@ namespace Skylabs.LobbyServer
             }
             return false;
         }
+
         public void Stop()
         {
             _running = false;
@@ -72,9 +72,9 @@ namespace Skylabs.LobbyServer
             }
             catch (Exception)
             {
-
             }
         }
+
         private void AcceptConnections()
         {
             try
@@ -83,9 +83,9 @@ namespace Skylabs.LobbyServer
             }
             catch (Exception)
             {
-
             }
         }
+
         private void HandleConnection(IAsyncResult res)
         {
             try
@@ -93,20 +93,20 @@ namespace Skylabs.LobbyServer
                 HttpListenerContext con = _server.EndGetContext(res);
                 HttpListenerRequest req = con.Request;
 
-                var page = req.Url.AbsolutePath.Trim('/');
+                string page = req.Url.AbsolutePath.Trim('/');
                 page = page.ToLower();
                 switch (page)
                 {
                     case "":
                         {
-                            var spage = File.ReadAllText("webserver/index.htm");
+                            string spage = File.ReadAllText("webserver/index.htm");
                             spage = ReplaceVariables(spage);
                             SendItem(con.Response, spage);
                             break;
                         }
                     case "games.htm":
                         {
-                            var spage = File.ReadAllText("webserver/games.htm");
+                            string spage = File.ReadAllText("webserver/games.htm");
                             spage = InsertRunningGames(spage);
                             SendItem(con.Response, spage);
                             break;
@@ -116,7 +116,7 @@ namespace Skylabs.LobbyServer
                             string time = req.QueryString["time"];
                             if (time != null)
                             {
-                                int t = 0;
+                                int t;
                                 if (Int32.TryParse(time, out t))
                                 {
                                     Program.KillServerInTime(t);
@@ -124,14 +124,14 @@ namespace Skylabs.LobbyServer
                                     break;
                                 }
                             }
-                            var spage = File.ReadAllText("webserver/index.htm");
+                            string spage = File.ReadAllText("webserver/index.htm");
                             spage = ReplaceVariables(spage);
                             SendItem(con.Response, spage);
                             break;
                         }
                     default:
                         {
-                            var spage = "";
+                            string spage = "";
                             try
                             {
                                 spage = File.ReadAllText("webserver/" + page);
@@ -149,13 +149,13 @@ namespace Skylabs.LobbyServer
             }
             catch (Exception)
             {
-
             }
             AcceptConnections();
         }
+
         private string ReplaceVariables(string rawpage)
         {
-            string ret = rawpage;
+            string ret;
             Version v = Assembly.GetCallingAssembly().GetName().Version;
             //Microsoft.VisualBasic.Devices.ComputerInfo ci = new Microsoft.VisualBasic.Devices.ComputerInfo();
             ret = rawpage.Replace("$version", v.ToString());
@@ -184,7 +184,7 @@ namespace Skylabs.LobbyServer
             //construct game table
             foreach (Lobby.HostedGame game in games)
             {
-                TimeSpan ts = new TimeSpan(DateTime.Now.Ticks - game.TimeStarted.Ticks);
+                var ts = new TimeSpan(DateTime.Now.Ticks - game.TimeStarted.Ticks);
                 insert = insert + "<tr>";
                 insert = insert + "<td>" + game.Name + "</td>";
                 insert = insert + "<td>" + game.Port + "</td>";
@@ -192,17 +192,17 @@ namespace Skylabs.LobbyServer
                 insert = insert + "<td>" + game.GameVersion + "</td>";
                 insert = insert + "<td>" + ts.ToString() + "</td>";
                 Client c = Server.GetOnlineClientByUid(game.UserHosting.Uid);
-                Lobby.User user;
+                User user;
                 if (c == null)
                 {
                     user = game.UserHosting;
-                    user.Status = Lobby.UserStatus.Offline;
+                    user.Status = UserStatus.Offline;
                 }
                 else
                     user = c.Me;
 
                 insert = insert + "<td>Name: " + user.DisplayName + "<br />";
-                insert = insert + "Status: " + Enum.GetName(typeof(Lobby.UserStatus), user.Status) + "<br />";
+                insert = insert + "Status: " + Enum.GetName(typeof (UserStatus), user.Status) + "<br />";
                 insert = insert + "Email: " + user.Email + "<br />";
                 insert = insert + "Uid: " + user.Uid + "</td>";
 
@@ -227,13 +227,12 @@ namespace Skylabs.LobbyServer
             }
             catch (ObjectDisposedException)
             {
-
             }
             catch (IOException)
             {
-
             }
         }
+
         public static string ToFileSize(int source)
         {
             return ToFileSize(Convert.ToInt64(source));
@@ -246,20 +245,17 @@ namespace Skylabs.LobbyServer
 
             if (bytes >= Math.Pow(byteConversion, 3)) //GB Range
             {
-                return string.Concat(Math.Round(bytes / Math.Pow(byteConversion, 3), 2), " GB");
+                return string.Concat(Math.Round(bytes/Math.Pow(byteConversion, 3), 2), " GB");
             }
-            else if (bytes >= Math.Pow(byteConversion, 2)) //MB Range
+            if (bytes >= Math.Pow(byteConversion, 2)) //MB Range
             {
-                return string.Concat(Math.Round(bytes / Math.Pow(byteConversion, 2), 2), " MB");
+                return string.Concat(Math.Round(bytes/Math.Pow(byteConversion, 2), 2), " MB");
             }
-            else if (bytes >= byteConversion) //KB Range
+            if (bytes >= byteConversion) //KB Range
             {
-                return string.Concat(Math.Round(bytes / byteConversion, 2), " KB");
+                return string.Concat(Math.Round(bytes/byteConversion, 2), " KB");
             }
-            else //Bytes
-            {
-                return string.Concat(bytes, " Bytes");
-            }
+            return string.Concat(bytes, " Bytes");
         }
     }
 }

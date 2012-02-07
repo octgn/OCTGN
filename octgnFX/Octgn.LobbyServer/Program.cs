@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using Skylabs.Net;
-using System.Reflection;
 
 namespace Skylabs.LobbyServer
 {
@@ -15,13 +15,14 @@ namespace Skylabs.LobbyServer
         public static WebServer WebServer;
         private static DateTime _killTime;
         private static Timer _killTimer;
-        private static bool _sentMinuteWarning = false;
-        private static Thread _runThread = new Thread(runner);
+        private static bool _sentMinuteWarning;
+        private static readonly Thread _runThread = new Thread(runner);
         private static bool _running = true;
-        private static void Main(string[] args)
+
+        private static void Main()
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
-            Trace.WriteLine(String.Format("[LobbyServer] V{0}", Assembly.GetExecutingAssembly().GetName().Version.ToString()));
+            Trace.WriteLine(String.Format("[LobbyServer] V{0}", Assembly.GetExecutingAssembly().GetName().Version));
             _runThread.Start();
             if (!LoadSettings())
                 return;
@@ -33,6 +34,7 @@ namespace Skylabs.LobbyServer
             WebServer.Start();
             _killTimer = new Timer(CheckKillTime, _killTime, 1000, 1000);
         }
+
         private static void runner()
         {
             while (_running)
@@ -42,6 +44,7 @@ namespace Skylabs.LobbyServer
                 Thread.Sleep(100);
             }
         }
+
         private static bool LoadSettings()
         {
             Settings = new Dictionary<string, string>();
@@ -60,7 +63,7 @@ namespace Skylabs.LobbyServer
                 string s = l.Trim();
                 if (s[0] == '#')
                     continue;
-                String[] parts = s.Split(new char[1] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                String[] parts = s.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length != 2)
                     continue;
                 parts[0] = parts[0].Trim();
@@ -72,6 +75,7 @@ namespace Skylabs.LobbyServer
             }
             return true;
         }
+
         public static void KillServerInTime(int minutes)
         {
             if (minutes == 0)
@@ -80,15 +84,14 @@ namespace Skylabs.LobbyServer
                 _killTime = new DateTime(0);
                 return;
             }
-            _killTime = DateTime.Now.AddMinutes((int)minutes);
-            SocketMessage sm = new SocketMessage("servermessage");
+            _killTime = DateTime.Now.AddMinutes(minutes);
+            var sm = new SocketMessage("servermessage");
             sm.AddData("message", "Server will be shutting down in " + minutes.ToString() + " minutes");
             Server.AllUserMessage(sm);
         }
+
         private static void CheckKillTime(Object stateInfo)
         {
-            if (_killTime == null)
-                return;
             if (_killTime == new DateTime(0))
                 return;
             if (_killTime.Ticks > DateTime.Now.Ticks)
@@ -97,7 +100,7 @@ namespace Skylabs.LobbyServer
                 {
                     if (!_sentMinuteWarning)
                     {
-                        SocketMessage sm = new SocketMessage("servermessage");
+                        var sm = new SocketMessage("servermessage");
                         sm.AddData("message", "Server will be shutting down in about a minute.");
                         Server.AllUserMessage(sm);
                         _sentMinuteWarning = true;
@@ -107,6 +110,7 @@ namespace Skylabs.LobbyServer
             }
             Quit();
         }
+
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
         {
             Quit();
@@ -116,7 +120,7 @@ namespace Skylabs.LobbyServer
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Console.WriteLine("------UNHANDLED EXCEPTION-------");
-            Exception ex = (Exception)e.ExceptionObject;
+            var ex = (Exception) e.ExceptionObject;
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
             Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
@@ -132,18 +136,28 @@ namespace Skylabs.LobbyServer
 
         private static void Quit()
         {
-            try { Gaming.Stop(); }
-            catch { }
-            try { Server.Stop(); }
-            catch { }
-            try { _killTimer.Dispose(); }
-            catch { }
+            try
+            {
+                Gaming.Stop();
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                Server.Stop();
+            }
+            catch (Exception)
+            {
+            }
+            try
+            {
+                _killTimer.Dispose();
+            }
+            catch (Exception)
+            {
+            }
             _running = false;
         }
-
-        private static void Tester()
-        {
-        }
-
     }
 }

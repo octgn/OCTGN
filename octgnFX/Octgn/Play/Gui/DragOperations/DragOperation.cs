@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 
 namespace Octgn.Play.Gui
@@ -23,6 +22,8 @@ namespace Octgn.Play.Gui
             StartDragCore(oldPos);
         }
 
+        #region IDragOperation Members
+
         public void Dragging(MouseEventArgs e)
         {
             Point newPos = e.GetPosition(target);
@@ -37,6 +38,8 @@ namespace Octgn.Play.Gui
             target.ReleaseMouseCapture();
             EndDragCore();
         }
+
+        #endregion
 
         protected abstract void StartDragCore(Point position);
 

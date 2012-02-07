@@ -1,22 +1,53 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Collections;
 
 namespace Skylabs.Lobby
 {
     public class ThreadSafeList<T> : IList<T>, ICollection<T>, IEnumerable<T>, ICollection, IEnumerable, IDisposable
     {
+        private readonly ReaderWriterLockSlim rwLock;
         private List<T> _list;
-        private ReaderWriterLockSlim rwLock;
 
         public ThreadSafeList()
         {
             _list = new List<T>();
             rwLock = new ReaderWriterLockSlim();
         }
+
+        #region ICollection Members
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ICollection.IsSynchronized
+        {
+            get { return false; }
+        }
+
+        object ICollection.SyncRoot
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            rwLock.Dispose();
+            _list.Clear();
+            _list = null;
+        }
+
+        #endregion
+
+        #region IList<T> Members
 
         public void Add(T value)
         {
@@ -136,6 +167,50 @@ namespace Skylabs.Lobby
             }
         }
 
+        public T this[int index]
+        {
+            get
+            {
+                rwLock.EnterReadLock();
+                try
+                {
+                    return (_list[index]);
+                }
+                finally
+                {
+                    rwLock.ExitReadLock();
+                }
+            }
+            set { UpdateAt(index, value); }
+        }
+
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            foreach (T item in _list.ToList())
+            {
+                yield return item;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ICollection<T>.IsReadOnly
+        {
+            get { return false; }
+        }
+
+        #endregion
+
         public void Update(T value)
         {
             rwLock.EnterWriteLock();
@@ -162,75 +237,5 @@ namespace Skylabs.Lobby
                 rwLock.ExitWriteLock();
             }
         }
-
-        public T this[int index]
-        {
-            get
-            {
-                rwLock.EnterReadLock();
-                try
-                {
-                    return (_list[index]);
-                }
-                finally
-                {
-                    rwLock.ExitReadLock();
-                }
-            }
-            set
-            {
-                UpdateAt(index, value);
-            }
-        }
-
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            foreach (T item in _list.ToList<T>())
-            {
-                yield return item;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public void Dispose()
-        {
-            rwLock.Dispose();
-            _list.Clear();
-            _list = null;
-        }
-
-
-
-        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        bool ICollection<T>.IsReadOnly
-        {
-            get { return false; }
-        }
-
-        void ICollection.CopyTo(Array array, int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        bool ICollection.IsSynchronized
-        {
-            get { return false; }
-        }
-
-        object ICollection.SyncRoot
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-
     }
 }

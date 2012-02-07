@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
 using System.Windows.Documents;
-using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Octgn.Play.Gui
 {
@@ -20,9 +18,9 @@ namespace Octgn.Play.Gui
             AddHandler(TableControl.TableKeyEvent, new EventHandler<TableKeyEventArgs>(TableKeyDown));
             int markerSize = Program.Game.Definition.MarkerSize;
             img1.Height = markerSize;
-            textBorder.Margin = new Thickness(markerSize * 0.2, markerSize * 0.04, 0, markerSize * 0.04);
-            text.Margin = new Thickness(markerSize * 0.3, 0, markerSize * 0.3, 0);
-            text.FontSize = markerSize * 0.8;
+            textBorder.Margin = new Thickness(markerSize*0.2, markerSize*0.04, 0, markerSize*0.04);
+            text.Margin = new Thickness(markerSize*0.3, 0, markerSize*0.3, 0);
+            text.FontSize = markerSize*0.8;
         }
 
         #region Key accelerators
@@ -46,17 +44,24 @@ namespace Octgn.Play.Gui
 
         #region Drag and drop
 
-        public static readonly RoutedEvent MarkerDroppedEvent = EventManager.RegisterRoutedEvent("MakerDropped", RoutingStrategy.Bubble, typeof(EventHandler<MarkerEventArgs>), typeof(CardControl));
+        public static readonly RoutedEvent MarkerDroppedEvent = EventManager.RegisterRoutedEvent("MakerDropped",
+                                                                                                 RoutingStrategy.Bubble,
+                                                                                                 typeof (
+                                                                                                     EventHandler
+                                                                                                     <MarkerEventArgs>),
+                                                                                                 typeof (CardControl));
 
         // One can only drag one marker at a time -> make everything static. It reduces memory usage.
-        private static bool isDragging = false, isMouseDown = false, takeAll;
+        private static bool isDragging, isMouseDown, takeAll;
         private static Point mousePt, mouseOffset;
         private static DragAdorner adorner;
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
-            e.Handled = true; isMouseDown = true; mousePt = Mouse.GetPosition(this);
+            e.Handled = true;
+            isMouseDown = true;
+            mousePt = Mouse.GetPosition(this);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -71,16 +76,16 @@ namespace Octgn.Play.Gui
                 if (isMouseDown && Mouse.LeftButton == MouseButtonState.Pressed &&
                     // Check if has moved enough to start a drag and drop
                     (Math.Abs(pt.X - mousePt.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                    Math.Abs(pt.Y - mousePt.Y) > SystemParameters.MinimumVerticalDragDistance))
+                     Math.Abs(pt.Y - mousePt.Y) > SystemParameters.MinimumVerticalDragDistance))
                 {
-                    e.Handled = true; isDragging = true;
+                    e.Handled = true;
+                    isDragging = true;
                     DragStarted();
-                    this.CaptureMouse();
+                    CaptureMouse();
                 }
             }
             else
                 DragDelta(pt.X - mousePt.X, pt.Y - mousePt.Y);
-
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -91,7 +96,7 @@ namespace Octgn.Play.Gui
             if (isDragging)
             {
                 isDragging = false;
-                this.ReleaseMouseCapture();
+                ReleaseMouseCapture();
                 DragCompleted();
             }
         }
@@ -102,10 +107,10 @@ namespace Octgn.Play.Gui
             RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, this));
 
             takeAll = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
-            UIElement adorned = takeAll ? (UIElement)this : (UIElement)img1;
+            UIElement adorned = takeAll ? this : (UIElement) img1;
             mouseOffset = TranslatePoint(mousePt, adorned);
-            mouseOffset.X -= adorned.DesiredSize.Width / 2;
-            mouseOffset.Y -= adorned.DesiredSize.Height / 2;
+            mouseOffset.X -= adorned.DesiredSize.Width/2;
+            mouseOffset.Y -= adorned.DesiredSize.Height/2;
             adorner = new DragAdorner(adorned);
             AdornerLayer.GetAdornerLayer(adorner.AdornedElement).Add(adorner);
         }
@@ -118,11 +123,11 @@ namespace Octgn.Play.Gui
 
         private void DragCompleted()
         {
-            ((AdornerLayer)adorner.Parent).Remove(adorner);
+            ((AdornerLayer) adorner.Parent).Remove(adorner);
             adorner = null;
-            Marker marker = (Marker)DataContext;
-            ushort count = takeAll ? marker.Count : (ushort)1;
-            MarkerEventArgs e = new MarkerEventArgs(this, marker, count);
+            var marker = (Marker) DataContext;
+            ushort count = takeAll ? marker.Count : (ushort) 1;
+            var e = new MarkerEventArgs(this, marker, count);
             Mouse.DirectlyOver.RaiseEvent(e);
             if (Keyboard.IsKeyUp(Key.LeftAlt) && !e.Handled)
                 marker.Count -= count;
@@ -133,12 +138,15 @@ namespace Octgn.Play.Gui
 
     public class MarkerEventArgs : RoutedEventArgs
     {
-        public readonly Marker Marker;
         public readonly ushort Count;
+        public readonly Marker Marker;
 
         public MarkerEventArgs(object source, Marker marker, ushort count)
             : base(MarkerControl.MarkerDroppedEvent, source)
-        { this.Marker = marker; this.Count = count; }
+        {
+            Marker = marker;
+            Count = count;
+        }
     }
 
     //internal class VisibilityConverter : IValueConverter

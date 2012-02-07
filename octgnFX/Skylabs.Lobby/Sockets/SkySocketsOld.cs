@@ -1,37 +1,72 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Net;
-using System.Diagnostics;
-using System.Collections.Concurrent;
 
 namespace Skylabs.Net
 {
-    public enum DisconnectReason { PingTimeout, RemoteHostDropped, CleanDisconnect, MalformedData };
+    public enum DisconnectReason
+    {
+        PingTimeout,
+        RemoteHostDropped,
+        CleanDisconnect,
+        MalformedData
+    };
 }
 
 namespace Skylabs.Net.Sockets
 {
     public class StateObject
     {
-        public TcpClient WorkSocket;
         // Size of receive buffer.
         public const int BufferSize = 256;
         // Receive buffer.
         public byte[] Buffer = new byte[BufferSize];
+        public TcpClient WorkSocket;
     }
 
     public abstract class SkySocketOld
     {
+        private readonly ConcurrentQueue<Action> DelegateQueue = new ConcurrentQueue<Action>();
+        private readonly object SocketLocker = new object();
+
+        private Timer DelegateTimer;
+
+        private List<byte> _buffer = new List<byte>();
+
+        private DisconnectReason _dr;
+        private DateTime _lastPingReceived;
+        private Thread _thread;
+
+        /// <summary>
+        /// Creates new SkySocket that isn't connected. You must call Connect to connect.
+        /// </summary>
+        protected SkySocketOld()
+        {
+            DelegateQueue = new ConcurrentQueue<Action>();
+            Connected = false;
+            Sock = null;
+            _buffer = new List<Byte>();
+            _thread = new Thread(Run);
+            DelegateTimer = new Timer(DelegateTimerTick, null, 5, 5);
+        }
+
+        /// <summary>
+        /// Creates new SkySocket using an already made connection.
+        /// </summary>
+        /// <param name="client">Connected TcpClient</param>
+        protected SkySocketOld(TcpClient client)
+        {
+            _Connect(client);
+        }
+
         /// <summary>
         /// Underlying TcpClient
         /// </summary>
         public TcpClient Sock { get; private set; }
-
-        private ConcurrentQueue<Action> DelegateQueue = new ConcurrentQueue<Action>();
-
-        private Timer DelegateTimer;
 
         public EndPoint RemoteEndPoint
         {
@@ -58,38 +93,6 @@ namespace Skylabs.Net.Sockets
         /// </summary>
         public bool Connected { get; private set; }
 
-        private List<byte> _buffer = new List<byte>();
-
-        private Thread _thread;
-
-        private DateTime _lastPingReceived;
-
-        private DisconnectReason _dr;
-
-        private object SocketLocker = new object();
-
-        /// <summary>
-        /// Creates new SkySocket that isn't connected. You must call Connect to connect.
-        /// </summary>
-        protected SkySocketOld()
-        {
-            DelegateQueue = new ConcurrentQueue<Action>();
-            Connected = false;
-            Sock = null;
-            _buffer = new List<Byte>();
-            _thread = new Thread(Run);
-            DelegateTimer = new Timer(DelegateTimerTick, null, 5, 5);
-        }
-
-        /// <summary>
-        /// Creates new SkySocket using an already made connection.
-        /// </summary>
-        /// <param name="client">Connected TcpClient</param>
-        protected SkySocketOld(TcpClient client)
-        {
-            _Connect(client);
-        }
-
         /// <summary>
         /// Connect to a remote host.
         /// </summary>
@@ -100,7 +103,7 @@ namespace Skylabs.Net.Sockets
         {
             if (!Connected)
             {
-                TcpClient c = new TcpClient();
+                var c = new TcpClient();
                 try
                 {
                     c.Connect(host, port);
@@ -114,6 +117,7 @@ namespace Skylabs.Net.Sockets
             }
             return false;
         }
+
         private void DelegateTimerTick(object state)
         {
             try
@@ -125,9 +129,10 @@ namespace Skylabs.Net.Sockets
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                if (Debugger.IsAttached) Debugger.Break();
             }
         }
+
         private void _Connect(TcpClient c)
         {
             lock (SocketLocker)
@@ -140,7 +145,6 @@ namespace Skylabs.Net.Sockets
                 _thread.Start();
                 Recieve();
             }
-
         }
 
         /// <summary>
@@ -179,8 +183,9 @@ namespace Skylabs.Net.Sockets
         {
             lock (SocketLocker)
             {
-                StateObject state = new StateObject { WorkSocket = Sock };
-                Sock.Client.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback, state);
+                var state = new StateObject {WorkSocket = Sock};
+                Sock.Client.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, ReceiveCallback,
+                                         state);
             }
         }
 
@@ -219,7 +224,7 @@ namespace Skylabs.Net.Sockets
             {
                 try
                 {
-                    StateObject state = (StateObject)ar.AsyncState;
+                    var state = (StateObject) ar.AsyncState;
                     TcpClient client = state.WorkSocket;
 
                     // Read data from the remote device.
@@ -230,7 +235,11 @@ namespace Skylabs.Net.Sockets
                         // There might be more data, so store the data received so far.
                         for (int i = 0; i < bytesRead; i++)
                             _buffer.Add(state.Buffer[i]);
-                        DelegateQueue.Enqueue(() => { HandleInput(); Recieve(); });
+                        DelegateQueue.Enqueue(() =>
+                                                  {
+                                                      HandleInput();
+                                                      Recieve();
+                                                  });
                     }
                     else
                     {
@@ -254,13 +263,13 @@ namespace Skylabs.Net.Sockets
             {
                 if (_buffer.Count > 8)
                 {
-                    byte[] mlength = new byte[8];
+                    var mlength = new byte[8];
                     _buffer.CopyTo(0, mlength, 0, 8);
                     long count = BitConverter.ToInt64(mlength, 0);
                     if (_buffer.Count >= count + 8)
                     {
-                        byte[] mdata = new byte[count];
-                        _buffer.CopyTo(8, mdata, 0, (int)count);
+                        var mdata = new byte[count];
+                        _buffer.CopyTo(8, mdata, 0, (int) count);
                         SocketMessage sm = null;
                         try
                         {
@@ -269,7 +278,7 @@ namespace Skylabs.Net.Sockets
                         catch (Exception)
                         {
 #if(DEBUG)
-                            if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                            if (Debugger.IsAttached) Debugger.Break();
 #endif
                             DelegateQueue.Enqueue(() => Close(DisconnectReason.MalformedData));
                         }
@@ -284,7 +293,7 @@ namespace Skylabs.Net.Sockets
                                 DelegateQueue.Enqueue(() => OnMessageReceived(sm));
                             }
                         }
-                        _buffer.RemoveRange(0, (int)count + 8);
+                        _buffer.RemoveRange(0, (int) count + 8);
                     }
                 }
             }
@@ -323,7 +332,7 @@ namespace Skylabs.Net.Sockets
                 }
                 catch (Exception)
                 {
-                    if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
             }
         }
