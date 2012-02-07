@@ -51,6 +51,21 @@ namespace Octgn.Networking
             Send(sb.ToString());
         }
 
+        public void IsAlternate(Card c, bool isAlternate)
+        {
+            StringBuilder sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+
+            writer.WriteStartElement("IsAlternate");
+            if (Program.Client.Muted != 0)
+                writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("cardid", c.Id.ToString());
+            writer.WriteElementString("isalternate", isAlternate.ToString());
+            writer.WriteEndElement();
+            writer.Close();
+            Send(sb.ToString());
+        }
+
         public void IsAlternateImage(Card c, bool isAlternateImage)
         {
             StringBuilder sb = new StringBuilder();

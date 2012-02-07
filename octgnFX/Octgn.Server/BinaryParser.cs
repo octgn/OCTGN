@@ -487,6 +487,13 @@ namespace Octgn.Server
                             handler.SetGlobalVariable(n, v);
                             break;
                         }
+                    case 90:
+                        {
+                            int arg0 = reader.ReadInt32();
+                            bool arg1 = reader.ReadBoolean();
+                            handler.IsAlternate(arg0, arg1);
+                            break;
+                        }
                     case 255:
                         {
                             handler.PingReceived();

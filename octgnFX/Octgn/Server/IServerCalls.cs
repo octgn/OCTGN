@@ -13,6 +13,8 @@ namespace Octgn.Server
     {
         void IsAlternateImage(Card c, bool isAlternateImage);
 
+        void IsAlternate(Card c, bool isAlternate);
+
         void Binary();
 
         void Error(string msg);

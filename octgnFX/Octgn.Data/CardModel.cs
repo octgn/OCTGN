@@ -8,6 +8,11 @@ namespace Octgn.Data
 {
     public class CardModel
     {
+        /*
+         *  The CardModel holds all the information the Set Definition gives to us. Access to the model itself
+         *  I would expect to be off limits.
+         * 
+         * */
         public static Uri GetPictureUri(Game game, Guid setId, string imageUri)
         {
             return new Uri(game.GetSet(setId).GetPackUri() + imageUri);

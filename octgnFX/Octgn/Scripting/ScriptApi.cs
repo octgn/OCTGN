@@ -141,11 +141,29 @@ namespace Octgn.Scripting
             return Tuple.Create(def.Width, def.Height);
         }
 
+        public bool IsAlternate(int id)
+        {
+            return Card.Find(id).IsAlternate;
+        }
         public bool IsAlternateImage(int id)
         {
             return Card.Find(id).IsAlternateImage;
         }
 
+        public void SwitchWithAlternate(int id)
+        {
+            //takes a card with id, and swaps it with the predefined "alternate" version of the card
+            //alternate may be considered the "back" of the card, or another card entirely - up to Game Definer.
+            Card c = Card.Find(id);
+            Guid alternateCard = (Guid)c.GetProperty("Alternate");
+            foreach (Card c in All
+            engine.Invoke(() => { c.IsAlternate = (c.IsAlternate != true); });
+ //           Data.CardModel newModel = new Data.CardModel c.GetProperty;
+ //           c.IsAlternate = !c.IsAlternate;
+ //           CardModel AlternateModel = 
+ //           c.SetModel(AlternateModel);
+
+        }
         public void SwitchImage(int id)
         {
             Card c = Card.Find(id);
@@ -157,6 +175,7 @@ namespace Octgn.Scripting
         { return Card.Find(id).Name; }
 
         public string CardModel(int id)
+        //Why is this public? I would expect the model to be private - (V)_V
         {
             var c = Card.Find(id);
             if (!c.FaceUp || c.Type.model == null) return null;

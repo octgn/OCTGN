@@ -47,13 +47,28 @@ namespace Octgn.Play
         private double _x, _y;
         private Player _target;
         private Color? _highlight;
-        private bool isAlternateImage = false;
+        private bool isAlternate = false;
+        private bool isAlternateImage =false;
         internal bool mayBeConsideredFaceUp;   /* For better responsiveness, turning a card face down is applied immediately,
 															   without waiting on the server.
 															   If a script tries to print the card's name, when the message arrives the card is already
 															   face down although it should still be up. */
 
         #endregion Private fields
+        public bool IsAlternate
+        {
+            get { return isAlternate; }
+            set
+            {
+                if (value != isAlternate)
+                {
+                    Program.Client.Rpc.IsAlternate(this, value);
+
+                    isAlternate = value;
+                    OnPropertyChanged("Card");
+                }
+            }
+        }
 
         public bool IsAlternateImage
         {
@@ -143,7 +158,8 @@ namespace Octgn.Play
                     // Clear peeking (if any)
                     PeekingPlayers.Clear();
                     //Switch back to original image.
-                    IsAlternateImage = false;
+                    IsAlternateImage = false; //This actually changes the image?
+                    IsAlternate = false;
                 }
             }
         }
@@ -376,6 +392,7 @@ namespace Octgn.Play
             definition = def;
             All.Add(id, this);
             isAlternateImage = false;
+            isAlternate = false;
         }
 
         internal void SetOrientation(CardOrientation value)

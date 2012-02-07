@@ -249,7 +249,7 @@ namespace Octgn
                 foreach (Data.Deck.Element element in section.Cards)
                 {
                     for (int i = 0; i < element.Quantity; i++)
-                    {
+                    { //for every card in the deck, generate a unique key for it, ID for it
                         ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | element.Card.Id.Condense();
                         int id = GenerateCardId();
                         ids[j] = id; keys[j] = Crypto.ModExp(key);

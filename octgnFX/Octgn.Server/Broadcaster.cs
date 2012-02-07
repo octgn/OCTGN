@@ -125,6 +125,14 @@ namespace Octgn.Server
             Send();
         }
 
+        public void IsAlternate(int c, bool isAlternate)
+        {
+            if (xml != null)
+                xml.IsAlternate(c, isAlternate);
+            if (bin != null)
+                bin.IsAlternate(c, isAlternate);
+            Send();
+        }
         public void IsAlternateImage(int c, bool isaltertnate)
         {
             if (xml != null)
