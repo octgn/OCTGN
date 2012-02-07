@@ -291,6 +291,7 @@ namespace Skylabs.Lobby
         /// Login here
         /// </summary>
         /// <param name="onFinish">Delegate for when Login is done.</param>
+        /// <param name="onUpdate"> </param>
         /// <param name="email">Users e-mail address</param>
         /// <param name="password">Password</param>
         /// <param name="captcha">Captcha string if required</param>
@@ -356,6 +357,7 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Whenever a SkySocket gets a message, it goes here for processing.
         /// </summary>
+        /// <param name="ss">SkySocket </param>
         /// <param name="sm">SocketMessage</param>
         private void OnMessageReceived(SkySocket ss, SocketMessage sm)
         {

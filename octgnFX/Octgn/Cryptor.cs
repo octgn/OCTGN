@@ -68,16 +68,11 @@ namespace Octgn
             }
         }
 
-        /// <summary>
-        /// Decrypts a string that has been encrypted using Encrypt function
-        /// </summary>
-        /// <param name="cipherText">The string to decrypt</param>
-        /// <param name="Password">The password to decrypt the string with</param>
-        /// <returns>A decrypted string or jibberish if the password was wrong</returns>
-        public static string Decrypt(string EncryptedText, string Key)
+
+        public static string Decrypt(string EncryptedText, string key)
         {
             byte[] cryptedBytes = Convert.FromBase64String(EncryptedText);
-            var pdb = new PasswordDeriveBytes(Key,
+            var pdb = new PasswordDeriveBytes(key,
                                               new byte[]
                                                   {
                                                       0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65,

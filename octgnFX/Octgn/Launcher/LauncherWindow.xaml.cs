@@ -70,7 +70,7 @@ namespace Octgn.Launcher
                                   var page = Content as Page;
                                   if (page == null) return;
 
-                                  if (clientWidth == 0)
+                                  if (Math.Abs(clientWidth - 0) < double.Epsilon)
                                   {
                                       clientWidth = page.ActualWidth;
                                       bordersHeight = ActualHeight - page.ActualHeight;

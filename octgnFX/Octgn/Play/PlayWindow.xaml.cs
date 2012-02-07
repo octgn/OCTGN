@@ -126,14 +126,17 @@ namespace Octgn.Play
                                                                           return "{" + placeholder++ + "}";
                                                                       }
                                                                   }
-                                                                  Group group =
-                                                                      player.IndexedGroups.FirstOrDefault(
-                                                                          g => g.Name == name);
-                                                                  if (group != null)
+                                                                  if (player != null)
                                                                   {
-                                                                      multi.Bindings.Add(new Binding("Count")
-                                                                                             {Source = group.Cards});
-                                                                      return "{" + placeholder++ + "}";
+                                                                      Group group =
+                                                                          player.IndexedGroups.FirstOrDefault(
+                                                                              g => g.Name == name);
+                                                                      if (@group != null)
+                                                                      {
+                                                                          multi.Bindings.Add(new Binding("Count")
+                                                                                                 {Source = @group.Cards});
+                                                                          return "{" + placeholder++ + "}";
+                                                                      }
                                                                   }
                                                                   return "?";
                                                               });

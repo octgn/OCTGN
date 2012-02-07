@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Octgn.Data.Properties;
 
 namespace Octgn.Server
 {
@@ -357,7 +358,7 @@ namespace Octgn.Server
                 // Lock the disposed field
                 lock (this)
                 {
-                    Console.WriteLine("Client Disconnected.");
+                    Console.WriteLine(Resource1.Connection_Disconnect_Client_Disconnected_);
                     // Quit if this client is already disposed
                     if (disposed) return;
                     // Mark as disposed

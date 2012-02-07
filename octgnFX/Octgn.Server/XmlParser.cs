@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Xml;
+using Octgn.Data.Properties;
 
 namespace Octgn.Server
 {
@@ -510,7 +511,7 @@ namespace Octgn.Server
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Parse error in xmlparser: " + ex.StackTrace);
+                Console.WriteLine(Resource1.XmlParser_Parse_Parse_error_in_xmlparser__ + ex.StackTrace);
             }
             finally
             {

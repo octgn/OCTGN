@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Octgn.Data.Properties;
 
 namespace Octgn.Server
 {
@@ -502,7 +503,7 @@ namespace Octgn.Server
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Parse error in binaryparser: " + ex.StackTrace);
+                Console.WriteLine(Resource1.BinaryParser_Parse_Parse_error_in_binaryparser__ + ex.StackTrace);
             }
             finally
             {

@@ -61,6 +61,24 @@ namespace Octgn.Data.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parse error in binaryparser: .
+        /// </summary>
+        public static string BinaryParser_Parse_Parse_error_in_binaryparser__ {
+            get {
+                return ResourceManager.GetString("BinaryParser_Parse_Parse_error_in_binaryparser__", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Client Disconnected..
+        /// </summary>
+        public static string Connection_Disconnect_Client_Disconnected_ {
+            get {
+                return ResourceManager.GetString("Connection_Disconnect_Client_Disconnected_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to begin transaction;
         ///
         ///CREATE TABLE [dbinfo] (
@@ -97,6 +115,15 @@ namespace Octgn.Data.Properties {
         public static string UpdateDatabase {
             get {
                 return ResourceManager.GetString("UpdateDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parse error in xmlparser: .
+        /// </summary>
+        public static string XmlParser_Parse_Parse_error_in_xmlparser__ {
+            get {
+                return ResourceManager.GetString("XmlParser_Parse_Parse_error_in_xmlparser__", resourceCulture);
             }
         }
     }

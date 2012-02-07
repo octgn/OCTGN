@@ -596,7 +596,7 @@ namespace Mono.Options
 
         private OptionValueType ParsePrototype()
         {
-            char type = '\0';
+            char c = '\0';
             var seps = new List<string>();
             for (int i = 0; i < names.Length; ++i)
             {
@@ -608,16 +608,16 @@ namespace Mono.Options
                 if (end == -1)
                     continue;
                 names[i] = name.Substring(0, end);
-                if (type == '\0' || type == name[end])
-                    type = name[end];
+                if (c == '\0' || c == name[end])
+                    c = name[end];
                 else
                     throw new ArgumentException(
-                        string.Format("Conflicting option types: '{0}' vs. '{1}'.", type, name[end]),
+                        string.Format("Conflicting option types: '{0}' vs. '{1}'.", c, name[end]),
                         "prototype");
                 AddSeparators(name, end, seps);
             }
 
-            if (type == '\0')
+            if (c == '\0')
                 return OptionValueType.None;
 
             if (count <= 1 && seps.Count != 0)
@@ -634,7 +634,7 @@ namespace Mono.Options
                     separators = seps.ToArray();
             }
 
-            return type == '=' ? OptionValueType.Required : OptionValueType.Optional;
+            return c == '=' ? OptionValueType.Required : OptionValueType.Optional;
         }
 
         private static void AddSeparators(string name, int end, ICollection<string> seps)
@@ -1062,7 +1062,7 @@ namespace Mono.Options
             }
             c.OptionValues.Add(argument);
             c.Option = def;
-            c.Option.Invoke(c);
+            if (c.Option != null) c.Option.Invoke(c);
         }
 
         protected bool GetOptionParts(string argument, out string flag, out string name, out string sep,
@@ -1122,7 +1122,7 @@ namespace Mono.Options
             if (ParseBool(argument, n, c))
                 return true;
             // is it a bundled option?
-            if (ParseBundledValue(f, string.Concat(n + s + v), c))
+            if (ParseBundledValue(f, string.Concat(string.Format("{0}{1}{2}", n, s, v)), c))
                 return true;
 
             return false;

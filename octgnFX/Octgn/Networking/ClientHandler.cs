@@ -512,9 +512,6 @@ namespace Octgn.Networking
             }
         }
 
-        /// <summary>Reveal a card's identity to one player only.</summary>
-        /// <param name="card">The card, whose identity is revealed.</param>
-        /// <param name="encrypted">Either a ulong[2] containing an encrypted aliased CardIdentity id. Or a ulong[5] containing an encrypted CardModel guid.</param>
         public void RevealTo(Player[] players, Card card, ulong[] encrypted)
         {
             CardIdentity oldType = card.Type;
@@ -839,7 +836,7 @@ namespace Octgn.Networking
                 return;
             }
             // If all cards are now revealed, one can proceed to shuffling
-            if (g.WantToShuffle)
+            if (g != null && g.WantToShuffle)
             {
                 bool done = false;
                 for (int i = 0; !done && i < g.Count; i++)

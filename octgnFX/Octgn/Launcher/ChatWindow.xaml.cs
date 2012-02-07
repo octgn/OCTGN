@@ -133,14 +133,14 @@ namespace Octgn.Launcher
             //get the vertical size of the visible content area
             double dExtent = richTextBox1.ExtentHeight;
 
-            if (dVer == 0 && dViewport < dExtent)
+            if (Math.Abs(dVer - 0) < double.Epsilon && dViewport < dExtent)
             {
                 rtbatbottom = true;
             }
 
-            if (dVer != 0)
+            if (Math.Abs(dVer - 0) > double.Epsilon)
             {
-                if (dVer + dViewport == dExtent)
+                if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
                 {
                     rtbatbottom = true;
                     justScrolledToBottom = false;

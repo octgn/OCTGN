@@ -204,7 +204,7 @@ namespace Octgn.Play.Gui
                         pt.X += delta;
                         pt.Y += delta;
                     }
-                    else if (cardCtrl.IsInverted && !newPosInverted)
+                    else if (cardCtrl != null && (cardCtrl.IsInverted && !newPosInverted))
                     {
                         pt.X -= delta;
                         pt.Y -= delta;

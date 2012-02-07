@@ -83,7 +83,7 @@ namespace Octgn.Launcher
             SystemTrayIcon.Icon = new Icon("Resources/Icon.ico");
             SystemTrayIcon.Visible = false;
             SystemTrayIcon.ContextMenu = cm;
-            SystemTrayIcon.Text = "Octgn";
+            SystemTrayIcon.Text = Properties.Resources.Main_Main_Octgn;
             SystemTrayIcon.DoubleClick += SystemTrayIcon_DoubleClick;
             // Insert code required on object creation below this point.
         }

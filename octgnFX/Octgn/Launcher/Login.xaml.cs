@@ -86,7 +86,7 @@ namespace Octgn.Launcher
         private void HandleAnimationTick(object sender, EventArgs e)
         {
             SpinnerRotate.Angle = (SpinnerRotate.Angle + 10)%360;
-            if (SpinnerRotate.Angle == 0 && bSpin == false)
+            if (Math.Abs(SpinnerRotate.Angle - 0) < double.Epsilon && bSpin == false)
                 animationTimer.Stop();
         }
 

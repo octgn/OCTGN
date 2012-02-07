@@ -23,7 +23,7 @@ namespace Skylabs.ConsoleHelper
         {
             get
             {
-                if (Exception.Message != null)
+                if (Exception != null)
                     return Exception.Message;
                 return "No Exception Message Data.";
             }
