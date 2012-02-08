@@ -366,8 +366,7 @@ namespace Octgn.Launcher
             if (cbSavePassword.IsChecked == true)
             {
                 cbSavePassword.IsChecked = false;
-                Settings.Default.Password = "";
-                Settings.Default.Save();
+                SimpleConfig.WriteValue("Password", "");
             }
         }
 
@@ -380,8 +379,7 @@ namespace Octgn.Launcher
             else if (cbSavePassword.IsChecked == true)
             {
                 cbSavePassword.IsChecked = false;
-                Settings.Default.Password = "";
-                Settings.Default.Save();
+                SimpleConfig.WriteValue("Password", "");
             }
         }
 

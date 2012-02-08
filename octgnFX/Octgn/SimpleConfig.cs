@@ -43,6 +43,16 @@ namespace Octgn
             return null;
         }
 
+        public static string ReadValue(string valName, string d)
+        {
+            var r = ReadValue(valName);
+            if (r == null)
+            {
+                return d;
+            }
+            return r;
+        }
+
         /// <summary>
         ///   Writes a string value to the OCTGN registry
         /// </summary>

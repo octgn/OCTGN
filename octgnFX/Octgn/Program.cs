@@ -113,9 +113,8 @@ namespace Octgn
                 if (LauncherWindow != null && LauncherWindow.IsLoaded)
                 {
                     _locationUpdating = true;
-                    Settings.Default.LoginLeftLoc = LauncherWindow.Left;
-                    Settings.Default.LoginTopLoc = LauncherWindow.Top;
-                    Settings.Default.Save();
+                    SimpleConfig.WriteValue("LoginLeftLoc", LauncherWindow.Left.ToString());
+                    SimpleConfig.WriteValue("LoginTopLoc", LauncherWindow.Top.ToString());
                     _locationUpdating = false;
                 }
             }

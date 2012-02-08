@@ -26,9 +26,6 @@ namespace Octgn
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            Updates.UpgradeSettings();
-
-            Updates.PerformHouskeeping();
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
             Program.GamesRepository = new GamesRepository();

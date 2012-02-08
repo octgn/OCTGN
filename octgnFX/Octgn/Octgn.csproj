@@ -629,7 +629,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Updates.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
