@@ -13,7 +13,7 @@ namespace Octgn.Server
         #region Statics
 
         private const string ServerName = "OCTGN.NET";
-        private static Version _serverVersion = GetServerVersion(); //unused
+        private static Version ServerVersion = GetServerVersion(); //unused
 
         private static Version GetServerVersion()
         {
@@ -202,9 +202,9 @@ namespace Octgn.Server
 #if !DEBUG
             if(clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor)
             {
-                XmlSenderStub rpc = new XmlSenderStub(sender, this);
+                XmlSenderStub rpc = new XmlSenderStub(_sender, this);
                 rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.", ServerVersion.ToString(2)));
-                try { sender.Client.Close(); sender.Close(); }
+                try { _sender.Client.Close(); _sender.Close(); }
                 catch { }
                 return;
             }

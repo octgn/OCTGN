@@ -49,7 +49,9 @@ namespace Octgn
         internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
         internal static Inline LastChatTrace;
 
+#if(DEBUG)
         private static Process _lobbyServerProcess;
+#endif
         private static bool _locationUpdating;
 
 #if(TestServer)
@@ -152,6 +154,8 @@ namespace Octgn
             catch (Exception)
             {
             }
+
+#if(DEBUG)
             if (_lobbyServerProcess != null)
             {
                 try
@@ -162,6 +166,7 @@ namespace Octgn
                 {
                 }
             }
+#endif
             Application.Current.Shutdown(0);
         }
 
