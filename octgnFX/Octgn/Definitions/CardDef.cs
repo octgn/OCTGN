@@ -51,7 +51,7 @@ namespace Octgn.Definitions
                            Width = xml.Attr<int>("width"),
                            Height = xml.Attr<int>("height"),
                            CornerRadius = xml.Attr<int>("cornerRadius"),
-                           Properties = xml.Elements(Defs.xmlnsOctgn + "property")
+                           Properties = xml.Elements(Defs.XmlnsOctgn + "property")
                                .Select(x => PropertyDef.LoadFromXml(x))
                                .ToDictionary(x => x.Name)
                        };

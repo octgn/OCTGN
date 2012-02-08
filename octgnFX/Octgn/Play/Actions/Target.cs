@@ -11,10 +11,10 @@ namespace Octgn.Play.Actions
 
         public Target(Player who, Card fromCard, Card toCard, bool doTarget)
         {
-            this.Who = who;
-            this.FromCard = fromCard;
-            this.ToCard = toCard;
-            this.DoTarget = doTarget;
+            Who = who;
+            FromCard = fromCard;
+            ToCard = toCard;
+            DoTarget = doTarget;
         }
 
         internal static event EventHandler CreatingArrow;

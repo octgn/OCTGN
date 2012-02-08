@@ -19,7 +19,7 @@ namespace Octgn.Play.Gui
         public ArrowAdorner(Player player, UIElement adornedElement)
             : base(adornedElement)
         {
-            this._player = player;
+            _player = player;
             IsHitTestVisible = false;
 
             UpdateStartPoint(this, EventArgs.Empty);

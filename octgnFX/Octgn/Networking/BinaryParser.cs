@@ -12,7 +12,7 @@ namespace Octgn.Networking
 
         public BinaryParser(Handler handler)
         {
-            this._handler = handler;
+            _handler = handler;
         }
 
         public void Parse(byte[] data)

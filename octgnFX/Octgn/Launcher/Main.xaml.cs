@@ -458,17 +458,15 @@ namespace Octgn.Launcher
                 IPAddress ip = ad[0];
 #endif
 
-            if (ad.Length > 0)
+            if (ad.Length <= 0) return;
+            try
             {
-                try
-                {
-                    if (hg != null) Program.Client = new Client(ip, hg.Port);
-                    Program.Client.Connect();
-                    Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
-                }
-                catch (Exception)
-                {
-                }
+                if (hg != null) Program.Client = new Client(ip, hg.Port);
+                Program.Client.Connect();
+                Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
+            }
+            catch (Exception)
+            {
             }
         }
 

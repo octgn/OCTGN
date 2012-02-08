@@ -90,7 +90,7 @@ namespace Octgn.Definitions
 
         private static GameDef LoadFromXml(XElement xml, PackagePart part)
         {
-            if (xml.Name != Defs.xmlnsOctgn + "game")
+            if (xml.Name != Defs.XmlnsOctgn + "game")
                 throw new InvalidFormatException("The root document element must be <game>.");
 
             return new GameDef

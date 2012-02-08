@@ -16,24 +16,24 @@ namespace Octgn.Play.Actions
 
         public MoveCard(Player who, Card card, Group to, int idx, bool faceUp)
         {
-            this.Who = who;
-            this.Card = card;
-            this.To = to;
+            Who = who;
+            Card = card;
+            To = to;
             From = card.Group;
-            this.Idx = idx;
-            this.FaceUp = faceUp;
+            Idx = idx;
+            FaceUp = faceUp;
         }
 
         public MoveCard(Player who, Card card, int x, int y, int idx, bool faceUp)
         {
-            this.Who = who;
-            this.Card = card;
+            Who = who;
+            Card = card;
             To = Program.Game.Table;
             From = card.Group;
-            this.X = x;
-            this.Y = y;
-            this.Idx = idx;
-            this.FaceUp = faceUp;
+            X = x;
+            Y = y;
+            Idx = idx;
+            FaceUp = faceUp;
         }
 
         internal static event EventHandler Done;

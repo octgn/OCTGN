@@ -47,8 +47,8 @@ namespace Octgn.Networking
         public Client(IPAddress address, int port)
         {
             // Init fields
-            this._port = port;
-            this._address = address;
+            _port = port;
+            _address = address;
             _tcp = new TcpClient(address.AddressFamily);
             _handler = new Handler();
             _xmlHandler = _handler.ReceiveMessage;
