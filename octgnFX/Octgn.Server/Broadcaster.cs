@@ -563,15 +563,6 @@ namespace Octgn.Server
                 }
         }
 
-        public void IsAlternateImage(int c, bool isaltertnate)
-        {
-            if (xml != null)
-                xml.IsAlternateImage(c, isaltertnate);
-            if (bin != null)
-                bin.IsAlternateImage(c, isaltertnate);
-            Send();
-        }
-
         public void PlayerSetGlobalVariable(byte from, byte p, string n, string v)
         {
             if (xml != null)
