@@ -373,10 +373,10 @@ namespace Mono.Options
             _description = description;
             _count = maxValueCount;
             _names = (this is OptionSet.Category)
-                    // append GetHashCode() so that "duplicate" categories have distinct
-                    // names, e.g. adding multiple "" categories should be valid.
-                        ? new[] {prototype + GetHashCode()}
-                        : prototype.Split('|');
+                     // append GetHashCode() so that "duplicate" categories have distinct
+                     // names, e.g. adding multiple "" categories should be valid.
+                         ? new[] {prototype + GetHashCode()}
+                         : prototype.Split('|');
 
             if (this is OptionSet.Category)
                 return;
@@ -703,12 +703,12 @@ namespace Mono.Options
         private const int DescriptionFirstWidth = 80 - OptionWidth;
         private const int DescriptionRemWidth = 80 - OptionWidth - 2;
 
-        private readonly Regex _valueOption = new Regex(
-            @"^(?<flag>--|-|/)(?<name>[^:=]+)((?<sep>[:=])(?<value>.*))?$");
-
         private readonly Converter<string, string> _localizer;
         private readonly ReadOnlyCollection<ArgumentSource> _roSources;
         private readonly List<ArgumentSource> _sources = new List<ArgumentSource>();
+
+        private readonly Regex _valueOption = new Regex(
+            @"^(?<flag>--|-|/)(?<name>[^:=]+)((?<sep>[:=])(?<value>.*))?$");
 
         public OptionSet()
             : this(delegate(string f) { return f; })

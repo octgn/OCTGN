@@ -33,9 +33,9 @@ namespace Octgn.Controls
         private bool _dragHasLeftScope;
         private Window _dragdropWindow;
         private AdornerLayer _layer;
-        private Point _startPoint;
 
         private User _mUser = new User();
+        private Point _startPoint;
 
         public FriendListItem()
         {

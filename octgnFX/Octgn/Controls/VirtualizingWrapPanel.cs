@@ -396,10 +396,10 @@ namespace Octgn.Controls
         {
             _scrollAnimation = new DoubleAnimation {Duration = SmoothScrollDuration, DecelerationRatio = 0.5};
             _scrollAnimation.Completed += delegate
-                                             {
-                                                 _scrollAnimation = null;
-                                                 _scrollDirection = 0;
-                                             };
+                                              {
+                                                  _scrollAnimation = null;
+                                                  _scrollDirection = 0;
+                                              };
         }
 
         #endregion

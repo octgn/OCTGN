@@ -13,15 +13,14 @@ namespace Octgn.Server
     {
         #region Private fields
 
-        private readonly Thread _connectionChecker;
         private readonly List<Connection> _clients = new List<Connection>(); // List of all the connected clients		
+        private readonly Thread _connectionChecker;
         private readonly Handler _handler; // Message handler
         private readonly TcpListener _tcp; // Underlying windows socket
 
-        private Thread _serverThread;
-
         private Timer _checkConnectionDrops;
         private bool _closed;
+        private Thread _serverThread;
         public event EventHandler OnStop;
 
         #endregion
@@ -183,12 +182,12 @@ namespace Octgn.Server
 
         public class Connection
         {
-            private readonly Thread _pingThread;
-            private readonly byte[] _buffer = new byte[512]; // Buffer to receive data
             internal readonly TcpClient Client; // The underlying Windows socket            
+            private readonly byte[] _buffer = new byte[512]; // Buffer to receive data
+            private readonly Thread _pingThread;
             private readonly Server _server; // The containing server
-            private bool _binary; // Receives Binary data ?
             public bool Disposed; // Indicates if the connection has already been disposed
+            private bool _binary; // Receives Binary data ?
             private DateTime _lastPing = DateTime.Now;
             private byte[] _packet = new byte[512]; // Buffer where received data is processed in packets
             private int _packetPos; // Current position in the packet buffer

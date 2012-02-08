@@ -11,7 +11,7 @@ namespace Octgn.DeckBuilder
         public SetPropertyDef(IEnumerable<Set> allSets)
             : base("Set", 0)
         {
-            this._allSets = allSets.OrderBy(s => s.Name).ToList();
+            _allSets = allSets.OrderBy(s => s.Name).ToList();
         }
 
         public IList<Set> Sets

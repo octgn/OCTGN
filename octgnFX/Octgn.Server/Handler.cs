@@ -34,8 +34,8 @@ namespace Octgn.Server
         private readonly Dictionary<byte, PlayerInfo> _players = new Dictionary<byte, PlayerInfo>();
         private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
         private readonly XmlParser _xmlParser; // Parser for xml messages
-        private Server.Connection _connection;
         private bool _acceptPlayers = true; // When false, no new players are accepted
+        private Server.Connection _connection;
         private byte _playerId = 1; // Next free player id
         private TcpClient _sender; // Socket on which current message was received
         private int _turnNumber; // Turn number, used to validate TurnStop requests

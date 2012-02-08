@@ -11,7 +11,7 @@ using Octgn.Data;
 
 namespace Octgn.Play.Gui
 {
-    partial class ChatControl
+    internal partial class ChatControl
     {
         public ChatControl()
         {

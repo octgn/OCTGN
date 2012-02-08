@@ -5,7 +5,7 @@ using System.Windows.Media.Animation;
 
 namespace Octgn.Play.Gui
 {
-    partial class PileControl
+    internal partial class PileControl
     {
         private static readonly DoubleAnimation anim = new DoubleAnimation
                                                            {

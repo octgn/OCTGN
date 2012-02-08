@@ -387,7 +387,7 @@ namespace Octgn.Play
         private void ShowRules(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            var wnd = new RulesWindow() { Owner = this };
+            var wnd = new RulesWindow {Owner = this};
             wnd.ShowDialog();
         }
 
@@ -440,9 +440,7 @@ namespace Octgn.Play
             HideBackstage();
         }
 
-
-    #endregion
-
+        #endregion
     }
 
     internal class CanPlayConverter : IMultiValueConverter

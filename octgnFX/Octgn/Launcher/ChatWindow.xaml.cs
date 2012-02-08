@@ -18,8 +18,8 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class ChatWindow
     {
-        private bool _realClose;
         private Boolean _justScrolledToBottom;
+        private bool _realClose;
 
         public ChatWindow(long id)
         {

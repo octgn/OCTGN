@@ -17,9 +17,9 @@ namespace Octgn.Data
         internal string BasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                                                 "Octgn");
 
-        private IList<PropertyDef> _cacheCustomProperties;
         public SQLiteConnection Dbc;
         public GamesRepository Repository;
+        private IList<PropertyDef> _cacheCustomProperties;
 
         public Guid Id { get; set; }
         public string Name { get; set; }

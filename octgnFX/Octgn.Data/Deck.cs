@@ -213,9 +213,9 @@ namespace Octgn.Data
 
         public class Element : INotifyPropertyChanged
         {
+            internal string LoadedId, LoadedName;
             private CardModel _card;
             private byte _quantity = 1;
-            internal string LoadedId, LoadedName;
 
             public CardModel Card
             {

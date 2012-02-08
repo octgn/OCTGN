@@ -18,9 +18,9 @@ namespace Octgn.DeckBuilder
     public partial class DeckBuilderWindow : INotifyPropertyChanged
     {
         private Deck _deck;
+        private string _deckFilename;
         private Data.Game _game;
         private Deck.Section _section;
-        private string _deckFilename;
         private bool _unsaved;
 
         public DeckBuilderWindow()

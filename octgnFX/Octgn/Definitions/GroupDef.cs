@@ -9,12 +9,12 @@ namespace Octgn.Definitions
     public class GroupDef
     {
         // TODO: Make these private
+        public BaseActionDef[] CardActions;
+        public BaseActionDef[] GroupActions;
         public string background;
         public string board;
         public string icon;
 
-        public BaseActionDef[] CardActions;
-        public BaseActionDef[] GroupActions;
         public byte Id { get; private set; }
         public string Name { get; private set; }
 

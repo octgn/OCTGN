@@ -16,7 +16,7 @@ using Octgn.Play.Actions;
 
 namespace Octgn.Play.Gui
 {
-    partial class TableControl
+    internal partial class TableControl
     {
         private readonly int _defaultHeight;
         private readonly int _defaultWidth;
