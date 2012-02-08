@@ -74,7 +74,7 @@ namespace Octgn.Data
                 using (SQLiteCommand com = dbc.CreateCommand())
                 {
                     com.CommandText =
-                        "PRAGMA locking_mode=EXCLUSIVE; PRAGMA automatic_index=FALSE; PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA encoding='UTF-8';";
+                        "PRAGMA automatic_index=FALSE; PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA encoding='UTF-8';";
                     com.ExecuteScalar();
                 }
                 IsDatabaseOpen = true;
@@ -632,46 +632,45 @@ namespace Octgn.Data
             bool wasdbopen = IsDatabaseOpen;
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
-            var ret = new DataTable();
+            var cards = new DataTable();
+            var customProperties = new DataTable();
             using (SQLiteCommand com = dbc.CreateCommand())
             {
                 com.CommandText =
                     "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE game_id=@game_id;";
                 com.Parameters.AddWithValue("@game_id", Id.ToString());
-                ret.Load(com.ExecuteReader());
+                cards.Load(com.ExecuteReader());
+
+                com.CommandText =
+                    "SELECT * FROM [custom_properties] WHERE [game_id]=@game_id";
+                com.Parameters.AddWithValue("@game_id", Id.ToString());
+                customProperties.Load(com.ExecuteReader());
             }
             foreach (PropertyDef d in CustomProperties)
             {
-                ret.Columns.Add(d.Name);
+                cards.Columns.Add(d.Name);
             }
+
             int i = 0;
-            foreach (DataRow r in ret.Rows)
+            foreach (DataRow card in cards.Rows)
             {
-                var cid = r["id"] as string;
-                using (SQLiteCommand com = dbc.CreateCommand())
+                DataRow[] props = customProperties.Select("card_real_id = " + card["real_id"]);
+                foreach (DataRow prop in props)
                 {
-                    com.CommandText =
-                        "SELECT * FROM [custom_properties] WHERE [card_real_id]=(SELECT real_id FROM cards WHERE id = @cid LIMIT 1)";
-                    com.Parameters.AddWithValue("@cid", cid);
-                    using (SQLiteDataReader dr = com.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                            var cname = dr["name"] as string;
-                            if (!ret.Columns.Contains(cname))
-                                continue;
-                            var t = (int) ((long) dr["type"]);
-                            if (t == 0)
-                                ret.Rows[i][cname] = dr["vstr"] as string;
-                            else if (t == 1)
-                                ret.Rows[i][cname] = (int) ((long) dr["vint"]);
-                            else
-                                ret.Rows[i][cname] = dr["vstr"] as string;
-                        }
-                    }
+                        var cname = prop["name"] as string;
+                        if (!cards.Columns.Contains(cname))
+                            continue;
+                        var t = (int)((long)prop["type"]);
+                        if (t == 0)
+                            cards.Rows[i][cname] = prop["vstr"] as string;
+                        else if (t == 1)
+                            cards.Rows[i][cname] = (int)((long)prop["vint"]);
+                        else
+                            cards.Rows[i][cname] = prop["vstr"] as string;
                 }
                 i++;
             }
+
             //Now apply the search query to it
             var sb = new StringBuilder();
             if (conditions != null && conditions.Length > 0)
@@ -685,22 +684,22 @@ namespace Octgn.Data
                     sb.Append(")");
                     connector = " AND ";
                 }
-                ret.CaseSensitive = false;
+                cards.CaseSensitive = false;
 
-                DataTable dtnw = ret.Clone();
+                DataTable dtnw = cards.Clone();
                 dtnw.Rows.Clear();
 
-                DataRow[] rows = ret.Select(sb.ToString());
+                DataRow[] rows = cards.Select(sb.ToString());
 
                 foreach (DataRow r in rows)
                     dtnw.ImportRow(r);
 
-                ret.Rows.Clear();
-                ret = dtnw;
+                cards.Rows.Clear();
+                cards = dtnw;
             }
             if (!wasdbopen)
                 CloseDatabase();
-            return ret;
+            return cards;
         }
 
         public IEnumerable<CardModel> SelectCardModels(params string[] conditions)
