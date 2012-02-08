@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -12,7 +11,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for FriendListItem.xaml
     /// </summary>
-    public partial class HostedGameListItem : UserControl
+    public partial class HostedGameListItem
     {
         public static DependencyProperty GameNameProperty = DependencyProperty.Register(
             "GameName", typeof (string), typeof (HostedGameListItem));

@@ -17,7 +17,7 @@ using Octgn.Scripting;
 
 namespace Octgn.Play.Gui
 {
-    public partial class CardControl : UserControl
+    public partial class CardControl
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
@@ -587,7 +587,7 @@ namespace Octgn.Play.Gui
 
             // Starts the drag-and-drop            
             scaleFactor = TransformToAncestor(mainWin).TransformBounds(new Rect(0, 0, 1, 1)).Size;
-            bool rot90 = (Card.Orientation & CardOrientation.Rot90) != 0;
+            //bool rot90 = (Card.Orientation & CardOrientation.Rot90) != 0;
             mouseOffset =
                 new Vector(mousePt.X*Program.Game.Definition.CardDefinition.Width/ActualWidth,
                            mousePt.Y*Program.Game.Definition.CardDefinition.Height/ActualHeight);

@@ -6,7 +6,7 @@ using System.Windows.Media.Animation;
 
 namespace Octgn.Script
 {
-    public partial class InputDlg : Window
+    public partial class InputDlg
     {
         private int intResult;
         private Kind kind;

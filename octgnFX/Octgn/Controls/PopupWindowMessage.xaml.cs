@@ -9,7 +9,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for PopupWindowMessage.xaml
     /// </summary>
-    public partial class PopupWindowMessage : UserControl
+    public partial class PopupWindowMessage
     {
         #region Delegates
 

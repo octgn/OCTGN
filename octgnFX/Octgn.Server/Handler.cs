@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
-using System.Reflection;
 using Octgn.Data;
 
 namespace Octgn.Server
@@ -15,13 +14,14 @@ namespace Octgn.Server
         private const string ServerName = "OCTGN.NET";
         //private static Version ServerVersion = GetServerVersion(); //unused
 
+        /*
         private static Version GetServerVersion()
         {
             Assembly asm = typeof (Server).Assembly;
             //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0]; //unused
             return asm.GetName().Version;
         }
-
+        */
         #endregion Statics
 
         #region Private fields

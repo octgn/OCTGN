@@ -31,12 +31,13 @@ namespace Octgn
         public static string Encrypt(string Text, string Key)
         {
             byte[] Bytes = Encoding.Unicode.GetBytes(Text);
-            var pdb = new PasswordDeriveBytes(Key,
+            var pdb = new Rfc2898DeriveBytes(Key,
                                               new byte[]
                                                   {
                                                       0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d,
                                                       0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
                                                   });
+            
             byte[] encryptedData = Encrypt(Bytes, pdb.GetBytes(16), pdb.GetBytes(8));
             return Convert.ToBase64String(encryptedData);
         }
@@ -72,7 +73,7 @@ namespace Octgn
         public static string Decrypt(string EncryptedText, string key)
         {
             byte[] cryptedBytes = Convert.FromBase64String(EncryptedText);
-            var pdb = new PasswordDeriveBytes(key,
+            var pdb = new Rfc2898DeriveBytes(key,
                                               new byte[]
                                                   {
                                                       0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65,

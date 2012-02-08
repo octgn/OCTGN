@@ -385,8 +385,8 @@ namespace Octgn.Networking
                 return;
             }
             // Find the old position on the table, if any
-            bool onTable = card.Group == table;
-            double oldX = card.X, oldY = card.Y;
+            //bool onTable = card.Group == table;
+            //double oldX = card.X, oldY = card.Y;
             // Do the move
             new MoveCard(player, card, x, y, idx, faceUp).Do();
         }

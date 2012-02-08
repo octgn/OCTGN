@@ -6,7 +6,7 @@ using System.Windows.Media.Animation;
 
 namespace Octgn.Play.Gui
 {
-    public partial class PileCollapsedControl : PileBaseControl
+    public partial class PileCollapsedControl
     {
         public PileCollapsedControl()
         {

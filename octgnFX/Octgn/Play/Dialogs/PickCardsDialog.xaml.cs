@@ -16,7 +16,7 @@ using Octgn.Play.Gui;
 
 namespace Octgn.Play.Dialogs
 {
-    public partial class PickCardsDialog : UserControl
+    public partial class PickCardsDialog
     {
         public PickCardsDialog()
         {

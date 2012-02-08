@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -16,7 +17,6 @@ using Microsoft.Windows.Controls.Ribbon;
 using Octgn.DeckBuilder;
 using Octgn.Definitions;
 using Octgn.Networking;
-using Octgn.Properties;
 using Skylabs.Lobby;
 using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
@@ -30,7 +30,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for Main.xaml
     /// </summary>
-    public partial class Main : RibbonWindow
+    public partial class Main
     {
         public static readonly DependencyProperty IsHideLoginNotificationsCheckedProperty =
             DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof (string), typeof (Window),
@@ -167,8 +167,8 @@ namespace Octgn.Launcher
 
         private void SaveLocation()
         {
-            SimpleConfig.WriteValue("MainLeftLoc", Left.ToString());
-            SimpleConfig.WriteValue("MainTopLoc", Top.ToString());
+            SimpleConfig.WriteValue("MainLeftLoc", Left.ToString(CultureInfo.InvariantCulture));
+            SimpleConfig.WriteValue("MainTopLoc", Top.ToString(CultureInfo.InvariantCulture));
         }
 
         private void SystemTrayIcon_DoubleClick(object Sender, EventArgs e)

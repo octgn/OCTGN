@@ -4,11 +4,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
-using Octgn.Properties;
 
 namespace Octgn.Launcher
 {
-    public partial class LauncherWindow : NavigationWindow
+    public partial class LauncherWindow
     {
         public RoutedCommand DebugWindowCommand = new RoutedCommand();
 

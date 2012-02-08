@@ -11,7 +11,7 @@ using Octgn.Launcher;
 
 namespace Octgn
 {
-    public partial class OctgnApp : Application
+    public partial class OctgnApp
     {
         internal const string ClientName = "OCTGN.NET";
         internal static readonly Version OctgnVersion = GetClientVersion();
@@ -20,7 +20,7 @@ namespace Octgn
         private static Version GetClientVersion()
         {
             Assembly asm = typeof (OctgnApp).Assembly;
-            var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0];
+            //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0];
             return asm.GetName().Version;
         }
 
@@ -72,7 +72,7 @@ namespace Octgn
             base.OnStartup(e);
         }
 
-        private void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
+        private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
             Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, e.Exception.ToString());

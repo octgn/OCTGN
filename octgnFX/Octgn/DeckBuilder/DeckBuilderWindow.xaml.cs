@@ -12,11 +12,10 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Octgn.Data;
-using Octgn.Properties;
 
 namespace Octgn.DeckBuilder
 {
-    public partial class DeckBuilderWindow : Window, INotifyPropertyChanged
+    public partial class DeckBuilderWindow : INotifyPropertyChanged
     {
         private Deck _deck;
         private Data.Game _game;
@@ -213,9 +212,9 @@ namespace Octgn.DeckBuilder
                               AddExtension = true,
                               Filter = "OCTGN decks|*.o8d",
                               InitialDirectory =
-                                  (Settings.Default.DeckDirLastUsed == "")
+                                  SimpleConfig.ReadValue("DeckDirLastUsed", "none") == "none"
                                       ? Game.DefaultDecksPath
-                                      : Settings.Default.DeckDirLastUsed
+                                      : SimpleConfig.ReadValue("DeckDirLastUsed")
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
             try

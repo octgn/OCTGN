@@ -496,7 +496,7 @@ namespace Octgn.Data
                 using (SQLiteCommand com = dbc.CreateCommand())
                 {
                     com.CommandText = command;
-                    com.Parameters.AddWithValue("@id", pair.Key + card.Id.ToString());
+                    com.Parameters.AddWithValue("@id", pair.Key + card.Id);
                     com.Parameters.AddWithValue("@card_id", card.Id.ToString());
                     com.Parameters.AddWithValue("@game_id", Id.ToString());
                     com.Parameters.AddWithValue("@name", pair.Key);

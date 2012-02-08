@@ -37,7 +37,7 @@ namespace Skylabs.LobbyServer
             StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" + GameGuid + " -v=" + GameVersion + " -p=" + Port.ToString(CultureInfo.InvariantCulture);
                     
 #endif
-            StandAloneApp.Exited += StandAloneApp_Exited;
+            StandAloneApp.Exited += StandAloneAppExited;
             StandAloneApp.EnableRaisingEvents = true;
         }
 
@@ -137,7 +137,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="sender"> Who knows </param>
         /// <param name="e"> Jesus </param>
-        private void StandAloneApp_Exited(object sender, EventArgs e)
+        private void StandAloneAppExited(object sender, EventArgs e)
         {
             if (HostedGameDone != null)
                 HostedGameDone(this, e);

@@ -436,7 +436,7 @@ namespace Octgn.Controls
 
         private NumericUpDown MyOwner
         {
-            get { return (NumericUpDown) base.Owner; }
+            get { return (NumericUpDown) Owner; }
         }
 
         #region IRangeValueProvider Members
@@ -503,7 +503,7 @@ namespace Octgn.Controls
 
         internal void RaiseValueChangedEvent(decimal oldValue, decimal newValue)
         {
-            base.RaisePropertyChangedEvent(RangeValuePatternIdentifiers.ValueProperty,
+            RaisePropertyChangedEvent(RangeValuePatternIdentifiers.ValueProperty,
                                            (double) oldValue, (double) newValue);
         }
     }

@@ -8,14 +8,14 @@ namespace Skylabs.LobbyServer
 {
     public static class Logger
     {
-        private const int curIndent = 1;
+        private const int CurIndent = 1;
 
-        private static string tab
+        private static string Tab
         {
             get
             {
                 var sb = new StringBuilder();
-                for (int i = 0; i < curIndent; i++)
+                for (var i = 0; i < CurIndent; i++)
                 {
                     sb.Append("    ");
                 }
@@ -67,7 +67,7 @@ namespace Skylabs.LobbyServer
                         }
                     }
                 }
-            Console.WriteLine(String.Format("{1}[{4}:{5}][ERROR({2})]{0}:{3}", methodName, tab,
+            Console.WriteLine(String.Format("{1}[{4}:{5}][ERROR({2})]{0}:{3}", methodName, Tab,
                                             Thread.CurrentThread.ManagedThreadId, e.Message,
                                             DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
             Console.WriteLine("==========StackTrace==========");
