@@ -56,7 +56,8 @@ namespace Octgn.Controls
                 m_User = value;
                 SetValue(CustomStatusProperty, value.CustomStatus);
                 string h = ValueConverters.HashEmailAddress(value.Email.ToLower().Trim());
-                string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x";
+                Random r = new Random();
+                string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt="+r.NextDouble().ToString();
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
                 SetValue(UsernameProperty, value.DisplayName);
                 switch (value.Status)

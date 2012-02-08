@@ -32,8 +32,6 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class Main : RibbonWindow
     {
-        private static bool _locationUpdating;
-
         public static readonly DependencyProperty IsHideLoginNotificationsCheckedProperty =
             DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof (string), typeof (Window),
                                         new UIPropertyMetadata(Prefs.HideLoginNotifications));
@@ -169,13 +167,8 @@ namespace Octgn.Launcher
 
         private void SaveLocation()
         {
-            if (!_locationUpdating)
-            {
-                _locationUpdating = true;
-                SimpleConfig.WriteValue("MainLeftLoc", Left.ToString());
-                SimpleConfig.WriteValue("MainTopLoc", Top.ToString());
-                _locationUpdating = false;
-            }
+            SimpleConfig.WriteValue("MainLeftLoc", Left.ToString());
+            SimpleConfig.WriteValue("MainTopLoc", Top.ToString());
         }
 
         private void SystemTrayIcon_DoubleClick(object Sender, EventArgs e)
