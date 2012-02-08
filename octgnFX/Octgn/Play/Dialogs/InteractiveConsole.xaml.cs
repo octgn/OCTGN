@@ -14,17 +14,17 @@ namespace Octgn.Play.Dialogs
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
-        [Import] private Engine scriptEngine;
+        [Import] private Engine _scriptEngine;
 
 #pragma warning restore 649
 
-        private readonly ScriptScope scope;
+        private readonly ScriptScope _scope;
 
         public InteractiveConsole()
         {
             InitializeComponent();
             Program.Game.ComposeParts(this);
-            scope = scriptEngine.CreateScope();
+            _scope = _scriptEngine.CreateScope();
 
             Loaded += (s, a) => prompt.Focus();
         }
@@ -65,11 +65,9 @@ namespace Octgn.Play.Dialogs
             }
 
             prompt.IsEnabled = false;
-            if (!scriptEngine.TryExecuteInteractiveCode(input, scope, ExecutionCompleted))
-            {
-                prompt.IsEnabled = true;
-                PromptNewIndentedLine();
-            }
+            if (_scriptEngine.TryExecuteInteractiveCode(input, _scope, ExecutionCompleted)) return;
+            prompt.IsEnabled = true;
+            PromptNewIndentedLine();
         }
 
         private void ExecutionCompleted(ExecutionResult result)
@@ -81,7 +79,7 @@ namespace Octgn.Play.Dialogs
             prompt.IsEnabled = true;
         }
 
-        private static readonly string[] terminators = new[] {"pass", "break", "continue", "return"};
+        private static readonly string[] Terminators = new[] {"pass", "break", "continue", "return"};
 
         private void PromptNewIndentedLine()
         {
@@ -110,7 +108,7 @@ namespace Octgn.Play.Dialogs
             // Check if the indentation shoud be modified
             curLine = curLine.Trim();
             if (curLine.EndsWith(":")) newIndent += indent;
-            else if (terminators.Any(t => curLine.StartsWith(t)))
+            else if (Terminators.Any(t => curLine.StartsWith(t)))
                 newIndent = new string(' ', Math.Max(0, newIndent.Length - indent.Length));
 
             return newIndent;

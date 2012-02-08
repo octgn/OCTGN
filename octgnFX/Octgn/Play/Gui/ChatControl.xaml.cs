@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -30,24 +31,29 @@ namespace Octgn.Play.Gui
 
         private void KeyDownHandler(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            switch (e.Key)
             {
-                e.Handled = true;
+                case Key.Enter:
+                    {
+                        e.Handled = true;
 
-                string msg = input.Text;
-                input.Clear();
-                if (string.IsNullOrEmpty(msg)) return;
+                        string msg = input.Text;
+                        input.Clear();
+                        if (string.IsNullOrEmpty(msg)) return;
 
-                Program.Client.Rpc.ChatReq(msg);
-            }
-            else if (e.Key == Key.Escape)
-            {
-                e.Handled = true;
-                input.Clear();
-                var window = Window.GetWindow(this);
-                if (window != null)
-                    ((UIElement) window.Content).MoveFocus(
-                        new TraversalRequest(FocusNavigationDirection.First));
+                        Program.Client.Rpc.ChatReq(msg);
+                    }
+                    break;
+                case Key.Escape:
+                    {
+                        e.Handled = true;
+                        input.Clear();
+                        var window = Window.GetWindow(this);
+                        if (window != null)
+                            ((UIElement) window.Content).MoveFocus(
+                                new TraversalRequest(FocusNavigationDirection.First));
+                    }
+                    break;
             }
         }
 
@@ -70,7 +76,7 @@ namespace Octgn.Play.Gui
     internal sealed class ChatTraceListener : TraceListener
     {
         private static readonly Brush TurnBrush;
-        private readonly ChatControl ctrl;
+        private readonly ChatControl _ctrl;
 
         static ChatTraceListener()
         {
@@ -82,7 +88,7 @@ namespace Octgn.Play.Gui
         public ChatTraceListener(string name, ChatControl ctrl)
             : base(name)
         {
-            this.ctrl = ctrl;
+            this._ctrl = ctrl;
         }
 
         public override void Write(string message)
@@ -121,11 +127,11 @@ namespace Octgn.Play.Gui
                                             {X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush}
                                     }
                             };
-                if (((Paragraph) ctrl.output.Document.Blocks.LastBlock).Inlines.Count == 0)
-                    ctrl.output.Document.Blocks.Remove(ctrl.output.Document.Blocks.LastBlock);
-                ctrl.output.Document.Blocks.Add(p);
-                ctrl.output.Document.Blocks.Add(new Paragraph {Margin = new Thickness()}); // Restore left alignment
-                ctrl.output.ScrollToEnd();
+                if (((Paragraph) _ctrl.output.Document.Blocks.LastBlock).Inlines.Count == 0)
+                    _ctrl.output.Document.Blocks.Remove(_ctrl.output.Document.Blocks.LastBlock);
+                _ctrl.output.Document.Blocks.Add(p);
+                _ctrl.output.Document.Blocks.Add(new Paragraph {Margin = new Thickness()}); // Restore left alignment
+                _ctrl.output.ScrollToEnd();
             }
             else
                 InsertLine(FormatInline(MergeArgs(format, args), eventType, id, args));
@@ -144,70 +150,62 @@ namespace Octgn.Play.Gui
             InsertLine(FormatMsg(message, eventType, id));
         }
 
-        private bool IsMuted()
+        private static bool IsMuted()
         {
-            if (Program.Client.Muted != 0)
-                return true;
-            return false;
+            return Program.Client.Muted != 0;
         }
 
         private void InsertLine(Inline message)
         {
-            var p = (Paragraph) ctrl.output.Document.Blocks.LastBlock;
+            var p = (Paragraph) _ctrl.output.Document.Blocks.LastBlock;
             if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
             p.Inlines.Add(message);
             Program.LastChatTrace = message;
-            ctrl.output.ScrollToEnd();
+            _ctrl.output.ScrollToEnd();
         }
 
-        private Inline FormatInline(Inline inline, TraceEventType eventType, int id, Object[] args = null)
+        private static Inline FormatInline(Inline inline, TraceEventType eventType, int id, Object[] args = null)
         {
-            if (eventType == TraceEventType.Warning || eventType == TraceEventType.Error)
+            switch (eventType)
             {
-                inline.Foreground = Brushes.Red;
-                inline.FontWeight = FontWeights.Bold;
-            }
-            else if (eventType == TraceEventType.Information)
-            {
-                if ((id & EventIds.Chat) != 0)
+                case TraceEventType.Error:
+                case TraceEventType.Warning:
+                    inline.Foreground = Brushes.Red;
                     inline.FontWeight = FontWeights.Bold;
-                if (args == null || args.GetUpperBound(0) == -1)
-                {
-                    if ((id & EventIds.OtherPlayer) == 0)
-                        inline.Foreground = Brushes.DarkGray;
-                }
-                else
-                {
-                    int i = 0;
-                    var p = args[i] as Player;
-                    while (p == null && i < args.Length - 1)
+                    break;
+                case TraceEventType.Information:
+                    if ((id & EventIds.Chat) != 0)
+                        inline.FontWeight = FontWeights.Bold;
+                    if (args == null || args.GetUpperBound(0) == -1)
                     {
-                        i++;
-                        p = args[i] as Player;
+                        if ((id & EventIds.OtherPlayer) == 0)
+                            inline.Foreground = Brushes.DarkGray;
                     }
-                    if (p != null)
-                        inline.Foreground = new SolidColorBrush(p.Color);
                     else
-                        inline.Foreground = Brushes.Red;
-                }
+                    {
+                        int i = 0;
+                        var p = args[i] as Player;
+                        while (p == null && i < args.Length - 1)
+                        {
+                            i++;
+                            p = args[i] as Player;
+                        }
+                        inline.Foreground = p != null ? new SolidColorBrush(p.Color) : Brushes.Red;
+                    }
+                    break;
             }
             return inline;
         }
 
-        private Inline FormatMsg(string text, TraceEventType eventType, int id)
+        private static Inline FormatMsg(string text, TraceEventType eventType, int id)
         {
             var result = new Run(text);
             return FormatInline(result, eventType, id);
         }
 
-        private Inline MergeArgs(string format, object[] args)
+        private static Inline MergeArgs(string format, IList<object> args, int startAt = 0)
         {
-            return MergeArgs(format, args, 0);
-        }
-
-        private Inline MergeArgs(string format, object[] args, int startAt)
-        {
-            for (int i = startAt; i < args.Length; i++)
+            for (int i = startAt; i < args.Count; i++)
             {
                 object arg = args[i];
                 string placeholder = "{" + i + "}";
@@ -215,7 +213,7 @@ namespace Octgn.Play.Gui
                 var cardModel = arg as CardModel;
                 var cardId = arg as CardIdentity;
                 var card = arg as Card;
-                if (card != null && (card.FaceUp || card.mayBeConsideredFaceUp))
+                if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
                     cardId = card.Type;
 
                 if (cardId != null || cardModel != null)
@@ -257,40 +255,40 @@ namespace Octgn.Play.Gui
                                                                                                      >),
                                                                                                  typeof (CardRun));
 
-        private CardModel card;
+        private CardModel _card;
 
         public CardRun(CardIdentity id)
             : base(id.ToString())
         {
-            card = id.model;
-            if (id.model == null)
+            _card = id.Model;
+            if (id.Model == null)
                 id.Revealed += new CardIdentityNamer {Target = this}.Rename;
         }
 
         public CardRun(CardModel model)
             : base(model.Name)
         {
-            card = model;
+            _card = model;
         }
 
         public void SetCardModel(CardModel model)
         {
-            Debug.Assert(card == null, "Cannot set the CardModel of a CardRun if it is already defined");
-            card = model;
+            Debug.Assert(_card == null, "Cannot set the CardModel of a CardRun if it is already defined");
+            _card = model;
             Text = model.Name;
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             base.OnMouseEnter(e);
-            if (card != null)
-                RaiseEvent(new CardModelEventArgs(card, ViewCardModelEvent, this));
+            if (_card != null)
+                RaiseEvent(new CardModelEventArgs(_card, ViewCardModelEvent, this));
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             base.OnMouseLeave(e);
-            if (card != null)
+            if (_card != null)
                 RaiseEvent(new CardModelEventArgs(null, ViewCardModelEvent, this));
         }
     }

@@ -14,12 +14,12 @@ namespace Octgn.Launcher
         public ContactList()
         {
             InitializeComponent();
-            Program.lobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
-            Program.lobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
-            Program.lobbyClient.Chatting.eChatEvent += Chatting_eChatEvent;
+            Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
+            Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
+            Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
         }
 
-        private void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User u, object data)
+        private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User u, object data)
         {
             if (e != Chatting.ChatEvent.ChatMessage)
             {
@@ -32,25 +32,27 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
                                              {
                                                  stackPanel1.Children.Clear();
-                                                 User[] flist = Program.lobbyClient.GetFriendsList();
+                                                 User[] flist = Program.LobbyClient.GetFriendsList();
                                                  foreach (User u in flist)
                                                  {
-                                                     var f = new FriendListItem();
-                                                     f.ThisUser = u;
-                                                     f.HorizontalAlignment = HorizontalAlignment.Stretch;
-                                                     f.MouseDoubleClick += f_MouseDoubleClick;
+                                                     var f = new FriendListItem
+                                                                 {
+                                                                     ThisUser = u,
+                                                                     HorizontalAlignment = HorizontalAlignment.Stretch
+                                                                 };
+                                                     f.MouseDoubleClick += FMouseDoubleClick;
                                                      stackPanel1.Children.Add(f);
                                                  }
-                                                 foreach (ChatRoom cr in Program.lobbyClient.Chatting.Rooms)
+                                                 foreach (ChatRoom cr in Program.LobbyClient.Chatting.Rooms)
                                                  {
-                                                     if (cr.ID == 0 || (cr.UserCount > 2))
-                                                     {
-                                                         var gi = new GroupChatListItem();
-                                                         gi.ThisRoom = cr;
-                                                         gi.HorizontalAlignment = HorizontalAlignment.Stretch;
-                                                         gi.MouseDoubleClick += gi_MouseDoubleClick;
-                                                         stackPanel1.Children.Add(gi);
-                                                     }
+                                                     if (cr.Id != 0 && (cr.UserCount <= 2)) continue;
+                                                     var gi = new GroupChatListItem
+                                                                  {
+                                                                      ThisRoom = cr,
+                                                                      HorizontalAlignment = HorizontalAlignment.Stretch
+                                                                  };
+                                                     gi.MouseDoubleClick += GiMouseDoubleClick;
+                                                     stackPanel1.Children.Add(gi);
                                                  }
                                              }));
         }
@@ -63,57 +65,44 @@ namespace Octgn.Launcher
             }
         }
 
-        private void gi_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private static void GiMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var gi = sender as GroupChatListItem;
-            if (gi != null)
+            if (gi == null) return;
+            foreach (var cw in Program.ChatWindows)
             {
-                foreach (ChatWindow cw in Program.ChatWindows)
-                {
-                    if (gi.ThisRoom.ID == cw.ID)
-                    {
-                        cw.Show();
-                        return;
-                    }
-                }
-                if (gi.ThisRoom.ID == 0)
-                {
-                    var cw = new ChatWindow(0);
-                    Program.ChatWindows.Add(cw);
-                    cw.Show();
-                }
+                if (gi.ThisRoom.Id != cw.Id) continue;
+                cw.Show();
+                return;
             }
+            if (gi.ThisRoom.Id != 0) return;
+            var cw2 = new ChatWindow(0);
+            Program.ChatWindows.Add(cw2);
+            cw2.Show();
         }
 
 
-        private void f_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private static void FMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var fi = sender as FriendListItem;
-            if (fi != null)
+            if (fi == null) return;
+            foreach (ChatWindow cw in Program.ChatWindows)
             {
-                foreach (ChatWindow cw in Program.ChatWindows)
-                {
-                    long rid = cw.ID;
-                    ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(rid);
-                    if (cr != null)
-                    {
-                        if (cr.ID == 0)
-                            continue;
-                        if (cr.UserCount == 2 && cr.ContainsUser(Program.lobbyClient.Me) && cr.ContainsUser(fi.ThisUser))
-                        {
-                            if (cw.Visibility != Visibility.Visible)
-                            {
-                                cw.Show();
-                                return;
-                            }
-                        }
-                    }
-                }
-                Program.lobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
+                long rid = cw.Id;
+                ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(rid);
+                if (cr == null) continue;
+                if (cr.Id == 0)
+                    continue;
+                if (cr.UserCount != 2 || !cr.ContainsUser(Program.LobbyClient.Me) || !cr.ContainsUser(fi.ThisUser))
+                    continue;
+                if (cw.Visibility == Visibility.Visible) continue;
+                cw.Show();
+                return;
             }
+            Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void PageLoaded(object sender, RoutedEventArgs e)
         {
             RefreshList();
         }
@@ -123,11 +112,11 @@ namespace Octgn.Launcher
             RefreshList();
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
-            Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
-            Program.lobbyClient.Chatting.eChatEvent -= Chatting_eChatEvent;
+            Program.LobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
+            Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
+            Program.LobbyClient.Chatting.EChatEvent -= ChattingEChatEvent;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Octgn
         public object[] Args;
         public TraceEventCache Cache;
         public string Format;
-        public int ID;
+        public int Id;
         public String Message;
         public string Source;
         public TraceEventType Type;
@@ -23,7 +23,7 @@ namespace Octgn
                 sb.AppendFormat("[{0} {1}]", Cache.DateTime.ToShortTimeString(), Cache.DateTime.ToShortDateString());
             if (Source != null)
                 sb.AppendFormat("'{0}'", Source);
-            sb.Append(ID);
+            sb.Append(Id);
             sb.Append(" - ");
             if (Message == null && Args != null && Format != null)
             {
@@ -55,10 +55,8 @@ namespace Octgn
 
         public override void Write(string message)
         {
-            var te = new TraceEvent();
-            te.Cache = new TraceEventCache();
-            te.Message = message;
-            te.Type = TraceEventType.Information;
+            var te = new TraceEvent
+                         {Cache = new TraceEventCache(), Message = message, Type = TraceEventType.Information};
             Events.Add(te);
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
@@ -66,10 +64,12 @@ namespace Octgn
 
         public override void WriteLine(string message)
         {
-            var te = new TraceEvent();
-            te.Cache = new TraceEventCache();
-            te.Message = message + Environment.NewLine;
-            te.Type = TraceEventType.Information;
+            var te = new TraceEvent
+                         {
+                             Cache = new TraceEventCache(),
+                             Message = message + Environment.NewLine,
+                             Type = TraceEventType.Information
+                         };
             Events.Add(te);
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
@@ -78,12 +78,7 @@ namespace Octgn
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
                                         string message)
         {
-            var te = new TraceEvent();
-            te.Cache = eventCache;
-            te.Source = source;
-            te.Type = eventType;
-            te.ID = id;
-            te.Message = message;
+            var te = new TraceEvent {Cache = eventCache, Source = source, Type = eventType, Id = id, Message = message};
             Events.Add(te);
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
@@ -91,11 +86,7 @@ namespace Octgn
 
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id)
         {
-            var te = new TraceEvent();
-            te.Cache = eventCache;
-            te.Source = source;
-            te.Type = eventType;
-            te.ID = id;
+            var te = new TraceEvent {Cache = eventCache, Source = source, Type = eventType, Id = id};
             Events.Add(te);
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
@@ -104,13 +95,8 @@ namespace Octgn
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
                                         string format, params object[] args)
         {
-            var te = new TraceEvent();
-            te.Cache = eventCache;
-            te.Source = source;
-            te.Type = eventType;
-            te.ID = id;
-            te.Format = format;
-            te.Args = args;
+            var te = new TraceEvent
+                         {Cache = eventCache, Source = source, Type = eventType, Id = id, Format = format, Args = args};
             Events.Add(te);
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);

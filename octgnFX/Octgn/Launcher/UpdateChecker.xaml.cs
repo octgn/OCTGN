@@ -18,7 +18,7 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class UpdateChecker
     {
-        private readonly List<string> Errors = new List<string>();
+        private readonly List<string> _errors = new List<string>();
         // private bool stopReading; // not used
 
         public UpdateChecker()
@@ -77,13 +77,13 @@ namespace Octgn.Launcher
             {
                 if (Program.GamesRepository == null)
                     Program.GamesRepository = new GamesRepository();
-                var g2r = new List<Data.Game>();
+                var g2R = new List<Data.Game>();
                 foreach (Data.Game g in Program.GamesRepository.Games)
                 {
                     UpdateStatus("Checking Game: " + g.Name);
                     if (!File.Exists(g.Filename))
                     {
-                        Errors.Add("[" + g.Name + "]: Def file doesn't exist at " + g.Filename);
+                        _errors.Add("[" + g.Name + "]: Def file doesn't exist at " + g.Filename);
                         continue;
                     }
                     Program.Game = new Game(GameDef.FromO8G(g.Filename));
@@ -92,20 +92,18 @@ namespace Octgn.Launcher
                     var engine = new Engine(true);
                     string[] terr = engine.TestScripts(Program.Game);
                     Program.Game.End();
-                    if (terr.Length > 0)
-                    {
-                        Errors.AddRange(terr);
-                        g2r.Add(g);
-                    }
+                    if (terr.Length <= 0) continue;
+                    _errors.AddRange(terr);
+                    g2R.Add(g);
                 }
-                foreach (Data.Game g in g2r)
+                foreach (Data.Game g in g2R)
                     Program.GamesRepository.Games.Remove(g);
-                if (Errors.Count > 0)
+                if (_errors.Count > 0)
                 {
                     Dispatcher.BeginInvoke(new Action(() =>
                                                           {
                                                               String ewe = "";
-                                                              foreach (string s in Errors)
+                                                              foreach (string s in _errors)
                                                                   ewe += s + Environment.NewLine;
                                                               var er = new ErrorWindow(ewe);
                                                               er.ShowDialog();
@@ -143,8 +141,7 @@ namespace Octgn.Launcher
                 try
                 {
                     Stream str = client.OpenRead(URL);
-                    if (str != null) result = true;
-                    else result = false;
+                    result = str != null;
                 }
                 catch
                 {
@@ -154,39 +151,35 @@ namespace Octgn.Launcher
             return result;
         }
 
-        private string[] ReadUpdateXML(string URL)
+        private static string[] ReadUpdateXML(string url)
         {
             var values = new string[2];
             try
             {
-                WebRequest wr = WebRequest.Create(URL);
+                WebRequest wr = WebRequest.Create(url);
                 wr.Timeout = 15000;
                 WebResponse resp = wr.GetResponse();
                 using (XmlReader reader = XmlReader.Create(resp.GetResponseStream()))
                 {
                     while (reader.Read())
                     {
-                        if (reader.IsStartElement())
+                        if (!reader.IsStartElement()) continue;
+                        if (reader.IsEmptyElement) continue;
+                        switch (reader.Name)
                         {
-                            if (!reader.IsEmptyElement)
-                            {
-                                switch (reader.Name)
+                            case "Version":
+                                values = new string[2];
+                                if (reader.Read())
                                 {
-                                    case "Version":
-                                        values = new string[2];
-                                        if (reader.Read())
-                                        {
-                                            values[0] = reader.Value;
-                                        }
-                                        break;
-                                    case "Location":
-                                        if (reader.Read())
-                                        {
-                                            values[1] = reader.Value;
-                                        }
-                                        break;
+                                    values[0] = reader.Value;
                                 }
-                            }
+                                break;
+                            case "Location":
+                                if (reader.Read())
+                                {
+                                    values[1] = reader.Value;
+                                }
+                                break;
                         }
                     }
                 }

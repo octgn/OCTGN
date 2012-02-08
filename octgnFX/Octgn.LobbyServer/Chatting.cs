@@ -12,8 +12,7 @@ namespace Skylabs.LobbyServer
     {
         static Chatting()
         {
-            Rooms = new List<ChatRoom>();
-            Rooms.Add(new ChatRoom(0, null));
+            Rooms = new List<ChatRoom> {new ChatRoom(0, null)};
         }
 
         /// <summary>

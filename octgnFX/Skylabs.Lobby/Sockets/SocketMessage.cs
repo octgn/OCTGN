@@ -74,8 +74,7 @@ namespace Skylabs.Net
 
         public object Clone()
         {
-            var sm = new SocketMessage(Header.Clone() as String);
-            sm.Data = Data.Clone() as NameValuePair[];
+            var sm = new SocketMessage(Header.Clone() as String) {Data = Data.Clone() as NameValuePair[]};
             return sm;
         }
 

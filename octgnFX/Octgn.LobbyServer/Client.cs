@@ -440,7 +440,7 @@ namespace Skylabs.LobbyServer
                     if (banned == -1)
                     {
                         Trace.WriteLine(String.Format("Client[{0}]:Starting to Stop and remove by uid={1}", Id, u.Uid));
-                        var res = Server.StopAndRemoveAllByUID(this, u.Uid);
+                        var res = Server.StopAndRemoveAllByUid(this, u.Uid);
                         Trace.WriteLine(String.Format("Client[{0}]:Done Stop and remove by uid={1}", Id, u.Uid));
                         Me = u;
                         if (status == UserStatus.Unknown || status == UserStatus.Offline)

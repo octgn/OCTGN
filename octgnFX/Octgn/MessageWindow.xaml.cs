@@ -10,7 +10,7 @@ namespace Octgn
             contentBlock.Text = text;
         }
 
-        protected void OKClicked(object sender, EventArgs e)
+        protected void OkClicked(object sender, EventArgs e)
         {
             DialogResult = true;
         }

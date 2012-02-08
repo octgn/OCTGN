@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Linq;
 using System.Xml;
 
@@ -8,7 +7,7 @@ namespace Octgn.Data
 {
     public class Set
     {
-        private List<Pack> cachedPacks;
+        private List<Pack> _cachedPacks;
 
         internal Set()
         {
@@ -40,8 +39,8 @@ namespace Octgn.Data
         {
             get
             {
-                if (cachedPacks == null) LoadPacks();
-                return cachedPacks;
+                if (_cachedPacks == null) LoadPacks();
+                return _cachedPacks;
             }
         }
 
@@ -57,20 +56,20 @@ namespace Octgn.Data
 
         private void LoadPacks()
         {
-            cachedPacks = new List<Pack>();
-            bool wasDbOpen = Game.IsDatabaseOpen;
+            _cachedPacks = new List<Pack>();
+            var wasDbOpen = Game.IsDatabaseOpen;
             if (!Game.IsDatabaseOpen)
                 Game.OpenDatabase(true);
             try
             {
-                using (SQLiteCommand com = Game.dbc.CreateCommand())
+                using (var com = Game.Dbc.CreateCommand())
                 {
                     com.CommandText = "SELECT [xml] FROM [packs] WHERE [set_id]=@set_id ORDER BY [name]";
                     com.Parameters.AddWithValue("@set_id", Id.ToString());
-                    using (SQLiteDataReader reader = com.ExecuteReader())
+                    using (var reader = com.ExecuteReader())
                     {
                         while (reader.Read())
-                            cachedPacks.Add(new Pack(this, reader.GetString(0)));
+                            _cachedPacks.Add(new Pack(this, reader.GetString(0)));
                     }
                 }
             }

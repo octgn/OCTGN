@@ -15,26 +15,28 @@ namespace Octgn.Play
     {
         #region Non-public fields
 
-        private static readonly KeyGestureConverter keyConverter = new KeyGestureConverter();
+        private static readonly KeyGestureConverter KeyConverter = new KeyGestureConverter();
 
-        protected ObservableCollection<Card> cards = new ObservableCollection<Card>();
+        // TODO: Should be Cards
         // List of cards in this group        
 
-        internal GroupDef def;
-        internal int filledShuffleSlots;
-        internal bool hasReceivedFirstShuffledMessage;
+        internal GroupDef Def;
+        internal int FilledShuffleSlots;
+        internal bool HasReceivedFirstShuffledMessage;
 
-        private bool locked;
         // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
 
-        internal Dictionary<int, List<Card>> lookedAt = new Dictionary<int, List<Card>>();
+        internal Dictionary<int, List<Card>> LookedAt = new Dictionary<int, List<Card>>();
         // Cards being looked at, key is a unique identifier for each "look"; Note: cards may have left the group in the meantime, which is not important
 
-        internal short[] myShufflePos; // Stores positions suggested by this client during a shuffle [transient]
+        internal short[] MyShufflePos; // Stores positions suggested by this client during a shuffle [transient]
 
-        internal List<Player> viewers = new List<Player>(2);
+        internal List<Player> Viewers = new List<Player>(2);
+        private bool _locked;
+        protected ObservableCollection<Card> cards = new ObservableCollection<Card>();
         // List of players who can see cards in this group, or null where this is irrelevant (Visibility.Undefined)
 
+        // TODO: Should be Visibility 
         protected GroupVisibility visibility; // Visibility of the group
 
         #endregion
@@ -50,23 +52,23 @@ namespace Octgn.Play
         internal Group(Player owner, GroupDef def)
             : base(owner)
         {
-            this.def = def;
+            Def = def;
             ResetVisibility();
-            GroupShortcuts = CreateShortcuts(def.groupActions);
-            CardShortcuts = CreateShortcuts(def.cardActions);
+            GroupShortcuts = CreateShortcuts(def.GroupActions);
+            CardShortcuts = CreateShortcuts(def.CardActions);
             if (def.Shortcut != null)
-                MoveToShortcut = (KeyGesture) keyConverter.ConvertFromInvariantString(def.Shortcut);
+                MoveToShortcut = (KeyGesture) KeyConverter.ConvertFromInvariantString(def.Shortcut);
         }
 
         public GroupDef Definition
         {
-            get { return def; }
+            get { return Def; }
         }
 
         // Group name
         public override string Name
         {
-            get { return def.Name; }
+            get { return Def.Name; }
         }
 
         public KeyGesture MoveToShortcut { get; private set; }
@@ -80,7 +82,7 @@ namespace Octgn.Play
         // Is this group ordered ?
         public bool Ordered
         {
-            get { return def.Ordered; }
+            get { return Def.Ordered; }
         }
 
         public ObservableCollection<Card> Cards
@@ -116,7 +118,7 @@ namespace Octgn.Play
             CopyControllersTo(card);
 
             // Assign default visibility
-            card.SetVisibility(visibility, viewers);
+            card.SetVisibility(visibility, Viewers);
 
             // Add the card to the group
             card.Group = this;
@@ -149,16 +151,16 @@ namespace Octgn.Play
         // Get the Id of this group
         internal override int Id
         {
-            get { return 0x01000000 | (Owner == null ? 0 : Owner.Id << 16) | def.Id; }
+            get { return 0x01000000 | (Owner == null ? 0 : Owner.Id << 16) | Def.Id; }
         }
 
         internal bool Locked
         {
-            get { return locked; }
+            get { return _locked; }
             set
             {
-                if (locked == value) return;
-                locked = value;
+                if (_locked == value) return;
+                _locked = value;
                 if (value) KeepControl();
                 else ReleaseControl();
             }
@@ -167,7 +169,7 @@ namespace Octgn.Play
         internal event EventHandler<ShuffleTraceEventArgs> ShuffledTrace;
         internal event EventHandler Shuffled;
 
-        private ActionShortcut[] CreateShortcuts(IEnumerable<BaseActionDef> baseActionDef)
+        private static ActionShortcut[] CreateShortcuts(IEnumerable<BaseActionDef> baseActionDef)
         {
             if (baseActionDef == null) return new ActionShortcut[0];
 
@@ -185,7 +187,7 @@ namespace Octgn.Play
                                                                {
                                                                    Key =
                                                                        (KeyGesture)
-                                                                       keyConverter.ConvertFromInvariantString(
+                                                                       KeyConverter.ConvertFromInvariantString(
                                                                            action.Shortcut),
                                                                    ActionDef = action
                                                                };
@@ -199,8 +201,7 @@ namespace Octgn.Play
 
         internal override bool CanManipulate()
         {
-            if (WantToShuffle) return false;
-            return base.CanManipulate();
+            return !WantToShuffle && base.CanManipulate();
         }
 
         internal override bool TryToManipulate()
@@ -231,22 +232,22 @@ namespace Octgn.Play
             if (!visible.HasValue)
             {
                 visibility = GroupVisibility.Undefined;
-                viewers.Clear();
+                Viewers.Clear();
             }
             else if (visible.Value)
             {
                 visibility = GroupVisibility.Everybody;
-                viewers.Clear();
-                viewers.AddRange(Player.All);
+                Viewers.Clear();
+                Viewers.AddRange(Player.All);
             }
             else
             {
                 visibility = GroupVisibility.Nobody;
-                viewers.Clear();
+                Viewers.Clear();
             }
 
             foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
-                c.SetVisibility(visibility, viewers);
+                c.SetVisibility(visibility, Viewers);
         }
 
         internal void AddViewer(Player player, bool notifyServer)
@@ -254,24 +255,24 @@ namespace Octgn.Play
             if (visibility != GroupVisibility.Custom)
             {
                 visibility = GroupVisibility.Custom;
-                viewers.Clear();
+                Viewers.Clear();
             }
-            else if (viewers.Contains(player)) return;
+            else if (Viewers.Contains(player)) return;
             if (notifyServer)
                 Program.Client.Rpc.GroupVisAddReq(this, player);
             visibility = GroupVisibility.Custom;
-            viewers.Add(player);
+            Viewers.Add(player);
             foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
-                c.SetVisibility(visibility, viewers);
+                c.SetVisibility(visibility, Viewers);
         }
 
         internal void RemoveViewer(Player player, bool notifyServer)
         {
-            if (!viewers.Contains(player)) return;
+            if (!Viewers.Contains(player)) return;
             if (notifyServer)
                 Program.Client.Rpc.GroupVisRemoveReq(this, player);
-            viewers.Remove(player);
-            visibility = viewers.Count == 0 ? GroupVisibility.Nobody : GroupVisibility.Custom;
+            Viewers.Remove(player);
+            visibility = Viewers.Count == 0 ? GroupVisibility.Nobody : GroupVisibility.Custom;
             if (player == Player.LocalPlayer)
                 foreach (Card c in cards)
                     c.SetFaceUp(false);
@@ -280,10 +281,10 @@ namespace Octgn.Play
         internal void OnShuffled()
         {
             // Remove player looking at the cards, if any (doesn't remove the need to remove those from the dictionary!)
-            foreach (var list in lookedAt.Values)
+            foreach (var list in LookedAt.Values)
                 list.Clear();
             foreach (Card c in Cards)
-                c.playersLooking.Clear();
+                c.PlayersLooking.Clear();
 
             // Notify trace event listeners
             var shuffledArgs = new ShuffleTraceEventArgs {TraceNotification = true};
@@ -322,14 +323,14 @@ namespace Octgn.Play
 
         private void ResetVisibility()
         {
-            viewers.Clear();
-            if (def.Visibility == GroupVisibility.Owner)
+            Viewers.Clear();
+            if (Def.Visibility == GroupVisibility.Owner)
             {
                 visibility = GroupVisibility.Custom;
-                viewers.Add(Owner);
+                Viewers.Add(Owner);
             }
             else
-                visibility = def.Visibility;
+                visibility = Def.Visibility;
         }
 
         // Hard-reset: removes all cards from this group, without destroying them

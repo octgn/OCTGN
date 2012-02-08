@@ -7,20 +7,20 @@ namespace Octgn.Play
     public class RandomRequest
     {
         public readonly int Id;
-        private readonly int max;
-        private readonly int min;
-        private readonly Player player;
-        private readonly List<RandomValue> values = new List<RandomValue>();
+        private readonly int _max;
+        private readonly int _min;
+        private readonly Player _player;
+        private readonly List<RandomValue> _values = new List<RandomValue>();
         public int Result;
-        private RandomValue myValue;
-        private int phase2Count;
+        private RandomValue _myValue;
+        private int _phase2Count;
 
         public RandomRequest(Player player, int id, int min, int max)
         {
-            this.player = player;
+            _player = player;
             Id = id;
-            this.min = min;
-            this.max = max;
+            _min = min;
+            _max = max;
         }
 
         public static event EventHandler Completed;
@@ -32,30 +32,30 @@ namespace Octgn.Play
 
         public void Answer1()
         {
-            Debug.Assert(myValue == null);
+            Debug.Assert(_myValue == null);
 
-            myValue = new RandomValue();
-            Program.Client.Rpc.RandomAnswer1Req(Id, myValue.encrypted);
+            _myValue = new RandomValue();
+            Program.Client.Rpc.RandomAnswer1Req(Id, _myValue.Encrypted);
         }
 
         public void Answer2()
         {
-            Program.Client.Rpc.RandomAnswer2Req(Id, myValue.decrypted);
+            Program.Client.Rpc.RandomAnswer2Req(Id, _myValue.Decrypted);
         }
 
         public void AddAnswer1(Player lPlayer, ulong encrypted)
         {
-            values.Add(new RandomValue(lPlayer, encrypted));
+            _values.Add(new RandomValue(lPlayer, encrypted));
         }
 
         public void AddAnswer2(Player lPlayer, ulong decrypted)
         {
-            foreach (RandomValue v in values)
-                if (v.player == lPlayer)
+            foreach (RandomValue v in _values)
+                if (v.Player == lPlayer)
                 {
-                    v.decrypted = decrypted;
+                    v.Decrypted = decrypted;
                     v.CheckConsistency();
-                    phase2Count++;
+                    _phase2Count++;
                     return;
                 }
             Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
@@ -66,21 +66,21 @@ namespace Octgn.Play
         {
             Program.Game.RandomRequests.Remove(this);
 
-            if (max < min)
+            if (_max < _min)
             {
                 Result = -1;
             }
             else
             {
                 int xorResult = 0;
-                foreach (RandomValue value in values)
-                    xorResult ^= (int) (value.decrypted & 0xffffff);
+                foreach (RandomValue value in _values)
+                    xorResult ^= (int) (value.Decrypted & 0xffffff);
                 double relativeValue = xorResult/(double) 0xffffff;
-                Result = (int) Math.Truncate((max - min + 1)*relativeValue) + min;
-                if (Result > max) Result = max; // this handles the extremely rare case where relativeValue == 1.0
+                Result = (int) Math.Truncate((_max - _min + 1)*relativeValue) + _min;
+                if (Result > _max) Result = _max; // this handles the extremely rare case where relativeValue == 1.0
             }
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event + EventIds.PlayerFlag(player),
-                                     "{0} randomly picks {1} in [{2}, {3}]", player, Result, min, max);
+            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event + EventIds.PlayerFlag(_player),
+                                     "{0} randomly picks {1} in [{2}, {3}]", _player, Result, _min, _max);
 
             if (Completed != null)
                 Completed(this, EventArgs.Empty);
@@ -88,39 +88,39 @@ namespace Octgn.Play
 
         public bool IsPhase1Completed()
         {
-            return values.Count == Player.Count;
+            return _values.Count == Player.Count;
         }
 
         public bool IsPhase2Completed()
         {
-            return phase2Count == Player.Count;
+            return _phase2Count == Player.Count;
         }
 
         #region Nested type: RandomValue
 
         private class RandomValue
         {
-            public readonly ulong encrypted;
-            public readonly Player player;
-            public ulong decrypted;
+            public readonly ulong Encrypted;
+            public readonly Player Player;
+            public ulong Decrypted;
 
             public RandomValue()
             {
-                player = Player.LocalPlayer;
-                decrypted = (ulong) Crypto.PositiveRandom() << 32 | Crypto.Random();
-                encrypted = Crypto.ModExp(decrypted);
+                Player = Player.LocalPlayer;
+                Decrypted = (ulong) Crypto.PositiveRandom() << 32 | Crypto.Random();
+                Encrypted = Crypto.ModExp(Decrypted);
             }
 
             public RandomValue(Player player, ulong encrypted)
             {
-                this.player = player;
-                this.encrypted = encrypted;
+                Player = player;
+                Encrypted = encrypted;
             }
 
             public void CheckConsistency()
             {
-                ulong correct = Crypto.ModExp(decrypted);
-                if (correct != encrypted)
+                ulong correct = Crypto.ModExp(Decrypted);
+                if (correct != Encrypted)
                     Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
                                              "[CheckConsistency] Random number doesn't match. One client is buggy or tries to cheat.");
             }

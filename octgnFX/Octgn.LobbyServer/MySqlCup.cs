@@ -10,7 +10,7 @@ namespace Skylabs.LobbyServer
 {
     public class MySqlCup
     {
-        private readonly object DBLocker = new object();
+        private readonly object _dbLocker = new object();
         public string ConnectionString;
 
         public MySqlCup(string user, string pass, string host, string db)
@@ -45,7 +45,7 @@ namespace Skylabs.LobbyServer
         /// <returns> -1 if not banned. Timestamp of ban end if banned. Timestamp can be converted to DateTime with fromPHPTime. </returns>
         public int IsBanned(int uid, EndPoint endpoint)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (uid <= -1)
                     return -1;
@@ -136,7 +136,7 @@ namespace Skylabs.LobbyServer
         /// <param name="table"> Table to delete from </param>
         /// <param name="columnname"> Column name to check against. </param>
         /// <param name="columnvalue"> The value, that if exists in said column, will cause the row to go bye bye. </param>
-        private void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
+        private static void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
         {
             MySqlCommand cmd = con.CreateCommand();
             cmd.CommandText = "DELETE FROM @table WHERE @col=@val;";
@@ -157,7 +157,7 @@ namespace Skylabs.LobbyServer
         /// <returns> User data, such as UID and whatnot, or NULL if none found. </returns>
         public User GetUser(string email)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (email == null)
                     return null;
@@ -210,7 +210,7 @@ namespace Skylabs.LobbyServer
         /// <returns> User that matches, or null. </returns>
         public User GetUser(int uid)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (uid <= -1)
                     return null;
@@ -262,7 +262,7 @@ namespace Skylabs.LobbyServer
         /// <returns> true on success, false on failure. </returns>
         public bool RegisterUser(string email, string name)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (email == null || name == null)
                     return false;
@@ -299,7 +299,7 @@ namespace Skylabs.LobbyServer
         /// <param name="friendemail"> To be friends email </param>
         public void RemoveFriendRequest(int requesteeuid, string friendemail)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (requesteeuid <= -1 || friendemail == null)
                     return;
@@ -333,7 +333,7 @@ namespace Skylabs.LobbyServer
         /// <param name="friendemail"> Friend-to-bes e-mail </param>
         public void AddFriendRequest(int uid, string friendemail)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (uid <= -1)
                     return;
@@ -369,7 +369,7 @@ namespace Skylabs.LobbyServer
         /// <returns> List of UID's of users that want to be the users friend. </returns>
         public List<int> GetFriendRequests(string email)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (email == null)
                     return null;
@@ -415,7 +415,7 @@ namespace Skylabs.LobbyServer
         /// <param name="frienduid"> Friend id </param>
         public void AddFriend(int useruid, int frienduid)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (useruid <= -1 || frienduid <= -1)
                     return;
@@ -455,7 +455,7 @@ namespace Skylabs.LobbyServer
         /// <returns> Returns a false if the data it got was bullshit. </returns>
         public bool SetCustomStatus(int uid, string status)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (uid <= -1)
                     return false;
@@ -492,7 +492,7 @@ namespace Skylabs.LobbyServer
         /// <returns> True on success, or false if the data is fucked. </returns>
         public bool SetDisplayName(int uid, string name)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (uid <= -1)
                     return false;
@@ -528,7 +528,7 @@ namespace Skylabs.LobbyServer
         /// <returns> List of friends as Users, or NULL. </returns>
         public List<User> GetFriendsList(int uid)
         {
-            lock (DBLocker)
+            lock (_dbLocker)
             {
                 if (uid <= -1)
                     return null;

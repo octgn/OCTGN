@@ -17,7 +17,7 @@
       </Grid>
     </Border>
 
-    <Button x:Name="okBtn" Content="OK" MinWidth="100" Click="OKClicked" HorizontalAlignment="Center"
+    <Button x:Name="okBtn" Content="OK" MinWidth="100" Click="OkClicked" HorizontalAlignment="Center"
             VerticalAlignment="Bottom" Grid.Row="1" Visibility="Hidden" />
   </Grid>
 </Window>

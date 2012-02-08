@@ -52,13 +52,11 @@ namespace Octgn.Scripting
 
             ActionsScope = CreateScope();
             // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
-            if (Program.Game != null && !forTesting)
+            if (Program.Game == null || forTesting) return;
+            foreach (ScriptDef s in Program.Game.Definition.Scripts)
             {
-                foreach (ScriptDef s in Program.Game.Definition.Scripts)
-                {
-                    ScriptSource src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
-                    src.Execute(ActionsScope);
-                }
+                ScriptSource src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+                src.Execute(ActionsScope);
             }
         }
 
@@ -281,14 +279,12 @@ namespace Octgn.Scripting
             // See comment on sponsor declaration
             // Note: this has to be done after api has been activated at least once remotely,
             // that's why the code is here rather than in the c'tor
-            if (sponsor == null)
-            {
-                sponsor = new Sponsor();
-                var life = (ILease) RemotingServices.GetLifetimeService(api);
-                life.Register(sponsor);
-                life = (ILease) RemotingServices.GetLifetimeService(outputWriter);
-                life.Register(sponsor);
-            }
+            if (sponsor != null) return;
+            sponsor = new Sponsor();
+            var life = (ILease) RemotingServices.GetLifetimeService(api);
+            life.Register(sponsor);
+            life = (ILease) RemotingServices.GetLifetimeService(outputWriter);
+            life.Register(sponsor);
         }
 
         private static AppDomain CreateSandbox(bool forTesting)
@@ -304,8 +300,7 @@ namespace Octgn.Scripting
             permissions.AddPermission(
                 new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery,
                                      AppDomain.CurrentDomain.BaseDirectory));
-            var appinfo = new AppDomainSetup();
-            appinfo.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
+            var appinfo = new AppDomainSetup {ApplicationBase = AppDomain.CurrentDomain.BaseDirectory};
 
             return AppDomain.CreateDomain("Scripting sandbox", null, appinfo, permissions);
         }
@@ -314,14 +309,12 @@ namespace Octgn.Scripting
 
         void IDisposable.Dispose()
         {
-            if (sponsor != null)
-            {
-                // See comment on sponsor declaration
-                var life = (ILease) RemotingServices.GetLifetimeService(api);
-                life.Unregister(sponsor);
-                life = (ILease) RemotingServices.GetLifetimeService(outputWriter);
-                life.Unregister(sponsor);
-            }
+            if (sponsor == null) return;
+            // See comment on sponsor declaration
+            var life = (ILease) RemotingServices.GetLifetimeService(api);
+            life.Unregister(sponsor);
+            life = (ILease) RemotingServices.GetLifetimeService(outputWriter);
+            life.Unregister(sponsor);
         }
 
         #endregion

@@ -13,15 +13,15 @@ namespace Octgn
     /// </summary>
     public partial class DWindow
     {
-        private readonly Brush TurnBrush;
+        private readonly Brush _turnBrush;
         public RoutedCommand DebugWindowCommand = new RoutedCommand();
 
         public DWindow()
         {
             InitializeComponent();
             Color color = Color.FromRgb(0xFF, 0x00, 0x00);
-            TurnBrush = new SolidColorBrush(color);
-            TurnBrush.Freeze();
+            _turnBrush = new SolidColorBrush(color);
+            _turnBrush.Freeze();
 
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
 
@@ -34,7 +34,7 @@ namespace Octgn
             InputBindings.Add(ib);
         }
 
-        private void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private static void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
@@ -44,28 +44,28 @@ namespace Octgn
             Visibility = Visibility.Hidden;
         }
 
-        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void WindowIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var v = (bool) e.NewValue;
             if (v)
             {
-                Program.DebugListener.OnEventAdd += Add_Event;
+                Program.DebugListener.OnEventAdd += AddEvent;
                 output.Document.Blocks.Clear();
                 foreach (TraceEvent te in Program.DebugListener.Events)
                 {
-                    Add_Event(te);
+                    AddEvent(te);
                 }
             }
             else
-                Program.DebugListener.OnEventAdd -= Add_Event;
+                Program.DebugListener.OnEventAdd -= AddEvent;
         }
 
-        private void Add_Event(TraceEvent te)
+        private void AddEvent(TraceEvent te)
         {
-            Dispatcher.Invoke(new Action<TraceEvent>(i_Add_Event), new object[] {te});
+            Dispatcher.Invoke(new Action<TraceEvent>(IAddEvent), new object[] {te});
         }
 
-        private void i_Add_Event(TraceEvent te)
+        private void IAddEvent(TraceEvent te)
         {
             var p = new Paragraph
                         {
@@ -74,7 +74,7 @@ namespace Octgn
                             Inlines =
                                 {
                                     //new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush },
-                                    new Run(te.ToString()) {Foreground = TurnBrush, FontWeight = FontWeights.Bold}
+                                    new Run(te.ToString()) {Foreground = _turnBrush, FontWeight = FontWeights.Bold}
                                     //new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush }
                                 }
                         };
@@ -86,7 +86,7 @@ namespace Octgn
             output.ScrollToEnd();
         }
 
-        private void Window_Closing(object sender, CancelEventArgs e)
+        private void WindowClosing(object sender, CancelEventArgs e)
         {
             //Hide Window
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,

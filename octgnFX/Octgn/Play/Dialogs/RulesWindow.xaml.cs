@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.IO;
 using System.IO.Packaging;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Octgn.Play.Dialogs
 {
     /// <summary>
-    /// Interaction logic for RulesWindow.xaml
+    ///   Interaction logic for RulesWindow.xaml
     /// </summary>
-    public partial class RulesWindow : Window
+    public partial class RulesWindow
     {
         public RulesWindow()
         {
@@ -31,33 +26,35 @@ namespace Octgn.Play.Dialogs
             input.Position = output.Position = 0;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void WindowLoaded(object sender, RoutedEventArgs e)
         {
-            Uri uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
-            string defLoc = uri.LocalPath.Remove(0,3).Replace('/','\\');
+            var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
+            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
             using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                PackageRelationship defRelationship = package.GetRelationshipsByType("http://schemas.octgn.org/game/rules").First();
+                PackageRelationship defRelationship =
+                    package.GetRelationshipsByType("http://schemas.octgn.org/game/rules").First();
                 PackagePart definition = package.GetPart(defRelationship.TargetUri);
-                using (StreamReader fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
+                using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
                 {
                     long bytesRead = 0;
                     // Change the 75 for performance.  Find a number that suits your application best
-                    int bufferLength = 1024 * 75;
+                    const int bufferLength = 1024*75;
                     while (!fileReader.EndOfStream)
                     {
                         int readLength = bufferLength;
-                        char[] buffer = new char[readLength];
-                        bytesRead += (long)(fileReader.Read(buffer, 0, readLength));
+                        var buffer = new char[readLength];
+                        bytesRead += (fileReader.Read(buffer, 0, readLength));
                         // This will help the file load much faster 
                         // RichText loads \n as a new paragraph. Very slow for large text
                         string currentLine = new string(buffer).Replace("\n", string.Empty);
                         // Load in background
-                        this.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            TextRange range = new TextRange(rules.Document.ContentEnd, rules.Document.ContentEnd);
-                            range.Text = currentLine;
-                        }), System.Windows.Threading.DispatcherPriority.Normal);
+                        Dispatcher.BeginInvoke(new Action(() =>
+                                                              {
+                                                                  var range = new TextRange(rules.Document.ContentEnd,
+                                                                                            rules.Document.ContentEnd)
+                                                                                  {Text = currentLine};
+                                                              }), DispatcherPriority.Normal);
                     }
                 }
             }
@@ -65,23 +62,21 @@ namespace Octgn.Play.Dialogs
 
         private void FindText(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {                
-                DoSearch(rules, search.Text, true);
-                rules.Focus();
+            if (e.Key != Key.Enter) return;
+            DoSearch(rules, search.Text, true);
+            rules.Focus();
 
-                // Testing code for text scrolling
-                /*var start = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+            // Testing code for text scrolling
+            /*var start = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
                 var end = rules.Selection.End.GetCharacterRect(LogicalDirection.Forward);                
                 rules.ScrollToVerticalOffset((start.Top + end.Bottom - rules.ViewportHeight) / 2 + rules.VerticalOffset);*/
 
-                // WPF RichTextBox doesn't include "scrolltocaret"
-                Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-                double totaloffset = thisposition.Top + rules.VerticalOffset;
-                scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight / 2);
-                // Handle the keypress. We don't want to muck with rules text
-                e.Handled = true;
-            }
+            // WPF RichTextBox doesn't include "scrolltocaret"
+            Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+            double totaloffset = thisposition.Top + rules.VerticalOffset;
+            scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
+            // Handle the keypress. We don't want to muck with rules text
+            e.Handled = true;
         }
 
         public bool DoSearch(RichTextBox richTextBox, string searchText, bool searchNext)
@@ -107,18 +102,20 @@ namespace Octgn.Play.Dialogs
 
         public TextRange FindTextInRange(TextRange searchRange, string searchText)
         {
-          // Search the text with IndexOf
-          int offset = searchRange.Text.IndexOf(searchText);
-          if(offset<0)
-            return null;  // Not found
-          // Try to select the text as a contiguous range
-          for(TextPointer start = searchRange.Start.GetPositionAtOffset(offset); start != searchRange.End; start = start.GetPositionAtOffset(1))
-          {
-            TextRange result = new TextRange(start, start.GetPositionAtOffset(searchText.Length));
-            if(result.Text == searchText)
-              return result;
-          }
-          return null;
+            // Search the text with IndexOf
+            int offset = searchRange.Text.IndexOf(searchText);
+            if (offset < 0)
+                return null; // Not found
+            // Try to select the text as a contiguous range
+            for (TextPointer start = searchRange.Start.GetPositionAtOffset(offset);
+                 start != searchRange.End;
+                 start = start.GetPositionAtOffset(1))
+            {
+                var result = new TextRange(start, start.GetPositionAtOffset(searchText.Length));
+                if (result.Text == searchText)
+                    return result;
+            }
+            return null;
         }
 
         private void FindNext(object sender, KeyEventArgs e)
@@ -129,7 +126,7 @@ namespace Octgn.Play.Dialogs
                 // WPF RichTextBox doesn't include "scrolltocaret"
                 Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
                 double totaloffset = thisposition.Top + rules.VerticalOffset;
-                scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight / 2);
+                scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
             }
             e.Handled = true;
         }
@@ -139,6 +136,5 @@ namespace Octgn.Play.Dialogs
          * http://stackoverflow.com/questions/837086/c-sharp-loading-a-large-file-into-a-wpf-richtextbox
          * http://stackoverflow.com/questions/1228714/how-do-i-find-the-viewable-area-of-a-wpf-richtextbox
          */
-
     }
 }

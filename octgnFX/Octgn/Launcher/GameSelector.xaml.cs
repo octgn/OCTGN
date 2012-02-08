@@ -12,15 +12,15 @@ namespace Octgn.Launcher
 {
     public sealed partial class GameSelector
     {
-        private static readonly Duration dt = new Duration(TimeSpan.FromMilliseconds(500));
-        private readonly IList<Data.Game> games;
-        private int selectedIdx;
+        private static readonly Duration Dt = new Duration(TimeSpan.FromMilliseconds(500));
+        private readonly IList<Data.Game> _games;
+        private int _selectedIdx;
 
         public GameSelector()
         {
             InitializeComponent();
             if (DesignerProperties.GetIsInDesignMode(this)) return;
-            games = Program.GamesRepository.Games;
+            _games = Program.GamesRepository.Games;
             Create3DItems();
         }
 
@@ -28,12 +28,11 @@ namespace Octgn.Launcher
         {
             get
             {
-                if (games.Count == 0) return null;
+                return _games.Count == 0 ? null : new Game(GameDef.FromO8G(_games[_selectedIdx].Filename));
                 //var serializer = new BinaryFormatter();
                 //var memStream = new MemoryStream(games[selectedIdx].Data);
                 //GameDef def = (GameDef)serializer.Deserialize(memStream);
                 //return new Game(def);
-                return new Game(GameDef.FromO8G(games[selectedIdx].Filename));
             }
         }
 
@@ -44,7 +43,7 @@ namespace Octgn.Launcher
             //var rnd = new Random();
             int i = 0;
 
-            foreach (Data.Game game in games)
+            foreach (Data.Game game in _games)
             {
                 var bmp = new BitmapImage();
                 bmp.BeginInit();
@@ -102,36 +101,34 @@ namespace Octgn.Launcher
                 ++i;
             }
 
-            if (games.Count > 0)
-            {
-                selectedIdx = 0;
-                nameText.Text = games[0].Name;
-            }
+            if (_games.Count <= 0) return;
+            _selectedIdx = 0;
+            nameText.Text = _games[0].Name;
         }
 
         private void Select(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             int idx = container.Children.IndexOf((Visual3D) sender);
-            if (idx == selectedIdx) return;
+            if (idx == _selectedIdx) return;
             for (int i = 0; i < container.Children.Count; ++i)
             {
                 var item = (ModelUIElement3D) container.Children[i];
                 var rotate = (RotateTransform3D) ((Transform3DGroup) item.Model.Transform).Children[0];
                 var translate = (TranslateTransform3D) ((Transform3DGroup) item.Model.Transform).Children[1];
 
-                var anim = new DoubleAnimation(i == idx ? 0 : -1, dt, FillBehavior.HoldEnd) {DecelerationRatio = 0.65};
+                var anim = new DoubleAnimation(i == idx ? 0 : -1, Dt, FillBehavior.HoldEnd) {DecelerationRatio = 0.65};
                 translate.BeginAnimation(TranslateTransform3D.OffsetZProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                anim = new DoubleAnimation(i - idx + 0.5*Math.Sign(i - idx), dt, FillBehavior.HoldEnd)
+                anim = new DoubleAnimation(i - idx + 0.5*Math.Sign(i - idx), Dt, FillBehavior.HoldEnd)
                            {DecelerationRatio = 0.65};
                 translate.BeginAnimation(TranslateTransform3D.OffsetXProperty, anim, HandoffBehavior.SnapshotAndReplace);
-                anim = new DoubleAnimation(i < idx ? 40 : i > idx ? -40 : 0, dt, FillBehavior.HoldEnd)
+                anim = new DoubleAnimation(i < idx ? 40 : i > idx ? -40 : 0, Dt, FillBehavior.HoldEnd)
                            {DecelerationRatio = 0.65};
                 (rotate.Rotation).BeginAnimation(AxisAngleRotation3D.AngleProperty, anim,
                                                  HandoffBehavior.SnapshotAndReplace);
             }
-            selectedIdx = idx;
-            nameText.Text = games[idx].Name;
+            _selectedIdx = idx;
+            nameText.Text = _games[idx].Name;
         }
     }
 }

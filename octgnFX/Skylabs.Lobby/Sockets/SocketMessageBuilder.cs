@@ -14,11 +14,11 @@ namespace Skylabs.Lobby.Sockets
 
         public SocketMessageBuilder()
         {
-            SMQueue = new Queue<SocketMessage>();
+            SmQueue = new Queue<SocketMessage>();
             Restart();
         }
 
-        public Queue<SocketMessage> SMQueue { get; set; }
+        public Queue<SocketMessage> SmQueue { get; set; }
 
         private void Restart()
         {
@@ -31,16 +31,16 @@ namespace Skylabs.Lobby.Sockets
 
         public void AddBytes(byte[] toadd)
         {
-            for (int i = 0; i < toadd.Length; i++)
+            foreach (byte t in toadd)
             {
                 if (_messageSize == -1)
                 {
-                    _messageSizeBuffer[_msbAdded] = toadd[i];
+                    _messageSizeBuffer[_msbAdded] = t;
                     _msbAdded++;
                 }
                 else
                 {
-                    _messageBuffer[_mbAdded] = toadd[i];
+                    _messageBuffer[_mbAdded] = t;
                     _mbAdded++;
                 }
                 if (_msbAdded == 8 && _messageSize == -1)
@@ -49,13 +49,11 @@ namespace Skylabs.Lobby.Sockets
                     _messageBuffer = new byte[_messageSize];
                     continue;
                 }
-                if (_mbAdded == _messageSize)
-                {
-                    SocketMessage sm = SocketMessage.Deserialize(_messageBuffer);
-                    if (sm != null)
-                        SMQueue.Enqueue(sm);
-                    Restart();
-                }
+                if (_mbAdded != _messageSize) continue;
+                SocketMessage sm = SocketMessage.Deserialize(_messageBuffer);
+                if (sm != null)
+                    SmQueue.Enqueue(sm);
+                Restart();
             }
         }
     }
