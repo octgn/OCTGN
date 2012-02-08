@@ -154,7 +154,6 @@ namespace Octgn.DeckBuilder
 
         private void NewClicked(object sender, RoutedEventArgs e)
         {
-            //Magnus: First Commit!
             if (unsaved)
             {
                 MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
