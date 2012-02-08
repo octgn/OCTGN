@@ -82,7 +82,7 @@ namespace Octgn.Launcher
                                                          case Chatting.ChatEvent.UserJoinedChat:
                                                              {
                                                                  string reg =
-                                                                     Registry.ReadValue("Options_HideLoginNotifications");
+                                                                     SimpleConfig.ReadValue("Options_HideLoginNotifications");
                                                                  if (reg == "false" || reg == null)
                                                                  {
                                                                      var r = new Run("#" + user.DisplayName + ": ");
@@ -98,7 +98,7 @@ namespace Octgn.Launcher
                                                          case Chatting.ChatEvent.UserLeftChat:
                                                              {
                                                                  string reg =
-                                                                     Registry.ReadValue("Options_HideLoginNotifications");
+                                                                     SimpleConfig.ReadValue("Options_HideLoginNotifications");
                                                                  if (reg == "false" || reg == null)
                                                                  {
                                                                      var r = new Run("#" + user.DisplayName + ": ");

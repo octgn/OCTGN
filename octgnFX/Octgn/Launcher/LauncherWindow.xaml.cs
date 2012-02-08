@@ -129,8 +129,8 @@ namespace Octgn.Launcher
 
         public void Launcher_Initialized(object sender, EventArgs e)
         {
-            Top = Settings.Default.LoginTopLoc;
-            Left = Settings.Default.LoginLeftLoc;
+            Top = double.Parse(SimpleConfig.ReadValue("LoginTopLoc", "100"));
+            Left = double.Parse(SimpleConfig.ReadValue("LoginLeftLoc", "100"));
         }
 
         #endregion Constructors
