@@ -1,5 +1,4 @@
 using Octgn.Definitions;
-using Octgn.Play.Actions;
 
 namespace Octgn.Play
 {
@@ -7,18 +6,19 @@ namespace Octgn.Play
     {
         public Table(GroupDef def)
             : base(null, def)
-        { }
+        {
+        }
 
         public void BringToFront(Card card)
         {
             if (card.Group != this) return;
-            card.MoveToTable((int)card.X, (int)card.Y, card.FaceUp, Cards.Count);
+            card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, Cards.Count);
         }
 
         public void SendToBack(Card card)
         {
             if (card.Group != this) return;
-            card.MoveToTable((int)card.X, (int)card.Y, card.FaceUp, 0);
+            card.MoveToTable((int) card.X, (int) card.Y, card.FaceUp, 0);
         }
     }
 }

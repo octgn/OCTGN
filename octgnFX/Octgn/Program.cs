@@ -2,36 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Threading;
+using Octgn.Data;
+using Octgn.DeckBuilder;
+using Octgn.Launcher;
+using Octgn.Networking;
 using Octgn.Play;
+using Octgn.Properties;
 using Skylabs.Lobby;
 using RE = System.Text.RegularExpressions;
-using Octgn.Launcher;
-using Skylabs.Lobby.Threading;
 
 namespace Octgn
 {
     public static class Program
     {
         public static DWindow DebugWindow;
-        public static Octgn.Launcher.Main ClientWindow;
-        public static Launcher.LauncherWindow LauncherWindow;
-        public static DeckBuilder.DeckBuilderWindow DeckEditor;
+        public static Main ClientWindow;
+        public static LauncherWindow LauncherWindow;
+        public static DeckBuilderWindow DeckEditor;
         public static PlayWindow PlayWindow;
         public static List<ChatWindow> ChatWindows;
 
         public static Game Game;
         public static LobbyClient lobbyClient;
-        public static Octgn.Data.GameSettings GameSettings = new Octgn.Data.GameSettings();
-        public static Data.GamesRepository GamesRepository;
-        internal static Networking.Client Client;
+        public static GameSettings GameSettings = new GameSettings();
+        public static GamesRepository GamesRepository;
+        internal static Client Client;
 
-        internal static bool IsGameRunning = false;
-        internal readonly static string BasePath;
-        internal readonly static string GamesPath;
+        internal static bool IsGameRunning;
+        internal static readonly string BasePath;
+        internal static readonly string GamesPath;
 
-        internal static ulong PrivateKey = ((ulong)Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
+        internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
         internal static event EventHandler<ServerErrorEventArgs> ServerError;
 
@@ -39,13 +44,13 @@ namespace Octgn
 
         internal static Dispatcher Dispatcher;
 
-        internal readonly static TraceSource Trace = new TraceSource("MainTrace", SourceLevels.Information);
-        internal readonly static TraceSource DebugTrace = new TraceSource("DebugTrace", SourceLevels.All);
-        internal readonly static CacheTraceListener DebugListener = new CacheTraceListener();
-        internal static System.Windows.Documents.Inline LastChatTrace;
+        internal static readonly TraceSource Trace = new TraceSource("MainTrace", SourceLevels.Information);
+        internal static readonly TraceSource DebugTrace = new TraceSource("DebugTrace", SourceLevels.All);
+        internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
+        internal static Inline LastChatTrace;
 
         private static Process LobbyServerProcess;
-        private static bool _locationUpdating = false;
+        private static bool _locationUpdating;
 
 #if(TestServer)
         public static TestServerSettings LobbySettings = TestServerSettings.Default;
@@ -59,17 +64,18 @@ namespace Octgn
 
         static Program()
         {
-            System.Diagnostics.Debug.Listeners.Add(DebugListener);
+            Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
-            BasePath = Path.GetDirectoryName(typeof(Program).Assembly.Location) + '\\';
+            BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
             StartLobbyServer();
-            Exception e = new Exception();
+            var e = new Exception();
             string s = e.Message.Substring(0);
-            Program.LauncherWindow = new Launcher.LauncherWindow();
-            Application.Current.MainWindow = Program.LauncherWindow;
+            LauncherWindow = new LauncherWindow();
+            Application.Current.MainWindow = LauncherWindow;
         }
+
         public static void StartLobbyServer()
         {
 #if(DEBUG)
@@ -78,7 +84,6 @@ namespace Octgn
             try
             {
                 LobbyServerProcess.Start();
-                return;
             }
             catch (Exception e)
             {
@@ -86,13 +91,16 @@ namespace Octgn
             }
 #endif
         }
+
         public static void StopGame()
         {
             if (Client != null)
             {
-                Client.Disconnect(); Client = null;
+                Client.Disconnect();
+                Client = null;
             }
-            Game.End(); Game = null;
+            Game.End();
+            Game = null;
             Dispatcher = null;
             Database.Close();
             IsGameRunning = false;
@@ -105,9 +113,9 @@ namespace Octgn
                 if (LauncherWindow != null && LauncherWindow.IsLoaded)
                 {
                     _locationUpdating = true;
-                    Properties.Settings.Default.LoginLeftLoc = LauncherWindow.Left;
-                    Properties.Settings.Default.LoginTopLoc = LauncherWindow.Top;
-                    Properties.Settings.Default.Save();
+                    Settings.Default.LoginLeftLoc = LauncherWindow.Left;
+                    Settings.Default.LoginTopLoc = LauncherWindow.Top;
+                    Settings.Default.Save();
                     _locationUpdating = false;
                 }
             }
@@ -116,8 +124,8 @@ namespace Octgn
         public static void Exit()
         {
             Application.Current.MainWindow = null;
-            if (Program.lobbyClient != null && Program.lobbyClient.Connected)
-                Program.lobbyClient.Stop();
+            if (lobbyClient != null && lobbyClient.Connected)
+                lobbyClient.Stop();
 
             SaveLocation();
             try
@@ -162,22 +170,22 @@ namespace Octgn
         //TODO: Get rid of this method at some point
         internal static void OnServerError(string serverMessage)
         {
-            var args = new ServerErrorEventArgs() { Message = serverMessage };
+            var args = new ServerErrorEventArgs {Message = serverMessage};
             if (ServerError != null)
                 ServerError(null, args);
             if (args.Handled) return;
 
             MessageBox.Show(Application.Current.MainWindow,
-                "The server has returned an error:\n" + serverMessage,
-                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            "The server has returned an error:\n" + serverMessage,
+                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         internal static void Print(Player player, string text)
         {
             string finalText = text;
             int i = 0;
-            List<object> args = new List<object>(2);
-            RE.Match match = RE.Regex.Match(text, "{([^}]*)}");
+            var args = new List<object>(2);
+            Match match = Regex.Match(text, "{([^}]*)}");
             while (match.Success)
             {
                 string token = match.Groups[1].Value;
@@ -186,13 +194,15 @@ namespace Octgn
                 object tokenValue = token;
                 switch (token)
                 {
-                    case "me": tokenValue = player; break;
+                    case "me":
+                        tokenValue = player;
+                        break;
                     default:
                         if (token.StartsWith("#"))
                         {
                             int id;
                             if (!int.TryParse(token.Substring(1), out id)) break;
-                            var obj = ControllableObject.Find(id);
+                            ControllableObject obj = ControllableObject.Find(id);
                             if (obj == null) break;
                             tokenValue = obj;
                             break;
@@ -203,24 +213,26 @@ namespace Octgn
                 match = match.NextMatch();
             }
             args.Add(player);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player) | EventIds.Explicit, finalText, args.ToArray());
+            Trace.TraceEvent(TraceEventType.Information,
+                             EventIds.Event | EventIds.PlayerFlag(player) | EventIds.Explicit, finalText, args.ToArray());
         }
 
         internal static void TracePlayerEvent(Player player, string message, params object[] args)
         {
-            List<object> args1 = new List<object>(args);
+            var args1 = new List<object>(args);
             args1.Add(player);
-            Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message, args1.ToArray());
+            Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message,
+                             args1.ToArray());
         }
 
         internal static void TraceWarning(string message)
         {
-            Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message);
+            Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message);
         }
 
         internal static void TraceWarning(string message, params object[] args)
         {
-            Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message, args);
+            Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message, args);
         }
     }
 }

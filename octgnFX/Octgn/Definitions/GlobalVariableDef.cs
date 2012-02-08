@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using Octgn.Data;
 
@@ -18,13 +16,13 @@ namespace Octgn.Definitions
             if (xml == null) return new List<GlobalVariableDef>(0);
 
             return xml.Elements("globalvariable")
-                     .Select(x => new GlobalVariableDef
-                     {
-                         Name = x.Attr<string>("name"),
-                         Value = x.Attr<string>("value"),
-                         DefaultValue = x.Attr<string>("value")
-                     })
-                     .ToList();
+                .Select(x => new GlobalVariableDef
+                                 {
+                                     Name = x.Attr<string>("name"),
+                                     Value = x.Attr<string>("value"),
+                                     DefaultValue = x.Attr<string>("value")
+                                 })
+                .ToList();
         }
     }
 }

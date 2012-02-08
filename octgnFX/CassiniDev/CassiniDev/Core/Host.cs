@@ -1,17 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
@@ -27,15 +13,8 @@ using System.Web.Hosting;
 namespace CassiniDev
 {
     /// <summary>
-    /// 01/01/10 sky: added HttpRuntime.Close to IRegisteredObject.Stop to eliminate 
-    ///               System.AppDomainUnloadedException when running tests in NUnit GuiRunner.
-    ///               reference: http://stackoverflow.com/questions/561402/cassini-webserver-webdev-nunit-and-appdomainunloadedexception
-    ///               need to test thoroughly but seems to work just fine with no ill effects
-    /// 01.03.10 sky: removed the HttpRuntime.Close because, even though it tests fine, I am not entirely certain it is in the right place
-    ///               and since I am no longer recommending that the server be used as a library in testing (run a console instance in a new process).
-    /// 04.20.11 sky: un-second-guessed myself and un-removed the initial fix. seems to have resolved the issue.
-    ///               
-    /// </summary>  
+    ///   01/01/10 sky: added HttpRuntime.Close to IRegisteredObject.Stop to eliminate System.AppDomainUnloadedException when running tests in NUnit GuiRunner. reference: http://stackoverflow.com/questions/561402/cassini-webserver-webdev-nunit-and-appdomainunloadedexception need to test thoroughly but seems to work just fine with no ill effects 01.03.10 sky: removed the HttpRuntime.Close because, even though it tests fine, I am not entirely certain it is in the right place and since I am no longer recommending that the server be used as a library in testing (run a console instance in a new process). 04.20.11 sky: un-second-guessed myself and un-removed the initial fix. seems to have resolved the issue.
+    /// </summary>
     internal class Host : MarshalByRefObject, IRegisteredObject
     {
         private bool _disableDirectoryListing;
@@ -170,7 +149,7 @@ namespace CassiniDev
 
         public SecurityIdentifier GetProcessSid()
         {
-            using (WindowsIdentity identity = new WindowsIdentity(_server.GetProcessToken()))
+            using (var identity = new WindowsIdentity(_server.GetProcessToken()))
             {
                 return identity.User;
             }
@@ -287,7 +266,7 @@ namespace CassiniDev
 
         private void WaitForPendingCallsToFinish()
         {
-            for (; ; )
+            for (;;)
             {
                 if (_pendingCallsCount <= 0)
                 {

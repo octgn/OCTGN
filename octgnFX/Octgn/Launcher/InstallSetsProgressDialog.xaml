@@ -1,9 +1,7 @@
 ﻿<Window x:Class="Octgn.Launcher.InstallSetsProgressDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Installing sets..." Height="372" Width="471"
-        Style="{StaticResource DialogWindow}"
-        ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Installing sets..." Height="372" Width="471"
+        Style="{StaticResource DialogWindow}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
   <Grid Margin="4">
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
@@ -19,9 +17,8 @@
         </Border>
       </Grid>
     </Border>
-    
-    <Button x:Name="okBtn" Content="OK" MinWidth="100" Click="OKClicked"
-            HorizontalAlignment="Center" VerticalAlignment="Bottom"
-            Grid.Row="1" Visibility="Hidden" />
+
+    <Button x:Name="okBtn" Content="OK" MinWidth="100" Click="OKClicked" HorizontalAlignment="Center"
+            VerticalAlignment="Bottom" Grid.Row="1" Visibility="Hidden" />
   </Grid>
 </Window>

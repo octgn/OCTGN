@@ -4,17 +4,31 @@ namespace Skylabs.ConsoleHelper
 {
     public class ConsoleWriter
     {
-        public enum EnConsoleEvent { Read, Wrote, ComText };
+        #region EnConsoleEvent enum
+
+        public enum EnConsoleEvent
+        {
+            Read,
+            Wrote,
+            ComText
+        };
+
+        #endregion
 
         //public static ConsoleColor CommandTextColor { get { return _CommandTextColor;} set { _CommandTextColor = value;} }
         //public static ConsoleColor OutputColor { get { return _OutputColor; } set { _OutputColor = value; } }
-        public static String CommandText { get { return _commandText; } set { _commandText = value; } }
 
         //private static ConsoleColor _CommandTextColor = ConsoleColor.White;
         //private static ConsoleColor _OutputColor = ConsoleColor.White;
         private static String _commandText = ": ";
 
         private static EnConsoleEvent _lastEvent = EnConsoleEvent.Wrote;
+
+        public static String CommandText
+        {
+            get { return _commandText; }
+            set { _commandText = value; }
+        }
 
         public static void WriteCt()
         {

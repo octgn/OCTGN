@@ -124,4 +124,13 @@
   <data name="UpdateDatabase" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\updatedatabase.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="BinaryParser_Parse_Parse_error_in_binaryparser__">
+    <value xml:space="preserve">Parse error in binaryparser: </value>
+  </data>
+  <data name="XmlParser_Parse_Parse_error_in_xmlparser__">
+    <value xml:space="preserve">Parse error in xmlparser: </value>
+  </data>
+  <data name="Connection_Disconnect_Client_Disconnected_">
+    <value xml:space="preserve">Client Disconnected.</value>
+  </data>
 </root>

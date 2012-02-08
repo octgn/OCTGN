@@ -1,9 +1,4 @@
-﻿/*
- * This file was automatically generated!
- * Do not modify, changes will get lost when the file is regenerated!
- */
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -11,10 +6,12 @@ namespace Octgn.Server
 {
     internal sealed class BinaryParser
     {
-        Handler handler;
+        private readonly Handler handler;
 
         public BinaryParser(Handler handler)
-        { this.handler = handler; }
+        {
+            this.handler = handler;
+        }
 
         public void Parse(byte[] data)
         {
@@ -45,10 +42,10 @@ namespace Octgn.Server
                             string arg0 = reader.ReadString();
                             ulong arg1 = reader.ReadUInt64();
                             string arg2 = reader.ReadString();
-                            Version arg3 = new Version(reader.ReadString());
-                            Version arg4 = new Version(reader.ReadString());
-                            Guid arg5 = new Guid(reader.ReadBytes(16));
-                            Version arg6 = new Version(reader.ReadString());
+                            var arg3 = new Version(reader.ReadString());
+                            var arg4 = new Version(reader.ReadString());
+                            var arg5 = new Guid(reader.ReadBytes(16));
+                            var arg6 = new Version(reader.ReadString());
                             handler.Hello(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
                             break;
                         }
@@ -138,15 +135,15 @@ namespace Octgn.Server
                     case 28:
                         {
                             length = reader.ReadInt16();
-                            int[] arg0 = new int[length];
+                            var arg0 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg0[i] = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            ulong[] arg1 = new ulong[length];
+                            var arg1 = new ulong[length];
                             for (int i = 0; i < length; ++i)
                                 arg1[i] = reader.ReadUInt64();
                             length = reader.ReadInt16();
-                            int[] arg2 = new int[length];
+                            var arg2 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg2[i] = reader.ReadInt32();
                             handler.LoadDeck(arg0, arg1, arg2);
@@ -155,11 +152,11 @@ namespace Octgn.Server
                     case 29:
                         {
                             length = reader.ReadInt16();
-                            int[] arg0 = new int[length];
+                            var arg0 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg0[i] = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            ulong[] arg1 = new ulong[length];
+                            var arg1 = new ulong[length];
                             for (int i = 0; i < length; ++i)
                                 arg1[i] = reader.ReadUInt64();
                             int arg2 = reader.ReadInt32();
@@ -169,23 +166,23 @@ namespace Octgn.Server
                     case 30:
                         {
                             length = reader.ReadInt16();
-                            int[] arg0 = new int[length];
+                            var arg0 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg0[i] = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            ulong[] arg1 = new ulong[length];
+                            var arg1 = new ulong[length];
                             for (int i = 0; i < length; ++i)
                                 arg1[i] = reader.ReadUInt64();
                             length = reader.ReadInt16();
-                            Guid[] arg2 = new Guid[length];
+                            var arg2 = new Guid[length];
                             for (int i = 0; i < length; ++i)
                                 arg2[i] = new Guid(reader.ReadBytes(16));
                             length = reader.ReadInt16();
-                            int[] arg3 = new int[length];
+                            var arg3 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg3[i] = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            int[] arg4 = new int[length];
+                            var arg4 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg4[i] = reader.ReadInt32();
                             bool arg5 = reader.ReadBoolean();
@@ -196,11 +193,11 @@ namespace Octgn.Server
                     case 31:
                         {
                             length = reader.ReadInt16();
-                            int[] arg0 = new int[length];
+                            var arg0 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg0[i] = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            ulong[] arg1 = new ulong[length];
+                            var arg1 = new ulong[length];
                             for (int i = 0; i < length; ++i)
                                 arg1[i] = reader.ReadUInt64();
                             handler.CreateAlias(arg0, arg1);
@@ -229,7 +226,7 @@ namespace Octgn.Server
                         {
                             int arg0 = reader.ReadInt32();
                             ulong arg1 = reader.ReadUInt64();
-                            Guid arg2 = new Guid(reader.ReadBytes(16));
+                            var arg2 = new Guid(reader.ReadBytes(16));
                             handler.Reveal(arg0, arg1, arg2);
                             break;
                         }
@@ -237,12 +234,12 @@ namespace Octgn.Server
                         {
                             byte arg0 = reader.ReadByte();
                             length = reader.ReadInt16();
-                            byte[] arg1 = new byte[length];
+                            var arg1 = new byte[length];
                             for (int i = 0; i < length; ++i)
                                 arg1[i] = reader.ReadByte();
                             int arg2 = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            ulong[] arg3 = new ulong[length];
+                            var arg3 = new ulong[length];
                             for (int i = 0; i < length; ++i)
                                 arg3[i] = reader.ReadUInt64();
                             handler.RevealToReq(arg0, arg1, arg2, arg3);
@@ -290,7 +287,7 @@ namespace Octgn.Server
                     case 50:
                         {
                             int arg0 = reader.ReadInt32();
-                            CardOrientation arg1 = (CardOrientation)reader.ReadByte();
+                            var arg1 = (CardOrientation) reader.ReadByte();
                             handler.RotateReq(arg0, arg1);
                             break;
                         }
@@ -298,7 +295,7 @@ namespace Octgn.Server
                         {
                             int arg0 = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            int[] arg1 = new int[length];
+                            var arg1 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg1[i] = reader.ReadInt32();
                             handler.Shuffle(arg0, arg1);
@@ -308,11 +305,11 @@ namespace Octgn.Server
                         {
                             int arg0 = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            int[] arg1 = new int[length];
+                            var arg1 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg1[i] = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            short[] arg2 = new short[length];
+                            var arg2 = new short[length];
                             for (int i = 0; i < length; ++i)
                                 arg2[i] = reader.ReadInt16();
                             handler.Shuffled(arg0, arg1, arg2);
@@ -327,11 +324,11 @@ namespace Octgn.Server
                     case 55:
                         {
                             length = reader.ReadInt16();
-                            int[] arg0 = new int[length];
+                            var arg0 = new int[length];
                             for (int i = 0; i < length; ++i)
                                 arg0[i] = reader.ReadInt32();
                             length = reader.ReadInt16();
-                            ulong[] arg1 = new ulong[length];
+                            var arg1 = new ulong[length];
                             for (int i = 0; i < length; ++i)
                                 arg1[i] = reader.ReadUInt64();
                             handler.Unalias(arg0, arg1);
@@ -340,7 +337,7 @@ namespace Octgn.Server
                     case 56:
                         {
                             int arg0 = reader.ReadInt32();
-                            Guid arg1 = new Guid(reader.ReadBytes(16));
+                            var arg1 = new Guid(reader.ReadBytes(16));
                             string arg2 = reader.ReadString();
                             ushort arg3 = reader.ReadUInt16();
                             handler.AddMarkerReq(arg0, arg1, arg2, arg3);
@@ -349,7 +346,7 @@ namespace Octgn.Server
                     case 58:
                         {
                             int arg0 = reader.ReadInt32();
-                            Guid arg1 = new Guid(reader.ReadBytes(16));
+                            var arg1 = new Guid(reader.ReadBytes(16));
                             string arg2 = reader.ReadString();
                             ushort arg3 = reader.ReadUInt16();
                             handler.RemoveMarkerReq(arg0, arg1, arg2, arg3);
@@ -358,7 +355,7 @@ namespace Octgn.Server
                     case 60:
                         {
                             int arg0 = reader.ReadInt32();
-                            Guid arg1 = new Guid(reader.ReadBytes(16));
+                            var arg1 = new Guid(reader.ReadBytes(16));
                             string arg2 = reader.ReadString();
                             ushort arg3 = reader.ReadUInt16();
                             handler.SetMarkerReq(arg0, arg1, arg2, arg3);
@@ -368,7 +365,7 @@ namespace Octgn.Server
                         {
                             int arg0 = reader.ReadInt32();
                             int arg1 = reader.ReadInt32();
-                            Guid arg2 = new Guid(reader.ReadBytes(16));
+                            var arg2 = new Guid(reader.ReadBytes(16));
                             string arg3 = reader.ReadString();
                             ushort arg4 = reader.ReadUInt16();
                             handler.TransferMarkerReq(arg0, arg1, arg2, arg3, arg4);
@@ -453,7 +450,7 @@ namespace Octgn.Server
                     case 83:
                         {
                             length = reader.ReadInt16();
-                            Guid[] arg0 = new Guid[length];
+                            var arg0 = new Guid[length];
                             for (int i = 0; i < length; ++i)
                                 arg0[i] = new Guid(reader.ReadBytes(16));
                             handler.StartLimitedReq(arg0);
@@ -504,7 +501,6 @@ namespace Octgn.Server
                         Debug.WriteLine("[Server Parser] Unknown message: " + method);
                         break;
                 }
-
             }
             catch (Exception ex)
             {
@@ -515,7 +511,6 @@ namespace Octgn.Server
                 if (reader != null)
                 {
                     reader.Close();
-                    stream = null;
                 }
             }
         }

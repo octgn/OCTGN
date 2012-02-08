@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
 using Octgn.Data;
-using System.Collections.Generic;
 
 namespace Octgn.Definitions
 {
@@ -15,12 +15,12 @@ namespace Octgn.Definitions
         {
             int i = 1;
             Counters = xml.Elements(Defs.xmlnsOctgn + "counter")
-                          .Select(x => CounterDef.LoadFromXml(x, part, i++))
-                          .ToArray();
+                .Select(x => CounterDef.LoadFromXml(x, part, i++))
+                .ToArray();
             i = 1;
             Groups = xml.Elements(Defs.xmlnsOctgn + "group")
-                        .Select(x => GroupDef.LoadFromXml(x, part, i++))
-                        .ToArray();
+                .Select(x => GroupDef.LoadFromXml(x, part, i++))
+                .ToArray();
         }
     }
 
@@ -33,11 +33,11 @@ namespace Octgn.Definitions
         internal static PlayerDef LoadFromXml(XElement xml, PackagePart part)
         {
             var res = new PlayerDef
-            {
-                IndicatorsFormat = xml.Attr<string>("summary"),
-                Hand = GroupDef.LoadFromXml(xml.Child("hand"), part, 0),
-                GlobalVariables = GlobalVariableDef.LoadAllFromXml(xml)
-            };
+                          {
+                              IndicatorsFormat = xml.Attr<string>("summary"),
+                              Hand = GroupDef.LoadFromXml(xml.Child("hand"), part, 0),
+                              GlobalVariables = GlobalVariableDef.LoadAllFromXml(xml)
+                          };
             res.LoadBaseXml(xml, part);
             return res;
         }

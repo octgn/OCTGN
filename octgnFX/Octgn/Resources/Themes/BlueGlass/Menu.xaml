@@ -1,18 +1,17 @@
-﻿<ResourceDictionary 
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style x:Key="MenuHeader" TargetType="MenuItem">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Grid Background="{TemplateBinding Control.Background}">
-                        <TextBlock Text="{TemplateBinding MenuItem.Header}" Margin="4" FontWeight="Bold" Foreground="Black" />
-                        <Rectangle Stroke="#bbb" VerticalAlignment="Bottom" Height="1" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+  <Style x:Key="MenuHeader" TargetType="MenuItem">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate>
+          <Grid Background="{TemplateBinding Control.Background}">
+            <TextBlock Text="{TemplateBinding MenuItem.Header}" Margin="4" FontWeight="Bold" Foreground="Black" />
+            <Rectangle Stroke="#bbb" VerticalAlignment="Bottom" Height="1" />
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
 </ResourceDictionary>

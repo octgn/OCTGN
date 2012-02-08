@@ -2,14 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using Octgn.Play.Gui;
-using Octgn.Definitions;
-using System.Diagnostics;
+using System.Windows.Documents;
 using System.Windows.Input;
+using Octgn.Controls;
+using Octgn.Definitions;
 using Octgn.Utils;
-
 
 namespace Octgn.Play
 {
@@ -17,30 +15,38 @@ namespace Octgn.Play
     {
         #region Non-public fields
 
-        protected ObservableCollection<Card> cards = new ObservableCollection<Card>();        // List of cards in this group        
-        protected GroupVisibility visibility;                                                 // Visibility of the group
-        internal List<Player> viewers = new List<Player>(2);                                  // List of players who can see cards in this group, or null where this is irrelevant (Visibility.Undefined)
-        internal Dictionary<int, List<Card>> lookedAt = new Dictionary<int, List<Card>>();     // Cards being looked at, key is a unique identifier for each "look"; Note: cards may have left the group in the meantime, which is not important
-        private bool locked = false;                                                          // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
-        internal GroupDef def;
-        internal short[] myShufflePos;                                                        // Stores positions suggested by this client during a shuffle [transient]
-        internal bool hasReceivedFirstShuffledMessage;
-        internal int filledShuffleSlots;
         private static readonly KeyGestureConverter keyConverter = new KeyGestureConverter();
+
+        protected ObservableCollection<Card> cards = new ObservableCollection<Card>();
+        // List of cards in this group        
+
+        internal GroupDef def;
+        internal int filledShuffleSlots;
+        internal bool hasReceivedFirstShuffledMessage;
+
+        private bool locked;
+        // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
+
+        internal Dictionary<int, List<Card>> lookedAt = new Dictionary<int, List<Card>>();
+        // Cards being looked at, key is a unique identifier for each "look"; Note: cards may have left the group in the meantime, which is not important
+
+        internal short[] myShufflePos; // Stores positions suggested by this client during a shuffle [transient]
+
+        internal List<Player> viewers = new List<Player>(2);
+        // List of players who can see cards in this group, or null where this is irrelevant (Visibility.Undefined)
+
+        protected GroupVisibility visibility; // Visibility of the group
 
         #endregion
 
         #region Public interface
 
         // Find a group given its id
-        internal static new Group Find(int id)
-        {
-            if (id == 0x01000000) return Program.Game.Table;
-            Player player = Player.Find((byte)(id >> 16));
-            return player.IndexedGroups[(byte)id];
-        }
 
         // C'tor
+        public readonly ActionShortcut[] CardShortcuts;
+        public readonly ActionShortcut[] GroupShortcuts;
+
         internal Group(Player owner, GroupDef def)
             : base(owner)
         {
@@ -49,7 +55,7 @@ namespace Octgn.Play
             GroupShortcuts = CreateShortcuts(def.groupActions);
             CardShortcuts = CreateShortcuts(def.cardActions);
             if (def.Shortcut != null)
-                MoveToShortcut = (KeyGesture)keyConverter.ConvertFromInvariantString(def.Shortcut);
+                MoveToShortcut = (KeyGesture) keyConverter.ConvertFromInvariantString(def.Shortcut);
         }
 
         public GroupDef Definition
@@ -57,33 +63,48 @@ namespace Octgn.Play
             get { return def; }
         }
 
-        public readonly ActionShortcut[] GroupShortcuts;
-        public readonly ActionShortcut[] CardShortcuts;
-
         // Group name
         public override string Name
-        { get { return def.Name; } }
+        {
+            get { return def.Name; }
+        }
 
-        public KeyGesture MoveToShortcut
-        { get; private set; }
+        public KeyGesture MoveToShortcut { get; private set; }
 
         // Are cards visible when they arrive in this group ?                
         internal GroupVisibility Visibility
-        { get { return visibility; } }
+        {
+            get { return visibility; }
+        }
 
         // Is this group ordered ?
         public bool Ordered
-        { get { return def.Ordered; } }
+        {
+            get { return def.Ordered; }
+        }
 
         public ObservableCollection<Card> Cards
-        { get { return cards; } }
+        {
+            get { return cards; }
+        }
 
         // Get a card in the group
         public Card this[int idx]
-        { get { return cards[idx]; } }
+        {
+            get { return cards[idx]; }
+        }
 
         public int Count
-        { get { return cards.Count; } }
+        {
+            get { return cards.Count; }
+        }
+
+        internal new static Group Find(int id)
+        {
+            if (id == 0x01000000) return Program.Game.Table;
+            Player player = Player.Find((byte) (id >> 16));
+            return player.IndexedGroups[(byte) id];
+        }
 
         // Add a card to the group
         public void AddAt(Card card, int idx)
@@ -119,20 +140,16 @@ namespace Octgn.Play
 
         #region Implementation
 
-        internal event EventHandler<ShuffleTraceEventArgs> ShuffledTrace;
-        internal event EventHandler Shuffled;
-
         // True if a UnaliasGrp message was received
-        internal bool PreparingShuffle = false;
+        internal bool PreparingShuffle;
 
         // True if the localPlayer is the one who wants to shuffle        
-        internal bool WantToShuffle = false;
+        internal bool WantToShuffle;
 
         // Get the Id of this group
         internal override int Id
         {
-            get
-            { return 0x01000000 | (Owner == null ? 0 : Owner.Id << 16) | def.Id; }
+            get { return 0x01000000 | (Owner == null ? 0 : Owner.Id << 16) | def.Id; }
         }
 
         internal bool Locked
@@ -147,21 +164,31 @@ namespace Octgn.Play
             }
         }
 
+        internal event EventHandler<ShuffleTraceEventArgs> ShuffledTrace;
+        internal event EventHandler Shuffled;
+
         private ActionShortcut[] CreateShortcuts(IEnumerable<BaseActionDef> baseActionDef)
         {
             if (baseActionDef == null) return new ActionShortcut[0];
 
-            var actionDef = baseActionDef
-                              .Flatten(x => { var y = x as ActionGroupDef; return y == null ? null : y.Children; })
-                              .OfType<ActionDef>();
+            IEnumerable<ActionDef> actionDef = baseActionDef
+                .Flatten(x =>
+                             {
+                                 var y = x as ActionGroupDef;
+                                 return y == null ? null : y.Children;
+                             })
+                .OfType<ActionDef>();
 
-            var shortcuts = from action in actionDef
-                            where action.Shortcut != null
-                            select new ActionShortcut
-                            {
-                                Key = (KeyGesture)keyConverter.ConvertFromInvariantString(action.Shortcut),
-                                ActionDef = action
-                            };
+            IEnumerable<ActionShortcut> shortcuts = from action in actionDef
+                                                    where action.Shortcut != null
+                                                    select new ActionShortcut
+                                                               {
+                                                                   Key =
+                                                                       (KeyGesture)
+                                                                       keyConverter.ConvertFromInvariantString(
+                                                                           action.Shortcut),
+                                                                   ActionDef = action
+                                                               };
             return shortcuts.ToArray();
         }
 
@@ -180,7 +207,7 @@ namespace Octgn.Play
         {
             if (WantToShuffle)
             {
-                Controls.Tooltip.PopupError("Wait until shuffle completes.");
+                Tooltip.PopupError("Wait until shuffle completes.");
                 return false;
             }
             return base.TryToManipulate();
@@ -188,7 +215,7 @@ namespace Octgn.Play
 
         internal override void NotControlledError()
         {
-            Controls.Tooltip.PopupError("You don't control this group.");
+            Tooltip.PopupError("You don't control this group.");
         }
 
         internal void FreezeCardsVisibility(bool notifyServer)
@@ -259,7 +286,7 @@ namespace Octgn.Play
                 c.playersLooking.Clear();
 
             // Notify trace event listeners
-            var shuffledArgs = new ShuffleTraceEventArgs() { TraceNotification = true };
+            var shuffledArgs = new ShuffleTraceEventArgs {TraceNotification = true};
             if (ShuffledTrace != null)
                 ShuffledTrace(this, shuffledArgs);
             // Trace if required
@@ -324,13 +351,17 @@ namespace Octgn.Play
 
         #endregion
 
-        #region IEnumerable<Card> and IEnumberable Members
+        #region IEnumerable<Card> Members
 
         public IEnumerator<Card> GetEnumerator()
-        { return cards.GetEnumerator(); }
+        {
+            return cards.GetEnumerator();
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
-        { return cards.GetEnumerator(); }
+        {
+            return cards.GetEnumerator();
+        }
 
         #endregion
     }
@@ -342,14 +373,14 @@ namespace Octgn.Play
 
     internal class ShuffleTraceChatHandler
     {
-        public System.Windows.Documents.Inline Line { get; set; }
+        public Inline Line { get; set; }
 
         public void ReplaceText(object sender, ShuffleTraceEventArgs e)
         {
             e.TraceNotification = false;
-            var group = (Group)sender;
+            var group = (Group) sender;
             group.ShuffledTrace -= ReplaceText;
-            var run = (System.Windows.Documents.Run)Line;
+            var run = (Run) Line;
             run.Text = string.Format("{0} is shuffled", group.FullName);
         }
     }

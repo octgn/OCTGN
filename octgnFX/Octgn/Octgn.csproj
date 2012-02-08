@@ -298,9 +298,6 @@
     <Compile Include="Launcher\AddFriendPage.xaml.cs">
       <DependentUpon>AddFriendPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\GameManager.xaml.cs">
-      <DependentUpon>GameManager.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Launcher\HostedGameList.xaml.cs">
       <DependentUpon>HostedGameList.xaml</DependentUpon>
     </Compile>
@@ -315,9 +312,6 @@
     </Compile>
     <Compile Include="Launcher\GameList.xaml.cs">
       <DependentUpon>GameList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\InstallNoticeDialog.xaml.cs">
-      <DependentUpon>InstallNoticeDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\InstallSetsProgressDialog.xaml.cs">
       <DependentUpon>InstallSetsProgressDialog.xaml</DependentUpon>
@@ -337,16 +331,9 @@
     <Compile Include="Launcher\UpdateChecker.xaml.cs">
       <DependentUpon>UpdateChecker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\UpgradeMessage.xaml.cs">
-      <DependentUpon>UpgradeMessage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Launcher\GameSelector.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>GameSelector.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\Join.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>Join.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\LauncherWindow.xaml.cs">
       <DependentUpon>LauncherWindow.xaml</DependentUpon>
@@ -354,6 +341,9 @@
     <Compile Include="Launcher\StartGame.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>StartGame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\UpgradeMessage.xaml.cs">
+      <DependentUpon>UpgradeMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="lobbysettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -498,14 +488,6 @@
     </Compile>
     <Compile Include="Networking\ServerErrorEventArgs.cs" />
     <Compile Include="GroupVisibility.cs" />
-    <Compile Include="Launcher\MainMenu.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>MainMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\Serve.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>Serve.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Play\Card.cs" />
     <Compile Include="Play\CardIdentity.cs" />
@@ -730,10 +712,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Launcher\GameManager.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Launcher\HostedGameList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -751,10 +729,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Launcher\GameList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Launcher\InstallNoticeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -782,17 +756,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Launcher\UpgradeMessage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Launcher\GameSelector.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Launcher\Join.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -802,15 +766,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Launcher\MainMenu.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Launcher\Serve.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Launcher\StartGame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\UpgradeMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

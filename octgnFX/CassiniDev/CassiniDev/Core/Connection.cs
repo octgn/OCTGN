@@ -1,17 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
@@ -35,8 +21,8 @@ namespace CassiniDev
         private const int HttpOK = 200;
 
         private readonly MemoryStream _responseContent;
-        public List<string> Plugins = new List<string>();
         private readonly Server _server;
+        public List<string> Plugins = new List<string>();
         private LogInfo _requestLog;
         private LogInfo _responseLog;
 
@@ -63,7 +49,7 @@ namespace CassiniDev
         {
             get
             {
-                IPEndPoint ep = (IPEndPoint)_socket.LocalEndPoint;
+                var ep = (IPEndPoint) _socket.LocalEndPoint;
                 return (ep != null && ep.Address != null) ? ep.Address.ToString() : "127.0.0.1";
             }
         }
@@ -72,7 +58,7 @@ namespace CassiniDev
         {
             get
             {
-                IPEndPoint ep = (IPEndPoint)_socket.RemoteEndPoint;
+                var ep = (IPEndPoint) _socket.RemoteEndPoint;
                 return (ep != null && ep.Address != null) ? ep.Address.ToString() : "127.0.0.1";
             }
         }
@@ -96,9 +82,9 @@ namespace CassiniDev
                 _socket.Shutdown(SocketShutdown.Both);
                 _socket.Close();
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
             }
             finally
@@ -149,7 +135,7 @@ namespace CassiniDev
 
                 int numReceived = 0;
 
-                byte[] buffer = new byte[numBytes];
+                var buffer = new byte[numBytes];
 
                 if (numBytes > 0)
                 {
@@ -158,7 +144,7 @@ namespace CassiniDev
 
                 if (numReceived < numBytes)
                 {
-                    byte[] tempBuffer = new byte[numReceived];
+                    var tempBuffer = new byte[numReceived];
 
                     if (numReceived > 0)
                     {
@@ -194,9 +180,9 @@ namespace CassiniDev
 
                 availBytes = _socket.Available;
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
             }
 
@@ -207,10 +193,12 @@ namespace CassiniDev
         {
             WriteEntireResponseFromString(100, null, null, true);
         }
+
         internal void Write200Continue()
         {
             WriteEntireResponseFromString(200, null, string.Empty, true);
         }
+
         public void WriteBody(byte[] data, int offset, int length)
         {
             try
@@ -250,8 +238,8 @@ namespace CassiniDev
             try
             {
                 fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                int len = (int)fs.Length;
-                byte[] fileBytes = new byte[len];
+                var len = (int) fs.Length;
+                var fileBytes = new byte[len];
                 int bytesRead = fs.Read(fileBytes, 0, len);
 
                 String headers = MakeResponseHeaders(HttpOK, contentTypeHeader, bytesRead, keepAlive);
@@ -346,9 +334,9 @@ namespace CassiniDev
                 _responseLog.Identity = _requestLog.Identity;
                 _responseLog.PhysicalPath = _requestLog.PhysicalPath;
             }
-            // ReSharper disable EmptyGeneralCatchClause
+                // ReSharper disable EmptyGeneralCatchClause
             catch
-            // ReSharper restore EmptyGeneralCatchClause
+                // ReSharper restore EmptyGeneralCatchClause
             {
                 // log error to text
             }
@@ -369,24 +357,24 @@ namespace CassiniDev
         private void InitializeLogInfo()
         {
             _requestLog = new LogInfo
-                {
-                    Created = DateTime.Now,
-                    ConversationId = Id,
-                    RowType = 1,
-                    Identity = _server.GetProcessUser(),
-                    PhysicalPath = _server.PhysicalPath
-                };
+                              {
+                                  Created = DateTime.Now,
+                                  ConversationId = Id,
+                                  RowType = 1,
+                                  Identity = _server.GetProcessUser(),
+                                  PhysicalPath = _server.PhysicalPath
+                              };
 
             _responseLog = new LogInfo
-                {
-                    ConversationId = Id,
-                    RowType = 2
-                };
+                               {
+                                   ConversationId = Id,
+                                   RowType = 2
+                               };
         }
 
         private static string MakeResponseHeaders(int statusCode, string moreHeaders, int contentLength, bool keepAlive)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.Append("HTTP/1.1 " + statusCode + " " + HttpWorkerRequest.GetStatusDescription(statusCode) + "\r\n");
             sb.Append("Server: Cassini/" + Messages.VersionString + "\r\n");

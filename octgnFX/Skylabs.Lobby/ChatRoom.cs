@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Skylabs.Lobby
 {
     public class ChatRoom
     {
+        private readonly object userLocker = new object();
+
+        public ChatRoom(long id)
+        {
+            ID = id;
+            Users = new List<User>();
+        }
+
         public long ID { get; private set; }
         private List<User> Users { get; set; }
 
@@ -19,8 +25,6 @@ namespace Skylabs.Lobby
             }
         }
 
-        private object userLocker = new object();
-
         public bool ContainsUser(User u)
         {
             lock (userLocker)
@@ -29,16 +33,12 @@ namespace Skylabs.Lobby
             }
         }
 
-        public ChatRoom(long id)
-        {
-            ID = id;
-            Users = new List<User>();
-        }
         public User[] GetUserList()
         {
             lock (userLocker)
                 return Users.ToArray();
         }
+
         public void UserStatusChange(User userToChange, UserStatus newUserData)
         {
             lock (userLocker)
@@ -52,10 +52,10 @@ namespace Skylabs.Lobby
                         utochange.CustomStatus = userToChange.CustomStatus;
                         utochange.DisplayName = userToChange.DisplayName;
                     }
-
                 }
             }
         }
+
         public void ResetUserList(List<User> users)
         {
             lock (userLocker)
@@ -63,6 +63,7 @@ namespace Skylabs.Lobby
                 Users = users;
             }
         }
+
         public void RemoveUser(User user)
         {
             lock (userLocker)

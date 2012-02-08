@@ -16,11 +16,12 @@ namespace Octgn.Play.Gui
         protected override void GroupChanged()
         {
             base.GroupChanged();
-            var pile = (Pile)group;
+            var pile = (Pile) group;
             if (pile.AnimateInsertion)
             {
                 pile.AnimateInsertion = false;
-                var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300)) { EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop };
+                var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
+                               {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
                 scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
             }
         }
@@ -31,17 +32,18 @@ namespace Octgn.Play.Gui
             IsHitTestVisible = false;
 
             // Fix: capture the group, because it's sometimes null inside the Completed event.
-            var oldPile = (Pile)group;
+            var oldPile = (Pile) group;
             // Fix: group may even be null at this point (?!). 
             // Apparently when clicking on a pile just after another one has been removed. That would be just before the GroupChanged happens?
             if (oldPile == null) return;
 
-            var anim = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300)) { EasingFunction = new ExponentialEase { EasingMode = EasingMode.EaseIn } };
+            var anim = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
+                           {EasingFunction = new ExponentialEase {EasingMode = EasingMode.EaseIn}};
             anim.Completed += delegate
-            {
-                oldPile.AnimateInsertion = true;
-                oldPile.Collapsed = false;
-            };
+                                  {
+                                      oldPile.AnimateInsertion = true;
+                                      oldPile.Collapsed = false;
+                                  };
 
             scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
         }
@@ -49,7 +51,7 @@ namespace Octgn.Play.Gui
         protected override void OnCardOver(object sender, CardsEventArgs e)
         {
             base.OnCardOver(sender, e);
-            e.CardSize = new Size(30 * group.def.Width / group.def.Height, 30);
+            e.CardSize = new Size(30*group.def.Width/group.def.Height, 30);
         }
 
         protected override void OnCardDropped(object sender, CardsEventArgs e)
@@ -57,7 +59,7 @@ namespace Octgn.Play.Gui
             e.Handled = e.CanDrop = true;
             if (group.TryToManipulate())
                 foreach (Card c in e.Cards)
-                    c.MoveTo(group, e.FaceUp.Value, 0);
+                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0);
         }
     }
 }
