@@ -18,16 +18,14 @@ namespace Skylabs.Lobby
             sm.AddData("accept", true);
             LobbyClient.WriteMessage(sm);
             Notification[] ns = LobbyClient.GetNotificationList();
-            for (int i = 0; i < ns.Length; i++)
+            foreach (Notification t in ns)
             {
-                var fr = ns[i] as FriendRequestNotification;
-                if (fr != null)
+                var fr = t as FriendRequestNotification;
+                if (fr == null) continue;
+                if (fr.User.Uid == User.Uid)
                 {
-                    if (fr.User.Uid == User.Uid)
-                    {
-                        LobbyClient.RemoveNotification(ns[i]);
-                        break;
-                    }
+                    LobbyClient.RemoveNotification(t);
+                    break;
                 }
             }
             Dismissed = true;
@@ -40,16 +38,14 @@ namespace Skylabs.Lobby
             sm.AddData("accept", false);
             LobbyClient.WriteMessage(sm);
             Notification[] ns = LobbyClient.GetNotificationList();
-            for (int i = 0; i < ns.Length; i++)
+            foreach (Notification t in ns)
             {
-                var fr = ns[i] as FriendRequestNotification;
-                if (fr != null)
+                var fr = t as FriendRequestNotification;
+                if (fr == null) continue;
+                if (fr.User.Uid == User.Uid)
                 {
-                    if (fr.User.Uid == User.Uid)
-                    {
-                        LobbyClient.RemoveNotification(ns[i]);
-                        break;
-                    }
+                    LobbyClient.RemoveNotification(t);
+                    break;
                 }
             }
             Dismissed = true;

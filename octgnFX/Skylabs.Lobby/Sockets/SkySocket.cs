@@ -19,22 +19,22 @@ namespace Skylabs.Lobby.Sockets
         #endregion
 
         public const long MaxReceiveSize = 5242880;
-        private readonly SocketMessageBuilder Builder;
+        private readonly SocketMessageBuilder _builder;
 
-        private readonly object SocketLocker = new object();
+        private readonly object _socketLocker = new object();
 
         //private Thread SocketThread;
 
-        private bool Stopping;
+        private bool _stopping;
 
         public SkySocket()
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
                 IsDisposed = false;
                 Connected = false;
-                Stopping = false;
-                Builder = new SocketMessageBuilder();
+                _stopping = false;
+                _builder = new SocketMessageBuilder();
                 Sock = new TcpClient();
                 //SocketThread = new Thread(ReadThreadRunner);
                 //SocketThread.Name = "SkySocket Read Thread";
@@ -43,12 +43,12 @@ namespace Skylabs.Lobby.Sockets
 
         public SkySocket(TcpClient c)
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
                 IsDisposed = false;
-                Stopping = false;
+                _stopping = false;
                 Sock = c;
-                Builder = new SocketMessageBuilder();
+                _builder = new SocketMessageBuilder();
                 //SocketThread = new Thread(ReadThreadRunner);
                 //SocketThread.Name = "SkySocket Read Thread";
                 RemoteEndPoint = Sock.Client.RemoteEndPoint;
@@ -69,13 +69,11 @@ namespace Skylabs.Lobby.Sockets
 
         public void Dispose()
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
-                if (!IsDisposed)
-                {
-                    Sock.Close();
-                    IsDisposed = true;
-                }
+                if (IsDisposed) return;
+                Sock.Close();
+                IsDisposed = true;
             }
         }
 
@@ -87,7 +85,7 @@ namespace Skylabs.Lobby.Sockets
 
         public bool Connect(string host, int port)
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
                 if (!Connected)
                 {
@@ -112,9 +110,9 @@ namespace Skylabs.Lobby.Sockets
 
         public void Stop()
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
-                Stopping = true;
+                _stopping = true;
                 LazyAsync.Invoke(() =>
                                      {
                                          if (OnConnectionClosed != null) OnConnectionClosed.Invoke(this);
@@ -125,9 +123,9 @@ namespace Skylabs.Lobby.Sockets
 
         private void AsyncRead()
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
-                if (Stopping)
+                if (_stopping)
                     return;
                 try
                 {
@@ -216,7 +214,7 @@ namespace Skylabs.Lobby.Sockets
 
         private void AsyncReadDone(IAsyncResult ar)
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
                 try
                 {
@@ -230,7 +228,7 @@ namespace Skylabs.Lobby.Sockets
                     {
                         if (rin != 256)
                             Array.Resize(ref buff, rin);
-                        Builder.AddBytes(buff);
+                        _builder.AddBytes(buff);
                     }
                     else
                     {
@@ -322,14 +320,12 @@ namespace Skylabs.Lobby.Sockets
                     Trace.WriteLine("ss4:" + e.Message);
                     Trace.WriteLine(e.StackTrace);
                 }
-                while (Builder.SMQueue.Count > 0)
+                while (_builder.SmQueue.Count > 0)
                 {
-                    SocketMessage sm = Builder.SMQueue.Dequeue();
-                    if (sm != null)
-                    {
-                        if (OnMessageReceived != null)
-                            OnMessageReceived.BeginInvoke(this, (SocketMessage) sm.Clone(), null, null);
-                    }
+                    SocketMessage sm = _builder.SmQueue.Dequeue();
+                    if (sm == null) continue;
+                    if (OnMessageReceived != null)
+                        OnMessageReceived.BeginInvoke(this, (SocketMessage) sm.Clone(), null, null);
                 }
                 LazyAsync.Invoke(AsyncRead);
             }
@@ -337,7 +333,7 @@ namespace Skylabs.Lobby.Sockets
 
         public void WriteMessage(SocketMessage message)
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
                 if (IsDisposed)
                     return;

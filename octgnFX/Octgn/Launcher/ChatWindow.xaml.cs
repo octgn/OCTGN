@@ -55,7 +55,7 @@ namespace Octgn.Launcher
 
         private void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
-            if (cr.ID == ID)
+            if (cr.Id == ID)
             {
                 Dispatcher.Invoke(new Action(() =>
                                                  {
@@ -329,7 +329,7 @@ namespace Octgn.Launcher
                 if (Int32.TryParse(s, out uid))
                 {
                     //BUG Should be pulling from FriendList
-                    User u = Program.lobbyClient.GetFriendFromUID(uid);
+                    User u = Program.lobbyClient.GetFriendFromUid(uid);
                     if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
                     {
                         Program.lobbyClient.Chatting.AddUserToChat(u, ID);
@@ -340,13 +340,13 @@ namespace Octgn.Launcher
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.Chatting.eChatEvent += Chatting_eChatEvent;
+            Program.lobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {
             Program.lobbyClient.Chatting.LeaveChatRoom(ID);
-            Program.lobbyClient.Chatting.eChatEvent -= Chatting_eChatEvent;
+            Program.lobbyClient.Chatting.EChatEvent -= Chatting_eChatEvent;
             Program.ChatWindows.RemoveAll(r => r.ID == ID);
             Program.lobbyClient.OnUserStatusChanged -= LobbyClientOnOnUserStatusChanged;
             var cl = Program.ClientWindow.frame1.Content as ContactList;

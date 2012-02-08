@@ -34,7 +34,7 @@ namespace Skylabs.Lobby
         }
 
         public List<ChatRoom> Rooms { get; private set; }
-        public event ChatEventDelegate eChatEvent;
+        public event ChatEventDelegate EChatEvent;
 
         public ChatRoom GetChatRoomFromRID(long rid)
         {
@@ -42,7 +42,7 @@ namespace Skylabs.Lobby
             {
                 foreach (ChatRoom r in Rooms)
                 {
-                    if (r.ID == rid)
+                    if (r.Id == rid)
                         return r;
                 }
                 return null;
@@ -93,7 +93,7 @@ namespace Skylabs.Lobby
             var sm = new SocketMessage("leavechat");
             sm.AddData("roomid", rid);
             Parent.WriteMessage(sm);
-            Rooms.RemoveAll(r => r.ID == rid);
+            Rooms.RemoveAll(r => r.Id == rid);
         }
 
         /// <summary>
@@ -117,22 +117,20 @@ namespace Skylabs.Lobby
         /// <param name="allusers"> </param>
         public void UserJoinedChat(long rid, User u, List<User> allusers)
         {
-            if (!Rooms.Exists(r => r.ID == rid))
+            if (!Rooms.Exists(r => r.Id == rid))
             {
                 Rooms.Add(new ChatRoom(rid));
             }
-            ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
-            if (cr != null)
+            ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
+            if (cr == null) return;
+            cr.ResetUserList(allusers);
+            if (u.Uid == Parent.Me.Uid)
             {
-                cr.ResetUserList(allusers);
-                if (u.Uid == Parent.Me.Uid)
-                {
-                    if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.MeJoinedChat, u, null);
-                }
-                else
-                {
-                    if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.UserJoinedChat, u, null);
-                }
+                if (EChatEvent != null) EChatEvent.Invoke(cr, ChatEvent.MeJoinedChat, u, null);
+            }
+            else
+            {
+                if (EChatEvent != null) EChatEvent.Invoke(cr, ChatEvent.UserJoinedChat, u, null);
             }
         }
 
@@ -143,12 +141,10 @@ namespace Skylabs.Lobby
         /// <param name="u"> </param>
         public void UserLeftChat(long rid, User u)
         {
-            ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
-            if (cr != null)
-            {
-                cr.RemoveUser(u);
-                if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.UserLeftChat, u, null);
-            }
+            ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
+            if (cr == null) return;
+            cr.RemoveUser(u);
+            if (EChatEvent != null) EChatEvent.Invoke(cr, ChatEvent.UserLeftChat, u, null);
         }
 
         /// <summary>
@@ -159,16 +155,14 @@ namespace Skylabs.Lobby
         /// <param name="message"> </param>
         public void RecieveChatMessage(long rid, User u, string message)
         {
-            ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
-            if (cr != null)
-            {
-                if (eChatEvent != null) eChatEvent.Invoke(cr, ChatEvent.ChatMessage, u, message);
-            }
+            ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
+            if (cr == null) return;
+            if (EChatEvent != null) EChatEvent.Invoke(cr, ChatEvent.ChatMessage, u, message);
         }
 
         public void UserStatusChange(long rid, User u, UserStatus ustatus)
         {
-            ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
+            ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
             if (cr != null)
             {
                 cr.UserStatusChange(u, ustatus);

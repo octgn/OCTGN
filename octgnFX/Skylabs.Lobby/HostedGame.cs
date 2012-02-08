@@ -10,7 +10,7 @@ namespace Skylabs.Lobby
         #region eHostedGame enum
 
         [Serializable]
-        public enum eHostedGame
+        public enum EHostedGame
         {
             StartedHosting,
             GameInProgress,
@@ -28,7 +28,7 @@ namespace Skylabs.Lobby
             Name = name;
             PasswordRequired = passreq;
             UserHosting = huser;
-            GameStatus = eHostedGame.StartedHosting;
+            GameStatus = EHostedGame.StartedHosting;
             TimeStarted = startTime;
         }
 
@@ -40,7 +40,7 @@ namespace Skylabs.Lobby
             Name = (string) sm["name"];
             PasswordRequired = (bool) sm["passrequired"];
             UserHosting = (User) sm["hoster"];
-            GameStatus = eHostedGame.StartedHosting;
+            GameStatus = EHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
         }
 
@@ -50,7 +50,7 @@ namespace Skylabs.Lobby
         public String Name { get; private set; }
         public bool PasswordRequired { get; private set; }
         public User UserHosting { get; private set; }
-        public eHostedGame GameStatus { get; set; }
+        public EHostedGame GameStatus { get; set; }
         public DateTime TimeStarted { get; private set; }
 
         #region IEqualityComparer<HostedGame> Members

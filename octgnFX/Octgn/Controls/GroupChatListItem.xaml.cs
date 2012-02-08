@@ -43,11 +43,11 @@ namespace Octgn.Controls
             get { return Program.lobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID); }
             set
             {
-                ChatRoomID = value.ID;
+                ChatRoomID = value.Id;
                 ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID);
                 if (cr != null)
                 {
-                    if (cr.ID == 0)
+                    if (cr.Id == 0)
                     {
                         SetValue(UsernameProperty, "Lobby Chat");
                         image1.Opacity = 0;
@@ -79,7 +79,7 @@ namespace Octgn.Controls
         {
             if (ChatRoomID != 0)
             {
-                var firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.ID == ThisRoom.ID);
+                var firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.ID == ThisRoom.Id);
                 if (firstOrDefault != null)
                     firstOrDefault.CloseChatWindow();
                 var sp = Parent as StackPanel;

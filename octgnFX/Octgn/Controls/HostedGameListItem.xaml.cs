@@ -61,10 +61,10 @@ namespace Octgn.Controls
                 SetValue(GameNameProperty, _hostedGame.Name);
                 switch (_hostedGame.GameStatus)
                 {
-                    case HostedGame.eHostedGame.GameInProgress:
+                    case HostedGame.EHostedGame.GameInProgress:
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusAway.png";
                         break;
-                    case HostedGame.eHostedGame.StartedHosting:
+                    case HostedGame.EHostedGame.StartedHosting:
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusOnline.png";
                         break;
                     default: //Offline or anything else

@@ -16,7 +16,7 @@ namespace Octgn.Launcher
             InitializeComponent();
             Program.lobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
             Program.lobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
-            Program.lobbyClient.Chatting.eChatEvent += Chatting_eChatEvent;
+            Program.lobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
         }
 
         private void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User u, object data)
@@ -43,7 +43,7 @@ namespace Octgn.Launcher
                                                  }
                                                  foreach (ChatRoom cr in Program.lobbyClient.Chatting.Rooms)
                                                  {
-                                                     if (cr.ID == 0 || (cr.UserCount > 2))
+                                                     if (cr.Id == 0 || (cr.UserCount > 2))
                                                      {
                                                          var gi = new GroupChatListItem();
                                                          gi.ThisRoom = cr;
@@ -70,13 +70,13 @@ namespace Octgn.Launcher
             {
                 foreach (ChatWindow cw in Program.ChatWindows)
                 {
-                    if (gi.ThisRoom.ID == cw.ID)
+                    if (gi.ThisRoom.Id == cw.ID)
                     {
                         cw.Show();
                         return;
                     }
                 }
-                if (gi.ThisRoom.ID == 0)
+                if (gi.ThisRoom.Id == 0)
                 {
                     var cw = new ChatWindow(0);
                     Program.ChatWindows.Add(cw);
@@ -97,7 +97,7 @@ namespace Octgn.Launcher
                     ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(rid);
                     if (cr != null)
                     {
-                        if (cr.ID == 0)
+                        if (cr.Id == 0)
                             continue;
                         if (cr.UserCount == 2 && cr.ContainsUser(Program.lobbyClient.Me) && cr.ContainsUser(fi.ThisUser))
                         {
@@ -127,7 +127,7 @@ namespace Octgn.Launcher
         {
             Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
             Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
-            Program.lobbyClient.Chatting.eChatEvent -= Chatting_eChatEvent;
+            Program.lobbyClient.Chatting.EChatEvent -= Chatting_eChatEvent;
         }
     }
 }

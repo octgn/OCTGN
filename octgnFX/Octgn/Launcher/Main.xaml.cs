@@ -67,7 +67,7 @@ namespace Octgn.Launcher
             Program.lobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
             Program.lobbyClient.OnDisconnect += lobbyClient_OnDisconnectEvent;
             Program.lobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
-            Program.lobbyClient.Chatting.eChatEvent += Chatting_eChatEvent;
+            Program.lobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
             Program.lobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
             tbUsername.Text = Program.lobbyClient.Me.DisplayName;
             tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
@@ -181,13 +181,13 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
                                              {
                                                  ChatWindow cw =
-                                                     Program.ChatWindows.FirstOrDefault(cww => cww.ID == cr.ID);
+                                                     Program.ChatWindows.FirstOrDefault(cww => cww.ID == cr.Id);
                                                  if (cw == null)
                                                  {
-                                                     var c = new ChatWindow(cr.ID);
+                                                     var c = new ChatWindow(cr.Id);
                                                      c.Loaded += delegate { c.ChatEvent(cr, e, user, data); };
                                                      Program.ChatWindows.Add(c);
-                                                     if (cr.ID != 0)
+                                                     if (cr.Id != 0)
                                                          c.Show();
                                                  }
                                                  else

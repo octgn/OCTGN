@@ -24,7 +24,7 @@ namespace Skylabs.LobbyServer
             Name = name;
             Password = password;
             Hoster = hoster;
-            Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
+            Status = Lobby.HostedGame.EHostedGame.StoppedHosting;
             Port = port;
             TimeStarted = new DateTime(0);
             StandAloneApp = new Process
@@ -84,7 +84,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         ///   The status of the hosted game.
         /// </summary>
-        public Lobby.HostedGame.eHostedGame Status { get; set; }
+        public Lobby.HostedGame.EHostedGame Status { get; set; }
 
         public DateTime TimeStarted { get; private set; }
 
@@ -117,11 +117,11 @@ namespace Skylabs.LobbyServer
 
         public bool StartProcess()
         {
-            Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
+            Status = Lobby.HostedGame.EHostedGame.StoppedHosting;
             try
             {
                 StandAloneApp.Start();
-                Status = Lobby.HostedGame.eHostedGame.StartedHosting;
+                Status = Lobby.HostedGame.EHostedGame.StartedHosting;
                 TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
                 return true;
             }

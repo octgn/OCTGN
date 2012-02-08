@@ -8,16 +8,16 @@ namespace Skylabs.Lobby.Threading
 {
     public sealed class Conductor2 : IDisposable
     {
-        private readonly Timer DelegateTimer;
+        private readonly Timer _delegateTimer;
 
-        private readonly object Locker = new object();
-        private Queue<ConductorAction> Q;
+        private readonly object _locker = new object();
+        private Queue<ConductorAction> _q;
 
         public Conductor2()
         {
-            Q = new Queue<ConductorAction>();
+            _q = new Queue<ConductorAction>();
             IsDisposed = false;
-            DelegateTimer = new Timer(DelegateTimerTick, null, 5, 5);
+            _delegateTimer = new Timer(DelegateTimerTick, null, 5, 5);
         }
 
         public bool IsDisposed { get; private set; }
@@ -26,14 +26,12 @@ namespace Skylabs.Lobby.Threading
 
         public void Dispose()
         {
-            lock (Locker)
+            lock (_locker)
             {
-                if (!IsDisposed)
-                {
-                    DelegateTimer.Dispose();
-                    Q.Clear();
-                    Q = null;
-                }
+                if (IsDisposed) return;
+                _delegateTimer.Dispose();
+                _q.Clear();
+                _q = null;
             }
         }
 
@@ -41,21 +39,24 @@ namespace Skylabs.Lobby.Threading
 
         public void Add(Action a)
         {
-            lock (Locker)
+            lock (_locker)
             {
-                Q.Enqueue(new ConductorAction(a));
+                _q.Enqueue(new ConductorAction(a));
             }
         }
 
         private void DelegateTimerTick(object state)
         {
-            lock (Locker)
+            lock (_locker)
             {
                 try
                 {
-                    if (Q.Count > 0)
+                    if (_q.Count <= 0)
                     {
-                        ConductorAction ca = Q.Dequeue();
+                    }
+                    else
+                    {
+                        ConductorAction ca = _q.Dequeue();
                         ca.Action.BeginInvoke(InvokeDone, null);
                     }
                 }
@@ -70,7 +71,7 @@ namespace Skylabs.Lobby.Threading
             }
         }
 
-        private void InvokeDone(IAsyncResult result)
+        private static void InvokeDone(IAsyncResult result)
         {
         }
     }
@@ -86,13 +87,11 @@ namespace Skylabs.Lobby.Threading
             {
                 for (int i = 0; i < frames.Length; i++)
                 {
-                    if (frames[i].GetMethod().Name == MethodBase.GetCurrentMethod().Name)
+                    if (frames[i].GetMethod().Name != MethodBase.GetCurrentMethod().Name) continue;
+                    if (i + 2 < frames.Length)
                     {
-                        if (i + 2 < frames.Length)
-                        {
-                            CalledFromMethod = frames[i + 2].GetMethod().Name;
-                            break;
-                        }
+                        CalledFromMethod = frames[i + 2].GetMethod().Name;
+                        break;
                     }
                 }
             }
