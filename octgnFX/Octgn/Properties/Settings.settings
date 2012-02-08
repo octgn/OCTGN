@@ -1,7 +1,5 @@
 <?xml version='1.0' encoding='iso-8859-1'?>
-
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
-              GeneratedClassNamespace="Octgn.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Octgn.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="ServePort" Type="System.String" Scope="User">
@@ -21,6 +19,9 @@
     </Setting>
     <Setting Name="Password" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="NickName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Nickname</Value>
     </Setting>
   </Settings>
 </SettingsFile>
