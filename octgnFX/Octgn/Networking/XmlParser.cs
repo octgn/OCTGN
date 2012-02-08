@@ -15,7 +15,7 @@ namespace Octgn.Networking
 
         public XmlParser(Handler handler)
         {
-            this._handler = handler;
+            _handler = handler;
         }
 
         public void Parse(string xml)

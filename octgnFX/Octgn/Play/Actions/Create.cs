@@ -18,14 +18,14 @@ namespace Octgn.Play.Actions
         public CreateCard(Player owner, int id, ulong key, bool faceUp, CardModel model, int x, int y,
                           bool deletesWhenLeavesGroup)
         {
-            this._owner = owner;
-            this._id = id;
-            this._key = key;
-            this._faceUp = faceUp;
-            this._deletesWhenLeavesGroup = deletesWhenLeavesGroup;
-            this._model = model;
-            this._x = x;
-            this._y = y;
+            _owner = owner;
+            _id = id;
+            _key = key;
+            _faceUp = faceUp;
+            _deletesWhenLeavesGroup = deletesWhenLeavesGroup;
+            _model = model;
+            _x = x;
+            _y = y;
         }
 
         internal static event EventHandler Done;

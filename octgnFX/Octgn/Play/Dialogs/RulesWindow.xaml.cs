@@ -37,23 +37,22 @@ namespace Octgn.Play.Dialogs
                 PackagePart definition = package.GetPart(defRelationship.TargetUri);
                 using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
                 {
-                    long bytesRead = 0;
                     // Change the 75 for performance.  Find a number that suits your application best
                     const int bufferLength = 1024*75;
                     while (!fileReader.EndOfStream)
                     {
-                        int readLength = bufferLength;
+                        const int readLength = bufferLength;
                         var buffer = new char[readLength];
-                        bytesRead += (fileReader.Read(buffer, 0, readLength));
+                        fileReader.Read(buffer, 0, readLength);
                         // This will help the file load much faster 
                         // RichText loads \n as a new paragraph. Very slow for large text
                         string currentLine = new string(buffer).Replace("\n", string.Empty);
                         // Load in background
                         Dispatcher.BeginInvoke(new Action(() =>
                                                               {
-                                                                  var range = new TextRange(rules.Document.ContentEnd,
-                                                                                            rules.Document.ContentEnd)
-                                                                                  {Text = currentLine};
+                                                                  new TextRange(rules.Document.ContentEnd,
+                                                                                rules.Document.ContentEnd)
+                                                                      {Text = currentLine};
                                                               }), DispatcherPriority.Normal);
                     }
                 }
@@ -103,7 +102,7 @@ namespace Octgn.Play.Dialogs
         public TextRange FindTextInRange(TextRange searchRange, string searchText)
         {
             // Search the text with IndexOf
-            int offset = searchRange.Text.IndexOf(searchText);
+            int offset = searchRange.Text.IndexOf(searchText, StringComparison.Ordinal);
             if (offset < 0)
                 return null; // Not found
             // Try to select the text as a contiguous range
@@ -111,6 +110,7 @@ namespace Octgn.Play.Dialogs
                  start != searchRange.End;
                  start = start.GetPositionAtOffset(1))
             {
+                if (start == null) continue;
                 var result = new TextRange(start, start.GetPositionAtOffset(searchText.Length));
                 if (result.Text == searchText)
                     return result;

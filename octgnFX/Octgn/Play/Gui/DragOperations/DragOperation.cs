@@ -16,7 +16,7 @@ namespace Octgn.Play.Gui
 
         protected DragOperation(T target)
         {
-            this.Target = target;
+            Target = target;
             _oldPos = Mouse.GetPosition(target);
             target.CaptureMouse();
             // TODO: Calling a virtual constructure in a future object, bad news

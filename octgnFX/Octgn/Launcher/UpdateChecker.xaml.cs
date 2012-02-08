@@ -133,14 +133,14 @@ namespace Octgn.Launcher
                                                   }));
         }
 
-        private bool FileExists(string URL)
+        private bool FileExists(string url)
         {
             bool result;
             using (var client = new WebClient())
             {
                 try
                 {
-                    Stream str = client.OpenRead(URL);
+                    Stream str = client.OpenRead(url);
                     result = str != null;
                 }
                 catch

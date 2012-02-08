@@ -86,14 +86,14 @@ namespace Octgn.Definitions
                            CardActions = xml.Elements()
                                .Where(
                                    x =>
-                                   x.Name == Defs.xmlnsOctgn + "cardaction" || x.Name == Defs.xmlnsOctgn + "cardactions")
+                                   x.Name == Defs.XmlnsOctgn + "cardaction" || x.Name == Defs.XmlnsOctgn + "cardactions")
                                .Select(x => BaseActionDef.LoadFromXml(x))
                                .ToArray(),
                            GroupActions = xml.Elements()
                                .Where(
                                    x =>
-                                   x.Name == Defs.xmlnsOctgn + "groupaction" ||
-                                   x.Name == Defs.xmlnsOctgn + "groupactions")
+                                   x.Name == Defs.XmlnsOctgn + "groupaction" ||
+                                   x.Name == Defs.XmlnsOctgn + "groupactions")
                                .Select(x => BaseActionDef.LoadFromXml(x))
                                .ToArray()
                        };

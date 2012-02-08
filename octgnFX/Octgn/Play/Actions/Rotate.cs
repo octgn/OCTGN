@@ -11,9 +11,9 @@ namespace Octgn.Play.Actions
 
         public Rotate(Player who, Card card, CardOrientation rot)
         {
-            this._who = who;
-            this._card = card;
-            this._rot = rot;
+            _who = who;
+            _card = card;
+            _rot = rot;
             _oldRot = card.Orientation;
         }
 

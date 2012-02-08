@@ -10,9 +10,9 @@ namespace Octgn.Play.Actions
 
         public Turn(Player who, Card card, bool up)
         {
-            this._who = who;
-            this._card = card;
-            this._up = up;
+            _who = who;
+            _card = card;
+            _up = up;
         }
 
         public override void Do()

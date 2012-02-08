@@ -891,24 +891,24 @@ namespace Octgn.Networking
 
     internal class XmlSenderStub : BaseXmlStub
     {
-        private readonly TcpClient to;
-        private byte[] buffer = new byte[1024];
+        private readonly TcpClient _to;
+        private byte[] _buffer = new byte[1024];
 
         public XmlSenderStub(TcpClient to)
         {
-            this.to = to;
+            _to = to;
         }
 
         protected override void Send(string xml)
         {
             int length = Encoding.UTF8.GetByteCount(xml) + 1;
-            if (length > buffer.Length) buffer = new byte[length];
-            Encoding.UTF8.GetBytes(xml, 0, xml.Length, buffer, 0);
-            buffer[length - 1] = 0;
+            if (length > _buffer.Length) _buffer = new byte[length];
+            Encoding.UTF8.GetBytes(xml, 0, xml.Length, _buffer, 0);
+            _buffer[length - 1] = 0;
             try
             {
-                Stream stream = to.GetStream();
-                stream.Write(buffer, 0, length);
+                Stream stream = _to.GetStream();
+                stream.Write(_buffer, 0, length);
                 stream.Flush();
             }
             catch
