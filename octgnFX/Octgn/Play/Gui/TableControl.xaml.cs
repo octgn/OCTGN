@@ -16,7 +16,7 @@ using Octgn.Play.Actions;
 
 namespace Octgn.Play.Gui
 {
-    partial class TableControl : GroupControl
+    partial class TableControl
     {
         private readonly int _defaultHeight;
         private readonly int _defaultWidth;
@@ -259,7 +259,7 @@ namespace Octgn.Play.Gui
 
         private bool IsCardAtInvertedPosition(double y, CardEventArgs e)
         {
-            var cardCtrl = e.OriginalSource as CardControl;
+            //var cardCtrl = e.OriginalSource as CardControl;
             double offset = e.MouseOffset.Y;
             if (Player.LocalPlayer.InvertedTable)
             {

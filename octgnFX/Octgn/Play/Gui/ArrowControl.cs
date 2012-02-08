@@ -6,7 +6,7 @@ namespace Octgn.Play.Gui
 {
     internal class ArrowControl : DrawingVisual
     {
-        private const double ArrowHalfWidth = 7;
+        //private const double ArrowHalfWidth = 7;
         private const double HeadHalfWidthFactor = 2;
         private const double HeadLengthFactor = 3;
         private const double CurvatureAlong = 0.3;

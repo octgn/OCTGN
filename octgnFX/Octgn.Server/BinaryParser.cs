@@ -15,7 +15,7 @@ namespace Octgn.Server
 
         public void Parse(byte[] data)
         {
-            MemoryStream stream = null;
+            MemoryStream stream;
             BinaryReader reader = null;
             try
             {

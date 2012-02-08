@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using Octgn.Controls;
 using Octgn.Data;
 using Octgn.Utils;
 
@@ -21,7 +20,7 @@ namespace Octgn.Play.Gui
         Bottom
     }
 
-    public partial class GroupWindow : ChildWindow
+    public partial class GroupWindow
     {
         private readonly Group group;
         private readonly int id;

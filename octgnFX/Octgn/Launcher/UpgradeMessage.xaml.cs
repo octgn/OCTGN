@@ -2,7 +2,7 @@
 
 namespace Octgn.Launcher
 {
-    public partial class UpgradeMessage : Window
+    public partial class UpgradeMessage
     {
         public UpgradeMessage()
         {

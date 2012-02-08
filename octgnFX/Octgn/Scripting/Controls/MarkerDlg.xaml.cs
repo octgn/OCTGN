@@ -11,7 +11,7 @@ using Octgn.Play;
 
 namespace Octgn.Script
 {
-    public partial class MarkerDlg : Window
+    public partial class MarkerDlg
     {
         public static readonly DependencyProperty IsModelSelectedProperty =
             DependencyProperty.Register("IsModelSelected", typeof (bool), typeof (MarkerDlg),

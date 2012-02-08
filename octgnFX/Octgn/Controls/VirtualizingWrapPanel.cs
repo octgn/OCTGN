@@ -75,9 +75,9 @@ namespace Octgn.Controls
                     if (isNewlyRealized)
                     {
                         if (childIndex >= children.Count)
-                            base.AddInternalChild(child);
+                            AddInternalChild(child);
                         else
-                            base.InsertInternalChild(childIndex, child);
+                            InsertInternalChild(childIndex, child);
                         generator.PrepareItemContainer(child);
                     }
                     else

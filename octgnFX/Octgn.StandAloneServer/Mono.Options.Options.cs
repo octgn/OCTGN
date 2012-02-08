@@ -83,7 +83,7 @@ namespace Mono.Options
                 // '.' is any character, - is for a continuation
                 const string minWidth = ".-";
                 if (curWidth < minWidth.Length)
-                    throw new ArgumentOutOfRangeException("widths",
+                    throw new ArgumentOutOfRangeException("ewidths",
                                                           string.Format("Element must be >= {0}, was {1}.",
                                                                         minWidth.Length, curWidth));
                 return curWidth;

@@ -8,7 +8,7 @@ using Octgn.Data;
 
 namespace Octgn.Play.Dialogs
 {
-    public partial class LimitedDialog : Window
+    public partial class LimitedDialog
     {
         public LimitedDialog()
         {

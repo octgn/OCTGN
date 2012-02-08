@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace Octgn.Play.Gui
 {
-    partial class HandControl : GroupControl
+    partial class HandControl
     {
         private FanPanel fanPanel;
 

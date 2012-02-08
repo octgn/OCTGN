@@ -3,12 +3,12 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
+using Octgn.Networking;
 using Octgn.Play;
 
 namespace Octgn.Launcher
 {
-    public partial class StartGame : Page
+    public partial class StartGame
     {
         private bool StartingGame;
 

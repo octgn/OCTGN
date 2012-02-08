@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
@@ -11,7 +10,7 @@ using Octgn.Definitions;
 
 namespace Octgn.Launcher
 {
-    public sealed partial class GameSelector : UserControl
+    public sealed partial class GameSelector
     {
         private static readonly Duration dt = new Duration(TimeSpan.FromMilliseconds(500));
         private readonly IList<Data.Game> games;
@@ -42,7 +41,7 @@ namespace Octgn.Launcher
         {
             container.Children.Clear();
 
-            var rnd = new Random();
+            //var rnd = new Random();
             int i = 0;
 
             foreach (Data.Game game in games)

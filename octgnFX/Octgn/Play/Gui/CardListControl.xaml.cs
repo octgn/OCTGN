@@ -11,7 +11,7 @@ using Octgn.Definitions;
 
 namespace Octgn.Play.Gui
 {
-    public partial class CardListControl : GroupControl
+    public partial class CardListControl
     {
         public static readonly DependencyProperty IsAlwaysUpProperty =
             DependencyProperty.Register("IsAlwaysUp", typeof (bool), typeof (CardListControl),

@@ -116,7 +116,7 @@ namespace Skylabs.LobbyServer
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
         {
             Quit();
-            Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
+            Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime));
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -125,7 +125,7 @@ namespace Skylabs.LobbyServer
             var ex = (Exception) e.ExceptionObject;
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
-            Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime.ToString()));
+            Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime));
             Console.WriteLine("--------------------------------");
             Quit();
         }

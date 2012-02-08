@@ -11,7 +11,6 @@ using Octgn.DeckBuilder;
 using Octgn.Launcher;
 using Octgn.Networking;
 using Octgn.Play;
-using Octgn.Properties;
 using Skylabs.Lobby;
 using RE = System.Text.RegularExpressions;
 
@@ -70,8 +69,8 @@ namespace Octgn
             BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
             StartLobbyServer();
-            var e = new Exception();
-            string s = e.Message.Substring(0);
+            //var e = new Exception();
+            //string s = e.Message.Substring(0);
             LauncherWindow = new LauncherWindow();
             Application.Current.MainWindow = LauncherWindow;
         }

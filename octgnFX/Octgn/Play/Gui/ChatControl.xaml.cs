@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -11,7 +10,7 @@ using Octgn.Data;
 
 namespace Octgn.Play.Gui
 {
-    partial class ChatControl : UserControl
+    partial class ChatControl
     {
         public ChatControl()
         {

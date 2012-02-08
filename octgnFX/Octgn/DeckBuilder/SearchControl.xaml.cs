@@ -11,7 +11,7 @@ using Octgn.Data;
 
 namespace Octgn.DeckBuilder
 {
-    public partial class SearchControl : UserControl
+    public partial class SearchControl
     {
         public SearchControl(Data.Game game)
         {
