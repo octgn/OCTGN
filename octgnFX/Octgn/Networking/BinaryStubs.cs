@@ -1015,7 +1015,7 @@ namespace Octgn.Networking
 
         public BinarySenderStub(TcpClient to)
         {
-            this._to = to;
+            _to = to;
         }
 
         protected override void Send(byte[] data)

@@ -14,11 +14,11 @@ namespace Octgn.Definitions
         protected void LoadBaseXml(XElement xml, PackagePart part)
         {
             int i = 1;
-            Counters = xml.Elements(Defs.xmlnsOctgn + "counter")
+            Counters = xml.Elements(Defs.XmlnsOctgn + "counter")
                 .Select(x => CounterDef.LoadFromXml(x, part, i++))
                 .ToArray();
             i = 1;
-            Groups = xml.Elements(Defs.xmlnsOctgn + "group")
+            Groups = xml.Elements(Defs.XmlnsOctgn + "group")
                 .Select(x => GroupDef.LoadFromXml(x, part, i++))
                 .ToArray();
         }

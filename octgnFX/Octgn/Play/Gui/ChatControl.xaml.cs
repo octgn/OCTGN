@@ -88,7 +88,7 @@ namespace Octgn.Play.Gui
         public ChatTraceListener(string name, ChatControl ctrl)
             : base(name)
         {
-            this._ctrl = ctrl;
+            _ctrl = ctrl;
         }
 
         public override void Write(string message)
