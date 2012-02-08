@@ -616,7 +616,7 @@ namespace Octgn.Play
         internal Marker FindMarker(Guid lId, string name)
         {
             return _markers.FirstOrDefault(m =>
-                                          m.Model.id == lId &&
+                                          m.Model.Id == lId &&
                                           (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
         }
 

@@ -131,7 +131,7 @@ namespace Octgn
                                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
             foreach (MarkerModel m in Database.GetAllMarkers())
-                _markersById.Add(m.id, m);
+                _markersById.Add(m.Id, m);
 
             Program.IsGameRunning = true;
         }
@@ -157,7 +157,7 @@ namespace Octgn
             //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
             foreach (MarkerModel m in Database.GetAllMarkers())
-                _markersById.Add(m.id, m);
+                _markersById.Add(m.Id, m);
 
             //Program.IsGameRunning = true;
         }
@@ -332,9 +332,9 @@ namespace Octgn
             if (id.CompareTo(new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10)) < 0)
             {
                 // Get a standard model
-                DefaultMarkerModel defaultModel = Marker.DefaultMarkers.First(x => x.id == id);
+                DefaultMarkerModel defaultModel = Marker.DefaultMarkers.First(x => x.Id == id);
                 model = defaultModel.Clone();
-                model.id = id;
+                model.Id = id;
                 return model;
             }
             // Try to find the marker model
@@ -344,7 +344,7 @@ namespace Octgn
                                          "Marker model '{0}' not found, using default marker instead", id);
                 DefaultMarkerModel defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
                 model = defaultModel.Clone();
-                model.id = id;
+                model.Id = id;
                 return model;
             }
             return model;

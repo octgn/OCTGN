@@ -41,25 +41,23 @@ namespace Skylabs.ConsoleHelper
         public static void Stop()
         {
             if (_thread == null) return;
-            if (_thread.ThreadState == ThreadState.Running)
-            {
-                Console.In.Close();
+            if (_thread.ThreadState != ThreadState.Running) return;
+            Console.In.Close();
 
-                _thread.Abort();
-                _thread = null;
-                //thread.Join();
-            }
+            _thread.Abort();
+            _thread = null;
+            //thread.Join();
         }
 
         private static void Run()
         {
-            Boolean endLine = false;
+            var endLine = false;
             var sb = new StringBuilder();
             while (true)
             {
                 if (Console.KeyAvailable)
                 {
-                    ConsoleKeyInfo r = Console.ReadKey();
+                    var r = Console.ReadKey();
                     switch (r.Key)
                     {
                         case ConsoleKey.Enter:

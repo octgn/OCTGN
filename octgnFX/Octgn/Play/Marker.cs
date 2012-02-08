@@ -77,9 +77,9 @@ namespace Octgn.Play
             set
             {
                 if (value < _count)
-                    Program.Client.Rpc.RemoveMarkerReq(_card, Model.id, Model.Name, (ushort) (_count - value));
+                    Program.Client.Rpc.RemoveMarkerReq(_card, Model.Id, Model.Name, (ushort) (_count - value));
                 else if (value > _count)
-                    Program.Client.Rpc.AddMarkerReq(_card, Model.id, Model.Name, (ushort) (value - _count));
+                    Program.Client.Rpc.AddMarkerReq(_card, Model.Id, Model.Name, (ushort) (value - _count));
                 else
                     return;
                 SetCount(value);

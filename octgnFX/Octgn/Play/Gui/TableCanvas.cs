@@ -28,25 +28,23 @@ namespace Octgn.Play.Gui
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
             if (visualAdded == null) return;
             var child = (ContentPresenter) visualAdded;
-            if (((Card) child.DataContext).Controller != Player.LocalPlayer)
-            {
-                var scale = new ScaleTransform();
-                child.RenderTransformOrigin = new Point(0.5, 0.5);
-                child.RenderTransform = scale;
-                var anim = new DoubleAnimation
-                               {
-                                   Duration = new Duration(TimeSpan.FromMilliseconds(400)),
-                                   AutoReverse = true,
-                                   RepeatBehavior = new RepeatBehavior(2.166),
-                                   AccelerationRatio = 0.2,
-                                   DecelerationRatio = 0.7,
-                                   To = 1.2,
-                                   From = 0.9,
-                                   FillBehavior = FillBehavior.Stop
-                               };
-                scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-                scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
-            }
+            if (((Card) child.DataContext).Controller == Player.LocalPlayer) return;
+            var scale = new ScaleTransform();
+            child.RenderTransformOrigin = new Point(0.5, 0.5);
+            child.RenderTransform = scale;
+            var anim = new DoubleAnimation
+                           {
+                               Duration = new Duration(TimeSpan.FromMilliseconds(400)),
+                               AutoReverse = true,
+                               RepeatBehavior = new RepeatBehavior(2.166),
+                               AccelerationRatio = 0.2,
+                               DecelerationRatio = 0.7,
+                               To = 1.2,
+                               From = 0.9,
+                               FillBehavior = FillBehavior.Stop
+                           };
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+            scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
         }
 
         private void CardMoving(object sender, EventArgs e)

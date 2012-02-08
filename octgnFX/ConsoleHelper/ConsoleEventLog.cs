@@ -44,10 +44,10 @@ namespace Skylabs.ConsoleHelper
                     var xmlTextWriter = new XmlTextWriter(stream, Encoding.ASCII)
                                             {Formatting = Formatting.Indented, Indentation = 4};
                     var cTypes = new List<Type>();
-                    foreach (ConsoleEvent c in Events)
+                    foreach (var c in Events)
                     {
-                        bool foundit = false;
-                        foreach (Type t in cTypes)
+                        var foundit = false;
+                        foreach (var t in cTypes)
                         {
                             if (c.GetType() != t) continue;
                             foundit = true;

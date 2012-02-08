@@ -190,17 +190,14 @@ namespace Octgn.Play.Gui
                             i++;
                             p = args[i] as Player;
                         }
-                        if (p != null)
-                            inline.Foreground = new SolidColorBrush(p.Color);
-                        else
-                            inline.Foreground = Brushes.Red;
+                        inline.Foreground = p != null ? new SolidColorBrush(p.Color) : Brushes.Red;
                     }
                     break;
             }
             return inline;
         }
 
-        private Inline FormatMsg(string text, TraceEventType eventType, int id)
+        private static Inline FormatMsg(string text, TraceEventType eventType, int id)
         {
             var result = new Run(text);
             return FormatInline(result, eventType, id);

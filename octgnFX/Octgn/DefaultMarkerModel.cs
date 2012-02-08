@@ -22,12 +22,12 @@ namespace Octgn
         {
             var other = obj as DefaultMarkerModel;
             if (other == null) return false;
-            return other.id == id && other.name == name;
+            return other.Id == Id && other.name == name;
         }
 
         public override int GetHashCode()
         {
-            return id.GetHashCode() ^ (name != null ? name.GetHashCode() : 0);
+            return Id.GetHashCode() ^ (name != null ? name.GetHashCode() : 0);
         }
 
         public void SetName(string lName)
@@ -37,7 +37,7 @@ namespace Octgn
 
         public DefaultMarkerModel Clone()
         {
-            var result = new DefaultMarkerModel(_key, id) {name = name};
+            var result = new DefaultMarkerModel(_key, Id) {name = name};
             return result;
         }
     }

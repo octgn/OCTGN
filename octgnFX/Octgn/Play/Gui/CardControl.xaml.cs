@@ -327,9 +327,9 @@ namespace Octgn.Play.Gui
                 rotate90.BeginAnimation(RotateTransform.AngleProperty, anim);
             }
             if (Math.Abs(target180 - rotate180.Angle) <= double.Epsilon) return;
-            var anim = new DoubleAnimation(target180, TimeSpan.FromMilliseconds(600), FillBehavior.HoldEnd)
+            var animation = new DoubleAnimation(target180, TimeSpan.FromMilliseconds(600), FillBehavior.HoldEnd)
                            {EasingFunction = new ExponentialEase()};
-            rotate180.BeginAnimation(RotateTransform.AngleProperty, anim);
+            rotate180.BeginAnimation(RotateTransform.AngleProperty, animation);
         }
 
         private void AnimateTurn(bool newIsUp)
@@ -927,12 +927,12 @@ namespace Octgn.Play.Gui
             if (e.Marker.Card == Card) return;
             if (Keyboard.IsKeyUp(Key.LeftAlt))
             {
-                Program.Client.Rpc.TransferMarkerReq(e.Marker.Card, Card, e.Marker.Model.id, e.Marker.Model.Name,
+                Program.Client.Rpc.TransferMarkerReq(e.Marker.Card, Card, e.Marker.Model.Id, e.Marker.Model.Name,
                                                      e.Count);
                 e.Marker.Card.RemoveMarker(e.Marker, e.Count);
             }
             else
-                Program.Client.Rpc.AddMarkerReq(Card, e.Marker.Model.id, e.Marker.Model.Name, e.Count);
+                Program.Client.Rpc.AddMarkerReq(Card, e.Marker.Model.Id, e.Marker.Model.Name, e.Count);
             Card.AddMarker(e.Marker.Model, e.Count);
         }
 

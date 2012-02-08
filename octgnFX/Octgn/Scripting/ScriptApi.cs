@@ -335,7 +335,7 @@ namespace Octgn.Scripting
 
         public Tuple<string, string>[] CardGetMarkers(int id)
         {
-            return Card.Find(id).Markers.Select(m => Tuple.Create(m.Model.Name, m.Model.id.ToString())).ToArray();
+            return Card.Find(id).Markers.Select(m => Tuple.Create(m.Model.Name, m.Model.Id.ToString())).ToArray();
         }
 
         public int MarkerGetCount(int cardId, string markerName, string markerId)
@@ -404,7 +404,7 @@ namespace Octgn.Scripting
                                                                      if (!dlg.ShowDialog().GetValueOrDefault())
                                                                          return null;
                                                                      return Tuple.Create(dlg.MarkerModel.Name,
-                                                                                         dlg.MarkerModel.id.ToString(),
+                                                                                         dlg.MarkerModel.Id.ToString(),
                                                                                          dlg.Quantity);
                                                                  });
         }
