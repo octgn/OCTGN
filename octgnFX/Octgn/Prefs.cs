@@ -6,7 +6,7 @@
 
         static Prefs()
         {
-            string _hln = Registry.ReadValue("Options_HideLoginNotifications");
+            string _hln = SimpleConfig.ReadValue("Options_HideLoginNotifications");
             _hideLoginNotifications = _hln == null || _hln == "false" ? "false" : "true";
         }
 
@@ -16,7 +16,7 @@
             set
             {
                 _hideLoginNotifications = value;
-                Registry.WriteValue("Options_HideLoginNotifications", value);
+                SimpleConfig.WriteValue("Options_HideLoginNotifications", value);
             }
         }
     }

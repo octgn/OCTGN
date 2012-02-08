@@ -48,13 +48,13 @@ namespace Octgn.Launcher
             animationTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             versionText.Text = string.Format("Version {0}", OctgnApp.OctgnVersion.ToString(4));
             animationTimer.Tick += HandleAnimationTick;
-            string password = Registry.ReadValue("Password");
+            string password = SimpleConfig.ReadValue("Password");
             if (password != null)
             {
                 passwordBox1.Password = password.Decrypt();
                 cbSavePassword.IsChecked = true;
             }
-            textBox1.Text = Registry.ReadValue("E-Mail");
+            textBox1.Text = SimpleConfig.ReadValue("E-Mail");
         }
 
         private void lobbyClient_OnDataRecieved(DataRecType type, object e)
@@ -203,12 +203,12 @@ namespace Octgn.Launcher
                                                 {
                                                     if (cbSavePassword.IsChecked == true)
                                                     {
-                                                        Registry.WriteValue("Password", passwordBox1.Password.Encrypt());
+                                                        SimpleConfig.WriteValue("Password", passwordBox1.Password.Encrypt());
                                                     }
                                                     else
-                                                        Registry.WriteValue("Password", "");
-                                                    Registry.WriteValue("E-Mail", textBox1.Text);
-                                                    Registry.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
+                                                        SimpleConfig.WriteValue("Password", "");
+                                                    SimpleConfig.WriteValue("E-Mail", textBox1.Text);
+                                                    SimpleConfig.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
 
                                                     Program.ClientWindow = new Main();
                                                     Program.ClientWindow.Show();
@@ -410,7 +410,7 @@ namespace Octgn.Launcher
         public static string Decrypt(this string Text)
         {
             RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Registry.ReadValue("Nickname") ?? "null"));
+            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(SimpleConfig.ReadValue("Nickname") ?? "null"));
             Text = Cryptor.Decrypt(Text, BitConverter.ToString(hasher));
             return Text;
         }

@@ -1,9 +1,26 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using System.Collections;
+using System.IO;
+using Polenter.Serialization;
 
 namespace Octgn
 {
-    internal class Registry
+    internal class SimpleConfig
     {
+        private static string GetPath()
+        {
+            var p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
+            const string f = "settings.xml";
+            var fullPath = Path.Combine(p, f);
+
+            if (!Directory.Exists(p))
+            {
+                Directory.CreateDirectory(p);
+            }
+
+            return fullPath;
+        }
+
         /// <summary>
         ///   Reads a string value from the OCTGN registry
         /// </summary>
@@ -11,13 +28,19 @@ namespace Octgn
         /// <returns> A string value </returns>
         public static string ReadValue(string valName)
         {
-            RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN");
-            if (key == null)
+            if (File.Exists(GetPath()))
             {
-                Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\OCTGN");
-                return null;
+                using (var reader = new StreamReader(GetPath()))
+                {
+                    var serializer = new SharpSerializer();
+                    var config = (Hashtable) serializer.Deserialize(GetPath());
+                    if (config.ContainsKey(valName))
+                    {
+                        return config[valName].ToString();
+                    }
+                }
             }
-            return (string) key.GetValue(valName);
+            return null;
         }
 
         /// <summary>
@@ -27,13 +50,17 @@ namespace Octgn
         /// <param name="value"> String to write for value </param>
         public static void WriteValue(string valName, string value)
         {
-            RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\OCTGN", true);
-            if (key == null) key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\OCTGN");
-            if (key != null)
+            var serializer = new SharpSerializer();
+            Hashtable config = new Hashtable();
+            if (File.Exists(GetPath()))
             {
-                key.SetValue(valName, value, RegistryValueKind.String);
-                key.Close();
+                using (var reader = new StreamReader(GetPath()))
+                {
+                    config = (Hashtable) serializer.Deserialize(GetPath());
+                }
             }
+            config[valName] = value;
+            serializer.Serialize(config, GetPath());
         }
     }
 }

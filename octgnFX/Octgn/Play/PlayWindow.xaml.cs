@@ -174,9 +174,9 @@ namespace Octgn.Play
             var ofd = new OpenFileDialog();
             ofd.Filter = "OCTGN deck files (*.o8d) | *.o8d";
             //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
-            ofd.InitialDirectory = Registry.ReadValue("lastFolder");
+            ofd.InitialDirectory = SimpleConfig.ReadValue("lastFolder");
             if (ofd.ShowDialog() != true) return;
-            Registry.WriteValue("lastFolder", Path.GetDirectoryName(ofd.FileName));
+            SimpleConfig.WriteValue("lastFolder", Path.GetDirectoryName(ofd.FileName));
             // Try to load the file contents
             try
             {
