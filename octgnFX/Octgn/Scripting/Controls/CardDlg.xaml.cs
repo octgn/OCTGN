@@ -14,7 +14,7 @@ using Octgn.Definitions;
 
 namespace Octgn.Script
 {
-    public partial class CardDlg : Window
+    public partial class CardDlg
     {
         public static readonly DependencyProperty IsCardSelectedProperty = DependencyProperty.Register(
             "IsCardSelected", typeof (bool), typeof (CardDlg), new UIPropertyMetadata(false));

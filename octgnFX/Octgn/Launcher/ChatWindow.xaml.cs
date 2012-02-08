@@ -16,7 +16,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for ChatWindow.xaml
     /// </summary>
-    public partial class ChatWindow : Window
+    public partial class ChatWindow
     {
         private bool _realClose;
         private Boolean justScrolledToBottom;
@@ -234,7 +234,7 @@ namespace Octgn.Launcher
                     catch (Exception)
                     {
                         r.Foreground = b;
-                        var ul = new Underline(r);
+                        //var ul = new Underline(r);
                     }
                 }
                 ret = h;

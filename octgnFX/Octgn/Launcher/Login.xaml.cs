@@ -16,7 +16,6 @@ using System.Windows.Threading;
 using System.Xml;
 using Octgn.Controls;
 using Octgn.DeckBuilder;
-using Octgn.Properties;
 using Skylabs.Lobby;
 
 namespace Octgn.Launcher
@@ -24,7 +23,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for Login.xaml
     /// </summary>
-    public partial class Login : Page
+    public partial class Login
     {
         private readonly DispatcherTimer animationTimer;
         private Timer LoginTimer;

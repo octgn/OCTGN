@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -8,7 +7,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for NotificationListItem.xaml
     /// </summary>
-    public partial class NotificationListItem : UserControl
+    public partial class NotificationListItem
     {
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
             "Message", typeof (string), typeof (FriendListItem));

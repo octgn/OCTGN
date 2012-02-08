@@ -1,6 +1,6 @@
 ﻿namespace Skylabs.MultiLogin
 {
-    public abstract class ILogin
+    public abstract class Login
     {
     }
 }

@@ -129,7 +129,7 @@ namespace Octgn.Data
                             com.Parameters.AddWithValue("@card_id", "");
                             com.Parameters.AddWithValue("@vint", 0);
                             com.Parameters.AddWithValue("@vstr", " ");
-                            com.Parameters.AddWithValue("@id", pair.Name + game.Id.ToString());
+                            com.Parameters.AddWithValue("@id", pair.Name + game.Id);
                             com.Parameters.AddWithValue("@game_id", game.Id.ToString());
                             com.Parameters.AddWithValue("@name", pair.Name);
                             if (pair.Type == PropertyType.String)

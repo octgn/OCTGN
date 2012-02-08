@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using Microsoft.Win32;
 using Octgn.Data;
 
@@ -11,7 +10,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for GameList.xaml
     /// </summary>
-    public partial class SetList : Page
+    public partial class SetList
     {
         public Data.Game SelectedGame;
 

@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Net;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Navigation;
 using Octgn.Definitions;
 using Octgn.Networking;
@@ -14,7 +13,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for ContactList.xaml
     /// </summary>
-    public partial class HostGameSettings : Page
+    public partial class HostGameSettings
     {
         private readonly Data.Game Game;
         private bool beginHost;

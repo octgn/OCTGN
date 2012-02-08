@@ -11,7 +11,7 @@ namespace Octgn
     /// <summary>
     ///   Interaction logic for DebugWindow.xaml
     /// </summary>
-    public partial class DWindow : Window
+    public partial class DWindow
     {
         private readonly Brush TurnBrush;
         public RoutedCommand DebugWindowCommand = new RoutedCommand();

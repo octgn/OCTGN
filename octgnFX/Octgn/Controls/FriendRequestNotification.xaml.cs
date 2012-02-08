@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Skylabs;
@@ -10,7 +9,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for GameListItem.xaml
     /// </summary>
-    public partial class FriendRequestNotification : UserControl
+    public partial class FriendRequestNotification
     {
         public static DependencyProperty FriendNameProperty = DependencyProperty.Register(
             "FriendName", typeof (string), typeof (FriendRequestNotification));

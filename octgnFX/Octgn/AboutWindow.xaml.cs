@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace Octgn
 {
-    public partial class AboutWindow : Window
+    public partial class AboutWindow
     {
         public AboutWindow()
         {

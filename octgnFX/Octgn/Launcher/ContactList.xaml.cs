@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Controls;
 using Skylabs.Lobby;
@@ -10,7 +9,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for ContactList.xaml
     /// </summary>
-    public partial class ContactList : Page
+    public partial class ContactList
     {
         public ContactList()
         {

@@ -25,7 +25,7 @@ namespace Skylabs.LobbyServer
             lock (GamingLocker)
             {
                 Logger.L(MethodBase.GetCurrentMethod().Name, "GamingLocker");
-                int ret = Games.Count;
+                var ret = Games.Count;
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "GamingLocker");
                 return ret;
             }
@@ -52,7 +52,7 @@ namespace Skylabs.LobbyServer
             lock (GamingLocker)
             {
                 Logger.L(MethodBase.GetCurrentMethod().Name, "GamingLocker");
-                long ret = _totalHostedGames;
+                var ret = _totalHostedGames;
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "GamingLocker");
                 return ret;
             }
@@ -97,6 +97,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch
                 {
+                    
                 }
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "GamingLocker");
             }

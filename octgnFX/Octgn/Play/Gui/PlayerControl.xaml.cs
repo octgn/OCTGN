@@ -2,13 +2,12 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Animation;
 
 namespace Octgn.Play.Gui
 {
-    public partial class PlayerControl : UserControl
+    public partial class PlayerControl
     {
         public PlayerControl()
         {

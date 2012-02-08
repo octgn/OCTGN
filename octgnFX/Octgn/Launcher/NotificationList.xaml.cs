@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using Skylabs.Lobby;
 
 namespace Octgn.Launcher
@@ -8,7 +7,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for GameList.xaml
     /// </summary>
-    public partial class NotificationList : Page
+    public partial class NotificationList
     {
         public NotificationList()
         {

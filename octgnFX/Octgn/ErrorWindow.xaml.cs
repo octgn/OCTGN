@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace Octgn
 {
-    public partial class ErrorWindow : Window
+    public partial class ErrorWindow
     {
         public ErrorWindow()
         {

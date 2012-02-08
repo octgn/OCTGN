@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Controls;
 using Skylabs.Lobby;
@@ -11,7 +10,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for GameList.xaml
     /// </summary>
-    public partial class HostedGameList : Page
+    public partial class HostedGameList
     {
         public HostedGameList()
         {
@@ -66,7 +65,7 @@ namespace Octgn.Launcher
             }
         }
 
-        private void GamesRepository_GameInstalled(object sender, EventArgs e)
+        private void GamesRepositoryGameInstalled(object sender, EventArgs e)
         {
             Reload_Game_List();
         }

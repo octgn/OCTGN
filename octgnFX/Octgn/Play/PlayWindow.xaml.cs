@@ -24,7 +24,7 @@ using Octgn.Scripting;
 
 namespace Octgn.Play
 {
-    public partial class PlayWindow : Window
+    public partial class PlayWindow
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
@@ -245,11 +245,6 @@ namespace Octgn.Play
         {
             if (!IsFullScreen) return;
             menuRow.Height = new GridLength(2);
-        }
-
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            base.OnKeyUp(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

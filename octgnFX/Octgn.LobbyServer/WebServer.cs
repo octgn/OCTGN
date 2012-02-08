@@ -190,7 +190,7 @@ namespace Skylabs.LobbyServer
                 insert = insert + "<td>" + game.Port + "</td>";
                 insert = insert + "<td>" + game.GameStatus + "</td>";
                 insert = insert + "<td>" + game.GameVersion + "</td>";
-                insert = insert + "<td>" + ts.ToString() + "</td>";
+                insert = insert + "<td>" + ts + "</td>";
                 Client c = Server.GetOnlineClientByUid(game.UserHosting.Uid);
                 User user;
                 if (c == null)

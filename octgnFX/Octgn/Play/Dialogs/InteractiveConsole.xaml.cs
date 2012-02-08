@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -11,7 +10,7 @@ using Octgn.Scripting;
 
 namespace Octgn.Play.Dialogs
 {
-    public partial class InteractiveConsole : Window
+    public partial class InteractiveConsole
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 

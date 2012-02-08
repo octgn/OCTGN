@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Octgn.Controls;
@@ -13,7 +12,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for GameList.xaml
     /// </summary>
-    public partial class GameList : Page
+    public partial class GameList
     {
         #region LoadEvent enum
 
@@ -68,6 +67,7 @@ namespace Octgn.Launcher
             Reload_Game_List();
         }
 
+        /*
         private void gs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var gs = (GameListItem) sender;
@@ -76,6 +76,7 @@ namespace Octgn.Launcher
                 OnGameClick.Invoke(gs.Game, new EventArgs());
             }
         }
+        */
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {

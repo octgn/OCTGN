@@ -10,12 +10,12 @@ namespace Skylabs.LobbyServer
 {
     public class ChatRoom : IComparable<ChatRoom>, IEquatable<ChatRoom>
     {
-        private readonly object UserLocker = new object();
+        private readonly object _userLocker = new object();
 
         /// <summary>
         ///   List of users in the chat room.8
         /// </summary>
-        private readonly List<Pair<int, User>> Users = new List<Pair<int, User>>();
+        private readonly List<Pair<int, User>> _users = new List<Pair<int, User>>();
 
         /// <summary>
         ///   initializes a chat room, and adds the initial user. This should only be called by Chatting.cs
@@ -24,7 +24,7 @@ namespace Skylabs.LobbyServer
         /// <param name="initialUser"> User making the room </param>
         public ChatRoom(long id, User initialUser)
         {
-            ID = id;
+            Id = id;
             if (initialUser != null)
                 AddUser(initialUser);
         }
@@ -32,7 +32,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         ///   Unique ID of the chat room
         /// </summary>
-        public long ID { get; private set; }
+        public long Id { get; private set; }
 
         #region IComparable<ChatRoom> Members
 
@@ -43,7 +43,7 @@ namespace Skylabs.LobbyServer
         /// <returns> General compare integers </returns>
         public int CompareTo(ChatRoom other)
         {
-            return ID.CompareTo(other.ID);
+            return Id.CompareTo(other.Id);
         }
 
         #endregion
@@ -57,7 +57,7 @@ namespace Skylabs.LobbyServer
         /// <returns> true if equal, false if not. </returns>
         public bool Equals(ChatRoom other)
         {
-            return ID == other.ID;
+            return Id == other.Id;
         }
 
         #endregion
@@ -70,22 +70,22 @@ namespace Skylabs.LobbyServer
         public bool AddUser(User u)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "UserLocker");
-            lock (UserLocker)
+            lock (_userLocker)
             {
                 Logger.L(MethodBase.GetCurrentMethod().Name, "UserLocker");
-                Client c = Server.GetOnlineClientByUid(u.Uid);
+                var c = Server.GetOnlineClientByUid(u.Uid);
                 if (c != null)
                 {
                     var sm = new SocketMessage("userjoinedchatroom");
-                    sm.AddData("roomid", ID);
+                    sm.AddData("roomid", Id);
                     sm.AddData("user", u);
                     var ulist = new List<User>();
-                    foreach (var p in Users)
+                    foreach (var p in _users)
                         ulist.Add(p.Item2);
-                    Pair<int, User> ou = Users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
+                    var ou = _users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
                     if (ou == null)
                     {
-                        Users.Add(new Pair<int, User>(1, u));
+                        _users.Add(new Pair<int, User>(1, u));
                         ulist.Add(u);
                         sm.AddData("allusers", ulist);
                         SendAllUsersMessage(sm, false);
@@ -107,13 +107,13 @@ namespace Skylabs.LobbyServer
         public User[] GetUserList()
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "UserLocker");
-            lock (UserLocker)
+            lock (_userLocker)
             {
                 Logger.L(MethodBase.GetCurrentMethod().Name, "UserLocker");
-                var ret = new User[Users.Count];
-                for (int i = 0; i < Users.Count; i++)
+                var ret = new User[_users.Count];
+                for (var i = 0; i < _users.Count; i++)
                 {
-                    ret[i] = Users[i].Item2;
+                    ret[i] = _users[i].Item2;
                 }
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "UserLocker");
                 return ret;
@@ -127,18 +127,18 @@ namespace Skylabs.LobbyServer
         public void UserExit(User u)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "UserLocker");
-            lock (UserLocker)
+            lock (_userLocker)
             {
                 Logger.L(MethodBase.GetCurrentMethod().Name, "UserLocker");
-                Pair<int, User> ou = Users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
+                var ou = _users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
                 if (ou != null)
                 {
                     ou.Item1--;
                     if (ou.Item1 == 0)
                     {
-                        Users.Remove(ou);
+                        _users.Remove(ou);
                         var sm = new SocketMessage("userleftchatroom");
-                        sm.AddData("roomid", ID);
+                        sm.AddData("roomid", Id);
                         sm.AddData("user", u);
                         SendAllUsersMessage(sm, false);
                     }
@@ -157,12 +157,12 @@ namespace Skylabs.LobbyServer
             if (Lock)
             {
                 Logger.TL(MethodBase.GetCurrentMethod().Name, "UserLocker");
-                lock (UserLocker)
+                lock (_userLocker)
                 {
                     Logger.L(MethodBase.GetCurrentMethod().Name, "UserLocker");
-                    var slist = new int[Users.Count];
-                    int i = 0;
-                    foreach (var u in Users)
+                    var slist = new int[_users.Count];
+                    var i = 0;
+                    foreach (var u in _users)
                     {
                         slist[i] = u.Item2.Uid;
                         i++;
@@ -173,9 +173,9 @@ namespace Skylabs.LobbyServer
             }
             else
             {
-                var slist = new int[Users.Count];
-                int i = 0;
-                foreach (var u in Users)
+                var slist = new int[_users.Count];
+                var i = 0;
+                foreach (var u in _users)
                 {
                     slist[i] = u.Item2.Uid;
                     i++;
@@ -192,7 +192,7 @@ namespace Skylabs.LobbyServer
         public void ChatMessage(User u, String message)
         {
             var sm = new SocketMessage("chatmessage");
-            sm.AddData("roomid", ID);
+            sm.AddData("roomid", Id);
             sm.AddData("mess", message);
             sm.AddData("user", u);
             SendAllUsersMessage(sm, false);

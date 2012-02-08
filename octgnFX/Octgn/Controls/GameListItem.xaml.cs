@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -9,7 +8,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for GameListItem.xaml
     /// </summary>
-    public partial class GameListItem : UserControl
+    public partial class GameListItem
     {
         public static DependencyProperty GameNameProperty = DependencyProperty.Register(
             "GameName", typeof (string), typeof (GameListItem));

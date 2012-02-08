@@ -351,7 +351,7 @@ namespace Octgn.Scripting
             if (count < 0) count = 0;
             Card card = Card.Find(cardId);
             Guid guid = Guid.Parse(markerId);
-            Marker marker = card.FindMarker(guid, markerName);
+            //Marker marker = card.FindMarker(guid, markerName);
             engine.Invoke(() =>
                               {
                                   card.SetMarker(Player.LocalPlayer, guid, markerName, count);
