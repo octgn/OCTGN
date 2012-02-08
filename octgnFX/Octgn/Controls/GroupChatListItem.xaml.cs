@@ -40,11 +40,11 @@ namespace Octgn.Controls
 
         public ChatRoom ThisRoom
         {
-            get { return Program.lobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID); }
+            get { return Program.LobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID); }
             set
             {
                 ChatRoomID = value.Id;
-                ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID);
+                ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID);
                 if (cr != null)
                 {
                     if (cr.Id == 0)

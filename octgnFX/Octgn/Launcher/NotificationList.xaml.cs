@@ -16,7 +16,7 @@ namespace Octgn.Launcher
 
         private void Reload_List()
         {
-            Notification[] nlist = Program.lobbyClient.GetNotificationList();
+            Notification[] nlist = Program.LobbyClient.GetNotificationList();
             foreach (Notification n in nlist)
             {
                 if (n.GetType() == typeof (FriendRequestNotification))
@@ -41,7 +41,7 @@ namespace Octgn.Launcher
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Reload_List();
-            Program.lobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
+            Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
         }
 
         private void lobbyClient_OnFriendRequest(User u)
@@ -52,7 +52,7 @@ namespace Octgn.Launcher
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
+            Program.LobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
         }
     }
 }

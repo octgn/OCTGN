@@ -45,11 +45,7 @@ namespace Octgn
         public static string ReadValue(string valName, string d)
         {
             var r = ReadValue(valName);
-            if (r == null)
-            {
-                return d;
-            }
-            return r;
+            return r ?? d;
         }
 
         /// <summary>

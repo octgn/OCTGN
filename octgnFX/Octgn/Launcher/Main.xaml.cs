@@ -64,13 +64,13 @@ namespace Octgn.Launcher
             var kg = new KeyGesture(Key.M, ModifierKeys.Control);
             var ib = new InputBinding(DebugWindowCommand, kg);
             InputBindings.Add(ib);
-            Program.lobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
-            Program.lobbyClient.OnDisconnect += lobbyClient_OnDisconnectEvent;
-            Program.lobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
-            Program.lobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
-            Program.lobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
-            tbUsername.Text = Program.lobbyClient.Me.DisplayName;
-            tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
+            Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
+            Program.LobbyClient.OnDisconnect += lobbyClient_OnDisconnectEvent;
+            Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
+            Program.LobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
+            Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
+            tbUsername.Text = Program.LobbyClient.Me.DisplayName;
+            tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
             var cm = new ContextMenu();
             cm.MenuItems.Add("Show", cmShow_Click).DefaultItem = true;
@@ -331,11 +331,11 @@ namespace Octgn.Launcher
                 Application.Current.MainWindow = Program.ClientWindow;
             }
             Program.ClientWindow.Close();
-            Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
-            Program.lobbyClient.OnDisconnect -= lobbyClient_OnDisconnectEvent;
-            Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
-            Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
-            Program.lobbyClient.Stop();
+            Program.LobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
+            Program.LobbyClient.OnDisconnect -= lobbyClient_OnDisconnectEvent;
+            Program.LobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
+            Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
+            Program.LobbyClient.Stop();
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
 
@@ -492,36 +492,36 @@ namespace Octgn.Launcher
         private void bOnlineStatus_Click(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bOnlineStatus.LargeImageSource;
-            Program.lobbyClient.SetStatus(UserStatus.Online);
+            Program.LobbyClient.SetStatus(UserStatus.Online);
         }
 
         private void bBusyStatus_Click(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bBusyStatus.LargeImageSource;
-            Program.lobbyClient.SetStatus(UserStatus.DoNotDisturb);
+            Program.LobbyClient.SetStatus(UserStatus.DoNotDisturb);
         }
 
         private void bOfflineStatus_Click(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
-            Program.lobbyClient.SetStatus(UserStatus.Invisible);
+            Program.LobbyClient.SetStatus(UserStatus.Invisible);
         }
 
         private void bAwayStatus_Click(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bAwayStatus.LargeImageSource;
-            Program.lobbyClient.SetStatus(UserStatus.Away);
+            Program.LobbyClient.SetStatus(UserStatus.Away);
         }
 
         private void lobbyClient_OnUserStatusChanged(UserStatus eve, User u)
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
-                                                 if (u.Equals(Program.lobbyClient.Me))
+                                                 if (u.Equals(Program.LobbyClient.Me))
                                                  {
-                                                     tbUsername.Text = Program.lobbyClient.Me.DisplayName;
-                                                     tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
-                                                     SimpleConfig.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
+                                                     tbUsername.Text = Program.LobbyClient.Me.DisplayName;
+                                                     tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
+                                                     SimpleConfig.WriteValue("Nickname", Program.LobbyClient.Me.DisplayName);
                                                  }
                                              }));
         }
@@ -536,20 +536,20 @@ namespace Octgn.Launcher
         private void tbUsername_LostFocus(object sender, RoutedEventArgs e)
         {
             tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbUsername.Text = Program.lobbyClient.Me.DisplayName;
+            tbUsername.Text = Program.LobbyClient.Me.DisplayName;
         }
 
         private void tbUsername_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbUsername.Text = Program.lobbyClient.Me.DisplayName;
+            tbUsername.Text = Program.LobbyClient.Me.DisplayName;
         }
 
         private void tbUsername_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                Program.lobbyClient.SetDisplayName(tbUsername.Text);
+                Program.LobbyClient.SetDisplayName(tbUsername.Text);
                 tbUsername.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
             }
         }
@@ -564,7 +564,7 @@ namespace Octgn.Launcher
         private void tbStatus_LostFocus(object sender, RoutedEventArgs e)
         {
             tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
+            tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
         }
@@ -572,7 +572,7 @@ namespace Octgn.Launcher
         private void tbStatus_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
+            tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
         }
@@ -581,7 +581,7 @@ namespace Octgn.Launcher
         {
             if (e.Key == Key.Enter)
             {
-                Program.lobbyClient.SetCustomStatus(tbStatus.Text);
+                Program.LobbyClient.SetCustomStatus(tbStatus.Text);
                 tbStatus.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
             }
         }

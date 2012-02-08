@@ -93,7 +93,7 @@ namespace Octgn.Play.Gui
                         e.FaceUp = e.ClickedCard.FaceUp;
                     break;
                 case GroupVisibility.Custom:
-                    e.FaceUp = group.viewers.Contains(Player.LocalPlayer);
+                    e.FaceUp = group.Viewers.Contains(Player.LocalPlayer);
                     break;
                 default:
                     throw new NotImplementedException("Unknown visibility : " + group.Visibility);
@@ -355,7 +355,7 @@ namespace Octgn.Play.Gui
                                                                    IsCheckable = true,
                                                                    IsChecked =
                                                                        group.Visibility == GroupVisibility.Custom &&
-                                                                       group.viewers.Contains(p),
+                                                                       group.Viewers.Contains(p),
                                                                };
                                               playerItem.Click += delegate(object sender, RoutedEventArgs e)
                                                                       {

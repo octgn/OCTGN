@@ -28,7 +28,7 @@ namespace Octgn.Play
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
-        [Import] protected Engine scriptEngine;
+        [Import] protected Engine ScriptEngine;
 
 
 #pragma warning restore 649
@@ -51,12 +51,12 @@ namespace Octgn.Play
         {
             InitializeComponent();
             //Application.Current.MainWindow = this;
-            Version Oversion = Assembly.GetExecutingAssembly().GetName().Version;
-            Title = "OCTGN  version : " + Oversion + " : " + Program.Game.Definition.Name;
+            Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
+            Title = "OCTGN  version : " + oversion + " : " + Program.Game.Definition.Name;
             Program.Game.ComposeParts(this);
         }
 
-        private Storyboard fadeIn, fadeOut;
+        private Storyboard _fadeIn, _fadeOut;
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -64,8 +64,8 @@ namespace Octgn.Play
             Program.Dispatcher = Dispatcher;
             DataContext = Program.Game;
 
-            fadeIn = (Storyboard) Resources["ImageFadeIn"];
-            fadeOut = (Storyboard) Resources["ImageFadeOut"];
+            _fadeIn = (Storyboard) Resources["ImageFadeIn"];
+            _fadeOut = (Storyboard) Resources["ImageFadeOut"];
 
             cardViewer.Source = new BitmapImage(new Uri(Program.Game.Definition.CardDefinition.Back));
             if (Program.Game.Definition.CardDefinition.CornerRadius > 0)
@@ -77,18 +77,16 @@ namespace Octgn.Play
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
             // Show the Scripting console in dev only
-            if (Application.Current.Properties["ArbitraryArgName"] != null)
+            if (Application.Current.Properties["ArbitraryArgName"] == null) return;
+            string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
+            if (fname == "/developer")
             {
-                string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
-                if (fname == "/developer")
-                {
-                    Console.Visibility = Visibility.Visible;
-                    Loaded += (sender, args) =>
-                                  {
-                                      var wnd = new InteractiveConsole {Owner = this};
-                                      wnd.Show();
-                                  };
-                }
+                Console.Visibility = Visibility.Visible;
+                Loaded += (sender, args) =>
+                              {
+                                  var wnd = new InteractiveConsole {Owner = this};
+                                  wnd.Show();
+                              };
             }
         }
 
@@ -171,10 +169,12 @@ namespace Octgn.Play
         {
             e.Handled = true;
             // Show the dialog to choose the file
-            var ofd = new OpenFileDialog();
-            ofd.Filter = "OCTGN deck files (*.o8d) | *.o8d";
+            var ofd = new OpenFileDialog
+                          {
+                              Filter = "OCTGN deck files (*.o8d) | *.o8d",
+                              InitialDirectory = SimpleConfig.ReadValue("lastFolder")
+                          };
             //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
-            ofd.InitialDirectory = SimpleConfig.ReadValue("lastFolder");
             if (ofd.ShowDialog() != true) return;
             SimpleConfig.WriteValue("lastFolder", Path.GetDirectoryName(ofd.FileName));
             // Try to load the file contents
@@ -268,9 +268,9 @@ namespace Octgn.Play
                 if (match != null)
                 {
                     if (match.ActionDef.Execute != null)
-                        scriptEngine.ExecuteOnCards(match.ActionDef.Execute, Selection.Cards);
+                        ScriptEngine.ExecuteOnCards(match.ActionDef.Execute, Selection.Cards);
                     else if (match.ActionDef.BatchExecute != null)
-                        scriptEngine.ExecuteOnBatch(match.ActionDef.BatchExecute, Selection.Cards);
+                        ScriptEngine.ExecuteOnBatch(match.ActionDef.BatchExecute, Selection.Cards);
                     e.Handled = true;
                     return;
                 }
@@ -284,7 +284,7 @@ namespace Octgn.Play
                 ActionShortcut a = g.GroupShortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e));
                 if (a == null) continue;
                 if (a.ActionDef.Execute != null)
-                    scriptEngine.ExecuteOnGroup(a.ActionDef.Execute, g);
+                    ScriptEngine.ExecuteOnGroup(a.ActionDef.Execute, g);
                 e.Handled = true;
                 return;
             }
@@ -294,7 +294,7 @@ namespace Octgn.Play
         {
             if (e.Card == null && e.CardModel == null)
             {
-                fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
+                _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
             }
             else
             {
@@ -319,28 +319,26 @@ namespace Octgn.Play
         private void ViewCardModel(object sender, CardModelEventArgs e)
         {
             if (e.CardModel == null)
-                fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
+                _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
             else
                 ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture)));
         }
 
-        private void ShowCardPicture(BitmapImage img)
+        private void ShowCardPicture(BitmapSource img)
         {
             cardViewer.Height = img.PixelHeight;
             cardViewer.Width = img.PixelWidth;
             cardViewer.Source = img;
 
-            fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
+            _fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
 
-            if (cardViewer.Clip != null)
-            {
-                CardDef cardDef = Program.Game.Definition.CardDefinition;
-                var clipRect = ((RectangleGeometry) cardViewer.Clip);
-                double height = Math.Min(cardViewer.MaxHeight, cardViewer.Height);
-                double width = cardViewer.Width*height/cardViewer.Height;
-                clipRect.Rect = new Rect(new Size(width, height));
-                clipRect.RadiusX = clipRect.RadiusY = cardDef.CornerRadius*height/cardDef.Height;
-            }
+            if (cardViewer.Clip == null) return;
+            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            var clipRect = ((RectangleGeometry) cardViewer.Clip);
+            double height = Math.Min(cardViewer.MaxHeight, cardViewer.Height);
+            double width = cardViewer.Width*height/cardViewer.Height;
+            clipRect.Rect = new Rect(new Size(width, height));
+            clipRect.RadiusX = clipRect.RadiusY = cardDef.CornerRadius*height/cardDef.Height;
         }
 
         private void NextTurnClicked(object sender, RoutedEventArgs e)
@@ -383,11 +381,9 @@ namespace Octgn.Play
             wndManager.Visibility = Visibility.Collapsed;
             backstage.Child = ui;
             backstage.Visibility = Visibility.Visible;
-            if (ui is PickCardsDialog)
-            {
-                limitedTab.Visibility = Visibility.Visible;
-                ribbon.SelectedItem = limitedTab;
-            }
+            if (!(ui is PickCardsDialog)) return;
+            limitedTab.Visibility = Visibility.Visible;
+            ribbon.SelectedItem = limitedTab;
         }
 
         internal void HideBackstage()

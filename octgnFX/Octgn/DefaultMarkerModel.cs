@@ -5,17 +5,17 @@ namespace Octgn
 {
     public class DefaultMarkerModel : MarkerModel
     {
-        private readonly string key;
+        private string _key;
 
         public DefaultMarkerModel(string key, Guid id)
             : base(id)
         {
-            this.key = key;
+            this._key = key;
         }
 
         public override string Picture
         {
-            get { return "pack://application:,,,/Resources/Markers/" + key + ".png"; }
+            get { return "pack://application:,,,/Resources/Markers/" + _key + ".png"; }
         }
 
         public override bool Equals(object obj)
@@ -37,7 +37,7 @@ namespace Octgn
 
         public DefaultMarkerModel Clone()
         {
-            var result = new DefaultMarkerModel(key, id);
+            var result = new DefaultMarkerModel(_key, id);
             result.name = name;
             return result;
         }

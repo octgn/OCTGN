@@ -51,7 +51,7 @@ namespace Octgn.Play.Gui
         protected override void OnCardOver(object sender, CardsEventArgs e)
         {
             base.OnCardOver(sender, e);
-            e.CardSize = new Size(30*group.def.Width/group.def.Height, 30);
+            e.CardSize = new Size(30*group.Def.Width/group.Def.Height, 30);
         }
 
         protected override void OnCardDropped(object sender, CardsEventArgs e)

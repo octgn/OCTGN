@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -26,7 +27,7 @@ namespace Octgn
         public static List<ChatWindow> ChatWindows;
 
         public static Game Game;
-        public static LobbyClient lobbyClient;
+        public static LobbyClient LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository;
         internal static Client Client;
@@ -48,7 +49,7 @@ namespace Octgn
         internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
         internal static Inline LastChatTrace;
 
-        private static Process LobbyServerProcess;
+        private static Process _lobbyServerProcess;
         private static bool _locationUpdating;
 
 #if(TestServer)
@@ -78,11 +79,14 @@ namespace Octgn
         public static void StartLobbyServer()
         {
 #if(DEBUG)
-            LobbyServerProcess = new Process();
-            LobbyServerProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Skylabs.LobbyServer.exe";
+            _lobbyServerProcess = new Process
+                                      {
+                                          StartInfo =
+                                              {FileName = Directory.GetCurrentDirectory() + "/Skylabs.LobbyServer.exe"}
+                                      };
             try
             {
-                LobbyServerProcess.Start();
+                _lobbyServerProcess.Start();
             }
             catch (Exception e)
             {
@@ -107,23 +111,21 @@ namespace Octgn
 
         public static void SaveLocation()
         {
-            if (!_locationUpdating)
+            if (_locationUpdating) return;
+            if (LauncherWindow != null && LauncherWindow.IsLoaded)
             {
-                if (LauncherWindow != null && LauncherWindow.IsLoaded)
-                {
-                    _locationUpdating = true;
-                    SimpleConfig.WriteValue("LoginLeftLoc", LauncherWindow.Left.ToString());
-                    SimpleConfig.WriteValue("LoginTopLoc", LauncherWindow.Top.ToString());
-                    _locationUpdating = false;
-                }
+                _locationUpdating = true;
+                SimpleConfig.WriteValue("LoginLeftLoc", LauncherWindow.Left.ToString(CultureInfo.InvariantCulture));
+                SimpleConfig.WriteValue("LoginTopLoc", LauncherWindow.Top.ToString(CultureInfo.InvariantCulture));
+                _locationUpdating = false;
             }
         }
 
         public static void Exit()
         {
             Application.Current.MainWindow = null;
-            if (lobbyClient != null && lobbyClient.Connected)
-                lobbyClient.Stop();
+            if (LobbyClient != null && LobbyClient.Connected)
+                LobbyClient.Stop();
 
             SaveLocation();
             try
@@ -152,11 +154,11 @@ namespace Octgn
             catch (Exception)
             {
             }
-            if (LobbyServerProcess != null)
+            if (_lobbyServerProcess != null)
             {
                 try
                 {
-                    LobbyServerProcess.Kill();
+                    _lobbyServerProcess.Kill();
                 }
                 catch (Exception)
                 {
@@ -217,8 +219,7 @@ namespace Octgn
 
         internal static void TracePlayerEvent(Player player, string message, params object[] args)
         {
-            var args1 = new List<object>(args);
-            args1.Add(player);
+            var args1 = new List<object>(args) {player};
             Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message,
                              args1.ToArray());
         }

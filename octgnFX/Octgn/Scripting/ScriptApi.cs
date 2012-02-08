@@ -194,15 +194,15 @@ namespace Octgn.Scripting
         public string CardModel(int id)
         {
             Card c = Card.Find(id);
-            if (!c.FaceUp || c.Type.model == null) return null;
-            return c.Type.model.Id.ToString();
+            if (!c.FaceUp || c.Type.Model == null) return null;
+            return c.Type.Model.Id.ToString();
         }
 
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
-            if (!c.FaceUp || c.Type.model == null) return "?";
-            return c.Type.model.Properties[property];
+            if (!c.FaceUp || c.Type.Model == null) return "?";
+            return c.Type.Model.Properties[property];
         }
 
         public int CardOwner(int id)

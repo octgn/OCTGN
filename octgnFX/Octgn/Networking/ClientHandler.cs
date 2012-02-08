@@ -334,8 +334,8 @@ namespace Octgn.Networking
             {
                 if (type[i] == ulong.MaxValue) continue;
                 var ci = new CardIdentity(id[i]);
-                ci.alias = true;
-                ci.key = type[i];
+                ci.Alias = true;
+                ci.Key = type[i];
             }
         }
 
@@ -474,21 +474,21 @@ namespace Octgn.Networking
             // Save old id
             CardIdentity oldType = card.Type;
             // Check if the card is rightfully revealed
-            if (!card.Type.revealing)
+            if (!card.Type.Revealing)
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
                                          "Someone tries to reveal a card which is not visible to everybody.");
             // Check if we can trust other clients
-            if (!card.Type.mySecret)
+            if (!card.Type.MySecret)
             {
                 if (guid != Guid.Empty && (uint) revealed != guid.Condense())
                     Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
                                              "[Reveal] Alias and id aren't the same. One client is buggy or tries to cheat.");
-                if (Crypto.ModExp(revealed) != card.Type.key)
+                if (Crypto.ModExp(revealed) != card.Type.Key)
                     Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
                                              "[Reveal] Card identity doesn't match. One client is buggy or tries to cheat.");
             }
             else
-                card.Type.mySecret = false;
+                card.Type.MySecret = false;
             // Reveal an alias
             if (guid == Guid.Empty)
             {
@@ -504,18 +504,18 @@ namespace Octgn.Networking
                 }
                 // Possibly copy the model, if it was known and isn't anymore
                 // (possible when the alias has beeen locally revealed)
-                if (newId.model == null) newId.model = card.Type.model;
+                if (newId.Model == null) newId.Model = card.Type.Model;
                 // Set the new type
                 card.Type = newId;
                 // Delete the old identity
-                CardIdentity.Delete(oldType.id);
+                CardIdentity.Delete(oldType.Id);
                 // Possibly reveal the alias further
                 card.Reveal();
                 // Raise a notification
                 oldType.OnRevealed(newId);
             }
                 // Reveal a card's type
-            else if (card.Type.model == null)
+            else if (card.Type.Model == null)
             {
                 card.SetModel(Database.GetCardById(guid));
                 // Raise a notification
@@ -539,8 +539,8 @@ namespace Octgn.Networking
                 return;
             }
 
-            if (!players.All(p => (card.Group.Visibility == GroupVisibility.Custom && card.Group.viewers.Contains(p)) ||
-                                  card.playersLooking.Contains(p) || card.PeekingPlayers.Contains(p)))
+            if (!players.All(p => (card.Group.Visibility == GroupVisibility.Custom && card.Group.Viewers.Contains(p)) ||
+                                  card.PlayersLooking.Contains(p) || card.PeekingPlayers.Contains(p)))
                 Program.TraceWarning(
                     "[RevealTo] Revealing a card to a player, who isn't allowed to see it. This indicates a bug or cheating.");
 
@@ -557,10 +557,10 @@ namespace Octgn.Networking
                 }
 
                 // If the revealed type is an alias, pass it to the one who owns it to continue the RevealTo chain.
-                if (ci.alias)
+                if (ci.Alias)
                 {
-                    Player p = Player.Find((byte) (ci.key >> 16));
-                    Program.Client.Rpc.RevealToReq(p, players, card, Crypto.Encrypt(ci.key, p.PublicKey));
+                    Player p = Player.Find((byte) (ci.Key >> 16));
+                    Program.Client.Rpc.RevealToReq(p, players, card, Crypto.Encrypt(ci.Key, p.PublicKey));
                 }
                     // Else revealed the card model to the ones, who must see it
                 else
@@ -570,19 +570,19 @@ namespace Octgn.Networking
                         if (p != Player.LocalPlayer)
                         {
                             pArray[0] = p;
-                            Program.Client.Rpc.RevealToReq(p, pArray, card, Crypto.Encrypt(ci.model.Id, p.PublicKey));
+                            Program.Client.Rpc.RevealToReq(p, pArray, card, Crypto.Encrypt(ci.Model.Id, p.PublicKey));
                         }
                         else
                         {
                             sendToMyself = true;
-                            id = ci.model.Id;
+                            id = ci.Model.Id;
                         }
                 }
             }
             // Else it's a type and we are the final recipients
             if (sendToMyself)
             {
-                if (card.Type.model == null)
+                if (card.Type.Model == null)
                     card.SetModel(Database.GetCardById(id));
                 // Raise a notification
                 oldType.OnRevealed(card.Type);
@@ -633,7 +633,7 @@ namespace Octgn.Networking
             // Ignore the card we turned ourselves
             if (player == Player.LocalPlayer)
             {
-                card.mayBeConsideredFaceUp = false; // see comment on mayBeConsideredFaceUp
+                card.MayBeConsideredFaceUp = false; // see comment on mayBeConsideredFaceUp
                 return;
             }
             new Turn(player, card, up).Do();
@@ -657,9 +657,9 @@ namespace Octgn.Networking
             // Array to hold the new aliases (sent to CreateAlias)
             var aliases = new ulong[card.Length];
             // Intialize the group shuffle
-            group.filledShuffleSlots = 0;
-            group.hasReceivedFirstShuffledMessage = false;
-            group.myShufflePos = new short[card.Length];
+            group.FilledShuffleSlots = 0;
+            group.HasReceivedFirstShuffledMessage = false;
+            group.MyShufflePos = new short[card.Length];
             // Check if we received enough cards
             if (card.Length < group.Count/(Player.Count - 1))
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Shuffle] Too few cards received.");
@@ -676,24 +676,24 @@ namespace Octgn.Networking
                 {
                     card[i] = tc;
                     aliases[i] = ulong.MaxValue;
-                    ci.visible = true;
+                    ci.Visible = true;
                 }
                 else
                 {
                     ci = new CardIdentity(Program.Game.GenerateCardId());
-                    ci.mySecret = ci.alias = true;
-                    ci.key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) tc;
-                    card[i] = ci.id;
-                    aliases[i] = Crypto.ModExp(ci.key);
-                    ci.visible = false;
+                    ci.MySecret = ci.Alias = true;
+                    ci.Key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) tc;
+                    card[i] = ci.Id;
+                    aliases[i] = Crypto.ModExp(ci.Key);
+                    ci.Visible = false;
                 }
                 // Give a random position to the card
                 // TODO: I don't think this shuffling algorithm generates all possibilities equiprobably
-                group.myShufflePos[i] = (short) Crypto.Random(group.Count);
+                group.MyShufflePos[i] = (short) Crypto.Random(group.Count);
             }
             // Send the results
             Program.Client.Rpc.CreateAlias(card, aliases);
-            Program.Client.Rpc.Shuffled(group, card, group.myShufflePos);
+            Program.Client.Rpc.Shuffled(group, card, group.MyShufflePos);
         }
 
         public void Shuffled(Group group, int[] card, short[] pos)
@@ -704,26 +704,26 @@ namespace Octgn.Networking
                 Program.TraceWarning("[Shuffled] Cards and positions lengths don't match.");
                 return;
             }
-            group.filledShuffleSlots += card.Length;
-            if (group.filledShuffleSlots > group.Count)
+            group.FilledShuffleSlots += card.Length;
+            if (group.FilledShuffleSlots > group.Count)
             {
                 Program.TraceWarning("[Shuffled] Too many card positions received.");
                 return;
             }
             // If it's the first packet we receive for this shuffle, clear all Types
-            if (!group.hasReceivedFirstShuffledMessage)
+            if (!group.HasReceivedFirstShuffledMessage)
                 foreach (Card c in group) c.Type = null;
-            group.hasReceivedFirstShuffledMessage = true;
+            group.HasReceivedFirstShuffledMessage = true;
             // Check that the server didn't change our positions
-            if (card[0] >> 16 == Player.LocalPlayer.Id && group.myShufflePos != null)
+            if (card[0] >> 16 == Player.LocalPlayer.Id && group.MyShufflePos != null)
             {
                 for (int i = 0; i < pos.Length; i++)
-                    if (pos[i] != group.myShufflePos[i])
+                    if (pos[i] != group.MyShufflePos[i])
                     {
                         Program.TraceWarning("[Shuffled] The server has changed the order of the cards.");
                         break;
                     }
-                group.myShufflePos = null;
+                group.MyShufflePos = null;
             }
             // Insert the cards
             for (int j = 0; j < card.Length; j++)
@@ -741,9 +741,9 @@ namespace Octgn.Networking
                 if (group[i].Type != null) i = group.FindNextFreeSlot(i);
                 // Set the type
                 group[i].Type = ci;
-                group[i].SetVisibility(ci.visible ? GroupVisibility.Everybody : GroupVisibility.Nobody, null);
+                group[i].SetVisibility(ci.Visible ? GroupVisibility.Everybody : GroupVisibility.Nobody, null);
             }
-            if (group.filledShuffleSlots == group.Count)
+            if (group.FilledShuffleSlots == group.Count)
                 group.OnShuffled();
         }
 
@@ -767,13 +767,13 @@ namespace Octgn.Networking
             for (int i = 0; i < g.Count; i++)
             {
                 CardIdentity ci = g[i].Type;
-                if (ci.alias)
+                if (ci.Alias)
                 {
                     hasAlias = true;
-                    if (ci.mySecret)
+                    if (ci.MySecret)
                     {
                         cards.Add(g[i].Id);
-                        types.Add(ci.key);
+                        types.Add(ci.Key);
                     }
                 }
             }
@@ -825,9 +825,9 @@ namespace Octgn.Networking
                     continue;
                 }
                 // Check nobody cheated
-                if (!c.Type.mySecret)
+                if (!c.Type.MySecret)
                 {
-                    if (c.Type.key != Crypto.ModExp(type[i]))
+                    if (c.Type.Key != Crypto.ModExp(type[i]))
                         Program.TraceWarning("[Unalias] Card identity doesn't match.");
                 }
                 // Substitue the card's identity
@@ -837,12 +837,12 @@ namespace Octgn.Networking
                     Program.TraceWarning("[Unalias] Card identity not found.");
                     continue;
                 }
-                CardIdentity.Delete(c.Type.id);
+                CardIdentity.Delete(c.Type.Id);
                 c.Type = ci;
                 // Propagate unaliasing
-                if (ci.alias && ci.mySecret)
+                if (ci.Alias && ci.MySecret)
                     cards.Add(c.Id);
-                types.Add(ci.key);
+                types.Add(ci.Key);
             }
             if (cards.Count > 0)
                 Program.Client.Rpc.Unalias(cards.ToArray(), types.ToArray());
@@ -856,7 +856,7 @@ namespace Octgn.Networking
             {
                 bool done = false;
                 for (int i = 0; !done && i < g.Count; i++)
-                    done = g[i].Type.alias;
+                    done = g[i].Type.Alias;
                 if (!done)
                     g.DoShuffle();
             }
@@ -920,25 +920,25 @@ namespace Octgn.Networking
                 if (group.Visibility != GroupVisibility.Everybody)
                     foreach (Card c in group)
                     {
-                        c.playersLooking.Add(player);
+                        c.PlayersLooking.Add(player);
                         c.RevealTo(Enumerable.Repeat(player, 1));
                     }
-                group.lookedAt.Add(uid, group.ToList());
+                group.LookedAt.Add(uid, group.ToList());
                 Program.TracePlayerEvent(player, "{0} looks at {1}.", player, group);
             }
             else
             {
-                if (!group.lookedAt.ContainsKey(uid))
+                if (!group.LookedAt.ContainsKey(uid))
                 {
                     Program.TraceWarning("[LookAtTop] Protocol violation: unknown unique id received.");
                     return;
                 }
                 if (group.Visibility != GroupVisibility.Everybody)
                 {
-                    foreach (Card c in group.lookedAt[uid])
-                        c.playersLooking.Remove(player);
+                    foreach (Card c in group.LookedAt[uid])
+                        c.PlayersLooking.Remove(player);
                 }
-                group.lookedAt.Remove(uid);
+                group.LookedAt.Remove(uid);
                 Program.TracePlayerEvent(player, "{0} stops looking at {1}.", player, group);
             }
         }
@@ -950,23 +950,23 @@ namespace Octgn.Networking
                 IEnumerable<Card> cards = group.Take(count);
                 foreach (Card c in cards)
                 {
-                    c.playersLooking.Add(player);
+                    c.PlayersLooking.Add(player);
                     c.RevealTo(Enumerable.Repeat(player, 1));
                 }
-                group.lookedAt.Add(uid, cards.ToList());
+                group.LookedAt.Add(uid, cards.ToList());
                 Program.TracePlayerEvent(player, "{0} looks at {1} top {2} cards.", player, group, count);
             }
             else
             {
-                if (!group.lookedAt.ContainsKey(uid))
+                if (!group.LookedAt.ContainsKey(uid))
                 {
                     Program.TraceWarning("[LookAtTop] Protocol violation: unknown unique id received.");
                     return;
                 }
-                foreach (Card c in group.lookedAt[uid])
-                    c.playersLooking.Remove(player);
+                foreach (Card c in group.LookedAt[uid])
+                    c.PlayersLooking.Remove(player);
                 Program.TracePlayerEvent(player, "{0} stops looking at {1} top {2} cards.", player, group, count);
-                group.lookedAt.Remove(uid);
+                group.LookedAt.Remove(uid);
             }
         }
 
@@ -978,23 +978,23 @@ namespace Octgn.Networking
                 IEnumerable<Card> cards = group.Skip(skipCount);
                 foreach (Card c in cards)
                 {
-                    c.playersLooking.Add(player);
+                    c.PlayersLooking.Add(player);
                     c.RevealTo(Enumerable.Repeat(player, 1));
                 }
-                group.lookedAt.Add(uid, cards.ToList());
+                group.LookedAt.Add(uid, cards.ToList());
                 Program.TracePlayerEvent(player, "{0} looks at {1} bottom {2} cards.", player, group, count);
             }
             else
             {
-                if (!group.lookedAt.ContainsKey(uid))
+                if (!group.LookedAt.ContainsKey(uid))
                 {
                     Program.TraceWarning("[LookAtTop] Protocol violation: unknown unique id received.");
                     return;
                 }
-                foreach (Card c in group.lookedAt[uid])
-                    c.playersLooking.Remove(player);
+                foreach (Card c in group.LookedAt[uid])
+                    c.PlayersLooking.Remove(player);
                 Program.TracePlayerEvent(player, "{0} stops looking at {1} bottom {2} cards.", player, group, count);
-                group.lookedAt.Remove(uid);
+                group.LookedAt.Remove(uid);
             }
         }
 

@@ -28,7 +28,7 @@ namespace Octgn.Launcher
             ID = id;
             if (ID == 0)
                 miLeaveChat.IsEnabled = false;
-            Program.lobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
+            Program.LobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
             var cm = new ContextMenu();
             var mi = new MenuItem();
             mi.Header = "Add to friends list";
@@ -44,7 +44,7 @@ namespace Octgn.Launcher
 
         private void LobbyClientOnOnUserStatusChanged(UserStatus eve, User user)
         {
-            Program.lobbyClient.Chatting.UserStatusChange(ID, user, eve);
+            Program.LobbyClient.Chatting.UserStatusChange(ID, user, eve);
             ResetUserList();
         }
 
@@ -64,7 +64,7 @@ namespace Octgn.Launcher
                                                          case Chatting.ChatEvent.ChatMessage:
                                                              {
                                                                  Brush b = Brushes.Black;
-                                                                 if (user.Uid == Program.lobbyClient.Me.Uid)
+                                                                 if (user.Uid == Program.LobbyClient.Me.Uid)
                                                                      b = Brushes.Blue;
 
                                                                  Run r = getUserRun(user.DisplayName,
@@ -241,7 +241,7 @@ namespace Octgn.Launcher
             }
             else
             {
-                if (s.Equals(Program.lobbyClient.Me.DisplayName))
+                if (s.Equals(Program.LobbyClient.Me.DisplayName))
                 {
                     b = Brushes.Blue;
                     ret = new Bold(r);
@@ -305,7 +305,7 @@ namespace Octgn.Launcher
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
-                                                 ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(ID);
+                                                 ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(ID);
                                                  if (cr != null)
                                                  {
                                                      listBox1.Items.Clear();
@@ -329,10 +329,10 @@ namespace Octgn.Launcher
                 if (Int32.TryParse(s, out uid))
                 {
                     //BUG Should be pulling from FriendList
-                    User u = Program.lobbyClient.GetFriendFromUid(uid);
+                    User u = Program.LobbyClient.GetFriendFromUid(uid);
                     if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
                     {
-                        Program.lobbyClient.Chatting.AddUserToChat(u, ID);
+                        Program.LobbyClient.Chatting.AddUserToChat(u, ID);
                     }
                 }
             }
@@ -340,15 +340,15 @@ namespace Octgn.Launcher
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
+            Program.LobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.Chatting.LeaveChatRoom(ID);
-            Program.lobbyClient.Chatting.EChatEvent -= Chatting_eChatEvent;
+            Program.LobbyClient.Chatting.LeaveChatRoom(ID);
+            Program.LobbyClient.Chatting.EChatEvent -= Chatting_eChatEvent;
             Program.ChatWindows.RemoveAll(r => r.ID == ID);
-            Program.lobbyClient.OnUserStatusChanged -= LobbyClientOnOnUserStatusChanged;
+            Program.LobbyClient.OnUserStatusChanged -= LobbyClientOnOnUserStatusChanged;
             var cl = Program.ClientWindow.frame1.Content as ContactList;
             if (cl != null)
                 cl.RefreshList();
@@ -360,7 +360,7 @@ namespace Octgn.Launcher
             {
                 if (textBox1.Text.Trim().Length > 0)
                 {
-                    Program.lobbyClient.Chatting.SendChatMessage(ID, textBox1.Text);
+                    Program.LobbyClient.Chatting.SendChatMessage(ID, textBox1.Text);
                     textBox1.Text = "";
                 }
             }
@@ -395,7 +395,7 @@ namespace Octgn.Launcher
         {
             var u = listBox1.SelectedItem as User;
             if (u != null)
-                Program.lobbyClient.AddFriend(u.Email);
+                Program.LobbyClient.AddFriend(u.Email);
         }
     }
 }

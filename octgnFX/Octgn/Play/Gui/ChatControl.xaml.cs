@@ -215,7 +215,7 @@ namespace Octgn.Play.Gui
                 var cardModel = arg as CardModel;
                 var cardId = arg as CardIdentity;
                 var card = arg as Card;
-                if (card != null && (card.FaceUp || card.mayBeConsideredFaceUp))
+                if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
                     cardId = card.Type;
 
                 if (cardId != null || cardModel != null)
@@ -262,8 +262,8 @@ namespace Octgn.Play.Gui
         public CardRun(CardIdentity id)
             : base(id.ToString())
         {
-            card = id.model;
-            if (id.model == null)
+            card = id.Model;
+            if (id.Model == null)
                 id.Revealed += new CardIdentityNamer {Target = this}.Rename;
         }
 

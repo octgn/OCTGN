@@ -9,10 +9,10 @@ namespace Octgn.Play
     {
         #region Private fields
 
-        private readonly CounterDef defintion;
-        private readonly byte id;
-        private readonly Player player; // Player who owns this counter, if any        
-        private int state; // Value of this counter
+        private readonly CounterDef _defintion;
+        private readonly byte _id;
+        private readonly Player _player; // Player who owns this counter, if any        
+        private int _state; // Value of this counter
 
         #endregion
 
@@ -25,11 +25,11 @@ namespace Octgn.Play
 
         public Counter(Player player, CounterDef def)
         {
-            this.player = player;
-            state = def.Start;
+            this._player = player;
+            _state = def.Start;
             _name = def.Name;
-            id = def.Id;
-            defintion = def;
+            _id = def.Id;
+            _defintion = def;
         }
 
         public string Name
@@ -40,13 +40,13 @@ namespace Octgn.Play
         // Get or set the counter's value
         public int Value
         {
-            get { return state; }
+            get { return _state; }
             set { SetValue(value, Player.LocalPlayer, true); }
         }
 
         public CounterDef Definition
         {
-            get { return defintion; }
+            get { return _defintion; }
         }
 
         public static Counter Find(int id)
@@ -61,7 +61,7 @@ namespace Octgn.Play
 
         public override string ToString()
         {
-            return (player != null ? player.Name + "'s " : "Global ") + Name;
+            return (_player != null ? _player.Name + "'s " : "Global ") + Name;
         }
 
         #endregion
@@ -71,20 +71,20 @@ namespace Octgn.Play
         // Get the id of this counter
         internal int Id
         {
-            get { return 0x02000000 | (player == null ? 0 : player.Id << 16) | id; }
+            get { return 0x02000000 | (_player == null ? 0 : _player.Id << 16) | _id; }
         }
 
         // Set the counter's value
         internal void SetValue(int value, Player who, bool notifyServer)
         {
             // Check the difference with current value
-            int delta = value - state;
+            int delta = value - _state;
             if (delta == 0) return;
             // Notify the server if needed
             if (notifyServer)
                 Program.Client.Rpc.CounterReq(this, value);
             // Set the new value
-            state = value;
+            _state = value;
             OnPropertyChanged("Value");
             // Display a notification in the chat
             string deltaString = (delta > 0 ? "+" : "") + delta.ToString(CultureInfo.InvariantCulture);
@@ -95,7 +95,7 @@ namespace Octgn.Play
         internal void Reset()
         {
             if (!Definition.Reset) return;
-            state = Definition.Start;
+            _state = Definition.Start;
             OnPropertyChanged("Value");
         }
 

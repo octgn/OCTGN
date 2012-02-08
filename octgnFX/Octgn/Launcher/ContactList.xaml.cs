@@ -14,9 +14,9 @@ namespace Octgn.Launcher
         public ContactList()
         {
             InitializeComponent();
-            Program.lobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
-            Program.lobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
-            Program.lobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
+            Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
+            Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
+            Program.LobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
         }
 
         private void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User u, object data)
@@ -32,7 +32,7 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
                                              {
                                                  stackPanel1.Children.Clear();
-                                                 User[] flist = Program.lobbyClient.GetFriendsList();
+                                                 User[] flist = Program.LobbyClient.GetFriendsList();
                                                  foreach (User u in flist)
                                                  {
                                                      var f = new FriendListItem();
@@ -41,7 +41,7 @@ namespace Octgn.Launcher
                                                      f.MouseDoubleClick += f_MouseDoubleClick;
                                                      stackPanel1.Children.Add(f);
                                                  }
-                                                 foreach (ChatRoom cr in Program.lobbyClient.Chatting.Rooms)
+                                                 foreach (ChatRoom cr in Program.LobbyClient.Chatting.Rooms)
                                                  {
                                                      if (cr.Id == 0 || (cr.UserCount > 2))
                                                      {
@@ -94,12 +94,12 @@ namespace Octgn.Launcher
                 foreach (ChatWindow cw in Program.ChatWindows)
                 {
                     long rid = cw.ID;
-                    ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(rid);
+                    ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(rid);
                     if (cr != null)
                     {
                         if (cr.Id == 0)
                             continue;
-                        if (cr.UserCount == 2 && cr.ContainsUser(Program.lobbyClient.Me) && cr.ContainsUser(fi.ThisUser))
+                        if (cr.UserCount == 2 && cr.ContainsUser(Program.LobbyClient.Me) && cr.ContainsUser(fi.ThisUser))
                         {
                             if (cw.Visibility != Visibility.Visible)
                             {
@@ -109,7 +109,7 @@ namespace Octgn.Launcher
                         }
                     }
                 }
-                Program.lobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
+                Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
             }
         }
 
@@ -125,9 +125,9 @@ namespace Octgn.Launcher
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
-            Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
-            Program.lobbyClient.Chatting.EChatEvent -= Chatting_eChatEvent;
+            Program.LobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
+            Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
+            Program.LobbyClient.Chatting.EChatEvent -= Chatting_eChatEvent;
         }
     }
 }

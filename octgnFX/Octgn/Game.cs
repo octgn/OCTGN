@@ -24,12 +24,12 @@ namespace Octgn
         private readonly List<RandomRequest> _random = new List<RandomRequest>();
         private readonly Table _table;
         // TODO: why a SortedList? Wouldn't a Dictionary be sufficient?
-        private readonly SortedList<Guid, MarkerModel> markersById = new SortedList<Guid, MarkerModel>();
-        private readonly List<CardModel> recentCards = new List<CardModel>(MaxRecentCards);
-        private readonly List<MarkerModel> recentMarkers = new List<MarkerModel>(MaxRecentMarkers);
+        private readonly SortedList<Guid, MarkerModel> _markersById = new SortedList<Guid, MarkerModel>();
+        private readonly List<CardModel> _recentCards = new List<CardModel>(MaxRecentCards);
+        private readonly List<MarkerModel> _recentMarkers = new List<MarkerModel>(MaxRecentMarkers);
         private bool _stopTurn;
         private Player _turnPlayer;
-        private ushort uniqueId;
+        private ushort _uniqueId;
 
         public Game(GameDef def)
         {
@@ -50,11 +50,9 @@ namespace Octgn
             get { return _turnPlayer; }
             set
             {
-                if (_turnPlayer != value)
-                {
-                    _turnPlayer = value;
-                    OnPropertyChanged("TurnPlayer");
-                }
+                if (_turnPlayer == value) return;
+                _turnPlayer = value;
+                OnPropertyChanged("TurnPlayer");
             }
         }
 
@@ -63,11 +61,9 @@ namespace Octgn
             get { return _stopTurn; }
             set
             {
-                if (_stopTurn != value)
-                {
-                    _stopTurn = value;
-                    OnPropertyChanged("StopTurn");
-                }
+                if (_stopTurn == value) return;
+                _stopTurn = value;
+                OnPropertyChanged("StopTurn");
             }
         }
 
@@ -92,17 +88,17 @@ namespace Octgn
 
         public IList<MarkerModel> Markers
         {
-            get { return markersById.Values; }
+            get { return _markersById.Values; }
         }
 
         public IList<MarkerModel> RecentMarkers
         {
-            get { return recentMarkers; }
+            get { return _recentMarkers; }
         }
 
         public IList<CardModel> RecentCards
         {
-            get { return recentCards; }
+            get { return _recentCards; }
         }
 
         public Dictionary<string, int> Variables { get; private set; }
@@ -118,10 +114,10 @@ namespace Octgn
         {
             Database.Open(Definition, true);
             // Init fields
-            uniqueId = 1;
+            _uniqueId = 1;
             TurnNumber = 0;
             TurnPlayer = null;
-            string nick = Program.lobbyClient.Me.DisplayName;
+            string nick = Program.LobbyClient.Me.DisplayName;
             CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
@@ -135,7 +131,7 @@ namespace Octgn
                                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
             foreach (MarkerModel m in Database.GetAllMarkers())
-                markersById.Add(m.id, m);
+                _markersById.Add(m.id, m);
 
             Program.IsGameRunning = true;
         }
@@ -144,7 +140,7 @@ namespace Octgn
         {
             Database.Open(Definition, true);
             // Init fields
-            uniqueId = 1;
+            _uniqueId = 1;
             TurnNumber = 0;
             TurnPlayer = null;
             const string nick = "TestPlayer";
@@ -161,7 +157,7 @@ namespace Octgn
             //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
             foreach (MarkerModel m in Database.GetAllMarkers())
-                markersById.Add(m.id, m);
+                _markersById.Add(m.id, m);
 
             //Program.IsGameRunning = true;
         }
@@ -206,7 +202,7 @@ namespace Octgn
 
         public ushort GetUniqueId()
         {
-            return uniqueId++;
+            return _uniqueId++;
         }
 
         internal int GenerateCardId()
@@ -234,7 +230,7 @@ namespace Octgn
             var keys = new ulong[nCards];
             var cards = new Card[nCards];
             var groups = new Group[nCards];
-            var gtmps = new List<grp_tmp>(); //for temp groups visibility
+            var gtmps = new List<GrpTmp>(); //for temp groups visibility
             int j = 0;
             foreach (Deck.Section section in deck.Sections)
             {
@@ -246,7 +242,7 @@ namespace Octgn
                 //In order to make the clients know what the card is (if visibility is set so that they can see it),
                 //we have to set the visibility to Nobody, and then after the cards are sent, set the visibility back
                 //to what it was. //bug (google) #20
-                var gt = new grp_tmp(group, group.Visibility, group.viewers.ToList());
+                var gt = new GrpTmp(group, group.Visibility, group.Viewers.ToList());
                 if (!gtmps.Contains(gt))
                 {
                     gtmps.Add(gt);
@@ -276,18 +272,22 @@ namespace Octgn
             Program.Client.Rpc.LoadDeck(ids, keys, groups);
 
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
-            foreach (grp_tmp g in gtmps)
+            foreach (GrpTmp g in gtmps)
             {
-                if (g.visibility == GroupVisibility.Everybody)
-                    g.group.SetVisibility(true, false);
-                else if (g.visibility == GroupVisibility.Nobody)
-                    g.group.SetVisibility(false, false);
-                else
+                switch (g.Visibility)
                 {
-                    foreach (Player p in g.viewers)
-                    {
-                        g.group.AddViewer(p, false);
-                    }
+                    case GroupVisibility.Everybody:
+                        g.Group.SetVisibility(true, false);
+                        break;
+                    case GroupVisibility.Nobody:
+                        g.Group.SetVisibility(false, false);
+                        break;
+                    default:
+                        foreach (Player p in g.Viewers)
+                        {
+                            g.Group.AddViewer(p, false);
+                        }
+                        break;
                 }
             }
             gtmps.Clear();
@@ -296,34 +296,34 @@ namespace Octgn
 
         internal void AddRecentCard(CardModel card)
         {
-            int idx = recentCards.FindIndex(c => c.Id == card.Id);
+            int idx = _recentCards.FindIndex(c => c.Id == card.Id);
             if (idx == 0) return;
             if (idx > 0)
             {
-                recentCards.RemoveAt(idx);
-                recentCards.Insert(0, card);
+                _recentCards.RemoveAt(idx);
+                _recentCards.Insert(0, card);
                 return;
             }
 
-            if (recentCards.Count == MaxRecentCards)
-                recentCards.RemoveAt(MaxRecentCards - 1);
-            recentCards.Insert(0, card);
+            if (_recentCards.Count == MaxRecentCards)
+                _recentCards.RemoveAt(MaxRecentCards - 1);
+            _recentCards.Insert(0, card);
         }
 
         internal void AddRecentMarker(MarkerModel marker)
         {
-            int idx = recentMarkers.IndexOf(marker);
+            int idx = _recentMarkers.IndexOf(marker);
             if (idx == 0) return;
             if (idx > 0)
             {
-                recentMarkers.RemoveAt(idx);
-                recentMarkers.Insert(0, marker);
+                _recentMarkers.RemoveAt(idx);
+                _recentMarkers.Insert(0, marker);
                 return;
             }
 
-            if (recentMarkers.Count == MaxRecentMarkers)
-                recentMarkers.RemoveAt(MaxRecentMarkers - 1);
-            recentMarkers.Insert(0, marker);
+            if (_recentMarkers.Count == MaxRecentMarkers)
+                _recentMarkers.RemoveAt(MaxRecentMarkers - 1);
+            _recentMarkers.Insert(0, marker);
         }
 
         internal MarkerModel GetMarkerModel(Guid id)
@@ -338,7 +338,7 @@ namespace Octgn
                 return model;
             }
             // Try to find the marker model
-            if (!markersById.TryGetValue(id, out model))
+            if (!_markersById.TryGetValue(id, out model))
             {
                 Program.Trace.TraceEvent(TraceEventType.Verbose, EventIds.NonGame,
                                          "Marker model '{0}' not found, using default marker instead", id);
@@ -358,38 +358,36 @@ namespace Octgn
 
         #region MEF stuff for easy services composition
 
-        private static readonly AssemblyCatalog catalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
-        private readonly CompositionContainer container = new CompositionContainer(catalog);
+        private static readonly AssemblyCatalog Catalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
+        private readonly CompositionContainer _container = new CompositionContainer(Catalog);
 
         public void ComposeParts(params object[] attributedParts)
         {
-            container.ComposeParts(attributedParts);
+            _container.ComposeParts(attributedParts);
         }
 
         #endregion MEF stuff for easy services composition
 
         #region Nested type: grp_tmp
 
-        private struct grp_tmp : IEquatable<grp_tmp>
+        private struct GrpTmp : IEquatable<GrpTmp>
         {
-            public readonly Group group;
-            public readonly List<Player> viewers;
-            public readonly GroupVisibility visibility;
+            public readonly Group Group;
+            public readonly List<Player> Viewers;
+            public readonly GroupVisibility Visibility;
 
-            public grp_tmp(Group g, GroupVisibility vis, List<Player> v)
+            public GrpTmp(Group g, GroupVisibility vis, List<Player> v)
             {
-                group = g;
-                visibility = vis;
-                viewers = v;
+                Group = g;
+                Visibility = vis;
+                Viewers = v;
             }
 
             #region IEquatable<grp_tmp> Members
 
-            public bool Equals(grp_tmp gg)
+            public bool Equals(GrpTmp gg)
             {
-                if (@group == gg.group)
-                    return true;
-                return false;
+                return Group == gg.Group;
             }
 
             #endregion

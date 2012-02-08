@@ -33,13 +33,13 @@ namespace Octgn.Launcher
         public Login()
         {
             InitializeComponent();
-            if (Program.lobbyClient != null)
+            if (Program.LobbyClient != null)
             {
-                Program.lobbyClient.Stop();
-                Program.lobbyClient = null;
+                Program.LobbyClient.Stop();
+                Program.LobbyClient = null;
             }
-            Program.lobbyClient = new LobbyClient();
-            Program.lobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
+            Program.LobbyClient = new LobbyClient();
+            Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
 
             SpinnerRotate.CenterX = image2.Width/2;
             SpinnerRotate.CenterY = image2.Height/2;
@@ -102,18 +102,18 @@ namespace Octgn.Launcher
                 Start_Spinning();
                 Program.LauncherWindow.Closing += LauncherWindow_Closing;
                 bError.Visibility = Visibility.Hidden;
-                bool c = Program.lobbyClient.Connected;
+                bool c = Program.LobbyClient.Connected;
                 if (!c)
                 {
                     UpdateLoginStatus("Connecting to server...");
-                    c = Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
+                    c = Program.LobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
                 }
                 if (c)
                 {
                     Program.SaveLocation();
                     //TODO Sometimes it takes forever, maybe retry if it doesn't log in in like 10 seconds.
-                    Program.lobbyClient.OnCaptchaRequired += lobbyClient_OnCaptchaRequired;
-                    Program.lobbyClient.Login(LoginFinished, UpdateLoginStatus, textBox1.Text, passwordBox1.Password, "",
+                    Program.LobbyClient.OnCaptchaRequired += lobbyClient_OnCaptchaRequired;
+                    Program.LobbyClient.Login(LoginFinished, UpdateLoginStatus, textBox1.Text, passwordBox1.Password, "",
                                               UserStatus.Online);
                 }
                 else
@@ -194,7 +194,7 @@ namespace Octgn.Launcher
             }
             Dispatcher.Invoke((Action) (() =>
                                             {
-                                                Program.lobbyClient.OnCaptchaRequired -= lobbyClient_OnCaptchaRequired;
+                                                Program.LobbyClient.OnCaptchaRequired -= lobbyClient_OnCaptchaRequired;
                                                 Program.LauncherWindow.Closing -= LauncherWindow_Closing;
                                                 isLoggingIn = false;
                                                 Stop_Spinning();
@@ -207,7 +207,7 @@ namespace Octgn.Launcher
                                                     else
                                                         SimpleConfig.WriteValue("Password", "");
                                                     SimpleConfig.WriteValue("E-Mail", textBox1.Text);
-                                                    SimpleConfig.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
+                                                    SimpleConfig.WriteValue("Nickname", Program.LobbyClient.Me.DisplayName);
 
                                                     Program.ClientWindow = new Main();
                                                     Program.ClientWindow.Show();
@@ -384,13 +384,13 @@ namespace Octgn.Launcher
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
+            Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateLoginStatus("Connecting to server...");
-            if (Program.lobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort))
+            if (Program.LobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort))
             {
                 UpdateLoginStatus("Server available");
             }
@@ -416,7 +416,7 @@ namespace Octgn.Launcher
         {
             // Create a hash of current nickname to use as the Cryptographic Key
             RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.lobbyClient.Me.DisplayName));
+            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.LobbyClient.Me.DisplayName));
             return Cryptor.Encrypt(Text, BitConverter.ToString(hasher));
         }
     }

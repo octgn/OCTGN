@@ -15,7 +15,7 @@ namespace Octgn.Launcher
         public HostedGameList()
         {
             InitializeComponent();
-            Program.lobbyClient.OnGameHostEvent += lobbyClient_OnGameHostEvent;
+            Program.LobbyClient.OnGameHostEvent += lobbyClient_OnGameHostEvent;
         }
 
         public event EventHandler OnGameClick;
@@ -38,7 +38,7 @@ namespace Octgn.Launcher
                                                      count++;
                                                  }
                                                  HostedGame[] gl =
-                                                     Program.lobbyClient.GetHostedGames().OrderByDescending(
+                                                     Program.LobbyClient.GetHostedGames().OrderByDescending(
                                                          item => item.TimeStarted).ToArray();
                                                  foreach (HostedGame g in gl)
                                                  {
@@ -86,7 +86,7 @@ namespace Octgn.Launcher
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.OnGameHostEvent -= lobbyClient_OnGameHostEvent;
+            Program.LobbyClient.OnGameHostEvent -= lobbyClient_OnGameHostEvent;
         }
     }
 }
