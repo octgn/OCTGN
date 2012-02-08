@@ -21,12 +21,12 @@ namespace Octgn
         private const int MaxRecentCards = 10;
 
         private readonly GameDef _definition;
-        private readonly List<RandomRequest> _random = new List<RandomRequest>();
-        private readonly Table _table;
         // TODO: why a SortedList? Wouldn't a Dictionary be sufficient?
         private readonly SortedList<Guid, MarkerModel> _markersById = new SortedList<Guid, MarkerModel>();
+        private readonly List<RandomRequest> _random = new List<RandomRequest>();
         private readonly List<CardModel> _recentCards = new List<CardModel>(MaxRecentCards);
         private readonly List<MarkerModel> _recentMarkers = new List<MarkerModel>(MaxRecentMarkers);
+        private readonly Table _table;
         private bool _stopTurn;
         private Player _turnPlayer;
         private ushort _uniqueId;
@@ -368,7 +368,7 @@ namespace Octgn
 
         #endregion MEF stuff for easy services composition
 
-        #region Nested type: grp_tmp
+        #region Nested type: GrpTmp
 
         private struct GrpTmp : IEquatable<GrpTmp>
         {
@@ -383,7 +383,7 @@ namespace Octgn
                 Viewers = v;
             }
 
-            #region IEquatable<grp_tmp> Members
+            #region IEquatable<GrpTmp> Members
 
             public bool Equals(GrpTmp gg)
             {

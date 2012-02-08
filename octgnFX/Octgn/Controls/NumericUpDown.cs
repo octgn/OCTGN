@@ -30,7 +30,7 @@ namespace Octgn.Controls
         public NumericUpDown()
         {
             Focusable = false;
-            updateValueString();
+            UpdateValueString();
         }
 
         #region Properties
@@ -74,7 +74,7 @@ namespace Octgn.Controls
 
             control.OnValueChanged(e);
 
-            control.updateValueString();
+            control.UpdateValueString();
         }
 
         protected virtual void OnValueChanged(RoutedPropertyChangedEventArgs<decimal> args)
@@ -194,13 +194,13 @@ namespace Octgn.Controls
             //previous Change
             if (coercedNewChange < newChange)
             {
-                coercedNewChange = smallestForDecimalPlaces(control.DecimalPlaces);
+                coercedNewChange = SmallestForDecimalPlaces(control.DecimalPlaces);
             }
 
             return coercedNewChange;
         }
 
-        private static decimal smallestForDecimalPlaces(int decimalPlaces)
+        private static decimal SmallestForDecimalPlaces(int decimalPlaces)
         {
             if (decimalPlaces < 0) throw new ArgumentException("decimalPlaces");
 
@@ -236,7 +236,7 @@ namespace Octgn.Controls
             control.CoerceValue(MinimumProperty);
             control.CoerceValue(MaximumProperty);
             control.CoerceValue(ValueProperty);
-            control.updateValueString();
+            control.UpdateValueString();
         }
 
         private static bool ValidateDecimalPlaces(object value)
@@ -262,7 +262,7 @@ namespace Octgn.Controls
             get { return (string) GetValue(ValueStringProperty); }
         }
 
-        private void updateValueString()
+        private void UpdateValueString()
         {
             _numberFormatInfo.NumberDecimalDigits = DecimalPlaces;
             string newValueString = Value.ToString("f", _numberFormatInfo);
@@ -367,49 +367,50 @@ namespace Octgn.Controls
                                                 // If the box isn't focused, focus it (which selects its text, see GotFocus handler)
                                                 // and delete the event. If we let the Textbox further handle the event it will move 
                                                 // the caret position, i.e. deselect the text
-                                                if (!box.IsFocused)
-                                                {
-                                                    box.Focus();
-                                                    e.Handled = true;
-                                                }
+                                                if (box.IsFocused) return;
+                                                box.Focus();
+                                                e.Handled = true;
                                             };
             editBox.LostKeyboardFocus += delegate(object sender, KeyboardFocusChangedEventArgs e)
                                              {
                                                  var box = (TextBox) sender;
                                                  BindingExpression be =
                                                      box.GetBindingExpression(TextBox.TextProperty);
-                                                 if (be != null)
-                                                 {
-                                                     be.UpdateSource();
-                                                     be.UpdateTarget();
-                                                 }
+                                                 if (be == null) return;
+                                                 be.UpdateSource();
+                                                 be.UpdateTarget();
                                                  // if the value has been reject (e.g. bad format)
                                              };
             editBox.KeyDown += delegate(object sender, KeyEventArgs e)
                                    {
-                                       if (e.Key == Key.Enter)
+                                       switch (e.Key)
                                        {
-                                           var box = (TextBox) sender;
-                                           BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
-                                           if (be != null)
-                                           {
-                                               be.UpdateSource();
-                                               be.UpdateTarget(); // if the value has been reject (e.g. bad format)
-                                           }
-                                           var window = Window.GetWindow(box);
-                                           if (window != null)
-                                               ((UIElement) window.Content).MoveFocus(
-                                                   new TraversalRequest(FocusNavigationDirection.First));
-                                       }
-                                       else if (e.Key == Key.Escape)
-                                       {
-                                           var box = (TextBox) sender;
-                                           BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
-                                           if (be != null) be.UpdateTarget();
-                                           var window = Window.GetWindow(box);
-                                           if (window != null)
-                                               ((UIElement) window.Content).MoveFocus(
-                                                   new TraversalRequest(FocusNavigationDirection.First));
+                                           case Key.Enter:
+                                               {
+                                                   var box = (TextBox) sender;
+                                                   BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
+                                                   if (be != null)
+                                                   {
+                                                       be.UpdateSource();
+                                                       be.UpdateTarget(); // if the value has been reject (e.g. bad format)
+                                                   }
+                                                   var window = Window.GetWindow(box);
+                                                   if (window != null)
+                                                       ((UIElement) window.Content).MoveFocus(
+                                                           new TraversalRequest(FocusNavigationDirection.First));
+                                               }
+                                               break;
+                                           case Key.Escape:
+                                               {
+                                                   var box = (TextBox) sender;
+                                                   BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
+                                                   if (be != null) be.UpdateTarget();
+                                                   var window = Window.GetWindow(box);
+                                                   if (window != null)
+                                                       ((UIElement) window.Content).MoveFocus(
+                                                           new TraversalRequest(FocusNavigationDirection.First));
+                                               }
+                                               break;
                                        }
                                    };
         }
@@ -493,7 +494,7 @@ namespace Octgn.Controls
         internal void RaiseValueChangedEvent(decimal oldValue, decimal newValue)
         {
             RaisePropertyChangedEvent(RangeValuePatternIdentifiers.ValueProperty,
-                                           (double) oldValue, (double) newValue);
+                                      (double) oldValue, (double) newValue);
         }
     }
 }

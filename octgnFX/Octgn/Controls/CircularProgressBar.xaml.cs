@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace ThreadingComponent
@@ -14,7 +13,7 @@ namespace ThreadingComponent
     {
         #region Data
 
-        private readonly DispatcherTimer animationTimer;
+        private readonly DispatcherTimer _animationTimer;
 
         #endregion Data
 
@@ -23,7 +22,7 @@ namespace ThreadingComponent
         public CircularProgressBar()
         {
             InitializeComponent();
-            animationTimer = new DispatcherTimer(
+            _animationTimer = new DispatcherTimer(
                 DispatcherPriority.ContextIdle, Dispatcher) {Interval = new TimeSpan(0, 0, 0, 0, 100)};
         }
 
@@ -33,17 +32,17 @@ namespace ThreadingComponent
 
         private void Start()
         {
-            animationTimer.Tick += HandleAnimationTick;
+            _animationTimer.Tick += HandleAnimationTick;
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                animationTimer.Start();
+                _animationTimer.Start();
             }
         }
 
         private void Stop()
         {
-            animationTimer.Stop();
-            animationTimer.Tick -= HandleAnimationTick;
+            _animationTimer.Stop();
+            _animationTimer.Tick -= HandleAnimationTick;
         }
 
         private void HandleAnimationTick(object sender, EventArgs e)
@@ -79,8 +78,8 @@ namespace ThreadingComponent
         }
 
         private static void SetPosition(FrameworkElement ellipse, double offset,
-                                 double posOffSet, double step, double ew, double eh, double w, double h,
-                                 double r)
+                                        double posOffSet, double step, double ew, double eh, double w, double h,
+                                        double r)
         {
             double t = 2*Math.PI*posOffSet/10;
             ellipse.Width = ew;
@@ -114,7 +113,7 @@ namespace ThreadingComponent
 
         #endregion Private Methods
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void UserControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             SetPositions();
         }

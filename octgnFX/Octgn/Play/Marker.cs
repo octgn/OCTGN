@@ -50,8 +50,8 @@ namespace Octgn.Play
                                                                                                                0, 8))
                                                                            };
 
-        private readonly MarkerModel _model;
         private readonly Card _card;
+        private readonly MarkerModel _model;
         private ushort _count = 1;
 
         public Marker(Card card, MarkerModel model)

@@ -143,7 +143,9 @@ namespace Octgn.Launcher
             {
                 Program.DebugWindow = new DWindow();
             }
-            Program.DebugWindow.Visibility = Program.DebugWindow.Visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+            Program.DebugWindow.Visibility = Program.DebugWindow.Visibility == Visibility.Visible
+                                                 ? Visibility.Hidden
+                                                 : Visibility.Visible;
         }
     }
 }

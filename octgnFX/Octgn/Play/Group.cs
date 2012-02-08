@@ -18,14 +18,12 @@ namespace Octgn.Play
         private static readonly KeyGestureConverter KeyConverter = new KeyGestureConverter();
 
         // TODO: Should be Cards
-        protected ObservableCollection<Card> cards = new ObservableCollection<Card>();
         // List of cards in this group        
 
         internal GroupDef Def;
         internal int FilledShuffleSlots;
         internal bool HasReceivedFirstShuffledMessage;
 
-        private bool _locked;
         // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
 
         internal Dictionary<int, List<Card>> LookedAt = new Dictionary<int, List<Card>>();
@@ -34,8 +32,10 @@ namespace Octgn.Play
         internal short[] MyShufflePos; // Stores positions suggested by this client during a shuffle [transient]
 
         internal List<Player> Viewers = new List<Player>(2);
+        private bool _locked;
+        protected ObservableCollection<Card> cards = new ObservableCollection<Card>();
         // List of players who can see cards in this group, or null where this is irrelevant (Visibility.Undefined)
-        
+
         // TODO: Should be Visibility 
         protected GroupVisibility visibility; // Visibility of the group
 
@@ -54,8 +54,8 @@ namespace Octgn.Play
         {
             Def = def;
             ResetVisibility();
-            GroupShortcuts = CreateShortcuts(def.groupActions);
-            CardShortcuts = CreateShortcuts(def.cardActions);
+            GroupShortcuts = CreateShortcuts(def.GroupActions);
+            CardShortcuts = CreateShortcuts(def.CardActions);
             if (def.Shortcut != null)
                 MoveToShortcut = (KeyGesture) KeyConverter.ConvertFromInvariantString(def.Shortcut);
         }

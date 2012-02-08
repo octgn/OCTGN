@@ -32,7 +32,7 @@ namespace Octgn.Data
                                                   Name, ImageUri));
             reader.Read(); // <card>
 
-            this.Set = set;
+            Set = set;
 
             while (reader.IsStartElement("property"))
             {
@@ -132,7 +132,7 @@ namespace Octgn.Data
 
         public CardPropertyComparer(string propertyName)
         {
-            this._propertyName = propertyName;
+            _propertyName = propertyName;
             _isName = propertyName == "Name";
         }
 

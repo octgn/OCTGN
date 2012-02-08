@@ -13,14 +13,14 @@ namespace Octgn.Controls
         public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof (string),
                                                                                              typeof (TextOrIcon));
 
-        private readonly Image img = new Image();
-        private readonly TextBlock tb = new TextBlock {Style = null};
+        private readonly Image _img = new Image();
+        private readonly TextBlock _tb = new TextBlock {Style = null};
 
         public TextOrIcon()
         {
-            img.VerticalAlignment = tb.VerticalAlignment = VerticalAlignment.Center;
+            _img.VerticalAlignment = _tb.VerticalAlignment = VerticalAlignment.Center;
             Focusable = false;
-            Content = tb;
+            Content = _tb;
         }
 
         public string Text
@@ -42,15 +42,15 @@ namespace Octgn.Controls
             {
                 if (Icon != null)
                 {
-                    img.Source = new BitmapImage(new Uri(Icon));
-                    Content = img;
+                    _img.Source = new BitmapImage(new Uri(Icon));
+                    Content = _img;
                 }
                 else
-                    Content = tb;
+                    Content = _tb;
             }
             else if (e.Property == TextProperty)
             {
-                img.ToolTip = tb.Text = Text;
+                _img.ToolTip = _tb.Text = Text;
             }
         }
     }

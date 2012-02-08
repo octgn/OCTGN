@@ -58,17 +58,6 @@ namespace Octgn.Play
         private readonly int _id;
 
         private readonly ObservableCollection<Player> _playersPeeking = new ObservableCollection<Player>();
-        // List of players, who had peeked at this card. The list is reset when the card changes group.
-
-        private Color? _highlight;
-
-        private bool _selected;
-        private double _x, _y;
-        private CardDef _definition;
-        private bool _faceUp;
-        private Group _group;
-        private bool _isAlternateImage;
-
         internal bool MayBeConsideredFaceUp;
         /* For better responsiveness, turning a card face down is applied immediately,
 															   without waiting on the server.
@@ -76,10 +65,20 @@ namespace Octgn.Play
 															   face down although it should still be up. */
 
         internal List<Player> PlayersLooking = new List<Player>(1);
+        // List of players, who had peeked at this card. The list is reset when the card changes group.
+
+        private CardDef _definition;
+        private bool _faceUp;
+        private Group _group;
+        private Color? _highlight;
+        private bool _isAlternateImage;
+
         // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
 
         private CardOrientation _rot;
+        private bool _selected;
         private CardIdentity _type;
+        private double _x, _y;
 
         #endregion Private fields
 
@@ -616,8 +615,8 @@ namespace Octgn.Play
         internal Marker FindMarker(Guid lId, string name)
         {
             return _markers.FirstOrDefault(m =>
-                                          m.Model.Id == lId &&
-                                          (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
+                                           m.Model.Id == lId &&
+                                           (!(m.Model is DefaultMarkerModel) || m.Model.Name == name));
         }
 
         internal void SetMarker(Player player, Guid lId, string name, int count)

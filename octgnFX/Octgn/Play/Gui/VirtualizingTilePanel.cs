@@ -229,7 +229,9 @@ namespace Octgn.Play.Gui
         private int CalculateChildrenPerRow(Size availableSize)
         {
             // Figure out how many children fit on each row
-            int childrenPerRow = double.IsPositiveInfinity(availableSize.Width) ? Children.Count : Math.Max(1, (int) Math.Floor(availableSize.Width/ChildSize));
+            int childrenPerRow = double.IsPositiveInfinity(availableSize.Width)
+                                     ? Children.Count
+                                     : Math.Max(1, (int) Math.Floor(availableSize.Width/ChildSize));
             return childrenPerRow;
         }
 

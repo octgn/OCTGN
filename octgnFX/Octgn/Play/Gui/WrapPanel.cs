@@ -14,16 +14,16 @@ namespace Octgn.Play.Gui
 
         private const int SpacingWidth = 8;
 
-        private static readonly DoubleAnimation animation = new DoubleAnimation
+        private static readonly DoubleAnimation Animation = new DoubleAnimation
                                                                 {
                                                                     DecelerationRatio = 0.7,
                                                                     Duration =
                                                                         new Duration(TimeSpan.FromMilliseconds(300))
                                                                 };
 
-        private InsertAdorner insertAdorner;
+        private InsertAdorner _insertAdorner;
 
-        private UIElement spacedItem1, spacedItem2;
+        private UIElement _spacedItem1, _spacedItem2;
 
         #endregion
 
@@ -43,7 +43,7 @@ namespace Octgn.Play.Gui
 
         #region Insertion related
 
-        private bool insertAtEndOfRow; // indicates wheter the insertion adorner should preferably 
+        private bool _insertAtEndOfRow; // indicates wheter the insertion adorner should preferably 
         // get displayed at the end of row or at the beginning of the next one
 
         public int GetIndexFromPoint(Point position)
@@ -58,7 +58,7 @@ namespace Octgn.Play.Gui
                 int rowSize = Math.Max(1, (int) (ActualWidth/itemWidth));
 
                 int hOffset = Math.Min(rowSize, (int) (position.X/itemWidth + 0.5));
-                insertAtEndOfRow = hOffset == rowSize;
+                _insertAtEndOfRow = hOffset == rowSize;
                 int index = (int) (position.Y/itemHeight)*rowSize + hOffset;
 
                 if (index > VisualChildrenCount) index = VisualChildrenCount;
@@ -87,12 +87,12 @@ namespace Octgn.Play.Gui
             }
 
             // Create an adorner if none exists yet
-            if (insertAdorner == null)
+            if (_insertAdorner == null)
             {
-                insertAdorner = new InsertAdorner(this) {Height = 106, ClippingVisual = ClippingVisual};
+                _insertAdorner = new InsertAdorner(this) {Height = 106, ClippingVisual = ClippingVisual};
                 // HACK: currently WarpPanel is only used by the group window, but card height should be a property and not hard-coded like that
                 AdornerLayer layer = AdornerLayer.GetAdornerLayer(AdornerLayerVisual ?? this);
-                layer.Add(insertAdorner);
+                layer.Add(_insertAdorner);
             }
 
             // Assuming all items have the same size, get the size of the first one
@@ -117,61 +117,61 @@ namespace Octgn.Play.Gui
 
             // Position the adorner correctly            
             int hOffset, vOffset = Math.DivRem(idx, rowSize, out hOffset);
-            if (hOffset == 0 && insertAtEndOfRow)
+            if (hOffset == 0 && _insertAtEndOfRow)
             {
                 vOffset -= 1;
                 hOffset = rowSize;
             }
-            insertAdorner.MoveTo(new Point(hOffset*itemWidth, vOffset*itemHeight));
+            _insertAdorner.MoveTo(new Point(hOffset*itemWidth, vOffset*itemHeight));
 
             CancelSpacing();
 
             // Space neighbors
             if (idx >= VisualChildrenCount) return;
-            spacedItem2 = (UIElement) GetVisualChild(idx);
-            SetSpacing(spacedItem2, SpacingWidth);
+            _spacedItem2 = (UIElement) GetVisualChild(idx);
+            SetSpacing(_spacedItem2, SpacingWidth);
             if (idx <= 0) return;
-            spacedItem1 = (UIElement) GetVisualChild(idx - 1);
-            SetSpacing(spacedItem1, -SpacingWidth);
+            _spacedItem1 = (UIElement) GetVisualChild(idx - 1);
+            SetSpacing(_spacedItem1, -SpacingWidth);
         }
 
         public void HideInsertIndicator()
         {
-            if (insertAdorner == null) return;
+            if (_insertAdorner == null) return;
             AdornerLayer layer = AdornerLayer.GetAdornerLayer(AdornerLayerVisual ?? this);
-            layer.Remove(insertAdorner);
-            insertAdorner = null;
+            layer.Remove(_insertAdorner);
+            _insertAdorner = null;
             CancelSpacing();
         }
 
         private void CancelSpacing()
         {
-            if (spacedItem1 != null)
+            if (_spacedItem1 != null)
             {
-                CancelSpacing(spacedItem1);
-                spacedItem1 = null;
+                CancelSpacing(_spacedItem1);
+                _spacedItem1 = null;
             }
-            if (spacedItem2 == null) return;
-            CancelSpacing(spacedItem2);
-            spacedItem2 = null;
+            if (_spacedItem2 == null) return;
+            CancelSpacing(_spacedItem2);
+            _spacedItem2 = null;
         }
 
         private static void CancelSpacing(UIElement element)
         {
             var group = (TransformGroup) element.RenderTransform;
             var translate = (TranslateTransform) group.Children[0];
-            animation.To = 0;
-            animation.FillBehavior = FillBehavior.Stop;
-            translate.BeginAnimation(TranslateTransform.XProperty, animation);
+            Animation.To = 0;
+            Animation.FillBehavior = FillBehavior.Stop;
+            translate.BeginAnimation(TranslateTransform.XProperty, Animation);
         }
 
         private static void SetSpacing(UIElement element, int value)
         {
             var group = (TransformGroup) element.RenderTransform;
             var translate = (TranslateTransform) group.Children[0];
-            animation.To = value;
-            animation.FillBehavior = FillBehavior.HoldEnd;
-            translate.BeginAnimation(TranslateTransform.XProperty, animation);
+            Animation.To = value;
+            Animation.FillBehavior = FillBehavior.HoldEnd;
+            translate.BeginAnimation(TranslateTransform.XProperty, Animation);
         }
 
         protected override Transform GetCurrentLayoutInfo(UIElement element, out Point arrangePosition)

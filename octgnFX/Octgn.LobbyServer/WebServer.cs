@@ -251,7 +251,9 @@ namespace Skylabs.LobbyServer
             {
                 return string.Concat(Math.Round(bytes/Math.Pow(byteConversion, 2), 2), " MB");
             }
-            return bytes >= byteConversion ? string.Concat(Math.Round(bytes/byteConversion, 2), " KB") : string.Concat(bytes, " Bytes");
+            return bytes >= byteConversion
+                       ? string.Concat(Math.Round(bytes/byteConversion, 2), " KB")
+                       : string.Concat(bytes, " Bytes");
         }
     }
 }

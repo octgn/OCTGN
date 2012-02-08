@@ -177,7 +177,7 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
                                              {
                                                  ChatWindow cw =
-                                                     Program.ChatWindows.FirstOrDefault(cww => cww.ID == cr.Id);
+                                                     Program.ChatWindows.FirstOrDefault(cww => cww.Id == cr.Id);
                                                  if (cw == null)
                                                  {
                                                      var c = new ChatWindow(cr.Id);
@@ -188,7 +188,7 @@ namespace Octgn.Launcher
                                                  }
                                                  else
                                                  {
-                                                     if (cw.ID != 0)
+                                                     if (cw.Id != 0)
                                                      {
                                                          cw.Show();
                                                      }
@@ -341,7 +341,7 @@ namespace Octgn.Launcher
                 frame1.Navigate(gl);
             }
             else
-                gl.Install_Game();
+                gl.InstallGame();
         }
 
         private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
@@ -420,7 +420,9 @@ namespace Octgn.Launcher
             {
                 Program.DebugWindow = new DWindow();
             }
-            Program.DebugWindow.Visibility = Program.DebugWindow.Visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+            Program.DebugWindow.Visibility = Program.DebugWindow.Visibility == Visibility.Visible
+                                                 ? Visibility.Hidden
+                                                 : Visibility.Visible;
         }
 
         private void bJoin_Click(object sender, RoutedEventArgs e)

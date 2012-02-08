@@ -24,11 +24,11 @@ namespace Skylabs.Lobby
 
         #endregion
 
-        private readonly LobbyClient Parent;
+        private readonly LobbyClient _parent;
 
         public Chatting(LobbyClient c)
         {
-            Parent = c;
+            _parent = c;
             Rooms = new List<ChatRoom> {new ChatRoom(0)};
         }
 
@@ -56,7 +56,7 @@ namespace Skylabs.Lobby
         {
             var sm = new SocketMessage("twopersonchat");
             sm.AddData("user", otherUser);
-            Parent.WriteMessage(sm);
+            _parent.WriteMessage(sm);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Skylabs.Lobby
         {
             var sm = new SocketMessage("joinchatroom");
             sm.AddData("roomid", id);
-            Parent.WriteMessage(sm);
+            _parent.WriteMessage(sm);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Skylabs.Lobby
             var sm = new SocketMessage("addusertochat");
             sm.AddData("roomid", chatid);
             sm.AddData("user", u);
-            Parent.WriteMessage(sm);
+            _parent.WriteMessage(sm);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Skylabs.Lobby
         {
             var sm = new SocketMessage("leavechat");
             sm.AddData("roomid", rid);
-            Parent.WriteMessage(sm);
+            _parent.WriteMessage(sm);
             Rooms.RemoveAll(r => r.Id == rid);
         }
 
@@ -105,7 +105,7 @@ namespace Skylabs.Lobby
             var sm = new SocketMessage("chatmessage");
             sm.AddData("roomid", rid);
             sm.AddData("mess", message);
-            Parent.WriteMessage(sm);
+            _parent.WriteMessage(sm);
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Skylabs.Lobby
             ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
             if (cr == null) return;
             cr.ResetUserList(allusers);
-            if (u.Uid == Parent.Me.Uid)
+            if (u.Uid == _parent.Me.Uid)
             {
                 if (EChatEvent != null) EChatEvent.Invoke(cr, ChatEvent.MeJoinedChat, u, null);
             }

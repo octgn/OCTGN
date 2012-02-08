@@ -12,21 +12,21 @@ namespace Octgn.Launcher
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void PageLoaded(object sender, RoutedEventArgs e)
         {
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void Button1Click(object sender, RoutedEventArgs e)
         {
             Program.LobbyClient.AddFriend(textBox1.Text);
             Program.ClientWindow.LobbyTab();
         }
 
-        private void button2_Click(object sender, RoutedEventArgs e)
+        private void Button2Click(object sender, RoutedEventArgs e)
         {
             Program.ClientWindow.LobbyTab();
         }

@@ -97,7 +97,6 @@ namespace Skylabs.LobbyServer
                 }
                 catch
                 {
-                    
                 }
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "GamingLocker");
             }

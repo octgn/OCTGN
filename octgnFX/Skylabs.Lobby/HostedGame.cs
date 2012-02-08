@@ -7,7 +7,7 @@ namespace Skylabs.Lobby
     [Serializable]
     public class HostedGame : IEquatable<HostedGame>, IEqualityComparer<HostedGame>
     {
-        #region eHostedGame enum
+        #region EHostedGame enum
 
         [Serializable]
         public enum EHostedGame

@@ -11,7 +11,7 @@ namespace Octgn.StandAloneServer
         public static int Port;
         public static Guid GameGuid;
         public static Version GameVersion;
-        private static bool KeepRunning = true;
+        private static bool _keepRunning = true;
 
         private static void Main(string[] args)
         {
@@ -56,7 +56,7 @@ namespace Octgn.StandAloneServer
             Server = new Server.Server(Port, GameGuid, GameVersion);
             Server.OnStop += Server_OnStop;
             Console.WriteLine("Starting server on port " + Port);
-            while (KeepRunning)
+            while (_keepRunning)
             {
                 Thread.Sleep(1000);
             }
@@ -65,7 +65,7 @@ namespace Octgn.StandAloneServer
         private static void Server_OnStop(object sender, EventArgs e)
         {
             Server = null;
-            KeepRunning = false;
+            _keepRunning = false;
         }
 
         private static void CurrentDomainProcessExit(object sender, EventArgs e)

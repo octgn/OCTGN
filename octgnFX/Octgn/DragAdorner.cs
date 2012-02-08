@@ -8,13 +8,13 @@ namespace SimplestDragDrop
 {
     internal class DragAdorner : Adorner
     {
+        protected UIElement Child;
+        protected UIElement Owner;
+        public double Scale = 1.0;
         protected double XCenter;
         protected double YCenter;
-        protected UIElement Child;
         private double _leftOffset;
-        protected UIElement Owner;
         private double _topOffset;
-        public double Scale = 1.0;
 
         public DragAdorner(UIElement owner) : base(owner)
         {

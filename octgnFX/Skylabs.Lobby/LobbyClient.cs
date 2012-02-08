@@ -56,11 +56,11 @@ namespace Skylabs.Lobby
         /// </summary>
         private readonly Dictionary<string, SocketMessageResult> _callbacks;
 
-        private readonly SkySocket _socket;
         private readonly object _friendLocker = new object();
 
         private readonly object _gameLocker = new object();
         private readonly object _noteLocker = new object();
+        private readonly SkySocket _socket;
 
         /// <summary>
         ///   Assembly version of the LobbySoftware I think.
@@ -100,10 +100,7 @@ namespace Skylabs.Lobby
 
         public bool Connected
         {
-            get
-            {
-                return _socket != null && _socket.Connected;
-            }
+            get { return _socket != null && _socket.Connected; }
         }
 
         /// <summary>

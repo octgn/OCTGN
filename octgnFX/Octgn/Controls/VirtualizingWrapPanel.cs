@@ -176,8 +176,9 @@ namespace Octgn.Controls
         private int CalculateChildrenPerRow(Size availableSize)
         {
             // Figure out how many children fit on each row
-            int childrenPerRow;
-            childrenPerRow = double.IsPositiveInfinity(availableSize.Width) ? Children.Count : Math.Max(1, (int) Math.Floor(availableSize.Width/ChildWidth));
+            int childrenPerRow = double.IsPositiveInfinity(availableSize.Width)
+                                     ? Children.Count
+                                     : Math.Max(1, (int) Math.Floor(availableSize.Width/ChildWidth));
             return childrenPerRow;
         }
 
@@ -356,9 +357,9 @@ namespace Octgn.Controls
             DependencyProperty.Register("AnimatableVerticalOffset", typeof (double), typeof (VirtualizingWrapPanel),
                                         new UIPropertyMetadata(0.0, AnimatableVerticalOffsetChanged));
 
-        private DoubleAnimation scrollAnimation;
-        private int scrollDirection;
-        private double scrollTarget;
+        private DoubleAnimation _scrollAnimation;
+        private int _scrollDirection;
+        private double _scrollTarget;
 
         private double AnimatableVerticalOffset
         {
@@ -378,26 +379,26 @@ namespace Octgn.Controls
             // Add inerita to scrolling for a very smooth effect      
             int sign = Math.Sign(delta);
             double offset = -sign*48.0;
-            if (sign == scrollDirection)
-                scrollTarget += offset;
+            if (sign == _scrollDirection)
+                _scrollTarget += offset;
             else
             {
-                scrollDirection = sign;
-                scrollTarget = VerticalOffset + offset;
+                _scrollDirection = sign;
+                _scrollTarget = VerticalOffset + offset;
             }
             EnsureScrollAnimation();
-            scrollAnimation.From = VerticalOffset;
-            scrollAnimation.To = scrollTarget;
-            BeginAnimation(AnimatableVerticalOffsetProperty, scrollAnimation);
+            _scrollAnimation.From = VerticalOffset;
+            _scrollAnimation.To = _scrollTarget;
+            BeginAnimation(AnimatableVerticalOffsetProperty, _scrollAnimation);
         }
 
         private void EnsureScrollAnimation()
         {
-            scrollAnimation = new DoubleAnimation {Duration = SmoothScrollDuration, DecelerationRatio = 0.5};
-            scrollAnimation.Completed += delegate
+            _scrollAnimation = new DoubleAnimation {Duration = SmoothScrollDuration, DecelerationRatio = 0.5};
+            _scrollAnimation.Completed += delegate
                                              {
-                                                 scrollAnimation = null;
-                                                 scrollDirection = 0;
+                                                 _scrollAnimation = null;
+                                                 _scrollDirection = 0;
                                              };
         }
 

@@ -15,7 +15,7 @@ namespace Octgn.Controls
     public class ChildWindow : ContentControl
     {
         private static readonly Duration FadeOutDuration = new Duration(TimeSpan.FromMilliseconds(220));
-        private double moveX, moveY;
+        private double _moveX, _moveY;
 
         static ChildWindow()
         {
@@ -89,25 +89,25 @@ namespace Octgn.Controls
 
         private void WindowBeginDrag(object sender, DragStartedEventArgs e)
         {
-            moveX = Canvas.GetLeft(this);
-            moveY = Canvas.GetTop(this);
+            _moveX = Canvas.GetLeft(this);
+            _moveY = Canvas.GetTop(this);
         }
 
         private void WindowDragged(object sender, DragDeltaEventArgs e)
         {
-            moveX += e.HorizontalChange;
-            moveY += e.VerticalChange;
-            Canvas.SetLeft(this, moveX);
-            Canvas.SetTop(this, moveY);
+            _moveX += e.HorizontalChange;
+            _moveY += e.VerticalChange;
+            Canvas.SetLeft(this, _moveX);
+            Canvas.SetTop(this, _moveY);
         }
 
         private void WindowDropped(object sender, DragCompletedEventArgs e)
         {
             var canvas = (Canvas) Parent;
-            moveX = moveX < 0 ? 0 : moveX + Width > canvas.ActualWidth ? canvas.ActualWidth - Width : moveX;
-            moveY = moveY < 0 ? 0 : moveY + Height > canvas.ActualHeight ? canvas.ActualHeight - Height : moveY;
-            SetValue(Canvas.LeftProperty, moveX);
-            SetValue(Canvas.TopProperty, moveY);
+            _moveX = _moveX < 0 ? 0 : _moveX + Width > canvas.ActualWidth ? canvas.ActualWidth - Width : _moveX;
+            _moveY = _moveY < 0 ? 0 : _moveY + Height > canvas.ActualHeight ? canvas.ActualHeight - Height : _moveY;
+            SetValue(Canvas.LeftProperty, _moveX);
+            SetValue(Canvas.TopProperty, _moveY);
         }
 
         private void WindowResizing(object sender, DragDeltaEventArgs e)

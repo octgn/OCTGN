@@ -19,42 +19,42 @@ namespace Octgn.Launcher
     public partial class ChatWindow
     {
         private bool _realClose;
-        private Boolean justScrolledToBottom;
+        private Boolean _justScrolledToBottom;
 
         public ChatWindow(long id)
         {
             InitializeComponent();
             Users = new List<User>();
-            ID = id;
-            if (ID == 0)
+            Id = id;
+            if (Id == 0)
                 miLeaveChat.IsEnabled = false;
             Program.LobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
             var cm = new ContextMenu();
             var mi = new MenuItem {Header = "Add to friends list"};
-            mi.Click += mi_Click;
+            mi.Click += MiClick;
             cm.Items.Add(mi);
             listBox1.ContextMenu = cm;
 
             richTextBox1.Document.LineHeight = 2;
         }
 
-        public long ID { get; private set; }
+        public long Id { get; private set; }
         public List<User> Users { get; private set; }
 
         private void LobbyClientOnOnUserStatusChanged(UserStatus eve, User user)
         {
-            Program.LobbyClient.Chatting.UserStatusChange(ID, user, eve);
+            Program.LobbyClient.Chatting.UserStatusChange(Id, user, eve);
             ResetUserList();
         }
 
         public void ChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
-            Chatting_eChatEvent(cr, e, user, data);
+            ChattingEChatEvent(cr, e, user, data);
         }
 
-        private void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
+        private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
-            if (cr.Id == ID)
+            if (cr.Id == Id)
             {
                 Dispatcher.Invoke(new Action(() =>
                                                  {
@@ -66,7 +66,7 @@ namespace Octgn.Launcher
                                                                  if (user.Uid == Program.LobbyClient.Me.Uid)
                                                                      b = Brushes.Blue;
 
-                                                                 Run r = getUserRun(user.DisplayName,
+                                                                 Run r = GetUserRun(user.DisplayName,
                                                                                     "[" + user.DisplayName + "] : ");
                                                                  r.Foreground = b;
                                                                  var mess = data as string;
@@ -81,7 +81,8 @@ namespace Octgn.Launcher
                                                          case Chatting.ChatEvent.UserJoinedChat:
                                                              {
                                                                  string reg =
-                                                                     SimpleConfig.ReadValue("Options_HideLoginNotifications");
+                                                                     SimpleConfig.ReadValue(
+                                                                         "Options_HideLoginNotifications");
                                                                  if (reg == "false" || reg == null)
                                                                  {
                                                                      var r = new Run("#" + user.DisplayName + ": ");
@@ -97,7 +98,8 @@ namespace Octgn.Launcher
                                                          case Chatting.ChatEvent.UserLeftChat:
                                                              {
                                                                  string reg =
-                                                                     SimpleConfig.ReadValue("Options_HideLoginNotifications");
+                                                                     SimpleConfig.ReadValue(
+                                                                         "Options_HideLoginNotifications");
                                                                  if (reg == "false" || reg == null)
                                                                  {
                                                                      var r = new Run("#" + user.DisplayName + ": ");
@@ -142,17 +144,17 @@ namespace Octgn.Launcher
                 if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
                 {
                     rtbatbottom = true;
-                    justScrolledToBottom = false;
+                    _justScrolledToBottom = false;
                 }
                 else
                 {
-                    if (!justScrolledToBottom)
+                    if (!_justScrolledToBottom)
                     {
                         var pa = new Paragraph();
                         var ru = new Run("------------------------------") {Foreground = Brushes.Red};
                         pa.Inlines.Add(new Bold(ru));
                         richTextBox1.Document.Blocks.Add(pa);
-                        justScrolledToBottom = true;
+                        _justScrolledToBottom = true;
                     }
                 }
             }
@@ -217,7 +219,7 @@ namespace Octgn.Launcher
             {
                 b = Brushes.LightBlue;
                 var h = new Hyperlink(r);
-                h.RequestNavigate += h_RequestNavigate;
+                h.RequestNavigate += HRequestNavigate;
                 try
                 {
                     h.NavigateUri = new Uri(s);
@@ -270,7 +272,7 @@ namespace Octgn.Launcher
             return ret;
         }
 
-        private static void h_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        private static void HRequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             var hl = (Hyperlink) sender;
             string navigateUri = hl.NavigateUri.ToString();
@@ -284,7 +286,7 @@ namespace Octgn.Launcher
             e.Handled = true;
         }
 
-        private static Run getUserRun(String user, string fulltext)
+        private static Run GetUserRun(String user, string fulltext)
         {
             var r = new Run(fulltext)
                         {
@@ -304,7 +306,7 @@ namespace Octgn.Launcher
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
-                                                 ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(ID);
+                                                 ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(Id);
                                                  if (cr == null) return;
                                                  listBox1.Items.Clear();
                                                  Users = new List<User>();
@@ -317,49 +319,45 @@ namespace Octgn.Launcher
                                              }));
         }
 
-        private void Window_Drop(object sender, DragEventArgs e)
+        private void WindowDrop(object sender, DragEventArgs e)
         {
             var s = e.Data.GetData(typeof (String)) as String;
             if (s == null) return;
             int uid;
-            if (Int32.TryParse(s, out uid))
+            if (!Int32.TryParse(s, out uid)) return;
+            //TODO: Should be pulling from FriendList
+            User u = Program.LobbyClient.GetFriendFromUid(uid);
+            if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
             {
-                //BUG Should be pulling from FriendList
-                User u = Program.LobbyClient.GetFriendFromUid(uid);
-                if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
-                {
-                    Program.LobbyClient.Chatting.AddUserToChat(u, ID);
-                }
+                Program.LobbyClient.Chatting.AddUserToChat(u, Id);
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void WindowLoaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
+            Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
         }
 
-        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        private void WindowUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.Chatting.LeaveChatRoom(ID);
-            Program.LobbyClient.Chatting.EChatEvent -= Chatting_eChatEvent;
-            Program.ChatWindows.RemoveAll(r => r.ID == ID);
+            Program.LobbyClient.Chatting.LeaveChatRoom(Id);
+            Program.LobbyClient.Chatting.EChatEvent -= ChattingEChatEvent;
+            Program.ChatWindows.RemoveAll(r => r.Id == Id);
             Program.LobbyClient.OnUserStatusChanged -= LobbyClientOnOnUserStatusChanged;
             var cl = Program.ClientWindow.frame1.Content as ContactList;
             if (cl != null)
                 cl.RefreshList();
         }
 
-        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        private void TextBox1KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
-            if (textBox1.Text.Trim().Length > 0)
-            {
-                Program.LobbyClient.Chatting.SendChatMessage(ID, textBox1.Text);
-                textBox1.Text = "";
-            }
+            if (textBox1.Text.Trim().Length <= 0) return;
+            Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
+            textBox1.Text = "";
         }
 
-        private void Window_Closing(object sender, CancelEventArgs e)
+        private void WindowClosing(object sender, CancelEventArgs e)
         {
             if (_realClose) return;
             e.Cancel = true;
@@ -372,17 +370,17 @@ namespace Octgn.Launcher
             Close();
         }
 
-        private void miLeaveChat_Click(object sender, RoutedEventArgs e)
+        private void MiLeaveChatClick(object sender, RoutedEventArgs e)
         {
             _realClose = true;
             Close();
         }
 
-        private void listBox1_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void ListBox1MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
         }
 
-        private void mi_Click(object sender, RoutedEventArgs e)
+        private void MiClick(object sender, RoutedEventArgs e)
         {
             var u = listBox1.SelectedItem as User;
             if (u != null)

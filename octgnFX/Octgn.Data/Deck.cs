@@ -151,9 +151,9 @@ namespace Octgn.Data
                                                                        (from card in section.Elements("card")
                                                                         select new Element
                                                                                    {
-                                                                                       loadedId =
+                                                                                       LoadedId =
                                                                                            card.Attr<string>("id"),
-                                                                                       loadedName = card.Value,
+                                                                                       LoadedName = card.Value,
                                                                                        Quantity =
                                                                                            card.Attr<byte>("qty", 1)
                                                                                    })
@@ -185,17 +185,17 @@ namespace Octgn.Data
                         try
                         {
                             // First try by id, if one is provided
-                            if (e.loadedId != null) e.Card = game.GetCardById(new Guid(e.loadedId));
+                            if (e.LoadedId != null) e.Card = game.GetCardById(new Guid(e.LoadedId));
                             // If there's no id, or if it doesn't match a card in the database, try to fallback on the name
-                            if (e.Card == null) e.Card = game.GetCardByName(e.loadedName);
+                            if (e.Card == null) e.Card = game.GetCardByName(e.LoadedName);
                             // If we still can't find the card, report an error
                             if (e.Card == null)
-                                throw new UnknownCardException(e.loadedId, e.loadedName);
+                                throw new UnknownCardException(e.LoadedId, e.LoadedName);
                         }
                         catch (FormatException)
                         {
                             throw new InvalidFileFormatException(string.Format("Could not parse card id {0}.",
-                                                                               e.loadedId));
+                                                                               e.LoadedId));
                         }
             }
             finally
@@ -215,7 +215,7 @@ namespace Octgn.Data
         {
             private CardModel _card;
             private byte _quantity = 1;
-            internal string loadedId, loadedName;
+            internal string LoadedId, LoadedName;
 
             public CardModel Card
             {

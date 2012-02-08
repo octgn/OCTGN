@@ -30,14 +30,12 @@ namespace Octgn
         {
             if (File.Exists(GetPath()))
             {
-
                 var serializer = new SharpSerializer();
-                var config = (Hashtable)serializer.Deserialize(GetPath());
+                var config = (Hashtable) serializer.Deserialize(GetPath());
                 if (config.ContainsKey(valName))
                 {
                     return config[valName].ToString();
                 }
-
             }
             return null;
         }
@@ -59,7 +57,7 @@ namespace Octgn
             var config = new Hashtable();
             if (File.Exists(GetPath()))
             {
-                config = (Hashtable)serializer.Deserialize(GetPath());
+                config = (Hashtable) serializer.Deserialize(GetPath());
             }
             config[valName] = value;
             serializer.Serialize(config, GetPath());

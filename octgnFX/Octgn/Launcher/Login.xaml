@@ -1,8 +1,6 @@
 ﻿<Page x:Class="Octgn.Launcher.Login" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="Login"
-      Width="640" Height="376" 
-      Unloaded="Page_Unloaded" Loaded="Page_Loaded">
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Login" Width="640" Height="376" Unloaded="Page_Unloaded"
+      Loaded="Page_Loaded">
   <Page.Resources>
     <Storyboard x:Key="LogoTimeline">
       <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="whiteRing"

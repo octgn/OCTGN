@@ -27,32 +27,32 @@ namespace Octgn.Launcher
         public GameList()
         {
             InitializeComponent();
-            Program.GamesRepository.GameInstalled += GamesRepository_GameInstalled;
+            Program.GamesRepository.GameInstalled += GamesRepositoryGameInstalled;
         }
 
         public GameList(LoadEvent le)
         {
             InitializeComponent();
-            Program.GamesRepository.GameInstalled += GamesRepository_GameInstalled;
+            Program.GamesRepository.GameInstalled += GamesRepositoryGameInstalled;
             if (le == LoadEvent.InstallGame)
-                Install_Game();
+                InstallGame();
         }
 
         public event EventHandler OnGameClick;
 
-        private void Reload_Game_List()
+        private void ReloadGameList()
         {
             stackPanel1.Children.Clear();
             foreach (Data.Game g in Program.GamesRepository.AllGames)
             {
                 var gs = new GameListItem {Game = g};
                 //gs.MouseDoubleClick += new MouseButtonEventHandler(gs_MouseDoubleClick);
-                gs.MouseUp += gs_MouseUp;
+                gs.MouseUp += GsMouseUp;
                 stackPanel1.Children.Add(gs);
             }
         }
 
-        private void gs_MouseUp(object sender, MouseButtonEventArgs e)
+        private void GsMouseUp(object sender, MouseButtonEventArgs e)
         {
             var gs = (GameListItem) sender;
             if (OnGameClick != null)
@@ -61,9 +61,9 @@ namespace Octgn.Launcher
             }
         }
 
-        private void GamesRepository_GameInstalled(object sender, EventArgs e)
+        private void GamesRepositoryGameInstalled(object sender, EventArgs e)
         {
-            Reload_Game_List();
+            ReloadGameList();
         }
 
         /*
@@ -77,17 +77,17 @@ namespace Octgn.Launcher
         }
         */
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void PageLoaded(object sender, RoutedEventArgs e)
         {
-            Reload_Game_List();
+            ReloadGameList();
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.GamesRepository.GameInstalled -= GamesRepository_GameInstalled;
+            Program.GamesRepository.GameInstalled -= GamesRepositoryGameInstalled;
         }
 
-        public void Install_Game()
+        public void InstallGame()
         {
             var ofd = new OpenFileDialog {Filter = "Game definition files (*.o8g)|*.o8g"};
             if (ofd.ShowDialog() != true) return;
@@ -154,7 +154,7 @@ namespace Octgn.Launcher
                                            game.SharedDeckDefinition == null
                                                ? null
                                                : game.SharedDeckDefinition.Sections.Keys,
-                                       repository = Program.GamesRepository
+                                       Repository = Program.GamesRepository
                                    };
                 Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
             }

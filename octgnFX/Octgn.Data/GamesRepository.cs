@@ -211,15 +211,15 @@ namespace Octgn.Data
                 sc.Close();
             }
             _missingFiles = (from g in _allCachedGames
-                            let fullname = Path.Combine(g.basePath, "Defs", g.Filename)
-                            where !File.Exists(fullname)
-                            select fullname).ToList();
+                             let fullname = Path.Combine(g.BasePath, "Defs", g.Filename)
+                             where !File.Exists(fullname)
+                             select fullname).ToList();
 
             _cachedGames = _missingFiles.Count > 0
-                              ? new ObservableCollection<Game>(
-                                    _allCachedGames.Where(
-                                        g => !_missingFiles.Contains(Path.Combine(g.basePath, "Defs", g.Filename))))
-                              : _allCachedGames;
+                               ? new ObservableCollection<Game>(
+                                     _allCachedGames.Where(
+                                         g => !_missingFiles.Contains(Path.Combine(g.BasePath, "Defs", g.Filename))))
+                               : _allCachedGames;
         }
 
         private Game ReadGameFromTable(IDataRecord read)
@@ -242,8 +242,8 @@ namespace Octgn.Data
                             DeckSections = DeserializeList((string) read["deck_sections"]),
                             SharedDeckSections =
                                 sharedDeckSections == null ? null : DeserializeList(sharedDeckSections),
-                            basePath = BasePath,
-                            repository = this
+                            BasePath = BasePath,
+                            Repository = this
                         };
 
 

@@ -328,7 +328,7 @@ namespace Octgn.Play.Gui
             }
             if (Math.Abs(target180 - rotate180.Angle) <= double.Epsilon) return;
             var animation = new DoubleAnimation(target180, TimeSpan.FromMilliseconds(600), FillBehavior.HoldEnd)
-                           {EasingFunction = new ExponentialEase()};
+                                {EasingFunction = new ExponentialEase()};
             rotate180.BeginAnimation(RotateTransform.AngleProperty, animation);
         }
 

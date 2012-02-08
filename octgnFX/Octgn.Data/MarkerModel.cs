@@ -18,20 +18,20 @@ namespace Octgn.Data
             reader.MoveToAttribute("id");
             Id = new Guid(reader.Value);
             reader.Read(); // <marker />
-            this._set = set;
+            _set = set;
         }
 
         protected MarkerModel(Guid id)
         {
-            this.Id = id;
+            Id = id;
         }
 
         public MarkerModel(Guid id, string name, string icon, Set set)
         {
-            this._set = set;
+            _set = set;
             _iconUri = icon;
             this.name = name;
-            this.Id = id;
+            Id = id;
         }
 
         public virtual string Picture

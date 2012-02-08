@@ -20,8 +20,8 @@ namespace Octgn.DeckBuilder
         private Deck _deck;
         private Data.Game _game;
         private Deck.Section _section;
-        private string deckFilename;
-        private bool unsaved;
+        private string _deckFilename;
+        private bool _unsaved;
 
         public DeckBuilderWindow()
         {
@@ -32,12 +32,12 @@ namespace Octgn.DeckBuilder
             {
                 Game = Program.GamesRepository.Games[0];
                 Deck = new Deck(Game);
-                deckFilename = null;
+                _deckFilename = null;
             }
-            Version Oversion = Assembly.GetExecutingAssembly().GetName().Version;
+            Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             newSubMenu.ItemsSource = Program.GamesRepository.AllGames;
             loadSubMenu.ItemsSource = Program.GamesRepository.AllGames;
-            Title = "OCTGN Deck Editor  version " + Oversion;
+            Title = "OCTGN Deck Editor  version " + oversion;
         }
 
         #region Search tabs
@@ -84,7 +84,7 @@ namespace Octgn.DeckBuilder
             {
                 if (_deck == value) return;
                 _deck = value;
-                unsaved = false;
+                _unsaved = false;
                 ActiveSection = value.Sections.FirstOrDefault();
                 OnPropertyChanged("Deck");
             }
@@ -146,12 +146,12 @@ namespace Octgn.DeckBuilder
                 }
             }
             Deck = new Deck(Game);
-            deckFilename = null;
+            _deckFilename = null;
         }
 
         private void NewClicked(object sender, RoutedEventArgs e)
         {
-            if (unsaved)
+            if (_unsaved)
             {
                 MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
                                                           MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -169,7 +169,7 @@ namespace Octgn.DeckBuilder
             Game = (Data.Game) ((MenuItem) e.OriginalSource).DataContext;
             CommandManager.InvalidateRequerySuggested();
             Deck = new Deck(Game);
-            deckFilename = null;
+            _deckFilename = null;
         }
 
         private void SaveDeck(object sender, ExecutedRoutedEventArgs e)
@@ -186,15 +186,15 @@ namespace Octgn.DeckBuilder
 
         private void Save()
         {
-            if (deckFilename == null)
+            if (_deckFilename == null)
             {
                 SaveAs();
                 return;
             }
             try
             {
-                Deck.Save(deckFilename);
-                unsaved = false;
+                Deck.Save(_deckFilename);
+                _unsaved = false;
             }
             catch (Exception ex)
             {
@@ -218,9 +218,9 @@ namespace Octgn.DeckBuilder
             try
             {
                 Deck.Save(sfd.FileName);
-                unsaved = false;
-                deckFilename = sfd.FileName;
-                SimpleConfig.WriteValue("lastFolder", Path.GetFileName(deckFilename));
+                _unsaved = false;
+                _deckFilename = sfd.FileName;
+                SimpleConfig.WriteValue("lastFolder", Path.GetFileName(_deckFilename));
             }
             catch (Exception ex)
             {
@@ -243,7 +243,7 @@ namespace Octgn.DeckBuilder
 
         private void LoadDeck(Data.Game game)
         {
-            if (unsaved)
+            if (_unsaved)
             {
                 MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
                                                           MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -289,7 +289,7 @@ namespace Octgn.DeckBuilder
             }
             Game = Program.GamesRepository.Games.First(g => g.Id == newDeck.GameId);
             Deck = newDeck;
-            deckFilename = ofd.FileName;
+            _deckFilename = ofd.FileName;
             CommandManager.InvalidateRequerySuggested();
         }
 
@@ -302,7 +302,7 @@ namespace Octgn.DeckBuilder
         {
             base.OnClosing(e);
 
-            if (unsaved)
+            if (_unsaved)
             {
                 MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
                                                           MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -351,7 +351,7 @@ namespace Octgn.DeckBuilder
 
         private void AddResultCard(object sender, SearchCardIdEventArgs e)
         {
-            unsaved = true;
+            _unsaved = true;
             Deck.Element element = ActiveSection.Cards.FirstOrDefault(c => c.Card.Id == e.CardId);
             if (element != null)
                 element.Quantity += 1;
@@ -361,7 +361,7 @@ namespace Octgn.DeckBuilder
 
         private void RemoveResultCard(object sender, SearchCardIdEventArgs e)
         {
-            unsaved = true;
+            _unsaved = true;
             Deck.Element element = ActiveSection.Cards.FirstOrDefault(c => c.Card.Id == e.CardId);
             if (element == null) return;
             element.Quantity -= 1;
@@ -381,7 +381,7 @@ namespace Octgn.DeckBuilder
             int moveDown = grid.SelectedIndex + 1;
             if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
             {
-                unsaved = true;
+                _unsaved = true;
                 if (moveDown <= items)
                     ActiveSection.Cards.Move(grid.SelectedIndex, moveDown);
                 grid.Focus();
@@ -389,7 +389,7 @@ namespace Octgn.DeckBuilder
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Subtract))
             {
-                unsaved = true;
+                _unsaved = true;
                 if (moveUp >= 0)
                     ActiveSection.Cards.Move(grid.SelectedIndex, moveUp);
                 grid.Focus();
@@ -397,13 +397,13 @@ namespace Octgn.DeckBuilder
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
             {
-                unsaved = true;
+                _unsaved = true;
                 element.Quantity += 1;
                 e.Handled = true;
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.Delete) || e.KeyboardDevice.IsKeyDown(Key.Subtract))
             {
-                unsaved = true;
+                _unsaved = true;
                 element.Quantity -= 1;
                 e.Handled = true;
             }
@@ -411,7 +411,7 @@ namespace Octgn.DeckBuilder
 
         private void ElementEditEnd(object sender, DataGridCellEditEndingEventArgs e)
         {
-            unsaved = true;
+            _unsaved = true;
         }
 
         private void SetActiveSection(object sender, RoutedEventArgs e)

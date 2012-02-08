@@ -32,12 +32,12 @@ namespace Octgn
         {
             byte[] bytes = Encoding.Unicode.GetBytes(text);
             var pdb = new Rfc2898DeriveBytes(key,
-                                              new byte[]
-                                                  {
-                                                      0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d,
-                                                      0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
-                                                  });
-            
+                                             new byte[]
+                                                 {
+                                                     0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d,
+                                                     0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
+                                                 });
+
             byte[] encryptedData = Encrypt(bytes, pdb.GetBytes(16), pdb.GetBytes(8));
             return Convert.ToBase64String(encryptedData);
         }
@@ -74,11 +74,11 @@ namespace Octgn
         {
             byte[] cryptedBytes = Convert.FromBase64String(encryptedText);
             var pdb = new Rfc2898DeriveBytes(key,
-                                              new byte[]
-                                                  {
-                                                      0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65,
-                                                      0x64, 0x76, 0x65, 0x64, 0x65, 0x76
-                                                  });
+                                             new byte[]
+                                                 {
+                                                     0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65,
+                                                     0x64, 0x76, 0x65, 0x64, 0x65, 0x76
+                                                 });
             byte[] decryptedData = Decrypt(cryptedBytes, pdb.GetBytes(16), pdb.GetBytes(8));
             return Encoding.Unicode.GetString(decryptedData ?? new byte[] {});
         }

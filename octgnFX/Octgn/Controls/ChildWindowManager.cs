@@ -4,7 +4,7 @@ namespace Octgn.Controls
 {
     public class ChildWindowManager : Canvas
     {
-        private ChildWindow topWindow;
+        private ChildWindow _topWindow;
 
         public void Show(ChildWindow wnd)
         {
@@ -18,15 +18,15 @@ namespace Octgn.Controls
 
         internal void Hide(ChildWindow wnd)
         {
-            if (topWindow == wnd) topWindow = null;
+            if (_topWindow == wnd) _topWindow = null;
             Children.Remove(wnd);
         }
 
         internal void Activate(ChildWindow wnd)
         {
-            if (topWindow == wnd) return;
-            if (topWindow != null) topWindow.SetValue(ZIndexProperty, 0);
-            topWindow = wnd;
+            if (_topWindow == wnd) return;
+            if (_topWindow != null) _topWindow.SetValue(ZIndexProperty, 0);
+            _topWindow = wnd;
             wnd.SetValue(ZIndexProperty, 1);
         }
     }

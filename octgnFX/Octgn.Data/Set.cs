@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Linq;
 using System.Xml;
 
@@ -63,7 +62,7 @@ namespace Octgn.Data
                 Game.OpenDatabase(true);
             try
             {
-                using (var com = Game.dbc.CreateCommand())
+                using (var com = Game.Dbc.CreateCommand())
                 {
                     com.CommandText = "SELECT [xml] FROM [packs] WHERE [set_id]=@set_id ORDER BY [name]";
                     com.Parameters.AddWithValue("@set_id", Id.ToString());

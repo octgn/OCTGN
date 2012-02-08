@@ -22,7 +22,7 @@ namespace Octgn.Controls
 
         private static readonly Duration AnimationDuration = new Duration(TimeSpan.FromMilliseconds(400));
         private static readonly TimeSpan CascadingDelay = TimeSpan.FromMilliseconds(60);
-        private int isAnimationValid;
+        private int _isAnimationValid;
 
         protected override Size ArrangeOverride(Size finalSize)
         {
@@ -41,7 +41,7 @@ namespace Octgn.Controls
                 Transform currentTransform = GetCurrentLayoutInfo(child, out arrangePosition);
 
                 //HACK: see the comment at the end of this method
-                bool bypassTransform = isAnimationValid != (int) GetValue(IsAnimationValidProperty);
+                bool bypassTransform = _isAnimationValid != (int) GetValue(IsAnimationValidProperty);
 
                 // If we had previously stored an arrange position, see if it has moved
                 if (child.ReadLocalValue(SavedArrangePositionProperty) != DependencyProperty.UnsetValue)
@@ -87,9 +87,9 @@ namespace Octgn.Controls
             }
             // HACK: currently WPF doesn't allow me to read a value right after the call to BeginAnimation
             // this code enables me to trick it and know whether I can trust the current position or not.
-            isAnimationValid = (int) GetValue(IsAnimationValidProperty) + 1;
+            _isAnimationValid = (int) GetValue(IsAnimationValidProperty) + 1;
             BeginAnimation(IsAnimationValidProperty,
-                           new Int32Animation(isAnimationValid, isAnimationValid, new Duration(), FillBehavior.HoldEnd));
+                           new Int32Animation(_isAnimationValid, _isAnimationValid, new Duration(), FillBehavior.HoldEnd));
         }
 
         protected virtual Transform GetCurrentLayoutInfo(UIElement element, out Point arrangePosition)

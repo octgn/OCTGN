@@ -20,7 +20,7 @@ namespace Octgn.Data
 
         public Patch(string filename)
         {
-            this._filename = filename;
+            _filename = filename;
         }
 
         public event Action<int, int, string, bool> Progress;
@@ -96,7 +96,7 @@ namespace Octgn.Data
                 using (var reader = XmlReader.Create(definition.GetStream(), XmlSettings))
                 {
                     reader.ReadToFollowing("set"); // <?xml ... ?>
-                    set = new Set(localFilename, reader, _game.repository);
+                    set = new Set(localFilename, reader, _game.Repository);
                     // Check if the set game matches the patch
                     if (set.Game != _game) return;
                 }
@@ -128,9 +128,9 @@ namespace Octgn.Data
                                     var relationshipId = action.Attr<string>("relationshipId");
                                     var contentType = action.Attr<string>("contentType");
                                     var part = setPkg.PartExists(targetUri)
-                                                           ? setPkg.GetPart(targetUri)
-                                                           : setPkg.CreatePart(targetUri, contentType,
-                                                                               CompressionOption.Normal);
+                                                   ? setPkg.GetPart(targetUri)
+                                                   : setPkg.CreatePart(targetUri, contentType,
+                                                                       CompressionOption.Normal);
                                     if (part != null)
                                         using (var targetStream = part.GetStream(FileMode.Create, FileAccess.Write))
                                         using (
@@ -192,7 +192,7 @@ namespace Octgn.Data
             var result = new XmlReaderSettings {ValidationType = ValidationType.Schema, IgnoreWhitespace = true};
             using (
                 var s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (GamesRepository),
-                                                                                     "CardSet.xsd"))
+                                                                                  "CardSet.xsd"))
             using (var reader = XmlReader.Create(s))
                 result.Schemas.Add(null, reader);
             return result;

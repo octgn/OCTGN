@@ -68,7 +68,7 @@ namespace Octgn.Launcher
 
         private void Start_Spinning()
         {
-            if (bSpin || animationTimer.IsEnabled != false) return;
+            if (bSpin || animationTimer.IsEnabled) return;
             bSpin = true;
             animationTimer.Start();
         }
@@ -199,12 +199,14 @@ namespace Octgn.Launcher
                                                     case LoginResult.Success:
                                                         if (cbSavePassword.IsChecked == true)
                                                         {
-                                                            SimpleConfig.WriteValue("Password", passwordBox1.Password.Encrypt());
+                                                            SimpleConfig.WriteValue("Password",
+                                                                                    passwordBox1.Password.Encrypt());
                                                         }
                                                         else
                                                             SimpleConfig.WriteValue("Password", "");
                                                         SimpleConfig.WriteValue("E-Mail", textBox1.Text);
-                                                        SimpleConfig.WriteValue("Nickname", Program.LobbyClient.Me.DisplayName);
+                                                        SimpleConfig.WriteValue("Nickname",
+                                                                                Program.LobbyClient.Me.DisplayName);
                                                         Program.ClientWindow = new Main();
                                                         Program.ClientWindow.Show();
                                                         Application.Current.MainWindow = Program.ClientWindow;

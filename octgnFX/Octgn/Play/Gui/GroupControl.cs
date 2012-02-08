@@ -272,10 +272,10 @@ namespace Octgn.Play.Gui
 
         protected virtual List<Control> CreateGroupMenuItems(GroupDef def)
         {
-            int nGroupActions = def.groupActions == null ? 0 : def.groupActions.Length;
+            int nGroupActions = def.GroupActions == null ? 0 : def.GroupActions.Length;
             var items = new List<Control> {CreateGroupHeader()};
             for (int i = 0; i < nGroupActions; i++)
-                if (def.groupActions != null) items.Add(CreateGroupMenuItem(def.groupActions[i]));
+                if (def.GroupActions != null) items.Add(CreateGroupMenuItem(def.GroupActions[i]));
 
             if (nGroupActions > 0)
                 items.Add(new Separator());
@@ -296,7 +296,7 @@ namespace Octgn.Play.Gui
 
         protected virtual List<Control> CreateCardMenuItems(GroupDef def)
         {
-            int nCardActions = def.cardActions == null ? 0 : def.cardActions.Length;
+            int nCardActions = def.CardActions == null ? 0 : def.CardActions.Length;
             var items = new List<Control>();
 
             if (nCardActions > 0 || group.Controller == null)
@@ -308,7 +308,7 @@ namespace Octgn.Play.Gui
             if (nCardActions > 0)
             {
                 for (int i = 0; i < nCardActions; i++)
-                    if (def.cardActions != null) items.Add(CreateCardMenuItem(def.cardActions[i]));
+                    if (def.CardActions != null) items.Add(CreateCardMenuItem(def.CardActions[i]));
                 if (group.Controller == null)
                     items.Add(new Separator());
             }
@@ -515,7 +515,9 @@ namespace Octgn.Play.Gui
         {
             var header = new MenuItem {Header = group.Name};
             header.SetResourceReference(StyleProperty, "MenuHeader");
-            header.Background = @group.Controller != null ? @group.Controller.TransparentBrush : new SolidColorBrush(Color.FromArgb(100, 100, 100, 100));
+            header.Background = @group.Controller != null
+                                    ? @group.Controller.TransparentBrush
+                                    : new SolidColorBrush(Color.FromArgb(100, 100, 100, 100));
             return header;
         }
 
