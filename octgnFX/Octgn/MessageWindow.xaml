@@ -11,7 +11,7 @@
       <TextBlock x:Name="contentBlock" VerticalAlignment="Top" Margin="0,0,0,8" />
     </Border>
 
-    <Button x:Name="okBtn" Content="OK" MinWidth="100" Click="OKClicked" HorizontalAlignment="Center"
+    <Button x:Name="okBtn" Content="OK" MinWidth="100" Click="OkClicked" HorizontalAlignment="Center"
             VerticalAlignment="Bottom" Grid.Row="1" />
   </Grid>
 </Window>

@@ -15,17 +15,17 @@ namespace Octgn.Launcher
         public HostedGameList()
         {
             InitializeComponent();
-            Program.lobbyClient.OnGameHostEvent += lobbyClient_OnGameHostEvent;
+            Program.LobbyClient.OnGameHostEvent += lobbyClient_OnGameHostEvent;
         }
 
         public event EventHandler OnGameClick;
 
         private void lobbyClient_OnGameHostEvent(HostedGame g)
         {
-            Reload_Game_List();
+            ReloadGameList();
         }
 
-        private void Reload_Game_List()
+        private void ReloadGameList()
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
@@ -38,25 +38,23 @@ namespace Octgn.Launcher
                                                      count++;
                                                  }
                                                  HostedGame[] gl =
-                                                     Program.lobbyClient.GetHostedGames().OrderByDescending(
+                                                     Program.LobbyClient.GetHostedGames().OrderByDescending(
                                                          item => item.TimeStarted).ToArray();
                                                  foreach (HostedGame g in gl)
                                                  {
-                                                     if (gids.Contains(g.GameGuid) &&
-                                                         g.GameStatus == HostedGame.eHostedGame.StartedHosting
-                                                         && g.UserHosting.Status != UserStatus.Offline &&
-                                                         g.UserHosting.Status != UserStatus.Unknown)
-                                                     {
-                                                         var gs = new HostedGameListItem(g);
-                                                         if (g.GameStatus == HostedGame.eHostedGame.StartedHosting)
-                                                             gs.MouseUp += gs_MouseUp;
-                                                         stackPanel1.Children.Add(gs);
-                                                     }
+                                                     if (!gids.Contains(g.GameGuid) ||
+                                                         g.GameStatus != HostedGame.EHostedGame.StartedHosting ||
+                                                         g.UserHosting.Status == UserStatus.Offline ||
+                                                         g.UserHosting.Status == UserStatus.Unknown) continue;
+                                                     var gs = new HostedGameListItem(g);
+                                                     if (g.GameStatus == HostedGame.EHostedGame.StartedHosting)
+                                                         gs.MouseUp += GsMouseUp;
+                                                     stackPanel1.Children.Add(gs);
                                                  }
                                              }));
         }
 
-        private void gs_MouseUp(object sender, MouseButtonEventArgs e)
+        private void GsMouseUp(object sender, MouseButtonEventArgs e)
         {
             var gs = (HostedGameListItem) sender;
             if (OnGameClick != null)
@@ -67,10 +65,10 @@ namespace Octgn.Launcher
 
         private void GamesRepositoryGameInstalled(object sender, EventArgs e)
         {
-            Reload_Game_List();
+            ReloadGameList();
         }
 
-        private void gs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void GsMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var gs = (HostedGameListItem) sender;
             if (OnGameClick != null)
@@ -79,14 +77,14 @@ namespace Octgn.Launcher
             }
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void PageLoaded(object sender, RoutedEventArgs e)
         {
-            Reload_Game_List();
+            ReloadGameList();
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.OnGameHostEvent -= lobbyClient_OnGameHostEvent;
+            Program.LobbyClient.OnGameHostEvent -= lobbyClient_OnGameHostEvent;
         }
     }
 }

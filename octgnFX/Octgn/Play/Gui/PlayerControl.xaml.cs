@@ -62,8 +62,7 @@ namespace Octgn.Play.Gui
         private void IsCollapsedPile(object sender, FilterEventArgs e)
         {
             var pile = e.Item as Pile;
-            if (pile == null) e.Accepted = false;
-            else e.Accepted = pile.Collapsed;
+            e.Accepted = pile != null && pile.Collapsed;
         }
 
         private void IsExpandedPile(object sender, FilterEventArgs e)

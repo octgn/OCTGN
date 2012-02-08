@@ -10,13 +10,13 @@ namespace Octgn.Play.Gui
 {
     internal static class Selection
     {
-        private static readonly List<Card> selected = new List<Card>(4);
+        private static readonly List<Card> Selected = new List<Card>(4);
 
         public static Group Source { get; private set; }
 
         public static IEnumerable<Card> Cards
         {
-            get { return selected; }
+            get { return Selected; }
         }
 
         public static void Add(Card c)
@@ -29,42 +29,42 @@ namespace Octgn.Play.Gui
             }
             if (c.Selected) return;
             c.Selected = true;
-            selected.Add(c);
+            Selected.Add(c);
         }
 
         public static void Remove(Card c)
         {
             if (!c.Selected) return;
             c.Selected = false;
-            selected.Remove(c);
+            Selected.Remove(c);
         }
 
         public static void RemoveAll(Predicate<Card> match)
         {
-            selected.ForEach(c => c.Selected = !match(c));
-            selected.RemoveAll(match);
+            Selected.ForEach(c => c.Selected = !match(c));
+            Selected.RemoveAll(match);
         }
 
         public static void Clear()
         {
-            selected.ForEach(c => c.Selected = false);
-            selected.Clear();
+            Selected.ForEach(c => c.Selected = false);
+            Selected.Clear();
         }
 
         public static bool IsEmpty()
         {
-            return selected.Count == 0;
+            return Selected.Count == 0;
         }
 
         public static void ForEach(Action<Card> action)
         {
-            selected.ForEach(action);
+            Selected.ForEach(action);
         }
 
         public static void ForEachModifiable(Action<Card> action)
         {
-            for (int i = selected.Count - 1; i >= 0; --i)
-                action(selected[i]);
+            for (int i = Selected.Count - 1; i >= 0; --i)
+                action(Selected[i]);
         }
 
         public static IEnumerable<CardControl> GetCardControls(GroupControl ctrl)
@@ -92,8 +92,7 @@ namespace Octgn.Play.Gui
 
         public static IEnumerable<Card> ExtendToSelection(Card card)
         {
-            if (selected.Contains(card)) return selected;
-            return Enumerable.Repeat(card, 1);
+            return Selected.Contains(card) ? Selected : Enumerable.Repeat(card, 1);
         }
 
         public static void Do(Action<Card> action, Card card)

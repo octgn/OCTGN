@@ -26,39 +26,35 @@ namespace Octgn.Play.Gui
         protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
-            if (visualAdded != null)
-            {
-                var child = (ContentPresenter) visualAdded;
-                if (((Card) child.DataContext).Controller != Player.LocalPlayer)
-                {
-                    var scale = new ScaleTransform();
-                    child.RenderTransformOrigin = new Point(0.5, 0.5);
-                    child.RenderTransform = scale;
-                    var anim = new DoubleAnimation
-                                   {
-                                       Duration = new Duration(TimeSpan.FromMilliseconds(400)),
-                                       AutoReverse = true,
-                                       RepeatBehavior = new RepeatBehavior(2.166),
-                                       AccelerationRatio = 0.2,
-                                       DecelerationRatio = 0.7,
-                                       To = 1.2,
-                                       From = 0.9,
-                                       FillBehavior = FillBehavior.Stop
-                                   };
-                    scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
-                    scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
-                }
-            }
+            if (visualAdded == null) return;
+            var child = (ContentPresenter) visualAdded;
+            if (((Card) child.DataContext).Controller == Player.LocalPlayer) return;
+            var scale = new ScaleTransform();
+            child.RenderTransformOrigin = new Point(0.5, 0.5);
+            child.RenderTransform = scale;
+            var anim = new DoubleAnimation
+                           {
+                               Duration = new Duration(TimeSpan.FromMilliseconds(400)),
+                               AutoReverse = true,
+                               RepeatBehavior = new RepeatBehavior(2.166),
+                               AccelerationRatio = 0.2,
+                               DecelerationRatio = 0.7,
+                               To = 1.2,
+                               From = 0.9,
+                               FillBehavior = FillBehavior.Stop
+                           };
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, anim);
+            scale.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
         }
 
         private void CardMoving(object sender, EventArgs e)
         {
             var action = (MoveCard) sender;
             Table table = Program.Game.Table;
-            if (action.who == Player.LocalPlayer || action.to != table || action.from != table)
+            if (action.Who == Player.LocalPlayer || action.To != table || action.From != table)
                 return;
 
-            AnimateMove(action.card, action.x, action.y);
+            AnimateMove(action.Card, action.X, action.Y);
         }
 
         private void AnimateMove(Card card, double x, double y)
@@ -98,23 +94,21 @@ namespace Octgn.Play.Gui
 
             foreach (ContentPresenter child in Children)
             {
-                if (targetAction.fromCard == child.DataContext)
+                if (targetAction.FromCard == child.DataContext)
                 {
                     fromCard = VisualTreeHelper.GetChild(child, 0) as CardControl;
                     if (toCard != null) break;
                 }
-                else if (targetAction.toCard == child.DataContext)
+                else if (targetAction.ToCard == child.DataContext)
                 {
                     toCard = VisualTreeHelper.GetChild(child, 0) as CardControl;
                     if (fromCard != null) break;
                 }
             }
 
-            if (fromCard != null && toCard != null) // Opponent may have moved the card out of the table concurently
-            {
-                fromCard.CreateArrowTo(targetAction.who, toCard);
-                targetAction.fromCard.TargetsOtherCards = true;
-            }
+            if (fromCard == null || toCard == null) return;
+            fromCard.CreateArrowTo(targetAction.Who, toCard);
+            targetAction.FromCard.TargetsOtherCards = true;
         }
 
         private void Untargetting(object sender, EventArgs e)
@@ -122,7 +116,7 @@ namespace Octgn.Play.Gui
             var targetAction = (Target) sender;
             CardControl card = null;
             foreach (ContentPresenter child in Children)
-                if (child.DataContext == targetAction.fromCard)
+                if (child.DataContext == targetAction.FromCard)
                 {
                     card = VisualTreeHelper.GetChild(child, 0) as CardControl;
                     break;
@@ -138,7 +132,7 @@ namespace Octgn.Play.Gui
                 if (arrow != null) layer.Remove(arrow);
             }
 
-            targetAction.fromCard.TargetsOtherCards = false;
+            targetAction.FromCard.TargetsOtherCards = false;
         }
     }
 }

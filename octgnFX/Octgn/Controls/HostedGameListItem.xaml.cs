@@ -61,10 +61,10 @@ namespace Octgn.Controls
                 SetValue(GameNameProperty, _hostedGame.Name);
                 switch (_hostedGame.GameStatus)
                 {
-                    case HostedGame.eHostedGame.GameInProgress:
+                    case HostedGame.EHostedGame.GameInProgress:
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusAway.png";
                         break;
-                    case HostedGame.eHostedGame.StartedHosting:
+                    case HostedGame.EHostedGame.StartedHosting:
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusOnline.png";
                         break;
                     default: //Offline or anything else
@@ -75,12 +75,12 @@ namespace Octgn.Controls
             }
         }
 
-        private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        private void UserControlMouseDown(object sender, MouseButtonEventArgs e)
         {
             //Focus();
         }
 
-        private void flistitem_MouseUp(object sender, MouseButtonEventArgs e)
+        private void FlistitemMouseUp(object sender, MouseButtonEventArgs e)
         {
             Focus();
         }

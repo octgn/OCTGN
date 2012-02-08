@@ -93,11 +93,10 @@ namespace Skylabs.LobbyServer
                 Logger.L(MethodBase.GetCurrentMethod().Name, "GamingLocker");
                 try
                 {
-                    Games[port].Status = Lobby.HostedGame.eHostedGame.GameInProgress;
+                    Games[port].Status = Lobby.HostedGame.EHostedGame.GameInProgress;
                 }
                 catch
                 {
-                    
                 }
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "GamingLocker");
             }
@@ -116,8 +115,7 @@ namespace Skylabs.LobbyServer
                         new Lobby.HostedGame(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(),
                                              g.Value.Port, (string) g.Value.Name.Clone(),
                                              !String.IsNullOrWhiteSpace(g.Value.Password), (User) g.Value.Hoster.Clone(),
-                                             g.Value.TimeStarted);
-                    newhg.GameStatus = g.Value.Status;
+                                             g.Value.TimeStarted) {GameStatus = g.Value.Status};
                     sendgames.Add(newhg);
                 }
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "GamingLocker");
@@ -134,7 +132,7 @@ namespace Skylabs.LobbyServer
                 var s = sender as HostedGame;
                 if (s != null)
                 {
-                    s.Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
+                    s.Status = Lobby.HostedGame.EHostedGame.StoppedHosting;
                     var sm = new SocketMessage("gameend");
                     sm.AddData("port", s.Port);
                     Action t = () => Server.AllUserMessage(sm);

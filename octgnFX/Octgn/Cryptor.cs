@@ -11,15 +11,15 @@ namespace Octgn
         ///   Encrypts an array of bytes using a Key and an Initialization Vector
         /// </summary>
         /// <param name="clearData"> The data to be encrypted </param>
-        /// <param name="Key"> The key to encrypt it with </param>
-        /// <param name="IV"> The Initialization Vector </param>
+        /// <param name="key"> The key to encrypt it with </param>
+        /// <param name="iv"> The Initialization Vector </param>
         /// <returns> An encrypted byte array </returns>
-        public static byte[] Encrypt(byte[] clearData, byte[] Key, byte[] IV)
+        public static byte[] Encrypt(byte[] clearData, byte[] key, byte[] iv)
         {
             var ms = new MemoryStream();
             TripleDES alg = TripleDES.Create();
-            alg.Key = Key;
-            alg.IV = IV;
+            alg.Key = key;
+            alg.IV = iv;
             var cs = new CryptoStream(ms, alg.CreateEncryptor(), CryptoStreamMode.Write);
             cs.Write(clearData, 0, clearData.Length);
             cs.Close();
@@ -28,17 +28,17 @@ namespace Octgn
         }
 
 
-        public static string Encrypt(string Text, string Key)
+        public static string Encrypt(string text, string key)
         {
-            byte[] Bytes = Encoding.Unicode.GetBytes(Text);
-            var pdb = new Rfc2898DeriveBytes(Key,
-                                              new byte[]
-                                                  {
-                                                      0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d,
-                                                      0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
-                                                  });
-            
-            byte[] encryptedData = Encrypt(Bytes, pdb.GetBytes(16), pdb.GetBytes(8));
+            byte[] bytes = Encoding.Unicode.GetBytes(text);
+            var pdb = new Rfc2898DeriveBytes(key,
+                                             new byte[]
+                                                 {
+                                                     0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d,
+                                                     0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
+                                                 });
+
+            byte[] encryptedData = Encrypt(bytes, pdb.GetBytes(16), pdb.GetBytes(8));
             return Convert.ToBase64String(encryptedData);
         }
 
@@ -46,15 +46,15 @@ namespace Octgn
         ///   Decrypts an array of data that has been encrypted using the Encrypt command.
         /// </summary>
         /// <param name="cipherData"> The data to decrypt </param>
-        /// <param name="Key"> The Key to decrypt it with </param>
-        /// <param name="IV"> An Initialization Vector </param>
+        /// <param name="key"> The Key to decrypt it with </param>
+        /// <param name="iv"> An Initialization Vector </param>
         /// <returns> A decrypted data byte array </returns>
-        public static byte[] Decrypt(byte[] cipherData, byte[] Key, byte[] IV)
+        public static byte[] Decrypt(byte[] cipherData, byte[] key, byte[] iv)
         {
             var ms = new MemoryStream();
             TripleDES alg = TripleDES.Create();
-            alg.Key = Key;
-            alg.IV = IV;
+            alg.Key = key;
+            alg.IV = iv;
             var cs = new CryptoStream(ms, alg.CreateDecryptor(), CryptoStreamMode.Write);
             try
             {
@@ -70,15 +70,15 @@ namespace Octgn
         }
 
 
-        public static string Decrypt(string EncryptedText, string key)
+        public static string Decrypt(string encryptedText, string key)
         {
-            byte[] cryptedBytes = Convert.FromBase64String(EncryptedText);
+            byte[] cryptedBytes = Convert.FromBase64String(encryptedText);
             var pdb = new Rfc2898DeriveBytes(key,
-                                              new byte[]
-                                                  {
-                                                      0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65,
-                                                      0x64, 0x76, 0x65, 0x64, 0x65, 0x76
-                                                  });
+                                             new byte[]
+                                                 {
+                                                     0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65,
+                                                     0x64, 0x76, 0x65, 0x64, 0x65, 0x76
+                                                 });
             byte[] decryptedData = Decrypt(cryptedBytes, pdb.GetBytes(16), pdb.GetBytes(8));
             return Encoding.Unicode.GetString(decryptedData ?? new byte[] {});
         }

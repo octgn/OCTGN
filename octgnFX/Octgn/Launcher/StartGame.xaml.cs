@@ -3,14 +3,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using Octgn.Networking;
 using Octgn.Play;
 
 namespace Octgn.Launcher
 {
     public partial class StartGame
     {
-        private bool StartingGame;
+        private bool _startingGame;
 
         public StartGame()
         {
@@ -49,7 +48,7 @@ namespace Octgn.Launcher
                           };
             Unloaded += delegate
                             {
-                                if (StartingGame == false)
+                                if (_startingGame == false)
                                     Program.StopGame();
                                 Program.GameSettings.PropertyChanged -= SettingsChanged;
                                 Program.ServerError -= HandshakeError;
@@ -58,17 +57,15 @@ namespace Octgn.Launcher
 
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                if (Program.IsHost)
-                    Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
-                cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
-            }
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
+            if (Program.IsHost)
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
+            cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
         }
 
         internal void Start()
         {
-            StartingGame = true;
+            _startingGame = true;
             // Reset the InvertedTable flags if they were set and they are not used
             if (!Program.GameSettings.UseTwoSidedTable)
                 foreach (Player player in Player.AllExceptGlobal)
@@ -82,24 +79,20 @@ namespace Octgn.Launcher
                     group.Controller = host;
             }
 
-            if (Program.PlayWindow == null)
-            {
-                Program.Client.Rpc.Start();
-                Program.PlayWindow = new PlayWindow();
-                Program.PlayWindow.Show();
-                Program.ClientWindow.HostJoinTab();
-            }
+            if (Program.PlayWindow != null) return;
+            Program.Client.Rpc.Start();
+            Program.PlayWindow = new PlayWindow();
+            Program.PlayWindow.Show();
+            Program.ClientWindow.HostJoinTab();
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            if (!StartingGame)
-            {
-                StartingGame = true;
-                Program.lobbyClient.HostedGameStarted();
-                e.Handled = true;
-                Start();
-            }
+            if (_startingGame) return;
+            _startingGame = true;
+            Program.LobbyClient.HostedGameStarted();
+            e.Handled = true;
+            Start();
         }
 
         private void CancelClicked(object sender, RoutedEventArgs e)
@@ -108,12 +101,12 @@ namespace Octgn.Launcher
             Back();
         }
 
-        private void Back()
+        private static void Back()
         {
             Program.ClientWindow.HostJoinTab();
         }
 
-        private void HandshakeError(object sender, ServerErrorEventArgs e)
+        private static void HandshakeError(object sender, ServerErrorEventArgs e)
         {
             MessageBox.Show("The server returned an error:\n" + e.Message, "Error", MessageBoxButton.OK,
                             MessageBoxImage.Error);
@@ -121,7 +114,7 @@ namespace Octgn.Launcher
             Back();
         }
 
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        private void CheckBoxClick(object sender, RoutedEventArgs e)
         {
             if (cbTwoSided.IsChecked != null) Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
         }

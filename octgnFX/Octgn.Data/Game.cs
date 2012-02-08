@@ -14,12 +14,12 @@ namespace Octgn.Data
 {
     public class Game
     {
-        internal string basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+        internal string BasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                                                 "Octgn");
 
-        private IList<PropertyDef> cacheCustomProperties;
-        public SQLiteConnection dbc;
-        public GamesRepository repository;
+        public SQLiteConnection Dbc;
+        public GamesRepository Repository;
+        private IList<PropertyDef> _cacheCustomProperties;
 
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -40,7 +40,7 @@ namespace Octgn.Data
 
         public IList<PropertyDef> CustomProperties
         {
-            get { return cacheCustomProperties ?? (cacheCustomProperties = GetCustomProperties()); }
+            get { return _cacheCustomProperties ?? (_cacheCustomProperties = GetCustomProperties()); }
         }
 
         public IEnumerable<PropertyDef> AllProperties
@@ -50,52 +50,48 @@ namespace Octgn.Data
 
         public string DefaultDecksPath
         {
-            get { return Path.Combine(basePath, "Decks"); }
+            get { return Path.Combine(BasePath, "Decks"); }
         }
 
         public bool IsDatabaseOpen { get; private set; }
 
         public Uri GetCardBackUri()
         {
-            String s = Path.Combine(basePath, Filename).Replace('\\', ',');
+            String s = Path.Combine(BasePath, Filename).Replace('\\', ',');
             var u = new Uri("pack://file:,,," + s + CardBack);
             return u;
         }
 
         public void OpenDatabase(bool readOnly)
         {
-            if (!IsDatabaseOpen)
+            if (IsDatabaseOpen) return;
+            string conString = "URI=file:" +
+                               Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                                            "Octgn", "Database", "master.db3");
+            Dbc = new SQLiteConnection(conString);
+            Dbc.Open();
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
-                string conString = "URI=file:" +
-                                   Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                                "Octgn", "Database", "master.db3");
-                dbc = new SQLiteConnection(conString);
-                dbc.Open();
-                using (SQLiteCommand com = dbc.CreateCommand())
-                {
-                    com.CommandText =
-                        "PRAGMA automatic_index=FALSE; PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA encoding='UTF-8';";
-                    com.ExecuteScalar();
-                }
-                IsDatabaseOpen = true;
+                com.CommandText =
+                    "PRAGMA automatic_index=FALSE; PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA encoding='UTF-8';";
+                com.ExecuteScalar();
             }
+            IsDatabaseOpen = true;
         }
 
         public void CloseDatabase()
         {
-            if (IsDatabaseOpen)
-            {
-                dbc.Close();
-                dbc.Dispose();
-                IsDatabaseOpen = false;
-            }
+            if (!IsDatabaseOpen) return;
+            Dbc.Close();
+            Dbc.Dispose();
+            IsDatabaseOpen = false;
         }
 
         public Set GetSet(Guid id)
         {
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 com.CommandText = "SElECT id, name, game_version, version, package FROM [sets] WHERE [id]=@id;";
 
@@ -125,7 +121,7 @@ namespace Octgn.Data
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
 
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE [name]=@name;";
@@ -140,7 +136,7 @@ namespace Octgn.Data
                                              Id = Guid.Parse(dr["id"] as string),
                                              Name = (string) dr["name"],
                                              ImageUri = (string) dr["image"],
-                                             set = GetSet(Guid.Parse(dr["set_id"] as string)),
+                                             Set = GetSet(Guid.Parse(dr["set_id"] as string)),
                                              Properties = GetCardProperties(Guid.Parse(dr["id"] as string))
                                          };
                         return result;
@@ -155,7 +151,7 @@ namespace Octgn.Data
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
             var ret = new SortedList<string, object>();
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, type, name, vstr, vint FROM [custom_properties] WHERE [card_real_id]=(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1);";
@@ -201,7 +197,7 @@ namespace Octgn.Data
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
 
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id;";
@@ -216,7 +212,7 @@ namespace Octgn.Data
                                              Id = Guid.Parse(dr["id"] as string),
                                              Name = (string) dr["name"],
                                              ImageUri = (string) dr["image"],
-                                             set = GetSet(Guid.Parse(dr["set_id"] as string)),
+                                             Set = GetSet(Guid.Parse(dr["set_id"] as string)),
                                              Properties = GetCardProperties(id)
                                          };
                         return result;
@@ -231,7 +227,7 @@ namespace Octgn.Data
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
             var ret = new List<MarkerModel>();
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, name, icon, (SELECT id FROM sets WHERE real_id=markers.[set_real_id]) as set_id FROM [markers] WHERE [game_id]=@game_id;";
@@ -259,7 +255,7 @@ namespace Octgn.Data
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
 
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, xml, (SELECT id FROM sets WHERE real_id=packs.[set_real_id]) as set_id FROM [packs] WHERE [id]=@id;";
@@ -281,7 +277,7 @@ namespace Octgn.Data
         public void InstallSet(string filename)
         {
             OpenDatabase(false);
-            SQLiteTransaction trans = dbc.BeginTransaction();
+            SQLiteTransaction trans = Dbc.BeginTransaction();
             try
             {
                 using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read))
@@ -303,7 +299,7 @@ namespace Octgn.Data
                     {
                         reader.ReadToFollowing("set"); // <?xml ... ?>
 
-                        var set = new Set(filename, reader, repository);
+                        var set = new Set(filename, reader, Repository);
                         if (set.Game != this)
                             throw new ApplicationException(
                                 string.Format("The set '{0}' is not built for the game '{1}'.", set.Name, Name));
@@ -383,7 +379,7 @@ namespace Octgn.Data
             bool wasdbopen = IsDatabaseOpen;
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 com.CommandText = "DELETE FROM [sets] WHERE [id]=@id;";
                 com.Parameters.AddWithValue("@id", set.Id.ToString());
@@ -395,7 +391,7 @@ namespace Octgn.Data
 
         private void InsertSet(Set set)
         {
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 //Build Query
                 var sb = new StringBuilder();
@@ -419,7 +415,7 @@ namespace Octgn.Data
 
         private void InsertPack(Pack pack, string xml, Guid setId)
         {
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 //Build Query
                 var sb = new StringBuilder();
@@ -440,7 +436,7 @@ namespace Octgn.Data
 
         private void InsertMarker(Guid id, string name, string iconUri, Guid setId)
         {
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
                 //Build Query
                 var sb = new StringBuilder();
@@ -466,7 +462,7 @@ namespace Octgn.Data
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
             var sb = new StringBuilder();
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (var com = Dbc.CreateCommand())
             {
                 //Build Query
                 sb.Append("INSERT INTO [cards](");
@@ -478,7 +474,7 @@ namespace Octgn.Data
 
                 com.Parameters.AddWithValue("@id", card.Id.ToString());
                 com.Parameters.AddWithValue("@game_id", Id.ToString());
-                com.Parameters.AddWithValue("@set_id", card.set.Id.ToString());
+                com.Parameters.AddWithValue("@set_id", card.Set.Id.ToString());
                 com.Parameters.AddWithValue("@name", card.Name);
                 com.Parameters.AddWithValue("@image", card.ImageUri);
                 com.ExecuteNonQuery();
@@ -490,10 +486,10 @@ namespace Octgn.Data
             sb.Append(") VALUES(");
             sb.Append("@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
             sb.Append(");\n");
-            string command = sb.ToString();
+            var command = sb.ToString();
             foreach (var pair in card.Properties)
             {
-                using (SQLiteCommand com = dbc.CreateCommand())
+                using (var com = Dbc.CreateCommand())
                 {
                     com.CommandText = command;
                     com.Parameters.AddWithValue("@id", pair.Key + card.Id);
@@ -528,17 +524,17 @@ namespace Octgn.Data
         private ObservableCollection<Set> GetAllSets()
         {
             var result = new ObservableCollection<Set>();
-            bool wasdbopen = IsDatabaseOpen;
+            var wasdbopen = IsDatabaseOpen;
             if (!IsDatabaseOpen)
                 OpenDatabase(true);
 
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (var com = Dbc.CreateCommand())
             {
                 com.CommandText =
                     "SElECT * FROM [sets] WHERE [game_real_id]=(SELECT real_id FROM games WHERE id = @game_id LIMIT 1);";
 
                 com.Parameters.AddWithValue("@game_id", Id.ToString());
-                using (SQLiteDataReader dr = com.ExecuteReader())
+                using (var dr = com.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -563,17 +559,17 @@ namespace Octgn.Data
 
         private List<PropertyDef> GetCustomProperties()
         {
-            bool wasdbopen = IsDatabaseOpen;
+            var wasdbopen = IsDatabaseOpen;
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
             var ret = new List<PropertyDef>();
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (var com = Dbc.CreateCommand())
             {
                 com.CommandText = "SElECT DISTINCT name, type FROM [custom_properties] WHERE [game_id]=@game_id;";
                 //com.CommandText = "SElECT * FROM [custom_properties] WHERE [game_id]=@game_id AND [card_id]='';";
 
                 com.Parameters.AddWithValue("@game_id", Id.ToString());
-                using (SQLiteDataReader dr = com.ExecuteReader())
+                using (var dr = com.ExecuteReader())
                 {
                     var dl = new Dictionary<string, PropertyType>();
                     while (dr.Read())
@@ -581,12 +577,18 @@ namespace Octgn.Data
                         var name = dr["name"] as string;
                         var t = (int) ((long) dr["type"]);
                         PropertyType pt;
-                        if (t == 0)
-                            pt = PropertyType.String;
-                        else if (t == 1)
-                            pt = PropertyType.Integer;
-                        else
-                            pt = PropertyType.Char;
+                        switch (t)
+                        {
+                            case 0:
+                                pt = PropertyType.String;
+                                break;
+                            case 1:
+                                pt = PropertyType.Integer;
+                                break;
+                            default:
+                                pt = PropertyType.Char;
+                                break;
+                        }
                         if (!dl.ContainsKey(name))
                             dl.Add(name, pt);
                     }
@@ -601,25 +603,25 @@ namespace Octgn.Data
 
         internal void CopyDecks(string filename)
         {
-            using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read))
+            using (var package = Package.Open(filename, FileMode.Open, FileAccess.Read))
                 CopyDecks(package);
         }
 
         internal void CopyDecks(Package package)
         {
-            string path = Path.Combine(basePath, "Decks");
-            PackageRelationshipCollection decks = package.GetRelationshipsByType("http://schemas.octgn.org/set/deck");
+            var path = Path.Combine(BasePath, "Decks");
+            var decks = package.GetRelationshipsByType("http://schemas.octgn.org/set/deck");
             var buffer = new byte[0x1000];
-            foreach (PackageRelationship deckRel in decks)
+            foreach (var deckRel in decks)
             {
-                PackagePart deck = package.GetPart(deckRel.TargetUri);
-                string deckFilename = Path.Combine(path, Path.GetFileName(deck.Uri.ToString()));
-                using (Stream deckStream = deck.GetStream(FileMode.Open, FileAccess.Read))
-                using (FileStream targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write))
+                var deck = package.GetPart(deckRel.TargetUri);
+                var deckFilename = Path.Combine(path, Path.GetFileName(deck.Uri.ToString()));
+                using (var deckStream = deck.GetStream(FileMode.Open, FileAccess.Read))
+                using (var targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write))
                 {
                     while (true)
                     {
-                        int read = deckStream.Read(buffer, 0, buffer.Length);
+                        var read = deckStream.Read(buffer, 0, buffer.Length);
                         if (read == 0) break;
                         targetStream.Write(buffer, 0, read);
                     }
@@ -629,12 +631,12 @@ namespace Octgn.Data
 
         public DataTable SelectCards(string[] conditions)
         {
-            bool wasdbopen = IsDatabaseOpen;
+            var wasdbopen = IsDatabaseOpen;
             if (!IsDatabaseOpen)
                 OpenDatabase(false);
             var cards = new DataTable();
             var customProperties = new DataTable();
-            using (SQLiteCommand com = dbc.CreateCommand())
+            using (var com = Dbc.CreateCommand())
             {
                 com.CommandText =
                     "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE game_id=@game_id;";
@@ -646,27 +648,33 @@ namespace Octgn.Data
                 com.Parameters.AddWithValue("@game_id", Id.ToString());
                 customProperties.Load(com.ExecuteReader());
             }
-            foreach (PropertyDef d in CustomProperties)
+            foreach (var d in CustomProperties)
             {
                 cards.Columns.Add(d.Name);
             }
 
-            int i = 0;
+            var i = 0;
             foreach (DataRow card in cards.Rows)
             {
                 DataRow[] props = customProperties.Select("card_real_id = " + card["real_id"]);
-                foreach (DataRow prop in props)
+                foreach (var prop in props)
                 {
-                        var cname = prop["name"] as string;
-                        if (!cards.Columns.Contains(cname))
-                            continue;
-                        var t = (int)((long)prop["type"]);
-                        if (t == 0)
+                    var cname = prop["name"] as string;
+                    if (!cards.Columns.Contains(cname))
+                        continue;
+                    var t = (int) ((long) prop["type"]);
+                    switch (t)
+                    {
+                        case 0:
                             cards.Rows[i][cname] = prop["vstr"] as string;
-                        else if (t == 1)
-                            cards.Rows[i][cname] = (int)((long)prop["vint"]);
-                        else
+                            break;
+                        case 1:
+                            cards.Rows[i][cname] = (int) ((long) prop["vint"]);
+                            break;
+                        default:
                             cards.Rows[i][cname] = prop["vstr"] as string;
+                            break;
+                    }
                 }
                 i++;
             }
@@ -675,8 +683,8 @@ namespace Octgn.Data
             var sb = new StringBuilder();
             if (conditions != null && conditions.Length > 0)
             {
-                string connector = "";
-                foreach (string condition in conditions)
+                var connector = "";
+                foreach (var condition in conditions)
                 {
                     sb.Append(connector);
                     sb.Append("(");
@@ -686,12 +694,12 @@ namespace Octgn.Data
                 }
                 cards.CaseSensitive = false;
 
-                DataTable dtnw = cards.Clone();
+                var dtnw = cards.Clone();
                 dtnw.Rows.Clear();
 
-                DataRow[] rows = cards.Select(sb.ToString());
+                var rows = cards.Select(sb.ToString());
 
-                foreach (DataRow r in rows)
+                foreach (var r in rows)
                     dtnw.ImportRow(r);
 
                 cards.Rows.Clear();
@@ -713,17 +721,17 @@ namespace Octgn.Data
             if (count < 0) throw new ArgumentOutOfRangeException("count");
             if (count == 0) return Enumerable.Empty<CardModel>();
 
-            DataTable table = SelectCards(conditions);
+            var table = SelectCards(conditions);
             IEnumerable<DataRow> candidates;
             if (table.Rows.Count <= count)
                 candidates = table.Rows.Cast<DataRow>();
             else
             {
                 var rnd = new Random();
-                IEnumerable<int> indexes = from i in Enumerable.Range(0, table.Rows.Count)
-                                           let pair = new KeyValuePair<int, double>(i, rnd.NextDouble())
-                                           orderby pair.Value
-                                           select pair.Key;
+                var indexes = from i in Enumerable.Range(0, table.Rows.Count)
+                              let pair = new KeyValuePair<int, double>(i, rnd.NextDouble())
+                              orderby pair.Value
+                              select pair.Key;
                 candidates = from i in indexes.Take(count)
                              select table.Rows[i];
             }

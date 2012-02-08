@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" Focusable="True" d:DesignHeight="106"
-             d:DesignWidth="361" FocusManager.IsFocusScope="False" MouseDown="UserControl_MouseDown" MinWidth="64" MinHeight="32">
+             d:DesignWidth="361" FocusManager.IsFocusScope="False" MouseDown="UserControlMouseDown" MinWidth="64" MinHeight="32">
   <Border x:Name="LIBorder" CornerRadius="10" BorderThickness="0" Padding="3" BorderBrush="Transparent"
           Background="{DynamicResource ListItemBackground}">
     <Grid>
@@ -17,7 +17,7 @@
       <TextBlock Text="{Binding ElementName=flistitem, Path=Message}" Grid.Column="1" HorizontalAlignment="Stretch"
                  Foreground="Black" Name="tbUsername" VerticalAlignment="Center" Margin="2" />
       <Image Grid.Column="2" Height="16" HorizontalAlignment="Center" Name="imgDismiss" Stretch="Fill"
-             VerticalAlignment="Top" Width="16" Source="/OCTGN;component/Resources/cross.png" MouseUp="imgDismiss_MouseUp" />
+             VerticalAlignment="Top" Width="16" Source="/OCTGN;component/Resources/cross.png" MouseUp="ImgDismissMouseUp" />
     </Grid>
   </Border>
   <UserControl.Resources>

@@ -17,14 +17,14 @@ namespace Skylabs.LobbyServer
         private static DateTime _killTime;
         private static Timer _killTimer;
         private static bool _sentMinuteWarning;
-        private static readonly Thread _runThread = new Thread(runner);
+        private static readonly Thread RunThread = new Thread(Runner);
         private static bool _running = true;
 
         private static void Main()
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
             Trace.WriteLine(String.Format("[LobbyServer] V{0}", Assembly.GetExecutingAssembly().GetName().Version));
-            _runThread.Start();
+            RunThread.Start();
             if (!LoadSettings())
                 return;
             //Console.WriteLine(String.Format("[LobbyServer] V{0}",Assembly.GetExecutingAssembly().GetName().Version.ToString()));
@@ -36,7 +36,7 @@ namespace Skylabs.LobbyServer
             _killTimer = new Timer(CheckKillTime, _killTime, 1000, 1000);
         }
 
-        private static void runner()
+        private static void Runner()
         {
             while (_running)
             {

@@ -24,14 +24,19 @@ namespace Skylabs.LobbyServer
             Name = name;
             Password = password;
             Hoster = hoster;
-            Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
+            Status = Lobby.HostedGame.EHostedGame.StoppedHosting;
             Port = port;
             TimeStarted = new DateTime(0);
-            StandAloneApp = new Process();
+            StandAloneApp = new Process
+                                {
+                                    StartInfo =
+                                        {
+                                            FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe",
+                                            Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
+                                                        Port.ToString(CultureInfo.InvariantCulture)
+                                        }
+                                };
 #if(DEBUG || TestServer)
-            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
-            StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
-                                                Port.ToString(CultureInfo.InvariantCulture);
 #else
             StandAloneApp.StartInfo.FileName = "/opt/mono-2.10/bin/mono";
             StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" + GameGuid + " -v=" + GameVersion + " -p=" + Port.ToString(CultureInfo.InvariantCulture);
@@ -79,7 +84,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         ///   The status of the hosted game.
         /// </summary>
-        public Lobby.HostedGame.eHostedGame Status { get; set; }
+        public Lobby.HostedGame.EHostedGame Status { get; set; }
 
         public DateTime TimeStarted { get; private set; }
 
@@ -112,11 +117,11 @@ namespace Skylabs.LobbyServer
 
         public bool StartProcess()
         {
-            Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
+            Status = Lobby.HostedGame.EHostedGame.StoppedHosting;
             try
             {
                 StandAloneApp.Start();
-                Status = Lobby.HostedGame.eHostedGame.StartedHosting;
+                Status = Lobby.HostedGame.EHostedGame.StartedHosting;
                 TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
                 return true;
             }

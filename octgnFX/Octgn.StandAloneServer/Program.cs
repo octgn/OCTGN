@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Mono.Options;
 
@@ -10,7 +11,7 @@ namespace Octgn.StandAloneServer
         public static int Port;
         public static Guid GameGuid;
         public static Version GameVersion;
-        private static bool KeepRunning = true;
+        private static bool _keepRunning = true;
 
         private static void Main(string[] args)
         {
@@ -42,9 +43,9 @@ namespace Octgn.StandAloneServer
             StartServer();
         }
 
-        private static bool HandleArgs(string[] args, OptionSet set)
+        private static bool HandleArgs(ICollection<string> args, OptionSet set)
         {
-            if (args.Length < 2)
+            if (args.Count < 2)
                 return false;
             set.Parse(args);
             return true;
@@ -55,7 +56,7 @@ namespace Octgn.StandAloneServer
             Server = new Server.Server(Port, GameGuid, GameVersion);
             Server.OnStop += Server_OnStop;
             Console.WriteLine("Starting server on port " + Port);
-            while (KeepRunning)
+            while (_keepRunning)
             {
                 Thread.Sleep(1000);
             }
@@ -64,7 +65,7 @@ namespace Octgn.StandAloneServer
         private static void Server_OnStop(object sender, EventArgs e)
         {
             Server = null;
-            KeepRunning = false;
+            _keepRunning = false;
         }
 
         private static void CurrentDomainProcessExit(object sender, EventArgs e)

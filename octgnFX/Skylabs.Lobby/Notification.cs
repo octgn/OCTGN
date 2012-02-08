@@ -7,7 +7,7 @@ namespace Skylabs.Lobby
     {
         public Notification(LobbyClient lc, int id)
         {
-            ID = id;
+            Id = id;
             Time = DateTime.Now;
             LobbyClient = lc;
             Dismissed = false;
@@ -16,18 +16,18 @@ namespace Skylabs.Lobby
         public DateTime Time { get; set; }
         public LobbyClient LobbyClient { get; set; }
         public bool Dismissed { get; set; }
-        public int ID { get; private set; }
+        public int Id { get; private set; }
 
         #region IEqualityComparer<Notification> Members
 
         public bool Equals(Notification x, Notification y)
         {
-            return x.ID == y.ID;
+            return x.Id == y.Id;
         }
 
         public int GetHashCode(Notification obj)
         {
-            return obj.ID;
+            return obj.Id;
         }
 
         #endregion

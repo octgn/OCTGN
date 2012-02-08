@@ -17,12 +17,10 @@ namespace Octgn.Data
             get { return _useTwoSidedTable; }
             set
             {
-                if (value != _useTwoSidedTable)
-                {
-                    _useTwoSidedTable = value;
-                    if (_initialized)
-                        OnPropertyChanged("UseTwoSidedTable");
-                }
+                if (value == _useTwoSidedTable) return;
+                _useTwoSidedTable = value;
+                if (_initialized)
+                    OnPropertyChanged("UseTwoSidedTable");
             }
         }
 
