@@ -185,7 +185,7 @@ namespace Octgn.Play
         internal Player(GameDef g, string name, byte id, ulong pkey)
         {
             // Init fields
-            this._name = name;
+            _name = name;
             Id = id;
             PublicKey = pkey;
             // Register the lPlayer

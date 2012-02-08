@@ -169,32 +169,30 @@ namespace Octgn.Play.Gui
 
             StopDragScroll();
             e.Handled = e.CanDrop = true;
-            if (group.TryToManipulate())
+            if (!@group.TryToManipulate()) return;
+            int idx = wrapPanel.GetIndexFromPoint(Mouse.GetPosition(wrapPanel));
+
+            // When the list is restricted, real index may be different from index in the GUI
+            if (RestrictDrop)
             {
-                int idx = wrapPanel.GetIndexFromPoint(Mouse.GetPosition(wrapPanel));
-
-                // When the list is restricted, real index may be different from index in the GUI
-                if (RestrictDrop)
+                Card c = null;
+                bool after = false;
+                if (idx < View.Count)
+                    c = (Card) View.GetItemAt(idx);
+                else if (View.Count > 0)
                 {
-                    Card c = null;
-                    bool after = false;
-                    if (idx < View.Count)
-                        c = (Card) View.GetItemAt(idx);
-                    else if (View.Count > 0)
-                    {
-                        c = (Card) View.GetItemAt(View.Count - 1);
-                        after = true;
-                    }
-
-                    if (c != null) idx = group.Cards.IndexOf(c) + (after ? 1 : 0);
+                    c = (Card) View.GetItemAt(View.Count - 1);
+                    after = true;
                 }
 
-                foreach (Card c in e.Cards)
-                {
-                    // Fix the target index if the card is already in the group at a lower index
-                    if (c.Group == group && c.GetIndex() < idx) --idx;
-                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, idx++);
-                }
+                if (c != null) idx = @group.Cards.IndexOf(c) + (after ? 1 : 0);
+            }
+
+            foreach (Card c in e.Cards)
+            {
+                // Fix the target index if the card is already in the group at a lower index
+                if (c.Group == @group && c.GetIndex() < idx) --idx;
+                c.MoveTo(@group, e.FaceUp != null && e.FaceUp.Value, idx++);
             }
         }
 

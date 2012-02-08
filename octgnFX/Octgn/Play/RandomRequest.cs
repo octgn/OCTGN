@@ -17,10 +17,10 @@ namespace Octgn.Play
 
         public RandomRequest(Player player, int id, int min, int max)
         {
-            this._player = player;
+            _player = player;
             Id = id;
-            this._min = min;
-            this._max = max;
+            _min = min;
+            _max = max;
         }
 
         public static event EventHandler Completed;
@@ -113,8 +113,8 @@ namespace Octgn.Play
 
             public RandomValue(Player player, ulong encrypted)
             {
-                this.Player = player;
-                this.Encrypted = encrypted;
+                Player = player;
+                Encrypted = encrypted;
             }
 
             public void CheckConsistency()

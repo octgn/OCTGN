@@ -56,7 +56,7 @@ namespace Octgn.Play
 
         public Marker(Card card, MarkerModel model)
         {
-            this._card = card;
+            _card = card;
             _model = model;
         }
 

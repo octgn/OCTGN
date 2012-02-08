@@ -59,11 +59,9 @@ namespace Skylabs.LobbyServer
                 for (int i = 0; i < frames.Length; i++)
                 {
                     if (frames[i].GetMethod().Name != MethodBase.GetCurrentMethod().Name) continue;
-                    if (i + 1 < frames.Length)
-                    {
-                        methodName = frames[i + 1].GetMethod().Name;
-                        break;
-                    }
+                    if (i + 1 >= frames.Length) continue;
+                    methodName = frames[i + 1].GetMethod().Name;
+                    break;
                 }
             Console.WriteLine(String.Format("{1}[{4}:{5}][ERROR({2})]{0}:{3}", methodName, Tab,
                                             Thread.CurrentThread.ManagedThreadId, e.Message,

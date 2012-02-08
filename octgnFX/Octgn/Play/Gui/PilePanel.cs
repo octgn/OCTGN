@@ -48,11 +48,9 @@ namespace Octgn.Play.Gui
             {
                 var childGeneratorPos = new GeneratorPosition(i, 0);
                 int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
-                if (itemIndex != count - 1)
-                {
-                    generator.Remove(childGeneratorPos, 1);
-                    RemoveInternalChildRange(i, 1);
-                }
+                if (itemIndex == count - 1) continue;
+                generator.Remove(childGeneratorPos, 1);
+                RemoveInternalChildRange(i, 1);
             }
             return desiredSize;
         }

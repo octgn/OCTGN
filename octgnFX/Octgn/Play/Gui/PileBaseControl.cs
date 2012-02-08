@@ -36,11 +36,9 @@ namespace Octgn.Play.Gui
         {
             e.Handled = true;
             var playWindow = (PlayWindow) Window.GetWindow(this);
-            if (playWindow != null)
-            {
-                ChildWindowManager manager = playWindow.wndManager;
-                manager.Show(new GroupWindow(@group, PilePosition.All, 0));
-            }
+            if (playWindow == null) return;
+            ChildWindowManager manager = playWindow.wndManager;
+            manager.Show(new GroupWindow(@group, PilePosition.All, 0));
         }
 
         protected void ViewTopCards(object sender, RoutedEventArgs e)
@@ -48,11 +46,9 @@ namespace Octgn.Play.Gui
             e.Handled = true;
             int count = OCTGN.InputPositiveInt("View top cards", "How many cards do you want to see?", 1);
             var playWindow = (PlayWindow) Window.GetWindow(this);
-            if (playWindow != null)
-            {
-                ChildWindowManager manager = playWindow.wndManager;
-                manager.Show(new GroupWindow(@group, PilePosition.Top, count));
-            }
+            if (playWindow == null) return;
+            ChildWindowManager manager = playWindow.wndManager;
+            manager.Show(new GroupWindow(@group, PilePosition.Top, count));
         }
 
         protected void ViewBottomCards(object sender, RoutedEventArgs e)
@@ -60,11 +56,9 @@ namespace Octgn.Play.Gui
             e.Handled = true;
             int count = OCTGN.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1);
             var playWindow = (PlayWindow) Window.GetWindow(this);
-            if (playWindow != null)
-            {
-                ChildWindowManager manager = playWindow.wndManager;
-                manager.Show(new GroupWindow(@group, PilePosition.Bottom, count));
-            }
+            if (playWindow == null) return;
+            ChildWindowManager manager = playWindow.wndManager;
+            manager.Show(new GroupWindow(@group, PilePosition.Bottom, count));
         }
     }
 }

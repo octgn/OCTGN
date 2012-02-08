@@ -295,31 +295,23 @@ namespace Octgn.Controls
 
         #region Commands
 
-        private static RoutedCommand _increaseCommand, _decreaseCommand;
+        public static RoutedCommand IncreaseCommand { get; private set; }
 
-        public static RoutedCommand IncreaseCommand
-        {
-            get { return _increaseCommand; }
-        }
-
-        public static RoutedCommand DecreaseCommand
-        {
-            get { return _decreaseCommand; }
-        }
+        public static RoutedCommand DecreaseCommand { get; private set; }
 
         private static void InitializeCommands()
         {
-            _increaseCommand = new RoutedCommand("IncreaseCommand", typeof (NumericUpDown));
+            IncreaseCommand = new RoutedCommand("IncreaseCommand", typeof (NumericUpDown));
             CommandManager.RegisterClassCommandBinding(typeof (NumericUpDown),
-                                                       new CommandBinding(_increaseCommand, OnIncreaseCommand));
+                                                       new CommandBinding(IncreaseCommand, OnIncreaseCommand));
             CommandManager.RegisterClassInputBinding(typeof (NumericUpDown),
-                                                     new InputBinding(_increaseCommand, new KeyGesture(Key.Up)));
+                                                     new InputBinding(IncreaseCommand, new KeyGesture(Key.Up)));
 
-            _decreaseCommand = new RoutedCommand("DecreaseCommand", typeof (NumericUpDown));
+            DecreaseCommand = new RoutedCommand("DecreaseCommand", typeof (NumericUpDown));
             CommandManager.RegisterClassCommandBinding(typeof (NumericUpDown),
-                                                       new CommandBinding(_decreaseCommand, OnDecreaseCommand));
+                                                       new CommandBinding(DecreaseCommand, OnDecreaseCommand));
             CommandManager.RegisterClassInputBinding(typeof (NumericUpDown),
-                                                     new InputBinding(_decreaseCommand, new KeyGesture(Key.Down)));
+                                                     new InputBinding(DecreaseCommand, new KeyGesture(Key.Down)));
         }
 
         private static void OnIncreaseCommand(object sender, ExecutedRoutedEventArgs e)
@@ -363,65 +355,63 @@ namespace Octgn.Controls
         {
             base.OnApplyTemplate();
             var editBox = GetTemplateChild("PART_TextBox") as TextBox;
-            if (editBox != null)
-            {
-                editBox.GotFocus += delegate(object sender, RoutedEventArgs e)
-                                        {
-                                            var box = (TextBox) sender;
-                                            box.SelectAll();
-                                        };
-                editBox.PreviewMouseDown += delegate(object sender, MouseButtonEventArgs e)
+            if (editBox == null) return;
+            editBox.GotFocus += delegate(object sender, RoutedEventArgs e)
+                                    {
+                                        var box = (TextBox) sender;
+                                        box.SelectAll();
+                                    };
+            editBox.PreviewMouseDown += delegate(object sender, MouseButtonEventArgs e)
+                                            {
+                                                var box = (TextBox) sender;
+                                                // If the box isn't focused, focus it (which selects its text, see GotFocus handler)
+                                                // and delete the event. If we let the Textbox further handle the event it will move 
+                                                // the caret position, i.e. deselect the text
+                                                if (!box.IsFocused)
                                                 {
-                                                    var box = (TextBox) sender;
-                                                    // If the box isn't focused, focus it (which selects its text, see GotFocus handler)
-                                                    // and delete the event. If we let the Textbox further handle the event it will move 
-                                                    // the caret position, i.e. deselect the text
-                                                    if (!box.IsFocused)
-                                                    {
-                                                        box.Focus();
-                                                        e.Handled = true;
-                                                    }
-                                                };
-                editBox.LostKeyboardFocus += delegate(object sender, KeyboardFocusChangedEventArgs e)
+                                                    box.Focus();
+                                                    e.Handled = true;
+                                                }
+                                            };
+            editBox.LostKeyboardFocus += delegate(object sender, KeyboardFocusChangedEventArgs e)
+                                             {
+                                                 var box = (TextBox) sender;
+                                                 BindingExpression be =
+                                                     box.GetBindingExpression(TextBox.TextProperty);
+                                                 if (be != null)
                                                  {
-                                                     var box = (TextBox) sender;
-                                                     BindingExpression be =
-                                                         box.GetBindingExpression(TextBox.TextProperty);
-                                                     if (be != null)
-                                                     {
-                                                         be.UpdateSource();
-                                                         be.UpdateTarget();
-                                                     }
-                                                     // if the value has been reject (e.g. bad format)
-                                                 };
-                editBox.KeyDown += delegate(object sender, KeyEventArgs e)
+                                                     be.UpdateSource();
+                                                     be.UpdateTarget();
+                                                 }
+                                                 // if the value has been reject (e.g. bad format)
+                                             };
+            editBox.KeyDown += delegate(object sender, KeyEventArgs e)
+                                   {
+                                       if (e.Key == Key.Enter)
                                        {
-                                           if (e.Key == Key.Enter)
+                                           var box = (TextBox) sender;
+                                           BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
+                                           if (be != null)
                                            {
-                                               var box = (TextBox) sender;
-                                               BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
-                                               if (be != null)
-                                               {
-                                                   be.UpdateSource();
-                                                   be.UpdateTarget(); // if the value has been reject (e.g. bad format)
-                                               }
-                                               var window = Window.GetWindow(box);
-                                               if (window != null)
-                                                   ((UIElement) window.Content).MoveFocus(
-                                                       new TraversalRequest(FocusNavigationDirection.First));
+                                               be.UpdateSource();
+                                               be.UpdateTarget(); // if the value has been reject (e.g. bad format)
                                            }
-                                           else if (e.Key == Key.Escape)
-                                           {
-                                               var box = (TextBox) sender;
-                                               BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
-                                               if (be != null) be.UpdateTarget();
-                                               var window = Window.GetWindow(box);
-                                               if (window != null)
-                                                   ((UIElement) window.Content).MoveFocus(
-                                                       new TraversalRequest(FocusNavigationDirection.First));
-                                           }
-                                       };
-            }
+                                           var window = Window.GetWindow(box);
+                                           if (window != null)
+                                               ((UIElement) window.Content).MoveFocus(
+                                                   new TraversalRequest(FocusNavigationDirection.First));
+                                       }
+                                       else if (e.Key == Key.Escape)
+                                       {
+                                           var box = (TextBox) sender;
+                                           BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
+                                           if (be != null) be.UpdateTarget();
+                                           var window = Window.GetWindow(box);
+                                           if (window != null)
+                                               ((UIElement) window.Content).MoveFocus(
+                                                   new TraversalRequest(FocusNavigationDirection.First));
+                                       }
+                                   };
         }
 
         #endregion
@@ -429,7 +419,7 @@ namespace Octgn.Controls
 
     public class NumericUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
     {
-        public NumericUpDownAutomationPeer(NumericUpDown control)
+        public NumericUpDownAutomationPeer(FrameworkElement control)
             : base(control)
         {
         }
@@ -497,8 +487,7 @@ namespace Octgn.Controls
 
         public override object GetPattern(PatternInterface patternInterface)
         {
-            if (patternInterface == PatternInterface.RangeValue) return this;
-            return base.GetPattern(patternInterface);
+            return patternInterface == PatternInterface.RangeValue ? this : base.GetPattern(patternInterface);
         }
 
         internal void RaiseValueChangedEvent(decimal oldValue, decimal newValue)

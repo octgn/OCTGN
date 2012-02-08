@@ -65,11 +65,9 @@ namespace Octgn.Play.Dialogs
             }
 
             prompt.IsEnabled = false;
-            if (!scriptEngine.TryExecuteInteractiveCode(input, scope, ExecutionCompleted))
-            {
-                prompt.IsEnabled = true;
-                PromptNewIndentedLine();
-            }
+            if (scriptEngine.TryExecuteInteractiveCode(input, scope, ExecutionCompleted)) return;
+            prompt.IsEnabled = true;
+            PromptNewIndentedLine();
         }
 
         private void ExecutionCompleted(ExecutionResult result)

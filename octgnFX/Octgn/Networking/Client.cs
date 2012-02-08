@@ -23,7 +23,6 @@ namespace Octgn.Networking
         private bool disposed; // True when the client has been closed
         private byte[] packet = new byte[1024]; // Packet buffer (gets the receive buffer's content)
         private int packetPos; // Position in the packet buffer
-        private IServerCalls rpc;
         private XmlReceiveDelegate xmlHandler; // Receive delegate when in xml mode
 
         // Delegates definitions
@@ -54,7 +53,7 @@ namespace Octgn.Networking
             handler = new Handler();
             xmlHandler = handler.ReceiveMessage;
             // Create a remote call interface
-            rpc = new XmlSenderStub(tcp);
+            Rpc = new XmlSenderStub(tcp);
         }
 
         public bool IsConnected
@@ -63,10 +62,7 @@ namespace Octgn.Networking
         }
 
         // Used to send messages to the server
-        internal IServerCalls Rpc
-        {
-            get { return rpc; }
-        }
+        internal IServerCalls Rpc { get; private set; }
 
         public int Muted { get; set; }
 
@@ -167,7 +163,7 @@ namespace Octgn.Networking
         public void Binary()
         {
             Rpc.Binary();
-            rpc = new BinarySenderStub(tcp);
+            Rpc = new BinarySenderStub(tcp);
         }
 
         #endregion
@@ -243,7 +239,9 @@ namespace Octgn.Networking
             while (packetPos > 4)
             {
                 int length = packet[0] | packet[1] << 8 | packet[2] << 16 | packet[3] << 24;
-                if (packetPos >= length)
+                if (packetPos < length)
+                    break;
+                else
                 {
                     // Copy the message into a new array
                     var data = new byte[length - 4];
@@ -254,8 +252,6 @@ namespace Octgn.Networking
                     packetPos -= length;
                     Array.Copy(packet, length, packet, 0, packetPos);
                 }
-                else
-                    break;
             }
         }
 
@@ -265,24 +261,22 @@ namespace Octgn.Networking
             // Look for a 0 at the end.
             for (int i = packetPos; i < packetPos + count; i++)
             {
-                if (packet[i] == 0)
+                if (packet[i] != 0) continue;
+                // Extract the xml
+                string xml = Encoding.UTF8.GetString(packet, 0, i);
+                // Invoke the handler                                        
+                Program.Dispatcher.BeginInvoke(DispatcherPriority.Normal, xmlHandler, xml);
+                // Switch to a binary handler if the message asked for it
+                if (xml == "<Binary />")
                 {
-                    // Extract the xml
-                    string xml = Encoding.UTF8.GetString(packet, 0, i);
-                    // Invoke the handler                                        
-                    Program.Dispatcher.BeginInvoke(DispatcherPriority.Normal, xmlHandler, xml);
-                    // Switch to a binary handler if the message asked for it
-                    if (xml == "<Binary />")
-                    {
-                        binHandler = handler.ReceiveMessage;
-                        xmlHandler = null;
-                    }
-                    // Adjust the packet buffer
-                    count += packetPos - i - 1;
-                    packetPos = 0;
-                    Array.Copy(packet, i + 1, packet, 0, count);
-                    i = -1;
+                    binHandler = handler.ReceiveMessage;
+                    xmlHandler = null;
                 }
+                // Adjust the packet buffer
+                count += packetPos - i - 1;
+                packetPos = 0;
+                Array.Copy(packet, i + 1, packet, 0, count);
+                i = -1;
             }
             // Adjust the position in the packet buffer
             packetPos += count;

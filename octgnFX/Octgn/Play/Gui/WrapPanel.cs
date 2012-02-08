@@ -130,11 +130,9 @@ namespace Octgn.Play.Gui
             if (idx >= VisualChildrenCount) return;
             spacedItem2 = (UIElement) GetVisualChild(idx);
             SetSpacing(spacedItem2, SpacingWidth);
-            if (idx > 0)
-            {
-                spacedItem1 = (UIElement) GetVisualChild(idx - 1);
-                SetSpacing(spacedItem1, -SpacingWidth);
-            }
+            if (idx <= 0) return;
+            spacedItem1 = (UIElement) GetVisualChild(idx - 1);
+            SetSpacing(spacedItem1, -SpacingWidth);
         }
 
         public void HideInsertIndicator()

@@ -12,13 +12,11 @@ namespace Octgn.Play.Gui
         public DragAdorner(UIElement adorned)
             : base(adorned)
         {
-            var brush = new VisualBrush(adorned);
+            var brush = new VisualBrush(adorned) {Stretch = Stretch.None, AlignmentX = AlignmentX.Left};
             // HACK: this makes the markers work properly, 
             // even after adding 4+ markers and then removing to 3-,
             // and then shift-dragging (in which case the size of the adorner is correct, 
             // but the VisualBrush tries to render the now invisible number.
-            brush.Stretch = Stretch.None;
-            brush.AlignmentX = AlignmentX.Left;
             child = new Rectangle();
             child.BeginInit();
             child.Width = adorned.RenderSize.Width;
@@ -27,9 +25,8 @@ namespace Octgn.Play.Gui
             child.IsHitTestVisible = false;
             child.EndInit();
 
-            var animation = new DoubleAnimation(0.6, 0.85, new Duration(TimeSpan.FromMilliseconds(500)));
-            animation.AutoReverse = true;
-            animation.RepeatBehavior = RepeatBehavior.Forever;
+            var animation = new DoubleAnimation(0.6, 0.85, new Duration(TimeSpan.FromMilliseconds(500)))
+                                {AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever};
             animation.Freeze();
 
             brush.BeginAnimation(Brush.OpacityProperty, animation);

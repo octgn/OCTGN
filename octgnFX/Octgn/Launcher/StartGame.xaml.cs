@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using Octgn.Networking;
 using Octgn.Play;
 
 namespace Octgn.Launcher
@@ -58,12 +57,10 @@ namespace Octgn.Launcher
 
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                if (Program.IsHost)
-                    Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
-                cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
-            }
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
+            if (Program.IsHost)
+                Program.Client.Rpc.Settings(Program.GameSettings.UseTwoSidedTable);
+            cbTwoSided.IsChecked = Program.GameSettings.UseTwoSidedTable;
         }
 
         internal void Start()
@@ -82,24 +79,20 @@ namespace Octgn.Launcher
                     group.Controller = host;
             }
 
-            if (Program.PlayWindow == null)
-            {
-                Program.Client.Rpc.Start();
-                Program.PlayWindow = new PlayWindow();
-                Program.PlayWindow.Show();
-                Program.ClientWindow.HostJoinTab();
-            }
+            if (Program.PlayWindow != null) return;
+            Program.Client.Rpc.Start();
+            Program.PlayWindow = new PlayWindow();
+            Program.PlayWindow.Show();
+            Program.ClientWindow.HostJoinTab();
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            if (!StartingGame)
-            {
-                StartingGame = true;
-                Program.LobbyClient.HostedGameStarted();
-                e.Handled = true;
-                Start();
-            }
+            if (StartingGame) return;
+            StartingGame = true;
+            Program.LobbyClient.HostedGameStarted();
+            e.Handled = true;
+            Start();
         }
 
         private void CancelClicked(object sender, RoutedEventArgs e)
@@ -108,7 +101,7 @@ namespace Octgn.Launcher
             Back();
         }
 
-        private void Back()
+        private static void Back()
         {
             Program.ClientWindow.HostJoinTab();
         }

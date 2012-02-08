@@ -26,12 +26,10 @@ namespace Octgn.Controls
 
         public ChildWindow()
         {
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                RenderTransform = new ScaleTransform();
-                // HACK: This shouldn't be required with the code in the cctor, but I can't get it to work otherwise
-                Style = (Style) FindResource(typeof (ChildWindow));
-            }
+            if (DesignerProperties.GetIsInDesignMode(this)) return;
+            RenderTransform = new ScaleTransform();
+            // HACK: This shouldn't be required with the code in the cctor, but I can't get it to work otherwise
+            Style = (Style) FindResource(typeof (ChildWindow));
         }
 
         #region Title property

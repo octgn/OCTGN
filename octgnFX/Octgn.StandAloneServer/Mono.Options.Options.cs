@@ -991,10 +991,8 @@ namespace Mono.Options
                 return true;
             }
             // no match; is it a bool option?
-            if (ParseBool(argument, n, c))
-                return true;
+            return ParseBool(argument, n, c) || ParseBundledValue(f, string.Concat(string.Format("{0}{1}{2}", n, s, v)), c);
             // is it a bundled option?
-            return ParseBundledValue(f, string.Concat(string.Format("{0}{1}{2}", n, s, v)), c);
         }
 
         private void ParseValue(string option, OptionContext c)
@@ -1221,8 +1219,7 @@ namespace Mono.Options
         {
             if (description == null)
                 return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
-            string[] nameStart;
-            nameStart = maxIndex == 1 ? new[] {"{0:", "{"} : new[] {"{" + index + ":"};
+            string[] nameStart = maxIndex == 1 ? new[] {"{0:", "{"} : new[] {"{" + index + ":"};
             foreach (string t in nameStart)
             {
                 int start, j = 0;

@@ -92,11 +92,9 @@ namespace Octgn.Launcher
                     var engine = new Engine(true);
                     string[] terr = engine.TestScripts(Program.Game);
                     Program.Game.End();
-                    if (terr.Length > 0)
-                    {
-                        Errors.AddRange(terr);
-                        g2r.Add(g);
-                    }
+                    if (terr.Length <= 0) continue;
+                    Errors.AddRange(terr);
+                    g2r.Add(g);
                 }
                 foreach (Data.Game g in g2r)
                     Program.GamesRepository.Games.Remove(g);
@@ -143,8 +141,7 @@ namespace Octgn.Launcher
                 try
                 {
                     Stream str = client.OpenRead(URL);
-                    if (str != null) result = true;
-                    else result = false;
+                    result = str != null;
                 }
                 catch
                 {
@@ -154,7 +151,7 @@ namespace Octgn.Launcher
             return result;
         }
 
-        private string[] ReadUpdateXML(string URL)
+        private static string[] ReadUpdateXML(string URL)
         {
             var values = new string[2];
             try
@@ -166,26 +163,24 @@ namespace Octgn.Launcher
                 {
                     while (reader.Read())
                     {
-                        if (reader.IsStartElement())
+                        if (!reader.IsStartElement()) continue;
+                        if (!reader.IsEmptyElement)
                         {
-                            if (!reader.IsEmptyElement)
+                            switch (reader.Name)
                             {
-                                switch (reader.Name)
-                                {
-                                    case "Version":
-                                        values = new string[2];
-                                        if (reader.Read())
-                                        {
-                                            values[0] = reader.Value;
-                                        }
-                                        break;
-                                    case "Location":
-                                        if (reader.Read())
-                                        {
-                                            values[1] = reader.Value;
-                                        }
-                                        break;
-                                }
+                                case "Version":
+                                    values = new string[2];
+                                    if (reader.Read())
+                                    {
+                                        values[0] = reader.Value;
+                                    }
+                                    break;
+                                case "Location":
+                                    if (reader.Read())
+                                    {
+                                        values[1] = reader.Value;
+                                    }
+                                    break;
                             }
                         }
                     }

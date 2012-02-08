@@ -17,13 +17,11 @@ namespace Octgn.Play.Gui
         {
             base.GroupChanged();
             var pile = (Pile) group;
-            if (pile.AnimateInsertion)
-            {
-                pile.AnimateInsertion = false;
-                var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
-                               {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
-            }
+            if (!pile.AnimateInsertion) return;
+            pile.AnimateInsertion = false;
+            var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
+                           {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)

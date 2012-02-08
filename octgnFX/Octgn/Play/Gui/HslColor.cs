@@ -7,15 +7,14 @@ namespace Octgn.Play.Gui
 {
     public struct HslColor
     {
-        private byte alpha;
         private float hue;
         private float luminance;
         private float saturation;
 
-        public HslColor(Color c)
+        public HslColor(Color c) : this()
         {
             hue = saturation = luminance = 0;
-            alpha = 0;
+            Alpha = 0;
             FromRgba(c.ScR, c.ScG, c.ScB, c.A);
         }
 
@@ -37,10 +36,7 @@ namespace Octgn.Play.Gui
             set { Clamp(value, out luminance); }
         }
 
-        public byte Alpha
-        {
-            get { return alpha; }
-        }
+        public byte Alpha { get; private set; }
 
         public static implicit operator Color(HslColor c)
         {
@@ -62,7 +58,7 @@ namespace Octgn.Play.Gui
             }
 
             return Color.FromArgb(
-                c.alpha,
+                c.Alpha,
                 (byte) Math.Round(red*255),
                 (byte) Math.Round(green*255),
                 (byte) Math.Round(blue*255)
@@ -86,7 +82,7 @@ namespace Octgn.Play.Gui
 
         private void FromRgba(float red, float green, float blue, byte lAlpha)
         {
-            alpha = lAlpha;
+            Alpha = lAlpha;
 
             // Compute Max, Min and Delta
             float max, min;
@@ -128,7 +124,7 @@ namespace Octgn.Play.Gui
             hue /= 6f;
         }
 
-        private void Clamp(float source, out float target)
+        private static void Clamp(float source, out float target)
         {
             if (source > 1) target = 1;
             else if (source < 0) target = 0;
@@ -143,8 +139,8 @@ namespace Octgn.Play.Gui
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var c = new HslColor((Color) value);
-            c.Luminance = System.Convert.ToSingle(parameter, CultureInfo.InvariantCulture);
+            var c = new HslColor((Color) value)
+                        {Luminance = System.Convert.ToSingle(parameter, CultureInfo.InvariantCulture)};
             return (Color) c;
         }
 

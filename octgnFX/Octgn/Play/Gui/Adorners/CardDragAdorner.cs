@@ -104,9 +104,8 @@ namespace Octgn.Play.Gui
             child.EndInit();
             AddVisualChild(child);
 
-            var animation = new DoubleAnimation(0.55, 0.75, new Duration(TimeSpan.FromMilliseconds(500)));
-            animation.AutoReverse = true;
-            animation.RepeatBehavior = RepeatBehavior.Forever;
+            var animation = new DoubleAnimation(0.55, 0.75, new Duration(TimeSpan.FromMilliseconds(500)))
+                                {AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever};
             animation.Freeze();
 
             faceUpBrush.BeginAnimation(Brush.OpacityProperty, animation);

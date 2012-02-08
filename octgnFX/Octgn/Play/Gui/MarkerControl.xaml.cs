@@ -27,17 +27,22 @@ namespace Octgn.Play.Gui
         protected void TableKeyDown(object sender, TableKeyEventArgs te)
         {
             KeyEventArgs e = te.KeyEventArgs;
-            if (e.Key == Key.Add)
+            switch (e.Key)
             {
-                te.Handled = e.Handled = true;
-                var marker = DataContext as Marker;
-                if (marker != null) marker.Count++;
-            }
-            else if (e.Key == Key.Subtract)
-            {
-                te.Handled = e.Handled = true;
-                var marker = DataContext as Marker;
-                if (marker != null) marker.Count--;
+                case Key.Add:
+                    {
+                        te.Handled = e.Handled = true;
+                        var marker = DataContext as Marker;
+                        if (marker != null) marker.Count++;
+                    }
+                    break;
+                case Key.Subtract:
+                    {
+                        te.Handled = e.Handled = true;
+                        var marker = DataContext as Marker;
+                        if (marker != null) marker.Count--;
+                    }
+                    break;
             }
         }
 
@@ -94,12 +99,10 @@ namespace Octgn.Play.Gui
             base.OnMouseLeftButtonUp(e);
             e.Handled = true;
             isMouseDown = false;
-            if (isDragging)
-            {
-                isDragging = false;
-                ReleaseMouseCapture();
-                DragCompleted();
-            }
+            if (!isDragging) return;
+            isDragging = false;
+            ReleaseMouseCapture();
+            DragCompleted();
         }
 
         private void DragStarted()
@@ -116,7 +119,7 @@ namespace Octgn.Play.Gui
             AdornerLayer.GetAdornerLayer(adorner.AdornedElement).Add(adorner);
         }
 
-        private void DragDelta(double dx, double dy)
+        private static void DragDelta(double dx, double dy)
         {
             adorner.LeftOffset = mouseOffset.X + dx;
             adorner.TopOffset = mouseOffset.Y + dy;

@@ -45,12 +45,10 @@ namespace Skylabs.Lobby
             {
                 if (!Users.Contains(userToChange)) return;
                 User utochange = Users.FirstOrDefault(us => us.Uid == userToChange.Uid);
-                if (utochange != null)
-                {
-                    utochange.Status = newUserData;
-                    utochange.CustomStatus = userToChange.CustomStatus;
-                    utochange.DisplayName = userToChange.DisplayName;
-                }
+                if (utochange == null) return;
+                utochange.Status = newUserData;
+                utochange.CustomStatus = userToChange.CustomStatus;
+                utochange.DisplayName = userToChange.DisplayName;
             }
         }
 

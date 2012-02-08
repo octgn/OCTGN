@@ -30,8 +30,7 @@ namespace Octgn.Launcher
                 miLeaveChat.IsEnabled = false;
             Program.LobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
             var cm = new ContextMenu();
-            var mi = new MenuItem();
-            mi.Header = "Add to friends list";
+            var mi = new MenuItem {Header = "Add to friends list"};
             mi.Click += mi_Click;
             cm.Items.Add(mi);
             listBox1.ContextMenu = cm;
@@ -116,7 +115,7 @@ namespace Octgn.Launcher
             }
         }
 
-        private void AddChatText(Run headerRun, string chat, Brush b = null)
+        private void AddChatText(Inline headerRun, string chat, Brush b = null)
         {
             if (b == null) b = Brushes.Black;
             bool rtbatbottom = false;
@@ -150,8 +149,7 @@ namespace Octgn.Launcher
                     if (!justScrolledToBottom)
                     {
                         var pa = new Paragraph();
-                        var ru = new Run("------------------------------");
-                        ru.Foreground = Brushes.Red;
+                        var ru = new Run("------------------------------") {Foreground = Brushes.Red};
                         pa.Inlines.Add(new Bold(ru));
                         richTextBox1.Document.Blocks.Add(pa);
                         justScrolledToBottom = true;
@@ -251,19 +249,16 @@ namespace Octgn.Launcher
                     Boolean fUser = false;
                     foreach (User u in listBox1.Items)
                     {
-                        if (u.DisplayName == s)
-                        {
-                            b = Brushes.LightGreen;
-                            ret = new Bold(r);
-                            ret.ToolTip = "Click to whisper";
-                            r.Cursor = Cursors.Hand;
-                            r.Background = Brushes.White;
-                            r.MouseEnter +=
-                                delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
-                            r.MouseLeave += delegate { r.Background = Brushes.White; };
-                            fUser = true;
-                            break;
-                        }
+                        if (u.DisplayName != s) continue;
+                        b = Brushes.LightGreen;
+                        ret = new Bold(r) {ToolTip = "Click to whisper"};
+                        r.Cursor = Cursors.Hand;
+                        r.Background = Brushes.White;
+                        r.MouseEnter +=
+                            delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
+                        r.MouseLeave += delegate { r.Background = Brushes.White; };
+                        fUser = true;
+                        break;
                     }
                     if (!fUser)
                     {
@@ -275,7 +270,7 @@ namespace Octgn.Launcher
             return ret;
         }
 
-        private void h_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        private static void h_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             var hl = (Hyperlink) sender;
             string navigateUri = hl.NavigateUri.ToString();
@@ -289,13 +284,17 @@ namespace Octgn.Launcher
             e.Handled = true;
         }
 
-        private Run getUserRun(String user, string fulltext)
+        private static Run getUserRun(String user, string fulltext)
         {
-            var r = new Run(fulltext);
-            r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() + "\nClick to whisper " +
-                        user;
-            r.Cursor = Cursors.Hand;
-            r.Background = Brushes.White;
+            var r = new Run(fulltext)
+                        {
+                            ToolTip =
+                                DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() +
+                                "\nClick to whisper " +
+                                user,
+                            Cursor = Cursors.Hand,
+                            Background = Brushes.White
+                        };
             r.MouseEnter += delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
             r.MouseLeave += delegate { r.Background = Brushes.White; };
             return r;
@@ -306,16 +305,14 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
                                              {
                                                  ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(ID);
-                                                 if (cr != null)
-                                                 {
-                                                     listBox1.Items.Clear();
-                                                     Users = new List<User>();
+                                                 if (cr == null) return;
+                                                 listBox1.Items.Clear();
+                                                 Users = new List<User>();
 
-                                                     foreach (User u in cr.GetUserList())
-                                                     {
-                                                         listBox1.Items.Add(u);
-                                                         Users.Add(u);
-                                                     }
+                                                 foreach (User u in cr.GetUserList())
+                                                 {
+                                                     listBox1.Items.Add(u);
+                                                     Users.Add(u);
                                                  }
                                              }));
         }
@@ -323,17 +320,15 @@ namespace Octgn.Launcher
         private void Window_Drop(object sender, DragEventArgs e)
         {
             var s = e.Data.GetData(typeof (String)) as String;
-            if (s != null)
+            if (s == null) return;
+            int uid;
+            if (Int32.TryParse(s, out uid))
             {
-                int uid;
-                if (Int32.TryParse(s, out uid))
+                //BUG Should be pulling from FriendList
+                User u = Program.LobbyClient.GetFriendFromUid(uid);
+                if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
                 {
-                    //BUG Should be pulling from FriendList
-                    User u = Program.LobbyClient.GetFriendFromUid(uid);
-                    if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
-                    {
-                        Program.LobbyClient.Chatting.AddUserToChat(u, ID);
-                    }
+                    Program.LobbyClient.Chatting.AddUserToChat(u, ID);
                 }
             }
         }
@@ -356,23 +351,19 @@ namespace Octgn.Launcher
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key != Key.Enter) return;
+            if (textBox1.Text.Trim().Length > 0)
             {
-                if (textBox1.Text.Trim().Length > 0)
-                {
-                    Program.LobbyClient.Chatting.SendChatMessage(ID, textBox1.Text);
-                    textBox1.Text = "";
-                }
+                Program.LobbyClient.Chatting.SendChatMessage(ID, textBox1.Text);
+                textBox1.Text = "";
             }
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (!_realClose)
-            {
-                e.Cancel = true;
-                Hide();
-            }
+            if (_realClose) return;
+            e.Cancel = true;
+            Hide();
         }
 
         public void CloseChatWindow()

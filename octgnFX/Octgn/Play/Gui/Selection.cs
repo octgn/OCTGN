@@ -92,8 +92,7 @@ namespace Octgn.Play.Gui
 
         public static IEnumerable<Card> ExtendToSelection(Card card)
         {
-            if (selected.Contains(card)) return selected;
-            return Enumerable.Repeat(card, 1);
+            return selected.Contains(card) ? selected : Enumerable.Repeat(card, 1);
         }
 
         public static void Do(Action<Card> action, Card card)

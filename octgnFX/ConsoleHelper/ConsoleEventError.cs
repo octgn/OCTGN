@@ -23,9 +23,7 @@ namespace Skylabs.ConsoleHelper
         {
             get
             {
-                if (Exception != null)
-                    return Exception.Message;
-                return "No Exception Message Data.";
+                return Exception != null ? Exception.Message : "No Exception Message Data.";
             }
         }
 
@@ -34,9 +32,7 @@ namespace Skylabs.ConsoleHelper
         {
             get
             {
-                if (Exception.StackTrace != null)
-                    return Exception.StackTrace;
-                return "No Stack Trace Message Data.";
+                return Exception.StackTrace ?? "No Stack Trace Message Data.";
             }
         }
 

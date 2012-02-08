@@ -342,8 +342,7 @@ namespace Octgn.Scripting
         {
             Card card = Card.Find(cardId);
             Marker marker = card.FindMarker(Guid.Parse(markerId), markerName);
-            if (marker == null) return 0;
-            return marker.Count;
+            return marker == null ? 0 : marker.Count;
         }
 
         public void MarkerSetCount(int cardId, int count, string markerName, string markerId)
@@ -469,7 +468,10 @@ namespace Octgn.Scripting
             engine.Invoke(() =>
                               {
                                   CardModel model = Database.GetCardById(modelGuid);
-                                  if (model != null)
+                                  if (model == null)
+                                  {
+                                  }
+                                  else
                                   {
                                       var ids = new int[quantity];
                                       var keys = new ulong[quantity];
@@ -629,9 +631,7 @@ namespace Octgn.Scripting
             Player p = Player.Find((byte) id);
             if (p == null)
                 return "";
-            if (p.GlobalVariables.ContainsKey(name))
-                return p.GlobalVariables[name];
-            return "";
+            return p.GlobalVariables.ContainsKey(name) ? p.GlobalVariables[name] : "";
         }
 
         public void SetGlobalVariable(string name, object value)
@@ -646,9 +646,7 @@ namespace Octgn.Scripting
 
         public string GetGlobalVariable(string name)
         {
-            if (Program.Game.GlobalVariables.ContainsKey(name))
-                return Program.Game.GlobalVariables[name];
-            return "";
+            return Program.Game.GlobalVariables.ContainsKey(name) ? Program.Game.GlobalVariables[name] : "";
         }
 
         #endregion

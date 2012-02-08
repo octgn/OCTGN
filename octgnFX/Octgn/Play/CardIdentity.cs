@@ -20,7 +20,7 @@ namespace Octgn.Play
 
         public CardIdentity(int id)
         {
-            this.Id = id;
+            Id = id;
             All.Add(id, this);
         }
 

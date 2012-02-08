@@ -152,11 +152,9 @@ namespace Octgn.Play.Gui
 
         private void FilterBoxPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
-            {
-                e.Handled = true;
-                filterBox.Text = "";
-            }
+            if (e.Key != Key.Escape) return;
+            e.Handled = true;
+            filterBox.Text = "";
         }
 
         private void PositionOrderChecked(object sender, RoutedEventArgs e)

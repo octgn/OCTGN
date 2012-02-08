@@ -5,12 +5,12 @@ namespace Octgn
 {
     public class DefaultMarkerModel : MarkerModel
     {
-        private string _key;
+        private readonly string _key;
 
         public DefaultMarkerModel(string key, Guid id)
             : base(id)
         {
-            this._key = key;
+            _key = key;
         }
 
         public override string Picture
@@ -37,8 +37,7 @@ namespace Octgn
 
         public DefaultMarkerModel Clone()
         {
-            var result = new DefaultMarkerModel(_key, id);
-            result.name = name;
+            var result = new DefaultMarkerModel(_key, id) {name = name};
             return result;
         }
     }

@@ -103,14 +103,12 @@ namespace Octgn.DeckBuilder
                 _game = value;
                 ActiveSection = null;
 
-                if (value != null)
-                {
-                    value.OpenDatabase(true);
-                    cardImage.Source = new BitmapImage(value.GetCardBackUri());
+                if (value == null) return;
+                value.OpenDatabase(true);
+                cardImage.Source = new BitmapImage(value.GetCardBackUri());
 
-                    Searches.Clear();
-                    AddSearchTab();
-                }
+                Searches.Clear();
+                AddSearchTab();
             }
         }
 
@@ -365,12 +363,10 @@ namespace Octgn.DeckBuilder
         {
             unsaved = true;
             Deck.Element element = ActiveSection.Cards.FirstOrDefault(c => c.Card.Id == e.CardId);
-            if (element != null)
-            {
-                element.Quantity -= 1;
-                if (element.Quantity == 0)
-                    ActiveSection.Cards.Remove(element);
-            }
+            if (element == null) return;
+            element.Quantity -= 1;
+            if (element.Quantity == 0)
+                ActiveSection.Cards.Remove(element);
         }
 
         private void DeckKeyDownHandler(object sender, KeyEventArgs e)
@@ -429,7 +425,7 @@ namespace Octgn.DeckBuilder
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void PreventExpanderBehavior(object sender, MouseButtonEventArgs e)
+        private void PreventExpanderBehavior(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
         }

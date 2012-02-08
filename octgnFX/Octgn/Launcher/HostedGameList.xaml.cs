@@ -42,16 +42,14 @@ namespace Octgn.Launcher
                                                          item => item.TimeStarted).ToArray();
                                                  foreach (HostedGame g in gl)
                                                  {
-                                                     if (gids.Contains(g.GameGuid) &&
-                                                         g.GameStatus == HostedGame.EHostedGame.StartedHosting
-                                                         && g.UserHosting.Status != UserStatus.Offline &&
-                                                         g.UserHosting.Status != UserStatus.Unknown)
-                                                     {
-                                                         var gs = new HostedGameListItem(g);
-                                                         if (g.GameStatus == HostedGame.EHostedGame.StartedHosting)
-                                                             gs.MouseUp += gs_MouseUp;
-                                                         stackPanel1.Children.Add(gs);
-                                                     }
+                                                     if (!gids.Contains(g.GameGuid) ||
+                                                         g.GameStatus != HostedGame.EHostedGame.StartedHosting ||
+                                                         g.UserHosting.Status == UserStatus.Offline ||
+                                                         g.UserHosting.Status == UserStatus.Unknown) continue;
+                                                     var gs = new HostedGameListItem(g);
+                                                     if (g.GameStatus == HostedGame.EHostedGame.StartedHosting)
+                                                         gs.MouseUp += gs_MouseUp;
+                                                     stackPanel1.Children.Add(gs);
                                                  }
                                              }));
         }

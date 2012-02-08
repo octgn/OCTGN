@@ -30,11 +30,9 @@ namespace Skylabs.ConsoleHelper
             Events.Add(con);
             if (writeToConsole)
                 con.WriteEvent(false);
-            if (EAddEvent != null)
-            {
-                if (EAddEvent.GetInvocationList().Length != 0)
-                    EAddEvent.Invoke(con);
-            }
+            if (EAddEvent == null) return;
+            if (EAddEvent.GetInvocationList().Length != 0)
+                EAddEvent.Invoke(con);
         }
 
         public static void SerializeEvents(string filename)
@@ -51,11 +49,9 @@ namespace Skylabs.ConsoleHelper
                         bool foundit = false;
                         foreach (Type t in cTypes)
                         {
-                            if (c.GetType() == t)
-                            {
-                                foundit = true;
-                                break;
-                            }
+                            if (c.GetType() != t) continue;
+                            foundit = true;
+                            break;
                         }
                         if (!foundit)
                             cTypes.Add(c.GetType());

@@ -45,22 +45,20 @@ namespace Octgn.Controls
             {
                 ChatRoomID = value.Id;
                 ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID);
-                if (cr != null)
+                if (cr == null) return;
+                if (cr.Id == 0)
                 {
-                    if (cr.Id == 0)
-                    {
-                        SetValue(UsernameProperty, "Lobby Chat");
-                        image1.Opacity = 0;
-                    }
-                    else
-                    {
-                        image1.Opacity = 1;
-                        String users = String.Join<User>(",", cr.GetUserList());
-                        if (users.Length > 100)
-                            users = users.Substring(0, 97);
-                        users += "...";
-                        SetValue(UsernameProperty, users);
-                    }
+                    SetValue(UsernameProperty, "Lobby Chat");
+                    image1.Opacity = 0;
+                }
+                else
+                {
+                    image1.Opacity = 1;
+                    String users = String.Join<User>(",", cr.GetUserList());
+                    if (users.Length > 100)
+                        users = users.Substring(0, 97);
+                    users += "...";
+                    SetValue(UsernameProperty, users);
                 }
             }
         }
@@ -77,15 +75,13 @@ namespace Octgn.Controls
 
         private void image1_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (ChatRoomID != 0)
-            {
-                var firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.ID == ThisRoom.Id);
-                if (firstOrDefault != null)
-                    firstOrDefault.CloseChatWindow();
-                var sp = Parent as StackPanel;
-                if (sp != null)
-                    sp.Children.Remove(this);
-            }
+            if (ChatRoomID == 0) return;
+            var firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.ID == ThisRoom.Id);
+            if (firstOrDefault != null)
+                firstOrDefault.CloseChatWindow();
+            var sp = Parent as StackPanel;
+            if (sp != null)
+                sp.Children.Remove(this);
         }
     }
 }

@@ -25,10 +25,7 @@ namespace Octgn.Networking
             reader.Read();
             string method = reader.Name;
             string muted = reader.GetAttribute("muted");
-            if (!string.IsNullOrEmpty(muted))
-                Program.Client.Muted = int.Parse(muted);
-            else
-                Program.Client.Muted = 0;
+            Program.Client.Muted = !string.IsNullOrEmpty(muted) ? int.Parse(muted) : 0;
             reader.ReadStartElement(); // <method>
             switch (method)
             {

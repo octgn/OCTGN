@@ -38,19 +38,17 @@ namespace Octgn.Play.Gui
         protected override void OnCardDropped(object sender, CardsEventArgs e)
         {
             e.Handled = e.CanDrop = true;
-            if (group.TryToManipulate())
+            if (!@group.TryToManipulate()) return;
+            int idx = fanPanel.GetIndexFromPoint(Mouse.GetPosition(fanPanel));
+            foreach (Card c in e.Cards)
             {
-                int idx = fanPanel.GetIndexFromPoint(Mouse.GetPosition(fanPanel));
-                foreach (Card c in e.Cards)
-                {
-                    bool doNotIncrement = (c.Group == group && group.GetCardIndex(c) < idx);
-                    c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, idx);
-                    // Fix: some cards (notably copies like token) may be deleted when they change group
-                    // in those case we should increment idx, otherwise an IndexOutOfRange exception may occur
-                    if (c.Group != group)
-                        doNotIncrement = true;
-                    if (!doNotIncrement) idx++;
-                }
+                bool doNotIncrement = (c.Group == @group && @group.GetCardIndex(c) < idx);
+                c.MoveTo(@group, e.FaceUp != null && e.FaceUp.Value, idx);
+                // Fix: some cards (notably copies like token) may be deleted when they change group
+                // in those case we should increment idx, otherwise an IndexOutOfRange exception may occur
+                if (c.Group != @group)
+                    doNotIncrement = true;
+                if (!doNotIncrement) idx++;
             }
         }
 

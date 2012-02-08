@@ -92,30 +92,26 @@ namespace Octgn.Launcher
         {
             var droppedFolders = e.Data.GetData(DataFormats.FileDrop) as string[];
             string folder = droppedFolders.FirstOrDefault(f => Directory.Exists(f));
-            if (folder != null)
-            {
-                TargetFolderName = folder;
-                PatchFolder = true;
-            }
+            if (folder == null) return;
+            TargetFolderName = folder;
+            PatchFolder = true;
         }
 
         private void OKClicked(object sender, RoutedEventArgs e)
         {
             Close();
-            if (PatchFileName != null && (PatchInstalledSets || (PatchFolder && TargetFolderName != null)))
-            {
-                var patch = new Patch(PatchFileName);
-                var dlg = new PatchProgressDialog {Owner = Owner};
-                patch.Progress += dlg.UpdateProgress;
+            if (PatchFileName == null || (!PatchInstalledSets && (!PatchFolder || TargetFolderName == null))) return;
+            var patch = new Patch(PatchFileName);
+            var dlg = new PatchProgressDialog {Owner = Owner};
+            patch.Progress += dlg.UpdateProgress;
 
-                // Capture variables to prevent a cross-thread call to dependency properties.
-                bool patchInstalledSets = PatchInstalledSets;
-                string targetFolder = PatchFolder ? TargetFolderName : null;
-                ThreadPool.QueueUserWorkItem(
-                    _ => patch.Apply(Program.GamesRepository, patchInstalledSets, targetFolder));
+            // Capture variables to prevent a cross-thread call to dependency properties.
+            bool patchInstalledSets = PatchInstalledSets;
+            string targetFolder = PatchFolder ? TargetFolderName : null;
+            ThreadPool.QueueUserWorkItem(
+                _ => patch.Apply(Program.GamesRepository, patchInstalledSets, targetFolder));
 
-                dlg.ShowDialog();
-            }
+            dlg.ShowDialog();
         }
     }
 }

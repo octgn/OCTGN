@@ -25,7 +25,7 @@ namespace Octgn.Play
 
         public Counter(Player player, CounterDef def)
         {
-            this._player = player;
+            _player = player;
             _state = def.Start;
             _name = def.Name;
             _id = def.Id;

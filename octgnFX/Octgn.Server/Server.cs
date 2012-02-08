@@ -295,21 +295,18 @@ namespace Octgn.Server
                     int length = packet[0] | packet[1] << 8 | packet[2] << 16 | packet[3] << 24;
                     if (packetPos < length)
                         break;
-                    else
-                    {
-                        // Copy the packet data in an array
-                        var data = new byte[length - 4];
-                        Array.Copy(packet, 4, data, 0, length - 4);
+                    // Copy the packet data in an array
+                    var data = new byte[length - 4];
+                    Array.Copy(packet, 4, data, 0, length - 4);
 
 
-                        // Lock the handler, because it is not thread-safe
-                        lock (server.handler)
-                            server.handler.ReceiveMessage(data, client, this);
+                    // Lock the handler, because it is not thread-safe
+                    lock (server.handler)
+                        server.handler.ReceiveMessage(data, client, this);
 
-                        // Adjust the packet pos and contents
-                        packetPos -= length;
-                        Array.Copy(packet, length, packet, 0, packetPos);
-                    }
+                    // Adjust the packet pos and contents
+                    packetPos -= length;
+                    Array.Copy(packet, length, packet, 0, packetPos);
                 }
             }
 

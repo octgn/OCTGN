@@ -19,15 +19,12 @@ namespace Octgn.Launcher
             Notification[] nlist = Program.LobbyClient.GetNotificationList();
             foreach (Notification n in nlist)
             {
-                if (n.GetType() == typeof (FriendRequestNotification))
-                {
-                    var fr = n as FriendRequestNotification;
-                    var fi = new Controls.FriendRequestNotification();
-                    fi.Notification = fr;
-                    fi.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    fi.OnDismiss += NotificationDismissed;
-                    stackPanel1.Children.Add(fi);
-                }
+                if (n.GetType() != typeof (FriendRequestNotification)) continue;
+                var fr = n as FriendRequestNotification;
+                var fi = new Controls.FriendRequestNotification
+                             {Notification = fr, HorizontalAlignment = HorizontalAlignment.Stretch};
+                fi.OnDismiss += NotificationDismissed;
+                stackPanel1.Children.Add(fi);
             }
         }
 

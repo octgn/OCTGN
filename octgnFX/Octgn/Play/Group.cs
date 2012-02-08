@@ -52,7 +52,7 @@ namespace Octgn.Play
         internal Group(Player owner, GroupDef def)
             : base(owner)
         {
-            this.Def = def;
+            Def = def;
             ResetVisibility();
             GroupShortcuts = CreateShortcuts(def.groupActions);
             CardShortcuts = CreateShortcuts(def.cardActions);

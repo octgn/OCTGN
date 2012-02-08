@@ -54,9 +54,12 @@ namespace Octgn.Play.Gui
                                    new PathSegmentCollection {endPt1, arrowPt1, headPt, arrowPt2, endPt2, startPt2},
                                IsClosed = true
                            };
-            Shape = new Path {Data = new PathGeometry {Figures = new PathFigureCollection {startPt1}}};
-            Shape.Stroke = Brushes.Red;
-            Shape.Fill = fillBrush;
+            Shape = new Path
+                        {
+                            Data = new PathGeometry {Figures = new PathFigureCollection {startPt1}},
+                            Stroke = Brushes.Red,
+                            Fill = fillBrush
+                        };
         }
 
         public Point ToPoint

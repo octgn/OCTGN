@@ -88,11 +88,9 @@ namespace Skylabs.Lobby.Threading
                 for (int i = 0; i < frames.Length; i++)
                 {
                     if (frames[i].GetMethod().Name != MethodBase.GetCurrentMethod().Name) continue;
-                    if (i + 2 < frames.Length)
-                    {
-                        CalledFromMethod = frames[i + 2].GetMethod().Name;
-                        break;
-                    }
+                    if (i + 2 >= frames.Length) continue;
+                    CalledFromMethod = frames[i + 2].GetMethod().Name;
+                    break;
                 }
             }
             Action = a;

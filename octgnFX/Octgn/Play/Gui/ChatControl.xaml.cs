@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -30,24 +31,29 @@ namespace Octgn.Play.Gui
 
         private void KeyDownHandler(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            switch (e.Key)
             {
-                e.Handled = true;
+                case Key.Enter:
+                    {
+                        e.Handled = true;
 
-                string msg = input.Text;
-                input.Clear();
-                if (string.IsNullOrEmpty(msg)) return;
+                        string msg = input.Text;
+                        input.Clear();
+                        if (string.IsNullOrEmpty(msg)) return;
 
-                Program.Client.Rpc.ChatReq(msg);
-            }
-            else if (e.Key == Key.Escape)
-            {
-                e.Handled = true;
-                input.Clear();
-                var window = Window.GetWindow(this);
-                if (window != null)
-                    ((UIElement) window.Content).MoveFocus(
-                        new TraversalRequest(FocusNavigationDirection.First));
+                        Program.Client.Rpc.ChatReq(msg);
+                    }
+                    break;
+                case Key.Escape:
+                    {
+                        e.Handled = true;
+                        input.Clear();
+                        var window = Window.GetWindow(this);
+                        if (window != null)
+                            ((UIElement) window.Content).MoveFocus(
+                                new TraversalRequest(FocusNavigationDirection.First));
+                    }
+                    break;
             }
         }
 
@@ -144,11 +150,9 @@ namespace Octgn.Play.Gui
             InsertLine(FormatMsg(message, eventType, id));
         }
 
-        private bool IsMuted()
+        private static bool IsMuted()
         {
-            if (Program.Client.Muted != 0)
-                return true;
-            return false;
+            return Program.Client.Muted != 0;
         }
 
         private void InsertLine(Inline message)
@@ -160,36 +164,38 @@ namespace Octgn.Play.Gui
             ctrl.output.ScrollToEnd();
         }
 
-        private Inline FormatInline(Inline inline, TraceEventType eventType, int id, Object[] args = null)
+        private static Inline FormatInline(Inline inline, TraceEventType eventType, int id, Object[] args = null)
         {
-            if (eventType == TraceEventType.Warning || eventType == TraceEventType.Error)
+            switch (eventType)
             {
-                inline.Foreground = Brushes.Red;
-                inline.FontWeight = FontWeights.Bold;
-            }
-            else if (eventType == TraceEventType.Information)
-            {
-                if ((id & EventIds.Chat) != 0)
+                case TraceEventType.Error:
+                case TraceEventType.Warning:
+                    inline.Foreground = Brushes.Red;
                     inline.FontWeight = FontWeights.Bold;
-                if (args == null || args.GetUpperBound(0) == -1)
-                {
-                    if ((id & EventIds.OtherPlayer) == 0)
-                        inline.Foreground = Brushes.DarkGray;
-                }
-                else
-                {
-                    int i = 0;
-                    var p = args[i] as Player;
-                    while (p == null && i < args.Length - 1)
+                    break;
+                case TraceEventType.Information:
+                    if ((id & EventIds.Chat) != 0)
+                        inline.FontWeight = FontWeights.Bold;
+                    if (args == null || args.GetUpperBound(0) == -1)
                     {
-                        i++;
-                        p = args[i] as Player;
+                        if ((id & EventIds.OtherPlayer) == 0)
+                            inline.Foreground = Brushes.DarkGray;
                     }
-                    if (p != null)
-                        inline.Foreground = new SolidColorBrush(p.Color);
                     else
-                        inline.Foreground = Brushes.Red;
-                }
+                    {
+                        int i = 0;
+                        var p = args[i] as Player;
+                        while (p == null && i < args.Length - 1)
+                        {
+                            i++;
+                            p = args[i] as Player;
+                        }
+                        if (p != null)
+                            inline.Foreground = new SolidColorBrush(p.Color);
+                        else
+                            inline.Foreground = Brushes.Red;
+                    }
+                    break;
             }
             return inline;
         }
@@ -200,14 +206,9 @@ namespace Octgn.Play.Gui
             return FormatInline(result, eventType, id);
         }
 
-        private Inline MergeArgs(string format, object[] args)
+        private static Inline MergeArgs(string format, IList<object> args, int startAt = 0)
         {
-            return MergeArgs(format, args, 0);
-        }
-
-        private Inline MergeArgs(string format, object[] args, int startAt)
-        {
-            for (int i = startAt; i < args.Length; i++)
+            for (int i = startAt; i < args.Count; i++)
             {
                 object arg = args[i];
                 string placeholder = "{" + i + "}";

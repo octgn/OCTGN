@@ -76,14 +76,12 @@ namespace Octgn.Play.Dialogs
         private void SetPicture(object sender, RoutedEventArgs e)
         {
             var img = sender as Image;
-            if (img != null)
+            if (img == null) return;
+            var element = img.DataContext as Deck.Element;
+            if (element != null)
             {
-                var element = img.DataContext as Deck.Element;
-                if (element != null)
-                {
-                    CardModel model = element.Card;
-                    ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
-                }
+                CardModel model = element.Card;
+                ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
             }
         }
 
@@ -168,14 +166,12 @@ namespace Octgn.Play.Dialogs
         private void MouseEnterCard(object sender, MouseEventArgs e)
         {
             var src = e.Source as FrameworkElement;
-            if (src != null)
+            if (src == null) return;
+            var element = src.DataContext as Deck.Element;
+            if (element != null)
             {
-                var element = src.DataContext as Deck.Element;
-                if (element != null)
-                {
-                    CardModel model = element.Card;
-                    RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
-                }
+                CardModel model = element.Card;
+                RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
             }
         }
 
@@ -201,11 +197,9 @@ namespace Octgn.Play.Dialogs
                 bool isOk = false;
                 foreach (FilterValue filterValue in restriction)
                 {
-                    if (filterValue.IsValueMatch(value))
-                    {
-                        isOk = true;
-                        break;
-                    }
+                    if (!filterValue.IsValueMatch(value)) continue;
+                    isOk = true;
+                    break;
                 }
                 if (!isOk) return false;
             }
@@ -446,8 +440,7 @@ namespace Octgn.Play.Dialogs
             public override bool IsValueMatch(object value)
             {
                 var strValue = value as string;
-                if (strValue == null) return false;
-                return regex.IsMatch(strValue);
+                return strValue != null && regex.IsMatch(strValue);
             }
         }
 

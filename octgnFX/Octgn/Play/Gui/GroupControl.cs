@@ -115,12 +115,10 @@ namespace Octgn.Play.Gui
         {
             ActionShortcut[] shortcuts = group.GroupShortcuts;
             ActionShortcut match = shortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e.KeyEventArgs));
-            if (match != null && group.TryToManipulate())
-            {
-                if (match.ActionDef.Execute != null)
-                    scriptEngine.ExecuteOnGroup(match.ActionDef.Execute, group);
-                e.Handled = e.KeyEventArgs.Handled = true;
-            }
+            if (match == null || !@group.TryToManipulate()) return;
+            if (match.ActionDef.Execute != null)
+                scriptEngine.ExecuteOnGroup(match.ActionDef.Execute, @group);
+            e.Handled = e.KeyEventArgs.Handled = true;
         }
 
         protected virtual void GroupChanged()
@@ -148,14 +146,12 @@ namespace Octgn.Play.Gui
 
         public void ExecuteDefaultAction()
         {
-            if (defaultGroupAction != null)
-            {
-                if (!group.TryToManipulate()) return;
-                group.KeepControl();
-                if (defaultGroupAction.Execute != null)
-                    scriptEngine.ExecuteOnGroup(defaultGroupAction.Execute, group);
-                group.ReleaseControl();
-            }
+            if (defaultGroupAction == null) return;
+            if (!@group.TryToManipulate()) return;
+            @group.KeepControl();
+            if (defaultGroupAction.Execute != null)
+                scriptEngine.ExecuteOnGroup(defaultGroupAction.Execute, @group);
+            @group.ReleaseControl();
         }
 
         internal int GetTurnAnimationDelay()
@@ -277,8 +273,7 @@ namespace Octgn.Play.Gui
         protected virtual List<Control> CreateGroupMenuItems(GroupDef def)
         {
             int nGroupActions = def.groupActions == null ? 0 : def.groupActions.Length;
-            var items = new List<Control>();
-            items.Add(CreateGroupHeader());
+            var items = new List<Control> {CreateGroupHeader()};
             for (int i = 0; i < nGroupActions; i++)
                 if (def.groupActions != null) items.Add(CreateGroupMenuItem(def.groupActions[i]));
 
@@ -392,10 +387,13 @@ namespace Octgn.Play.Gui
                                                                                 };
                                                         passToItem.Items.Add(playerItem);
                                                     }
-                                                if (!passToItem.HasItems)
+                                                if (passToItem.HasItems)
                                                 {
-                                                    var emptyItem = new MenuItem {Header = "no player"};
-                                                    emptyItem.IsEnabled = false;
+                                                }
+                                                else
+                                                {
+                                                    var emptyItem = new MenuItem
+                                                                        {Header = "no player", IsEnabled = false};
                                                     passToItem.Items.Add(emptyItem);
                                                 }
                                             };
@@ -424,7 +422,10 @@ namespace Octgn.Play.Gui
                                                                                 };
                                                         passToItem.Items.Add(playerItem);
                                                     }
-                                                if (!passToItem.HasItems)
+                                                if (passToItem.HasItems)
+                                                {
+                                                }
+                                                else
                                                 {
                                                     var emptyItem = new MenuItem
                                                                         {Header = "no player", IsEnabled = false};
@@ -514,10 +515,7 @@ namespace Octgn.Play.Gui
         {
             var header = new MenuItem {Header = group.Name};
             header.SetResourceReference(StyleProperty, "MenuHeader");
-            if (group.Controller != null)
-                header.Background = group.Controller.TransparentBrush;
-            else
-                header.Background = new SolidColorBrush(Color.FromArgb(100, 100, 100, 100));
+            header.Background = @group.Controller != null ? @group.Controller.TransparentBrush : new SolidColorBrush(Color.FromArgb(100, 100, 100, 100));
             return header;
         }
 

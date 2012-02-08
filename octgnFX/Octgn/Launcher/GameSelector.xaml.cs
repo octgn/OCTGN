@@ -28,12 +28,11 @@ namespace Octgn.Launcher
         {
             get
             {
-                if (games.Count == 0) return null;
+                return games.Count == 0 ? null : new Game(GameDef.FromO8G(games[selectedIdx].Filename));
                 //var serializer = new BinaryFormatter();
                 //var memStream = new MemoryStream(games[selectedIdx].Data);
                 //GameDef def = (GameDef)serializer.Deserialize(memStream);
                 //return new Game(def);
-                return new Game(GameDef.FromO8G(games[selectedIdx].Filename));
             }
         }
 
@@ -102,11 +101,9 @@ namespace Octgn.Launcher
                 ++i;
             }
 
-            if (games.Count > 0)
-            {
-                selectedIdx = 0;
-                nameText.Text = games[0].Name;
-            }
+            if (games.Count <= 0) return;
+            selectedIdx = 0;
+            nameText.Text = games[0].Name;
         }
 
         private void Select(object sender, RoutedEventArgs e)

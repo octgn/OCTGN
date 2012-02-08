@@ -220,7 +220,7 @@ namespace Octgn.Networking
         /// <param name="type"> An array containing the corresponding CardModel guids (encrypted) </param>
         /// <param name="groups"> An array indicating the group the cards must be loaded into. </param>
         /// <seealso cref="CreateCard(int[], ulong[], Group)">for a more efficient way to insert cards inside one group.</seealso>
-        private void CreateCard(int[] id, ulong[] type, Group[] groups)
+        private static void CreateCard(IList<int> id, IList<ulong> type, IList<Group> groups)
         {
             Player owner = Player.Find((byte) (id[0] >> 16));
             if (owner == null)
@@ -230,7 +230,7 @@ namespace Octgn.Networking
             }
             // Ignore cards created by oneself
             if (owner == Player.LocalPlayer) return;
-            for (int i = 0; i < id.Length; i++)
+            for (int i = 0; i < id.Count; i++)
             {
                 var c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 Group group = groups[i];
@@ -333,9 +333,7 @@ namespace Octgn.Networking
             for (int i = 0; i < id.Length; i++)
             {
                 if (type[i] == ulong.MaxValue) continue;
-                var ci = new CardIdentity(id[i]);
-                ci.Alias = true;
-                ci.Key = type[i];
+                var ci = new CardIdentity(id[i]) {Alias = true, Key = type[i]};
             }
         }
 
@@ -529,14 +527,17 @@ namespace Octgn.Networking
             ulong alias = 0;
             Guid id = Guid.Empty;
 
-            if (encrypted.Length == 2)
-                alias = Crypto.Decrypt(encrypted);
-            else if (encrypted.Length == 5)
-                id = Crypto.DecryptGuid(encrypted);
-            else
+            switch (encrypted.Length)
             {
-                Program.TraceWarning("[RevealTo] Invalid data received.");
-                return;
+                case 2:
+                    alias = Crypto.Decrypt(encrypted);
+                    break;
+                case 5:
+                    id = Crypto.DecryptGuid(encrypted);
+                    break;
+                default:
+                    Program.TraceWarning("[RevealTo] Invalid data received.");
+                    return;
             }
 
             if (!players.All(p => (card.Group.Visibility == GroupVisibility.Custom && card.Group.Viewers.Contains(p)) ||
@@ -580,13 +581,11 @@ namespace Octgn.Networking
                 }
             }
             // Else it's a type and we are the final recipients
-            if (sendToMyself)
-            {
-                if (card.Type.Model == null)
-                    card.SetModel(Database.GetCardById(id));
-                // Raise a notification
-                oldType.OnRevealed(card.Type);
-            }
+            if (!sendToMyself) return;
+            if (card.Type.Model == null)
+                card.SetModel(Database.GetCardById(id));
+            // Raise a notification
+            oldType.OnRevealed(card.Type);
         }
 
         public void Peek(Player player, Card card)
@@ -764,17 +763,15 @@ namespace Octgn.Networking
             var cards = new List<int>(g.Count);
             var types = new List<ulong>(g.Count);
             bool hasAlias = false;
-            for (int i = 0; i < g.Count; i++)
+            foreach (Card t in g)
             {
-                CardIdentity ci = g[i].Type;
-                if (ci.Alias)
+                CardIdentity ci = t.Type;
+                if (!ci.Alias) continue;
+                hasAlias = true;
+                if (ci.MySecret)
                 {
-                    hasAlias = true;
-                    if (ci.MySecret)
-                    {
-                        cards.Add(g[i].Id);
-                        types.Add(ci.Key);
-                    }
+                    cards.Add(t.Id);
+                    types.Add(ci.Key);
                 }
             }
             // Unalias cards that we know (if any)
@@ -852,14 +849,12 @@ namespace Octgn.Networking
                 return;
             }
             // If all cards are now revealed, one can proceed to shuffling
-            if (g != null && g.WantToShuffle)
-            {
-                bool done = false;
-                for (int i = 0; !done && i < g.Count; i++)
-                    done = g[i].Type.Alias;
-                if (!done)
-                    g.DoShuffle();
-            }
+            if (g == null || !g.WantToShuffle) return;
+            bool done = false;
+            for (int i = 0; !done && i < g.Count; i++)
+                done = g[i].Type.Alias;
+            if (!done)
+                g.DoShuffle();
         }
 
         public void PassTo(Player who, ControllableObject obj, Player player, bool requested)
@@ -1014,13 +1009,11 @@ namespace Octgn.Networking
 
         public void PlayerSetGlobalVariable(Player fromp, Player p, string name, string value)
         {
-            if (fromp.Id == p.Id)
-            {
-                if (p.GlobalVariables.ContainsKey(name))
-                    p.GlobalVariables[name] = value;
-                else
-                    p.GlobalVariables.Add(name, value);
-            }
+            if (fromp.Id != p.Id) return;
+            if (p.GlobalVariables.ContainsKey(name))
+                p.GlobalVariables[name] = value;
+            else
+                p.GlobalVariables.Add(name, value);
         }
 
         public void SetGlobalVariable(string name, string value)

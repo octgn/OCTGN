@@ -20,7 +20,7 @@ namespace Octgn.Play
         // Id of this object 
         protected ControllableObject(Player owner)
         {
-            this._owner = Controller = owner;
+            _owner = Controller = owner;
             _keepControl = 0;
         }
 

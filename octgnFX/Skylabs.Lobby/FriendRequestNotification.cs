@@ -22,11 +22,9 @@ namespace Skylabs.Lobby
             {
                 var fr = t as FriendRequestNotification;
                 if (fr == null) continue;
-                if (fr.User.Uid == User.Uid)
-                {
-                    LobbyClient.RemoveNotification(t);
-                    break;
-                }
+                if (fr.User.Uid != User.Uid) continue;
+                LobbyClient.RemoveNotification(t);
+                break;
             }
             Dismissed = true;
         }
@@ -42,11 +40,9 @@ namespace Skylabs.Lobby
             {
                 var fr = t as FriendRequestNotification;
                 if (fr == null) continue;
-                if (fr.User.Uid == User.Uid)
-                {
-                    LobbyClient.RemoveNotification(t);
-                    break;
-                }
+                if (fr.User.Uid != User.Uid) continue;
+                LobbyClient.RemoveNotification(t);
+                break;
             }
             Dismissed = true;
         }

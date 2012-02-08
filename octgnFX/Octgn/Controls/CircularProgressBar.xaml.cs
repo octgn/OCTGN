@@ -24,8 +24,7 @@ namespace ThreadingComponent
         {
             InitializeComponent();
             animationTimer = new DispatcherTimer(
-                DispatcherPriority.ContextIdle, Dispatcher);
-            animationTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+                DispatcherPriority.ContextIdle, Dispatcher) {Interval = new TimeSpan(0, 0, 0, 0, 100)};
         }
 
         #endregion Constructor
@@ -79,7 +78,7 @@ namespace ThreadingComponent
             SetPositions();
         }
 
-        private void SetPosition(Ellipse ellipse, double offset,
+        private static void SetPosition(FrameworkElement ellipse, double offset,
                                  double posOffSet, double step, double ew, double eh, double w, double h,
                                  double r)
         {

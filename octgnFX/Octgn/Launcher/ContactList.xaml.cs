@@ -35,22 +35,24 @@ namespace Octgn.Launcher
                                                  User[] flist = Program.LobbyClient.GetFriendsList();
                                                  foreach (User u in flist)
                                                  {
-                                                     var f = new FriendListItem();
-                                                     f.ThisUser = u;
-                                                     f.HorizontalAlignment = HorizontalAlignment.Stretch;
+                                                     var f = new FriendListItem
+                                                                 {
+                                                                     ThisUser = u,
+                                                                     HorizontalAlignment = HorizontalAlignment.Stretch
+                                                                 };
                                                      f.MouseDoubleClick += f_MouseDoubleClick;
                                                      stackPanel1.Children.Add(f);
                                                  }
                                                  foreach (ChatRoom cr in Program.LobbyClient.Chatting.Rooms)
                                                  {
-                                                     if (cr.Id == 0 || (cr.UserCount > 2))
-                                                     {
-                                                         var gi = new GroupChatListItem();
-                                                         gi.ThisRoom = cr;
-                                                         gi.HorizontalAlignment = HorizontalAlignment.Stretch;
-                                                         gi.MouseDoubleClick += gi_MouseDoubleClick;
-                                                         stackPanel1.Children.Add(gi);
-                                                     }
+                                                     if (cr.Id != 0 && (cr.UserCount <= 2)) continue;
+                                                     var gi = new GroupChatListItem
+                                                                  {
+                                                                      ThisRoom = cr,
+                                                                      HorizontalAlignment = HorizontalAlignment.Stretch
+                                                                  };
+                                                     gi.MouseDoubleClick += gi_MouseDoubleClick;
+                                                     stackPanel1.Children.Add(gi);
                                                  }
                                              }));
         }
@@ -63,54 +65,46 @@ namespace Octgn.Launcher
             }
         }
 
-        private void gi_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private static void gi_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var gi = sender as GroupChatListItem;
-            if (gi != null)
+            if (gi == null) return;
+            foreach (ChatWindow cw in Program.ChatWindows)
             {
-                foreach (ChatWindow cw in Program.ChatWindows)
+                if (gi.ThisRoom.Id != cw.ID) continue;
+                cw.Show();
+                return;
+            }
+            if (gi.ThisRoom.Id == 0)
+            {
+                var cw = new ChatWindow(0);
+                Program.ChatWindows.Add(cw);
+                cw.Show();
+            }
+        }
+
+
+        private static void f_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var fi = sender as FriendListItem;
+            if (fi == null) return;
+            foreach (ChatWindow cw in Program.ChatWindows)
+            {
+                long rid = cw.ID;
+                ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(rid);
+                if (cr == null) continue;
+                if (cr.Id == 0)
+                    continue;
+                if (cr.UserCount == 2 && cr.ContainsUser(Program.LobbyClient.Me) && cr.ContainsUser(fi.ThisUser))
                 {
-                    if (gi.ThisRoom.Id == cw.ID)
+                    if (cw.Visibility != Visibility.Visible)
                     {
                         cw.Show();
                         return;
                     }
                 }
-                if (gi.ThisRoom.Id == 0)
-                {
-                    var cw = new ChatWindow(0);
-                    Program.ChatWindows.Add(cw);
-                    cw.Show();
-                }
             }
-        }
-
-
-        private void f_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var fi = sender as FriendListItem;
-            if (fi != null)
-            {
-                foreach (ChatWindow cw in Program.ChatWindows)
-                {
-                    long rid = cw.ID;
-                    ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(rid);
-                    if (cr != null)
-                    {
-                        if (cr.Id == 0)
-                            continue;
-                        if (cr.UserCount == 2 && cr.ContainsUser(Program.LobbyClient.Me) && cr.ContainsUser(fi.ThisUser))
-                        {
-                            if (cw.Visibility != Visibility.Visible)
-                            {
-                                cw.Show();
-                                return;
-                            }
-                        }
-                    }
-                }
-                Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
-            }
+            Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

@@ -112,13 +112,11 @@ namespace Octgn
         public static void SaveLocation()
         {
             if (_locationUpdating) return;
-            if (LauncherWindow != null && LauncherWindow.IsLoaded)
-            {
-                _locationUpdating = true;
-                SimpleConfig.WriteValue("LoginLeftLoc", LauncherWindow.Left.ToString(CultureInfo.InvariantCulture));
-                SimpleConfig.WriteValue("LoginTopLoc", LauncherWindow.Top.ToString(CultureInfo.InvariantCulture));
-                _locationUpdating = false;
-            }
+            if (LauncherWindow == null || !LauncherWindow.IsLoaded) return;
+            _locationUpdating = true;
+            SimpleConfig.WriteValue("LoginLeftLoc", LauncherWindow.Left.ToString(CultureInfo.InvariantCulture));
+            SimpleConfig.WriteValue("LoginTopLoc", LauncherWindow.Top.ToString(CultureInfo.InvariantCulture));
+            _locationUpdating = false;
         }
 
         public static void Exit()

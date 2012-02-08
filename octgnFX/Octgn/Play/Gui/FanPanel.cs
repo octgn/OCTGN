@@ -102,15 +102,13 @@ namespace Octgn.Play.Gui
             CancelSpacing();
 
             // Space neighbors
-            if (idx < Children.Count)
+            if (idx >= Children.Count) return;
+            spacedItem2 = Children[idx];
+            SetSpacing(spacedItem2, SpacingWidth);
+            if (idx > 0)
             {
-                spacedItem2 = Children[idx];
-                SetSpacing(spacedItem2, SpacingWidth);
-                if (idx > 0)
-                {
-                    spacedItem1 = Children[idx - 1];
-                    SetSpacing(spacedItem1, -SpacingWidth);
-                }
+                spacedItem1 = Children[idx - 1];
+                SetSpacing(spacedItem1, -SpacingWidth);
             }
         }
 
@@ -130,14 +128,12 @@ namespace Octgn.Play.Gui
                 CancelSpacing(spacedItem1);
                 spacedItem1 = null;
             }
-            if (spacedItem2 != null)
-            {
-                CancelSpacing(spacedItem2);
-                spacedItem2 = null;
-            }
+            if (spacedItem2 == null) return;
+            CancelSpacing(spacedItem2);
+            spacedItem2 = null;
         }
 
-        private void CancelSpacing(UIElement element)
+        private static void CancelSpacing(UIElement element)
         {
             var group = (TransformGroup) element.RenderTransform;
             var translate = (TranslateTransform) group.Children[1];
@@ -146,7 +142,7 @@ namespace Octgn.Play.Gui
             translate.BeginAnimation(TranslateTransform.XProperty, animation);
         }
 
-        private void SetSpacing(UIElement element, int value)
+        private static void SetSpacing(UIElement element, int value)
         {
             var group = (TransformGroup) element.RenderTransform;
             var translate = (TranslateTransform) group.Children[1];
@@ -181,17 +177,15 @@ namespace Octgn.Play.Gui
         {
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
             // Set up the transformations
-            if (visualAdded != null)
-            {
-                var child = (UIElement) visualAdded;
-                child.RenderTransformOrigin = new Point(0, 0);
-                var group = new TransformGroup();
-                child.RenderTransform = group;
-                group.Children.Add(new ScaleTransform()); // Used for hover effects
-                group.Children.Add(new TranslateTransform()); // Y used for hover effects, X for drag and drop
-                group.Children.Add(new TranslateTransform()); // X used for layout to layout animations
-                SetXPosition(child, double.NaN);
-            }
+            if (visualAdded == null) return;
+            var child = (UIElement) visualAdded;
+            child.RenderTransformOrigin = new Point(0, 0);
+            var group = new TransformGroup();
+            child.RenderTransform = @group;
+            @group.Children.Add(new ScaleTransform()); // Used for hover effects
+            @group.Children.Add(new TranslateTransform()); // Y used for hover effects, X for drag and drop
+            @group.Children.Add(new TranslateTransform()); // X used for layout to layout animations
+            SetXPosition(child, double.NaN);
         }
 
         protected override Size MeasureOverride(Size availableSize)

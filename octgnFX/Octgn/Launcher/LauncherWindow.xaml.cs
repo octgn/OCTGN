@@ -78,10 +78,7 @@ namespace Octgn.Launcher
 
                                   e.Cancel = true;
                                   isInTransition = true;
-                                  if (e.NavigationMode == NavigationMode.Back)
-                                      transitionTarget = BackTarget;
-                                  else
-                                      transitionTarget = e.Content;
+                                  transitionTarget = e.NavigationMode == NavigationMode.Back ? BackTarget : e.Content;
                                   page.BeginAnimation(OpacityProperty, OutAnimation, HandoffBehavior.SnapshotAndReplace);
                               };
 
@@ -134,22 +131,19 @@ namespace Octgn.Launcher
 
         #endregion Constructors
 
-        private void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private static void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private void MyCommandExecute(object sender, ExecutedRoutedEventArgs e)
+        private static void MyCommandExecute(object sender, ExecutedRoutedEventArgs e)
         {
             //System.Diagnostics.XmlWriterTraceListener tr = new System.Diagnostics.XmlWriterTraceListener()
             if (Program.DebugWindow == null)
             {
                 Program.DebugWindow = new DWindow();
             }
-            if (Program.DebugWindow.Visibility == Visibility.Visible)
-                Program.DebugWindow.Visibility = Visibility.Hidden;
-            else
-                Program.DebugWindow.Visibility = Visibility.Visible;
+            Program.DebugWindow.Visibility = Program.DebugWindow.Visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
         }
     }
 }

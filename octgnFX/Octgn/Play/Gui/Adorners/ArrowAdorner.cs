@@ -32,21 +32,19 @@ namespace Octgn.Play.Gui
                                 var adornedCard = ((CardControl) AdornedElement);
                                 adornedCard.rotate90.Changed -= UpdateStartPoint;
                                 IsInvertedPropertyDescriptor.RemoveValueChanged(adornedCard, UpdateToPoint);
-                                if (toCard != null)
-                                {
-                                    DependencyPropertyDescriptor leftDescriptor =
-                                        DependencyPropertyDescriptor.FromProperty(Canvas.LeftProperty, typeof (Canvas));
-                                    DependencyPropertyDescriptor topDescriptor =
-                                        DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty, typeof (Canvas));
-                                    leftDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(toCard), UpdateToPoint);
-                                    topDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(toCard), UpdateToPoint);
-                                    leftDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(adornedCard),
-                                                                      UpdateToPoint);
-                                    topDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(adornedCard),
-                                                                     UpdateToPoint);
-                                    toCard.rotate90.Changed -= UpdateToPoint;
-                                    toCard.Unloaded -= RemoveFromLayer;
-                                }
+                                if (toCard == null) return;
+                                DependencyPropertyDescriptor leftDescriptor =
+                                    DependencyPropertyDescriptor.FromProperty(Canvas.LeftProperty, typeof (Canvas));
+                                DependencyPropertyDescriptor topDescriptor =
+                                    DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty, typeof (Canvas));
+                                leftDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(toCard), UpdateToPoint);
+                                topDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(toCard), UpdateToPoint);
+                                leftDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(adornedCard),
+                                                                  UpdateToPoint);
+                                topDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(adornedCard),
+                                                                 UpdateToPoint);
+                                toCard.rotate90.Changed -= UpdateToPoint;
+                                toCard.Unloaded -= RemoveFromLayer;
                             };
         }
 

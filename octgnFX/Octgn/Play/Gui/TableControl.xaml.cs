@@ -158,21 +158,19 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
             e.CardSize = CardSize;
 
-            if (Program.GameSettings.UseTwoSidedTable)
+            if (!Program.GameSettings.UseTwoSidedTable) return;
+            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            var cardCtrl = (CardControl) e.OriginalSource;
+            Card baseCard = cardCtrl.Card;
+            double mouseY = Mouse.GetPosition(cardsView).Y;
+            double baseY = (cardCtrl.IsInverted ||
+                            (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas))
+                               ? mouseY - cardDef.Height + e.MouseOffset.Y
+                               : mouseY - e.MouseOffset.Y;
+            foreach (CardDragAdorner adorner in e.Adorners)
             {
-                CardDef cardDef = Program.Game.Definition.CardDefinition;
-                var cardCtrl = (CardControl) e.OriginalSource;
-                Card baseCard = cardCtrl.Card;
-                double mouseY = Mouse.GetPosition(cardsView).Y;
-                double baseY = (cardCtrl.IsInverted ||
-                                (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas))
-                                   ? mouseY - cardDef.Height + e.MouseOffset.Y
-                                   : mouseY - e.MouseOffset.Y;
-                foreach (CardDragAdorner adorner in e.Adorners)
-                {
-                    double y = baseY + adorner.SourceCard.Card.Y - baseCard.Y;
-                    adorner.onHoverRequestInverted = IsInInvertedZone(y) ^ Player.LocalPlayer.InvertedTable;
-                }
+                double y = baseY + adorner.SourceCard.Card.Y - baseCard.Y;
+                adorner.onHoverRequestInverted = IsInInvertedZone(y) ^ Player.LocalPlayer.InvertedTable;
             }
         }
 
@@ -275,11 +273,9 @@ namespace Octgn.Play.Gui
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseLeftButtonDown(e);
-            if (Keyboard.IsKeyDown(Key.Space))
-            {
-                dragOperation = new Pan(this);
-                e.Handled = true;
-            }
+            if (!Keyboard.IsKeyDown(Key.Space)) return;
+            dragOperation = new Pan(this);
+            e.Handled = true;
         }
 
         protected override void OnPreviewMouseRightButtonUp(MouseButtonEventArgs e)
@@ -724,7 +720,7 @@ namespace Octgn.Play.Gui
                 layer.Remove(adorner);
             }
 
-            private Rect ComputeCardBounds(Card c, int w, int h)
+            private static Rect ComputeCardBounds(Card c, int w, int h)
             {
                 Rect result =
                     // Case 1: straight card

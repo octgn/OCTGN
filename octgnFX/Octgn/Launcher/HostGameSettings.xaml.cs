@@ -35,14 +35,12 @@ namespace Octgn.Launcher
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            if (!beginHost)
-            {
-                e.Handled = true;
-                beginHost = true;
-                ns = NavigationService;
-                Program.LobbyClient.BeginHostGame(EndHostGame, Game, textBox1.Text, textBox2.Text);
-                Program.ClientWindow.HostJoinTab();
-            }
+            if (beginHost) return;
+            e.Handled = true;
+            beginHost = true;
+            ns = NavigationService;
+            Program.LobbyClient.BeginHostGame(EndHostGame, Game, textBox1.Text, textBox2.Text);
+            Program.ClientWindow.HostJoinTab();
         }
 
         private void EndHostGame(SocketMessage sm)
@@ -51,25 +49,23 @@ namespace Octgn.Launcher
             Program.DebugTrace.TraceEvent(TraceEventType.Information, 0,
                                           "Connecting to port: " + port.ToString(CultureInfo.InvariantCulture));
             Program.LobbyClient.CurrentHostedGamePort = port;
-            if (port > -1)
-            {
-                Program.GameSettings.UseTwoSidedTable = true;
-                Program.Game = new Game(GameDef.FromO8G(Game.Filename));
-                Program.IsHost = true;
+            if (port <= -1) return;
+            Program.GameSettings.UseTwoSidedTable = true;
+            Program.Game = new Game(GameDef.FromO8G(Game.Filename));
+            Program.IsHost = true;
 #if(DEBUG)
-                var ad = new IPAddress[1];
-                IPAddress ip = IPAddress.Parse("127.0.0.1");
+            var ad = new IPAddress[1];
+            IPAddress ip = IPAddress.Parse("127.0.0.1");
 #else
                 var ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
                 IPAddress ip = ad[0];
 #endif
 
-                if (ad.Length > 0)
-                {
-                    Program.Client = new Client(ip, port);
-                    Program.Client.Connect();
-                    Dispatcher.Invoke(new Action(dothenavigate));
-                }
+            if (ad.Length > 0)
+            {
+                Program.Client = new Client(ip, port);
+                Program.Client.Connect();
+                Dispatcher.Invoke(new Action(dothenavigate));
             }
         }
 

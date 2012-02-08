@@ -86,7 +86,7 @@ namespace Octgn.Play
         internal Card(Player owner, int id, ulong key, CardDef def, CardModel model, bool mySecret)
             : base(owner)
         {
-            this._id = id;
+            _id = id;
             Type = new CardIdentity(id) {Alias = false, Key = key, Model = model, MySecret = mySecret};
             _definition = def;
             All.Add(id, this);

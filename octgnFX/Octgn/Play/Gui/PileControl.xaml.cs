@@ -27,13 +27,11 @@ namespace Octgn.Play.Gui
             base.GroupChanged();
             grid.ColumnDefinitions[0].Width = new GridLength(100*group.Def.Width/group.Def.Height);
             var pile = (Pile) group;
-            if (pile.AnimateInsertion)
-            {
-                pile.AnimateInsertion = false;
-                var doubleAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
-                                          {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
-            }
+            if (!pile.AnimateInsertion) return;
+            pile.AnimateInsertion = false;
+            var doubleAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
+                                      {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
         }
 
         private void CollapseClicked(object sender, RoutedEventArgs e)

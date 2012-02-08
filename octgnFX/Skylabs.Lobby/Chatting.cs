@@ -29,8 +29,7 @@ namespace Skylabs.Lobby
         public Chatting(LobbyClient c)
         {
             Parent = c;
-            Rooms = new List<ChatRoom>();
-            Rooms.Add(new ChatRoom(0));
+            Rooms = new List<ChatRoom> {new ChatRoom(0)};
         }
 
         public List<ChatRoom> Rooms { get; private set; }

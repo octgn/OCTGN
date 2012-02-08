@@ -59,11 +59,9 @@ namespace Octgn.Controls
         public void HideMessage()
         {
             var a = FindResource("sbHide") as Storyboard;
-            if (a != null)
-            {
-                a.Completed += a_Completed;
-                a.Begin();
-            }
+            if (a == null) return;
+            a.Completed += a_Completed;
+            a.Begin();
         }
 
         private void a_Completed(object sender, EventArgs e)

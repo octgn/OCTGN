@@ -45,8 +45,7 @@ namespace Octgn.Launcher
             stackPanel1.Children.Clear();
             foreach (Data.Game g in Program.GamesRepository.AllGames)
             {
-                var gs = new GameListItem();
-                gs.Game = g;
+                var gs = new GameListItem {Game = g};
                 //gs.MouseDoubleClick += new MouseButtonEventHandler(gs_MouseDoubleClick);
                 gs.MouseUp += gs_MouseUp;
                 stackPanel1.Children.Add(gs);
@@ -90,8 +89,7 @@ namespace Octgn.Launcher
 
         public void Install_Game()
         {
-            var ofd = new OpenFileDialog();
-            ofd.Filter = "Game definition files (*.o8g)|*.o8g";
+            var ofd = new OpenFileDialog {Filter = "Game definition files (*.o8g)|*.o8g"};
             if (ofd.ShowDialog() != true) return;
 
             //Fix def filename
