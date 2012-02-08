@@ -224,7 +224,7 @@ namespace Octgn.DeckBuilder
                 Deck.Save(sfd.FileName);
                 unsaved = false;
                 deckFilename = sfd.FileName;
-                Registry.WriteValue("lastFolder", Path.GetFileName(deckFilename));
+                SimpleConfig.WriteValue("lastFolder", Path.GetFileName(deckFilename));
             }
             catch (Exception ex)
             {
@@ -267,12 +267,12 @@ namespace Octgn.DeckBuilder
                           {
                               Filter = "OCTGN deck files (*.o8d) | *.o8d",
                               InitialDirectory =
-                                  ((game != null) && (Registry.ReadValue("lastFolder")) == "")
+                                  ((game != null) && (SimpleConfig.ReadValue("lastFolder")) == "")
                                       ? game.DefaultDecksPath
-                                      : Registry.ReadValue("lastFolder")
+                                      : SimpleConfig.ReadValue("lastFolder")
                           };
             if (ofd.ShowDialog() != true) return;
-            Registry.WriteValue("lastFolder", Path.GetDirectoryName(ofd.FileName));
+            SimpleConfig.WriteValue("lastFolder", Path.GetDirectoryName(ofd.FileName));
 
             // Try to load the file contents
             Deck newDeck;

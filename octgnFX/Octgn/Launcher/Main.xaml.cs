@@ -163,8 +163,8 @@ namespace Octgn.Launcher
 
         private void Main_Initialized(object sender, EventArgs e)
         {
-            Left = Settings.Default.MainLeftLoc;
-            Top = Settings.Default.MainTopLoc;
+            Left = double.Parse(SimpleConfig.ReadValue("MainLeftLoc", "100"));
+            Top = double.Parse(SimpleConfig.ReadValue("MainTopLoc", "100"));
         }
 
         private void SaveLocation()
@@ -172,9 +172,8 @@ namespace Octgn.Launcher
             if (!_locationUpdating)
             {
                 _locationUpdating = true;
-                Settings.Default.MainLeftLoc = Left;
-                Settings.Default.MainTopLoc = Top;
-                Settings.Default.Save();
+                SimpleConfig.WriteValue("MainLeftLoc", Left.ToString());
+                SimpleConfig.WriteValue("MainTopLoc", Top.ToString());
                 _locationUpdating = false;
             }
         }
@@ -529,7 +528,7 @@ namespace Octgn.Launcher
                                                  {
                                                      tbUsername.Text = Program.lobbyClient.Me.DisplayName;
                                                      tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
-                                                     Registry.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
+                                                     SimpleConfig.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
                                                  }
                                              }));
         }
