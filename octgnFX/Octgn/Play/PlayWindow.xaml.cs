@@ -390,6 +390,13 @@ namespace Octgn.Play
             }
         }
 
+        private void ShowRules(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var wnd = new RulesWindow() { Owner = this };
+            wnd.ShowDialog();
+        }
+
         internal void HideBackstage()
         {
             limitedTab.Visibility = Visibility.Collapsed;
@@ -439,7 +446,9 @@ namespace Octgn.Play
             HideBackstage();
         }
 
-        #endregion
+
+    #endregion
+
     }
 
     internal class CanPlayConverter : IMultiValueConverter
