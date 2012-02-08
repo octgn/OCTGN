@@ -213,9 +213,9 @@ namespace Octgn.DeckBuilder
                               AddExtension = true,
                               Filter = "OCTGN decks|*.o8d",
                               InitialDirectory =
-                                  (Settings.Default.DeckDirLastUsed == "")
+                                  SimpleConfig.ReadValue("DeckDirLastUsed", "none") == "none"
                                       ? Game.DefaultDecksPath
-                                      : Settings.Default.DeckDirLastUsed
+                                      : SimpleConfig.ReadValue("DeckDirLastUsed")
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
             try
