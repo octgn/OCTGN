@@ -392,6 +392,9 @@
     <Compile Include="Play\Dialogs\PickCardsDialog.xaml.cs">
       <DependentUpon>PickCardsDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Play\Dialogs\RulesWindow.xaml.cs">
+      <DependentUpon>RulesWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\Gui\Adorners\ArrowAdorner.cs" />
     <Compile Include="Play\Gui\Adorners\SelectAdorner.cs" />
@@ -596,6 +599,7 @@
     <Resource Include="Resources\Icons\image_link_small.png" />
     <Resource Include="Resources\chaticon.png" />
     <Resource Include="Resources\Icons\console.png" />
+    <Resource Include="Resources\Icons\rules.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -785,6 +789,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Play\Dialogs\PickCardsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Dialogs\RulesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
