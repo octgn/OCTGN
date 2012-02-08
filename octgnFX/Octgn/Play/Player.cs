@@ -246,6 +246,7 @@ namespace Octgn.Play
             for (int i = 0; i < Counters.Length; i++)
                 if (globalDef.Counters != null) Counters[i] = new Counter(this, globalDef.Counters[i]);
             // Create global's lPlayer groups
+            // TODO: This could fail with a run-time exception on write, make it safe
             _groups = new Pile[globalDef.Groups != null ? g.GlobalDefinition.Groups.Length + 1 : 0];
             for (int i = 1; i < IndexedGroups.Length; i++)
                 if (globalDef.Groups != null) _groups[i] = new Pile(this, globalDef.Groups[i - 1]);

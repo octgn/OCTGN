@@ -16,13 +16,13 @@ using Octgn.Play.Actions;
 
 namespace Octgn.Play.Gui
 {
-    internal partial class TableControl
+    partial class TableControl
     {
         private readonly int _defaultHeight;
         private readonly int _defaultWidth;
         private Size _cardSize;
-        private IDragOperation dragOperation;
-        protected bool isCardSizeValid;
+        private IDragOperation _dragOperation;
+        protected bool IsCardSizeValid;
 
         public TableControl()
         {
@@ -45,7 +45,7 @@ namespace Octgn.Play.Gui
             _defaultHeight = Program.Game.Definition.CardDefinition.Height;
             SizeChanged += delegate
                                {
-                                   isCardSizeValid = false;
+                                   IsCardSizeValid = false;
                                    AspectRatioChanged();
                                };
             MoveCard.Done += CardMoved;
@@ -62,14 +62,14 @@ namespace Octgn.Play.Gui
         {
             get
             {
-                if (!isCardSizeValid)
+                if (!IsCardSizeValid)
                 {
                     double scale = Math.Min(ActualWidth/Program.Game.Definition.TableDefinition.Width,
                                             ActualHeight/Program.Game.Definition.TableDefinition.Height);
                     scale *= Zoom;
                     _cardSize = new Size(Program.Game.Definition.CardDefinition.Width*scale,
                                          Program.Game.Definition.CardDefinition.Height*scale);
-                    isCardSizeValid = true;
+                    IsCardSizeValid = true;
                 }
                 return _cardSize;
             }
@@ -143,14 +143,14 @@ namespace Octgn.Play.Gui
         private void CardMoved(object sender, EventArgs e)
         {
             var action = (MoveCard) sender;
-            if (action.to == group)
-                BringCardIntoView(action.card);
+            if (action.To == group)
+                BringCardIntoView(action.Card);
         }
 
         private void CardCreated(object sender, EventArgs e)
         {
             var action = (CreateCard) sender;
-            BringCardIntoView(action.card);
+            BringCardIntoView(action.Card);
         }
 
         protected override void OnCardOver(object sender, CardsEventArgs e)
@@ -170,7 +170,7 @@ namespace Octgn.Play.Gui
             foreach (CardDragAdorner adorner in e.Adorners)
             {
                 double y = baseY + adorner.SourceCard.Card.Y - baseCard.Y;
-                adorner.onHoverRequestInverted = IsInInvertedZone(y) ^ Player.LocalPlayer.InvertedTable;
+                adorner.OnHoverRequestInverted = IsInInvertedZone(y) ^ Player.LocalPlayer.InvertedTable;
             }
         }
 
@@ -274,14 +274,14 @@ namespace Octgn.Play.Gui
         {
             base.OnPreviewMouseLeftButtonDown(e);
             if (!Keyboard.IsKeyDown(Key.Space)) return;
-            dragOperation = new Pan(this);
+            _dragOperation = new Pan(this);
             e.Handled = true;
         }
 
         protected override void OnPreviewMouseRightButtonUp(MouseButtonEventArgs e)
         {
             // Prevents popup menu from opening during DnD operations, which may result in e.g. stuck selection rectangles
-            if (dragOperation == null)
+            if (_dragOperation == null)
                 base.OnPreviewMouseRightButtonUp(e);
             else
                 e.Handled = true;
@@ -290,14 +290,14 @@ namespace Octgn.Play.Gui
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
-            dragOperation = new SelectCards(this);
+            _dragOperation = new SelectCards(this);
             e.Handled = true;
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            if (dragOperation != null)
-                dragOperation.Dragging(e);
+            if (_dragOperation != null)
+                _dragOperation.Dragging(e);
             base.OnMouseMove(e);
         }
 
@@ -306,10 +306,10 @@ namespace Octgn.Play.Gui
             switch (e.ChangedButton)
             {
                 case MouseButton.Left:
-                    if (dragOperation != null)
+                    if (_dragOperation != null)
                     {
-                        dragOperation.EndDrag();
-                        dragOperation = null;
+                        _dragOperation.EndDrag();
+                        _dragOperation = null;
                     }
                     e.Handled = true;
                     break;
@@ -337,7 +337,7 @@ namespace Octgn.Play.Gui
         public static readonly DependencyProperty YCenterOffsetProperty =
             DependencyProperty.Register("YCenterOffset", typeof (double), typeof (TableControl));
 
-        private DispatcherOperation updateYCenterOperation;
+        private DispatcherOperation _updateYCenterOperation;
 
         public double Zoom
         {
@@ -364,7 +364,7 @@ namespace Octgn.Play.Gui
 
         protected void ZoomChanged()
         {
-            isCardSizeValid = false;
+            IsCardSizeValid = false;
             UpdateYCenterOffset();
         }
 
@@ -381,12 +381,12 @@ namespace Octgn.Play.Gui
         protected void UpdateYCenterOffset()
         {
             // Don't queue the update multiple times (could happen e.g. when updating the Offset and then the Zoom property)
-            if (updateYCenterOperation != null && updateYCenterOperation.Status == DispatcherOperationStatus.Pending)
+            if (_updateYCenterOperation != null && _updateYCenterOperation.Status == DispatcherOperationStatus.Pending)
                 return;
 
             // Bug fix: if done immediately, the layout is slightly incorrect (e.g. in the case of mouse wheel zoom).
             // so we dispatch the update until all transforms are updated.         
-            updateYCenterOperation = Dispatcher.BeginInvoke(new Action(delegate
+            _updateYCenterOperation = Dispatcher.BeginInvoke(new Action(delegate
                                                                            {
                                                                                Point pt =
                                                                                    cardsView.TransformToAncestor(this).
@@ -398,7 +398,7 @@ namespace Octgn.Play.Gui
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
             e.Handled = true;
-            isCardSizeValid = false;
+            IsCardSizeValid = false;
 
             Point center = e.GetPosition(cardsView);
             double oldZoom = Zoom; // May be animated
@@ -423,8 +423,8 @@ namespace Octgn.Play.Gui
 
         #region Table extents
 
-        private double logicalRatio;
-        private Size stretchMargins;
+        private double _logicalRatio;
+        private Size _stretchMargins;
 
         protected void AspectRatioChanged()
         {
@@ -435,15 +435,15 @@ namespace Octgn.Play.Gui
 
             if (wRatio < hRatio)
             {
-                logicalRatio = wRatio;
-                stretchMargins.Width = 0;
-                stretchMargins.Height = Math.Max((ActualHeight/wRatio - tHeight)/2, 0);
+                _logicalRatio = wRatio;
+                _stretchMargins.Width = 0;
+                _stretchMargins.Height = Math.Max((ActualHeight/wRatio - tHeight)/2, 0);
             }
             else
             {
-                logicalRatio = hRatio;
-                stretchMargins.Width = Math.Max((ActualWidth/logicalRatio - tWidth)/2, 0);
-                stretchMargins.Height = 0;
+                _logicalRatio = hRatio;
+                _stretchMargins.Width = Math.Max((ActualWidth/_logicalRatio - tWidth)/2, 0);
+                _stretchMargins.Height = 0;
             }
 
             UpdateYCenterOffset();
@@ -475,11 +475,11 @@ namespace Octgn.Play.Gui
 
             // Compute the zoom and offset corresponding to the new view
             double newZoom = Math.Min(
-                (Program.Game.Table.Definition.Width + 2*stretchMargins.Width)/newBounds.Width,
-                (Program.Game.Table.Definition.Height + 2*stretchMargins.Height)/newBounds.Height);
+                (Program.Game.Table.Definition.Width + 2*_stretchMargins.Width)/newBounds.Width,
+                (Program.Game.Table.Definition.Height + 2*_stretchMargins.Height)/newBounds.Height);
             var newOffset = new Vector(
-                -stretchMargins.Width - newBounds.X*newZoom,
-                -stretchMargins.Height - newBounds.Y*newZoom);
+                -_stretchMargins.Width - newBounds.X*newZoom,
+                -_stretchMargins.Height - newBounds.Y*newZoom);
 
             // Combine new values with the current ones 
             // (bypassing animations, e.g. when moving several cards outside the bounds at the same time
@@ -560,17 +560,17 @@ namespace Octgn.Play.Gui
 
         #region Context menu
 
-        protected Point contextMenuPosition;
+        protected Point ContextMenuPosition;
 
         protected override void OnContextMenuOpening(ContextMenuEventArgs e)
         {
-            contextMenuPosition = MousePosition();
+            ContextMenuPosition = MousePosition();
             base.OnContextMenuOpening(e);
         }
 
         internal override void ShowContextMenu(Card card, bool showGroupActions = true)
         {
-            contextMenuPosition = MousePosition();
+            ContextMenuPosition = MousePosition();
             base.ShowContextMenu(card, card == null); // Don't show group actions when a card is selected on table
         }
 
@@ -584,7 +584,7 @@ namespace Octgn.Play.Gui
                                   Header = Program.Game.Definition.PlayerDefinition.Hand.Name,
                                   InputGestureText = Program.Game.Definition.PlayerDefinition.Hand.Shortcut
                               };
-            subItem.Click += delegate { Selection.Do(c => c.MoveTo(Player.LocalPlayer.Hand, true), contextCard); };
+            subItem.Click += delegate { Selection.Do(c => c.MoveTo(Player.LocalPlayer.Hand, true), ContextCard); };
             item.Items.Add(subItem);
             GroupDef[] groupDefs = Program.Game.Definition.PlayerDefinition.Groups;
             var moveToBottomItems = new List<MenuItem>();
@@ -593,7 +593,7 @@ namespace Octgn.Play.Gui
                 GroupDef groupDef = groupDefs[i];
                 Group indexedGroup = Player.LocalPlayer.IndexedGroups[i + 1]; // 0 is hand
                 subItem = new MenuItem {Header = groupDef.Name, InputGestureText = groupDef.Shortcut};
-                subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true), contextCard); };
+                subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true), ContextCard); };
                 item.Items.Add(subItem);
                 subItem = new MenuItem
                               {
@@ -602,7 +602,7 @@ namespace Octgn.Play.Gui
                                       string.IsNullOrEmpty(groupDef.Shortcut) ? null : "Alt+" + groupDef.Shortcut
                               };
                 subItem.Click +=
-                    delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, indexedGroup.Count), contextCard); };
+                    delegate { Selection.Do(c => c.MoveTo(indexedGroup, true, indexedGroup.Count), ContextCard); };
                 moveToBottomItems.Add(subItem);
             }
             if (moveToBottomItems.Count > 0) item.Items.Add(new Separator());
@@ -610,11 +610,11 @@ namespace Octgn.Play.Gui
             items.Add(item);
 
             item = new MenuItem {Header = "Bring to front", InputGestureText = "PgUp"};
-            item.Click += delegate { Selection.Do(c => Program.Game.Table.BringToFront(c), contextCard); };
+            item.Click += delegate { Selection.Do(c => Program.Game.Table.BringToFront(c), ContextCard); };
             items.Add(item);
 
             item = new MenuItem {Header = "Send to back", InputGestureText = "PgDn"};
-            item.Click += delegate { Selection.Do(c => Program.Game.Table.SendToBack(c), contextCard); };
+            item.Click += delegate { Selection.Do(c => Program.Game.Table.SendToBack(c), ContextCard); };
             items.Add(item);
 
             return items;
@@ -624,18 +624,18 @@ namespace Octgn.Play.Gui
         {
             var action = (ActionDef) ((MenuItem) sender).Tag;
             if (action.Execute != null)
-                scriptEngine.ExecuteOnGroup(action.Execute, group, contextMenuPosition);
+                ScriptEngine.ExecuteOnGroup(action.Execute, group, ContextMenuPosition);
         }
 
         protected override void CardActionClicked(object sender, RoutedEventArgs e)
         {
             var action = (ActionDef) ((MenuItem) sender).Tag;
             if (action.Execute != null)
-                scriptEngine.ExecuteOnCards(action.Execute, Selection.ExtendToSelection(contextCard),
-                                            contextMenuPosition);
+                ScriptEngine.ExecuteOnCards(action.Execute, Selection.ExtendToSelection(ContextCard),
+                                            ContextMenuPosition);
             else if (action.BatchExecute != null)
-                scriptEngine.ExecuteOnBatch(action.BatchExecute, Selection.ExtendToSelection(contextCard),
-                                            contextMenuPosition);
+                ScriptEngine.ExecuteOnBatch(action.BatchExecute, Selection.ExtendToSelection(ContextCard),
+                                            ContextMenuPosition);
         }
 
         #endregion
@@ -657,8 +657,8 @@ namespace Octgn.Play.Gui
 
             protected override void DraggingCore(Point position, Vector delta)
             {
-                target.Offset += delta/target.logicalRatio;
-                target.BeginAnimation(OffsetProperty, null);
+                Target.Offset += delta/Target._logicalRatio;
+                Target.BeginAnimation(OffsetProperty, null);
                 // Stop any animation, which could override the current Offset
             }
 
@@ -673,8 +673,8 @@ namespace Octgn.Play.Gui
 
         private sealed class SelectCards : DragOperation<TableControl>
         {
-            private SelectAdorner adorner;
-            private Point fromPt;
+            private SelectAdorner _adorner;
+            private Point _fromPt;
 
             public SelectCards(TableControl table)
                 : base(table)
@@ -683,20 +683,20 @@ namespace Octgn.Play.Gui
 
             protected override void StartDragCore(Point position)
             {
-                fromPt = position;
-                adorner = new SelectAdorner(target) {Rectangle = new Rect(position, position)};
-                AdornerLayer layer = AdornerLayer.GetAdornerLayer(target);
-                layer.Add(adorner);
+                _fromPt = position;
+                _adorner = new SelectAdorner(Target) {Rectangle = new Rect(position, position)};
+                AdornerLayer layer = AdornerLayer.GetAdornerLayer(Target);
+                layer.Add(_adorner);
             }
 
             protected override void DraggingCore(Point position, Vector delta)
             {
                 // Update adorner
-                var rect = new Rect(fromPt, position);
-                adorner.Rectangle = rect;
+                var rect = new Rect(_fromPt, position);
+                _adorner.Rectangle = rect;
 
                 // Get position in table space
-                GeneralTransform transform = target.TransformToDescendant(target.cardsView);
+                GeneralTransform transform = Target.TransformToDescendant(Target.cardsView);
                 rect = transform.TransformBounds(rect);
                 int width = Program.Game.Definition.CardDefinition.Width;
                 int height = Program.Game.Definition.CardDefinition.Height;
@@ -705,7 +705,7 @@ namespace Octgn.Play.Gui
                 Selection.RemoveAll(card => !rect.IntersectsWith(ComputeCardBounds(card, width, height)));
 
                 // Add cards which entered the selection rectangle
-                ObservableCollection<Card> allCards = target.group.Cards;
+                ObservableCollection<Card> allCards = Target.group.Cards;
                 IEnumerable<Card> cards = from card in allCards
                                           where card.Controller == Player.LocalPlayer
                                                 && !card.Selected
@@ -716,8 +716,8 @@ namespace Octgn.Play.Gui
 
             protected override void EndDragCore()
             {
-                AdornerLayer layer = AdornerLayer.GetAdornerLayer(target);
-                layer.Remove(adorner);
+                AdornerLayer layer = AdornerLayer.GetAdornerLayer(Target);
+                layer.Remove(_adorner);
             }
 
             private static Rect ComputeCardBounds(Card c, int w, int h)

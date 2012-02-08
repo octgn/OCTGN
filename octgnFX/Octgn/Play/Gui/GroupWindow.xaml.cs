@@ -22,11 +22,11 @@ namespace Octgn.Play.Gui
 
     public partial class GroupWindow
     {
-        private readonly Group group;
-        private readonly int id;
-        private readonly PilePosition position;
-        private int count;
-        private bool shouldNotifyClose;
+        private readonly Group _group;
+        private readonly int _id;
+        private readonly PilePosition _position;
+        private int _count;
+        private bool _shouldNotifyClose;
 
         public GroupWindow()
         {
@@ -36,10 +36,10 @@ namespace Octgn.Play.Gui
         public GroupWindow(Group group, PilePosition position, int count)
             : this()
         {
-            id = Program.Game.GetUniqueId();
-            this.position = position;
-            this.count = count;
-            DataContext = this.group = group;
+            _id = Program.Game.GetUniqueId();
+            this._position = position;
+            this._count = count;
+            DataContext = this._group = group;
 
             switch (position)
             {
@@ -76,24 +76,24 @@ namespace Octgn.Play.Gui
         protected override void OnClose()
         {
             base.OnClose();
-            if (shouldNotifyClose)
+            if (_shouldNotifyClose)
                 SendLookAtRpc(false);
-            ((INotifyCollectionChanged) group.Cards).CollectionChanged -= CardsChanged;
+            ((INotifyCollectionChanged) _group.Cards).CollectionChanged -= CardsChanged;
         }
 
         private void SendLookAtRpc(bool look)
         {
-            shouldNotifyClose = look;
-            switch (position)
+            _shouldNotifyClose = look;
+            switch (_position)
             {
                 case PilePosition.All:
-                    Program.Client.Rpc.LookAtReq(id, group, look);
+                    Program.Client.Rpc.LookAtReq(_id, _group, look);
                     break;
                 case PilePosition.Top:
-                    Program.Client.Rpc.LookAtTopReq(id, group, count, look);
+                    Program.Client.Rpc.LookAtTopReq(_id, _group, _count, look);
                     break;
                 case PilePosition.Bottom:
-                    Program.Client.Rpc.LookAtBottomReq(id, group, count, look);
+                    Program.Client.Rpc.LookAtBottomReq(_id, _group, _count, look);
                     break;
             }
         }
@@ -106,7 +106,7 @@ namespace Octgn.Play.Gui
         private void CloseAndShuffleClicked(object sender, RoutedEventArgs e)
         {
             Close();
-            var pile = group as Pile;
+            var pile = _group as Pile;
             if (pile != null) pile.Shuffle();
         }
 
@@ -186,11 +186,11 @@ namespace Octgn.Play.Gui
                     var card = e.OldItems[0] as Card;
                     if (!cards.Contains(card)) break;
 
-                    if ((position == PilePosition.Top && e.NewStartingIndex >= count) ||
-                        (position == PilePosition.Bottom && e.NewStartingIndex < group.Count - count))
+                    if ((_position == PilePosition.Top && e.NewStartingIndex >= _count) ||
+                        (_position == PilePosition.Bottom && e.NewStartingIndex < _group.Count - _count))
                     {
                         cards.Remove(card);
-                        count--;
+                        _count--;
                     }
                     else
                     {

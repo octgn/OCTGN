@@ -78,11 +78,9 @@ namespace Octgn.Play.Dialogs
             var img = sender as Image;
             if (img == null) return;
             var element = img.DataContext as Deck.Element;
-            if (element != null)
-            {
-                CardModel model = element.Card;
-                ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
-            }
+            if (element == null) return;
+            CardModel model = element.Card;
+            ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
         }
 
         private void PickPoolCard(object sender, RoutedEventArgs e)
@@ -168,11 +166,9 @@ namespace Octgn.Play.Dialogs
             var src = e.Source as FrameworkElement;
             if (src == null) return;
             var element = src.DataContext as Deck.Element;
-            if (element != null)
-            {
-                CardModel model = element.Card;
-                RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
-            }
+            if (element == null) return;
+            CardModel model = element.Card;
+            RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
         }
 
         private void MouseLeaveCard(object sender, MouseEventArgs e)
@@ -182,15 +178,15 @@ namespace Octgn.Play.Dialogs
 
         #region Filters
 
-        private readonly List<FilterValue> activeRestrictions = new List<FilterValue>();
+        private readonly List<FilterValue> _activeRestrictions = new List<FilterValue>();
 
         private bool FilterCard(object c)
         {
-            if (activeRestrictions == null || activeRestrictions.Count == 0)
+            if (_activeRestrictions == null || _activeRestrictions.Count == 0)
                 return true;
             var card = (CardModel) c;
 
-            foreach (var restriction in activeRestrictions.GroupBy(fv => fv.Property))
+            foreach (var restriction in _activeRestrictions.GroupBy(fv => fv.Property))
             {
                 PropertyDef prop = restriction.Key;
                 object value = card.Properties[prop.Name];
@@ -234,7 +230,7 @@ namespace Octgn.Play.Dialogs
 
         private void UpdateFilters()
         {
-            activeRestrictions.Clear();
+            _activeRestrictions.Clear();
             foreach (Filter filter in Filters)
             {
                 PropertyDef prop = filter.Property;
@@ -300,7 +296,7 @@ namespace Octgn.Play.Dialogs
         {
             var src = ((FrameworkElement) sender);
             var filterValue = (FilterValue) src.DataContext;
-            activeRestrictions.Add(filterValue);
+            _activeRestrictions.Add(filterValue);
             CardPoolView.Refresh();
         }
 
@@ -308,7 +304,7 @@ namespace Octgn.Play.Dialogs
         {
             var src = ((FrameworkElement) sender);
             var filterValue = (FilterValue) src.DataContext;
-            activeRestrictions.Remove(filterValue);
+            _activeRestrictions.Remove(filterValue);
             CardPoolView.Refresh();
         }
 
@@ -316,18 +312,18 @@ namespace Octgn.Play.Dialogs
 
         #region Quantity popup
 
-        private Action<int> quantityPopupAction;
+        private Action<int> _quantityPopupAction;
 
         private void OpenQuantityPopup(Action<int> qtyAction)
         {
-            quantityPopupAction = qtyAction;
+            _quantityPopupAction = qtyAction;
             quantityPopup.IsOpen = true;
             quantityBox.Text = "1";
             quantityBox.Focus();
             quantityBox.SelectAll();
         }
 
-        private void QuantityBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void QuantityBoxPreviewKeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -336,7 +332,7 @@ namespace Octgn.Play.Dialogs
                     int qty;
                     if (!int.TryParse(quantityBox.Text, out qty)) return;
                     if (qty < 1) return;
-                    quantityPopupAction(qty);
+                    _quantityPopupAction(qty);
                     quantityPopup.IsOpen = false;
                     break;
                 case Key.Escape:
@@ -346,7 +342,7 @@ namespace Octgn.Play.Dialogs
             }
         }
 
-        private void QuantityBox_LostFocus(object sender, RoutedEventArgs e)
+        private void QuantityBoxLostFocus(object sender, RoutedEventArgs e)
         {
             quantityPopup.IsOpen = false;
         }
@@ -425,7 +421,7 @@ namespace Octgn.Play.Dialogs
         {
             private string _value;
 
-            private Regex regex;
+            private Regex _regex;
 
             public string Value
             {
@@ -433,14 +429,14 @@ namespace Octgn.Play.Dialogs
                 set
                 {
                     _value = value;
-                    regex = new Regex(@"(^|\s)" + value + @"($|\s)", RegexOptions.Compiled);
+                    _regex = new Regex(@"(^|\s)" + value + @"($|\s)", RegexOptions.Compiled);
                 }
             }
 
             public override bool IsValueMatch(object value)
             {
                 var strValue = value as string;
-                return strValue != null && regex.IsMatch(strValue);
+                return strValue != null && _regex.IsMatch(strValue);
             }
         }
 

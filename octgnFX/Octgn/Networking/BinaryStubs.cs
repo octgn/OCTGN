@@ -1011,18 +1011,18 @@ namespace Octgn.Networking
 
     public class BinarySenderStub : BaseBinaryStub
     {
-        private readonly TcpClient to;
+        private readonly TcpClient _to;
 
         public BinarySenderStub(TcpClient to)
         {
-            this.to = to;
+            this._to = to;
         }
 
         protected override void Send(byte[] data)
         {
             try
             {
-                Stream stream = to.GetStream();
+                Stream stream = _to.GetStream();
                 stream.Write(data, 0, data.Length);
                 stream.Flush();
             }

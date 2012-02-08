@@ -40,7 +40,7 @@
       </StackPanel>
     </Border>
     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-      <Button Content="OK" MinWidth="100" Margin="2,0" Click="OKClicked" />
+      <Button Content="OK" MinWidth="100" Margin="2,0" Click="OkClicked" />
       <Button Content="Cancel" MinWidth="100" Margin="2,0" Click="CancelClicked" />
     </StackPanel>
   </Grid>

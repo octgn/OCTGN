@@ -97,7 +97,7 @@ namespace Octgn.Launcher
             PatchFolder = true;
         }
 
-        private void OKClicked(object sender, RoutedEventArgs e)
+        private void OkClicked(object sender, RoutedEventArgs e)
         {
             Close();
             if (PatchFileName == null || (!PatchInstalledSets && (!PatchFolder || TargetFolderName == null))) return;

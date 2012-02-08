@@ -51,10 +51,10 @@ namespace Octgn.Play.Gui
         {
             var action = (MoveCard) sender;
             Table table = Program.Game.Table;
-            if (action.who == Player.LocalPlayer || action.to != table || action.from != table)
+            if (action.Who == Player.LocalPlayer || action.To != table || action.From != table)
                 return;
 
-            AnimateMove(action.card, action.x, action.y);
+            AnimateMove(action.Card, action.X, action.Y);
         }
 
         private void AnimateMove(Card card, double x, double y)
@@ -94,12 +94,12 @@ namespace Octgn.Play.Gui
 
             foreach (ContentPresenter child in Children)
             {
-                if (targetAction.fromCard == child.DataContext)
+                if (targetAction.FromCard == child.DataContext)
                 {
                     fromCard = VisualTreeHelper.GetChild(child, 0) as CardControl;
                     if (toCard != null) break;
                 }
-                else if (targetAction.toCard == child.DataContext)
+                else if (targetAction.ToCard == child.DataContext)
                 {
                     toCard = VisualTreeHelper.GetChild(child, 0) as CardControl;
                     if (fromCard != null) break;
@@ -107,8 +107,8 @@ namespace Octgn.Play.Gui
             }
 
             if (fromCard == null || toCard == null) return;
-            fromCard.CreateArrowTo(targetAction.who, toCard);
-            targetAction.fromCard.TargetsOtherCards = true;
+            fromCard.CreateArrowTo(targetAction.Who, toCard);
+            targetAction.FromCard.TargetsOtherCards = true;
         }
 
         private void Untargetting(object sender, EventArgs e)
@@ -116,7 +116,7 @@ namespace Octgn.Play.Gui
             var targetAction = (Target) sender;
             CardControl card = null;
             foreach (ContentPresenter child in Children)
-                if (child.DataContext == targetAction.fromCard)
+                if (child.DataContext == targetAction.FromCard)
                 {
                     card = VisualTreeHelper.GetChild(child, 0) as CardControl;
                     break;
@@ -132,7 +132,7 @@ namespace Octgn.Play.Gui
                 if (arrow != null) layer.Remove(arrow);
             }
 
-            targetAction.fromCard.TargetsOtherCards = false;
+            targetAction.FromCard.TargetsOtherCards = false;
         }
     }
 }

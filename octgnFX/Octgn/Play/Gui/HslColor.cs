@@ -7,33 +7,33 @@ namespace Octgn.Play.Gui
 {
     public struct HslColor
     {
-        private float hue;
-        private float luminance;
-        private float saturation;
+        private float _hue;
+        private float _luminance;
+        private float _saturation;
 
         public HslColor(Color c) : this()
         {
-            hue = saturation = luminance = 0;
+            _hue = _saturation = _luminance = 0;
             Alpha = 0;
             FromRgba(c.ScR, c.ScG, c.ScB, c.A);
         }
 
         public float Hue
         {
-            get { return hue; }
-            set { Clamp(value, out hue); }
+            get { return _hue; }
+            set { Clamp(value, out _hue); }
         }
 
         public float Saturation
         {
-            get { return saturation; }
-            set { Clamp(value, out saturation); }
+            get { return _saturation; }
+            set { Clamp(value, out _saturation); }
         }
 
         public float Luminance
         {
-            get { return luminance; }
-            set { Clamp(value, out luminance); }
+            get { return _luminance; }
+            set { Clamp(value, out _luminance); }
         }
 
         public byte Alpha { get; private set; }
@@ -42,19 +42,19 @@ namespace Octgn.Play.Gui
         {
             double red, green, blue;
 
-            if (Math.Abs(c.saturation - 0) < float.Epsilon)
-                red = green = blue = c.luminance;
+            if (Math.Abs(c._saturation - 0) < float.Epsilon)
+                red = green = blue = c._luminance;
             else
             {
-                double m2 = c.luminance <= 0.5f
-                                ? c.luminance*(1 + c.saturation)
-                                : c.luminance + c.saturation - c.luminance*c.saturation;
+                double m2 = c._luminance <= 0.5f
+                                ? c._luminance*(1 + c._saturation)
+                                : c._luminance + c._saturation - c._luminance*c._saturation;
 
-                double m1 = (2*c.luminance) - m2;
+                double m1 = (2*c._luminance) - m2;
 
-                red = HueToRgb(m1, m2, c.hue + (1/3f));
-                green = HueToRgb(m1, m2, c.hue);
-                blue = HueToRgb(m1, m2, c.hue - (1/3f));
+                red = HueToRgb(m1, m2, c._hue + (1/3f));
+                green = HueToRgb(m1, m2, c._hue);
+                blue = HueToRgb(m1, m2, c._hue - (1/3f));
             }
 
             return Color.FromArgb(
@@ -99,29 +99,29 @@ namespace Octgn.Play.Gui
             float delta = max - min;
 
             // Compute Luminance
-            luminance = (max + min)/2f;
+            _luminance = (max + min)/2f;
 
             // Compute Saturation
-            if (Math.Abs(luminance - 0) < float.Epsilon || Math.Abs(delta - 0) < float.Epsilon)
-                saturation = 0;
-            else if (luminance <= 0.5f)
-                saturation = delta/(2*luminance);
+            if (Math.Abs(_luminance - 0) < float.Epsilon || Math.Abs(delta - 0) < float.Epsilon)
+                _saturation = 0;
+            else if (_luminance <= 0.5f)
+                _saturation = delta/(2*_luminance);
             else
-                saturation = delta/(2 - 2*luminance);
+                _saturation = delta/(2 - 2*_luminance);
 
             // Compute Hue
             if (Math.Abs(delta - 0) < float.Epsilon)
-                hue = 0;
+                _hue = 0;
             else if (Math.Abs(max - red) < float.Epsilon)
             {
-                hue = (green - blue)/delta;
-                if (green < blue) hue += 6;
+                _hue = (green - blue)/delta;
+                if (green < blue) _hue += 6;
             }
             else if (Math.Abs(max - green) < float.Epsilon)
-                hue = (blue - red)/delta + 2;
+                _hue = (blue - red)/delta + 2;
             else
-                hue = (red - green)/delta + 4;
-            hue /= 6f;
+                _hue = (red - green)/delta + 4;
+            _hue /= 6f;
         }
 
         private static void Clamp(float source, out float target)

@@ -7,29 +7,29 @@ namespace Octgn.Play.Gui
 {
     public class PileBaseControl : GroupControl
     {
-        private MenuItem LookAtCardsMenuItem;
+        private MenuItem _lookAtCardsMenuItem;
 
         private void BuildLookAtCardsMenuItem()
         {
-            LookAtCardsMenuItem = new MenuItem {Header = "Look at"};
+            _lookAtCardsMenuItem = new MenuItem {Header = "Look at"};
 
             var top = new MenuItem {Header = "Top X cards..."};
             top.Click += ViewTopCards;
-            LookAtCardsMenuItem.Items.Add(top);
+            _lookAtCardsMenuItem.Items.Add(top);
 
             var all = new MenuItem {Header = "All cards"};
             all.Click += ViewAllCards;
-            LookAtCardsMenuItem.Items.Add(all);
+            _lookAtCardsMenuItem.Items.Add(all);
 
             var bottom = new MenuItem {Header = "Bottom X cards..."};
             bottom.Click += ViewBottomCards;
-            LookAtCardsMenuItem.Items.Add(bottom);
+            _lookAtCardsMenuItem.Items.Add(bottom);
         }
 
         protected override MenuItem CreateLookAtCardsMenuItem()
         {
-            if (LookAtCardsMenuItem == null) BuildLookAtCardsMenuItem();
-            return LookAtCardsMenuItem;
+            if (_lookAtCardsMenuItem == null) BuildLookAtCardsMenuItem();
+            return _lookAtCardsMenuItem;
         }
 
         protected void ViewAllCards(object sender, RoutedEventArgs e)

@@ -17,13 +17,13 @@ namespace Octgn.Play.Gui
             DependencyProperty.Register("IsAlwaysUp", typeof (bool), typeof (CardListControl),
                                         new UIPropertyMetadata(false));
 
-        private ListCollectionView View;
+        private ListCollectionView _view;
 
         private ObservableCollection<Card> _cards;
 
         private Predicate<Card> _filterCards;
         private bool _sort;
-        private WrapPanel wrapPanel;
+        private WrapPanel _wrapPanel;
 
         public CardListControl()
         {
@@ -42,7 +42,7 @@ namespace Octgn.Play.Gui
             set
             {
                 _cards = value;
-                list.ItemsSource = View = new ListCollectionView(_cards);
+                list.ItemsSource = _view = new ListCollectionView(_cards);
             }
         }
 
@@ -52,8 +52,8 @@ namespace Octgn.Play.Gui
             set
             {
                 _filterCards = value;
-                View.Filter = value == null ? (Predicate<object>) null : o => _filterCards((Card) o);
-                View.Refresh();
+                _view.Filter = value == null ? (Predicate<object>) null : o => _filterCards((Card) o);
+                _view.Refresh();
             }
         }
 
@@ -66,18 +66,18 @@ namespace Octgn.Play.Gui
             {
                 if (_sort == value) return;
                 _sort = value;
-                using (View.DeferRefresh())
+                using (_view.DeferRefresh())
                 {
                     if (value)
                     {
-                        View.CustomSort = IsAlwaysUp ? (IComparer) new Card.RealNameComparer() : new Card.NameComparer();
-                        if (View.GroupDescriptions != null)
-                            View.GroupDescriptions.Add(new PropertyGroupDescription(IsAlwaysUp ? "RealName" : "Name"));
+                        _view.CustomSort = IsAlwaysUp ? (IComparer) new Card.RealNameComparer() : new Card.NameComparer();
+                        if (_view.GroupDescriptions != null)
+                            _view.GroupDescriptions.Add(new PropertyGroupDescription(IsAlwaysUp ? "RealName" : "Name"));
                     }
                     else
                     {
-                        View.CustomSort = null;
-                        if (View.GroupDescriptions != null) View.GroupDescriptions.Clear();
+                        _view.CustomSort = null;
+                        if (_view.GroupDescriptions != null) _view.GroupDescriptions.Clear();
                     }
                 }
             }
@@ -85,9 +85,9 @@ namespace Octgn.Play.Gui
 
         private void SaveWrapPanel(object sender, RoutedEventArgs e)
         {
-            wrapPanel = (WrapPanel) sender;
-            wrapPanel.AdornerLayerVisual = scroller; // So that adorners are not clipped by the scrollviewer
-            wrapPanel.ClippingVisual = scroller; // but rather with the better suited InsertAdorner clipping behavior
+            _wrapPanel = (WrapPanel) sender;
+            _wrapPanel.AdornerLayerVisual = scroller; // So that adorners are not clipped by the scrollviewer
+            _wrapPanel.ClippingVisual = scroller; // but rather with the better suited InsertAdorner clipping behavior
         }
 
         internal override void ShowContextMenu(Card card, bool showGroupActions = true)
@@ -100,7 +100,7 @@ namespace Octgn.Play.Gui
         protected override void OnCardOut(object sender, CardsEventArgs e)
         {
             e.Handled = true;
-            wrapPanel.HideInsertIndicator();
+            _wrapPanel.HideInsertIndicator();
             StopDragScroll();
         }
 
@@ -129,19 +129,19 @@ namespace Octgn.Play.Gui
             }
 
             // Display insert indicator
-            wrapPanel.DisplayInsertIndicator(e.ClickedCard, wrapPanel.GetIndexFromPoint(Mouse.GetPosition(wrapPanel)));
+            _wrapPanel.DisplayInsertIndicator(e.ClickedCard, _wrapPanel.GetIndexFromPoint(Mouse.GetPosition(_wrapPanel)));
 
             // Scroll the scroll viewer if required
             double pos = Mouse.GetPosition(scroller).Y;
             if (pos <= ScrollMargin || pos >= scroller.ActualHeight - ScrollMargin)
             {
-                if (scrollTimer == null)
+                if (_scrollTimer == null)
                 {
-                    scrollSpeed = ScrollInitialSpeed;
-                    scrollDirectionUp = pos <= ScrollMargin;
-                    scrollTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(ScrollTimeInterval)};
-                    scrollTimer.Tick += DragScroll;
-                    scrollTimer.Start();
+                    _scrollSpeed = ScrollInitialSpeed;
+                    _scrollDirectionUp = pos <= ScrollMargin;
+                    _scrollTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(ScrollTimeInterval)};
+                    _scrollTimer.Tick += DragScroll;
+                    _scrollTimer.Start();
                 }
             }
             else
@@ -170,18 +170,18 @@ namespace Octgn.Play.Gui
             StopDragScroll();
             e.Handled = e.CanDrop = true;
             if (!@group.TryToManipulate()) return;
-            int idx = wrapPanel.GetIndexFromPoint(Mouse.GetPosition(wrapPanel));
+            int idx = _wrapPanel.GetIndexFromPoint(Mouse.GetPosition(_wrapPanel));
 
             // When the list is restricted, real index may be different from index in the GUI
             if (RestrictDrop)
             {
                 Card c = null;
                 bool after = false;
-                if (idx < View.Count)
-                    c = (Card) View.GetItemAt(idx);
-                else if (View.Count > 0)
+                if (idx < _view.Count)
+                    c = (Card) _view.GetItemAt(idx);
+                else if (_view.Count > 0)
                 {
-                    c = (Card) View.GetItemAt(View.Count - 1);
+                    c = (Card) _view.GetItemAt(_view.Count - 1);
                     after = true;
                 }
 
@@ -205,26 +205,26 @@ namespace Octgn.Play.Gui
         private const double ScrollInitialSpeed = 0.05; // px per ms
         private const double ScrollAcceleration = 0.0005; // px per ms^2
         private const double ScrollMaxSpeed = 2; // px per ms
-        private bool scrollDirectionUp;
-        private double scrollSpeed;
-        private DispatcherTimer scrollTimer;
+        private bool _scrollDirectionUp;
+        private double _scrollSpeed;
+        private DispatcherTimer _scrollTimer;
 
 
         private void DragScroll(object sender, EventArgs e)
         {
             if (!scroller.IsLoaded) return;
             scroller.ScrollToVerticalOffset(scroller.VerticalOffset +
-                                            (scrollDirectionUp
-                                                 ? -scrollSpeed*ScrollTimeInterval
-                                                 : scrollSpeed*ScrollTimeInterval));
-            scrollSpeed = Math.Min(ScrollMaxSpeed, scrollSpeed + ScrollAcceleration*ScrollTimeInterval);
+                                            (_scrollDirectionUp
+                                                 ? -_scrollSpeed*ScrollTimeInterval
+                                                 : _scrollSpeed*ScrollTimeInterval));
+            _scrollSpeed = Math.Min(ScrollMaxSpeed, _scrollSpeed + ScrollAcceleration*ScrollTimeInterval);
         }
 
         private void StopDragScroll()
         {
-            if (scrollTimer == null) return;
-            scrollTimer.Stop();
-            scrollTimer = null;
+            if (_scrollTimer == null) return;
+            _scrollTimer.Stop();
+            _scrollTimer = null;
         }
 
         #endregion
@@ -237,9 +237,9 @@ namespace Octgn.Play.Gui
             DependencyProperty.Register("AnimatableVerticalOffset", typeof (double), typeof (CardListControl),
                                         new UIPropertyMetadata(0.0, AnimatableVerticalOffsetChanged));
 
-        private DoubleAnimation scrollAnimation;
-        private int scrollDirection;
-        private double scrollTarget;
+        private DoubleAnimation _scrollAnimation;
+        private int _scrollDirection;
+        private double _scrollTarget;
 
         private double AnimatableVerticalOffset
         {
@@ -260,26 +260,26 @@ namespace Octgn.Play.Gui
             // Add inerita to scrolling for a very smooth effect      
             int sign = Math.Sign(e.Delta);
             double offset = -sign*48.0;
-            if (sign == scrollDirection)
-                scrollTarget += offset;
+            if (sign == _scrollDirection)
+                _scrollTarget += offset;
             else
             {
-                scrollDirection = sign;
-                scrollTarget = scroller.VerticalOffset + offset;
+                _scrollDirection = sign;
+                _scrollTarget = scroller.VerticalOffset + offset;
             }
             EnsureScrollAnimation();
-            scrollAnimation.From = scroller.VerticalOffset;
-            scrollAnimation.To = scrollTarget;
-            BeginAnimation(AnimatableVerticalOffsetProperty, scrollAnimation);
+            _scrollAnimation.From = scroller.VerticalOffset;
+            _scrollAnimation.To = _scrollTarget;
+            BeginAnimation(AnimatableVerticalOffsetProperty, _scrollAnimation);
         }
 
         private void EnsureScrollAnimation()
         {
-            scrollAnimation = new DoubleAnimation {Duration = SmoothScrollDuration, DecelerationRatio = 0.5};
-            scrollAnimation.Completed += delegate
+            _scrollAnimation = new DoubleAnimation {Duration = SmoothScrollDuration, DecelerationRatio = 0.5};
+            _scrollAnimation.Completed += delegate
                                              {
-                                                 scrollAnimation = null;
-                                                 scrollDirection = 0;
+                                                 _scrollAnimation = null;
+                                                 _scrollDirection = 0;
                                              };
         }
 

@@ -17,13 +17,13 @@ namespace Octgn.Play.Gui
             // even after adding 4+ markers and then removing to 3-,
             // and then shift-dragging (in which case the size of the adorner is correct, 
             // but the VisualBrush tries to render the now invisible number.
-            child = new Rectangle();
-            child.BeginInit();
-            child.Width = adorned.RenderSize.Width;
-            child.Height = adorned.RenderSize.Height;
-            child.Fill = brush;
-            child.IsHitTestVisible = false;
-            child.EndInit();
+            _child = new Rectangle();
+            _child.BeginInit();
+            _child.Width = adorned.RenderSize.Width;
+            _child.Height = adorned.RenderSize.Height;
+            _child.Fill = brush;
+            _child.IsHitTestVisible = false;
+            _child.EndInit();
 
             var animation = new DoubleAnimation(0.6, 0.85, new Duration(TimeSpan.FromMilliseconds(500)))
                                 {AutoReverse = true, RepeatBehavior = RepeatBehavior.Forever};
@@ -34,7 +34,7 @@ namespace Octgn.Play.Gui
 
         #region Content Management
 
-        private readonly Rectangle child;
+        private readonly Rectangle _child;
 
         protected override int VisualChildrenCount
         {
@@ -43,43 +43,43 @@ namespace Octgn.Play.Gui
 
         protected override Size MeasureOverride(Size constraint)
         {
-            child.Measure(constraint);
-            return child.DesiredSize;
+            _child.Measure(constraint);
+            return _child.DesiredSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            child.Arrange(new Rect(finalSize));
+            _child.Arrange(new Rect(finalSize));
             return finalSize;
         }
 
         protected override Visual GetVisualChild(int index)
         {
-            return child;
+            return _child;
         }
 
         #endregion
 
         #region Position
 
-        private double leftOffset, topOffset;
+        private double _leftOffset, _topOffset;
 
         public double LeftOffset
         {
-            get { return leftOffset; }
+            get { return _leftOffset; }
             set
             {
-                leftOffset = value;
+                _leftOffset = value;
                 UpdatePosition();
             }
         }
 
         public double TopOffset
         {
-            get { return topOffset; }
+            get { return _topOffset; }
             set
             {
-                topOffset = value;
+                _topOffset = value;
                 UpdatePosition();
             }
         }
@@ -93,7 +93,7 @@ namespace Octgn.Play.Gui
         public override GeneralTransform GetDesiredTransform(GeneralTransform transform)
         {
             var result = new GeneralTransformGroup();
-            result.Children.Add(new TranslateTransform(leftOffset, topOffset));
+            result.Children.Add(new TranslateTransform(_leftOffset, _topOffset));
             result.Children.Add(base.GetDesiredTransform(transform));
             return result;
         }

@@ -24,41 +24,41 @@ namespace Octgn.Play.Gui
                                                                                                   new UIPropertyMetadata
                                                                                                       (PointChanged));
 
-        private static readonly SolidColorBrush fillBrush;
+        private static readonly SolidColorBrush FillBrush;
 
-        private readonly LineSegment arrowPt1;
-        private readonly LineSegment arrowPt2;
-        private readonly BezierSegment endPt1;
-        private readonly LineSegment endPt2;
-        private readonly LineSegment headPt;
-        private readonly PathFigure startPt1;
-        private readonly BezierSegment startPt2;
+        private readonly LineSegment _arrowPt1;
+        private readonly LineSegment _arrowPt2;
+        private readonly BezierSegment _endPt1;
+        private readonly LineSegment _endPt2;
+        private readonly LineSegment _headPt;
+        private readonly PathFigure _startPt1;
+        private readonly BezierSegment _startPt2;
 
         static ArrowControl()
         {
-            fillBrush = new SolidColorBrush(Color.FromArgb(128, 255, 0, 0));
-            fillBrush.Freeze();
+            FillBrush = new SolidColorBrush(Color.FromArgb(128, 255, 0, 0));
+            FillBrush.Freeze();
         }
 
         public ArrowControl()
         {
-            endPt1 = new BezierSegment();
-            endPt2 = new LineSegment();
-            arrowPt1 = new LineSegment();
-            arrowPt2 = new LineSegment();
-            headPt = new LineSegment();
-            startPt2 = new BezierSegment();
-            startPt1 = new PathFigure
+            _endPt1 = new BezierSegment();
+            _endPt2 = new LineSegment();
+            _arrowPt1 = new LineSegment();
+            _arrowPt2 = new LineSegment();
+            _headPt = new LineSegment();
+            _startPt2 = new BezierSegment();
+            _startPt1 = new PathFigure
                            {
                                Segments =
-                                   new PathSegmentCollection {endPt1, arrowPt1, headPt, arrowPt2, endPt2, startPt2},
+                                   new PathSegmentCollection {_endPt1, _arrowPt1, _headPt, _arrowPt2, _endPt2, _startPt2},
                                IsClosed = true
                            };
             Shape = new Path
                         {
-                            Data = new PathGeometry {Figures = new PathFigureCollection {startPt1}},
+                            Data = new PathGeometry {Figures = new PathFigureCollection {_startPt1}},
                             Stroke = Brushes.Red,
-                            Fill = fillBrush
+                            Fill = FillBrush
                         };
         }
 
@@ -85,14 +85,14 @@ namespace Octgn.Play.Gui
         private void ComputeShape()
         {
             double arrowHalfWidth = Program.Game.Definition.TableDefinition.Height*0.017; // 1/60th
-            double HeadHalfWidth = arrowHalfWidth*HeadHalfWidthFactor;
-            double HeadLength = arrowHalfWidth*HeadLengthFactor;
+            double headHalfWidth = arrowHalfWidth*HeadHalfWidthFactor;
+            double headLength = arrowHalfWidth*HeadLengthFactor;
 
             // Compute the arrow base point so that the arrow tip is approximately at the ToPoint
             Vector dir = ToPoint - FromPoint;
             dir.Normalize();
             var ortho = new Vector(-dir.Y, dir.X);
-            Point arrowBasePoint = ToPoint + (-dir*CurvatureAlong + ortho*CurvatureOrtho)*HeadLength*2;
+            Point arrowBasePoint = ToPoint + (-dir*CurvatureAlong + ortho*CurvatureOrtho)*headLength*2;
 
             // Compute the base direction and othogonal vectors
             dir = arrowBasePoint - FromPoint;
@@ -105,31 +105,31 @@ namespace Octgn.Play.Gui
             Vector bezierTip = (-dir*CurvatureAlong + ortho*CurvatureOrtho)*length;
 
             // Set the four base points
-            startPt1.StartPoint = FromPoint - widthVec;
+            _startPt1.StartPoint = FromPoint - widthVec;
 
-            endPt1.Point3 = arrowBasePoint - widthVec;
-            endPt1.Point2 = endPt1.Point3 + bezierTip;
-            endPt1.Point1 = startPt1.StartPoint + bezierBase;
+            _endPt1.Point3 = arrowBasePoint - widthVec;
+            _endPt1.Point2 = _endPt1.Point3 + bezierTip;
+            _endPt1.Point1 = _startPt1.StartPoint + bezierBase;
 
-            endPt2.Point = arrowBasePoint + widthVec;
+            _endPt2.Point = arrowBasePoint + widthVec;
 
-            startPt2.Point3 = FromPoint + widthVec;
-            startPt2.Point2 = startPt2.Point3 + bezierBase;
-            startPt2.Point1 = endPt2.Point + bezierTip;
+            _startPt2.Point3 = FromPoint + widthVec;
+            _startPt2.Point2 = _startPt2.Point3 + bezierBase;
+            _startPt2.Point1 = _endPt2.Point + bezierTip;
 
             //  Compute the arrow tip direction and orthogonal vectors
             dir = -bezierTip;
             dir.Normalize();
             ortho = new Vector(-dir.Y, dir.X);
             // Compute the three tip points
-            Vector headVec = ortho*HeadHalfWidth;
-            arrowPt1.Point = arrowBasePoint - headVec;
-            arrowPt2.Point = arrowBasePoint + headVec;
-            headPt.Point = arrowBasePoint + dir*HeadLength;
+            Vector headVec = ortho*headHalfWidth;
+            _arrowPt1.Point = arrowBasePoint - headVec;
+            _arrowPt2.Point = arrowBasePoint + headVec;
+            _headPt.Point = arrowBasePoint + dir*headLength;
 
             // Adjust the arrow/base junction so that it's nicer
-            endPt2.Point = arrowPt2.Point - headVec/2;
-            endPt1.Point3 = arrowPt1.Point + headVec/2;
+            _endPt2.Point = _arrowPt2.Point - headVec/2;
+            _endPt1.Point3 = _arrowPt1.Point + headVec/2;
         }
     }
 }

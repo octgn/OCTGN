@@ -1,6 +1,6 @@
 ﻿<Page x:Class="Octgn.Launcher.Login" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Login" Width="640" Height="376" Unloaded="Page_Unloaded"
-      Loaded="Page_Loaded">
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Login" Width="640" Height="376" Unloaded="PageUnloaded"
+      Loaded="PageLoaded">
   <Page.Resources>
     <Storyboard x:Key="LogoTimeline">
       <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="whiteRing"
@@ -52,9 +52,9 @@
     </Grid.RowDefinitions>
     <Menu Grid.Row="0" Height="23" HorizontalAlignment="Stretch" Name="menu1" VerticalAlignment="Top">
       <MenuItem Name="menuOctgn" Header="Octgn">
-        <MenuItem Name="menuDeckEditor" Header="Deck Editor" Click="menuDeckEditor_Click" />
-        <MenuItem Name="menuUpdate" Header="Check for updates" Click="menuUpdate_Click" />
-        <MenuItem Name="menuExit" Header="Exit" Click="menuExit_Click" />
+        <MenuItem Name="menuDeckEditor" Header="Deck Editor" Click="MenuDeckEditorClick" />
+        <MenuItem Name="menuUpdate" Header="Check for updates" Click="MenuUpdateClick" />
+        <MenuItem Name="menuExit" Header="Exit" Click="MenuExitClick" />
       </MenuItem>
 
     </Menu>
@@ -229,13 +229,13 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
         <Label Content="E-mail Address" Height="26" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top"
                Width="119" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10,0" />
         <TextBox Height="23" HorizontalAlignment="Stretch" Name="textBox1" VerticalAlignment="Top"
-                 TextChanged="textBox1_TextChanged" Margin="10,0" KeyUp="textBox1_KeyUp" />
+                 TextChanged="TextBox1TextChanged" Margin="10,0" KeyUp="TextBox1KeyUp" />
         <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White" Height="28"
                HorizontalAlignment="Left" Name="label2" VerticalAlignment="Top" Width="119" Grid.Row="2" Margin="10,0" />
         <PasswordBox Height="23" Name="passwordBox1" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                     PasswordChanged="passwordBox1_PasswordChanged" Margin="10,0" KeyUp="passwordBox1_KeyUp" />
+                     PasswordChanged="PasswordBox1PasswordChanged" Margin="10,0" KeyUp="PasswordBox1KeyUp" />
         <Grid>
-          <Button Content="Sign In" Height="37" Name="button1" Width="103" Click="button1_Click" Margin="10"
+          <Button Content="Sign In" Height="37" Name="button1" Width="103" Click="Button1Click" Margin="10"
                   HorizontalAlignment="Right" IsEnabled="True" />
           <CheckBox x:Name="cbSavePassword" Content="Save Password" Foreground="White" FontWeight="Bold" FontSize="14"
                     HorizontalAlignment="Left" Margin="10,0" />
@@ -250,18 +250,18 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
           <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock5"
                      VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap">
             If you have problems signing in, please visit
-            <Hyperlink NavigateUri="https://accounts.google.com/" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink NavigateUri="https://accounts.google.com/" RequestNavigate="HyperlinkRequestNavigate">
               Google
             </Hyperlink>
             .
             <LineBreak />
             You can also
-            <Hyperlink NavigateUri="https://accounts.google.com/NewAccount" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink NavigateUri="https://accounts.google.com/NewAccount" RequestNavigate="HyperlinkRequestNavigate">
               Make an Account
             </Hyperlink>
             <LineBreak />
             Please visit
-            <Hyperlink NavigateUri="http://www.gravatar.com/" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink NavigateUri="http://www.gravatar.com/" RequestNavigate="HyperlinkRequestNavigate">
               Gravatar.com
             </Hyperlink>
             To change your picture.

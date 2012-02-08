@@ -69,16 +69,16 @@ namespace Octgn.Launcher
         {
             var gi = sender as GroupChatListItem;
             if (gi == null) return;
-            foreach (ChatWindow cw in Program.ChatWindows)
+            foreach (var cw in Program.ChatWindows)
             {
                 if (gi.ThisRoom.Id != cw.Id) continue;
                 cw.Show();
                 return;
             }
             if (gi.ThisRoom.Id != 0) return;
-            var cw = new ChatWindow(0);
-            Program.ChatWindows.Add(cw);
-            cw.Show();
+            var cw2 = new ChatWindow(0);
+            Program.ChatWindows.Add(cw2);
+            cw2.Show();
         }
 
 
@@ -95,11 +95,9 @@ namespace Octgn.Launcher
                     continue;
                 if (cr.UserCount != 2 || !cr.ContainsUser(Program.LobbyClient.Me) || !cr.ContainsUser(fi.ThisUser))
                     continue;
-                if (cw.Visibility != Visibility.Visible)
-                {
-                    cw.Show();
-                    return;
-                }
+                if (cw.Visibility == Visibility.Visible) continue;
+                cw.Show();
+                return;
             }
             Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
         }

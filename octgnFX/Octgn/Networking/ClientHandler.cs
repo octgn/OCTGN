@@ -12,13 +12,13 @@ namespace Octgn.Networking
 {
     internal sealed class Handler
     {
-        private readonly BinaryParser binParser;
-        private readonly XmlParser xmlParser;
+        private readonly BinaryParser _binParser;
+        private readonly XmlParser _xmlParser;
 
         public Handler()
         {
-            xmlParser = new XmlParser(this);
-            binParser = new BinaryParser(this);
+            _xmlParser = new XmlParser(this);
+            _binParser = new BinaryParser(this);
         }
 
         public void ReceiveMessage(string msg)
@@ -30,7 +30,7 @@ namespace Octgn.Networking
 
             try
             {
-                xmlParser.Parse(msg);
+                _xmlParser.Parse(msg);
             }
             finally
             {
@@ -47,7 +47,7 @@ namespace Octgn.Networking
 
             try
             {
-                binParser.Parse(data);
+                _binParser.Parse(data);
             }
             finally
             {
@@ -244,7 +244,6 @@ namespace Octgn.Networking
         /// <param name="id"> An array with the new CardIdentity ids. </param>
         /// <param name="type"> An array containing the corresponding CardModel guids (encrypted) </param>
         /// <param name="group"> The group, in which the cards are added. </param>
-        /// <seealso cref="CreateCard(int[], ulong[], Group[])">to add cards to several groups</seealso>
         public void CreateCard(int[] id, ulong[] type, Group group)
         {
             Player owner = Player.Find((byte) (id[0] >> 16));
@@ -333,7 +332,8 @@ namespace Octgn.Networking
             for (int i = 0; i < id.Length; i++)
             {
                 if (type[i] == ulong.MaxValue) continue;
-                var ci = new CardIdentity(id[i]) {Alias = true, Key = type[i]};
+                // TODO: Why did we define then not use this?
+                // var ci = new CardIdentity(id[i]) {Alias = true, Key = type[i]};
             }
         }
 
@@ -768,11 +768,9 @@ namespace Octgn.Networking
                 CardIdentity ci = t.Type;
                 if (!ci.Alias) continue;
                 hasAlias = true;
-                if (ci.MySecret)
-                {
-                    cards.Add(t.Id);
-                    types.Add(ci.Key);
-                }
+                if (!ci.MySecret) continue;
+                cards.Add(t.Id);
+                types.Add(ci.Key);
             }
             // Unalias cards that we know (if any)
             if (cards.Count > 0)

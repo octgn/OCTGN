@@ -20,12 +20,12 @@ namespace Octgn.Launcher
             SelectedGame = selectedGame;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        public void PageLoaded(object sender, RoutedEventArgs e)
         {
-            Refresh_List();
+            RefreshList();
         }
 
-        public void Refresh_List()
+        public void RefreshList()
         {
             lbSetList.Items.Clear();
             foreach (Set s in SelectedGame.Sets)
@@ -34,20 +34,20 @@ namespace Octgn.Launcher
             }
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
         }
 
-        public void Deleted_Selected()
+        public void DeletedSelected()
         {
             foreach (Set s in lbSetList.SelectedItems)
             {
                 SelectedGame.DeleteSet(s);
             }
-            Refresh_List();
+            RefreshList();
         }
 
-        public void Install_Sets()
+        public void InstallSets()
         {
             var ofd = new OpenFileDialog
                           {
@@ -93,13 +93,13 @@ namespace Octgn.Launcher
                                                  }
                                              });
             wnd.ShowDialog();
-            Refresh_List();
+            RefreshList();
         }
 
-        public void Patch_Selected()
+        public void PatchSelected()
         {
             new PatchDialog {Owner = Program.ClientWindow}.ShowDialog();
-            Refresh_List();
+            RefreshList();
         }
     }
 }

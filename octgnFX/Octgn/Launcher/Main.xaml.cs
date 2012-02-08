@@ -48,7 +48,7 @@ namespace Octgn.Launcher
 
         public Main()
         {
-            Initialized += Main_Initialized;
+            Initialized += MainInitialized;
             InitializeComponent();
             //Set title with version info.
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
@@ -67,16 +67,16 @@ namespace Octgn.Launcher
             Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
             Program.LobbyClient.OnDisconnect += lobbyClient_OnDisconnectEvent;
             Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
-            Program.LobbyClient.Chatting.EChatEvent += Chatting_eChatEvent;
+            Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
             Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
             tbUsername.Text = Program.LobbyClient.Me.DisplayName;
             tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
             var cm = new ContextMenu();
-            cm.MenuItems.Add("Show", cmShow_Click).DefaultItem = true;
-            cm.MenuItems.Add("Log Off", cmLogOff_Click);
+            cm.MenuItems.Add("Show", CmShowClick).DefaultItem = true;
+            cm.MenuItems.Add("Log Off", CmLogOffClick);
             cm.MenuItems.Add("-");
-            cm.MenuItems.Add("Quit", cmQuit_Click);
+            cm.MenuItems.Add("Quit", CmQuitClick);
             SystemTrayIcon = new NotifyIcon
                                  {
                                      Icon = new Icon("Resources/Icon.ico"),
@@ -84,7 +84,7 @@ namespace Octgn.Launcher
                                      ContextMenu = cm,
                                      Text = Properties.Resources.Main_Main_Octgn
                                  };
-            SystemTrayIcon.DoubleClick += SystemTrayIcon_DoubleClick;
+            SystemTrayIcon.DoubleClick += SystemTrayIconDoubleClick;
             // Insert code required on object creation below this point.
         }
 
@@ -94,7 +94,7 @@ namespace Octgn.Launcher
             set { SetValue(IsHideLoginNotificationsCheckedProperty, value); }
         }
 
-        private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
+        private void FrameNavigating(object sender, NavigatingCancelEventArgs e)
         {
             if (Content != null && !_allowDirectNavigation)
             {
@@ -155,7 +155,7 @@ namespace Octgn.Launcher
             }
         }
 
-        private void Main_Initialized(object sender, EventArgs e)
+        private void MainInitialized(object sender, EventArgs e)
         {
             Left = double.Parse(SimpleConfig.ReadValue("MainLeftLoc", "100"));
             Top = double.Parse(SimpleConfig.ReadValue("MainTopLoc", "100"));
@@ -167,12 +167,12 @@ namespace Octgn.Launcher
             SimpleConfig.WriteValue("MainTopLoc", Top.ToString(CultureInfo.InvariantCulture));
         }
 
-        private void SystemTrayIcon_DoubleClick(object Sender, EventArgs e)
+        private void SystemTrayIconDoubleClick(object sender, EventArgs e)
         {
-            cmShow_Click(Sender, e);
+            CmShowClick(sender, e);
         }
 
-        private void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
+        private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
@@ -196,17 +196,17 @@ namespace Octgn.Launcher
                                              }));
         }
 
-        private void cmQuit_Click(object sender, EventArgs e)
+        private void CmQuitClick(object sender, EventArgs e)
         {
             CloseDownShop(true);
         }
 
-        private void cmLogOff_Click(object sender, EventArgs e)
+        private void CmLogOffClick(object sender, EventArgs e)
         {
             CloseDownShop(false);
         }
 
-        private void cmShow_Click(object sender, EventArgs e)
+        private void CmShowClick(object sender, EventArgs e)
         {
             Visibility = Visibility.Visible;
             SystemTrayIcon.Visible = false;
@@ -223,7 +223,7 @@ namespace Octgn.Launcher
                                              }));
         }
 
-        private void Ribbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RibbonSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var tab = Ribbon.SelectedItem as RibbonTab;
             if (tab == null) return;
@@ -267,7 +267,7 @@ namespace Octgn.Launcher
             frame1.Navigate(_currentSetList);
         }
 
-        private void Quit_Click(object sender, RoutedEventArgs e)
+        private void QuitClick(object sender, RoutedEventArgs e)
         {
             CloseDownShop(true);
             Program.Exit();
@@ -278,12 +278,12 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action<bool>(CloseDownShop), false);
         }
 
-        private void LogOff_Click(object sender, RoutedEventArgs e)
+        private void LogOffClick(object sender, RoutedEventArgs e)
         {
             CloseDownShop(false);
         }
 
-        private void CloseDownShop(bool Exiting)
+        private void CloseDownShop(bool exiting)
         {
             _isLegitClosing = true;
             SaveLocation();
@@ -296,7 +296,7 @@ namespace Octgn.Launcher
                 cw.CloseChatWindow();
             }
             Program.ChatWindows.Clear();
-            if (!Exiting)
+            if (!exiting)
             {
                 if (Program.LauncherWindow != null)
                 {
@@ -331,7 +331,7 @@ namespace Octgn.Launcher
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
 
-        private void RibbonButton_Click(object sender, RoutedEventArgs e)
+        private void RibbonButtonClick(object sender, RoutedEventArgs e)
         {
             var gl = frame1.Content as GameList;
             if (gl == null)
@@ -344,7 +344,7 @@ namespace Octgn.Launcher
                 gl.InstallGame();
         }
 
-        private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
+        private void RibbonButtonClick1(object sender, RoutedEventArgs e)
         {
             _currentSetList = null;
             var gl = new GameList();
@@ -352,25 +352,25 @@ namespace Octgn.Launcher
             frame1.Navigate(gl);
         }
 
-        private void RibbonButton_Click_2(object sender, RoutedEventArgs e)
+        private void RibbonButtonClick2(object sender, RoutedEventArgs e)
         {
             if (_currentSetList != null)
-                _currentSetList.Deleted_Selected();
+                _currentSetList.DeletedSelected();
         }
 
-        private void bInstallSets_Click(object sender, RoutedEventArgs e)
+        private void BInstallSetsClick(object sender, RoutedEventArgs e)
         {
             if (_currentSetList != null)
-                _currentSetList.Install_Sets();
+                _currentSetList.InstallSets();
         }
 
-        private void bPatchSets_Click(object sender, RoutedEventArgs e)
+        private void BPatchSetsClick(object sender, RoutedEventArgs e)
         {
             if (_currentSetList != null)
-                _currentSetList.Patch_Selected();
+                _currentSetList.PatchSelected();
         }
 
-        private void bDeckEditor_Click(object sender, RoutedEventArgs e)
+        private void BDeckEditorClick(object sender, RoutedEventArgs e)
         {
             if (Program.GamesRepository.Games.Count == 0)
             {
@@ -389,19 +389,19 @@ namespace Octgn.Launcher
             }
         }
 
-        private void bAddFriend_Click(object sender, RoutedEventArgs e)
+        private void BAddFriendClick(object sender, RoutedEventArgs e)
         {
             frame1.Navigate(new AddFriendPage());
         }
 
-        private void bHost_Click(object sender, RoutedEventArgs e)
+        private void BHostClick(object sender, RoutedEventArgs e)
         {
             var gl = new GameList();
-            gl.OnGameClick += gl_HostGameClick;
+            gl.OnGameClick += GlHostGameClick;
             frame1.Navigate(gl);
         }
 
-        private void gl_HostGameClick(object sender, EventArgs e)
+        private void GlHostGameClick(object sender, EventArgs e)
         {
             if (Program.PlayWindow != null) return;
             var g = sender as Data.Game;
@@ -425,7 +425,7 @@ namespace Octgn.Launcher
                                                  : Visibility.Visible;
         }
 
-        private void bJoin_Click(object sender, RoutedEventArgs e)
+        private void BJoinClick(object sender, RoutedEventArgs e)
         {
             var hgl = new HostedGameList();
             hgl.OnGameClick += hgl_OnGameClick;
@@ -447,52 +447,50 @@ namespace Octgn.Launcher
             Program.IsHost = false;
             Data.Game theGame =
                 Program.GamesRepository.AllGames.FirstOrDefault(g => hg != null && g.Id == hg.GameGuid);
-            if (theGame != null)
-            {
-                Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
+            if (theGame == null) return;
+            Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
 #if(DEBUG)
-                var ad = new IPAddress[1];
-                IPAddress ip = IPAddress.Parse("127.0.0.1");
+            var ad = new IPAddress[1];
+            IPAddress ip = IPAddress.Parse("127.0.0.1");
 
 #else
                 var ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
                 IPAddress ip = ad[0];
 #endif
 
-                if (ad.Length > 0)
+            if (ad.Length > 0)
+            {
+                try
                 {
-                    try
-                    {
-                        if (hg != null) Program.Client = new Client(ip, hg.Port);
-                        Program.Client.Connect();
-                        Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
-                    }
-                    catch (Exception)
-                    {
-                    }
+                    if (hg != null) Program.Client = new Client(ip, hg.Port);
+                    Program.Client.Connect();
+                    Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
+                }
+                catch (Exception)
+                {
                 }
             }
         }
 
-        private void bOnlineStatus_Click(object sender, RoutedEventArgs e)
+        private void BOnlineStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bOnlineStatus.LargeImageSource;
             Program.LobbyClient.SetStatus(UserStatus.Online);
         }
 
-        private void bBusyStatus_Click(object sender, RoutedEventArgs e)
+        private void BBusyStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bBusyStatus.LargeImageSource;
             Program.LobbyClient.SetStatus(UserStatus.DoNotDisturb);
         }
 
-        private void bOfflineStatus_Click(object sender, RoutedEventArgs e)
+        private void BOfflineStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
             Program.LobbyClient.SetStatus(UserStatus.Invisible);
         }
 
-        private void bAwayStatus_Click(object sender, RoutedEventArgs e)
+        private void BAwayStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bAwayStatus.LargeImageSource;
             Program.LobbyClient.SetStatus(UserStatus.Away);
@@ -509,40 +507,40 @@ namespace Octgn.Launcher
                                              }));
         }
 
-        private void tbUsername_MouseUp(object sender, MouseButtonEventArgs e)
+        private void TbUsernameMouseUp(object sender, MouseButtonEventArgs e)
         {
             tbUsername.Style = (Style) TryFindResource(typeof (TextBox));
             tbUsername.Focus();
             tbUsername.SelectAll();
         }
 
-        private void tbUsername_LostFocus(object sender, RoutedEventArgs e)
+        private void TbUsernameLostFocus(object sender, RoutedEventArgs e)
         {
             tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
             tbUsername.Text = Program.LobbyClient.Me.DisplayName;
         }
 
-        private void tbUsername_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        private void TbUsernameLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
             tbUsername.Text = Program.LobbyClient.Me.DisplayName;
         }
 
-        private void tbUsername_KeyUp(object sender, KeyEventArgs e)
+        private void TbUsernameKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
             Program.LobbyClient.SetDisplayName(tbUsername.Text);
             tbUsername.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
         }
 
-        private void tbStatus_MouseUp(object sender, MouseButtonEventArgs e)
+        private void TbStatusMouseUp(object sender, MouseButtonEventArgs e)
         {
             tbStatus.Style = (Style) TryFindResource(typeof (TextBox));
             tbStatus.Focus();
             tbStatus.SelectAll();
         }
 
-        private void tbStatus_LostFocus(object sender, RoutedEventArgs e)
+        private void TbStatusLostFocus(object sender, RoutedEventArgs e)
         {
             tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
             tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
@@ -550,7 +548,7 @@ namespace Octgn.Launcher
                 tbStatus.Text = "Set a custom status here";
         }
 
-        private void tbStatus_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        private void TbStatusLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
             tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
@@ -558,30 +556,30 @@ namespace Octgn.Launcher
                 tbStatus.Text = "Set a custom status here";
         }
 
-        private void tbStatus_KeyUp(object sender, KeyEventArgs e)
+        private void TbStatusKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
             Program.LobbyClient.SetCustomStatus(tbStatus.Text);
             tbStatus.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
         }
 
-        private void tbStatus_TextChanged(object sender, TextChangedEventArgs e)
+        private void TbStatusTextChanged(object sender, TextChangedEventArgs e)
         {
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
         }
 
-        private void bHideLoginNotifications_Unchecked(object sender, RoutedEventArgs e)
+        private void BHideLoginNotificationsUnchecked(object sender, RoutedEventArgs e)
         {
             Prefs.HideLoginNotifications = "false";
         }
 
-        private void bHideLoginNotifications_Checked(object sender, RoutedEventArgs e)
+        private void BHideLoginNotificationsChecked(object sender, RoutedEventArgs e)
         {
             Prefs.HideLoginNotifications = "true";
         }
 
-        private void Window_Closing(object sender, CancelEventArgs e)
+        private void WindowClosing(object sender, CancelEventArgs e)
         {
             if (_isLegitClosing) return;
             SystemTrayIcon.Visible = true;

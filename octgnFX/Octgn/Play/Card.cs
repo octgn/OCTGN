@@ -67,7 +67,7 @@ namespace Octgn.Play
         internal List<Player> PlayersLooking = new List<Player>(1);
         // List of players, who had peeked at this card. The list is reset when the card changes group.
 
-        private CardDef _definition;
+        //private CardDef _definition;
         private bool _faceUp;
         private Group _group;
         private Color? _highlight;
@@ -87,7 +87,7 @@ namespace Octgn.Play
         {
             _id = id;
             Type = new CardIdentity(id) {Alias = false, Key = key, Model = model, MySecret = mySecret};
-            _definition = def;
+            // var _definition = def;
             All.Add(id, this);
             _isAlternateImage = false;
         }

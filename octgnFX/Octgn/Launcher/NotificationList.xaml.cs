@@ -14,7 +14,7 @@ namespace Octgn.Launcher
             InitializeComponent();
         }
 
-        private void Reload_List()
+        private void ReloadList()
         {
             Notification[] nlist = Program.LobbyClient.GetNotificationList();
             foreach (Notification n in nlist)
@@ -35,19 +35,19 @@ namespace Octgn.Launcher
                 stackPanel1.Children.Remove(u);
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void PageLoaded(object sender, RoutedEventArgs e)
         {
-            Reload_List();
+            ReloadList();
             Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
         }
 
         private void lobbyClient_OnFriendRequest(User u)
         {
             //Reload_List();
-            Dispatcher.Invoke(new Action(Reload_List));
+            Dispatcher.Invoke(new Action(ReloadList));
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
             Program.LobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
         }

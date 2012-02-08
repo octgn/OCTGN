@@ -8,8 +8,8 @@ namespace Octgn.Play.Gui
     internal class SelectAdorner : Adorner
     {
         private static readonly Brush BorderBrush, FillBrush;
-        private readonly Rectangle child;
-        private Rect position;
+        private readonly Rectangle _child;
+        private Rect _position;
 
         static SelectAdorner()
         {
@@ -24,7 +24,7 @@ namespace Octgn.Play.Gui
         public SelectAdorner(UIElement adornedElement)
             : base(adornedElement)
         {
-            child = new Rectangle
+            _child = new Rectangle
                         {StrokeThickness = 3, Stroke = BorderBrush, Fill = FillBrush, IsHitTestVisible = false};
         }
 
@@ -32,7 +32,7 @@ namespace Octgn.Play.Gui
         {
             set
             {
-                position = value;
+                _position = value;
                 InvalidateVisual();
             }
         }
@@ -44,18 +44,18 @@ namespace Octgn.Play.Gui
 
         protected override Size MeasureOverride(Size constraint)
         {
-            return position.Size;
+            return _position.Size;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            child.Arrange(position);
-            return position.Size;
+            _child.Arrange(_position);
+            return _position.Size;
         }
 
         protected override Visual GetVisualChild(int index)
         {
-            return child;
+            return _child;
         }
     }
 }

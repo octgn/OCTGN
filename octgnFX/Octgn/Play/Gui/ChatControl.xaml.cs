@@ -11,7 +11,7 @@ using Octgn.Data;
 
 namespace Octgn.Play.Gui
 {
-    internal partial class ChatControl
+    partial class ChatControl
     {
         public ChatControl()
         {
@@ -76,7 +76,7 @@ namespace Octgn.Play.Gui
     internal sealed class ChatTraceListener : TraceListener
     {
         private static readonly Brush TurnBrush;
-        private readonly ChatControl ctrl;
+        private readonly ChatControl _ctrl;
 
         static ChatTraceListener()
         {
@@ -88,7 +88,7 @@ namespace Octgn.Play.Gui
         public ChatTraceListener(string name, ChatControl ctrl)
             : base(name)
         {
-            this.ctrl = ctrl;
+            this._ctrl = ctrl;
         }
 
         public override void Write(string message)
@@ -127,11 +127,11 @@ namespace Octgn.Play.Gui
                                             {X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush}
                                     }
                             };
-                if (((Paragraph) ctrl.output.Document.Blocks.LastBlock).Inlines.Count == 0)
-                    ctrl.output.Document.Blocks.Remove(ctrl.output.Document.Blocks.LastBlock);
-                ctrl.output.Document.Blocks.Add(p);
-                ctrl.output.Document.Blocks.Add(new Paragraph {Margin = new Thickness()}); // Restore left alignment
-                ctrl.output.ScrollToEnd();
+                if (((Paragraph) _ctrl.output.Document.Blocks.LastBlock).Inlines.Count == 0)
+                    _ctrl.output.Document.Blocks.Remove(_ctrl.output.Document.Blocks.LastBlock);
+                _ctrl.output.Document.Blocks.Add(p);
+                _ctrl.output.Document.Blocks.Add(new Paragraph {Margin = new Thickness()}); // Restore left alignment
+                _ctrl.output.ScrollToEnd();
             }
             else
                 InsertLine(FormatInline(MergeArgs(format, args), eventType, id, args));
@@ -157,11 +157,11 @@ namespace Octgn.Play.Gui
 
         private void InsertLine(Inline message)
         {
-            var p = (Paragraph) ctrl.output.Document.Blocks.LastBlock;
+            var p = (Paragraph) _ctrl.output.Document.Blocks.LastBlock;
             if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
             p.Inlines.Add(message);
             Program.LastChatTrace = message;
-            ctrl.output.ScrollToEnd();
+            _ctrl.output.ScrollToEnd();
         }
 
         private static Inline FormatInline(Inline inline, TraceEventType eventType, int id, Object[] args = null)
@@ -255,12 +255,12 @@ namespace Octgn.Play.Gui
                                                                                                      >),
                                                                                                  typeof (CardRun));
 
-        private CardModel card;
+        private CardModel _card;
 
         public CardRun(CardIdentity id)
             : base(id.ToString())
         {
-            card = id.Model;
+            _card = id.Model;
             if (id.Model == null)
                 id.Revealed += new CardIdentityNamer {Target = this}.Rename;
         }
@@ -268,27 +268,27 @@ namespace Octgn.Play.Gui
         public CardRun(CardModel model)
             : base(model.Name)
         {
-            card = model;
+            _card = model;
         }
 
         public void SetCardModel(CardModel model)
         {
-            Debug.Assert(card == null, "Cannot set the CardModel of a CardRun if it is already defined");
-            card = model;
+            Debug.Assert(_card == null, "Cannot set the CardModel of a CardRun if it is already defined");
+            _card = model;
             Text = model.Name;
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             base.OnMouseEnter(e);
-            if (card != null)
-                RaiseEvent(new CardModelEventArgs(card, ViewCardModelEvent, this));
+            if (_card != null)
+                RaiseEvent(new CardModelEventArgs(_card, ViewCardModelEvent, this));
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             base.OnMouseLeave(e);
-            if (card != null)
+            if (_card != null)
                 RaiseEvent(new CardModelEventArgs(null, ViewCardModelEvent, this));
         }
     }

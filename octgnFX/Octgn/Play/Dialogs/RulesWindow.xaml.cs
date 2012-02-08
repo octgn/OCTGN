@@ -13,7 +13,7 @@ namespace Octgn.Play.Dialogs
     /// <summary>
     ///   Interaction logic for RulesWindow.xaml
     /// </summary>
-    public partial class RulesWindow : Window
+    public partial class RulesWindow
     {
         public RulesWindow()
         {
@@ -26,7 +26,7 @@ namespace Octgn.Play.Dialogs
             input.Position = output.Position = 0;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
             string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
@@ -39,7 +39,7 @@ namespace Octgn.Play.Dialogs
                 {
                     long bytesRead = 0;
                     // Change the 75 for performance.  Find a number that suits your application best
-                    int bufferLength = 1024*75;
+                    const int bufferLength = 1024*75;
                     while (!fileReader.EndOfStream)
                     {
                         int readLength = bufferLength;
@@ -52,8 +52,8 @@ namespace Octgn.Play.Dialogs
                         Dispatcher.BeginInvoke(new Action(() =>
                                                               {
                                                                   var range = new TextRange(rules.Document.ContentEnd,
-                                                                                            rules.Document.ContentEnd);
-                                                                  range.Text = currentLine;
+                                                                                            rules.Document.ContentEnd)
+                                                                                  {Text = currentLine};
                                                               }), DispatcherPriority.Normal);
                     }
                 }
@@ -62,23 +62,21 @@ namespace Octgn.Play.Dialogs
 
         private void FindText(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                DoSearch(rules, search.Text, true);
-                rules.Focus();
+            if (e.Key != Key.Enter) return;
+            DoSearch(rules, search.Text, true);
+            rules.Focus();
 
-                // Testing code for text scrolling
-                /*var start = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+            // Testing code for text scrolling
+            /*var start = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
                 var end = rules.Selection.End.GetCharacterRect(LogicalDirection.Forward);                
                 rules.ScrollToVerticalOffset((start.Top + end.Bottom - rules.ViewportHeight) / 2 + rules.VerticalOffset);*/
 
-                // WPF RichTextBox doesn't include "scrolltocaret"
-                Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-                double totaloffset = thisposition.Top + rules.VerticalOffset;
-                scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
-                // Handle the keypress. We don't want to muck with rules text
-                e.Handled = true;
-            }
+            // WPF RichTextBox doesn't include "scrolltocaret"
+            Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+            double totaloffset = thisposition.Top + rules.VerticalOffset;
+            scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
+            // Handle the keypress. We don't want to muck with rules text
+            e.Handled = true;
         }
 
         public bool DoSearch(RichTextBox richTextBox, string searchText, bool searchNext)

@@ -15,31 +15,31 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class HostGameSettings
     {
-        private readonly Data.Game Game;
-        private bool beginHost;
-        private NavigationService ns;
+        private readonly Data.Game _game;
+        private bool _beginHost;
+        private NavigationService _ns;
 
         public HostGameSettings(Data.Game game)
         {
             InitializeComponent();
-            Game = game;
+            _game = game;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void PageLoaded(object sender, RoutedEventArgs e)
         {
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void Button1Click(object sender, RoutedEventArgs e)
         {
-            if (beginHost) return;
+            if (_beginHost) return;
             e.Handled = true;
-            beginHost = true;
-            ns = NavigationService;
-            Program.LobbyClient.BeginHostGame(EndHostGame, Game, textBox1.Text, textBox2.Text);
+            _beginHost = true;
+            _ns = NavigationService;
+            Program.LobbyClient.BeginHostGame(EndHostGame, _game, textBox1.Text, textBox2.Text);
             Program.ClientWindow.HostJoinTab();
         }
 
@@ -51,7 +51,7 @@ namespace Octgn.Launcher
             Program.LobbyClient.CurrentHostedGamePort = port;
             if (port <= -1) return;
             Program.GameSettings.UseTwoSidedTable = true;
-            Program.Game = new Game(GameDef.FromO8G(Game.Filename));
+            Program.Game = new Game(GameDef.FromO8G(_game.Filename));
             Program.IsHost = true;
 #if(DEBUG)
             var ad = new IPAddress[1];
@@ -61,20 +61,18 @@ namespace Octgn.Launcher
                 IPAddress ip = ad[0];
 #endif
 
-            if (ad.Length > 0)
-            {
-                Program.Client = new Client(ip, port);
-                Program.Client.Connect();
-                Dispatcher.Invoke(new Action(dothenavigate));
-            }
+            if (ad.Length <= 0) return;
+            Program.Client = new Client(ip, port);
+            Program.Client.Connect();
+            Dispatcher.Invoke(new Action(DoTheNavigate));
         }
 
-        private void dothenavigate()
+        private void DoTheNavigate()
         {
-            ns.Navigate(new StartGame());
+            _ns.Navigate(new StartGame());
         }
 
-        private void button2_Click(object sender, RoutedEventArgs e)
+        private void Button2Click(object sender, RoutedEventArgs e)
         {
             Program.ClientWindow.HostJoinTab();
         }

@@ -11,32 +11,32 @@ namespace Octgn.Play.Gui
 
     internal abstract class DragOperation<T> : IDragOperation where T : UIElement
     {
-        private Point oldPos;
-        protected T target;
+        private Point _oldPos;
+        protected T Target;
 
         protected DragOperation(T target)
         {
-            this.target = target;
-            oldPos = Mouse.GetPosition(target);
+            this.Target = target;
+            _oldPos = Mouse.GetPosition(target);
             target.CaptureMouse();
             // TODO: Calling a virtual constructure in a future object, bad news
-            StartDragCore(oldPos);
+            StartDragCore(_oldPos);
         }
 
         #region IDragOperation Members
 
         public void Dragging(MouseEventArgs e)
         {
-            Point newPos = e.GetPosition(target);
-            Vector delta = newPos - oldPos;
-            oldPos = newPos;
+            Point newPos = e.GetPosition(Target);
+            Vector delta = newPos - _oldPos;
+            _oldPos = newPos;
             DraggingCore(newPos, delta);
             e.Handled = true;
         }
 
         public void EndDrag()
         {
-            target.ReleaseMouseCapture();
+            Target.ReleaseMouseCapture();
             EndDragCore();
         }
 

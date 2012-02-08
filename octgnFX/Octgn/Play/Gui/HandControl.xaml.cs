@@ -5,9 +5,9 @@ using System.Windows.Input;
 
 namespace Octgn.Play.Gui
 {
-    internal partial class HandControl
+    partial class HandControl
     {
-        private FanPanel fanPanel;
+        private FanPanel _fanPanel;
 
         public HandControl()
         {
@@ -26,20 +26,20 @@ namespace Octgn.Play.Gui
             e.CardSize =
                 new Size(
                     100*Program.Game.Definition.CardDefinition.Width/Program.Game.Definition.CardDefinition.Height, 100);
-            fanPanel.DisplayInsertIndicator(e.ClickedCard, fanPanel.GetIndexFromPoint(Mouse.GetPosition(fanPanel)));
+            _fanPanel.DisplayInsertIndicator(e.ClickedCard, _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel)));
         }
 
         protected override void OnCardOut(object sender, CardsEventArgs e)
         {
             e.Handled = true;
-            fanPanel.HideInsertIndicator();
+            _fanPanel.HideInsertIndicator();
         }
 
         protected override void OnCardDropped(object sender, CardsEventArgs e)
         {
             e.Handled = e.CanDrop = true;
             if (!@group.TryToManipulate()) return;
-            int idx = fanPanel.GetIndexFromPoint(Mouse.GetPosition(fanPanel));
+            int idx = _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel));
             foreach (Card c in e.Cards)
             {
                 bool doNotIncrement = (c.Group == @group && @group.GetCardIndex(c) < idx);
@@ -54,7 +54,7 @@ namespace Octgn.Play.Gui
 
         private void SaveFanPanel(object sender, RoutedEventArgs e)
         {
-            fanPanel = (FanPanel) sender;
+            _fanPanel = (FanPanel) sender;
         }
     }
 }

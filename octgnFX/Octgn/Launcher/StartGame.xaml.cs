@@ -9,7 +9,7 @@ namespace Octgn.Launcher
 {
     public partial class StartGame
     {
-        private bool StartingGame;
+        private bool _startingGame;
 
         public StartGame()
         {
@@ -48,7 +48,7 @@ namespace Octgn.Launcher
                           };
             Unloaded += delegate
                             {
-                                if (StartingGame == false)
+                                if (_startingGame == false)
                                     Program.StopGame();
                                 Program.GameSettings.PropertyChanged -= SettingsChanged;
                                 Program.ServerError -= HandshakeError;
@@ -65,7 +65,7 @@ namespace Octgn.Launcher
 
         internal void Start()
         {
-            StartingGame = true;
+            _startingGame = true;
             // Reset the InvertedTable flags if they were set and they are not used
             if (!Program.GameSettings.UseTwoSidedTable)
                 foreach (Player player in Player.AllExceptGlobal)
@@ -88,8 +88,8 @@ namespace Octgn.Launcher
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            if (StartingGame) return;
-            StartingGame = true;
+            if (_startingGame) return;
+            _startingGame = true;
             Program.LobbyClient.HostedGameStarted();
             e.Handled = true;
             Start();
@@ -106,7 +106,7 @@ namespace Octgn.Launcher
             Program.ClientWindow.HostJoinTab();
         }
 
-        private void HandshakeError(object sender, ServerErrorEventArgs e)
+        private static void HandshakeError(object sender, ServerErrorEventArgs e)
         {
             MessageBox.Show("The server returned an error:\n" + e.Message, "Error", MessageBoxButton.OK,
                             MessageBoxImage.Error);
@@ -114,7 +114,7 @@ namespace Octgn.Launcher
             Back();
         }
 
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        private void CheckBoxClick(object sender, RoutedEventArgs e)
         {
             if (cbTwoSided.IsChecked != null) Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
         }
