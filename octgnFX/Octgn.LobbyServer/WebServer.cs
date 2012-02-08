@@ -154,7 +154,7 @@ namespace Skylabs.LobbyServer
             AcceptConnections();
         }
 
-        private string ReplaceVariables(string rawpage)
+        private static string ReplaceVariables(string rawpage)
         {
             Version v = Assembly.GetCallingAssembly().GetName().Version;
             //Microsoft.VisualBasic.Devices.ComputerInfo ci = new Microsoft.VisualBasic.Devices.ComputerInfo();
@@ -169,7 +169,7 @@ namespace Skylabs.LobbyServer
             return ret;
         }
 
-        private string InsertRunningGames(string rawpage)
+        private static string InsertRunningGames(string rawpage)
         {
             string insert = string.Empty;
             List<Lobby.HostedGame> games = Gaming.GetLobbyList();
@@ -213,7 +213,7 @@ namespace Skylabs.LobbyServer
             return (ret);
         }
 
-        private void SendItem(HttpListenerResponse res, string page)
+        private static void SendItem(HttpListenerResponse res, string page)
         {
             try
             {
@@ -251,11 +251,7 @@ namespace Skylabs.LobbyServer
             {
                 return string.Concat(Math.Round(bytes/Math.Pow(byteConversion, 2), 2), " MB");
             }
-            if (bytes >= byteConversion) //KB Range
-            {
-                return string.Concat(Math.Round(bytes/byteConversion, 2), " KB");
-            }
-            return string.Concat(bytes, " Bytes");
+            return bytes >= byteConversion ? string.Concat(Math.Round(bytes/byteConversion, 2), " KB") : string.Concat(bytes, " Bytes");
         }
     }
 }

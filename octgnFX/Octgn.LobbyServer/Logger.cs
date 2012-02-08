@@ -58,23 +58,18 @@ namespace Skylabs.LobbyServer
             if (frames != null)
                 for (int i = 0; i < frames.Length; i++)
                 {
-                    if (frames[i].GetMethod().Name == MethodBase.GetCurrentMethod().Name)
+                    if (frames[i].GetMethod().Name != MethodBase.GetCurrentMethod().Name) continue;
+                    if (i + 1 < frames.Length)
                     {
-                        if (i + 1 < frames.Length)
-                        {
-                            methodName = frames[i + 1].GetMethod().Name;
-                            break;
-                        }
+                        methodName = frames[i + 1].GetMethod().Name;
+                        break;
                     }
                 }
             Console.WriteLine(String.Format("{1}[{4}:{5}][ERROR({2})]{0}:{3}", methodName, Tab,
                                             Thread.CurrentThread.ManagedThreadId, e.Message,
                                             DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
             Console.WriteLine("==========StackTrace==========");
-            if (e.StackTrace != null)
-                Console.WriteLine(e.StackTrace);
-            else
-                Console.WriteLine(st.ToString());
+            Console.WriteLine(e.StackTrace ?? st.ToString());
             Console.WriteLine("=============END==============");
             foreach (string s in extras)
                 Console.WriteLine(s);

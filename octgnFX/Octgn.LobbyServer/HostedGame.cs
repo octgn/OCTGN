@@ -27,11 +27,16 @@ namespace Skylabs.LobbyServer
             Status = Lobby.HostedGame.eHostedGame.StoppedHosting;
             Port = port;
             TimeStarted = new DateTime(0);
-            StandAloneApp = new Process();
+            StandAloneApp = new Process
+                                {
+                                    StartInfo =
+                                        {
+                                            FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe",
+                                            Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
+                                                        Port.ToString(CultureInfo.InvariantCulture)
+                                        }
+                                };
 #if(DEBUG || TestServer)
-            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
-            StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
-                                                Port.ToString(CultureInfo.InvariantCulture);
 #else
             StandAloneApp.StartInfo.FileName = "/opt/mono-2.10/bin/mono";
             StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" + GameGuid + " -v=" + GameVersion + " -p=" + Port.ToString(CultureInfo.InvariantCulture);

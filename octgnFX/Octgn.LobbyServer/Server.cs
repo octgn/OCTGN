@@ -152,11 +152,9 @@ namespace Skylabs.LobbyServer
                 Logger.L(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 foreach (Client c in Clients)
                 {
-                    if (c.LoggedIn && c.Me.Uid == uid)
-                    {
-                        Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
-                        return c.Me.Status;
-                    }
+                    if (!c.LoggedIn || c.Me.Uid != uid) continue;
+                    Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
+                    return c.Me.Status;
                 }
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 return UserStatus.Offline;
@@ -178,8 +176,8 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="e"> User status </param>
         /// <param name="client"> The client that called </param>
-        /// <param name="Supress"> Should we supress a broadcast message </param>
-        public static void OnUserEvent(UserStatus e, Client client, bool Supress)
+        /// <param name="supress"> Should we supress a broadcast message </param>
+        public static void OnUserEvent(UserStatus e, Client client, bool supress)
         {
             Logger.TL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
@@ -192,18 +190,16 @@ namespace Skylabs.LobbyServer
                     bool foundOne = false;
                     foreach (Client c in Clients)
                     {
-                        if (c.Me.Uid == me.Uid)
-                        {
-                            foundOne = true;
-                            break;
-                        }
+                        if (c.Me.Uid != me.Uid) continue;
+                        foundOne = true;
+                        break;
                     }
                     if (!foundOne)
                     {
                         LazyAsync.Invoke(() => Chatting.UserOffline((User) me.Clone()));
                     }
                 }
-                if (!Supress)
+                if (!supress)
                 {
                     foreach (Client c in Clients)
                     {
@@ -291,7 +287,7 @@ namespace Skylabs.LobbyServer
         /// <param name="caller"> The Caller </param>
         /// <param name="uid"> UID </param>
         /// <returns> Tupple, where value1=number of users with UID who are logged in, and value2=Number of clients removed. </returns>
-        public static Tuple<int, int> StopAndRemoveAllByUID(Client caller, int uid)
+        public static Tuple<int, int> StopAndRemoveAllByUid(Client caller, int uid)
         {
             //Logger.TL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
@@ -305,14 +301,12 @@ namespace Skylabs.LobbyServer
                     Client cl2 = cl;
                     if (cl2 == null) continue;
                     if (cl2.Id == caller.Id) continue;
-                    if (cl2.Me.Uid == uid)
-                    {
-                        removedCount++;
-                        if (cl2.LoggedIn)
-                            loggedInCount++;
-                        Trace.WriteLine(String.Format("#Try stop client[{0}]", cl2.Id));
-                        LazyAsync.Invoke(() => cl2.Stop());
-                    }
+                    if (cl2.Me.Uid != uid) continue;
+                    removedCount++;
+                    if (cl2.LoggedIn)
+                        loggedInCount++;
+                    Trace.WriteLine(String.Format("#Try stop client[{0}]", cl2.Id));
+                    LazyAsync.Invoke(() => cl2.Stop());
                 }
                 //Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return new Tuple<int, int>(loggedInCount, removedCount);
