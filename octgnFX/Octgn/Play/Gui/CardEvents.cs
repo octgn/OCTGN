@@ -1,30 +1,39 @@
-using System.Windows;
 using System.Collections.Generic;
+using System.Windows;
 using Octgn.Data;
 
 namespace Octgn.Play.Gui
 {
     public class CardEventArgs : RoutedEventArgs
     {
+        public readonly Card Card;
+        public readonly CardModel CardModel;
+
         public CardEventArgs(RoutedEvent routedEvent, object src)
             : base(routedEvent, src)
-        { }
+        {
+        }
 
         public CardEventArgs(Card card, RoutedEvent routedEvent, object src)
             : base(routedEvent, src)
-        { Card = card; }
+        {
+            Card = card;
+        }
 
         public CardEventArgs(CardModel model, RoutedEvent routedEvent, object src)
             : base(routedEvent, src)
-        { CardModel = model; }
+        {
+            CardModel = model;
+        }
 
-        public readonly Card Card;
-        public readonly CardModel CardModel;
         public Vector MouseOffset { get; set; }
     }
 
     public class CardsEventArgs : RoutedEventArgs
     {
+        public readonly IEnumerable<Card> Cards;
+        public readonly Card ClickedCard;
+
         public CardsEventArgs(Card card, IEnumerable<Card> cards, RoutedEvent routedEvent, object src)
             : base(routedEvent, src)
         {
@@ -32,8 +41,6 @@ namespace Octgn.Play.Gui
             Cards = cards;
         }
 
-        public readonly Card ClickedCard;
-        public readonly IEnumerable<Card> Cards;
         public IInputElement Handler { get; set; }
         public Vector MouseOffset { get; set; }
         public bool? FaceUp { get; set; }
@@ -43,5 +50,6 @@ namespace Octgn.Play.Gui
     }
 
     public delegate void CardEventHandler(object sender, CardEventArgs e);
+
     public delegate void CardsEventHandler(object sender, CardsEventArgs e);
 }

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using Octgn.Controls;
-using Skylabs.Lobby;
 
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for ContactList.xaml
+    ///   Interaction logic for ContactList.xaml
     /// </summary>
     public partial class AddFriendPage : Page
     {
@@ -18,7 +15,6 @@ namespace Octgn.Launcher
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -34,7 +30,6 @@ namespace Octgn.Launcher
         private void button2_Click(object sender, RoutedEventArgs e)
         {
             Program.ClientWindow.LobbyTab();
-
         }
     }
 }

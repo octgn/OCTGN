@@ -1,24 +1,26 @@
-﻿<Window x:Class="Octgn.Launcher.ChatWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Lobby Chat" Height="448" Width="710" Drop="Window_Drop" Loaded="Window_Loaded" Unloaded="Window_Unloaded" AllowDrop="True" Closing="Window_Closing" Icon="/OCTGN;component/Resources/chaticon.png">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100*" />
-            <ColumnDefinition Width="158" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="23" />
-            <RowDefinition Height="100*" />
-            <RowDefinition Height="26" />
-        </Grid.RowDefinitions>
-        <TextBox Grid.Row="2" Name="textBox1" KeyUp="textBox1_KeyUp" />
-        <ListBox Grid.Column="1" Name="listBox1" Grid.Row="1" Grid.RowSpan="2" MouseRightButtonUp="listBox1_MouseRightButtonUp" />
-        <RichTextBox Name="richTextBox1" Drop="Window_Drop" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Grid.Row="1" IsDocumentEnabled="True" />
-        <Menu Grid.Row="0" Height="23" Name="menu1" Grid.ColumnSpan="2" >
-            <MenuItem Header="_File">
-                <MenuItem Header="_Leave Chat" Name="miLeaveChat" Click="miLeaveChat_Click" />
-            </MenuItem>
-        </Menu>
-    </Grid>
+﻿<Window x:Class="Octgn.Launcher.ChatWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Lobby Chat" Height="448" Width="710" Drop="Window_Drop"
+        Loaded="Window_Loaded" Unloaded="Window_Unloaded" AllowDrop="True" Closing="Window_Closing"
+        Icon="/OCTGN;component/Resources/chaticon.png">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="100*" />
+      <ColumnDefinition Width="158" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="23" />
+      <RowDefinition Height="100*" />
+      <RowDefinition Height="26" />
+    </Grid.RowDefinitions>
+    <TextBox Grid.Row="2" Name="textBox1" KeyUp="textBox1_KeyUp" />
+    <ListBox Grid.Column="1" Name="listBox1" Grid.Row="1" Grid.RowSpan="2"
+             MouseRightButtonUp="listBox1_MouseRightButtonUp" />
+    <RichTextBox Name="richTextBox1" Drop="Window_Drop" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                 Grid.Row="1" IsDocumentEnabled="True" />
+    <Menu Grid.Row="0" Height="23" Name="menu1" Grid.ColumnSpan="2">
+      <MenuItem Header="_File">
+        <MenuItem Header="_Leave Chat" Name="miLeaveChat" Click="miLeaveChat_Click" />
+      </MenuItem>
+    </Menu>
+  </Grid>
 </Window>

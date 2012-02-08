@@ -2,9 +2,9 @@
 
 namespace Octgn.Networking
 {
-    class Mute : IDisposable
+    internal class Mute : IDisposable
     {
-        private int oldMuteId;
+        private readonly int oldMuteId;
 
         public Mute(int muteId)
         {
@@ -12,9 +12,13 @@ namespace Octgn.Networking
             Program.Client.Muted = muteId;
         }
 
+        #region IDisposable Members
+
         public void Dispose()
         {
             Program.Client.Muted = oldMuteId;
         }
+
+        #endregion
     }
 }

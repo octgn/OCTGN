@@ -1,17 +1,4 @@
-﻿//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
-#region
+﻿#region
 
 using System;
 using System.Collections.Generic;
@@ -35,18 +22,13 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Returns first available port on the specified IP address. 
-        /// The port scan excludes ports that are open on ANY loopback adapter. 
-        /// 
-        /// If the address upon which a port is requested is an 'ANY' address all 
-        /// ports that are open on ANY IP are excluded.
+        ///   Returns first available port on the specified IP address. The port scan excludes ports that are open on ANY loopback adapter. If the address upon which a port is requested is an 'ANY' address all ports that are open on ANY IP are excluded.
         /// </summary>
-        /// <param name="rangeStart"></param>
-        /// <param name="rangeEnd"></param>
-        /// <param name="ip">The IP address upon which to search for available port.</param>
-        /// <param name="includeIdlePorts">If true includes ports in TIME_WAIT state in results. 
-        /// TIME_WAIT state is typically cool down period for recently released ports.</param>
-        /// <returns></returns>
+        /// <param name="rangeStart"> </param>
+        /// <param name="rangeEnd"> </param>
+        /// <param name="ip"> The IP address upon which to search for available port. </param>
+        /// <param name="includeIdlePorts"> If true includes ports in TIME_WAIT state in results. TIME_WAIT state is typically cool down period for recently released ports. </param>
+        /// <returns> </returns>
         public static int GetAvailablePort(int rangeStart, int rangeEnd, IPAddress ip, bool includeIdlePorts)
         {
             IPGlobalProperties ipProps = IPGlobalProperties.GetIPGlobalProperties();
@@ -58,7 +40,7 @@ namespace CassiniDev
                                                            IPAddress.IPv6Loopback.
                                                                Equals(i);
             // get all active ports on specified IP. 
-            List<ushort> excludedPorts = new List<ushort>();
+            var excludedPorts = new List<ushort>();
 
             // if a port is open on an 'any' or 'loopback' interface then include it in the excludedPorts
             excludedPorts.AddRange(from n in ipProps.GetActiveTcpConnections()
@@ -69,27 +51,27 @@ namespace CassiniDev
                                                                                n.LocalEndPoint.Address.Equals(ip) ||
                                                                                isIpAnyOrLoopBack(n.LocalEndPoint.Address)) &&
                                        (!includeIdlePorts || n.State != TcpState.TimeWait)
-                                   select (ushort)n.LocalEndPoint.Port);
+                                   select (ushort) n.LocalEndPoint.Port);
 
             excludedPorts.AddRange(from n in ipProps.GetActiveTcpListeners()
                                    where n.Port >= rangeStart && n.Port <= rangeEnd && (
                                                                                            isIpAnyOrLoopBack(ip) ||
                                                                                            n.Address.Equals(ip) ||
                                                                                            isIpAnyOrLoopBack(n.Address))
-                                   select (ushort)n.Port);
+                                   select (ushort) n.Port);
 
             excludedPorts.AddRange(from n in ipProps.GetActiveUdpListeners()
                                    where n.Port >= rangeStart && n.Port <= rangeEnd && (
                                                                                            isIpAnyOrLoopBack(ip) ||
                                                                                            n.Address.Equals(ip) ||
                                                                                            isIpAnyOrLoopBack(n.Address))
-                                   select (ushort)n.Port);
+                                   select (ushort) n.Port);
 
             excludedPorts.Sort();
 
             for (int port = rangeStart; port <= rangeEnd; port++)
             {
-                if (!excludedPorts.Contains((ushort)port))
+                if (!excludedPorts.Contains((ushort) port))
                 {
                     return port;
                 }
@@ -99,26 +81,25 @@ namespace CassiniDev
         }
 
         ///<summary>
-        /// Returns the first IPV4 address available for this host.
-        /// This is typically an external IP
+        ///  Returns the first IPV4 address available for this host. This is typically an external IP
         ///</summary>
-        ///<returns></returns>
+        ///<returns> </returns>
         public static IPAddress GetExternalIPV4()
         {
             return GetIPAdresses().ToList()
-                .FirstOrDefault(i => i.ToString().IndexOf(":") == -1);
+                .FirstOrDefault(i => i.ToString().IndexOf(":", StringComparison.Ordinal) == -1);
         }
 
         ///<summary>
         ///</summary>
-        ///<returns></returns>
+        ///<returns> </returns>
         public static string GetHostName()
         {
             return Dns.GetHostName();
         }
 
         ///<summary>
-        /// Gets all IP addresses for this host
+        ///  Gets all IP addresses for this host
         ///</summary>
         public static IPAddress[] GetIPAdresses()
         {
@@ -126,10 +107,10 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Gently polls specified IP:Port to determine if it is available.
+        ///   Gently polls specified IP:Port to determine if it is available.
         /// </summary>
-        /// <param name="ipAddress"></param>
-        /// <param name="port"></param>
+        /// <param name="ipAddress"> </param>
+        /// <param name="port"> </param>
         public static bool IsPortAvailable(IPAddress ipAddress, int port)
         {
             bool portAvailable = false;
@@ -149,15 +130,13 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// Combine the RootUrl of the running web application with the relative url
-        /// specified.
+        ///   Combine the RootUrl of the running web application with the relative url specified.
         /// </summary>
-        /// <param name="rootUrl"></param>
-        /// <param name="relativeUrl"></param>
-        /// <returns></returns>
+        /// <param name="rootUrl"> </param>
+        /// <param name="relativeUrl"> </param>
+        /// <returns> </returns>
         public static string NormalizeUrl(string rootUrl, string relativeUrl)
         {
-
             relativeUrl = relativeUrl.TrimStart('/');
 
             if (!rootUrl.EndsWith("/"))
@@ -169,8 +148,8 @@ namespace CassiniDev
 
         ///<summary>
         ///</summary>
-        ///<param name="ipString"></param>
-        ///<returns></returns>
+        ///<param name="ipString"> </param>
+        ///<returns> </returns>
         public static IPAddress ParseIPString(string ipString)
         {
             if (string.IsNullOrEmpty(ipString))
@@ -196,24 +175,21 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// <para>
-        /// Hostnames are composed of series of labels concatenated with dots, as are all domain names[1]. 
-        /// For example, "en.wikipedia.org" is a hostname. Each label must be between 1 and 63 characters long, 
-        /// and the entire hostname has a maximum of 255 characters.</para>
-        /// <para>
-        /// The Internet standards (Request for Comments) for protocols mandate that component hostname 
-        /// labels may contain only the ASCII letters 'a' through 'z' (in a case-insensitive manner), the digits 
-        /// '0' through '9', and the hyphen. The original specification of hostnames in RFC 952, mandated that 
-        /// labels could not start with a digit or with a hyphen, and must not end with a hyphen. However, a 
-        /// subsequent specification (RFC 1123) permitted hostname labels to start with digits. No other symbols, 
-        /// punctuation characters, or blank spaces are permitted.</para>
+        ///   <para>Hostnames are composed of series of labels concatenated with dots, as are all domain names[1]. 
+        ///     For example, "en.wikipedia.org" is a hostname. Each label must be between 1 and 63 characters long, 
+        ///     and the entire hostname has a maximum of 255 characters.</para> <para>The Internet standards (Request for Comments) for protocols mandate that component hostname 
+        ///                                                                       labels may contain only the ASCII letters 'a' through 'z' (in a case-insensitive manner), the digits 
+        ///                                                                       '0' through '9', and the hyphen. The original specification of hostnames in RFC 952, mandated that 
+        ///                                                                       labels could not start with a digit or with a hyphen, and must not end with a hyphen. However, a 
+        ///                                                                       subsequent specification (RFC 1123) permitted hostname labels to start with digits. No other symbols, 
+        ///                                                                       punctuation characters, or blank spaces are permitted.</para>
         /// </summary>
-        /// <param name="hostname"></param>
-        /// <returns></returns>
+        /// <param name="hostname"> </param>
+        /// <returns> </returns>
         /// http://en.wikipedia.org/wiki/Hostname#Restrictions_on_valid_host_names
         public static bool ValidateHostName(string hostname)
         {
-            Regex hostnameRx =
+            var hostnameRx =
                 new Regex(
                     @"^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$");
             return hostnameRx.IsMatch(hostname);

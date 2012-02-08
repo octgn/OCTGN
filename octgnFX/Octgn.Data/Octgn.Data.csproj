@@ -177,6 +177,7 @@
     <EmbeddedResource Include="CardSet.xsd" />
     <EmbeddedResource Include="Properties\Resource1.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

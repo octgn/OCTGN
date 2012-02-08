@@ -12,23 +12,6 @@ namespace Skylabs.ConsoleHelper
 
     public class ConsoleMessage
     {
-        public String RawData
-        {
-            get
-            {
-                return _rawData;
-            }
-            set
-            {
-                _rawData = value.TrimStart(new[] { ' ' });
-                ParseMessage();
-            }
-        }
-
-        public String Header { get; set; }
-
-        public List<ConsoleArgument> Args { get; set; }
-
         private String _rawData;
 
         public ConsoleMessage()
@@ -41,6 +24,20 @@ namespace Skylabs.ConsoleHelper
             RawData = rawData;
         }
 
+        public String RawData
+        {
+            get { return _rawData; }
+            set
+            {
+                _rawData = value.TrimStart(new[] {' '});
+                ParseMessage();
+            }
+        }
+
+        public String Header { get; set; }
+
+        public List<ConsoleArgument> Args { get; set; }
+
         public void ParseMessage(String data)
         {
             RawData = data;
@@ -49,7 +46,7 @@ namespace Skylabs.ConsoleHelper
         private void ParseMessage()
         {
             //TODO better handling of jibberish. Probubly be best to use regex. It'd be a lot cleaner and sexier.
-            RawData = RawData.TrimStart(new[] { ' ' });
+            RawData = RawData.TrimStart(new[] {' '});
             int ws = RawData.IndexOf(' ');
             Header = "";
             Args = new List<ConsoleArgument>();
@@ -63,10 +60,10 @@ namespace Skylabs.ConsoleHelper
                 try
                 {
                     String args = RawData.Substring(ws + 1);
-                    args = args.TrimStart(new[] { ' ' });
+                    args = args.TrimStart(new[] {' '});
                     if (!args.Equals(""))
                     {
-                        String[] araw = args.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+                        String[] araw = args.Split(new[] {'-'}, StringSplitOptions.RemoveEmptyEntries);
                         if (araw.Length != 0)
                         {
                             foreach (String a in araw)
@@ -75,16 +72,16 @@ namespace Skylabs.ConsoleHelper
                                 ws = temp.IndexOf(' ');
                                 if (ws == -1)
                                 {
-                                    ConsoleArgument ca = new ConsoleArgument { Argument = temp };
+                                    var ca = new ConsoleArgument {Argument = temp};
                                     Args.Add(ca);
                                 }
                                 else
                                 {
-                                    ConsoleArgument ca = new ConsoleArgument
-                                                             {
-                                                                 Argument = temp.Substring(0, ws),
-                                                                 Value = temp.Substring(ws + 1)
-                                                             };
+                                    var ca = new ConsoleArgument
+                                                 {
+                                                     Argument = temp.Substring(0, ws),
+                                                     Value = temp.Substring(ws + 1)
+                                                 };
                                     Args.Add(ca);
                                 }
                             }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 
 namespace CassiniDev.Configuration
 {
-    [ConfigurationCollection(typeof(CassiniDevProfileElement))]
+    [ConfigurationCollection(typeof (CassiniDevProfileElement))]
     public class CassiniDevProfileElementCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
@@ -13,7 +12,7 @@ namespace CassiniDev.Configuration
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((CassiniDevProfileElement)element).Port;
+            return ((CassiniDevProfileElement) element).Port;
         }
     }
 }

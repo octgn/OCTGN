@@ -1,9 +1,4 @@
-﻿/*
- * This file was automatically generated.
- * Do not modify, changes will get lots when the file is regenerated!
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
@@ -11,83 +6,24 @@ using System.Text;
 
 namespace Octgn.Server
 {
-    internal sealed class Broadcaster : Octgn.Server.IClientCalls
+    internal sealed class Broadcaster : IClientCalls
     {
-        private byte[] xmlData = new byte[1024], binData;
-        private int xmlLength;
-        private Dictionary<TcpClient, Handler.PlayerInfo> to;
-        private XmlFormatter xml;
+        private readonly Handler handler;
+        private readonly Dictionary<TcpClient, Handler.PlayerInfo> to;
         private BinFormatter bin;
-        private Handler handler;
-
-        private sealed class XmlFormatter : BaseXmlStub
-        {
-            private Broadcaster bcast;
-
-            internal XmlFormatter(Broadcaster bcast, Handler handler)
-                : base(handler)
-            { this.bcast = bcast; }
-
-            protected override void Send(string xml)
-            {
-                bcast.xmlLength = Encoding.UTF8.GetByteCount(xml) + 1;
-                if (bcast.xmlLength > bcast.xmlData.Length)
-                    bcast.xmlData = new byte[bcast.xmlLength];
-                Encoding.UTF8.GetBytes(xml, 0, xml.Length, bcast.xmlData, 0);
-                bcast.xmlData[bcast.xmlLength - 1] = 0;
-            }
-        }
-
-        private sealed class BinFormatter : BaseBinaryStub
-        {
-            private Broadcaster bcast;
-
-            internal BinFormatter(Broadcaster bcast, Handler handler)
-                : base(handler)
-            { this.bcast = bcast; }
-
-            protected override void Send(byte[] data)
-            { bcast.binData = data; }
-        }
+        private byte[] binData;
+        private XmlFormatter xml;
+        private byte[] xmlData = new byte[1024];
+        private int xmlLength;
 
         internal Broadcaster(Dictionary<TcpClient, Handler.PlayerInfo> to, Handler handler)
         {
-            this.to = to; this.handler = handler;
+            this.to = to;
+            this.handler = handler;
             xml = new XmlFormatter(this, handler);
         }
 
-        internal void RefreshTypes()
-        {
-            bool bBin = false, bXml = false;
-            foreach (Handler.PlayerInfo pi in to.Values)
-            {
-                bBin |= pi.binary == true;
-                bXml |= pi.binary == false;
-            }
-            if (bBin && bin == null) bin = new BinFormatter(this, handler);
-            else if (!bBin && bin != null) bin = null;
-            if (bXml && xml == null) xml = new XmlFormatter(this, handler);
-            else if (!bXml && xml != null) xml = null;
-        }
-
-        internal void Send()
-        {
-            foreach (KeyValuePair<TcpClient, Handler.PlayerInfo> kvp in to)
-                try
-                {
-                    Stream stream = kvp.Key.GetStream();
-                    if (kvp.Value.binary)
-                        stream.Write(binData, 0, binData.Length);
-                    else
-                        stream.Write(xmlData, 0, xmlLength);
-                    stream.Flush();
-                }
-                catch
-                {
-                    // TODO notify disconnection
-                    //					Program.server.Disconnected(kvp.Key);
-                }
-        }
+        #region IClientCalls Members
 
         public void Ping()
         {
@@ -122,15 +58,6 @@ namespace Octgn.Server
                 xml.Welcome(id);
             if (bin != null)
                 bin.Welcome(id);
-            Send();
-        }
-
-        public void IsAlternateImage(int c, bool isaltertnate)
-        {
-            if (xml != null)
-                xml.IsAlternateImage(c, isaltertnate);
-            if (bin != null)
-                bin.IsAlternateImage(c, isaltertnate);
             Send();
         }
 
@@ -467,30 +394,30 @@ namespace Octgn.Server
             Send();
         }
 
-        public void TransferMarker(byte player, int from, int to, Guid id, string name, ushort count)
+        public void TransferMarker(byte player, int from, int lTo, Guid id, string name, ushort count)
         {
             if (xml != null)
-                xml.TransferMarker(player, from, to, id, name, count);
+                xml.TransferMarker(player, from, lTo, id, name, count);
             if (bin != null)
-                bin.TransferMarker(player, from, to, id, name, count);
+                bin.TransferMarker(player, from, lTo, id, name, count);
             Send();
         }
 
-        public void PassTo(byte player, int id, byte to, bool requested)
+        public void PassTo(byte player, int id, byte lTo, bool requested)
         {
             if (xml != null)
-                xml.PassTo(player, id, to, requested);
+                xml.PassTo(player, id, lTo, requested);
             if (bin != null)
-                bin.PassTo(player, id, to, requested);
+                bin.PassTo(player, id, lTo, requested);
             Send();
         }
 
-        public void TakeFrom(int id, byte to)
+        public void TakeFrom(int id, byte lTo)
         {
             if (xml != null)
-                xml.TakeFrom(id, to);
+                xml.TakeFrom(id, lTo);
             if (bin != null)
-                bin.TakeFrom(id, to);
+                bin.TakeFrom(id, lTo);
             Send();
         }
 
@@ -583,6 +510,51 @@ namespace Octgn.Server
                 bin.CancelLimited(player);
             Send();
         }
+
+        #endregion
+
+        internal void RefreshTypes()
+        {
+            bool bBin = false, bXml = false;
+            foreach (Handler.PlayerInfo pi in to.Values)
+            {
+                bBin |= pi.binary;
+                bXml |= pi.binary == false;
+            }
+            if (bBin && bin == null) bin = new BinFormatter(this, handler);
+            else if (!bBin && bin != null) bin = null;
+            if (bXml && xml == null) xml = new XmlFormatter(this, handler);
+            else if (!bXml && xml != null) xml = null;
+        }
+
+        internal void Send()
+        {
+            foreach (var kvp in to)
+                try
+                {
+                    Stream stream = kvp.Key.GetStream();
+                    if (kvp.Value.binary)
+                        stream.Write(binData, 0, binData.Length);
+                    else
+                        stream.Write(xmlData, 0, xmlLength);
+                    stream.Flush();
+                }
+                catch
+                {
+                    // TODO notify disconnection
+                    //					Program.server.Disconnected(kvp.Key);
+                }
+        }
+
+        public void IsAlternateImage(int c, bool isaltertnate)
+        {
+            if (xml != null)
+                xml.IsAlternateImage(c, isaltertnate);
+            if (bin != null)
+                bin.IsAlternateImage(c, isaltertnate);
+            Send();
+        }
+
         public void PlayerSetGlobalVariable(byte from, byte p, string n, string v)
         {
             if (xml != null)
@@ -591,6 +563,7 @@ namespace Octgn.Server
                 bin.PlayerSetGlobalVariable(from, p, n, v);
             Send();
         }
+
         public void SetGlobalVariable(string n, string v)
         {
             if (xml != null)
@@ -599,5 +572,49 @@ namespace Octgn.Server
                 bin.SetGlobalVariable(n, v);
             Send();
         }
+
+        #region Nested type: BinFormatter
+
+        private sealed class BinFormatter : BaseBinaryStub
+        {
+            private readonly Broadcaster bcast;
+
+            internal BinFormatter(Broadcaster bcast, Handler handler)
+                : base(handler)
+            {
+                this.bcast = bcast;
+            }
+
+            protected override void Send(byte[] data)
+            {
+                bcast.binData = data;
+            }
+        }
+
+        #endregion
+
+        #region Nested type: XmlFormatter
+
+        private sealed class XmlFormatter : BaseXmlStub
+        {
+            private readonly Broadcaster bcast;
+
+            internal XmlFormatter(Broadcaster bcast, Handler handler)
+                : base(handler)
+            {
+                this.bcast = bcast;
+            }
+
+            protected override void Send(string xml)
+            {
+                bcast.xmlLength = Encoding.UTF8.GetByteCount(xml) + 1;
+                if (bcast.xmlLength > bcast.xmlData.Length)
+                    bcast.xmlData = new byte[bcast.xmlLength];
+                Encoding.UTF8.GetBytes(xml, 0, xml.Length, bcast.xmlData, 0);
+                bcast.xmlData[bcast.xmlLength - 1] = 0;
+            }
+        }
+
+        #endregion
     }
 }

@@ -1,8 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
@@ -10,28 +15,82 @@ using System.Windows.Threading;
 using Microsoft.Windows.Controls.Ribbon;
 using Octgn.DeckBuilder;
 using Octgn.Definitions;
+using Octgn.Networking;
+using Octgn.Properties;
 using Skylabs.Lobby;
-using Skylabs.Net;
-using System.IO;
-using System.Windows.Media;
-using System.Windows.Controls;
-using System.Collections.Generic;
+using Application = System.Windows.Application;
+using Brush = System.Windows.Media.Brush;
+using ContextMenu = System.Windows.Forms.ContextMenu;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for Main.xaml
+    ///   Interaction logic for Main.xaml
     /// </summary>
     public partial class Main : RibbonWindow
     {
+        public static readonly DependencyProperty IsHideLoginNotificationsCheckedProperty =
+            DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof (string), typeof (Window),
+                                        new UIPropertyMetadata(Prefs.HideLoginNotifications));
+
+        private readonly Duration _duration = new Duration(TimeSpan.FromSeconds(.5));
+
         public RoutedCommand DebugWindowCommand = new RoutedCommand();
-        private bool _allowDirectNavigation = false;
-        private NavigatingCancelEventArgs _navArgs = null;
-        private Duration _duration = new Duration(TimeSpan.FromSeconds(.5));
+        public NotifyIcon SystemTrayIcon;
+        private bool _allowDirectNavigation;
         private SetList _currentSetList;
+        private bool _isLegitClosing;
+        private NavigatingCancelEventArgs _navArgs;
         private Brush _originalBorderBrush;
-        private bool _isLegitClosing = false;
-        private static bool _locationUpdating = false;
+
+        public Main()
+        {
+            Initialized += Main_Initialized;
+            InitializeComponent();
+            //Set title with version info.
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            Title = "OCTGN  verson " + version;
+
+            frame1.Navigate(new ContactList());
+            DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
+
+            var cb = new CommandBinding(DebugWindowCommand,
+                                        MyCommandExecute, MyCommandCanExecute);
+            CommandBindings.Add(cb);
+
+            var kg = new KeyGesture(Key.M, ModifierKeys.Control);
+            var ib = new InputBinding(DebugWindowCommand, kg);
+            InputBindings.Add(ib);
+            Program.lobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
+            Program.lobbyClient.OnDisconnect += lobbyClient_OnDisconnectEvent;
+            Program.lobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
+            Program.lobbyClient.Chatting.eChatEvent += Chatting_eChatEvent;
+            Program.lobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
+            tbUsername.Text = Program.lobbyClient.Me.DisplayName;
+            tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
+            _originalBorderBrush = NotificationTab.Background;
+            var cm = new ContextMenu();
+            cm.MenuItems.Add("Show", cmShow_Click).DefaultItem = true;
+            cm.MenuItems.Add("Log Off", cmLogOff_Click);
+            cm.MenuItems.Add("-");
+            cm.MenuItems.Add("Quit", cmQuit_Click);
+            SystemTrayIcon = new NotifyIcon();
+            SystemTrayIcon.Icon = new Icon("Resources/Icon.ico");
+            SystemTrayIcon.Visible = false;
+            SystemTrayIcon.ContextMenu = cm;
+            SystemTrayIcon.Text = Properties.Resources.Main_Main_Octgn;
+            SystemTrayIcon.DoubleClick += SystemTrayIcon_DoubleClick;
+            // Insert code required on object creation below this point.
+        }
+
+        public string IsHideJoinsChecked
+        {
+            get { return (string) GetValue(IsHideLoginNotificationsCheckedProperty); }
+            set { SetValue(IsHideLoginNotificationsCheckedProperty, value); }
+        }
 
         private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
@@ -41,14 +100,14 @@ namespace Octgn.Launcher
 
                 _navArgs = e;
                 Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    DoubleAnimation animation0 = new DoubleAnimation();
-                    animation0.From = 1;
-                    animation0.To = 0;
-                    animation0.Duration = _duration;
-                    animation0.Completed += SlideCompleted;
-                    frame1.BeginAnimation(OpacityProperty, animation0);
-                }));
+                                                      {
+                                                          var animation0 = new DoubleAnimation();
+                                                          animation0.From = 1;
+                                                          animation0.To = 0;
+                                                          animation0.Duration = _duration;
+                                                          animation0.Completed += SlideCompleted;
+                                                          frame1.BeginAnimation(OpacityProperty, animation0);
+                                                      }));
             }
             _allowDirectNavigation = false;
         }
@@ -76,73 +135,23 @@ namespace Octgn.Launcher
             }
 
             Dispatcher.BeginInvoke(DispatcherPriority.Loaded,
-                (ThreadStart)delegate()
-                {
-                    frame1.UpdateLayout();
-                    UpdateLayout();
-                    DoubleAnimation animation0 = new DoubleAnimation();
-                    animation0.From = 0;
-                    animation0.To = 1;
-                    animation0.Duration = _duration;
-                    frame1.BeginAnimation(OpacityProperty, animation0);
-                });
+                                   (ThreadStart) delegate
+                                                     {
+                                                         frame1.UpdateLayout();
+                                                         UpdateLayout();
+                                                         var animation0 = new DoubleAnimation();
+                                                         animation0.From = 0;
+                                                         animation0.To = 1;
+                                                         animation0.Duration = _duration;
+                                                         frame1.BeginAnimation(OpacityProperty, animation0);
+                                                     });
         }
 
-        public static readonly DependencyProperty IsHideLoginNotificationsCheckedProperty =
-         DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof(string), typeof(Window), new UIPropertyMetadata(Prefs.HideLoginNotifications));
-
-        public string IsHideJoinsChecked
-        {
-            get { return (string)GetValue(IsHideLoginNotificationsCheckedProperty); }
-            set { SetValue(IsHideLoginNotificationsCheckedProperty, value); }
-        }
-
-        public System.Windows.Forms.NotifyIcon SystemTrayIcon;
-        public Main()
-        {
-            this.Initialized += Main_Initialized;
-            InitializeComponent();
-            //Set title with version info.
-            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            this.Title = "OCTGN  verson " + version.ToString();
-
-            frame1.Navigate(new ContactList());
-            DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
-
-            CommandBinding cb = new CommandBinding(DebugWindowCommand,
-                MyCommandExecute, MyCommandCanExecute);
-            this.CommandBindings.Add(cb);
-
-            KeyGesture kg = new KeyGesture(Key.M, ModifierKeys.Control);
-            InputBinding ib = new InputBinding(DebugWindowCommand, kg);
-            this.InputBindings.Add(ib);
-            Program.lobbyClient.OnFriendRequest += new LobbyClient.FriendRequest(lobbyClient_OnFriendRequest);
-            Program.lobbyClient.OnDisconnect += new EventHandler(lobbyClient_OnDisconnectEvent);
-            Program.lobbyClient.OnUserStatusChanged += new LobbyClient.UserStatusChanged(lobbyClient_OnUserStatusChanged);
-            Program.lobbyClient.Chatting.eChatEvent += new Chatting.ChatEventDelegate(Chatting_eChatEvent);
-            Program.lobbyClient.OnDataRecieved += new LobbyClient.DataRecieved(lobbyClient_OnDataRecieved);
-            tbUsername.Text = Program.lobbyClient.Me.DisplayName;
-            tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
-            _originalBorderBrush = NotificationTab.Background;
-            System.Windows.Forms.ContextMenu cm = new System.Windows.Forms.ContextMenu();
-            cm.MenuItems.Add("Show", cmShow_Click).DefaultItem = true;
-            cm.MenuItems.Add("Log Off", cmLogOff_Click);
-            cm.MenuItems.Add("-");
-            cm.MenuItems.Add("Quit", cmQuit_Click);
-            SystemTrayIcon = new System.Windows.Forms.NotifyIcon();
-            SystemTrayIcon.Icon = new System.Drawing.Icon("Resources/Icon.ico");
-            SystemTrayIcon.Visible = false;
-            SystemTrayIcon.ContextMenu = cm;
-            SystemTrayIcon.Text = "Octgn";
-            SystemTrayIcon.DoubleClick += new System.EventHandler(this.SystemTrayIcon_DoubleClick);
-            // Insert code required on object creation below this point.
-        }
-
-        void lobbyClient_OnDataRecieved(DataRecType type, object e)
+        private void lobbyClient_OnDataRecieved(DataRecType type, object e)
         {
             if (type == DataRecType.ServerMessage)
             {
-                string m = e as string;
+                var m = e as string;
                 if (m != null && !String.IsNullOrWhiteSpace(m))
                 {
                     MessageBox.Show(m, "Server Message", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -152,20 +161,14 @@ namespace Octgn.Launcher
 
         private void Main_Initialized(object sender, EventArgs e)
         {
-            this.Left = Properties.Settings.Default.MainLeftLoc;
-            this.Top = Properties.Settings.Default.MainTopLoc;
+            Left = double.Parse(SimpleConfig.ReadValue("MainLeftLoc", "100"));
+            Top = double.Parse(SimpleConfig.ReadValue("MainTopLoc", "100"));
         }
 
         private void SaveLocation()
         {
-            if (!_locationUpdating)
-            {
-                _locationUpdating = true;
-                Properties.Settings.Default.MainLeftLoc = this.Left;
-                Properties.Settings.Default.MainTopLoc = this.Top;
-                Properties.Settings.Default.Save();
-                _locationUpdating = false;
-            }
+            SimpleConfig.WriteValue("MainLeftLoc", Left.ToString());
+            SimpleConfig.WriteValue("MainTopLoc", Top.ToString());
         }
 
         private void SystemTrayIcon_DoubleClick(object Sender, EventArgs e)
@@ -173,67 +176,65 @@ namespace Octgn.Launcher
             cmShow_Click(Sender, e);
         }
 
-        void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
+        private void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
             Dispatcher.Invoke(new Action(() =>
-            {
-
-                ChatWindow cw = Program.ChatWindows.FirstOrDefault(cww => cww.ID == cr.ID);
-                if (cw == null)
-                {
-                    ChatWindow c = new ChatWindow(cr.ID);
-                    c.Loaded += delegate
-                    {
-                        c.ChatEvent(cr, e, user, data);
-                    };
-                    Program.ChatWindows.Add(c);
-                    if (cr.ID != 0)
-                        c.Show();
-                }
-                else
-                {
-                    if (cw.ID != 0)
-                    {
-                        cw.Show();
-                    }
-                }
-            }));
+                                             {
+                                                 ChatWindow cw =
+                                                     Program.ChatWindows.FirstOrDefault(cww => cww.ID == cr.ID);
+                                                 if (cw == null)
+                                                 {
+                                                     var c = new ChatWindow(cr.ID);
+                                                     c.Loaded += delegate { c.ChatEvent(cr, e, user, data); };
+                                                     Program.ChatWindows.Add(c);
+                                                     if (cr.ID != 0)
+                                                         c.Show();
+                                                 }
+                                                 else
+                                                 {
+                                                     if (cw.ID != 0)
+                                                     {
+                                                         cw.Show();
+                                                     }
+                                                 }
+                                             }));
         }
 
-        void cmQuit_Click(object sender, EventArgs e)
+        private void cmQuit_Click(object sender, EventArgs e)
         {
             CloseDownShop(true);
         }
-        void cmLogOff_Click(object sender, EventArgs e)
+
+        private void cmLogOff_Click(object sender, EventArgs e)
         {
             CloseDownShop(false);
         }
-        void cmShow_Click(object sender, EventArgs e)
+
+        private void cmShow_Click(object sender, EventArgs e)
         {
-            this.Visibility = System.Windows.Visibility.Visible;
+            Visibility = Visibility.Visible;
             SystemTrayIcon.Visible = false;
         }
 
-        void lobbyClient_OnFriendRequest(User u)
+        private void lobbyClient_OnFriendRequest(User u)
         {
             Dispatcher.Invoke(new Action(() =>
-            {
-                if (frame1.Content as NotificationList == null)
-                {
-                    NotificationTab.HeaderStyle = this.Resources["AlertHeaderColor"] as Style;
-                    NotificationTab.InvalidateVisual();
-                }
-
-            }));
-
+                                             {
+                                                 if (frame1.Content as NotificationList == null)
+                                                 {
+                                                     NotificationTab.HeaderStyle =
+                                                         Resources["AlertHeaderColor"] as Style;
+                                                     NotificationTab.InvalidateVisual();
+                                                 }
+                                             }));
         }
 
-        private void Ribbon_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void Ribbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RibbonTab tab = Ribbon.SelectedItem as RibbonTab;
+            var tab = Ribbon.SelectedItem as RibbonTab;
             if (tab != null)
             {
-                switch ((String)tab.Header)
+                switch ((String) tab.Header)
                 {
                     case "Lobby":
                         LobbyTab();
@@ -242,32 +243,34 @@ namespace Octgn.Launcher
                         HostJoinTab();
                         break;
                     case "Games":
-                        GameList gl = new GameList();
-                        gl.OnGameClick += new EventHandler(gl_OnGameDoubleClick);
+                        var gl = new GameList();
+                        gl.OnGameClick += gl_OnGameDoubleClick;
                         frame1.Navigate(gl);
                         break;
                     case "!":
                         frame1.Navigate(new NotificationList());
-                        NotificationTab.HeaderStyle = this.Resources["NormalHeaderColor"] as Style;
+                        NotificationTab.HeaderStyle = Resources["NormalHeaderColor"] as Style;
                         NotificationTab.InvalidateVisual();
                         break;
                 }
             }
         }
+
         public void LobbyTab()
         {
             frame1.Navigate(new ContactList());
         }
+
         public void HostJoinTab()
         {
-            HostedGameList hgl = new HostedGameList();
-            hgl.OnGameClick += new EventHandler(hgl_OnGameClick);
+            var hgl = new HostedGameList();
+            hgl.OnGameClick += hgl_OnGameClick;
             frame1.Navigate(hgl);
         }
 
-        void gl_OnGameDoubleClick(object sender, EventArgs e)
+        private void gl_OnGameDoubleClick(object sender, EventArgs e)
         {
-            Data.Game g = sender as Data.Game;
+            var g = sender as Data.Game;
             _currentSetList = new SetList(g);
             frame1.Navigate(_currentSetList);
         }
@@ -277,14 +280,17 @@ namespace Octgn.Launcher
             CloseDownShop(true);
             Program.Exit();
         }
-        void lobbyClient_OnDisconnectEvent(object sender, EventArgs e)
+
+        private void lobbyClient_OnDisconnectEvent(object sender, EventArgs e)
         {
             Dispatcher.Invoke(new Action<bool>(CloseDownShop), false);
         }
+
         private void LogOff_Click(object sender, RoutedEventArgs e)
         {
             CloseDownShop(false);
         }
+
         private void CloseDownShop(bool Exiting)
         {
             _isLegitClosing = true;
@@ -332,25 +338,25 @@ namespace Octgn.Launcher
             Program.lobbyClient.Stop();
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
+
         private void RibbonButton_Click(object sender, RoutedEventArgs e)
         {
-            GameList gl = frame1.Content as GameList;
+            var gl = frame1.Content as GameList;
             if (gl == null)
             {
                 gl = new GameList(GameList.LoadEvent.InstallGame);
-                gl.OnGameClick += new EventHandler(gl_OnGameDoubleClick);
+                gl.OnGameClick += gl_OnGameDoubleClick;
                 frame1.Navigate(gl);
             }
             else
                 gl.Install_Game();
-
         }
 
         private void RibbonButton_Click_1(object sender, RoutedEventArgs e)
         {
             _currentSetList = null;
-            GameList gl = new GameList();
-            gl.OnGameClick += new EventHandler(gl_OnGameDoubleClick);
+            var gl = new GameList();
+            gl.OnGameClick += gl_OnGameDoubleClick;
             frame1.Navigate(gl);
         }
 
@@ -398,19 +404,20 @@ namespace Octgn.Launcher
 
         private void bHost_Click(object sender, RoutedEventArgs e)
         {
-            GameList gl = new GameList();
-            gl.OnGameClick += new EventHandler(gl_HostGameClick);
+            var gl = new GameList();
+            gl.OnGameClick += gl_HostGameClick;
             frame1.Navigate(gl);
         }
 
-        void gl_HostGameClick(object sender, EventArgs e)
+        private void gl_HostGameClick(object sender, EventArgs e)
         {
             if (Program.PlayWindow == null)
             {
-                Data.Game g = sender as Data.Game;
+                var g = sender as Data.Game;
                 frame1.Navigate(new HostGameSettings(g));
             }
         }
+
         private void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -423,40 +430,42 @@ namespace Octgn.Launcher
             {
                 Program.DebugWindow = new DWindow();
             }
-            if (Program.DebugWindow.Visibility == System.Windows.Visibility.Visible)
-                Program.DebugWindow.Visibility = System.Windows.Visibility.Hidden;
+            if (Program.DebugWindow.Visibility == Visibility.Visible)
+                Program.DebugWindow.Visibility = Visibility.Hidden;
             else
-                Program.DebugWindow.Visibility = System.Windows.Visibility.Visible;
+                Program.DebugWindow.Visibility = Visibility.Visible;
         }
 
         private void bJoin_Click(object sender, RoutedEventArgs e)
         {
-            HostedGameList hgl = new HostedGameList();
-            hgl.OnGameClick += new EventHandler(hgl_OnGameClick);
+            var hgl = new HostedGameList();
+            hgl.OnGameClick += hgl_OnGameClick;
             frame1.Navigate(hgl);
         }
+
         public void StartGame()
         {
-            StartGame sg = frame1.Content as StartGame;
+            var sg = frame1.Content as StartGame;
             if (sg != null)
             {
                 sg.Start();
                 frame1.Navigate(new HostedGameList());
             }
         }
-        void hgl_OnGameClick(object sender, EventArgs e)
+
+        private void hgl_OnGameClick(object sender, EventArgs e)
         {
             if (Program.PlayWindow == null)
             {
-                HostedGame hg = sender as HostedGame;
+                var hg = sender as HostedGame;
                 Program.IsHost = false;
-                Octgn.Data.Game theGame = Program.GamesRepository.AllGames.FirstOrDefault(g => g.Id == hg.GameGuid);
+                Data.Game theGame =
+                    Program.GamesRepository.AllGames.FirstOrDefault(g => hg != null && g.Id == hg.GameGuid);
                 if (theGame != null)
                 {
                     Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
-                    IPAddress[] ad = new IPAddress[0];
 #if(DEBUG)
-                    ad = new IPAddress[1];
+                    var ad = new IPAddress[1];
                     IPAddress ip = IPAddress.Parse("127.0.0.1");
 
 #else
@@ -468,12 +477,13 @@ namespace Octgn.Launcher
                     {
                         try
                         {
-                            Program.Client = new Networking.Client(ip, hg.Port);
+                            if (hg != null) Program.Client = new Client(ip, hg.Port);
                             Program.Client.Connect();
-                            this.Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
+                            Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
                         }
-                        catch (Exception) { }
-
+                        catch (Exception)
+                        {
+                        }
                     }
                 }
             }
@@ -502,36 +512,39 @@ namespace Octgn.Launcher
             rgStatus.LargeImageSource = bAwayStatus.LargeImageSource;
             Program.lobbyClient.SetStatus(UserStatus.Away);
         }
-        void lobbyClient_OnUserStatusChanged(UserStatus eve, User u)
+
+        private void lobbyClient_OnUserStatusChanged(UserStatus eve, User u)
         {
             Dispatcher.Invoke(new Action(() =>
-            {
-                if (u.Equals(Program.lobbyClient.Me))
-                {
-                    tbUsername.Text = Program.lobbyClient.Me.DisplayName;
-                    tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
-                    Registry.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
-                }
-            }));
-
+                                             {
+                                                 if (u.Equals(Program.lobbyClient.Me))
+                                                 {
+                                                     tbUsername.Text = Program.lobbyClient.Me.DisplayName;
+                                                     tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
+                                                     SimpleConfig.WriteValue("Nickname", Program.lobbyClient.Me.DisplayName);
+                                                 }
+                                             }));
         }
+
         private void tbUsername_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            tbUsername.Style = (Style)TryFindResource(typeof(TextBox));
+            tbUsername.Style = (Style) TryFindResource(typeof (TextBox));
             tbUsername.Focus();
             tbUsername.SelectAll();
         }
 
         private void tbUsername_LostFocus(object sender, RoutedEventArgs e)
         {
-            tbUsername.Style = (Style)TryFindResource("LabelBoxUnSelected");
+            tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
             tbUsername.Text = Program.lobbyClient.Me.DisplayName;
         }
+
         private void tbUsername_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            tbUsername.Style = (Style)TryFindResource("LabelBoxUnSelected");
+            tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
             tbUsername.Text = Program.lobbyClient.Me.DisplayName;
         }
+
         private void tbUsername_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -543,21 +556,22 @@ namespace Octgn.Launcher
 
         private void tbStatus_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            tbStatus.Style = (Style)TryFindResource(typeof(TextBox));
+            tbStatus.Style = (Style) TryFindResource(typeof (TextBox));
             tbStatus.Focus();
             tbStatus.SelectAll();
         }
 
         private void tbStatus_LostFocus(object sender, RoutedEventArgs e)
         {
-            tbStatus.Style = (Style)TryFindResource("LabelBoxUnSelected");
+            tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
             tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
         }
+
         private void tbStatus_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            tbStatus.Style = (Style)TryFindResource("LabelBoxUnSelected");
+            tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
             tbStatus.Text = Program.lobbyClient.Me.CustomStatus;
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
@@ -588,16 +602,17 @@ namespace Octgn.Launcher
             Prefs.HideLoginNotifications = "true";
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             if (!_isLegitClosing)
             {
                 SystemTrayIcon.Visible = true;
-                this.Visibility = System.Windows.Visibility.Hidden;
-                SystemTrayIcon.ShowBalloonTip(5000, "OCTGN", "OCTGN has minimized to your system tray and is still running. Double click the icon to open it again.", System.Windows.Forms.ToolTipIcon.Info);
+                Visibility = Visibility.Hidden;
+                SystemTrayIcon.ShowBalloonTip(5000, "OCTGN",
+                                              "OCTGN has minimized to your system tray and is still running. Double click the icon to open it again.",
+                                              ToolTipIcon.Info);
                 e.Cancel = true;
             }
         }
-
     }
 }

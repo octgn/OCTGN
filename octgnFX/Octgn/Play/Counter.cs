@@ -1,9 +1,7 @@
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using Octgn.Definitions;
-using Octgn.Play.Gui;
-
 
 namespace Octgn.Play
 {
@@ -11,48 +9,55 @@ namespace Octgn.Play
     {
         #region Private fields
 
-        private CounterDef defintion;
-        private Player player;      // Player who owns this counter, if any        
-        private int state;          // Value of this counter
-        private byte id;
+        private readonly CounterDef defintion;
+        private readonly byte id;
+        private readonly Player player; // Player who owns this counter, if any        
+        private int state; // Value of this counter
 
         #endregion
 
         #region Public interface
 
         // Find a counter given its Id
-        public static Counter Find(int id)
-        {
-            Player p = Player.Find((byte)(id >> 16));
-            if (p == null || (byte)id > p.Counters.Length || (byte)id == 0)
-                return null;
-            return p.Counters[(byte)id - 1];
-        }
 
         // Name of this counter
         private readonly string _name;
+
+        public Counter(Player player, CounterDef def)
+        {
+            this.player = player;
+            state = def.Start;
+            _name = def.Name;
+            id = def.Id;
+            defintion = def;
+        }
+
         public string Name
-        { get { return _name; } }
+        {
+            get { return _name; }
+        }
 
         // Get or set the counter's value
         public int Value
         {
-            get
-            { return state; }
-            set
-            { SetValue(value, Player.LocalPlayer, true); }
+            get { return state; }
+            set { SetValue(value, Player.LocalPlayer, true); }
         }
 
         public CounterDef Definition
-        { get { return defintion; } }
+        {
+            get { return defintion; }
+        }
+
+        public static Counter Find(int id)
+        {
+            Player p = Player.Find((byte) (id >> 16));
+            if (p == null || (byte) id > p.Counters.Length || (byte) id == 0)
+                return null;
+            return p.Counters[(byte) id - 1];
+        }
 
         // C'tor
-        public Counter(Player player, CounterDef def)
-        {
-            this.player = player;
-            state = def.Start; _name = def.Name; id = def.Id;
-            defintion = def;
-        }
 
         public override string ToString()
         {
@@ -66,10 +71,7 @@ namespace Octgn.Play
         // Get the id of this counter
         internal int Id
         {
-            get
-            {
-                return 0x02000000 | (player == null ? 0 : player.Id << 16) | id;
-            }
+            get { return 0x02000000 | (player == null ? 0 : player.Id << 16) | id; }
         }
 
         // Set the counter's value
@@ -82,16 +84,19 @@ namespace Octgn.Play
             if (notifyServer)
                 Program.Client.Rpc.CounterReq(this, value);
             // Set the new value
-            state = value; OnPropertyChanged("Value");
+            state = value;
+            OnPropertyChanged("Value");
             // Display a notification in the chat
-            string deltaString = (delta > 0 ? "+" : "") + delta.ToString();
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who), "{0} sets {1} counter to {2} ({3})", who, this, value, deltaString);
+            string deltaString = (delta > 0 ? "+" : "") + delta.ToString(CultureInfo.InvariantCulture);
+            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
+                                     "{0} sets {1} counter to {2} ({3})", who, this, value, deltaString);
         }
 
         internal void Reset()
         {
             if (!Definition.Reset) return;
-            state = Definition.Start; OnPropertyChanged("Value");
+            state = Definition.Start;
+            OnPropertyChanged("Value");
         }
 
         #endregion
@@ -100,12 +105,12 @@ namespace Octgn.Play
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #endregion
+
         private void OnPropertyChanged(string property)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
-
-        #endregion
     }
 }

@@ -4,9 +4,7 @@ using System.IO;
 namespace CassiniDev
 {
     /// <summary>
-    ///   Walks up from the current execution directory looking for directoryName.
-    ///   This means that we can spin up a server on an arbitrary directory that is a child
-    ///   of any of the current directory's ancestors
+    ///   Walks up from the current execution directory looking for directoryName. This means that we can spin up a server on an arbitrary directory that is a child of any of the current directory's ancestors
     /// </summary>
     public class ContentLocator : IContentLocator
     {
@@ -21,7 +19,7 @@ namespace CassiniDev
 
         public string LocateContent()
         {
-            var path = Environment.CurrentDirectory;
+            string path = Environment.CurrentDirectory;
 
             while (!Directory.Exists(Path.Combine(path + "", _directoryName)))
             {

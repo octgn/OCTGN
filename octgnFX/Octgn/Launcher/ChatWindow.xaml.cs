@@ -1,30 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Navigation;
 using Skylabs.Lobby;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
 
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for ChatWindow.xaml
+    ///   Interaction logic for ChatWindow.xaml
     /// </summary>
     public partial class ChatWindow : Window
     {
-        public long ID { get; private set; }
-        public List<User> Users { get; private set; }
-        private bool _realClose = false;
-        private Boolean justScrolledToBottom = false;
+        private bool _realClose;
+        private Boolean justScrolledToBottom;
+
         public ChatWindow(long id)
         {
             InitializeComponent();
@@ -33,19 +29,22 @@ namespace Octgn.Launcher
             if (ID == 0)
                 miLeaveChat.IsEnabled = false;
             Program.lobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
-            ContextMenu cm = new ContextMenu();
-            MenuItem mi = new MenuItem();
+            var cm = new ContextMenu();
+            var mi = new MenuItem();
             mi.Header = "Add to friends list";
-            mi.Click += new RoutedEventHandler(mi_Click);
+            mi.Click += mi_Click;
             cm.Items.Add(mi);
             listBox1.ContextMenu = cm;
 
             richTextBox1.Document.LineHeight = 2;
         }
 
+        public long ID { get; private set; }
+        public List<User> Users { get; private set; }
+
         private void LobbyClientOnOnUserStatusChanged(UserStatus eve, User user)
         {
-            Program.lobbyClient.Chatting.UserStatusChange(this.ID, user, eve);
+            Program.lobbyClient.Chatting.UserStatusChange(ID, user, eve);
             ResetUserList();
         }
 
@@ -53,68 +52,77 @@ namespace Octgn.Launcher
         {
             Chatting_eChatEvent(cr, e, user, data);
         }
-        void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
+
+        private void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
             if (cr.ID == ID)
             {
                 Dispatcher.Invoke(new Action(() =>
-                {
-                    switch (e)
-                    {
-                        case Chatting.ChatEvent.ChatMessage:
-                            {
-                                Brush b = Brushes.Black;
-                                if (user.Uid == Program.lobbyClient.Me.Uid)
-                                    b = Brushes.Blue;
+                                                 {
+                                                     switch (e)
+                                                     {
+                                                         case Chatting.ChatEvent.ChatMessage:
+                                                             {
+                                                                 Brush b = Brushes.Black;
+                                                                 if (user.Uid == Program.lobbyClient.Me.Uid)
+                                                                     b = Brushes.Blue;
 
-                                Run r = getUserRun(user.DisplayName, "[" + user.DisplayName + "] : ");
-                                r.Foreground = b;
-                                String mess = data as string;
-                                AddChatText(r, mess);
-                                break;
-                            }
-                        case Chatting.ChatEvent.MeJoinedChat:
-                            {
-                                ResetUserList();
-                                break;
-                            }
-                        case Chatting.ChatEvent.UserJoinedChat:
-                            {
-                                string reg = Registry.ReadValue("Options_HideLoginNotifications");
-                                if (reg == "false" || reg == null)
-                                {
-                                    Run r = new Run("#" + user.DisplayName + ": ");
-                                    Brush b = Brushes.DarkGray;
-                                    r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
-                                    r.Foreground = b;
-                                    AddChatText(r, "Joined the chat.", b);
-                                    ResetUserList();
-                                }
-                                break;
-                            }
-                        case Chatting.ChatEvent.UserLeftChat:
-                            {
-                                string reg = Registry.ReadValue("Options_HideLoginNotifications");
-                                if (reg == "false" || reg == null)
-                                {
-                                    Run r = new Run("#" + user.DisplayName + ": ");
-                                    Brush b = Brushes.LightGray;
-                                    r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString();
-                                    r.Foreground = b;
-                                    AddChatText(r, "Left the chat.", b);
-                                    ResetUserList();
-                                }
-                                break;
-                            }
-                    }
-                }));
+                                                                 Run r = getUserRun(user.DisplayName,
+                                                                                    "[" + user.DisplayName + "] : ");
+                                                                 r.Foreground = b;
+                                                                 var mess = data as string;
+                                                                 AddChatText(r, mess);
+                                                                 break;
+                                                             }
+                                                         case Chatting.ChatEvent.MeJoinedChat:
+                                                             {
+                                                                 ResetUserList();
+                                                                 break;
+                                                             }
+                                                         case Chatting.ChatEvent.UserJoinedChat:
+                                                             {
+                                                                 string reg =
+                                                                     SimpleConfig.ReadValue("Options_HideLoginNotifications");
+                                                                 if (reg == "false" || reg == null)
+                                                                 {
+                                                                     var r = new Run("#" + user.DisplayName + ": ");
+                                                                     Brush b = Brushes.DarkGray;
+                                                                     r.ToolTip = DateTime.Now.ToLongTimeString() + " " +
+                                                                                 DateTime.Now.ToLongDateString();
+                                                                     r.Foreground = b;
+                                                                     AddChatText(r, "Joined the chat.", b);
+                                                                     ResetUserList();
+                                                                 }
+                                                                 break;
+                                                             }
+                                                         case Chatting.ChatEvent.UserLeftChat:
+                                                             {
+                                                                 string reg =
+                                                                     SimpleConfig.ReadValue("Options_HideLoginNotifications");
+                                                                 if (reg == "false" || reg == null)
+                                                                 {
+                                                                     var r = new Run("#" + user.DisplayName + ": ");
+                                                                     Brush b = Brushes.LightGray;
+                                                                     r.ToolTip = DateTime.Now.ToLongTimeString() + " " +
+                                                                                 DateTime.Now.ToLongDateString();
+                                                                     r.Foreground = b;
+                                                                     AddChatText(r, "Left the chat.", b);
+                                                                     ResetUserList();
+                                                                 }
+                                                                 break;
+                                                             }
+                                                     }
+                                                 }));
             }
         }
+
         private void AddChatText(Run headerRun, string chat, Brush b = null)
         {
             if (b == null) b = Brushes.Black;
             bool rtbatbottom = false;
-            bool firstAutoScroll = true;
+
+            // bool firstAutoScroll = true; // never used 
+
             //check to see if the richtextbox is scrolled to the bottom.
             //----------------------------------------------------------------------------------
             double dVer = richTextBox1.VerticalOffset;
@@ -125,15 +133,14 @@ namespace Octgn.Launcher
             //get the vertical size of the visible content area
             double dExtent = richTextBox1.ExtentHeight;
 
-            if (dVer == 0 && dViewport < dExtent && firstAutoScroll)
+            if (Math.Abs(dVer - 0) < double.Epsilon && dViewport < dExtent)
             {
-                firstAutoScroll = false;
                 rtbatbottom = true;
             }
 
-            if (dVer != 0)
+            if (Math.Abs(dVer - 0) > double.Epsilon)
             {
-                if (dVer + dViewport == dExtent)
+                if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
                 {
                     rtbatbottom = true;
                     justScrolledToBottom = false;
@@ -142,8 +149,8 @@ namespace Octgn.Launcher
                 {
                     if (!justScrolledToBottom)
                     {
-                        Paragraph pa = new Paragraph();
-                        Run ru = new Run("------------------------------");
+                        var pa = new Paragraph();
+                        var ru = new Run("------------------------------");
                         ru.Foreground = Brushes.Red;
                         pa.Inlines.Add(new Bold(ru));
                         richTextBox1.Document.Blocks.Add(pa);
@@ -153,14 +160,14 @@ namespace Octgn.Launcher
             }
             //----------------------------------------------------------------------------
 
-            Paragraph p = new Paragraph();
+            var p = new Paragraph();
             p.Inlines.Add(headerRun);
             if (chat.Contains("\n"))
             {
-                String[] lines = chat.Split(new char[1] { '\n' });
+                String[] lines = chat.Split(new[] {'\n'});
                 foreach (String line in lines)
                 {
-                    String[] words = line.Split(new char[1] { ' ' });
+                    String[] words = line.Split(new[] {' '});
                     foreach (String word in words)
                     {
                         Inline inn = StringToRun(word, b);
@@ -174,7 +181,7 @@ namespace Octgn.Launcher
             }
             else
             {
-                String[] words = chat.Split(new char[1] { ' ' });
+                String[] words = chat.Split(new[] {' '});
                 foreach (String word in words)
                 {
                     Inline inn = StringToRun(word, b);
@@ -193,26 +200,26 @@ namespace Octgn.Launcher
                 }
                 catch (Exception)
                 {
-
                 }
-
             }
             if (rtbatbottom)
                 richTextBox1.ScrollToEnd();
         }
+
         public Inline StringToRun(String s, Brush b)
         {
             Inline ret = null;
-            String strUrlRegex = "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
-            Regex reg = new Regex(strUrlRegex);
+            const string strUrlRegex =
+                "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
+            var reg = new Regex(strUrlRegex);
             s = s.Trim();
             //b = Brushes.Black;
             Inline r = new Run(s);
             if (reg.IsMatch(s))
             {
                 b = Brushes.LightBlue;
-                Hyperlink h = new Hyperlink(r);
-                h.RequestNavigate += new System.Windows.Navigation.RequestNavigateEventHandler(h_RequestNavigate);
+                var h = new Hyperlink(r);
+                h.RequestNavigate += h_RequestNavigate;
                 try
                 {
                     h.NavigateUri = new Uri(s);
@@ -227,7 +234,7 @@ namespace Octgn.Launcher
                     catch (Exception)
                     {
                         r.Foreground = b;
-                        System.Windows.Documents.Underline ul = new Underline(r);
+                        var ul = new Underline(r);
                     }
                 }
                 ret = h;
@@ -251,14 +258,9 @@ namespace Octgn.Launcher
                             ret.ToolTip = "Click to whisper";
                             r.Cursor = Cursors.Hand;
                             r.Background = Brushes.White;
-                            r.MouseEnter += delegate(object sender, MouseEventArgs e)
-                            {
-                                r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke);
-                            };
-                            r.MouseLeave += delegate(object sender, MouseEventArgs e)
-                            {
-                                r.Background = Brushes.White;
-                            };
+                            r.MouseEnter +=
+                                delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
+                            r.MouseLeave += delegate { r.Background = Brushes.White; };
                             fUser = true;
                             break;
                         }
@@ -272,58 +274,58 @@ namespace Octgn.Launcher
             ret.Foreground = b;
             return ret;
         }
-        private void h_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+
+        private void h_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Hyperlink hl = (Hyperlink)sender;
+            var hl = (Hyperlink) sender;
             string navigateUri = hl.NavigateUri.ToString();
             try
             {
                 Process.Start(new ProcessStartInfo(navigateUri));
             }
-            catch { }
+            catch
+            {
+            }
             e.Handled = true;
         }
+
         private Run getUserRun(String user, string fulltext)
         {
-            Run r = new Run(fulltext);
-            r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() + "\nClick to whisper " + user;
+            var r = new Run(fulltext);
+            r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() + "\nClick to whisper " +
+                        user;
             r.Cursor = Cursors.Hand;
             r.Background = Brushes.White;
-            r.MouseEnter += delegate(object sender, MouseEventArgs e)
-            {
-                r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke);
-            };
-            r.MouseLeave += delegate(object sender, MouseEventArgs e)
-            {
-                r.Background = Brushes.White;
-            };
+            r.MouseEnter += delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
+            r.MouseLeave += delegate { r.Background = Brushes.White; };
             return r;
         }
 
         private void ResetUserList()
         {
             Dispatcher.Invoke(new Action(() =>
-            {
-                ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(ID);
-                if (cr != null)
-                {
-                    listBox1.Items.Clear();
-                    Users = new List<User>();
+                                             {
+                                                 ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(ID);
+                                                 if (cr != null)
+                                                 {
+                                                     listBox1.Items.Clear();
+                                                     Users = new List<User>();
 
-                    foreach (User u in cr.GetUserList())
-                    {
-                        listBox1.Items.Add(u);
-                        Users.Add(u);
-                    }
-                }
-            }));
+                                                     foreach (User u in cr.GetUserList())
+                                                     {
+                                                         listBox1.Items.Add(u);
+                                                         Users.Add(u);
+                                                     }
+                                                 }
+                                             }));
         }
+
         private void Window_Drop(object sender, DragEventArgs e)
         {
-            String s = e.Data.GetData(typeof(String)) as String;
+            var s = e.Data.GetData(typeof (String)) as String;
             if (s != null)
             {
-                int uid = -1;
+                int uid;
                 if (Int32.TryParse(s, out uid))
                 {
                     //BUG Should be pulling from FriendList
@@ -338,8 +340,7 @@ namespace Octgn.Launcher
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.Chatting.eChatEvent += new Chatting.ChatEventDelegate(Chatting_eChatEvent);
-
+            Program.lobbyClient.Chatting.eChatEvent += Chatting_eChatEvent;
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
@@ -365,32 +366,34 @@ namespace Octgn.Launcher
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             if (!_realClose)
             {
                 e.Cancel = true;
-                this.Hide();
+                Hide();
             }
         }
+
         public void CloseChatWindow()
         {
             _realClose = true;
             Close();
         }
+
         private void miLeaveChat_Click(object sender, RoutedEventArgs e)
         {
             _realClose = true;
-            this.Close();
+            Close();
         }
 
         private void listBox1_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
         }
 
-        void mi_Click(object sender, RoutedEventArgs e)
+        private void mi_Click(object sender, RoutedEventArgs e)
         {
-            User u = listBox1.SelectedItem as User;
+            var u = listBox1.SelectedItem as User;
             if (u != null)
                 Program.lobbyClient.AddFriend(u.Email);
         }
