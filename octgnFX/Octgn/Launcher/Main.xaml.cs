@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -167,8 +168,8 @@ namespace Octgn.Launcher
 
         private void SaveLocation()
         {
-            SimpleConfig.WriteValue("MainLeftLoc", Left.ToString());
-            SimpleConfig.WriteValue("MainTopLoc", Top.ToString());
+            SimpleConfig.WriteValue("MainLeftLoc", Left.ToString(CultureInfo.InvariantCulture));
+            SimpleConfig.WriteValue("MainTopLoc", Top.ToString(CultureInfo.InvariantCulture));
         }
 
         private void SystemTrayIcon_DoubleClick(object Sender, EventArgs e)
