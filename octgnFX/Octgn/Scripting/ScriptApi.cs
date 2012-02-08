@@ -187,9 +187,14 @@ namespace Octgn.Scripting
         {
             //takes a card with id, and swaps it with the predefined "alternate" version of the card
             //alternate may be considered the "back" of the card, or another card entirely - up to Game Definer.
+            //id will remain the same, all other values should change.
             Card c = Card.Find(id);
-            Guid alternateCard = (Guid)c.GetProperty("Alternate");
-            engine.Invoke(() => { c.IsAlternate = (c.IsAlternate != true); });
+            if (c.hasProperty("Alternate"))
+            {
+                Guid alternateCard = (Guid)c.GetProperty("Alternate");
+                c.SetModel(findModel(c, alternateCard)); 
+                engine.Invoke(() => { c.IsAlternate = (c.IsAlternate != true); });
+            }
  //           Data.CardModel newModel = new Data.CardModel c.GetProperty;
  //           c.IsAlternate = !c.IsAlternate;
  //           CardModel AlternateModel = 

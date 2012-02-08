@@ -695,5 +695,12 @@ namespace Octgn.Play
         }
 
         #endregion Markers
+
+        internal bool hasProperty(string p)
+        {
+            if (Type.model.Properties.ContainsKey(p))
+            { return true; }
+            return false;
+        }
     }
 }
