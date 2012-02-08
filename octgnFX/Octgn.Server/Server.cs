@@ -81,8 +81,7 @@ namespace Octgn.Server
         private void Start()
         {
             // Creates a new thread for the server
-            ServerThread = new Thread(Listen);
-            ServerThread.Name = "OCTGN.net Server";
+            ServerThread = new Thread(Listen) {Name = "OCTGN.net Server"};
             // Flag used to wait until the server is really started
             var started = new ManualResetEvent(false);
 
@@ -105,13 +104,11 @@ namespace Octgn.Server
                 // Search the client
                 foreach (Connection t in clients)
                 {
-                    if (t.client == lost)
-                    {
-                        // Remove it
-                        t.Disconnected();
-                        ret = true;
-                        break;
-                    }
+                    if (t.client != lost) continue;
+                    // Remove it
+                    t.Disconnected();
+                    ret = true;
+                    break;
                 }
             }
             return ret;
@@ -131,11 +128,9 @@ namespace Octgn.Server
                     DoAgain:
                     for (int i = 0; i < clients.Count; i++)
                     {
-                        if (clients[i].disposed)
-                        {
-                            clients.RemoveAt(i);
-                            goto DoAgain;
-                        }
+                        if (!clients[i].disposed) continue;
+                        clients.RemoveAt(i);
+                        goto DoAgain;
                     }
                 }
             }
@@ -143,16 +138,14 @@ namespace Octgn.Server
 
         private void CheckForDroppedConnection(object stateInfo)
         {
-            if (!closed)
+            if (closed) return;
+            Connection[] connections = clients.ToArray();
+            foreach (Connection t in connections)
             {
-                Connection[] connections = clients.ToArray();
-                for (int i = 0; i < connections.Length; i++)
+                var ts = new TimeSpan(DateTime.Now.Ticks - t.LastPingTime.Ticks);
+                if (ts.Seconds > 60)
                 {
-                    var ts = new TimeSpan(DateTime.Now.Ticks - connections[i].LastPingTime.Ticks);
-                    if (ts.Seconds > 60)
-                    {
-                        connections[i].Disconnected();
-                    }
+                    t.Disconnected();
                 }
             }
         }
@@ -300,7 +293,9 @@ namespace Octgn.Server
                 while (packetPos > 4)
                 {
                     int length = packet[0] | packet[1] << 8 | packet[2] << 16 | packet[3] << 24;
-                    if (packetPos >= length)
+                    if (packetPos < length)
+                        break;
+                    else
                     {
                         // Copy the packet data in an array
                         var data = new byte[length - 4];
@@ -315,8 +310,6 @@ namespace Octgn.Server
                         packetPos -= length;
                         Array.Copy(packet, length, packet, 0, packetPos);
                     }
-                    else
-                        break;
                 }
             }
 
@@ -326,27 +319,25 @@ namespace Octgn.Server
                 // Look for a 0 at the end of the packet
                 for (int i = packetPos; i < packetPos + count; i++)
                 {
-                    if (packet[i] == 0)
+                    if (packet[i] != 0) continue;
+                    // Get the message as xml
+                    string xml = Encoding.UTF8.GetString(packet, 0, i);
+                    // Check if it's a request to switch to binary mode
+                    if (xml == "<Binary />")
                     {
-                        // Get the message as xml
-                        string xml = Encoding.UTF8.GetString(packet, 0, i);
-                        // Check if it's a request to switch to binary mode
-                        if (xml == "<Binary />")
-                        {
-                            binary = true;
-                        }
-                        else
-                        {
-                            // Lock the handler, because it is not thread-safe
-                            lock (server.handler) server.handler.ReceiveMessage(xml, client, this);
-                        }
-                        // Adjust the packet position and contents
-                        count += packetPos - i - 1;
-                        packetPos = 0;
-                        Array.Copy(packet, i + 1, packet, 0, count);
-                        // Continue the loop
-                        i = -1;
+                        binary = true;
                     }
+                    else
+                    {
+                        // Lock the handler, because it is not thread-safe
+                        lock (server.handler) server.handler.ReceiveMessage(xml, client, this);
+                    }
+                    // Adjust the packet position and contents
+                    count += packetPos - i - 1;
+                    packetPos = 0;
+                    Array.Copy(packet, i + 1, packet, 0, count);
+                    // Continue the loop
+                    i = -1;
                 }
                 // Ajust packet position
                 packetPos += count;

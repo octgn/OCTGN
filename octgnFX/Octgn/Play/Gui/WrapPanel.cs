@@ -33,14 +33,12 @@ namespace Octgn.Play.Gui
         protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
         {
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
-            if (visualAdded != null)
-            {
-                var child = (UIElement) visualAdded;
-                var group = new TransformGroup();
-                child.RenderTransform = group;
-                group.Children.Add(new TranslateTransform()); // used for drag and drop effects
-                group.Children.Add(Transform.Identity); // slot reserved for layout to layout animations (in base class)
-            }
+            if (visualAdded == null) return;
+            var child = (UIElement) visualAdded;
+            var group = new TransformGroup();
+            child.RenderTransform = @group;
+            @group.Children.Add(new TranslateTransform()); // used for drag and drop effects
+            @group.Children.Add(Transform.Identity); // slot reserved for layout to layout animations (in base class)
         }
 
         #region Insertion related
@@ -129,15 +127,13 @@ namespace Octgn.Play.Gui
             CancelSpacing();
 
             // Space neighbors
-            if (idx < VisualChildrenCount)
+            if (idx >= VisualChildrenCount) return;
+            spacedItem2 = (UIElement) GetVisualChild(idx);
+            SetSpacing(spacedItem2, SpacingWidth);
+            if (idx > 0)
             {
-                spacedItem2 = (UIElement) GetVisualChild(idx);
-                SetSpacing(spacedItem2, SpacingWidth);
-                if (idx > 0)
-                {
-                    spacedItem1 = (UIElement) GetVisualChild(idx - 1);
-                    SetSpacing(spacedItem1, -SpacingWidth);
-                }
+                spacedItem1 = (UIElement) GetVisualChild(idx - 1);
+                SetSpacing(spacedItem1, -SpacingWidth);
             }
         }
 
@@ -157,14 +153,12 @@ namespace Octgn.Play.Gui
                 CancelSpacing(spacedItem1);
                 spacedItem1 = null;
             }
-            if (spacedItem2 != null)
-            {
-                CancelSpacing(spacedItem2);
-                spacedItem2 = null;
-            }
+            if (spacedItem2 == null) return;
+            CancelSpacing(spacedItem2);
+            spacedItem2 = null;
         }
 
-        private void CancelSpacing(UIElement element)
+        private static void CancelSpacing(UIElement element)
         {
             var group = (TransformGroup) element.RenderTransform;
             var translate = (TranslateTransform) group.Children[0];
@@ -173,7 +167,7 @@ namespace Octgn.Play.Gui
             translate.BeginAnimation(TranslateTransform.XProperty, animation);
         }
 
-        private void SetSpacing(UIElement element, int value)
+        private static void SetSpacing(UIElement element, int value)
         {
             var group = (TransformGroup) element.RenderTransform;
             var translate = (TranslateTransform) group.Children[0];

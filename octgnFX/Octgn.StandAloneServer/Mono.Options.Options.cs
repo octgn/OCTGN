@@ -354,7 +354,6 @@ namespace Mono.Options
         private readonly string[] names;
         private readonly string prototype;
         private readonly OptionValueType type;
-        private string[] separators;
 
         protected Option(string prototype, string description)
             : this(prototype, description, 1)
@@ -426,10 +425,7 @@ namespace Mono.Options
             get { return names; }
         }
 
-        internal string[] ValueSeparators
-        {
-            get { return separators; }
-        }
+        internal string[] ValueSeparators { get; private set; }
 
         public string[] GetNames()
         {
@@ -438,9 +434,9 @@ namespace Mono.Options
 
         public string[] GetValueSeparators()
         {
-            if (separators == null)
+            if (ValueSeparators == null)
                 return new string[0];
-            return (string[]) separators.Clone();
+            return (string[]) ValueSeparators.Clone();
         }
 
         protected static T Parse<T>(string value, OptionContext c)
@@ -501,11 +497,11 @@ namespace Mono.Options
             if (count > 1)
             {
                 if (seps.Count == 0)
-                    separators = new[] {":", "="};
+                    ValueSeparators = new[] {":", "="};
                 else if (seps.Count == 1 && seps[0].Length == 0)
-                    separators = null;
+                    ValueSeparators = null;
                 else
-                    separators = seps.ToArray();
+                    ValueSeparators = seps.ToArray();
             }
 
             return c == '=' ? OptionValueType.Required : OptionValueType.Optional;
@@ -593,35 +589,38 @@ namespace Mono.Options
                     {
                         char c = line[i];
 
-                        if (c == '"' || c == '\'')
+                        switch (c)
                         {
-                            char end = c;
+                            case '\'':
+                            case '"':
+                                {
+                                    char end = c;
 
-                            for (i++; i < t; i++)
-                            {
-                                c = line[i];
+                                    for (i++; i < t; i++)
+                                    {
+                                        c = line[i];
 
-                                if (c == end)
-                                    break;
+                                        if (c == end)
+                                            break;
+                                        arg.Append(c);
+                                    }
+                                }
+                                break;
+                            case ' ':
+                                if (arg.Length > 0)
+                                {
+                                    yield return arg.ToString();
+                                    arg.Length = 0;
+                                }
+                                break;
+                            default:
                                 arg.Append(c);
-                            }
+                                break;
                         }
-                        else if (c == ' ')
-                        {
-                            if (arg.Length > 0)
-                            {
-                                yield return arg.ToString();
-                                arg.Length = 0;
-                            }
-                        }
-                        else
-                            arg.Append(c);
                     }
-                    if (arg.Length > 0)
-                    {
-                        yield return arg.ToString();
-                        arg.Length = 0;
-                    }
+                    if (arg.Length <= 0) continue;
+                    yield return arg.ToString();
+                    arg.Length = 0;
                 }
             }
             finally
@@ -995,10 +994,7 @@ namespace Mono.Options
             if (ParseBool(argument, n, c))
                 return true;
             // is it a bundled option?
-            if (ParseBundledValue(f, string.Concat(string.Format("{0}{1}{2}", n, s, v)), c))
-                return true;
-
-            return false;
+            return ParseBundledValue(f, string.Concat(string.Format("{0}{1}{2}", n, s, v)), c);
         }
 
         private void ParseValue(string option, OptionContext c)
@@ -1206,9 +1202,9 @@ namespace Mono.Options
             return true;
         }
 
-        private static int GetNextOptionIndex(string[] names, int i)
+        private static int GetNextOptionIndex(IList<string> names, int i)
         {
-            while (i < names.Length && names[i] == "<>")
+            while (i < names.Count && names[i] == "<>")
             {
                 ++i;
             }
@@ -1226,23 +1222,20 @@ namespace Mono.Options
             if (description == null)
                 return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
             string[] nameStart;
-            if (maxIndex == 1)
-                nameStart = new[] {"{0:", "{"};
-            else
-                nameStart = new[] {"{" + index + ":"};
-            for (int i = 0; i < nameStart.Length; ++i)
+            nameStart = maxIndex == 1 ? new[] {"{0:", "{"} : new[] {"{" + index + ":"};
+            foreach (string t in nameStart)
             {
                 int start, j = 0;
                 do
                 {
-                    start = description.IndexOf(nameStart[i], j, StringComparison.Ordinal);
+                    start = description.IndexOf(t, j, StringComparison.Ordinal);
                 } while (start >= 0 && j != 0 && description[j++ - 1] == '{');
                 if (start == -1)
                     continue;
                 int end = description.IndexOf("}", start, StringComparison.Ordinal);
                 if (end == -1)
                     continue;
-                return description.Substring(start + nameStart[i].Length, end - start - nameStart[i].Length);
+                return description.Substring(start + t.Length, end - start - t.Length);
             }
             return maxIndex == 1 ? "VALUE" : "VALUE" + (index + 1);
         }

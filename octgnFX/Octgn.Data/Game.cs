@@ -64,31 +64,27 @@ namespace Octgn.Data
 
         public void OpenDatabase(bool readOnly)
         {
-            if (!IsDatabaseOpen)
+            if (IsDatabaseOpen) return;
+            string conString = "URI=file:" +
+                               Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                                            "Octgn", "Database", "master.db3");
+            dbc = new SQLiteConnection(conString);
+            dbc.Open();
+            using (SQLiteCommand com = dbc.CreateCommand())
             {
-                string conString = "URI=file:" +
-                                   Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                                "Octgn", "Database", "master.db3");
-                dbc = new SQLiteConnection(conString);
-                dbc.Open();
-                using (SQLiteCommand com = dbc.CreateCommand())
-                {
-                    com.CommandText =
-                        "PRAGMA automatic_index=FALSE; PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA encoding='UTF-8';";
-                    com.ExecuteScalar();
-                }
-                IsDatabaseOpen = true;
+                com.CommandText =
+                    "PRAGMA automatic_index=FALSE; PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA encoding='UTF-8';";
+                com.ExecuteScalar();
             }
+            IsDatabaseOpen = true;
         }
 
         public void CloseDatabase()
         {
-            if (IsDatabaseOpen)
-            {
-                dbc.Close();
-                dbc.Dispose();
-                IsDatabaseOpen = false;
-            }
+            if (!IsDatabaseOpen) return;
+            dbc.Close();
+            dbc.Dispose();
+            IsDatabaseOpen = false;
         }
 
         public Set GetSet(Guid id)
@@ -581,12 +577,18 @@ namespace Octgn.Data
                         var name = dr["name"] as string;
                         var t = (int) ((long) dr["type"]);
                         PropertyType pt;
-                        if (t == 0)
-                            pt = PropertyType.String;
-                        else if (t == 1)
-                            pt = PropertyType.Integer;
-                        else
-                            pt = PropertyType.Char;
+                        switch (t)
+                        {
+                            case 0:
+                                pt = PropertyType.String;
+                                break;
+                            case 1:
+                                pt = PropertyType.Integer;
+                                break;
+                            default:
+                                pt = PropertyType.Char;
+                                break;
+                        }
                         if (!dl.ContainsKey(name))
                             dl.Add(name, pt);
                     }
@@ -661,12 +663,18 @@ namespace Octgn.Data
                         if (!cards.Columns.Contains(cname))
                             continue;
                         var t = (int)((long)prop["type"]);
-                        if (t == 0)
-                            cards.Rows[i][cname] = prop["vstr"] as string;
-                        else if (t == 1)
-                            cards.Rows[i][cname] = (int)((long)prop["vint"]);
-                        else
-                            cards.Rows[i][cname] = prop["vstr"] as string;
+                        switch (t)
+                        {
+                            case 0:
+                                cards.Rows[i][cname] = prop["vstr"] as string;
+                                break;
+                            case 1:
+                                cards.Rows[i][cname] = (int)((long)prop["vint"]);
+                                break;
+                            default:
+                                cards.Rows[i][cname] = prop["vstr"] as string;
+                                break;
+                        }
                 }
                 i++;
             }

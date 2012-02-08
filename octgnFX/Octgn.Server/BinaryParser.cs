@@ -15,11 +15,10 @@ namespace Octgn.Server
 
         public void Parse(byte[] data)
         {
-            MemoryStream stream;
             BinaryReader reader = null;
             try
             {
-                stream = new MemoryStream(data);
+                MemoryStream stream = new MemoryStream(data);
                 reader = new BinaryReader(stream);
                 short length;
                 handler.muted = reader.ReadInt32();

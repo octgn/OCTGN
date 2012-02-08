@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
@@ -132,12 +133,18 @@ namespace Octgn.Data
                             com.Parameters.AddWithValue("@id", pair.Name + game.Id);
                             com.Parameters.AddWithValue("@game_id", game.Id.ToString());
                             com.Parameters.AddWithValue("@name", pair.Name);
-                            if (pair.Type == PropertyType.String)
-                                com.Parameters.AddWithValue("@type", 0);
-                            else if (pair.Type == PropertyType.Integer)
-                                com.Parameters.AddWithValue("@type", 1);
-                            else // char
-                                com.Parameters.AddWithValue("@type", 2);
+                            switch (pair.Type)
+                            {
+                                case PropertyType.String:
+                                    com.Parameters.AddWithValue("@type", 0);
+                                    break;
+                                case PropertyType.Integer:
+                                    com.Parameters.AddWithValue("@type", 1);
+                                    break;
+                                default:
+                                    com.Parameters.AddWithValue("@type", 2);
+                                    break;
+                            }
                             com.ExecuteNonQuery();
                         }
                     }
@@ -215,7 +222,7 @@ namespace Octgn.Data
                               : allCachedGames;
         }
 
-        private Game ReadGameFromTable(SQLiteDataReader read)
+        private Game ReadGameFromTable(IDataRecord read)
         {
             object temp = read["shared_deck_sections"];
             string sharedDeckSections;
@@ -243,7 +250,7 @@ namespace Octgn.Data
             return g;
         }
 
-        private string SerializeList(IEnumerable<string> list)
+        private static string SerializeList(IEnumerable<string> list)
         {
             var sb = new StringBuilder();
             foreach (string item in list)
@@ -254,7 +261,7 @@ namespace Octgn.Data
             return sb.ToString();
         }
 
-        private List<string> DeserializeList(string list)
+        private static List<string> DeserializeList(string list)
         {
             string[] sections = Regex.Split(list, "(?<!,),(?!,)");
             return sections.Select(s => s.Replace(",,", ",")).ToList();

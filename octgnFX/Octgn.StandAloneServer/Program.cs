@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Mono.Options;
 
@@ -42,9 +43,9 @@ namespace Octgn.StandAloneServer
             StartServer();
         }
 
-        private static bool HandleArgs(string[] args, OptionSet set)
+        private static bool HandleArgs(ICollection<string> args, OptionSet set)
         {
-            if (args.Length < 2)
+            if (args.Count < 2)
                 return false;
             set.Parse(args);
             return true;

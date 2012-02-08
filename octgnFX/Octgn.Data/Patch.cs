@@ -41,31 +41,29 @@ namespace Octgn.Data
 
                 // Get the list of sets to potentially patch
                 game = repository.Games.FirstOrDefault(g => g.Id == gameId);
-                if (game != null)
+                if (game == null) return;
+                List<string> installedSets = game.Sets.Select(s => s.PackageName).ToList();
+                List<string> uninstalledSets;
+
+                if (patchFolder != null)
                 {
-                    List<string> installedSets = game.Sets.Select(s => s.PackageName).ToList();
-                    List<string> uninstalledSets;
-
-                    if (patchFolder != null)
-                    {
-                        string[] files = Directory.GetFiles(patchFolder, "*.o8s");
-                        uninstalledSets = files.Except(installedSets).ToList();
-                        if (!patchInstalledSets)
-                            installedSets = files.Intersect(installedSets).ToList();
-                    }
-                    else
-                        uninstalledSets = new List<string>(0);
-
-                    current = 0;
-                    max = installedSets.Count + uninstalledSets.Count;
-                    OnProgress();
-
-                    foreach (string set in installedSets)
-                        SafeApply(package, set, true);
-
-                    foreach (string set in uninstalledSets)
-                        SafeApply(package, set, false);
+                    string[] files = Directory.GetFiles(patchFolder, "*.o8s");
+                    uninstalledSets = files.Except(installedSets).ToList();
+                    if (!patchInstalledSets)
+                        installedSets = files.Intersect(installedSets).ToList();
                 }
+                else
+                    uninstalledSets = new List<string>(0);
+
+                current = 0;
+                max = installedSets.Count + uninstalledSets.Count;
+                OnProgress();
+
+                foreach (string set in installedSets)
+                    SafeApply(package, set, true);
+
+                foreach (string set in uninstalledSets)
+                    SafeApply(package, set, false);
             }
         }
 
@@ -183,11 +181,9 @@ namespace Octgn.Data
             using (XmlReader reader = XmlReader.Create(part.GetStream(FileMode.Open, FileAccess.Read)))
             {
                 XDocument doc = XDocument.Load(reader);
-                if (doc.Root != null)
-                {
-                    XAttribute xAttribute = doc.Root.Attribute("gameId");
-                    if (xAttribute != null) gameId = new Guid(xAttribute.Value);
-                }
+                if (doc.Root == null) return;
+                XAttribute xAttribute = doc.Root.Attribute("gameId");
+                if (xAttribute != null) gameId = new Guid(xAttribute.Value);
             }
         }
 

@@ -306,12 +306,10 @@ namespace Octgn.Data
 
             private void ElementChanged(object sender, PropertyChangedEventArgs e)
             {
-                if (e.PropertyName == "Quantity")
-                {
-                    var element = sender as Element;
-                    if (element != null && element.Quantity <= 0) Cards.Remove(element);
-                    OnPropertyChanged("CardCount");
-                }
+                if (e.PropertyName != "Quantity") return;
+                var element = sender as Element;
+                if (element != null && element.Quantity <= 0) Cards.Remove(element);
+                OnPropertyChanged("CardCount");
             }
 
             protected void OnPropertyChanged(string propertyName)

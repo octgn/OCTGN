@@ -147,11 +147,9 @@ namespace Octgn.Server
         {
             PlayerInfo p;
             // The player may have left the game concurently
-            if (players.TryGetValue(player, out p))
-            {
-                p.invertedTable = invertedTable;
-                broadcaster.PlayerSettings(player, invertedTable);
-            }
+            if (!players.TryGetValue(player, out p)) return;
+            p.invertedTable = invertedTable;
+            broadcaster.PlayerSettings(player, invertedTable);
         }
 
         public void ResetReq()
