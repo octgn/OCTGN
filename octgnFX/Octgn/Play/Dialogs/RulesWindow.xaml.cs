@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.IO;
+using System.IO.Packaging;
 
 namespace Octgn.Play.Dialogs
 {
@@ -24,10 +25,134 @@ namespace Octgn.Play.Dialogs
             InitializeComponent();
         }
 
+        private const string _packageRelationshipType = "http://schemas.openxmlformats.org/package/2007/" + "relationships/htmx/root-html";
+        private const string _resourceRelationshipType = "http://schemas.openxmlformats.org/package/2007/" + "relationships/htmx/required-resource";
+        private string ExtractPackageParts(string packageFile, string targetDirectory)
+        {
+            Uri uriDocumentTarget = null;
+            // Open the Package.
+            using (Package package = Package.Open(packageFile, FileMode.Open, FileAccess.Read))
+            {
+                PackagePart documentPart = null,  resourcePart = null;
+                // Examine the package-level relationships and look for
+                // the relationship with the "root-html" RelationshipType.
+                foreach (PackageRelationship relationship in
+                    package.GetRelationshipsByType(_packageRelationshipType))
+                {
+                    // Resolve the relationship target URI so
+                    // the root-html document part can be retrieved.
+                    uriDocumentTarget = PackUriHelper.ResolvePartUri(new Uri("/", UriKind.Relative), relationship.TargetUri);
+                    // Open the document part and write its contents to a file.
+                    documentPart = package.GetPart(uriDocumentTarget);
+                    ExtractPart(documentPart, targetDirectory);
+                }
+                // Examine the root part’s part-level relationships and look
+                // for relationships with "required-resource" RelationshipTypes.
+                Uri uriResourceTarget = null;
+                foreach (PackageRelationship relationship in
+                    documentPart.GetRelationshipsByType(_resourceRelationshipType))
+                {
+                    // Resolve the Relationship Target Uri so the resource part
+                    // can be retrieved.
+                    uriResourceTarget = PackUriHelper.ResolvePartUri(documentPart.Uri, relationship.TargetUri);
+                    // Open the resource part and write the contents to a file.
+                    resourcePart = package.GetPart(uriResourceTarget);
+                    ExtractPart(resourcePart, targetDirectory);
+                }
+            }
+            // Return the path and filename to the file referenced
+            // by the HTMX package’s "root-html" package-level relationship.
+            return targetDirectory + uriDocumentTarget.ToString().TrimStart('/');
+        }
+
+        private static void ExtractPart(PackagePart packagePart, string targetDirectory)
+        {
+            // Remove leading slash from the Part Uri and make a new
+            // relative Uri from the result.
+            string stringPart = packagePart.Uri.ToString().TrimStart('/');
+            Uri partUri = new Uri(stringPart, UriKind.Relative);
+            // Create an absolute file URI by combining the target directory
+            // with the relative part URI created from the part name.
+            Uri uriFullFilePath = new Uri(new Uri(targetDirectory, UriKind.Absolute), partUri);
+            // Create the necessary directories based on the full part path
+            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(uriFullFilePath.LocalPath));
+            // Write the file from the part’s content stream.
+            using (FileStream fileStream = File.Create(uriFullFilePath.LocalPath))
+            {                
+                CopyStream(packagePart.GetStream(), fileStream);
+            }
+        }
+
+        public static void CopyStream(Stream input, Stream output)
+        {
+            input.CopyTo(output);
+            input.Position = output.Position = 0;
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Uri test = new Uri(Program.Game.Definition.PackUri.Replace(",", "/").Replace("///",",,,"));
-            Boolean f = test.IsFile;
+            Uri uri = new Uri(Program.Game.Definition.PackUri + "/rules.txt");
+            Package mypackage = Package.Open(@"D:\Magic-v3.0.2.o8g", FileMode.Open);
+            PackagePart srootPart = mypackage.GetPart(new Uri("/rules.txt"));
+
+            // Path and name of the package file.
+            string packageFile = @"D:\Magic-v3.0.2.o8g"; 
+            // Name for the root package relationship type.
+            string rootHtmlRelationshipType = "http://schemas.openxmlformats.org/" +  "package/2007/relationships/htmx/root-html";
+            string resourceRelationshipType = "http://schemas.openxmlformats.org/" + "package/2007/relationships/htmx/required-resource";
+            // Open the package for reading. - - - - - - - - - - - - - - -
+            try
+            {
+                using (Package package = Package.Open(packageFile, FileMode.Open, FileAccess.Read))
+                {
+                    // A package can contain multiple root items, iterate through each.  Get the “root-html” package relationship.
+                    foreach (PackageRelationship relationship in package.GetRelationshipsByType(rootHtmlRelationshipType))
+                    {
+                        // Get the part referenced by the relationship TargetUri.
+                        PackagePart rootPart = package.GetPart(relationship.TargetUri);
+                        // Open and access the part data stream.
+                        using (Stream dataStream = rootPart.GetStream())
+                        {
+                            //  Access the root part’s data stream.
+                        }
+                        // A part can have associations with other parts. Locate and iterate through each associated part.
+                        // Iterate through each “required-resource” part.
+                        foreach (PackageRelationship resourceRelationship in rootPart.GetRelationshipsByType(resourceRelationshipType))
+                        {
+                            // Open the Resource Part and write the contents to a file.
+                            PackagePart resourcePart = package.GetPart(resourceRelationship.TargetUri);
+                            // Party with the resource part.
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            // Extract the Web page and its local resources to the temp folder.
+            string _tempFolder = @"D:\Temp";
+            // Extract the Web page and its local resources to the temp folder.
+            string _htmlFilepath = ExtractPackageParts(packageFile, _tempFolder);
+            // Convert the path and filename to a URI for the browser control.
+            Uri webpageUri;
+            try
+            {
+                webpageUri = new Uri(_htmlFilepath, UriKind.Absolute);
+            }
+            catch (System.UriFormatException)
+            {
+                string msg = _htmlFilepath + "\n\nThe specified path and " + "filename cannot be converted to a valid URI.\n\n";
+                System.Windows.MessageBox.Show(msg, "Invalid URI", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+
+
+
+
+
+
             // Get Stream of the file
             StreamReader fileReader = new StreamReader(File.Open(@"C:\Downloads\rules.txt", FileMode.Open));
             FileInfo fileInfo = new FileInfo(@"C:\Downloads\rules.txt");
