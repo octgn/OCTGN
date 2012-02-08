@@ -14,7 +14,7 @@ namespace Octgn.Play.Gui
             int count = parent != null && parent.HasItems ? parent.Items.Count : 0;
 
             // Next line needed otherwise ItemContainerGenerator is null (bug in WinFX ?)
-            UIElementCollection children = base.InternalChildren;
+            UIElementCollection children = InternalChildren;
             IItemContainerGenerator generator = ItemContainerGenerator;
 
             if (count == 0)

@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Octgn.Launcher
 {
-    public partial class InstallSetsProgressDialog : Window
+    public partial class InstallSetsProgressDialog
     {
         public InstallSetsProgressDialog()
         {

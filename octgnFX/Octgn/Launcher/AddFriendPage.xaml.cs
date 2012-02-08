@@ -1,12 +1,11 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 
 namespace Octgn.Launcher
 {
     /// <summary>
     ///   Interaction logic for ContactList.xaml
     /// </summary>
-    public partial class AddFriendPage : Page
+    public partial class AddFriendPage
     {
         public AddFriendPage()
         {

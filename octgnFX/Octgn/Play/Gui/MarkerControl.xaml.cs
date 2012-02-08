@@ -1,13 +1,12 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace Octgn.Play.Gui
 {
-    public partial class MarkerControl : UserControl
+    public partial class MarkerControl
     {
         public MarkerControl()
         {

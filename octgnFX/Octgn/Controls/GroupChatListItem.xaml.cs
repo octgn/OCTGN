@@ -11,7 +11,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for FriendListItem.xaml
     /// </summary>
-    public partial class GroupChatListItem : UserControl
+    public partial class GroupChatListItem
     {
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
             "UserName", typeof (string), typeof (GroupChatListItem));

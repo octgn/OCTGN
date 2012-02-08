@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -17,7 +16,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for FriendListItem.xaml
     /// </summary>
-    public partial class FriendListItem : UserControl
+    public partial class FriendListItem
     {
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
             "UserName", typeof (string), typeof (FriendListItem));
@@ -57,7 +56,7 @@ namespace Octgn.Controls
                 SetValue(CustomStatusProperty, value.CustomStatus);
                 string h = ValueConverters.HashEmailAddress(value.Email.ToLower().Trim());
                 Random r = new Random();
-                string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt="+r.NextDouble().ToString();
+                var guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt=";
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
                 SetValue(UsernameProperty, value.DisplayName);
                 switch (value.Status)
@@ -127,7 +126,7 @@ namespace Octgn.Controls
             var data = new DataObject(DataFormats.Text, m_User.Uid.ToString(CultureInfo.InvariantCulture));
             //DataObject data = new DataObject(this.m_User);
             _dragdropWindow.Show();
-            DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
+            //DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
             DestroyDragDropWindow();
             IsDragging = false;
             GiveFeedback -= feedbackhandler;
@@ -206,7 +205,7 @@ namespace Octgn.Controls
 
         private void DragSource_GiveFeedback(object sender, GiveFeedbackEventArgs e)
         {
-            Debug.WriteLine("DragSource_GiveFeedback " + e.Effects.ToString());
+            Debug.WriteLine("DragSource_GiveFeedback " + e.Effects);
 
             if (DragScope == null)
             {
@@ -270,7 +269,7 @@ namespace Octgn.Controls
             _dragHasLeftScope = false;
             //Finally lets drag drop 
             var data = new DataObject(DataFormats.Text, "abcd");
-            DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
+            //DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
 
             // Clean up our mess :) 
             DragScope.AllowDrop = previousDrop;

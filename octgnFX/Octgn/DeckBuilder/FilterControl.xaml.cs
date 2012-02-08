@@ -2,13 +2,12 @@
 using System.Globalization;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Data;
 
 namespace Octgn.DeckBuilder
 {
-    public partial class FilterControl : UserControl
+    public partial class FilterControl
     {
         private static readonly SqlComparison[] StringComparisons = new[]
                                                                         {

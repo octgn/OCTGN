@@ -30,15 +30,14 @@ namespace Octgn
         {
             if (File.Exists(GetPath()))
             {
-                using (var reader = new StreamReader(GetPath()))
+
+                var serializer = new SharpSerializer();
+                var config = (Hashtable)serializer.Deserialize(GetPath());
+                if (config.ContainsKey(valName))
                 {
-                    var serializer = new SharpSerializer();
-                    var config = (Hashtable) serializer.Deserialize(GetPath());
-                    if (config.ContainsKey(valName))
-                    {
-                        return config[valName].ToString();
-                    }
+                    return config[valName].ToString();
                 }
+
             }
             return null;
         }
@@ -61,13 +60,10 @@ namespace Octgn
         public static void WriteValue(string valName, string value)
         {
             var serializer = new SharpSerializer();
-            Hashtable config = new Hashtable();
+            var config = new Hashtable();
             if (File.Exists(GetPath()))
             {
-                using (var reader = new StreamReader(GetPath()))
-                {
-                    config = (Hashtable) serializer.Deserialize(GetPath());
-                }
+                config = (Hashtable)serializer.Deserialize(GetPath());
             }
             config[valName] = value;
             serializer.Serialize(config, GetPath());

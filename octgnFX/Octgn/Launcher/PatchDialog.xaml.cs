@@ -8,7 +8,7 @@ using Octgn.Data;
 
 namespace Octgn.Launcher
 {
-    public partial class PatchDialog : Window
+    public partial class PatchDialog
     {
         public static readonly DependencyProperty PatchFileNameProperty =
             DependencyProperty.Register("PatchFileName", typeof (string), typeof (PatchDialog));

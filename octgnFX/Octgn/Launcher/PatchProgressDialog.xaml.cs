@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Octgn.Launcher
 {
-    public partial class PatchProgressDialog : Window
+    public partial class PatchProgressDialog
     {
         public PatchProgressDialog()
         {

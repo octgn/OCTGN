@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Windows;
 
 namespace Octgn
 {
-    public partial class MessageWindow : Window
+    public partial class MessageWindow
     {
         public MessageWindow(string text)
         {

@@ -8,7 +8,6 @@ using System.Windows;
 using System.Xml;
 using Octgn.Data;
 using Octgn.Definitions;
-using Octgn.Play;
 using Octgn.Scripting;
 using Skylabs.Lobby.Threading;
 
@@ -17,7 +16,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for UpdateChecker.xaml
     /// </summary>
-    public partial class UpdateChecker : Window
+    public partial class UpdateChecker
     {
         private readonly List<string> Errors = new List<string>();
         // private bool stopReading; // not used
@@ -89,7 +88,7 @@ namespace Octgn.Launcher
                     }
                     Program.Game = new Game(GameDef.FromO8G(g.Filename));
                     Program.Game.TestBegin();
-                    IEnumerable<Player> plz = Player.All;
+                    //IEnumerable<Player> plz = Player.All;
                     var engine = new Engine(true);
                     string[] terr = engine.TestScripts(Program.Game);
                     Program.Game.End();

@@ -22,7 +22,7 @@ namespace Octgn.Scripting
             get { return Find(name).Value; }
             set
             {
-                Counter counter = Find(name);
+                //Counter counter = Find(name);
                 //Engine.Current.Invoke<object>(() => counter.Value = value);
             }
         }
