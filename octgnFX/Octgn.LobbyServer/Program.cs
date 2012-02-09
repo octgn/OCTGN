@@ -52,7 +52,7 @@ namespace Skylabs.LobbyServer
 #if(DEBUG)
             const string sname = "serversettingsdebug.ini";
 #else
-            string sname = "serversettings.ini";
+            const string sname = "serversettings.ini";
 #endif
             if (!File.Exists(sname))
             {

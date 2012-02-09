@@ -179,8 +179,8 @@ namespace Octgn.Play.Gui
             var group = (TransformGroup) element.RenderTransform;
 
             Point currentPos = element.TransformToAncestor(this).Transform(new Point());
-            Debug.Assert(@group.Inverse != null, "@group.Inverse != null");
-            arrangePosition = @group.Inverse.Transform(currentPos);
+            arrangePosition = new Point(0,0);
+            if (@group.Inverse != null) arrangePosition = @group.Inverse.Transform(currentPos);
 
             return group.Children[1];
         }
