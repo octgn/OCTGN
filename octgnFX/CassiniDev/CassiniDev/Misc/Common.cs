@@ -1,18 +1,4 @@
-﻿//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
-#region
+﻿#region
 
 using System;
 using System.Collections.Generic;
@@ -41,7 +27,7 @@ namespace CassiniDev
                 .ToList();
 
             int byteAddress = 0;
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             for (int i = 0; i < hexSplit.Count; i++)
             {
@@ -61,7 +47,7 @@ namespace CassiniDev
                 Assembly assembly = Assembly.GetAssembly(type);
 
                 object[] customAttributes = assembly.GetCustomAttributes(typeof (AssemblyFileVersionAttribute), true);
-                if ((customAttributes != null) && (customAttributes.GetLength(0) > 0))
+                if ((customAttributes.GetLength(0) > 0))
                 {
                     version = ((AssemblyFileVersionAttribute) customAttributes[0]).Version;
                 }
@@ -79,10 +65,10 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// CassiniDev FIX: #12506
+        ///   CassiniDev FIX: #12506
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
+        /// <param name="fileName"> </param>
+        /// <returns> </returns>
         public static string GetContentType(string fileName)
         {
             if (!File.Exists(fileName))
@@ -92,7 +78,7 @@ namespace CassiniDev
 
             string contentType;
 
-            FileInfo info = new FileInfo(fileName);
+            var info = new FileInfo(fileName);
             string extension = info.Extension.ToLowerInvariant();
 
             switch (extension)
@@ -1667,10 +1653,10 @@ namespace CassiniDev
         public static byte[] StreamToBytes(this Stream input)
         {
             int capacity = input.CanSeek ? (int) input.Length : 0;
-            using (MemoryStream output = new MemoryStream(capacity))
+            using (var output = new MemoryStream(capacity))
             {
                 int readLength;
-                byte[] buffer = new byte[4096];
+                var buffer = new byte[4096];
 
                 do
                 {
@@ -1683,10 +1669,10 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// CassiniDev FIX: #12506
+        ///   CassiniDev FIX: #12506
         /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
+        /// <param name="file"> </param>
+        /// <returns> </returns>
         private static string GetMimeFromFile(string file)
         {
             IntPtr mimeout;
@@ -1694,11 +1680,11 @@ namespace CassiniDev
                 return null;
             //throw new FileNotFoundException(file + " not found");
 
-            int maxContent = (int) new FileInfo(file).Length;
+            var maxContent = (int) new FileInfo(file).Length;
             if (maxContent > 4096) maxContent = 4096;
             FileStream fs = File.OpenRead(file);
 
-            byte[] buf = new byte[maxContent];
+            var buf = new byte[maxContent];
             fs.Read(buf, 0, maxContent);
             fs.Close();
             int result = Interop.FindMimeFromData(IntPtr.Zero, file, buf, maxContent, null, 0, out mimeout, 0);
@@ -1710,9 +1696,9 @@ namespace CassiniDev
             return mime;
         }
 
-        private static IList<string> SplitIntoChunks(this string text, int chunkSize)
+        private static IEnumerable<string> SplitIntoChunks(this string text, int chunkSize)
         {
-            List<string> chunks = new List<string>();
+            var chunks = new List<string>();
             int offset = 0;
             while (offset < text.Length)
             {

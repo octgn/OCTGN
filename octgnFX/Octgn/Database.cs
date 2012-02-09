@@ -2,56 +2,54 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Octgn.Data;
+using Octgn.Definitions;
 
 namespace Octgn
 {
-	public static class Database
-	{
-		private static Data.Game openedGame;
-
-    public static Data.Game OpenedGame
-    { get { return openedGame; } }
-
-		public static void Open(Definitions.GameDef game, bool readOnly)
-		{
-			openedGame = Program.GamesRepository.Games.First(g => g.Id == game.Id);
-			openedGame.OpenDatabase(readOnly);
-		}
-
-		public static void Close()
-		{
-			if (openedGame != null)
-				openedGame.CloseDatabase();
-		}
-
-		public static CardModel GetCardByName(string name)
-		{
-			return openedGame.GetCardByName(name);
-		}
-
-		public static CardModel GetCardById(Guid id)
-		{
-			return openedGame.GetCardById(id);			
-		}
-
-		public static IEnumerable<MarkerModel> GetAllMarkers()
-		{
-			return openedGame.GetAllMarkers();			
-		}
-
-    public static IEnumerable<CardModel> GetCards(params string[] conditions)
+    public static class Database
     {
-      return openedGame.SelectCardModels(conditions);
-    }
+        public static Data.Game OpenedGame { get; private set; }
 
-    public static IEnumerable<Set> GetAllSets()
-    {
-      return openedGame.Sets;
-    }
+        public static void Open(GameDef game, bool readOnly)
+        {
+            OpenedGame = Program.GamesRepository.Games.First(g => g.Id == game.Id);
+            OpenedGame.OpenDatabase(readOnly);
+        }
 
-    internal static Pack GetPackById(Guid packId)
-    {
-      return openedGame.GetPackById(packId);
+        public static void Close()
+        {
+            if (OpenedGame != null)
+                OpenedGame.CloseDatabase();
+        }
+
+        public static CardModel GetCardByName(string name)
+        {
+            return OpenedGame.GetCardByName(name);
+        }
+
+        public static CardModel GetCardById(Guid id)
+        {
+            return OpenedGame.GetCardById(id);
+        }
+
+        public static IEnumerable<MarkerModel> GetAllMarkers()
+        {
+            return OpenedGame.GetAllMarkers();
+        }
+
+        public static IEnumerable<CardModel> GetCards(params string[] conditions)
+        {
+            return OpenedGame.SelectCardModels(conditions);
+        }
+
+        public static IEnumerable<Set> GetAllSets()
+        {
+            return OpenedGame.Sets;
+        }
+
+        internal static Pack GetPackById(Guid packId)
+        {
+            return OpenedGame.GetPackById(packId);
+        }
     }
-  }
 }

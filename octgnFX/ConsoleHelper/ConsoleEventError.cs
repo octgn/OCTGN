@@ -6,31 +6,6 @@ namespace Skylabs.ConsoleHelper
     [Serializable]
     public class ConsoleEventError : ConsoleEvent
     {
-        [XmlElement("ExceptionMessage")]
-        public String ExceptionMessage
-        {
-            get
-            {
-                if (Exception.Message != null)
-                    return Exception.Message;
-                return "No Exception Message Data.";
-            }
-        }
-
-        [XmlElement("StackTrace")]
-        public String StackTrace
-        {
-            get
-            {
-                if(Exception.StackTrace != null)
-                    return Exception.StackTrace;
-                return "No Stack Trace Message Data.";
-            }
-        }
-
-        [XmlIgnore]
-        public Exception Exception { get; set; }
-
         private ConsoleEventError()
         {
         }
@@ -42,5 +17,20 @@ namespace Skylabs.ConsoleHelper
             //Color = ConsoleColor.Red;
             Exception = e;
         }
+
+        [XmlElement("ExceptionMessage")]
+        public String ExceptionMessage
+        {
+            get { return Exception != null ? Exception.Message : "No Exception Message Data."; }
+        }
+
+        [XmlElement("StackTrace")]
+        public String StackTrace
+        {
+            get { return Exception.StackTrace ?? "No Stack Trace Message Data."; }
+        }
+
+        [XmlIgnore]
+        public Exception Exception { get; set; }
     }
 }

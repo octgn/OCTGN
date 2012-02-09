@@ -1,18 +1,24 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 
 namespace Octgn.Controls
 {
     /// <summary>
-    /// Interaction logic for PopupWindowMessage.xaml
+    ///   Interaction logic for PopupWindowMessage.xaml
     /// </summary>
-    public partial class PopupWindowMessage : UserControl
+    public partial class PopupWindowMessage
     {
-        public delegate void HandlePopupWindowClose(object sender, bool XClosed);
-        public event HandlePopupWindowClose OnPopupWindowClose;
-        private Panel parentControl;
-        private bool xclosed = false;
+        #region Delegates
+
+        public delegate void HandlePopupWindowClose(object sender, bool xClosed);
+
+        #endregion
+
+        private Panel _parentControl;
+        private bool _xclosed;
 
         public PopupWindowMessage()
         {
@@ -22,25 +28,27 @@ namespace Octgn.Controls
                 <DoubleAnimation From="0" To="300" Duration="00:00:02"/>
                 <DoubleAnimation From="0" To="1" Duration="00:00:02"/>
              */
-            Visibility = System.Windows.Visibility.Hidden;
+            Visibility = Visibility.Hidden;
         }
 
-        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        public event HandlePopupWindowClose OnPopupWindowClose;
+
+        private void UserControlIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
         }
 
-        public void ShowMessage(Panel ParentControl)
+        public void ShowMessage(Panel parentControl)
         {
-            parentControl = ParentControl;
-            HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
-            VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            _parentControl = parentControl;
+            HorizontalAlignment = HorizontalAlignment.Center;
+            VerticalAlignment = VerticalAlignment.Center;
             SetValue(Grid.ColumnSpanProperty, 10);
             SetValue(Grid.RowSpanProperty, 10);
             Opacity = 0;
-            this.Visibility = System.Windows.Visibility.Visible;
-            ParentControl.Children.Add(this);
-            Storyboard a = this.FindResource("sbShow") as Storyboard;
-            a.Begin();
+            Visibility = Visibility.Visible;
+            parentControl.Children.Add(this);
+            var a = FindResource("sbShow") as Storyboard;
+            if (a != null) a.Begin();
         }
 
         public void AddControl(UIElement e)
@@ -50,23 +58,24 @@ namespace Octgn.Controls
 
         public void HideMessage()
         {
-            Storyboard a = this.FindResource("sbHide") as Storyboard;
-            a.Completed += new System.EventHandler(a_Completed);
+            var a = FindResource("sbHide") as Storyboard;
+            if (a == null) return;
+            a.Completed += ACompleted;
             a.Begin();
         }
 
-        private void a_Completed(object sender, System.EventArgs e)
+        private void ACompleted(object sender, EventArgs e)
         {
-            this.Visibility = Visibility.Hidden;
-            if(parentControl != null)
-                parentControl.Children.Remove(this);
-            if(OnPopupWindowClose != null)
-                OnPopupWindowClose(this, xclosed);
+            Visibility = Visibility.Hidden;
+            if (_parentControl != null)
+                _parentControl.Children.Remove(this);
+            if (OnPopupWindowClose != null)
+                OnPopupWindowClose(this, _xclosed);
         }
 
-        private void image1_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Image1MouseUp(object sender, MouseButtonEventArgs e)
         {
-            xclosed = true;
+            _xclosed = true;
             HideMessage();
         }
     }

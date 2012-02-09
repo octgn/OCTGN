@@ -1,98 +1,102 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
 
 namespace Skylabs.Lobby.Threading
 {
     public sealed class Conductor2 : IDisposable
     {
-        public bool IsDisposed { get; private set; }
+        private readonly Timer _delegateTimer;
 
-        private Queue<ConductorAction> Q;
-
-        private Timer DelegateTimer;
-
-        private object Locker = new object();
+        private readonly object _locker = new object();
+        private Queue<ConductorAction> _q;
 
         public Conductor2()
         {
-            Q = new Queue<ConductorAction>();
+            _q = new Queue<ConductorAction>();
             IsDisposed = false;
-            DelegateTimer = new Timer(DelegateTimerTick, null, 5, 5);
+            _delegateTimer = new Timer(DelegateTimerTick, null, 5, 5);
         }
+
+        public bool IsDisposed { get; private set; }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            lock (_locker)
+            {
+                if (IsDisposed) return;
+                _delegateTimer.Dispose();
+                _q.Clear();
+                _q = null;
+            }
+        }
+
+        #endregion
 
         public void Add(Action a)
         {
-            lock (Locker)
+            lock (_locker)
             {
-                Q.Enqueue(new ConductorAction(a));
+                _q.Enqueue(new ConductorAction(a));
             }
         }
 
         private void DelegateTimerTick(object state)
         {
-            lock (Locker)
+            lock (_locker)
             {
-                ConductorAction ca;
                 try
                 {
-                    if (Q.Count > 0)
+                    if (_q.Count <= 0)
                     {
-                        ca = Q.Dequeue();
-                        ca.Action.BeginInvoke(InvokeDone,null);
+                    }
+                    else
+                    {
+                        ConductorAction ca = _q.Dequeue();
+                        ca.Action.BeginInvoke(InvokeDone, null);
                     }
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
-                    if (System.Diagnostics.Debugger.IsAttached)
+                    if (Debugger.IsAttached)
                     {
-                        System.Diagnostics.Debugger.Break();
-                    } 
+                        Debugger.Break();
+                    }
                 }
             }
         }
-        private void InvokeDone(IAsyncResult result)
+
+        private static void InvokeDone(IAsyncResult result)
         {
-            
-        }
-        public void Dispose()
-        {
-            lock (Locker)
-            {
-                if (!IsDisposed)
-                {
-                    DelegateTimer.Dispose();
-                    Q.Clear();
-                    Q = null;
-                }
-            }
         }
     }
+
     public sealed class ConductorAction
     {
-        public Action Action { get; private set; }
-        public String CalledFromMethod { get; private set; }
         public ConductorAction(Action a)
         {
-            StackTrace st = new StackTrace();
+            var st = new StackTrace();
             StackFrame[] frames = st.GetFrames();
             CalledFromMethod = "UnknownMethod";
-            for (int i = 0; i < frames.Length; i++)
+            if (frames != null)
             {
-                if (frames[i].GetMethod().Name == System.Reflection.MethodInfo.GetCurrentMethod().Name)
+                for (int i = 0; i < frames.Length; i++)
                 {
-                    if (i + 2 < frames.Length)
-                    {
-                        CalledFromMethod = frames[i + 2].GetMethod().Name;
-                        break;
-                    }
+                    if (frames[i].GetMethod().Name != MethodBase.GetCurrentMethod().Name) continue;
+                    if (i + 2 >= frames.Length) continue;
+                    CalledFromMethod = frames[i + 2].GetMethod().Name;
+                    break;
                 }
             }
             Action = a;
         }
+
+        public Action Action { get; private set; }
+        public String CalledFromMethod { get; private set; }
     }
 }

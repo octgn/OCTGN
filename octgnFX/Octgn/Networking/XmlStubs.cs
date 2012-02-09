@@ -1,9 +1,4 @@
-﻿/*
- * This file was automatically generated.
- * Do not modify, changes will get lost when the file is regenerated!
- */
-
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
@@ -11,27 +6,28 @@ using System.Text;
 using System.Windows.Media;
 using System.Xml;
 using Octgn.Play;
+using Octgn.Server;
 
 namespace Octgn.Networking
 {
-    internal abstract class BaseXmlStub : Octgn.Server.IServerCalls
+    internal abstract class BaseXmlStub : IServerCalls
     {
-        protected XmlWriterSettings xmlSettings = new XmlWriterSettings();
+        protected XmlWriterSettings XmlSettings = new XmlWriterSettings();
 
-        public BaseXmlStub()
+        protected BaseXmlStub()
         {
-            xmlSettings.OmitXmlDeclaration = true;
+            XmlSettings.OmitXmlDeclaration = true;
         }
 
-        protected abstract void Send(string xml);
+        #region IServerCalls Members
 
         public void Binary()
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Binary");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -40,8 +36,8 @@ namespace Octgn.Networking
 
         public void Ping()
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Ping");
             if (Program.Client.Muted != 0)
@@ -53,14 +49,14 @@ namespace Octgn.Networking
 
         public void IsAlternateImage(Card c, bool isAlternateImage)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("IsAlternateImage");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("cardid", c.Id.ToString());
-            writer.WriteElementString("isalternateimage", isAlternateImage.ToString());
+            writer.WriteElementString("cardid", c.Id.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("isalternateimage", isAlternateImage.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
             Send(sb.ToString());
@@ -68,11 +64,11 @@ namespace Octgn.Networking
 
         public void Error(string msg)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Error");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("msg", msg);
             writer.WriteEndElement();
@@ -80,13 +76,14 @@ namespace Octgn.Networking
             Send(sb.ToString());
         }
 
-        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId, Version gameVersion)
+        public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid gameId,
+                          Version gameVersion)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Hello");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("nick", nick);
             writer.WriteElementString("pkey", pkey.ToString(CultureInfo.InvariantCulture));
@@ -102,11 +99,11 @@ namespace Octgn.Networking
 
         public void Settings(bool twoSidedTable)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Settings");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("twoSidedTable", twoSidedTable.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
@@ -116,11 +113,11 @@ namespace Octgn.Networking
 
         public void PlayerSettings(Player playerId, bool invertedTable)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("PlayerSettings");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("playerId", playerId.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("invertedTable", invertedTable.ToString(CultureInfo.InvariantCulture));
@@ -131,11 +128,11 @@ namespace Octgn.Networking
 
         public void NickReq(string nick)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("NickReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("nick", nick);
             writer.WriteEndElement();
@@ -145,11 +142,11 @@ namespace Octgn.Networking
 
         public void Start()
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Start");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -158,11 +155,11 @@ namespace Octgn.Networking
 
         public void ResetReq()
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("ResetReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -171,11 +168,11 @@ namespace Octgn.Networking
 
         public void NextTurn(Player nextPlayer)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("NextTurn");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("nextPlayer", nextPlayer.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
@@ -185,11 +182,11 @@ namespace Octgn.Networking
 
         public void StopTurnReq(int turnNumber, bool stop)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("StopTurnReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("turnNumber", turnNumber.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("stop", stop.ToString(CultureInfo.InvariantCulture));
@@ -200,11 +197,11 @@ namespace Octgn.Networking
 
         public void ChatReq(string text)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("ChatReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("text", text);
             writer.WriteEndElement();
@@ -214,11 +211,11 @@ namespace Octgn.Networking
 
         public void PrintReq(string text)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("PrintReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("text", text);
             writer.WriteEndElement();
@@ -228,11 +225,11 @@ namespace Octgn.Networking
 
         public void RandomReq(int id, int min, int max)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("RandomReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("min", min.ToString(CultureInfo.InvariantCulture));
@@ -244,11 +241,11 @@ namespace Octgn.Networking
 
         public void RandomAnswer1Req(int id, ulong value)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("RandomAnswer1Req");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("value", value.ToString(CultureInfo.InvariantCulture));
@@ -259,11 +256,11 @@ namespace Octgn.Networking
 
         public void RandomAnswer2Req(int id, ulong value)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("RandomAnswer2Req");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("value", value.ToString(CultureInfo.InvariantCulture));
@@ -274,11 +271,11 @@ namespace Octgn.Networking
 
         public void CounterReq(Counter counter, int value)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("CounterReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("counter", counter.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("value", value.ToString(CultureInfo.InvariantCulture));
@@ -289,17 +286,17 @@ namespace Octgn.Networking
 
         public void LoadDeck(int[] id, ulong[] type, Group[] group)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("LoadDeck");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
-            foreach(int p in id)
+            foreach (int p in id)
                 writer.WriteElementString("id", p.ToString(CultureInfo.InvariantCulture));
-            foreach(ulong p in type)
+            foreach (ulong p in type)
                 writer.WriteElementString("type", p.ToString(CultureInfo.InvariantCulture));
-            foreach(Group g in group)
+            foreach (Group g in group)
                 writer.WriteElementString("group", g.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -308,15 +305,15 @@ namespace Octgn.Networking
 
         public void CreateCard(int[] id, ulong[] type, Group group)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("CreateCard");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
-            foreach(int p in id)
+            foreach (int p in id)
                 writer.WriteElementString("id", p.ToString(CultureInfo.InvariantCulture));
-            foreach(ulong p in type)
+            foreach (ulong p in type)
                 writer.WriteElementString("type", p.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
@@ -326,21 +323,21 @@ namespace Octgn.Networking
 
         public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("CreateCardAt");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
-            foreach(int p in id)
+            foreach (int p in id)
                 writer.WriteElementString("id", p.ToString(CultureInfo.InvariantCulture));
-            foreach(ulong p in key)
+            foreach (ulong p in key)
                 writer.WriteElementString("key", p.ToString(CultureInfo.InvariantCulture));
-            foreach(Guid g in modelId)
+            foreach (Guid g in modelId)
                 writer.WriteElementString("modelId", g.ToString());
-            foreach(int p in x)
+            foreach (int p in x)
                 writer.WriteElementString("x", p.ToString(CultureInfo.InvariantCulture));
-            foreach(int p in y)
+            foreach (int p in y)
                 writer.WriteElementString("y", p.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("faceUp", faceUp.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("persist", persist.ToString(CultureInfo.InvariantCulture));
@@ -351,15 +348,15 @@ namespace Octgn.Networking
 
         public void CreateAlias(int[] id, ulong[] type)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("CreateAlias");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
-            foreach(int p in id)
+            foreach (int p in id)
                 writer.WriteElementString("id", p.ToString(CultureInfo.InvariantCulture));
-            foreach(ulong p in type)
+            foreach (ulong p in type)
                 writer.WriteElementString("type", p.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -368,11 +365,11 @@ namespace Octgn.Networking
 
         public void MoveCardReq(Card card, Group group, int idx, bool faceUp)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("MoveCardReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
@@ -385,11 +382,11 @@ namespace Octgn.Networking
 
         public void MoveCardAtReq(Card card, int x, int y, int idx, bool faceUp)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("MoveCardAtReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("x", x.ToString(CultureInfo.InvariantCulture));
@@ -403,11 +400,11 @@ namespace Octgn.Networking
 
         public void Reveal(Card card, ulong revealed, Guid guid)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Reveal");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("revealed", revealed.ToString(CultureInfo.InvariantCulture));
@@ -419,17 +416,17 @@ namespace Octgn.Networking
 
         public void RevealToReq(Player sendTo, Player[] revealTo, Card card, ulong[] encrypted)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("RevealToReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("sendTo", sendTo.Id.ToString(CultureInfo.InvariantCulture));
-            foreach(Player p in revealTo)
+            foreach (Player p in revealTo)
                 writer.WriteElementString("revealTo", p.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
-            foreach(ulong p in encrypted)
+            foreach (ulong p in encrypted)
                 writer.WriteElementString("encrypted", p.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -438,11 +435,11 @@ namespace Octgn.Networking
 
         public void PeekReq(Card card)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("PeekReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
@@ -452,11 +449,11 @@ namespace Octgn.Networking
 
         public void UntargetReq(Card card)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("UntargetReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
@@ -466,11 +463,11 @@ namespace Octgn.Networking
 
         public void TargetReq(Card card)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("TargetReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
@@ -480,11 +477,11 @@ namespace Octgn.Networking
 
         public void TargetArrowReq(Card card, Card otherCard)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("TargetArrowReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("otherCard", otherCard.Id.ToString(CultureInfo.InvariantCulture));
@@ -495,11 +492,11 @@ namespace Octgn.Networking
 
         public void Highlight(Card card, Color? color)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Highlight");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("color", color == null ? "" : color.ToString());
@@ -510,11 +507,11 @@ namespace Octgn.Networking
 
         public void TurnReq(Card card, bool up)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("TurnReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("up", up.ToString(CultureInfo.InvariantCulture));
@@ -525,11 +522,11 @@ namespace Octgn.Networking
 
         public void RotateReq(Card card, CardOrientation rot)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("RotateReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("rot", rot.ToString());
@@ -540,14 +537,14 @@ namespace Octgn.Networking
 
         public void Shuffle(Group group, int[] card)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Shuffle");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
-            foreach(int p in card)
+            foreach (int p in card)
                 writer.WriteElementString("card", p.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -556,16 +553,16 @@ namespace Octgn.Networking
 
         public void Shuffled(Group group, int[] card, short[] pos)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Shuffled");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
-            foreach(int p in card)
+            foreach (int p in card)
                 writer.WriteElementString("card", p.ToString(CultureInfo.InvariantCulture));
-            foreach(short p in pos)
+            foreach (short p in pos)
                 writer.WriteElementString("pos", p.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -574,11 +571,11 @@ namespace Octgn.Networking
 
         public void UnaliasGrp(Group group)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("UnaliasGrp");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
@@ -588,15 +585,15 @@ namespace Octgn.Networking
 
         public void Unalias(int[] card, ulong[] type)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("Unalias");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
-            foreach(int p in card)
+            foreach (int p in card)
                 writer.WriteElementString("card", p.ToString(CultureInfo.InvariantCulture));
-            foreach(ulong p in type)
+            foreach (ulong p in type)
                 writer.WriteElementString("type", p.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -605,11 +602,11 @@ namespace Octgn.Networking
 
         public void AddMarkerReq(Card card, Guid id, string name, ushort count)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("AddMarkerReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString());
@@ -622,11 +619,11 @@ namespace Octgn.Networking
 
         public void RemoveMarkerReq(Card card, Guid id, string name, ushort count)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("RemoveMarkerReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString());
@@ -639,11 +636,11 @@ namespace Octgn.Networking
 
         public void SetMarkerReq(Card card, Guid id, string name, ushort count)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("SetMarkerReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("card", card.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString());
@@ -656,11 +653,11 @@ namespace Octgn.Networking
 
         public void TransferMarkerReq(Card from, Card to, Guid id, string name, ushort count)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("TransferMarkerReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("from", from.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("to", to.Id.ToString(CultureInfo.InvariantCulture));
@@ -674,11 +671,11 @@ namespace Octgn.Networking
 
         public void PassToReq(ControllableObject id, Player to, bool requested)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("PassToReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("to", to.Id.ToString(CultureInfo.InvariantCulture));
@@ -690,11 +687,11 @@ namespace Octgn.Networking
 
         public void TakeFromReq(ControllableObject id, Player from)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("TakeFromReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("from", from.Id.ToString(CultureInfo.InvariantCulture));
@@ -705,11 +702,11 @@ namespace Octgn.Networking
 
         public void DontTakeReq(ControllableObject id, Player to)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("DontTakeReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("to", to.Id.ToString(CultureInfo.InvariantCulture));
@@ -720,11 +717,11 @@ namespace Octgn.Networking
 
         public void FreezeCardsVisibility(Group group)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("FreezeCardsVisibility");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
@@ -734,11 +731,11 @@ namespace Octgn.Networking
 
         public void GroupVisReq(Group group, bool defined, bool visible)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("GroupVisReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("defined", defined.ToString(CultureInfo.InvariantCulture));
@@ -750,11 +747,11 @@ namespace Octgn.Networking
 
         public void GroupVisAddReq(Group group, Player who)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("GroupVisAddReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("who", who.Id.ToString(CultureInfo.InvariantCulture));
@@ -765,11 +762,11 @@ namespace Octgn.Networking
 
         public void GroupVisRemoveReq(Group group, Player who)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("GroupVisRemoveReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("who", who.Id.ToString(CultureInfo.InvariantCulture));
@@ -780,11 +777,11 @@ namespace Octgn.Networking
 
         public void LookAtReq(int uid, Group group, bool look)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("LookAtReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("uid", uid.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
@@ -796,11 +793,11 @@ namespace Octgn.Networking
 
         public void LookAtTopReq(int uid, Group group, int count, bool look)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("LookAtTopReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("uid", uid.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
@@ -813,11 +810,11 @@ namespace Octgn.Networking
 
         public void LookAtBottomReq(int uid, Group group, int count, bool look)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("LookAtBottomReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("uid", uid.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("group", group.Id.ToString(CultureInfo.InvariantCulture));
@@ -830,13 +827,13 @@ namespace Octgn.Networking
 
         public void StartLimitedReq(Guid[] packs)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("StartLimitedReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
-            foreach(Guid g in packs)
+            foreach (Guid g in packs)
                 writer.WriteElementString("packs", g.ToString());
             writer.WriteEndElement();
             writer.Close();
@@ -845,20 +842,21 @@ namespace Octgn.Networking
 
         public void CancelLimitedReq()
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("CancelLimitedReq");
-            if(Program.Client.Muted != 0)
+            if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
             Send(sb.ToString());
         }
+
         public void PlayerSetGlobalVariable(Player p, string n, string v)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("PlayerSetGlobalVariable");
             if (Program.Client.Muted != 0)
@@ -870,10 +868,11 @@ namespace Octgn.Networking
             writer.Close();
             Send(sb.ToString());
         }
-        public void SetGlobalVariable( string n, string v)
+
+        public void SetGlobalVariable(string n, string v)
         {
-            StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            var sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("SetGlobalVariable");
             if (Program.Client.Muted != 0)
@@ -884,26 +883,33 @@ namespace Octgn.Networking
             writer.Close();
             Send(sb.ToString());
         }
+
+        #endregion
+
+        protected abstract void Send(string xml);
     }
 
     internal class XmlSenderStub : BaseXmlStub
     {
-        private TcpClient to;
-        private byte[] buffer = new byte[1024];
+        private readonly TcpClient _to;
+        private byte[] _buffer = new byte[1024];
 
         public XmlSenderStub(TcpClient to)
-        { this.to = to; }
+        {
+            _to = to;
+        }
 
         protected override void Send(string xml)
         {
             int length = Encoding.UTF8.GetByteCount(xml) + 1;
-            if(length > buffer.Length) buffer = new byte[length];
-            Encoding.UTF8.GetBytes(xml, 0, xml.Length, buffer, 0);
-            buffer[length - 1] = 0;
+            if (length > _buffer.Length) _buffer = new byte[length];
+            Encoding.UTF8.GetBytes(xml, 0, xml.Length, _buffer, 0);
+            _buffer[length - 1] = 0;
             try
             {
-                Stream stream = to.GetStream();
-                stream.Write(buffer, 0, length); stream.Flush();
+                Stream stream = _to.GetStream();
+                stream.Write(_buffer, 0, length);
+                stream.Flush();
             }
             catch
             {

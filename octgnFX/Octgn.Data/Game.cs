@@ -1,244 +1,356 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
+using System.Data.SQLite;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
-using VistaDB;
-using VistaDB.DDA;
 
 namespace Octgn.Data
 {
     public class Game
     {
+        internal string BasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                                                "Octgn");
+
+        public SQLiteConnection Dbc;
+        public GamesRepository Repository;
+        private IList<PropertyDef> _cacheCustomProperties;
+
         public Guid Id { get; set; }
-
         public string Name { get; set; }
-
         public string Filename { get; set; }
-
         public Version Version { get; set; }
-
         public int CardWidth { get; set; }
-
         public int CardHeight { get; set; }
-
         public string CardBack { get; set; }
-
         public Boolean Warning { get; set; }
-
+        public string FileHash { get; set; }
         public IEnumerable<string> DeckSections { get; set; }
-
         public IEnumerable<string> SharedDeckSections { get; set; }
-
-        internal string basePath;
-        internal GamesRepository repository;
-        private ObservableCollection<Set> cachedSets;
-        private IList<PropertyDef> cachedProperties;
-        private IVistaDBDDA dda;
-        internal IVistaDBDatabase db;
-        private IVistaDBTable packTable, markerTable, cardTable;
-        private Dictionary<Guid, CardModel> cardModelCache;
-        private Dictionary<Guid, Set> setCache;
-
-        public Uri GetCardBackUri()
-        {
-            String s = Path.Combine(basePath, Filename).Replace('\\', ',');
-            Uri u = new Uri("pack://file:,,," + s + CardBack);
-            return u;
-        }
 
         public ObservableCollection<Set> Sets
         {
-            get
-            {
-                if(cachedSets == null)
-                    cachedSets = GetAllSets();
-                return cachedSets;
-            }
+            get { return GetAllSets(); }
         }
 
         public IList<PropertyDef> CustomProperties
         {
-            get
-            {
-                if(cachedProperties == null)
-                    cachedProperties = GetCustomProperties();
-                return cachedProperties;
-            }
+            get { return _cacheCustomProperties ?? (_cacheCustomProperties = GetCustomProperties()); }
         }
 
         public IEnumerable<PropertyDef> AllProperties
         {
-            get
-            {
-                return Enumerable.Union(Enumerable.Repeat(PropertyDef.NameProperty, 1), CustomProperties);
-            }
+            get { return Enumerable.Repeat(PropertyDef.NameProperty, 1).Union(CustomProperties); }
         }
 
         public string DefaultDecksPath
-        { get { return Path.Combine(basePath, "Decks"); } }
+        {
+            get { return Path.Combine(BasePath, "Decks"); }
+        }
 
-        public bool IsDatabaseOpen
-        { get { return dda != null; } }
+        public bool IsDatabaseOpen { get; private set; }
+
+        public Uri GetCardBackUri()
+        {
+            String s = Path.Combine(BasePath, Filename).Replace('\\', ',');
+            var u = new Uri("pack://file:,,," + s + CardBack);
+            return u;
+        }
 
         public void OpenDatabase(bool readOnly)
         {
-            System.Diagnostics.Debug.Assert(dda == null, "The database is already open");
-
-            dda = VistaDBEngine.Connections.OpenDDA();
-            db = dda.OpenDatabase(Path.Combine(basePath, "game.vdb3"),
-              readOnly ? VistaDBDatabaseOpenMode.NonexclusiveReadOnly : VistaDBDatabaseOpenMode.ExclusiveReadWrite, null);
-            packTable = db.OpenTable("Pack", false, readOnly);
-            markerTable = db.OpenTable("Marker", false, readOnly);
-            cardTable = db.OpenTable("Card", false, readOnly);
-            cardModelCache = new Dictionary<Guid, CardModel>();
-            setCache = new Dictionary<Guid, Set>();
+            if (IsDatabaseOpen) return;
+            string conString = "URI=file:" +
+                               Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                                            "Octgn", "Database", "master.db3");
+            Dbc = new SQLiteConnection(conString);
+            Dbc.Open();
+            using (SQLiteCommand com = Dbc.CreateCommand())
+            {
+                com.CommandText =
+                    "PRAGMA automatic_index=FALSE; PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA encoding='UTF-8';";
+                com.ExecuteScalar();
+            }
+            IsDatabaseOpen = true;
         }
 
         public void CloseDatabase()
         {
-            packTable.Dispose(); packTable = null;
-            cardTable.Dispose(); cardTable = null;
-            markerTable.Dispose(); markerTable = null;
-            db.Dispose(); db = null;
-            dda.Dispose(); dda = null;
-            cardModelCache = null;
-            setCache = null;
+            if (!IsDatabaseOpen) return;
+            Dbc.Close();
+            Dbc.Dispose();
+            IsDatabaseOpen = false;
         }
 
         public Set GetSet(Guid id)
         {
-            Set cachedSet;
-            if(setCache.TryGetValue(id, out cachedSet))
-                return cachedSet;
-            using(var setTable = db.OpenTable("Set", false, true))
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
-                if(!setTable.Find("id:'" + id.ToString() + "'", "SetPK", false, false)) return null;
-                var newSet = Set.FromDataRow(this, setTable.CurrentRow);
-                setCache.Add(newSet.Id, newSet);
-                return newSet;
+                com.CommandText = "SElECT id, name, game_version, version, package FROM [sets] WHERE [id]=@id;";
+
+                com.Parameters.AddWithValue("@id", id.ToString());
+                using (SQLiteDataReader dr = com.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        var s = new Set
+                                    {
+                                        Id = Guid.Parse(dr["id"] as string),
+                                        Name = (string) dr["name"],
+                                        Game = this,
+                                        GameVersion = new Version((string) dr["game_version"]),
+                                        Version = new Version((string) dr["version"]),
+                                        PackageName = (string) dr["package"]
+                                    };
+                        return s;
+                    }
+                }
             }
+            return null;
         }
 
         public CardModel GetCardByName(string name)
         {
-            if(!cardTable.Find("name:'" + name.Replace("'", "''") + "'", "CardNameIX", false, false)) return null;
-            CardModel cachedModel;
-            if(cardModelCache.TryGetValue((Guid)cardTable.Get("id").Value, out cachedModel))
-                return cachedModel;
-            var newModel = CardModel.FromDataRow(this, cardTable.CurrentRow);
-            cardModelCache.Add(newModel.Id, newModel);
-            return newModel;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+
+            using (SQLiteCommand com = Dbc.CreateCommand())
+            {
+                com.CommandText =
+                    "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE [name]=@name;";
+
+                com.Parameters.AddWithValue("@name", name);
+                using (SQLiteDataReader dr = com.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        var result = new CardModel
+                                         {
+                                             Id = Guid.Parse(dr["id"] as string),
+                                             Name = (string) dr["name"],
+                                             ImageUri = (string) dr["image"],
+                                             Set = GetSet(Guid.Parse(dr["set_id"] as string)),
+                                             Properties = GetCardProperties(Guid.Parse(dr["id"] as string))
+                                         };
+                        return result;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public SortedList<string, object> GetCardProperties(Guid cardId)
+        {
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            var ret = new SortedList<string, object>();
+            using (SQLiteCommand com = Dbc.CreateCommand())
+            {
+                com.CommandText =
+                    "SElECT id, type, name, vstr, vint FROM [custom_properties] WHERE [card_real_id]=(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1);";
+
+                com.Parameters.AddWithValue("@card_id", cardId.ToString());
+                using (SQLiteDataReader dr = com.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        var vt = (int) ((long) dr["type"]);
+                        switch (vt)
+                        {
+                            case 0: // String
+                                {
+                                    var name = dr["name"] as string;
+                                    var val = dr["vstr"] as string;
+                                    ret.Add(name, val);
+                                    break;
+                                }
+                            case 1: // int
+                                {
+                                    var name = dr["name"] as string;
+                                    var val = (int) ((long) dr["vint"]);
+                                    ret.Add(name, val);
+                                    break;
+                                }
+                            case 2: //char
+                                {
+                                    var name = dr["name"] as string;
+                                    var val = dr["vstr"] as string;
+                                    ret.Add(name, val);
+                                    break;
+                                }
+                        }
+                    }
+                }
+            }
+            return ret;
         }
 
         public CardModel GetCardById(Guid id)
         {
-            CardModel cachedModel;
-            if(cardModelCache.TryGetValue(id, out cachedModel))
-                return cachedModel;
-            if(!cardTable.Find("id:'" + id.ToString() + "'", "CardPK", false, false)) return null;
-            var newModel = CardModel.FromDataRow(this, cardTable.CurrentRow);
-            cardModelCache.Add(newModel.Id, newModel);
-            return newModel;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+
+            using (SQLiteCommand com = Dbc.CreateCommand())
+            {
+                com.CommandText =
+                    "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id;";
+
+                com.Parameters.AddWithValue("@id", id.ToString());
+                using (SQLiteDataReader dr = com.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        var result = new CardModel
+                                         {
+                                             Id = Guid.Parse(dr["id"] as string),
+                                             Name = (string) dr["name"],
+                                             ImageUri = (string) dr["image"],
+                                             Set = GetSet(Guid.Parse(dr["set_id"] as string)),
+                                             Properties = GetCardProperties(id)
+                                         };
+                        return result;
+                    }
+                }
+            }
+            return null;
         }
 
         public IEnumerable<MarkerModel> GetAllMarkers()
         {
-            var result = new List<MarkerModel>();
-            var previousGuid = Guid.Empty;
-            markerTable.First();
-            while(!markerTable.EndOfTable)
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            var ret = new List<MarkerModel>();
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
-                if(previousGuid != (Guid)markerTable.Get("id").Value)
+                com.CommandText =
+                    "SElECT id, name, icon, (SELECT id FROM sets WHERE real_id=markers.[set_real_id]) as set_id FROM [markers] WHERE [game_id]=@game_id;";
+
+                com.Parameters.AddWithValue("@game_id", Id.ToString());
+                using (SQLiteDataReader dr = com.ExecuteReader())
                 {
-                    result.Add(MarkerModel.FromDataRow(this, markerTable.CurrentRow));
-                    previousGuid = (Guid)markerTable.Get("id").Value;
+                    while (dr.Read())
+                    {
+                        var result = new MarkerModel(
+                            Guid.Parse(dr["id"] as string),
+                            (string) dr["name"],
+                            (string) dr["icon"],
+                            GetSet(Guid.Parse(dr["set_id"] as string))
+                            );
+                        ret.Add(result);
+                    }
                 }
-                markerTable.Next();
             }
-            return result;
+            return ret;
         }
 
         public Pack GetPackById(Guid id)
         {
-            if(!packTable.Find("id:'" + id.ToString() + "'", "PackPK", false, false)) return null;
-            var set = GetSet((Guid)packTable.Get("setId").Value);
-            return new Pack(set, (string)packTable.Get("xml").Value);
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+
+            using (SQLiteCommand com = Dbc.CreateCommand())
+            {
+                com.CommandText =
+                    "SElECT id, xml, (SELECT id FROM sets WHERE real_id=packs.[set_real_id]) as set_id FROM [packs] WHERE [id]=@id;";
+
+                com.Parameters.AddWithValue("@id", id.ToString());
+                using (SQLiteDataReader dr = com.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        Set set = GetSet(Guid.Parse(dr["set_id"] as string));
+                        var xml = dr["xml"] as string;
+                        return new Pack(set, xml);
+                    }
+                }
+            }
+            return null;
         }
 
         public void InstallSet(string filename)
         {
             OpenDatabase(false);
+            SQLiteTransaction trans = Dbc.BeginTransaction();
             try
             {
-                db.BeginTransaction();
-                using(var package = Package.Open(filename, FileMode.Open, FileAccess.Read))
+                using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read))
                 {
-                    var defRelationship = package.GetRelationshipsByType("http://schemas.octgn.org/set/definition").First();
-                    var definition = package.GetPart(defRelationship.TargetUri);
+                    PackageRelationship defRelationship =
+                        package.GetRelationshipsByType("http://schemas.octgn.org/set/definition").First();
+                    PackagePart definition = package.GetPart(defRelationship.TargetUri);
 
-                    XmlReaderSettings settings = new XmlReaderSettings();
-                    settings.ValidationType = ValidationType.Schema;
-                    settings.IgnoreWhitespace = true;
-                    using(Stream s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(GamesRepository), "CardSet.xsd"))
-                    using(XmlReader reader = XmlReader.Create(s))
+                    var settings = new XmlReaderSettings
+                                       {ValidationType = ValidationType.Schema, IgnoreWhitespace = true};
+                    using (
+                        Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (GamesRepository),
+                                                                                             "CardSet.xsd"))
+                    using (XmlReader reader = XmlReader.Create(s))
                         settings.Schemas.Add(null, reader);
 
-                    Set set;
-
                     // Read the cards
-                    using(var reader = XmlReader.Create(definition.GetStream(), settings))
+                    using (XmlReader reader = XmlReader.Create(definition.GetStream(), settings))
                     {
-                        reader.ReadToFollowing("set");  // <?xml ... ?>
+                        reader.ReadToFollowing("set"); // <?xml ... ?>
 
-                        set = new Set(filename, reader, repository);
-                        if(set.Game != this)
-                            throw new ApplicationException(string.Format("The set '{0}' is not built for the game '{1}'.", set.Name, Name));
-                        if(set.GameVersion.Major != Version.Major || set.GameVersion.Minor != Version.Minor)
-                            throw new ApplicationException(string.Format("The set '{0}' is incompatible with the installed game version.\nGame version: {1:2}\nSet made for version: {2:2}.", set.Name, Version, set.GameVersion));
+                        var set = new Set(filename, reader, Repository);
+                        if (set.Game != this)
+                            throw new ApplicationException(
+                                string.Format("The set '{0}' is not built for the game '{1}'.", set.Name, Name));
+                        if (set.GameVersion.Major != Version.Major || set.GameVersion.Minor != Version.Minor)
+                            throw new ApplicationException(
+                                string.Format(
+                                    "The set '{0}' is incompatible with the installed game version.\nGame version: {1:2}\nSet made for version: {2:2}.",
+                                    set.Name, Version, set.GameVersion));
 
                         InsertSet(set);
 
-                        if(reader.IsStartElement("packaging"))
+                        if (reader.IsStartElement("packaging"))
                         {
-                            reader.ReadStartElement();  // <packaging>
-                            while(reader.IsStartElement("pack"))
+                            reader.ReadStartElement(); // <packaging>
+                            while (reader.IsStartElement("pack"))
                             {
                                 string xml = reader.ReadOuterXml();
                                 var pack = new Pack(set, xml);
                                 InsertPack(pack, xml, set.Id);
                             }
-                            reader.ReadEndElement();  // </packaging>
+                            reader.ReadEndElement(); // </packaging>
                         }
 
-                        if(reader.IsStartElement("markers"))
+                        if (reader.IsStartElement("markers"))
                         {
-                            reader.ReadStartElement();  // <markers>
-                            while(reader.IsStartElement("marker"))
+                            reader.ReadStartElement(); // <markers>
+                            while (reader.IsStartElement("marker"))
                             {
                                 reader.MoveToAttribute("name");
-                                var markerName = reader.Value;
+                                string markerName = reader.Value;
                                 reader.MoveToAttribute("id");
                                 var markerId = new Guid(reader.Value);
-                                var markerImageUri = definition.GetRelationship("M" + markerId.ToString("N")).TargetUri;
-                                var markerUri = markerImageUri.OriginalString;
-                                if(!package.PartExists(markerImageUri))
-                                    throw new ApplicationException(string.Format("Image for marker '{0}', with URI '{1}' was not found in the package.", markerName, markerUri));
-                                reader.Read();  // <marker />
+                                Uri markerImageUri = definition.GetRelationship("M" + markerId.ToString("N")).TargetUri;
+                                string markerUri = markerImageUri.OriginalString;
+                                if (!package.PartExists(markerImageUri))
+                                    throw new ApplicationException(
+                                        string.Format(
+                                            "Image for marker '{0}', with URI '{1}' was not found in the package.",
+                                            markerName, markerUri));
+                                reader.Read(); // <marker />
                                 InsertMarker(markerId, markerName, markerUri, set.Id);
                             }
-                            reader.ReadEndElement();    // </markers>
+                            reader.ReadEndElement(); // </markers>
                         }
 
-                        if(reader.IsStartElement("cards"))
+                        if (reader.IsStartElement("cards"))
                         {
-                            reader.ReadStartElement();  // <cards>
-                            while(reader.IsStartElement("card"))
+                            reader.ReadStartElement(); // <cards>
+                            while (reader.IsStartElement("card"))
                                 InsertCard(new CardModel(reader, this, set, definition, package));
-                            reader.ReadEndElement();    // </cards>
+                            reader.ReadEndElement(); // </cards>
                         }
 
                         reader.ReadEndElement();
@@ -248,195 +360,331 @@ namespace Octgn.Data
                     package.Close();
 
                     // Commit the changes
-                    db.CommitTransaction();
-                    if(cachedSets != null)
-                        cachedSets.Add(set);
+                    trans.Commit();
                 }
             }
             catch
             {
-                db.RollbackTransaction();
+                trans.Rollback();
                 throw;
             }
             finally
-            { CloseDatabase(); }
+            {
+                CloseDatabase();
+            }
         }
 
         public void DeleteSet(Set set)
         {
-            OpenDatabase(false);
-            try
+            bool wasdbopen = IsDatabaseOpen;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
-                using(var setTable = db.OpenTable("Set", false, false))
-                {
-                    if(setTable.Find("id:'" + set.Id + "'", "SetPK", false, false))
-                    {
-                        db.BeginTransaction();
-                        try
-                        {
-                            setTable.Delete();
-                            db.CommitTransaction();
-                        }
-                        catch
-                        {
-                            db.RollbackTransaction();
-                            throw;
-                        }
-                        if(cachedSets != null)
-                            cachedSets.Remove(set);
-                    }
-                }
+                com.CommandText = "DELETE FROM [sets] WHERE [id]=@id;";
+                com.Parameters.AddWithValue("@id", set.Id.ToString());
+                com.ExecuteNonQuery();
             }
-            finally
-            { CloseDatabase(); }
+            if (!wasdbopen)
+                CloseDatabase();
         }
 
         private void InsertSet(Set set)
         {
-            using(var setTable = db.OpenTable("Set", false, false))
+            using (SQLiteCommand com = Dbc.CreateCommand())
             {
-                if (setTable.Find("id:'" + set.Id + "'", "SetPK", false, false))
-                    setTable.Delete();
-                setTable.Insert();
-                setTable.PutGuid("id", set.Id);
-                setTable.PutString("name", set.Name);
-                setTable.PutString("gameVersion", set.GameVersion.ToString());
-                setTable.PutString("version", set.Version.ToString());
-                setTable.PutString("package", set.PackageName);
-                setTable.Post();
+                //Build Query
+                var sb = new StringBuilder();
+                sb.Append("INSERT OR REPLACE INTO [sets](");
+                sb.Append("[id],[name],[game_real_id],[game_version],[version],[package]");
+                sb.Append(") VALUES(");
+                sb.Append(
+                    "@id,@name,(SELECT real_id FROM games WHERE id = @game_id LIMIT 1),@game_version,@version,@package");
+                sb.Append(");\n");
+                com.CommandText = sb.ToString();
+
+                com.Parameters.AddWithValue("@id", set.Id.ToString());
+                com.Parameters.AddWithValue("@name", set.Name);
+                com.Parameters.AddWithValue("@game_id", set.Game.Id.ToString());
+                com.Parameters.AddWithValue("@game_version", set.GameVersion.ToString());
+                com.Parameters.AddWithValue("@version", set.Version.ToString());
+                com.Parameters.AddWithValue("@package", set.PackageName);
+                com.ExecuteNonQuery();
             }
-            cachedSets = null;
         }
 
         private void InsertPack(Pack pack, string xml, Guid setId)
         {
-            packTable.Insert();
-            packTable.PutGuid("id", pack.Id);
-            packTable.PutString("name", pack.Name);
-            packTable.PutGuid("setId", setId);
-            packTable.PutString("xml", xml);
-            packTable.Post();
+            using (SQLiteCommand com = Dbc.CreateCommand())
+            {
+                //Build Query
+                var sb = new StringBuilder();
+                sb.Append("INSERT OR REPLACE INTO [packs](");
+                sb.Append("[id],[set_real_id],[name],[xml]");
+                sb.Append(") VALUES(");
+                sb.Append("@id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@xml");
+                sb.Append(");\n");
+                com.CommandText = sb.ToString();
+
+                com.Parameters.AddWithValue("@id", pack.Id.ToString());
+                com.Parameters.AddWithValue("@set_id", setId.ToString());
+                com.Parameters.AddWithValue("@name", pack.Name);
+                com.Parameters.AddWithValue("@xml", xml);
+                com.ExecuteNonQuery();
+            }
         }
 
         private void InsertMarker(Guid id, string name, string iconUri, Guid setId)
         {
-            markerTable.Insert();
-            markerTable.PutGuid("id", id);
-            markerTable.PutString("name", name);
-            markerTable.PutString("icon", iconUri);
-            markerTable.PutGuid("setId", setId);
-            markerTable.Post();
+            using (SQLiteCommand com = Dbc.CreateCommand())
+            {
+                //Build Query
+                var sb = new StringBuilder();
+                sb.Append("INSERT OR REPLACE INTO [markers](");
+                sb.Append("[id],[set_real_id],[game_id],[name],[icon]");
+                sb.Append(") VALUES(");
+                sb.Append("@id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@game_id,@name,@icon");
+                sb.Append(");\n");
+                com.CommandText = sb.ToString();
+
+                com.Parameters.AddWithValue("@id", id.ToString());
+                com.Parameters.AddWithValue("@set_id", setId.ToString());
+                com.Parameters.AddWithValue("@game_id", Id.ToString());
+                com.Parameters.AddWithValue("@name", name);
+                com.Parameters.AddWithValue("@icon", iconUri);
+                com.ExecuteNonQuery();
+            }
         }
 
         private void InsertCard(CardModel card)
         {
-            cardTable.Insert();
-            cardTable.PutGuid("id", card.Id);
-            cardTable.PutString("name", card.Name);
-            cardTable.PutString("image", card.ImageUri);
-            cardTable.PutGuid("setId", card.set.Id);
-            foreach(KeyValuePair<string, object> pair in card.Properties)
+            bool wasdbopen = IsDatabaseOpen;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            var sb = new StringBuilder();
+            using (var com = Dbc.CreateCommand())
             {
-                if(pair.Value is string)
-                    cardTable.PutString(pair.Key, (string)pair.Value);
-                else if(pair.Value is int)
-                    cardTable.PutInt32(pair.Key, (int)pair.Value);
-                else		// char
-                    cardTable.PutString(pair.Key, pair.Value.ToString());
+                //Build Query
+                sb.Append("INSERT INTO [cards](");
+                sb.Append("[id],[game_id],[set_real_id],[name], [image]");
+                sb.Append(") VALUES(");
+                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image");
+                sb.Append(");\n");
+                com.CommandText = sb.ToString();
+
+                com.Parameters.AddWithValue("@id", card.Id.ToString());
+                com.Parameters.AddWithValue("@game_id", Id.ToString());
+                com.Parameters.AddWithValue("@set_id", card.Set.Id.ToString());
+                com.Parameters.AddWithValue("@name", card.Name);
+                com.Parameters.AddWithValue("@image", card.ImageUri);
+                com.ExecuteNonQuery();
             }
-            cardTable.Post();
+            //Add custom properties for the card.
+            sb = new StringBuilder();
+            sb.Append("INSERT INTO [custom_properties](");
+            sb.Append("[id],[card_real_id],[game_id],[name],[type],[vint],[vstr]");
+            sb.Append(") VALUES(");
+            sb.Append("@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
+            sb.Append(");\n");
+            var command = sb.ToString();
+            foreach (var pair in card.Properties)
+            {
+                using (var com = Dbc.CreateCommand())
+                {
+                    com.CommandText = command;
+                    com.Parameters.AddWithValue("@id", pair.Key + card.Id);
+                    com.Parameters.AddWithValue("@card_id", card.Id.ToString());
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    com.Parameters.AddWithValue("@name", pair.Key);
+                    if (pair.Value is string)
+                    {
+                        com.Parameters.AddWithValue("@type", 0);
+                        com.Parameters.AddWithValue("@vstr", pair.Value);
+                        com.Parameters.AddWithValue("@vint", null);
+                    }
+                    else if (pair.Value is int)
+                    {
+                        com.Parameters.AddWithValue("@type", 1);
+                        com.Parameters.AddWithValue("@vstr", null);
+                        com.Parameters.AddWithValue("@vint", (int) pair.Value);
+                    }
+                    else // char
+                    {
+                        com.Parameters.AddWithValue("@type", 2);
+                        com.Parameters.AddWithValue("@vstr", pair.Value.ToString());
+                        com.Parameters.AddWithValue("@vint", null);
+                    }
+                    com.ExecuteNonQuery();
+                }
+            }
+            if (!wasdbopen)
+                CloseDatabase();
         }
 
         private ObservableCollection<Set> GetAllSets()
         {
             var result = new ObservableCollection<Set>();
-            bool wasDbOpen = IsDatabaseOpen;
-            if(!wasDbOpen)
+            var wasdbopen = IsDatabaseOpen;
+            if (!IsDatabaseOpen)
                 OpenDatabase(true);
-            try
+
+            using (var com = Dbc.CreateCommand())
             {
-                using(var setTable = db.OpenTable("Set", false, true))
+                com.CommandText =
+                    "SElECT * FROM [sets] WHERE [game_real_id]=(SELECT real_id FROM games WHERE id = @game_id LIMIT 1);";
+
+                com.Parameters.AddWithValue("@game_id", Id.ToString());
+                using (var dr = com.ExecuteReader())
                 {
-                    setTable.First();
-                    while(!setTable.EndOfTable)
+                    while (dr.Read())
                     {
-                        result.Add(Set.FromDataRow(this, setTable.CurrentRow));
-                        setTable.Next();
+                        var s = new Set
+                                    {
+                                        Id = Guid.Parse(dr["id"] as string),
+                                        Name = (string) dr["name"],
+                                        Game = this,
+                                        GameVersion = new Version((string) dr["game_version"]),
+                                        Version = new Version((string) dr["version"]),
+                                        PackageName = (string) dr["package"]
+                                    };
+                        result.Add(s);
                     }
                 }
             }
-            finally
-            {
-                if(!wasDbOpen)
-                    CloseDatabase();
-            }
 
+            if (!wasdbopen)
+                CloseDatabase();
             return result;
         }
 
         private List<PropertyDef> GetCustomProperties()
         {
-            bool shouldClose = false;
-            if(db == null)
+            var wasdbopen = IsDatabaseOpen;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            var ret = new List<PropertyDef>();
+            using (var com = Dbc.CreateCommand())
             {
-                OpenDatabase(true);
-                shouldClose = true;
+                com.CommandText = "SElECT DISTINCT name, type FROM [custom_properties] WHERE [game_id]=@game_id;";
+                //com.CommandText = "SElECT * FROM [custom_properties] WHERE [game_id]=@game_id AND [card_id]='';";
+
+                com.Parameters.AddWithValue("@game_id", Id.ToString());
+                using (var dr = com.ExecuteReader())
+                {
+                    var dl = new Dictionary<string, PropertyType>();
+                    while (dr.Read())
+                    {
+                        var name = dr["name"] as string;
+                        var t = (int) ((long) dr["type"]);
+                        PropertyType pt;
+                        switch (t)
+                        {
+                            case 0:
+                                pt = PropertyType.String;
+                                break;
+                            case 1:
+                                pt = PropertyType.Integer;
+                                break;
+                            default:
+                                pt = PropertyType.Char;
+                                break;
+                        }
+                        if (!dl.ContainsKey(name))
+                            dl.Add(name, pt);
+                    }
+                    ret.AddRange(dl.Select(d => new PropertyDef(d.Key, d.Value)));
+                }
             }
-            try
-            {
-                var result = new List<PropertyDef>();
-                var schema = db.TableSchema("Card");
-                var columns = from IVistaDBColumnAttributes col in schema
-                              where col.Description != null && col.Description.StartsWith("Custom property")
-                              select col;
-                foreach(var col in columns)
-                    result.Add(new PropertyDef(col.Name,
-                        col.Type == VistaDBType.NVarChar ? PropertyType.String :
-                        col.Type == VistaDBType.Int ? PropertyType.Integer :
-                        PropertyType.Char));
-                return result;
-            }
-            finally
-            { if(shouldClose) CloseDatabase(); }
+
+            if (!wasdbopen)
+                CloseDatabase();
+            return ret;
         }
 
         internal void CopyDecks(string filename)
         {
-            using(Package package = Package.Open(filename, FileMode.Open, FileAccess.Read))
+            using (var package = Package.Open(filename, FileMode.Open, FileAccess.Read))
                 CopyDecks(package);
         }
 
         internal void CopyDecks(Package package)
         {
-            string path = Path.Combine(basePath, "Decks");
+            var path = Path.Combine(BasePath, "Decks");
             var decks = package.GetRelationshipsByType("http://schemas.octgn.org/set/deck");
-            byte[] buffer = new byte[0x1000];
-            foreach(var deckRel in decks)
+            var buffer = new byte[0x1000];
+            foreach (var deckRel in decks)
             {
                 var deck = package.GetPart(deckRel.TargetUri);
-                string deckFilename = Path.Combine(path, Path.GetFileName(deck.Uri.ToString()));
-                using(var deckStream = deck.GetStream(FileMode.Open, FileAccess.Read))
-                using(var targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write))
+                var deckFilename = Path.Combine(path, Path.GetFileName(deck.Uri.ToString()));
+                using (var deckStream = deck.GetStream(FileMode.Open, FileAccess.Read))
+                using (var targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write))
                 {
-                    int read;
-                    while(true)
+                    while (true)
                     {
-                        read = deckStream.Read(buffer, 0, buffer.Length);
-                        if(read == 0) break;
+                        var read = deckStream.Read(buffer, 0, buffer.Length);
+                        if (read == 0) break;
                         targetStream.Write(buffer, 0, read);
                     }
                 }
             }
         }
 
-        public System.Data.DataTable SelectCards(string[] conditions)
+        public DataTable SelectCards(string[] conditions)
         {
-            var sb = new StringBuilder();
-            sb.Append("SELECT * FROM Card");
-            if(conditions != null)
+            var wasdbopen = IsDatabaseOpen;
+            if (!IsDatabaseOpen)
+                OpenDatabase(false);
+            var cards = new DataTable();
+            var customProperties = new DataTable();
+            using (var com = Dbc.CreateCommand())
             {
-                string connector = " WHERE ";
-                foreach(string condition in conditions)
+                com.CommandText =
+                    "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE game_id=@game_id;";
+                com.Parameters.AddWithValue("@game_id", Id.ToString());
+                cards.Load(com.ExecuteReader());
+
+                com.CommandText =
+                    "SELECT * FROM [custom_properties] WHERE [game_id]=@game_id";
+                com.Parameters.AddWithValue("@game_id", Id.ToString());
+                customProperties.Load(com.ExecuteReader());
+            }
+            foreach (var d in CustomProperties)
+            {
+                cards.Columns.Add(d.Name);
+            }
+
+            var i = 0;
+            foreach (DataRow card in cards.Rows)
+            {
+                DataRow[] props = customProperties.Select("card_real_id = " + card["real_id"]);
+                foreach (var prop in props)
+                {
+                    var cname = prop["name"] as string;
+                    if (!cards.Columns.Contains(cname))
+                        continue;
+                    var t = (int) ((long) prop["type"]);
+                    switch (t)
+                    {
+                        case 0:
+                            cards.Rows[i][cname] = prop["vstr"] as string;
+                            break;
+                        case 1:
+                            cards.Rows[i][cname] = (int) ((long) prop["vint"]);
+                            break;
+                        default:
+                            cards.Rows[i][cname] = prop["vstr"] as string;
+                            break;
+                    }
+                }
+                i++;
+            }
+
+            //Now apply the search query to it
+            var sb = new StringBuilder();
+            if (conditions != null && conditions.Length > 0)
+            {
+                var connector = "";
+                foreach (var condition in conditions)
                 {
                     sb.Append(connector);
                     sb.Append("(");
@@ -444,36 +692,42 @@ namespace Octgn.Data
                     sb.Append(")");
                     connector = " AND ";
                 }
+                cards.CaseSensitive = false;
+
+                var dtnw = cards.Clone();
+                dtnw.Rows.Clear();
+
+                var rows = cards.Select(sb.ToString());
+
+                foreach (var r in rows)
+                    dtnw.ImportRow(r);
+
+                cards.Rows.Clear();
+                cards = dtnw;
             }
-            using(var conn = new VistaDB.Provider.VistaDBConnection(db))
-            {
-                var cmd = new VistaDB.Provider.VistaDBCommand();
-                cmd.Connection = conn;
-                cmd.CommandText = sb.ToString();
-                var result = new System.Data.DataTable();
-                result.Load(cmd.ExecuteReader());
-                return result;
-            }
+            if (!wasdbopen)
+                CloseDatabase();
+            return cards;
         }
 
         public IEnumerable<CardModel> SelectCardModels(params string[] conditions)
         {
-            return from System.Data.DataRow row in SelectCards(conditions).Rows
+            return from DataRow row in SelectCards(conditions).Rows
                    select CardModel.FromDataRow(this, row);
         }
 
         public IEnumerable<CardModel> SelectRandomCardModels(int count, params string[] conditions)
         {
-            if(count < 0) throw new ArgumentOutOfRangeException("count parameter must be greater or equal to 0.");
-            if(count == 0) return Enumerable.Empty<CardModel>();
+            if (count < 0) throw new ArgumentOutOfRangeException("count");
+            if (count == 0) return Enumerable.Empty<CardModel>();
 
             var table = SelectCards(conditions);
-            IEnumerable<System.Data.DataRow> candidates;
-            if(table.Rows.Count <= count)
-                candidates = table.Rows.Cast<System.Data.DataRow>();
+            IEnumerable<DataRow> candidates;
+            if (table.Rows.Count <= count)
+                candidates = table.Rows.Cast<DataRow>();
             else
             {
-                var rnd = new System.Random();
+                var rnd = new Random();
                 var indexes = from i in Enumerable.Range(0, table.Rows.Count)
                               let pair = new KeyValuePair<int, double>(i, rnd.NextDouble())
                               orderby pair.Value

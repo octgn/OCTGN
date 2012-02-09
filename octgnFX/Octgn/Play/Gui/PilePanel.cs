@@ -9,13 +9,13 @@ namespace Octgn.Play.Gui
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            Size desiredSize = new Size();
+            var desiredSize = new Size();
             ItemsControl parent = ItemsControl.GetItemsOwner(this);
-            int count = parent != null && parent.HasItems ? parent.Items.Count : 0;            
+            int count = parent != null && parent.HasItems ? parent.Items.Count : 0;
 
             // Next line needed otherwise ItemContainerGenerator is null (bug in WinFX ?)
-            UIElementCollection children = base.InternalChildren;
-            IItemContainerGenerator generator = this.ItemContainerGenerator;
+            UIElementCollection children = InternalChildren;
+            IItemContainerGenerator generator = ItemContainerGenerator;
 
             if (count == 0)
             {
@@ -25,31 +25,32 @@ namespace Octgn.Play.Gui
             }
 
             // Get the generator position of the first visible data item
-            GeneratorPosition startPos = generator.GeneratorPositionFromIndex(count - 1);            
+            GeneratorPosition startPos = generator.GeneratorPositionFromIndex(count - 1);
             using (generator.StartAt(startPos, GeneratorDirection.Forward, true))
             {
                 bool newlyRealized;
                 // Get or create the child
-                UIElement child = generator.GenerateNext(out newlyRealized) as UIElement;
+                var child = generator.GenerateNext(out newlyRealized) as UIElement;
                 if (newlyRealized)
-                {                    
+                {
                     AddInternalChild(child);
                     generator.PrepareItemContainer(child);
                 }
-                child.Measure(availableSize);
-                desiredSize = child.DesiredSize;
+                if (child != null)
+                {
+                    child.Measure(availableSize);
+                    desiredSize = child.DesiredSize;
+                }
             }
-            
+
             // Remove all other items than the top one
             for (int i = children.Count - 1; i >= 0; i--)
             {
-                GeneratorPosition childGeneratorPos = new GeneratorPosition(i, 0);
+                var childGeneratorPos = new GeneratorPosition(i, 0);
                 int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
-                if (itemIndex != count - 1)
-                {
-                    generator.Remove(childGeneratorPos, 1);
-                    RemoveInternalChildRange(i, 1);
-                }
+                if (itemIndex == count - 1) continue;
+                generator.Remove(childGeneratorPos, 1);
+                RemoveInternalChildRange(i, 1);
             }
             return desiredSize;
         }
@@ -58,12 +59,12 @@ namespace Octgn.Play.Gui
         {
             if (VisualChildrenCount > 0)
             {
-                UIElement child = GetVisualChild(0) as UIElement;
-                child.Arrange(new Rect(finalSize));
+                var child = GetVisualChild(0) as UIElement;
+                if (child != null) child.Arrange(new Rect(finalSize));
             }
             return finalSize;
-        }        
-        
+        }
+
         protected override void OnItemsChanged(object sender, ItemsChangedEventArgs args)
         {
             switch (args.Action)

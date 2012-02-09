@@ -1,298 +1,324 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace Octgn.Data
 {
-	public class Deck : INotifyPropertyChanged
-	{
-		public class Section : INotifyPropertyChanged
-		{
-			public string Name
-			{ get; internal set; }
+    public class Deck : INotifyPropertyChanged
+    {
+        private Section[] _sections;
 
-			private ObservableCollection<Element> _cards;
-			public ObservableCollection<Element> Cards
-			{
-				get { return _cards; }
-				internal set
-				{
-					_cards = value;
-					foreach (INotifyPropertyChanged item in value)
-						item.PropertyChanged += ElementChanged;
-					value.CollectionChanged += delegate(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-					{
-						if (e.OldItems != null)
-							foreach (INotifyPropertyChanged item in e.OldItems)
-								item.PropertyChanged -= ElementChanged;
-						if (e.NewItems != null)
-							foreach (INotifyPropertyChanged item in e.NewItems)
-								item.PropertyChanged += ElementChanged;
-						OnPropertyChanged("CardCount");
-					};
-				}
-			}
-
-			public int CardCount
-			{
-				get { return Cards.Sum(el => el.Quantity); }
-			}
-
-			public Section()
-				: this(true)
-			{ }
-
-			internal Section(bool createEmptyList)
-			{
-				if (createEmptyList) Cards = new ObservableCollection<Element>();
-			}
-
-			private void ElementChanged(object sender, PropertyChangedEventArgs e)
-			{
-        if (e.PropertyName == "Quantity")
+        internal Deck()
         {
-          var element = sender as Element;
-          if (element.Quantity <= 0) Cards.Remove(element);
-          OnPropertyChanged("CardCount");
         }
-			}
 
-			#region INotifyPropertyChanged Members
+        public Deck(Game game)
+        {
+            GameId = game.Id;
+            Sections = game.DeckSections.Select(s => new Section {Name = s}).ToArray();
+        }
 
-			public event PropertyChangedEventHandler PropertyChanged;
+        public Guid GameId { get; internal set; }
 
-			protected void OnPropertyChanged(string propertyName)
-			{
-				if (PropertyChanged != null)
-					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
+        public bool IsShared { get; internal set; }
 
-			#endregion
-		}
+        public Section[] Sections
+        {
+            get { return _sections; }
+            internal set
+            {
+                _sections = value;
+                foreach (Section s in value)
+                    s.PropertyChanged +=
+                        delegate(object sender, PropertyChangedEventArgs e) { if (e.PropertyName == "CardCount") OnPropertyChanged("CardCount"); };
+            }
+        }
 
-		public class Element : INotifyPropertyChanged
-		{
-			internal string loadedId, loadedName;
+        public int CardCount
+        {
+            get { return Sections.Sum(sec => sec.CardCount); }
+        }
 
-			private Data.CardModel _card;
+        #region INotifyPropertyChanged Members
 
-			public Data.CardModel Card
-			{
-				get { return _card; }
-				set
-				{
-					if (_card == value) return;
-					_card = value;
-					OnPropertyChanged("Card");
-				}
-			}
+        public event PropertyChangedEventHandler PropertyChanged;
 
-			private byte _quantity = 1;
+        #endregion
 
-			public byte Quantity
-			{
-				get { return _quantity; }
-				set
-				{
-					if (_quantity == value) return;
-					_quantity = value;
-					OnPropertyChanged("Quantity");
-				}
-			}
+        public void Save(string file)
+        {
+            var doc = new XDocument(
+                new XDeclaration("1.0", "utf-8", "yes"),
+                new XElement("deck",
+                             new XAttribute("game", GameId),
+                             from section in Sections
+                             select new XElement("section",
+                                                 new XAttribute("name", section.Name),
+                                                 from card in section.Cards
+                                                 select new XElement("card",
+                                                                     new XAttribute("qty", card.Quantity),
+                                                                     new XAttribute("id", card.Card.Id),
+                                                                     card.Card.Name))));
+            doc.Save(file);
+        }
 
-			#region INotifyPropertyChanged Members
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-			public event PropertyChangedEventHandler PropertyChanged;
+        #region Load
 
-			protected void OnPropertyChanged(string propertyName)
-			{
-				if (PropertyChanged != null)
-					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
+        public static Deck Load(string file, GamesRepository repository)
+        {
+            if (repository == null) throw new ArgumentNullException("repository");
 
-			#endregion
-		}
+            Guid gameId;
+            XDocument doc = LoadDoc(file, out gameId);
 
-		public Guid GameId
-		{ get; internal set; }
+            Game game = repository.Games.FirstOrDefault(g => g.Id == gameId);
+            if (game == null) throw new UnknownGameException(gameId);
 
-    public bool IsShared
-    { get; internal set; }
+            return LoadCore(doc, game);
+        }
 
-		private Section[] _sections;
+        public static Deck Load(string file, Game game)
+        {
+            if (game == null) throw new ArgumentNullException("game");
 
-		public Section[] Sections
-		{
-			get { return _sections; }
-			internal set
-			{
-				_sections = value;
-				foreach (Section s in value)
-					s.PropertyChanged += delegate(object sender, PropertyChangedEventArgs e)
-					{ if (e.PropertyName == "CardCount") OnPropertyChanged("CardCount"); };
-			}
-		}
+            Guid gameId;
+            XDocument doc = LoadDoc(file, out gameId);
+            if (gameId != game.Id) throw new WrongGameException(gameId, game.Id.ToString());
 
-		public int CardCount
-		{
-			get { return Sections.Sum(sec => sec.CardCount); }
-		}
+            return LoadCore(doc, game);
+        }
 
-		internal Deck()
-		{ }
+        private static XDocument LoadDoc(string file, out Guid gameId)
+        {
+            XDocument doc;
+            gameId = new Guid();
+            try
+            {
+                doc = XDocument.Load(file);
+            }
+            catch (Exception e)
+            {
+                throw new FileNotReadableException(e);
+            }
 
-		public Deck(Game game)
-		{
-			GameId = game.Id;
-			Sections = game.DeckSections.Select(s => new Section { Name = s }).ToArray();
-		}
+            if (doc.Root != null)
+            {
+                XAttribute gameAttribute = doc.Root.Attribute("game");
+                if (gameAttribute == null)
+                    throw new InvalidFileFormatException("The <deck> tag is missing the 'game' attribute");
 
-		public void Save(string file)
-		{
-			XDocument doc = new XDocument(
-				new XDeclaration("1.0", "utf-8", "yes"),
-				new XElement("deck",
-					new XAttribute("game", GameId),
-					from section in Sections
-					select new XElement("section",
-						new XAttribute("name", section.Name),
-						from card in section.Cards
-						select new XElement("card",
-							new XAttribute("qty", card.Quantity),
-							new XAttribute("id", card.Card.Id),
-							card.Card.Name))));
-			doc.Save(file);
-		}
+                try
+                {
+                    gameId = new Guid(gameAttribute.Value);
+                }
+                catch
+                {
+                    throw new InvalidFileFormatException("The game attribute is not a valid GUID");
+                }
+            }
 
-		#region Load
+            return doc;
+        }
 
-		public static Deck Load(string file, Data.GamesRepository repository)
-		{
-			if (repository == null) throw new ArgumentNullException("repository");
+        private static Deck LoadCore(XDocument doc, Game game)
+        {
+            Deck deck;
+            try
+            {
+                var isShared = doc.Root.Attr<bool>("shared");
+                IEnumerable<string> defSections = isShared ? game.SharedDeckSections : game.DeckSections;
 
-			Guid gameId;
-			XDocument doc = LoadDoc(file, out gameId);
+                deck = new Deck {GameId = game.Id, IsShared = isShared};
+                if (doc.Root != null)
+                {
+                    IEnumerable<Section> sections = from section in doc.Root.Elements("section")
+                                                    let xAttribute = section.Attribute("name")
+                                                    where xAttribute != null
+                                                    select new Section(false)
+                                                               {
+                                                                   Name = xAttribute.Value,
+                                                                   Cards = new ObservableCollection<Element>
+                                                                       (from card in section.Elements("card")
+                                                                        select new Element
+                                                                                   {
+                                                                                       LoadedId =
+                                                                                           card.Attr<string>("id"),
+                                                                                       LoadedName = card.Value,
+                                                                                       Quantity =
+                                                                                           card.Attr<byte>("qty", 1)
+                                                                                   })
+                                                               };
+                    var allSections = new Section[defSections.Count()];
+                    int i = 0;
+                    foreach (string sectionName in defSections)
+                    {
+                        allSections[i] = sections.FirstOrDefault(x => x.Name == sectionName);
+                        if (allSections[i] == null) allSections[i] = new Section {Name = sectionName};
+                        ++i;
+                    }
+                    deck.Sections = allSections;
+                }
+            }
+            catch
+            {
+                throw new InvalidFileFormatException();
+            }
 
-			Game game = repository.Games.FirstOrDefault(g => g.Id == gameId);
-			if (game == null) throw new UnknownGameException(gameId);
+            bool isDbClosed = !game.IsDatabaseOpen;
+            try
+            {
+                if (isDbClosed)
+                    game.OpenDatabase(true);
+                // Matches with actual cards in database
+                foreach (Section s in deck.Sections)
+                    foreach (Element e in s.Cards)
+                        try
+                        {
+                            // First try by id, if one is provided
+                            if (e.LoadedId != null) e.Card = game.GetCardById(new Guid(e.LoadedId));
+                            // If there's no id, or if it doesn't match a card in the database, try to fallback on the name
+                            if (e.Card == null) e.Card = game.GetCardByName(e.LoadedName);
+                            // If we still can't find the card, report an error
+                            if (e.Card == null)
+                                throw new UnknownCardException(e.LoadedId, e.LoadedName);
+                        }
+                        catch (FormatException)
+                        {
+                            throw new InvalidFileFormatException(string.Format("Could not parse card id {0}.",
+                                                                               e.LoadedId));
+                        }
+            }
+            finally
+            {
+                if (isDbClosed)
+                    game.CloseDatabase();
+            }
 
-			return LoadCore(doc, game);
-		}
+            return deck;
+        }
 
-		public static Deck Load(string file, Game game)
-		{
-			if (game == null) throw new ArgumentNullException("game");
+        #endregion
 
-			Guid gameId;
-			XDocument doc = LoadDoc(file, out gameId);
-			if (gameId != game.Id) throw new WrongGameException(gameId, game.Id.ToString());
+        #region Nested type: Element
 
-			return LoadCore(doc, game);
-		}
+        public class Element : INotifyPropertyChanged
+        {
+            internal string LoadedId, LoadedName;
+            private CardModel _card;
+            private byte _quantity = 1;
 
-		private static XDocument LoadDoc(string file, out Guid gameId)
-		{
-			XDocument doc;
-			try
-			{ doc = XDocument.Load(file); }
-			catch (Exception e)
-			{ throw new FileNotReadableException(e); }
+            public CardModel Card
+            {
+                get { return _card; }
+                set
+                {
+                    if (_card == value) return;
+                    _card = value;
+                    OnPropertyChanged("Card");
+                }
+            }
 
-			XAttribute gameAttribute = doc.Root.Attribute("game");
-			if (gameAttribute == null)
-				throw new InvalidFileFormatException("The <deck> tag is missing the 'game' attribute");
+            public byte Quantity
+            {
+                get { return _quantity; }
+                set
+                {
+                    if (_quantity == value) return;
+                    _quantity = value;
+                    OnPropertyChanged("Quantity");
+                }
+            }
 
-			try
-			{ gameId = new Guid(gameAttribute.Value); }
-			catch
-			{ throw new InvalidFileFormatException("The game attribute is not a valid GUID"); }
+            #region INotifyPropertyChanged Members
 
-			return doc;
-		}
+            public event PropertyChangedEventHandler PropertyChanged;
 
-		private static Deck LoadCore(XDocument doc, Game game)
-		{
-			Deck deck;
-			try
-			{
-        var isShared = doc.Root.Attr<bool>("shared");
-        var defSections = isShared ? game.SharedDeckSections : game.DeckSections;
+            #endregion
 
-        deck = new Deck { GameId = game.Id, IsShared = isShared };
-				var sections = from section in doc.Root.Elements("section")
-											 select new Section(false)
-											 {
-												 Name = section.Attribute("name").Value,
-												 Cards = new ObservableCollection<Element>
-																 (from card in section.Elements("card")
-																	select new Element
-																	{
-																		loadedId = card.Attr<string>("id"),
-																		loadedName = card.Value,
-																		Quantity = card.Attr<byte>("qty", 1)
-																	})
-											 };
-				Section[] allSections = new Section[defSections.Count()];
-				int i = 0;
-				foreach (string sectionName in defSections)
-				{
-					allSections[i] = sections.FirstOrDefault(x => x.Name == sectionName);
-					if (allSections[i] == null) allSections[i] = new Section { Name = sectionName };
-					++i;
-				}
-				deck.Sections = allSections;
-			}
-			catch
-			{ throw new InvalidFileFormatException(); }
+            protected void OnPropertyChanged(string propertyName)
+            {
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
-			bool isDbClosed = !game.IsDatabaseOpen;
-			try
-			{
-				if (isDbClosed)
-					game.OpenDatabase(true);
-				// Matches with actual cards in database
-				foreach (Section s in deck.Sections)
-					foreach (Element e in s.Cards)
-						try
-						{
-							// First try by id, if one is provided
-							if (e.loadedId != null) e.Card = game.GetCardById(new Guid(e.loadedId));
-							// If there's no id, or if it doesn't match a card in the database, try to fallback on the name
-							if (e.Card == null) e.Card = game.GetCardByName(e.loadedName);
-							// If we still can't find the card, report an error
-							if (e.Card == null)
-								throw new UnknownCardException(e.loadedId, e.loadedName);
-						}
-						catch (FormatException)
-						{ throw new InvalidFileFormatException(string.Format("Could not parse card id {0}.", e.loadedId)); }
-			}
-			finally
-			{
-				if (isDbClosed)
-					game.CloseDatabase();
-			}
+        #endregion
 
-			return deck;
-		}
+        #region Nested type: Section
 
-		#endregion
+        public class Section : INotifyPropertyChanged
+        {
+            private ObservableCollection<Element> _cards;
 
-		#region INotifyPropertyChanged Members
+            public Section()
+                : this(true)
+            {
+            }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+            internal Section(bool createEmptyList)
+            {
+                if (createEmptyList) Cards = new ObservableCollection<Element>();
+            }
 
-		protected void OnPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
+            public string Name { get; internal set; }
 
-		#endregion
-	}
+            public ObservableCollection<Element> Cards
+            {
+                get { return _cards; }
+                internal set
+                {
+                    _cards = value;
+                    foreach (INotifyPropertyChanged item in value)
+                        item.PropertyChanged += ElementChanged;
+                    value.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e)
+                                                   {
+                                                       if (e.OldItems != null)
+                                                           foreach (INotifyPropertyChanged item in e.OldItems)
+                                                               item.PropertyChanged -= ElementChanged;
+                                                       if (e.NewItems != null)
+                                                           foreach (INotifyPropertyChanged item in e.NewItems)
+                                                               item.PropertyChanged += ElementChanged;
+                                                       OnPropertyChanged("CardCount");
+                                                   };
+                }
+            }
+
+            public int CardCount
+            {
+                get { return Cards.Sum(el => el.Quantity); }
+            }
+
+            #region INotifyPropertyChanged Members
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            #endregion
+
+            private void ElementChanged(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName != "Quantity") return;
+                var element = sender as Element;
+                if (element != null && element.Quantity <= 0) Cards.Remove(element);
+                OnPropertyChanged("CardCount");
+            }
+
+            protected void OnPropertyChanged(string propertyName)
+            {
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+    }
 }

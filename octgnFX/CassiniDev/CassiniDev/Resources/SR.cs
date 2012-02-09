@@ -1,17 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) Sky Sanders. All rights reserved.
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.htm file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
@@ -26,19 +12,21 @@ namespace CassiniDev
 {
     internal sealed class SR
     {
-        
-        internal const string ErrInvalidIPMode="SR.ErrInvalidIPMode";
+        internal const string ErrInvalidIPMode = "SR.ErrInvalidIPMode";
         internal const string ErrInvalidIPAddress = "ErrInvalidIPAddress";
         internal const string ErrInvalidPortMode = "ErrInvalidPortMode";
         internal const string ErrPortIsInUse = "ErrPortIsInUse";
         internal const string ErrNoAvailablePortFound = "ErrNoAvailablePortFound";
+
         internal const string ErrPortRangeEndMustBeEqualOrGreaterThanPortRangeSta =
             "ErrPortRangeEndMustBeEqualOrGreaterThanPortRangeSta";
+
         internal const string ErrInvalidPortRangeValue = "ErrInvalidPortRangeValue";
         internal const string ErrInvalidHostname = "ErrInvalidHostname";
 
         internal const string ErrFailedToStartCassiniDevServerOnPortError =
             "ErrFailedToStartCassiniDevServerOnPortError";
+
         internal const string ErrApplicationPathIsNull = "ErrApplicationPathIsNull";
         internal const string ErrPortOutOfRange = "ErrPortOutOfRange";
 
@@ -89,11 +77,11 @@ namespace CassiniDev
         internal const string WebdevVersionInfo = "WebdevVersionInfo";
 
         internal const string WebdevVwdName = "WebdevVwdName";
+        public const string WebdevStart = "WebdevStart";
 
         private static SR _loader;
 
         private readonly ResourceManager _resources;
-        public const string WebdevStart = "WebdevStart";
 
         internal SR()
         {
@@ -137,7 +125,7 @@ namespace CassiniDev
             }
             for (int i = 0; i < args.Length; i++)
             {
-                string str2 = args[i] as string;
+                var str2 = args[i] as string;
                 if ((str2 != null) && (str2.Length > 0x400))
                 {
                     args[i] = str2.Substring(0, 0x3fd) + "...";
@@ -154,11 +142,10 @@ namespace CassiniDev
         {
             if (_loader == null)
             {
-                SR sr = new SR();
+                var sr = new SR();
                 Interlocked.CompareExchange(ref _loader, sr, null);
             }
             return _loader;
         }
-
     }
 }

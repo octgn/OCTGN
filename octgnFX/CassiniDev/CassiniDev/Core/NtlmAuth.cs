@@ -1,17 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
@@ -90,7 +76,7 @@ namespace CassiniDev
         {
             _blob = null;
             byte[] buffer = Convert.FromBase64String(blobString);
-            byte[] inArray = new byte[0x4000];
+            var inArray = new byte[0x4000];
             fixed (void* ptrRef = &_securityContext)
             {
                 fixed (void* ptrRef2 = &_inputBuffer)
@@ -140,7 +126,7 @@ namespace CassiniDev
                                     }
                                     try
                                     {
-                                        using (WindowsIdentity identity = new WindowsIdentity(phToken))
+                                        using (var identity = new WindowsIdentity(phToken))
                                         {
                                             _sid = identity.User;
                                         }

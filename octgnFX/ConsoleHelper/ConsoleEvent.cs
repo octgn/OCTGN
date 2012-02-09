@@ -8,14 +8,6 @@ namespace Skylabs.ConsoleHelper
     {
         //[XmlIgnore()]
         //public ConsoleColor Color { get; set; }
-        [XmlIgnore]
-        public string Header { get; set; }
-
-        [XmlElement("message")]
-        public string Message { get; set; }
-
-        [XmlElement("date")]
-        public DateTime Date { get; set; }
 
         public ConsoleEvent()
         {
@@ -36,6 +28,15 @@ namespace Skylabs.ConsoleHelper
             Date = DateTime.Now;
         }
 
+        [XmlIgnore]
+        public string Header { get; set; }
+
+        [XmlElement("message")]
+        public string Message { get; set; }
+
+        [XmlElement("date")]
+        public DateTime Date { get; set; }
+
         public String GetConsoleString()
         {
             return Header + Message;
@@ -46,7 +47,7 @@ namespace Skylabs.ConsoleHelper
             //Console.ForegroundColor = Color;
             ConsoleWriter.WriteLine(Header + Message, false);
             ConsoleWriter.WriteCt();
-            if(addToEventLog)
+            if (addToEventLog)
                 ConsoleEventLog.AddEvent(this, false);
         }
     }

@@ -1,28 +1,35 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-	<xs:simpleType name="guid">
-		<xs:annotation>
-			<xs:documentation>Defines a GUID, with or without the enclosing curly braces.</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:pattern value="\{[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}\}" />
-			<xs:pattern value="[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}" />
-		</xs:restriction>
-	</xs:simpleType>
+  <xs:simpleType name="guid">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a GUID, with or without the enclosing curly braces.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\{[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}\}" />
+      <xs:pattern value="[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}" />
+    </xs:restriction>
+  </xs:simpleType>
 
-	<xs:simpleType name="version">
-		<xs:annotation>
-			<xs:documentation>Defines a version number: major.minor[.build[.revision]]</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:pattern value="\d+\.\d+(\.\d+(\.\d+)?)?" />
-		</xs:restriction>
-	</xs:simpleType>
+  <xs:simpleType name="version">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a version number: major.minor[.build[.revision]]
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d+\.\d+(\.\d+(\.\d+)?)?" />
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:simpleType name="pickQuantity">
     <xs:annotation>
-      <xs:documentation>Defines quantity in picks when creating packs. Should be a positive integer, or 'unlimited'</xs:documentation>
+      <xs:documentation>
+        Defines quantity in picks when creating packs. Should be a positive integer, or 'unlimited'
+      </xs:documentation>
     </xs:annotation>
     <xs:union>
       <xs:simpleType>
@@ -40,7 +47,9 @@
 
   <xs:complexType name="pick">
     <xs:annotation>
-      <xs:documentation>Defines a random choice of cards.</xs:documentation>
+      <xs:documentation>
+        Defines a random choice of cards.
+      </xs:documentation>
     </xs:annotation>
     <xs:attribute name="qty" use="required" />
     <xs:attribute name="key" type="xs:string" use="required" />
@@ -49,7 +58,9 @@
 
   <xs:complexType name="options">
     <xs:annotation>
-      <xs:documentation>Defines a random choice amongst several options</xs:documentation>
+      <xs:documentation>
+        Defines a random choice amongst several options
+      </xs:documentation>
     </xs:annotation>
     <xs:sequence>
       <xs:element name="option" minOccurs="1" maxOccurs="unbounded">
@@ -64,12 +75,14 @@
     </xs:sequence>
   </xs:complexType>
 
-	<xs:element name="set">
-		<xs:annotation>
-			<xs:documentation>This element defines a card set for OCTGN.</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
+  <xs:element name="set">
+    <xs:annotation>
+      <xs:documentation>
+        This element defines a card set for OCTGN.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
         <xs:element name="packaging" minOccurs="0">
           <xs:complexType>
             <xs:sequence>
@@ -86,86 +99,106 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-				<xs:element name="markers" minOccurs="0">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="marker" minOccurs="0" maxOccurs="unbounded">
-								<xs:complexType>
-									<xs:attribute name="name" type="xs:string" use="required" />
-									<xs:attribute name="id" type="guid" use="required" />
-								</xs:complexType>
-							</xs:element>
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="cards" minOccurs="0">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="card" minOccurs="0" maxOccurs="unbounded">
-								<xs:annotation>
-									<xs:documentation>This element defines the cards contained in the set.</xs:documentation>
-								</xs:annotation>
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element name="property" minOccurs="0" maxOccurs="unbounded">
-											<xs:annotation>
-												<xs:documentation>This element defines one property of the card.</xs:documentation>
-											</xs:annotation>
-											<xs:complexType>
-												<xs:attribute name="name" type="xs:string" use="required">
-													<xs:annotation>
-														<xs:documentation>This attribute defines the name of this property. Note: this name must have been declared in the game definition file.</xs:documentation>
-													</xs:annotation>
-												</xs:attribute>
-												<xs:attribute name="value" type="xs:string" use="required">
-													<xs:annotation>
-														<xs:documentation>This attribute defines the value of this property.</xs:documentation>
-													</xs:annotation>
-												</xs:attribute>
-											</xs:complexType>
-										</xs:element>
-									</xs:sequence>
-									<xs:attribute name="name" type="xs:string" use="required">
-										<xs:annotation>
-											<xs:documentation>This attribute is the card's name.</xs:documentation>
-										</xs:annotation>
-									</xs:attribute>
-									<xs:attribute name="id" type="guid" use="required">
-										<xs:annotation>
-											<xs:documentation>This attribute is the card's unique id.</xs:documentation>
-										</xs:annotation>
-									</xs:attribute>
-								</xs:complexType>
-							</xs:element>
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-			</xs:sequence>
-			<xs:attribute name="name" type="xs:string" use="required">
-				<xs:annotation>
-					<xs:documentation>This attribute is the name of this card set.</xs:documentation>
-				</xs:annotation>
-			</xs:attribute>
-			<xs:attribute name="id" type="guid" use="required">
-				<xs:annotation>
-					<xs:documentation>Unique id of the card set.</xs:documentation>
-				</xs:annotation>
-			</xs:attribute>
-			<xs:attribute name="gameId" type="guid" use="required">
-				<xs:annotation>
-					<xs:documentation>Unique identifier of the game this set belongs to.</xs:documentation>
-				</xs:annotation>
-			</xs:attribute>
-			<xs:attribute name="gameVersion" type="version" use="required">
-				<xs:annotation>
-					<xs:documentation>Game version this set was created for. Major or minor version changes are set-incompatible.</xs:documentation>
-				</xs:annotation>
-			</xs:attribute>
+        <xs:element name="markers" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="marker" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="name" type="xs:string" use="required" />
+                  <xs:attribute name="id" type="guid" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="cards" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="card" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation>
+                    This element defines the cards contained in the set.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation>
+                          This element defines one property of the card.
+                        </xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:attribute name="name" type="xs:string" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              This attribute defines the name of this property. Note: this name must have been declared in the game definition file.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="value" type="xs:string" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              This attribute defines the value of this property.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        This attribute is the card's name.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="id" type="guid" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        This attribute is the card's unique id.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            This attribute is the name of this card set.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="id" type="guid" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Unique id of the card set.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="gameId" type="guid" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Unique identifier of the game this set belongs to.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="gameVersion" type="version" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Game version this set was created for. Major or minor version changes are set-incompatible.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
       <xs:attribute name="version" type="version" use="optional">
         <xs:annotation>
           <xs:documentation>Version of this set.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
-		</xs:complexType>
-	</xs:element>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>

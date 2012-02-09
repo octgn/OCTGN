@@ -1,31 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using Skylabs.Net;
 
 namespace Skylabs.Lobby
 {
     [Serializable]
-    public class HostedGame : IEquatable<HostedGame>,IEqualityComparer<HostedGame>
+    public class HostedGame : IEquatable<HostedGame>, IEqualityComparer<HostedGame>
     {
+        #region EHostedGame enum
+
         [Serializable]
-        public enum eHostedGame
+        public enum EHostedGame
         {
             StartedHosting,
             GameInProgress,
             StoppedHosting
         };
-        public Guid GameGuid { get; private set; }
-        public Version GameVersion { get; private set; }
-        public int Port { get; private set; }
-        public String Name { get; private set; }
-        public bool PasswordRequired { get; private set; }
-        public User UserHosting { get; private set; }
-        public eHostedGame GameStatus { get; set; }
-        public DateTime TimeStarted { get; private set; }
-        public HostedGame(Guid gameguid, Version gameversion, int port, string name, bool passreq, User huser, DateTime startTime)
+
+        #endregion
+
+        public HostedGame(Guid gameguid, Version gameversion, int port, string name, bool passreq, User huser,
+                          DateTime startTime)
         {
             GameGuid = gameguid;
             GameVersion = gameversion;
@@ -33,9 +28,10 @@ namespace Skylabs.Lobby
             Name = name;
             PasswordRequired = passreq;
             UserHosting = huser;
-            GameStatus = eHostedGame.StartedHosting;
+            GameStatus = EHostedGame.StartedHosting;
             TimeStarted = startTime;
         }
+
         public HostedGame(SocketMessage sm)
         {
             GameGuid = (Guid) sm["guid"];
@@ -44,14 +40,20 @@ namespace Skylabs.Lobby
             Name = (string) sm["name"];
             PasswordRequired = (bool) sm["passrequired"];
             UserHosting = (User) sm["hoster"];
-            GameStatus = eHostedGame.StartedHosting;
+            GameStatus = EHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
         }
 
-        public bool Equals(HostedGame other)
-        {
-            return other.Port == Port;
-        }
+        public Guid GameGuid { get; private set; }
+        public Version GameVersion { get; private set; }
+        public int Port { get; private set; }
+        public String Name { get; private set; }
+        public bool PasswordRequired { get; private set; }
+        public User UserHosting { get; private set; }
+        public EHostedGame GameStatus { get; set; }
+        public DateTime TimeStarted { get; private set; }
+
+        #region IEqualityComparer<HostedGame> Members
 
         public bool Equals(HostedGame x, HostedGame y)
         {
@@ -62,5 +64,16 @@ namespace Skylabs.Lobby
         {
             return obj.Port;
         }
+
+        #endregion
+
+        #region IEquatable<HostedGame> Members
+
+        public bool Equals(HostedGame other)
+        {
+            return other.Port == Port;
+        }
+
+        #endregion
     }
 }

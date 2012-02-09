@@ -1,12 +1,6 @@
-﻿<Window x:Class="Octgn.Play.Dialogs.LimitedDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Name="This"
-        Title="Start a limited game" 
-        Width="541"
-        Style="{StaticResource DialogWindow}"
-        ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
-        SizeToContent="Height">
+﻿<Window x:Class="Octgn.Play.Dialogs.LimitedDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="This" Title="Start a limited game" Width="541"
+        Style="{StaticResource DialogWindow}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" SizeToContent="Height">
   <Border Style="{StaticResource Panel}" Margin="4">
     <Grid Margin="8">
       <Grid.ColumnDefinitions>
@@ -21,7 +15,10 @@
       </Grid.RowDefinitions>
       <TextBlock Text="Kind of game:" Margin="2" />
       <TextBlock Grid.Column="1" Margin="2">
-        <Bold>Sealed</Bold> <Italic>(sorry, no other option in this release)</Italic>
+        <Bold>Sealed</Bold>
+        <Italic>
+          (sorry, no other option in this release)
+        </Italic>
       </TextBlock>
       <TextBlock Text="Packs:" Grid.Row="1" Margin="2" />
       <StackPanel Grid.Row="1" Grid.Column="1" Margin="2">
@@ -31,19 +28,13 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
           </Grid.ColumnDefinitions>
-          <ComboBox x:Name="setsCombo"
-                    ItemsSource="{Binding Sets, ElementName=This, Mode=OneTime}" 
+          <ComboBox x:Name="setsCombo" ItemsSource="{Binding Sets, ElementName=This, Mode=OneTime}"
                     DisplayMemberPath="Name" />
-          <ComboBox x:Name="packsCombo" 
-                    Grid.Column="1" Margin="2,0"
-                    ItemsSource="{Binding ElementName=setsCombo, Path=SelectedItem.Packs}"
-                    DisplayMemberPath="Name" />
-          <Button Content="Add" FontSize="14"
-                  Grid.Column="2" Width="80" Padding="2"
-                  Click="AddSetClicked" />
+          <ComboBox x:Name="packsCombo" Grid.Column="1" Margin="2,0"
+                    ItemsSource="{Binding ElementName=setsCombo, Path=SelectedItem.Packs}" DisplayMemberPath="Name" />
+          <Button Content="Add" FontSize="14" Grid.Column="2" Width="80" Padding="2" Click="AddSetClicked" />
         </Grid>
-        <ListBox ItemsSource="{Binding Packs, ElementName=This, Mode=OneTime}"
-                 Margin="0,4,0,0" MinHeight="100">
+        <ListBox ItemsSource="{Binding Packs, ElementName=This, Mode=OneTime}" Margin="0,4,0,0" MinHeight="100">
           <ListBox.ItemTemplate>
             <DataTemplate>
               <StackPanel Orientation="Horizontal">
@@ -57,22 +48,16 @@
                   </Button.Template>
                 </Button>
                 <TextBlock Text="{Binding FullName, Mode=OneTime}" />
-              </StackPanel>              
+              </StackPanel>
             </DataTemplate>
           </ListBox.ItemTemplate>
         </ListBox>
-      </StackPanel>            
-      <StackPanel Orientation="Horizontal"
-                  Grid.Row="3" Grid.ColumnSpan="2" 
-                  HorizontalAlignment="Center" VerticalAlignment="Top" 
-                  Margin="0,16,0,4">
-        <Button Content="OK" FontSize="14" 
-                Click="StartClicked" Margin="0,0,8,0"
-                Width="100" />
-        <Button Content="Cancel" FontSize="14" 
-                Click="CancelClicked"
-                Width="100" />
-      </StackPanel>      
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Center"
+                  VerticalAlignment="Top" Margin="0,16,0,4">
+        <Button Content="OK" FontSize="14" Click="StartClicked" Margin="0,0,8,0" Width="100" />
+        <Button Content="Cancel" FontSize="14" Click="CancelClicked" Width="100" />
+      </StackPanel>
     </Grid>
-  </Border>  
+  </Border>
 </Window>

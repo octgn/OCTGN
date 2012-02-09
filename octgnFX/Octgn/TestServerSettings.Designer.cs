@@ -8,41 +8,51 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Octgn {
-    
-    
+namespace Octgn
+{
+
+
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
-    public sealed partial class TestServerSettings : global::System.Configuration.ApplicationSettingsBase {
-        
+    public sealed partial class TestServerSettings : global::System.Configuration.ApplicationSettingsBase
+    {
+
         private static TestServerSettings defaultInstance = ((TestServerSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new TestServerSettings())));
-        
-        public static TestServerSettings Default {
-            get {
+
+        public static TestServerSettings Default
+        {
+            get
+            {
                 return defaultInstance;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("www.fileorchard.com")]
-        public string Server {
-            get {
+        public string Server
+        {
+            get
+            {
                 return ((string)(this["Server"]));
             }
-            set {
+            set
+            {
                 this["Server"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("7535")]
-        public int ServerPort {
-            get {
+        public int ServerPort
+        {
+            get
+            {
                 return ((int)(this["ServerPort"]));
             }
-            set {
+            set
+            {
                 this["ServerPort"] = value;
             }
         }

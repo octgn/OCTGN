@@ -1,66 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections.Concurrent;
-using System.Net.Sockets;
+using System.Diagnostics;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using Skylabs.Lobby.Threading;
-using System.Diagnostics;
 using Skylabs.Net;
 
 namespace Skylabs.Lobby.Sockets
 {
     public sealed class SkySocket : IDisposable
     {
-        public delegate void MessageReceived(SkySocket socket, SocketMessage message);
+        #region Delegates
 
         public delegate void ConnectionClosed(SkySocket socket);
 
-        public event MessageReceived OnMessageReceived;
+        public delegate void MessageReceived(SkySocket socket, SocketMessage message);
 
-        public event ConnectionClosed OnConnectionClosed;
-
-        public bool Connected { get;private set ;}
-
-        public bool IsDisposed {get;private set;}
+        #endregion
 
         public const long MaxReceiveSize = 5242880;
+        private readonly SocketMessageBuilder _builder;
 
-        private TcpClient Sock { get; set; }
-
-        public EndPoint RemoteEndPoint { get; private set; }
-
-        private object SocketLocker = new object();
+        private readonly object _socketLocker = new object();
 
         //private Thread SocketThread;
 
-        private bool Stopping;
-
-        private SocketMessageBuilder Builder;
+        private bool _stopping;
 
         public SkySocket()
         {
-            lock(SocketLocker)
+            lock (_socketLocker)
             {
                 IsDisposed = false;
                 Connected = false;
-                Stopping = false;
-                Builder = new SocketMessageBuilder();
+                _stopping = false;
+                _builder = new SocketMessageBuilder();
                 Sock = new TcpClient();
                 //SocketThread = new Thread(ReadThreadRunner);
                 //SocketThread.Name = "SkySocket Read Thread";
             }
         }
+
         public SkySocket(TcpClient c)
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
                 IsDisposed = false;
-                Stopping = false;
+                _stopping = false;
                 Sock = c;
-                Builder = new SocketMessageBuilder();
+                _builder = new SocketMessageBuilder();
                 //SocketThread = new Thread(ReadThreadRunner);
                 //SocketThread.Name = "SkySocket Read Thread";
                 RemoteEndPoint = Sock.Client.RemoteEndPoint;
@@ -69,9 +57,35 @@ namespace Skylabs.Lobby.Sockets
                 LazyAsync.Invoke(AsyncRead);
             }
         }
+
+        public bool Connected { get; private set; }
+
+        public bool IsDisposed { get; private set; }
+        private TcpClient Sock { get; set; }
+
+        public EndPoint RemoteEndPoint { get; private set; }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            lock (_socketLocker)
+            {
+                if (IsDisposed) return;
+                Sock.Close();
+                IsDisposed = true;
+            }
+        }
+
+        #endregion
+
+        public event MessageReceived OnMessageReceived;
+
+        public event ConnectionClosed OnConnectionClosed;
+
         public bool Connect(string host, int port)
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
                 if (!Connected)
                 {
@@ -96,26 +110,32 @@ namespace Skylabs.Lobby.Sockets
 
         public void Stop()
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
-                Stopping = true;
-                LazyAsync.Invoke(() => { if (OnConnectionClosed != null)OnConnectionClosed.Invoke(this); Dispose(); });
+                _stopping = true;
+                LazyAsync.Invoke(() =>
+                                     {
+                                         if (OnConnectionClosed != null) OnConnectionClosed.Invoke(this);
+                                         Dispose();
+                                     });
             }
         }
+
         private void AsyncRead()
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
-                if (Stopping)
+                if (_stopping)
                     return;
                 try
                 {
-                    byte[] buffer = new byte[256];
+                    var buffer = new byte[256];
                     Sock.Client.BeginReceive(buffer, 0, 256, SocketFlags.None, AsyncReadDone, buffer);
                 }
                 catch (SocketException se)
                 {
                     #region "SocketErrors"
+
                     switch (se.SocketErrorCode)
                     {
                         case SocketError.ConnectionAborted:
@@ -180,6 +200,7 @@ namespace Skylabs.Lobby.Sockets
                                 break;
                             }
                     }
+
                     #endregion
                 }
                 catch (Exception e)
@@ -190,13 +211,14 @@ namespace Skylabs.Lobby.Sockets
                 }
             }
         }
+
         private void AsyncReadDone(IAsyncResult ar)
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
                 try
                 {
-                    byte[] buff = (byte[])ar.AsyncState;
+                    var buff = (byte[]) ar.AsyncState;
                     if (buff == null)
                         return;
                     if (Sock.Client == null)
@@ -206,7 +228,7 @@ namespace Skylabs.Lobby.Sockets
                     {
                         if (rin != 256)
                             Array.Resize(ref buff, rin);
-                        Builder.AddBytes(buff);
+                        _builder.AddBytes(buff);
                     }
                     else
                     {
@@ -216,6 +238,7 @@ namespace Skylabs.Lobby.Sockets
                 catch (SocketException se)
                 {
                     #region "SocketErrors"
+
                     switch (se.SocketErrorCode)
                     {
                         case SocketError.ConnectionAborted:
@@ -279,6 +302,7 @@ namespace Skylabs.Lobby.Sockets
                                 break;
                             }
                     }
+
                     #endregion
                 }
                 catch (ObjectDisposedException oe)
@@ -296,21 +320,20 @@ namespace Skylabs.Lobby.Sockets
                     Trace.WriteLine("ss4:" + e.Message);
                     Trace.WriteLine(e.StackTrace);
                 }
-                while(Builder.SMQueue.Count > 0)
+                while (_builder.SmQueue.Count > 0)
                 {
-                    SocketMessage sm = Builder.SMQueue.Dequeue();
-                    if (sm != null)
-                    {
-                        if (OnMessageReceived != null)
-                            OnMessageReceived.BeginInvoke(this, (SocketMessage)sm.Clone(), null, null);
-                    }
+                    SocketMessage sm = _builder.SmQueue.Dequeue();
+                    if (sm == null) continue;
+                    if (OnMessageReceived != null)
+                        OnMessageReceived.BeginInvoke(this, (SocketMessage) sm.Clone(), null, null);
                 }
                 LazyAsync.Invoke(AsyncRead);
             }
         }
+
         public void WriteMessage(SocketMessage message)
         {
-            lock (SocketLocker)
+            lock (_socketLocker)
             {
                 if (IsDisposed)
                     return;
@@ -338,19 +361,7 @@ namespace Skylabs.Lobby.Sockets
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
-                    if (System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-                }
-            }
-        }
-    
-        public void Dispose()
-        {
-            lock(SocketLocker)
-            {
-                if(!IsDisposed)
-                {
-                    Sock.Close();
-                    IsDisposed = true;
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
             }
         }

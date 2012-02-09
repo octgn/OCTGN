@@ -1,116 +1,100 @@
-﻿<ResourceDictionary
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-	
-	<Style x:Key="ScrollBarUpButton" TargetType="RepeatButton">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="RepeatButton">
-					<Border x:Name="border" 
-							Style="{StaticResource PanelControl}"	
-							BorderBrush="{StaticResource RaisedBorderBrush}"
-							CornerRadius="2,2,0,0">
-						<Path x:Name="glyph" 
-							  Data="M 4,0 l4,4 h-8 Z" Fill="{StaticResource GlyphBrush}"
-							  HorizontalAlignment="Center" VerticalAlignment="Center" />
-					</Border>
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsPressed" Value="True">
-							<Setter TargetName="glyph" Property="Margin" Value="0,2,0,0" />
-							<Setter TargetName="border" Property="Background" Value="{StaticResource PressedBrush}" />
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-	
-	<Style x:Key="ScrollBarDownButton" TargetType="RepeatButton">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="RepeatButton">
-					<Border x:Name="border" 
-							Style="{StaticResource PanelControl}"		
-							BorderBrush="{StaticResource RaisedBorderBrush}"					
-							CornerRadius="0,0,2,2">
-						<Path x:Name="glyph"
-							  Data="M 4,4 l4,-4 h-8 Z" Fill="{StaticResource GlyphBrush}"
-							  HorizontalAlignment="Center" VerticalAlignment="Center" />
-					</Border>
-					<ControlTemplate.Triggers>
-						<Trigger Property="IsPressed" Value="True">
-							<Setter TargetName="glyph" Property="Margin" Value="0,2,0,0" />
-							<Setter TargetName="border" Property="Background" Value="{StaticResource PressedBrush}" />
-						</Trigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-	
-	<Style x:Key="ScrollBarThumb" TargetType="Thumb">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="Thumb">
-					<Border Style="{StaticResource PanelControl}"
-							BorderBrush="#E0999999" />					
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-  
-  	<Style x:Key="TrackRepeatButton" TargetType="RepeatButton">
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="RepeatButton">
-					<Rectangle Fill="Transparent" />
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
-  
-	<ControlTemplate x:Key="VerticalScrollBarControlTemplate" TargetType="{x:Type ScrollBar}">
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
-			</Grid.RowDefinitions>
-			<RepeatButton Command="ScrollBar.LineUpCommand"
-						  Style="{StaticResource ScrollBarUpButton}" />
-			<Border Grid.Row="1"
-					Background="#10333333"
-					BorderBrush="#DAAAAAAA"
-					BorderThickness="1,0,1,0" />
-			<Track x:Name="PART_Track" Grid.Row="1" IsDirectionReversed="True">
-				<Track.Thumb>
-					<Thumb Style="{StaticResource ScrollBarThumb}" />						
-				</Track.Thumb>
-				<Track.IncreaseRepeatButton>
-					<RepeatButton Command="ScrollBar.PageDownCommand"
-								  Style="{StaticResource TrackRepeatButton}" />
-				</Track.IncreaseRepeatButton>
-				<Track.DecreaseRepeatButton>
-					<RepeatButton Command="ScrollBar.PageUpCommand"
-								  Style="{StaticResource TrackRepeatButton}" />
-				</Track.DecreaseRepeatButton>
-			</Track>
-			<RepeatButton Command="ScrollBar.LineDownCommand"
-						  Style="{StaticResource ScrollBarDownButton}"
-						  Grid.Row="2" />
-		</Grid>
-	</ControlTemplate>
-	
-	<Style TargetType="ScrollBar">
-		<Setter Property="SnapsToDevicePixels" Value="True" />
-		<Style.Triggers>
-			<Trigger Property="Orientation" Value="Vertical">
-				<Setter Property="Template" Value="{StaticResource VerticalScrollBarControlTemplate}" />		
-			</Trigger>
-			<Trigger Property="IsEnabled" Value="False">
-				<Setter Property="Opacity" Value="0.3" />
-			</Trigger>			
-		</Style.Triggers>		
-	</Style>
-	
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Style x:Key="ScrollBarUpButton" TargetType="RepeatButton">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="RepeatButton">
+          <Border x:Name="border" Style="{StaticResource PanelControl}"
+                  BorderBrush="{StaticResource RaisedBorderBrush}" CornerRadius="2,2,0,0">
+            <Path x:Name="glyph" Data="M 4,0 l4,4 h-8 Z" Fill="{StaticResource GlyphBrush}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="glyph" Property="Margin" Value="0,2,0,0" />
+              <Setter TargetName="border" Property="Background" Value="{StaticResource PressedBrush}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="ScrollBarDownButton" TargetType="RepeatButton">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="RepeatButton">
+          <Border x:Name="border" Style="{StaticResource PanelControl}"
+                  BorderBrush="{StaticResource RaisedBorderBrush}" CornerRadius="0,0,2,2">
+            <Path x:Name="glyph" Data="M 4,4 l4,-4 h-8 Z" Fill="{StaticResource GlyphBrush}"
+                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="glyph" Property="Margin" Value="0,2,0,0" />
+              <Setter TargetName="border" Property="Background" Value="{StaticResource PressedBrush}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="ScrollBarThumb" TargetType="Thumb">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Thumb">
+          <Border Style="{StaticResource PanelControl}" BorderBrush="#E0999999" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="TrackRepeatButton" TargetType="RepeatButton">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="RepeatButton">
+          <Rectangle Fill="Transparent" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <ControlTemplate x:Key="VerticalScrollBarControlTemplate" TargetType="{x:Type ScrollBar}">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}" />
+        <RowDefinition Height="*" />
+        <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}" />
+      </Grid.RowDefinitions>
+      <RepeatButton Command="ScrollBar.LineUpCommand" Style="{StaticResource ScrollBarUpButton}" />
+      <Border Grid.Row="1" Background="#10333333" BorderBrush="#DAAAAAAA" BorderThickness="1,0,1,0" />
+      <Track x:Name="PART_Track" Grid.Row="1" IsDirectionReversed="True">
+        <Track.Thumb>
+          <Thumb Style="{StaticResource ScrollBarThumb}" />
+        </Track.Thumb>
+        <Track.IncreaseRepeatButton>
+          <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource TrackRepeatButton}" />
+        </Track.IncreaseRepeatButton>
+        <Track.DecreaseRepeatButton>
+          <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource TrackRepeatButton}" />
+        </Track.DecreaseRepeatButton>
+      </Track>
+      <RepeatButton Command="ScrollBar.LineDownCommand" Style="{StaticResource ScrollBarDownButton}" Grid.Row="2" />
+    </Grid>
+  </ControlTemplate>
+
+  <Style TargetType="ScrollBar">
+    <Setter Property="SnapsToDevicePixels" Value="True" />
+    <Style.Triggers>
+      <Trigger Property="Orientation" Value="Vertical">
+        <Setter Property="Template" Value="{StaticResource VerticalScrollBarControlTemplate}" />
+      </Trigger>
+      <Trigger Property="IsEnabled" Value="False">
+        <Setter Property="Opacity" Value="0.3" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
 </ResourceDictionary>

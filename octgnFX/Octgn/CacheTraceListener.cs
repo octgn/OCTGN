@@ -7,26 +7,25 @@ namespace Octgn
 {
     public class TraceEvent
     {
+        public object[] Args;
         public TraceEventCache Cache;
+        public string Format;
+        public int Id;
+        public String Message;
         public string Source;
         public TraceEventType Type;
-        public int ID;
-        public String Message;
-        public string Format;
-        public object[] Args;
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendFormat("<{0}>", Type);
-            if(Cache != null)
-                if(Cache.DateTime != null)
-                    sb.AppendFormat("[{0} {1}]", Cache.DateTime.ToShortTimeString(), Cache.DateTime.ToShortDateString());
-            if(Source != null)
+            if (Cache != null)
+                sb.AppendFormat("[{0} {1}]", Cache.DateTime.ToShortTimeString(), Cache.DateTime.ToShortDateString());
+            if (Source != null)
                 sb.AppendFormat("'{0}'", Source);
-            sb.Append(ID);
+            sb.Append(Id);
             sb.Append(" - ");
-            if(Message == null && Args != null && Format != null)
+            if (Message == null && Args != null && Format != null)
             {
                 sb.AppendFormat(Format, Args);
             }
@@ -40,8 +39,11 @@ namespace Octgn
 
     public class CacheTraceListener : TraceListener
     {
+        #region Delegates
+
         public delegate void EventAdded(TraceEvent te);
-        public event EventAdded OnEventAdd;
+
+        #endregion
 
         public CacheTraceListener()
         {
@@ -49,65 +51,54 @@ namespace Octgn
         }
 
         public List<TraceEvent> Events { get; set; }
+        public event EventAdded OnEventAdd;
 
         public override void Write(string message)
         {
-            TraceEvent te = new TraceEvent();
-            te.Cache = new TraceEventCache();
-            te.Message = message;
-            te.Type = TraceEventType.Information;
+            var te = new TraceEvent
+                         {Cache = new TraceEventCache(), Message = message, Type = TraceEventType.Information};
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
 
         public override void WriteLine(string message)
         {
-            TraceEvent te = new TraceEvent();
-            te.Cache = new TraceEventCache();
-            te.Message = message + System.Environment.NewLine;
-            te.Type = TraceEventType.Information;
+            var te = new TraceEvent
+                         {
+                             Cache = new TraceEventCache(),
+                             Message = message + Environment.NewLine,
+                             Type = TraceEventType.Information
+                         };
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
 
-        public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
+        public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
+                                        string message)
         {
-            TraceEvent te = new TraceEvent();
-            te.Cache = eventCache;
-            te.Source = source;
-            te.Type = eventType;
-            te.ID = id;
-            te.Message = message;
+            var te = new TraceEvent {Cache = eventCache, Source = source, Type = eventType, Id = id, Message = message};
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
 
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id)
         {
-            TraceEvent te = new TraceEvent();
-            te.Cache = eventCache;
-            te.Source = source;
-            te.Type = eventType;
-            te.ID = id;
+            var te = new TraceEvent {Cache = eventCache, Source = source, Type = eventType, Id = id};
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
 
-        public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object[] args)
+        public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
+                                        string format, params object[] args)
         {
-            TraceEvent te = new TraceEvent();
-            te.Cache = eventCache;
-            te.Source = source;
-            te.Type = eventType;
-            te.ID = id;
-            te.Format = format;
-            te.Args = args;
+            var te = new TraceEvent
+                         {Cache = eventCache, Source = source, Type = eventType, Id = id, Format = format, Args = args};
             Events.Add(te);
-            if(OnEventAdd != null)
+            if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
     }

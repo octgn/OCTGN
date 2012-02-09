@@ -1,59 +1,52 @@
 using System;
 using System.Xml;
-using VistaDB.DDA;
 
 namespace Octgn.Data
 {
-	public class MarkerModel
-	{		
-		public Guid id;
-		protected string name;
-		private string iconUri;
-		private Set set;
+    public class MarkerModel
+    {
+        private readonly string _iconUri;
+        private readonly Set _set;
+        public Guid Id;
+        // TODO: Should be renamed at some point
+        protected string name;
 
-		public virtual string Picture
-		{
-			get
-			{
-				return set.GetPackUri() + iconUri;
-			}
-		}
+        public MarkerModel(XmlReader reader, Set set)
+        {
+            reader.MoveToAttribute("name");
+            name = reader.Value;
+            reader.MoveToAttribute("id");
+            Id = new Guid(reader.Value);
+            reader.Read(); // <marker />
+            _set = set;
+        }
 
-		public string Name
-		{
-			get
-			{ return name; }
-		}
+        protected MarkerModel(Guid id)
+        {
+            Id = id;
+        }
 
-		public MarkerModel(XmlReader reader, Set set)
-		{
-			reader.MoveToAttribute("name");
-			name = reader.Value;
-			reader.MoveToAttribute("id");
-			id = new Guid(reader.Value);
-			reader.Read();  // <marker />
-			this.set = set;
-		}
+        public MarkerModel(Guid id, string name, string icon, Set set)
+        {
+            _set = set;
+            _iconUri = icon;
+            this.name = name;
+            Id = id;
+        }
 
-		protected MarkerModel(Guid id)
-		{ this.id = id; }
+        public virtual string Picture
+        {
+            get { return _set.GetPackUri() + _iconUri; }
+        }
 
-		private MarkerModel()
-		{ }
+        public string Name
+        {
+            get { return name; }
+        }
 
-		public override string ToString()
-		{ return name; }
-
-		internal static MarkerModel FromDataRow(Game game, IVistaDBRow row)
-		{
-			var result = new MarkerModel
-			{
-				id = (Guid)row["id"].Value,
-				name = (string)row["name"].Value,
-				iconUri = (string)row["icon"].Value,
-				set = game.GetSet((Guid)row["setId"].Value)
-			};
-			return result;
-		}
-	}	
+        public override string ToString()
+        {
+            return name;
+        }
+    }
 }

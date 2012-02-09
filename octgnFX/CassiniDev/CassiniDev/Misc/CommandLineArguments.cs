@@ -1,23 +1,9 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading;
 
 #endregion
@@ -25,9 +11,7 @@ using System.Threading;
 namespace CassiniDev
 {
     /// <summary>
-    /// Command line arguments
-    /// 
-    /// fixed 5/24/10 - quoted embedded spaces in ToString
+    ///   Command line arguments fixed 5/24/10 - quoted embedded spaces in ToString
     /// </summary>
     public class CommandLineArguments
     {
@@ -103,16 +87,20 @@ namespace CassiniDev
 
         public string[] ToArgs()
         {
-            List<string>  result = new List<string>();
+            var result = new List<string>();
             if (RunMode != RunMode.Server)
             {
                 result.Add(string.Format("{0}", RunMode));
             }
             if (!string.IsNullOrEmpty(ApplicationPath))
             {
-                result.Add(string.Format("/a:{0}", ApplicationPath.Contains("") ? String.Format("\"{0}\"", ApplicationPath) : ApplicationPath));
+                result.Add(string.Format("/a:{0}",
+                                         ApplicationPath.Contains("")
+                                             ? String.Format("\"{0}\"", ApplicationPath)
+                                             : ApplicationPath));
             }
-            result.Add(string.Format("/v:{0}", VirtualPath.Contains("") ? String.Format("\"{0}\"", VirtualPath) : VirtualPath));
+            result.Add(string.Format("/v:{0}",
+                                     VirtualPath.Contains("") ? String.Format("\"{0}\"", VirtualPath) : VirtualPath));
 
             if (!string.IsNullOrEmpty(HostName))
             {
@@ -189,6 +177,7 @@ namespace CassiniDev
 
             return result.ToArray();
         }
+
         public override string ToString()
         {
             return string.Join(" ", ToArgs());
@@ -406,13 +395,12 @@ namespace CassiniDev
 
 
         /// <summary>
-        /// Converts CommandLineArgument values to an IP address if possible.
-        /// Throws Exception if not.
+        ///   Converts CommandLineArgument values to an IP address if possible. Throws Exception if not.
         /// </summary>
-        /// <param name="ipmode"></param>
-        /// <param name="v6"></param>
-        /// <param name="ipString"></param>
-        /// <returns></returns>
+        /// <param name="ipmode"> </param>
+        /// <param name="v6"> </param>
+        /// <param name="ipString"> </param>
+        /// <returns> </returns>
         /// <exception cref="CassiniException">If IPMode is invalid</exception>
         /// <exception cref="CassiniException">If IPMode is 'Specific' and ipString is invalid</exception>
         public static IPAddress ParseIP(IPMode ipmode, bool v6, string ipString)

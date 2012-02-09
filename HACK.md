@@ -1,11 +1,11 @@
-Get Involved! 
+Get Involved!
 -------------------------------------------------
-* *REPORT BUGS & Request Features:* https://github.com/kellyelton/OCTGN/issues
+* Read the https://github.com/kellyelton/OCTGN/blob/master/README.md -- IRC, Mailing List, Issues, etc.
 * *HELP US CODE:*
   * Create a github account (https://github.com/signup/free)
   * Setup git locally (http://help.github.com/win-set-up-git/)
   * Fork the repository (http://help.github.com/fork-a-repo/)
-  * Make your awesome change! (see HACK.md get a grip on the project)
+  * Make your awesome change! (by following this file)
   * Request we pull it in (http://help.github.com/send-pull-requests/)
 
 Your own awesome changes
@@ -29,9 +29,9 @@ it can include the required assemblies.
 
 Components
 -------------------------------------------------
-
-# Installer
-...
+**TODO:** Installer, octgnFX/CassiniDev, octgnFX/ConsoleHelper, octgnFX/Graphics, octgnFX/Lib, octgnFX/Octgn.Data, 
+octgnFX/Octgn.LobbyServer, octgnFX/Octgn.Server,  octgnFX/Octgn.StandAloneServer, octgnFX/Skylabs.Lobby, octgnFX/Skylabs.MultiLogin, 
+octgnFX/Webcontent
 
 # Python
 Octgn uses IronPython for its in-game scripting engine.
@@ -43,50 +43,5 @@ For example, the following code found in [PythonApi.py](https://github.com/kelly
 
 It calls Random with a min and max value that is located in [ScriptApi.cs](https://github.com/kellyelton/OCTGN/blob/master/octgnFX/Octgn/Scripting/ScriptAPI.cs).
 
-# octgnFX/CassiniDev
-...
-
-
-# octgnFX/ConsoleHelper
-...
-
-
-# octgnFX/Graphics
-...
-
-
-# octgnFX/Lib
-...
-
-
 # octgnFX/Octgn
-...
-
-
-# octgnFX/Octgn.Data
-...
-
-
-# octgnFX/Octgn.LobbyServer
-...
-
-
-# octgnFX/Octgn.Server
-...
-
-
-# octgnFX/Octgn.StandAloneServer
-...
-
-
-# octgnFX/Skylabs.Lobby
-...
-
-
-# octgnFX/Skylabs.MultiLogin
-...
-
-
-# octgnFX/Webcontent
-...
-
+Most of the work in this project is shouldered by Game.cs. Inside Game.cs is a IVistaDBDatabase that has all card data installed in it. Card data is read and dropped into a CardModel format, which is stored in a Dictionary<Guid, CardModel> cardModelCache. CardModels are wrapped in a CardIdentity class (apparently for anti-cheating), which is wrapped in a Card class. Cards are placed into Piles and manipulated according to the gamedef.

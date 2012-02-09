@@ -1,99 +1,100 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Octgn
 {
     /// <summary>
-    /// Interaction logic for DebugWindow.xaml
+    ///   Interaction logic for DebugWindow.xaml
     /// </summary>
-    public partial class DWindow : Window
+    public partial class DWindow
     {
-        Brush TurnBrush;
+        private readonly Brush _turnBrush;
         public RoutedCommand DebugWindowCommand = new RoutedCommand();
 
         public DWindow()
         {
             InitializeComponent();
-            var color = Color.FromRgb(0xFF, 0x00, 0x00);
-            TurnBrush = new SolidColorBrush(color);
-            TurnBrush.Freeze();
+            Color color = Color.FromRgb(0xFF, 0x00, 0x00);
+            _turnBrush = new SolidColorBrush(color);
+            _turnBrush.Freeze();
 
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
 
-            CommandBinding cb = new CommandBinding(DebugWindowCommand,
-                MyCommandExecute, MyCommandCanExecute);
-            this.CommandBindings.Add(cb);
+            var cb = new CommandBinding(DebugWindowCommand,
+                                        MyCommandExecute, MyCommandCanExecute);
+            CommandBindings.Add(cb);
 
-            KeyGesture kg = new KeyGesture(Key.M, ModifierKeys.Control);
-            InputBinding ib = new InputBinding(DebugWindowCommand, kg);
-            this.InputBindings.Add(ib);
+            var kg = new KeyGesture(Key.M, ModifierKeys.Control);
+            var ib = new InputBinding(DebugWindowCommand, kg);
+            InputBindings.Add(ib);
         }
 
-        private void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private static void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
         private void MyCommandExecute(object sender, ExecutedRoutedEventArgs e)
         {
-            this.Visibility = System.Windows.Visibility.Hidden;
+            Visibility = Visibility.Hidden;
         }
 
-        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void WindowIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            bool v = (bool)e.NewValue;
-            if(v)
+            var v = (bool) e.NewValue;
+            if (v)
             {
-                Program.DebugListener.OnEventAdd += new CacheTraceListener.EventAdded(Add_Event);
+                Program.DebugListener.OnEventAdd += AddEvent;
                 output.Document.Blocks.Clear();
-                foreach(TraceEvent te in Program.DebugListener.Events)
+                foreach (TraceEvent te in Program.DebugListener.Events)
                 {
-                    Add_Event(te);
+                    AddEvent(te);
                 }
             }
             else
-                Program.DebugListener.OnEventAdd -= Add_Event;
+                Program.DebugListener.OnEventAdd -= AddEvent;
         }
 
-        private void Add_Event(TraceEvent te)
+        private void AddEvent(TraceEvent te)
         {
-            this.Dispatcher.Invoke(new Action<TraceEvent>(i_Add_Event), new object[1] { te });
+            Dispatcher.Invoke(new Action<TraceEvent>(IAddEvent), new object[] {te});
         }
 
-        private void i_Add_Event(TraceEvent te)
+        private void IAddEvent(TraceEvent te)
         {
-            var p = new Paragraph()
-            {
-                TextAlignment = TextAlignment.Left,
-                Margin = new Thickness(0),
-                Inlines =
+            var p = new Paragraph
                         {
-                            //new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush },
-                            new Run(te.ToString()) { Foreground = TurnBrush, FontWeight = FontWeights.Bold  }
-                            //new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush }
-                        }
-            };
-            if(output.Document.Blocks.LastBlock != null)
-                if(((Paragraph)output.Document.Blocks.LastBlock).Inlines.Count == 0)
+                            TextAlignment = TextAlignment.Left,
+                            Margin = new Thickness(0),
+                            Inlines =
+                                {
+                                    //new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush },
+                                    new Run(te.ToString()) {Foreground = _turnBrush, FontWeight = FontWeights.Bold}
+                                    //new Line() { X1 = 0, X2 = 40, Y1 = -4, Y2 = -4, StrokeThickness = 2, Stroke = TurnBrush }
+                                }
+                        };
+            if (output.Document.Blocks.LastBlock != null)
+                if (((Paragraph) output.Document.Blocks.LastBlock).Inlines.Count == 0)
                     output.Document.Blocks.Remove(output.Document.Blocks.LastBlock);
             output.Document.Blocks.Add(p);
-            output.Document.Blocks.Add(new Paragraph() { Margin = new Thickness() });    // Restore left alignment
+            output.Document.Blocks.Add(new Paragraph {Margin = new Thickness()}); // Restore left alignment
             output.ScrollToEnd();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void WindowClosing(object sender, CancelEventArgs e)
         {
             //Hide Window
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, (DispatcherOperationCallback)delegate(object o)
-            {
-                Hide();
-                return null;
-            }, null);
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                                                       (DispatcherOperationCallback) delegate
+                                                                                         {
+                                                                                             Hide();
+                                                                                             return null;
+                                                                                         }, null);
             //Do not close application
             e.Cancel = true;
         }

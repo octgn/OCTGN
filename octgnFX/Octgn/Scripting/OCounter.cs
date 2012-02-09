@@ -1,33 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Runtime.CompilerServices;
 using System.Security;
+using Octgn.Play;
 
 namespace Octgn.Scripting
 {
-  [SecuritySafeCritical]
-  public class OCounter : MarshalByRefObject
-  {
-    private Play.Counter[] counters;
-
-    public OCounter(Play.Player player)
-    { counters = player.Counters; }
-
-    [System.Runtime.CompilerServices.IndexerName("values")]
-    public int this[string name]
+    [SecuritySafeCritical]
+    public class OCounter : MarshalByRefObject
     {
-      get { return Find(name).Value; }
-      set
-      {
-        var counter = Find(name);
-        //Engine.Current.Invoke<object>(() => counter.Value = value);
-      }
-    }
+        private readonly Counter[] counters;
 
-    private Play.Counter Find(string name)
-    {
-      return counters.First(c => string.Equals(name, c.Name, StringComparison.InvariantCultureIgnoreCase));
+        public OCounter(Player player)
+        {
+            counters = player.Counters;
+        }
+
+        [IndexerName("values")]
+        public int this[string name]
+        {
+            get { return Find(name).Value; }
+            set
+            {
+                //Counter counter = Find(name);
+                //Engine.Current.Invoke<object>(() => counter.Value = value);
+            }
+        }
+
+        private Counter Find(string name)
+        {
+            return counters.First(c => string.Equals(name, c.Name, StringComparison.InvariantCultureIgnoreCase));
+        }
     }
-  }
 }
