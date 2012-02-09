@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Octgn.Definitions;
 
-namespace Octgn.Play.Gui
+namespace Octgn.Play.Gui.Adorners
 {
     internal class CardDragAdorner : Adorner, IDisposable
     {

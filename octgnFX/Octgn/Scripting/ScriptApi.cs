@@ -13,7 +13,7 @@ using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui;
-using Octgn.Script;
+using Octgn.Scripting.Controls;
 
 namespace Octgn.Scripting
 {
@@ -587,7 +587,7 @@ namespace Octgn.Scripting
                 {
                     try
                     {
-                        engine.Invoke(() => { Process.Start(url); });
+                        engine.Invoke(() => Process.Start(url));
                         return true;
                     }
                     catch (Exception)

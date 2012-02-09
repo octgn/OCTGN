@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace Octgn.Script
+namespace Octgn.Scripting.Controls
 {
     public partial class InputDlg
     {

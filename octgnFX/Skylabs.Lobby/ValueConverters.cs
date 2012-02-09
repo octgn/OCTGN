@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Skylabs
+namespace Skylabs.Lobby
 {
     public static class ValueConverters
     {

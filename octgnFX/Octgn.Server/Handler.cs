@@ -454,27 +454,26 @@ namespace Octgn.Server
             int nCards = card.Length/(_clients.Count - 1);
             int from = 0, client = 1;
             var someCard = new int[nCards];
-            foreach (var kvp in _clients)
+            foreach (var kvp in _clients.Where(kvp => kvp.Key != _sender))
             {
-                if (kvp.Key == _sender) continue;
                 if (client < _clients.Count - 1)
                 {
                     if (nCards > 0)
                     {
-                        Array.Copy(card, from, someCard, 0, nCards);
-                        kvp.Value.Rpc.Shuffle(group, someCard);
-                        from += nCards;
+                        Array.Copy(card, @from, someCard, 0, nCards);
+                        kvp.Value.Rpc.Shuffle(@group, someCard);
+                        @from += nCards;
                     }
                     client++;
                 }
                 else
                 {
-                    int rest = card.Length - from;
+                    int rest = card.Length - @from;
                     if (rest > 0)
                     {
                         someCard = new int[rest];
-                        Array.Copy(card, from, someCard, 0, rest);
-                        kvp.Value.Rpc.Shuffle(group, someCard);
+                        Array.Copy(card, @from, someCard, 0, rest);
+                        kvp.Value.Rpc.Shuffle(@group, someCard);
                     }
                     return;
                 }

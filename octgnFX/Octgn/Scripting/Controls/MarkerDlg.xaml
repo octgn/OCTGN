@@ -1,4 +1,4 @@
-﻿<Window x:Class="Octgn.Script.MarkerDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Window x:Class="Octgn.Scripting.Controls.MarkerDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="Dlg" Style="{StaticResource DialogWindow}"
         Title="Add markers" Height="434" Width="553" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
 

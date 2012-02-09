@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Windows;
@@ -102,9 +103,7 @@ namespace Octgn.Launcher
                 {
                     Dispatcher.BeginInvoke(new Action(() =>
                                                           {
-                                                              String ewe = "";
-                                                              foreach (string s in _errors)
-                                                                  ewe += s + Environment.NewLine;
+                                                              String ewe = _errors.Aggregate("", (current, s) => current + (s + Environment.NewLine));
                                                               var er = new ErrorWindow(ewe);
                                                               er.ShowDialog();
                                                           }));

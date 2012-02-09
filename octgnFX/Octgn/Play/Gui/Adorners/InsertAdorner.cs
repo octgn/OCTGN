@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 
-namespace Octgn.Play.Gui
+namespace Octgn.Play.Gui.Adorners
 {
     internal class InsertAdorner : Adorner
     {

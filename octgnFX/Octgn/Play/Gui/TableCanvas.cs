@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.Play.Actions;
+using Octgn.Play.Gui.Adorners;
 
 namespace Octgn.Play.Gui
 {
@@ -114,22 +116,15 @@ namespace Octgn.Play.Gui
         private void Untargetting(object sender, EventArgs e)
         {
             var targetAction = (Target) sender;
-            CardControl card = null;
-            foreach (ContentPresenter child in Children)
-                if (child.DataContext == targetAction.FromCard)
-                {
-                    card = VisualTreeHelper.GetChild(child, 0) as CardControl;
-                    break;
-                }
+            CardControl card = (from ContentPresenter child in Children where child.DataContext == targetAction.FromCard select VisualTreeHelper.GetChild(child, 0) as CardControl).FirstOrDefault();
             if (card == null) return; // Opponent moved the card out of the table concurently
 
             AdornerLayer layer = AdornerLayer.GetAdornerLayer(card);
             Adorner[] adorners = layer.GetAdorners(card);
             if (adorners == null) return; // Opponent removed the target card out of the table concurently
-            foreach (Adorner adorner in adorners)
+            foreach (var arrow in adorners.OfType<ArrowAdorner>())
             {
-                var arrow = adorner as ArrowAdorner;
-                if (arrow != null) layer.Remove(arrow);
+                layer.Remove(arrow);
             }
 
             targetAction.FromCard.TargetsOtherCards = false;

@@ -12,6 +12,7 @@ using Octgn.Data;
 using Octgn.Definitions;
 using Octgn.Play;
 using Octgn.Play.Gui;
+using Octgn.Utils;
 
 namespace Octgn
 {
@@ -212,9 +213,7 @@ namespace Octgn
 
         public RandomRequest FindRandomRequest(int id)
         {
-            foreach (RandomRequest r in RandomRequests)
-                if (r.Id == id) return r;
-            return null;
+            return RandomRequests.FirstOrDefault(r => r.Id == id);
         }
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20

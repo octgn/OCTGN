@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Octgn.Definitions;
 
 //using Octgn.Play.GUI;
@@ -52,13 +53,11 @@ namespace Octgn.Play
                 WantToShuffle = Locked = true;
                 bool ready = true;
                 // Unalias only if necessary
-                foreach (Card c in cards)
-                    if (c.Type.Alias)
-                    {
-                        Program.Client.Rpc.UnaliasGrp(this);
-                        ready = false;
-                        break;
-                    }
+                if (cards.Any(c => c.Type.Alias))
+                {
+                    Program.Client.Rpc.UnaliasGrp(this);
+                    ready = false;
+                }
                 if (ready)
                     DoShuffle();
                 return true;

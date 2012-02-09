@@ -8,7 +8,6 @@ using System.Reflection;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Sockets;
 using Skylabs.Lobby.Threading;
-using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {
@@ -150,9 +149,8 @@ namespace Skylabs.LobbyServer
             lock (ClientLocker)
             {
                 Logger.L(MethodBase.GetCurrentMethod().Name, "ClientLocker");
-                foreach (Client c in Clients)
+                foreach (Client c in Clients.Where(c => c.LoggedIn && c.Me.Uid == uid))
                 {
-                    if (!c.LoggedIn || c.Me.Uid != uid) continue;
                     Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                     return c.Me.Status;
                 }
@@ -187,13 +185,7 @@ namespace Skylabs.LobbyServer
                 if (e == UserStatus.Offline)
                 {
                     Clients.Remove(client);
-                    bool foundOne = false;
-                    foreach (Client c in Clients)
-                    {
-                        if (c.Me.Uid != me.Uid) continue;
-                        foundOne = true;
-                        break;
-                    }
+                    bool foundOne = Clients.Any(c => c.Me.Uid == me.Uid);
                     if (!foundOne)
                     {
                         LazyAsync.Invoke(() => Chatting.UserOffline((User) me.Clone()));
@@ -235,16 +227,12 @@ namespace Skylabs.LobbyServer
 #if(TestServer)
                     Trace.WriteLine("#WriteAll: " + sm.Header);
 #endif
-                foreach (Client c in Clients)
+                foreach (Client cl2 in Clients.Where(cl2 => cl2.LoggedIn))
                 {
-                    Client cl2 = c;
-                    if (cl2.LoggedIn)
-                    {
 #if(TestServer)
                             Trace.WriteLine("#TryWriteTo[" + cl2.Id + "](" + sm.Header + ")");
 #endif
-                        LazyAsync.Invoke(() => cl2.WriteMessage(sm));
-                    }
+                    LazyAsync.Invoke(() => cl2.WriteMessage(sm));
                 }
             }
         }
@@ -253,13 +241,9 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                foreach (Client c in Clients)
+                foreach (Client cl2 in Clients.Where(cl2 => cl2.LoggedIn && uids.Contains(cl2.Me.Uid)))
                 {
-                    Client cl2 = c;
-                    if (cl2.LoggedIn && uids.Contains(cl2.Me.Uid))
-                    {
-                        LazyAsync.Invoke(() => cl2.WriteMessage(sm));
-                    }
+                    LazyAsync.Invoke(() => cl2.WriteMessage(sm));
                 }
             }
         }
@@ -298,17 +282,13 @@ namespace Skylabs.LobbyServer
                 int loggedInCount = 0;
                 int removedCount = 0;
                 // int StartCount = Clients.Count; // unused
-                foreach (Client cl in Clients)
+                foreach (Client cl2 in from cl2 in Clients where cl2 != null where cl2.Id != caller.Id where cl2.Me.Uid == uid select cl2)
                 {
-                    Client cl2 = cl;
-                    if (cl2 == null) continue;
-                    if (cl2.Id == caller.Id) continue;
-                    if (cl2.Me.Uid != uid) continue;
                     removedCount++;
                     if (cl2.LoggedIn)
                         loggedInCount++;
                     Trace.WriteLine(String.Format("#Try stop client[{0}]", cl2.Id));
-                    LazyAsync.Invoke(() => cl2.Stop());
+                    LazyAsync.Invoke(cl2.Stop);
                 }
                 //Logger.UL(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
                 return new Tuple<int, int>(loggedInCount, removedCount);

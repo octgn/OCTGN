@@ -39,9 +39,7 @@ namespace Octgn.Play
         // Find a lPlayer with his id
         internal static Player Find(byte id)
         {
-            foreach (Player p in all)
-                if (p.Id == id) return p;
-            return null;
+            return all.FirstOrDefault(p => p.Id == id);
         }
 
         // Resets the lPlayer list
