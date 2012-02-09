@@ -349,11 +349,11 @@ namespace Skylabs.Lobby.Sockets
                 {
                     if (se.ErrorCode == 10058)
                         return;
-                    LazyAsync.Invoke(() => Stop());
+                    LazyAsync.Invoke(Stop);
                 }
                 catch (ObjectDisposedException)
                 {
-                    LazyAsync.Invoke(() => Stop());
+                    LazyAsync.Invoke(Stop);
                 }
                 catch (NullReferenceException)
                 {

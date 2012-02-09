@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
+// TODO: Change this namespace when you can do it on client / server at the same time -- communications are fragile as fuck
 namespace Skylabs.Net
 {
     [Serializable]
@@ -62,10 +63,9 @@ namespace Skylabs.Net
             get { return (from t in _data where t.Key == key select t.Value).FirstOrDefault(); }
             set
             {
-                foreach (NameValuePair t in _data)
+                foreach (NameValuePair t in _data.Where(t => t.Key == key))
                 {
-                    if (t.Key == key)
-                        t.Value = value;
+                    t.Value = value;
                 }
             }
         }
