@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Skylabs.Lobby;
-using Skylabs.Lobby.Sockets;
 using Skylabs.Lobby.Threading;
 using Skylabs.Net;
 

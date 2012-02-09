@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Skylabs.Lobby;
-using Skylabs.Lobby.Sockets;
 using Skylabs.Lobby.Threading;
 using Skylabs.Net;
 
@@ -63,7 +62,9 @@ namespace Skylabs.LobbyServer
             long id = -1;
             lock (Rooms)
             {
-                if (Rooms.Select(cr => cr.GetUserList()).Any(ul => ul.Contains(user) && ul.Contains(c.Me) && ul.Length == 2))
+                if (
+                    Rooms.Select(cr => cr.GetUserList()).Any(
+                        ul => ul.Contains(user) && ul.Contains(c.Me) && ul.Length == 2))
                 {
                     Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
                     return;

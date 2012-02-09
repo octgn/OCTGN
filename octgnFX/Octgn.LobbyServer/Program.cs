@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using Skylabs.Lobby.Sockets;
 using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
@@ -61,7 +60,11 @@ namespace Skylabs.LobbyServer
                 Console.WriteLine("Can't find settings file.");
                 return false;
             }
-            foreach (string[] parts in File.ReadLines(sname).Select(l => l.Trim()).Where(s => s[0] != '#').Select(s => s.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries)).Where(parts => parts.Length == 2))
+            foreach (
+                string[] parts in
+                    File.ReadLines(sname).Select(l => l.Trim()).Where(s => s[0] != '#').Select(
+                        s => s.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries)).Where(
+                            parts => parts.Length == 2))
             {
                 parts[0] = parts[0].Trim();
                 parts[1] = parts[1].Trim();

@@ -103,7 +103,10 @@ namespace Octgn.Launcher
                 {
                     Dispatcher.BeginInvoke(new Action(() =>
                                                           {
-                                                              String ewe = _errors.Aggregate("", (current, s) => current + (s + Environment.NewLine));
+                                                              String ewe = _errors.Aggregate("",
+                                                                                             (current, s) =>
+                                                                                             current +
+                                                                                             (s + Environment.NewLine));
                                                               var er = new ErrorWindow(ewe);
                                                               er.ShowDialog();
                                                           }));

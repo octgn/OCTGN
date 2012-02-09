@@ -141,7 +141,12 @@ namespace Octgn.Server
         {
             if (_closed) return;
             Connection[] connections = _clients.ToArray();
-            foreach (Connection t in from t in connections let ts = new TimeSpan(DateTime.Now.Ticks - t.LastPingTime.Ticks) where ts.Seconds > 60 select t)
+            foreach (
+                Connection t in
+                    from t in connections
+                    let ts = new TimeSpan(DateTime.Now.Ticks - t.LastPingTime.Ticks)
+                    where ts.Seconds > 60
+                    select t)
             {
                 t.Disconnected();
             }

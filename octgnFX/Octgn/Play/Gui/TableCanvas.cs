@@ -116,7 +116,9 @@ namespace Octgn.Play.Gui
         private void Untargetting(object sender, EventArgs e)
         {
             var targetAction = (Target) sender;
-            CardControl card = (from ContentPresenter child in Children where child.DataContext == targetAction.FromCard select VisualTreeHelper.GetChild(child, 0) as CardControl).FirstOrDefault();
+            CardControl card = (from ContentPresenter child in Children
+                                where child.DataContext == targetAction.FromCard
+                                select VisualTreeHelper.GetChild(child, 0) as CardControl).FirstOrDefault();
             if (card == null) return; // Opponent moved the card out of the table concurently
 
             AdornerLayer layer = AdornerLayer.GetAdornerLayer(card);
