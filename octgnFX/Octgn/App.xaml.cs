@@ -49,7 +49,7 @@ namespace Octgn
             Program.LauncherWindow.Show();
             Program.ChatWindows = new List<ChatWindow>();
 #else
-            UpdateChecker uc = new UpdateChecker();
+            var uc = new UpdateChecker();
             uc.ShowDialog();
             if (!uc.IsClosingDown)
             {
@@ -58,7 +58,7 @@ namespace Octgn
             }
             else
             {
-                Application.Current.MainWindow = null;
+                Current.MainWindow = null;
                 Program.LauncherWindow.Close();
                 Program.Exit();
             }

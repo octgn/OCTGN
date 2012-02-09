@@ -107,10 +107,9 @@ namespace Octgn.Play.Dialogs
                 return null; // Not found
             // Try to select the text as a contiguous range
             for (TextPointer start = searchRange.Start.GetPositionAtOffset(offset);
-                 start != searchRange.End;
+                 start != searchRange.End && start != null;
                  start = start.GetPositionAtOffset(1))
             {
-                if (start == null) continue;
                 var result = new TextRange(start, start.GetPositionAtOffset(searchText.Length));
                 if (result.Text == searchText)
                     return result;

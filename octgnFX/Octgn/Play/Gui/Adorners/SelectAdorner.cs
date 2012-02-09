@@ -25,7 +25,7 @@ namespace Octgn.Play.Gui
             : base(adornedElement)
         {
             _child = new Rectangle
-                        {StrokeThickness = 3, Stroke = BorderBrush, Fill = FillBrush, IsHitTestVisible = false};
+                         {StrokeThickness = 3, Stroke = BorderBrush, Fill = FillBrush, IsHitTestVisible = false};
         }
 
         public Rect Rectangle

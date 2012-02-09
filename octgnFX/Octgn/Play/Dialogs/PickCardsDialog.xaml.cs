@@ -419,9 +419,8 @@ namespace Octgn.Play.Dialogs
 
         public class TokenFilterValue : FilterValue
         {
-            private string _value;
-
             private Regex _regex;
+            private string _value;
 
             public string Value
             {

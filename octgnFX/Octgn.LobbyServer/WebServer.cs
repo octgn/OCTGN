@@ -71,8 +71,10 @@ namespace Skylabs.LobbyServer
                 _server.Stop();
                 //_webServer.StopServer();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
         }
 
@@ -82,8 +84,10 @@ namespace Skylabs.LobbyServer
             {
                 _server.BeginGetContext(HandleConnection, _server);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
         }
 
@@ -148,8 +152,10 @@ namespace Skylabs.LobbyServer
                         }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             AcceptConnections();
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
@@ -961,13 +962,15 @@ namespace Octgn.Server
                 stream.Write(_buffer, 0, length);
                 stream.Flush();
             }
-            catch
-            {
                 // TODO: notify disconnections
-                //				if (Program.Server != null && Program.Server.Disconnected(lTo))
-                //					return;
-                //				Program.Client.Disconnected();
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
+            //				if (Program.Server != null && Program.Server.Disconnected(lTo))
+            //					return;
+            //				Program.Client.Disconnected();
         }
     }
 }

@@ -132,8 +132,10 @@ namespace Octgn
             {
                 DebugWindow.Close();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             if (LauncherWindow != null)
                 if (LauncherWindow.IsLoaded)
@@ -151,8 +153,10 @@ namespace Octgn
                     cw.CloseChatWindow();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
 
 #if(DEBUG)

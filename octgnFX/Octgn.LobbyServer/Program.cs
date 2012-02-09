@@ -52,7 +52,7 @@ namespace Skylabs.LobbyServer
 #if(DEBUG)
             const string sname = "serversettingsdebug.ini";
 #else
-            string sname = "serversettings.ini";
+            const string sname = "serversettings.ini";
 #endif
             if (!File.Exists(sname))
             {
@@ -142,22 +142,28 @@ namespace Skylabs.LobbyServer
             {
                 Gaming.Stop();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             try
             {
                 Server.Stop();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             try
             {
                 _killTimer.Dispose();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             _running = false;
         }
