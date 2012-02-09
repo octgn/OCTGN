@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -44,17 +45,9 @@ namespace Skylabs.ConsoleHelper
                     var xmlTextWriter = new XmlTextWriter(stream, Encoding.ASCII)
                                             {Formatting = Formatting.Indented, Indentation = 4};
                     var cTypes = new List<Type>();
-                    foreach (var c in Events)
+                    foreach (var c in from c in Events let foundit = cTypes.Any(t => c.GetType() == t) where !foundit select c)
                     {
-                        var foundit = false;
-                        foreach (var t in cTypes)
-                        {
-                            if (c.GetType() != t) continue;
-                            foundit = true;
-                            break;
-                        }
-                        if (!foundit)
-                            cTypes.Add(c.GetType());
+                        cTypes.Add(c.GetType());
                     }
                     var xs = new XmlSerializer(Events.GetType(), new XmlAttributeOverrides(), cTypes.ToArray(),
                                                new XmlRootAttribute("Events"), "Skylabs.olobby");

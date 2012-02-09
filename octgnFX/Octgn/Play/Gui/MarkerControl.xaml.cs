@@ -60,7 +60,7 @@ namespace Octgn.Play.Gui
         // One can only drag one marker at a time -> make everything static. It reduces memory usage.
         private static bool _isDragging, _isMouseDown, _takeAll;
         private static Point _mousePt, _mouseOffset;
-        private static DragAdorner _adorner;
+        private static Adorners.DragAdorner _adorner;
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
@@ -115,7 +115,7 @@ namespace Octgn.Play.Gui
             _mouseOffset = TranslatePoint(_mousePt, adorned);
             _mouseOffset.X -= adorned.DesiredSize.Width/2;
             _mouseOffset.Y -= adorned.DesiredSize.Height/2;
-            _adorner = new DragAdorner(adorned);
+            _adorner = new Adorners.DragAdorner(adorned);
             AdornerLayer.GetAdornerLayer(_adorner.AdornedElement).Add(_adorner);
         }
 

@@ -716,12 +716,10 @@ namespace Octgn.Networking
             // Check that the server didn't change our positions
             if (card[0] >> 16 == Player.LocalPlayer.Id && group.MyShufflePos != null)
             {
-                for (int i = 0; i < pos.Length; i++)
-                    if (pos[i] != group.MyShufflePos[i])
-                    {
-                        Program.TraceWarning("[Shuffled] The server has changed the order of the cards.");
-                        break;
-                    }
+                if (pos.Where((t, i) => t != @group.MyShufflePos[i]).Any())
+                {
+                    Program.TraceWarning("[Shuffled] The server has changed the order of the cards.");
+                }
                 group.MyShufflePos = null;
             }
             // Insert the cards

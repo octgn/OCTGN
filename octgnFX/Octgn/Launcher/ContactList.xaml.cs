@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Octgn.Controls;
@@ -33,24 +34,21 @@ namespace Octgn.Launcher
                                              {
                                                  stackPanel1.Children.Clear();
                                                  User[] flist = Program.LobbyClient.GetFriendsList();
-                                                 foreach (User u in flist)
+                                                 foreach (var f in flist.Select(u => new FriendListItem
+                                                                                         {
+                                                                                             ThisUser = u,
+                                                                                             HorizontalAlignment = HorizontalAlignment.Stretch
+                                                                                         }))
                                                  {
-                                                     var f = new FriendListItem
-                                                                 {
-                                                                     ThisUser = u,
-                                                                     HorizontalAlignment = HorizontalAlignment.Stretch
-                                                                 };
                                                      f.MouseDoubleClick += FMouseDoubleClick;
                                                      stackPanel1.Children.Add(f);
                                                  }
-                                                 foreach (ChatRoom cr in Program.LobbyClient.Chatting.Rooms)
+                                                 foreach (var gi in from cr in Program.LobbyClient.Chatting.Rooms where cr.Id == 0 || (cr.UserCount > 2) select new GroupChatListItem
+                                                                                                                                                                    {
+                                                                                                                                                                        ThisRoom = cr,
+                                                                                                                                                                        HorizontalAlignment = HorizontalAlignment.Stretch
+                                                                                                                                                                    })
                                                  {
-                                                     if (cr.Id != 0 && (cr.UserCount <= 2)) continue;
-                                                     var gi = new GroupChatListItem
-                                                                  {
-                                                                      ThisRoom = cr,
-                                                                      HorizontalAlignment = HorizontalAlignment.Stretch
-                                                                  };
                                                      gi.MouseDoubleClick += GiMouseDoubleClick;
                                                      stackPanel1.Children.Add(gi);
                                                  }
@@ -69,9 +67,8 @@ namespace Octgn.Launcher
         {
             var gi = sender as GroupChatListItem;
             if (gi == null) return;
-            foreach (var cw in Program.ChatWindows)
+            foreach (var cw in Program.ChatWindows.Where(cw => gi.ThisRoom.Id == cw.Id))
             {
-                if (gi.ThisRoom.Id != cw.Id) continue;
                 cw.Show();
                 return;
             }
@@ -86,16 +83,8 @@ namespace Octgn.Launcher
         {
             var fi = sender as FriendListItem;
             if (fi == null) return;
-            foreach (ChatWindow cw in Program.ChatWindows)
+            foreach (ChatWindow cw in from cw in Program.ChatWindows let rid = cw.Id let cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(rid) where cr != null where cr.Id != 0 where cr.UserCount == 2 && cr.ContainsUser(Program.LobbyClient.Me) && cr.ContainsUser(fi.ThisUser) where cw.Visibility != Visibility.Visible select cw)
             {
-                long rid = cw.Id;
-                ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(rid);
-                if (cr == null) continue;
-                if (cr.Id == 0)
-                    continue;
-                if (cr.UserCount != 2 || !cr.ContainsUser(Program.LobbyClient.Me) || !cr.ContainsUser(fi.ThisUser))
-                    continue;
-                if (cw.Visibility == Visibility.Visible) continue;
                 cw.Show();
                 return;
             }

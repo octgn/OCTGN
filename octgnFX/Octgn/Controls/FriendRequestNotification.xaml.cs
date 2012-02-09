@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Skylabs;
+using Skylabs.Lobby;
 
 namespace Octgn.Controls
 {

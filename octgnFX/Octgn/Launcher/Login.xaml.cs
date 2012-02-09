@@ -147,7 +147,7 @@ namespace Octgn.Launcher
                                                                 Content = "Ok"
                                                             };
 
-                                                b.Click += (o, e) => { pm.HideMessage(); };
+                                                b.Click += (o, e) => pm.HideMessage();
                                                 tb.Name = "tbCaptcha";
 
                                                 i.Source = new BitmapImage(new Uri(imageurl));
@@ -178,7 +178,7 @@ namespace Octgn.Launcher
             if (success == LoginResult.WaitingForResponse)
             {
                 _loginTimer =
-                    new Timer(o => { LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again."); },
+                    new Timer(o => LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again."),
                               null, 10000, 10000);
                 return;
             }

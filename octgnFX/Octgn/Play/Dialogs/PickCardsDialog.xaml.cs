@@ -13,6 +13,7 @@ using Octgn.Controls;
 using Octgn.Data;
 using Octgn.Definitions;
 using Octgn.Play.Gui;
+using Octgn.Utils;
 
 namespace Octgn.Play.Dialogs
 {
@@ -46,9 +47,8 @@ namespace Octgn.Play.Dialogs
         {
             StopListenningForFilterValueChanges();
 
-            foreach (Guid packId in packs)
+            foreach (Pack pack in packs.Select(Database.GetPackById))
             {
-                Pack pack = Database.GetPackById(packId);
                 if (pack == null)
                 {
                     Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
@@ -186,34 +186,20 @@ namespace Octgn.Play.Dialogs
                 return true;
             var card = (CardModel) c;
 
-            foreach (var restriction in _activeRestrictions.GroupBy(fv => fv.Property))
-            {
-                PropertyDef prop = restriction.Key;
-                object value = card.Properties[prop.Name];
-                bool isOk = false;
-                foreach (FilterValue filterValue in restriction)
-                {
-                    if (!filterValue.IsValueMatch(value)) continue;
-                    isOk = true;
-                    break;
-                }
-                if (!isOk) return false;
-            }
-            return true;
+            return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property) let prop = restriction.Key let value = card.Properties[prop.Name] select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
         private void CreateFilters()
         {
             Filters = new ObservableCollection<Filter>();
-            foreach (PropertyDef prop in Program.Game.Definition.CardDefinition.Properties.Values
-                .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)))
+            foreach (var filter in Program.Game.Definition.CardDefinition.Properties.Values
+                .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)).Select(prop => new Filter
+                                                                                                                                         {
+                                                                                                                                             Name = prop.Name,
+                                                                                                                                             Property = prop,
+                                                                                                                                             Values = new ObservableCollection<FilterValue>()
+                                                                                                                                         }))
             {
-                var filter = new Filter
-                                 {
-                                     Name = prop.Name,
-                                     Property = prop,
-                                     Values = new ObservableCollection<FilterValue>()
-                                 };
                 Filters.Add(filter);
             }
         }
@@ -284,11 +270,11 @@ namespace Octgn.Play.Dialogs
             foreach (FilterValue fv in Filters.SelectMany(f => f.Values))
             {
                 if (e.NewItems != null)
-                    foreach (CardModel card in e.NewItems)
-                        if (fv.IsMatch(card)) fv.Count++;
+                    foreach (CardModel card in e.NewItems.Cast<CardModel>().Where(card => fv.IsMatch(card)))
+                        fv.Count++;
                 if (e.OldItems != null)
-                    foreach (CardModel card in e.OldItems)
-                        if (fv.IsMatch(card)) fv.Count--;
+                    foreach (CardModel card in e.OldItems.Cast<CardModel>().Where(card => fv.IsMatch(card)))
+                        fv.Count--;
             }
         }
 

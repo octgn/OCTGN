@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace Octgn
+namespace Octgn.Utils
 {
     internal static class ImageUtils
     {

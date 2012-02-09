@@ -26,7 +26,7 @@ namespace Octgn.Definitions
                        {
                            Name = xml.Attr<string>("menu"),
                            Children = xml.Elements()
-                               .Select(x => BaseActionDef.LoadFromXml(x))
+                               .Select(BaseActionDef.LoadFromXml)
                                .ToArray()
                        };
         }

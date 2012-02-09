@@ -11,8 +11,9 @@ using System.Windows.Media.Animation;
 using Octgn.Controls;
 using Octgn.Data;
 using Octgn.Definitions;
+using Octgn.Utils;
 
-namespace Octgn.Script
+namespace Octgn.Scripting.Controls
 {
     public partial class CardDlg
     {

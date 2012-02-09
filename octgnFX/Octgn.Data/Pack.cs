@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace Octgn.Data
@@ -122,9 +123,8 @@ namespace Octgn.Data
             public PackContent GenerateContent(Pack pack)
             {
                 var result = new PackContent();
-                foreach (var def in this)
+                foreach (var defContent in this.Select(def => def.GetCards(pack)))
                 {
-                    var defContent = def.GetCards(pack);
                     result.Merge(defContent);
                 }
                 return result;

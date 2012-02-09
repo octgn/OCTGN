@@ -22,7 +22,7 @@ using NDesk.Options;
 namespace NDesk.Options
 #else
 
-namespace Mono.Options
+namespace Octgn.StandAloneServer
 #endif
 {
     internal static class StringCoda
@@ -711,7 +711,7 @@ namespace Mono.Options
             @"^(?<flag>--|-|/)(?<name>[^:=]+)((?<sep>[:=])(?<value>.*))?$");
 
         public OptionSet()
-            : this(delegate(string f) { return f; })
+            : this(f => f)
         {
         }
 
@@ -828,7 +828,7 @@ namespace Mono.Options
             if (action == null)
                 throw new ArgumentNullException("action");
             Option p = new ActionOption(prototype, description, 1,
-                                        delegate(OptionValueCollection v) { action(v[0]); });
+                                        v => action(v[0]));
             base.Add(p);
             return this;
         }
@@ -843,7 +843,7 @@ namespace Mono.Options
             if (action == null)
                 throw new ArgumentNullException("action");
             Option p = new ActionOption(prototype, description, 2,
-                                        delegate(OptionValueCollection v) { action(v[0], v[1]); });
+                                        v => action(v[0], v[1]));
             base.Add(p);
             return this;
         }

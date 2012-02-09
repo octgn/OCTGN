@@ -180,23 +180,22 @@ namespace Octgn.Data
                 if (isDbClosed)
                     game.OpenDatabase(true);
                 // Matches with actual cards in database
-                foreach (Section s in deck.Sections)
-                    foreach (Element e in s.Cards)
-                        try
-                        {
-                            // First try by id, if one is provided
-                            if (e.LoadedId != null) e.Card = game.GetCardById(new Guid(e.LoadedId));
-                            // If there's no id, or if it doesn't match a card in the database, try to fallback on the name
-                            if (e.Card == null) e.Card = game.GetCardByName(e.LoadedName);
-                            // If we still can't find the card, report an error
-                            if (e.Card == null)
-                                throw new UnknownCardException(e.LoadedId, e.LoadedName);
-                        }
-                        catch (FormatException)
-                        {
-                            throw new InvalidFileFormatException(string.Format("Could not parse card id {0}.",
-                                                                               e.LoadedId));
-                        }
+                foreach (Element e in deck.Sections.SelectMany(s => s.Cards))
+                    try
+                    {
+                        // First try by id, if one is provided
+                        if (e.LoadedId != null) e.Card = game.GetCardById(new Guid(e.LoadedId));
+                        // If there's no id, or if it doesn't match a card in the database, try to fallback on the name
+                        if (e.Card == null) e.Card = game.GetCardByName(e.LoadedName);
+                        // If we still can't find the card, report an error
+                        if (e.Card == null)
+                            throw new UnknownCardException(e.LoadedId, e.LoadedName);
+                    }
+                    catch (FormatException)
+                    {
+                        throw new InvalidFileFormatException(string.Format("Could not parse card id {0}.",
+                                                                           e.LoadedId));
+                    }
             }
             finally
             {

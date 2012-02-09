@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace ThreadingComponent
+namespace Octgn.Controls
 {
     /// <summary>
     ///   A circular type progress bar, that is simliar to popular web based progress bars

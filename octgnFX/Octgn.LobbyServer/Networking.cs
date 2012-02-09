@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using System.Linq;
+using System.Net.NetworkInformation;
 
 namespace Skylabs.LobbyServer
 {
@@ -14,14 +15,7 @@ namespace Skylabs.LobbyServer
             IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
             TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
 
-            foreach (TcpConnectionInformation tcpi in tcpConnInfoArray)
-            {
-                if (tcpi.LocalEndPoint.Port == port)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return tcpConnInfoArray.All(tcpi => tcpi.LocalEndPoint.Port != port);
         }
     }
 }

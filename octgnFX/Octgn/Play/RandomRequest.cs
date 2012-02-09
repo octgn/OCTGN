@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Octgn.Play
 {
@@ -50,14 +51,13 @@ namespace Octgn.Play
 
         public void AddAnswer2(Player lPlayer, ulong decrypted)
         {
-            foreach (RandomValue v in _values)
-                if (v.Player == lPlayer)
-                {
-                    v.Decrypted = decrypted;
-                    v.CheckConsistency();
-                    _phase2Count++;
-                    return;
-                }
+            foreach (RandomValue v in _values.Where(v => v.Player == lPlayer))
+            {
+                v.Decrypted = decrypted;
+                v.CheckConsistency();
+                _phase2Count++;
+                return;
+            }
             Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
                                      "[AddAnswer] Protocol inconsistency. One client is buggy or tries to cheat.");
         }
@@ -72,9 +72,7 @@ namespace Octgn.Play
             }
             else
             {
-                int xorResult = 0;
-                foreach (RandomValue value in _values)
-                    xorResult ^= (int) (value.Decrypted & 0xffffff);
+                int xorResult = _values.Aggregate(0, (current, value) => current ^ (int) (value.Decrypted & 0xffffff));
                 double relativeValue = xorResult/(double) 0xffffff;
                 Result = (int) Math.Truncate((_max - _min + 1)*relativeValue) + _min;
                 if (Result > _max) Result = _max; // this handles the extremely rare case where relativeValue == 1.0
