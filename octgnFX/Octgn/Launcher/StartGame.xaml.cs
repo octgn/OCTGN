@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using Octgn.Networking;
 using Octgn.Play;
 
 namespace Octgn.Launcher

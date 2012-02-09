@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Skylabs.Net
+namespace Skylabs.Lobby.Sockets
 {
     [Serializable]
     public class NameValuePair
@@ -62,10 +62,9 @@ namespace Skylabs.Net
             get { return (from t in _data where t.Key == key select t.Value).FirstOrDefault(); }
             set
             {
-                foreach (NameValuePair t in _data)
+                foreach (NameValuePair t in _data.Where(t => t.Key == key))
                 {
-                    if (t.Key == key)
-                        t.Value = value;
+                    t.Value = value;
                 }
             }
         }

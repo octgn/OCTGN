@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Skylabs.Net;
+using Skylabs.Lobby.Sockets;
 
 namespace Skylabs.Lobby
 {
@@ -39,12 +39,7 @@ namespace Skylabs.Lobby
         {
             lock (Rooms)
             {
-                foreach (ChatRoom r in Rooms)
-                {
-                    if (r.Id == rid)
-                        return r;
-                }
-                return null;
+                return Rooms.FirstOrDefault(r => r.Id == rid);
             }
         }
 

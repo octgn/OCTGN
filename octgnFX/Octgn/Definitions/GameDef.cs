@@ -62,9 +62,8 @@ namespace Octgn.Definitions
         internal void CreateFolders()
         {
             var folders = new[] {BasePath, DecksPath, SetsPath};
-            foreach (string path in folders)
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
+            foreach (string path in folders.Where(path => !Directory.Exists(path)))
+                Directory.CreateDirectory(path);
         }
 
         public bool CheckVersion()

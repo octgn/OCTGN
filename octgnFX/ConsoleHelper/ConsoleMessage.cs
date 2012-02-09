@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skylabs.ConsoleHelper
 {
@@ -66,9 +67,8 @@ namespace Skylabs.ConsoleHelper
                         var araw = args.Split(new[] {'-'}, StringSplitOptions.RemoveEmptyEntries);
                         if (araw.Length != 0)
                         {
-                            foreach (var a in araw)
+                            foreach (var temp in araw.Select(a => a.Trim()))
                             {
-                                var temp = a.Trim();
                                 ws = temp.IndexOf(' ');
                                 if (ws == -1)
                                 {

@@ -1,4 +1,4 @@
-﻿<Window x:Class="Octgn.Script.InputDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Window x:Class="Octgn.Scripting.Controls.InputDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource DialogWindow}" Width="300"
         SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
   <StackPanel Orientation="Vertical">

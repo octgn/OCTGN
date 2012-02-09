@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using Octgn.Data;
+using Octgn.Play.Gui.Adorners;
 
 namespace Octgn.Play.Gui
 {

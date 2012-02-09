@@ -375,19 +375,17 @@ namespace Octgn.Play.Gui
             passToItem.SubmenuOpened += delegate
                                             {
                                                 passToItem.Items.Clear();
-                                                foreach (Player player in Player.AllExceptGlobal)
-                                                    if (player != Player.LocalPlayer)
-                                                    {
-                                                        var playerItem = new MenuItem
-                                                                             {Header = player.Name, Tag = player};
-                                                        playerItem.Click += delegate(object sender, RoutedEventArgs e)
-                                                                                {
-                                                                                    var p =
-                                                                                        (Player) ((MenuItem) sender).Tag;
-                                                                                    group.PassControlTo(p);
-                                                                                };
-                                                        passToItem.Items.Add(playerItem);
-                                                    }
+                                                foreach (var playerItem in from player in Player.AllExceptGlobal where player != Player.LocalPlayer select new MenuItem
+                                                                                                                                                               {Header = player.Name, Tag = player})
+                                                {
+                                                    playerItem.Click += delegate(object sender, RoutedEventArgs e)
+                                                                            {
+                                                                                var p =
+                                                                                    (Player) ((MenuItem) sender).Tag;
+                                                                                @group.PassControlTo(p);
+                                                                            };
+                                                    passToItem.Items.Add(playerItem);
+                                                }
                                                 if (passToItem.HasItems)
                                                 {
                                                 }
@@ -408,21 +406,19 @@ namespace Octgn.Play.Gui
             passToItem.SubmenuOpened += delegate
                                             {
                                                 passToItem.Items.Clear();
-                                                foreach (Player player in Player.AllExceptGlobal)
-                                                    if (player != Player.LocalPlayer)
-                                                    {
-                                                        var playerItem = new MenuItem
-                                                                             {Header = player.Name, Tag = player};
-                                                        playerItem.Click += delegate(object sender, RoutedEventArgs e)
-                                                                                {
-                                                                                    var p =
-                                                                                        (Player) ((MenuItem) sender).Tag;
-                                                                                    Selection.Do(
-                                                                                        c => c.PassControlTo(p),
-                                                                                        ContextCard);
-                                                                                };
-                                                        passToItem.Items.Add(playerItem);
-                                                    }
+                                                foreach (var playerItem in from player in Player.AllExceptGlobal where player != Player.LocalPlayer select new MenuItem
+                                                                                                                                                               {Header = player.Name, Tag = player})
+                                                {
+                                                    playerItem.Click += delegate(object sender, RoutedEventArgs e)
+                                                                            {
+                                                                                var p =
+                                                                                    (Player) ((MenuItem) sender).Tag;
+                                                                                Selection.Do(
+                                                                                    c => c.PassControlTo(p),
+                                                                                    ContextCard);
+                                                                            };
+                                                    passToItem.Items.Add(playerItem);
+                                                }
                                                 if (passToItem.HasItems)
                                                 {
                                                 }
@@ -465,7 +461,7 @@ namespace Octgn.Play.Gui
             var actionGroupDef = baseAction as ActionGroupDef;
             if (actionGroupDef != null)
             {
-                foreach (MenuItem subItem in actionGroupDef.Children.Select(x => CreateGroupMenuItem(x)))
+                foreach (MenuItem subItem in actionGroupDef.Children.Select(CreateGroupMenuItem))
                     item.Items.Add(subItem);
                 return item;
             }
@@ -492,7 +488,7 @@ namespace Octgn.Play.Gui
             var actionGroupDef = baseAction as ActionGroupDef;
             if (actionGroupDef != null)
             {
-                foreach (MenuItem subItem in actionGroupDef.Children.Select(x => CreateCardMenuItem(x)))
+                foreach (MenuItem subItem in actionGroupDef.Children.Select(CreateCardMenuItem))
                     item.Items.Add(subItem);
                 return item;
             }

@@ -9,7 +9,6 @@ using Google.GData.Client;
 using Octgn.Data;
 using Skylabs.Lobby.Sockets;
 using Skylabs.Lobby.Threading;
-using Skylabs.Net;
 
 namespace Skylabs.Lobby
 {
@@ -243,12 +242,7 @@ namespace Skylabs.Lobby
         {
             lock (_friendLocker)
             {
-                foreach (User u in FriendList)
-                {
-                    if (u.Uid == uid)
-                        return u;
-                }
-                return null;
+                return FriendList.FirstOrDefault(u => u.Uid == uid);
             }
         }
 
@@ -413,12 +407,9 @@ namespace Skylabs.Lobby
                     lock (_noteLocker)
                     {
                         u = (User) sm.Data[0].Value;
-                        foreach (Notification n in Notifications)
+                        if (Notifications.OfType<FriendRequestNotification>().Any(fr => fr.User.Uid == u.Uid))
                         {
-                            var fr = n as FriendRequestNotification;
-                            if (fr == null) continue;
-                            if (fr.User.Uid == u.Uid)
-                                return;
+                            return;
                         }
                         Notifications.Add(new FriendRequestNotification(u, this, _nextNoteId));
                         _nextNoteId++;

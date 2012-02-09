@@ -21,6 +21,7 @@ using Octgn.Definitions;
 using Octgn.Play.Dialogs;
 using Octgn.Play.Gui;
 using Octgn.Scripting;
+using Octgn.Utils;
 
 namespace Octgn.Play
 {

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using Skylabs.Lobby;
-using Skylabs.Net;
+using Skylabs.Lobby.Sockets;
 
 namespace Skylabs.LobbyServer
 {
@@ -111,16 +112,7 @@ namespace Skylabs.LobbyServer
             lock (GamingLocker)
             {
                 Logger.L(MethodBase.GetCurrentMethod().Name, "GamingLocker");
-                var sendgames = new List<Lobby.HostedGame>();
-                foreach (var g in Games)
-                {
-                    var newhg =
-                        new Lobby.HostedGame(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(),
-                                             g.Value.Port, (string) g.Value.Name.Clone(),
-                                             !String.IsNullOrWhiteSpace(g.Value.Password), (User) g.Value.Hoster.Clone(),
-                                             g.Value.TimeStarted) {GameStatus = g.Value.Status};
-                    sendgames.Add(newhg);
-                }
+                var sendgames = Games.Select(g => new Lobby.HostedGame(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(), g.Value.Port, (string) g.Value.Name.Clone(), !String.IsNullOrWhiteSpace(g.Value.Password), (User) g.Value.Hoster.Clone(), g.Value.TimeStarted) {GameStatus = g.Value.Status}).ToList();
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "GamingLocker");
                 return sendgames;
             }

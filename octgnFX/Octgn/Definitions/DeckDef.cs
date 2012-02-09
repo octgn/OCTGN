@@ -16,7 +16,7 @@ namespace Octgn.Definitions
             return new DeckDef
                        {
                            Sections = xml.Elements(Defs.XmlnsOctgn + "section")
-                               .Select(x => DeckSectionDef.LoadFromXml(x))
+                               .Select(DeckSectionDef.LoadFromXml)
                                .ToDictionary(x => x.Name)
                        };
         }

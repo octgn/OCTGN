@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
 using System.Security;
@@ -53,9 +54,8 @@ namespace Octgn.Scripting
             ActionsScope = CreateScope();
             // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
             if (Program.Game == null || forTesting) return;
-            foreach (ScriptDef s in Program.Game.Definition.Scripts)
+            foreach (ScriptSource src in Program.Game.Definition.Scripts.Select(s => engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
             {
-                ScriptSource src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
                 src.Execute(ActionsScope);
             }
         }

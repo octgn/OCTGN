@@ -316,9 +316,7 @@ namespace Octgn.Play
 
         internal Card FindByCardIdentity(CardIdentity identity)
         {
-            foreach (Card c in cards)
-                if (c.Type == identity) return c;
-            return null;
+            return cards.FirstOrDefault(c => c.Type == identity);
         }
 
         private void ResetVisibility()

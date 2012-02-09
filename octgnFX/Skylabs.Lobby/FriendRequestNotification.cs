@@ -1,4 +1,5 @@
-﻿using Skylabs.Net;
+﻿using System.Linq;
+using Skylabs.Lobby.Sockets;
 
 namespace Skylabs.Lobby
 {
@@ -18,11 +19,8 @@ namespace Skylabs.Lobby
             sm.AddData("accept", true);
             LobbyClient.WriteMessage(sm);
             Notification[] ns = LobbyClient.GetNotificationList();
-            foreach (Notification t in ns)
+            foreach (Notification t in from t in ns let fr = t as FriendRequestNotification where fr != null where fr.User.Uid == User.Uid select t)
             {
-                var fr = t as FriendRequestNotification;
-                if (fr == null) continue;
-                if (fr.User.Uid != User.Uid) continue;
                 LobbyClient.RemoveNotification(t);
                 break;
             }
@@ -36,11 +34,8 @@ namespace Skylabs.Lobby
             sm.AddData("accept", false);
             LobbyClient.WriteMessage(sm);
             Notification[] ns = LobbyClient.GetNotificationList();
-            foreach (Notification t in ns)
+            foreach (Notification t in from t in ns let fr = t as FriendRequestNotification where fr != null where fr.User.Uid == User.Uid select t)
             {
-                var fr = t as FriendRequestNotification;
-                if (fr == null) continue;
-                if (fr.User.Uid != User.Uid) continue;
                 LobbyClient.RemoveNotification(t);
                 break;
             }

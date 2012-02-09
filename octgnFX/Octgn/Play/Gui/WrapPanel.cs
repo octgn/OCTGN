@@ -4,6 +4,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.Controls;
+using Octgn.Play.Gui.Adorners;
 
 namespace Octgn.Play.Gui
 {
