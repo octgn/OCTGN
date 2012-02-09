@@ -562,10 +562,7 @@ namespace Octgn.Scripting
                     }
                 }
             }
-            catch (Exception)
-            {
-                //placeholder for other sorts of exceptions
-            }
+            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
             finally
             {
                 // general cleanup

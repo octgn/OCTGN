@@ -187,10 +187,7 @@ namespace Skylabs.Lobby
 
         public IEnumerator<T> GetEnumerator()
         {
-            foreach (T item in _list.ToList())
-            {
-                yield return item;
-            }
+            return ((IEnumerable<T>) _list.ToList()).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

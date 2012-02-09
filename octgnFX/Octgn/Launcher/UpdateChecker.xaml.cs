@@ -111,10 +111,7 @@ namespace Octgn.Launcher
                 }
                 UpdateStatus("Checking for updates...");
             }
-            catch (Exception)
-            {
-                //System.Diagnostics.Debugger.Break();
-            }
+            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
             CheckForUpdates();
         }
 
@@ -184,9 +181,7 @@ namespace Octgn.Launcher
                     }
                 }
             }
-            catch
-            {
-            }
+            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
             return values;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Net;
 using MySql.Data.MySqlClient;
@@ -319,9 +320,7 @@ namespace Skylabs.LobbyServer
                         cmd.ExecuteNonQuery();
                     }
                 }
-                catch
-                {
-                }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
             }
         }
 
@@ -355,9 +354,7 @@ namespace Skylabs.LobbyServer
                         com.ExecuteNonQuery();
                     }
                 }
-                catch
-                {
-                }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
             }
         }
 
@@ -400,9 +397,7 @@ namespace Skylabs.LobbyServer
                         return ret;
                     }
                 }
-                catch
-                {
-                }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
                 return null;
             }
         }
@@ -440,9 +435,7 @@ namespace Skylabs.LobbyServer
                             com.ExecuteNonQuery();
                     }
                 }
-                catch
-                {
-                }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
             }
         }
 

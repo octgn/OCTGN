@@ -60,11 +60,7 @@ namespace Skylabs.Lobby.Threading
                         ca.Action.BeginInvoke(InvokeDone, null);
                     }
                 }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using Skylabs.Lobby;
 using Skylabs.Net;
@@ -95,9 +96,7 @@ namespace Skylabs.LobbyServer
                 {
                     Games[port].Status = Lobby.HostedGame.EHostedGame.GameInProgress;
                 }
-                catch
-                {
-                }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "GamingLocker");
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -465,9 +466,7 @@ namespace Octgn.Launcher
                 Program.Client.Connect();
                 Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception ex) { Debug.WriteLine(ex); if (Debugger.IsAttached) Debugger.Break(); }
         }
 
         private void BOnlineStatusClick(object sender, RoutedEventArgs e)

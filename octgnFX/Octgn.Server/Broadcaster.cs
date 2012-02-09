@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -539,11 +540,9 @@ namespace Octgn.Server
                         stream.Write(_xmlData, 0, _xmlLength);
                     stream.Flush();
                 }
-                catch
-                {
-                    // TODO notify disconnection
-                    //					Program.server.Disconnected(kvp.Key);
-                }
+                // TODO notify disconnection
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                //					Program.server.Disconnected(kvp.Key);
         }
 
         public void IsAlternateImage(int c, bool isaltertnate)

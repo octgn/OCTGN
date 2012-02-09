@@ -152,9 +152,7 @@ namespace Octgn.Networking
                         _tcp.GetStream().Close();
                         _tcp.Close();
                     }
-                    catch
-                    {
-                    }
+                    catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
                 // Set disposed to 0
                 _disposed = true;
             }

@@ -205,7 +205,7 @@ namespace Octgn.Server
                 var rpc = new XmlSenderStub(_sender, this);
                 rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.", ServerVersion.ToString(2)));
                 try { _sender.Client.Close(); _sender.Close(); }
-                catch { }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
                 return;
             }
 #endif
@@ -219,9 +219,7 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch
-                {
-                }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
                 return;
             }
             // Check if the client wants to play the correct game
@@ -234,9 +232,7 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch
-                {
-                }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
                 return;
             }
             // Check if the client's major game version matches ours
@@ -250,9 +246,7 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch
-                {
-                }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
                 return;
             }
             // Create the new endpoint
