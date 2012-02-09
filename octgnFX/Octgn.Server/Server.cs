@@ -51,8 +51,10 @@ namespace Octgn.Server
                 _tcp.Server.Close();
                 _tcp.Stop();
             }
-            catch
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             // Close all open connections
             while (true)
@@ -358,8 +360,10 @@ namespace Octgn.Server
                         Client.GetStream().Close();
                         Client.Close();
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Debug.WriteLine(e);
+                        if (Debugger.IsAttached) Debugger.Break();
                     }
                 // Remove it from the list
                 lock (_server._clients)

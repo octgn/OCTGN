@@ -11,8 +11,8 @@ namespace Octgn.Play.Gui
 
     internal abstract class DragOperation<T> : IDragOperation where T : UIElement
     {
-        private Point _oldPos;
         protected T Target;
+        private Point _oldPos;
 
         protected DragOperation(T target)
         {

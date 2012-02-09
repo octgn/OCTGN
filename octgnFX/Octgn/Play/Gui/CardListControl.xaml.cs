@@ -17,12 +17,11 @@ namespace Octgn.Play.Gui
             DependencyProperty.Register("IsAlwaysUp", typeof (bool), typeof (CardListControl),
                                         new UIPropertyMetadata(false));
 
-        private ListCollectionView _view;
-
         private ObservableCollection<Card> _cards;
 
         private Predicate<Card> _filterCards;
         private bool _sort;
+        private ListCollectionView _view;
         private WrapPanel _wrapPanel;
 
         public CardListControl()
@@ -70,7 +69,9 @@ namespace Octgn.Play.Gui
                 {
                     if (value)
                     {
-                        _view.CustomSort = IsAlwaysUp ? (IComparer) new Card.RealNameComparer() : new Card.NameComparer();
+                        _view.CustomSort = IsAlwaysUp
+                                               ? (IComparer) new Card.RealNameComparer()
+                                               : new Card.NameComparer();
                         if (_view.GroupDescriptions != null)
                             _view.GroupDescriptions.Add(new PropertyGroupDescription(IsAlwaysUp ? "RealName" : "Name"));
                     }
@@ -277,10 +278,10 @@ namespace Octgn.Play.Gui
         {
             _scrollAnimation = new DoubleAnimation {Duration = SmoothScrollDuration, DecelerationRatio = 0.5};
             _scrollAnimation.Completed += delegate
-                                             {
-                                                 _scrollAnimation = null;
-                                                 _scrollDirection = 0;
-                                             };
+                                              {
+                                                  _scrollAnimation = null;
+                                                  _scrollDirection = 0;
+                                              };
         }
 
         #endregion

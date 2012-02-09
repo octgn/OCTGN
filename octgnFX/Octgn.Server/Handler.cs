@@ -13,7 +13,7 @@ namespace Octgn.Server
         #region Statics
 
         private const string ServerName = "OCTGN.NET";
-        private static Version ServerVersion = GetServerVersion(); //unused
+        private static readonly Version ServerVersion = GetServerVersion(); //unused
 
         private static Version GetServerVersion()
         {
@@ -202,10 +202,10 @@ namespace Octgn.Server
 #if !DEBUG
             if(clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor)
             {
-                XmlSenderStub rpc = new XmlSenderStub(_sender, this);
+                var rpc = new XmlSenderStub(_sender, this);
                 rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.", ServerVersion.ToString(2)));
                 try { _sender.Client.Close(); _sender.Close(); }
-                catch { }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
                 return;
             }
 #endif
@@ -219,8 +219,10 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
                 return;
             }
@@ -234,8 +236,10 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
                 return;
             }
@@ -250,8 +254,10 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
                 return;
             }

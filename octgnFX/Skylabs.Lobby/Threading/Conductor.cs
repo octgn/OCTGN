@@ -63,10 +63,7 @@ namespace Skylabs.Lobby.Threading
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
-                    if (Debugger.IsAttached)
-                    {
-                        Debugger.Break();
-                    }
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
             }
         }

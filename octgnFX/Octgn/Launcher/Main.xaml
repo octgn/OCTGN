@@ -100,8 +100,8 @@
       <ribbon:RibbonTab Header="Options" Foreground="Black">
         <ribbon:RibbonGroup>
           <ribbon:RibbonCheckBox x:Name="bHideLoginNotifications" Label="Hide user login notifications"
-                                 IsChecked="{Binding ElementName=Window, Path=IsHideLoginNotificationsChecked}"
-                                 Checked="BHideLoginNotificationsChecked" Unchecked="BHideLoginNotificationsUnchecked" />
+                                 IsChecked="{Binding ElementName=Window, Path=IsHideLoginNotificationsChecked}" Checked="BHideLoginNotificationsChecked"
+                                 Unchecked="BHideLoginNotificationsUnchecked" />
         </ribbon:RibbonGroup>
       </ribbon:RibbonTab>
       <ribbon:RibbonTab Header="!" x:Name="NotificationTab"></ribbon:RibbonTab>

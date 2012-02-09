@@ -20,9 +20,9 @@ namespace Octgn.Play.Gui
     {
         private readonly int _defaultHeight;
         private readonly int _defaultWidth;
+        protected bool IsCardSizeValid;
         private Size _cardSize;
         private IDragOperation _dragOperation;
-        protected bool IsCardSizeValid;
 
         public TableControl()
         {
@@ -387,12 +387,12 @@ namespace Octgn.Play.Gui
             // Bug fix: if done immediately, the layout is slightly incorrect (e.g. in the case of mouse wheel zoom).
             // so we dispatch the update until all transforms are updated.         
             _updateYCenterOperation = Dispatcher.BeginInvoke(new Action(delegate
-                                                                           {
-                                                                               Point pt =
-                                                                                   cardsView.TransformToAncestor(this).
-                                                                                       Transform(new Point());
-                                                                               YCenterOffset = pt.Y;
-                                                                           }), DispatcherPriority.ContextIdle);
+                                                                            {
+                                                                                Point pt =
+                                                                                    cardsView.TransformToAncestor(this).
+                                                                                        Transform(new Point());
+                                                                                YCenterOffset = pt.Y;
+                                                                            }), DispatcherPriority.ContextIdle);
         }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
