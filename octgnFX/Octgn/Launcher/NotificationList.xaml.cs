@@ -18,8 +18,12 @@ namespace Octgn.Launcher
         private void ReloadList()
         {
             Notification[] nlist = Program.LobbyClient.GetNotificationList();
-            foreach (var fi in from n in nlist where n.GetType() == typeof (FriendRequestNotification) select n as FriendRequestNotification into fr select new Controls.FriendRequestNotification
-                                                                                                                                                                {Notification = fr, HorizontalAlignment = HorizontalAlignment.Stretch})
+            foreach (var fi in from n in nlist
+                               where n.GetType() == typeof (FriendRequestNotification)
+                               select n as FriendRequestNotification
+                               into fr select new Controls.FriendRequestNotification
+                                                  {Notification = fr, HorizontalAlignment = HorizontalAlignment.Stretch}
+                )
             {
                 fi.OnDismiss += NotificationDismissed;
                 stackPanel1.Children.Add(fi);

@@ -654,7 +654,9 @@ namespace Octgn.Data
             }
 
             var i = 0;
-            foreach (DataRow[] props in from DataRow card in cards.Rows select customProperties.Select("card_real_id = " + card["real_id"]))
+            foreach (
+                DataRow[] props in
+                    from DataRow card in cards.Rows select customProperties.Select("card_real_id = " + card["real_id"]))
             {
                 foreach (var prop in props)
                 {

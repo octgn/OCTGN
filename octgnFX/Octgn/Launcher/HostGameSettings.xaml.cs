@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Navigation;
 using Octgn.Definitions;
 using Octgn.Networking;
-using Skylabs.Lobby.Sockets;
+using Skylabs.Net;
 
 namespace Octgn.Launcher
 {
@@ -57,8 +57,8 @@ namespace Octgn.Launcher
             var ad = new IPAddress[1];
             IPAddress ip = IPAddress.Parse("127.0.0.1");
 #else
-                var ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
-                IPAddress ip = ad[0];
+            var ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
+            IPAddress ip = ad[0];
 #endif
 
             if (ad.Length <= 0) return;

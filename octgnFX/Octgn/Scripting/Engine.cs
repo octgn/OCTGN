@@ -54,7 +54,10 @@ namespace Octgn.Scripting
             ActionsScope = CreateScope();
             // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
             if (Program.Game == null || forTesting) return;
-            foreach (ScriptSource src in Program.Game.Definition.Scripts.Select(s => engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
+            foreach (
+                ScriptSource src in
+                    Program.Game.Definition.Scripts.Select(
+                        s => engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
             {
                 src.Execute(ActionsScope);
             }

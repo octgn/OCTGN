@@ -186,19 +186,23 @@ namespace Octgn.Play.Dialogs
                 return true;
             var card = (CardModel) c;
 
-            return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property) let prop = restriction.Key let value = card.Properties[prop.Name] select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
+            return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
+                    let prop = restriction.Key
+                    let value = card.Properties[prop.Name]
+                    select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
         private void CreateFilters()
         {
             Filters = new ObservableCollection<Filter>();
             foreach (var filter in Program.Game.Definition.CardDefinition.Properties.Values
-                .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)).Select(prop => new Filter
-                                                                                                                                         {
-                                                                                                                                             Name = prop.Name,
-                                                                                                                                             Property = prop,
-                                                                                                                                             Values = new ObservableCollection<FilterValue>()
-                                                                                                                                         }))
+                .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)).
+                Select(prop => new Filter
+                                   {
+                                       Name = prop.Name,
+                                       Property = prop,
+                                       Values = new ObservableCollection<FilterValue>()
+                                   }))
             {
                 Filters.Add(filter);
             }
