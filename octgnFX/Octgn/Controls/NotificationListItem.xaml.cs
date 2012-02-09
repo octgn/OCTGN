@@ -24,12 +24,12 @@ namespace Octgn.Controls
 
         public event MouseEventHandler OnClose;
 
-        private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        private void UserControlMouseDown(object sender, MouseButtonEventArgs e)
         {
             Focus();
         }
 
-        private void imgDismiss_MouseUp(object sender, MouseButtonEventArgs e)
+        private void ImgDismissMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (OnClose != null)
                 OnClose.Invoke(this, new MouseEventArgs(e.MouseDevice, e.Timestamp));

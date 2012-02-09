@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Octgn.Definitions;
 
 //using Octgn.Play.GUI;
@@ -52,13 +53,11 @@ namespace Octgn.Play
                 WantToShuffle = Locked = true;
                 bool ready = true;
                 // Unalias only if necessary
-                foreach (Card c in cards)
-                    if (c.Type.alias)
-                    {
-                        Program.Client.Rpc.UnaliasGrp(this);
-                        ready = false;
-                        break;
-                    }
+                if (cards.Any(c => c.Type.Alias))
+                {
+                    Program.Client.Rpc.UnaliasGrp(this);
+                    ready = false;
+                }
                 if (ready)
                     DoShuffle();
                 return true;
@@ -72,8 +71,8 @@ namespace Octgn.Play
         {
             // Set internal fields
             PreparingShuffle = false;
-            filledShuffleSlots = 0;
-            hasReceivedFirstShuffledMessage = false;
+            FilledShuffleSlots = 0;
+            HasReceivedFirstShuffledMessage = false;
             // Create aliases
             var cis = new CardIdentity[cards.Count];
             for (int i = 0; i < cards.Count; i++)
@@ -81,14 +80,14 @@ namespace Octgn.Play
                 if (cards[i].IsVisibleToAll())
                 {
                     cis[i] = cards[i].Type;
-                    cis[i].visible = true;
+                    cis[i].Visible = true;
                 }
                 else
                 {
                     CardIdentity ci = cis[i] = new CardIdentity(Program.Game.GenerateCardId());
-                    ci.alias = ci.mySecret = true;
-                    ci.key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) cards[i].Type.id;
-                    ci.visible = false;
+                    ci.Alias = ci.MySecret = true;
+                    ci.Key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) cards[i].Type.Id;
+                    ci.Visible = false;
                 }
             }
             // Shuffle
@@ -98,8 +97,8 @@ namespace Octgn.Play
             for (int i = cards.Count - 1; i >= 0; i--)
             {
                 int r = rnd.Next(i);
-                cardIds[i] = cis[r].id;
-                cardAliases[i] = cis[r].visible ? ulong.MaxValue : Crypto.ModExp(cis[r].key);
+                cardIds[i] = cis[r].Id;
+                cardAliases[i] = cis[r].Visible ? ulong.MaxValue : Crypto.ModExp(cis[r].Key);
                 cis[r] = cis[i];
             }
             // Send the request

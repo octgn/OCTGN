@@ -79,9 +79,7 @@ namespace Skylabs.LobbyServer
                     var sm = new SocketMessage("userjoinedchatroom");
                     sm.AddData("roomid", Id);
                     sm.AddData("user", u);
-                    var ulist = new List<User>();
-                    foreach (var p in _users)
-                        ulist.Add(p.Item2);
+                    var ulist = _users.Select(p => p.Item2).ToList();
                     var ou = _users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
                     if (ou == null)
                     {

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 
-namespace Octgn.Play.Gui
+namespace Octgn.Play.Gui.DragOperations
 {
     internal interface IDragOperation
     {
@@ -11,31 +11,32 @@ namespace Octgn.Play.Gui
 
     internal abstract class DragOperation<T> : IDragOperation where T : UIElement
     {
-        private Point oldPos;
-        protected T target;
+        protected T Target;
+        private Point _oldPos;
 
         protected DragOperation(T target)
         {
-            this.target = target;
-            oldPos = Mouse.GetPosition(target);
+            Target = target;
+            _oldPos = Mouse.GetPosition(target);
             target.CaptureMouse();
-            StartDragCore(oldPos);
+            // TODO: Calling a virtual constructure in a future object, bad news
+            StartDragCore(_oldPos);
         }
 
         #region IDragOperation Members
 
         public void Dragging(MouseEventArgs e)
         {
-            Point newPos = e.GetPosition(target);
-            Vector delta = newPos - oldPos;
-            oldPos = newPos;
+            Point newPos = e.GetPosition(Target);
+            Vector delta = newPos - _oldPos;
+            _oldPos = newPos;
             DraggingCore(newPos, delta);
             e.Handled = true;
         }
 
         public void EndDrag()
         {
-            target.ReleaseMouseCapture();
+            Target.ReleaseMouseCapture();
             EndDragCore();
         }
 

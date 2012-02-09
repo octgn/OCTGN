@@ -34,7 +34,7 @@
         <TextBlock Margin="16,8,16,8" x:Name="descriptionLabel" Grid.ColumnSpan="2" />
 
         <Grid x:Name="options" Grid.Row="1" Margin="32,0,8,0" Grid.ColumnSpan="2">
-          <CheckBox x:Name="cbTwoSided" Click="CheckBox_Click"
+          <CheckBox x:Name="cbTwoSided" Click="CheckBoxClick"
                     ToolTip="Simulates a real table setup, with players facing each other." IsChecked="True">
             <!-- Textblock is required to inherit the panel text style -->
             <TextBlock Text="Use a two-sided table" VerticalAlignment="Center" Padding="0,0,4,0" />

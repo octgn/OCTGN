@@ -32,13 +32,11 @@ namespace Skylabs.ConsoleHelper
 
         public static void WriteCt()
         {
-            if (_lastEvent != EnConsoleEvent.ComText)
-            {
-                //Console.ForegroundColor = CommandTextColor;
-                Console.Out.Write(CommandText);
-                _lastEvent = EnConsoleEvent.ComText;
-                //Console.ForegroundColor = ConsoleReader.InputColor;
-            }
+            if (_lastEvent == EnConsoleEvent.ComText) return;
+            //Console.ForegroundColor = CommandTextColor;
+            Console.Out.Write(CommandText);
+            _lastEvent = EnConsoleEvent.ComText;
+            //Console.ForegroundColor = ConsoleReader.InputColor;
         }
 
         public static void WriteLine(String st, Boolean writeComText)

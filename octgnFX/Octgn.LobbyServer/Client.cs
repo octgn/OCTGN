@@ -153,7 +153,7 @@ namespace Skylabs.LobbyServer
                     }
                 case "end":
                     {
-                        LazyAsync.Invoke(() => Stop());
+                        LazyAsync.Invoke(Stop);
                         break;
                     }
                 case "displayname":
@@ -341,7 +341,7 @@ namespace Skylabs.LobbyServer
                 Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
                 if (!Me.Equals(requestee))
                     Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
-                LazyAsync.Invoke(() => SendFriendsList());
+                LazyAsync.Invoke(SendFriendsList);
             }
         }
 
@@ -353,7 +353,7 @@ namespace Skylabs.LobbyServer
                 _friends.Add(friend);
                 if (LoggedIn)
                 {
-                    LazyAsync.Invoke(() => SendFriendsList());
+                    LazyAsync.Invoke(SendFriendsList);
                 }
             }
         }
@@ -440,7 +440,7 @@ namespace Skylabs.LobbyServer
                     if (banned == -1)
                     {
                         Trace.WriteLine(String.Format("Client[{0}]:Starting to Stop and remove by uid={1}", Id, u.Uid));
-                        var res = Server.StopAndRemoveAllByUID(this, u.Uid);
+                        var res = Server.StopAndRemoveAllByUid(this, u.Uid);
                         Trace.WriteLine(String.Format("Client[{0}]:Done Stop and remove by uid={1}", Id, u.Uid));
                         Me = u;
                         if (status == UserStatus.Unknown || status == UserStatus.Offline)
@@ -456,15 +456,15 @@ namespace Skylabs.LobbyServer
                         _friends = Cup.GetFriendsList(Me.Uid);
 
 
-                        LazyAsync.Invoke(() => SendFriendsList());
-                        LazyAsync.Invoke(() => SendFriendRequests());
-                        LazyAsync.Invoke(() => SendHostedGameList());
+                        LazyAsync.Invoke(SendFriendsList);
+                        LazyAsync.Invoke(SendFriendRequests);
+                        LazyAsync.Invoke(SendHostedGameList);
                         return;
                     }
                     sm = new SocketMessage("banned");
                     sm.AddData("end", banned);
                     _socket.WriteMessage(sm);
-                    LazyAsync.Invoke(() => Stop());
+                    LazyAsync.Invoke(Stop);
                     LoggedIn = false;
                     return;
                 }

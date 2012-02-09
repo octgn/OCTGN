@@ -50,13 +50,13 @@ namespace Octgn.Play
                                                                                                                0, 8))
                                                                            };
 
+        private readonly Card _card;
         private readonly MarkerModel _model;
-        private readonly Card card;
         private ushort _count = 1;
 
         public Marker(Card card, MarkerModel model)
         {
-            this.card = card;
+            _card = card;
             _model = model;
         }
 
@@ -77,9 +77,9 @@ namespace Octgn.Play
             set
             {
                 if (value < _count)
-                    Program.Client.Rpc.RemoveMarkerReq(card, Model.id, Model.Name, (ushort) (_count - value));
+                    Program.Client.Rpc.RemoveMarkerReq(_card, Model.Id, Model.Name, (ushort) (_count - value));
                 else if (value > _count)
-                    Program.Client.Rpc.AddMarkerReq(card, Model.id, Model.Name, (ushort) (value - _count));
+                    Program.Client.Rpc.AddMarkerReq(_card, Model.Id, Model.Name, (ushort) (value - _count));
                 else
                     return;
                 SetCount(value);
@@ -93,7 +93,7 @@ namespace Octgn.Play
 
         public Card Card
         {
-            get { return card; }
+            get { return _card; }
         }
 
         #region INotifyPropertyChanged Members
@@ -110,7 +110,7 @@ namespace Octgn.Play
         internal void SetCount(ushort value)
         {
             if (value == 0)
-                card.RemoveMarker(this);
+                _card.RemoveMarker(this);
             else if (value != _count)
             {
                 _count = value;

@@ -1,4 +1,5 @@
-﻿using Skylabs.Net;
+﻿using System.Linq;
+using Skylabs.Net;
 
 namespace Skylabs.Lobby
 {
@@ -18,17 +19,16 @@ namespace Skylabs.Lobby
             sm.AddData("accept", true);
             LobbyClient.WriteMessage(sm);
             Notification[] ns = LobbyClient.GetNotificationList();
-            for (int i = 0; i < ns.Length; i++)
+            foreach (
+                Notification t in
+                    from t in ns
+                    let fr = t as FriendRequestNotification
+                    where fr != null
+                    where fr.User.Uid == User.Uid
+                    select t)
             {
-                var fr = ns[i] as FriendRequestNotification;
-                if (fr != null)
-                {
-                    if (fr.User.Uid == User.Uid)
-                    {
-                        LobbyClient.RemoveNotification(ns[i]);
-                        break;
-                    }
-                }
+                LobbyClient.RemoveNotification(t);
+                break;
             }
             Dismissed = true;
         }
@@ -40,17 +40,16 @@ namespace Skylabs.Lobby
             sm.AddData("accept", false);
             LobbyClient.WriteMessage(sm);
             Notification[] ns = LobbyClient.GetNotificationList();
-            for (int i = 0; i < ns.Length; i++)
+            foreach (
+                Notification t in
+                    from t in ns
+                    let fr = t as FriendRequestNotification
+                    where fr != null
+                    where fr.User.Uid == User.Uid
+                    select t)
             {
-                var fr = ns[i] as FriendRequestNotification;
-                if (fr != null)
-                {
-                    if (fr.User.Uid == User.Uid)
-                    {
-                        LobbyClient.RemoveNotification(ns[i]);
-                        break;
-                    }
-                }
+                LobbyClient.RemoveNotification(t);
+                break;
             }
             Dismissed = true;
         }

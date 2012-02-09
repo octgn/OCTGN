@@ -32,7 +32,7 @@ namespace Octgn.Launcher
                                                   }));
         }
 
-        private void OKClicked(object sender, RoutedEventArgs e)
+        private void OkClicked(object sender, RoutedEventArgs e)
         {
             Close();
         }

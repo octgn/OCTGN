@@ -12,7 +12,7 @@ namespace Octgn.Play
     {
         #region Static members
 
-        // Contains all players in this game
+        // Contains all players in this game (TODO: Rename to All, then cleanup all the dependancies)
         private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
         public static Player LocalPlayer;
         // May be null if there's no global lPlayer in the game definition
@@ -39,9 +39,7 @@ namespace Octgn.Play
         // Find a lPlayer with his id
         internal static Player Find(byte id)
         {
-            foreach (Player p in all)
-                if (p.Id == id) return p;
-            return null;
+            return all.FirstOrDefault(p => p.Id == id);
         }
 
         // Resets the lPlayer list
@@ -61,28 +59,28 @@ namespace Octgn.Play
         #region Public fields and properties
 
         internal readonly ulong PublicKey; // Public cryptographic key
-        private readonly Counter[] counters; // Counters this lPlayer owns
+        private readonly Counter[] _counters; // Counters this lPlayer owns
 
-        private readonly Group[] groups; // Groups this lPlayer owns
-        private readonly Hand hand; // Hand of this lPlayer (may be null)
-        private readonly Brush solidBrush;
-        private readonly Brush transparentBrush;
+        private readonly Group[] _groups; // Groups this lPlayer owns
+        private readonly Hand _hand; // Hand of this lPlayer (may be null)
+        private readonly Brush _solidBrush;
+        private readonly Brush _transparentBrush;
         private bool _invertedTable;
-        private string name;
+        private string _name;
 
         public Counter[] Counters
         {
-            get { return counters; }
+            get { return _counters; }
         }
 
         public Group[] IndexedGroups
         {
-            get { return groups; }
+            get { return _groups; }
         }
 
         public IEnumerable<Group> Groups
         {
-            get { return groups.Where(g => g != null); }
+            get { return _groups.Where(g => g != null); }
         }
 
         public Dictionary<string, int> Variables { get; private set; }
@@ -90,7 +88,7 @@ namespace Octgn.Play
 
         public Hand Hand
         {
-            get { return hand; }
+            get { return _hand; }
         }
 
         public byte Id // Identifier
@@ -98,14 +96,12 @@ namespace Octgn.Play
 
         public string Name // Nickname
         {
-            get { return name; }
+            get { return _name; }
             set
             {
-                if (name != value)
-                {
-                    name = value;
-                    OnPropertyChanged("Name");
-                }
+                if (_name == value) return;
+                _name = value;
+                OnPropertyChanged("Name");
             }
         }
 
@@ -120,14 +116,12 @@ namespace Octgn.Play
             get { return _invertedTable; }
             set
             {
-                if (_invertedTable != value)
-                {
-                    _invertedTable = value;
-                    OnPropertyChanged("InvertedTable");
+                if (_invertedTable == value) return;
+                _invertedTable = value;
+                OnPropertyChanged("InvertedTable");
 
-                    if (Program.IsHost) // If we are the host, we are setting this option for everyone
-                        Program.Client.Rpc.PlayerSettings(this, value);
-                }
+                if (Program.IsHost) // If we are the host, we are setting this option for everyone
+                    Program.Client.Rpc.PlayerSettings(this, value);
             }
         }
 
@@ -140,15 +134,15 @@ namespace Octgn.Play
         // Work around a WPF binding bug ? Borders don't seem to bind correctly to Color!
         public Brush Brush
         {
-            get { return solidBrush; }
+            get { return _solidBrush; }
         }
 
         public Brush TransparentBrush
         {
-            get { return transparentBrush; }
+            get { return _transparentBrush; }
         }
 
-        private Color determinePlayerColor(int idx)
+        private static Color DeterminePlayerColor(int idx)
         {
             // Create the Player's Color
             Color[] baseColors = {
@@ -189,23 +183,22 @@ namespace Octgn.Play
         internal Player(GameDef g, string name, byte id, ulong pkey)
         {
             // Init fields
-            this.name = name;
+            _name = name;
             Id = id;
             PublicKey = pkey;
             // Register the lPlayer
             all.Add(this);
             OnPropertyChanged("Color");
             //Create the color brushes           
-            Color = determinePlayerColor(Id);
-            solidBrush = new SolidColorBrush(Color);
-            solidBrush.Freeze();
-            transparentBrush = new SolidColorBrush(Color);
-            transparentBrush.Opacity = 0.4;
-            transparentBrush.Freeze();
+            Color = DeterminePlayerColor(Id);
+            _solidBrush = new SolidColorBrush(Color);
+            _solidBrush.Freeze();
+            _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
+            _transparentBrush.Freeze();
             OnPropertyChanged("Brush");
             OnPropertyChanged("TransparentBrush");
             // Create counters
-            counters = new Counter[g.PlayerDefinition.Counters != null ? g.PlayerDefinition.Counters.Length : 0];
+            _counters = new Counter[g.PlayerDefinition.Counters != null ? g.PlayerDefinition.Counters.Length : 0];
             for (int i = 0; i < Counters.Length; i++)
                 if (g.PlayerDefinition.Counters != null)
                     Counters[i] = new Counter(this, g.PlayerDefinition.Counters[i]);
@@ -219,12 +212,12 @@ namespace Octgn.Play
                 GlobalVariables.Add(varD.Name, varD.Value);
             // Create a hand, if any
             if (g.PlayerDefinition.Hand != null)
-                hand = new Hand(this, g.PlayerDefinition.Hand);
+                _hand = new Hand(this, g.PlayerDefinition.Hand);
             // Create groups
-            groups = new Group[g.PlayerDefinition.Groups != null ? g.PlayerDefinition.Groups.Length + 1 : 1];
-            groups[0] = hand;
+            _groups = new Group[g.PlayerDefinition.Groups != null ? g.PlayerDefinition.Groups.Length + 1 : 1];
+            _groups[0] = _hand;
             for (int i = 1; i < IndexedGroups.Length; i++)
-                if (g.PlayerDefinition.Groups != null) groups[i] = new Pile(this, g.PlayerDefinition.Groups[i - 1]);
+                if (g.PlayerDefinition.Groups != null) _groups[i] = new Pile(this, g.PlayerDefinition.Groups[i - 1]);
             // Raise the event
             if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
         }
@@ -236,7 +229,7 @@ namespace Octgn.Play
             // Register the lPlayer
             all.Add(this);
             // Init fields
-            name = "Global";
+            _name = "Global";
             Id = 0;
             PublicKey = 0;
             if (GlobalVariables == null)
@@ -247,13 +240,14 @@ namespace Octgn.Play
                     GlobalVariables.Add(varD.Name, varD.Value);
             }
             // Create counters
-            counters = new Counter[globalDef.Counters != null ? globalDef.Counters.Length : 0];
+            _counters = new Counter[globalDef.Counters != null ? globalDef.Counters.Length : 0];
             for (int i = 0; i < Counters.Length; i++)
                 if (globalDef.Counters != null) Counters[i] = new Counter(this, globalDef.Counters[i]);
             // Create global's lPlayer groups
-            groups = new Pile[globalDef.Groups != null ? g.GlobalDefinition.Groups.Length + 1 : 0];
+            // TODO: This could fail with a run-time exception on write, make it safe
+            _groups = new Pile[globalDef.Groups != null ? g.GlobalDefinition.Groups.Length + 1 : 0];
             for (int i = 1; i < IndexedGroups.Length; i++)
-                if (globalDef.Groups != null) groups[i] = new Pile(this, globalDef.Groups[i - 1]);
+                if (globalDef.Groups != null) _groups[i] = new Pile(this, globalDef.Groups[i - 1]);
         }
 
         // Remove the lPlayer from the game
@@ -267,7 +261,7 @@ namespace Octgn.Play
 
         public override string ToString()
         {
-            return name;
+            return _name;
         }
 
         #endregion

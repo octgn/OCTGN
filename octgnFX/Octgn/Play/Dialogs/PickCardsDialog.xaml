@@ -211,8 +211,8 @@ Template="{StaticResource ExpanderButton}" />
         </Border.Effect>
         <StackPanel Margin="5">
           <TextBlock Text="How many?" Foreground="#333333" FontWeight="Bold" />
-          <TextBox x:Name="quantityBox" Text="1" Margin="0,4,0,0" PreviewKeyDown="QuantityBox_PreviewKeyDown"
-                   LostFocus="QuantityBox_LostFocus" />
+          <TextBox x:Name="quantityBox" Text="1" Margin="0,4,0,0" PreviewKeyDown="QuantityBoxPreviewKeyDown"
+                   LostFocus="QuantityBoxLostFocus" />
         </StackPanel>
       </Border>
     </Popup>

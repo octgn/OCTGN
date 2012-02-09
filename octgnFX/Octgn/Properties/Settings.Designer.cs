@@ -94,5 +94,17 @@ namespace Octgn.Properties {
                 this["Password"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Nickname")]
+        public string NickName {
+            get {
+                return ((string)(this["NickName"]));
+            }
+            set {
+                this["NickName"] = value;
+            }
+        }
     }
 }

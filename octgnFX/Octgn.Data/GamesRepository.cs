@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
@@ -14,10 +15,10 @@ namespace Octgn.Data
     public class GamesRepository
     {
         public static readonly string BasePath;
-        private readonly string masterDbPath;
-        private ObservableCollection<Game> allCachedGames;
-        private ObservableCollection<Game> cachedGames;
-        private List<string> missingFiles;
+        private readonly string _masterDbPath;
+        private ObservableCollection<Game> _allCachedGames;
+        private ObservableCollection<Game> _cachedGames;
+        private List<string> _missingFiles;
 
         static GamesRepository()
         {
@@ -29,9 +30,9 @@ namespace Octgn.Data
 
         public GamesRepository()
         {
-            masterDbPath = Path.Combine(BasePath, "Database", "master.db3");
+            _masterDbPath = Path.Combine(BasePath, "Database", "master.db3");
             // Create the master base if needed
-            if (!File.Exists(masterDbPath))
+            if (!File.Exists(_masterDbPath))
                 CreateMasterDatabase();
         }
 
@@ -39,9 +40,9 @@ namespace Octgn.Data
         {
             get
             {
-                if (cachedGames == null)
+                if (_cachedGames == null)
                     GetGamesList();
-                return cachedGames;
+                return _cachedGames;
             }
         }
 
@@ -52,9 +53,9 @@ namespace Octgn.Data
         {
             get
             {
-                if (allCachedGames == null)
+                if (_allCachedGames == null)
                     GetGamesList();
-                return allCachedGames;
+                return _allCachedGames;
             }
         }
 
@@ -62,9 +63,9 @@ namespace Octgn.Data
         {
             get
             {
-                if (missingFiles == null)
+                if (_missingFiles == null)
                     GetGamesList();
-                return missingFiles;
+                return _missingFiles;
             }
         }
 
@@ -75,12 +76,12 @@ namespace Octgn.Data
             SQLiteTransaction trans = null;
             try
             {
-                using (var sc = new SQLiteConnection("URI=file:" + masterDbPath))
+                using (var sc = new SQLiteConnection("URI=file:" + _masterDbPath))
                 {
                     sc.Open();
                     var sb = new StringBuilder();
                     trans = sc.BeginTransaction();
-                    using (SQLiteCommand com = sc.CreateCommand())
+                    using (var com = sc.CreateCommand())
                     {
                         //Build Query
                         sb.Append("INSERT OR REPLACE INTO [games](");
@@ -120,10 +121,10 @@ namespace Octgn.Data
                     sb.Append(
                         "@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
                     sb.Append(");\n");
-                    string command = sb.ToString();
-                    foreach (PropertyDef pair in properties)
+                    var command = sb.ToString();
+                    foreach (var pair in properties)
                     {
-                        using (SQLiteCommand com = sc.CreateCommand())
+                        using (var com = sc.CreateCommand())
                         {
                             com.CommandText = command;
                             com.Parameters.AddWithValue("@card_id", "");
@@ -132,12 +133,18 @@ namespace Octgn.Data
                             com.Parameters.AddWithValue("@id", pair.Name + game.Id);
                             com.Parameters.AddWithValue("@game_id", game.Id.ToString());
                             com.Parameters.AddWithValue("@name", pair.Name);
-                            if (pair.Type == PropertyType.String)
-                                com.Parameters.AddWithValue("@type", 0);
-                            else if (pair.Type == PropertyType.Integer)
-                                com.Parameters.AddWithValue("@type", 1);
-                            else // char
-                                com.Parameters.AddWithValue("@type", 2);
+                            switch (pair.Type)
+                            {
+                                case PropertyType.String:
+                                    com.Parameters.AddWithValue("@type", 0);
+                                    break;
+                                case PropertyType.Integer:
+                                    com.Parameters.AddWithValue("@type", 1);
+                                    break;
+                                default:
+                                    com.Parameters.AddWithValue("@type", 2);
+                                    break;
+                            }
                             com.ExecuteNonQuery();
                         }
                     }
@@ -152,21 +159,21 @@ namespace Octgn.Data
                 if (Debugger.IsAttached) Debugger.Break();
                 return;
             }
-            Game existingGame = cachedGames.FirstOrDefault(g => g.Id == game.Id);
-            if (existingGame != null) cachedGames.Remove(existingGame);
-            cachedGames.Add(game);
+            var existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
+            if (existingGame != null) _cachedGames.Remove(existingGame);
+            _cachedGames.Add(game);
             if (GameInstalled != null)
                 GameInstalled.Invoke(game, new EventArgs());
         }
 
         private void CreateMasterDatabase()
         {
-            SQLiteConnection.CreateFile(masterDbPath);
-            using (var sc = new SQLiteConnection("URI=file:" + masterDbPath))
+            SQLiteConnection.CreateFile(_masterDbPath);
+            using (var sc = new SQLiteConnection("URI=file:" + _masterDbPath))
             {
                 sc.Open();
-                SQLiteCommand com = sc.CreateCommand();
-                string md = Resource1.MakeDatabase;
+                var com = sc.CreateCommand();
+                var md = Resource1.MakeDatabase;
                 com.CommandText = md;
                 try
                 {
@@ -185,39 +192,39 @@ namespace Octgn.Data
 
         private void GetGamesList()
         {
-            allCachedGames = new ObservableCollection<Game>();
-            using (var sc = new SQLiteConnection("URI=file:" + masterDbPath))
+            _allCachedGames = new ObservableCollection<Game>();
+            using (var sc = new SQLiteConnection("URI=file:" + _masterDbPath))
             {
                 sc.Open();
-                using (SQLiteCommand com = sc.CreateCommand())
+                using (var com = sc.CreateCommand())
                 {
                     com.CommandText = "SELECT * FROM games;";
-                    using (SQLiteDataReader read = com.ExecuteReader())
+                    using (var read = com.ExecuteReader())
                     {
                         while (read.Read())
                         {
-                            allCachedGames.Add(ReadGameFromTable(read));
+                            _allCachedGames.Add(ReadGameFromTable(read));
                         }
                         read.Close();
                     }
                 }
                 sc.Close();
             }
-            missingFiles = (from g in allCachedGames
-                            let fullname = Path.Combine(g.basePath, "Defs", g.Filename)
-                            where !File.Exists(fullname)
-                            select fullname).ToList();
+            _missingFiles = (from g in _allCachedGames
+                             let fullname = Path.Combine(g.BasePath, "Defs", g.Filename)
+                             where !File.Exists(fullname)
+                             select fullname).ToList();
 
-            cachedGames = missingFiles.Count > 0
-                              ? new ObservableCollection<Game>(
-                                    allCachedGames.Where(
-                                        g => !missingFiles.Contains(Path.Combine(g.basePath, "Defs", g.Filename))))
-                              : allCachedGames;
+            _cachedGames = _missingFiles.Count > 0
+                               ? new ObservableCollection<Game>(
+                                     _allCachedGames.Where(
+                                         g => !_missingFiles.Contains(Path.Combine(g.BasePath, "Defs", g.Filename))))
+                               : _allCachedGames;
         }
 
-        private Game ReadGameFromTable(SQLiteDataReader read)
+        private Game ReadGameFromTable(IDataRecord read)
         {
-            object temp = read["shared_deck_sections"];
+            var temp = read["shared_deck_sections"];
             string sharedDeckSections;
             if (temp == DBNull.Value)
                 sharedDeckSections = null;
@@ -235,18 +242,18 @@ namespace Octgn.Data
                             DeckSections = DeserializeList((string) read["deck_sections"]),
                             SharedDeckSections =
                                 sharedDeckSections == null ? null : DeserializeList(sharedDeckSections),
-                            basePath = BasePath,
-                            repository = this
+                            BasePath = BasePath,
+                            Repository = this
                         };
 
 
             return g;
         }
 
-        private string SerializeList(IEnumerable<string> list)
+        private static string SerializeList(IEnumerable<string> list)
         {
             var sb = new StringBuilder();
-            foreach (string item in list)
+            foreach (var item in list)
             {
                 if (sb.Length > 0) sb.Append(",");
                 sb.Append(item.Replace(",", ",,"));
@@ -254,9 +261,9 @@ namespace Octgn.Data
             return sb.ToString();
         }
 
-        private List<string> DeserializeList(string list)
+        private static List<string> DeserializeList(string list)
         {
-            string[] sections = Regex.Split(list, "(?<!,),(?!,)");
+            var sections = Regex.Split(list, "(?<!,),(?!,)");
             return sections.Select(s => s.Replace(",,", ",")).ToList();
         }
     }

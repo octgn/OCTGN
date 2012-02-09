@@ -12,8 +12,7 @@ namespace Skylabs.LobbyServer
     {
         static Chatting()
         {
-            Rooms = new List<ChatRoom>();
-            Rooms.Add(new ChatRoom(0, null));
+            Rooms = new List<ChatRoom> {new ChatRoom(0, null)};
         }
 
         /// <summary>
@@ -63,10 +62,10 @@ namespace Skylabs.LobbyServer
             long id = -1;
             lock (Rooms)
             {
-                foreach (var cr in Rooms)
+                if (
+                    Rooms.Select(cr => cr.GetUserList()).Any(
+                        ul => ul.Contains(user) && ul.Contains(c.Me) && ul.Length == 2))
                 {
-                    var ul = cr.GetUserList();
-                    if (!ul.Contains(user) || !ul.Contains(c.Me) || ul.Length != 2) continue;
                     Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
                     return;
                 }

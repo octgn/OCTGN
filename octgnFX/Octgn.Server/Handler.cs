@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
+using System.Reflection;
 using Octgn.Data;
 
 namespace Octgn.Server
@@ -12,51 +13,50 @@ namespace Octgn.Server
         #region Statics
 
         private const string ServerName = "OCTGN.NET";
-        //private static Version ServerVersion = GetServerVersion(); //unused
+        private static readonly Version ServerVersion = GetServerVersion(); //unused
 
-        /*
         private static Version GetServerVersion()
         {
             Assembly asm = typeof (Server).Assembly;
             //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0]; //unused
             return asm.GetName().Version;
         }
-        */
+
         #endregion Statics
 
         #region Private fields
 
-        private readonly BinaryParser binParser; // Parser for binary messages
+        private readonly BinaryParser _binParser; // Parser for Binary messages
         // List of connected clients, keyed by underlying socket
-        private readonly Broadcaster broadcaster; // Stub to broadcast messages
-        private readonly Dictionary<TcpClient, PlayerInfo> clients = new Dictionary<TcpClient, PlayerInfo>();
-        private readonly GameSettings gameSettings = new GameSettings();
-        private readonly Dictionary<byte, PlayerInfo> players = new Dictionary<byte, PlayerInfo>();
-        private readonly HashSet<byte> turnStopPlayers = new HashSet<byte>();
-        private readonly XmlParser xmlParser; // Parser for xml messages
-        private Server.Connection Connection;
-        private bool acceptPlayers = true; // When false, no new players are accepted
-        private byte playerId = 1; // Next free player id
-        private TcpClient sender; // Socket on which current message was received
-        private int turnNumber; // Turn number, used to validate TurnStop requests
+        private readonly Broadcaster _broadcaster; // Stub to broadcast messages
+        private readonly Dictionary<TcpClient, PlayerInfo> _clients = new Dictionary<TcpClient, PlayerInfo>();
+        private readonly GameSettings _gameSettings = new GameSettings();
+        private readonly Dictionary<byte, PlayerInfo> _players = new Dictionary<byte, PlayerInfo>();
+        private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
+        private readonly XmlParser _xmlParser; // Parser for xml messages
+        private bool _acceptPlayers = true; // When false, no new players are accepted
+        private Server.Connection _connection;
+        private byte _playerId = 1; // Next free player id
+        private TcpClient _sender; // Socket on which current message was received
+        private int _turnNumber; // Turn number, used to validate TurnStop requests
 
         #endregion Private fields
 
         #region Internal methods
 
-        private readonly Guid gameId;
-        private readonly Version gameVersion;
-        internal int muted;
+        private readonly Guid _gameId;
+        private readonly Version _gameVersion;
+        internal int Muted;
 
         // C'tor
         internal Handler(Guid gameId, Version gameVersion)
         {
-            this.gameId = gameId;
-            this.gameVersion = gameVersion;
+            _gameId = gameId;
+            _gameVersion = gameVersion;
             // Init fields
-            broadcaster = new Broadcaster(clients, this);
-            xmlParser = new XmlParser(this);
-            binParser = new BinaryParser(this);
+            _broadcaster = new Broadcaster(_clients, this);
+            _xmlParser = new XmlParser(this);
+            _binParser = new BinaryParser(this);
         }
 
         // Show the management GUI
@@ -70,7 +70,7 @@ namespace Octgn.Server
         internal void ReceiveMessage(string msg, TcpClient lSender, Server.Connection con)
         {
             // Check if this is the first message received
-            if (!clients.ContainsKey(lSender))
+            if (!_clients.ContainsKey(lSender))
             {
                 // A new connection must always start with a <Hello> message.
                 if (!msg.StartsWith("<Hello>", StringComparison.Ordinal))
@@ -81,27 +81,27 @@ namespace Octgn.Server
                 }
             }
             // Set the lSender field
-            sender = lSender;
-            Connection = con;
+            _sender = lSender;
+            _connection = con;
             // Parse and handle the message
-            xmlParser.Parse(msg);
+            _xmlParser.Parse(msg);
         }
 
-        // Handle a binary message
+        // Handle a Binary message
         internal void ReceiveMessage(byte[] data, TcpClient lSender, Server.Connection con)
         {
             // Check if this is the first message received
-            if (!clients.ContainsKey(lSender))
+            if (!_clients.ContainsKey(lSender))
             {
                 // A new connection must always start with a <Hello> xml message, refuse the connection
                 lSender.GetStream().Close();
                 return;
             }
             // Set the lSender field
-            sender = lSender;
-            Connection = con;
+            _sender = lSender;
+            _connection = con;
             // Parse and handle the message
-            binParser.Parse(data);
+            _binParser.Parse(data);
         }
 
         // Called when a client is unexpectedly disconnected
@@ -109,12 +109,12 @@ namespace Octgn.Server
         {
             PlayerInfo info;
             // If the client is not registered, do nothing
-            if (!clients.TryGetValue(client, out info)) return;
+            if (!_clients.TryGetValue(client, out info)) return;
             // Remove the client from our lists
-            clients.Remove(client);
-            players.Remove(info.id);
+            _clients.Remove(client);
+            _players.Remove(info.Id);
             // Notify everybody that the player has left the game
-            broadcaster.Leave(info.id);
+            _broadcaster.Leave(info.Id);
         }
 
         #endregion Internal methods
@@ -133,344 +133,356 @@ namespace Octgn.Server
 
         public void Start()
         {
-            acceptPlayers = false;
-            broadcaster.Start();
+            _acceptPlayers = false;
+            _broadcaster.Start();
         }
 
         public void Settings(bool twoSidedTable)
         {
-            gameSettings.UseTwoSidedTable = twoSidedTable;
-            broadcaster.Settings(twoSidedTable);
+            _gameSettings.UseTwoSidedTable = twoSidedTable;
+            _broadcaster.Settings(twoSidedTable);
         }
 
         public void PlayerSettings(byte player, bool invertedTable)
         {
             PlayerInfo p;
             // The player may have left the game concurently
-            if (players.TryGetValue(player, out p))
-            {
-                p.invertedTable = invertedTable;
-                broadcaster.PlayerSettings(player, invertedTable);
-            }
+            if (!_players.TryGetValue(player, out p)) return;
+            p.InvertedTable = invertedTable;
+            _broadcaster.PlayerSettings(player, invertedTable);
         }
 
         public void ResetReq()
         {
-            turnNumber = 0;
-            turnStopPlayers.Clear();
-            broadcaster.Reset(clients[sender].id);
+            _turnNumber = 0;
+            _turnStopPlayers.Clear();
+            _broadcaster.Reset(_clients[_sender].Id);
         }
 
         public void ChatReq(string text)
         {
-            broadcaster.Chat(clients[sender].id, text);
+            _broadcaster.Chat(_clients[_sender].Id, text);
         }
 
         public void PrintReq(string text)
         {
-            broadcaster.Print(clients[sender].id, text);
+            _broadcaster.Print(_clients[_sender].Id, text);
         }
 
         public void RandomReq(int id, int min, int max)
         {
-            broadcaster.Random(clients[sender].id, id, min, max);
+            _broadcaster.Random(_clients[_sender].Id, id, min, max);
         }
 
         public void RandomAnswer1Req(int id, ulong value)
         {
-            broadcaster.RandomAnswer1(clients[sender].id, id, value);
+            _broadcaster.RandomAnswer1(_clients[_sender].Id, id, value);
         }
 
         public void RandomAnswer2Req(int id, ulong value)
         {
-            broadcaster.RandomAnswer2(clients[sender].id, id, value);
+            _broadcaster.RandomAnswer2(_clients[_sender].Id, id, value);
         }
 
         public void CounterReq(int counter, int value)
         {
-            broadcaster.Counter(clients[sender].id, counter, value);
+            _broadcaster.Counter(_clients[_sender].Id, counter, value);
         }
 
         public void Hello(string nick, ulong pkey, string client, Version clientVer, Version octgnVer, Guid lGameId,
                           Version gameVer)
         {
             // One should say Hello only once
-            if (clients.ContainsKey(sender))
+            if (_clients.ContainsKey(_sender))
             {
-                clients[sender].rpc.Error("[Hello]You may say hello only once.");
+                _clients[_sender].Rpc.Error("[Hello]You may say hello only once.");
                 return;
             }
             // Check if the versions are compatible
 #if !DEBUG
-            if(clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor)
+            if (clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor)
             {
-                XmlSenderStub rpc = new XmlSenderStub(sender, this);
-                rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.", ServerVersion.ToString(2)));
-                try { sender.Client.Close(); sender.Close(); }
-                catch { }
+                var rpc = new XmlSenderStub(_sender, this);
+                rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.",
+                                        ServerVersion.ToString(2)));
+                try
+                {
+                    _sender.Client.Close();
+                    _sender.Close();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
                 return;
             }
 #endif
             // Check if we accept new players
-            if (!acceptPlayers)
+            if (!_acceptPlayers)
             {
-                var rpc = new XmlSenderStub(sender, this);
+                var rpc = new XmlSenderStub(_sender, this);
                 rpc.Error("No more players are accepted in this game.");
                 try
                 {
-                    sender.Client.Close();
-                    sender.Close();
+                    _sender.Client.Close();
+                    _sender.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
                 return;
             }
             // Check if the client wants to play the correct game
-            if (lGameId != gameId)
+            if (lGameId != _gameId)
             {
-                var rpc = new XmlSenderStub(sender, this);
-                rpc.Error(string.Format("Invalid game. This server is hosting another game (game id: {0}).", gameId));
+                var rpc = new XmlSenderStub(_sender, this);
+                rpc.Error(string.Format("Invalid game. This server is hosting another game (game id: {0}).", _gameId));
                 try
                 {
-                    sender.Client.Close();
-                    sender.Close();
+                    _sender.Client.Close();
+                    _sender.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
                 return;
             }
             // Check if the client's major game version matches ours
-            if (gameVer.Major != gameVersion.Major)
+            if (gameVer.Major != _gameVersion.Major)
             {
-                var rpc = new XmlSenderStub(sender, this);
+                var rpc = new XmlSenderStub(_sender, this);
                 rpc.Error(string.Format("Incompatible game version. This server is hosting game version {0:3}.",
-                                        gameVersion));
+                                        _gameVersion));
                 try
                 {
-                    sender.Client.Close();
-                    sender.Close();
+                    _sender.Client.Close();
+                    _sender.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
                 return;
             }
             // Create the new endpoint
-            IClientCalls senderRpc = new XmlSenderStub(sender, this);
+            IClientCalls senderRpc = new XmlSenderStub(_sender, this);
             string software = client + " (" + clientVer + ')';
-            var pi = new PlayerInfo(playerId++, nick, pkey, senderRpc, software);
-            // Check if one can switch to binary mode
+            var pi = new PlayerInfo(_playerId++, nick, pkey, senderRpc, software);
+            // Check if one can switch to Binary mode
             if (client == ServerName)
             {
-                pi.rpc.Binary();
-                pi.rpc = senderRpc = new BinarySenderStub(sender, this);
-                pi.binary = true;
+                pi.Rpc.Binary();
+                pi.Rpc = senderRpc = new BinarySenderStub(_sender, this);
+                pi.Binary = true;
             }
             // Notify everybody of the newcomer
-            broadcaster.NewPlayer(pi.id, nick, pkey);
+            _broadcaster.NewPlayer(pi.Id, nick, pkey);
             // Add everybody to the newcomer
-            foreach (PlayerInfo player in clients.Values)
-                senderRpc.NewPlayer(player.id, player.nick, player.pkey);
-            senderRpc.Welcome(pi.id);
+            foreach (PlayerInfo player in _clients.Values)
+                senderRpc.NewPlayer(player.Id, player.Nick, player.Pkey);
+            senderRpc.Welcome(pi.Id);
             // Notify the newcomer of some shared settings
-            senderRpc.Settings(gameSettings.UseTwoSidedTable);
-            foreach (PlayerInfo player in players.Values.Where(p => p.invertedTable))
-                senderRpc.PlayerSettings(player.id, true);
+            senderRpc.Settings(_gameSettings.UseTwoSidedTable);
+            foreach (PlayerInfo player in _players.Values.Where(p => p.InvertedTable))
+                senderRpc.PlayerSettings(player.Id, true);
             // Add it to our lists
-            clients.Add(sender, pi);
-            players.Add(pi.id, pi);
-            broadcaster.RefreshTypes();
+            _clients.Add(_sender, pi);
+            _players.Add(pi.Id, pi);
+            _broadcaster.RefreshTypes();
         }
 
         public void LoadDeck(int[] id, ulong[] type, int[] group)
         {
-            short s = clients[sender].id;
+            short s = _clients[_sender].Id;
             for (int i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
-            broadcaster.LoadDeck(id, type, group);
+            _broadcaster.LoadDeck(id, type, group);
         }
 
         public void CreateCard(int[] id, ulong[] type, int group)
         {
-            short s = clients[sender].id;
+            short s = _clients[_sender].Id;
             for (int i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
-            broadcaster.CreateCard(id, type, group);
+            _broadcaster.CreateCard(id, type, group);
         }
 
         public void CreateCardAt(int[] id, ulong[] key, Guid[] modelId, int[] x, int[] y, bool faceUp, bool persist)
         {
-            short s = clients[sender].id;
+            short s = _clients[_sender].Id;
             for (int i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
-            broadcaster.CreateCardAt(id, key, modelId, x, y, faceUp, persist);
+            _broadcaster.CreateCardAt(id, key, modelId, x, y, faceUp, persist);
         }
 
         public void CreateAlias(int[] id, ulong[] type)
         {
-            short s = clients[sender].id;
+            short s = _clients[_sender].Id;
             for (int i = 0; i < id.Length; i++)
                 id[i] = s << 16 | (id[i] & 0xffff);
-            broadcaster.CreateAlias(id, type);
+            _broadcaster.CreateAlias(id, type);
         }
 
         public void NextTurn(byte nextPlayer)
         {
-            if (turnStopPlayers.Count > 0)
+            if (_turnStopPlayers.Count > 0)
             {
-                byte stopPlayerId = turnStopPlayers.First();
-                turnStopPlayers.Remove(stopPlayerId);
-                broadcaster.StopTurn(stopPlayerId);
+                byte stopPlayerId = _turnStopPlayers.First();
+                _turnStopPlayers.Remove(stopPlayerId);
+                _broadcaster.StopTurn(stopPlayerId);
                 return;
             }
-            turnNumber++;
-            broadcaster.NextTurn(nextPlayer);
+            _turnNumber++;
+            _broadcaster.NextTurn(nextPlayer);
         }
 
         public void PlayerSetGlobalVariable(byte p, string name, string value)
         {
-            broadcaster.PlayerSetGlobalVariable(clients[sender].id, p, name, value);
+            _broadcaster.PlayerSetGlobalVariable(_clients[_sender].Id, p, name, value);
         }
 
         public void SetGlobalVariable(string name, string value)
         {
-            broadcaster.SetGlobalVariable(name, value);
+            _broadcaster.SetGlobalVariable(name, value);
         }
 
         public void StopTurnReq(int lTurnNumber, bool stop)
         {
-            if (lTurnNumber != turnNumber) return; // Message StopTurn crossed a NextTurn message
-            byte id = clients[sender].id;
+            if (lTurnNumber != _turnNumber) return; // Message StopTurn crossed a NextTurn message
+            byte id = _clients[_sender].Id;
             if (stop)
-                turnStopPlayers.Add(id);
+                _turnStopPlayers.Add(id);
             else
-                turnStopPlayers.Remove(id);
+                _turnStopPlayers.Remove(id);
         }
 
         public void IsAlternateImage(int c, bool isAlternateImage)
         {
-            broadcaster.IsAlternateImage(c, isAlternateImage);
+            _broadcaster.IsAlternateImage(c, isAlternateImage);
         }
 
         public void MoveCardReq(int card, int to, int idx, bool faceUp)
         {
-            broadcaster.MoveCard(clients[sender].id, card, to, idx, faceUp);
+            _broadcaster.MoveCard(_clients[_sender].Id, card, to, idx, faceUp);
         }
 
         public void MoveCardAtReq(int card, int x, int y, int idx, bool faceUp)
         {
-            broadcaster.MoveCardAt(clients[sender].id, card, x, y, idx, faceUp);
+            _broadcaster.MoveCardAt(_clients[_sender].Id, card, x, y, idx, faceUp);
         }
 
         public void AddMarkerReq(int card, Guid id, string name, ushort count)
         {
-            broadcaster.AddMarker(clients[sender].id, card, id, name, count);
+            _broadcaster.AddMarker(_clients[_sender].Id, card, id, name, count);
         }
 
         public void RemoveMarkerReq(int card, Guid id, string name, ushort count)
         {
-            broadcaster.RemoveMarker(clients[sender].id, card, id, name, count);
+            _broadcaster.RemoveMarker(_clients[_sender].Id, card, id, name, count);
         }
 
         public void SetMarkerReq(int card, Guid id, string name, ushort count)
         {
-            broadcaster.SetMarker(clients[sender].id, card, id, name, count);
+            _broadcaster.SetMarker(_clients[_sender].Id, card, id, name, count);
         }
 
         public void TransferMarkerReq(int from, int to, Guid id, string name, ushort count)
         {
-            broadcaster.TransferMarker(clients[sender].id, from, to, id, name, count);
+            _broadcaster.TransferMarker(_clients[_sender].Id, from, to, id, name, count);
         }
 
         public void NickReq(string nick)
         {
-            PlayerInfo pi = clients[sender];
-            pi.nick = nick;
-            broadcaster.Nick(pi.id, nick);
+            PlayerInfo pi = _clients[_sender];
+            pi.Nick = nick;
+            _broadcaster.Nick(pi.Id, nick);
         }
 
         public void Reveal(int card, ulong revealed, Guid guid)
         {
-            broadcaster.Reveal(card, revealed, guid);
+            _broadcaster.Reveal(card, revealed, guid);
         }
 
         public void RevealToReq(byte sendTo, byte[] revealTo, int card, ulong[] encrypted)
         {
             if (encrypted.Length != 2 && encrypted.Length != 5)
                 Debug.WriteLine("[RevealToReq] Invalid encrypted length.");
-            players[sendTo].rpc.RevealTo(revealTo, card, encrypted);
+            _players[sendTo].Rpc.RevealTo(revealTo, card, encrypted);
         }
 
         public void PeekReq(int card)
         {
-            broadcaster.Peek(clients[sender].id, card);
+            _broadcaster.Peek(_clients[_sender].Id, card);
         }
 
         public void UntargetReq(int card)
         {
-            broadcaster.Untarget(clients[sender].id, card);
+            _broadcaster.Untarget(_clients[_sender].Id, card);
         }
 
         public void TargetReq(int card)
         {
-            broadcaster.Target(clients[sender].id, card);
+            _broadcaster.Target(_clients[_sender].Id, card);
         }
 
         public void TargetArrowReq(int card, int otherCard)
         {
-            broadcaster.TargetArrow(clients[sender].id, card, otherCard);
+            _broadcaster.TargetArrow(_clients[_sender].Id, card, otherCard);
         }
 
         public void Highlight(int card, string color)
         {
-            broadcaster.Highlight(card, color);
+            _broadcaster.Highlight(card, color);
         }
 
         public void TurnReq(int card, bool up)
         {
-            broadcaster.Turn(clients[sender].id, card, up);
+            _broadcaster.Turn(_clients[_sender].Id, card, up);
         }
 
         public void RotateReq(int card, CardOrientation rot)
         {
-            broadcaster.Rotate(clients[sender].id, card, rot);
+            _broadcaster.Rotate(_clients[_sender].Id, card, rot);
         }
 
         public void Shuffle(int group, int[] card)
         {
             // Special case: solo playing
-            if (clients.Count == 1)
+            if (_clients.Count == 1)
             {
-                clients[sender].rpc.Shuffle(group, card);
+                _clients[_sender].Rpc.Shuffle(group, card);
                 return;
             }
             // Normal case
-            int nCards = card.Length/(clients.Count - 1);
+            int nCards = card.Length/(_clients.Count - 1);
             int from = 0, client = 1;
             var someCard = new int[nCards];
-            foreach (var kvp in clients)
+            foreach (var kvp in _clients.Where(kvp => kvp.Key != _sender))
             {
-                if (kvp.Key == sender) continue;
-                if (client < clients.Count - 1)
+                if (client < _clients.Count - 1)
                 {
                     if (nCards > 0)
                     {
-                        Array.Copy(card, from, someCard, 0, nCards);
-                        kvp.Value.rpc.Shuffle(group, someCard);
-                        from += nCards;
+                        Array.Copy(card, @from, someCard, 0, nCards);
+                        kvp.Value.Rpc.Shuffle(@group, someCard);
+                        @from += nCards;
                     }
                     client++;
                 }
                 else
                 {
-                    int rest = card.Length - from;
+                    int rest = card.Length - @from;
                     if (rest > 0)
                     {
                         someCard = new int[rest];
-                        Array.Copy(card, from, someCard, 0, rest);
-                        kvp.Value.rpc.Shuffle(group, someCard);
+                        Array.Copy(card, @from, someCard, 0, rest);
+                        kvp.Value.Rpc.Shuffle(@group, someCard);
                     }
                     return;
                 }
@@ -479,77 +491,77 @@ namespace Octgn.Server
 
         public void Shuffled(int group, int[] card, short[] pos)
         {
-            broadcaster.Shuffled(group, card, pos);
+            _broadcaster.Shuffled(group, card, pos);
         }
 
         public void UnaliasGrp(int group)
         {
-            broadcaster.UnaliasGrp(group);
+            _broadcaster.UnaliasGrp(group);
         }
 
         public void Unalias(int[] card, ulong[] type)
         {
-            broadcaster.Unalias(card, type);
+            _broadcaster.Unalias(card, type);
         }
 
         public void PassToReq(int id, byte player, bool requested)
         {
-            broadcaster.PassTo(clients[sender].id, id, player, requested);
+            _broadcaster.PassTo(_clients[_sender].Id, id, player, requested);
         }
 
         public void TakeFromReq(int id, byte fromPlayer)
         {
-            players[fromPlayer].rpc.TakeFrom(id, clients[sender].id);
+            _players[fromPlayer].Rpc.TakeFrom(id, _clients[_sender].Id);
         }
 
         public void DontTakeReq(int id, byte toPlayer)
         {
-            players[toPlayer].rpc.DontTake(id);
+            _players[toPlayer].Rpc.DontTake(id);
         }
 
         public void FreezeCardsVisibility(int group)
         {
-            broadcaster.FreezeCardsVisibility(group);
+            _broadcaster.FreezeCardsVisibility(group);
         }
 
         public void GroupVisReq(int id, bool defined, bool visible)
         {
-            broadcaster.GroupVis(clients[sender].id, id, defined, visible);
+            _broadcaster.GroupVis(_clients[_sender].Id, id, defined, visible);
         }
 
         public void GroupVisAddReq(int gId, byte pId)
         {
-            broadcaster.GroupVisAdd(clients[sender].id, gId, pId);
+            _broadcaster.GroupVisAdd(_clients[_sender].Id, gId, pId);
         }
 
         public void GroupVisRemoveReq(int gId, byte pId)
         {
-            broadcaster.GroupVisRemove(clients[sender].id, gId, pId);
+            _broadcaster.GroupVisRemove(_clients[_sender].Id, gId, pId);
         }
 
         public void LookAtReq(int uid, int gId, bool look)
         {
-            broadcaster.LookAt(clients[sender].id, uid, gId, look);
+            _broadcaster.LookAt(_clients[_sender].Id, uid, gId, look);
         }
 
         public void LookAtTopReq(int uid, int gId, int count, bool look)
         {
-            broadcaster.LookAtTop(clients[sender].id, uid, gId, count, look);
+            _broadcaster.LookAtTop(_clients[_sender].Id, uid, gId, count, look);
         }
 
         public void LookAtBottomReq(int uid, int gId, int count, bool look)
         {
-            broadcaster.LookAtBottom(clients[sender].id, uid, gId, count, look);
+            _broadcaster.LookAtBottom(_clients[_sender].Id, uid, gId, count, look);
         }
 
         public void StartLimitedReq(Guid[] packs)
         {
-            broadcaster.StartLimited(clients[sender].id, packs);
+            _broadcaster.StartLimited(_clients[_sender].Id, packs);
         }
 
         public void CancelLimitedReq()
         {
-            broadcaster.CancelLimited(clients[sender].id);
+            _broadcaster.CancelLimited(_clients[_sender].Id);
         }
 
         #endregion IRemoteCalls interface
@@ -558,23 +570,23 @@ namespace Octgn.Server
 
         internal void PingReceived()
         {
-            Connection.PingReceived();
+            _connection.PingReceived();
         }
 
         #region Nested type: PlayerInfo
 
         internal sealed class PlayerInfo
         {
-            internal readonly byte id; // Player id
-            internal readonly ulong pkey; // Player public cryptographic key
-            internal readonly string software; // Connected software
-            internal bool binary; // Send binary data ?
+            internal readonly byte Id; // Player id
+            internal readonly ulong Pkey; // Player public cryptographic key
+            internal readonly string Software; // Connected software
+            internal bool Binary; // Send Binary data ?
 
-            internal bool invertedTable;
+            internal bool InvertedTable;
             // When using a two-sided table, indicates whether this player plays on the opposite side
 
-            internal string nick; // Player nick
-            internal IClientCalls rpc; // Stub to send messages to the player
+            internal string Nick; // Player nick
+            internal IClientCalls Rpc; // Stub to send messages to the player
 
             // internal bool spectates; // Is a spectator rather than a player?  Not even used
 
@@ -582,11 +594,11 @@ namespace Octgn.Server
             internal PlayerInfo(byte id, string nick, ulong pkey, IClientCalls rpc, string software)
             {
                 // Init fields
-                this.id = id;
-                this.nick = nick;
-                this.rpc = rpc;
-                this.software = software;
-                this.pkey = pkey;
+                Id = id;
+                Nick = nick;
+                Rpc = rpc;
+                Software = software;
+                Pkey = pkey;
             }
         }
 

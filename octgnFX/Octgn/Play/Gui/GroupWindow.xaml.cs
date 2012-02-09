@@ -22,11 +22,11 @@ namespace Octgn.Play.Gui
 
     public partial class GroupWindow
     {
-        private readonly Group group;
-        private readonly int id;
-        private readonly PilePosition position;
-        private int count;
-        private bool shouldNotifyClose;
+        private readonly Group _group;
+        private readonly int _id;
+        private readonly PilePosition _position;
+        private int _count;
+        private bool _shouldNotifyClose;
 
         public GroupWindow()
         {
@@ -36,10 +36,10 @@ namespace Octgn.Play.Gui
         public GroupWindow(Group group, PilePosition position, int count)
             : this()
         {
-            id = Program.Game.GetUniqueId();
-            this.position = position;
-            this.count = count;
-            DataContext = this.group = group;
+            _id = Program.Game.GetUniqueId();
+            _position = position;
+            _count = count;
+            DataContext = _group = group;
 
             switch (position)
             {
@@ -76,24 +76,24 @@ namespace Octgn.Play.Gui
         protected override void OnClose()
         {
             base.OnClose();
-            if (shouldNotifyClose)
+            if (_shouldNotifyClose)
                 SendLookAtRpc(false);
-            ((INotifyCollectionChanged) group.Cards).CollectionChanged -= CardsChanged;
+            ((INotifyCollectionChanged) _group.Cards).CollectionChanged -= CardsChanged;
         }
 
         private void SendLookAtRpc(bool look)
         {
-            shouldNotifyClose = look;
-            switch (position)
+            _shouldNotifyClose = look;
+            switch (_position)
             {
                 case PilePosition.All:
-                    Program.Client.Rpc.LookAtReq(id, group, look);
+                    Program.Client.Rpc.LookAtReq(_id, _group, look);
                     break;
                 case PilePosition.Top:
-                    Program.Client.Rpc.LookAtTopReq(id, group, count, look);
+                    Program.Client.Rpc.LookAtTopReq(_id, _group, _count, look);
                     break;
                 case PilePosition.Bottom:
-                    Program.Client.Rpc.LookAtBottomReq(id, group, count, look);
+                    Program.Client.Rpc.LookAtBottomReq(_id, _group, _count, look);
                     break;
             }
         }
@@ -106,7 +106,7 @@ namespace Octgn.Play.Gui
         private void CloseAndShuffleClicked(object sender, RoutedEventArgs e)
         {
             Close();
-            var pile = group as Pile;
+            var pile = _group as Pile;
             if (pile != null) pile.Shuffle();
         }
 
@@ -130,21 +130,15 @@ namespace Octgn.Play.Gui
                                             {
                                                 if (!cardsList.IsAlwaysUp && !c.FaceUp)
                                                     return false;
-                                                if (
+                                                return
                                                     c.RealName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=
-                                                    0)
-                                                    return true;
-                                                foreach (string property in textProperties)
-                                                {
-                                                    var propertyValue = (string) c.GetProperty(property);
-                                                    if (propertyValue == null) continue;
-                                                    if (
-                                                        propertyValue.IndexOf(filter,
-                                                                              StringComparison.CurrentCultureIgnoreCase) >=
-                                                        0)
-                                                        return true;
-                                                }
-                                                return false;
+                                                    0 ||
+                                                    textProperties.Select(property => (string) c.GetProperty(property)).
+                                                        Where(propertyValue => propertyValue != null).Any(
+                                                            propertyValue =>
+                                                            propertyValue.IndexOf(filter,
+                                                                                  StringComparison.
+                                                                                      CurrentCultureIgnoreCase) >= 0);
                                             };
                 alphaOrderBtn.IsChecked = true;
             }
@@ -152,11 +146,9 @@ namespace Octgn.Play.Gui
 
         private void FilterBoxPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
-            {
-                e.Handled = true;
-                filterBox.Text = "";
-            }
+            if (e.Key != Key.Escape) return;
+            e.Handled = true;
+            filterBox.Text = "";
         }
 
         private void PositionOrderChecked(object sender, RoutedEventArgs e)
@@ -188,17 +180,17 @@ namespace Octgn.Play.Gui
                     var card = e.OldItems[0] as Card;
                     if (!cards.Contains(card)) break;
 
-                    if ((position == PilePosition.Top && e.NewStartingIndex >= count) ||
-                        (position == PilePosition.Bottom && e.NewStartingIndex < group.Count - count))
+                    if ((_position == PilePosition.Top && e.NewStartingIndex >= _count) ||
+                        (_position == PilePosition.Bottom && e.NewStartingIndex < _group.Count - _count))
                     {
                         cards.Remove(card);
-                        count--;
+                        _count--;
                     }
                     else
                     {
                         var src = sender as ICollection<Card>;
                         int oldIndex = cards.IndexOf(card);
-                        int newIndex = src.Where(c => cards.Contains(c)).IndexOf(card);
+                        int newIndex = src.Where(cards.Contains).IndexOf(card);
                         cards.Move(oldIndex, newIndex);
                     }
                     break;

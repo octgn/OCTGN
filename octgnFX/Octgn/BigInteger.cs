@@ -197,13 +197,16 @@ namespace Octgn
 
                 if (posVal >= radix)
                     throw (new ArithmeticException("Invalid string in constructor."));
-                if (value[0] == '-')
-                    posVal = -posVal;
+                else
+                {
+                    if (value[0] == '-')
+                        posVal = -posVal;
 
-                result = result + (multiplier*posVal);
+                    result = result + (multiplier*posVal);
 
-                if ((i - 1) >= limit)
-                    multiplier = multiplier*radix;
+                    if ((i - 1) >= limit)
+                        multiplier = multiplier*radix;
+                }
             }
 
             if (value[0] == '-') // negative values
@@ -845,13 +848,13 @@ namespace Octgn
 
         public static bool operator ==(BigInteger bi1, BigInteger bi2)
         {
-            return bi1 != null && bi1.Equals(bi2);
+            return bi1.Equals(bi2);
         }
 
 
         public static bool operator !=(BigInteger bi1, BigInteger bi2)
         {
-            return bi1 != null && !(bi1.Equals(bi2));
+            return !(bi1.Equals(bi2));
         }
 
 
@@ -895,9 +898,7 @@ namespace Octgn
 
             // same sign
             int len = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength;
-            for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--)
-            {
-            }
+            for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--) ;
 
             if (pos >= 0)
             {
@@ -923,9 +924,7 @@ namespace Octgn
 
             // same sign
             int len = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength;
-            for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--)
-            {
-            }
+            for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--) ;
 
             if (pos >= 0)
             {
@@ -1735,7 +1734,7 @@ namespace Octgn
                 // test small numbers
                 if (thisVal.data[0] == 0 || thisVal.data[0] == 1)
                     return false;
-                if (thisVal.data[0] == 2 || thisVal.data[0] == 3)
+                else if (thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
             }
 
@@ -1825,7 +1824,7 @@ namespace Octgn
                 // test small numbers
                 if (thisVal.data[0] == 0 || thisVal.data[0] == 1)
                     return false;
-                if (thisVal.data[0] == 2 || thisVal.data[0] == 3)
+                else if (thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
             }
 
@@ -1950,7 +1949,7 @@ namespace Octgn
                 // test small numbers
                 if (thisVal.data[0] == 0 || thisVal.data[0] == 1)
                     return false;
-                if (thisVal.data[0] == 2 || thisVal.data[0] == 3)
+                else if (thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
             }
 
@@ -2039,7 +2038,7 @@ namespace Octgn
                 // test small numbers
                 if (thisVal.data[0] == 0 || thisVal.data[0] == 1)
                     return false;
-                if (thisVal.data[0] == 2 || thisVal.data[0] == 3)
+                else if (thisVal.data[0] == 2 || thisVal.data[0] == 3)
                     return true;
             }
 

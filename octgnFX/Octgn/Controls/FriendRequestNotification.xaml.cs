@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Skylabs;
+using Skylabs.Lobby;
 
 namespace Octgn.Controls
 {
@@ -40,17 +40,17 @@ namespace Octgn.Controls
             }
         }
 
-        private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        private void UserControlMouseDown(object sender, MouseButtonEventArgs e)
         {
             //Focus();
         }
 
-        private void flistitem_MouseUp(object sender, MouseButtonEventArgs e)
+        private void FlistitemMouseUp(object sender, MouseButtonEventArgs e)
         {
             Focus();
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void Button1Click(object sender, RoutedEventArgs e)
         {
             _notify.Accept();
             Visibility = Visibility.Hidden;
@@ -58,7 +58,7 @@ namespace Octgn.Controls
                 OnDismiss(this, null);
         }
 
-        private void button2_Click(object sender, RoutedEventArgs e)
+        private void Button2Click(object sender, RoutedEventArgs e)
         {
             _notify.Decline();
             Visibility = Visibility.Hidden;

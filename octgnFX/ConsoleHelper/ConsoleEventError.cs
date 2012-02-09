@@ -21,23 +21,13 @@ namespace Skylabs.ConsoleHelper
         [XmlElement("ExceptionMessage")]
         public String ExceptionMessage
         {
-            get
-            {
-                if (Exception != null)
-                    return Exception.Message;
-                return "No Exception Message Data.";
-            }
+            get { return Exception != null ? Exception.Message : "No Exception Message Data."; }
         }
 
         [XmlElement("StackTrace")]
         public String StackTrace
         {
-            get
-            {
-                if (Exception.StackTrace != null)
-                    return Exception.StackTrace;
-                return "No Stack Trace Message Data.";
-            }
+            get { return Exception.StackTrace ?? "No Stack Trace Message Data."; }
         }
 
         [XmlIgnore]

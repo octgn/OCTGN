@@ -40,7 +40,7 @@ namespace Octgn.Data
         {
             var name = xml.Attr<string>("name");
 
-            string kindStr = xml.Attr("textKind", "Free");
+            var kindStr = xml.Attr("textKind", "Free");
             PropertyTextKind kind;
             switch (kindStr)
             {

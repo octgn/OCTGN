@@ -8,11 +8,13 @@ namespace Octgn.Definitions
 {
     public class GroupDef
     {
+        // TODO: Make these private
+        public BaseActionDef[] CardActions;
+        public BaseActionDef[] GroupActions;
         public string background;
         public string board;
-        public BaseActionDef[] cardActions;
-        public BaseActionDef[] groupActions;
         public string icon;
+
         public byte Id { get; private set; }
         public string Name { get; private set; }
 
@@ -54,45 +56,45 @@ namespace Octgn.Definitions
 
         internal static GroupDef LoadFromXml(XElement xml, PackagePart part, int index)
         {
-            var _background = xml.Attr<string>("background");
-            if (_background != null)
-                _background = part.GetRelationship(_background).TargetUri.OriginalString;
+            var bg = xml.Attr<string>("background");
+            if (bg != null)
+                bg = part.GetRelationship(bg).TargetUri.OriginalString;
 
-            var _board = xml.Attr<string>("board");
-            if (_board != null)
-                _board = part.GetRelationship(_board).TargetUri.OriginalString;
+            var board = xml.Attr<string>("board");
+            if (board != null)
+                board = part.GetRelationship(board).TargetUri.OriginalString;
 
-            var _icon = xml.Attr<string>("icon");
-            if (_icon != null)
-                _icon = part.GetRelationship(_icon).TargetUri.OriginalString;
+            var icon = xml.Attr<string>("icon");
+            if (icon != null)
+                icon = part.GetRelationship(icon).TargetUri.OriginalString;
 
             return new GroupDef
                        {
                            Id = (byte) index,
                            Name = xml.Attr<string>("name"),
-                           icon = _icon,
+                           icon = icon,
                            Shortcut = xml.Attr<string>("shortcut"),
-                           background = _background,
+                           background = bg,
                            BackgroundStyle = xml.Attr<string>("backgroundStyle"),
-                           board = _board,
+                           board = board,
                            BoardPosition = xml.Attr<Rect>("boardPosition"),
                            Visibility = xml.Attr<GroupVisibility>("visibility"),
                            Width = xml.Attr<int>("width"),
                            Height = xml.Attr<int>("height"),
                            Ordered = xml.Attr("ordered", true),
                            Collapsed = xml.Attr<bool>("collapsed"),
-                           cardActions = xml.Elements()
+                           CardActions = xml.Elements()
                                .Where(
                                    x =>
-                                   x.Name == Defs.xmlnsOctgn + "cardaction" || x.Name == Defs.xmlnsOctgn + "cardactions")
-                               .Select(x => BaseActionDef.LoadFromXml(x))
+                                   x.Name == Defs.XmlnsOctgn + "cardaction" || x.Name == Defs.XmlnsOctgn + "cardactions")
+                               .Select(BaseActionDef.LoadFromXml)
                                .ToArray(),
-                           groupActions = xml.Elements()
+                           GroupActions = xml.Elements()
                                .Where(
                                    x =>
-                                   x.Name == Defs.xmlnsOctgn + "groupaction" ||
-                                   x.Name == Defs.xmlnsOctgn + "groupactions")
-                               .Select(x => BaseActionDef.LoadFromXml(x))
+                                   x.Name == Defs.XmlnsOctgn + "groupaction" ||
+                                   x.Name == Defs.XmlnsOctgn + "groupactions")
+                               .Select(BaseActionDef.LoadFromXml)
                                .ToArray()
                        };
         }

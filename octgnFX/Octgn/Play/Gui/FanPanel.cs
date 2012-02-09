@@ -5,6 +5,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Octgn.Play.Gui.Adorners;
 
 namespace Octgn.Play.Gui
 {
@@ -14,24 +15,24 @@ namespace Octgn.Play.Gui
 
         private const int SpacingWidth = 8;
         private const double LayoutAnimationDelay = 0.1;
-        private static readonly IEasingFunction expoEasing = new ExponentialEase();
+        private static readonly IEasingFunction ExpoEasing = new ExponentialEase();
 
-        private static readonly DoubleAnimation animation = new DoubleAnimation
+        private static readonly DoubleAnimation Animation = new DoubleAnimation
                                                                 {
-                                                                    EasingFunction = expoEasing,
+                                                                    EasingFunction = ExpoEasing,
                                                                     Duration = TimeSpan.FromMilliseconds(300)
                                                                 };
 
-        private static readonly DoubleAnimation staticAnimation = new DoubleAnimation
+        private static readonly DoubleAnimation StaticAnimation = new DoubleAnimation
                                                                       {
-                                                                          EasingFunction = expoEasing,
+                                                                          EasingFunction = ExpoEasing,
                                                                           FillBehavior = FillBehavior.Stop
                                                                       };
 
-        private InsertAdorner insertAdorner;
-        private double itemSkipSize;
-        private UIElement mouseOverElement;
-        private UIElement spacedItem1, spacedItem2;
+        private InsertAdorner _insertAdorner;
+        private double _itemSkipSize;
+        private UIElement _mouseOverElement;
+        private UIElement _spacedItem1, _spacedItem2;
 
         #endregion
 
@@ -55,7 +56,7 @@ namespace Octgn.Play.Gui
         public FanPanel()
         {
             //  Wire events
-            PreviewMouseMove += FanPanel_MouseMove;
+            PreviewMouseMove += FanPanelMouseMove;
             MouseEnter += MouseRequiresArrange;
             MouseLeave += MouseRequiresArrange;
         }
@@ -64,8 +65,8 @@ namespace Octgn.Play.Gui
 
         public int GetIndexFromPoint(Point position)
         {
-            if (Math.Abs(itemSkipSize - 0) < double.Epsilon) return 0;
-            int idx = position.X < 0 ? 0 : (int) (position.X/itemSkipSize + 0.5);
+            if (Math.Abs(_itemSkipSize - 0) < double.Epsilon) return 0;
+            int idx = position.X < 0 ? 0 : (int) (position.X/_itemSkipSize + 0.5);
             if (idx > Children.Count) idx = Children.Count;
             return idx;
         }
@@ -88,84 +89,78 @@ namespace Octgn.Play.Gui
             }
 
             // Create an adorner if it doesn't exist yet
-            if (insertAdorner == null)
+            if (_insertAdorner == null)
             {
-                insertAdorner = new InsertAdorner(this);
+                _insertAdorner = new InsertAdorner(this);
                 AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
-                layer.Add(insertAdorner);
+                layer.Add(_insertAdorner);
             }
 
             // Position the insert adorner correctly
-            insertAdorner.MoveTo(new Point(idx*itemSkipSize, 0));
+            _insertAdorner.MoveTo(new Point(idx*_itemSkipSize, 0));
 
             // Cancel previous spacing
             CancelSpacing();
 
             // Space neighbors
-            if (idx < Children.Count)
-            {
-                spacedItem2 = Children[idx];
-                SetSpacing(spacedItem2, SpacingWidth);
-                if (idx > 0)
-                {
-                    spacedItem1 = Children[idx - 1];
-                    SetSpacing(spacedItem1, -SpacingWidth);
-                }
-            }
+            if (idx >= Children.Count) return;
+            _spacedItem2 = Children[idx];
+            SetSpacing(_spacedItem2, SpacingWidth);
+            if (idx <= 0) return;
+            _spacedItem1 = Children[idx - 1];
+            SetSpacing(_spacedItem1, -SpacingWidth);
         }
 
         public void HideInsertIndicator()
         {
-            if (insertAdorner == null) return;
+            if (_insertAdorner == null) return;
             AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
-            layer.Remove(insertAdorner);
-            insertAdorner = null;
+            layer.Remove(_insertAdorner);
+            _insertAdorner = null;
             CancelSpacing();
         }
 
         private void CancelSpacing()
         {
-            if (spacedItem1 != null)
+            if (_spacedItem1 != null)
             {
-                CancelSpacing(spacedItem1);
-                spacedItem1 = null;
+                CancelSpacing(_spacedItem1);
+                _spacedItem1 = null;
             }
-            if (spacedItem2 != null)
-            {
-                CancelSpacing(spacedItem2);
-                spacedItem2 = null;
-            }
+            if (_spacedItem2 == null) return;
+            CancelSpacing(_spacedItem2);
+            _spacedItem2 = null;
         }
 
-        private void CancelSpacing(UIElement element)
+        private static void CancelSpacing(UIElement element)
         {
             var group = (TransformGroup) element.RenderTransform;
             var translate = (TranslateTransform) group.Children[1];
-            animation.To = 0;
-            animation.FillBehavior = FillBehavior.Stop;
-            translate.BeginAnimation(TranslateTransform.XProperty, animation);
+            Animation.To = 0;
+            Animation.FillBehavior = FillBehavior.Stop;
+            translate.BeginAnimation(TranslateTransform.XProperty, Animation);
         }
 
-        private void SetSpacing(UIElement element, int value)
+        private static void SetSpacing(UIElement element, int value)
         {
             var group = (TransformGroup) element.RenderTransform;
             var translate = (TranslateTransform) group.Children[1];
-            animation.To = value;
-            animation.FillBehavior = FillBehavior.HoldEnd;
-            translate.BeginAnimation(TranslateTransform.XProperty, animation);
+            Animation.To = value;
+            Animation.FillBehavior = FillBehavior.HoldEnd;
+            translate.BeginAnimation(TranslateTransform.XProperty, Animation);
         }
 
         #endregion
 
         #region Mouse related
 
-        private void FanPanel_MouseMove(object sender, MouseEventArgs e)
+        private void FanPanelMouseMove(object sender, MouseEventArgs e)
         {
-            if (mouseOverElement == null)
+            if (_mouseOverElement == null)
             {
                 if (!IsMouseDirectlyOver) InvalidateArrange();
             }
-            else if (!mouseOverElement.IsMouseOver) InvalidateArrange();
+            else if (!_mouseOverElement.IsMouseOver) InvalidateArrange();
         }
 
         private void MouseRequiresArrange(object sender, MouseEventArgs e)
@@ -181,17 +176,15 @@ namespace Octgn.Play.Gui
         {
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
             // Set up the transformations
-            if (visualAdded != null)
-            {
-                var child = (UIElement) visualAdded;
-                child.RenderTransformOrigin = new Point(0, 0);
-                var group = new TransformGroup();
-                child.RenderTransform = group;
-                group.Children.Add(new ScaleTransform()); // Used for hover effects
-                group.Children.Add(new TranslateTransform()); // Y used for hover effects, X for drag and drop
-                group.Children.Add(new TranslateTransform()); // X used for layout to layout animations
-                SetXPosition(child, double.NaN);
-            }
+            if (visualAdded == null) return;
+            var child = (UIElement) visualAdded;
+            child.RenderTransformOrigin = new Point(0, 0);
+            var group = new TransformGroup();
+            child.RenderTransform = @group;
+            @group.Children.Add(new ScaleTransform()); // Used for hover effects
+            @group.Children.Add(new TranslateTransform()); // Y used for hover effects, X for drag and drop
+            @group.Children.Add(new TranslateTransform()); // X used for layout to layout animations
+            SetXPosition(child, double.NaN);
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -232,9 +225,9 @@ namespace Octgn.Play.Gui
             double childWidth = Children[0].DesiredSize.Width*ratio;
 
             // Check if enough space is available
-            itemSkipSize = childWidth + 2;
-            if (Children.Count > 1 && Children.Count*itemSkipSize > finalSize.Width)
-                itemSkipSize = (finalSize.Width - childWidth)/(Children.Count - 1);
+            _itemSkipSize = childWidth + 2;
+            if (Children.Count > 1 && Children.Count*_itemSkipSize > finalSize.Width)
+                _itemSkipSize = (finalSize.Width - childWidth)/(Children.Count - 1);
 
             double xposition = 0;
             double animationDelay = 0;
@@ -249,26 +242,26 @@ namespace Octgn.Play.Gui
                 if (child.IsMouseOver)
                 {
                     newMouseOverElement = child;
-                    if (child != mouseOverElement)
+                    if (child != _mouseOverElement)
                     {
-                        animation.To = 1.3*ratio;
-                        animation.FillBehavior = FillBehavior.HoldEnd;
-                        scale.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
-                        scale.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
-                        animation.To = -0.4*finalSize.Height;
-                        translate.BeginAnimation(TranslateTransform.YProperty, animation);
+                        Animation.To = 1.3*ratio;
+                        Animation.FillBehavior = FillBehavior.HoldEnd;
+                        scale.BeginAnimation(ScaleTransform.ScaleXProperty, Animation);
+                        scale.BeginAnimation(ScaleTransform.ScaleYProperty, Animation);
+                        Animation.To = -0.4*finalSize.Height;
+                        translate.BeginAnimation(TranslateTransform.YProperty, Animation);
                     }
                 }
                 else
                 {
-                    if (child == mouseOverElement)
+                    if (child == _mouseOverElement)
                     {
-                        animation.To = 1;
-                        animation.FillBehavior = FillBehavior.Stop;
-                        scale.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
-                        scale.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
-                        animation.To = 0;
-                        translate.BeginAnimation(TranslateTransform.YProperty, animation);
+                        Animation.To = 1;
+                        Animation.FillBehavior = FillBehavior.Stop;
+                        scale.BeginAnimation(ScaleTransform.ScaleXProperty, Animation);
+                        scale.BeginAnimation(ScaleTransform.ScaleYProperty, Animation);
+                        Animation.To = 0;
+                        translate.BeginAnimation(TranslateTransform.YProperty, Animation);
                     }
                 }
 
@@ -280,25 +273,25 @@ namespace Octgn.Play.Gui
                 {
                     var translate2 = (TranslateTransform) group.Children[2];
                     TimeSpan delay = TimeSpan.FromSeconds(animationDelay);
-                    animation.FillBehavior = FillBehavior.Stop;
-                    animation.From = oldPos - xposition;
-                    animation.To = 0;
-                    animation.BeginTime = delay;
-                    staticAnimation.To = staticAnimation.From = animation.From;
-                    staticAnimation.Duration = delay;
+                    Animation.FillBehavior = FillBehavior.Stop;
+                    Animation.From = oldPos - xposition;
+                    Animation.To = 0;
+                    Animation.BeginTime = delay;
+                    StaticAnimation.To = StaticAnimation.From = Animation.From;
+                    StaticAnimation.Duration = delay;
                     if (animationDelay > 0)
-                        translate2.BeginAnimation(TranslateTransform.XProperty, staticAnimation);
-                    translate2.BeginAnimation(TranslateTransform.XProperty, animation, HandoffBehavior.Compose);
-                    animation.From = null;
-                    animation.BeginTime = TimeSpan.Zero;
+                        translate2.BeginAnimation(TranslateTransform.XProperty, StaticAnimation);
+                    translate2.BeginAnimation(TranslateTransform.XProperty, Animation, HandoffBehavior.Compose);
+                    Animation.From = null;
+                    Animation.BeginTime = TimeSpan.Zero;
                     animationDelay += LayoutAnimationDelay;
                 }
                 SetXPosition(child, xposition);
 
-                xposition += itemSkipSize;
+                xposition += _itemSkipSize;
             }
 
-            mouseOverElement = newMouseOverElement;
+            _mouseOverElement = newMouseOverElement;
             return finalSize;
         }
 

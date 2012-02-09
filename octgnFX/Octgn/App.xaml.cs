@@ -26,7 +26,7 @@ namespace Octgn
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
             Program.GamesRepository = new GamesRepository();
 
@@ -49,7 +49,7 @@ namespace Octgn
             Program.LauncherWindow.Show();
             Program.ChatWindows = new List<ChatWindow>();
 #else
-            UpdateChecker uc = new UpdateChecker();
+            var uc = new UpdateChecker();
             uc.ShowDialog();
             if (!uc.IsClosingDown)
             {
@@ -58,7 +58,7 @@ namespace Octgn
             }
             else
             {
-                Application.Current.MainWindow = null;
+                Current.MainWindow = null;
                 Program.LauncherWindow.Close();
                 Program.Exit();
             }
@@ -79,7 +79,7 @@ namespace Octgn
 #endif
         }
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception) e.ExceptionObject;
             if (!Debugger.IsAttached)

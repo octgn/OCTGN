@@ -4,17 +4,17 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace SimplestDragDrop
+namespace Octgn
 {
     internal class DragAdorner : Adorner
     {
+        protected UIElement Child;
+        protected UIElement Owner;
+        public double Scale = 1.0;
         protected double XCenter;
         protected double YCenter;
-        protected UIElement _child;
         private double _leftOffset;
-        protected UIElement _owner;
         private double _topOffset;
-        public double scale = 1.0;
 
         public DragAdorner(UIElement owner) : base(owner)
         {
@@ -25,27 +25,28 @@ namespace SimplestDragDrop
         {
             Debug.Assert(owner != null);
             Debug.Assert(adornElement != null);
-            _owner = owner;
+            Owner = owner;
             if (useVisualBrush)
             {
-                var _brush = new VisualBrush(adornElement);
-                _brush.Opacity = opacity;
-                var r = new Rectangle();
-                r.RadiusX = 3;
-                r.RadiusY = 3;
+                var brush = new VisualBrush(adornElement) {Opacity = opacity};
+                var r = new Rectangle
+                            {
+                                RadiusX = 3,
+                                RadiusY = 3,
+                                Width = adornElement.DesiredSize.Width,
+                                Height = adornElement.DesiredSize.Height
+                            };
 
                 //TODO: questioning DesiredSize vs. Actual 
-                r.Width = adornElement.DesiredSize.Width;
-                r.Height = adornElement.DesiredSize.Height;
 
                 XCenter = adornElement.DesiredSize.Width/2;
                 YCenter = adornElement.DesiredSize.Height/2;
 
-                r.Fill = _brush;
-                _child = r;
+                r.Fill = brush;
+                Child = r;
             }
             else
-                _child = adornElement;
+                Child = adornElement;
         }
 
 
@@ -86,19 +87,19 @@ namespace SimplestDragDrop
 
         protected override Visual GetVisualChild(int index)
         {
-            return _child;
+            return Child;
         }
 
 
         protected override Size MeasureOverride(Size finalSize)
         {
-            _child.Measure(finalSize);
-            return _child.DesiredSize;
+            Child.Measure(finalSize);
+            return Child.DesiredSize;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            _child.Arrange(new Rect(_child.DesiredSize));
+            Child.Arrange(new Rect(Child.DesiredSize));
             return finalSize;
         }
 

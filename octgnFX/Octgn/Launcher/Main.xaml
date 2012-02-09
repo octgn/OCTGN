@@ -2,7 +2,7 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary" Title="Octgn"
                      x:Name="Window" Width="416" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="368"
-                     Closing="Window_Closing">
+                     Closing="WindowClosing">
   <ribbon:RibbonWindow.Resources>
     <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
       <Setter Property="Foreground" Value="Red" />
@@ -19,11 +19,11 @@
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
-    <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="Ribbon_SelectionChanged">
+    <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="RibbonSelectionChanged">
       <ribbon:Ribbon.ApplicationMenu>
         <ribbon:RibbonApplicationMenu IsMainMenu="True" x:Name="MainMenu">
-          <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOff_Click"></ribbon:RibbonApplicationMenuItem>
-          <ribbon:RibbonApplicationMenuItem x:Name="Quit" Header="Quit" Click="Quit_Click"></ribbon:RibbonApplicationMenuItem>
+          <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOffClick"></ribbon:RibbonApplicationMenuItem>
+          <ribbon:RibbonApplicationMenuItem x:Name="Quit" Header="Quit" Click="QuitClick"></ribbon:RibbonApplicationMenuItem>
         </ribbon:RibbonApplicationMenu>
       </ribbon:Ribbon.ApplicationMenu>
       <ribbon:Ribbon.QuickAccessToolBar>
@@ -32,7 +32,7 @@
       <ribbon:RibbonTab Header="Lobby">
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton x:Name="bAddFriend" Label="Add A Friend"
-                               LargeImageSource="/Resources/Icons/user_add.png" Click="bAddFriend_Click" />
+                               LargeImageSource="/Resources/Icons/user_add.png" Click="BAddFriendClick" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup x:Name="rgStatus" Header="Status" LargeImageSource="/Resources/statusOnline.png">
           <ribbon:RibbonGroup.GroupSizeDefinitions>
@@ -41,24 +41,24 @@
             </ribbon:RibbonGroupSizeDefinitionBaseCollection>
           </ribbon:RibbonGroup.GroupSizeDefinitions>
           <ribbon:RibbonRadioButton x:Name="bOnlineStatus" Label="Online"
-                                    LargeImageSource="/Resources/statusOnline.png" Click="bOnlineStatus_Click" />
+                                    LargeImageSource="/Resources/statusOnline.png" Click="BOnlineStatusClick" />
           <ribbon:RibbonRadioButton x:Name="bAwayStatus" Label="Away" LargeImageSource="/Resources/statusAway.png"
-                                    Click="bAwayStatus_Click" />
+                                    Click="BAwayStatusClick" />
           <ribbon:RibbonRadioButton x:Name="bBusyStatus" Label="Busy" LargeImageSource="/Resources/statusDND.png"
-                                    Click="bBusyStatus_Click" />
+                                    Click="BBusyStatusClick" />
           <ribbon:RibbonRadioButton x:Name="bOfflineStatus" Label="Offline"
-                                    LargeImageSource="/Resources/statusOffline.png" Click="bOfflineStatus_Click" />
+                                    LargeImageSource="/Resources/statusOffline.png" Click="BOfflineStatusClick" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup>
           <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
             <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbUsername" Width="200"
-                     Text="My Username" FontWeight="Bold" FontSize="16" MouseUp="tbUsername_MouseUp" LostFocus="tbUsername_LostFocus"
-                     KeyUp="tbUsername_KeyUp" LostKeyboardFocus="tbUsername_LostKeyboardFocus" />
+                     Text="My Username" FontWeight="Bold" FontSize="16" MouseUp="TbUsernameMouseUp" LostFocus="TbUsernameLostFocus"
+                     KeyUp="TbUsernameKeyUp" LostKeyboardFocus="TbUsernameLostKeyboardFocus" />
           </ribbon:RibbonControlGroup>
           <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
             <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbStatus" Width="200"
-                     Text="My Username" KeyUp="tbStatus_KeyUp" LostFocus="tbStatus_LostFocus" MouseUp="tbStatus_MouseUp"
-                     TextChanged="tbStatus_TextChanged" LostKeyboardFocus="tbStatus_LostKeyboardFocus" />
+                     Text="My Username" KeyUp="TbStatusKeyUp" LostFocus="TbStatusLostFocus" MouseUp="TbStatusMouseUp"
+                     TextChanged="TbStatusTextChanged" LostKeyboardFocus="TbStatusLostKeyboardFocus" />
           </ribbon:RibbonControlGroup>
         </ribbon:RibbonGroup>
 
@@ -66,47 +66,47 @@
       <ribbon:RibbonTab Header="Host/Join" Foreground="Black">
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton x:Name="bHost" Label="Host" LargeImageSource="/Resources/Icons/user_add.png"
-                               Click="bHost_Click" />
+                               Click="BHostClick" />
           <ribbon:RibbonButton x:Name="bJoin" Label="Join" LargeImageSource="/Resources/Icons/user_add.png"
-                               Click="bJoin_Click" />
+                               Click="BJoinClick" />
         </ribbon:RibbonGroup>
       </ribbon:RibbonTab>
       <ribbon:RibbonTab Header="Games">
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton Label="Select Game" LargeImageSource="/Resources/Icons/bullet_arrow_down.png"
-                               Click="RibbonButton_Click_1" SmallImageSource="/OCTGN;component/Resources/Icons/bullet_arrow_down_small.png" />
+                               Click="RibbonButtonClick1" SmallImageSource="/OCTGN;component/Resources/Icons/bullet_arrow_down_small.png" />
           <ribbon:RibbonButton x:Name="bDeckEditor" Label="Deck Editor"
-                               LargeImageSource="/Resources/Icons/page_edit.png" Click="bDeckEditor_Click"
+                               LargeImageSource="/Resources/Icons/page_edit.png" Click="BDeckEditorClick"
                                SmallImageSource="/OCTGN;component/Resources/Icons/page_edit_small.png" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton Label="Install Game" LargeImageSource="/Resources/Icons/ruby_Add.png"
-                               Click="RibbonButton_Click" SmallImageSource="/OCTGN;component/Resources/Icons/ruby_add_small.png" />
+                               Click="RibbonButtonClick" SmallImageSource="/OCTGN;component/Resources/Icons/ruby_add_small.png" />
           <ribbon:RibbonButton Label="Remove Game" LargeImageSource="/Resources/Icons/ruby_delete.png"
                                IsEnabled="False" SmallImageSource="/OCTGN;component/Resources/Icons/ruby_delete_small.png" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton x:Name="bInstallSets" Label="Install Sets"
-                               LargeImageSource="/Resources/Icons/image_add.png" Click="bInstallSets_Click"
+                               LargeImageSource="/Resources/Icons/image_add.png" Click="BInstallSetsClick"
                                SmallImageSource="/OCTGN;component/Resources/Icons/image_add_small.png" />
           <ribbon:RibbonButton x:Name="bRemoveSets" Label="Remove Sets"
-                               LargeImageSource="/Resources/Icons/image_delete.png" Click="RibbonButton_Click_2"
+                               LargeImageSource="/Resources/Icons/image_delete.png" Click="RibbonButtonClick2"
                                SmallImageSource="/OCTGN;component/Resources/Icons/image_delete_small.png" />
           <ribbon:RibbonButton x:Name="bPatchSets" Label="Patch All Sets"
-                               LargeImageSource="/Resources/Icons/image_link.png" Click="bPatchSets_Click"
+                               LargeImageSource="/Resources/Icons/image_link.png" Click="BPatchSetsClick"
                                SmallImageSource="/OCTGN;component/Resources/Icons/image_link_small.png" />
         </ribbon:RibbonGroup>
       </ribbon:RibbonTab>
       <ribbon:RibbonTab Header="Options" Foreground="Black">
         <ribbon:RibbonGroup>
           <ribbon:RibbonCheckBox x:Name="bHideLoginNotifications" Label="Hide user login notifications"
-                                 IsChecked="{Binding ElementName=Window, Path=IsHideLoginNotificationsChecked}"
-                                 Checked="bHideLoginNotifications_Checked" Unchecked="bHideLoginNotifications_Unchecked" />
+                                 IsChecked="{Binding ElementName=Window, Path=IsHideLoginNotificationsChecked}" Checked="BHideLoginNotificationsChecked"
+                                 Unchecked="BHideLoginNotificationsUnchecked" />
         </ribbon:RibbonGroup>
       </ribbon:RibbonTab>
       <ribbon:RibbonTab Header="!" x:Name="NotificationTab"></ribbon:RibbonTab>
     </ribbon:Ribbon>
     <Frame Grid.Row="1" HorizontalAlignment="Stretch" Name="frame1" VerticalAlignment="Stretch"
-           Navigating="frame_Navigating" NavigationUIVisibility="Hidden" />
+           Navigating="FrameNavigating" NavigationUIVisibility="Hidden" />
   </Grid>
 </ribbon:RibbonWindow>

@@ -13,6 +13,7 @@ using Octgn.Controls;
 using Octgn.Data;
 using Octgn.Definitions;
 using Octgn.Play.Gui;
+using Octgn.Utils;
 
 namespace Octgn.Play.Dialogs
 {
@@ -46,9 +47,8 @@ namespace Octgn.Play.Dialogs
         {
             StopListenningForFilterValueChanges();
 
-            foreach (Guid packId in packs)
+            foreach (Pack pack in packs.Select(Database.GetPackById))
             {
-                Pack pack = Database.GetPackById(packId);
                 if (pack == null)
                 {
                     Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
@@ -76,15 +76,11 @@ namespace Octgn.Play.Dialogs
         private void SetPicture(object sender, RoutedEventArgs e)
         {
             var img = sender as Image;
-            if (img != null)
-            {
-                var element = img.DataContext as Deck.Element;
-                if (element != null)
-                {
-                    CardModel model = element.Card;
-                    ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
-                }
-            }
+            if (img == null) return;
+            var element = img.DataContext as Deck.Element;
+            if (element == null) return;
+            CardModel model = element.Card;
+            ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
         }
 
         private void PickPoolCard(object sender, RoutedEventArgs e)
@@ -168,15 +164,11 @@ namespace Octgn.Play.Dialogs
         private void MouseEnterCard(object sender, MouseEventArgs e)
         {
             var src = e.Source as FrameworkElement;
-            if (src != null)
-            {
-                var element = src.DataContext as Deck.Element;
-                if (element != null)
-                {
-                    CardModel model = element.Card;
-                    RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
-                }
-            }
+            if (src == null) return;
+            var element = src.DataContext as Deck.Element;
+            if (element == null) return;
+            CardModel model = element.Card;
+            RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
         }
 
         private void MouseLeaveCard(object sender, MouseEventArgs e)
@@ -186,44 +178,32 @@ namespace Octgn.Play.Dialogs
 
         #region Filters
 
-        private readonly List<FilterValue> activeRestrictions = new List<FilterValue>();
+        private readonly List<FilterValue> _activeRestrictions = new List<FilterValue>();
 
         private bool FilterCard(object c)
         {
-            if (activeRestrictions == null || activeRestrictions.Count == 0)
+            if (_activeRestrictions == null || _activeRestrictions.Count == 0)
                 return true;
             var card = (CardModel) c;
 
-            foreach (var restriction in activeRestrictions.GroupBy(fv => fv.Property))
-            {
-                PropertyDef prop = restriction.Key;
-                object value = card.Properties[prop.Name];
-                bool isOk = false;
-                foreach (FilterValue filterValue in restriction)
-                {
-                    if (filterValue.IsValueMatch(value))
-                    {
-                        isOk = true;
-                        break;
-                    }
-                }
-                if (!isOk) return false;
-            }
-            return true;
+            return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
+                    let prop = restriction.Key
+                    let value = card.Properties[prop.Name]
+                    select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
         private void CreateFilters()
         {
             Filters = new ObservableCollection<Filter>();
-            foreach (PropertyDef prop in Program.Game.Definition.CardDefinition.Properties.Values
-                .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)))
+            foreach (var filter in Program.Game.Definition.CardDefinition.Properties.Values
+                .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)).
+                Select(prop => new Filter
+                                   {
+                                       Name = prop.Name,
+                                       Property = prop,
+                                       Values = new ObservableCollection<FilterValue>()
+                                   }))
             {
-                var filter = new Filter
-                                 {
-                                     Name = prop.Name,
-                                     Property = prop,
-                                     Values = new ObservableCollection<FilterValue>()
-                                 };
                 Filters.Add(filter);
             }
         }
@@ -240,7 +220,7 @@ namespace Octgn.Play.Dialogs
 
         private void UpdateFilters()
         {
-            activeRestrictions.Clear();
+            _activeRestrictions.Clear();
             foreach (Filter filter in Filters)
             {
                 PropertyDef prop = filter.Property;
@@ -294,11 +274,11 @@ namespace Octgn.Play.Dialogs
             foreach (FilterValue fv in Filters.SelectMany(f => f.Values))
             {
                 if (e.NewItems != null)
-                    foreach (CardModel card in e.NewItems)
-                        if (fv.IsMatch(card)) fv.Count++;
+                    foreach (CardModel card in e.NewItems.Cast<CardModel>().Where(card => fv.IsMatch(card)))
+                        fv.Count++;
                 if (e.OldItems != null)
-                    foreach (CardModel card in e.OldItems)
-                        if (fv.IsMatch(card)) fv.Count--;
+                    foreach (CardModel card in e.OldItems.Cast<CardModel>().Where(card => fv.IsMatch(card)))
+                        fv.Count--;
             }
         }
 
@@ -306,7 +286,7 @@ namespace Octgn.Play.Dialogs
         {
             var src = ((FrameworkElement) sender);
             var filterValue = (FilterValue) src.DataContext;
-            activeRestrictions.Add(filterValue);
+            _activeRestrictions.Add(filterValue);
             CardPoolView.Refresh();
         }
 
@@ -314,7 +294,7 @@ namespace Octgn.Play.Dialogs
         {
             var src = ((FrameworkElement) sender);
             var filterValue = (FilterValue) src.DataContext;
-            activeRestrictions.Remove(filterValue);
+            _activeRestrictions.Remove(filterValue);
             CardPoolView.Refresh();
         }
 
@@ -322,18 +302,18 @@ namespace Octgn.Play.Dialogs
 
         #region Quantity popup
 
-        private Action<int> quantityPopupAction;
+        private Action<int> _quantityPopupAction;
 
         private void OpenQuantityPopup(Action<int> qtyAction)
         {
-            quantityPopupAction = qtyAction;
+            _quantityPopupAction = qtyAction;
             quantityPopup.IsOpen = true;
             quantityBox.Text = "1";
             quantityBox.Focus();
             quantityBox.SelectAll();
         }
 
-        private void QuantityBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void QuantityBoxPreviewKeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -342,7 +322,7 @@ namespace Octgn.Play.Dialogs
                     int qty;
                     if (!int.TryParse(quantityBox.Text, out qty)) return;
                     if (qty < 1) return;
-                    quantityPopupAction(qty);
+                    _quantityPopupAction(qty);
                     quantityPopup.IsOpen = false;
                     break;
                 case Key.Escape:
@@ -352,7 +332,7 @@ namespace Octgn.Play.Dialogs
             }
         }
 
-        private void QuantityBox_LostFocus(object sender, RoutedEventArgs e)
+        private void QuantityBoxLostFocus(object sender, RoutedEventArgs e)
         {
             quantityPopup.IsOpen = false;
         }
@@ -429,9 +409,8 @@ namespace Octgn.Play.Dialogs
 
         public class TokenFilterValue : FilterValue
         {
+            private Regex _regex;
             private string _value;
-
-            private Regex regex;
 
             public string Value
             {
@@ -439,15 +418,14 @@ namespace Octgn.Play.Dialogs
                 set
                 {
                     _value = value;
-                    regex = new Regex(@"(^|\s)" + value + @"($|\s)", RegexOptions.Compiled);
+                    _regex = new Regex(@"(^|\s)" + value + @"($|\s)", RegexOptions.Compiled);
                 }
             }
 
             public override bool IsValueMatch(object value)
             {
                 var strValue = value as string;
-                if (strValue == null) return false;
-                return regex.IsMatch(strValue);
+                return strValue != null && _regex.IsMatch(strValue);
             }
         }
 

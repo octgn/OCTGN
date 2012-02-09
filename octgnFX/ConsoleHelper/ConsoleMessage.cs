@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Skylabs.ConsoleHelper
 {
@@ -47,7 +48,7 @@ namespace Skylabs.ConsoleHelper
         {
             //TODO better handling of jibberish. Probubly be best to use regex. It'd be a lot cleaner and sexier.
             RawData = RawData.TrimStart(new[] {' '});
-            int ws = RawData.IndexOf(' ');
+            var ws = RawData.IndexOf(' ');
             Header = "";
             Args = new List<ConsoleArgument>();
             if (ws == -1)
@@ -59,16 +60,15 @@ namespace Skylabs.ConsoleHelper
                 Header = RawData.Substring(0, ws);
                 try
                 {
-                    String args = RawData.Substring(ws + 1);
+                    var args = RawData.Substring(ws + 1);
                     args = args.TrimStart(new[] {' '});
                     if (!args.Equals(""))
                     {
-                        String[] araw = args.Split(new[] {'-'}, StringSplitOptions.RemoveEmptyEntries);
+                        var araw = args.Split(new[] {'-'}, StringSplitOptions.RemoveEmptyEntries);
                         if (araw.Length != 0)
                         {
-                            foreach (String a in araw)
+                            foreach (var temp in araw.Select(a => a.Trim()))
                             {
-                                string temp = a.Trim();
                                 ws = temp.IndexOf(' ');
                                 if (ws == -1)
                                 {

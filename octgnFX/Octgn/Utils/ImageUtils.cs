@@ -3,21 +3,21 @@ using System.Reflection;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace Octgn
+namespace Octgn.Utils
 {
     internal static class ImageUtils
     {
-        private static readonly BitmapImage reflectionBitmapImage;
+        private static readonly BitmapImage ReflectionBitmapImage;
         private static readonly Func<Uri, BitmapImage> GetImageFromCache;
 
         static ImageUtils()
         {
-            reflectionBitmapImage = new BitmapImage();
+            ReflectionBitmapImage = new BitmapImage();
             MethodInfo methodInfo = typeof (BitmapImage).GetMethod("CheckCache",
                                                                    BindingFlags.NonPublic | BindingFlags.Instance);
             GetImageFromCache =
                 (Func<Uri, BitmapImage>)
-                Delegate.CreateDelegate(typeof (Func<Uri, BitmapImage>), reflectionBitmapImage, methodInfo);
+                Delegate.CreateDelegate(typeof (Func<Uri, BitmapImage>), ReflectionBitmapImage, methodInfo);
         }
 
         public static void GetCardImage(Uri uri, Action<BitmapImage> action)

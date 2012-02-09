@@ -151,9 +151,9 @@ namespace Octgn.Data
                                                                        (from card in section.Elements("card")
                                                                         select new Element
                                                                                    {
-                                                                                       loadedId =
+                                                                                       LoadedId =
                                                                                            card.Attr<string>("id"),
-                                                                                       loadedName = card.Value,
+                                                                                       LoadedName = card.Value,
                                                                                        Quantity =
                                                                                            card.Attr<byte>("qty", 1)
                                                                                    })
@@ -180,23 +180,22 @@ namespace Octgn.Data
                 if (isDbClosed)
                     game.OpenDatabase(true);
                 // Matches with actual cards in database
-                foreach (Section s in deck.Sections)
-                    foreach (Element e in s.Cards)
-                        try
-                        {
-                            // First try by id, if one is provided
-                            if (e.loadedId != null) e.Card = game.GetCardById(new Guid(e.loadedId));
-                            // If there's no id, or if it doesn't match a card in the database, try to fallback on the name
-                            if (e.Card == null) e.Card = game.GetCardByName(e.loadedName);
-                            // If we still can't find the card, report an error
-                            if (e.Card == null)
-                                throw new UnknownCardException(e.loadedId, e.loadedName);
-                        }
-                        catch (FormatException)
-                        {
-                            throw new InvalidFileFormatException(string.Format("Could not parse card id {0}.",
-                                                                               e.loadedId));
-                        }
+                foreach (Element e in deck.Sections.SelectMany(s => s.Cards))
+                    try
+                    {
+                        // First try by id, if one is provided
+                        if (e.LoadedId != null) e.Card = game.GetCardById(new Guid(e.LoadedId));
+                        // If there's no id, or if it doesn't match a card in the database, try to fallback on the name
+                        if (e.Card == null) e.Card = game.GetCardByName(e.LoadedName);
+                        // If we still can't find the card, report an error
+                        if (e.Card == null)
+                            throw new UnknownCardException(e.LoadedId, e.LoadedName);
+                    }
+                    catch (FormatException)
+                    {
+                        throw new InvalidFileFormatException(string.Format("Could not parse card id {0}.",
+                                                                           e.LoadedId));
+                    }
             }
             finally
             {
@@ -213,9 +212,9 @@ namespace Octgn.Data
 
         public class Element : INotifyPropertyChanged
         {
+            internal string LoadedId, LoadedName;
             private CardModel _card;
             private byte _quantity = 1;
-            internal string loadedId, loadedName;
 
             public CardModel Card
             {
@@ -306,12 +305,10 @@ namespace Octgn.Data
 
             private void ElementChanged(object sender, PropertyChangedEventArgs e)
             {
-                if (e.PropertyName == "Quantity")
-                {
-                    var element = sender as Element;
-                    if (element != null && element.Quantity <= 0) Cards.Remove(element);
-                    OnPropertyChanged("CardCount");
-                }
+                if (e.PropertyName != "Quantity") return;
+                var element = sender as Element;
+                if (element != null && element.Quantity <= 0) Cards.Remove(element);
+                OnPropertyChanged("CardCount");
             }
 
             protected void OnPropertyChanged(string propertyName)

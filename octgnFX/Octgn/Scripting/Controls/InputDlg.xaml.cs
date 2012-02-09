@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace Octgn.Script
+namespace Octgn.Scripting.Controls
 {
     public partial class InputDlg
     {
@@ -60,8 +60,7 @@ namespace Octgn.Script
                     {
                         e.Cancel = true;
                         var anim = new ColorAnimation(Colors.White, Colors.Red,
-                                                      new Duration(TimeSpan.FromMilliseconds(750)));
-                        anim.AutoReverse = true;
+                                                      new Duration(TimeSpan.FromMilliseconds(750))) {AutoReverse = true};
                         var brush = (SolidColorBrush) inputBox.Background.Clone();
                         inputBox.Background = brush;
                         brush.BeginAnimation(SolidColorBrush.ColorProperty, anim);

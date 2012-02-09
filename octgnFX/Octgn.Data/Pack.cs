@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace Octgn.Data
@@ -12,7 +13,7 @@ namespace Octgn.Data
         {
             Set = set;
             using (var stringReader = new StringReader(xml))
-            using (XmlReader reader = XmlReader.Create(stringReader))
+            using (var reader = XmlReader.Create(stringReader))
             {
                 reader.Read();
                 Id = new Guid(reader.GetAttribute("id"));
@@ -79,9 +80,9 @@ namespace Octgn.Data
             public override PackContent GetCards(Pack pack)
             {
                 var rnd = new Random();
-                double value = rnd.NextDouble();
+                var value = rnd.NextDouble();
                 double threshold = 0;
-                foreach (Option option in Options)
+                foreach (var option in Options)
                 {
                     threshold += option.Probability;
                     if (value <= threshold) return option.Definition.GenerateContent(pack);
@@ -122,9 +123,8 @@ namespace Octgn.Data
             public PackContent GenerateContent(Pack pack)
             {
                 var result = new PackContent();
-                foreach (BasePackItem def in this)
+                foreach (var defContent in this.Select(def => def.GetCards(pack)))
                 {
-                    PackContent defContent = def.GetCards(pack);
                     result.Merge(defContent);
                 }
                 return result;
@@ -139,7 +139,7 @@ namespace Octgn.Data
         {
             public Pick(XmlReader reader)
             {
-                string qtyAttribute = reader.GetAttribute("qty");
+                var qtyAttribute = reader.GetAttribute("qty");
                 Quantity = qtyAttribute == "unlimited" ? -1 : int.Parse(qtyAttribute);
                 Key = reader.GetAttribute("key");
                 Value = reader.GetAttribute("value");

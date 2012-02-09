@@ -13,7 +13,7 @@ using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui;
-using Octgn.Script;
+using Octgn.Scripting.Controls;
 
 namespace Octgn.Scripting
 {
@@ -194,15 +194,15 @@ namespace Octgn.Scripting
         public string CardModel(int id)
         {
             Card c = Card.Find(id);
-            if (!c.FaceUp || c.Type.model == null) return null;
-            return c.Type.model.Id.ToString();
+            if (!c.FaceUp || c.Type.Model == null) return null;
+            return c.Type.Model.Id.ToString();
         }
 
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
-            if (!c.FaceUp || c.Type.model == null) return "?";
-            return c.Type.model.Properties[property];
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
+            return c.Type.Model.Properties[property];
         }
 
         public int CardOwner(int id)
@@ -335,15 +335,14 @@ namespace Octgn.Scripting
 
         public Tuple<string, string>[] CardGetMarkers(int id)
         {
-            return Card.Find(id).Markers.Select(m => Tuple.Create(m.Model.Name, m.Model.id.ToString())).ToArray();
+            return Card.Find(id).Markers.Select(m => Tuple.Create(m.Model.Name, m.Model.Id.ToString())).ToArray();
         }
 
         public int MarkerGetCount(int cardId, string markerName, string markerId)
         {
             Card card = Card.Find(cardId);
             Marker marker = card.FindMarker(Guid.Parse(markerId), markerName);
-            if (marker == null) return 0;
-            return marker.Count;
+            return marker == null ? 0 : marker.Count;
         }
 
         public void MarkerSetCount(int cardId, int count, string markerName, string markerId)
@@ -405,7 +404,7 @@ namespace Octgn.Scripting
                                                                      if (!dlg.ShowDialog().GetValueOrDefault())
                                                                          return null;
                                                                      return Tuple.Create(dlg.MarkerModel.Name,
-                                                                                         dlg.MarkerModel.id.ToString(),
+                                                                                         dlg.MarkerModel.Id.ToString(),
                                                                                          dlg.Quantity);
                                                                  });
         }
@@ -469,7 +468,10 @@ namespace Octgn.Scripting
             engine.Invoke(() =>
                               {
                                   CardModel model = Database.GetCardById(modelGuid);
-                                  if (model != null)
+                                  if (model == null)
+                                  {
+                                  }
+                                  else
                                   {
                                       var ids = new int[quantity];
                                       var keys = new ulong[quantity];
@@ -560,9 +562,10 @@ namespace Octgn.Scripting
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //placeholder for other sorts of exceptions
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             finally
             {
@@ -584,7 +587,7 @@ namespace Octgn.Scripting
                 {
                     try
                     {
-                        engine.Invoke(() => { Process.Start(url); });
+                        engine.Invoke(() => Process.Start(url));
                         return true;
                     }
                     catch (Exception)
@@ -629,9 +632,7 @@ namespace Octgn.Scripting
             Player p = Player.Find((byte) id);
             if (p == null)
                 return "";
-            if (p.GlobalVariables.ContainsKey(name))
-                return p.GlobalVariables[name];
-            return "";
+            return p.GlobalVariables.ContainsKey(name) ? p.GlobalVariables[name] : "";
         }
 
         public void SetGlobalVariable(string name, object value)
@@ -646,9 +647,7 @@ namespace Octgn.Scripting
 
         public string GetGlobalVariable(string name)
         {
-            if (Program.Game.GlobalVariables.ContainsKey(name))
-                return Program.Game.GlobalVariables[name];
-            return "";
+            return Program.Game.GlobalVariables.ContainsKey(name) ? Program.Game.GlobalVariables[name] : "";
         }
 
         #endregion

@@ -11,8 +11,9 @@ using System.Windows.Media.Animation;
 using Octgn.Controls;
 using Octgn.Data;
 using Octgn.Definitions;
+using Octgn.Utils;
 
-namespace Octgn.Script
+namespace Octgn.Scripting.Controls
 {
     public partial class CardDlg
     {
@@ -21,7 +22,6 @@ namespace Octgn.Script
 
         private List<CardModel> allCards;
         private string filterText = "";
-        private CardModel result;
 
         public CardDlg(string where)
         {
@@ -41,10 +41,7 @@ namespace Octgn.Script
             set { SetValue(IsCardSelectedProperty, value); }
         }
 
-        public CardModel SelectedCard
-        {
-            get { return result; }
-        }
+        public CardModel SelectedCard { get; private set; }
 
         public int Quantity
         {
@@ -59,10 +56,10 @@ namespace Octgn.Script
             // (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
             if (sender is ListBox && ((ListBox) sender).SelectedIndex == -1) return;
 
-            if (recentList.SelectedIndex != -1) result = (CardModel) recentList.SelectedItem;
-            if (allList.SelectedIndex != -1) result = (CardModel) allList.SelectedItem;
+            if (recentList.SelectedIndex != -1) SelectedCard = (CardModel) recentList.SelectedItem;
+            if (allList.SelectedIndex != -1) SelectedCard = (CardModel) allList.SelectedItem;
 
-            if (result == null) return;
+            if (SelectedCard == null) return;
 
             int qty;
             if (!int.TryParse(quantityBox.Text, out qty) || qty < 1)
@@ -73,7 +70,7 @@ namespace Octgn.Script
                 return;
             }
 
-            Program.Game.AddRecentCard(result);
+            Program.Game.AddRecentCard(SelectedCard);
             DialogResult = true;
         }
 
@@ -116,21 +113,17 @@ namespace Octgn.Script
 
         private void PreviewFilterKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape && filterBox.Text.Length > 0)
-            {
-                filterBox.Clear();
-                e.Handled = true;
-            }
+            if (e.Key != Key.Escape || filterBox.Text.Length <= 0) return;
+            filterBox.Clear();
+            e.Handled = true;
         }
 
         private void SetPicture(object sender, RoutedEventArgs e)
         {
             var img = sender as Image;
-            if (img != null)
-            {
-                var model = img.DataContext as CardModel;
-                if (model != null) ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
-            }
+            if (img == null) return;
+            var model = img.DataContext as CardModel;
+            if (model != null) ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
