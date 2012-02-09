@@ -8,7 +8,6 @@ using Google.GData.Client;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Sockets;
 using Skylabs.Lobby.Threading;
-using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {
@@ -153,7 +152,7 @@ namespace Skylabs.LobbyServer
                     }
                 case "end":
                     {
-                        LazyAsync.Invoke(() => Stop());
+                        LazyAsync.Invoke(Stop);
                         break;
                     }
                 case "displayname":
@@ -341,7 +340,7 @@ namespace Skylabs.LobbyServer
                 Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
                 if (!Me.Equals(requestee))
                     Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
-                LazyAsync.Invoke(() => SendFriendsList());
+                LazyAsync.Invoke(SendFriendsList);
             }
         }
 
@@ -353,7 +352,7 @@ namespace Skylabs.LobbyServer
                 _friends.Add(friend);
                 if (LoggedIn)
                 {
-                    LazyAsync.Invoke(() => SendFriendsList());
+                    LazyAsync.Invoke(SendFriendsList);
                 }
             }
         }
@@ -456,15 +455,15 @@ namespace Skylabs.LobbyServer
                         _friends = Cup.GetFriendsList(Me.Uid);
 
 
-                        LazyAsync.Invoke(() => SendFriendsList());
-                        LazyAsync.Invoke(() => SendFriendRequests());
-                        LazyAsync.Invoke(() => SendHostedGameList());
+                        LazyAsync.Invoke(SendFriendsList);
+                        LazyAsync.Invoke(SendFriendRequests);
+                        LazyAsync.Invoke(SendHostedGameList);
                         return;
                     }
                     sm = new SocketMessage("banned");
                     sm.AddData("end", banned);
                     _socket.WriteMessage(sm);
-                    LazyAsync.Invoke(() => Stop());
+                    LazyAsync.Invoke(Stop);
                     LoggedIn = false;
                     return;
                 }

@@ -13,7 +13,7 @@ using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui;
-using Octgn.Script;
+using Octgn.Scripting.Controls;
 
 namespace Octgn.Scripting
 {
@@ -201,7 +201,7 @@ namespace Octgn.Scripting
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
-            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null ) return "?";
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
             return c.Type.Model.Properties[property];
         }
 
@@ -562,9 +562,10 @@ namespace Octgn.Scripting
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //placeholder for other sorts of exceptions
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             finally
             {
@@ -586,7 +587,7 @@ namespace Octgn.Scripting
                 {
                     try
                     {
-                        engine.Invoke(() => { Process.Start(url); });
+                        engine.Invoke(() => Process.Start(url));
                         return true;
                     }
                     catch (Exception)

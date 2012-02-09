@@ -3,7 +3,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace Octgn.Play.Gui
+namespace Octgn.Play.Gui.Adorners
 {
     internal class SelectAdorner : Adorner
     {
@@ -25,7 +25,7 @@ namespace Octgn.Play.Gui
             : base(adornedElement)
         {
             _child = new Rectangle
-                        {StrokeThickness = 3, Stroke = BorderBrush, Fill = FillBrush, IsHitTestVisible = false};
+                         {StrokeThickness = 3, Stroke = BorderBrush, Fill = FillBrush, IsHitTestVisible = false};
         }
 
         public Rect Rectangle

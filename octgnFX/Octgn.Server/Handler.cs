@@ -13,7 +13,7 @@ namespace Octgn.Server
         #region Statics
 
         private const string ServerName = "OCTGN.NET";
-        private static Version ServerVersion = GetServerVersion(); //unused
+        private static readonly Version ServerVersion = GetServerVersion(); //unused
 
         private static Version GetServerVersion()
         {
@@ -202,10 +202,10 @@ namespace Octgn.Server
 #if !DEBUG
             if(clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor)
             {
-                XmlSenderStub rpc = new XmlSenderStub(_sender, this);
+                var rpc = new XmlSenderStub(_sender, this);
                 rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.", ServerVersion.ToString(2)));
                 try { _sender.Client.Close(); _sender.Close(); }
-                catch { }
+                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
                 return;
             }
 #endif
@@ -219,8 +219,10 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
                 return;
             }
@@ -234,8 +236,10 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
                 return;
             }
@@ -250,8 +254,10 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
                 return;
             }
@@ -448,27 +454,26 @@ namespace Octgn.Server
             int nCards = card.Length/(_clients.Count - 1);
             int from = 0, client = 1;
             var someCard = new int[nCards];
-            foreach (var kvp in _clients)
+            foreach (var kvp in _clients.Where(kvp => kvp.Key != _sender))
             {
-                if (kvp.Key == _sender) continue;
                 if (client < _clients.Count - 1)
                 {
                     if (nCards > 0)
                     {
-                        Array.Copy(card, from, someCard, 0, nCards);
-                        kvp.Value.Rpc.Shuffle(group, someCard);
-                        from += nCards;
+                        Array.Copy(card, @from, someCard, 0, nCards);
+                        kvp.Value.Rpc.Shuffle(@group, someCard);
+                        @from += nCards;
                     }
                     client++;
                 }
                 else
                 {
-                    int rest = card.Length - from;
+                    int rest = card.Length - @from;
                     if (rest > 0)
                     {
                         someCard = new int[rest];
-                        Array.Copy(card, from, someCard, 0, rest);
-                        kvp.Value.Rpc.Shuffle(group, someCard);
+                        Array.Copy(card, @from, someCard, 0, rest);
+                        kvp.Value.Rpc.Shuffle(@group, someCard);
                     }
                     return;
                 }

@@ -49,11 +49,12 @@ namespace Octgn.Play.Gui
             _headPt = new LineSegment();
             _startPt2 = new BezierSegment();
             _startPt1 = new PathFigure
-                           {
-                               Segments =
-                                   new PathSegmentCollection {_endPt1, _arrowPt1, _headPt, _arrowPt2, _endPt2, _startPt2},
-                               IsClosed = true
-                           };
+                            {
+                                Segments =
+                                    new PathSegmentCollection
+                                        {_endPt1, _arrowPt1, _headPt, _arrowPt2, _endPt2, _startPt2},
+                                IsClosed = true
+                            };
             Shape = new Path
                         {
                             Data = new PathGeometry {Figures = new PathFigureCollection {_startPt1}},

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.Controls;
+using Octgn.Play.Gui.Adorners;
 
 namespace Octgn.Play.Gui
 {
@@ -179,8 +179,8 @@ namespace Octgn.Play.Gui
             var group = (TransformGroup) element.RenderTransform;
 
             Point currentPos = element.TransformToAncestor(this).Transform(new Point());
-            Debug.Assert(@group.Inverse != null, "@group.Inverse != null");
-            arrangePosition = @group.Inverse.Transform(currentPos);
+            arrangePosition = new Point(0, 0);
+            if (@group.Inverse != null) arrangePosition = @group.Inverse.Transform(currentPos);
 
             return group.Children[1];
         }

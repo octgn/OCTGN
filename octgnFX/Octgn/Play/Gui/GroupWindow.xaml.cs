@@ -39,7 +39,7 @@ namespace Octgn.Play.Gui
             _id = Program.Game.GetUniqueId();
             _position = position;
             _count = count;
-            DataContext = _group = group; 
+            DataContext = _group = group;
 
             switch (position)
             {
@@ -130,21 +130,8 @@ namespace Octgn.Play.Gui
                                             {
                                                 if (!cardsList.IsAlwaysUp && !c.FaceUp)
                                                     return false;
-                                                if (
-                                                    c.RealName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=
-                                                    0)
-                                                    return true;
-                                                foreach (string property in textProperties)
-                                                {
-                                                    var propertyValue = (string) c.GetProperty(property);
-                                                    if (propertyValue == null) continue;
-                                                    if (
-                                                        propertyValue.IndexOf(filter,
-                                                                              StringComparison.CurrentCultureIgnoreCase) >=
-                                                        0)
-                                                        return true;
-                                                }
-                                                return false;
+                                                return c.RealName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=
+                                                       0 || textProperties.Select(property => (string) c.GetProperty(property)).Where(propertyValue => propertyValue != null).Any(propertyValue => propertyValue.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0);
                                             };
                 alphaOrderBtn.IsChecked = true;
             }
@@ -196,7 +183,7 @@ namespace Octgn.Play.Gui
                     {
                         var src = sender as ICollection<Card>;
                         int oldIndex = cards.IndexOf(card);
-                        int newIndex = src.Where(c => cards.Contains(c)).IndexOf(card);
+                        int newIndex = src.Where(cards.Contains).IndexOf(card);
                         cards.Move(oldIndex, newIndex);
                     }
                     break;

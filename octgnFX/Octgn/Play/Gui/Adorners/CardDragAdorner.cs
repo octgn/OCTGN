@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Octgn.Definitions;
 
-namespace Octgn.Play.Gui
+namespace Octgn.Play.Gui.Adorners
 {
     internal class CardDragAdorner : Adorner, IDisposable
     {
@@ -25,13 +25,13 @@ namespace Octgn.Play.Gui
         private readonly RotateTransform _rot180Transform;
         private readonly RotateTransform _rot90Transform;
         private readonly TranslateTransform _translate;
+        internal bool OnHoverRequestInverted;
 
         private bool _canDrop = true, _faceUp;
         private Vector _mouseAdjustment;
         private Vector _mouseOffset;
         private Vector _offset;
         private TranslateTransform _offsetTransform;
-        internal bool OnHoverRequestInverted;
 
         public CardDragAdorner(CardControl sourceCard, Vector mousePoint)
             : this(sourceCard, sourceCard, mousePoint)
@@ -64,13 +64,13 @@ namespace Octgn.Play.Gui
             _lightRedBrush = Brushes.Red.Clone();
             _faceDownBrush = new ImageBrush(sourceCard.Card.GetBitmapImage(false));
             _faceUpBrush = _faceUp
-                              ? new VisualBrush(sourceCard.GetCardVisual())
-                                    {
-                                        Viewbox = new Rect(0, 0, sourceCard.ActualWidth, sourceCard.ActualHeight),
-                                        ViewboxUnits = BrushMappingMode.Absolute
-                                    }
-                              : (Brush)
-                                new ImageBrush(new BitmapImage(new Uri(Program.Game.Definition.CardDefinition.Front)));
+                               ? new VisualBrush(sourceCard.GetCardVisual())
+                                     {
+                                         Viewbox = new Rect(0, 0, sourceCard.ActualWidth, sourceCard.ActualHeight),
+                                         ViewboxUnits = BrushMappingMode.Absolute
+                                     }
+                               : (Brush)
+                                 new ImageBrush(new BitmapImage(new Uri(Program.Game.Definition.CardDefinition.Front)));
             _invertTransform = new ScaleTransform {CenterX = 0.5, CenterY = 0.5};
             _faceUpBrush.RelativeTransform = _invertTransform;
             if (_faceUpBrush is VisualBrush)
@@ -93,8 +93,8 @@ namespace Octgn.Play.Gui
             if ((_rot & CardOrientation.Rot90) != 0)
             {
                 _rot90Transform = isCardInverted
-                                     ? new RotateTransform(90, _child.Width/2, _child.Width/2)
-                                     : new RotateTransform(90, _child.Width/2, _child.Height - _child.Width/2);
+                                      ? new RotateTransform(90, _child.Width/2, _child.Width/2)
+                                      : new RotateTransform(90, _child.Width/2, _child.Height - _child.Width/2);
                 transforms.Children.Add(_rot90Transform);
             }
             _translate = new TranslateTransform();
@@ -174,7 +174,8 @@ namespace Octgn.Play.Gui
             {
                 _mouseAdjustment +=
                     new Vector(_mouseOffset.X*(size.Width - _child.Width)/Program.Game.Definition.CardDefinition.Width,
-                               _mouseOffset.Y*(size.Height - _child.Height)/Program.Game.Definition.CardDefinition.Height);
+                               _mouseOffset.Y*(size.Height - _child.Height)/
+                               Program.Game.Definition.CardDefinition.Height);
                 if (_offsetTransform != null)
                 {
                     _offsetTransform.X *= size.Width/_child.Width;

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace SimplestDragDrop
+namespace Octgn
 {
     public static class Win32
     {

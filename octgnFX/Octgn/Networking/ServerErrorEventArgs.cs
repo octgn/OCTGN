@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Octgn
+namespace Octgn.Networking
 {
     internal class ServerErrorEventArgs : EventArgs
     {

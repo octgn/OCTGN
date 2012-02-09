@@ -26,9 +26,9 @@ namespace Octgn.Launcher
     public partial class Login
     {
         private readonly DispatcherTimer _animationTimer;
-        private Timer _loginTimer;
         private bool _bSpin;
         private bool _isLoggingIn;
+        private Timer _loginTimer;
 
         public Login()
         {
@@ -44,7 +44,7 @@ namespace Octgn.Launcher
             SpinnerRotate.CenterX = image2.Width/2;
             SpinnerRotate.CenterY = image2.Height/2;
             _animationTimer = new DispatcherTimer(DispatcherPriority.ContextIdle, Dispatcher)
-                                 {Interval = new TimeSpan(0, 0, 0, 0, 100)};
+                                  {Interval = new TimeSpan(0, 0, 0, 0, 100)};
             versionText.Text = string.Format("Version {0}", OctgnApp.OctgnVersion.ToString(4));
             _animationTimer.Tick += HandleAnimationTick;
             string password = SimpleConfig.ReadValue("Password");
@@ -147,7 +147,7 @@ namespace Octgn.Launcher
                                                                 Content = "Ok"
                                                             };
 
-                                                b.Click += (o, e) => { pm.HideMessage(); };
+                                                b.Click += (o, e) => pm.HideMessage();
                                                 tb.Name = "tbCaptcha";
 
                                                 i.Source = new BitmapImage(new Uri(imageurl));
@@ -178,7 +178,7 @@ namespace Octgn.Launcher
             if (success == LoginResult.WaitingForResponse)
             {
                 _loginTimer =
-                    new Timer(o => { LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again."); },
+                    new Timer(o => LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again."),
                               null, 10000, 10000);
                 return;
             }

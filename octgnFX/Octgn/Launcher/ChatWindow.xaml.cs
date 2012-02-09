@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -165,27 +166,18 @@ namespace Octgn.Launcher
             if (chat.Contains("\n"))
             {
                 String[] lines = chat.Split(new[] {'\n'});
-                foreach (String line in lines)
+                foreach (Inline inn in lines.Select(line => line.Split(new[] {' '})).SelectMany(words => words.Select(word => StringToRun(word, b))))
                 {
-                    String[] words = line.Split(new[] {' '});
-                    foreach (String word in words)
-                    {
-                        Inline inn = StringToRun(word, b);
-
-                        if (inn != null)
-                            p.Inlines.Add(inn);
-                        p.Inlines.Add(new Run(" "));
-                    }
-                    //p.Inlines.Add(new Run("\n"));
+                    if (inn != null)
+                        p.Inlines.Add(inn);
+                    p.Inlines.Add(new Run(" "));
                 }
             }
             else
             {
                 String[] words = chat.Split(new[] {' '});
-                foreach (String word in words)
+                foreach (Inline inn in words.Select(word => StringToRun(word, b)))
                 {
-                    Inline inn = StringToRun(word, b);
-
                     if (inn != null)
                         p.Inlines.Add(inn);
                     p.Inlines.Add(new Run(" "));
@@ -198,8 +190,10 @@ namespace Octgn.Launcher
                 {
                     richTextBox1.Document.Blocks.Remove(richTextBox1.Document.Blocks.FirstBlock);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
             }
             if (rtbatbottom)
@@ -249,9 +243,8 @@ namespace Octgn.Launcher
                 else
                 {
                     Boolean fUser = false;
-                    foreach (User u in listBox1.Items)
+                    if (listBox1.Items.Cast<User>().Any(u => u.DisplayName == s))
                     {
-                        if (u.DisplayName != s) continue;
                         b = Brushes.LightGreen;
                         ret = new Bold(r) {ToolTip = "Click to whisper"};
                         r.Cursor = Cursors.Hand;
@@ -260,7 +253,6 @@ namespace Octgn.Launcher
                             delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
                         r.MouseLeave += delegate { r.Background = Brushes.White; };
                         fUser = true;
-                        break;
                     }
                     if (!fUser)
                     {
@@ -280,8 +272,10 @@ namespace Octgn.Launcher
             {
                 Process.Start(new ProcessStartInfo(navigateUri));
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             e.Handled = true;
         }

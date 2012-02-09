@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using Skylabs.Net;
+using Skylabs.Lobby.Sockets;
 
 namespace Skylabs.LobbyServer
 {
@@ -52,21 +53,15 @@ namespace Skylabs.LobbyServer
 #if(DEBUG)
             const string sname = "serversettingsdebug.ini";
 #else
-            string sname = "serversettings.ini";
+            const string sname = "serversettings.ini";
 #endif
             if (!File.Exists(sname))
             {
                 Console.WriteLine("Can't find settings file.");
                 return false;
             }
-            foreach (string l in File.ReadLines(sname))
+            foreach (string[] parts in File.ReadLines(sname).Select(l => l.Trim()).Where(s => s[0] != '#').Select(s => s.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries)).Where(parts => parts.Length == 2))
             {
-                string s = l.Trim();
-                if (s[0] == '#')
-                    continue;
-                String[] parts = s.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length != 2)
-                    continue;
                 parts[0] = parts[0].Trim();
                 parts[1] = parts[1].Trim();
                 if (Settings.ContainsKey(parts[0]))
@@ -142,22 +137,28 @@ namespace Skylabs.LobbyServer
             {
                 Gaming.Stop();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             try
             {
                 Server.Stop();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             try
             {
                 _killTimer.Dispose();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             _running = false;
         }

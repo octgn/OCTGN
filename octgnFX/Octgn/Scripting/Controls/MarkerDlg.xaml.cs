@@ -9,7 +9,7 @@ using System.Windows.Media.Animation;
 using Octgn.Data;
 using Octgn.Play;
 
-namespace Octgn.Script
+namespace Octgn.Scripting.Controls
 {
     public partial class MarkerDlg
     {

@@ -6,7 +6,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using SimplestDragDrop;
 using Skylabs;
 using Skylabs.Lobby;
 
@@ -232,7 +231,7 @@ namespace Octgn.Controls
             Debug.Assert(DragScope != null);
 
             // We enable Drag & Drop in our scope ...  We are not implementing Drop, so it is OK, but this allows us to get DragOver 
-            bool previousDrop = DragScope.AllowDrop;
+            bool previousDrop = DragScope != null && DragScope.AllowDrop;
             DragScope.AllowDrop = true;
 
             // Let's wire our usual events.. 

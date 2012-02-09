@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 
-namespace Octgn.Play.Gui
+namespace Octgn.Play.Gui.Adorners
 {
     internal class InsertAdorner : Adorner
     {
@@ -17,23 +17,23 @@ namespace Octgn.Play.Gui
         {
             IsHitTestVisible = false;
             _topTriangle = new Polygon
-                              {
-                                  Points =
-                                      new PointCollection(new[] {new Point(), new Point(6, -10), new Point(-6, -10)}),
-                                  Fill = Brushes.White,
-                                  Stroke = Brushes.Black,
-                                  StrokeThickness = 1,
-                                  Effect = new DropShadowEffect {ShadowDepth = 3}
-                              };
+                               {
+                                   Points =
+                                       new PointCollection(new[] {new Point(), new Point(6, -10), new Point(-6, -10)}),
+                                   Fill = Brushes.White,
+                                   Stroke = Brushes.Black,
+                                   StrokeThickness = 1,
+                                   Effect = new DropShadowEffect {ShadowDepth = 3}
+                               };
             _bottomTriangle = new Polygon
-                                 {
-                                     Points =
-                                         new PointCollection(new[] {new Point(), new Point(6, 10), new Point(-6, 10)}),
-                                     Fill = Brushes.White,
-                                     Stroke = Brushes.Black,
-                                     StrokeThickness = 1,
-                                     Effect = new DropShadowEffect {ShadowDepth = 2}
-                                 };
+                                  {
+                                      Points =
+                                          new PointCollection(new[] {new Point(), new Point(6, 10), new Point(-6, 10)}),
+                                      Fill = Brushes.White,
+                                      Stroke = Brushes.Black,
+                                      StrokeThickness = 1,
+                                      Effect = new DropShadowEffect {ShadowDepth = 2}
+                                  };
         }
 
         public FrameworkElement ClippingVisual { get; set; }

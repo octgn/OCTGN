@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -51,8 +52,10 @@ namespace Octgn.Server
                 _tcp.Server.Close();
                 _tcp.Stop();
             }
-            catch
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             // Close all open connections
             while (true)
@@ -101,9 +104,8 @@ namespace Octgn.Server
             lock (_clients)
             {
                 // Search the client
-                foreach (Connection t in _clients)
+                foreach (Connection t in _clients.Where(t => t.Client == lost))
                 {
-                    if (t.Client != lost) continue;
                     // Remove it
                     t.Disconnected();
                     ret = true;
@@ -139,13 +141,9 @@ namespace Octgn.Server
         {
             if (_closed) return;
             Connection[] connections = _clients.ToArray();
-            foreach (Connection t in connections)
+            foreach (Connection t in from t in connections let ts = new TimeSpan(DateTime.Now.Ticks - t.LastPingTime.Ticks) where ts.Seconds > 60 select t)
             {
-                var ts = new TimeSpan(DateTime.Now.Ticks - t.LastPingTime.Ticks);
-                if (ts.Seconds > 60)
-                {
-                    t.Disconnected();
-                }
+                t.Disconnected();
             }
         }
 
@@ -358,8 +356,10 @@ namespace Octgn.Server
                         Client.GetStream().Close();
                         Client.Close();
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Debug.WriteLine(e);
+                        if (Debugger.IsAttached) Debugger.Break();
                     }
                 // Remove it from the list
                 lock (_server._clients)

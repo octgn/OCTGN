@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Octgn.Definitions;
 using Octgn.Play.Actions;
+using Octgn.Play.Gui.Adorners;
+using Octgn.Play.Gui.DragOperations;
 
 namespace Octgn.Play.Gui
 {
@@ -20,9 +22,9 @@ namespace Octgn.Play.Gui
     {
         private readonly int _defaultHeight;
         private readonly int _defaultWidth;
+        protected bool IsCardSizeValid;
         private Size _cardSize;
         private IDragOperation _dragOperation;
-        protected bool IsCardSizeValid;
 
         public TableControl()
         {
@@ -218,9 +220,8 @@ namespace Octgn.Play.Gui
 
                 // If there were other cards (i.e. dragging from a count number in GroupWindow), move them accordingly
                 double xOffset = Program.Game.Definition.CardDefinition.Width*1.05;
-                foreach (Card c in e.Cards)
+                foreach (Card c in e.Cards.Where(c => c != e.ClickedCard))
                 {
-                    if (c == e.ClickedCard) continue;
                     pt.X += xOffset;
                     c.MoveToTable((int) pt.X, (int) pt.Y, e.FaceUp != null && e.FaceUp.Value, idx);
                 }
@@ -387,12 +388,12 @@ namespace Octgn.Play.Gui
             // Bug fix: if done immediately, the layout is slightly incorrect (e.g. in the case of mouse wheel zoom).
             // so we dispatch the update until all transforms are updated.         
             _updateYCenterOperation = Dispatcher.BeginInvoke(new Action(delegate
-                                                                           {
-                                                                               Point pt =
-                                                                                   cardsView.TransformToAncestor(this).
-                                                                                       Transform(new Point());
-                                                                               YCenterOffset = pt.Y;
-                                                                           }), DispatcherPriority.ContextIdle);
+                                                                            {
+                                                                                Point pt =
+                                                                                    cardsView.TransformToAncestor(this).
+                                                                                        Transform(new Point());
+                                                                                YCenterOffset = pt.Y;
+                                                                            }), DispatcherPriority.ContextIdle);
         }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)

@@ -393,7 +393,7 @@ namespace Octgn.Controls
                                                    {
                                                        be.UpdateSource();
                                                        be.UpdateTarget();
-                                                           // if the value has been reject (e.g. bad format)
+                                                       // if the value has been reject (e.g. bad format)
                                                    }
                                                    var window = Window.GetWindow(box);
                                                    if (window != null)
