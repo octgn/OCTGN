@@ -18,11 +18,11 @@ namespace Octgn.Networking
         private readonly Handler _handler; // Message handler
         private readonly int _port; // Port number to connect to
         private readonly TcpClient _tcp; // Underlying windows socket        
-        private Thread _pingThread;
         private BinaryReceiveDelegate _binHandler; // Receive delegate when in binary mode
         private bool _disposed; // True when the client has been closed
         private byte[] _packet = new byte[1024]; // Packet buffer (gets the receive buffer's content)
         private int _packetPos; // Position in the packet buffer
+        private Thread _pingThread;
         private XmlReceiveDelegate _xmlHandler; // Receive delegate when in xml mode
 
         // Delegates definitions
@@ -107,23 +107,23 @@ namespace Octgn.Networking
         {
             _packetPos = 0;
             _tcp.BeginConnect(_address, _port,
-                             delegate(IAsyncResult ar)
-                                 {
-                                     try
-                                     {
-                                         lock (this)
-                                         {
-                                             if (_tcp.Client == null) return; // was cancelled
-                                             _tcp.EndConnect(ar);
-                                             _tcp.GetStream().BeginRead(_buffer, 0, 1024, Receive, null);
-                                         }
-                                         callback(this, new ConnectedEventArgs());
-                                     }
-                                     catch (SocketException se)
-                                     {
-                                         callback(this, new ConnectedEventArgs(se));
-                                     }
-                                 }, null);
+                              delegate(IAsyncResult ar)
+                                  {
+                                      try
+                                      {
+                                          lock (this)
+                                          {
+                                              if (_tcp.Client == null) return; // was cancelled
+                                              _tcp.EndConnect(ar);
+                                              _tcp.GetStream().BeginRead(_buffer, 0, 1024, Receive, null);
+                                          }
+                                          callback(this, new ConnectedEventArgs());
+                                      }
+                                      catch (SocketException se)
+                                      {
+                                          callback(this, new ConnectedEventArgs(se));
+                                      }
+                                  }, null);
         }
 
         public void CancelConnect()
@@ -152,7 +152,11 @@ namespace Octgn.Networking
                         _tcp.GetStream().Close();
                         _tcp.Close();
                     }
-                    catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                        if (Debugger.IsAttached) Debugger.Break();
+                    }
                 // Set disposed to 0
                 _disposed = true;
             }

@@ -96,7 +96,11 @@ namespace Skylabs.LobbyServer
                 {
                     Games[port].Status = Lobby.HostedGame.EHostedGame.GameInProgress;
                 }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
                 Logger.UL(MethodBase.GetCurrentMethod().Name, "GamingLocker");
             }
         }

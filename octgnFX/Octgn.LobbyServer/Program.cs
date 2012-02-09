@@ -142,17 +142,29 @@ namespace Skylabs.LobbyServer
             {
                 Gaming.Stop();
             }
-            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
             try
             {
                 Server.Stop();
             }
-            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
             try
             {
                 _killTimer.Dispose();
             }
-            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
             _running = false;
         }
     }

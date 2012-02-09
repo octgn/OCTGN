@@ -466,7 +466,11 @@ namespace Octgn.Launcher
                 Program.Client.Connect();
                 Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
             }
-            catch (Exception ex) { Debug.WriteLine(ex); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
         }
 
         private void BOnlineStatusClick(object sender, RoutedEventArgs e)

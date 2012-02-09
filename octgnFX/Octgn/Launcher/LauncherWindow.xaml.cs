@@ -17,16 +17,16 @@ namespace Octgn.Launcher
         private static readonly object BackTarget = new object();
 
         private readonly AnimationTimeline _inAnimation = new DoubleAnimation(0, 1, TransitionDuration)
-                                                             {BeginTime = TimeSpan.FromMilliseconds(200)};
+                                                              {BeginTime = TimeSpan.FromMilliseconds(200)};
 
         private readonly AnimationTimeline _outAnimation = new DoubleAnimation(0, TransitionDuration);
 
         private readonly DoubleAnimation _resizeAnimation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
-                                                               {
-                                                                   EasingFunction =
-                                                                       new ExponentialEase
-                                                                           {EasingMode = EasingMode.EaseOut}
-                                                               };
+                                                                {
+                                                                    EasingFunction =
+                                                                        new ExponentialEase
+                                                                            {EasingMode = EasingMode.EaseOut}
+                                                                };
 
         private double _bordersHeight;
         private double _clientWidth;
@@ -39,13 +39,13 @@ namespace Octgn.Launcher
             NavigationCommands.BrowseBack.InputGestures.Clear();
 
             _outAnimation.Completed += delegate
-                                          {
-                                              _isInTransition = false;
-                                              if (_transitionTarget == BackTarget)
-                                                  GoBack();
-                                              else
-                                                  Navigate(_transitionTarget);
-                                          };
+                                           {
+                                               _isInTransition = false;
+                                               if (_transitionTarget == BackTarget)
+                                                   GoBack();
+                                               else
+                                                   Navigate(_transitionTarget);
+                                           };
             _outAnimation.Freeze();
 
             _resizeAnimation.Completed += (s, e) => SizeToContent = SizeToContent.WidthAndHeight;

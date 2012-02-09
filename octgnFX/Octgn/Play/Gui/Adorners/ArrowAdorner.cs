@@ -69,8 +69,8 @@ namespace Octgn.Play.Gui
             double deltaY = Canvas.GetTop(toCtrl) - Canvas.GetTop(fromCtrl);
             Point toMiddlePt = _toCard.GetMiddlePoint(_toCard.IsInverted ^ fromCard.IsInverted);
             _arrow.ToPoint = fromCard.IsInverted
-                                ? toMiddlePt - new Vector(deltaX, deltaY)
-                                : toMiddlePt + new Vector(deltaX, deltaY);
+                                 ? toMiddlePt - new Vector(deltaX, deltaY)
+                                 : toMiddlePt + new Vector(deltaX, deltaY);
         }
 
         public void UpdateToPoint(Point pt)

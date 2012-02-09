@@ -110,7 +110,11 @@ namespace Skylabs.LobbyServer
             {
                 StandAloneApp.Close();
             }
-            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
         }
 
         public bool StartProcess()

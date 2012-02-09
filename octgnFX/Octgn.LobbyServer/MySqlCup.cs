@@ -320,7 +320,11 @@ namespace Skylabs.LobbyServer
                         cmd.ExecuteNonQuery();
                     }
                 }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
             }
         }
 
@@ -354,7 +358,11 @@ namespace Skylabs.LobbyServer
                         com.ExecuteNonQuery();
                     }
                 }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
             }
         }
 
@@ -397,7 +405,11 @@ namespace Skylabs.LobbyServer
                         return ret;
                     }
                 }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
                 return null;
             }
         }
@@ -435,7 +447,11 @@ namespace Skylabs.LobbyServer
                             com.ExecuteNonQuery();
                     }
                 }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
             }
         }
 

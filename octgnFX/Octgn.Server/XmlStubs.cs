@@ -962,8 +962,12 @@ namespace Octgn.Server
                 stream.Write(_buffer, 0, length);
                 stream.Flush();
             }
-            // TODO: notify disconnections
-            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                // TODO: notify disconnections
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
             //				if (Program.Server != null && Program.Server.Disconnected(lTo))
             //					return;
             //				Program.Client.Disconnected();

@@ -198,7 +198,11 @@ namespace Octgn.Launcher
                 {
                     richTextBox1.Document.Blocks.Remove(richTextBox1.Document.Blocks.FirstBlock);
                 }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
             }
             if (rtbatbottom)
                 richTextBox1.ScrollToEnd();
@@ -278,7 +282,11 @@ namespace Octgn.Launcher
             {
                 Process.Start(new ProcessStartInfo(navigateUri));
             }
-            catch (Exception ex) { Debug.WriteLine(ex); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
             e.Handled = true;
         }
 

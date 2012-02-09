@@ -217,7 +217,11 @@ namespace Skylabs.LobbyServer
             {
                 ListenSocket.BeginAcceptTcpClient(AcceptReceiveDataCallback, ListenSocket);
             }
-            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
         }
 
         /// <summary>

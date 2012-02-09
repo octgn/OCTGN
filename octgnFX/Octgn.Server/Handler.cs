@@ -219,7 +219,11 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
                 return;
             }
             // Check if the client wants to play the correct game
@@ -232,7 +236,11 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
                 return;
             }
             // Check if the client's major game version matches ours
@@ -246,7 +254,11 @@ namespace Octgn.Server
                     _sender.Client.Close();
                     _sender.Close();
                 }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
                 return;
             }
             // Create the new endpoint

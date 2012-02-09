@@ -39,7 +39,7 @@ namespace Octgn.Play.Gui
             _id = Program.Game.GetUniqueId();
             _position = position;
             _count = count;
-            DataContext = _group = group; 
+            DataContext = _group = group;
 
             switch (position)
             {

@@ -132,7 +132,11 @@ namespace Octgn
             {
                 DebugWindow.Close();
             }
-            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
             if (LauncherWindow != null)
                 if (LauncherWindow.IsLoaded)
                     LauncherWindow.Close();
@@ -149,7 +153,11 @@ namespace Octgn
                     cw.CloseChatWindow();
                 }
             }
-            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
 
 #if(DEBUG)
             if (_lobbyServerProcess != null)

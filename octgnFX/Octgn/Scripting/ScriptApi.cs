@@ -201,7 +201,7 @@ namespace Octgn.Scripting
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
-            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null ) return "?";
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
             return c.Type.Model.Properties[property];
         }
 
@@ -562,7 +562,11 @@ namespace Octgn.Scripting
                     }
                 }
             }
-            catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
             finally
             {
                 // general cleanup
