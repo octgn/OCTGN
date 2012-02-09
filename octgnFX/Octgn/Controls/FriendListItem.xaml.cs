@@ -6,7 +6,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Skylabs;
 using Skylabs.Lobby;
 
 namespace Octgn.Controls

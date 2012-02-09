@@ -39,8 +39,10 @@ namespace Skylabs.LobbyServer
 #if(DEBUG || TestServer)
 #else
             StandAloneApp.StartInfo.FileName = "/opt/mono-2.10/bin/mono";
-            StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" + GameGuid + " -v=" + GameVersion + " -p=" + Port.ToString(CultureInfo.InvariantCulture);
-                    
+            StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" +
+                                                GameGuid + " -v=" + GameVersion + " -p=" +
+                                                Port.ToString(CultureInfo.InvariantCulture);
+
 #endif
             StandAloneApp.Exited += StandAloneAppExited;
             StandAloneApp.EnableRaisingEvents = true;

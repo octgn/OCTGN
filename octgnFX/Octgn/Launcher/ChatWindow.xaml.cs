@@ -166,7 +166,10 @@ namespace Octgn.Launcher
             if (chat.Contains("\n"))
             {
                 String[] lines = chat.Split(new[] {'\n'});
-                foreach (Inline inn in lines.Select(line => line.Split(new[] {' '})).SelectMany(words => words.Select(word => StringToRun(word, b))))
+                foreach (
+                    Inline inn in
+                        lines.Select(line => line.Split(new[] {' '})).SelectMany(
+                            words => words.Select(word => StringToRun(word, b))))
                 {
                     if (inn != null)
                         p.Inlines.Add(inn);

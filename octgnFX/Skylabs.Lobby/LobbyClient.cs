@@ -9,6 +9,7 @@ using Google.GData.Client;
 using Octgn.Data;
 using Skylabs.Lobby.Sockets;
 using Skylabs.Lobby.Threading;
+using Skylabs.Net;
 
 namespace Skylabs.Lobby
 {

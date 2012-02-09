@@ -510,11 +510,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestServerSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>TestServerSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Utils\LinqExtensions.cs" />
     <Compile Include="Win32.cs" />
@@ -551,10 +546,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Scripting\PythonAPI.py" />
     <EmbeddedResource Include="Scripting\CaseInsensitiveDict.py" />
-    <None Include="TestServerSettings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>TestServerSettings.Designer.cs</LastGenOutput>
-    </None>
     <Resource Include="Resources\eye.png" />
     <Resource Include="Resources\Icons\LoadDeck.png" />
     <Resource Include="Resources\Icons\LoadLimited.png" />
@@ -1021,10 +1012,10 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Folder Include="Effects\" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
