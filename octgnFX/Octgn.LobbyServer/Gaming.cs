@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Sockets;
+using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {

@@ -7,6 +7,7 @@ using System.Windows.Navigation;
 using Octgn.Definitions;
 using Octgn.Networking;
 using Skylabs.Lobby.Sockets;
+using Skylabs.Net;
 
 namespace Octgn.Launcher
 {

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Skylabs.Lobby.Threading;
+using Skylabs.Net;
 
 namespace Skylabs.Lobby.Sockets
 {
@@ -348,11 +349,11 @@ namespace Skylabs.Lobby.Sockets
                 {
                     if (se.ErrorCode == 10058)
                         return;
-                    LazyAsync.Invoke(Stop);
+                    LazyAsync.Invoke(() => Stop());
                 }
                 catch (ObjectDisposedException)
                 {
-                    LazyAsync.Invoke(Stop);
+                    LazyAsync.Invoke(() => Stop());
                 }
                 catch (NullReferenceException)
                 {

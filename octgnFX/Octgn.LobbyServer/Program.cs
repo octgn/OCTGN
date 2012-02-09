@@ -8,6 +8,7 @@ using System.Net;
 using System.Reflection;
 using System.Threading;
 using Skylabs.Lobby.Sockets;
+using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {

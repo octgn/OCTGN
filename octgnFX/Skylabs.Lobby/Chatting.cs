@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Skylabs.Lobby.Sockets;
+using Skylabs.Net;
 
 namespace Skylabs.Lobby
 {
