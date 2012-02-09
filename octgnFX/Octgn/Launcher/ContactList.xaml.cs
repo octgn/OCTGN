@@ -37,17 +37,22 @@ namespace Octgn.Launcher
                                                  foreach (var f in flist.Select(u => new FriendListItem
                                                                                          {
                                                                                              ThisUser = u,
-                                                                                             HorizontalAlignment = HorizontalAlignment.Stretch
+                                                                                             HorizontalAlignment =
+                                                                                                 HorizontalAlignment.
+                                                                                                 Stretch
                                                                                          }))
                                                  {
                                                      f.MouseDoubleClick += FMouseDoubleClick;
                                                      stackPanel1.Children.Add(f);
                                                  }
-                                                 foreach (var gi in from cr in Program.LobbyClient.Chatting.Rooms where cr.Id == 0 || (cr.UserCount > 2) select new GroupChatListItem
-                                                                                                                                                                    {
-                                                                                                                                                                        ThisRoom = cr,
-                                                                                                                                                                        HorizontalAlignment = HorizontalAlignment.Stretch
-                                                                                                                                                                    })
+                                                 foreach (var gi in from cr in Program.LobbyClient.Chatting.Rooms
+                                                                    where cr.Id == 0 || (cr.UserCount > 2)
+                                                                    select new GroupChatListItem
+                                                                               {
+                                                                                   ThisRoom = cr,
+                                                                                   HorizontalAlignment =
+                                                                                       HorizontalAlignment.Stretch
+                                                                               })
                                                  {
                                                      gi.MouseDoubleClick += GiMouseDoubleClick;
                                                      stackPanel1.Children.Add(gi);
@@ -83,7 +88,16 @@ namespace Octgn.Launcher
         {
             var fi = sender as FriendListItem;
             if (fi == null) return;
-            foreach (ChatWindow cw in from cw in Program.ChatWindows let rid = cw.Id let cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(rid) where cr != null where cr.Id != 0 where cr.UserCount == 2 && cr.ContainsUser(Program.LobbyClient.Me) && cr.ContainsUser(fi.ThisUser) where cw.Visibility != Visibility.Visible select cw)
+            foreach (ChatWindow cw in from cw in Program.ChatWindows
+                                      let rid = cw.Id
+                                      let cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(rid)
+                                      where cr != null
+                                      where cr.Id != 0
+                                      where
+                                          cr.UserCount == 2 && cr.ContainsUser(Program.LobbyClient.Me) &&
+                                          cr.ContainsUser(fi.ThisUser)
+                                      where cw.Visibility != Visibility.Visible
+                                      select cw)
             {
                 cw.Show();
                 return;

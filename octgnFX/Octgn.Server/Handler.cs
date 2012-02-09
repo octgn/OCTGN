@@ -200,12 +200,21 @@ namespace Octgn.Server
             }
             // Check if the versions are compatible
 #if !DEBUG
-            if(clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor)
+            if (clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor)
             {
                 var rpc = new XmlSenderStub(_sender, this);
-                rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.", ServerVersion.ToString(2)));
-                try { _sender.Client.Close(); _sender.Close(); }
-                catch (Exception e) { Debug.WriteLine(e); if (Debugger.IsAttached) Debugger.Break(); }
+                rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.",
+                                        ServerVersion.ToString(2)));
+                try
+                {
+                    _sender.Client.Close();
+                    _sender.Close();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
                 return;
             }
 #endif

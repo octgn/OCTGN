@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Skylabs.Lobby.Sockets
+// TODO: Change this namespace when you can do it on client / server at the same time -- communications are fragile as fuck
+
+namespace Skylabs.Net
 {
     [Serializable]
     public class NameValuePair

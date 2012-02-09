@@ -455,8 +455,8 @@ namespace Octgn.Launcher
             IPAddress ip = IPAddress.Parse("127.0.0.1");
 
 #else
-                var ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
-                IPAddress ip = ad[0];
+            var ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
+            IPAddress ip = ad[0];
 #endif
 
             if (ad.Length <= 0) return;

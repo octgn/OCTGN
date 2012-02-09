@@ -8,6 +8,7 @@ using System.Reflection;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Sockets;
 using Skylabs.Lobby.Threading;
+using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {
@@ -232,7 +233,8 @@ namespace Skylabs.LobbyServer
 #if(TestServer)
                             Trace.WriteLine("#TryWriteTo[" + cl2.Id + "](" + sm.Header + ")");
 #endif
-                    LazyAsync.Invoke(() => cl2.WriteMessage(sm));
+                    Client cl3 = cl2;
+                    LazyAsync.Invoke(() => cl3.WriteMessage(sm));
                 }
             }
         }
@@ -243,7 +245,8 @@ namespace Skylabs.LobbyServer
             {
                 foreach (Client cl2 in Clients.Where(cl2 => cl2.LoggedIn && uids.Contains(cl2.Me.Uid)))
                 {
-                    LazyAsync.Invoke(() => cl2.WriteMessage(sm));
+                    Client cl3 = cl2;
+                    LazyAsync.Invoke(() => cl3.WriteMessage(sm));
                 }
             }
         }
@@ -282,7 +285,13 @@ namespace Skylabs.LobbyServer
                 int loggedInCount = 0;
                 int removedCount = 0;
                 // int StartCount = Clients.Count; // unused
-                foreach (Client cl2 in from cl2 in Clients where cl2 != null where cl2.Id != caller.Id where cl2.Me.Uid == uid select cl2)
+                foreach (
+                    Client cl2 in
+                        from cl2 in Clients
+                        where cl2 != null
+                        where cl2.Id != caller.Id
+                        where cl2.Me.Uid == uid
+                        select cl2)
                 {
                     removedCount++;
                     if (cl2.LoggedIn)

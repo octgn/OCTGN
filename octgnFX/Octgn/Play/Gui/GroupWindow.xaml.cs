@@ -130,8 +130,15 @@ namespace Octgn.Play.Gui
                                             {
                                                 if (!cardsList.IsAlwaysUp && !c.FaceUp)
                                                     return false;
-                                                return c.RealName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=
-                                                       0 || textProperties.Select(property => (string) c.GetProperty(property)).Where(propertyValue => propertyValue != null).Any(propertyValue => propertyValue.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >= 0);
+                                                return
+                                                    c.RealName.IndexOf(filter, StringComparison.CurrentCultureIgnoreCase) >=
+                                                    0 ||
+                                                    textProperties.Select(property => (string) c.GetProperty(property)).
+                                                        Where(propertyValue => propertyValue != null).Any(
+                                                            propertyValue =>
+                                                            propertyValue.IndexOf(filter,
+                                                                                  StringComparison.
+                                                                                      CurrentCultureIgnoreCase) >= 0);
                                             };
                 alphaOrderBtn.IsChecked = true;
             }

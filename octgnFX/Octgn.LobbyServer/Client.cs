@@ -8,6 +8,7 @@ using Google.GData.Client;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Sockets;
 using Skylabs.Lobby.Threading;
+using Skylabs.Net;
 
 namespace Skylabs.LobbyServer
 {
