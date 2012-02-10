@@ -192,7 +192,7 @@ namespace Octgn.Scripting
             if (c.hasProperty("Alternate"))
             {
                 Guid alternateCard = (Guid)c.GetProperty("Alternate");
-                c.SetModel(findModel(c, alternateCard)); 
+                //c.SetModel(findModel(c, alternateCard)); 
                 engine.Invoke(() => { c.IsAlternate = (c.IsAlternate != true); });
             }
  //           Data.CardModel newModel = new Data.CardModel c.GetProperty;

@@ -129,6 +129,11 @@ namespace Octgn.Data
                 result.Properties.Add(columns[i].ColumnName, row.IsNull(i) ? null : row[i]);
             return result;
         }
+
+        public bool hasProperty(string p)
+        {
+            return Properties.ContainsKey(p);
+        }
     }
 
     public class CardPropertyComparer : IComparer, IComparer<CardModel>

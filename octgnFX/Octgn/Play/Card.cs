@@ -698,9 +698,7 @@ namespace Octgn.Play
 
         internal bool hasProperty(string p)
         {
-            if (Type.model.Properties.ContainsKey(p))
-            { return true; }
-            return false;
+            return (Type.model.hasProperty(p));
         }
     }
 }
