@@ -70,6 +70,13 @@
           <ribbon:RibbonButton x:Name="bJoin" Label="Join" LargeImageSource="/Resources/Icons/user_add.png"
                                Click="BJoinClick" />
         </ribbon:RibbonGroup>
+        <ribbon:RibbonGroup x:Name="bFilterGames" Header="Filter Games" LargeImageSource="/Resources/Icons/FilterGames.png">
+           <ribbon:RibbonGroup.GroupSizeDefinitions>
+              <ribbon:RibbonGroupSizeDefinitionBaseCollection>
+                 <ribbon:RibbonGroupSizeDefinition IsCollapsed="True" />
+              </ribbon:RibbonGroupSizeDefinitionBaseCollection>
+           </ribbon:RibbonGroup.GroupSizeDefinitions>
+         </ribbon:RibbonGroup>
       </ribbon:RibbonTab>
       <ribbon:RibbonTab Header="Games">
         <ribbon:RibbonGroup>
