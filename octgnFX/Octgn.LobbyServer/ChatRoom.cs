@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Threading;
 using Skylabs.Net;
@@ -69,10 +68,8 @@ namespace Skylabs.LobbyServer
         /// <returns> Returns true on success, or false if there was an explosion </returns>
         public bool AddUser(User u)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "UserLocker");
             lock (_userLocker)
             {
-                Logger.L(MethodBase.GetCurrentMethod().Name, "UserLocker");
                 var c = Server.GetOnlineClientByUid(u.Uid);
                 if (c != null)
                 {
@@ -93,27 +90,22 @@ namespace Skylabs.LobbyServer
                         ou.Item1++;
                         sm.AddData("allusers", ulist);
                         c.WriteMessage(sm);
-                        Logger.UL(MethodBase.GetCurrentMethod().Name, "UserLocker");
                         return true;
                     }
                 }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "UserLocker");
                 return false;
             }
         }
 
         public User[] GetUserList()
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "UserLocker");
             lock (_userLocker)
             {
-                Logger.L(MethodBase.GetCurrentMethod().Name, "UserLocker");
                 var ret = new User[_users.Count];
                 for (var i = 0; i < _users.Count; i++)
                 {
                     ret[i] = _users[i].Item2;
                 }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "UserLocker");
                 return ret;
             }
         }
@@ -124,24 +116,17 @@ namespace Skylabs.LobbyServer
         /// <param name="u"> The user. </param>
         public void UserExit(User u)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "UserLocker");
             lock (_userLocker)
             {
-                Logger.L(MethodBase.GetCurrentMethod().Name, "UserLocker");
                 var ou = _users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
-                if (ou != null)
-                {
-                    ou.Item1--;
-                    if (ou.Item1 == 0)
-                    {
-                        _users.Remove(ou);
-                        var sm = new SocketMessage("userleftchatroom");
-                        sm.AddData("roomid", Id);
-                        sm.AddData("user", u);
-                        SendAllUsersMessage(sm, false);
-                    }
-                }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "UserLocker");
+                if (ou == null) return;
+                ou.Item1--;
+                if (ou.Item1 != 0) return;
+                _users.Remove(ou);
+                var sm = new SocketMessage("userleftchatroom");
+                sm.AddData("roomid", Id);
+                sm.AddData("user", u);
+                SendAllUsersMessage(sm, false);
             }
         }
 
@@ -154,10 +139,8 @@ namespace Skylabs.LobbyServer
         {
             if (Lock)
             {
-                Logger.TL(MethodBase.GetCurrentMethod().Name, "UserLocker");
                 lock (_userLocker)
                 {
-                    Logger.L(MethodBase.GetCurrentMethod().Name, "UserLocker");
                     var slist = new int[_users.Count];
                     var i = 0;
                     foreach (var u in _users)
@@ -167,7 +150,6 @@ namespace Skylabs.LobbyServer
                     }
                     LazyAsync.Invoke(() => Server.AllUserMessageUidList(slist, sm));
                 }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "UserLocker");
             }
             else
             {

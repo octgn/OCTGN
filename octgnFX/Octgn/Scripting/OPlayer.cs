@@ -16,21 +16,21 @@ namespace Octgn.Scripting
     [SecuritySafeCritical]
     public class OPlayer : MarshalByRefObject //, IDynamicMetaObjectProvider
     {
-        private readonly Player player;
+        private readonly Player _player;
 
         public OPlayer(Player player)
         {
-            this.player = player;
+            _player = player;
         }
 
         public string name
         {
-            get { return player.Name; }
+            get { return _player.Name; }
         }
 
         public OCounter counters
         {
-            get { return new OCounter(player); }
+            get { return new OCounter(_player); }
         }
 
         //[SecurityCritical]

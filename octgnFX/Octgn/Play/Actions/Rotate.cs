@@ -7,14 +7,12 @@ namespace Octgn.Play.Actions
         private readonly Card _card;
         private readonly CardOrientation _rot;
         private readonly Player _who;
-        private CardOrientation _oldRot;
 
         public Rotate(Player who, Card card, CardOrientation rot)
         {
             _who = who;
             _card = card;
             _rot = rot;
-            _oldRot = card.Orientation;
         }
 
         public override void Do()

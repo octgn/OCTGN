@@ -166,8 +166,9 @@ namespace Octgn
                 {
                     _lobbyServerProcess.Kill();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
                 }
             }
 #endif
