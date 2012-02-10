@@ -143,7 +143,6 @@ namespace Skylabs.LobbyServer
                             }
                             catch (Exception)
                             {
-                                spage = "";
                                 con.Response.StatusCode = 404;
                             }
                             spage = ReplaceVariables(spage);

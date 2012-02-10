@@ -8,8 +8,8 @@ namespace Octgn.Scripting.Controls
 {
     public partial class InputDlg
     {
-        private int intResult;
-        private Kind kind;
+        private int _intResult;
+        private Kind _kind;
 
         public InputDlg(string title, string prompt, string defaultValue)
         {
@@ -29,16 +29,16 @@ namespace Octgn.Scripting.Controls
 
         public int GetInteger()
         {
-            kind = Kind.Integer;
+            _kind = Kind.Integer;
             ShowDialog();
-            return intResult;
+            return _intResult;
         }
 
         public int GetPositiveInt()
         {
-            kind = Kind.Positive;
+            _kind = Kind.Positive;
             ShowDialog();
-            return intResult;
+            return _intResult;
         }
 
         protected void OkClicked(object sender, RoutedEventArgs e)
@@ -49,14 +49,14 @@ namespace Octgn.Scripting.Controls
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            switch (kind)
+            switch (_kind)
             {
                 case Kind.Text:
                     break;
                 case Kind.Positive:
                 case Kind.Integer:
-                    if (!int.TryParse(inputBox.Text, out intResult) ||
-                        (kind == Kind.Positive && intResult < 0))
+                    if (!int.TryParse(inputBox.Text, out _intResult) ||
+                        (_kind == Kind.Positive && _intResult < 0))
                     {
                         e.Cancel = true;
                         var anim = new ColorAnimation(Colors.White, Colors.Red,

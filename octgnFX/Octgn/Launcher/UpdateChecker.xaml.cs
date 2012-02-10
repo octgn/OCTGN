@@ -136,6 +136,7 @@ namespace Octgn.Launcher
                                                   }));
         }
 
+/*
         private bool FileExists(string url)
         {
             bool result;
@@ -153,6 +154,7 @@ namespace Octgn.Launcher
             }
             return result;
         }
+*/
 
         private static string[] ReadUpdateXML(string url)
         {

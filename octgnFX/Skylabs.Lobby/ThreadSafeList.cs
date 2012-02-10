@@ -77,11 +77,15 @@ namespace Skylabs.Lobby
 
         public bool Contains(T value)
         {
-            bool ret = false;
             _rwLock.EnterReadLock();
+            bool ret;
             try
             {
                 ret = _list.Contains(value);
+            }
+            catch
+            {
+                ret = false;
             }
             finally
             {
@@ -95,11 +99,15 @@ namespace Skylabs.Lobby
         {
             get
             {
-                int ret = -1;
                 _rwLock.EnterReadLock();
+                int ret;
                 try
                 {
                     ret = _list.Count;
+                }
+                catch (Exception)
+                {
+                    ret = -1;
                 }
                 finally
                 {
@@ -111,12 +119,15 @@ namespace Skylabs.Lobby
 
         public int IndexOf(T value)
         {
-            int ret = -1;
-
             _rwLock.EnterReadLock();
+            int ret;
             try
             {
                 ret = _list.IndexOf(value);
+            }
+            catch
+            {
+                ret = -1;
             }
             finally
             {
@@ -141,11 +152,15 @@ namespace Skylabs.Lobby
 
         public bool Remove(T value)
         {
-            bool ret = false;
             _rwLock.EnterWriteLock();
+            bool ret;
             try
             {
                 ret = _list.Remove(value);
+            }
+            catch
+            {
+                ret = false;
             }
             finally
             {
