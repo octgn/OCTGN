@@ -992,7 +992,7 @@ namespace Octgn.StandAloneServer
             }
             // no match; is it a bool option?
             return ParseBool(argument, n, c) ||
-                   ParseBundledValue(f, string.Concat(string.Format("{0}{1}{2}", n, s, v)), c);
+                   ParseBundledValue(f, string.Concat("{0}{1}{2}", n, s, v), c);
             // is it a bundled option?
         }
 

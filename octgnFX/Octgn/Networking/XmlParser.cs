@@ -335,7 +335,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[MoveCard] Card not found.", method));
+                            Debug.WriteLine(string.Format("[MoveCard] Card not found."));
                             return;
                         }
                         Group arg2 =
@@ -362,7 +362,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[MoveCardAt] Card not found.", method));
+                            Debug.WriteLine(string.Format("[MoveCardAt] Card not found."));
                             return;
                         }
                         int arg2 = int.Parse(reader.ReadElementString("x"), CultureInfo.InvariantCulture);
@@ -377,7 +377,7 @@ namespace Octgn.Networking
                         Card arg0 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg0 == null)
                         {
-                            Debug.WriteLine(string.Format("[Reveal] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Reveal] Card not found."));
                             return;
                         }
                         ulong arg1 = ulong.Parse(reader.ReadElementString("revealed"), CultureInfo.InvariantCulture);
@@ -403,7 +403,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[RevealTo] Card not found.", method));
+                            Debug.WriteLine(string.Format("[RevealTo] Card not found."));
                             return;
                         }
                         var list2 = new List<ulong>(30);
@@ -425,7 +425,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Peek] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Peek] Card not found."));
                             return;
                         }
                         _handler.Peek(arg0, arg1);
@@ -443,7 +443,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Untarget] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Untarget] Card not found."));
                             return;
                         }
                         _handler.Untarget(arg0, arg1);
@@ -461,7 +461,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Target] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Target] Card not found."));
                             return;
                         }
                         _handler.Target(arg0, arg1);
@@ -479,14 +479,14 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[TargetArrow] Card not found.", method));
+                            Debug.WriteLine(string.Format("[TargetArrow] Card not found."));
                             return;
                         }
                         Card arg2 =
                             Card.Find(int.Parse(reader.ReadElementString("otherCard"), CultureInfo.InvariantCulture));
                         if (arg2 == null)
                         {
-                            Debug.WriteLine(string.Format("[TargetArrow] Card not found.", method));
+                            Debug.WriteLine(string.Format("[TargetArrow] Card not found."));
                             return;
                         }
                         _handler.TargetArrow(arg0, arg1, arg2);
@@ -497,7 +497,7 @@ namespace Octgn.Networking
                         Card arg0 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg0 == null)
                         {
-                            Debug.WriteLine(string.Format("[Highlight] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Highlight] Card not found."));
                             return;
                         }
                         string temp1 = reader.ReadElementString("color");
@@ -517,7 +517,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Turn] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Turn] Card not found."));
                             return;
                         }
                         bool arg2 = bool.Parse(reader.ReadElementString("up"));
@@ -536,7 +536,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Rotate] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Rotate] Card not found."));
                             return;
                         }
                         var arg2 =
@@ -617,7 +617,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[AddMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[AddMarker] Card not found."));
                             return;
                         }
                         var arg2 = new Guid(reader.ReadElementString("id"));
@@ -638,7 +638,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[RemoveMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[RemoveMarker] Card not found."));
                             return;
                         }
                         var arg2 = new Guid(reader.ReadElementString("id"));
@@ -659,7 +659,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[SetMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[SetMarker] Card not found."));
                             return;
                         }
                         var arg2 = new Guid(reader.ReadElementString("id"));
@@ -680,13 +680,13 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("from"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[TransferMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[TransferMarker] Card not found."));
                             return;
                         }
                         Card arg2 = Card.Find(int.Parse(reader.ReadElementString("to"), CultureInfo.InvariantCulture));
                         if (arg2 == null)
                         {
-                            Debug.WriteLine(string.Format("[TransferMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[TransferMarker] Card not found."));
                             return;
                         }
                         var arg3 = new Guid(reader.ReadElementString("id"));

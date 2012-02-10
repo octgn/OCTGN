@@ -211,12 +211,12 @@ namespace Octgn.Play.Gui
             if (Children == null || Children.Count == 0)
                 return finalSize;
 
-            double totalChildWidth = 0;
+            //double totalChildWidth = 0;
 
             foreach (UIElement child in Children)
             {
                 child.Arrange(new Rect(0, 0, child.DesiredSize.Width, child.DesiredSize.Height));
-                totalChildWidth += child.DesiredSize.Width;
+                //totalChildWidth += child.DesiredSize.Width;
             }
 
             // Assume all children have the same width
