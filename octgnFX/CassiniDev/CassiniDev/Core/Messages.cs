@@ -1,16 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System.IO;
@@ -22,7 +9,7 @@ using System.Web;
 namespace CassiniDev
 {
     /// <summary>
-    /// TODO: get this into resources
+    ///   TODO: get this into resources
     /// </summary>
     internal static class Messages
     {
@@ -113,7 +100,7 @@ namespace CassiniDev
 
         public static string FormatDirectoryListing(string dirPath, string parentPath, FileSystemInfo[] elements)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.Append(string.Format(_dirListingFormat1, dirPath));
             sb.Append(_httpStyle);
@@ -135,13 +122,13 @@ namespace CassiniDev
                 {
                     if (elements[i] is FileInfo)
                     {
-                        FileInfo fi = (FileInfo) elements[i];
+                        var fi = (FileInfo) elements[i];
                         sb.Append(string.Format(_dirListingFileFormat,
                                                 fi.LastWriteTime, fi.Length, fi.Name, fi.Name));
                     }
                     else if (elements[i] is DirectoryInfo)
                     {
-                        DirectoryInfo di = (DirectoryInfo) elements[i];
+                        var di = (DirectoryInfo) elements[i];
                         sb.Append(string.Format(_dirListingDirFormat,
                                                 di.LastWriteTime, di.Name, di.Name));
                     }

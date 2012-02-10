@@ -7,89 +7,99 @@ using System.Windows.Navigation;
 
 namespace Octgn.Launcher
 {
-    public partial class LauncherWindow : NavigationWindow
+    public partial class LauncherWindow
     {
         public RoutedCommand DebugWindowCommand = new RoutedCommand();
 
         #region Animation
 
         private static readonly Duration TransitionDuration = new Duration(TimeSpan.FromMilliseconds(300));
-        private readonly AnimationTimeline OutAnimation = new DoubleAnimation(0, TransitionDuration);
-        private readonly AnimationTimeline InAnimation = new DoubleAnimation(0, 1, TransitionDuration) { BeginTime = TimeSpan.FromMilliseconds(200) };
-        private readonly DoubleAnimation ResizeAnimation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300)) { EasingFunction = new ExponentialEase() { EasingMode = EasingMode.EaseOut } };
-
         private static readonly object BackTarget = new object();
-        private bool isInTransition = false;
-        private bool isFirstLoad = true;
-        private double clientWidth = 0, bordersHeight = 0;
-        private object transitionTarget;
+
+        private readonly AnimationTimeline _inAnimation = new DoubleAnimation(0, 1, TransitionDuration)
+                                                              {BeginTime = TimeSpan.FromMilliseconds(200)};
+
+        private readonly AnimationTimeline _outAnimation = new DoubleAnimation(0, TransitionDuration);
+
+        private readonly DoubleAnimation _resizeAnimation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(300))
+                                                                {
+                                                                    EasingFunction =
+                                                                        new ExponentialEase
+                                                                            {EasingMode = EasingMode.EaseOut}
+                                                                };
+
+        private double _bordersHeight;
+        private double _clientWidth;
+        private bool _isFirstLoad = true;
+        private bool _isInTransition;
+        private object _transitionTarget;
 
         private void ConstructAnim()
         {
             NavigationCommands.BrowseBack.InputGestures.Clear();
 
-            OutAnimation.Completed += delegate
-            {
-                isInTransition = false;
-                if(transitionTarget == BackTarget)
-                    GoBack();
-                else
-                    Navigate(transitionTarget);
-            };
-            OutAnimation.Freeze();
+            _outAnimation.Completed += delegate
+                                           {
+                                               _isInTransition = false;
+                                               if (_transitionTarget == BackTarget)
+                                                   GoBack();
+                                               else
+                                                   Navigate(_transitionTarget);
+                                           };
+            _outAnimation.Freeze();
 
-            ResizeAnimation.Completed += (s, e) => SizeToContent = SizeToContent.WidthAndHeight;
+            _resizeAnimation.Completed += (s, e) => SizeToContent = SizeToContent.WidthAndHeight;
 
             Navigating += delegate(object sender, NavigatingCancelEventArgs e)
-            {
-                // FIX (jods): prevent further navigation when a navigation is already in progress
-                //						 (e.g. double-click a button in the main menu). This would break the transitions.
-                if(isInTransition)
-                { e.Cancel = true; return; }
+                              {
+                                  // FIX (jods): prevent further navigation when a navigation is already in progress
+                                  //						 (e.g. double-click a button in the main menu). This would break the transitions.
+                                  if (_isInTransition)
+                                  {
+                                      e.Cancel = true;
+                                      return;
+                                  }
 
-                if(transitionTarget != null)
-                {
-                    transitionTarget = null;
-                    return;
-                }
+                                  if (_transitionTarget != null)
+                                  {
+                                      _transitionTarget = null;
+                                      return;
+                                  }
 
-                var page = Content as Page;
-                if(page == null) return;
+                                  var page = Content as Page;
+                                  if (page == null) return;
 
-                if(clientWidth == 0)
-                {
-                    clientWidth = page.ActualWidth;
-                    bordersHeight = ActualHeight - page.ActualHeight;
-                }
-                SizeToContent = System.Windows.SizeToContent.Manual;
+                                  if (Math.Abs(_clientWidth - 0) < double.Epsilon)
+                                  {
+                                      _clientWidth = page.ActualWidth;
+                                      _bordersHeight = ActualHeight - page.ActualHeight;
+                                  }
+                                  SizeToContent = SizeToContent.Manual;
 
-                e.Cancel = true;
-                isInTransition = true;
-                if(e.NavigationMode == NavigationMode.Back)
-                    transitionTarget = BackTarget;
-                else
-                    transitionTarget = e.Content;
-                page.BeginAnimation(UIElement.OpacityProperty, OutAnimation, HandoffBehavior.SnapshotAndReplace);
-            };
+                                  e.Cancel = true;
+                                  _isInTransition = true;
+                                  _transitionTarget = e.NavigationMode == NavigationMode.Back ? BackTarget : e.Content;
+                                  page.BeginAnimation(OpacityProperty, _outAnimation, HandoffBehavior.SnapshotAndReplace);
+                              };
 
             Navigated += delegate
-            {
-                var page = Content as Page;
-                if(page == null) return;
+                             {
+                                 var page = Content as Page;
+                                 if (page == null) return;
 
-                if(isFirstLoad)
-                {
-                    isFirstLoad = false;
-                    return;
-                }
+                                 if (_isFirstLoad)
+                                 {
+                                     _isFirstLoad = false;
+                                     return;
+                                 }
 
-                page.Opacity = 0;
-                page.Measure(new Size(clientWidth, double.PositiveInfinity));
+                                 page.Opacity = 0;
+                                 page.Measure(new Size(_clientWidth, double.PositiveInfinity));
 
-                ResizeAnimation.To = page.DesiredSize.Height + bordersHeight;
-                this.BeginAnimation(Window.HeightProperty, ResizeAnimation);
-                page.BeginAnimation(UIElement.OpacityProperty, InAnimation);
-            };
+                                 _resizeAnimation.To = page.DesiredSize.Height + _bordersHeight;
+                                 BeginAnimation(HeightProperty, _resizeAnimation);
+                                 page.BeginAnimation(OpacityProperty, _inAnimation);
+                             };
         }
 
         #endregion Animation
@@ -98,45 +108,44 @@ namespace Octgn.Launcher
 
         public LauncherWindow()
         {
-            this.Initialized += Launcher_Initialized;
+            Initialized += LauncherInitialized;
             InitializeComponent();
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
 
-            CommandBinding cb = new CommandBinding(DebugWindowCommand,
-                MyCommandExecute, MyCommandCanExecute);
-            this.CommandBindings.Add(cb);
+            var cb = new CommandBinding(DebugWindowCommand,
+                                        MyCommandExecute, MyCommandCanExecute);
+            CommandBindings.Add(cb);
 
-            KeyGesture kg = new KeyGesture(Key.M, ModifierKeys.Control);
-            InputBinding ib = new InputBinding(DebugWindowCommand, kg);
-            this.InputBindings.Add(ib);
+            var kg = new KeyGesture(Key.M, ModifierKeys.Control);
+            var ib = new InputBinding(DebugWindowCommand, kg);
+            InputBindings.Add(ib);
 
             ConstructAnim();
         }
 
-        public void Launcher_Initialized(object sender, EventArgs e)
+        public void LauncherInitialized(object sender, EventArgs e)
         {
-            this.Top = Properties.Settings.Default.LoginTopLoc;
-            this.Left = Properties.Settings.Default.LoginLeftLoc;
+            Top = double.Parse(SimpleConfig.ReadValue("LoginTopLoc", "100"));
+            Left = double.Parse(SimpleConfig.ReadValue("LoginLeftLoc", "100"));
         }
 
         #endregion Constructors
 
-        private void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private static void MyCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private void MyCommandExecute(object sender, ExecutedRoutedEventArgs e)
+        private static void MyCommandExecute(object sender, ExecutedRoutedEventArgs e)
         {
             //System.Diagnostics.XmlWriterTraceListener tr = new System.Diagnostics.XmlWriterTraceListener()
-            if(Program.DebugWindow == null)
+            if (Program.DebugWindow == null)
             {
                 Program.DebugWindow = new DWindow();
             }
-            if(Program.DebugWindow.Visibility == System.Windows.Visibility.Visible)
-                Program.DebugWindow.Visibility = System.Windows.Visibility.Hidden;
-            else
-                Program.DebugWindow.Visibility = System.Windows.Visibility.Visible;
+            Program.DebugWindow.Visibility = Program.DebugWindow.Visibility == Visibility.Visible
+                                                 ? Visibility.Hidden
+                                                 : Visibility.Visible;
         }
     }
 }

@@ -2,20 +2,18 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace ThreadingComponent
+namespace Octgn.Controls
 {
     /// <summary>
-    /// A circular type progress bar, that is simliar to popular web based
-    /// progress bars
+    ///   A circular type progress bar, that is simliar to popular web based progress bars
     /// </summary>
     public partial class CircularProgressBar
     {
         #region Data
 
-        private readonly DispatcherTimer animationTimer;
+        private readonly DispatcherTimer _animationTimer;
 
         #endregion Data
 
@@ -24,9 +22,8 @@ namespace ThreadingComponent
         public CircularProgressBar()
         {
             InitializeComponent();
-            animationTimer = new DispatcherTimer(
-                DispatcherPriority.ContextIdle, Dispatcher);
-            animationTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+            _animationTimer = new DispatcherTimer(
+                DispatcherPriority.ContextIdle, Dispatcher) {Interval = new TimeSpan(0, 0, 0, 0, 100)};
         }
 
         #endregion Constructor
@@ -35,34 +32,34 @@ namespace ThreadingComponent
 
         private void Start()
         {
-            animationTimer.Tick += HandleAnimationTick;
-            if(!DesignerProperties.GetIsInDesignMode(this))
+            _animationTimer.Tick += HandleAnimationTick;
+            if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                animationTimer.Start();
+                _animationTimer.Start();
             }
         }
 
         private void Stop()
         {
-            animationTimer.Stop();
-            animationTimer.Tick -= HandleAnimationTick;
+            _animationTimer.Stop();
+            _animationTimer.Tick -= HandleAnimationTick;
         }
 
         private void HandleAnimationTick(object sender, EventArgs e)
         {
-            SpinnerRotate.Angle = (SpinnerRotate.Angle + 30) % 360;
+            SpinnerRotate.Angle = (SpinnerRotate.Angle + 30)%360;
         }
 
         private void SetPositions()
         {
             const double offset = Math.PI;
-            const double step = Math.PI * 2 / 10.0;
-            double ew = Width / 6;
-            double eh = Height / 6;
-            double w = Width / 2;
-            double h = Height / 2;
+            const double step = Math.PI*2/10.0;
+            double ew = Width/6;
+            double eh = Height/6;
+            double w = Width/2;
+            double h = Height/2;
             double m = Math.Min(w, h);
-            double r = 4 * m / 5;
+            double r = 4*m/5;
 
             SetPosition(C0, offset, 0.0, step, ew, eh, w, h, r);
             SetPosition(C1, offset, 1.0, step, ew, eh, w, h, r);
@@ -80,16 +77,16 @@ namespace ThreadingComponent
             SetPositions();
         }
 
-        private void SetPosition(Ellipse ellipse, double offset,
-            double posOffSet, double step, double ew, double eh, double w, double h,
-            double r)
+        private static void SetPosition(FrameworkElement ellipse, double offset,
+                                        double posOffSet, double step, double ew, double eh, double w, double h,
+                                        double r)
         {
-            double t = 2 * Math.PI * posOffSet / 10;
+            double t = 2*Math.PI*posOffSet/10;
             ellipse.Width = ew;
             ellipse.Height = eh;
 
-            ellipse.SetValue(Canvas.LeftProperty, w + r * Math.Cos(t));
-            ellipse.SetValue(Canvas.TopProperty, h + r * Math.Sin(t));
+            ellipse.SetValue(Canvas.LeftProperty, w + r*Math.Cos(t));
+            ellipse.SetValue(Canvas.TopProperty, h + r*Math.Sin(t));
 
             //ellipse.SetValue(Canvas.LeftProperty,w
             //    + Math.Sin(offset + posOffSet * step) * w);
@@ -104,11 +101,11 @@ namespace ThreadingComponent
         }
 
         private void HandleVisibleChanged(object sender,
-            DependencyPropertyChangedEventArgs e)
+                                          DependencyPropertyChangedEventArgs e)
         {
-            bool isVisible = (bool)e.NewValue;
+            var isVisible = (bool) e.NewValue;
 
-            if(isVisible)
+            if (isVisible)
                 Start();
             else
                 Stop();
@@ -116,7 +113,7 @@ namespace ThreadingComponent
 
         #endregion Private Methods
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void UserControlSizeChanged(object sender, SizeChangedEventArgs e)
         {
             SetPositions();
         }

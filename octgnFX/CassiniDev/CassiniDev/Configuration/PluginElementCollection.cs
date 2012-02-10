@@ -2,8 +2,8 @@
 
 namespace CassiniDev.Configuration
 {
-    [ConfigurationCollection(typeof(PluginElement))]
-    public class PluginElementCollection: ConfigurationElementCollection
+    [ConfigurationCollection(typeof (PluginElement))]
+    public class PluginElementCollection : ConfigurationElementCollection
     {
         protected override ConfigurationElement CreateNewElement()
         {
@@ -12,7 +12,7 @@ namespace CassiniDev.Configuration
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((PluginElement)element).Name;
+            return ((PluginElement) element).Name;
         }
     }
 }

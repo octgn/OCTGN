@@ -3,177 +3,169 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Media;
+using Octgn.Definitions;
 
 namespace Octgn.Play
 {
-	public sealed class Player : INotifyPropertyChanged
-	{
-		#region Static members
-
-		// Contains all players in this game
-		private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
-
-		// Get all players in the game
-		public static IEnumerable<Player> All
-		{ get { return all; } }
-
-		// Get all players in the game, except a possible Global player
-		public static IEnumerable<Player> AllExceptGlobal
-		{
-      get { return All.Where(p => p != Player.GlobalPlayer); }
-		}
-
-		// Number of players
-		internal static int Count
-		{
-			get
-			{
-				return GlobalPlayer == null ? all.Count : all.Count - 1;
-			}
-		}
-
-		// Find a player with his id
-		internal static Player Find(byte id)
-		{
-			foreach (Player p in all)
-				if (p.Id == id) return p;
-			return null;
-		}
-
-		// Resets the player list
-		internal static void Reset()
-		{ all.Clear(); LocalPlayer = GlobalPlayer = null; }
-
-		// May be null if we're in pure server mode
-		public static Player LocalPlayer;
-		// May be null if there's no global player in the game definition
-		public static Player GlobalPlayer;
-
-		internal static event EventHandler<PlayerEventArgs> PlayerAdded;
-		internal static event EventHandler<PlayerEventArgs> PlayerRemoved;
-
-		#endregion
-
-		#region Public fields and properties
-
-		private readonly Counter[] counters;     // Counters this player owns
-		public Counter[] Counters
-		{
-			get { return counters; }
-		}
-
-		private readonly Group[] groups;         // Groups this player owns
-		public Group[] IndexedGroups
-		{
-			get { return groups; }
-		}
-
-    public IEnumerable<Group> Groups
+    public sealed class Player : INotifyPropertyChanged
     {
-      get { return groups.Where(g => g != null); }
-    }
+        #region Static members
 
-    public Dictionary<string, int> Variables
-    { get; private set; }
-    public Dictionary<string, string> GlobalVariables
-    { get; private set; }
+        // Contains all players in this game (TODO: Rename to All, then cleanup all the dependancies)
+        private static readonly ObservableCollection<Player> all = new ObservableCollection<Player>();
+        public static Player LocalPlayer;
+        // May be null if there's no global lPlayer in the game definition
+        public static Player GlobalPlayer;
 
-		private readonly Hand hand;              // Hand of this player (may be null)
-		public Hand Hand
-		{ get { return hand; } }
+        // Get all players in the game
+        public static IEnumerable<Player> All
+        {
+            get { return all; }
+        }
 
-		internal readonly ulong PublicKey;       // Public cryptographic key
+        // Get all players in the game, except a possible Global lPlayer
+        public static IEnumerable<Player> AllExceptGlobal
+        {
+            get { return All.Where(p => p != GlobalPlayer); }
+        }
 
-		public byte Id                           // Identifier
-		{ get; set; }
+        // Number of players
+        internal static int Count
+        {
+            get { return GlobalPlayer == null ? all.Count : all.Count - 1; }
+        }
 
-		private string name;
-		public string Name                       // Nickname
-		{
-			get { return name; }
-			set
-			{
-				if (name != value)
-				{
-					name = value;
-					OnPropertyChanged("Name");
-				}
-			}
-		}
+        // Find a lPlayer with his id
+        internal static Player Find(byte id)
+        {
+            return all.FirstOrDefault(p => p.Id == id);
+        }
 
-    public bool IsGlobalPlayer
-    { get { return Id == 0; } }
+        // Resets the lPlayer list
+        internal static void Reset()
+        {
+            all.Clear();
+            LocalPlayer = GlobalPlayer = null;
+        }
 
-		private bool _invertedTable;
-		public bool InvertedTable								 // True if the player plays on the opposite side of the table (for two-sided table only)
-		{
-			get { return _invertedTable; }
-			set
-			{
-				if (_invertedTable != value)
-				{
-					_invertedTable = value;
-					OnPropertyChanged("InvertedTable");
-                    
-					if (Program.IsHost)					// If we are the host, we are setting this option for everyone
-						Program.Client.Rpc.PlayerSettings(this, value);
-				}
-			}
-		}
+        // May be null if we're in pure server mode
+
+        internal static event EventHandler<PlayerEventArgs> PlayerAdded;
+        internal static event EventHandler<PlayerEventArgs> PlayerRemoved;
+
+        #endregion
+
+        #region Public fields and properties
+
+        internal readonly ulong PublicKey; // Public cryptographic key
+        private readonly Counter[] _counters; // Counters this lPlayer owns
+
+        private readonly Group[] _groups; // Groups this lPlayer owns
+        private readonly Hand _hand; // Hand of this lPlayer (may be null)
+        private readonly Brush _solidBrush;
+        private readonly Brush _transparentBrush;
+        private bool _invertedTable;
+        private string _name;
+
+        public Counter[] Counters
+        {
+            get { return _counters; }
+        }
+
+        public Group[] IndexedGroups
+        {
+            get { return _groups; }
+        }
+
+        public IEnumerable<Group> Groups
+        {
+            get { return _groups.Where(g => g != null); }
+        }
+
+        public Dictionary<string, int> Variables { get; private set; }
+        public Dictionary<string, string> GlobalVariables { get; private set; }
+
+        public Hand Hand
+        {
+            get { return _hand; }
+        }
+
+        public byte Id // Identifier
+        { get; set; }
+
+        public string Name // Nickname
+        {
+            get { return _name; }
+            set
+            {
+                if (_name == value) return;
+                _name = value;
+                OnPropertyChanged("Name");
+            }
+        }
+
+        public bool IsGlobalPlayer
+        {
+            get { return Id == 0; }
+        }
+
+        public bool InvertedTable
+            // True if the lPlayer plays on the opposite side of the table (for two-sided table only)
+        {
+            get { return _invertedTable; }
+            set
+            {
+                if (_invertedTable == value) return;
+                _invertedTable = value;
+                OnPropertyChanged("InvertedTable");
+
+                if (Program.IsHost) // If we are the host, we are setting this option for everyone
+                    Program.Client.Rpc.PlayerSettings(this, value);
+            }
+        }
 
 
         //Color for the chat.
         //TODO: extend this to be game wide and be exposed to python. ralig98
-        private System.Windows.Media.Color color;
-		private System.Windows.Media.Brush solidBrush, transparentBrush;
-		// Associated color
-		public System.Windows.Media.Color Color
-		{
-			get
-			{
-				//int idx = all.IndexOf(this);
-				// Check if there's a global player
-                //if (all[0].Id != 0)
-                //    ++idx;
-				//TODO: return correct color
-				//                return System.Windows.Media.ColorConverter.ConvertFromString(Program.settings.GetPlayerColor(idx));
-                //if ((idx & 1) == 1)
-                //    return System.Windows.Media.Color.FromRgb(0x59, 0xEF, 0x5F);
-                //else
-                //    return System.Windows.Media.Colors.Red;
+        // Associated color
+        public Color Color { get; set; }
 
-                return color;
-			}
+        // Work around a WPF binding bug ? Borders don't seem to bind correctly to Color!
+        public Brush Brush
+        {
+            get { return _solidBrush; }
+        }
 
-            set
-            {
-                color = value;
-            }
-		}
+        public Brush TransparentBrush
+        {
+            get { return _transparentBrush; }
+        }
 
-        private System.Windows.Media.Color determinePlayerColor(int idx)
+        private static Color DeterminePlayerColor(int idx)
         {
             // Create the Player's Color
-            System.Windows.Media.Color[] baseColors = {
-                                  System.Windows.Media.Color.FromRgb(0x00, 0x66, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x66, 0x00, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x00, 0x00, 0x66),
-                                  System.Windows.Media.Color.FromRgb(0x66, 0x00, 0x66),
-                                  System.Windows.Media.Color.FromRgb(0xFF, 0x66, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x00, 0x00, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x00, 0x99, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x99, 0x00, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x00, 0x00, 0x99),
-                                  System.Windows.Media.Color.FromRgb(0x99, 0x00, 0x99),
-                                  System.Windows.Media.Color.FromRgb(0xFF, 0x99, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x33, 0x33, 0x33),
-                                  System.Windows.Media.Color.FromRgb(0x00, 0x99, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x99, 0x00, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x00, 0x00, 0x99),
-                                  System.Windows.Media.Color.FromRgb(0x99, 0x00, 0x99),
-                                  System.Windows.Media.Color.FromRgb(0xFF, 0x99, 0x00),
-                                  System.Windows.Media.Color.FromRgb(0x66, 0x66, 0x66),
-                                  System.Windows.Media.Color.FromRgb(0xFF, 0x00, 0x00)};
+            Color[] baseColors = {
+                                     Color.FromRgb(0x00, 0x66, 0x00),
+                                     Color.FromRgb(0x66, 0x00, 0x00),
+                                     Color.FromRgb(0x00, 0x00, 0x66),
+                                     Color.FromRgb(0x66, 0x00, 0x66),
+                                     Color.FromRgb(0xFF, 0x66, 0x00),
+                                     Color.FromRgb(0x00, 0x00, 0x00),
+                                     Color.FromRgb(0x00, 0x99, 0x00),
+                                     Color.FromRgb(0x99, 0x00, 0x00),
+                                     Color.FromRgb(0x00, 0x00, 0x99),
+                                     Color.FromRgb(0x99, 0x00, 0x99),
+                                     Color.FromRgb(0xFF, 0x99, 0x00),
+                                     Color.FromRgb(0x33, 0x33, 0x33),
+                                     Color.FromRgb(0x00, 0x99, 0x00),
+                                     Color.FromRgb(0x99, 0x00, 0x00),
+                                     Color.FromRgb(0x00, 0x00, 0x99),
+                                     Color.FromRgb(0x99, 0x00, 0x99),
+                                     Color.FromRgb(0xFF, 0x99, 0x00),
+                                     Color.FromRgb(0x66, 0x66, 0x66),
+                                     Color.FromRgb(0xFF, 0x00, 0x00)
+                                 };
             if (idx == 255)
                 return baseColors[0];
             if (idx == 0)
@@ -183,115 +175,117 @@ namespace Octgn.Play
             return baseColors[idx];
         }
 
-		// Work around a WPF binding bug ? Borders don't seem to bind correctly to Color!
-		public System.Windows.Media.Brush Brush
-		{ get { return solidBrush; } }
+        #endregion
 
-		public System.Windows.Media.Brush TransparentBrush
-		{ get { return transparentBrush; } }
+        #region Public interface
 
-		#endregion
-
-		#region Public interface
-
-		// C'tor
-		internal Player(Definitions.GameDef g, string name, byte id, ulong pkey)
-		{
-			// Init fields
-			this.name = name; this.Id = id; this.PublicKey = pkey;
-			// Register the player
-			all.Add(this);
-			OnPropertyChanged("Color");
-			//Create the color brushes           
-            color = determinePlayerColor(this.Id);
-			solidBrush = new System.Windows.Media.SolidColorBrush(Color);
-			solidBrush.Freeze();
-			transparentBrush = new System.Windows.Media.SolidColorBrush(Color);
-			transparentBrush.Opacity = 0.4;
-			transparentBrush.Freeze();
-			OnPropertyChanged("Brush");
-			OnPropertyChanged("TransparentBrush");
-			// Create counters
-			counters = new Counter[g.PlayerDefinition.Counters != null ? g.PlayerDefinition.Counters.Length : 0];
-			for (int i = 0; i < Counters.Length; i++)
-				Counters[i] = new Counter(this, g.PlayerDefinition.Counters[i]);
+        // C'tor
+        internal Player(GameDef g, string name, byte id, ulong pkey)
+        {
+            // Init fields
+            _name = name;
+            Id = id;
+            PublicKey = pkey;
+            // Register the lPlayer
+            all.Add(this);
+            OnPropertyChanged("Color");
+            //Create the color brushes           
+            Color = DeterminePlayerColor(Id);
+            _solidBrush = new SolidColorBrush(Color);
+            _solidBrush.Freeze();
+            _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
+            _transparentBrush.Freeze();
+            OnPropertyChanged("Brush");
+            OnPropertyChanged("TransparentBrush");
+            // Create counters
+            _counters = new Counter[g.PlayerDefinition.Counters != null ? g.PlayerDefinition.Counters.Length : 0];
+            for (int i = 0; i < Counters.Length; i++)
+                if (g.PlayerDefinition.Counters != null)
+                    Counters[i] = new Counter(this, g.PlayerDefinition.Counters[i]);
             // Create variables
             Variables = new Dictionary<string, int>();
-            foreach (var varDef in g.Variables.Where(v => !v.Global))
+            foreach (VariableDef varDef in g.Variables.Where(v => !v.Global))
                 Variables.Add(varDef.Name, varDef.DefaultValue);
             // Create global variables
             GlobalVariables = new Dictionary<string, string>();
-            foreach (var varD in g.PlayerDefinition.GlobalVariables)
+            foreach (GlobalVariableDef varD in g.PlayerDefinition.GlobalVariables)
                 GlobalVariables.Add(varD.Name, varD.Value);
-			// Create a hand, if any
-			if (g.PlayerDefinition.Hand != null)
-				hand = new Hand(this, g.PlayerDefinition.Hand);
-			// Create groups
-			groups = new Group[g.PlayerDefinition.Groups != null ? g.PlayerDefinition.Groups.Length + 1 : 1];
-			groups[0] = hand;
-			for (int i = 1; i < IndexedGroups.Length; i++)
-				groups[i] = new Pile(this, g.PlayerDefinition.Groups[i - 1]);
-			// Raise the event
-			if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
-		}
+            // Create a hand, if any
+            if (g.PlayerDefinition.Hand != null)
+                _hand = new Hand(this, g.PlayerDefinition.Hand);
+            // Create groups
+            _groups = new Group[g.PlayerDefinition.Groups != null ? g.PlayerDefinition.Groups.Length + 1 : 1];
+            _groups[0] = _hand;
+            for (int i = 1; i < IndexedGroups.Length; i++)
+                if (g.PlayerDefinition.Groups != null) _groups[i] = new Pile(this, g.PlayerDefinition.Groups[i - 1]);
+            // Raise the event
+            if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
+        }
 
-		// C'tor for global items
-		internal Player(Definitions.GameDef g)
-		{
-			var globalDef = g.GlobalDefinition;
-			// Register the player
-			all.Add(this);
-			// Init fields
-			name = "Global"; Id = 0; PublicKey = 0;
+        // C'tor for global items
+        internal Player(GameDef g)
+        {
+            SharedDef globalDef = g.GlobalDefinition;
+            // Register the lPlayer
+            all.Add(this);
+            // Init fields
+            _name = "Global";
+            Id = 0;
+            PublicKey = 0;
             if (GlobalVariables == null)
             {
                 // Create global variables
                 GlobalVariables = new Dictionary<string, string>();
-                foreach (var varD in g.PlayerDefinition.GlobalVariables)
+                foreach (GlobalVariableDef varD in g.PlayerDefinition.GlobalVariables)
                     GlobalVariables.Add(varD.Name, varD.Value);
             }
-			// Create counters
-			counters = new Counter[globalDef.Counters != null ? globalDef.Counters.Length : 0];
-			for (int i = 0; i < Counters.Length; i++)
-				Counters[i] = new Counter(this, globalDef.Counters[i]);
-			// Create global's player groups
-			groups = new Pile[globalDef.Groups != null ? g.GlobalDefinition.Groups.Length + 1 : 0];
-			for (int i = 1; i < IndexedGroups.Length; i++)
-				groups[i] = new Pile(this, globalDef.Groups[i - 1]);
-		}
+            // Create counters
+            _counters = new Counter[globalDef.Counters != null ? globalDef.Counters.Length : 0];
+            for (int i = 0; i < Counters.Length; i++)
+                if (globalDef.Counters != null) Counters[i] = new Counter(this, globalDef.Counters[i]);
+            // Create global's lPlayer groups
+            // TODO: This could fail with a run-time exception on write, make it safe
+            _groups = new Pile[globalDef.Groups != null ? g.GlobalDefinition.Groups.Length + 1 : 0];
+            for (int i = 1; i < IndexedGroups.Length; i++)
+                if (globalDef.Groups != null) _groups[i] = new Pile(this, globalDef.Groups[i - 1]);
+        }
 
-		// Remove the player from the game
-		internal void Delete()
-		{
-			// Remove from the list
-			all.Remove(this);
-			// Raise the event
-			if (PlayerRemoved != null) PlayerRemoved(null, new PlayerEventArgs(this));
-		}
+        // Remove the lPlayer from the game
+        internal void Delete()
+        {
+            // Remove from the list
+            all.Remove(this);
+            // Raise the event
+            if (PlayerRemoved != null) PlayerRemoved(null, new PlayerEventArgs(this));
+        }
 
-		public override string ToString()
-		{ return name; }
+        public override string ToString()
+        {
+            return _name;
+        }
 
-		#endregion
+        #endregion
 
-		#region INotifyPropertyChanged Members
+        #region INotifyPropertyChanged Members
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		private void OnPropertyChanged(string property)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(property));
-		}
+        #endregion
 
-		#endregion
-	}
+        private void OnPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
+    }
 
-	public class PlayerEventArgs : EventArgs
-	{
-		public readonly Player Player;
+    public class PlayerEventArgs : EventArgs
+    {
+        public readonly Player Player;
 
-		public PlayerEventArgs(Player p)
-		{ this.Player = p; }
-	}
+        public PlayerEventArgs(Player p)
+        {
+            Player = p;
+        }
+    }
 }

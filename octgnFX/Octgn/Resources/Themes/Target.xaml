@@ -1,51 +1,56 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <ControlTemplate x:Key="TargetTemplate" TargetType="ContentControl">
-        <ControlTemplate.Triggers>
-            <Trigger Property="Visibility" Value="Visible">
-                <Trigger.EnterActions>
-                    <BeginStoryboard x:Name="rotate">
-                        <Storyboard>
-                            <Storyboard.Children>
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="path1" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:03" Value="360"/>
-                                </DoubleAnimationUsingKeyFrames>
-                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever" Storyboard.TargetName="path" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)">
-                                    <SplineDoubleKeyFrame KeyTime="00:00:10" Value="-360"/>
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard.Children>
-                        </Storyboard>
-                    </BeginStoryboard>
-                </Trigger.EnterActions>
-                <Trigger.ExitActions>
-                    <StopStoryboard BeginStoryboardName="rotate" />
-                </Trigger.ExitActions>
-            </Trigger>
-        </ControlTemplate.Triggers>
+  <ControlTemplate x:Key="TargetTemplate" TargetType="ContentControl">
+    <ControlTemplate.Triggers>
+      <Trigger Property="Visibility" Value="Visible">
+        <Trigger.EnterActions>
+          <BeginStoryboard x:Name="rotate">
+            <Storyboard>
+              <Storyboard.Children>
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever"
+                                               Storyboard.TargetName="path1" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:03" Value="360" />
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" RepeatBehavior="Forever"
+                                               Storyboard.TargetName="path" Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)">
+                  <SplineDoubleKeyFrame KeyTime="00:00:10" Value="-360" />
+                </DoubleAnimationUsingKeyFrames>
+              </Storyboard.Children>
+            </Storyboard>
+          </BeginStoryboard>
+        </Trigger.EnterActions>
+        <Trigger.ExitActions>
+          <StopStoryboard BeginStoryboardName="rotate" />
+        </Trigger.ExitActions>
+      </Trigger>
+    </ControlTemplate.Triggers>
 
-        <Viewbox Stretch="Uniform">
-            <Canvas Width="70.083" Height="70.333">
-                <Path Fill="{TemplateBinding Foreground}" Stretch="Fill" StrokeThickness="2" Data="F1 M268.65067,155 L305,155 305,177.71582 C293.1994,251.01993 229.63715,307 153,307 L153,268.75165 C216.25937,268.75165 267.6665,218.00601 268.65067,155 z M128.28418,0.99999988 L153,0.99999988 153,37.248363 C89.072136,37.248367 37.248367,89.072136 37.248367,153 L37.450348,157 1.0000005,157 1.0000005,128.28418 C11.501979,63.02837 63.02837,11.501977 128.28418,0.99999988 z" Opacity="0.6" RenderTransformOrigin="0.5,0.5" x:Name="path1" 
-                      HorizontalAlignment="Center" VerticalAlignment="Center" 
-                      Width="66" Height="66" Canvas.Left="3" Canvas.Top="3">
-<!--                      Width="54.898" Height="55.256" Canvas.Left="8" Canvas.Top="7.812"> -->
-                    <Path.RenderTransform>
-                        <RotateTransform Angle="0"/>
-                    </Path.RenderTransform>
-                </Path>
-                <Ellipse Stroke="{TemplateBinding Foreground}" StrokeThickness="2" HorizontalAlignment="Center" VerticalAlignment="Top" 
-                         Width="66" Height="66" Canvas.Left="3" Canvas.Top="3" />
-<!--                         Width="56.126" Height="55.634" Canvas.Left="7.164" Canvas.Top="7.999"/> -->
-                <Path RenderTransformOrigin="0.5,0.5" Fill="{TemplateBinding Foreground}" Stretch="Fill" StrokeThickness="3" x:Name="path" Data="M8.942844,-2.8122468E-06 L1.06406E-06,31.665993 16.666997,31.665993 z M-30.001,-36.224157 L-61.667,-45.167001 -61.667,-28.499997 z M7.7241575,-76.001 L16.666999,-107.667 -1.8160322E-06,-107.667 z M45.505001,-37.442841 L77.171003,-28.499999 77.171003,-45.167 z" 
-                      Canvas.Left="-7" Canvas.Top="-7" Width="84" Height="84">
-<!--                      HorizontalAlignment="Left" VerticalAlignment="Top" Width="70.083" Height="70.333"> -->
-                    <Path.RenderTransform>
-                        <RotateTransform Angle="0"/>
-                    </Path.RenderTransform>
-                </Path>
-            </Canvas>
-        </Viewbox>
-    </ControlTemplate>
+    <Viewbox Stretch="Uniform">
+      <Canvas Width="70.083" Height="70.333">
+        <Path Fill="{TemplateBinding Foreground}" Stretch="Fill" StrokeThickness="2"
+              Data="F1 M268.65067,155 L305,155 305,177.71582 C293.1994,251.01993 229.63715,307 153,307 L153,268.75165 C216.25937,268.75165 267.6665,218.00601 268.65067,155 z M128.28418,0.99999988 L153,0.99999988 153,37.248363 C89.072136,37.248367 37.248367,89.072136 37.248367,153 L37.450348,157 1.0000005,157 1.0000005,128.28418 C11.501979,63.02837 63.02837,11.501977 128.28418,0.99999988 z"
+              Opacity="0.6" RenderTransformOrigin="0.5,0.5" x:Name="path1" HorizontalAlignment="Center" VerticalAlignment="Center"
+              Width="66" Height="66" Canvas.Left="3" Canvas.Top="3">
+          <!--                      Width="54.898" Height="55.256" Canvas.Left="8" Canvas.Top="7.812"> -->
+          <Path.RenderTransform>
+            <RotateTransform Angle="0" />
+          </Path.RenderTransform>
+        </Path>
+        <Ellipse Stroke="{TemplateBinding Foreground}" StrokeThickness="2" HorizontalAlignment="Center"
+                 VerticalAlignment="Top" Width="66" Height="66" Canvas.Left="3" Canvas.Top="3" />
+        <!--                         Width="56.126" Height="55.634" Canvas.Left="7.164" Canvas.Top="7.999"/> -->
+        <Path RenderTransformOrigin="0.5,0.5" Fill="{TemplateBinding Foreground}" Stretch="Fill" StrokeThickness="3"
+              x:Name="path"
+              Data="M8.942844,-2.8122468E-06 L1.06406E-06,31.665993 16.666997,31.665993 z M-30.001,-36.224157 L-61.667,-45.167001 -61.667,-28.499997 z M7.7241575,-76.001 L16.666999,-107.667 -1.8160322E-06,-107.667 z M45.505001,-37.442841 L77.171003,-28.499999 77.171003,-45.167 z"
+              Canvas.Left="-7" Canvas.Top="-7" Width="84" Height="84">
+          <!--                      HorizontalAlignment="Left" VerticalAlignment="Top" Width="70.083" Height="70.333"> -->
+          <Path.RenderTransform>
+            <RotateTransform Angle="0" />
+          </Path.RenderTransform>
+        </Path>
+      </Canvas>
+    </Viewbox>
+  </ControlTemplate>
 
 </ResourceDictionary>

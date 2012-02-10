@@ -1,76 +1,32 @@
-﻿using System.Windows;
+﻿using System;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Skylabs;
 using Skylabs.Lobby;
-using SimplestDragDrop;
-using System.Windows.Documents;
-using System;
-using System.Linq;
-using System.IO;
-using System.Windows.Shapes;
 
 namespace Octgn.Controls
 {
     /// <summary>
-    /// Interaction logic for FriendListItem.xaml
+    ///   Interaction logic for FriendListItem.xaml
     /// </summary>
-    public partial class GroupChatListItem : UserControl
+    public partial class GroupChatListItem
     {
-        private bool _isDragging;
-        public bool IsDragging
-        {
-            get { return _isDragging; }
-            set { _isDragging = value; }
-        } 
-        FrameworkElement _dragScope;
-        public FrameworkElement DragScope
-        {
-            get { return _dragScope; }
-            set { _dragScope = value; }
-        }
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
-    "UserName", typeof(string), typeof(GroupChatListItem));
+            "UserName", typeof (string), typeof (GroupChatListItem));
+
         public static DependencyProperty CustomStatusProperty = DependencyProperty.Register(
-    "CustomStatus", typeof(string), typeof(GroupChatListItem));
+            "CustomStatus", typeof (string), typeof (GroupChatListItem));
+
         public static DependencyProperty PictureProperty = DependencyProperty.Register(
-    "Picture", typeof(ImageSource), typeof(GroupChatListItem));
+            "Picture", typeof (ImageSource), typeof (GroupChatListItem));
+
         public static DependencyProperty StatusPictureProperty = DependencyProperty.Register(
-    "StatusPicture", typeof(ImageSource), typeof(GroupChatListItem));
+            "StatusPicture", typeof (ImageSource), typeof (GroupChatListItem));
 
 
-        private long ChatRoomID = 0;
-
-        public ChatRoom ThisRoom
-        {
-            get
-            {
-                return Program.lobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID);
-            }
-            set
-            {
-                ChatRoomID = value.ID;
-                ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID);
-                if (cr != null)
-                {
-                    if (cr.ID == 0)
-                    {
-                        SetValue(UsernameProperty, "Lobby Chat");
-                        image1.Opacity = 0;
-                    }
-                    else
-                    {
-                        image1.Opacity = 1;
-                        String users = String.Join<User>(",", cr.GetUserList());
-                        if (users.Length > 100)
-                            users.Substring(0, 97);
-                        users += "...";
-                        SetValue(UsernameProperty, users);
-                    }
-                }
-            }
-        }
+        private long _chatRoomId;
 
         public GroupChatListItem()
         {
@@ -78,25 +34,54 @@ namespace Octgn.Controls
             ThisRoom = new ChatRoom(0);
         }
 
-        private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        public bool IsDragging { get; set; }
+
+        public FrameworkElement DragScope { get; set; }
+
+        public ChatRoom ThisRoom
+        {
+            get { return Program.LobbyClient.Chatting.GetChatRoomFromRID(_chatRoomId); }
+            set
+            {
+                _chatRoomId = value.Id;
+                ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(_chatRoomId);
+                if (cr == null) return;
+                if (cr.Id == 0)
+                {
+                    SetValue(UsernameProperty, "Lobby Chat");
+                    image1.Opacity = 0;
+                }
+                else
+                {
+                    image1.Opacity = 1;
+                    String users = String.Join<User>(",", cr.GetUserList());
+                    if (users.Length > 100)
+                        users = users.Substring(0, 97);
+                    users += "...";
+                    SetValue(UsernameProperty, users);
+                }
+            }
+        }
+
+        private void UserControlMouseDown(object sender, MouseButtonEventArgs e)
         {
             //Focus();
         }
 
-        private void flistitem_MouseUp(object sender, MouseButtonEventArgs e)
+        private void FlistitemMouseUp(object sender, MouseButtonEventArgs e)
         {
             Focus();
         }
 
-        private void image1_MouseUp(object sender, MouseButtonEventArgs e)
+        private void Image1MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if(ChatRoomID != 0)
-            {
-                Program.ChatWindows.FirstOrDefault(cw => cw.ID == ThisRoom.ID).CloseChatWindow();
-                StackPanel sp = Parent as StackPanel;
-                if(sp != null)
-                    sp.Children.Remove(this);
-            }
+            if (_chatRoomId == 0) return;
+            var firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.Id);
+            if (firstOrDefault != null)
+                firstOrDefault.CloseChatWindow();
+            var sp = Parent as StackPanel;
+            if (sp != null)
+                sp.Children.Remove(this);
         }
     }
 }

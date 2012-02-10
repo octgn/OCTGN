@@ -1,16 +1,3 @@
-//  **********************************************************************************
-//  CassiniDev - http://cassinidev.codeplex.com
-// 
-//  Copyright (c) 2010 Sky Sanders. All rights reserved.
-//  
-//  This source code is subject to terms and conditions of the Microsoft Public
-//  License (Ms-PL). A copy of the license can be found in the license.txt file
-//  included in this distribution.
-//  
-//  You must not remove this notice, or any other, from this software.
-//  
-//  **********************************************************************************
-
 #region
 
 using System;
@@ -26,11 +13,10 @@ namespace CassiniDev
     public static class HostsFile
     {
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="ipAddress"></param>
-        /// <param name="hostname"></param>
-        /// <returns></returns>
+        /// <param name="ipAddress"> </param>
+        /// <param name="hostname"> </param>
+        /// <returns> </returns>
         public static int AddHostEntry(string ipAddress, string hostname)
         {
             try
@@ -48,11 +34,10 @@ namespace CassiniDev
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="ipAddress"></param>
-        /// <param name="hostname"></param>
-        /// <returns></returns>
+        /// <param name="ipAddress"> </param>
+        /// <param name="hostname"> </param>
+        /// <returns> </returns>
         public static int RemoveHostEntry(string ipAddress, string hostname)
         {
             try
@@ -91,23 +76,19 @@ namespace CassiniDev
 
         private static int StartElevated(string filename, string args)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    UseShellExecute = true,
-                    WorkingDirectory = Environment.CurrentDirectory,
-                    FileName = filename,
-                    Arguments = args,
-                    Verb = "runas"
-                };
+            var startInfo = new ProcessStartInfo
+                                {
+                                    UseShellExecute = true,
+                                    WorkingDirectory = Environment.CurrentDirectory,
+                                    FileName = filename,
+                                    Arguments = args,
+                                    Verb = "runas"
+                                };
             try
             {
                 Process p = Process.Start(startInfo);
-                if (p != null)
-                {
-                    p.WaitForExit();
-                    return p.ExitCode;
-                }
-                return -2;
+                p.WaitForExit();
+                return p.ExitCode;
             }
             catch
             {

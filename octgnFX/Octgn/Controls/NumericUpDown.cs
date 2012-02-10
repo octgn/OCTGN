@@ -10,72 +10,82 @@ using System.Windows.Input;
 
 namespace Octgn.Controls
 {
-    [TemplatePart(Name = "PART_TextBox", Type = typeof(TextBox))]
+    [TemplatePart(Name = "PART_TextBox", Type = typeof (TextBox))]
     public class NumericUpDown : Control
     {
+        private const decimal DefaultMinValue = 0;
+        private const decimal DefaultValue = DefaultMinValue;
+        private const decimal DefaultMaxValue = 100;
+        private const decimal DefaultChange = 1;
+        private const int DefaultDecimalPlaces = 0;
+
         static NumericUpDown()
         {
             InitializeCommands();
 
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(NumericUpDown), new FrameworkPropertyMetadata(typeof(NumericUpDown)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof (NumericUpDown),
+                                                     new FrameworkPropertyMetadata(typeof (NumericUpDown)));
         }
 
         public NumericUpDown()
-            : base()
         {
             Focusable = false;
-            updateValueString();
+            UpdateValueString();
         }
 
         #region Properties
-        
+
         #region Value
-        
+
+        public static readonly DependencyProperty ValueProperty =
+            DependencyProperty.Register(
+                "Value", typeof (decimal), typeof (NumericUpDown),
+                new FrameworkPropertyMetadata(DefaultValue,
+                                              OnValueChanged,
+                                              CoerceValue
+                    )
+                );
+
         public decimal Value
         {
-            get { return (decimal)GetValue(ValueProperty); }
+            get { return (decimal) GetValue(ValueProperty); }
             set { SetValue(ValueProperty, value); }
         }
 
-        public static readonly DependencyProperty ValueProperty = 
-            DependencyProperty.Register(
-                "Value", typeof(decimal), typeof(NumericUpDown),
-                new FrameworkPropertyMetadata(DefaultValue,
-                    new PropertyChangedCallback(OnValueChanged),
-                    new CoerceValueCallback(CoerceValue)
-                )
-            );
-
         private static void OnValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            NumericUpDown control = (NumericUpDown)obj;
+            var control = (NumericUpDown) obj;
 
-            decimal oldValue = (decimal)args.OldValue;
-            decimal newValue = (decimal)args.NewValue;
+            var oldValue = (decimal) args.OldValue;
+            var newValue = (decimal) args.NewValue;
 
             #region Fire Automation events
-            NumericUpDownAutomationPeer peer = UIElementAutomationPeer.FromElement(control) as NumericUpDownAutomationPeer;
+
+            var peer = UIElementAutomationPeer.FromElement(control) as NumericUpDownAutomationPeer;
             if (peer != null)
             {
                 peer.RaiseValueChangedEvent(oldValue, newValue);
             }
+
             #endregion
 
-            RoutedPropertyChangedEventArgs<decimal> e = new RoutedPropertyChangedEventArgs<decimal>(
+            var e = new RoutedPropertyChangedEventArgs<decimal>(
                 oldValue, newValue, ValueChangedEvent);
 
             control.OnValueChanged(e);
 
-            control.updateValueString();
+            control.UpdateValueString();
         }
 
         protected virtual void OnValueChanged(RoutedPropertyChangedEventArgs<decimal> args)
-        { RaiseEvent(args); }
+        {
+            RaiseEvent(args);
+        }
 
         private static object CoerceValue(DependencyObject element, object value)
         {
-            decimal newValue = (decimal)value;
-            NumericUpDown control = (NumericUpDown)element;
+            var newValue = (decimal) value;
+            var control = (NumericUpDown) element;
 
             newValue = Math.Max(control.Minimum, Math.Min(control.Maximum, newValue));
             newValue = Decimal.Round(newValue, control.DecimalPlaces);
@@ -87,19 +97,19 @@ namespace Octgn.Controls
 
         #region Minimum
 
-        public decimal Minimum
-        {
-            get { return (decimal)GetValue(MinimumProperty); }
-            set { SetValue(MinimumProperty, value); }
-        }
-
         public static readonly DependencyProperty MinimumProperty =
             DependencyProperty.Register(
-                "Minimum", typeof(decimal), typeof(NumericUpDown),
+                "Minimum", typeof (decimal), typeof (NumericUpDown),
                 new FrameworkPropertyMetadata(DefaultMinValue,
-                    new PropertyChangedCallback(OnMinimumChanged), new CoerceValueCallback(CoerceMinimum)
-                )
-            );
+                                              OnMinimumChanged, CoerceMinimum
+                    )
+                );
+
+        public decimal Minimum
+        {
+            get { return (decimal) GetValue(MinimumProperty); }
+            set { SetValue(MinimumProperty, value); }
+        }
 
         private static void OnMinimumChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
         {
@@ -109,8 +119,8 @@ namespace Octgn.Controls
 
         private static object CoerceMinimum(DependencyObject element, object value)
         {
-            decimal minimum = (decimal)value;
-            NumericUpDown control = (NumericUpDown)element;
+            var minimum = (decimal) value;
+            var control = (NumericUpDown) element;
             return Decimal.Round(minimum, control.DecimalPlaces);
         }
 
@@ -118,20 +128,20 @@ namespace Octgn.Controls
 
         #region Maximum
 
-        public decimal Maximum
-        {
-            get { return (decimal)GetValue(MaximumProperty); }
-            set { SetValue(MaximumProperty, value); }
-        }
-
         public static readonly DependencyProperty MaximumProperty =
             DependencyProperty.Register(
-                "Maximum", typeof(decimal), typeof(NumericUpDown),
+                "Maximum", typeof (decimal), typeof (NumericUpDown),
                 new FrameworkPropertyMetadata(DefaultMaxValue,
-                    new PropertyChangedCallback(OnMaximumChanged),
-                    new CoerceValueCallback(CoerceMaximum)
-                )
-            );
+                                              OnMaximumChanged,
+                                              CoerceMaximum
+                    )
+                );
+
+        public decimal Maximum
+        {
+            get { return (decimal) GetValue(MaximumProperty); }
+            set { SetValue(MaximumProperty, value); }
+        }
 
         private static void OnMaximumChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
         {
@@ -140,8 +150,8 @@ namespace Octgn.Controls
 
         private static object CoerceMaximum(DependencyObject element, object value)
         {
-            NumericUpDown control = (NumericUpDown)element;
-            decimal newMaximum = (decimal)value;
+            var control = (NumericUpDown) element;
+            var newMaximum = (decimal) value;
             return Decimal.Round(Math.Max(newMaximum, control.Minimum), control.DecimalPlaces);
         }
 
@@ -149,32 +159,33 @@ namespace Octgn.Controls
 
         #region Change
 
+        public static readonly DependencyProperty ChangeProperty =
+            DependencyProperty.Register(
+                "Change", typeof (decimal), typeof (NumericUpDown),
+                new FrameworkPropertyMetadata(DefaultChange, OnChangeChanged, CoerceChange),
+                ValidateChange
+                );
+
         public decimal Change
         {
-            get { return (decimal)GetValue(ChangeProperty); }
+            get { return (decimal) GetValue(ChangeProperty); }
             set { SetValue(ChangeProperty, value); }
         }
 
-        public static readonly DependencyProperty ChangeProperty =
-            DependencyProperty.Register(
-                "Change", typeof(decimal), typeof(NumericUpDown),
-                new FrameworkPropertyMetadata(DefaultChange, new PropertyChangedCallback(OnChangeChanged), new CoerceValueCallback(CoerceChange)),
-            new ValidateValueCallback(ValidateChange)
-            );
-
         private static bool ValidateChange(object value)
         {
-            decimal change = (decimal)value;
+            var change = (decimal) value;
             return change > 0;
         }
 
         private static void OnChangeChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
-        { }
+        {
+        }
 
         private static object CoerceChange(DependencyObject element, object value)
         {
-            decimal newChange = (decimal)value;
-            NumericUpDown control = (NumericUpDown)element;
+            var newChange = (decimal) value;
+            var control = (NumericUpDown) element;
 
             decimal coercedNewChange = Decimal.Round(newChange, control.DecimalPlaces);
 
@@ -183,13 +194,13 @@ namespace Octgn.Controls
             //previous Change
             if (coercedNewChange < newChange)
             {
-                coercedNewChange = smallestForDecimalPlaces(control.DecimalPlaces);
+                coercedNewChange = SmallestForDecimalPlaces(control.DecimalPlaces);
             }
 
             return coercedNewChange;
         }
 
-        private static decimal smallestForDecimalPlaces(int decimalPlaces)
+        private static decimal SmallestForDecimalPlaces(int decimalPlaces)
         {
             if (decimalPlaces < 0) throw new ArgumentException("decimalPlaces");
 
@@ -204,33 +215,33 @@ namespace Octgn.Controls
 
         #region DecimalPlaces
 
+        public static readonly DependencyProperty DecimalPlacesProperty =
+            DependencyProperty.Register(
+                "DecimalPlaces", typeof (int), typeof (NumericUpDown),
+                new FrameworkPropertyMetadata(DefaultDecimalPlaces,
+                                              OnDecimalPlacesChanged
+                    ), ValidateDecimalPlaces
+                );
+
         public int DecimalPlaces
         {
-            get { return (int)GetValue(DecimalPlacesProperty); }
+            get { return (int) GetValue(DecimalPlacesProperty); }
             set { SetValue(DecimalPlacesProperty, value); }
         }
 
-        public static readonly DependencyProperty DecimalPlacesProperty =
-            DependencyProperty.Register(
-                "DecimalPlaces", typeof(int), typeof(NumericUpDown),
-                new FrameworkPropertyMetadata(DefaultDecimalPlaces,
-                    new PropertyChangedCallback(OnDecimalPlacesChanged)
-                ), new ValidateValueCallback(ValidateDecimalPlaces)
-            );
-
         private static void OnDecimalPlacesChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
         {
-            NumericUpDown control = (NumericUpDown)element;
+            var control = (NumericUpDown) element;
             control.CoerceValue(ChangeProperty);
             control.CoerceValue(MinimumProperty);
             control.CoerceValue(MaximumProperty);
             control.CoerceValue(ValueProperty);
-            control.updateValueString();
+            control.UpdateValueString();
         }
 
         private static bool ValidateDecimalPlaces(object value)
         {
-            int decimalPlaces = (int)value;
+            var decimalPlaces = (int) value;
             return decimalPlaces >= 0;
         }
 
@@ -238,93 +249,104 @@ namespace Octgn.Controls
 
         #region ValueString
 
-        public string ValueString
-        { get { return (string)GetValue(ValueStringProperty); } }
-
         private static readonly DependencyPropertyKey ValueStringPropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly("ValueString", typeof(string), typeof(NumericUpDown), new PropertyMetadata());
+            DependencyProperty.RegisterAttachedReadOnly("ValueString", typeof (string), typeof (NumericUpDown),
+                                                        new PropertyMetadata());
 
         public static readonly DependencyProperty ValueStringProperty = ValueStringPropertyKey.DependencyProperty;
 
-        private void updateValueString()
+        private readonly NumberFormatInfo _numberFormatInfo = new NumberFormatInfo();
+
+        public string ValueString
         {
-            _numberFormatInfo.NumberDecimalDigits = this.DecimalPlaces;
-            string newValueString = this.Value.ToString("f", _numberFormatInfo);
-            this.SetValue(ValueStringPropertyKey, newValueString);
+            get { return (string) GetValue(ValueStringProperty); }
         }
 
-        private NumberFormatInfo _numberFormatInfo = new NumberFormatInfo();
+        private void UpdateValueString()
+        {
+            _numberFormatInfo.NumberDecimalDigits = DecimalPlaces;
+            string newValueString = Value.ToString("f", _numberFormatInfo);
+            SetValue(ValueStringPropertyKey, newValueString);
+        }
 
         #endregion
 
         #endregion
 
         #region Events
+
         /// <summary>
-        /// Identifies the ValueChanged routed event.
+        ///   Identifies the ValueChanged routed event.
         /// </summary>
         public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent(
             "ValueChanged", RoutingStrategy.Bubble,
-            typeof(RoutedPropertyChangedEventHandler<decimal>), typeof(NumericUpDown));
+            typeof (RoutedPropertyChangedEventHandler<decimal>), typeof (NumericUpDown));
 
         /// <summary>
-        /// Occurs when the Value property changes.
+        ///   Occurs when the Value property changes.
         /// </summary>
         public event RoutedPropertyChangedEventHandler<decimal> ValueChanged
         {
             add { AddHandler(ValueChangedEvent, value); }
             remove { RemoveHandler(ValueChangedEvent, value); }
         }
+
         #endregion
 
         #region Commands
 
-        public static RoutedCommand IncreaseCommand
-        { get { return _increaseCommand; } }
+        public static RoutedCommand IncreaseCommand { get; private set; }
 
-        public static RoutedCommand DecreaseCommand
-        { get { return _decreaseCommand; } }
+        public static RoutedCommand DecreaseCommand { get; private set; }
 
         private static void InitializeCommands()
         {
-            _increaseCommand = new RoutedCommand("IncreaseCommand", typeof(NumericUpDown));
-            CommandManager.RegisterClassCommandBinding(typeof(NumericUpDown), new CommandBinding(_increaseCommand, OnIncreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(NumericUpDown), new InputBinding(_increaseCommand, new KeyGesture(Key.Up)));
+            IncreaseCommand = new RoutedCommand("IncreaseCommand", typeof (NumericUpDown));
+            CommandManager.RegisterClassCommandBinding(typeof (NumericUpDown),
+                                                       new CommandBinding(IncreaseCommand, OnIncreaseCommand));
+            CommandManager.RegisterClassInputBinding(typeof (NumericUpDown),
+                                                     new InputBinding(IncreaseCommand, new KeyGesture(Key.Up)));
 
-            _decreaseCommand = new RoutedCommand("DecreaseCommand", typeof(NumericUpDown));
-            CommandManager.RegisterClassCommandBinding(typeof(NumericUpDown), new CommandBinding(_decreaseCommand, OnDecreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(NumericUpDown), new InputBinding(_decreaseCommand, new KeyGesture(Key.Down)));
+            DecreaseCommand = new RoutedCommand("DecreaseCommand", typeof (NumericUpDown));
+            CommandManager.RegisterClassCommandBinding(typeof (NumericUpDown),
+                                                       new CommandBinding(DecreaseCommand, OnDecreaseCommand));
+            CommandManager.RegisterClassInputBinding(typeof (NumericUpDown),
+                                                     new InputBinding(DecreaseCommand, new KeyGesture(Key.Down)));
         }
 
         private static void OnIncreaseCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            NumericUpDown control = sender as NumericUpDown;
+            var control = sender as NumericUpDown;
             if (control != null)
                 control.OnIncrease();
         }
 
         private static void OnDecreaseCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            NumericUpDown control = sender as NumericUpDown;
+            var control = sender as NumericUpDown;
             if (control != null)
                 control.OnDecrease();
         }
 
         protected virtual void OnIncrease()
-        { this.Value += Change; }
+        {
+            Value += Change;
+        }
 
         protected virtual void OnDecrease()
-        { this.Value -= Change; }
-
-        private static RoutedCommand _increaseCommand, _decreaseCommand;
+        {
+            Value -= Change;
+        }
 
         #endregion
 
         #region Automation
+
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new NumericUpDownAutomationPeer(this);
         }
+
         #endregion
 
         #region Template
@@ -333,84 +355,80 @@ namespace Octgn.Controls
         {
             base.OnApplyTemplate();
             var editBox = GetTemplateChild("PART_TextBox") as TextBox;
-            if (editBox != null)
-            {
-                editBox.GotFocus += delegate(object sender, RoutedEventArgs e)
-                {
-                    var box = (TextBox)sender; 
-                    box.SelectAll();
-                };
-                editBox.PreviewMouseDown += delegate(object sender, MouseButtonEventArgs e)
-                {
-                    var box = (TextBox)sender;
-                    // If the box isn't focused, focus it (which selects its text, see GotFocus handler)
-                    // and delete the event. If we let the Textbox further handle the event it will move 
-                    // the caret position, i.e. deselect the text
-                    if (!box.IsFocused)
-                    {
-                        box.Focus();
-                        e.Handled = true;
-                    }
-                };
-                editBox.LostKeyboardFocus += delegate (object sender, KeyboardFocusChangedEventArgs e)
-                {
-                    var box = (TextBox)sender;
-                    BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
-                    be.UpdateSource();
-                    be.UpdateTarget();  // if the value has been reject (e.g. bad format)
-                };
-                editBox.KeyDown += delegate(object sender, KeyEventArgs e)
-                {
-                    if (e.Key == Key.Enter)
-                    {
-                        var box = (TextBox)sender;
-                        BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
-                        be.UpdateSource();
-                        be.UpdateTarget();  // if the value has been reject (e.g. bad format)
-                        ((UIElement)Window.GetWindow(box).Content).MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-                    }
-                    else if (e.Key == Key.Escape)
-                    {
-                        var box = (TextBox)sender;
-                        BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
-                        be.UpdateTarget();
-                        ((UIElement)Window.GetWindow(box).Content).MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-                    }
-                };
-            }
+            if (editBox == null) return;
+            editBox.GotFocus += delegate(object sender, RoutedEventArgs e)
+                                    {
+                                        var box = (TextBox) sender;
+                                        box.SelectAll();
+                                    };
+            editBox.PreviewMouseDown += delegate(object sender, MouseButtonEventArgs e)
+                                            {
+                                                var box = (TextBox) sender;
+                                                // If the box isn't focused, focus it (which selects its text, see GotFocus handler)
+                                                // and delete the event. If we let the Textbox further handle the event it will move 
+                                                // the caret position, i.e. deselect the text
+                                                if (box.IsFocused) return;
+                                                box.Focus();
+                                                e.Handled = true;
+                                            };
+            editBox.LostKeyboardFocus += delegate(object sender, KeyboardFocusChangedEventArgs e)
+                                             {
+                                                 var box = (TextBox) sender;
+                                                 BindingExpression be =
+                                                     box.GetBindingExpression(TextBox.TextProperty);
+                                                 if (be == null) return;
+                                                 be.UpdateSource();
+                                                 be.UpdateTarget();
+                                                 // if the value has been reject (e.g. bad format)
+                                             };
+            editBox.KeyDown += delegate(object sender, KeyEventArgs e)
+                                   {
+                                       switch (e.Key)
+                                       {
+                                           case Key.Enter:
+                                               {
+                                                   var box = (TextBox) sender;
+                                                   BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
+                                                   if (be != null)
+                                                   {
+                                                       be.UpdateSource();
+                                                       be.UpdateTarget();
+                                                       // if the value has been reject (e.g. bad format)
+                                                   }
+                                                   var window = Window.GetWindow(box);
+                                                   if (window != null)
+                                                       ((UIElement) window.Content).MoveFocus(
+                                                           new TraversalRequest(FocusNavigationDirection.First));
+                                               }
+                                               break;
+                                           case Key.Escape:
+                                               {
+                                                   var box = (TextBox) sender;
+                                                   BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
+                                                   if (be != null) be.UpdateTarget();
+                                                   var window = Window.GetWindow(box);
+                                                   if (window != null)
+                                                       ((UIElement) window.Content).MoveFocus(
+                                                           new TraversalRequest(FocusNavigationDirection.First));
+                                               }
+                                               break;
+                                       }
+                                   };
         }
 
         #endregion
-
-        private const decimal DefaultMinValue = 0;
-        private const decimal DefaultValue = DefaultMinValue;
-        private const decimal DefaultMaxValue = 100;
-        private const decimal DefaultChange = 1;
-        private const int DefaultDecimalPlaces = 0;
     }
 
     public class NumericUpDownAutomationPeer : FrameworkElementAutomationPeer, IRangeValueProvider
     {
-        public NumericUpDownAutomationPeer(NumericUpDown control)
+        public NumericUpDownAutomationPeer(FrameworkElement control)
             : base(control)
-        {}
-
-        protected override string GetClassNameCore()
-        { return "NumericUpDown"; }
-
-        protected override AutomationControlType GetAutomationControlTypeCore()
-        { return AutomationControlType.Spinner; }
-
-        public override object GetPattern(PatternInterface patternInterface)
         {
-            if (patternInterface == PatternInterface.RangeValue) return this;
-            return base.GetPattern(patternInterface);
         }
 
-        internal void RaiseValueChangedEvent(decimal oldValue, decimal newValue)
+        private NumericUpDown MyOwner
         {
-            base.RaisePropertyChangedEvent(RangeValuePatternIdentifiers.ValueProperty,
-                (double)oldValue, (double)newValue);
+            get { return (NumericUpDown) Owner; }
         }
 
         #region IRangeValueProvider Members
@@ -422,17 +440,17 @@ namespace Octgn.Controls
 
         double IRangeValueProvider.LargeChange
         {
-            get { return (double)MyOwner.Change; }
+            get { return (double) MyOwner.Change; }
         }
 
         double IRangeValueProvider.Maximum
         {
-            get { return (double)MyOwner.Maximum; }
+            get { return (double) MyOwner.Maximum; }
         }
 
         double IRangeValueProvider.Minimum
         {
-            get { return (double)MyOwner.Minimum; }
+            get { return (double) MyOwner.Minimum; }
         }
 
         void IRangeValueProvider.SetValue(double value)
@@ -440,7 +458,7 @@ namespace Octgn.Controls
             if (!IsEnabled())
                 throw new ElementNotEnabledException();
 
-            decimal val = (decimal)value;
+            var val = (decimal) value;
             if (val < MyOwner.Minimum || val > MyOwner.Maximum)
                 throw new ArgumentOutOfRangeException("value");
 
@@ -449,19 +467,35 @@ namespace Octgn.Controls
 
         double IRangeValueProvider.SmallChange
         {
-            get { return (double)MyOwner.Change; }
+            get { return (double) MyOwner.Change; }
         }
 
         double IRangeValueProvider.Value
         {
-            get { return (double)MyOwner.Value; }
+            get { return (double) MyOwner.Value; }
         }
 
         #endregion
 
-        private NumericUpDown MyOwner
+        protected override string GetClassNameCore()
         {
-            get { return (NumericUpDown)base.Owner; }
+            return "NumericUpDown";
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.Spinner;
+        }
+
+        public override object GetPattern(PatternInterface patternInterface)
+        {
+            return patternInterface == PatternInterface.RangeValue ? this : base.GetPattern(patternInterface);
+        }
+
+        internal void RaiseValueChangedEvent(decimal oldValue, decimal newValue)
+        {
+            RaisePropertyChangedEvent(RangeValuePatternIdentifiers.ValueProperty,
+                                      (double) oldValue, (double) newValue);
         }
     }
 }

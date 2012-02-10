@@ -61,12 +61,25 @@ namespace Octgn.Data.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parse error in binaryparser: .
+        /// </summary>
+        public static string BinaryParser_Parse_Parse_error_in_binaryparser__ {
+            get {
+                return ResourceManager.GetString("BinaryParser_Parse_Parse_error_in_binaryparser__", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Client Disconnected..
+        /// </summary>
+        public static string Connection_Disconnect_Client_Disconnected_ {
+            get {
+                return ResourceManager.GetString("Connection_Disconnect_Client_Disconnected_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to begin transaction;
-        ///
-        ///pragma auto_vacuum=1;
-        ///pragma default_cache_size=2000;
-        ///pragma encoding=&apos;UTF-8&apos;;
-        ///pragma page_size=1024;
         ///
         ///CREATE TABLE [dbinfo] (
         ///  [version] INTEGER NOT NULL
@@ -75,15 +88,20 @@ namespace Octgn.Data.Properties {
         ///INSERT INTO dbinfo([version]) VALUES(1);
         ///
         ///CREATE TABLE [games] (
-        ///  [id] INTEGER PRIMARY KEY AUTOINCREMENT, 
-        ///  [filename] TEXT NOT NULL ON CONFLICT FAIL, 
+        ///  [real_id] INTEGER PRIMARY KEY AUTOINCREMENT, 
+        ///  [id] TEXT UNIQUE NOT NULL, 
+        ///  [name] TEXT NOT NULL,
+        ///  [filename] TEXT NOT NULL, 
         ///  [version] TEXT NOT NULL, 
         ///  [card_width] INTEGER, 
         ///  [card_height] INTEGER, 
         ///  [card_back] TEXT, 
         ///  [deck_sections] TEXT, 
         ///  [shared_deck_sections] TEXT,
-        /// [rest of string was truncated]&quot;;.
+        ///  [file_hash] TEXT);
+        ///
+        ///CREATE TABLE [sets] (
+        ///  [real_id] INTEGER PRIMARY KEY AUTOINC [rest of string was truncated]&quot;;.
         /// </summary>
         public static string MakeDatabase {
             get {
@@ -97,6 +115,15 @@ namespace Octgn.Data.Properties {
         public static string UpdateDatabase {
             get {
                 return ResourceManager.GetString("UpdateDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parse error in xmlparser: .
+        /// </summary>
+        public static string XmlParser_Parse_Parse_error_in_xmlparser__ {
+            get {
+                return ResourceManager.GetString("XmlParser_Parse_Parse_error_in_xmlparser__", resourceCulture);
             }
         }
     }

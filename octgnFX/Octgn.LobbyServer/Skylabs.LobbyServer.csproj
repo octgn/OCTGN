@@ -151,9 +151,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Google.GData.Client, Version=1.9.0.0, Culture=neutral, PublicKeyToken=04a59ca9b0273830, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Google.GData.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualBasic">
+      <HintPath>..\Lib\Google.GData.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MySql.Data">
@@ -161,11 +159,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ban.cs" />
@@ -216,10 +210,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CassiniDev\CassiniDev\CassiniDev.Lib4.csproj">
-      <Project>{070AE36D-4CE1-4708-BD0F-2896A6F117FC}</Project>
-      <Name>CassiniDev.Lib4</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
       <Name>Skylabs.Lobby</Name>

@@ -3,79 +3,86 @@ using System.Diagnostics;
 
 namespace Octgn.Play.Actions
 {
-	class MoveCard : ActionBase
-	{
-		internal static event EventHandler Done;
-		internal static event EventHandler Doing;
+    internal class MoveCard : ActionBase
+    {
+        internal Card Card;
+        internal bool FaceUp;
+        internal Group From;
+        internal int Idx;
+        internal Group To;
+        internal Player Who;
+        //        private int fromIdx;
+        internal int X, Y;
 
-		internal Player who;
-		internal Card card;
-		internal Group to, from;
-		//        private int fromIdx;
-		internal int x, y;
-		internal int idx;
-		internal bool faceUp;
+        public MoveCard(Player who, Card card, Group to, int idx, bool faceUp)
+        {
+            Who = who;
+            Card = card;
+            To = to;
+            From = card.Group;
+            Idx = idx;
+            FaceUp = faceUp;
+        }
 
-		public MoveCard(Player who, Card card, Group to, int idx, bool faceUp)
-		{
-			this.who = who; this.card = card;
-			this.to = to; this.from = card.Group;
-			this.idx = idx;
-			this.faceUp = faceUp;
-		}
+        public MoveCard(Player who, Card card, int x, int y, int idx, bool faceUp)
+        {
+            Who = who;
+            Card = card;
+            To = Program.Game.Table;
+            From = card.Group;
+            X = x;
+            Y = y;
+            Idx = idx;
+            FaceUp = faceUp;
+        }
 
-		public MoveCard(Player who, Card card, int x, int y, int idx, bool faceUp)
-		{
-			this.who = who; this.card = card;
-			this.to = Program.Game.Table; this.from = card.Group;
-			this.x = x; this.y = y;
-			this.idx = idx;
-			this.faceUp = faceUp;
-		}
+        internal static event EventHandler Done;
+        internal static event EventHandler Doing;
 
-		public override void Do()
-		{
-			if (Doing != null) Doing(this, EventArgs.Empty);
+        public override void Do()
+        {
+            if (Doing != null) Doing(this, EventArgs.Empty);
 
-			base.Do();
-			bool shouldSee = card.FaceUp, shouldLog = true;
-			// Move the card
-			if (card.Group != to)
-			{
-				card.Group.Remove(card);
-				if (card.DeleteWhenLeavesGroup)
-					card.Group = null;
-				else
-				{
-					card.SetFaceUp(faceUp);
-					card.SetOverrideGroupVisibility(false);
-					card.X = x; card.Y = y;
-					to.AddAt(card, idx);
-				}
-			}
-			else
-			{
-				shouldLog = false;
-				card.X = x; card.Y = y;
-				if (to.Cards.IndexOf(card) != idx)
-				{
-					if (to.Ordered)
-						Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
-								"{0} reorders {1}", who, to);
-					card.SetIndex(idx);
-				}
-			}
-			// Should the card be named in the log ?
-			shouldSee |= card.FaceUp;
-			// Prepare the message
-			if (shouldLog)
-				Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
-						"{0} moves '{1}' to {3}{2}",
-								who, shouldSee ? card.Type : (object)"Card",
-								to, to is Pile && idx > 0 && idx + 1 == to.Count ? "the bottom of " : "");
+            base.Do();
+            bool shouldSee = Card.FaceUp, shouldLog = true;
+            // Move the card
+            if (Card.Group != To)
+            {
+                Card.Group.Remove(Card);
+                if (Card.DeleteWhenLeavesGroup)
+                    Card.Group = null;
+                else
+                {
+                    Card.SetFaceUp(FaceUp);
+                    Card.SetOverrideGroupVisibility(false);
+                    Card.X = X;
+                    Card.Y = Y;
+                    To.AddAt(Card, Idx);
+                }
+            }
+            else
+            {
+                shouldLog = false;
+                Card.X = X;
+                Card.Y = Y;
+                if (To.Cards.IndexOf(Card) != Idx)
+                {
+                    if (To.Ordered)
+                        Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(Who),
+                                                 "{0} reorders {1}", Who, To);
+                    Card.SetIndex(Idx);
+                }
+            }
+            // Should the card be named in the log ?
+            shouldSee |= Card.FaceUp;
+            // Prepare the message
+            if (shouldLog)
+                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(Who),
+                                         "{0} moves '{1}' to {3}{2}",
+                                         Who, shouldSee ? Card.Type : (object) "Card",
+                                         To, To is Pile && Idx > 0 && Idx + 1 == To.Count ? "the bottom of " : "");
 
-			if (Done != null) Done(this, EventArgs.Empty);
-		}
-
-	}
+            if (Done != null) Done(this, EventArgs.Empty);
+        }
+    }
 }

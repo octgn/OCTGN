@@ -25,18 +25,6 @@ namespace Octgn.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Nickname")]
-        public string NickName {
-            get {
-                return ((string)(this["NickName"]));
-            }
-            set {
-                this["NickName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("8088")]
         public string ServePort {
             get {
@@ -109,61 +97,13 @@ namespace Octgn.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double LoginTopLoc {
+        [global::System.Configuration.DefaultSettingValueAttribute("Nickname")]
+        public string NickName {
             get {
-                return ((double)(this["LoginTopLoc"]));
+                return ((string)(this["NickName"]));
             }
             set {
-                this["LoginTopLoc"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double LoginLeftLoc {
-            get {
-                return ((double)(this["LoginLeftLoc"]));
-            }
-            set {
-                this["LoginLeftLoc"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double MainTopLoc {
-            get {
-                return ((double)(this["MainTopLoc"]));
-            }
-            set {
-                this["MainTopLoc"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double MainLeftLoc {
-            get {
-                return ((double)(this["MainLeftLoc"]));
-            }
-            set {
-                this["MainLeftLoc"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DeckDirLastUsed {
-            get {
-                return ((string)(this["DeckDirLastUsed"]));
-            }
-            set {
-                this["DeckDirLastUsed"] = value;
+                this["NickName"] = value;
             }
         }
     }

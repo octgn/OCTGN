@@ -167,20 +167,14 @@
       <HintPath>..\Lib\IronPython.Modules.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Dynamic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.Dynamic.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Scripting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.Scripting.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic.Compatibility.Data" />
-    <Reference Include="Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.Windows.Shell.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="Polenter.SharpSerializer">
+      <HintPath>..\Lib\Polenter.SharpSerializer.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -192,7 +186,6 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -213,8 +206,6 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutWindow.xaml.cs">
@@ -230,9 +221,6 @@
     </Compile>
     <Compile Include="Controls\GroupChatListItem.xaml.cs">
       <DependentUpon>GroupChatListItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\HostedGameListFilterItem.xaml.cs">
-      <DependentUpon>HostedGameListFilterItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\HostedGameListItem.xaml.cs">
       <DependentUpon>HostedGameListItem.xaml</DependentUpon>
@@ -301,9 +289,6 @@
     <Compile Include="Launcher\AddFriendPage.xaml.cs">
       <DependentUpon>AddFriendPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\GameManager.xaml.cs">
-      <DependentUpon>GameManager.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Launcher\HostedGameList.xaml.cs">
       <DependentUpon>HostedGameList.xaml</DependentUpon>
     </Compile>
@@ -318,9 +303,6 @@
     </Compile>
     <Compile Include="Launcher\GameList.xaml.cs">
       <DependentUpon>GameList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\InstallNoticeDialog.xaml.cs">
-      <DependentUpon>InstallNoticeDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\InstallSetsProgressDialog.xaml.cs">
       <DependentUpon>InstallSetsProgressDialog.xaml</DependentUpon>
@@ -340,16 +322,9 @@
     <Compile Include="Launcher\UpdateChecker.xaml.cs">
       <DependentUpon>UpdateChecker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\UpgradeMessage.xaml.cs">
-      <DependentUpon>UpgradeMessage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Launcher\GameSelector.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>GameSelector.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\Join.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>Join.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\LauncherWindow.xaml.cs">
       <DependentUpon>LauncherWindow.xaml</DependentUpon>
@@ -357,6 +332,9 @@
     <Compile Include="Launcher\StartGame.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>StartGame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\UpgradeMessage.xaml.cs">
+      <DependentUpon>UpgradeMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="lobbysettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -401,6 +379,9 @@
     </Compile>
     <Compile Include="Play\Dialogs\PickCardsDialog.xaml.cs">
       <DependentUpon>PickCardsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\RulesWindow.xaml.cs">
+      <DependentUpon>RulesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\Gui\Adorners\ArrowAdorner.cs" />
@@ -475,7 +456,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Registry.cs" />
+    <Compile Include="SimpleConfig.cs" />
     <Compile Include="Scripting\Engine.cs" />
     <Compile Include="Scripting\ExecutionResult.cs" />
     <Compile Include="Scripting\OCounter.cs" />
@@ -501,14 +482,6 @@
     </Compile>
     <Compile Include="Networking\ServerErrorEventArgs.cs" />
     <Compile Include="GroupVisibility.cs" />
-    <Compile Include="Launcher\MainMenu.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>MainMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\Serve.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>Serve.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Play\Card.cs" />
     <Compile Include="Play\CardIdentity.cs" />
@@ -525,11 +498,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestServerSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>TestServerSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Utils\LinqExtensions.cs" />
     <Compile Include="Win32.cs" />
@@ -566,10 +534,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Scripting\PythonAPI.py" />
     <EmbeddedResource Include="Scripting\CaseInsensitiveDict.py" />
-    <None Include="TestServerSettings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>TestServerSettings.Designer.cs</LastGenOutput>
-    </None>
     <Resource Include="Resources\eye.png" />
     <Resource Include="Resources\Icons\LoadDeck.png" />
     <Resource Include="Resources\Icons\LoadLimited.png" />
@@ -614,7 +578,7 @@
     <Resource Include="Resources\Icons\image_link_small.png" />
     <Resource Include="Resources\chaticon.png" />
     <Resource Include="Resources\Icons\console.png" />
-    <Resource Include="Resources\Icons\FilterGames.png" />
+    <Resource Include="Resources\Icons\rules.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -648,7 +612,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Updates.cs" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -667,10 +630,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\GroupChatListItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\HostedGameListFilterItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -738,10 +697,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Launcher\GameManager.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Launcher\HostedGameList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -759,10 +714,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Launcher\GameList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Launcher\InstallNoticeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -790,17 +741,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Launcher\UpgradeMessage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Launcher\GameSelector.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Launcher\Join.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -810,15 +751,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Launcher\MainMenu.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Launcher\Serve.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Launcher\StartGame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\UpgradeMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -831,6 +768,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Play\Dialogs\PickCardsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Dialogs\RulesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1060,30 +1001,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <PublishFile Include="OCTGN.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="VistaDB.NET20">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Effects\" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>

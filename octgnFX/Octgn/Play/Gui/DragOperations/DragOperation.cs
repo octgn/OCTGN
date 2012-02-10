@@ -1,47 +1,51 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 
-namespace Octgn.Play.Gui
+namespace Octgn.Play.Gui.DragOperations
 {
-	internal interface IDragOperation
-	{
-		void Dragging(MouseEventArgs e);
-		void EndDrag();
-	}
+    internal interface IDragOperation
+    {
+        void Dragging(MouseEventArgs e);
+        void EndDrag();
+    }
 
-	internal abstract class DragOperation<T> : IDragOperation where T: UIElement
-	{
-		private Point oldPos;
-		protected T target;
+    internal abstract class DragOperation<T> : IDragOperation where T : UIElement
+    {
+        protected T Target;
+        private Point _oldPos;
 
-		public DragOperation(T target)
-		{
-			this.target = target;
-			oldPos = Mouse.GetPosition(target);
-			target.CaptureMouse();
-			StartDragCore(oldPos);
-		}		
+        protected DragOperation(T target)
+        {
+            Target = target;
+            _oldPos = Mouse.GetPosition(target);
+            target.CaptureMouse();
+            // TODO: Calling a virtual constructure in a future object, bad news
+            StartDragCore(_oldPos);
+        }
 
-		public void Dragging(MouseEventArgs e)
-		{
-			Point newPos = e.GetPosition(target);
-			Vector delta = newPos - oldPos;
-			oldPos = newPos;
-			DraggingCore(newPos, delta);
-			e.Handled = true;
-		}
+        #region IDragOperation Members
 
-		public void EndDrag()
-		{
-			target.ReleaseMouseCapture();
-			EndDragCore();
-		}
+        public void Dragging(MouseEventArgs e)
+        {
+            Point newPos = e.GetPosition(Target);
+            Vector delta = newPos - _oldPos;
+            _oldPos = newPos;
+            DraggingCore(newPos, delta);
+            e.Handled = true;
+        }
 
-		protected abstract void StartDragCore(Point position);
+        public void EndDrag()
+        {
+            Target.ReleaseMouseCapture();
+            EndDragCore();
+        }
 
-		protected abstract void DraggingCore(Point position, Vector delta);
+        #endregion
 
-		protected abstract void EndDragCore();
-	}
+        protected abstract void StartDragCore(Point position);
+
+        protected abstract void DraggingCore(Point position, Vector delta);
+
+        protected abstract void EndDragCore();
+    }
 }

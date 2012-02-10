@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Octgn.Data;
-using System.Collections.ObjectModel;
 
 namespace Octgn.DeckBuilder
 {
-	public class SetPropertyDef : PropertyDef
-	{
-		private IList<Set> allSets;
+    public class SetPropertyDef : PropertyDef
+    {
+        private readonly IList<Set> _allSets;
 
-		public IList<Set> Sets
-		{ get { return allSets; } }
+        public SetPropertyDef(IEnumerable<Set> allSets)
+            : base("Set", 0)
+        {
+            _allSets = allSets.OrderBy(s => s.Name).ToList();
+        }
 
-		public SetPropertyDef(IList<Set> allSets) : base("Set", 0)
-		{
-			this.allSets = allSets.OrderBy(s => s.Name).ToList();
-		}
-	}
+        public IList<Set> Sets
+        {
+            get { return _allSets; }
+        }
+    }
 }

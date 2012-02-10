@@ -1,68 +1,57 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Octgn.Controls;
-using System.IO;
+using Skylabs.Lobby;
 
 namespace Octgn.Launcher
 {
     /// <summary>
-    /// Interaction logic for GameList.xaml
+    ///   Interaction logic for GameList.xaml
     /// </summary>
-    public partial class NotificationList : Page
+    public partial class NotificationList
     {
         public NotificationList()
         {
             InitializeComponent();
-
         }
-        private void Reload_List()
+
+        private void ReloadList()
         {
-            Skylabs.Lobby.Notification[] nlist = Program.lobbyClient.GetNotificationList();
-            foreach (Skylabs.Lobby.Notification n in nlist)
+            Notification[] nlist = Program.LobbyClient.GetNotificationList();
+            foreach (var fi in from n in nlist
+                               where n.GetType() == typeof (FriendRequestNotification)
+                               select n as FriendRequestNotification
+                               into fr select new Controls.FriendRequestNotification
+                                                  {Notification = fr, HorizontalAlignment = HorizontalAlignment.Stretch}
+                )
             {
-                if (n.GetType() == typeof(Skylabs.Lobby.FriendRequestNotification))
-                {
-                    Skylabs.Lobby.FriendRequestNotification fr = n as Skylabs.Lobby.FriendRequestNotification;
-                    FriendRequestNotification fi = new FriendRequestNotification();
-                    fi.Notification = fr;
-                    fi.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
-                    fi.OnDismiss += NotificationDismissed;
-                    stackPanel1.Children.Add(fi);
-                }
+                fi.OnDismiss += NotificationDismissed;
+                stackPanel1.Children.Add(fi);
             }
-
         }
+
         private void NotificationDismissed(object sender, EventArgs e)
         {
-            UIElement u = sender as UIElement;
-            if(u != null)
+            var u = sender as UIElement;
+            if (u != null)
                 stackPanel1.Children.Remove(u);
         }
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+
+        private void PageLoaded(object sender, RoutedEventArgs e)
         {
-            Reload_List();
-            Program.lobbyClient.OnFriendRequest += new Skylabs.Lobby.LobbyClient.FriendRequest(lobbyClient_OnFriendRequest);
+            ReloadList();
+            Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
         }
 
-        void lobbyClient_OnFriendRequest(Skylabs.Lobby.User u)
+        private void lobbyClient_OnFriendRequest(User u)
         {
             //Reload_List();
-            Dispatcher.Invoke(new Action(Reload_List));
+            Dispatcher.Invoke(new Action(ReloadList));
         }
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
+            Program.LobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
         }
     }
 }
