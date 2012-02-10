@@ -20,8 +20,8 @@ namespace Octgn.Scripting.Controls
         public static readonly DependencyProperty IsCardSelectedProperty = DependencyProperty.Register(
             "IsCardSelected", typeof (bool), typeof (CardDlg), new UIPropertyMetadata(false));
 
-        private List<CardModel> allCards;
-        private string filterText = "";
+        private List<CardModel> _allCards;
+        private string _filterText = "";
 
         public CardDlg(string where)
         {
@@ -29,8 +29,8 @@ namespace Octgn.Scripting.Controls
             // Async load the cards (to make the GUI snappier with huge DB)
             Task.Factory.StartNew(() =>
                                       {
-                                          allCards = Database.GetCards(where).ToList();
-                                          Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = allCards));
+                                          _allCards = Database.GetCards(where).ToList();
+                                          Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
                                       });
             recentList.ItemsSource = Program.Game.RecentCards;
         }
@@ -88,27 +88,27 @@ namespace Octgn.Scripting.Controls
 
         private void FilterChanged(object sender, EventArgs e)
         {
-            filterText = filterBox.Text;
-            if (string.IsNullOrEmpty(filterText))
+            _filterText = filterBox.Text;
+            if (string.IsNullOrEmpty(_filterText))
             {
-                allList.ItemsSource = allCards;
+                allList.ItemsSource = _allCards;
                 return;
             }
             // Filter asynchronously (so the UI doesn't freeze on huge lists)
             // TODO .NET 4: use PLINQ to make this filter more efficient, and include cancellation of unrequired work
-            if (allCards == null) return;
+            if (_allCards == null) return;
             ThreadPool.QueueUserWorkItem(searchObj =>
                                              {
                                                  var search = (string) searchObj;
                                                  List<CardModel> filtered =
-                                                     allCards.Where(
+                                                     _allCards.Where(
                                                          m =>
                                                          m.Name.IndexOf(search,
                                                                         StringComparison.CurrentCultureIgnoreCase) >= 0)
                                                          .ToList();
-                                                 if (search == filterText)
+                                                 if (search == _filterText)
                                                      Dispatcher.Invoke(new Action(() => allList.ItemsSource = filtered));
-                                             }, filterText);
+                                             }, _filterText);
         }
 
         private void PreviewFilterKeyDown(object sender, KeyEventArgs e)

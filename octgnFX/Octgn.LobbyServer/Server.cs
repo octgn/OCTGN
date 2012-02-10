@@ -53,7 +53,6 @@ namespace Skylabs.LobbyServer
         /// <param name="port"> The port to host on </param>
         public static void Start(IPAddress ip, int port)
         {
-            Logger.log("Start", "Start listening");
             LocalIp = ip;
             Port = port;
             ListenSocket = new TcpListener(LocalIp, Port);
@@ -83,12 +82,9 @@ namespace Skylabs.LobbyServer
         /// <returns> Current online client, or Null if ones not found(I think) </returns>
         public static Client GetOnlineClientByEmail(string email)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Logger.L(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 Client ret = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower().Equals(email.ToLower()));
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 return ret;
             }
         }
@@ -122,40 +118,30 @@ namespace Skylabs.LobbyServer
         /// <returns> Current online Client, or Null if ones not found. </returns>
         public static Client GetOnlineClientByUid(int uid)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Logger.L(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 Client ret = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 return ret;
             }
         }
 
         public static int OnlineCount()
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Logger.L(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 int ret = Clients.Count(c => c.LoggedIn);
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 return ret;
             }
         }
 
         public static UserStatus GetOnlineUserStatus(int uid)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Logger.L(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 foreach (Client c in Clients.Where(c => c.LoggedIn && c.Me.Uid == uid))
                 {
-                    Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                     return c.Me.Status;
                 }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 return UserStatus.Offline;
             }
         }
@@ -178,10 +164,8 @@ namespace Skylabs.LobbyServer
         /// <param name="supress"> Should we supress a broadcast message </param>
         public static void OnUserEvent(UserStatus e, Client client, bool supress)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
             lock (ClientLocker)
             {
-                Logger.L(MethodBase.GetCurrentMethod().Name, "ClientLocker");
                 User me = client.Me;
                 if (e == UserStatus.Offline)
                 {
@@ -192,15 +176,12 @@ namespace Skylabs.LobbyServer
                         LazyAsync.Invoke(() => Chatting.UserOffline((User) me.Clone()));
                     }
                 }
-                if (!supress)
+                if (supress) return;
+                foreach (Client c in Clients)
                 {
-                    foreach (Client c in Clients)
-                    {
-                        Client cl2 = c;
-                        LazyAsync.Invoke(() => cl2.OnUserEvent(e, me.Clone() as User));
-                    }
+                    Client cl2 = c;
+                    LazyAsync.Invoke(() => cl2.OnUserEvent(e, me.Clone() as User));
                 }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "ClientLocker");
             }
         }
 
