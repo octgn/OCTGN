@@ -130,7 +130,9 @@ namespace Octgn
             SaveLocation();
             try
             {
-                DebugWindow.Close();
+                if (DebugWindow != null) 
+                    if (DebugWindow.IsLoaded)
+                        DebugWindow.Close();
             }
             catch (Exception e)
             {
@@ -150,7 +152,8 @@ namespace Octgn
             {
                 foreach (ChatWindow cw in ChatWindows)
                 {
-                    cw.CloseChatWindow();
+                    if (cw.IsLoaded)
+                        cw.CloseChatWindow();
                 }
             }
             catch (Exception e)
@@ -164,11 +167,13 @@ namespace Octgn
             {
                 try
                 {
-                    _lobbyServerProcess.Kill();
+                    if (!_lobbyServerProcess.HasExited)
+                        _lobbyServerProcess.Kill();
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
             }
 #endif
