@@ -57,26 +57,15 @@ namespace Octgn.Data
         private void LoadPacks()
         {
             _cachedPacks = new List<Pack>();
-            var wasDbOpen = Game.IsDatabaseOpen;
-            if (!Game.IsDatabaseOpen)
-                Game.OpenDatabase(true);
-            try
+            using (var com = GamesRepository.DatabaseConnection.CreateCommand())
             {
-                using (var com = Game.Dbc.CreateCommand())
+                com.CommandText = "SELECT [xml] FROM [packs] WHERE [set_id]=@set_id ORDER BY [name]";
+                com.Parameters.AddWithValue("@set_id", Id.ToString());
+                using (var reader = com.ExecuteReader())
                 {
-                    com.CommandText = "SELECT [xml] FROM [packs] WHERE [set_id]=@set_id ORDER BY [name]";
-                    com.Parameters.AddWithValue("@set_id", Id.ToString());
-                    using (var reader = com.ExecuteReader())
-                    {
-                        while (reader.Read())
-                            _cachedPacks.Add(new Pack(this, reader.GetString(0)));
-                    }
+                    while (reader.Read())
+                        _cachedPacks.Add(new Pack(this, reader.GetString(0)));
                 }
-            }
-            finally
-            {
-                if (!wasDbOpen)
-                    Game.CloseDatabase();
             }
         }
     }
