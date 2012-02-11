@@ -35,7 +35,7 @@ namespace Octgn.Data
         {
             if (!patchInstalledSets && patchFolder == null) return;
 
-            using (var package = Package.Open(_filename, FileMode.Open, FileAccess.Read))
+            using (var package = Package.Open(_filename, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 ReadPackageDescription(package);
 
@@ -86,7 +86,7 @@ namespace Octgn.Data
 
         private void Apply(Package package, string localFilename, bool installed)
         {
-            using (var setPkg = Package.Open(localFilename, FileMode.Open, FileAccess.ReadWrite))
+            using (var setPkg = Package.Open(localFilename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
             {
                 // Extract information about the target set
                 var defRelationship =

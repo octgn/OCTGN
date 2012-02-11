@@ -14,10 +14,6 @@ namespace Octgn.Data
 {
     public class Game
     {
-        internal string BasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                                "Octgn");
-
-        public SQLiteConnection Dbc;
         public GamesRepository Repository;
         private IList<PropertyDef> _cacheCustomProperties;
 
@@ -50,48 +46,19 @@ namespace Octgn.Data
 
         public string DefaultDecksPath
         {
-            get { return Path.Combine(BasePath, "Decks"); }
+            get { return Path.Combine(GamesRepository.BasePath, "Decks"); }
         }
-
-        public bool IsDatabaseOpen { get; private set; }
 
         public Uri GetCardBackUri()
         {
-            String s = Path.Combine(BasePath, Filename).Replace('\\', ',');
+            String s = Path.Combine(GamesRepository.BasePath, Filename).Replace('\\', ',');
             var u = new Uri("pack://file:,,," + s + CardBack);
             return u;
         }
 
-        public void OpenDatabase(bool readOnly)
-        {
-            if (IsDatabaseOpen) return;
-            string conString = "URI=file:" +
-                               Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                            "Octgn", "Database", "master.db3");
-            Dbc = new SQLiteConnection(conString);
-            Dbc.Open();
-            using (SQLiteCommand com = Dbc.CreateCommand())
-            {
-                com.CommandText =
-                    "PRAGMA automatic_index=FALSE; PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA encoding='UTF-8';";
-                com.ExecuteScalar();
-            }
-            IsDatabaseOpen = true;
-        }
-
-        public void CloseDatabase()
-        {
-            if (!IsDatabaseOpen) return;
-            Dbc.Close();
-            Dbc.Dispose();
-            IsDatabaseOpen = false;
-        }
-
         public Set GetSet(Guid id)
         {
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText = "SElECT id, name, game_version, version, package FROM [sets] WHERE [id]=@id;";
 
@@ -118,10 +85,7 @@ namespace Octgn.Data
 
         public CardModel GetCardByName(string name)
         {
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
-
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE [name]=@name;";
@@ -148,10 +112,8 @@ namespace Octgn.Data
 
         public SortedList<string, object> GetCardProperties(Guid cardId)
         {
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
             var ret = new SortedList<string, object>();
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, type, name, vstr, vint FROM [custom_properties] WHERE [card_real_id]=(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1);";
@@ -194,10 +156,7 @@ namespace Octgn.Data
 
         public CardModel GetCardById(Guid id)
         {
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
-
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id;";
@@ -224,10 +183,8 @@ namespace Octgn.Data
 
         public IEnumerable<MarkerModel> GetAllMarkers()
         {
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
             var ret = new List<MarkerModel>();
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, name, icon, (SELECT id FROM sets WHERE real_id=markers.[set_real_id]) as set_id FROM [markers] WHERE [game_id]=@game_id;";
@@ -252,10 +209,7 @@ namespace Octgn.Data
 
         public Pack GetPackById(Guid id)
         {
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
-
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "SElECT id, xml, (SELECT id FROM sets WHERE real_id=packs.[set_real_id]) as set_id FROM [packs] WHERE [id]=@id;";
@@ -276,11 +230,10 @@ namespace Octgn.Data
 
         public void InstallSet(string filename)
         {
-            OpenDatabase(false);
-            SQLiteTransaction trans = Dbc.BeginTransaction();
+            SQLiteTransaction trans = GamesRepository.DatabaseConnection.BeginTransaction();
             try
             {
-                using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read))
+                using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     PackageRelationship defRelationship =
                         package.GetRelationshipsByType("http://schemas.octgn.org/set/definition").First();
@@ -368,30 +321,21 @@ namespace Octgn.Data
                 trans.Rollback();
                 throw;
             }
-            finally
-            {
-                CloseDatabase();
-            }
         }
 
         public void DeleteSet(Set set)
         {
-            bool wasdbopen = IsDatabaseOpen;
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText = "DELETE FROM [sets] WHERE [id]=@id;";
                 com.Parameters.AddWithValue("@id", set.Id.ToString());
                 com.ExecuteNonQuery();
             }
-            if (!wasdbopen)
-                CloseDatabase();
         }
 
         private void InsertSet(Set set)
         {
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 //Build Query
                 var sb = new StringBuilder();
@@ -415,7 +359,7 @@ namespace Octgn.Data
 
         private void InsertPack(Pack pack, string xml, Guid setId)
         {
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 //Build Query
                 var sb = new StringBuilder();
@@ -436,7 +380,7 @@ namespace Octgn.Data
 
         private void InsertMarker(Guid id, string name, string iconUri, Guid setId)
         {
-            using (SQLiteCommand com = Dbc.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 //Build Query
                 var sb = new StringBuilder();
@@ -458,11 +402,8 @@ namespace Octgn.Data
 
         private void InsertCard(CardModel card)
         {
-            bool wasdbopen = IsDatabaseOpen;
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
             var sb = new StringBuilder();
-            using (var com = Dbc.CreateCommand())
+            using (var com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 //Build Query
                 sb.Append("INSERT INTO [cards](");
@@ -489,7 +430,7 @@ namespace Octgn.Data
             var command = sb.ToString();
             foreach (var pair in card.Properties)
             {
-                using (var com = Dbc.CreateCommand())
+                using (var com = GamesRepository.DatabaseConnection.CreateCommand())
                 {
                     com.CommandText = command;
                     com.Parameters.AddWithValue("@id", pair.Key + card.Id);
@@ -517,18 +458,12 @@ namespace Octgn.Data
                     com.ExecuteNonQuery();
                 }
             }
-            if (!wasdbopen)
-                CloseDatabase();
         }
 
         private ObservableCollection<Set> GetAllSets()
         {
             var result = new ObservableCollection<Set>();
-            var wasdbopen = IsDatabaseOpen;
-            if (!IsDatabaseOpen)
-                OpenDatabase(true);
-
-            using (var com = Dbc.CreateCommand())
+            using (var com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "SElECT * FROM [sets] WHERE [game_real_id]=(SELECT real_id FROM games WHERE id = @game_id LIMIT 1);";
@@ -552,18 +487,13 @@ namespace Octgn.Data
                 }
             }
 
-            if (!wasdbopen)
-                CloseDatabase();
             return result;
         }
 
         private List<PropertyDef> GetCustomProperties()
         {
-            var wasdbopen = IsDatabaseOpen;
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
             var ret = new List<PropertyDef>();
-            using (var com = Dbc.CreateCommand())
+            using (var com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText = "SElECT DISTINCT name, type FROM [custom_properties] WHERE [game_id]=@game_id;";
                 //com.CommandText = "SElECT * FROM [custom_properties] WHERE [game_id]=@game_id AND [card_id]='';";
@@ -596,20 +526,20 @@ namespace Octgn.Data
                 }
             }
 
-            if (!wasdbopen)
-                CloseDatabase();
             return ret;
         }
 
         internal void CopyDecks(string filename)
         {
-            using (var package = Package.Open(filename, FileMode.Open, FileAccess.Read))
+            using (var package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
                 CopyDecks(package);
+            }
         }
 
         internal void CopyDecks(Package package)
         {
-            var path = Path.Combine(BasePath, "Decks");
+            var path = Path.Combine(GamesRepository.BasePath, "Decks");
             var decks = package.GetRelationshipsByType("http://schemas.octgn.org/set/deck");
             var buffer = new byte[0x1000];
             foreach (var deckRel in decks)
@@ -617,7 +547,7 @@ namespace Octgn.Data
                 var deck = package.GetPart(deckRel.TargetUri);
                 var deckFilename = Path.Combine(path, Path.GetFileName(deck.Uri.ToString()));
                 using (var deckStream = deck.GetStream(FileMode.Open, FileAccess.Read))
-                using (var targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write))
+                using (var targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write, FileShare.Read))
                 {
                     while (true)
                     {
@@ -631,12 +561,9 @@ namespace Octgn.Data
 
         public DataTable SelectCards(string[] conditions)
         {
-            var wasdbopen = IsDatabaseOpen;
-            if (!IsDatabaseOpen)
-                OpenDatabase(false);
             var cards = new DataTable();
             var customProperties = new DataTable();
-            using (var com = Dbc.CreateCommand())
+            using (var com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE game_id=@game_id;";
@@ -706,8 +633,6 @@ namespace Octgn.Data
                 cards.Rows.Clear();
                 cards = dtnw;
             }
-            if (!wasdbopen)
-                CloseDatabase();
             return cards;
         }
 
