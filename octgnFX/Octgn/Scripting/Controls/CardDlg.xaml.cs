@@ -100,7 +100,7 @@ namespace Octgn.Scripting.Controls
             ThreadPool.QueueUserWorkItem(searchObj =>
                                              {
                                                  var search = (string) searchObj;
-                                                 List<CardModel> filtered =
+                                                 var filtered =
                                                      _allCards.Where(
                                                          m =>
                                                          m.Name.IndexOf(search,
@@ -129,7 +129,7 @@ namespace Octgn.Scripting.Controls
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            var cardDef = Program.Game.Definition.CardDefinition;
             if (panel != null) panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
         }
     }

@@ -286,7 +286,7 @@ namespace Skylabs.Lobby
                                    {
                                        //TODO Need to add a method to handle 2-step signin.
                                        _onLoginFinished = onFinish;
-                                       String appName = "skylabs-LobbyClient-" + Version;
+                                       var appName = "skylabs-LobbyClient-" + Version;
                                        var s = new Service("code", appName);
                                        s.setUserCredentials(email, password);
                                        if (captcha != null && _mCaptchaToken != null)
@@ -303,7 +303,7 @@ namespace Skylabs.Lobby
                                        {
                                            Debug.WriteLine("Querying Google...");
                                            onUpdate.Invoke("Logging into Google...");
-                                           string ret = s.QueryClientLoginToken();
+                                           var ret = s.QueryClientLoginToken();
                                            onUpdate.Invoke("Sending login token to Server...");
                                            Debug.WriteLine("Received login token.");
                                            var sm = new SocketMessage("login");
@@ -344,7 +344,7 @@ namespace Skylabs.Lobby
             User u;
             if (_callbacks.ContainsKey(sm.Header.ToLower()))
             {
-                SocketMessageResult a = _callbacks[sm.Header.ToLower()];
+                var a = _callbacks[sm.Header.ToLower()];
                 if (a != null)
                 {
                     a.Invoke(sm);
@@ -383,7 +383,7 @@ namespace Skylabs.Lobby
                     lock (_friendLocker)
                     {
                         FriendList = new List<User>();
-                        foreach (NameValuePair p in sm.Data)
+                        foreach (var p in sm.Data)
                         {
                             FriendList.Add((User) p.Value);
                         }
@@ -423,7 +423,7 @@ namespace Skylabs.Lobby
                     lock (_friendLocker)
                     {
                         u = (User) sm.Data[0].Value;
-                        User f = FriendList.FirstOrDefault(us => us.Equals(u));
+                        var f = FriendList.FirstOrDefault(us => us.Equals(u));
                         if (f != null)
                         {
                             f.DisplayName = u.DisplayName;
@@ -455,7 +455,7 @@ namespace Skylabs.Lobby
                                 Me.CustomStatus = s;
                             else
                             {
-                                int i = FriendList.IndexOf(u);
+                                var i = FriendList.IndexOf(u);
                                 if (i > -1)
                                     FriendList[i].CustomStatus = s;
                                 if (OnDataRecieved != null)
@@ -500,7 +500,7 @@ namespace Skylabs.Lobby
                         {
                             var p = (int) sm["port"];
 
-                            HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
+                            var gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
                             {
                                 gm.GameStatus = HostedGame.EHostedGame.GameInProgress;
@@ -516,7 +516,7 @@ namespace Skylabs.Lobby
                         {
                             var p = (int) sm["port"];
 
-                            HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
+                            var gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
                             {
                                 gm.GameStatus = HostedGame.EHostedGame.StoppedHosting;

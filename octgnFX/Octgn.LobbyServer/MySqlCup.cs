@@ -51,15 +51,15 @@ namespace Skylabs.LobbyServer
                     return -1;
                 if (endpoint == null)
                     return -1;
-                int ret = -1;
+                var ret = -1;
                 try
                 {
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        string ip = endpoint.ToString();
+                        var ip = endpoint.ToString();
 
-                        MySqlCommand cmd = con.CreateCommand();
+                        var cmd = con.CreateCommand();
                         try
                         {
                             ip = ip.Substring(0, ip.IndexOf(':'));
@@ -76,7 +76,7 @@ namespace Skylabs.LobbyServer
                         cmd.Parameters["@uid"].Value = uid;
                         cmd.Parameters["@ip"].Value = ip;
 
-                        using (MySqlDataReader dr = cmd.ExecuteReader())
+                        using (var dr = cmd.ExecuteReader())
                         {
                             if (dr.HasRows)
                             {
@@ -94,10 +94,10 @@ namespace Skylabs.LobbyServer
                                     bans.Add(b);
                                 }
                                 dr.Close();
-                                foreach (Ban b in bans)
+                                foreach (var b in bans)
                                 {
-                                    string bid = b.Bid.ToString(CultureInfo.InvariantCulture);
-                                    DateTime endtime = ValueConverters.FromPhpTime(b.EndTime);
+                                    var bid = b.Bid.ToString(CultureInfo.InvariantCulture);
+                                    var endtime = ValueConverters.FromPhpTime(b.EndTime);
                                     if (DateTime.Now >= endtime)
                                     {
                                         DeleteRow(con, "bans", "bid", bid);
@@ -138,7 +138,7 @@ namespace Skylabs.LobbyServer
         /// <param name="columnvalue"> The value, that if exists in said column, will cause the row to go bye bye. </param>
         private static void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
         {
-            MySqlCommand cmd = con.CreateCommand();
+            var cmd = con.CreateCommand();
             cmd.CommandText = "DELETE FROM @table WHERE @col=@val;";
             cmd.Prepare();
             cmd.Parameters.Add("@table");
@@ -169,13 +169,13 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        using (MySqlCommand com = con.CreateCommand())
+                        using (var com = con.CreateCommand())
                         {
                             com.CommandText = "SELECT * FROM users WHERE email=@email;";
                             com.Prepare();
                             com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
                             com.Parameters["@email"].Value = email;
-                            using (MySqlDataReader dr = com.ExecuteReader())
+                            using (var dr = com.ExecuteReader())
                             {
                                 if (dr.Read())
                                 {
@@ -220,13 +220,13 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        using (MySqlCommand com = con.CreateCommand())
+                        using (var com = con.CreateCommand())
                         {
                             com.CommandText = "SELECT * FROM users WHERE uid=@uid;";
                             com.Prepare();
                             com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
                             com.Parameters["@uid"].Value = uid;
-                            using (MySqlDataReader dr = com.ExecuteReader())
+                            using (var dr = com.ExecuteReader())
                             {
                                 if (dr.Read())
                                 {
@@ -273,7 +273,7 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        MySqlCommand com = con.CreateCommand();
+                        var com = con.CreateCommand();
                         com.CommandText = "INSERT INTO users(email,name) VALUES(@email,@name);";
                         com.Prepare();
                         com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
@@ -310,7 +310,7 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        MySqlCommand cmd = con.CreateCommand();
+                        var cmd = con.CreateCommand();
                         cmd.CommandText = "DELETE FROM friendrequests WHERE uid=@uid AND email=@email;";
                         cmd.Prepare();
                         cmd.Parameters.Add("@uid", MySqlDbType.Int32, 11);
@@ -348,7 +348,7 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        MySqlCommand com = con.CreateCommand();
+                        var com = con.CreateCommand();
                         com.CommandText = "INSERT INTO friendrequests(uid,email) VALUES(@uid,@email);";
                         com.Prepare();
                         com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
@@ -385,18 +385,18 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        MySqlCommand com = con.CreateCommand();
+                        var com = con.CreateCommand();
                         com.CommandText = "SELECT * FROM friendrequests WHERE email=@email;";
                         com.Prepare();
                         com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
                         com.Parameters["@email"].Value = email;
-                        using (MySqlDataReader dr = com.ExecuteReader())
+                        using (var dr = com.ExecuteReader())
                         {
                             while (dr.Read())
                             {
                                 if (ret == null)
                                     ret = new List<int>();
-                                int uid = dr.GetInt32("uid");
+                                var uid = dr.GetInt32("uid");
                                 ret.Add(uid);
                             }
                             dr.Close();
@@ -430,9 +430,9 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        MySqlCommand com = con.CreateCommand();
-                        List<User> myFriendList = GetFriendsList(useruid);
-                        List<User> oFriendlist = GetFriendsList(frienduid);
+                        var com = con.CreateCommand();
+                        var myFriendList = GetFriendsList(useruid);
+                        var oFriendlist = GetFriendsList(frienduid);
                         com.CommandText = "INSERT INTO friends(uid,fid) VALUES(@uid,@fid);";
                         com.Prepare();
                         com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
@@ -474,7 +474,7 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        MySqlCommand com = con.CreateCommand();
+                        var com = con.CreateCommand();
                         com.CommandText = "UPDATE users SET status=@status WHERE uid=@uid;";
                         com.Prepare();
                         com.Parameters.Add("@status", MySqlDbType.VarChar, 200);
@@ -511,7 +511,7 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        MySqlCommand com = con.CreateCommand();
+                        var com = con.CreateCommand();
                         com.CommandText = "UPDATE users SET name=@name WHERE uid=@uid;";
                         com.Prepare();
                         com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
@@ -545,18 +545,18 @@ namespace Skylabs.LobbyServer
                     using (var con = new MySqlConnection(ConnectionString))
                     {
                         con.Open();
-                        using (MySqlCommand com = con.CreateCommand())
+                        using (var com = con.CreateCommand())
                         {
                             com.CommandText = "SELECT * FROM friends WHERE uid=@uid;";
                             com.Prepare();
                             com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
                             com.Parameters["@uid"].Value = uid;
-                            using (MySqlDataReader dr = com.ExecuteReader())
+                            using (var dr = com.ExecuteReader())
                             {
                                 var friends = new List<User>();
                                 while (dr.Read())
                                 {
-                                    User temp = GetUser(dr.GetInt32("fid"));
+                                    var temp = GetUser(dr.GetInt32("fid"));
                                     friends.Add(temp);
                                 }
                                 dr.Close();

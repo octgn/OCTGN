@@ -61,7 +61,7 @@ namespace Skylabs.LobbyServer
                 return false;
             }
             foreach (
-                string[] parts in
+                var parts in
                     File.ReadLines(sname).Select(l => l.Trim()).Where(s => s[0] != '#').Select(
                         s => s.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries)).Where(
                             parts => parts.Length == 2))
@@ -131,7 +131,7 @@ namespace Skylabs.LobbyServer
 
         private static void StartServer()
         {
-            IPAddress cto = Settings["BindTo"] == "*" ? IPAddress.Any : IPAddress.Parse(Settings["BindTo"]);
+            var cto = Settings["BindTo"] == "*" ? IPAddress.Any : IPAddress.Parse(Settings["BindTo"]);
             Server.Start(cto, Int32.Parse(Settings["BindPort"]));
         }
 

@@ -37,10 +37,10 @@ namespace Octgn
             _definition = def;
             _table = new Table(def.TableDefinition);
             Variables = new Dictionary<string, int>();
-            foreach (VariableDef varDef in def.Variables.Where(v => v.Global))
+            foreach (var varDef in def.Variables.Where(v => v.Global))
                 Variables.Add(varDef.Name, varDef.DefaultValue);
             GlobalVariables = new Dictionary<string, string>();
-            foreach (GlobalVariableDef varDef in def.GlobalVariables)
+            foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
         }
 
@@ -118,7 +118,7 @@ namespace Octgn
             _uniqueId = 1;
             TurnNumber = 0;
             TurnPlayer = null;
-            string nick = Program.LobbyClient.Me.DisplayName;
+            var nick = Program.LobbyClient.Me.DisplayName;
             CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
@@ -131,7 +131,7 @@ namespace Octgn
                                      OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
                                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
-            foreach (MarkerModel m in Database.GetAllMarkers())
+            foreach (var m in Database.GetAllMarkers())
                 _markersById.Add(m.Id, m);
 
             Program.IsGameRunning = true;
@@ -157,7 +157,7 @@ namespace Octgn
             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
             //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
-            foreach (MarkerModel m in Database.GetAllMarkers())
+            foreach (var m in Database.GetAllMarkers())
                 _markersById.Add(m.Id, m);
 
             //Program.IsGameRunning = true;
@@ -167,15 +167,15 @@ namespace Octgn
         {
             TurnNumber = 0;
             TurnPlayer = null;
-            foreach (Player p in Player.All)
+            foreach (var p in Player.All)
             {
-                foreach (Group g in p.Groups)
+                foreach (var g in p.Groups)
                     g.Reset();
-                foreach (Counter c in p.Counters)
+                foreach (var c in p.Counters)
                     c.Reset();
-                foreach (VariableDef varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
+                foreach (var varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
                     p.Variables[varDef.Name] = varDef.DefaultValue;
-                foreach (GlobalVariableDef g in Definition.PlayerDefinition.GlobalVariables)
+                foreach (var g in Definition.PlayerDefinition.GlobalVariables)
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
             Table.Reset();
@@ -183,12 +183,12 @@ namespace Octgn
             CardIdentity.Reset();
             Selection.Clear();
             RandomRequests.Clear();
-            foreach (VariableDef varDef in Definition.Variables.Where(v => v.Global && v.Reset))
+            foreach (var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
                 Variables[varDef.Name] = varDef.DefaultValue;
-            foreach (GlobalVariableDef g in Definition.GlobalVariables)
+            foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug
-            PlayWindow mainWin = Program.PlayWindow;
+            var mainWin = Program.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
         }
 
@@ -220,23 +220,23 @@ namespace Octgn
 
         public void LoadDeck(Deck deck)
         {
-            Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
-            GameDef def = Program.Game.Definition;
-            DeckDef deckDef = deck.IsShared ? def.SharedDeckDefinition : def.DeckDefinition;
-            CardDef cardDef = def.CardDefinition;
-            int nCards = deck.CardCount;
+            var player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
+            var def = Program.Game.Definition;
+            var deckDef = deck.IsShared ? def.SharedDeckDefinition : def.DeckDefinition;
+            var cardDef = def.CardDefinition;
+            var nCards = deck.CardCount;
             var ids = new int[nCards];
             var keys = new ulong[nCards];
             var cards = new Card[nCards];
             var groups = new Group[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
-            int j = 0;
-            foreach (Deck.Section section in deck.Sections)
+            var j = 0;
+            foreach (var section in deck.Sections)
             {
-                DeckSectionDef sectionDef = deckDef.Sections[section.Name];
+                var sectionDef = deckDef.Sections[section.Name];
                 if (sectionDef == null)
                     throw new InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
-                Group group = player.Groups.First(x => x.Name == sectionDef.Group);
+                var group = player.Groups.First(x => x.Name == sectionDef.Group);
 
                 //In order to make the clients know what the card is (if visibility is set so that they can see it),
                 //we have to set the visibility to Nobody, and then after the cards are sent, set the visibility back
@@ -247,12 +247,12 @@ namespace Octgn
                     gtmps.Add(gt);
                     group.SetVisibility(false, false);
                 }
-                foreach (Deck.Element element in section.Cards)
+                foreach (var element in section.Cards)
                 {
-                    for (int i = 0; i < element.Quantity; i++)
+                    for (var i = 0; i < element.Quantity; i++)
                     {
-                        ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | element.Card.Id.Condense();
-                        int id = GenerateCardId();
+                        var key = ((ulong) Crypto.PositiveRandom()) << 32 | element.Card.Id.Condense();
+                        var id = GenerateCardId();
                         ids[j] = id;
                         keys[j] = Crypto.ModExp(key);
                         groups[j] = group;
@@ -262,7 +262,7 @@ namespace Octgn
                     }
 
                     // Load images in the background
-                    string pictureUri = element.Card.Picture;
+                    var pictureUri = element.Card.Picture;
                     Dispatcher.CurrentDispatcher.BeginInvoke(
                         new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                         DispatcherPriority.ApplicationIdle, pictureUri);
@@ -271,7 +271,7 @@ namespace Octgn
             Program.Client.Rpc.LoadDeck(ids, keys, groups);
 
             //reset the visibility to what it was before pushing the deck to everybody. //bug (google) #20
-            foreach (GrpTmp g in gtmps)
+            foreach (var g in gtmps)
             {
                 switch (g.Visibility)
                 {
@@ -282,7 +282,7 @@ namespace Octgn
                         g.Group.SetVisibility(false, false);
                         break;
                     default:
-                        foreach (Player p in g.Viewers)
+                        foreach (var p in g.Viewers)
                         {
                             g.Group.AddViewer(p, false);
                         }
@@ -295,7 +295,7 @@ namespace Octgn
 
         internal void AddRecentCard(CardModel card)
         {
-            int idx = _recentCards.FindIndex(c => c.Id == card.Id);
+            var idx = _recentCards.FindIndex(c => c.Id == card.Id);
             if (idx == 0) return;
             if (idx > 0)
             {
@@ -311,7 +311,7 @@ namespace Octgn
 
         internal void AddRecentMarker(MarkerModel marker)
         {
-            int idx = _recentMarkers.IndexOf(marker);
+            var idx = _recentMarkers.IndexOf(marker);
             if (idx == 0) return;
             if (idx > 0)
             {
@@ -331,7 +331,7 @@ namespace Octgn
             if (id.CompareTo(new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10)) < 0)
             {
                 // Get a standard model
-                DefaultMarkerModel defaultModel = Marker.DefaultMarkers.First(x => x.Id == id);
+                var defaultModel = Marker.DefaultMarkers.First(x => x.Id == id);
                 model = defaultModel.Clone();
                 model.Id = id;
                 return model;
@@ -341,7 +341,7 @@ namespace Octgn
             {
                 Program.Trace.TraceEvent(TraceEventType.Verbose, EventIds.NonGame,
                                          "Marker model '{0}' not found, using default marker instead", id);
-                DefaultMarkerModel defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
+                var defaultModel = Marker.DefaultMarkers[Crypto.Random(7)];
                 model = defaultModel.Clone();
                 model.Id = id;
                 return model;

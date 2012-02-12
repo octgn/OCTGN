@@ -62,7 +62,7 @@ namespace Skylabs.LobbyServer
                 {
                     return;
                 }
-                long id = MakeRoom(c);
+                var id = MakeRoom(c);
                 s.AddData("roomid", id);
             }
             AddUserToChat(c, s);

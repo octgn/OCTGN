@@ -13,7 +13,7 @@ namespace Octgn.Utils
         static ImageUtils()
         {
             ReflectionBitmapImage = new BitmapImage();
-            MethodInfo methodInfo = typeof (BitmapImage).GetMethod("CheckCache",
+            var methodInfo = typeof (BitmapImage).GetMethod("CheckCache",
                                                                    BindingFlags.NonPublic | BindingFlags.Instance);
             GetImageFromCache =
                 (Func<Uri, BitmapImage>)
@@ -22,7 +22,7 @@ namespace Octgn.Utils
 
         public static void GetCardImage(Uri uri, Action<BitmapImage> action)
         {
-            BitmapImage bmp = GetImageFromCache(uri);
+            var bmp = GetImageFromCache(uri);
             if (bmp != null)
             {
                 action(bmp);

@@ -68,7 +68,7 @@ namespace Skylabs.LobbyServer
             ListenSocket.Stop();
             lock (ClientLocker)
             {
-                foreach (Client c in Clients)
+                foreach (var c in Clients)
                 {
                     c.Stop();
                 }
@@ -84,7 +84,7 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                Client ret = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower().Equals(email.ToLower()));
+                var ret = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower().Equals(email.ToLower()));
                 return ret;
             }
         }
@@ -93,7 +93,7 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower() == email.ToLower());
+                var cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Email.ToLower() == email.ToLower());
                 if (cl != null)
                     LazyAsync.Invoke(() => cl.WriteMessage(sm));
             }
@@ -103,7 +103,7 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                Client cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
+                var cl = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
                 if (cl != null)
                 {
                     LazyAsync.Invoke(() => cl.WriteMessage(sm));
@@ -120,7 +120,7 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                Client ret = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
+                var ret = Clients.FirstOrDefault(c => c.LoggedIn && c.Me.Uid == uid);
                 return ret;
             }
         }
@@ -129,7 +129,7 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                int ret = Clients.Count(c => c.LoggedIn);
+                var ret = Clients.Count(c => c.LoggedIn);
                 return ret;
             }
         }
@@ -138,7 +138,7 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                foreach (Client c in Clients.Where(c => c.LoggedIn && c.Me.Uid == uid))
+                foreach (var c in Clients.Where(c => c.LoggedIn && c.Me.Uid == uid))
                 {
                     return c.Me.Status;
                 }
@@ -166,20 +166,20 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                User me = client.Me;
+                var me = client.Me;
                 if (e == UserStatus.Offline)
                 {
                     Clients.Remove(client);
-                    bool foundOne = Clients.Any(c => c.Me.Uid == me.Uid);
+                    var foundOne = Clients.Any(c => c.Me.Uid == me.Uid);
                     if (!foundOne)
                     {
                         LazyAsync.Invoke(() => Chatting.UserOffline((User) me.Clone()));
                     }
                 }
                 if (supress) return;
-                foreach (Client c in Clients)
+                foreach (var c in Clients)
                 {
-                    Client cl2 = c;
+                    var cl2 = c;
                     LazyAsync.Invoke(() => cl2.OnUserEvent(e, me.Clone() as User));
                 }
             }
@@ -209,12 +209,12 @@ namespace Skylabs.LobbyServer
 #if(TestServer)
                     Trace.WriteLine("#WriteAll: " + sm.Header);
 #endif
-                foreach (Client cl2 in Clients.Where(cl2 => cl2.LoggedIn))
+                foreach (var cl2 in Clients.Where(cl2 => cl2.LoggedIn))
                 {
 #if(TestServer)
                             Trace.WriteLine("#TryWriteTo[" + cl2.Id + "](" + sm.Header + ")");
 #endif
-                    Client cl3 = cl2;
+                    var cl3 = cl2;
                     LazyAsync.Invoke(() => cl3.WriteMessage(sm));
                 }
             }
@@ -224,9 +224,9 @@ namespace Skylabs.LobbyServer
         {
             lock (ClientLocker)
             {
-                foreach (Client cl2 in Clients.Where(cl2 => cl2.LoggedIn && uids.Contains(cl2.Me.Uid)))
+                foreach (var cl2 in Clients.Where(cl2 => cl2.LoggedIn && uids.Contains(cl2.Me.Uid)))
                 {
-                    Client cl3 = cl2;
+                    var cl3 = cl2;
                     LazyAsync.Invoke(() => cl3.WriteMessage(sm));
                 }
             }
@@ -263,11 +263,11 @@ namespace Skylabs.LobbyServer
             lock (ClientLocker)
             {
                 //Logger.L(System.Reflection.MethodInfo.GetCurrentMethod().Name, "ClientLocker");
-                int loggedInCount = 0;
-                int removedCount = 0;
+                var loggedInCount = 0;
+                var removedCount = 0;
                 // int StartCount = Clients.Count; // unused
                 foreach (
-                    Client cl2 in
+                    var cl2 in
                         from cl2 in Clients
                         where cl2 != null
                         where cl2.Id != caller.Id

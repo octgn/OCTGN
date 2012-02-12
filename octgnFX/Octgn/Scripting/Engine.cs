@@ -43,7 +43,7 @@ namespace Octgn.Scripting
 
         public Engine(bool forTesting)
         {
-            AppDomain sandbox = CreateSandbox(forTesting);
+            var sandbox = CreateSandbox(forTesting);
             _engine = Python.CreateEngine(sandbox);
             _outputWriter = new StreamWriter(_outputStream);
             _engine.Runtime.IO.SetOutput(_outputStream, _outputWriter);
@@ -55,7 +55,7 @@ namespace Octgn.Scripting
             // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
             if (Program.Game == null || forTesting) return;
             foreach (
-                ScriptSource src in
+                var src in
                     Program.Game.Definition.Scripts.Select(
                         s => _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
             {
@@ -71,17 +71,17 @@ namespace Octgn.Scripting
         public String[] TestScripts(Game game)
         {
             var errors = new List<string>();
-            foreach (ScriptDef s in game.Definition.Scripts)
+            foreach (var s in game.Definition.Scripts)
             {
                 try
                 {
-                    ScriptSource src = _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+                    var src = _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
                     src.Execute(ActionsScope);
                 }
                 catch (Exception e)
                 {
                     var eo = _engine.GetService<ExceptionOperations>();
-                    string error = eo.FormatException(e);
+                    var error = eo.FormatException(e);
                     errors.Add(String.Format("[{2}:{0}]: Python Error:\n{1}", game.Definition.Name, error, s.FileName));
                 }
             }
@@ -90,7 +90,7 @@ namespace Octgn.Scripting
 
         public ScriptScope CreateScope(bool injectApi = true)
         {
-            ScriptScope scope = _engine.CreateScope();
+            var scope = _engine.CreateScope();
             if (injectApi)
                 InjectOctgnIntoScope(scope);
             return scope;
@@ -98,7 +98,7 @@ namespace Octgn.Scripting
 
         public bool TryExecuteInteractiveCode(string code, ScriptScope scope, Action<ExecutionResult> continuation)
         {
-            ScriptSource src = _engine.CreateScriptSourceFromString(code, SourceCodeKind.InteractiveCode);
+            var src = _engine.CreateScriptSourceFromString(code, SourceCodeKind.InteractiveCode);
             switch (src.GetCodeProperties())
             {
                 case ScriptCodeParseResult.IncompleteToken:
@@ -115,16 +115,16 @@ namespace Octgn.Scripting
 
         public void ExecuteOnGroup(string function, Group group)
         {
-            string pythonGroup = ScriptApi.GroupCtor(group);
-            ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
+            var pythonGroup = ScriptApi.GroupCtor(group);
+            var src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
                                                                    SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 
         public void ExecuteOnGroup(string function, Group group, Point position)
         {
-            string pythonGroup = ScriptApi.GroupCtor(group);
-            ScriptSource src = _engine.CreateScriptSourceFromString(
+            var pythonGroup = ScriptApi.GroupCtor(group);
+            var src = _engine.CreateScriptSourceFromString(
                 string.Format(CultureInfo.InvariantCulture,
                               "{0}({1}, {2:F3}, {3:F3})",
                               function, pythonGroup, position.X, position.Y),
@@ -134,16 +134,16 @@ namespace Octgn.Scripting
 
         public void ExecuteOnCards(string function, IEnumerable<Card> cards, Point? position = null)
         {
-            string posArguments = position == null
+            var posArguments = position == null
                                       ? ""
                                       : string.Format(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}",
                                                       position.Value.X, position.Value.Y);
             var sb = new StringBuilder();
-            foreach (Card card in cards)
+            foreach (var card in cards)
                 sb.AppendFormat(CultureInfo.InvariantCulture,
                                 "{0}(Card({1}){2})\n",
                                 function, card.Id, posArguments);
-            ScriptSource src = _engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
+            var src = _engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 
@@ -151,13 +151,13 @@ namespace Octgn.Scripting
         {
             var sb = new StringBuilder();
             sb.Append(function).Append("([");
-            foreach (Card c in cards)
+            foreach (var c in cards)
                 sb.Append("Card(").Append(c.Id.ToString(CultureInfo.InvariantCulture)).Append("),");
             sb.Append("]");
             if (position != null)
                 sb.AppendFormat(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}", position.Value.X, position.Value.Y);
             sb.Append(")\n");
-            ScriptSource src = _engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
+            var src = _engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 
@@ -173,7 +173,7 @@ namespace Octgn.Scripting
         {
             do
             {
-                ScriptJob job = _executionQueue.Peek();
+                var job = _executionQueue.Peek();
                 // Because some scripts have to be suspended during asynchronous operations (e.g. shuffle, reveal or random),
                 // their evaluation is done on another thread.
                 // The process still looks synchronous (no concurrency is allowed when manipulating the game model),
@@ -229,7 +229,7 @@ namespace Octgn.Scripting
             catch (Exception ex)
             {
                 var eo = _engine.GetService<ExceptionOperations>();
-                string error = eo.FormatException(ex);
+                var error = eo.FormatException(ex);
                 result.Error = error + Environment.NewLine + job.source.GetCode();
                 //result.Error = String.Format("{0}\n{1}",ex.Message,ex.StackTrace);
                 //Program.TraceWarning("----Python Error----\n{0}\n----End Error----\n", result.Error);
@@ -240,7 +240,7 @@ namespace Octgn.Scripting
 
         internal void Suspend()
         {
-            ScriptJob job = CurrentJob;
+            var job = CurrentJob;
             job.suspended = true;
             job.signal.Set();
             job.signal2.WaitOne();
@@ -253,7 +253,7 @@ namespace Octgn.Scripting
 
         internal void Invoke(Action action)
         {
-            ScriptJob job = CurrentJob;
+            var job = CurrentJob;
             job.invokedOperation = () =>
                                        {
                                            action();
@@ -265,7 +265,7 @@ namespace Octgn.Scripting
 
         internal T Invoke<T>(Func<object> func)
         {
-            ScriptJob job = _executionQueue.Peek();
+            var job = _executionQueue.Peek();
             job.invokedOperation = func;
             job.signal.Set();
             job.signal2.WaitOne();
