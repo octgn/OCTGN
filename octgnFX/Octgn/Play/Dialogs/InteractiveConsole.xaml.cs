@@ -33,7 +33,7 @@ namespace Octgn.Play.Dialogs
         {
             if (e.Key == Key.Tab)
             {
-                int position = prompt.CaretIndex;
+                var position = prompt.CaretIndex;
                 prompt.Text = prompt.Text.Insert(position, "    ");
                 prompt.CaretIndex = position + 4;
                 e.Handled = true;
@@ -43,7 +43,7 @@ namespace Octgn.Play.Dialogs
             if (e.Key != Key.Enter) return;
             e.Handled = true;
 
-            string input = prompt.Text;
+            var input = prompt.Text;
 
             if (input.EndsWith("\\")) // \ is the line continuation character in Python
             {
@@ -83,25 +83,25 @@ namespace Octgn.Play.Dialogs
 
         private void PromptNewIndentedLine()
         {
-            int position = prompt.CaretIndex;
-            string insert = "\n" + GetNewIndentation(prompt.Text, position);
+            var position = prompt.CaretIndex;
+            var insert = "\n" + GetNewIndentation(prompt.Text, position);
             prompt.Text = prompt.Text.Insert(position, insert);
             prompt.CaretIndex = position + insert.Length;
         }
 
         private static string GetNewIndentation(string input, int position)
         {
-            string indent = "    ";
+            var indent = "    ";
             // Find the first indented line (if any), to find out how wide the indentation is (usually four spaces)
-            Match match = Regex.Match(input, "^\\s+", RegexOptions.Multiline);
+            var match = Regex.Match(input, "^\\s+", RegexOptions.Multiline);
             if (match.Success)
                 indent = match.Value;
 
             // Find the indentation of the current line
             if (position < input.Length && input[position] == '\n') position--;
-            int lineStart = input.LastIndexOf("\n", position, StringComparison.Ordinal) + 1;
-            string curLine = input.Substring(lineStart, position - lineStart);
-            string newIndent = "";
+            var lineStart = input.LastIndexOf("\n", position, StringComparison.Ordinal) + 1;
+            var curLine = input.Substring(lineStart, position - lineStart);
+            var newIndent = "";
             match = Regex.Match(curLine, "^\\s+");
             if (match.Success) newIndent = match.Value;
 

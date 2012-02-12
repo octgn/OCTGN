@@ -14,7 +14,7 @@ namespace Octgn.Utils
         {
             ReflectionBitmapImage = new BitmapImage();
             var methodInfo = typeof (BitmapImage).GetMethod("CheckCache",
-                                                                   BindingFlags.NonPublic | BindingFlags.Instance);
+                                                            BindingFlags.NonPublic | BindingFlags.Instance);
             GetImageFromCache =
                 (Func<Uri, BitmapImage>)
                 Delegate.CreateDelegate(typeof (Func<Uri, BitmapImage>), ReflectionBitmapImage, methodInfo);

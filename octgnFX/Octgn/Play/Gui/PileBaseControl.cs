@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using Octgn.Controls;
 using Octgn.Scripting.Controls;
 
 namespace Octgn.Play.Gui
@@ -37,27 +36,27 @@ namespace Octgn.Play.Gui
             e.Handled = true;
             var playWindow = (PlayWindow) Window.GetWindow(this);
             if (playWindow == null) return;
-            ChildWindowManager manager = playWindow.wndManager;
+            var manager = playWindow.wndManager;
             manager.Show(new GroupWindow(@group, PilePosition.All, 0));
         }
 
         protected void ViewTopCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            int count = OCTGN.InputPositiveInt("View top cards", "How many cards do you want to see?", 1);
+            var count = OCTGN.InputPositiveInt("View top cards", "How many cards do you want to see?", 1);
             var playWindow = (PlayWindow) Window.GetWindow(this);
             if (playWindow == null) return;
-            ChildWindowManager manager = playWindow.wndManager;
+            var manager = playWindow.wndManager;
             manager.Show(new GroupWindow(@group, PilePosition.Top, count));
         }
 
         protected void ViewBottomCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            int count = OCTGN.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1);
+            var count = OCTGN.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1);
             var playWindow = (PlayWindow) Window.GetWindow(this);
             if (playWindow == null) return;
-            ChildWindowManager manager = playWindow.wndManager;
+            var manager = playWindow.wndManager;
             manager.Show(new GroupWindow(@group, PilePosition.Bottom, count));
         }
     }

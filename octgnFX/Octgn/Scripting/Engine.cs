@@ -14,7 +14,6 @@ using System.Windows;
 using IronPython.Hosting;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
-using Octgn.Definitions;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Properties;
@@ -117,7 +116,7 @@ namespace Octgn.Scripting
         {
             var pythonGroup = ScriptApi.GroupCtor(group);
             var src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
-                                                                   SourceCodeKind.Statements);
+                                                           SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 
@@ -135,9 +134,9 @@ namespace Octgn.Scripting
         public void ExecuteOnCards(string function, IEnumerable<Card> cards, Point? position = null)
         {
             var posArguments = position == null
-                                      ? ""
-                                      : string.Format(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}",
-                                                      position.Value.X, position.Value.Y);
+                                   ? ""
+                                   : string.Format(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}",
+                                                   position.Value.X, position.Value.Y);
             var sb = new StringBuilder();
             foreach (var card in cards)
                 sb.AppendFormat(CultureInfo.InvariantCulture,

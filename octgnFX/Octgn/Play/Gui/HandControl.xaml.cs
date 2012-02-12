@@ -39,10 +39,10 @@ namespace Octgn.Play.Gui
         {
             e.Handled = e.CanDrop = true;
             if (!@group.TryToManipulate()) return;
-            int idx = _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel));
-            foreach (Card c in e.Cards)
+            var idx = _fanPanel.GetIndexFromPoint(Mouse.GetPosition(_fanPanel));
+            foreach (var c in e.Cards)
             {
-                bool doNotIncrement = (c.Group == @group && @group.GetCardIndex(c) < idx);
+                var doNotIncrement = (c.Group == @group && @group.GetCardIndex(c) < idx);
                 c.MoveTo(@group, e.FaceUp != null && e.FaceUp.Value, idx);
                 // Fix: some cards (notably copies like token) may be deleted when they change group
                 // in those case we should increment idx, otherwise an IndexOutOfRange exception may occur

@@ -91,9 +91,12 @@ namespace Octgn.Launcher
         private void DropTargetFolder(object sender, DragEventArgs e)
         {
             var droppedFolders = e.Data.GetData(DataFormats.FileDrop) as string[];
-            string folder = droppedFolders.FirstOrDefault(Directory.Exists);
-            if (folder == null) return;
-            TargetFolderName = folder;
+            if (droppedFolders != null)
+            {
+                string folder = droppedFolders.FirstOrDefault(Directory.Exists);
+                if (folder == null) return;
+                TargetFolderName = folder;
+            }
             PatchFolder = true;
         }
 

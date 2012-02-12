@@ -29,7 +29,7 @@ namespace Octgn.Play
         public static CardIdentity Find(int id)
         {
             CardIdentity res;
-            bool success = All.TryGetValue(id, out res);
+            var success = All.TryGetValue(id, out res);
             return success ? res : null;
         }
 
@@ -68,7 +68,7 @@ namespace Octgn.Play
         {
             var id = (CardIdentity) sender;
             id.Revealed -= Rename;
-            CardIdentity newId = e.NewIdentity;
+            var newId = e.NewIdentity;
             if (newId.Model != null)
                 Target.SetCardModel(newId.Model);
             else

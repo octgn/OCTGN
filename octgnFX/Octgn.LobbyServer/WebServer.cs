@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -15,18 +14,8 @@ namespace Skylabs.LobbyServer
         private readonly HttpListener _server;
         private bool _running;
 
-        //private CassiniDevServer _webServer = null;
         public WebServer()
         {
-            //_webServer = new CassiniDevServer();
-            //_webServer.StartServer(Path.Combine(Environment.CurrentDirectory, "webserver"), int.Parse(Program.Settings["webserverport"]), "/", Environment.MachineName);
-
-            //CassiniDev.Server s = _webServer.Server;
-            //List<Assembly> assemblyList = new List<Assembly>();
-            //assemblyList.Add(Assembly.GetExecutingAssembly());
-            //_webServer.Server.Assemblies = assemblyList;
-
-
             _running = false;
             _server = new HttpListener();
             int port;

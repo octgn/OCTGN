@@ -164,30 +164,32 @@ namespace Octgn.Launcher
                 WebRequest wr = WebRequest.Create(url);
                 wr.Timeout = 15000;
                 WebResponse resp = wr.GetResponse();
-                using (XmlReader reader = XmlReader.Create(resp.GetResponseStream()))
-                {
-                    while (reader.Read())
+                var rgrp = resp.GetResponseStream();
+                if (rgrp != null)
+                    using (XmlReader reader = XmlReader.Create(rgrp))
                     {
-                        if (!reader.IsStartElement()) continue;
-                        if (reader.IsEmptyElement) continue;
-                        switch (reader.Name)
+                        while (reader.Read())
                         {
-                            case "Version":
-                                values = new string[2];
-                                if (reader.Read())
-                                {
-                                    values[0] = reader.Value;
-                                }
-                                break;
-                            case "Location":
-                                if (reader.Read())
-                                {
-                                    values[1] = reader.Value;
-                                }
-                                break;
+                            if (!reader.IsStartElement()) continue;
+                            if (reader.IsEmptyElement) continue;
+                            switch (reader.Name)
+                            {
+                                case "Version":
+                                    values = new string[2];
+                                    if (reader.Read())
+                                    {
+                                        values[0] = reader.Value;
+                                    }
+                                    break;
+                                case "Location":
+                                    if (reader.Read())
+                                    {
+                                        values[1] = reader.Value;
+                                    }
+                                    break;
+                            }
                         }
                     }
-                }
             }
             catch (Exception e)
             {

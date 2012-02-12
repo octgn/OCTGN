@@ -126,7 +126,7 @@ namespace Octgn.DeckBuilder
         public virtual string GetSql(string field, string value)
         {
             if (EscapeQuotes) value = value.Replace("'", "''");
-            return string.Format(SqlFormat, "["+field+"]", value);
+            return string.Format(SqlFormat, "[" + field + "]", value);
         }
     }
 
@@ -158,7 +158,7 @@ namespace Octgn.DeckBuilder
         public override string GetSql(string field, string value)
         {
             var sb = new StringBuilder();
-            foreach (char c in value)
+            foreach (var c in value)
             {
                 if (sb.Length > 0) sb.AppendFormat(",");
                 sb.AppendFormat("'{0}'", c == '\'' ? "''" : (object) c);

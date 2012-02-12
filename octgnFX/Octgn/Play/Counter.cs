@@ -51,7 +51,7 @@ namespace Octgn.Play
 
         public static Counter Find(int id)
         {
-            Player p = Player.Find((byte) (id >> 16));
+            var p = Player.Find((byte) (id >> 16));
             if (p == null || (byte) id > p.Counters.Length || (byte) id == 0)
                 return null;
             return p.Counters[(byte) id - 1];
@@ -78,7 +78,7 @@ namespace Octgn.Play
         internal void SetValue(int value, Player who, bool notifyServer)
         {
             // Check the difference with current value
-            int delta = value - _state;
+            var delta = value - _state;
             if (delta == 0) return;
             // Notify the server if needed
             if (notifyServer)
@@ -87,7 +87,7 @@ namespace Octgn.Play
             _state = value;
             OnPropertyChanged("Value");
             // Display a notification in the chat
-            string deltaString = (delta > 0 ? "+" : "") + delta.ToString(CultureInfo.InvariantCulture);
+            var deltaString = (delta > 0 ? "+" : "") + delta.ToString(CultureInfo.InvariantCulture);
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
                                      "{0} sets {1} counter to {2} ({3})", who, this, value, deltaString);
         }

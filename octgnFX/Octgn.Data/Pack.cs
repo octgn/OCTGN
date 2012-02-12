@@ -16,7 +16,8 @@ namespace Octgn.Data
             using (var reader = XmlReader.Create(stringReader))
             {
                 reader.Read();
-                Id = new Guid(reader.GetAttribute("id"));
+                var guid = reader.GetAttribute("id");
+                if (guid != null) Id = new Guid(guid);
                 Name = reader.GetAttribute("name");
                 reader.ReadStartElement("pack");
                 Definition = new PackDefinition(reader);
@@ -140,7 +141,7 @@ namespace Octgn.Data
             public Pick(XmlReader reader)
             {
                 var qtyAttribute = reader.GetAttribute("qty");
-                Quantity = qtyAttribute == "unlimited" ? -1 : int.Parse(qtyAttribute);
+                if (qtyAttribute != null) Quantity = qtyAttribute == "unlimited" ? -1 : int.Parse(qtyAttribute);
                 Key = reader.GetAttribute("key");
                 Value = reader.GetAttribute("value");
                 reader.Read(); // <pick />

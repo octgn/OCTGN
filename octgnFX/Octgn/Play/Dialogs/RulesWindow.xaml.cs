@@ -29,12 +29,12 @@ namespace Octgn.Play.Dialogs
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
-            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
-            using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
+            var defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
+            using (var package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                PackageRelationship defRelationship =
+                var defRelationship =
                     package.GetRelationshipsByType("http://schemas.octgn.org/game/rules").First();
-                PackagePart definition = package.GetPart(defRelationship.TargetUri);
+                var definition = package.GetPart(defRelationship.TargetUri);
                 using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
                 {
                     // Change the 75 for performance.  Find a number that suits your application best
@@ -46,7 +46,7 @@ namespace Octgn.Play.Dialogs
                         fileReader.Read(buffer, 0, readLength);
                         // This will help the file load much faster 
                         // RichText loads \n as a new paragraph. Very slow for large text
-                        string currentLine = new string(buffer).Replace("\n", string.Empty);
+                        var currentLine = new string(buffer).Replace("\n", string.Empty);
                         // Load in background
                         Dispatcher.BeginInvoke(new Action(() =>
                                                               {
@@ -65,14 +65,9 @@ namespace Octgn.Play.Dialogs
             DoSearch(rules, search.Text, true);
             rules.Focus();
 
-            // Testing code for text scrolling
-            /*var start = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-                var end = rules.Selection.End.GetCharacterRect(LogicalDirection.Forward);                
-                rules.ScrollToVerticalOffset((start.Top + end.Bottom - rules.ViewportHeight) / 2 + rules.VerticalOffset);*/
-
             // WPF RichTextBox doesn't include "scrolltocaret"
-            Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-            double totaloffset = thisposition.Top + rules.VerticalOffset;
+            var thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+            var totaloffset = thisposition.Top + rules.VerticalOffset;
             scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
             // Handle the keypress. We don't want to muck with rules text
             e.Handled = true;
@@ -91,7 +86,7 @@ namespace Octgn.Play.Dialogs
                     richTextBox.Document.ContentStart,
                     richTextBox.Document.ContentEnd);
             // Do the search
-            TextRange foundRange = FindTextInRange(searchRange, searchText);
+            var foundRange = FindTextInRange(searchRange, searchText);
             if (foundRange == null)
                 return false;
             // Select the found range
@@ -102,11 +97,11 @@ namespace Octgn.Play.Dialogs
         public TextRange FindTextInRange(TextRange searchRange, string searchText)
         {
             // Search the text with IndexOf
-            int offset = searchRange.Text.IndexOf(searchText, StringComparison.Ordinal);
+            var offset = searchRange.Text.IndexOf(searchText, StringComparison.Ordinal);
             if (offset < 0)
                 return null; // Not found
             // Try to select the text as a contiguous range
-            for (TextPointer start = searchRange.Start.GetPositionAtOffset(offset);
+            for (var start = searchRange.Start.GetPositionAtOffset(offset);
                  start != searchRange.End && start != null;
                  start = start.GetPositionAtOffset(1))
             {
@@ -123,17 +118,11 @@ namespace Octgn.Play.Dialogs
             {
                 DoSearch(rules, search.Text, true);
                 // WPF RichTextBox doesn't include "scrolltocaret"
-                Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-                double totaloffset = thisposition.Top + rules.VerticalOffset;
+                var thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+                var totaloffset = thisposition.Top + rules.VerticalOffset;
                 scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
             }
             e.Handled = true;
         }
-
-        /* Credits go to StackOverflow and it's authors for helping me fix some of these annoying problems
-         * http://stackoverflow.com/questions/1756844/making-a-simple-search-function-making-the-cursor-jump-to-or-highlight-the-wo
-         * http://stackoverflow.com/questions/837086/c-sharp-loading-a-large-file-into-a-wpf-richtextbox
-         * http://stackoverflow.com/questions/1228714/how-do-i-find-the-viewable-area-of-a-wpf-richtextbox
-         */
     }
 }

@@ -256,8 +256,7 @@ namespace Octgn.Server
             if (gameVer.Major != _gameVersion.Major)
             {
                 var rpc = new XmlSenderStub(_sender, this);
-                rpc.Error(string.Format("Incompatible game version. This server is hosting game version {0:3}.",
-                                        _gameVersion));
+                rpc.Error(string.Format("Incompatible game version. This server is hosting game version ."));
                 try
                 {
                     _sender.Client.Close();

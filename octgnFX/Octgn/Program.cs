@@ -131,7 +131,7 @@ namespace Octgn
             SaveLocation();
             try
             {
-                if (DebugWindow != null) 
+                if (DebugWindow != null)
                     if (DebugWindow.IsLoaded)
                         DebugWindow.Close();
             }

@@ -82,7 +82,7 @@ namespace Octgn.Play.Gui
         {
             e.Handled = e.CanDrop = true;
             if (group.TryToManipulate())
-                foreach (Card c in e.Cards)
+                foreach (var c in e.Cards)
                     c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, 0);
         }
 
@@ -90,7 +90,7 @@ namespace Octgn.Play.Gui
         {
             e.Handled = e.CanDrop = true;
             if (group.TryToManipulate())
-                foreach (Card c in e.Cards)
+                foreach (var c in e.Cards)
                     c.MoveTo(group, e.FaceUp != null && e.FaceUp.Value, group.Count);
         }
 

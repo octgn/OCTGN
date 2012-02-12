@@ -56,7 +56,7 @@ namespace Octgn.Play.Gui.Adorners
                     ClippingVisual.PointToScreen(new Point(-4, -4)),
                     ClippingVisual.PointToScreen(new Point(ClippingVisual.ActualWidth + 4,
                                                            ClippingVisual.ActualHeight + 4)));
-                Point testPt = PointToScreen(_position);
+                var testPt = PointToScreen(_position);
                 _topTriangle.Visibility = clipping.Contains(testPt) ? Visibility.Visible : Visibility.Collapsed;
                 testPt = PointToScreen(new Point(_position.X, _position.Y + Height + 2));
                 _bottomTriangle.Visibility = clipping.Contains(testPt) ? Visibility.Visible : Visibility.Collapsed;

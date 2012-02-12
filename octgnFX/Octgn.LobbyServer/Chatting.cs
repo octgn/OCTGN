@@ -77,12 +77,12 @@ namespace Skylabs.LobbyServer
         {
             lock (Rooms)
             {
-                var rid = (long?)s["roomid"];
+                var rid = (long?) s["roomid"];
                 if (rid == null || rid == -1)
                 {
                     return;
                 }
-                var user = (User)s["user"];
+                var user = (User) s["user"];
                 if (user == null)
                 {
                     return;

@@ -46,20 +46,20 @@ namespace Octgn.Play.Gui
             GetVisibleRange(out firstVisibleItemIndex, out lastVisibleItemIndex);
 
             // We need to access InternalChildren before the generator to work around a bug
-            UIElementCollection children = InternalChildren;
-            IItemContainerGenerator generator = ItemContainerGenerator;
+            var children = InternalChildren;
+            var generator = ItemContainerGenerator;
 
             // Get the generator position of the first visible data item
-            GeneratorPosition startPos = generator.GeneratorPositionFromIndex(firstVisibleItemIndex);
+            var startPos = generator.GeneratorPositionFromIndex(firstVisibleItemIndex);
 
             // Get index where we'd insert the child for this position. If the item is realized
             // (position.Offset == 0), it's just position.Index, otherwise we have to add one to
             // insert after the corresponding child
-            int childIndex = (startPos.Offset == 0) ? startPos.Index : startPos.Index + 1;
+            var childIndex = (startPos.Offset == 0) ? startPos.Index : startPos.Index + 1;
 
             using (generator.StartAt(startPos, GeneratorDirection.Forward, true))
             {
-                for (int itemIndex = firstVisibleItemIndex;
+                for (var itemIndex = firstVisibleItemIndex;
                      itemIndex <= lastVisibleItemIndex;
                      ++itemIndex, ++childIndex)
                 {
@@ -70,13 +70,16 @@ namespace Octgn.Play.Gui
                     if (newlyRealized)
                     {
                         // Figure out if we need to insert the child at the end or somewhere in the middle
-                        if (childIndex >= children.Count)
+                        if (child != null)
                         {
-                            AddInternalChild(child);
-                        }
-                        else
-                        {
-                            InsertInternalChild(childIndex, child);
+                            if (childIndex >= children.Count)
+                            {
+                                AddInternalChild(child);
+                            }
+                            else
+                            {
+                                InsertInternalChild(childIndex, child);
+                            }
                         }
                         generator.PrepareItemContainer(child);
                     }
@@ -104,16 +107,16 @@ namespace Octgn.Play.Gui
         /// <returns> Size used </returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            IItemContainerGenerator generator = ItemContainerGenerator;
+            var generator = ItemContainerGenerator;
 
             UpdateScrollInfo(finalSize);
 
-            for (int i = 0; i < Children.Count; i++)
+            for (var i = 0; i < Children.Count; i++)
             {
-                UIElement child = Children[i];
+                var child = Children[i];
 
                 // Map the child offset to an item offset
-                int itemIndex = generator.IndexFromGeneratorPosition(new GeneratorPosition(i, 0));
+                var itemIndex = generator.IndexFromGeneratorPosition(new GeneratorPosition(i, 0));
 
                 ArrangeChild(itemIndex, child, finalSize);
             }
@@ -128,13 +131,13 @@ namespace Octgn.Play.Gui
         /// <param name="maxDesiredGenerated"> last item index that should be visible </param>
         private void CleanUpItems(int minDesiredGenerated, int maxDesiredGenerated)
         {
-            UIElementCollection children = InternalChildren;
-            IItemContainerGenerator generator = ItemContainerGenerator;
+            var children = InternalChildren;
+            var generator = ItemContainerGenerator;
 
-            for (int i = children.Count - 1; i >= 0; i--)
+            for (var i = children.Count - 1; i >= 0; i--)
             {
                 var childGeneratorPos = new GeneratorPosition(i, 0);
-                int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
+                var itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
                 if (itemIndex >= minDesiredGenerated && itemIndex <= maxDesiredGenerated) continue;
                 generator.Remove(childGeneratorPos, 1);
                 RemoveInternalChildRange(i, 1);
@@ -171,7 +174,7 @@ namespace Octgn.Play.Gui
         /// <returns> </returns>
         private Size CalculateExtent(Size availableSize, int itemCount)
         {
-            int childrenPerRow = CalculateChildrenPerRow(availableSize);
+            var childrenPerRow = CalculateChildrenPerRow(availableSize);
 
             // See how big we are
             return new Size(childrenPerRow*ChildSize,
@@ -185,13 +188,13 @@ namespace Octgn.Play.Gui
         /// <param name="lastVisibleItemIndex"> The item index of the last visible item </param>
         private void GetVisibleRange(out int firstVisibleItemIndex, out int lastVisibleItemIndex)
         {
-            int childrenPerRow = CalculateChildrenPerRow(_extent);
+            var childrenPerRow = CalculateChildrenPerRow(_extent);
 
             firstVisibleItemIndex = (int) Math.Floor(_offset.Y/ChildSize)*childrenPerRow;
             lastVisibleItemIndex = (int) Math.Ceiling((_offset.Y + _viewport.Height)/ChildSize)*childrenPerRow - 1;
 
-            ItemsControl itemsControl = ItemsControl.GetItemsOwner(this);
-            int itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
+            var itemsControl = ItemsControl.GetItemsOwner(this);
+            var itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
             if (lastVisibleItemIndex >= itemCount)
                 lastVisibleItemIndex = itemCount - 1;
         }
@@ -213,10 +216,10 @@ namespace Octgn.Play.Gui
         /// <param name="finalSize"> The size of the panel </param>
         private void ArrangeChild(int itemIndex, UIElement child, Size finalSize)
         {
-            int childrenPerRow = CalculateChildrenPerRow(finalSize);
+            var childrenPerRow = CalculateChildrenPerRow(finalSize);
 
-            int row = itemIndex/childrenPerRow;
-            int column = itemIndex%childrenPerRow;
+            var row = itemIndex/childrenPerRow;
+            var column = itemIndex%childrenPerRow;
 
             child.Arrange(new Rect(column*ChildSize, row*ChildSize, ChildSize, ChildSize));
         }
@@ -229,7 +232,7 @@ namespace Octgn.Play.Gui
         private int CalculateChildrenPerRow(Size availableSize)
         {
             // Figure out how many children fit on each row
-            int childrenPerRow = double.IsPositiveInfinity(availableSize.Width)
+            var childrenPerRow = double.IsPositiveInfinity(availableSize.Width)
                                      ? Children.Count
                                      : Math.Max(1, (int) Math.Floor(availableSize.Width/ChildSize));
             return childrenPerRow;
@@ -386,10 +389,10 @@ namespace Octgn.Play.Gui
         private void UpdateScrollInfo(Size availableSize)
         {
             // See how many items there are
-            ItemsControl itemsControl = ItemsControl.GetItemsOwner(this);
-            int itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
+            var itemsControl = ItemsControl.GetItemsOwner(this);
+            var itemCount = itemsControl.HasItems ? itemsControl.Items.Count : 0;
 
-            Size extent = CalculateExtent(availableSize, itemCount);
+            var extent = CalculateExtent(availableSize, itemCount);
             // Update extent
             if (extent != _extent)
             {

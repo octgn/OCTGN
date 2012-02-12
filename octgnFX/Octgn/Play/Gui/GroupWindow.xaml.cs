@@ -114,7 +114,7 @@ namespace Octgn.Play.Gui
         {
             CardControl.SetAnimateLoad(this, false);
 
-            string filter = filterBox.Text;
+            var filter = filterBox.Text;
             if (filter == "")
             {
                 watermark.Visibility = Visibility.Visible;
@@ -122,7 +122,7 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                IEnumerable<string> textProperties = Program.Game.Definition.CardDefinition.Properties.Values
+                var textProperties = Program.Game.Definition.CardDefinition.Properties.Values
                     .Where(p => p.Type == PropertyType.String && !p.IgnoreText)
                     .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;
@@ -170,7 +170,7 @@ namespace Octgn.Play.Gui
 
         public void CardsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ObservableCollection<Card> cards = cardsList.Cards;
+            var cards = cardsList.Cards;
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
@@ -178,7 +178,7 @@ namespace Octgn.Play.Gui
                 case NotifyCollectionChangedAction.Move:
                     if (e.OldItems.Count > 1) throw new NotSupportedException("Can't move more than 1 card at a time");
                     var card = e.OldItems[0] as Card;
-                    if (!cards.Contains(card)) break;
+                    if (card == null || !cards.Contains(card)) break;
 
                     if ((_position == PilePosition.Top && e.NewStartingIndex >= _count) ||
                         (_position == PilePosition.Bottom && e.NewStartingIndex < _group.Count - _count))
@@ -189,9 +189,12 @@ namespace Octgn.Play.Gui
                     else
                     {
                         var src = sender as ICollection<Card>;
-                        int oldIndex = cards.IndexOf(card);
-                        int newIndex = src.Where(cards.Contains).IndexOf(card);
-                        cards.Move(oldIndex, newIndex);
+                        if (src != null)
+                        {
+                            var oldIndex = cards.IndexOf(card);
+                            var newIndex = src.Where(cards.Contains).IndexOf(card);
+                            cards.Move(oldIndex, newIndex);
+                        }
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:

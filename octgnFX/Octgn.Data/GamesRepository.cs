@@ -14,14 +14,23 @@ namespace Octgn.Data
 {
     public class GamesRepository
     {
-        private ObservableCollection<Game> _allCachedGames;
-        private ObservableCollection<Game> _cachedGames;
-        private List<string> _missingFiles;
         public static string BasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                                "Octgn");
+                                                     "Octgn");
+
         private static readonly string DatabaseFile = Path.Combine(BasePath, "Database", "master.db3");
         private static readonly string ConString = "URI=file:" + DatabaseFile;
         internal static SQLiteConnection DatabaseConnection;
+        private ObservableCollection<Game> _allCachedGames;
+        private ObservableCollection<Game> _cachedGames;
+        private List<string> _missingFiles;
+
+        static GamesRepository()
+        {
+            BasePath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "Octgn");
+            Directory.CreateDirectory(BasePath);
+        }
 
         public GamesRepository()
         {
@@ -32,7 +41,7 @@ namespace Octgn.Data
                 buildSchema = true;
             }
 
-            DatabaseConnection = new SQLiteConnection(ConString); 
+            DatabaseConnection = new SQLiteConnection(ConString);
             DatabaseConnection.Open();
             using (var com = DatabaseConnection.CreateCommand())
             {
@@ -57,14 +66,6 @@ namespace Octgn.Data
                 com.CommandText = md;
                 com.ExecuteNonQuery();
             }
-        }
-
-        static GamesRepository()
-        {
-            BasePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "Octgn");
-            Directory.CreateDirectory(BasePath);
         }
 
         public ObservableCollection<Game> Games
