@@ -412,7 +412,7 @@ namespace Octgn.Play.Gui
             _isOverCount = false;
             if (!Card.Selected) Selection.Clear();
             _mousePt = e.GetPosition(this);
-            var window = Window.GetWindow(this);
+            Window window = Window.GetWindow(this);
             if (window != null)
                 _mouseWindowPt = TranslatePoint(_mousePt, (UIElement) window.Content);
             _dragSource = Keyboard.Modifiers == ModifierKeys.Shift ? DragSource.Target : DragSource.Card;
@@ -488,7 +488,7 @@ namespace Octgn.Play.Gui
                 {
                     case DragSource.Card:
                         {
-                            var window = Window.GetWindow(this);
+                            Window window = Window.GetWindow(this);
                             if (window != null)
                             {
                                 Point windowPt = e.GetPosition((IInputElement) window.Content);
@@ -587,7 +587,10 @@ namespace Octgn.Play.Gui
                            _mousePt.Y*Program.Game.Definition.CardDefinition.Height/ActualHeight);
 
             // Create adorners
-            AdornerLayer layer = AdornerLayer.GetAdornerLayer(_mainWin.Content as Visual);
+            var mwn = _mainWin.Content as Visual;
+            AdornerLayer layer = null;
+            if (mwn != null)
+                layer = AdornerLayer.GetAdornerLayer(mwn);
             double offset = 0;
             double step = ActualWidth*1.05;
             // HACK: if the selected card is in HandControl, its ContentPresenter has a RenderTransform, 
@@ -605,7 +608,7 @@ namespace Octgn.Play.Gui
                 {
                     var overlay = new CardDragAdorner(cardCtrl, _mouseOffset);
                     OverlayElements.Add(overlay);
-                    layer.Add(overlay);
+                    if (layer != null) layer.Add(overlay);
                 }
                 else
                 {
@@ -619,7 +622,7 @@ namespace Octgn.Play.Gui
                         overlay.OffsetBy(offset, 0);
                         overlay.CollapseTo(0, 0, false);
                     }
-                    layer.Add(overlay);
+                    if (layer != null) layer.Add(overlay);
                 }
 
                 // Make the card translucent
@@ -635,7 +638,7 @@ namespace Octgn.Play.Gui
                 overlay.OffsetBy(offset, 0);
                 overlay.CollapseTo(0, 0, false);
                 OverlayElements.Add(overlay);
-                layer.Add(overlay);
+                if (layer != null) layer.Add(overlay);
             }
         }
 
@@ -646,11 +649,15 @@ namespace Octgn.Play.Gui
             Card.Group.ReleaseControl();
 
             // Remove the visual feedback
-            AdornerLayer layer = AdornerLayer.GetAdornerLayer(_mainWin.Content as Visual);
-            foreach (CardDragAdorner overlay in OverlayElements)
+            var mwc = _mainWin.Content as Visual;
+            if (mwc != null)
             {
-                layer.Remove(overlay);
-                overlay.Dispose();
+                AdornerLayer layer = AdornerLayer.GetAdornerLayer(mwc);
+                foreach (CardDragAdorner overlay in OverlayElements)
+                {
+                    layer.Remove(overlay);
+                    overlay.Dispose();
+                }
             }
             OverlayElements.Clear();
 

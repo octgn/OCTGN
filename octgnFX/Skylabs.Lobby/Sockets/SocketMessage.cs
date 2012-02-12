@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 // TODO: Change this namespace when you can do it on client / server at the same time -- communications are fragile as fuck
 // Skylabs.Lobby.Sockets.Net
+
 namespace Skylabs.Net
 {
     [Serializable]

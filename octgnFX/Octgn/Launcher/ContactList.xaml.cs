@@ -34,25 +34,29 @@ namespace Octgn.Launcher
                                              {
                                                  stackPanel1.Children.Clear();
                                                  User[] flist = Program.LobbyClient.GetFriendsList();
-                                                 foreach (var f in flist.Select(u => new FriendListItem
-                                                                                         {
-                                                                                             ThisUser = u,
-                                                                                             HorizontalAlignment =
-                                                                                                 HorizontalAlignment.
-                                                                                                 Stretch
-                                                                                         }))
+                                                 foreach (FriendListItem f in flist.Select(u => new FriendListItem
+                                                                                                    {
+                                                                                                        ThisUser = u,
+                                                                                                        HorizontalAlignment
+                                                                                                            =
+                                                                                                            HorizontalAlignment
+                                                                                                            .
+                                                                                                            Stretch
+                                                                                                    }))
                                                  {
                                                      f.MouseDoubleClick += FMouseDoubleClick;
                                                      stackPanel1.Children.Add(f);
                                                  }
-                                                 foreach (var gi in from cr in Program.LobbyClient.Chatting.Rooms
-                                                                    where cr.Id == 0 || (cr.UserCount > 2)
-                                                                    select new GroupChatListItem
-                                                                               {
-                                                                                   ThisRoom = cr,
-                                                                                   HorizontalAlignment =
-                                                                                       HorizontalAlignment.Stretch
-                                                                               })
+                                                 foreach (
+                                                     GroupChatListItem gi in
+                                                         from cr in Program.LobbyClient.Chatting.Rooms
+                                                         where cr.Id == 0 || (cr.UserCount > 2)
+                                                         select new GroupChatListItem
+                                                                    {
+                                                                        ThisRoom = cr,
+                                                                        HorizontalAlignment =
+                                                                            HorizontalAlignment.Stretch
+                                                                    })
                                                  {
                                                      gi.MouseDoubleClick += GiMouseDoubleClick;
                                                      stackPanel1.Children.Add(gi);
@@ -72,7 +76,7 @@ namespace Octgn.Launcher
         {
             var gi = sender as GroupChatListItem;
             if (gi == null) return;
-            foreach (var cw in Program.ChatWindows.Where(cw => gi.ThisRoom.Id == cw.Id))
+            foreach (ChatWindow cw in Program.ChatWindows.Where(cw => gi.ThisRoom.Id == cw.Id))
             {
                 cw.Show();
                 return;

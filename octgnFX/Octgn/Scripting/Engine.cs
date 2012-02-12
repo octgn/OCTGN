@@ -117,7 +117,7 @@ namespace Octgn.Scripting
         {
             string pythonGroup = ScriptApi.GroupCtor(group);
             ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
-                                                                   SourceCodeKind.Statements);
+                                                                    SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 

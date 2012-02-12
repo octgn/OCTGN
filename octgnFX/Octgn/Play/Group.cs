@@ -281,7 +281,7 @@ namespace Octgn.Play
         internal void OnShuffled()
         {
             // Remove player looking at the cards, if any (doesn't remove the need to remove those from the dictionary!)
-            foreach (var list in LookedAt.Values)
+            foreach (List<Card> list in LookedAt.Values)
                 list.Clear();
             foreach (Card c in Cards)
                 c.PlayersLooking.Clear();

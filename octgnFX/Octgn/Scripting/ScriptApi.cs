@@ -270,10 +270,10 @@ namespace Octgn.Scripting
             Card card = Card.Find(cardId);
             Group group = Group.Find(groupId);
             _engine.Invoke(() =>
-                              {
-                                  if (position == null) card.MoveTo(group, true);
-                                  else card.MoveTo(group, true, position.Value);
-                              });
+                               {
+                                   if (position == null) card.MoveTo(group, true);
+                                   else card.MoveTo(group, true, position.Value);
+                               });
         }
 
         public void CardMoveToTable(int cardId, double x, double y, bool forceFaceDown)
@@ -288,12 +288,12 @@ namespace Octgn.Scripting
             Card c = Card.Find(id);
             // At the moment, only table and hand support multiple selection
             _engine.Invoke(() =>
-                              {
-                                  if (c.Group is Table || c.Group is Hand)
-                                      Selection.Add(c);
-                                  else
-                                      Selection.Clear();
-                              });
+                               {
+                                   if (c.Group is Table || c.Group is Hand)
+                                       Selection.Add(c);
+                                   else
+                                       Selection.Clear();
+                               });
         }
 
         //Returns the card's index
@@ -321,10 +321,10 @@ namespace Octgn.Scripting
         {
             Card c = Card.Find(id);
             _engine.Invoke(() =>
-                              {
-                                  if (active) c.Target();
-                                  else c.Untarget();
-                              });
+                               {
+                                   if (active) c.Target();
+                                   else c.Untarget();
+                               });
         }
 
         public int CardTargeted(int id)
@@ -352,10 +352,10 @@ namespace Octgn.Scripting
             Guid guid = Guid.Parse(markerId);
             //Marker marker = card.FindMarker(guid, markerName);
             _engine.Invoke(() =>
-                              {
-                                  card.SetMarker(Player.LocalPlayer, guid, markerName, count);
-                                  Program.Client.Rpc.SetMarkerReq(card, guid, markerName, (ushort) count);
-                              });
+                               {
+                                   card.SetMarker(Player.LocalPlayer, guid, markerName, count);
+                                   Program.Client.Rpc.SetMarkerReq(card, guid, markerName, (ushort) count);
+                               });
         }
 
         #endregion Cards API
@@ -386,40 +386,41 @@ namespace Octgn.Scripting
         public int? AskInteger(string question, int defaultValue)
         {
             return _engine.Invoke<int?>(() =>
-                                           {
-                                               var dlg = new InputDlg("Question", question,
-                                                                      defaultValue.ToString(CultureInfo.InvariantCulture));
-                                               int result = dlg.GetPositiveInt();
-                                               return dlg.DialogResult.GetValueOrDefault() ? result : (int?) null;
-                                           });
+                                            {
+                                                var dlg = new InputDlg("Question", question,
+                                                                       defaultValue.ToString(
+                                                                           CultureInfo.InvariantCulture));
+                                                int result = dlg.GetPositiveInt();
+                                                return dlg.DialogResult.GetValueOrDefault() ? result : (int?) null;
+                                            });
         }
 
         public Tuple<string, string, int> AskMarker()
         {
             return _engine.Invoke<Tuple<string, string, int>>(() =>
-                                                                 {
-                                                                     //fix MAINWINDOW bug
-                                                                     var dlg = new MarkerDlg
-                                                                                   {Owner = Program.PlayWindow};
-                                                                     if (!dlg.ShowDialog().GetValueOrDefault())
-                                                                         return null;
-                                                                     return Tuple.Create(dlg.MarkerModel.Name,
-                                                                                         dlg.MarkerModel.Id.ToString(),
-                                                                                         dlg.Quantity);
-                                                                 });
+                                                                  {
+                                                                      //fix MAINWINDOW bug
+                                                                      var dlg = new MarkerDlg
+                                                                                    {Owner = Program.PlayWindow};
+                                                                      if (!dlg.ShowDialog().GetValueOrDefault())
+                                                                          return null;
+                                                                      return Tuple.Create(dlg.MarkerModel.Name,
+                                                                                          dlg.MarkerModel.Id.ToString(),
+                                                                                          dlg.Quantity);
+                                                                  });
         }
 
         public Tuple<string, int> AskCard(string restriction)
         {
             return _engine.Invoke<Tuple<string, int>>(() =>
-                                                         {
-                                                             //fix MAINWINDOW bug
-                                                             var dlg = new CardDlg(restriction)
-                                                                           {Owner = Program.PlayWindow};
-                                                             if (!dlg.ShowDialog().GetValueOrDefault()) return null;
-                                                             return Tuple.Create(dlg.SelectedCard.Id.ToString(),
-                                                                                 dlg.Quantity);
-                                                         });
+                                                          {
+                                                              //fix MAINWINDOW bug
+                                                              var dlg = new CardDlg(restriction)
+                                                                            {Owner = Program.PlayWindow};
+                                                              if (!dlg.ShowDialog().GetValueOrDefault()) return null;
+                                                              return Tuple.Create(dlg.SelectedCard.Id.ToString(),
+                                                                                  dlg.Quantity);
+                                                          });
         }
 
         #endregion Messages API
@@ -466,50 +467,50 @@ namespace Octgn.Scripting
                 return result; // e.g. modelId may be null if the cloned card is face down.
 
             _engine.Invoke(() =>
-                              {
-                                  CardModel model = Database.GetCardById(modelGuid);
-                                  if (model == null)
-                                  {
-                                  }
-                                  else
-                                  {
-                                      var ids = new int[quantity];
-                                      var keys = new ulong[quantity];
-                                      var models = new Guid[quantity];
-                                      int[] xs = new int[quantity], ys = new int[quantity];
+                               {
+                                   CardModel model = Database.GetCardById(modelGuid);
+                                   if (model == null)
+                                   {
+                                   }
+                                   else
+                                   {
+                                       var ids = new int[quantity];
+                                       var keys = new ulong[quantity];
+                                       var models = new Guid[quantity];
+                                       int[] xs = new int[quantity], ys = new int[quantity];
 
-                                      CardDef def = Program.Game.Definition.CardDefinition;
+                                       CardDef def = Program.Game.Definition.CardDefinition;
 
-                                      if (Player.LocalPlayer.InvertedTable)
-                                      {
-                                          x -= def.Width;
-                                          y -= def.Height;
-                                      }
-                                      var offset = (int) (Math.Min(def.Width, def.Height)*0.2);
-                                      if (Program.GameSettings.UseTwoSidedTable && TableControl.IsInInvertedZone(y))
-                                          offset = -offset;
+                                       if (Player.LocalPlayer.InvertedTable)
+                                       {
+                                           x -= def.Width;
+                                           y -= def.Height;
+                                       }
+                                       var offset = (int) (Math.Min(def.Width, def.Height)*0.2);
+                                       if (Program.GameSettings.UseTwoSidedTable && TableControl.IsInInvertedZone(y))
+                                           offset = -offset;
 
-                                      for (int i = 0; i < quantity; ++i)
-                                      {
-                                          ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                                          int id = Program.Game.GenerateCardId();
+                                       for (int i = 0; i < quantity; ++i)
+                                       {
+                                           ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
+                                           int id = Program.Game.GenerateCardId();
 
-                                          new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
+                                           new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
 
-                                          ids[i] = id;
-                                          keys[i] = key;
-                                          models[i] = model.Id;
-                                          xs[i] = x;
-                                          ys[i] = y;
-                                          result.Add(id);
+                                           ids[i] = id;
+                                           keys[i] = key;
+                                           models[i] = model.Id;
+                                           xs[i] = x;
+                                           ys[i] = y;
+                                           result.Add(id);
 
-                                          x += offset;
-                                          y += offset;
-                                      }
+                                           x += offset;
+                                           y += offset;
+                                       }
 
-                                      Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, true, persist);
-                                  }
-                              });
+                                       Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, true, persist);
+                                   }
+                               });
 
             return result;
         }
@@ -536,8 +537,12 @@ namespace Octgn.Scripting
                 WebRequest request = WebRequest.Create(url);
                 WebResponse response = request.GetResponse();
 
-                reader = new StreamReader(response.GetResponseStream());
-                result = reader.ReadToEnd();
+                Stream grs = response.GetResponseStream();
+                if (grs != null)
+                {
+                    reader = new StreamReader(grs);
+                    result = reader.ReadToEnd();
+                }
             }
             catch (WebException ex)
             {

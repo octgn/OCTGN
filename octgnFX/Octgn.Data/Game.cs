@@ -67,16 +67,20 @@ namespace Octgn.Data
                 {
                     if (dr.Read())
                     {
-                        var s = new Set
-                                    {
-                                        Id = Guid.Parse(dr["id"] as string),
-                                        Name = (string) dr["name"],
-                                        Game = this,
-                                        GameVersion = new Version((string) dr["game_version"]),
-                                        Version = new Version((string) dr["version"]),
-                                        PackageName = (string) dr["package"]
-                                    };
-                        return s;
+                        var did = dr["id"] as string;
+                        if (did != null)
+                        {
+                            var s = new Set
+                                        {
+                                            Id = Guid.Parse(did),
+                                            Name = (string) dr["name"],
+                                            Game = this,
+                                            GameVersion = new Version((string) dr["game_version"]),
+                                            Version = new Version((string) dr["version"]),
+                                            PackageName = (string) dr["package"]
+                                        };
+                            return s;
+                        }
                     }
                 }
             }
@@ -95,15 +99,20 @@ namespace Octgn.Data
                 {
                     if (dr.Read())
                     {
-                        var result = new CardModel
-                                         {
-                                             Id = Guid.Parse(dr["id"] as string),
-                                             Name = (string) dr["name"],
-                                             ImageUri = (string) dr["image"],
-                                             Set = GetSet(Guid.Parse(dr["set_id"] as string)),
-                                             Properties = GetCardProperties(Guid.Parse(dr["id"] as string))
-                                         };
-                        return result;
+                        var did = dr["id"] as string;
+                        var sid = dr["sed_id"] as string;
+                        if (did != null && sid != null)
+                        {
+                            var result = new CardModel
+                                             {
+                                                 Id = Guid.Parse(did),
+                                                 Name = (string) dr["name"],
+                                                 ImageUri = (string) dr["image"],
+                                                 Set = GetSet(Guid.Parse(sid)),
+                                                 Properties = GetCardProperties(Guid.Parse(did))
+                                             };
+                            return result;
+                        }
                     }
                 }
             }
@@ -124,30 +133,29 @@ namespace Octgn.Data
                     while (dr.Read())
                     {
                         var vt = (int) ((long) dr["type"]);
-                        switch (vt)
-                        {
-                            case 0: // String
-                                {
-                                    var name = dr["name"] as string;
-                                    var val = dr["vstr"] as string;
-                                    ret.Add(name, val);
-                                    break;
-                                }
-                            case 1: // int
-                                {
-                                    var name = dr["name"] as string;
-                                    var val = (int) ((long) dr["vint"]);
-                                    ret.Add(name, val);
-                                    break;
-                                }
-                            case 2: //char
-                                {
-                                    var name = dr["name"] as string;
-                                    var val = dr["vstr"] as string;
-                                    ret.Add(name, val);
-                                    break;
-                                }
-                        }
+                        var name = dr["name"] as string;
+                        if (name != null)
+                            switch (vt)
+                            {
+                                case 0: // String
+                                    {
+                                        var val = dr["vstr"] as string;
+                                        ret.Add(name, val);
+                                        break;
+                                    }
+                                case 1: // int
+                                    {
+                                        var val = (int) ((long) dr["vint"]);
+                                        ret.Add(name, val);
+                                        break;
+                                    }
+                                case 2: //char
+                                    {
+                                        var val = dr["vstr"] as string;
+                                        ret.Add(name, val);
+                                        break;
+                                    }
+                            }
                     }
                 }
             }
@@ -166,15 +174,20 @@ namespace Octgn.Data
                 {
                     if (dr.Read())
                     {
-                        var result = new CardModel
-                                         {
-                                             Id = Guid.Parse(dr["id"] as string),
-                                             Name = (string) dr["name"],
-                                             ImageUri = (string) dr["image"],
-                                             Set = GetSet(Guid.Parse(dr["set_id"] as string)),
-                                             Properties = GetCardProperties(id)
-                                         };
-                        return result;
+                        var did = dr["id"] as string;
+                        var sid = dr["set_id"] as string;
+                        if (sid != null && did != null)
+                        {
+                            var result = new CardModel
+                                             {
+                                                 Id = Guid.Parse(did),
+                                                 Name = (string) dr["name"],
+                                                 ImageUri = (string) dr["image"],
+                                                 Set = GetSet(Guid.Parse(sid)),
+                                                 Properties = GetCardProperties(id)
+                                             };
+                            return result;
+                        }
                     }
                 }
             }
@@ -194,11 +207,14 @@ namespace Octgn.Data
                 {
                     while (dr.Read())
                     {
+                        var did = dr["id"] as string;
+                        var sid = dr["set_id"] as string;
+                        if (sid == null || did == null) return ret;
                         var result = new MarkerModel(
-                            Guid.Parse(dr["id"] as string),
+                            Guid.Parse(did),
                             (string) dr["name"],
                             (string) dr["icon"],
-                            GetSet(Guid.Parse(dr["set_id"] as string))
+                            GetSet(Guid.Parse(sid))
                             );
                         ret.Add(result);
                     }
@@ -219,9 +235,13 @@ namespace Octgn.Data
                 {
                     if (dr.Read())
                     {
-                        Set set = GetSet(Guid.Parse(dr["set_id"] as string));
-                        var xml = dr["xml"] as string;
-                        return new Pack(set, xml);
+                        var setid = dr["set_id"] as string;
+                        if (setid != null)
+                        {
+                            Set set = GetSet(Guid.Parse(setid));
+                            var xml = dr["xml"] as string;
+                            return new Pack(set, xml);
+                        }
                     }
                 }
             }
@@ -244,8 +264,9 @@ namespace Octgn.Data
                     using (
                         Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (GamesRepository),
                                                                                              "CardSet.xsd"))
-                    using (XmlReader reader = XmlReader.Create(s))
-                        settings.Schemas.Add(null, reader);
+                        if (s != null)
+                            using (XmlReader reader = XmlReader.Create(s))
+                                settings.Schemas.Add(null, reader);
 
                     // Read the cards
                     using (XmlReader reader = XmlReader.Create(definition.GetStream(), settings))
@@ -259,8 +280,8 @@ namespace Octgn.Data
                         if (set.GameVersion.Major != Version.Major || set.GameVersion.Minor != Version.Minor)
                             throw new ApplicationException(
                                 string.Format(
-                                    "The set '{0}' is incompatible with the installed game version.\nGame version: {1:2}\nSet made for version: {2:2}.",
-                                    set.Name, Version, set.GameVersion));
+                                    "The set '{0}' is incompatible with the installed game version.\nGame version: \nSet made for version: {1:2}.",
+                                    set.Name, set.GameVersion));
 
                         InsertSet(set);
 
@@ -333,7 +354,7 @@ namespace Octgn.Data
             }
         }
 
-        private void InsertSet(Set set)
+        private static void InsertSet(Set set)
         {
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
@@ -357,7 +378,7 @@ namespace Octgn.Data
             }
         }
 
-        private void InsertPack(Pack pack, string xml, Guid setId)
+        private static void InsertPack(Pack pack, string xml, Guid setId)
         {
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
@@ -403,7 +424,7 @@ namespace Octgn.Data
         private void InsertCard(CardModel card)
         {
             var sb = new StringBuilder();
-            using (var com = GamesRepository.DatabaseConnection.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 //Build Query
                 sb.Append("INSERT INTO [cards](");
@@ -427,10 +448,10 @@ namespace Octgn.Data
             sb.Append(") VALUES(");
             sb.Append("@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
             sb.Append(");\n");
-            var command = sb.ToString();
-            foreach (var pair in card.Properties)
+            string command = sb.ToString();
+            foreach (KeyValuePair<string, object> pair in card.Properties)
             {
-                using (var com = GamesRepository.DatabaseConnection.CreateCommand())
+                using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
                 {
                     com.CommandText = command;
                     com.Parameters.AddWithValue("@id", pair.Key + card.Id);
@@ -463,19 +484,21 @@ namespace Octgn.Data
         private ObservableCollection<Set> GetAllSets()
         {
             var result = new ObservableCollection<Set>();
-            using (var com = GamesRepository.DatabaseConnection.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "SElECT * FROM [sets] WHERE [game_real_id]=(SELECT real_id FROM games WHERE id = @game_id LIMIT 1);";
 
                 com.Parameters.AddWithValue("@game_id", Id.ToString());
-                using (var dr = com.ExecuteReader())
+                using (SQLiteDataReader dr = com.ExecuteReader())
                 {
                     while (dr.Read())
                     {
+                        var guid = dr["id"] as string;
+                        if (guid == null) continue;
                         var s = new Set
                                     {
-                                        Id = Guid.Parse(dr["id"] as string),
+                                        Id = Guid.Parse(guid),
                                         Name = (string) dr["name"],
                                         Game = this,
                                         GameVersion = new Version((string) dr["game_version"]),
@@ -493,13 +516,13 @@ namespace Octgn.Data
         private List<PropertyDef> GetCustomProperties()
         {
             var ret = new List<PropertyDef>();
-            using (var com = GamesRepository.DatabaseConnection.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText = "SElECT DISTINCT name, type FROM [custom_properties] WHERE [game_id]=@game_id;";
                 //com.CommandText = "SElECT * FROM [custom_properties] WHERE [game_id]=@game_id AND [card_id]='';";
 
                 com.Parameters.AddWithValue("@game_id", Id.ToString());
-                using (var dr = com.ExecuteReader())
+                using (SQLiteDataReader dr = com.ExecuteReader())
                 {
                     var dl = new Dictionary<string, PropertyType>();
                     while (dr.Read())
@@ -519,8 +542,9 @@ namespace Octgn.Data
                                 pt = PropertyType.Char;
                                 break;
                         }
-                        if (!dl.ContainsKey(name))
-                            dl.Add(name, pt);
+                        if (name != null)
+                            if (!dl.ContainsKey(name))
+                                dl.Add(name, pt);
                     }
                     ret.AddRange(dl.Select(d => new PropertyDef(d.Key, d.Value)));
                 }
@@ -531,7 +555,7 @@ namespace Octgn.Data
 
         internal void CopyDecks(string filename)
         {
-            using (var package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 CopyDecks(package);
             }
@@ -539,19 +563,23 @@ namespace Octgn.Data
 
         internal void CopyDecks(Package package)
         {
-            var path = Path.Combine(GamesRepository.BasePath, "Decks");
-            var decks = package.GetRelationshipsByType("http://schemas.octgn.org/set/deck");
+            string path = Path.Combine(GamesRepository.BasePath, "Decks");
+            PackageRelationshipCollection decks = package.GetRelationshipsByType("http://schemas.octgn.org/set/deck");
             var buffer = new byte[0x1000];
-            foreach (var deckRel in decks)
+            foreach (PackageRelationship deckRel in decks)
             {
-                var deck = package.GetPart(deckRel.TargetUri);
-                var deckFilename = Path.Combine(path, Path.GetFileName(deck.Uri.ToString()));
-                using (var deckStream = deck.GetStream(FileMode.Open, FileAccess.Read))
-                using (var targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write, FileShare.Read))
+                PackagePart deck = package.GetPart(deckRel.TargetUri);
+                string deckuri = Path.GetFileName(deck.Uri.ToString());
+                if (deckuri == null) continue;
+                string deckFilename = Path.Combine(path, deckuri);
+                using (Stream deckStream = deck.GetStream(FileMode.Open, FileAccess.Read))
+                using (
+                    FileStream targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write, FileShare.Read)
+                    )
                 {
                     while (true)
                     {
-                        var read = deckStream.Read(buffer, 0, buffer.Length);
+                        int read = deckStream.Read(buffer, 0, buffer.Length);
                         if (read == 0) break;
                         targetStream.Write(buffer, 0, read);
                     }
@@ -563,7 +591,7 @@ namespace Octgn.Data
         {
             var cards = new DataTable();
             var customProperties = new DataTable();
-            using (var com = GamesRepository.DatabaseConnection.CreateCommand())
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE game_id=@game_id;";
@@ -575,20 +603,20 @@ namespace Octgn.Data
                 com.Parameters.AddWithValue("@game_id", Id.ToString());
                 customProperties.Load(com.ExecuteReader());
             }
-            foreach (var d in CustomProperties)
+            foreach (PropertyDef d in CustomProperties)
             {
                 cards.Columns.Add(d.Name);
             }
 
-            var i = 0;
+            int i = 0;
             foreach (
                 DataRow[] props in
                     from DataRow card in cards.Rows select customProperties.Select("card_real_id = " + card["real_id"]))
             {
-                foreach (var prop in props)
+                foreach (DataRow prop in props)
                 {
                     var cname = prop["name"] as string;
-                    if (!cards.Columns.Contains(cname))
+                    if (cname == null || !cards.Columns.Contains(cname))
                         continue;
                     var t = (int) ((long) prop["type"]);
                     switch (t)
@@ -611,8 +639,8 @@ namespace Octgn.Data
             var sb = new StringBuilder();
             if (conditions != null && conditions.Length > 0)
             {
-                var connector = "";
-                foreach (var condition in conditions)
+                string connector = "";
+                foreach (string condition in conditions)
                 {
                     sb.Append(connector);
                     sb.Append("(");
@@ -622,12 +650,12 @@ namespace Octgn.Data
                 }
                 cards.CaseSensitive = false;
 
-                var dtnw = cards.Clone();
+                DataTable dtnw = cards.Clone();
                 dtnw.Rows.Clear();
 
-                var rows = cards.Select(sb.ToString());
+                DataRow[] rows = cards.Select(sb.ToString());
 
-                foreach (var r in rows)
+                foreach (DataRow r in rows)
                     dtnw.ImportRow(r);
 
                 cards.Rows.Clear();
@@ -647,17 +675,17 @@ namespace Octgn.Data
             if (count < 0) throw new ArgumentOutOfRangeException("count");
             if (count == 0) return Enumerable.Empty<CardModel>();
 
-            var table = SelectCards(conditions);
+            DataTable table = SelectCards(conditions);
             IEnumerable<DataRow> candidates;
             if (table.Rows.Count <= count)
                 candidates = table.Rows.Cast<DataRow>();
             else
             {
                 var rnd = new Random();
-                var indexes = from i in Enumerable.Range(0, table.Rows.Count)
-                              let pair = new KeyValuePair<int, double>(i, rnd.NextDouble())
-                              orderby pair.Value
-                              select pair.Key;
+                IEnumerable<int> indexes = from i in Enumerable.Range(0, table.Rows.Count)
+                                           let pair = new KeyValuePair<int, double>(i, rnd.NextDouble())
+                                           orderby pair.Value
+                                           select pair.Key;
                 candidates = from i in indexes.Take(count)
                              select table.Rows[i];
             }

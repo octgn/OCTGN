@@ -395,7 +395,7 @@ namespace Octgn.Controls
                                                        be.UpdateTarget();
                                                        // if the value has been reject (e.g. bad format)
                                                    }
-                                                   var window = Window.GetWindow(box);
+                                                   Window window = Window.GetWindow(box);
                                                    if (window != null)
                                                        ((UIElement) window.Content).MoveFocus(
                                                            new TraversalRequest(FocusNavigationDirection.First));
@@ -406,7 +406,7 @@ namespace Octgn.Controls
                                                    var box = (TextBox) sender;
                                                    BindingExpression be = box.GetBindingExpression(TextBox.TextProperty);
                                                    if (be != null) be.UpdateTarget();
-                                                   var window = Window.GetWindow(box);
+                                                   Window window = Window.GetWindow(box);
                                                    if (window != null)
                                                        ((UIElement) window.Content).MoveFocus(
                                                            new TraversalRequest(FocusNavigationDirection.First));
