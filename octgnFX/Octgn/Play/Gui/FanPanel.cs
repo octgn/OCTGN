@@ -66,7 +66,7 @@ namespace Octgn.Play.Gui
         public int GetIndexFromPoint(Point position)
         {
             if (Math.Abs(_itemSkipSize - 0) < double.Epsilon) return 0;
-            var idx = position.X < 0 ? 0 : (int) (position.X/_itemSkipSize + 0.5);
+            int idx = position.X < 0 ? 0 : (int) (position.X/_itemSkipSize + 0.5);
             if (idx > Children.Count) idx = Children.Count;
             return idx;
         }
@@ -92,7 +92,7 @@ namespace Octgn.Play.Gui
             if (_insertAdorner == null)
             {
                 _insertAdorner = new InsertAdorner(this);
-                var layer = AdornerLayer.GetAdornerLayer(this);
+                AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
                 layer.Add(_insertAdorner);
             }
 
@@ -114,7 +114,7 @@ namespace Octgn.Play.Gui
         public void HideInsertIndicator()
         {
             if (_insertAdorner == null) return;
-            var layer = AdornerLayer.GetAdornerLayer(this);
+            AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
             layer.Remove(_insertAdorner);
             _insertAdorner = null;
             CancelSpacing();
@@ -221,8 +221,8 @@ namespace Octgn.Play.Gui
 
             // Assume all children have the same width
             if (Math.Abs(Children[0].DesiredSize.Height - 0) < double.Epsilon) return finalSize;
-            var ratio = finalSize.Height/Children[0].DesiredSize.Height;
-            var childWidth = Children[0].DesiredSize.Width*ratio;
+            double ratio = finalSize.Height/Children[0].DesiredSize.Height;
+            double childWidth = Children[0].DesiredSize.Width*ratio;
 
             // Check if enough space is available
             _itemSkipSize = childWidth + 2;
@@ -268,11 +268,11 @@ namespace Octgn.Play.Gui
                 child.Arrange(new Rect(new Point(xposition, 0), child.DesiredSize));
 
                 // Perform layout to layout animation                
-                var oldPos = GetXPosition(child);
+                double oldPos = GetXPosition(child);
                 if (!double.IsNaN(oldPos) && Math.Abs(xposition - oldPos) > 2)
                 {
                     var translate2 = (TranslateTransform) group.Children[2];
-                    var delay = TimeSpan.FromSeconds(animationDelay);
+                    TimeSpan delay = TimeSpan.FromSeconds(animationDelay);
                     Animation.FillBehavior = FillBehavior.Stop;
                     Animation.From = oldPos - xposition;
                     Animation.To = 0;

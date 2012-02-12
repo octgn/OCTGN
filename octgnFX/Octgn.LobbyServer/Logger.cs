@@ -15,7 +15,7 @@ namespace Skylabs.LobbyServer
             get
             {
                 var sb = new StringBuilder();
-                for (var i = 0; i < CurIndent; i++)
+                for (int i = 0; i < CurIndent; i++)
                 {
                     sb.Append("    ");
                 }
@@ -26,10 +26,10 @@ namespace Skylabs.LobbyServer
         public static void Er(Exception e, params string[] extras)
         {
             var st = new StackTrace();
-            var frames = st.GetFrames();
-            var methodName = "UnknownMethod";
+            StackFrame[] frames = st.GetFrames();
+            string methodName = "UnknownMethod";
             if (frames != null)
-                for (var i = 0; i < frames.Length; i++)
+                for (int i = 0; i < frames.Length; i++)
                 {
                     if (frames[i].GetMethod().Name != MethodBase.GetCurrentMethod().Name) continue;
                     if (i + 1 >= frames.Length) continue;
@@ -42,7 +42,7 @@ namespace Skylabs.LobbyServer
             Console.WriteLine("==========StackTrace==========");
             Console.WriteLine(e.StackTrace ?? st.ToString());
             Console.WriteLine("=============END==============");
-            foreach (var s in extras)
+            foreach (string s in extras)
                 Console.WriteLine(s);
         }
     }

@@ -51,7 +51,7 @@ namespace Octgn.Play
 
         public void AddAnswer2(Player lPlayer, ulong decrypted)
         {
-            foreach (var v in _values.Where(v => v.Player == lPlayer))
+            foreach (RandomValue v in _values.Where(v => v.Player == lPlayer))
             {
                 v.Decrypted = decrypted;
                 v.CheckConsistency();
@@ -72,8 +72,8 @@ namespace Octgn.Play
             }
             else
             {
-                var xorResult = _values.Aggregate(0, (current, value) => current ^ (int) (value.Decrypted & 0xffffff));
-                var relativeValue = xorResult/(double) 0xffffff;
+                int xorResult = _values.Aggregate(0, (current, value) => current ^ (int) (value.Decrypted & 0xffffff));
+                double relativeValue = xorResult/(double) 0xffffff;
                 Result = (int) Math.Truncate((_max - _min + 1)*relativeValue) + _min;
                 if (Result > _max) Result = _max; // this handles the extremely rare case where relativeValue == 1.0
             }
@@ -117,7 +117,7 @@ namespace Octgn.Play
 
             public void CheckConsistency()
             {
-                var correct = Crypto.ModExp(Decrypted);
+                ulong correct = Crypto.ModExp(Decrypted);
                 if (correct != Encrypted)
                     Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event,
                                              "[CheckConsistency] Random number doesn't match. One client is buggy or tries to cheat.");

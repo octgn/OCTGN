@@ -223,7 +223,7 @@ namespace Skylabs.Lobby.Sockets
                         return;
                     if (Sock.Client == null)
                         return;
-                    var rin = Sock.Client.EndReceive(ar);
+                    int rin = Sock.Client.EndReceive(ar);
                     if (rin > 0)
                     {
                         if (rin != 256)
@@ -322,7 +322,7 @@ namespace Skylabs.Lobby.Sockets
                 }
                 while (_builder.SmQueue.Count > 0)
                 {
-                    var sm = _builder.SmQueue.Dequeue();
+                    SocketMessage sm = _builder.SmQueue.Dequeue();
                     if (sm == null) continue;
                     if (OnMessageReceived != null)
                         OnMessageReceived.BeginInvoke(this, (SocketMessage) sm.Clone(), null, null);
@@ -337,8 +337,8 @@ namespace Skylabs.Lobby.Sockets
             {
                 if (IsDisposed)
                     return;
-                var data = SocketMessage.Serialize(message);
-                var messagesize = BitConverter.GetBytes(data.LongLength);
+                byte[] data = SocketMessage.Serialize(message);
+                byte[] messagesize = BitConverter.GetBytes(data.LongLength);
                 try
                 {
                     Sock.Client.Send(messagesize);

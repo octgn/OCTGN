@@ -25,7 +25,7 @@ namespace Octgn.Data
             Name = reader.Value;
             reader.MoveToAttribute("id");
             Id = new Guid(reader.Value);
-            var cardImageUri = definition.GetRelationship("C" + Id.ToString("N")).TargetUri;
+            Uri cardImageUri = definition.GetRelationship("C" + Id.ToString("N")).TargetUri;
             ImageUri = cardImageUri.OriginalString;
             if (!package.PartExists(cardImageUri))
                 throw new Exception(string.Format("Image for card '{0}', with URI '{1}' was not found in the package.",
@@ -37,7 +37,7 @@ namespace Octgn.Data
             while (reader.IsStartElement("property"))
             {
                 reader.MoveToAttribute("name");
-                var prop = game.CustomProperties.FirstOrDefault(p => p.Name == reader.Value);
+                PropertyDef prop = game.CustomProperties.FirstOrDefault(p => p.Name == reader.Value);
                 if (prop == null)
                     throw new ArgumentException(string.Format("The property '{0}' is unknown", reader.Value));
                 reader.MoveToAttribute("value");
@@ -84,7 +84,7 @@ namespace Octgn.Data
         {
             get
             {
-                var alternateUri = ImageUri.Replace(".jpg", ".b.jpg");
+                string alternateUri = ImageUri.Replace(".jpg", ".b.jpg");
                 return Set.GetPackUri() + alternateUri;
             }
         }
@@ -108,7 +108,7 @@ namespace Octgn.Data
 
         internal static CardModel FromDataRow(Game game, DataRow row)
         {
-            var columns = row.Table.Columns;
+            DataColumnCollection columns = row.Table.Columns;
             var result = new CardModel
                              {
                                  Id = (Guid) row["id"],
@@ -119,7 +119,7 @@ namespace Octgn.Data
                                      new SortedList<string, object>(columns.Count - 4,
                                                                     StringComparer.InvariantCultureIgnoreCase)
                              };
-            for (var i = 4; i < columns.Count; ++i)
+            for (int i = 4; i < columns.Count; ++i)
                 result.Properties.Add(columns[i].ColumnName, row.IsNull(i) ? null : row[i]);
             return result;
         }
@@ -152,8 +152,8 @@ namespace Octgn.Data
             if (_isName)
                 return String.CompareOrdinal(x.Name, y.Name);
 
-            var px = x.Properties[_propertyName];
-            var py = y.Properties[_propertyName];
+            object px = x.Properties[_propertyName];
+            object py = y.Properties[_propertyName];
             if (px == null) return py == null ? 0 : -1;
             return ((IComparable) px).CompareTo(py);
         }

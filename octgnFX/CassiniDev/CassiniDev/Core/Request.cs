@@ -156,7 +156,7 @@ namespace CassiniDev
 
                 _headersSent = true;
             }
-            foreach (var bytes in _responseBodyBytes)
+            foreach (byte[] bytes in _responseBodyBytes)
             {
                 _connection.WriteBody(bytes, 0, bytes.Length);
             }

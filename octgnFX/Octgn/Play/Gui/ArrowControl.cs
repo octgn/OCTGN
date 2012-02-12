@@ -85,25 +85,25 @@ namespace Octgn.Play.Gui
 
         private void ComputeShape()
         {
-            var arrowHalfWidth = Program.Game.Definition.TableDefinition.Height*0.017; // 1/60th
-            var headHalfWidth = arrowHalfWidth*HeadHalfWidthFactor;
-            var headLength = arrowHalfWidth*HeadLengthFactor;
+            double arrowHalfWidth = Program.Game.Definition.TableDefinition.Height*0.017; // 1/60th
+            double headHalfWidth = arrowHalfWidth*HeadHalfWidthFactor;
+            double headLength = arrowHalfWidth*HeadLengthFactor;
 
             // Compute the arrow base point so that the arrow tip is approximately at the ToPoint
-            var dir = ToPoint - FromPoint;
+            Vector dir = ToPoint - FromPoint;
             dir.Normalize();
             var ortho = new Vector(-dir.Y, dir.X);
-            var arrowBasePoint = ToPoint + (-dir*CurvatureAlong + ortho*CurvatureOrtho)*headLength*2;
+            Point arrowBasePoint = ToPoint + (-dir*CurvatureAlong + ortho*CurvatureOrtho)*headLength*2;
 
             // Compute the base direction and othogonal vectors
             dir = arrowBasePoint - FromPoint;
-            var length = dir.Length;
+            double length = dir.Length;
             dir /= length;
             ortho = new Vector(-dir.Y, dir.X);
-            var widthVec = ortho*arrowHalfWidth;
+            Vector widthVec = ortho*arrowHalfWidth;
             // Compute the base bezier control points (actually compute vectors)
-            var bezierBase = (dir*CurvatureAlong + ortho*CurvatureOrtho)*length;
-            var bezierTip = (-dir*CurvatureAlong + ortho*CurvatureOrtho)*length;
+            Vector bezierBase = (dir*CurvatureAlong + ortho*CurvatureOrtho)*length;
+            Vector bezierTip = (-dir*CurvatureAlong + ortho*CurvatureOrtho)*length;
 
             // Set the four base points
             _startPt1.StartPoint = FromPoint - widthVec;
@@ -123,7 +123,7 @@ namespace Octgn.Play.Gui
             dir.Normalize();
             ortho = new Vector(-dir.Y, dir.X);
             // Compute the three tip points
-            var headVec = ortho*headHalfWidth;
+            Vector headVec = ortho*headHalfWidth;
             _arrowPt1.Point = arrowBasePoint - headVec;
             _arrowPt2.Point = arrowBasePoint + headVec;
             _headPt.Point = arrowBasePoint + dir*headLength;

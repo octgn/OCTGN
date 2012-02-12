@@ -12,6 +12,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Octgn.Definitions;
 using Octgn.Play.Gui.Adorners;
 using Octgn.Scripting;
 using Octgn.Utils;
@@ -84,7 +85,7 @@ namespace Octgn.Play.Gui
 
             //fix MAINWINDOW bug
             _mainWin = Program.PlayWindow;
-            var markerSize = Program.Game.Definition.MarkerSize;
+            int markerSize = Program.Game.Definition.MarkerSize;
             if (markerSize == 0) markerSize = 20;
             markers.Margin = new Thickness(markerSize/8);
             peekEyeIcon.Width = peekers.MinHeight = markerSize;
@@ -103,7 +104,7 @@ namespace Octgn.Play.Gui
                                    // don't propagate to the layout
                                    if (double.IsNaN(Width) && !double.IsNaN(Height))
                                    {
-                                       var cardDef = Program.Game.Definition.CardDefinition;
+                                       CardDef cardDef = Program.Game.Definition.CardDefinition;
                                        Width = cardDef.Width*Height/cardDef.Height;
                                    }
                                    target.Height = target.Width = Math.Min(Height, Width);
@@ -211,7 +212,7 @@ namespace Octgn.Play.Gui
             img.Measure(constraint);
             if (img.Clip != null)
             {
-                var cardDef = Program.Game.Definition.CardDefinition;
+                CardDef cardDef = Program.Game.Definition.CardDefinition;
                 var clipRect = ((RectangleGeometry) img.Clip);
                 clipRect.Rect = new Rect(img.DesiredSize);
                 clipRect.RadiusX = clipRect.RadiusY = cardDef.CornerRadius*clipRect.Rect.Height/cardDef.Height;
@@ -231,7 +232,7 @@ namespace Octgn.Play.Gui
             Card = DataContext as Card;
 
             if (Card == null) return;
-            var oldIsUp = IsUp;
+            bool oldIsUp = IsUp;
             IsUp = IsAlwaysUp || Card.FaceUp;
             // If IsUp changes, it automatically updates the picture. 
             // Otherwise do it explicitely
@@ -260,7 +261,7 @@ namespace Octgn.Play.Gui
             //    top of a pile at once, with the GroupWindow open.
             //    We can recognize this case because GroupControl.IsLoaded is true.
             //    In this case we *keep* the listeners attached!			
-            var groupCtrl = GroupControl;
+            GroupControl groupCtrl = GroupControl;
             if (groupCtrl != null && groupCtrl.IsLoaded) return;
 
             Card.PropertyChanged -= PropertyChangeHandler;
@@ -335,8 +336,8 @@ namespace Octgn.Play.Gui
 
         private void AnimateTurn(bool newIsUp)
         {
-            var delay = TimeSpan.Zero;
-            var group = GroupControl;
+            TimeSpan delay = TimeSpan.Zero;
+            GroupControl group = GroupControl;
             if (group != null)
                 delay = TimeSpan.FromMilliseconds(group.GetTurnAnimationDelay());
             var animY = new DoubleAnimation(1.1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.HoldEnd)
@@ -411,7 +412,7 @@ namespace Octgn.Play.Gui
             _isOverCount = false;
             if (!Card.Selected) Selection.Clear();
             _mousePt = e.GetPosition(this);
-            var window = Window.GetWindow(this);
+            Window window = Window.GetWindow(this);
             if (window != null)
                 _mouseWindowPt = TranslatePoint(_mousePt, (UIElement) window.Content);
             _dragSource = Keyboard.Modifiers == ModifierKeys.Shift ? DragSource.Target : DragSource.Card;
@@ -456,7 +457,7 @@ namespace Octgn.Play.Gui
         {
             base.OnMouseMove(e);
             e.Handled = true;
-            var pt = e.GetPosition(this);
+            Point pt = e.GetPosition(this);
             if (!_isDragging)
             {
                 // Check if the button was pressed over the card, and was not release on another control in the meantime 
@@ -475,7 +476,7 @@ namespace Octgn.Play.Gui
                     {
                         _isDragging = true;
                         RaiseEvent(new CardEventArgs(CardHoveredEvent, this));
-                        var layer = AdornerLayer.GetAdornerLayer(this);
+                        AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
                         _draggedArrow = new ArrowAdorner(Player.LocalPlayer, this);
                         layer.Add(_draggedArrow);
                     }
@@ -487,10 +488,10 @@ namespace Octgn.Play.Gui
                 {
                     case DragSource.Card:
                         {
-                            var window = Window.GetWindow(this);
+                            Window window = Window.GetWindow(this);
                             if (window != null)
                             {
-                                var windowPt = e.GetPosition((IInputElement) window.Content);
+                                Point windowPt = e.GetPosition((IInputElement) window.Content);
                                 DragMouseDelta(windowPt.X - _mouseWindowPt.X, windowPt.Y - _mouseWindowPt.Y);
                             }
                         }
@@ -541,8 +542,8 @@ namespace Octgn.Play.Gui
                         var dependencyObject = Mouse.DirectlyOver as DependencyObject;
                         while (dependencyObject != null && !(dependencyObject is CardControl))
                         {
-                            var parent = LogicalTreeHelper.GetParent(dependencyObject) ??
-                                         VisualTreeHelper.GetParent(dependencyObject);
+                            DependencyObject parent = LogicalTreeHelper.GetParent(dependencyObject) ??
+                                                      VisualTreeHelper.GetParent(dependencyObject);
                             dependencyObject = parent;
                         }
 
@@ -572,7 +573,7 @@ namespace Octgn.Play.Gui
             _isDragging = true;
 
             // Keep control of the card and the group it's in
-            foreach (var c in DraggedCards) c.KeepControl();
+            foreach (Card c in DraggedCards) c.KeepControl();
             Card.Group.KeepControl();
 
             // Hides the card view
@@ -591,7 +592,7 @@ namespace Octgn.Play.Gui
             if (mwn != null)
                 layer = AdornerLayer.GetAdornerLayer(mwn);
             double offset = 0;
-            var step = ActualWidth*1.05;
+            double step = ActualWidth*1.05;
             // HACK: if the selected card is in HandControl, its ContentPresenter has a RenderTransform, 
             // which we must account for
             if (GroupControl is HandControl)
@@ -600,7 +601,7 @@ namespace Octgn.Play.Gui
                 if (parent != null)
                     step = 1.05*parent.RenderTransform.TransformBounds(new Rect(0, 0, ActualWidth, 0)).Width;
             }
-            foreach (var cardCtrl in Selection.GetCardControls(GroupControl, this))
+            foreach (CardControl cardCtrl in Selection.GetCardControls(GroupControl, this))
             {
                 // Create an adorner                
                 if (Card.Group is Table)
@@ -644,15 +645,15 @@ namespace Octgn.Play.Gui
         protected void DragCardCompleted()
         {
             // Release the card and its group
-            foreach (var c in DraggedCards) c.ReleaseControl();
+            foreach (Card c in DraggedCards) c.ReleaseControl();
             Card.Group.ReleaseControl();
 
             // Remove the visual feedback
             var mwc = _mainWin.Content as Visual;
             if (mwc != null)
             {
-                var layer = AdornerLayer.GetAdornerLayer(mwc);
-                foreach (var overlay in OverlayElements)
+                AdornerLayer layer = AdornerLayer.GetAdornerLayer(mwc);
+                foreach (CardDragAdorner overlay in OverlayElements)
                 {
                     layer.Remove(overlay);
                     overlay.Dispose();
@@ -668,7 +669,7 @@ namespace Octgn.Play.Gui
             }
 
             // Raise CardDroppedEvent
-            var res = Mouse.DirectlyOver;
+            IInputElement res = Mouse.DirectlyOver;
             if (res != null)
             {
                 var args = new CardsEventArgs(Card, DraggedCards, CardDroppedEvent, this)
@@ -683,9 +684,9 @@ namespace Octgn.Play.Gui
             // FIX (jods): if the cards have been moved to another group, groupCtrl is null.
             //					 	 But in this case nothing has to be done opacity-wise since 
             //					   the CardControls have been unloaded.
-            var groupCtrl = GroupControl;
+            GroupControl groupCtrl = GroupControl;
             if (groupCtrl != null)
-                foreach (var cardCtrl in Selection.GetCardControls(groupCtrl, this))
+                foreach (CardControl cardCtrl in Selection.GetCardControls(groupCtrl, this))
                     cardCtrl.Opacity = 1;
 
             DraggedCards.Clear();
@@ -693,12 +694,12 @@ namespace Octgn.Play.Gui
 
         protected void DragMouseDelta(double dx, double dy)
         {
-            var res = _mainWin.InputHitTest(Mouse.GetPosition(_mainWin));
+            IInputElement res = _mainWin.InputHitTest(Mouse.GetPosition(_mainWin));
 
             // Raise CardOverEvent
             if (res != null)
             {
-                foreach (var overlay in OverlayElements) overlay.OnHoverRequestInverted = false;
+                foreach (CardDragAdorner overlay in OverlayElements) overlay.OnHoverRequestInverted = false;
                 var overArgs = new CardsEventArgs(Card, DraggedCards, CardOverEvent, this)
                                    {MouseOffset = _mouseOffset, Adorners = OverlayElements};
                 res.RaiseEvent(overArgs);
@@ -716,7 +717,7 @@ namespace Octgn.Play.Gui
                     if (!overArgs.FaceUp.HasValue)
                         overArgs.FaceUp = (Keyboard.Modifiers & ModifierKeys.Shift) == 0;
 
-                    foreach (var overlay in OverlayElements)
+                    foreach (CardDragAdorner overlay in OverlayElements)
                         overlay.SetState(dx, dy, true, overArgs.CardSize, overArgs.FaceUp.Value,
                                          overlay.OnHoverRequestInverted);
 
@@ -730,7 +731,7 @@ namespace Octgn.Play.Gui
             }
 
             // Update the visual feedback (can't drop)
-            foreach (var overlay in OverlayElements)
+            foreach (CardDragAdorner overlay in OverlayElements)
                 overlay.SetState(dx, dy, false, Size.Empty, false, false);
         }
 
@@ -739,18 +740,18 @@ namespace Octgn.Play.Gui
             if (current == previous) return;
             if (DraggedCards.Count <= 1) return;
 
-            var isFirst = true;
+            bool isFirst = true;
             // Collapse if we leave the table
             if (previous is TableControl)
             {
-                foreach (var overlay in OverlayElements)
+                foreach (CardDragAdorner overlay in OverlayElements)
                 {
                     if (overlay.SourceCard == this && isFirst)
                     {
                         isFirst = false;
                         continue;
                     }
-                    var cardCtrl = overlay.SourceCard;
+                    CardControl cardCtrl = overlay.SourceCard;
                     double dx = Card.X - cardCtrl.Card.X, dy = Card.Y - cardCtrl.Card.Y;
                     overlay.CollapseTo(dx*ScaleFactor.Width, dy*ScaleFactor.Height);
                 }
@@ -758,7 +759,7 @@ namespace Octgn.Play.Gui
                 // Expand if we enter the table 			
             else if (current is TableControl)
             {
-                foreach (var overlay in OverlayElements)
+                foreach (CardDragAdorner overlay in OverlayElements)
                 {
                     if (overlay.SourceCard == this && isFirst)
                     {
@@ -777,7 +778,7 @@ namespace Octgn.Play.Gui
 
         public void CreateArrowTo(Player player, CardControl toCard)
         {
-            var layer = AdornerLayer.GetAdornerLayer(this);
+            AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
             var arrow = new ArrowAdorner(player, this);
             layer.Add(arrow);
             arrow.LinkToCard(toCard);
@@ -838,7 +839,7 @@ namespace Octgn.Play.Gui
                 return;
             }
 
-            var e = te.KeyEventArgs;
+            KeyEventArgs e = te.KeyEventArgs;
             switch (e.Key)
             {
                 case Key.PageUp:
@@ -858,8 +859,8 @@ namespace Octgn.Play.Gui
                     goto default;
                 default:
                     // Look for a custom shortcut in the game definition
-                    var shortcuts = Card.Group.CardShortcuts;
-                    var match =
+                    ActionShortcut[] shortcuts = Card.Group.CardShortcuts;
+                    ActionShortcut match =
                         shortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
                     if (match != null && Card.Group.CanManipulate())
                     {
@@ -872,9 +873,9 @@ namespace Octgn.Play.Gui
                         else
                             break;
                         // If the card is on the table, extract the cursor position
-                        var pos = GroupControl is TableControl
-                                      ? ((TableControl) GroupControl).MousePosition()
-                                      : (Point?) null;
+                        Point? pos = GroupControl is TableControl
+                                         ? ((TableControl) GroupControl).MousePosition()
+                                         : (Point?) null;
                         if (match.ActionDef.Execute != null)
                             ScriptEngine.ExecuteOnCards(match.ActionDef.Execute, targets, pos);
                         else if (match.ActionDef.BatchExecute != null)
@@ -884,10 +885,10 @@ namespace Octgn.Play.Gui
                     }
 
                     // Look for a "Move to" shortcut
-                    var group =
+                    Group group =
                         Player.LocalPlayer.Groups.FirstOrDefault(
                             g => g.MoveToShortcut != null && g.MoveToShortcut.Matches(this, te.KeyEventArgs));
-                    var toBottom = false;
+                    bool toBottom = false;
                     // If no group is found, try to match a shortcut with "Alt" and use it as "Move to bottom"
                     if (group == null)
                     {
@@ -901,14 +902,14 @@ namespace Octgn.Play.Gui
                     }
                     if (group != null && group.CanManipulate())
                     {
-                        var moveAction = toBottom
-                                             ? (c => c.MoveTo(@group, true, @group.Count))
-                                             : new Action<Card>(c => c.MoveTo(group, true));
+                        Action<Card> moveAction = toBottom
+                                                      ? (c => c.MoveTo(@group, true, @group.Count))
+                                                      : new Action<Card>(c => c.MoveTo(group, true));
                         if (!Selection.IsEmpty())
                             Selection.ForEachModifiable(moveAction);
                         else if (count.IsMouseOver)
                         {
-                            for (var i = MultipleCards.Count - 1; i >= 0; --i)
+                            for (int i = MultipleCards.Count - 1; i >= 0; --i)
                             {
                                 var c = (Card) MultipleCards[i];
                                 if (c.CanManipulate()) moveAction(c);
@@ -952,8 +953,8 @@ namespace Octgn.Play.Gui
         {
             get
             {
-                var iter = ItemsControl.ItemsControlFromItemContainer(VisualTreeHelper.GetParent(this)) ??
-                           Parent as FrameworkElement;
+                FrameworkElement iter = ItemsControl.ItemsControlFromItemContainer(VisualTreeHelper.GetParent(this)) ??
+                                        Parent as FrameworkElement;
                 while (iter != null)
                 {
                     iter = iter.Parent as FrameworkElement;
@@ -973,7 +974,7 @@ namespace Octgn.Play.Gui
         internal Point GetMiddlePoint(bool invertRotation)
         {
             var middlePt = new Point(ActualWidth/2, ActualHeight/2);
-            var rotatedPt = rotate90.Transform(middlePt);
+            Point rotatedPt = rotate90.Transform(middlePt);
             if (invertRotation && _invertTransform != null)
                 rotatedPt = new Point(2*middlePt.X - rotatedPt.X, 2*middlePt.Y - rotatedPt.Y);
             return rotatedPt;

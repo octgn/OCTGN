@@ -27,8 +27,8 @@ namespace Octgn.Play.Gui.DragOperations
 
         public void Dragging(MouseEventArgs e)
         {
-            var newPos = e.GetPosition(Target);
-            var delta = newPos - _oldPos;
+            Point newPos = e.GetPosition(Target);
+            Vector delta = newPos - _oldPos;
             _oldPos = newPos;
             DraggingCore(newPos, delta);
             e.Handled = true;

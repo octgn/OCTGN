@@ -7,6 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Security;
 using System.Windows.Media;
+using Octgn.Data;
+using Octgn.Definitions;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Play.Actions;
@@ -71,7 +73,7 @@ namespace Octgn.Scripting
 
         public int PlayerHandId(int id)
         {
-            var hand = Player.Find((byte) id).Hand;
+            Hand hand = Player.Find((byte) id).Hand;
             return hand != null ? hand.Id : 0;
         }
 
@@ -99,7 +101,7 @@ namespace Octgn.Scripting
 
         public void CounterSet(int id, int value)
         {
-            var counter = Counter.Find(id);
+            Counter counter = Counter.Find(id);
             _engine.Invoke(() => counter.Value = value);
         }
 
@@ -168,7 +170,7 @@ namespace Octgn.Scripting
 
         public Tuple<int, int> CardSize()
         {
-            var def = Program.Game.Definition.CardDefinition;
+            CardDef def = Program.Game.Definition.CardDefinition;
             return Tuple.Create(def.Width, def.Height);
         }
 
@@ -179,7 +181,7 @@ namespace Octgn.Scripting
 
         public void SwitchImage(int id)
         {
-            var c = Card.Find(id);
+            Card c = Card.Find(id);
             //c.IsAlternateImage = (c.IsAlternateImage != true);
             _engine.Invoke(() => { c.IsAlternateImage = (c.IsAlternateImage != true); });
         }
@@ -191,14 +193,14 @@ namespace Octgn.Scripting
 
         public string CardModel(int id)
         {
-            var c = Card.Find(id);
+            Card c = Card.Find(id);
             if (!c.FaceUp || c.Type.Model == null) return null;
             return c.Type.Model.Id.ToString();
         }
 
         public object CardProperty(int id, string property)
         {
-            var c = Card.Find(id);
+            Card c = Card.Find(id);
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
             return c.Type.Model.Properties[property];
         }
@@ -225,7 +227,7 @@ namespace Octgn.Scripting
 
         public void CardSetFaceUp(int id, bool value)
         {
-            var card = Card.Find(id);
+            Card card = Card.Find(id);
             _engine.Invoke(() => card.FaceUp = value);
         }
 
@@ -237,36 +239,36 @@ namespace Octgn.Scripting
         public void CardSetOrientation(int id, int rot)
         {
             if (rot < 0 || rot > 3) throw new IndexOutOfRangeException("orientation must be between 0 and 3");
-            var card = Card.Find(id);
+            Card card = Card.Find(id);
             _engine.Invoke(() => card.Orientation = (CardOrientation) rot);
         }
 
         public string CardGetHighlight(int id)
         {
-            var colorOrNull = Card.Find(id).HighlightColor;
+            Color? colorOrNull = Card.Find(id).HighlightColor;
             if (colorOrNull == null) return null;
-            var color = colorOrNull.Value;
+            Color color = colorOrNull.Value;
             return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
         }
 
         public void CardSetHighlight(int id, string color)
         {
-            var card = Card.Find(id);
-            var value = color == null ? null : (Color?) ColorConverter.ConvertFromString(color);
+            Card card = Card.Find(id);
+            Color? value = color == null ? null : (Color?) ColorConverter.ConvertFromString(color);
             _engine.Invoke(() => card.HighlightColor = value);
         }
 
         public void CardPosition(int id, out double x, out double y)
         {
-            var c = Card.Find(id);
+            Card c = Card.Find(id);
             x = c.X;
             y = c.Y;
         }
 
         public void CardMoveTo(int cardId, int groupId, int? position)
         {
-            var card = Card.Find(cardId);
-            var group = Group.Find(groupId);
+            Card card = Card.Find(cardId);
+            Group group = Group.Find(groupId);
             _engine.Invoke(() =>
                                {
                                    if (position == null) card.MoveTo(group, true);
@@ -276,14 +278,14 @@ namespace Octgn.Scripting
 
         public void CardMoveToTable(int cardId, double x, double y, bool forceFaceDown)
         {
-            var c = Card.Find(cardId);
-            var faceUp = !forceFaceDown && (!(c.Group is Table) || c.FaceUp);
+            Card c = Card.Find(cardId);
+            bool faceUp = !forceFaceDown && (!(c.Group is Table) || c.FaceUp);
             _engine.Invoke(() => c.MoveToTable((int) x, (int) y, faceUp, Program.Game.Table.Count));
         }
 
         public void CardSelect(int id)
         {
-            var c = Card.Find(id);
+            Card c = Card.Find(id);
             // At the moment, only table and hand support multiple selection
             _engine.Invoke(() =>
                                {
@@ -305,7 +307,7 @@ namespace Octgn.Scripting
         //ralig98
         public void CardSetIndex(int CardId, int idx, bool TableOnly = false)
         {
-            var c = Card.Find(CardId);
+            Card c = Card.Find(CardId);
             if (TableOnly)
             {
                 if (c.Group is Table)
@@ -317,7 +319,7 @@ namespace Octgn.Scripting
 
         public void CardTarget(int id, bool active)
         {
-            var c = Card.Find(id);
+            Card c = Card.Find(id);
             _engine.Invoke(() =>
                                {
                                    if (active) c.Target();
@@ -327,7 +329,7 @@ namespace Octgn.Scripting
 
         public int CardTargeted(int id)
         {
-            var c = Card.Find(id);
+            Card c = Card.Find(id);
             return c.TargetedBy != null ? c.TargetedBy.Id : -1;
         }
 
@@ -338,16 +340,16 @@ namespace Octgn.Scripting
 
         public int MarkerGetCount(int cardId, string markerName, string markerId)
         {
-            var card = Card.Find(cardId);
-            var marker = card.FindMarker(Guid.Parse(markerId), markerName);
+            Card card = Card.Find(cardId);
+            Marker marker = card.FindMarker(Guid.Parse(markerId), markerName);
             return marker == null ? 0 : marker.Count;
         }
 
         public void MarkerSetCount(int cardId, int count, string markerName, string markerId)
         {
             if (count < 0) count = 0;
-            var card = Card.Find(cardId);
-            var guid = Guid.Parse(markerId);
+            Card card = Card.Find(cardId);
+            Guid guid = Guid.Parse(markerId);
             //Marker marker = card.FindMarker(guid, markerName);
             _engine.Invoke(() =>
                                {
@@ -362,7 +364,7 @@ namespace Octgn.Scripting
 
         public void Mute(bool muted)
         {
-            var job = _engine.CurrentJob;
+            ScriptJob job = _engine.CurrentJob;
             _engine.CurrentJob.muted = muted ? job.id : 0;
         }
 
@@ -388,7 +390,7 @@ namespace Octgn.Scripting
                                                 var dlg = new InputDlg("Question", question,
                                                                        defaultValue.ToString(
                                                                            CultureInfo.InvariantCulture));
-                                                var result = dlg.GetPositiveInt();
+                                                int result = dlg.GetPositiveInt();
                                                 return dlg.DialogResult.GetValueOrDefault() ? result : (int?) null;
                                             });
         }
@@ -466,7 +468,7 @@ namespace Octgn.Scripting
 
             _engine.Invoke(() =>
                                {
-                                   var model = Database.GetCardById(modelGuid);
+                                   CardModel model = Database.GetCardById(modelGuid);
                                    if (model == null)
                                    {
                                    }
@@ -477,7 +479,7 @@ namespace Octgn.Scripting
                                        var models = new Guid[quantity];
                                        int[] xs = new int[quantity], ys = new int[quantity];
 
-                                       var def = Program.Game.Definition.CardDefinition;
+                                       CardDef def = Program.Game.Definition.CardDefinition;
 
                                        if (Player.LocalPlayer.InvertedTable)
                                        {
@@ -488,10 +490,10 @@ namespace Octgn.Scripting
                                        if (Program.GameSettings.UseTwoSidedTable && TableControl.IsInInvertedZone(y))
                                            offset = -offset;
 
-                                       for (var i = 0; i < quantity; ++i)
+                                       for (int i = 0; i < quantity; ++i)
                                        {
-                                           var key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                                           var id = Program.Game.GenerateCardId();
+                                           ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
+                                           int id = Program.Game.GenerateCardId();
 
                                            new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
 
@@ -520,8 +522,8 @@ namespace Octgn.Scripting
 
         public Tuple<String, int> Web_Read(string url)
         {
-            var statusCode = 200;
-            var result = "";
+            int statusCode = 200;
+            string result = "";
             StreamReader reader = null;
 
             try
@@ -532,10 +534,10 @@ namespace Octgn.Scripting
                 permission.Assert();
 
 
-                var request = WebRequest.Create(url);
-                var response = request.GetResponse();
+                WebRequest request = WebRequest.Create(url);
+                WebResponse response = request.GetResponse();
 
-                var grs = response.GetResponseStream();
+                Stream grs = response.GetResponseStream();
                 if (grs != null)
                 {
                     reader = new StreamReader(grs);
@@ -619,8 +621,8 @@ namespace Octgn.Scripting
 
         public void PlayerSetGlobalVariable(int id, string name, object value)
         {
-            var val = String.Format("{0}", value);
-            var p = Player.Find((byte) id);
+            string val = String.Format("{0}", value);
+            Player p = Player.Find((byte) id);
             if (p == null || p.Id != Player.LocalPlayer.Id)
                 return;
             if (Player.LocalPlayer.GlobalVariables.ContainsKey(name))
@@ -632,7 +634,7 @@ namespace Octgn.Scripting
 
         public string PlayerGetGlobalVariable(int id, string name)
         {
-            var p = Player.Find((byte) id);
+            Player p = Player.Find((byte) id);
             if (p == null)
                 return "";
             return p.GlobalVariables.ContainsKey(name) ? p.GlobalVariables[name] : "";
@@ -640,7 +642,7 @@ namespace Octgn.Scripting
 
         public void SetGlobalVariable(string name, object value)
         {
-            var val = String.Format("{0}", value);
+            string val = String.Format("{0}", value);
             if (Program.Game.GlobalVariables.ContainsKey(name))
                 _engine.Invoke(() => Program.Game.GlobalVariables[name] = val);
             else

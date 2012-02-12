@@ -52,7 +52,7 @@ namespace Octgn.Play.Gui
         private void CardMoving(object sender, EventArgs e)
         {
             var action = (MoveCard) sender;
-            var table = Program.Game.Table;
+            Table table = Program.Game.Table;
             if (action.Who == Player.LocalPlayer || action.To != table || action.From != table)
                 return;
 
@@ -116,15 +116,15 @@ namespace Octgn.Play.Gui
         private void Untargetting(object sender, EventArgs e)
         {
             var targetAction = (Target) sender;
-            var card = (from ContentPresenter child in Children
-                        where child.DataContext == targetAction.FromCard
-                        select VisualTreeHelper.GetChild(child, 0) as CardControl).FirstOrDefault();
+            CardControl card = (from ContentPresenter child in Children
+                                where child.DataContext == targetAction.FromCard
+                                select VisualTreeHelper.GetChild(child, 0) as CardControl).FirstOrDefault();
             if (card == null) return; // Opponent moved the card out of the table concurently
 
-            var layer = AdornerLayer.GetAdornerLayer(card);
-            var adorners = layer.GetAdorners(card);
+            AdornerLayer layer = AdornerLayer.GetAdornerLayer(card);
+            Adorner[] adorners = layer.GetAdorners(card);
             if (adorners == null) return; // Opponent removed the target card out of the table concurently
-            foreach (var arrow in adorners.OfType<ArrowAdorner>())
+            foreach (ArrowAdorner arrow in adorners.OfType<ArrowAdorner>())
             {
                 layer.Remove(arrow);
             }

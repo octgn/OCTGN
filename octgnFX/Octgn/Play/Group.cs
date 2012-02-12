@@ -104,7 +104,7 @@ namespace Octgn.Play
         internal new static Group Find(int id)
         {
             if (id == 0x01000000) return Program.Game.Table;
-            var player = Player.Find((byte) (id >> 16));
+            Player player = Player.Find((byte) (id >> 16));
             return player.IndexedGroups[(byte) id];
         }
 
@@ -173,7 +173,7 @@ namespace Octgn.Play
         {
             if (baseActionDef == null) return new ActionShortcut[0];
 
-            var actionDef = baseActionDef
+            IEnumerable<ActionDef> actionDef = baseActionDef
                 .Flatten(x =>
                              {
                                  var y = x as ActionGroupDef;
@@ -181,22 +181,22 @@ namespace Octgn.Play
                              })
                 .OfType<ActionDef>();
 
-            var shortcuts = from action in actionDef
-                            where action.Shortcut != null
-                            select new ActionShortcut
-                                       {
-                                           Key =
-                                               (KeyGesture)
-                                               KeyConverter.ConvertFromInvariantString(
-                                                   action.Shortcut),
-                                           ActionDef = action
-                                       };
+            IEnumerable<ActionShortcut> shortcuts = from action in actionDef
+                                                    where action.Shortcut != null
+                                                    select new ActionShortcut
+                                                               {
+                                                                   Key =
+                                                                       (KeyGesture)
+                                                                       KeyConverter.ConvertFromInvariantString(
+                                                                           action.Shortcut),
+                                                                   ActionDef = action
+                                                               };
             return shortcuts.ToArray();
         }
 
         protected override void OnControllerChanged()
         {
-            foreach (var c in cards) CopyControllersTo(c);
+            foreach (Card c in cards) CopyControllersTo(c);
         }
 
         internal override bool CanManipulate()
@@ -246,7 +246,7 @@ namespace Octgn.Play
                 Viewers.Clear();
             }
 
-            foreach (var c in cards.Where(c => !c.OverrideGroupVisibility))
+            foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
                 c.SetVisibility(visibility, Viewers);
         }
 
@@ -262,7 +262,7 @@ namespace Octgn.Play
                 Program.Client.Rpc.GroupVisAddReq(this, player);
             visibility = GroupVisibility.Custom;
             Viewers.Add(player);
-            foreach (var c in cards.Where(c => !c.OverrideGroupVisibility))
+            foreach (Card c in cards.Where(c => !c.OverrideGroupVisibility))
                 c.SetVisibility(visibility, Viewers);
         }
 
@@ -274,16 +274,16 @@ namespace Octgn.Play
             Viewers.Remove(player);
             visibility = Viewers.Count == 0 ? GroupVisibility.Nobody : GroupVisibility.Custom;
             if (player == Player.LocalPlayer)
-                foreach (var c in cards)
+                foreach (Card c in cards)
                     c.SetFaceUp(false);
         }
 
         internal void OnShuffled()
         {
             // Remove player looking at the cards, if any (doesn't remove the need to remove those from the dictionary!)
-            foreach (var list in LookedAt.Values)
+            foreach (List<Card> list in LookedAt.Values)
                 list.Clear();
-            foreach (var c in Cards)
+            foreach (Card c in Cards)
                 c.PlayersLooking.Clear();
 
             // Notify trace event listeners
@@ -303,7 +303,7 @@ namespace Octgn.Play
 
         internal void SetCardIndex(Card card, int idx)
         {
-            var currentIdx = cards.IndexOf(card);
+            int currentIdx = cards.IndexOf(card);
             if (currentIdx == idx || currentIdx == -1) return;
             if (idx >= cards.Count) idx = cards.Count - 1;
             cards.Move(currentIdx, idx);
@@ -340,7 +340,7 @@ namespace Octgn.Play
 
         internal int FindNextFreeSlot(int slot)
         {
-            for (var i = slot + 1; i != slot; ++i)
+            for (int i = slot + 1; i != slot; ++i)
             {
                 if (i >= cards.Count) i = 0;
                 if (cards[i].Type == null) return i;

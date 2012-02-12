@@ -55,7 +55,7 @@ namespace Octgn.Launcher
             Program.IsHost = true;
 #if(DEBUG)
             var ad = new IPAddress[1];
-            var ip = IPAddress.Parse("127.0.0.1");
+            IPAddress ip = IPAddress.Parse("127.0.0.1");
 #else
             var ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
             IPAddress ip = ad[0];

@@ -34,7 +34,7 @@ namespace Octgn.Data
 
         public GamesRepository()
         {
-            var buildSchema = false;
+            bool buildSchema = false;
             if (!File.Exists(DatabaseFile))
             {
                 SQLiteConnection.CreateFile(DatabaseFile);
@@ -43,7 +43,7 @@ namespace Octgn.Data
 
             DatabaseConnection = new SQLiteConnection(ConString);
             DatabaseConnection.Open();
-            using (var com = DatabaseConnection.CreateCommand())
+            using (SQLiteCommand com = DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
                     "PRAGMA automatic_index=FALSE; PRAGMA synchronous=OFF; PRAGMA auto_vacuum=INCREMENTAL; PRAGMA foreign_keys=ON; PRAGMA encoding='UTF-8';";
@@ -52,17 +52,17 @@ namespace Octgn.Data
 
             if (buildSchema)
             {
-                using (var com = DatabaseConnection.CreateCommand())
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
                 {
-                    var md = Resource1.MakeDatabase;
+                    string md = Resource1.MakeDatabase;
                     com.CommandText = md;
                     com.ExecuteNonQuery();
                 }
             }
 
-            using (var com = DatabaseConnection.CreateCommand())
+            using (SQLiteCommand com = DatabaseConnection.CreateCommand())
             {
-                var md = Resource1.UpdateDatabase;
+                string md = Resource1.UpdateDatabase;
                 com.CommandText = md;
                 com.ExecuteNonQuery();
             }
@@ -110,7 +110,7 @@ namespace Octgn.Data
             {
                 var sb = new StringBuilder();
                 trans = DatabaseConnection.BeginTransaction();
-                using (var com = DatabaseConnection.CreateCommand())
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
                 {
                     //Build Query
                     sb.Append("INSERT OR REPLACE INTO [games](");
@@ -150,10 +150,10 @@ namespace Octgn.Data
                 sb.Append(
                     "@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
                 sb.Append(");\n");
-                var command = sb.ToString();
-                foreach (var pair in properties)
+                string command = sb.ToString();
+                foreach (PropertyDef pair in properties)
                 {
-                    using (var com = DatabaseConnection.CreateCommand())
+                    using (SQLiteCommand com = DatabaseConnection.CreateCommand())
                     {
                         com.CommandText = command;
                         com.Parameters.AddWithValue("@card_id", "");
@@ -186,7 +186,7 @@ namespace Octgn.Data
                 if (Debugger.IsAttached) Debugger.Break();
                 return;
             }
-            var existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
+            Game existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
             if (existingGame != null) _cachedGames.Remove(existingGame);
             _cachedGames.Add(game);
             if (GameInstalled != null)
@@ -196,10 +196,10 @@ namespace Octgn.Data
         private void GetGamesList()
         {
             _allCachedGames = new ObservableCollection<Game>();
-            using (var com = DatabaseConnection.CreateCommand())
+            using (SQLiteCommand com = DatabaseConnection.CreateCommand())
             {
                 com.CommandText = "SELECT * FROM games;";
-                using (var read = com.ExecuteReader())
+                using (SQLiteDataReader read = com.ExecuteReader())
                 {
                     while (read.Read())
                     {
@@ -222,7 +222,7 @@ namespace Octgn.Data
 
         private Game ReadGameFromTable(IDataRecord read)
         {
-            var temp = read["shared_deck_sections"];
+            object temp = read["shared_deck_sections"];
             string sharedDeckSections;
             if (temp == DBNull.Value)
                 sharedDeckSections = null;
@@ -250,7 +250,7 @@ namespace Octgn.Data
         private static string SerializeList(IEnumerable<string> list)
         {
             var sb = new StringBuilder();
-            foreach (var item in list)
+            foreach (string item in list)
             {
                 if (sb.Length > 0) sb.Append(",");
                 sb.Append(item.Replace(",", ",,"));
@@ -260,7 +260,7 @@ namespace Octgn.Data
 
         private static List<string> DeserializeList(string list)
         {
-            var sections = Regex.Split(list, "(?<!,),(?!,)");
+            string[] sections = Regex.Split(list, "(?<!,),(?!,)");
             return sections.Select(s => s.Replace(",,", ",")).ToList();
         }
     }

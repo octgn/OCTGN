@@ -251,7 +251,7 @@ namespace Octgn.Launcher
         {
             var values = new string[2];
 
-            var wbr = WebRequest.Create(url).GetResponse().GetResponseStream();
+            Stream wbr = WebRequest.Create(url).GetResponse().GetResponseStream();
             if (wbr != null)
                 using (XmlReader reader = XmlReader.Create(wbr))
                 {

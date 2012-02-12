@@ -21,13 +21,13 @@ namespace Octgn.Play.Gui
             if (player != null)
             {
                 player = (Player) e.OldValue;
-                foreach (var group in player.Groups.OfType<Pile>())
+                foreach (Pile group in player.Groups.OfType<Pile>())
                     group.PropertyChanged -= GroupPropertyChanged;
             }
 
             player = e.NewValue as Player;
             if (player == null) return;
-            foreach (var group in player.Groups.OfType<Pile>())
+            foreach (Pile group in player.Groups.OfType<Pile>())
                 group.PropertyChanged += GroupPropertyChanged;
         }
 
@@ -47,9 +47,9 @@ namespace Octgn.Play.Gui
             }
             else if (collapsedList.Items.Count > 0)
             {
-                var currentWidth = collapsedList.ActualWidth;
+                double currentWidth = collapsedList.ActualWidth;
                 collapsedList.UpdateLayout();
-                var newWidth = collapsedList.ActualWidth;
+                double newWidth = collapsedList.ActualWidth;
                 if (Math.Abs(newWidth - currentWidth) > 2)
                 {
                     var anim = new DoubleAnimation(currentWidth, newWidth, TimeSpan.FromMilliseconds(300),
