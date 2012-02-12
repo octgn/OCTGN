@@ -193,8 +193,9 @@ namespace Octgn.Data
             using (
                 var s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (GamesRepository),
                                                                                   "CardSet.xsd"))
-            using (var reader = XmlReader.Create(s))
-                result.Schemas.Add(null, reader);
+                if (s != null)
+                    using (var reader = XmlReader.Create(s))
+                        result.Schemas.Add(null, reader);
             return result;
         }
     }

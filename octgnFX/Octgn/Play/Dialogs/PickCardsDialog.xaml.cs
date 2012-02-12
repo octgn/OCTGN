@@ -11,7 +11,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using Octgn.Controls;
 using Octgn.Data;
-using Octgn.Definitions;
 using Octgn.Play.Gui;
 using Octgn.Utils;
 
@@ -47,17 +46,17 @@ namespace Octgn.Play.Dialogs
         {
             StopListenningForFilterValueChanges();
 
-            foreach (Pack pack in packs.Select(Database.GetPackById))
+            foreach (var pack in packs.Select(Database.GetPackById))
             {
                 if (pack == null)
                 {
                     Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
                     continue;
                 }
-                Pack.PackContent content = pack.CrackOpen();
-                foreach (CardModel c in content.LimitedCards)
+                var content = pack.CrackOpen();
+                foreach (var c in content.LimitedCards)
                     CardPool.Add(c);
-                foreach (CardModel c in content.UnlimitedCards)
+                foreach (var c in content.UnlimitedCards)
                     UnlimitedPool.Add(c);
             }
 
@@ -69,7 +68,7 @@ namespace Octgn.Play.Dialogs
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            var cardDef = Program.Game.Definition.CardDefinition;
             if (panel != null) panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
         }
 
@@ -79,7 +78,7 @@ namespace Octgn.Play.Dialogs
             if (img == null) return;
             var element = img.DataContext as Deck.Element;
             if (element == null) return;
-            CardModel model = element.Card;
+            var model = element.Card;
             ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
         }
 
@@ -93,7 +92,7 @@ namespace Octgn.Play.Dialogs
             if (section == null) return;
 
             CardPool.Remove(card);
-            Deck.Element element = section.Cards.FirstOrDefault(x => x.Card.Id == card.Id);
+            var element = section.Cards.FirstOrDefault(x => x.Card.Id == card.Id);
             if (element != null)
                 element.Quantity++;
             else
@@ -118,7 +117,7 @@ namespace Octgn.Play.Dialogs
 
             OpenQuantityPopup(qty =>
                                   {
-                                      Deck.Element element = section.Cards.FirstOrDefault(x => x.Card.Id == card.Id);
+                                      var element = section.Cards.FirstOrDefault(x => x.Card.Id == card.Id);
                                       if (element != null)
                                           element.Quantity += (byte) qty;
                                       else
@@ -138,12 +137,12 @@ namespace Octgn.Play.Dialogs
             {
                 OpenQuantityPopup(qty =>
                                       {
-                                          int actuallyRemoved = Math.Min(qty, element.Quantity);
+                                          var actuallyRemoved = Math.Min(qty, element.Quantity);
                                           if (element.Quantity > qty)
                                               element.Quantity -= (byte) qty;
                                           else if (section != null) section.Cards.Remove(element);
                                           if (!UnlimitedPool.Contains(element.Card))
-                                              for (int i = 0; i < actuallyRemoved; ++i)
+                                              for (var i = 0; i < actuallyRemoved; ++i)
                                                   // When there are multiple copies of the same card, we insert clones of the CardModel.
                                                   // Otherwise, the ListBox gets confused with selection.
                                                   CardPool.Add(element.Quantity > 1
@@ -167,7 +166,7 @@ namespace Octgn.Play.Dialogs
             if (src == null) return;
             var element = src.DataContext as Deck.Element;
             if (element == null) return;
-            CardModel model = element.Card;
+            var model = element.Card;
             RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
         }
 
@@ -221,48 +220,48 @@ namespace Octgn.Play.Dialogs
         private void UpdateFilters()
         {
             _activeRestrictions.Clear();
-            foreach (Filter filter in Filters)
+            foreach (var filter in Filters)
             {
-                PropertyDef prop = filter.Property;
+                var prop = filter.Property;
                 filter.Values.Clear();
                 if (prop.Type == PropertyType.String)
                     switch (prop.TextKind)
                     {
                         case PropertyTextKind.Enumeration:
-                            Filter filter2 = filter;
-                            IEnumerable<EnumFilterValue> q = from CardModel c in CardPoolView
-                                                             group c by (string) c.Properties[prop.Name]
-                                                             into g
-                                                             orderby g.Key
-                                                             select
-                                                                 new EnumFilterValue
-                                                                     {
-                                                                         Property = filter2.Property,
-                                                                         Value = g.Key,
-                                                                         Count = g.Count()
-                                                                     };
-                            foreach (EnumFilterValue filterValue in q)
+                            var filter2 = filter;
+                            var q = from CardModel c in CardPoolView
+                                    group c by (string) c.Properties[prop.Name]
+                                    into g
+                                    orderby g.Key
+                                    select
+                                        new EnumFilterValue
+                                            {
+                                                Property = filter2.Property,
+                                                Value = g.Key,
+                                                Count = g.Count()
+                                            };
+                            foreach (var filterValue in q)
                                 filter.Values.Add(filterValue);
                             break;
                         case PropertyTextKind.Tokens:
-                            Filter filter1 = filter;
-                            IEnumerable<TokenFilterValue> q2 = from CardModel c in CardPoolView
-                                                               let all = (string) c.Properties[prop.Name]
-                                                               where all != null
-                                                               from token in
-                                                                   all.Split(new[] {' '},
-                                                                             StringSplitOptions.RemoveEmptyEntries)
-                                                               group c by token
-                                                               into g
-                                                               orderby g.Key
-                                                               select
-                                                                   new TokenFilterValue
-                                                                       {
-                                                                           Property = filter1.Property,
-                                                                           Value = g.Key,
-                                                                           Count = g.Count()
-                                                                       };
-                            foreach (TokenFilterValue filterValue in q2)
+                            var filter1 = filter;
+                            var q2 = from CardModel c in CardPoolView
+                                     let all = (string) c.Properties[prop.Name]
+                                     where all != null
+                                     from token in
+                                         all.Split(new[] {' '},
+                                                   StringSplitOptions.RemoveEmptyEntries)
+                                     group c by token
+                                     into g
+                                     orderby g.Key
+                                     select
+                                         new TokenFilterValue
+                                             {
+                                                 Property = filter1.Property,
+                                                 Value = g.Key,
+                                                 Count = g.Count()
+                                             };
+                            foreach (var filterValue in q2)
                                 filter.Values.Add(filterValue);
                             break;
                     }
@@ -271,14 +270,20 @@ namespace Octgn.Play.Dialogs
 
         private void CardPoolChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (FilterValue fv in Filters.SelectMany(f => f.Values))
+            foreach (var fv in Filters.SelectMany(f => f.Values))
             {
                 if (e.NewItems != null)
-                    foreach (CardModel card in e.NewItems.Cast<CardModel>().Where(card => fv.IsMatch(card)))
+                {
+                    var fv1 = fv;
+                    foreach (var card in e.NewItems.Cast<CardModel>().Where(fv1.IsMatch))
                         fv.Count++;
+                }
                 if (e.OldItems != null)
-                    foreach (CardModel card in e.OldItems.Cast<CardModel>().Where(card => fv.IsMatch(card)))
+                {
+                    var fv1 = fv;
+                    foreach (var card in e.OldItems.Cast<CardModel>().Where(fv1.IsMatch))
                         fv.Count--;
+                }
             }
         }
 

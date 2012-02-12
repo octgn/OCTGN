@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
@@ -130,7 +131,7 @@ namespace Octgn
             SaveLocation();
             try
             {
-                if (DebugWindow != null) 
+                if (DebugWindow != null)
                     if (DebugWindow.IsLoaded)
                         DebugWindow.Close();
             }
@@ -150,10 +151,9 @@ namespace Octgn
                     PlayWindow.Close();
             try
             {
-                foreach (ChatWindow cw in ChatWindows)
+                foreach (var cw in ChatWindows.Where(cw => cw.IsLoaded))
                 {
-                    if (cw.IsLoaded)
-                        cw.CloseChatWindow();
+                    cw.CloseChatWindow();
                 }
             }
             catch (Exception e)
@@ -195,13 +195,13 @@ namespace Octgn
 
         internal static void Print(Player player, string text)
         {
-            string finalText = text;
-            int i = 0;
+            var finalText = text;
+            var i = 0;
             var args = new List<object>(2);
-            Match match = Regex.Match(text, "{([^}]*)}");
+            var match = Regex.Match(text, "{([^}]*)}");
             while (match.Success)
             {
-                string token = match.Groups[1].Value;
+                var token = match.Groups[1].Value;
                 finalText = finalText.Replace(match.Groups[0].Value, "{" + i + "}");
                 i++;
                 object tokenValue = token;
@@ -215,7 +215,7 @@ namespace Octgn
                         {
                             int id;
                             if (!int.TryParse(token.Substring(1), out id)) break;
-                            ControllableObject obj = ControllableObject.Find(id);
+                            var obj = ControllableObject.Find(id);
                             if (obj == null) break;
                             tokenValue = obj;
                             break;

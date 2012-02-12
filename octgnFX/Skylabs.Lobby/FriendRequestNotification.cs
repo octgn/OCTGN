@@ -18,9 +18,9 @@ namespace Skylabs.Lobby
             sm.AddData("uid", User.Uid);
             sm.AddData("accept", true);
             LobbyClient.WriteMessage(sm);
-            Notification[] ns = LobbyClient.GetNotificationList();
+            var ns = LobbyClient.GetNotificationList();
             foreach (
-                Notification t in
+                var t in
                     from t in ns
                     let fr = t as FriendRequestNotification
                     where fr != null
@@ -39,9 +39,9 @@ namespace Skylabs.Lobby
             sm.AddData("uid", User.Uid);
             sm.AddData("accept", false);
             LobbyClient.WriteMessage(sm);
-            Notification[] ns = LobbyClient.GetNotificationList();
+            var ns = LobbyClient.GetNotificationList();
             foreach (
-                Notification t in
+                var t in
                     from t in ns
                     let fr = t as FriendRequestNotification
                     where fr != null

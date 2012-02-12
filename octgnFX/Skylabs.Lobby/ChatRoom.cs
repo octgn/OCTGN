@@ -44,7 +44,7 @@ namespace Skylabs.Lobby
             lock (_userLocker)
             {
                 if (!Users.Contains(userToChange)) return;
-                User utochange = Users.FirstOrDefault(us => us.Uid == userToChange.Uid);
+                var utochange = Users.FirstOrDefault(us => us.Uid == userToChange.Uid);
                 if (utochange == null) return;
                 utochange.Status = newUserData;
                 utochange.CustomStatus = userToChange.CustomStatus;

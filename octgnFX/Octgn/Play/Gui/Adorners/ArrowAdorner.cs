@@ -33,9 +33,9 @@ namespace Octgn.Play.Gui.Adorners
                                 adornedCard.rotate90.Changed -= UpdateStartPoint;
                                 IsInvertedPropertyDescriptor.RemoveValueChanged(adornedCard, UpdateToPoint);
                                 if (_toCard == null) return;
-                                DependencyPropertyDescriptor leftDescriptor =
+                                var leftDescriptor =
                                     DependencyPropertyDescriptor.FromProperty(Canvas.LeftProperty, typeof (Canvas));
-                                DependencyPropertyDescriptor topDescriptor =
+                                var topDescriptor =
                                     DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty, typeof (Canvas));
                                 leftDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(_toCard), UpdateToPoint);
                                 topDescriptor.RemoveValueChanged(VisualTreeHelper.GetParent(_toCard), UpdateToPoint);
@@ -65,9 +65,9 @@ namespace Octgn.Play.Gui.Adorners
             var fromCard = (CardControl) AdornedElement;
             var fromCtrl = (UIElement) VisualTreeHelper.GetParent(fromCard);
             var toCtrl = (UIElement) VisualTreeHelper.GetParent(_toCard);
-            double deltaX = Canvas.GetLeft(toCtrl) - Canvas.GetLeft(fromCtrl);
-            double deltaY = Canvas.GetTop(toCtrl) - Canvas.GetTop(fromCtrl);
-            Point toMiddlePt = _toCard.GetMiddlePoint(_toCard.IsInverted ^ fromCard.IsInverted);
+            var deltaX = Canvas.GetLeft(toCtrl) - Canvas.GetLeft(fromCtrl);
+            var deltaY = Canvas.GetTop(toCtrl) - Canvas.GetTop(fromCtrl);
+            var toMiddlePt = _toCard.GetMiddlePoint(_toCard.IsInverted ^ fromCard.IsInverted);
             _arrow.ToPoint = fromCard.IsInverted
                                  ? toMiddlePt - new Vector(deltaX, deltaY)
                                  : toMiddlePt + new Vector(deltaX, deltaY);
@@ -84,10 +84,10 @@ namespace Octgn.Play.Gui.Adorners
             UpdateToPoint(this, EventArgs.Empty);
             cardCtrl.rotate90.Changed += UpdateToPoint;
             var adornedCard = (CardControl) AdornedElement;
-            DependencyPropertyDescriptor leftDescriptor = DependencyPropertyDescriptor.FromProperty(
+            var leftDescriptor = DependencyPropertyDescriptor.FromProperty(
                 Canvas.LeftProperty, typeof (Canvas));
-            DependencyPropertyDescriptor topDescriptor = DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty,
-                                                                                                   typeof (Canvas));
+            var topDescriptor = DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty,
+                                                                          typeof (Canvas));
             leftDescriptor.AddValueChanged(VisualTreeHelper.GetParent(cardCtrl), UpdateToPoint);
             topDescriptor.AddValueChanged(VisualTreeHelper.GetParent(cardCtrl), UpdateToPoint);
             leftDescriptor.AddValueChanged(VisualTreeHelper.GetParent(adornedCard), UpdateToPoint);

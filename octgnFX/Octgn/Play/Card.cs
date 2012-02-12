@@ -42,7 +42,7 @@ namespace Octgn.Play
         internal new static Card Find(int id)
         {
             Card res;
-            bool success = All.TryGetValue(id, out res);
+            var success = All.TryGetValue(id, out res);
             return success ? res : null;
         }
 
@@ -213,7 +213,7 @@ namespace Octgn.Play
             set
             {
                 if (_selected == value) return;
-                bool currentState = IsHighlighted;
+                var currentState = IsHighlighted;
                 _selected = value;
                 OnPropertyChanged("Selected");
                 if (currentState != IsHighlighted) OnPropertyChanged("IsHighlighted");
@@ -325,7 +325,7 @@ namespace Octgn.Play
         public void MoveTo(Group to, bool lFaceUp)
         {
             // Default: move cards to the end of hand, top of table; but top of piles (which is index 0)
-            int toIdx = to is Pile ? 0 : to.Cards.Count;
+            var toIdx = to is Pile ? 0 : to.Cards.Count;
             MoveTo(to, lFaceUp, toIdx);
         }
 
@@ -426,7 +426,7 @@ namespace Octgn.Play
         internal void SetHighlight(Color? value)
         {
             if (value == _highlight) return;
-            bool currentState = IsHighlighted;
+            var currentState = IsHighlighted;
             _highlight = value;
             OnPropertyChanged("HighlightColor");
             if (currentState != IsHighlighted) OnPropertyChanged("IsHighlighted");
@@ -464,7 +464,7 @@ namespace Octgn.Play
 
         internal bool IsVisibleToAll()
         {
-            Group g = Group;
+            var g = Group;
             return g.Visibility == GroupVisibility.Everybody || (g.Visibility == GroupVisibility.Undefined && FaceUp);
         }
 
@@ -513,14 +513,14 @@ namespace Octgn.Play
             // If it's an alias pass it to the one who created it
             if (Type.Alias)
             {
-                Player p = Player.Find((byte) (Type.Key >> 16));
+                var p = Player.Find((byte) (Type.Key >> 16));
                 Program.Client.Rpc.RevealToReq(p, players.ToArray(), this, Crypto.Encrypt(Type.Key, p.PublicKey));
             }
                 // Else pass to every viewer
             else
             {
                 var pArray = new Player[1];
-                foreach (Player p in players)
+                foreach (var p in players)
                 {
                     if (p == Player.LocalPlayer)
                         Type.OnRevealed(Type);
@@ -580,7 +580,7 @@ namespace Octgn.Play
 
         internal void AddMarker(MarkerModel model, ushort count)
         {
-            Marker marker = _markers.FirstOrDefault(m => m.Model.Equals(model));
+            var marker = _markers.FirstOrDefault(m => m.Model.Equals(model));
             if (marker != null)
                 marker.SetCount((ushort) (marker.Count + count));
             else if (count > 0)
@@ -621,8 +621,8 @@ namespace Octgn.Play
 
         internal void SetMarker(Player player, Guid lId, string name, int count)
         {
-            int oldCount = 0;
-            Marker marker = FindMarker(lId, name);
+            var oldCount = 0;
+            var marker = FindMarker(lId, name);
             if (marker != null)
             {
                 oldCount = marker.Count;
@@ -630,7 +630,7 @@ namespace Octgn.Play
             }
             else if (count > 0)
             {
-                MarkerModel model = Program.Game.GetMarkerModel(lId);
+                var model = Program.Game.GetMarkerModel(lId);
                 var defaultMarkerModel = model as DefaultMarkerModel;
                 if (defaultMarkerModel != null)
                     (defaultMarkerModel).SetName(name);

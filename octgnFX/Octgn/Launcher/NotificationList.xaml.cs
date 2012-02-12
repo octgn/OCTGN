@@ -17,7 +17,7 @@ namespace Octgn.Launcher
 
         private void ReloadList()
         {
-            Notification[] nlist = Program.LobbyClient.GetNotificationList();
+            var nlist = Program.LobbyClient.GetNotificationList();
             foreach (var fi in from n in nlist
                                where n.GetType() == typeof (FriendRequestNotification)
                                select n as FriendRequestNotification

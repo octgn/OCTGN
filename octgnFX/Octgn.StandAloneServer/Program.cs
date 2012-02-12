@@ -24,7 +24,7 @@ namespace Octgn.StandAloneServer
                            };
             }
 
-            OptionSet set = new OptionSet()
+            var set = new OptionSet()
                 .Add("p=|port=", "Port for the server to host on.", v => int.TryParse(v, out Port))
                 .Add("g=|guid=", "GUID of the game being played.", v => Guid.TryParse(v, out GameGuid))
                 .Add("v=|version=", "Game version.",
