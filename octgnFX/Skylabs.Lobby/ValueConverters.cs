@@ -14,7 +14,7 @@ namespace Skylabs.Lobby
         public static long ToPhpTime(DateTime time)
         {
             var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
-            var span = time.Subtract(unixEpoch);
+            TimeSpan span = time.Subtract(unixEpoch);
 
             return (long) span.TotalSeconds;
         }
@@ -34,8 +34,8 @@ namespace Skylabs.Lobby
         {
             using (var hashTool = new SHA512Managed())
             {
-                var passwordAsByte = Encoding.ASCII.GetBytes(password);
-                var encryptedBytes = hashTool.ComputeHash(passwordAsByte);
+                byte[] passwordAsByte = Encoding.ASCII.GetBytes(password);
+                byte[] encryptedBytes = hashTool.ComputeHash(passwordAsByte);
                 hashTool.Clear();
                 return BitConverter.ToString(encryptedBytes).Replace("-", "").ToLowerInvariant();
             }
@@ -47,11 +47,11 @@ namespace Skylabs.Lobby
             {
                 MD5 md5 = new MD5CryptoServiceProvider();
 
-                var hasedBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(address));
+                byte[] hasedBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(address));
 
                 var sb = new StringBuilder();
 
-                for (var i = 0; i < hasedBytes.Length; i++)
+                for (int i = 0; i < hasedBytes.Length; i++)
                 {
                     sb.Append(hasedBytes[i].ToString("X2"));
                 }
@@ -66,11 +66,11 @@ namespace Skylabs.Lobby
 
         public static string Md5(string str)
         {
-            var textBytes = Encoding.Default.GetBytes(str);
+            byte[] textBytes = Encoding.Default.GetBytes(str);
             var cryptHandler = new MD5CryptoServiceProvider();
-            var hash = cryptHandler.ComputeHash(textBytes);
-            var ret = "";
-            foreach (var a in hash)
+            byte[] hash = cryptHandler.ComputeHash(textBytes);
+            string ret = "";
+            foreach (byte a in hash)
             {
                 if (a < 16)
                     ret += "0" + a.ToString("x");

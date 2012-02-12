@@ -33,7 +33,7 @@ namespace Octgn
         {
             var k = new BigInteger(new[] {PositiveRandom(), PositiveRandom()});
             BigInteger c1 = B.ModPow(k, M), c2 = new BigInteger(pkey).ModPow(k, M);
-            var encrypted = (c2*new BigInteger(data))%M;
+            BigInteger encrypted = (c2*new BigInteger(data))%M;
             return new[] {(ulong) c1.LongValue(), (ulong) encrypted.LongValue()};
         }
 
@@ -41,11 +41,11 @@ namespace Octgn
         {
             var k = new BigInteger(new[] {PositiveRandom(), PositiveRandom()});
             BigInteger c1 = B.ModPow(k, M), c2 = new BigInteger(pkey).ModPow(k, M);
-            var bytes = data.ToByteArray();
-            var encrypted1 = (c2*new BigInteger(BitConverter.ToUInt32(bytes, 0)))%M;
-            var encrypted2 = (c2*new BigInteger(BitConverter.ToUInt32(bytes, 4)))%M;
-            var encrypted3 = (c2*new BigInteger(BitConverter.ToUInt32(bytes, 8)))%M;
-            var encrypted4 = (c2*new BigInteger(BitConverter.ToUInt32(bytes, 12)))%M;
+            byte[] bytes = data.ToByteArray();
+            BigInteger encrypted1 = (c2*new BigInteger(BitConverter.ToUInt32(bytes, 0)))%M;
+            BigInteger encrypted2 = (c2*new BigInteger(BitConverter.ToUInt32(bytes, 4)))%M;
+            BigInteger encrypted3 = (c2*new BigInteger(BitConverter.ToUInt32(bytes, 8)))%M;
+            BigInteger encrypted4 = (c2*new BigInteger(BitConverter.ToUInt32(bytes, 12)))%M;
             return new[]
                        {
                            (ulong) c1.LongValue(),
@@ -61,7 +61,7 @@ namespace Octgn
             if (data.Length != 2) throw new ArgumentException("data should have a length of 2");
 
             BigInteger c1 = new BigInteger(data[0]), c2 = new BigInteger(data[1]);
-            var res = (c1.ModPow(Program.PrivateKey, M).modInverse(M)*c2)%M;
+            BigInteger res = (c1.ModPow(Program.PrivateKey, M).modInverse(M)*c2)%M;
             return (ulong) res.LongValue();
         }
 
@@ -71,11 +71,11 @@ namespace Octgn
 
             var c1 = new BigInteger(data[0]);
             var res = new byte[16];
-            for (var i = 1; i < 5; i++)
+            for (int i = 1; i < 5; i++)
             {
                 var c2 = new BigInteger(data[i]);
-                var part = (c1.ModPow(Program.PrivateKey, M).modInverse(M)*c2)%M;
-                var partBytes = BitConverter.GetBytes((uint) part.LongValue());
+                BigInteger part = (c1.ModPow(Program.PrivateKey, M).modInverse(M)*c2)%M;
+                byte[] partBytes = BitConverter.GetBytes((uint) part.LongValue());
                 partBytes.CopyTo(res, (i - 1)*4);
             }
             return new Guid(res);
@@ -83,7 +83,7 @@ namespace Octgn
 
         public static uint Condense(this Guid guid)
         {
-            var bytes = guid.ToByteArray();
+            byte[] bytes = guid.ToByteArray();
             return
                 BitConverter.ToUInt32(bytes, 0) ^
                 BitConverter.ToUInt32(bytes, 4) ^

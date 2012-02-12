@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using Octgn.Definitions;
 
 namespace Octgn.Play.Gui
 {
@@ -109,7 +110,7 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
 
             // Set overlay card size
-            var cardDef = Program.Game.Definition.CardDefinition;
+            CardDef cardDef = Program.Game.Definition.CardDefinition;
             e.CardSize = new Size(cardDef.Width*100/cardDef.Height, 100);
             if (IsAlwaysUp) e.FaceUp = true;
 
@@ -132,7 +133,7 @@ namespace Octgn.Play.Gui
             _wrapPanel.DisplayInsertIndicator(e.ClickedCard, _wrapPanel.GetIndexFromPoint(Mouse.GetPosition(_wrapPanel)));
 
             // Scroll the scroll viewer if required
-            var pos = Mouse.GetPosition(scroller).Y;
+            double pos = Mouse.GetPosition(scroller).Y;
             if (pos <= ScrollMargin || pos >= scroller.ActualHeight - ScrollMargin)
             {
                 if (_scrollTimer == null)
@@ -170,13 +171,13 @@ namespace Octgn.Play.Gui
             StopDragScroll();
             e.Handled = e.CanDrop = true;
             if (!@group.TryToManipulate()) return;
-            var idx = _wrapPanel.GetIndexFromPoint(Mouse.GetPosition(_wrapPanel));
+            int idx = _wrapPanel.GetIndexFromPoint(Mouse.GetPosition(_wrapPanel));
 
             // When the list is restricted, real index may be different from index in the GUI
             if (RestrictDrop)
             {
                 Card c = null;
-                var after = false;
+                bool after = false;
                 if (idx < _view.Count)
                     c = (Card) _view.GetItemAt(idx);
                 else if (_view.Count > 0)
@@ -188,7 +189,7 @@ namespace Octgn.Play.Gui
                 if (c != null) idx = @group.Cards.IndexOf(c) + (after ? 1 : 0);
             }
 
-            foreach (var c in e.Cards)
+            foreach (Card c in e.Cards)
             {
                 // Fix the target index if the card is already in the group at a lower index
                 if (c.Group == @group && c.GetIndex() < idx) --idx;
@@ -258,8 +259,8 @@ namespace Octgn.Play.Gui
         {
             e.Handled = true;
             // Add inerita to scrolling for a very smooth effect      
-            var sign = Math.Sign(e.Delta);
-            var offset = -sign*48.0;
+            int sign = Math.Sign(e.Delta);
+            double offset = -sign*48.0;
             if (sign == _scrollDirection)
                 _scrollTarget += offset;
             else

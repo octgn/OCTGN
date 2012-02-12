@@ -12,8 +12,8 @@ namespace Skylabs.LobbyServer
         /// <returns> Is the port available </returns>
         public static bool IsPortAvailable(int port)
         {
-            var ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
-            var tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
+            IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+            TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
 
             return tcpConnInfoArray.All(tcpi => tcpi.LocalEndPoint.Port != port);
         }

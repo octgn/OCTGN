@@ -462,7 +462,7 @@ namespace Octgn.Server
             int nCards = card.Length/(_clients.Count - 1);
             int from = 0, client = 1;
             var someCard = new int[nCards];
-            foreach (var kvp in _clients.Where(kvp => kvp.Key != _sender))
+            foreach (KeyValuePair<TcpClient, PlayerInfo> kvp in _clients.Where(kvp => kvp.Key != _sender))
             {
                 if (client < _clients.Count - 1)
                 {

@@ -29,12 +29,12 @@ namespace Octgn.Play.Dialogs
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
-            var defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
-            using (var package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
+            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
+            using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                var defRelationship =
+                PackageRelationship defRelationship =
                     package.GetRelationshipsByType("http://schemas.octgn.org/game/rules").First();
-                var definition = package.GetPart(defRelationship.TargetUri);
+                PackagePart definition = package.GetPart(defRelationship.TargetUri);
                 using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
                 {
                     // Change the 75 for performance.  Find a number that suits your application best
@@ -46,7 +46,7 @@ namespace Octgn.Play.Dialogs
                         fileReader.Read(buffer, 0, readLength);
                         // This will help the file load much faster 
                         // RichText loads \n as a new paragraph. Very slow for large text
-                        var currentLine = new string(buffer).Replace("\n", string.Empty);
+                        string currentLine = new string(buffer).Replace("\n", string.Empty);
                         // Load in background
                         Dispatcher.BeginInvoke(new Action(() =>
                                                               {
@@ -66,8 +66,8 @@ namespace Octgn.Play.Dialogs
             rules.Focus();
 
             // WPF RichTextBox doesn't include "scrolltocaret"
-            var thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-            var totaloffset = thisposition.Top + rules.VerticalOffset;
+            Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+            double totaloffset = thisposition.Top + rules.VerticalOffset;
             scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
             // Handle the keypress. We don't want to muck with rules text
             e.Handled = true;
@@ -86,7 +86,7 @@ namespace Octgn.Play.Dialogs
                     richTextBox.Document.ContentStart,
                     richTextBox.Document.ContentEnd);
             // Do the search
-            var foundRange = FindTextInRange(searchRange, searchText);
+            TextRange foundRange = FindTextInRange(searchRange, searchText);
             if (foundRange == null)
                 return false;
             // Select the found range
@@ -97,11 +97,11 @@ namespace Octgn.Play.Dialogs
         public TextRange FindTextInRange(TextRange searchRange, string searchText)
         {
             // Search the text with IndexOf
-            var offset = searchRange.Text.IndexOf(searchText, StringComparison.Ordinal);
+            int offset = searchRange.Text.IndexOf(searchText, StringComparison.Ordinal);
             if (offset < 0)
                 return null; // Not found
             // Try to select the text as a contiguous range
-            for (var start = searchRange.Start.GetPositionAtOffset(offset);
+            for (TextPointer start = searchRange.Start.GetPositionAtOffset(offset);
                  start != searchRange.End && start != null;
                  start = start.GetPositionAtOffset(1))
             {
@@ -118,8 +118,8 @@ namespace Octgn.Play.Dialogs
             {
                 DoSearch(rules, search.Text, true);
                 // WPF RichTextBox doesn't include "scrolltocaret"
-                var thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-                var totaloffset = thisposition.Top + rules.VerticalOffset;
+                Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+                double totaloffset = thisposition.Top + rules.VerticalOffset;
                 scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
             }
             e.Handled = true;

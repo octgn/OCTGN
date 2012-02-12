@@ -15,7 +15,7 @@ namespace Octgn.Play.Gui
             if (DesignerProperties.GetIsInDesignMode(this)) return;
 
             AddHandler(TableControl.TableKeyEvent, new EventHandler<TableKeyEventArgs>(TableKeyDown));
-            var markerSize = Program.Game.Definition.MarkerSize;
+            int markerSize = Program.Game.Definition.MarkerSize;
             img1.Height = markerSize;
             textBorder.Margin = new Thickness(markerSize*0.2, markerSize*0.04, 0, markerSize*0.04);
             text.Margin = new Thickness(markerSize*0.3, 0, markerSize*0.3, 0);
@@ -26,7 +26,7 @@ namespace Octgn.Play.Gui
 
         protected void TableKeyDown(object sender, TableKeyEventArgs te)
         {
-            var e = te.KeyEventArgs;
+            KeyEventArgs e = te.KeyEventArgs;
             switch (e.Key)
             {
                 case Key.Add:
@@ -74,7 +74,7 @@ namespace Octgn.Play.Gui
         {
             base.OnMouseMove(e);
             e.Handled = true;
-            var pt = e.GetPosition(this);
+            Point pt = e.GetPosition(this);
             if (!_isDragging)
             {
                 // Check if the button was pressed over the marker, and was not release on another control in the meantime 
@@ -111,7 +111,7 @@ namespace Octgn.Play.Gui
             RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, this));
 
             _takeAll = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
-            var adorned = _takeAll ? this : (UIElement) img1;
+            UIElement adorned = _takeAll ? this : (UIElement) img1;
             _mouseOffset = TranslatePoint(_mousePt, adorned);
             _mouseOffset.X -= adorned.DesiredSize.Width/2;
             _mouseOffset.Y -= adorned.DesiredSize.Height/2;
@@ -130,7 +130,7 @@ namespace Octgn.Play.Gui
             ((AdornerLayer) _adorner.Parent).Remove(_adorner);
             _adorner = null;
             var marker = (Marker) DataContext;
-            var count = _takeAll ? marker.Count : (ushort) 1;
+            ushort count = _takeAll ? marker.Count : (ushort) 1;
             var e = new MarkerEventArgs(this, marker, count);
             Mouse.DirectlyOver.RaiseEvent(e);
             if (Keyboard.IsKeyUp(Key.LeftAlt) && !e.Handled)

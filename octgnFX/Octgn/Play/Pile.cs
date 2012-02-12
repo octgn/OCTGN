@@ -51,7 +51,7 @@ namespace Octgn.Play
             if (Player.Count > 1)
             {
                 WantToShuffle = Locked = true;
-                var ready = true;
+                bool ready = true;
                 // Unalias only if necessary
                 if (cards.Any(c => c.Type.Alias))
                 {
@@ -75,7 +75,7 @@ namespace Octgn.Play
             HasReceivedFirstShuffledMessage = false;
             // Create aliases
             var cis = new CardIdentity[cards.Count];
-            for (var i = 0; i < cards.Count; i++)
+            for (int i = 0; i < cards.Count; i++)
             {
                 if (cards[i].IsVisibleToAll())
                 {
@@ -84,7 +84,7 @@ namespace Octgn.Play
                 }
                 else
                 {
-                    var ci = cis[i] = new CardIdentity(Program.Game.GenerateCardId());
+                    CardIdentity ci = cis[i] = new CardIdentity(Program.Game.GenerateCardId());
                     ci.Alias = ci.MySecret = true;
                     ci.Key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) cards[i].Type.Id;
                     ci.Visible = false;
@@ -94,9 +94,9 @@ namespace Octgn.Play
             var cardIds = new int[cards.Count];
             var cardAliases = new ulong[cards.Count];
             var rnd = new Random();
-            for (var i = cards.Count - 1; i >= 0; i--)
+            for (int i = cards.Count - 1; i >= 0; i--)
             {
-                var r = rnd.Next(i);
+                int r = rnd.Next(i);
                 cardIds[i] = cis[r].Id;
                 cardAliases[i] = cis[r].Visible ? ulong.MaxValue : Crypto.ModExp(cis[r].Key);
                 cis[r] = cis[i];
@@ -111,10 +111,10 @@ namespace Octgn.Play
         private void ShuffleAlone()
         {
             var rnd = new Random();
-            for (var i = cards.Count - 1; i >= 0; i--)
+            for (int i = cards.Count - 1; i >= 0; i--)
             {
-                var r = rnd.Next(i);
-                var temp = cards[r];
+                int r = rnd.Next(i);
+                Card temp = cards[r];
                 cards[r] = cards[i];
                 cards[i] = temp;
             }

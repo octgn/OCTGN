@@ -530,7 +530,7 @@ namespace Octgn.Server
 
         internal void Send()
         {
-            foreach (var kvp in _to)
+            foreach (KeyValuePair<TcpClient, Handler.PlayerInfo> kvp in _to)
                 try
                 {
                     Stream stream = kvp.Key.GetStream();

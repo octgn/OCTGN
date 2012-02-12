@@ -114,7 +114,7 @@ namespace Octgn.Play.Gui
         {
             CardControl.SetAnimateLoad(this, false);
 
-            var filter = filterBox.Text;
+            string filter = filterBox.Text;
             if (filter == "")
             {
                 watermark.Visibility = Visibility.Visible;
@@ -122,7 +122,7 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                var textProperties = Program.Game.Definition.CardDefinition.Properties.Values
+                IEnumerable<string> textProperties = Program.Game.Definition.CardDefinition.Properties.Values
                     .Where(p => p.Type == PropertyType.String && !p.IgnoreText)
                     .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;
@@ -170,7 +170,7 @@ namespace Octgn.Play.Gui
 
         public void CardsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var cards = cardsList.Cards;
+            ObservableCollection<Card> cards = cardsList.Cards;
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
@@ -191,8 +191,8 @@ namespace Octgn.Play.Gui
                         var src = sender as ICollection<Card>;
                         if (src != null)
                         {
-                            var oldIndex = cards.IndexOf(card);
-                            var newIndex = src.Where(cards.Contains).IndexOf(card);
+                            int oldIndex = cards.IndexOf(card);
+                            int newIndex = src.Where(cards.Contains).IndexOf(card);
                             cards.Move(oldIndex, newIndex);
                         }
                     }

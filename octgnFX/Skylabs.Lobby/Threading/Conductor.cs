@@ -56,7 +56,7 @@ namespace Skylabs.Lobby.Threading
                     }
                     else
                     {
-                        var ca = _q.Dequeue();
+                        ConductorAction ca = _q.Dequeue();
                         ca.Action.BeginInvoke(InvokeDone, null);
                     }
                 }
@@ -78,11 +78,11 @@ namespace Skylabs.Lobby.Threading
         public ConductorAction(Action a)
         {
             var st = new StackTrace();
-            var frames = st.GetFrames();
+            StackFrame[] frames = st.GetFrames();
             CalledFromMethod = "UnknownMethod";
             if (frames != null)
             {
-                for (var i = 0; i < frames.Length; i++)
+                for (int i = 0; i < frames.Length; i++)
                 {
                     if (frames[i].GetMethod().Name != MethodBase.GetCurrentMethod().Name) continue;
                     if (i + 2 >= frames.Length) continue;

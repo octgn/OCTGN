@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Skylabs.Lobby;
+using FriendRequestNotification = Octgn.Controls.FriendRequestNotification;
 
 namespace Octgn.Launcher
 {
@@ -17,12 +18,17 @@ namespace Octgn.Launcher
 
         private void ReloadList()
         {
-            var nlist = Program.LobbyClient.GetNotificationList();
-            foreach (var fi in from n in nlist
-                               where n.GetType() == typeof (FriendRequestNotification)
-                               select n as FriendRequestNotification
-                               into fr select new Controls.FriendRequestNotification
-                                                  {Notification = fr, HorizontalAlignment = HorizontalAlignment.Stretch}
+            Notification[] nlist = Program.LobbyClient.GetNotificationList();
+            foreach (FriendRequestNotification fi in from n in nlist
+                                                     where
+                                                         n.GetType() == typeof (Skylabs.Lobby.FriendRequestNotification)
+                                                     select n as Skylabs.Lobby.FriendRequestNotification
+                                                     into fr select new FriendRequestNotification
+                                                                        {
+                                                                            Notification = fr,
+                                                                            HorizontalAlignment =
+                                                                                HorizontalAlignment.Stretch
+                                                                        }
                 )
             {
                 fi.OnDismiss += NotificationDismissed;

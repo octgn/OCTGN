@@ -43,7 +43,7 @@ namespace Octgn.Launcher
         private void ReloadGameList()
         {
             stackPanel1.Children.Clear();
-            foreach (var gs in Program.GamesRepository.AllGames.Select(g => new GameListItem {Game = g}))
+            foreach (GameListItem gs in Program.GamesRepository.AllGames.Select(g => new GameListItem {Game = g}))
             {
                 gs.MouseUp += GsMouseUp;
                 stackPanel1.Children.Add(gs);

@@ -35,19 +35,19 @@ namespace Octgn.Data
         {
             if (!patchInstalledSets && patchFolder == null) return;
 
-            using (var package = Package.Open(_filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (Package package = Package.Open(_filename, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 ReadPackageDescription(package);
 
                 // Get the list of sets to potentially patch
                 _game = repository.Games.FirstOrDefault(g => g.Id == _gameId);
                 if (_game == null) return;
-                var installedSets = _game.Sets.Select(s => s.PackageName).ToList();
+                List<string> installedSets = _game.Sets.Select(s => s.PackageName).ToList();
                 List<string> uninstalledSets;
 
                 if (patchFolder != null)
                 {
-                    var files = Directory.GetFiles(patchFolder, "*.o8s");
+                    string[] files = Directory.GetFiles(patchFolder, "*.o8s");
                     uninstalledSets = files.Except(installedSets).ToList();
                     if (!patchInstalledSets)
                         installedSets = files.Intersect(installedSets).ToList();
@@ -59,10 +59,10 @@ namespace Octgn.Data
                 _max = installedSets.Count + uninstalledSets.Count;
                 OnProgress();
 
-                foreach (var set in installedSets)
+                foreach (string set in installedSets)
                     SafeApply(package, set, true);
 
-                foreach (var set in uninstalledSets)
+                foreach (string set in uninstalledSets)
                     SafeApply(package, set, false);
             }
         }
@@ -86,14 +86,14 @@ namespace Octgn.Data
 
         private void Apply(Package package, string localFilename, bool installed)
         {
-            using (var setPkg = Package.Open(localFilename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+            using (Package setPkg = Package.Open(localFilename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
             {
                 // Extract information about the target set
-                var defRelationship =
+                PackageRelationship defRelationship =
                     setPkg.GetRelationshipsByType("http://schemas.octgn.org/set/definition").First();
-                var definition = setPkg.GetPart(defRelationship.TargetUri);
+                PackagePart definition = setPkg.GetPart(defRelationship.TargetUri);
                 Set set;
-                using (var reader = XmlReader.Create(definition.GetStream(), XmlSettings))
+                using (XmlReader reader = XmlReader.Create(definition.GetStream(), XmlSettings))
                 {
                     reader.ReadToFollowing("set"); // <?xml ... ?>
                     set = new Set(localFilename, reader, _game.Repository);
@@ -102,12 +102,12 @@ namespace Octgn.Data
                 }
 
                 // Check if there is a patch for this set
-                var relationId = "S" + set.Id.ToString("N");
+                string relationId = "S" + set.Id.ToString("N");
                 if (!package.RelationshipExists(relationId)) return;
 
-                var patchPart = package.GetPart(package.GetRelationship(relationId).TargetUri);
+                PackagePart patchPart = package.GetPart(package.GetRelationship(relationId).TargetUri);
                 XDocument patchDoc;
-                using (var stream = patchPart.GetStream())
+                using (Stream stream = patchPart.GetStream())
                     patchDoc = XDocument.Load(stream);
 
                 // Check if the set is at least the required version for patching
@@ -119,7 +119,7 @@ namespace Octgn.Data
 
                 // Process the set 
                 if (patchDoc.Root != null)
-                    foreach (var action in patchDoc.Root.Elements())
+                    foreach (XElement action in patchDoc.Root.Elements())
                         switch (action.Name.LocalName)
                         {
                             case "new":
@@ -127,14 +127,14 @@ namespace Octgn.Data
                                     var targetUri = new Uri(action.Attr<string>("targetUri"), UriKind.Relative);
                                     var relationshipId = action.Attr<string>("relationshipId");
                                     var contentType = action.Attr<string>("contentType");
-                                    var part = setPkg.PartExists(targetUri)
-                                                   ? setPkg.GetPart(targetUri)
-                                                   : setPkg.CreatePart(targetUri, contentType,
-                                                                       CompressionOption.Normal);
+                                    PackagePart part = setPkg.PartExists(targetUri)
+                                                           ? setPkg.GetPart(targetUri)
+                                                           : setPkg.CreatePart(targetUri, contentType,
+                                                                               CompressionOption.Normal);
                                     if (part != null)
-                                        using (var targetStream = part.GetStream(FileMode.Create, FileAccess.Write))
+                                        using (Stream targetStream = part.GetStream(FileMode.Create, FileAccess.Write))
                                         using (
-                                            var srcStream =
+                                            Stream srcStream =
                                                 package.GetPart(patchPart.GetRelationship(relationshipId).TargetUri).
                                                     GetStream())
                                             srcStream.CopyTo(targetStream);
@@ -148,7 +148,7 @@ namespace Octgn.Data
                                     var targetUri = new Uri(action.Attr<string>("targetUri"), UriKind.Relative);
                                     var relationshipType = action.Attr<string>("relationshipType");
 
-                                    var part = setPkg.GetPart(partUri);
+                                    PackagePart part = setPkg.GetPart(partUri);
                                     if (part.RelationshipExists(relationshipId))
                                         part.DeleteRelationship(relationshipId);
                                     part.CreateRelationship(targetUri, TargetMode.Internal, relationshipType,
@@ -177,12 +177,12 @@ namespace Octgn.Data
 
         private void ReadPackageDescription(Package package)
         {
-            var part = package.GetPart(package.GetRelationship("PatchDescription").TargetUri);
-            using (var reader = XmlReader.Create(part.GetStream(FileMode.Open, FileAccess.Read)))
+            PackagePart part = package.GetPart(package.GetRelationship("PatchDescription").TargetUri);
+            using (XmlReader reader = XmlReader.Create(part.GetStream(FileMode.Open, FileAccess.Read)))
             {
-                var doc = XDocument.Load(reader);
+                XDocument doc = XDocument.Load(reader);
                 if (doc.Root == null) return;
-                var xAttribute = doc.Root.Attribute("gameId");
+                XAttribute xAttribute = doc.Root.Attribute("gameId");
                 if (xAttribute != null) _gameId = new Guid(xAttribute.Value);
             }
         }
@@ -191,10 +191,10 @@ namespace Octgn.Data
         {
             var result = new XmlReaderSettings {ValidationType = ValidationType.Schema, IgnoreWhitespace = true};
             using (
-                var s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (GamesRepository),
-                                                                                  "CardSet.xsd"))
+                Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (GamesRepository),
+                                                                                     "CardSet.xsd"))
                 if (s != null)
-                    using (var reader = XmlReader.Create(s))
+                    using (XmlReader reader = XmlReader.Create(s))
                         result.Schemas.Add(null, reader);
             return result;
         }

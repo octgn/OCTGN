@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Windows;
@@ -18,7 +19,7 @@ namespace Octgn
 
         private static Version GetClientVersion()
         {
-            var asm = typeof (OctgnApp).Assembly;
+            Assembly asm = typeof (OctgnApp).Assembly;
             //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0];
             return asm.GetName().Version;
         }
@@ -34,11 +35,11 @@ namespace Octgn
                 var sb =
                     new StringBuilder(
                         "OCTGN cannot find the following files. The corresponding games have been disabled.\n\n");
-                foreach (var file in Program.GamesRepository.MissingFiles)
+                foreach (string file in Program.GamesRepository.MissingFiles)
                     sb.Append(file).Append("\n\n");
                 sb.Append("You should restore those files, or re-install the corresponding games.");
 
-                var oldShutdown = ShutdownMode;
+                ShutdownMode oldShutdown = ShutdownMode;
                 ShutdownMode = ShutdownMode.OnExplicitShutdown;
                 new MessageWindow(sb.ToString()).ShowDialog();
                 ShutdownMode = oldShutdown;

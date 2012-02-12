@@ -13,7 +13,7 @@ namespace Octgn.Play.Gui.Adorners
 
         static SelectAdorner()
         {
-            var color = Color.FromRgb(0x53, 0x9C, 0xD8);
+            Color color = Color.FromRgb(0x53, 0x9C, 0xD8);
             BorderBrush = new SolidColorBrush(color);
             BorderBrush.Freeze();
             color.A = 100;
