@@ -5,7 +5,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Octgn.Definitions;
 
 namespace Octgn.Play.Gui.Adorners
 {
@@ -44,11 +43,11 @@ namespace Octgn.Play.Gui.Adorners
             : base(Program.PlayWindow.Content as UIElement)
         {
             SourceCard = sourceCard;
-            bool isCardInverted = anchor.IsOnTableCanvas && (Player.LocalPlayer.InvertedTable ^ anchor.IsInverted);
+            var isCardInverted = anchor.IsOnTableCanvas && (Player.LocalPlayer.InvertedTable ^ anchor.IsInverted);
             Point cardOrigin;
             if (isCardInverted)
             {
-                CardDef cardDef = Program.Game.Definition.CardDefinition;
+                var cardDef = Program.Game.Definition.CardDefinition;
                 cardOrigin = new Point(cardDef.Width, cardDef.Height);
                 _mouseOffset = new Vector(cardDef.Width - mousePoint.X, cardDef.Height - mousePoint.Y);
             }

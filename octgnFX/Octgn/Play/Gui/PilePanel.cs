@@ -10,12 +10,12 @@ namespace Octgn.Play.Gui
         protected override Size MeasureOverride(Size availableSize)
         {
             var desiredSize = new Size();
-            ItemsControl parent = ItemsControl.GetItemsOwner(this);
-            int count = parent != null && parent.HasItems ? parent.Items.Count : 0;
+            var parent = ItemsControl.GetItemsOwner(this);
+            var count = parent != null && parent.HasItems ? parent.Items.Count : 0;
 
             // Next line needed otherwise ItemContainerGenerator is null (bug in WinFX ?)
-            UIElementCollection children = InternalChildren;
-            IItemContainerGenerator generator = ItemContainerGenerator;
+            var children = InternalChildren;
+            var generator = ItemContainerGenerator;
 
             if (count == 0)
             {
@@ -25,29 +25,30 @@ namespace Octgn.Play.Gui
             }
 
             // Get the generator position of the first visible data item
-            GeneratorPosition startPos = generator.GeneratorPositionFromIndex(count - 1);
+            var startPos = generator.GeneratorPositionFromIndex(count - 1);
             using (generator.StartAt(startPos, GeneratorDirection.Forward, true))
             {
                 bool newlyRealized;
                 // Get or create the child
                 var child = generator.GenerateNext(out newlyRealized) as UIElement;
-                if (newlyRealized)
-                {
-                    AddInternalChild(child);
-                    generator.PrepareItemContainer(child);
-                }
+
                 if (child != null)
                 {
+                    if (newlyRealized)
+                    {
+                        AddInternalChild(child);
+                        generator.PrepareItemContainer(child);
+                    }
                     child.Measure(availableSize);
                     desiredSize = child.DesiredSize;
                 }
             }
 
             // Remove all other items than the top one
-            for (int i = children.Count - 1; i >= 0; i--)
+            for (var i = children.Count - 1; i >= 0; i--)
             {
                 var childGeneratorPos = new GeneratorPosition(i, 0);
-                int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
+                var itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
                 if (itemIndex == count - 1) continue;
                 generator.Remove(childGeneratorPos, 1);
                 RemoveInternalChildRange(i, 1);

@@ -45,7 +45,6 @@ namespace Octgn.Launcher
             stackPanel1.Children.Clear();
             foreach (var gs in Program.GamesRepository.AllGames.Select(g => new GameListItem {Game = g}))
             {
-                //gs.MouseDoubleClick += new MouseButtonEventHandler(gs_MouseDoubleClick);
                 gs.MouseUp += GsMouseUp;
                 stackPanel1.Children.Add(gs);
             }
@@ -64,17 +63,6 @@ namespace Octgn.Launcher
         {
             ReloadGameList();
         }
-
-        /*
-        private void gs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var gs = (GameListItem) sender;
-            if (OnGameClick != null)
-            {
-                OnGameClick.Invoke(gs.Game, new EventArgs());
-            }
-        }
-        */
 
         private void PageLoaded(object sender, RoutedEventArgs e)
         {

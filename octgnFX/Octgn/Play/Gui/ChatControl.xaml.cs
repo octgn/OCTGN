@@ -37,7 +37,7 @@ namespace Octgn.Play.Gui
                     {
                         e.Handled = true;
 
-                        string msg = input.Text;
+                        var msg = input.Text;
                         input.Clear();
                         if (string.IsNullOrEmpty(msg)) return;
 
@@ -80,7 +80,7 @@ namespace Octgn.Play.Gui
 
         static ChatTraceListener()
         {
-            Color color = Color.FromRgb(0x5A, 0x9A, 0xCF);
+            var color = Color.FromRgb(0x5A, 0x9A, 0xCF);
             TurnBrush = new SolidColorBrush(color);
             TurnBrush.Freeze();
         }
@@ -183,7 +183,7 @@ namespace Octgn.Play.Gui
                     }
                     else
                     {
-                        int i = 0;
+                        var i = 0;
                         var p = args[i] as Player;
                         while (p == null && i < args.Length - 1)
                         {
@@ -205,10 +205,10 @@ namespace Octgn.Play.Gui
 
         private static Inline MergeArgs(string format, IList<object> args, int startAt = 0)
         {
-            for (int i = startAt; i < args.Count; i++)
+            for (var i = startAt; i < args.Count; i++)
             {
-                object arg = args[i];
-                string placeholder = "{" + i + "}";
+                var arg = args[i];
+                var placeholder = "{" + i + "}";
 
                 var cardModel = arg as CardModel;
                 var cardId = arg as CardIdentity;
@@ -218,9 +218,9 @@ namespace Octgn.Play.Gui
 
                 if (cardId != null || cardModel != null)
                 {
-                    string[] parts = format.Split(new[] {placeholder}, StringSplitOptions.None);
+                    var parts = format.Split(new[] {placeholder}, StringSplitOptions.None);
                     var result = new Span();
-                    for (int j = 0; j < parts.Length; j++)
+                    for (var j = 0; j < parts.Length; j++)
                     {
                         result.Inlines.Add(MergeArgs(parts[j], args, i + 1));
                         if (j + 1 < parts.Length)

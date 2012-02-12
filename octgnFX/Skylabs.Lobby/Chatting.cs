@@ -115,7 +115,7 @@ namespace Skylabs.Lobby
             {
                 Rooms.Add(new ChatRoom(rid));
             }
-            ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
+            var cr = Rooms.FirstOrDefault(r => r.Id == rid);
             if (cr == null) return;
             cr.ResetUserList(allusers);
             if (u.Uid == _parent.Me.Uid)
@@ -135,7 +135,7 @@ namespace Skylabs.Lobby
         /// <param name="u"> </param>
         public void UserLeftChat(long rid, User u)
         {
-            ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
+            var cr = Rooms.FirstOrDefault(r => r.Id == rid);
             if (cr == null) return;
             cr.RemoveUser(u);
             if (EChatEvent != null) EChatEvent.Invoke(cr, ChatEvent.UserLeftChat, u, null);
@@ -149,14 +149,14 @@ namespace Skylabs.Lobby
         /// <param name="message"> </param>
         public void RecieveChatMessage(long rid, User u, string message)
         {
-            ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
+            var cr = Rooms.FirstOrDefault(r => r.Id == rid);
             if (cr == null) return;
             if (EChatEvent != null) EChatEvent.Invoke(cr, ChatEvent.ChatMessage, u, message);
         }
 
         public void UserStatusChange(long rid, User u, UserStatus ustatus)
         {
-            ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
+            var cr = Rooms.FirstOrDefault(r => r.Id == rid);
             if (cr != null)
             {
                 cr.UserStatusChange(u, ustatus);

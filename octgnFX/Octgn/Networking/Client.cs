@@ -264,7 +264,8 @@ namespace Octgn.Networking
                 // Extract the xml
                 string xml = Encoding.UTF8.GetString(_packet, 0, i);
                 // Invoke the handler                                        
-                Program.Dispatcher.BeginInvoke(DispatcherPriority.Normal, _xmlHandler, xml);
+                if (_xmlHandler != null)
+                    Program.Dispatcher.BeginInvoke(DispatcherPriority.Normal, _xmlHandler, xml);
                 // Switch to a binary handler if the message asked for it
                 if (xml == "<Binary />")
                 {

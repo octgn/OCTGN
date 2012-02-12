@@ -17,10 +17,16 @@ namespace Octgn.Data
         {
             PackageName = packageName;
             Name = reader.GetAttribute("name");
-            Id = new Guid(reader.GetAttribute("id"));
-            var gameId = new Guid(reader.GetAttribute("gameId"));
-            Game = repository.Games.First(g => g.Id == gameId);
-            GameVersion = new Version(reader.GetAttribute("gameVersion"));
+            var gaid = reader.GetAttribute("id");
+            if (gaid != null) Id = new Guid(gaid);
+            var gi = reader.GetAttribute("gameId");
+            if (gi != null)
+            {
+                var gameId = new Guid(gi);
+                Game = repository.Games.First(g => g.Id == gameId);
+            }
+            var gv = reader.GetAttribute("gameVersion");
+            if (gv != null) GameVersion = new Version(gv);
             Version ver;
             Version.TryParse(reader.GetAttribute("version"), out ver);
             Version = ver ?? new Version(0, 0);

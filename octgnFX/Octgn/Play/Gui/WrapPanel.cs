@@ -53,13 +53,13 @@ namespace Octgn.Play.Gui
             var firstChild = (FrameworkElement) GetVisualChild(0);
             if (firstChild != null)
             {
-                double itemHeight = firstChild.ActualHeight + firstChild.Margin.Top + firstChild.Margin.Bottom;
-                double itemWidth = firstChild.ActualWidth + firstChild.Margin.Left + firstChild.Margin.Right;
-                int rowSize = Math.Max(1, (int) (ActualWidth/itemWidth));
+                var itemHeight = firstChild.ActualHeight + firstChild.Margin.Top + firstChild.Margin.Bottom;
+                var itemWidth = firstChild.ActualWidth + firstChild.Margin.Left + firstChild.Margin.Right;
+                var rowSize = Math.Max(1, (int) (ActualWidth/itemWidth));
 
-                int hOffset = Math.Min(rowSize, (int) (position.X/itemWidth + 0.5));
+                var hOffset = Math.Min(rowSize, (int) (position.X/itemWidth + 0.5));
                 _insertAtEndOfRow = hOffset == rowSize;
-                int index = (int) (position.Y/itemHeight)*rowSize + hOffset;
+                var index = (int) (position.Y/itemHeight)*rowSize + hOffset;
 
                 if (index > VisualChildrenCount) index = VisualChildrenCount;
                 return index;
@@ -91,7 +91,7 @@ namespace Octgn.Play.Gui
             {
                 _insertAdorner = new InsertAdorner(this) {Height = 106, ClippingVisual = ClippingVisual};
                 // HACK: currently WarpPanel is only used by the group window, but card height should be a property and not hard-coded like that
-                AdornerLayer layer = AdornerLayer.GetAdornerLayer(AdornerLayerVisual ?? this);
+                var layer = AdornerLayer.GetAdornerLayer(AdornerLayerVisual ?? this);
                 layer.Add(_insertAdorner);
             }
 
@@ -138,7 +138,7 @@ namespace Octgn.Play.Gui
         public void HideInsertIndicator()
         {
             if (_insertAdorner == null) return;
-            AdornerLayer layer = AdornerLayer.GetAdornerLayer(AdornerLayerVisual ?? this);
+            var layer = AdornerLayer.GetAdornerLayer(AdornerLayerVisual ?? this);
             layer.Remove(_insertAdorner);
             _insertAdorner = null;
             CancelSpacing();
@@ -178,7 +178,7 @@ namespace Octgn.Play.Gui
         {
             var group = (TransformGroup) element.RenderTransform;
 
-            Point currentPos = element.TransformToAncestor(this).Transform(new Point());
+            var currentPos = element.TransformToAncestor(this).Transform(new Point());
             arrangePosition = new Point(0, 0);
             if (@group.Inverse != null) arrangePosition = @group.Inverse.Transform(currentPos);
 

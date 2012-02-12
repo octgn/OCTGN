@@ -26,10 +26,10 @@ namespace Skylabs.LobbyServer
         public static void Er(Exception e, params string[] extras)
         {
             var st = new StackTrace();
-            StackFrame[] frames = st.GetFrames();
-            string methodName = "UnknownMethod";
+            var frames = st.GetFrames();
+            var methodName = "UnknownMethod";
             if (frames != null)
-                for (int i = 0; i < frames.Length; i++)
+                for (var i = 0; i < frames.Length; i++)
                 {
                     if (frames[i].GetMethod().Name != MethodBase.GetCurrentMethod().Name) continue;
                     if (i + 1 >= frames.Length) continue;
@@ -42,7 +42,7 @@ namespace Skylabs.LobbyServer
             Console.WriteLine("==========StackTrace==========");
             Console.WriteLine(e.StackTrace ?? st.ToString());
             Console.WriteLine("=============END==============");
-            foreach (string s in extras)
+            foreach (var s in extras)
                 Console.WriteLine(s);
         }
     }

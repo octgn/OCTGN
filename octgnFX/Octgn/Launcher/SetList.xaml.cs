@@ -73,11 +73,13 @@ namespace Octgn.Launcher
                                                      string shortName = Path.GetFileName(setName);
                                                      try
                                                      {
-                                                         string copyto = Path.Combine(path, shortName);
-                                                         if (setName.ToLower() != copyto.ToLower())
-                                                             File.Copy(setName, copyto, true);
-
-                                                         SelectedGame.InstallSet(copyto);
+                                                         if (shortName != null)
+                                                         {
+                                                             string copyto = Path.Combine(path, shortName);
+                                                             if (setName.ToLower() != copyto.ToLower())
+                                                                 File.Copy(setName, copyto, true);
+                                                             SelectedGame.InstallSet(copyto);
+                                                         }
                                                          wnd.UpdateProgress(current, max,
                                                                             string.Format("'{0}' installed.", shortName),
                                                                             false);

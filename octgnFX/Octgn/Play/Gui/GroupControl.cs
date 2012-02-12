@@ -114,8 +114,8 @@ namespace Octgn.Play.Gui
 
         protected virtual void OnKeyShortcut(object sender, TableKeyEventArgs e)
         {
-            ActionShortcut[] shortcuts = group.GroupShortcuts;
-            ActionShortcut match = shortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e.KeyEventArgs));
+            var shortcuts = group.GroupShortcuts;
+            var match = shortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e.KeyEventArgs));
             if (match == null || !@group.TryToManipulate()) return;
             if (match.ActionDef.Execute != null)
                 ScriptEngine.ExecuteOnGroup(match.ActionDef.Execute, @group);
@@ -157,8 +157,8 @@ namespace Octgn.Play.Gui
 
         internal int GetTurnAnimationDelay()
         {
-            int currentTimestamp = Environment.TickCount;
-            int delay = _turnAnimationDelay - (currentTimestamp - _turnAnimationTimestamp);
+            var currentTimestamp = Environment.TickCount;
+            var delay = _turnAnimationDelay - (currentTimestamp - _turnAnimationTimestamp);
             if (delay < 0) delay = 0;
             _turnAnimationDelay = delay + 50;
             _turnAnimationTimestamp = currentTimestamp;
@@ -260,22 +260,22 @@ namespace Octgn.Play.Gui
             _cardHeader = null;
             _defaultGroupAction = _defaultCardAction = null;
 
-            GroupDef def = group.Definition;
+            var def = group.Definition;
 
             // Create the card actions
-            List<Control> cardItems = CreateCardMenuItems(def);
+            var cardItems = CreateCardMenuItems(def);
             _cardMenu.Collection = cardItems;
 
             // Create the group actions
-            List<Control> groupItems = CreateGroupMenuItems(def);
+            var groupItems = CreateGroupMenuItems(def);
             _groupMenu.Collection = groupItems;
         }
 
         protected virtual List<Control> CreateGroupMenuItems(GroupDef def)
         {
-            int nGroupActions = def.GroupActions == null ? 0 : def.GroupActions.Length;
+            var nGroupActions = def.GroupActions == null ? 0 : def.GroupActions.Length;
             var items = new List<Control> {CreateGroupHeader()};
-            for (int i = 0; i < nGroupActions; i++)
+            for (var i = 0; i < nGroupActions; i++)
                 if (def.GroupActions != null) items.Add(CreateGroupMenuItem(def.GroupActions[i]));
 
             if (nGroupActions > 0)
@@ -285,7 +285,7 @@ namespace Octgn.Play.Gui
                 items.Add(CreateGroupPassToItem());
             if (group.Visibility != GroupVisibility.Undefined)
                 items.Add(CreateVisibilityItem());
-            MenuItem item = CreateLookAtCardsMenuItem();
+            var item = CreateLookAtCardsMenuItem();
             if (item != null)
                 items.Add(item);
 
@@ -297,7 +297,7 @@ namespace Octgn.Play.Gui
 
         protected virtual List<Control> CreateCardMenuItems(GroupDef def)
         {
-            int nCardActions = def.CardActions == null ? 0 : def.CardActions.Length;
+            var nCardActions = def.CardActions == null ? 0 : def.CardActions.Length;
             var items = new List<Control>();
 
             if (nCardActions > 0 || group.Controller == null)
@@ -308,7 +308,7 @@ namespace Octgn.Play.Gui
             }
             if (nCardActions > 0)
             {
-                for (int i = 0; i < nCardActions; i++)
+                for (var i = 0; i < nCardActions; i++)
                     if (def.CardActions != null) items.Add(CreateCardMenuItem(def.CardActions[i]));
                 if (group.Controller == null)
                     items.Add(new Separator());
@@ -342,7 +342,7 @@ namespace Octgn.Play.Gui
                                           //((MenuItem)item.Items[2]).IsChecked = group.Visibility == GroupVisibility.Undefined;
                                           //while (item.Items.Count > 4) item.Items.RemoveAt(item.Items.Count - 1);
                                           while (item.Items.Count > 3) item.Items.RemoveAt(item.Items.Count - 1);
-                                          foreach (Player p in Player.AllExceptGlobal)
+                                          foreach (var p in Player.AllExceptGlobal)
                                           {
                                               playerItem = new MenuItem
                                                                {
@@ -471,7 +471,7 @@ namespace Octgn.Play.Gui
             var actionGroupDef = baseAction as ActionGroupDef;
             if (actionGroupDef != null)
             {
-                foreach (MenuItem subItem in actionGroupDef.Children.Select(CreateGroupMenuItem))
+                foreach (var subItem in actionGroupDef.Children.Select(CreateGroupMenuItem))
                     item.Items.Add(subItem);
                 return item;
             }
@@ -498,7 +498,7 @@ namespace Octgn.Play.Gui
             var actionGroupDef = baseAction as ActionGroupDef;
             if (actionGroupDef != null)
             {
-                foreach (MenuItem subItem in actionGroupDef.Children.Select(CreateCardMenuItem))
+                foreach (var subItem in actionGroupDef.Children.Select(CreateCardMenuItem))
                     item.Items.Add(subItem);
                 return item;
             }

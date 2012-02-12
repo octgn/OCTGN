@@ -67,16 +67,20 @@ namespace Octgn.Data
                 {
                     if (dr.Read())
                     {
-                        var s = new Set
-                                    {
-                                        Id = Guid.Parse(dr["id"] as string),
-                                        Name = (string) dr["name"],
-                                        Game = this,
-                                        GameVersion = new Version((string) dr["game_version"]),
-                                        Version = new Version((string) dr["version"]),
-                                        PackageName = (string) dr["package"]
-                                    };
-                        return s;
+                        var did = dr["id"] as string;
+                        if (did != null)
+                        {
+                            var s = new Set
+                                        {
+                                            Id = Guid.Parse(did),
+                                            Name = (string) dr["name"],
+                                            Game = this,
+                                            GameVersion = new Version((string) dr["game_version"]),
+                                            Version = new Version((string) dr["version"]),
+                                            PackageName = (string) dr["package"]
+                                        };
+                            return s;
+                        }
                     }
                 }
             }
@@ -95,15 +99,20 @@ namespace Octgn.Data
                 {
                     if (dr.Read())
                     {
-                        var result = new CardModel
-                                         {
-                                             Id = Guid.Parse(dr["id"] as string),
-                                             Name = (string) dr["name"],
-                                             ImageUri = (string) dr["image"],
-                                             Set = GetSet(Guid.Parse(dr["set_id"] as string)),
-                                             Properties = GetCardProperties(Guid.Parse(dr["id"] as string))
-                                         };
-                        return result;
+                        var did = dr["id"] as string;
+                        var sid = dr["sed_id"] as string;
+                        if (did != null && sid != null)
+                        {
+                            var result = new CardModel
+                                             {
+                                                 Id = Guid.Parse(did),
+                                                 Name = (string) dr["name"],
+                                                 ImageUri = (string) dr["image"],
+                                                 Set = GetSet(Guid.Parse(sid)),
+                                                 Properties = GetCardProperties(Guid.Parse(did))
+                                             };
+                            return result;
+                        }
                     }
                 }
             }
@@ -124,30 +133,29 @@ namespace Octgn.Data
                     while (dr.Read())
                     {
                         var vt = (int) ((long) dr["type"]);
-                        switch (vt)
-                        {
-                            case 0: // String
-                                {
-                                    var name = dr["name"] as string;
-                                    var val = dr["vstr"] as string;
-                                    ret.Add(name, val);
-                                    break;
-                                }
-                            case 1: // int
-                                {
-                                    var name = dr["name"] as string;
-                                    var val = (int) ((long) dr["vint"]);
-                                    ret.Add(name, val);
-                                    break;
-                                }
-                            case 2: //char
-                                {
-                                    var name = dr["name"] as string;
-                                    var val = dr["vstr"] as string;
-                                    ret.Add(name, val);
-                                    break;
-                                }
-                        }
+                        var name = dr["name"] as string;
+                        if (name != null)
+                            switch (vt)
+                            {
+                                case 0: // String
+                                    {
+                                        var val = dr["vstr"] as string;
+                                        ret.Add(name, val);
+                                        break;
+                                    }
+                                case 1: // int
+                                    {
+                                        var val = (int) ((long) dr["vint"]);
+                                        ret.Add(name, val);
+                                        break;
+                                    }
+                                case 2: //char
+                                    {
+                                        var val = dr["vstr"] as string;
+                                        ret.Add(name, val);
+                                        break;
+                                    }
+                            }
                     }
                 }
             }
@@ -166,15 +174,20 @@ namespace Octgn.Data
                 {
                     if (dr.Read())
                     {
-                        var result = new CardModel
-                                         {
-                                             Id = Guid.Parse(dr["id"] as string),
-                                             Name = (string) dr["name"],
-                                             ImageUri = (string) dr["image"],
-                                             Set = GetSet(Guid.Parse(dr["set_id"] as string)),
-                                             Properties = GetCardProperties(id)
-                                         };
-                        return result;
+                        var did = dr["id"] as string;
+                        var sid = dr["set_id"] as string;
+                        if (sid != null && did != null)
+                        {
+                            var result = new CardModel
+                                             {
+                                                 Id = Guid.Parse(did),
+                                                 Name = (string) dr["name"],
+                                                 ImageUri = (string) dr["image"],
+                                                 Set = GetSet(Guid.Parse(sid)),
+                                                 Properties = GetCardProperties(id)
+                                             };
+                            return result;
+                        }
                     }
                 }
             }
@@ -194,11 +207,14 @@ namespace Octgn.Data
                 {
                     while (dr.Read())
                     {
+                        var did = dr["id"] as string;
+                        var sid = dr["set_id"] as string;
+                        if (sid == null || did == null) return ret;
                         var result = new MarkerModel(
-                            Guid.Parse(dr["id"] as string),
+                            Guid.Parse(did),
                             (string) dr["name"],
                             (string) dr["icon"],
-                            GetSet(Guid.Parse(dr["set_id"] as string))
+                            GetSet(Guid.Parse(sid))
                             );
                         ret.Add(result);
                     }
@@ -219,9 +235,13 @@ namespace Octgn.Data
                 {
                     if (dr.Read())
                     {
-                        Set set = GetSet(Guid.Parse(dr["set_id"] as string));
-                        var xml = dr["xml"] as string;
-                        return new Pack(set, xml);
+                        var setid = dr["set_id"] as string;
+                        if (setid != null)
+                        {
+                            Set set = GetSet(Guid.Parse(setid));
+                            var xml = dr["xml"] as string;
+                            return new Pack(set, xml);
+                        }
                     }
                 }
             }
@@ -244,8 +264,9 @@ namespace Octgn.Data
                     using (
                         Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (GamesRepository),
                                                                                              "CardSet.xsd"))
-                    using (XmlReader reader = XmlReader.Create(s))
-                        settings.Schemas.Add(null, reader);
+                        if (s != null)
+                            using (XmlReader reader = XmlReader.Create(s))
+                                settings.Schemas.Add(null, reader);
 
                     // Read the cards
                     using (XmlReader reader = XmlReader.Create(definition.GetStream(), settings))
@@ -259,8 +280,8 @@ namespace Octgn.Data
                         if (set.GameVersion.Major != Version.Major || set.GameVersion.Minor != Version.Minor)
                             throw new ApplicationException(
                                 string.Format(
-                                    "The set '{0}' is incompatible with the installed game version.\nGame version: {1:2}\nSet made for version: {2:2}.",
-                                    set.Name, Version, set.GameVersion));
+                                    "The set '{0}' is incompatible with the installed game version.\nGame version: \nSet made for version: {1:2}.",
+                                    set.Name, set.GameVersion));
 
                         InsertSet(set);
 
@@ -333,7 +354,7 @@ namespace Octgn.Data
             }
         }
 
-        private void InsertSet(Set set)
+        private static void InsertSet(Set set)
         {
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
@@ -357,7 +378,7 @@ namespace Octgn.Data
             }
         }
 
-        private void InsertPack(Pack pack, string xml, Guid setId)
+        private static void InsertPack(Pack pack, string xml, Guid setId)
         {
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
@@ -473,9 +494,11 @@ namespace Octgn.Data
                 {
                     while (dr.Read())
                     {
+                        var guid = dr["id"] as string;
+                        if (guid == null) continue;
                         var s = new Set
                                     {
-                                        Id = Guid.Parse(dr["id"] as string),
+                                        Id = Guid.Parse(guid),
                                         Name = (string) dr["name"],
                                         Game = this,
                                         GameVersion = new Version((string) dr["game_version"]),
@@ -519,8 +542,9 @@ namespace Octgn.Data
                                 pt = PropertyType.Char;
                                 break;
                         }
-                        if (!dl.ContainsKey(name))
-                            dl.Add(name, pt);
+                        if (name != null)
+                            if (!dl.ContainsKey(name))
+                                dl.Add(name, pt);
                     }
                     ret.AddRange(dl.Select(d => new PropertyDef(d.Key, d.Value)));
                 }
@@ -545,9 +569,12 @@ namespace Octgn.Data
             foreach (var deckRel in decks)
             {
                 var deck = package.GetPart(deckRel.TargetUri);
-                var deckFilename = Path.Combine(path, Path.GetFileName(deck.Uri.ToString()));
+                var deckuri = Path.GetFileName(deck.Uri.ToString());
+                if (deckuri == null) continue;
+                var deckFilename = Path.Combine(path, deckuri);
                 using (var deckStream = deck.GetStream(FileMode.Open, FileAccess.Read))
-                using (var targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write, FileShare.Read))
+                using (var targetStream = File.Open(deckFilename, FileMode.Create, FileAccess.Write, FileShare.Read)
+                    )
                 {
                     while (true)
                     {
@@ -588,7 +615,7 @@ namespace Octgn.Data
                 foreach (var prop in props)
                 {
                     var cname = prop["name"] as string;
-                    if (!cards.Columns.Contains(cname))
+                    if (cname == null || !cards.Columns.Contains(cname))
                         continue;
                     var t = (int) ((long) prop["type"]);
                     switch (t)

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Octgn.Play.Gui
@@ -63,19 +60,19 @@ namespace Octgn.Play.Gui
 
         public static void ForEachModifiable(Action<Card> action)
         {
-            for (int i = Selected.Count - 1; i >= 0; --i)
+            for (var i = Selected.Count - 1; i >= 0; --i)
                 action(Selected[i]);
         }
 
         public static IEnumerable<CardControl> GetCardControls(GroupControl ctrl)
         {
             if (IsEmpty()) yield break;
-            ObservableCollection<Card> groupCards = ctrl.Group.Cards;
-            ItemContainerGenerator generator = ctrl.GetItemContainerGenerator();
-            for (int i = 0; i < groupCards.Count; ++i)
+            var groupCards = ctrl.Group.Cards;
+            var generator = ctrl.GetItemContainerGenerator();
+            for (var i = 0; i < groupCards.Count; ++i)
                 if (groupCards[i].Selected)
                 {
-                    DependencyObject container = generator.ContainerFromIndex(i);
+                    var container = generator.ContainerFromIndex(i);
                     var cardCtrl = (CardControl) VisualTreeHelper.GetChild(container, 0);
                     yield return cardCtrl;
                 }
@@ -86,7 +83,7 @@ namespace Octgn.Play.Gui
             if (IsEmpty())
                 yield return empty;
             else
-                foreach (CardControl cardCtrl in GetCardControls(ctrl))
+                foreach (var cardCtrl in GetCardControls(ctrl))
                     yield return cardCtrl;
         }
 
@@ -99,8 +96,8 @@ namespace Octgn.Play.Gui
         {
             // Because some actions may modify the selection (which breaks the enumeration),
             // we make a local copy of the selection
-            List<Card> cards = ExtendToSelection(card).ToList();
-            foreach (Card c in cards)
+            var cards = ExtendToSelection(card).ToList();
+            foreach (var c in cards)
                 action(c);
         }
     }

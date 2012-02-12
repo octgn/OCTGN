@@ -6,7 +6,7 @@
 
         static Prefs()
         {
-            string hln = SimpleConfig.ReadValue("Options_HideLoginNotifications");
+            var hln = SimpleConfig.ReadValue("Options_HideLoginNotifications");
             _hideLoginNotifications = hln == null || hln == "false" ? "false" : "true";
         }
 
