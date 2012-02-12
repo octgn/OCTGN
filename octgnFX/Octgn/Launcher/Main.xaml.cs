@@ -329,6 +329,7 @@ namespace Octgn.Launcher
             Program.LobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
             Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
             Program.LobbyClient.Stop();
+            Program.Exit();
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
 
