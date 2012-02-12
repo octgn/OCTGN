@@ -24,7 +24,7 @@ namespace Skylabs.LobbyServer
         {
             lock (GamingLocker)
             {
-                var ret = Games.Count;
+                int ret = Games.Count;
                 return ret;
             }
         }
@@ -33,7 +33,7 @@ namespace Skylabs.LobbyServer
         {
             lock (GamingLocker)
             {
-                foreach (var g in Games)
+                foreach (KeyValuePair<int, HostedGame> g in Games)
                 {
                     g.Value.Stop();
                 }
@@ -45,7 +45,7 @@ namespace Skylabs.LobbyServer
         {
             lock (GamingLocker)
             {
-                var ret = _totalHostedGames;
+                long ret = _totalHostedGames;
                 return ret;
             }
         }
@@ -93,7 +93,7 @@ namespace Skylabs.LobbyServer
         {
             lock (GamingLocker)
             {
-                var sendgames =
+                List<Lobby.HostedGame> sendgames =
                     Games.Select(
                         g =>
                         new Lobby.HostedGame(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(), g.Value.Port,

@@ -65,7 +65,7 @@ namespace Skylabs.Net
             get { return (from t in _data where t.Key == key select t.Value).FirstOrDefault(); }
             set
             {
-                foreach (var t in _data.Where(t => t.Key == key))
+                foreach (NameValuePair t in _data.Where(t => t.Key == key))
                 {
                     t.Value = value;
                 }

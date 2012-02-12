@@ -17,6 +17,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Octgn.Data;
+using Octgn.Definitions;
 using Octgn.Play.Dialogs;
 using Octgn.Play.Gui;
 using Octgn.Scripting;
@@ -51,7 +52,7 @@ namespace Octgn.Play
         {
             InitializeComponent();
             //Application.Current.MainWindow = this;
-            var oversion = Assembly.GetExecutingAssembly().GetName().Version;
+            Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "OCTGN  version : " + oversion + " : " + Program.Game.Definition.Name;
             Program.Game.ComposeParts(this);
         }
@@ -78,7 +79,7 @@ namespace Octgn.Play
 
             // Show the Scripting console in dev only
             if (Application.Current.Properties["ArbitraryArgName"] == null) return;
-            var fname = Application.Current.Properties["ArbitraryArgName"].ToString();
+            string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
             if (fname != "/developer") return;
             Console.Visibility = Visibility.Visible;
             Loaded += (sender, args) =>
@@ -98,8 +99,8 @@ namespace Octgn.Play
                 return;
             }
 
-            var def = Program.Game.Definition.PlayerDefinition;
-            var format = def.IndicatorsFormat;
+            PlayerDef def = Program.Game.Definition.PlayerDefinition;
+            string format = def.IndicatorsFormat;
             if (format == null)
             {
                 textBlock.Visibility = Visibility.Collapsed;
@@ -107,13 +108,13 @@ namespace Octgn.Play
             }
 
             var multi = new MultiBinding();
-            var placeholder = 0;
+            int placeholder = 0;
             format = Regex.Replace(format, @"{#([^}]*)}", delegate(Match match)
                                                               {
-                                                                  var name = match.Groups[1].Value;
+                                                                  string name = match.Groups[1].Value;
                                                                   if (player != null)
                                                                   {
-                                                                      var counter =
+                                                                      Counter counter =
                                                                           player.Counters.FirstOrDefault(
                                                                               c => c.Name == name);
                                                                       if (counter != null)
@@ -125,7 +126,7 @@ namespace Octgn.Play
                                                                   }
                                                                   if (player != null)
                                                                   {
-                                                                      var group =
+                                                                      Group group =
                                                                           player.IndexedGroups.FirstOrDefault(
                                                                               g => g.Name == name);
                                                                       if (@group != null)
@@ -178,8 +179,8 @@ namespace Octgn.Play
             // Try to load the file contents
             try
             {
-                var newDeck = Deck.Load(ofd.FileName,
-                                        Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
+                Deck newDeck = Deck.Load(ofd.FileName,
+                                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
                 Program.Game.LoadDeck(newDeck);
             }
@@ -252,7 +253,7 @@ namespace Octgn.Play
                 return; // Do not tinker with the keyboard events when the focus is inside a textbox
             if (e.IsRepeat)
                 return;
-            var mouseOver = Mouse.DirectlyOver;
+            IInputElement mouseOver = Mouse.DirectlyOver;
             var te = new TableKeyEventArgs(this, e);
             if (mouseOver != null) mouseOver.RaiseEvent(te);
             if (te.Handled) return;
@@ -260,7 +261,7 @@ namespace Octgn.Play
             // If the event was unhandled, check if there's a selection and try to apply a shortcut action to it
             if (!Selection.IsEmpty() && Selection.Source.CanManipulate())
             {
-                var match =
+                ActionShortcut match =
                     Selection.Source.CardShortcuts.FirstOrDefault(
                         shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
                 if (match != null)
@@ -277,9 +278,9 @@ namespace Octgn.Play
             // The event was still unhandled, try all groups, starting with the table
             table.RaiseEvent(te);
             if (te.Handled) return;
-            foreach (var g in Player.LocalPlayer.Groups.Where(g => g.CanManipulate()))
+            foreach (Group g in Player.LocalPlayer.Groups.Where(g => g.CanManipulate()))
             {
-                var a = g.GroupShortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e));
+                ActionShortcut a = g.GroupShortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e));
                 if (a == null) continue;
                 if (a.ActionDef.Execute != null)
                     ScriptEngine.ExecuteOnGroup(a.ActionDef.Execute, g);
@@ -296,20 +297,20 @@ namespace Octgn.Play
             }
             else
             {
-                var mousePt = Mouse.GetPosition(table);
+                Point mousePt = Mouse.GetPosition(table);
                 if (mousePt.X < 0.4*clientArea.ActualWidth)
                     outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Right;
                 else if (mousePt.X > 0.6*clientArea.ActualWidth)
                     outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Left;
 
                 var ctrl = e.OriginalSource as CardControl;
-                var img = e.Card != null
-                              ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
-                                                                                          e.Card.PeekingPlayers.
-                                                                                              Contains(
-                                                                                                  Player.
-                                                                                                      LocalPlayer)))
-                              : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture));
+                BitmapImage img = e.Card != null
+                                      ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
+                                                                                                  e.Card.PeekingPlayers.
+                                                                                                      Contains(
+                                                                                                          Player.
+                                                                                                              LocalPlayer)))
+                                      : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture));
                 ShowCardPicture(img);
             }
         }
@@ -331,10 +332,10 @@ namespace Octgn.Play
             _fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
 
             if (cardViewer.Clip == null) return;
-            var cardDef = Program.Game.Definition.CardDefinition;
+            CardDef cardDef = Program.Game.Definition.CardDefinition;
             var clipRect = ((RectangleGeometry) cardViewer.Clip);
-            var height = Math.Min(cardViewer.MaxHeight, cardViewer.Height);
-            var width = cardViewer.Width*height/cardViewer.Height;
+            double height = Math.Min(cardViewer.MaxHeight, cardViewer.Height);
+            double width = cardViewer.Width*height/cardViewer.Height;
             clipRect.Rect = new Rect(new Size(width, height));
             clipRect.RadiusX = clipRect.RadiusY = cardDef.CornerRadius*height/cardDef.Height;
         }
@@ -480,7 +481,7 @@ namespace Octgn.Play
         {
             if (value == null) return null;
             var d = (double) value;
-            var scale = double.Parse((string) parameter, CultureInfo.InvariantCulture);
+            double scale = double.Parse((string) parameter, CultureInfo.InvariantCulture);
             return d*scale;
         }
 

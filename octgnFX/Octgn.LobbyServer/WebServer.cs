@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -84,30 +85,30 @@ namespace Skylabs.LobbyServer
         {
             try
             {
-                var con = _server.EndGetContext(res);
-                var req = con.Request;
+                HttpListenerContext con = _server.EndGetContext(res);
+                HttpListenerRequest req = con.Request;
 
-                var page = req.Url.AbsolutePath.Trim('/');
+                string page = req.Url.AbsolutePath.Trim('/');
                 page = page.ToLower();
                 switch (page)
                 {
                     case "":
                         {
-                            var spage = File.ReadAllText("webserver/index.htm");
+                            string spage = File.ReadAllText("webserver/index.htm");
                             spage = ReplaceVariables(spage);
                             SendItem(con.Response, spage);
                             break;
                         }
                     case "games.htm":
                         {
-                            var spage = File.ReadAllText("webserver/games.htm");
+                            string spage = File.ReadAllText("webserver/games.htm");
                             spage = InsertRunningGames(spage);
                             SendItem(con.Response, spage);
                             break;
                         }
                     case "index.htm":
                         {
-                            var time = req.QueryString["time"];
+                            string time = req.QueryString["time"];
                             if (time != null)
                             {
                                 int t;
@@ -118,14 +119,14 @@ namespace Skylabs.LobbyServer
                                     break;
                                 }
                             }
-                            var spage = File.ReadAllText("webserver/index.htm");
+                            string spage = File.ReadAllText("webserver/index.htm");
                             spage = ReplaceVariables(spage);
                             SendItem(con.Response, spage);
                             break;
                         }
                     default:
                         {
-                            var spage = "";
+                            string spage = "";
                             try
                             {
                                 spage = File.ReadAllText("webserver/" + page);
@@ -150,9 +151,9 @@ namespace Skylabs.LobbyServer
 
         private static string ReplaceVariables(string rawpage)
         {
-            var v = Assembly.GetCallingAssembly().GetName().Version;
+            Version v = Assembly.GetCallingAssembly().GetName().Version;
             //Microsoft.VisualBasic.Devices.ComputerInfo ci = new Microsoft.VisualBasic.Devices.ComputerInfo();
-            var ret = rawpage.Replace("$version", v.ToString());
+            string ret = rawpage.Replace("$version", v.ToString());
             ret = ret.Replace("$runtime", Server.ServerRunTime.ToString());
             ret = ret.Replace("$onlineusers", Server.OnlineCount().ToString(CultureInfo.InvariantCulture));
             ret = ret.Replace("$hostedgames", Gaming.GameCount().ToString(CultureInfo.InvariantCulture));
@@ -165,18 +166,18 @@ namespace Skylabs.LobbyServer
 
         private static string InsertRunningGames(string rawpage)
         {
-            var insert = string.Empty;
-            var games = Gaming.GetLobbyList();
+            string insert = string.Empty;
+            List<Lobby.HostedGame> games = Gaming.GetLobbyList();
 
-            var v = Assembly.GetCallingAssembly().GetName().Version;
-            var ret = rawpage.Replace("$version", v.ToString());
+            Version v = Assembly.GetCallingAssembly().GetName().Version;
+            string ret = rawpage.Replace("$version", v.ToString());
             ret = ret.Replace("$runtime", Server.ServerRunTime.ToString());
             ret = ret.Replace("$proctime", Process.GetCurrentProcess().TotalProcessorTime.ToString());
             ret = ret.Replace("$memusage", ToFileSize(Process.GetCurrentProcess().WorkingSet64));
             ret = ret.Replace("$totmem", "256 MB");
 
             //construct game table
-            foreach (var game in games)
+            foreach (Lobby.HostedGame game in games)
             {
                 var ts = new TimeSpan(DateTime.Now.Ticks - game.TimeStarted.Ticks);
                 insert = insert + "<tr>";
@@ -185,7 +186,7 @@ namespace Skylabs.LobbyServer
                 insert = insert + "<td>" + game.GameStatus + "</td>";
                 insert = insert + "<td>" + game.GameVersion + "</td>";
                 insert = insert + "<td>" + ts + "</td>";
-                var c = Server.GetOnlineClientByUid(game.UserHosting.Uid);
+                Client c = Server.GetOnlineClientByUid(game.UserHosting.Uid);
                 User user;
                 if (c == null)
                 {
@@ -211,9 +212,9 @@ namespace Skylabs.LobbyServer
         {
             try
             {
-                var buffer = Encoding.UTF8.GetBytes(page);
+                byte[] buffer = Encoding.UTF8.GetBytes(page);
                 res.ContentLength64 = buffer.Length;
-                using (var o = res.OutputStream)
+                using (Stream o = res.OutputStream)
                 {
                     o.Write(buffer, 0, buffer.Length);
                     o.Close();
@@ -235,7 +236,7 @@ namespace Skylabs.LobbyServer
         public static string ToFileSize(long source)
         {
             const int byteConversion = 1024;
-            var bytes = Convert.ToDouble(source);
+            double bytes = Convert.ToDouble(source);
 
             if (bytes >= Math.Pow(byteConversion, 3)) //GB Range
             {

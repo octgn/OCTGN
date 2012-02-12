@@ -199,16 +199,16 @@ namespace Octgn.Play
             OnPropertyChanged("TransparentBrush");
             // Create counters
             _counters = new Counter[g.PlayerDefinition.Counters != null ? g.PlayerDefinition.Counters.Length : 0];
-            for (var i = 0; i < Counters.Length; i++)
+            for (int i = 0; i < Counters.Length; i++)
                 if (g.PlayerDefinition.Counters != null)
                     Counters[i] = new Counter(this, g.PlayerDefinition.Counters[i]);
             // Create variables
             Variables = new Dictionary<string, int>();
-            foreach (var varDef in g.Variables.Where(v => !v.Global))
+            foreach (VariableDef varDef in g.Variables.Where(v => !v.Global))
                 Variables.Add(varDef.Name, varDef.DefaultValue);
             // Create global variables
             GlobalVariables = new Dictionary<string, string>();
-            foreach (var varD in g.PlayerDefinition.GlobalVariables)
+            foreach (GlobalVariableDef varD in g.PlayerDefinition.GlobalVariables)
                 GlobalVariables.Add(varD.Name, varD.Value);
             // Create a hand, if any
             if (g.PlayerDefinition.Hand != null)
@@ -216,7 +216,7 @@ namespace Octgn.Play
             // Create groups
             _groups = new Group[g.PlayerDefinition.Groups != null ? g.PlayerDefinition.Groups.Length + 1 : 1];
             _groups[0] = _hand;
-            for (var i = 1; i < IndexedGroups.Length; i++)
+            for (int i = 1; i < IndexedGroups.Length; i++)
                 if (g.PlayerDefinition.Groups != null) _groups[i] = new Pile(this, g.PlayerDefinition.Groups[i - 1]);
             // Raise the event
             if (PlayerAdded != null) PlayerAdded(null, new PlayerEventArgs(this));
@@ -225,7 +225,7 @@ namespace Octgn.Play
         // C'tor for global items
         internal Player(GameDef g)
         {
-            var globalDef = g.GlobalDefinition;
+            SharedDef globalDef = g.GlobalDefinition;
             // Register the lPlayer
             all.Add(this);
             // Init fields
@@ -236,17 +236,17 @@ namespace Octgn.Play
             {
                 // Create global variables
                 GlobalVariables = new Dictionary<string, string>();
-                foreach (var varD in g.PlayerDefinition.GlobalVariables)
+                foreach (GlobalVariableDef varD in g.PlayerDefinition.GlobalVariables)
                     GlobalVariables.Add(varD.Name, varD.Value);
             }
             // Create counters
             _counters = new Counter[globalDef.Counters != null ? globalDef.Counters.Length : 0];
-            for (var i = 0; i < Counters.Length; i++)
+            for (int i = 0; i < Counters.Length; i++)
                 if (globalDef.Counters != null) Counters[i] = new Counter(this, globalDef.Counters[i]);
             // Create global's lPlayer groups
             // TODO: This could fail with a run-time exception on write, make it safe
             _groups = new Pile[globalDef.Groups != null ? g.GlobalDefinition.Groups.Length + 1 : 0];
-            for (var i = 1; i < IndexedGroups.Length; i++)
+            for (int i = 1; i < IndexedGroups.Length; i++)
                 if (globalDef.Groups != null) _groups[i] = new Pile(this, globalDef.Groups[i - 1]);
         }
 

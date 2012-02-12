@@ -31,7 +31,7 @@ namespace Skylabs.Lobby.Sockets
 
         public void AddBytes(byte[] toadd)
         {
-            foreach (var t in toadd)
+            foreach (byte t in toadd)
             {
                 if (_messageSize == -1)
                 {
@@ -50,7 +50,7 @@ namespace Skylabs.Lobby.Sockets
                     continue;
                 }
                 if (_mbAdded != _messageSize) continue;
-                var sm = SocketMessage.Deserialize(_messageBuffer);
+                SocketMessage sm = SocketMessage.Deserialize(_messageBuffer);
                 if (sm != null)
                     SmQueue.Enqueue(sm);
                 Restart();

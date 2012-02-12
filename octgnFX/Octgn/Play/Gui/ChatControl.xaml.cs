@@ -37,7 +37,7 @@ namespace Octgn.Play.Gui
                     {
                         e.Handled = true;
 
-                        var msg = input.Text;
+                        string msg = input.Text;
                         input.Clear();
                         if (string.IsNullOrEmpty(msg)) return;
 
@@ -48,7 +48,7 @@ namespace Octgn.Play.Gui
                     {
                         e.Handled = true;
                         input.Clear();
-                        var window = Window.GetWindow(this);
+                        Window window = Window.GetWindow(this);
                         if (window != null)
                             ((UIElement) window.Content).MoveFocus(
                                 new TraversalRequest(FocusNavigationDirection.First));
@@ -80,7 +80,7 @@ namespace Octgn.Play.Gui
 
         static ChatTraceListener()
         {
-            var color = Color.FromRgb(0x5A, 0x9A, 0xCF);
+            Color color = Color.FromRgb(0x5A, 0x9A, 0xCF);
             TurnBrush = new SolidColorBrush(color);
             TurnBrush.Freeze();
         }
@@ -183,7 +183,7 @@ namespace Octgn.Play.Gui
                     }
                     else
                     {
-                        var i = 0;
+                        int i = 0;
                         var p = args[i] as Player;
                         while (p == null && i < args.Length - 1)
                         {
@@ -205,10 +205,10 @@ namespace Octgn.Play.Gui
 
         private static Inline MergeArgs(string format, IList<object> args, int startAt = 0)
         {
-            for (var i = startAt; i < args.Count; i++)
+            for (int i = startAt; i < args.Count; i++)
             {
-                var arg = args[i];
-                var placeholder = "{" + i + "}";
+                object arg = args[i];
+                string placeholder = "{" + i + "}";
 
                 var cardModel = arg as CardModel;
                 var cardId = arg as CardIdentity;
@@ -218,9 +218,9 @@ namespace Octgn.Play.Gui
 
                 if (cardId != null || cardModel != null)
                 {
-                    var parts = format.Split(new[] {placeholder}, StringSplitOptions.None);
+                    string[] parts = format.Split(new[] {placeholder}, StringSplitOptions.None);
                     var result = new Span();
-                    for (var j = 0; j < parts.Length; j++)
+                    for (int j = 0; j < parts.Length; j++)
                     {
                         result.Inlines.Add(MergeArgs(parts[j], args, i + 1));
                         if (j + 1 < parts.Length)

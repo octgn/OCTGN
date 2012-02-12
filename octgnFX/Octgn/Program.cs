@@ -151,7 +151,7 @@ namespace Octgn
                     PlayWindow.Close();
             try
             {
-                foreach (var cw in ChatWindows.Where(cw => cw.IsLoaded))
+                foreach (ChatWindow cw in ChatWindows.Where(cw => cw.IsLoaded))
                 {
                     cw.CloseChatWindow();
                 }
@@ -195,13 +195,13 @@ namespace Octgn
 
         internal static void Print(Player player, string text)
         {
-            var finalText = text;
-            var i = 0;
+            string finalText = text;
+            int i = 0;
             var args = new List<object>(2);
-            var match = Regex.Match(text, "{([^}]*)}");
+            Match match = Regex.Match(text, "{([^}]*)}");
             while (match.Success)
             {
-                var token = match.Groups[1].Value;
+                string token = match.Groups[1].Value;
                 finalText = finalText.Replace(match.Groups[0].Value, "{" + i + "}");
                 i++;
                 object tokenValue = token;
@@ -215,7 +215,7 @@ namespace Octgn
                         {
                             int id;
                             if (!int.TryParse(token.Substring(1), out id)) break;
-                            var obj = ControllableObject.Find(id);
+                            ControllableObject obj = ControllableObject.Find(id);
                             if (obj == null) break;
                             tokenValue = obj;
                             break;

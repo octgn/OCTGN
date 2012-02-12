@@ -9,9 +9,9 @@ namespace Octgn
     {
         private static string GetPath()
         {
-            var p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
+            string p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
             const string f = "settings.xml";
-            var fullPath = Path.Combine(p, f);
+            string fullPath = Path.Combine(p, f);
 
             if (!Directory.Exists(p))
             {
@@ -42,7 +42,7 @@ namespace Octgn
 
         public static string ReadValue(string valName, string d)
         {
-            var r = ReadValue(valName);
+            string r = ReadValue(valName);
             return r ?? d;
         }
 

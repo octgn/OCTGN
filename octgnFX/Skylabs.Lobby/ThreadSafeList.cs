@@ -228,7 +228,7 @@ namespace Skylabs.Lobby
             _rwLock.EnterWriteLock();
             try
             {
-                var index = _list.IndexOf(value);
+                int index = _list.IndexOf(value);
                 _list[index] = value;
             }
             finally

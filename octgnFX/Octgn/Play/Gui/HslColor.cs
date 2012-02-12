@@ -50,7 +50,7 @@ namespace Octgn.Play.Gui
                                 ? c._luminance*(1 + c._saturation)
                                 : c._luminance + c._saturation - c._luminance*c._saturation;
 
-                var m1 = (2*c._luminance) - m2;
+                double m1 = (2*c._luminance) - m2;
 
                 red = HueToRgb(m1, m2, c._hue + (1/3f));
                 green = HueToRgb(m1, m2, c._hue);
@@ -96,7 +96,7 @@ namespace Octgn.Play.Gui
                 max = green > blue ? green : blue;
                 min = red < blue ? red : blue;
             }
-            var delta = max - min;
+            float delta = max - min;
 
             // Compute Luminance
             _luminance = (max + min)/2f;

@@ -164,7 +164,7 @@ namespace Octgn.Launcher
                 WebRequest wr = WebRequest.Create(url);
                 wr.Timeout = 15000;
                 WebResponse resp = wr.GetResponse();
-                var rgrp = resp.GetResponseStream();
+                Stream rgrp = resp.GetResponseStream();
                 if (rgrp != null)
                     using (XmlReader reader = XmlReader.Create(rgrp))
                     {
