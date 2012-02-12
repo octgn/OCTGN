@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -19,6 +20,8 @@ namespace Octgn.Play.Dialogs
 #pragma warning restore 649
 
         private readonly ScriptScope _scope;
+        private List<string> _commandHistory = new List<string>();
+        private int _commandHistoryLoc = 0;
 
         public InteractiveConsole()
         {
@@ -36,6 +39,24 @@ namespace Octgn.Play.Dialogs
                 int position = prompt.CaretIndex;
                 prompt.Text = prompt.Text.Insert(position, "    ");
                 prompt.CaretIndex = position + 4;
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Up || e.Key == Key.Down)
+            {
+                if (e.Key == Key.Up && _commandHistoryLoc != 0)
+                {
+                    _commandHistoryLoc -= 1;
+                    prompt.Text = _commandHistory[_commandHistoryLoc];
+                    prompt.CaretIndex = prompt.Text.Length;
+                }
+                else if (e.Key == Key.Down && _commandHistoryLoc < _commandHistory.Count - 1 && _commandHistory.Count != 0)
+                {
+                    _commandHistoryLoc += 1;
+                    prompt.Text = _commandHistory[_commandHistoryLoc];
+                    prompt.CaretIndex = prompt.Text.Length;
+                }
                 e.Handled = true;
                 return;
             }
@@ -64,6 +85,8 @@ namespace Octgn.Play.Dialogs
                 return;
             }
 
+            _commandHistory.Add(input);
+            _commandHistoryLoc = _commandHistory.Count;
             prompt.IsEnabled = false;
             if (_scriptEngine.TryExecuteInteractiveCode(input, _scope, ExecutionCompleted)) return;
             prompt.IsEnabled = true;
