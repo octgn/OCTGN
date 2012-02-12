@@ -13,13 +13,10 @@ namespace Octgn
         public static void Open(GameDef game, bool readOnly)
         {
             OpenedGame = Program.GamesRepository.Games.First(g => g.Id == game.Id);
-            OpenedGame.OpenDatabase(readOnly);
         }
 
         public static void Close()
         {
-            if (OpenedGame != null)
-                OpenedGame.CloseDatabase();
         }
 
         public static CardModel GetCardByName(string name)
