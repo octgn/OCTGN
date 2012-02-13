@@ -60,7 +60,10 @@ namespace Octgn.Scripting
 
         public bool IsActivePlayer(int id)
         {
-            return (Program.Game.TurnPlayer.Id == id);
+            if (Program.Game.TurnPlayer == null)
+                return false;
+            else
+                return (Program.Game.TurnPlayer.Id == id);
         }
 
         public List<KeyValuePair<int, string>> PlayerCounters(int id)
