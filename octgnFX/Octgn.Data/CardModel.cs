@@ -52,7 +52,20 @@ namespace Octgn.Data
                     switch (prop.Type)
                     {
                         case PropertyType.String:
-                            Properties.Add(prop.Name, reader.Value);
+                            if (prop.Name == "alternate")
+                            {
+                                String s = reader.Value;
+                                if (s.Equals("true"))
+                                {
+                                    ;//TODO Figure out how to deal with this
+                                }
+                                else
+                                {//Alternate contains the GUID of the card it switches to.
+                                    Alternate = new Guid(s);
+                                }
+                            }
+                            else
+                                { Properties.Add(prop.Name, reader.Value); }
                             break;
                         case PropertyType.Integer:
                             Properties.Add(prop.Name, Int32.Parse(reader.Value));
@@ -81,6 +94,8 @@ namespace Octgn.Data
 
         public string ImageUri { get; internal set; }
 
+        public Guid Alternate { get; internal set; }
+
         public string Picture
         {
             get { return set.GetPackUri() + ImageUri; }
@@ -108,7 +123,8 @@ namespace Octgn.Data
                            Name = Name,
                            ImageUri = ImageUri,
                            Properties = Properties,
-                           set = set
+                           set = set,
+                           Alternate = Alternate
                        };
         }
 
@@ -121,6 +137,7 @@ namespace Octgn.Data
                                  Name = (string) row["name"],
                                  ImageUri = (string) row["image"],
                                  set = game.GetSet((Guid) row["setId"]),
+                                 Alternate = (Guid) row["Alternate"],
                                  Properties =
                                      new SortedList<string, object>(columns.Count - 4,
                                                                     StringComparer.InvariantCultureIgnoreCase)

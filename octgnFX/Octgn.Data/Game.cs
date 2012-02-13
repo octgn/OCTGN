@@ -470,9 +470,9 @@ namespace Octgn.Data
             {
                 //Build Query
                 sb.Append("INSERT INTO [cards](");
-                sb.Append("[id],[game_id],[set_real_id],[name], [image]");
+                sb.Append("[id],[game_id],[set_real_id],[name], [image], [alternate]");
                 sb.Append(") VALUES(");
-                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image");
+                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image,@alternate");
                 sb.Append(");\n");
                 com.CommandText = sb.ToString();
 
@@ -481,6 +481,7 @@ namespace Octgn.Data
                 com.Parameters.AddWithValue("@set_id", card.set.Id.ToString());
                 com.Parameters.AddWithValue("@name", card.Name);
                 com.Parameters.AddWithValue("@image", card.ImageUri);
+                com.Parameters.AddWithValue("@alternate", card.Alternate.ToString());
                 com.ExecuteNonQuery();
             }
             //Add custom properties for the card.
@@ -493,32 +494,38 @@ namespace Octgn.Data
             string command = sb.ToString();
             foreach (var pair in card.Properties)
             {
-                using (SQLiteCommand com = dbc.CreateCommand())
+                if (pair.Key == "Alternate")
                 {
-                    com.CommandText = command;
-                    com.Parameters.AddWithValue("@id", pair.Key + card.Id.ToString());
-                    com.Parameters.AddWithValue("@card_id", card.Id.ToString());
-                    com.Parameters.AddWithValue("@game_id", Id.ToString());
-                    com.Parameters.AddWithValue("@name", pair.Key);
-                    if (pair.Value is string)
+                }
+                else
+                {
+                    using (var com = dbc.CreateCommand())
                     {
-                        com.Parameters.AddWithValue("@type", 0);
-                        com.Parameters.AddWithValue("@vstr", pair.Value);
-                        com.Parameters.AddWithValue("@vint", null);
+                        com.CommandText = command;
+                        com.Parameters.AddWithValue("@id", pair.Key + card.Id);
+                        com.Parameters.AddWithValue("@card_id", card.Id.ToString());
+                        com.Parameters.AddWithValue("@game_id", Id.ToString());
+                        com.Parameters.AddWithValue("@name", pair.Key);
+                        if (pair.Value is string)
+                        {
+                            com.Parameters.AddWithValue("@type", 0);
+                            com.Parameters.AddWithValue("@vstr", pair.Value);
+                            com.Parameters.AddWithValue("@vint", null);
+                        }
+                        else if (pair.Value is int)
+                        {
+                            com.Parameters.AddWithValue("@type", 1);
+                            com.Parameters.AddWithValue("@vstr", null);
+                            com.Parameters.AddWithValue("@vint", (int)pair.Value);
+                        }
+                        else // char
+                        {
+                            com.Parameters.AddWithValue("@type", 2);
+                            com.Parameters.AddWithValue("@vstr", pair.Value.ToString());
+                            com.Parameters.AddWithValue("@vint", null);
+                        }
+                        com.ExecuteNonQuery();
                     }
-                    else if (pair.Value is int)
-                    {
-                        com.Parameters.AddWithValue("@type", 1);
-                        com.Parameters.AddWithValue("@vstr", null);
-                        com.Parameters.AddWithValue("@vint", (int) pair.Value);
-                    }
-                    else // char
-                    {
-                        com.Parameters.AddWithValue("@type", 2);
-                        com.Parameters.AddWithValue("@vstr", pair.Value.ToString());
-                        com.Parameters.AddWithValue("@vint", null);
-                    }
-                    com.ExecuteNonQuery();
                 }
             }
             if (!wasdbopen)

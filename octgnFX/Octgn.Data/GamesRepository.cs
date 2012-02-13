@@ -117,8 +117,7 @@ namespace Octgn.Data
                     sb.Append("INSERT OR REPLACE INTO [custom_properties](");
                     sb.Append("[id],[card_real_id],[game_id],[name], [type],[vint],[vstr]");
                     sb.Append(") VALUES(");
-                    sb.Append(
-                        "@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
+                    sb.Append("@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
                     sb.Append(");\n");
                     string command = sb.ToString();
                     foreach (PropertyDef pair in properties)
@@ -141,6 +140,20 @@ namespace Octgn.Data
                             com.ExecuteNonQuery();
                         }
                     }
+                    //special case of "Alternate" property - removing this operation will result in requiring the Game Def to have 
+                    //"Alternate" listed as a custom property in order to use it
+                    using (var com = sc.CreateCommand())
+                    {
+                        com.CommandText = command;
+                        com.Parameters.AddWithValue("@card_id", "");
+                        com.Parameters.AddWithValue("@vint", 0);
+                        com.Parameters.AddWithValue("@vstr", " ");
+                        com.Parameters.AddWithValue("@id", "Alternate" + game.Id);
+                        com.Parameters.AddWithValue("@game_id", game.Id.ToString());
+                        com.Parameters.AddWithValue("@name", "Alternate");
+                        com.Parameters.AddWithValue("@type", 0);
+                        com.ExecuteNonQuery();
+                    }  
                     trans.Commit();
                     sc.Close();
                 }
