@@ -24,6 +24,8 @@ namespace Octgn.Launcher
 
         #endregion
 
+        static public bool GamesChanged = false;
+
         public GameList()
         {
             InitializeComponent();
@@ -62,6 +64,7 @@ namespace Octgn.Launcher
         private void GamesRepositoryGameInstalled(object sender, EventArgs e)
         {
             ReloadGameList();
+            GamesChanged = true;
         }
 
         private void PageLoaded(object sender, RoutedEventArgs e)
