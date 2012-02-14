@@ -48,7 +48,7 @@ namespace Octgn.Play.Gui
                     {
                         e.Handled = true;
                         input.Clear();
-                        var window = Window.GetWindow(this);
+                        Window window = Window.GetWindow(this);
                         if (window != null)
                             ((UIElement) window.Content).MoveFocus(
                                 new TraversalRequest(FocusNavigationDirection.First));

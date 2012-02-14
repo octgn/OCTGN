@@ -106,8 +106,8 @@ namespace Octgn
         public override GeneralTransform GetDesiredTransform(GeneralTransform transform)
         {
             var result = new GeneralTransformGroup();
-
-            result.Children.Add(base.GetDesiredTransform(transform));
+            GeneralTransform gdt = base.GetDesiredTransform(transform);
+            if (gdt != null) result.Children.Add(gdt);
             result.Children.Add(new TranslateTransform(_leftOffset, _topOffset));
             return result;
         }

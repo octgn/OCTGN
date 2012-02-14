@@ -124,7 +124,7 @@ namespace Octgn.Play.Gui
             AdornerLayer layer = AdornerLayer.GetAdornerLayer(card);
             Adorner[] adorners = layer.GetAdorners(card);
             if (adorners == null) return; // Opponent removed the target card out of the table concurently
-            foreach (var arrow in adorners.OfType<ArrowAdorner>())
+            foreach (ArrowAdorner arrow in adorners.OfType<ArrowAdorner>())
             {
                 layer.Remove(arrow);
             }

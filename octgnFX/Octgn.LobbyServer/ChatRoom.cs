@@ -70,14 +70,14 @@ namespace Skylabs.LobbyServer
         {
             lock (_userLocker)
             {
-                var c = Server.GetOnlineClientByUid(u.Uid);
+                Client c = Server.GetOnlineClientByUid(u.Uid);
                 if (c != null)
                 {
                     var sm = new SocketMessage("userjoinedchatroom");
                     sm.AddData("roomid", Id);
                     sm.AddData("user", u);
-                    var ulist = _users.Select(p => p.Item2).ToList();
-                    var ou = _users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
+                    List<User> ulist = _users.Select(p => p.Item2).ToList();
+                    Pair<int, User> ou = _users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
                     if (ou == null)
                     {
                         _users.Add(new Pair<int, User>(1, u));
@@ -102,7 +102,7 @@ namespace Skylabs.LobbyServer
             lock (_userLocker)
             {
                 var ret = new User[_users.Count];
-                for (var i = 0; i < _users.Count; i++)
+                for (int i = 0; i < _users.Count; i++)
                 {
                     ret[i] = _users[i].Item2;
                 }
@@ -118,7 +118,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_userLocker)
             {
-                var ou = _users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
+                Pair<int, User> ou = _users.FirstOrDefault(us => us.Item2.Uid == u.Uid);
                 if (ou == null) return;
                 ou.Item1--;
                 if (ou.Item1 != 0) return;
@@ -142,8 +142,8 @@ namespace Skylabs.LobbyServer
                 lock (_userLocker)
                 {
                     var slist = new int[_users.Count];
-                    var i = 0;
-                    foreach (var u in _users)
+                    int i = 0;
+                    foreach (Pair<int, User> u in _users)
                     {
                         slist[i] = u.Item2.Uid;
                         i++;
@@ -154,8 +154,8 @@ namespace Skylabs.LobbyServer
             else
             {
                 var slist = new int[_users.Count];
-                var i = 0;
-                foreach (var u in _users)
+                int i = 0;
+                foreach (Pair<int, User> u in _users)
                 {
                     slist[i] = u.Item2.Uid;
                     i++;

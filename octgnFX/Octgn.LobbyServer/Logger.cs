@@ -15,7 +15,7 @@ namespace Skylabs.LobbyServer
             get
             {
                 var sb = new StringBuilder();
-                for (var i = 0; i < CurIndent; i++)
+                for (int i = 0; i < CurIndent; i++)
                 {
                     sb.Append("    ");
                 }

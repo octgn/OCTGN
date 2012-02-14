@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
@@ -130,7 +131,7 @@ namespace Octgn
             SaveLocation();
             try
             {
-                if (DebugWindow != null) 
+                if (DebugWindow != null)
                     if (DebugWindow.IsLoaded)
                         DebugWindow.Close();
             }
@@ -150,10 +151,9 @@ namespace Octgn
                     PlayWindow.Close();
             try
             {
-                foreach (ChatWindow cw in ChatWindows)
+                foreach (ChatWindow cw in ChatWindows.Where(cw => cw.IsLoaded))
                 {
-                    if (cw.IsLoaded)
-                        cw.CloseChatWindow();
+                    cw.CloseChatWindow();
                 }
             }
             catch (Exception e)

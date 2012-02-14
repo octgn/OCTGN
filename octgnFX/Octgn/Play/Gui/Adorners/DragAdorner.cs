@@ -94,7 +94,9 @@ namespace Octgn.Play.Gui.Adorners
         {
             var result = new GeneralTransformGroup();
             result.Children.Add(new TranslateTransform(_leftOffset, _topOffset));
-            result.Children.Add(base.GetDesiredTransform(transform));
+            GeneralTransform gdt = base.GetDesiredTransform(transform);
+            if (gdt != null)
+                result.Children.Add(gdt);
             return result;
         }
 

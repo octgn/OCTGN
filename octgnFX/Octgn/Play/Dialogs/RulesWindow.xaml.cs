@@ -65,11 +65,6 @@ namespace Octgn.Play.Dialogs
             DoSearch(rules, search.Text, true);
             rules.Focus();
 
-            // Testing code for text scrolling
-            /*var start = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-                var end = rules.Selection.End.GetCharacterRect(LogicalDirection.Forward);                
-                rules.ScrollToVerticalOffset((start.Top + end.Bottom - rules.ViewportHeight) / 2 + rules.VerticalOffset);*/
-
             // WPF RichTextBox doesn't include "scrolltocaret"
             Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
             double totaloffset = thisposition.Top + rules.VerticalOffset;
@@ -129,11 +124,5 @@ namespace Octgn.Play.Dialogs
             }
             e.Handled = true;
         }
-
-        /* Credits go to StackOverflow and it's authors for helping me fix some of these annoying problems
-         * http://stackoverflow.com/questions/1756844/making-a-simple-search-function-making-the-cursor-jump-to-or-highlight-the-wo
-         * http://stackoverflow.com/questions/837086/c-sharp-loading-a-large-file-into-a-wpf-richtextbox
-         * http://stackoverflow.com/questions/1228714/how-do-i-find-the-viewable-area-of-a-wpf-richtextbox
-         */
     }
 }

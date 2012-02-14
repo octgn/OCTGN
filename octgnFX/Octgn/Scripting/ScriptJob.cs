@@ -9,6 +9,7 @@ namespace Octgn.Scripting
     {
         // The unique id of this job
         // The continuation to call when execution completes (on Dispatcher thread)
+        private int _uniqueId;
         public Action<ExecutionResult> continuation;
         public object invokeResult;
         public Func<object> invokedOperation;
@@ -24,7 +25,6 @@ namespace Octgn.Scripting
         public AutoResetEvent signal2;
         public ScriptSource source;
         public bool suspended;
-        private int _uniqueId;
 
         public int id
         {

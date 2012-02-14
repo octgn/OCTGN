@@ -31,13 +31,14 @@ namespace Octgn.Play.Gui
                 bool newlyRealized;
                 // Get or create the child
                 var child = generator.GenerateNext(out newlyRealized) as UIElement;
-                if (newlyRealized)
-                {
-                    AddInternalChild(child);
-                    generator.PrepareItemContainer(child);
-                }
+
                 if (child != null)
                 {
+                    if (newlyRealized)
+                    {
+                        AddInternalChild(child);
+                        generator.PrepareItemContainer(child);
+                    }
                     child.Measure(availableSize);
                     desiredSize = child.DesiredSize;
                 }

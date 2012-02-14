@@ -256,8 +256,7 @@ namespace Octgn.Server
             if (gameVer.Major != _gameVersion.Major)
             {
                 var rpc = new XmlSenderStub(_sender, this);
-                rpc.Error(string.Format("Incompatible game version. This server is hosting game version {0:3}.",
-                                        _gameVersion));
+                rpc.Error(string.Format("Incompatible game version. This server is hosting game version ."));
                 try
                 {
                     _sender.Client.Close();
@@ -463,7 +462,7 @@ namespace Octgn.Server
             int nCards = card.Length/(_clients.Count - 1);
             int from = 0, client = 1;
             var someCard = new int[nCards];
-            foreach (var kvp in _clients.Where(kvp => kvp.Key != _sender))
+            foreach (KeyValuePair<TcpClient, PlayerInfo> kvp in _clients.Where(kvp => kvp.Key != _sender))
             {
                 if (client < _clients.Count - 1)
                 {

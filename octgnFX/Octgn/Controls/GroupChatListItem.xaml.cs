@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Octgn.Launcher;
 using Skylabs.Lobby;
 
 namespace Octgn.Controls
@@ -76,7 +77,7 @@ namespace Octgn.Controls
         private void Image1MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (_chatRoomId == 0) return;
-            var firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.Id);
+            ChatWindow firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.Id);
             if (firstOrDefault != null)
                 firstOrDefault.CloseChatWindow();
             var sp = Parent as StackPanel;

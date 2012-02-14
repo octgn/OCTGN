@@ -51,13 +51,13 @@ namespace Skylabs.ConsoleHelper
 
         private static void Run()
         {
-            var endLine = false;
+            bool endLine = false;
             var sb = new StringBuilder();
             while (true)
             {
                 if (Console.KeyAvailable)
                 {
-                    var r = Console.ReadKey();
+                    ConsoleKeyInfo r = Console.ReadKey();
                     switch (r.Key)
                     {
                         case ConsoleKey.Enter:
