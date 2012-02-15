@@ -22,7 +22,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <ManifestCertificateThumbprint>95EF896D63BAD6C4EA21BEA2E16BEF4003BF8DC2</ManifestCertificateThumbprint>
     <ManifestKeyFile>OctgnKey.pfx</ManifestKeyFile>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
     <SignManifests>false</SignManifests>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <ExpressionBlendVersion>4.0.20421.0</ExpressionBlendVersion>
@@ -307,8 +307,8 @@
     <Compile Include="Launcher\GameList.xaml.cs">
       <DependentUpon>GameList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\InstallSetsProgressDialog.xaml.cs">
-      <DependentUpon>InstallSetsProgressDialog.xaml</DependentUpon>
+    <Compile Include="Launcher\ChangeSetsProgressDialog.xaml.cs">
+      <DependentUpon>ChangeSetsProgressDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
@@ -725,7 +725,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Launcher\InstallSetsProgressDialog.xaml">
+    <Page Include="Launcher\ChangeSetsProgressDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
