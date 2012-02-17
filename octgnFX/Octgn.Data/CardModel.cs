@@ -31,6 +31,7 @@ namespace Octgn.Data
             Name = reader.Value;
             reader.MoveToAttribute("id");
             Id = new Guid(reader.Value);
+            isAlternate = false;
             Uri cardImageUri = definition.GetRelationship("C" + Id.ToString("N")).TargetUri;
             ImageUri = cardImageUri.OriginalString;
             if (!package.PartExists(cardImageUri))
@@ -57,11 +58,17 @@ namespace Octgn.Data
                                 String s = reader.Value;
                                 if (s.Equals("true"))
                                 {
-                                    ;//TODO Figure out how to deal with this
+                                    isAlternate = true;//This card is the end of an alternate chain (an alternate chain is a singly-linked list)
                                 }
                                 else
                                 {//Alternate contains the GUID of the card it switches to.
-                                    Alternate = new Guid(s);
+                                    try
+                                    { Alternate = new Guid(s); }
+                                    catch (Exception e)
+                                    {
+                                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property {1}. Alternate must be either a GUID or 'TRUE'",
+                                                               reader.Value, prop.Name));
+                                    }
                                 }
                             }
                             else
@@ -94,7 +101,8 @@ namespace Octgn.Data
 
         public string ImageUri { get; internal set; }
 
-        public Guid Alternate { get; internal set; }
+        public Guid Alternate { get; internal set; }//The location of the alternate, if any (may be null)
+        public bool isAlternate { get; internal set; }//a flag; if true, this card is read-only. (and will only be instanced once<TODO>)
 
         public string Picture
         {
@@ -147,9 +155,9 @@ namespace Octgn.Data
             return result;
         }
 
-        public bool hasProperty(string p)
+        public bool hasProperty(string propertyName)
         {
-            return Properties.ContainsKey(p);
+            return Properties.ContainsKey(propertyName);
         }
     }
 

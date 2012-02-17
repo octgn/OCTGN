@@ -107,8 +107,7 @@ namespace Octgn.DeckBuilder
                 if (value != null)
                 {
                     value.OpenDatabase(true);
-                    cardImage.Source = new BitmapImage(value.GetCardBackUri());
-
+                    cardImage.Source = new BitmapImage(value.GetCardBackUri());//Sets initial preview to default backing (!isFaceUp Image)
                     Searches.Clear();
                     AddSearchTab();
                 }

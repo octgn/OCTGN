@@ -98,7 +98,7 @@ namespace Octgn.Play
                     Program.Client.Rpc.IsAlternate(this, value);
 
                     isAlternate = value;
-                    OnPropertyChanged("Card");
+                    OnPropertyChanged("CardModel");
                 }
             }
         }
@@ -204,7 +204,8 @@ namespace Octgn.Play
                     PeekingPlayers.Clear();
                     //Switch back to original image.
                     IsAlternateImage = false; //This actually changes the image?
-                    IsAlternate = false;
+                    //if (switchWithAlternateOnGroupChange) TODO
+                    //{ switchWithAlternate(); }
                 }
             }
         }
@@ -696,9 +697,9 @@ namespace Octgn.Play
 
         #endregion Markers
 
-        internal bool hasProperty(string p)
+        internal bool hasProperty(string propertyName)
         {
-            return (Type.model.hasProperty(p));
+            return (Type.model.hasProperty(propertyName));
         }
     }
 }

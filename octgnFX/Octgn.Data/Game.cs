@@ -585,8 +585,8 @@ namespace Octgn.Data
                     var dl = new Dictionary<string, PropertyType>();
                     while (dr.Read())
                     {
-                        var name = dr["name"] as string;
-                        var t = (int) ((long) dr["type"]);
+                        var name = dr["name"] as string;//name of property
+                        var t = (int) ((long) dr["type"]);//type of property (String, Int, Char)
                         PropertyType pt;
                         if (t == 0)
                             pt = PropertyType.String;
@@ -668,9 +668,7 @@ namespace Octgn.Data
                             if (!ret.Columns.Contains(cname))
                                 continue;
                             var t = (int) ((long) dr["type"]);
-                            if (t == 0)
-                                ret.Rows[i][cname] = dr["vstr"] as string;
-                            else if (t == 1)
+                            if (t == 1)
                                 ret.Rows[i][cname] = (int) ((long) dr["vint"]);
                             else
                                 ret.Rows[i][cname] = dr["vstr"] as string;

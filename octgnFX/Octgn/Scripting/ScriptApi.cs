@@ -189,6 +189,7 @@ namespace Octgn.Scripting
             //alternate may be considered the "back" of the card, or another card entirely - up to Game Definer.
             //id will remain the same, all other values should change.
             Card c = Card.Find(id);
+            bool yada = c.hasProperty("Alternate");
             if (c.hasProperty("Alternate"))
             {
                 Guid alternateCard = (Guid)c.GetProperty("Alternate");
