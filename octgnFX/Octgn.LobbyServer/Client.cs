@@ -125,7 +125,7 @@ namespace Skylabs.LobbyServer
 
         private void Socket_OnMessageReceived(SkySocket socket, SocketMessage message)
         {
-            var head = message.Header.ToLower();
+            string head = message.Header.ToLower();
             switch (head)
             {
                 case "login":
@@ -259,7 +259,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
-                var port = Gaming.HostGame(g, v, name, pass, Me);
+                int port = Gaming.HostGame(g, v, name, pass, Me);
                 var som = new SocketMessage("hostgameresponse");
                 som.AddData("port", port);
                 _socket.WriteMessage(som);
@@ -320,7 +320,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
-                var requestee = Cup.GetUser(uid);
+                User requestee = Cup.GetUser(uid);
                 if (requestee == null)
                     return;
                 if (accept)
@@ -329,7 +329,7 @@ namespace Skylabs.LobbyServer
                     if (!_friends.Contains(requestee))
                         _friends.Add(requestee);
                     //Add you to friends list
-                    var c = Server.GetOnlineClientByUid(requestee.Uid);
+                    Client c = Server.GetOnlineClientByUid(requestee.Uid);
                     if (c != null)
                     {
                         c.AddFriend(Me);
@@ -387,7 +387,7 @@ namespace Skylabs.LobbyServer
                     try
                     {
                         Trace.WriteLine(String.Format("Client[{0}]:Verifying Token", Id));
-                        var appName = "skylabs-LobbyServer-" + _version;
+                        string appName = "skylabs-LobbyServer-" + _version;
                         var s = new Service("code", appName);
                         s.SetAuthenticationToken(token);
                         s.QueryClientLoginToken();
@@ -411,8 +411,8 @@ namespace Skylabs.LobbyServer
                         return;
                     }
                     Trace.WriteLine(String.Format("Client[{0}]:Getting db User", Id));
-                    var u = Cup.GetUser(email);
-                    var emailparts = email.Split('@');
+                    User u = Cup.GetUser(email);
+                    string[] emailparts = email.Split('@');
                     if (u == null)
                     {
                         if (!Cup.RegisterUser(email, emailparts[0]))
@@ -436,11 +436,11 @@ namespace Skylabs.LobbyServer
                         Trace.WriteLine(String.Format("Client[{0}]:Login Failed", Id));
                         return;
                     }
-                    var banned = Cup.IsBanned(u.Uid, _socket.RemoteEndPoint);
+                    int banned = Cup.IsBanned(u.Uid, _socket.RemoteEndPoint);
                     if (banned == -1)
                     {
                         Trace.WriteLine(String.Format("Client[{0}]:Starting to Stop and remove by uid={1}", Id, u.Uid));
-                        var res = Server.StopAndRemoveAllByUid(this, u.Uid);
+                        Tuple<int, int> res = Server.StopAndRemoveAllByUid(this, u.Uid);
                         Trace.WriteLine(String.Format("Client[{0}]:Done Stop and remove by uid={1}", Id, u.Uid));
                         Me = u;
                         if (status == UserStatus.Unknown || status == UserStatus.Offline)
@@ -479,7 +479,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
-                var sendgames = Gaming.GetLobbyList();
+                List<Lobby.HostedGame> sendgames = Gaming.GetLobbyList();
                 var sm = new SocketMessage("gamelist");
                 sm.AddData("list", sendgames);
                 _socket.WriteMessage(sm);
@@ -490,13 +490,13 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
-                var r = Cup.GetFriendRequests(Me.Email);
+                List<int> r = Cup.GetFriendRequests(Me.Email);
                 if (r == null)
                     return;
-                foreach (var e in r)
+                foreach (int e in r)
                 {
                     var smm = new SocketMessage("friendrequest");
-                    var u = Cup.GetUser(e);
+                    User u = Cup.GetUser(e);
                     smm.AddData("user", u);
                     _socket.WriteMessage(smm);
                 }
@@ -508,9 +508,9 @@ namespace Skylabs.LobbyServer
             lock (_clientLocker)
             {
                 var sm = new SocketMessage("friends");
-                foreach (var u in _friends)
+                foreach (User u in _friends)
                 {
-                    var c = Server.GetOnlineClientByUid(u.Uid);
+                    Client c = Server.GetOnlineClientByUid(u.Uid);
                     User n;
                     if (c == null)
                     {

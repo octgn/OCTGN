@@ -9,27 +9,22 @@ namespace Octgn.Scripting
     [SecuritySafeCritical]
     public class OCounter : MarshalByRefObject
     {
-        private readonly Counter[] counters;
+        private readonly Counter[] _counters;
 
         public OCounter(Player player)
         {
-            counters = player.Counters;
+            _counters = player.Counters;
         }
 
         [IndexerName("values")]
         public int this[string name]
         {
             get { return Find(name).Value; }
-            set
-            {
-                //Counter counter = Find(name);
-                //Engine.Current.Invoke<object>(() => counter.Value = value);
-            }
         }
 
         private Counter Find(string name)
         {
-            return counters.First(c => string.Equals(name, c.Name, StringComparison.InvariantCultureIgnoreCase));
+            return _counters.First(c => string.Equals(name, c.Name, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

@@ -251,30 +251,32 @@ namespace Octgn.Launcher
         {
             var values = new string[2];
 
-            using (XmlReader reader = XmlReader.Create(WebRequest.Create(url).GetResponse().GetResponseStream()))
-            {
-                while (reader.Read())
+            Stream wbr = WebRequest.Create(url).GetResponse().GetResponseStream();
+            if (wbr != null)
+                using (XmlReader reader = XmlReader.Create(wbr))
                 {
-                    if (!reader.IsStartElement()) continue;
-                    if (reader.IsEmptyElement) continue;
-                    switch (reader.Name)
+                    while (reader.Read())
                     {
-                        case "Version":
-                            values = new string[2];
-                            if (reader.Read())
-                            {
-                                values[0] = reader.Value;
-                            }
-                            break;
-                        case "Location":
-                            if (reader.Read())
-                            {
-                                values[1] = reader.Value;
-                            }
-                            break;
+                        if (!reader.IsStartElement()) continue;
+                        if (reader.IsEmptyElement) continue;
+                        switch (reader.Name)
+                        {
+                            case "Version":
+                                values = new string[2];
+                                if (reader.Read())
+                                {
+                                    values[0] = reader.Value;
+                                }
+                                break;
+                            case "Location":
+                                if (reader.Read())
+                                {
+                                    values[1] = reader.Value;
+                                }
+                                break;
+                        }
                     }
                 }
-            }
             return values;
         }
 

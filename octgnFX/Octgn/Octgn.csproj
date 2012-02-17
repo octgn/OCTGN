@@ -22,7 +22,7 @@
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <ManifestCertificateThumbprint>95EF896D63BAD6C4EA21BEA2E16BEF4003BF8DC2</ManifestCertificateThumbprint>
     <ManifestKeyFile>OctgnKey.pfx</ManifestKeyFile>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
     <SignManifests>false</SignManifests>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <ExpressionBlendVersion>4.0.20421.0</ExpressionBlendVersion>
@@ -167,18 +167,9 @@
       <HintPath>..\Lib\IronPython.Modules.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Dynamic, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.Dynamic.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Scripting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Microsoft.Scripting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualBasic.Compatibility.Data" />
-    <Reference Include="Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.Windows.Shell.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="Polenter.SharpSerializer">
@@ -195,7 +186,6 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -216,8 +206,6 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutWindow.xaml.cs">
@@ -233,6 +221,9 @@
     </Compile>
     <Compile Include="Controls\GroupChatListItem.xaml.cs">
       <DependentUpon>GroupChatListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HostedGameListFilterItem.xaml.cs">
+      <DependentUpon>HostedGameListFilterItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\HostedGameListItem.xaml.cs">
       <DependentUpon>HostedGameListItem.xaml</DependentUpon>
@@ -316,8 +307,8 @@
     <Compile Include="Launcher\GameList.xaml.cs">
       <DependentUpon>GameList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\InstallSetsProgressDialog.xaml.cs">
-      <DependentUpon>InstallSetsProgressDialog.xaml</DependentUpon>
+    <Compile Include="Launcher\ChangeSetsProgressDialog.xaml.cs">
+      <DependentUpon>ChangeSetsProgressDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
@@ -591,6 +582,7 @@
     <Resource Include="Resources\chaticon.png" />
     <Resource Include="Resources\Icons\console.png" />
     <Resource Include="Resources\Icons\rules.png" />
+    <Resource Include="Resources\Icons\FilterGames.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -642,6 +634,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\GroupChatListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\HostedGameListFilterItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -729,7 +725,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Launcher\InstallSetsProgressDialog.xaml">
+    <Page Include="Launcher\ChangeSetsProgressDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

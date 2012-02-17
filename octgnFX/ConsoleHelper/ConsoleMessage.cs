@@ -48,7 +48,7 @@ namespace Skylabs.ConsoleHelper
         {
             //TODO better handling of jibberish. Probubly be best to use regex. It'd be a lot cleaner and sexier.
             RawData = RawData.TrimStart(new[] {' '});
-            var ws = RawData.IndexOf(' ');
+            int ws = RawData.IndexOf(' ');
             Header = "";
             Args = new List<ConsoleArgument>();
             if (ws == -1)
@@ -60,14 +60,14 @@ namespace Skylabs.ConsoleHelper
                 Header = RawData.Substring(0, ws);
                 try
                 {
-                    var args = RawData.Substring(ws + 1);
+                    string args = RawData.Substring(ws + 1);
                     args = args.TrimStart(new[] {' '});
                     if (!args.Equals(""))
                     {
-                        var araw = args.Split(new[] {'-'}, StringSplitOptions.RemoveEmptyEntries);
+                        string[] araw = args.Split(new[] {'-'}, StringSplitOptions.RemoveEmptyEntries);
                         if (araw.Length != 0)
                         {
-                            foreach (var temp in araw.Select(a => a.Trim()))
+                            foreach (string temp in araw.Select(a => a.Trim()))
                             {
                                 ws = temp.IndexOf(' ');
                                 if (ws == -1)

@@ -9,6 +9,7 @@ namespace Octgn.Scripting
     {
         // The unique id of this job
         // The continuation to call when execution completes (on Dispatcher thread)
+        private int _uniqueId;
         public Action<ExecutionResult> continuation;
         public object invokeResult;
         public Func<object> invokedOperation;
@@ -24,14 +25,13 @@ namespace Octgn.Scripting
         public AutoResetEvent signal2;
         public ScriptSource source;
         public bool suspended;
-        private int uniqueId;
 
         public int id
         {
             get
             {
-                if (uniqueId == 0) uniqueId = (Player.LocalPlayer.Id) << 16 | Program.Game.GetUniqueId();
-                return uniqueId;
+                if (_uniqueId == 0) _uniqueId = (Player.LocalPlayer.Id) << 16 | Program.Game.GetUniqueId();
+                return _uniqueId;
             }
         }
 

@@ -98,13 +98,13 @@ namespace Octgn.DeckBuilder
                 if (_game == value) return;
 
                 if (_game != null)
-                    _game.CloseDatabase();
+                {
+                }
 
                 _game = value;
                 ActiveSection = null;
 
                 if (value == null) return;
-                value.OpenDatabase(true);
                 cardImage.Source = new BitmapImage(value.GetCardBackUri());
 
                 Searches.Clear();

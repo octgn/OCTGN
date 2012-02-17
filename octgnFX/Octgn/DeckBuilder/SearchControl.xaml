@@ -67,9 +67,9 @@
 
     <DataGrid x:Name="resultsGrid" Grid.Row="2" AutoGenerateColumns="False" Margin="0,10,0,0"
               HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray" HeadersVisibility="Column"
-              SelectionMode="Single" SelectionUnit="FullRow" IsReadOnly="True" AlternatingRowBackground="#ffffc7"
+              SelectionUnit="FullRow" IsReadOnly="True" AlternatingRowBackground="#ffffc7"
               VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
-              SelectionChanged="ResultCardSelected" Keyboard.PreviewKeyDown="ResultKeyDownHandler">
+              SelectionChanged="ResultCardSelected" Keyboard.PreviewKeyDown="ResultKeyDownHandler" SelectionMode="Extended">
       <DataGrid.RowStyle>
         <Style>
           <EventSetter Event="DataGridRow.MouseDoubleClick" Handler="ResultDoubleClick" />

@@ -195,7 +195,7 @@ namespace Octgn.Play.Dialogs
         private void CreateFilters()
         {
             Filters = new ObservableCollection<Filter>();
-            foreach (var filter in Program.Game.Definition.CardDefinition.Properties.Values
+            foreach (Filter filter in Program.Game.Definition.CardDefinition.Properties.Values
                 .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)).
                 Select(prop => new Filter
                                    {
@@ -274,11 +274,17 @@ namespace Octgn.Play.Dialogs
             foreach (FilterValue fv in Filters.SelectMany(f => f.Values))
             {
                 if (e.NewItems != null)
-                    foreach (CardModel card in e.NewItems.Cast<CardModel>().Where(card => fv.IsMatch(card)))
+                {
+                    FilterValue fv1 = fv;
+                    foreach (CardModel card in e.NewItems.Cast<CardModel>().Where(fv1.IsMatch))
                         fv.Count++;
+                }
                 if (e.OldItems != null)
-                    foreach (CardModel card in e.OldItems.Cast<CardModel>().Where(card => fv.IsMatch(card)))
+                {
+                    FilterValue fv1 = fv;
+                    foreach (CardModel card in e.OldItems.Cast<CardModel>().Where(fv1.IsMatch))
                         fv.Count--;
+                }
             }
         }
 

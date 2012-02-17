@@ -286,7 +286,7 @@ namespace Skylabs.Lobby
                                    {
                                        //TODO Need to add a method to handle 2-step signin.
                                        _onLoginFinished = onFinish;
-                                       String appName = "skylabs-LobbyClient-" + Version;
+                                       string appName = "skylabs-LobbyClient-" + Version;
                                        var s = new Service("code", appName);
                                        s.setUserCredentials(email, password);
                                        if (captcha != null && _mCaptchaToken != null)

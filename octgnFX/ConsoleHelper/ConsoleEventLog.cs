@@ -46,7 +46,7 @@ namespace Skylabs.ConsoleHelper
                                             {Formatting = Formatting.Indented, Indentation = 4};
                     var cTypes = new List<Type>();
                     foreach (
-                        var c in
+                        ConsoleEvent c in
                             from c in Events let foundit = cTypes.Any(t => c.GetType() == t) where !foundit select c)
                     {
                         cTypes.Add(c.GetType());

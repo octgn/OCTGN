@@ -375,13 +375,13 @@ namespace Octgn.Play.Gui
             passToItem.SubmenuOpened += delegate
                                             {
                                                 passToItem.Items.Clear();
-                                                foreach (var playerItem in from player in Player.AllExceptGlobal
-                                                                           where player != Player.LocalPlayer
-                                                                           select new MenuItem
-                                                                                      {
-                                                                                          Header = player.Name,
-                                                                                          Tag = player
-                                                                                      })
+                                                foreach (MenuItem playerItem in from player in Player.AllExceptGlobal
+                                                                                where player != Player.LocalPlayer
+                                                                                select new MenuItem
+                                                                                           {
+                                                                                               Header = player.Name,
+                                                                                               Tag = player
+                                                                                           })
                                                 {
                                                     playerItem.Click += delegate(object sender, RoutedEventArgs e)
                                                                             {
@@ -411,13 +411,13 @@ namespace Octgn.Play.Gui
             passToItem.SubmenuOpened += delegate
                                             {
                                                 passToItem.Items.Clear();
-                                                foreach (var playerItem in from player in Player.AllExceptGlobal
-                                                                           where player != Player.LocalPlayer
-                                                                           select new MenuItem
-                                                                                      {
-                                                                                          Header = player.Name,
-                                                                                          Tag = player
-                                                                                      })
+                                                foreach (MenuItem playerItem in from player in Player.AllExceptGlobal
+                                                                                where player != Player.LocalPlayer
+                                                                                select new MenuItem
+                                                                                           {
+                                                                                               Header = player.Name,
+                                                                                               Tag = player
+                                                                                           })
                                                 {
                                                     playerItem.Click += delegate(object sender, RoutedEventArgs e)
                                                                             {

@@ -70,13 +70,16 @@ namespace Octgn.Play.Gui
                     if (newlyRealized)
                     {
                         // Figure out if we need to insert the child at the end or somewhere in the middle
-                        if (childIndex >= children.Count)
+                        if (child != null)
                         {
-                            AddInternalChild(child);
-                        }
-                        else
-                        {
-                            InsertInternalChild(childIndex, child);
+                            if (childIndex >= children.Count)
+                            {
+                                AddInternalChild(child);
+                            }
+                            else
+                            {
+                                InsertInternalChild(childIndex, child);
+                            }
                         }
                         generator.PrepareItemContainer(child);
                     }

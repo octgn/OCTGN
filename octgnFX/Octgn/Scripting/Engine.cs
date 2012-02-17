@@ -25,16 +25,16 @@ namespace Octgn.Scripting
     public class Engine : IDisposable
     {
         public readonly ScriptScope ActionsScope;
-        private readonly ScriptApi api;
-        private readonly ScriptEngine engine;
-        private readonly Queue<ScriptJob> executionQueue = new Queue<ScriptJob>(4);
-        private readonly MemoryStream outputStream = new MemoryStream();
-        private readonly StreamWriter outputWriter;
+        private readonly ScriptApi _api;
+        private readonly ScriptEngine _engine;
+        private readonly Queue<ScriptJob> _executionQueue = new Queue<ScriptJob>(4);
+        private readonly MemoryStream _outputStream = new MemoryStream();
+        private readonly StreamWriter _outputWriter;
         // This is a hack. The sponsor object is used to keep the remote side of the OCTGN API alive.
         // I would like to make this cleaner but it really seems to be an impass at the moment.
         // Combining Scripting + Remoting + Lifetime management + Garbage Collection + Partial trust
         // is an aweful and ugly mess.
-        private Sponsor sponsor;
+        private Sponsor _sponsor;
 
         public Engine()
             : this(false)
@@ -44,12 +44,12 @@ namespace Octgn.Scripting
         public Engine(bool forTesting)
         {
             AppDomain sandbox = CreateSandbox(forTesting);
-            engine = Python.CreateEngine(sandbox);
-            outputWriter = new StreamWriter(outputStream);
-            engine.Runtime.IO.SetOutput(outputStream, outputWriter);
-            engine.SetSearchPaths(new[] {Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib")});
+            _engine = Python.CreateEngine(sandbox);
+            _outputWriter = new StreamWriter(_outputStream);
+            _engine.Runtime.IO.SetOutput(_outputStream, _outputWriter);
+            _engine.SetSearchPaths(new[] {Path.Combine(sandbox.BaseDirectory, @"Scripting\Lib")});
 
-            api = new ScriptApi(this);
+            _api = new ScriptApi(this);
 
             ActionsScope = CreateScope();
             // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
@@ -57,7 +57,7 @@ namespace Octgn.Scripting
             foreach (
                 ScriptSource src in
                     Program.Game.Definition.Scripts.Select(
-                        s => engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
+                        s => _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
             {
                 src.Execute(ActionsScope);
             }
@@ -65,7 +65,7 @@ namespace Octgn.Scripting
 
         internal ScriptJob CurrentJob
         {
-            get { return executionQueue.Peek(); }
+            get { return _executionQueue.Peek(); }
         }
 
         public String[] TestScripts(Game game)
@@ -75,12 +75,12 @@ namespace Octgn.Scripting
             {
                 try
                 {
-                    ScriptSource src = engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+                    ScriptSource src = _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
                     src.Execute(ActionsScope);
                 }
                 catch (Exception e)
                 {
-                    var eo = engine.GetService<ExceptionOperations>();
+                    var eo = _engine.GetService<ExceptionOperations>();
                     string error = eo.FormatException(e);
                     errors.Add(String.Format("[{2}:{0}]: Python Error:\n{1}", game.Definition.Name, error, s.FileName));
                 }
@@ -90,7 +90,7 @@ namespace Octgn.Scripting
 
         public ScriptScope CreateScope(bool injectApi = true)
         {
-            ScriptScope scope = engine.CreateScope();
+            ScriptScope scope = _engine.CreateScope();
             if (injectApi)
                 InjectOctgnIntoScope(scope);
             return scope;
@@ -98,7 +98,7 @@ namespace Octgn.Scripting
 
         public bool TryExecuteInteractiveCode(string code, ScriptScope scope, Action<ExecutionResult> continuation)
         {
-            ScriptSource src = engine.CreateScriptSourceFromString(code, SourceCodeKind.InteractiveCode);
+            ScriptSource src = _engine.CreateScriptSourceFromString(code, SourceCodeKind.InteractiveCode);
             switch (src.GetCodeProperties())
             {
                 case ScriptCodeParseResult.IncompleteToken:
@@ -116,15 +116,15 @@ namespace Octgn.Scripting
         public void ExecuteOnGroup(string function, Group group)
         {
             string pythonGroup = ScriptApi.GroupCtor(group);
-            ScriptSource src = engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
-                                                                   SourceCodeKind.Statements);
+            ScriptSource src = _engine.CreateScriptSourceFromString(string.Format("{0}({1})", function, pythonGroup),
+                                                                    SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 
         public void ExecuteOnGroup(string function, Group group, Point position)
         {
             string pythonGroup = ScriptApi.GroupCtor(group);
-            ScriptSource src = engine.CreateScriptSourceFromString(
+            ScriptSource src = _engine.CreateScriptSourceFromString(
                 string.Format(CultureInfo.InvariantCulture,
                               "{0}({1}, {2:F3}, {3:F3})",
                               function, pythonGroup, position.X, position.Y),
@@ -143,7 +143,7 @@ namespace Octgn.Scripting
                 sb.AppendFormat(CultureInfo.InvariantCulture,
                                 "{0}(Card({1}){2})\n",
                                 function, card.Id, posArguments);
-            ScriptSource src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
+            ScriptSource src = _engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 
@@ -157,15 +157,15 @@ namespace Octgn.Scripting
             if (position != null)
                 sb.AppendFormat(CultureInfo.InvariantCulture, ", {0:F3}, {1:F3}", position.Value.X, position.Value.Y);
             sb.Append(")\n");
-            ScriptSource src = engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
+            ScriptSource src = _engine.CreateScriptSourceFromString(sb.ToString(), SourceCodeKind.Statements);
             StartExecution(src, ActionsScope, null);
         }
 
         private void StartExecution(ScriptSource src, ScriptScope scope, Action<ExecutionResult> continuation)
         {
             var job = new ScriptJob {source = src, scope = scope, continuation = continuation};
-            executionQueue.Enqueue(job);
-            if (executionQueue.Count == 1) // Other scripts may be hung. Scripts are executed in order.
+            _executionQueue.Enqueue(job);
+            if (_executionQueue.Count == 1) // Other scripts may be hung. Scripts are executed in order.
                 ProcessExecutionQueue();
         }
 
@@ -173,7 +173,7 @@ namespace Octgn.Scripting
         {
             do
             {
-                ScriptJob job = executionQueue.Peek();
+                ScriptJob job = _executionQueue.Peek();
                 // Because some scripts have to be suspended during asynchronous operations (e.g. shuffle, reveal or random),
                 // their evaluation is done on another thread.
                 // The process still looks synchronous (no concurrency is allowed when manipulating the game model),
@@ -206,11 +206,11 @@ namespace Octgn.Scripting
                 if (job.suspended) return;
                 job.signal.Dispose();
                 job.signal2.Dispose();
-                executionQueue.Dequeue();
+                _executionQueue.Dequeue();
 
                 if (job.continuation != null)
                     job.continuation(job.result);
-            } while (executionQueue.Count > 0);
+            } while (_executionQueue.Count > 0);
         }
 
         private void Execute(Object state)
@@ -220,15 +220,15 @@ namespace Octgn.Scripting
             try
             {
                 job.source.Execute(job.scope);
-                result.Output = Encoding.UTF8.GetString(outputStream.ToArray(), 0, (int) outputStream.Length);
+                result.Output = Encoding.UTF8.GetString(_outputStream.ToArray(), 0, (int) _outputStream.Length);
                 // HACK: It looks like Python adds some \r in front of \n, which sometimes 
                 // (depending on the string source) results in doubled \r\r
                 result.Output = result.Output.Replace("\r\r", "\r");
-                outputStream.SetLength(0);
+                _outputStream.SetLength(0);
             }
             catch (Exception ex)
             {
-                var eo = engine.GetService<ExceptionOperations>();
+                var eo = _engine.GetService<ExceptionOperations>();
                 string error = eo.FormatException(ex);
                 result.Error = error + Environment.NewLine + job.source.GetCode();
                 //result.Error = String.Format("{0}\n{1}",ex.Message,ex.StackTrace);
@@ -265,7 +265,7 @@ namespace Octgn.Scripting
 
         internal T Invoke<T>(Func<object> func)
         {
-            ScriptJob job = executionQueue.Peek();
+            ScriptJob job = _executionQueue.Peek();
             job.invokedOperation = func;
             job.signal.Set();
             job.signal2.WaitOne();
@@ -274,20 +274,20 @@ namespace Octgn.Scripting
 
         private void InjectOctgnIntoScope(ScriptScope scope)
         {
-            scope.SetVariable("_api", api);
+            scope.SetVariable("_api", _api);
             // For convenience reason, the definition of Python API objects is in a seperate file: PythonAPI.py
-            engine.Execute(Resources.CaseInsensitiveDict, scope);
-            engine.Execute(Resources.PythonAPI, scope);
+            _engine.Execute(Resources.CaseInsensitiveDict, scope);
+            _engine.Execute(Resources.PythonAPI, scope);
 
             // See comment on sponsor declaration
             // Note: this has to be done after api has been activated at least once remotely,
             // that's why the code is here rather than in the c'tor
-            if (sponsor != null) return;
-            sponsor = new Sponsor();
-            var life = (ILease) RemotingServices.GetLifetimeService(api);
-            life.Register(sponsor);
-            life = (ILease) RemotingServices.GetLifetimeService(outputWriter);
-            life.Register(sponsor);
+            if (_sponsor != null) return;
+            _sponsor = new Sponsor();
+            var life = (ILease) RemotingServices.GetLifetimeService(_api);
+            life.Register(_sponsor);
+            life = (ILease) RemotingServices.GetLifetimeService(_outputWriter);
+            life.Register(_sponsor);
         }
 
         private static AppDomain CreateSandbox(bool forTesting)
@@ -312,12 +312,12 @@ namespace Octgn.Scripting
 
         void IDisposable.Dispose()
         {
-            if (sponsor == null) return;
+            if (_sponsor == null) return;
             // See comment on sponsor declaration
-            var life = (ILease) RemotingServices.GetLifetimeService(api);
-            life.Unregister(sponsor);
-            life = (ILease) RemotingServices.GetLifetimeService(outputWriter);
-            life.Unregister(sponsor);
+            var life = (ILease) RemotingServices.GetLifetimeService(_api);
+            life.Unregister(_sponsor);
+            life = (ILease) RemotingServices.GetLifetimeService(_outputWriter);
+            life.Unregister(_sponsor);
         }
 
         #endregion

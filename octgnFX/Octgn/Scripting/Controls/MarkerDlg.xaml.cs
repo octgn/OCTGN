@@ -17,17 +17,17 @@ namespace Octgn.Scripting.Controls
             DependencyProperty.Register("IsModelSelected", typeof (bool), typeof (MarkerDlg),
                                         new UIPropertyMetadata(false));
 
-        private readonly ICollectionView allMarkersView;
-        private string filterText = "";
+        private readonly ICollectionView _allMarkersView;
+        private string _filterText = "";
 
         public MarkerDlg()
         {
             InitializeComponent();
-            allMarkersView = CollectionViewSource.GetDefaultView(Program.Game.Markers);
-            allMarkersView.Filter =
+            _allMarkersView = CollectionViewSource.GetDefaultView(Program.Game.Markers);
+            _allMarkersView.Filter =
                 marker =>
-                ((MarkerModel) marker).Name.IndexOf(filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
-            allList.ItemsSource = allMarkersView;
+                ((MarkerModel) marker).Name.IndexOf(_filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
+            allList.ItemsSource = _allMarkersView;
             defaultList.ItemsSource = Marker.DefaultMarkers;
             recentList.ItemsSource = Program.Game.RecentMarkers;
         }
@@ -93,8 +93,8 @@ namespace Octgn.Scripting.Controls
 
         private void FilterChanged(object sender, EventArgs e)
         {
-            filterText = filterBox.Text;
-            allMarkersView.Refresh();
+            _filterText = filterBox.Text;
+            _allMarkersView.Refresh();
         }
 
         private void PreviewFilterKeyDown(object sender, KeyEventArgs e)

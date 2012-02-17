@@ -120,7 +120,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (MySqlException me)
                 {
-                    Logger.ER(me.InnerException);
+                    Logger.Er(me.InnerException);
 #if(DEBUG)
                     if (Debugger.IsAttached) Debugger.Break();
 #endif
@@ -197,7 +197,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (Exception ex)
                 {
-                    Logger.ER(ex);
+                    Logger.Er(ex);
                 }
                 return ret;
             }
@@ -248,7 +248,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (Exception ex)
                 {
-                    Logger.ER(ex);
+                    Logger.Er(ex);
                 }
                 return ret;
             }
@@ -286,7 +286,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (Exception ex)
                 {
-                    Logger.ER(ex);
+                    Logger.Er(ex);
                 }
                 return false;
             }
@@ -568,7 +568,7 @@ namespace Skylabs.LobbyServer
                 }
                 catch (Exception ex)
                 {
-                    Logger.ER(ex);
+                    Logger.Er(ex);
                 }
                 return null;
             }

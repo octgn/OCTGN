@@ -161,7 +161,7 @@ namespace Octgn.Play
                 if (_group != null)
                 {
                     // Remove the card from peeking lists
-                    foreach (var lookedCards in _group.LookedAt.Values)
+                    foreach (List<Card> lookedCards in _group.LookedAt.Values)
                         lookedCards.Remove(this);
                 }
                 _group = value;

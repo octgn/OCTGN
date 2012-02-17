@@ -178,7 +178,7 @@ namespace Octgn.Play.Gui
                 case NotifyCollectionChangedAction.Move:
                     if (e.OldItems.Count > 1) throw new NotSupportedException("Can't move more than 1 card at a time");
                     var card = e.OldItems[0] as Card;
-                    if (!cards.Contains(card)) break;
+                    if (card == null || !cards.Contains(card)) break;
 
                     if ((_position == PilePosition.Top && e.NewStartingIndex >= _count) ||
                         (_position == PilePosition.Bottom && e.NewStartingIndex < _group.Count - _count))
@@ -189,9 +189,12 @@ namespace Octgn.Play.Gui
                     else
                     {
                         var src = sender as ICollection<Card>;
-                        int oldIndex = cards.IndexOf(card);
-                        int newIndex = src.Where(cards.Contains).IndexOf(card);
-                        cards.Move(oldIndex, newIndex);
+                        if (src != null)
+                        {
+                            int oldIndex = cards.IndexOf(card);
+                            int newIndex = src.Where(cards.Contains).IndexOf(card);
+                            cards.Move(oldIndex, newIndex);
+                        }
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:

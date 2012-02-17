@@ -40,10 +40,35 @@ namespace Octgn.Launcher
 
         public void DeletedSelected()
         {
-            foreach (Set s in lbSetList.SelectedItems)
+            var wnd = new ChangeSetsProgressDialog("Removing Sets...") { Owner = Program.ClientWindow };
+            System.Collections.IList items = lbSetList.SelectedItems;
+            ThreadPool.QueueUserWorkItem(_ =>
             {
-                SelectedGame.DeleteSet(s);
-            }
+                int current = 0, max = items.Count;
+                wnd.UpdateProgress(current, max, null, false);
+                wnd.ShowMessage("Set Removal can take some time. Please be patient.");
+                foreach (Set s in items)
+                {
+                    ++current;
+                    try
+                    {
+                        wnd.ShowMessage(string.Format("Removing '{0}' ...", s.Name));
+                        SelectedGame.DeleteSet(s);
+                        wnd.UpdateProgress(current, max,
+                                           string.Format("'{0}' removed.", s.Name),
+                                           false);
+                    }
+                    catch (Exception ex)
+                    {
+                        wnd.UpdateProgress(current, max,
+                                           string.Format(
+                                               "'{0}' an error occured during removal:",
+                                               s.Name), true);
+                        wnd.UpdateProgress(current, max, ex.Message, true);
+                    }
+                }
+            });
+            wnd.ShowDialog();
             RefreshList();
         }
 
@@ -62,7 +87,7 @@ namespace Octgn.Launcher
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            var wnd = new InstallSetsProgressDialog {Owner = Program.ClientWindow};
+            var wnd = new ChangeSetsProgressDialog("Installing Sets...") {Owner = Program.ClientWindow};
             ThreadPool.QueueUserWorkItem(_ =>
                                              {
                                                  int current = 0, max = ofd.FileNames.Length;
@@ -73,11 +98,13 @@ namespace Octgn.Launcher
                                                      string shortName = Path.GetFileName(setName);
                                                      try
                                                      {
-                                                         string copyto = Path.Combine(path, shortName);
-                                                         if (setName.ToLower() != copyto.ToLower())
-                                                             File.Copy(setName, copyto, true);
-
-                                                         SelectedGame.InstallSet(copyto);
+                                                         if (shortName != null)
+                                                         {
+                                                             string copyto = Path.Combine(path, shortName);
+                                                             if (setName.ToLower() != copyto.ToLower())
+                                                                 File.Copy(setName, copyto, true);
+                                                             SelectedGame.InstallSet(copyto);
+                                                         }
                                                          wnd.UpdateProgress(current, max,
                                                                             string.Format("'{0}' installed.", shortName),
                                                                             false);

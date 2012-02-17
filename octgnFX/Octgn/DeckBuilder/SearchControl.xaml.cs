@@ -48,14 +48,22 @@ namespace Octgn.DeckBuilder
                 case Key.Add:
                 case Key.Enter:
                     if (CardAdded != null)
-                        CardAdded(this, new SearchCardIdEventArgs {CardId = Guid.Parse(row["id"] as string)});
+                    {
+                        var rowid = row["id"] as string;
+                        if (rowid != null)
+                            CardAdded(this, new SearchCardIdEventArgs {CardId = Guid.Parse(rowid)});
+                    }
                     e.Handled = true;
                     break;
 
                 case Key.Delete:
                 case Key.Subtract:
                     if (CardRemoved != null)
-                        CardRemoved(this, new SearchCardIdEventArgs {CardId = Guid.Parse(row["id"] as string)});
+                    {
+                        var rowid = row["id"] as string;
+                        if (rowid != null)
+                            CardRemoved(this, new SearchCardIdEventArgs {CardId = Guid.Parse(rowid)});
+                    }
                     e.Handled = true;
                     break;
             }
@@ -66,21 +74,29 @@ namespace Octgn.DeckBuilder
             e.Handled = true;
             var row = (DataRowView) resultsGrid.SelectedItem;
             if (row == null) return;
-            if (CardAdded != null)
-                CardAdded(this, new SearchCardIdEventArgs {CardId = Guid.Parse(row["id"] as string)});
+            if (CardAdded == null) return;
+            var rowid = row["id"] as string;
+            if (rowid != null)
+                CardAdded(this, new SearchCardIdEventArgs {CardId = Guid.Parse(rowid)});
         }
 
         private void ResultCardSelected(object sender, SelectionChangedEventArgs e)
         {
             e.Handled = true;
             var row = (DataRowView) resultsGrid.SelectedItem;
-
             if (CardSelected != null)
-                CardSelected(this,
-                             row != null
-                                 ? new SearchCardImageEventArgs
-                                       {SetId = Guid.Parse(row["set_id"] as string), Image = (string) row["image"]}
-                                 : new SearchCardImageEventArgs());
+                if (row != null)
+                {
+                    var setid = row["set_id"] as string;
+                    if (setid != null)
+                        CardSelected(this,
+                                     new SearchCardImageEventArgs
+                                         {SetId = Guid.Parse(setid), Image = (string) row["image"]});
+                }
+                else
+                {
+                    CardSelected(this, new SearchCardImageEventArgs());
+                }
         }
 
         private void GenerateColumns(Data.Game game)
@@ -168,10 +184,15 @@ namespace Octgn.DeckBuilder
                 values[1] == DependencyProperty.UnsetValue)
                 return Binding.DoNothing;
 
-            Guid setId = Guid.Parse(values[0] as string);
-            var game = (Data.Game) values[1];
-            Set set = game.GetSet(setId);
-            return set != null ? set.Name : "(unknown)";
+            var guid = values[0] as string;
+            if (guid != null)
+            {
+                Guid setId = Guid.Parse(guid);
+                var game = (Data.Game) values[1];
+                Set set = game.GetSet(setId);
+                return set != null ? set.Name : "(unknown)";
+            }
+            return "(unknown)";
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
