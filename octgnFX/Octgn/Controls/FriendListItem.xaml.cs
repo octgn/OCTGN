@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using SimplestDragDrop;
-using Skylabs;
 using Skylabs.Lobby;
 
 namespace Octgn.Controls
@@ -17,7 +13,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for FriendListItem.xaml
     /// </summary>
-    public partial class FriendListItem : UserControl
+    public partial class FriendListItem
     {
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
             "UserName", typeof (string), typeof (FriendListItem));
@@ -35,9 +31,9 @@ namespace Octgn.Controls
         private bool _dragHasLeftScope;
         private Window _dragdropWindow;
         private AdornerLayer _layer;
-        private Point _startPoint;
 
-        private User m_User = new User();
+        private User _mUser = new User();
+        private Point _startPoint;
 
         public FriendListItem()
         {
@@ -50,13 +46,13 @@ namespace Octgn.Controls
 
         public User ThisUser
         {
-            get { return m_User; }
+            get { return _mUser; }
             set
             {
-                m_User = value;
+                _mUser = value;
                 SetValue(CustomStatusProperty, value.CustomStatus);
                 string h = ValueConverters.HashEmailAddress(value.Email.ToLower().Trim());
-                string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x";
+                string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt=";
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
                 SetValue(UsernameProperty, value.DisplayName);
                 switch (value.Status)
@@ -78,37 +74,35 @@ namespace Octgn.Controls
             }
         }
 
-        private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        private void UserControlMouseDown(object sender, MouseButtonEventArgs e)
         {
             //Focus();
         }
 
-        private void flistitem_MouseUp(object sender, MouseButtonEventArgs e)
+        private void FlistitemMouseUp(object sender, MouseButtonEventArgs e)
         {
             Focus();
         }
 
-        private void flistitem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void FlistitemPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _startPoint = e.GetPosition(null);
         }
 
-        private void flistitem_PreviewMouseMove(object sender, MouseEventArgs e)
+        private void FlistitemPreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed && !IsDragging)
-            {
-                Point position = e.GetPosition(null);
+            if (e.LeftButton != MouseButtonState.Pressed || IsDragging) return;
+            Point position = e.GetPosition(null);
 
-                if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                    Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
-                {
-                    //StartDragInProcAdorner(e);
-                    StartDragWindow(e);
-                }
+            if (Math.Abs(position.X - _startPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                Math.Abs(position.Y - _startPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+            {
+                //StartDragInProcAdorner(e);
+                StartDragWindow(e);
             }
         }
 
-        private void DragSource_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        private void DragSourceQueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
             UpdateWindowLocation();
         }
@@ -116,17 +110,17 @@ namespace Octgn.Controls
 
         private void StartDragWindow(MouseEventArgs e)
         {
-            GiveFeedbackEventHandler feedbackhandler = DragSource_GiveFeedback;
+            GiveFeedbackEventHandler feedbackhandler = DragSourceGiveFeedback;
             GiveFeedback += feedbackhandler;
-            QueryContinueDragEventHandler queryhandler = DragSource_QueryContinueDrag;
+            QueryContinueDragEventHandler queryhandler = DragSourceQueryContinueDrag;
             QueryContinueDrag += queryhandler;
             IsDragging = true;
             CreateDragDropWindow(this);
             //DataObject data = new DataObject(System.Windows.DataFormats.Text.ToString(), "abcd");
-            var data = new DataObject(DataFormats.Text, m_User.Uid.ToString(CultureInfo.InvariantCulture));
+            //var data = new DataObject(DataFormats.Text, m_User.Uid.ToString(CultureInfo.InvariantCulture));
             //DataObject data = new DataObject(this.m_User);
             _dragdropWindow.Show();
-            DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
+            //DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
             DestroyDragDropWindow();
             IsDragging = false;
             GiveFeedback -= feedbackhandler;
@@ -141,15 +135,17 @@ namespace Octgn.Controls
             // TODO: FE? or UIE??   FE cause I am lazy on size . 
             Debug.Assert(dragElement is FrameworkElement);
 
-            _dragdropWindow = new Window();
-            _dragdropWindow.WindowStyle = WindowStyle.None;
-            _dragdropWindow.AllowsTransparency = true;
-            _dragdropWindow.AllowDrop = false;
-            _dragdropWindow.Background = Brushes.WhiteSmoke;
-            _dragdropWindow.IsHitTestVisible = false;
-            _dragdropWindow.SizeToContent = SizeToContent.WidthAndHeight;
-            _dragdropWindow.Topmost = true;
-            _dragdropWindow.ShowInTaskbar = false;
+            _dragdropWindow = new Window
+                                  {
+                                      WindowStyle = WindowStyle.None,
+                                      AllowsTransparency = true,
+                                      AllowDrop = false,
+                                      Background = Brushes.WhiteSmoke,
+                                      IsHitTestVisible = false,
+                                      SizeToContent = SizeToContent.WidthAndHeight,
+                                      Topmost = true,
+                                      ShowInTaskbar = false
+                                  };
 
             _dragdropWindow.SourceInitialized += delegate
                                                      {
@@ -157,22 +153,22 @@ namespace Octgn.Controls
                                                          PresentationSource windowSource =
                                                              PresentationSource.FromVisual(_dragdropWindow);
                                                          var hwndSource = (HwndSource) windowSource;
-                                                         if (hwndSource != null)
-                                                         {
-                                                             IntPtr handle = hwndSource.Handle;
+                                                         if (hwndSource == null) return;
+                                                         IntPtr handle = hwndSource.Handle;
 
-                                                             Int32 styles = Win32.GetWindowLong(handle,
-                                                                                                Win32.GWL_EXSTYLE);
-                                                             Win32.SetWindowLong(handle, Win32.GWL_EXSTYLE,
-                                                                                 styles | Win32.WS_EX_LAYERED |
-                                                                                 Win32.WS_EX_TRANSPARENT);
-                                                         }
+                                                         Int32 styles = Win32.GetWindowLong(handle,
+                                                                                            Win32.GWL_EXSTYLE);
+                                                         Win32.SetWindowLong(handle, Win32.GWL_EXSTYLE,
+                                                                             styles | Win32.WS_EX_LAYERED |
+                                                                             Win32.WS_EX_TRANSPARENT);
                                                      };
 
-            var r = new Rectangle();
-            r.Width = ((FrameworkElement) dragElement).ActualWidth;
-            r.Height = ((FrameworkElement) dragElement).ActualHeight;
-            r.Fill = new VisualBrush(dragElement);
+            var r = new Rectangle
+                        {
+                            Width = ((FrameworkElement) dragElement).ActualWidth,
+                            Height = ((FrameworkElement) dragElement).ActualHeight,
+                            Fill = new VisualBrush(dragElement)
+                        };
             _dragdropWindow.Content = r;
 
 
@@ -182,30 +178,26 @@ namespace Octgn.Controls
 
         private void DestroyDragDropWindow()
         {
-            if (_dragdropWindow != null)
-            {
-                _dragdropWindow.Close();
-                _dragdropWindow = null;
-            }
+            if (_dragdropWindow == null) return;
+            _dragdropWindow.Close();
+            _dragdropWindow = null;
         }
 
         private void UpdateWindowLocation()
         {
-            if (_dragdropWindow != null)
+            if (_dragdropWindow == null) return;
+            Win32.POINT p;
+            if (!Win32.GetCursorPos(out p))
             {
-                Win32.POINT p;
-                if (!Win32.GetCursorPos(out p))
-                {
-                    return;
-                }
-                _dragdropWindow.Left = p.X;
-                _dragdropWindow.Top = p.Y;
+                return;
             }
+            _dragdropWindow.Left = p.X;
+            _dragdropWindow.Top = p.Y;
         }
 
-        private void DragSource_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        private void DragSourceGiveFeedback(object sender, GiveFeedbackEventArgs e)
         {
-            Debug.WriteLine("DragSource_GiveFeedback " + e.Effects.ToString());
+            Debug.WriteLine("DragSource_GiveFeedback " + e.Effects);
 
             if (DragScope == null)
             {
@@ -238,25 +230,25 @@ namespace Octgn.Controls
             Debug.Assert(DragScope != null);
 
             // We enable Drag & Drop in our scope ...  We are not implementing Drop, so it is OK, but this allows us to get DragOver 
-            bool previousDrop = DragScope.AllowDrop;
+            bool previousDrop = DragScope != null && DragScope.AllowDrop;
             DragScope.AllowDrop = true;
 
             // Let's wire our usual events.. 
             // GiveFeedback just tells it to use no standard cursors..  
 
-            GiveFeedbackEventHandler feedbackhandler = DragSource_GiveFeedback;
+            GiveFeedbackEventHandler feedbackhandler = DragSourceGiveFeedback;
             GiveFeedback += feedbackhandler;
 
             // The DragOver event ... 
-            DragEventHandler draghandler = Window1_DragOver;
+            DragEventHandler draghandler = Window1DragOver;
             DragScope.PreviewDragOver += draghandler;
 
             // Drag Leave is optional, but write up explains why I like it .. 
-            DragEventHandler dragleavehandler = DragScope_DragLeave;
+            DragEventHandler dragleavehandler = DragScopeDragLeave;
             DragScope.DragLeave += dragleavehandler;
 
             // QueryContinue Drag goes with drag leave... 
-            QueryContinueDragEventHandler queryhandler = DragScope_QueryContinueDrag;
+            QueryContinueDragEventHandler queryhandler = DragScopeQueryContinueDrag;
             DragScope.QueryContinueDrag += queryhandler;
 
             //Here we create our adorner.. 
@@ -268,8 +260,8 @@ namespace Octgn.Controls
             IsDragging = true;
             _dragHasLeftScope = false;
             //Finally lets drag drop 
-            var data = new DataObject(DataFormats.Text, "abcd");
-            DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
+            //var data = new DataObject(DataFormats.Text, "abcd");
+            //DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
 
             // Clean up our mess :) 
             DragScope.AllowDrop = previousDrop;
@@ -284,38 +276,30 @@ namespace Octgn.Controls
             IsDragging = false;
         }
 
-        private void DragScope_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        private void DragScopeQueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
-            if (_dragHasLeftScope)
-            {
-                e.Action = DragAction.Cancel;
-                e.Handled = true;
-            }
+            if (!_dragHasLeftScope) return;
+            e.Action = DragAction.Cancel;
+            e.Handled = true;
         }
 
 
-        private void DragScope_DragLeave(object sender, DragEventArgs e)
+        private void DragScopeDragLeave(object sender, DragEventArgs e)
         {
-            if (e.OriginalSource == DragScope)
-            {
-                Point p = e.GetPosition(DragScope);
-                Rect r = VisualTreeHelper.GetContentBounds(DragScope);
-                if (!r.Contains(p))
-                {
-                    _dragHasLeftScope = true;
-                    e.Handled = true;
-                }
-            }
+            if (e.OriginalSource != DragScope) return;
+            Point p = e.GetPosition(DragScope);
+            Rect r = VisualTreeHelper.GetContentBounds(DragScope);
+            if (r.Contains(p)) return;
+            _dragHasLeftScope = true;
+            e.Handled = true;
         }
 
 
-        private void Window1_DragOver(object sender, DragEventArgs args)
+        private void Window1DragOver(object sender, DragEventArgs args)
         {
-            if (_adorner != null)
-            {
-                _adorner.LeftOffset = args.GetPosition(DragScope).X /* - _startPoint.X */;
-                _adorner.TopOffset = args.GetPosition(DragScope).Y /* - _startPoint.Y */;
-            }
+            if (_adorner == null) return;
+            _adorner.LeftOffset = args.GetPosition(DragScope).X /* - _startPoint.X */;
+            _adorner.TopOffset = args.GetPosition(DragScope).Y /* - _startPoint.Y */;
         }
     }
 }

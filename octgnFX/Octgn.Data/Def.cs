@@ -9,11 +9,11 @@ namespace Octgn.Data
     // While this is nice, too, it is a bit complicated to seperate them completely from the Game engine and model.
     public static class Defs
     {
-        public static readonly XNamespace xmlnsOctgn = "";
+        public static readonly XNamespace XmlnsOctgn = "";
 
         public static T Attr<T>(this XElement xml, string name)
         {
-            XAttribute attr = xml.Attribute(xmlnsOctgn + name);
+            XAttribute attr = xml.Attribute(XmlnsOctgn + name);
             if (attr == null) return default(T);
             // HACK: Strangely, .NET 3.5 SP1 doesn't support conversion from string to Version by its TypeConverter
             if (typeof (T) == typeof (Version)) return (T) (object) new Version(attr.Value);
@@ -22,14 +22,14 @@ namespace Octgn.Data
 
         public static T Attr<T>(this XElement xml, string name, T defaultValue)
         {
-            XAttribute attr = xml.Attribute(xmlnsOctgn + name);
+            XAttribute attr = xml.Attribute(XmlnsOctgn + name);
             if (attr == null) return defaultValue;
             return (T) TypeDescriptor.GetConverter(typeof (T)).ConvertFromInvariantString(attr.Value);
         }
 
         public static XElement Child(this XElement xml, string name)
         {
-            return xml.Element(xmlnsOctgn + name);
+            return xml.Element(XmlnsOctgn + name);
         }
     }
 

@@ -8,13 +8,13 @@ namespace Skylabs.Lobby
 {
     public class ThreadSafeList<T> : IList<T>, ICollection, IDisposable
     {
-        private readonly ReaderWriterLockSlim rwLock;
+        private readonly ReaderWriterLockSlim _rwLock;
         private List<T> _list;
 
         public ThreadSafeList()
         {
             _list = new List<T>();
-            rwLock = new ReaderWriterLockSlim();
+            _rwLock = new ReaderWriterLockSlim();
         }
 
         #region ICollection Members
@@ -40,7 +40,7 @@ namespace Skylabs.Lobby
 
         public void Dispose()
         {
-            rwLock.Dispose();
+            _rwLock.Dispose();
             _list.Clear();
             _list = null;
         }
@@ -51,41 +51,45 @@ namespace Skylabs.Lobby
 
         public void Add(T value)
         {
-            rwLock.EnterWriteLock();
+            _rwLock.EnterWriteLock();
             try
             {
                 _list.Add(value);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                _rwLock.ExitWriteLock();
             }
         }
 
         public void Clear()
         {
-            rwLock.EnterWriteLock();
+            _rwLock.EnterWriteLock();
             try
             {
                 _list.Clear();
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                _rwLock.ExitWriteLock();
             }
         }
 
         public bool Contains(T value)
         {
-            bool ret = false;
-            rwLock.EnterReadLock();
+            _rwLock.EnterReadLock();
+            bool ret;
             try
             {
                 ret = _list.Contains(value);
             }
+            catch
+            {
+                ret = false;
+            }
             finally
             {
-                rwLock.ExitReadLock();
+                _rwLock.ExitReadLock();
             }
 
             return (ret);
@@ -95,15 +99,19 @@ namespace Skylabs.Lobby
         {
             get
             {
-                int ret = -1;
-                rwLock.EnterReadLock();
+                _rwLock.EnterReadLock();
+                int ret;
                 try
                 {
                     ret = _list.Count;
                 }
+                catch (Exception)
+                {
+                    ret = -1;
+                }
                 finally
                 {
-                    rwLock.ExitReadLock();
+                    _rwLock.ExitReadLock();
                 }
                 return (ret);
             }
@@ -111,16 +119,19 @@ namespace Skylabs.Lobby
 
         public int IndexOf(T value)
         {
-            int ret = -1;
-
-            rwLock.EnterReadLock();
+            _rwLock.EnterReadLock();
+            int ret;
             try
             {
                 ret = _list.IndexOf(value);
             }
+            catch
+            {
+                ret = -1;
+            }
             finally
             {
-                rwLock.ExitReadLock();
+                _rwLock.ExitReadLock();
             }
 
             return (ret);
@@ -128,42 +139,46 @@ namespace Skylabs.Lobby
 
         public void Insert(int index, T item)
         {
-            rwLock.EnterWriteLock();
+            _rwLock.EnterWriteLock();
             try
             {
                 _list.Insert(index, item);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                _rwLock.ExitWriteLock();
             }
         }
 
         public bool Remove(T value)
         {
-            bool ret = false;
-            rwLock.EnterWriteLock();
+            _rwLock.EnterWriteLock();
+            bool ret;
             try
             {
                 ret = _list.Remove(value);
             }
+            catch
+            {
+                ret = false;
+            }
             finally
             {
-                rwLock.ExitWriteLock();
+                _rwLock.ExitWriteLock();
             }
             return (ret);
         }
 
         public void RemoveAt(int index)
         {
-            rwLock.EnterWriteLock();
+            _rwLock.EnterWriteLock();
             try
             {
                 _list.RemoveAt(index);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                _rwLock.ExitWriteLock();
             }
         }
 
@@ -171,14 +186,14 @@ namespace Skylabs.Lobby
         {
             get
             {
-                rwLock.EnterReadLock();
+                _rwLock.EnterReadLock();
                 try
                 {
                     return (_list[index]);
                 }
                 finally
                 {
-                    rwLock.ExitReadLock();
+                    _rwLock.ExitReadLock();
                 }
             }
             set { UpdateAt(index, value); }
@@ -187,10 +202,7 @@ namespace Skylabs.Lobby
 
         public IEnumerator<T> GetEnumerator()
         {
-            foreach (T item in _list.ToList())
-            {
-                yield return item;
-            }
+            return ((IEnumerable<T>) _list.ToList()).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -213,7 +225,7 @@ namespace Skylabs.Lobby
 
         public void Update(T value)
         {
-            rwLock.EnterWriteLock();
+            _rwLock.EnterWriteLock();
             try
             {
                 int index = _list.IndexOf(value);
@@ -221,20 +233,20 @@ namespace Skylabs.Lobby
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                _rwLock.ExitWriteLock();
             }
         }
 
         public void UpdateAt(int index, T value)
         {
-            rwLock.EnterWriteLock();
+            _rwLock.EnterWriteLock();
             try
             {
                 _list[index] = value;
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                _rwLock.ExitWriteLock();
             }
         }
     }

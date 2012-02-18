@@ -70,13 +70,16 @@ namespace Octgn.Play.Gui
                     if (newlyRealized)
                     {
                         // Figure out if we need to insert the child at the end or somewhere in the middle
-                        if (childIndex >= children.Count)
+                        if (child != null)
                         {
-                            base.AddInternalChild(child);
-                        }
-                        else
-                        {
-                            base.InsertInternalChild(childIndex, child);
+                            if (childIndex >= children.Count)
+                            {
+                                AddInternalChild(child);
+                            }
+                            else
+                            {
+                                InsertInternalChild(childIndex, child);
+                            }
                         }
                         generator.PrepareItemContainer(child);
                     }
@@ -135,11 +138,9 @@ namespace Octgn.Play.Gui
             {
                 var childGeneratorPos = new GeneratorPosition(i, 0);
                 int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
-                if (itemIndex < minDesiredGenerated || itemIndex > maxDesiredGenerated)
-                {
-                    generator.Remove(childGeneratorPos, 1);
-                    RemoveInternalChildRange(i, 1);
-                }
+                if (itemIndex >= minDesiredGenerated && itemIndex <= maxDesiredGenerated) continue;
+                generator.Remove(childGeneratorPos, 1);
+                RemoveInternalChildRange(i, 1);
             }
         }
 
@@ -231,11 +232,9 @@ namespace Octgn.Play.Gui
         private int CalculateChildrenPerRow(Size availableSize)
         {
             // Figure out how many children fit on each row
-            int childrenPerRow;
-            if (double.IsPositiveInfinity(availableSize.Width))
-                childrenPerRow = Children.Count;
-            else
-                childrenPerRow = Math.Max(1, (int) Math.Floor(availableSize.Width/ChildSize));
+            int childrenPerRow = double.IsPositiveInfinity(availableSize.Width)
+                                     ? Children.Count
+                                     : Math.Max(1, (int) Math.Floor(availableSize.Width/ChildSize));
             return childrenPerRow;
         }
 
@@ -403,12 +402,10 @@ namespace Octgn.Play.Gui
             }
 
             // Update viewport
-            if (availableSize != _viewport)
-            {
-                _viewport = availableSize;
-                if (_owner != null)
-                    _owner.InvalidateScrollInfo();
-            }
+            if (availableSize == _viewport) return;
+            _viewport = availableSize;
+            if (_owner != null)
+                _owner.InvalidateScrollInfo();
         }
 
         #endregion

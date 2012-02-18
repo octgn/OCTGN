@@ -8,7 +8,7 @@ namespace Octgn.Data
 {
     public class Set
     {
-        private List<Pack> cachedPacks;
+        private List<Pack> _cachedPacks;
 
         internal Set()
         {
@@ -18,10 +18,16 @@ namespace Octgn.Data
         {
             PackageName = packageName;
             Name = reader.GetAttribute("name");
-            Id = new Guid(reader.GetAttribute("id"));
-            var gameId = new Guid(reader.GetAttribute("gameId"));
-            Game = repository.Games.First(g => g.Id == gameId);
-            GameVersion = new Version(reader.GetAttribute("gameVersion"));
+            string gaid = reader.GetAttribute("id");
+            if (gaid != null) Id = new Guid(gaid);
+            string gi = reader.GetAttribute("gameId");
+            if (gi != null)
+            {
+                var gameId = new Guid(gi);
+                Game = repository.Games.First(g => g.Id == gameId);
+            }
+            string gv = reader.GetAttribute("gameVersion");
+            if (gv != null) GameVersion = new Version(gv);
             Version ver;
             Version.TryParse(reader.GetAttribute("version"), out ver);
             Version = ver ?? new Version(0, 0);
@@ -40,8 +46,8 @@ namespace Octgn.Data
         {
             get
             {
-                if (cachedPacks == null) LoadPacks();
-                return cachedPacks;
+                if (_cachedPacks == null) LoadPacks();
+                return _cachedPacks;
             }
         }
 
@@ -57,27 +63,16 @@ namespace Octgn.Data
 
         private void LoadPacks()
         {
-            cachedPacks = new List<Pack>();
-            bool wasDbOpen = Game.IsDatabaseOpen;
-            if (!Game.IsDatabaseOpen)
-                Game.OpenDatabase(true);
-            try
+            _cachedPacks = new List<Pack>();
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
-                using (SQLiteCommand com = Game.dbc.CreateCommand())
+                com.CommandText = "SELECT [xml] FROM [packs] WHERE [set_id]=@set_id ORDER BY [name]";
+                com.Parameters.AddWithValue("@set_id", Id.ToString());
+                using (SQLiteDataReader reader = com.ExecuteReader())
                 {
-                    com.CommandText = "SELECT [xml] FROM [packs] WHERE [set_id]=@set_id ORDER BY [name]";
-                    com.Parameters.AddWithValue("@set_id", Id.ToString());
-                    using (SQLiteDataReader reader = com.ExecuteReader())
-                    {
-                        while (reader.Read())
-                            cachedPacks.Add(new Pack(this, reader.GetString(0)));
-                    }
+                    while (reader.Read())
+                        _cachedPacks.Add(new Pack(this, reader.GetString(0)));
                 }
-            }
-            finally
-            {
-                if (!wasDbOpen)
-                    Game.CloseDatabase();
             }
         }
     }

@@ -15,18 +15,8 @@ namespace Skylabs.LobbyServer
         private readonly HttpListener _server;
         private bool _running;
 
-        //private CassiniDevServer _webServer = null;
         public WebServer()
         {
-            //_webServer = new CassiniDevServer();
-            //_webServer.StartServer(Path.Combine(Environment.CurrentDirectory, "webserver"), int.Parse(Program.Settings["webserverport"]), "/", Environment.MachineName);
-
-            //CassiniDev.Server s = _webServer.Server;
-            //List<Assembly> assemblyList = new List<Assembly>();
-            //assemblyList.Add(Assembly.GetExecutingAssembly());
-            //_webServer.Server.Assemblies = assemblyList;
-
-
             _running = false;
             _server = new HttpListener();
             int port;
@@ -71,8 +61,10 @@ namespace Skylabs.LobbyServer
                 _server.Stop();
                 //_webServer.StopServer();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
         }
 
@@ -82,8 +74,10 @@ namespace Skylabs.LobbyServer
             {
                 _server.BeginGetContext(HandleConnection, _server);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
         }
 
@@ -139,7 +133,6 @@ namespace Skylabs.LobbyServer
                             }
                             catch (Exception)
                             {
-                                spage = "";
                                 con.Response.StatusCode = 404;
                             }
                             spage = ReplaceVariables(spage);
@@ -148,13 +141,15 @@ namespace Skylabs.LobbyServer
                         }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             AcceptConnections();
         }
 
-        private string ReplaceVariables(string rawpage)
+        private static string ReplaceVariables(string rawpage)
         {
             Version v = Assembly.GetCallingAssembly().GetName().Version;
             //Microsoft.VisualBasic.Devices.ComputerInfo ci = new Microsoft.VisualBasic.Devices.ComputerInfo();
@@ -169,7 +164,7 @@ namespace Skylabs.LobbyServer
             return ret;
         }
 
-        private string InsertRunningGames(string rawpage)
+        private static string InsertRunningGames(string rawpage)
         {
             string insert = string.Empty;
             List<Lobby.HostedGame> games = Gaming.GetLobbyList();
@@ -190,7 +185,7 @@ namespace Skylabs.LobbyServer
                 insert = insert + "<td>" + game.Port + "</td>";
                 insert = insert + "<td>" + game.GameStatus + "</td>";
                 insert = insert + "<td>" + game.GameVersion + "</td>";
-                insert = insert + "<td>" + ts.ToString() + "</td>";
+                insert = insert + "<td>" + ts + "</td>";
                 Client c = Server.GetOnlineClientByUid(game.UserHosting.Uid);
                 User user;
                 if (c == null)
@@ -213,7 +208,7 @@ namespace Skylabs.LobbyServer
             return (ret);
         }
 
-        private void SendItem(HttpListenerResponse res, string page)
+        private static void SendItem(HttpListenerResponse res, string page)
         {
             try
             {
@@ -251,11 +246,9 @@ namespace Skylabs.LobbyServer
             {
                 return string.Concat(Math.Round(bytes/Math.Pow(byteConversion, 2), 2), " MB");
             }
-            if (bytes >= byteConversion) //KB Range
-            {
-                return string.Concat(Math.Round(bytes/byteConversion, 2), " KB");
-            }
-            return string.Concat(bytes, " Bytes");
+            return bytes >= byteConversion
+                       ? string.Concat(Math.Round(bytes/byteConversion, 2), " KB")
+                       : string.Concat(bytes, " Bytes");
         }
     }
 }

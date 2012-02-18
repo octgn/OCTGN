@@ -1,14 +1,13 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace SimplestDragDrop
+namespace Octgn
 {
     public static class Win32
     {
         public static Int32 GWL_EXSTYLE = -20;
         public static Int32 WS_EX_LAYERED = 0x00080000;
         public static Int32 WS_EX_TRANSPARENT = 0x00000020;
-
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern bool GetCursorPos(out POINT pt);

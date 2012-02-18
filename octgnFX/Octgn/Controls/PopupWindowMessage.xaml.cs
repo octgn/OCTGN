@@ -9,16 +9,16 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for PopupWindowMessage.xaml
     /// </summary>
-    public partial class PopupWindowMessage : UserControl
+    public partial class PopupWindowMessage
     {
         #region Delegates
 
-        public delegate void HandlePopupWindowClose(object sender, bool XClosed);
+        public delegate void HandlePopupWindowClose(object sender, bool xClosed);
 
         #endregion
 
-        private Panel parentControl;
-        private bool xclosed;
+        private Panel _parentControl;
+        private bool _xclosed;
 
         public PopupWindowMessage()
         {
@@ -33,20 +33,20 @@ namespace Octgn.Controls
 
         public event HandlePopupWindowClose OnPopupWindowClose;
 
-        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void UserControlIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
         }
 
-        public void ShowMessage(Panel ParentControl)
+        public void ShowMessage(Panel parentControl)
         {
-            parentControl = ParentControl;
+            _parentControl = parentControl;
             HorizontalAlignment = HorizontalAlignment.Center;
             VerticalAlignment = VerticalAlignment.Center;
             SetValue(Grid.ColumnSpanProperty, 10);
             SetValue(Grid.RowSpanProperty, 10);
             Opacity = 0;
             Visibility = Visibility.Visible;
-            ParentControl.Children.Add(this);
+            parentControl.Children.Add(this);
             var a = FindResource("sbShow") as Storyboard;
             if (a != null) a.Begin();
         }
@@ -59,25 +59,23 @@ namespace Octgn.Controls
         public void HideMessage()
         {
             var a = FindResource("sbHide") as Storyboard;
-            if (a != null)
-            {
-                a.Completed += a_Completed;
-                a.Begin();
-            }
+            if (a == null) return;
+            a.Completed += ACompleted;
+            a.Begin();
         }
 
-        private void a_Completed(object sender, EventArgs e)
+        private void ACompleted(object sender, EventArgs e)
         {
             Visibility = Visibility.Hidden;
-            if (parentControl != null)
-                parentControl.Children.Remove(this);
+            if (_parentControl != null)
+                _parentControl.Children.Remove(this);
             if (OnPopupWindowClose != null)
-                OnPopupWindowClose(this, xclosed);
+                OnPopupWindowClose(this, _xclosed);
         }
 
-        private void image1_MouseUp(object sender, MouseButtonEventArgs e)
+        private void Image1MouseUp(object sender, MouseButtonEventArgs e)
         {
-            xclosed = true;
+            _xclosed = true;
             HideMessage();
         }
     }

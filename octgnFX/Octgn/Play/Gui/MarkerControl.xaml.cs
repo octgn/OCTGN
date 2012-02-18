@@ -1,13 +1,12 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace Octgn.Play.Gui
 {
-    public partial class MarkerControl : UserControl
+    public partial class MarkerControl
     {
         public MarkerControl()
         {
@@ -28,17 +27,22 @@ namespace Octgn.Play.Gui
         protected void TableKeyDown(object sender, TableKeyEventArgs te)
         {
             KeyEventArgs e = te.KeyEventArgs;
-            if (e.Key == Key.Add)
+            switch (e.Key)
             {
-                te.Handled = e.Handled = true;
-                var marker = DataContext as Marker;
-                if (marker != null) marker.Count++;
-            }
-            else if (e.Key == Key.Subtract)
-            {
-                te.Handled = e.Handled = true;
-                var marker = DataContext as Marker;
-                if (marker != null) marker.Count--;
+                case Key.Add:
+                    {
+                        te.Handled = e.Handled = true;
+                        var marker = DataContext as Marker;
+                        if (marker != null) marker.Count++;
+                    }
+                    break;
+                case Key.Subtract:
+                    {
+                        te.Handled = e.Handled = true;
+                        var marker = DataContext as Marker;
+                        if (marker != null) marker.Count--;
+                    }
+                    break;
             }
         }
 
@@ -54,16 +58,16 @@ namespace Octgn.Play.Gui
                                                                                                  typeof (CardControl));
 
         // One can only drag one marker at a time -> make everything static. It reduces memory usage.
-        private static bool isDragging, isMouseDown, takeAll;
-        private static Point mousePt, mouseOffset;
-        private static DragAdorner adorner;
+        private static bool _isDragging, _isMouseDown, _takeAll;
+        private static Point _mousePt, _mouseOffset;
+        private static Adorners.DragAdorner _adorner;
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
             e.Handled = true;
-            isMouseDown = true;
-            mousePt = Mouse.GetPosition(this);
+            _isMouseDown = true;
+            _mousePt = Mouse.GetPosition(this);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -71,36 +75,34 @@ namespace Octgn.Play.Gui
             base.OnMouseMove(e);
             e.Handled = true;
             Point pt = e.GetPosition(this);
-            if (!isDragging)
+            if (!_isDragging)
             {
                 // Check if the button was pressed over the marker, and was not release on another control in the meantime 
                 // (possible if the cursor is near the border of the marker)
-                if (isMouseDown && Mouse.LeftButton == MouseButtonState.Pressed &&
+                if (_isMouseDown && Mouse.LeftButton == MouseButtonState.Pressed &&
                     // Check if has moved enough to start a drag and drop
-                    (Math.Abs(pt.X - mousePt.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                     Math.Abs(pt.Y - mousePt.Y) > SystemParameters.MinimumVerticalDragDistance))
+                    (Math.Abs(pt.X - _mousePt.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                     Math.Abs(pt.Y - _mousePt.Y) > SystemParameters.MinimumVerticalDragDistance))
                 {
                     e.Handled = true;
-                    isDragging = true;
+                    _isDragging = true;
                     DragStarted();
                     CaptureMouse();
                 }
             }
             else
-                DragDelta(pt.X - mousePt.X, pt.Y - mousePt.Y);
+                DragDelta(pt.X - _mousePt.X, pt.Y - _mousePt.Y);
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonUp(e);
             e.Handled = true;
-            isMouseDown = false;
-            if (isDragging)
-            {
-                isDragging = false;
-                ReleaseMouseCapture();
-                DragCompleted();
-            }
+            _isMouseDown = false;
+            if (!_isDragging) return;
+            _isDragging = false;
+            ReleaseMouseCapture();
+            DragCompleted();
         }
 
         private void DragStarted()
@@ -108,27 +110,27 @@ namespace Octgn.Play.Gui
             // Hides the card view
             RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, this));
 
-            takeAll = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
-            UIElement adorned = takeAll ? this : (UIElement) img1;
-            mouseOffset = TranslatePoint(mousePt, adorned);
-            mouseOffset.X -= adorned.DesiredSize.Width/2;
-            mouseOffset.Y -= adorned.DesiredSize.Height/2;
-            adorner = new DragAdorner(adorned);
-            AdornerLayer.GetAdornerLayer(adorner.AdornedElement).Add(adorner);
+            _takeAll = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+            UIElement adorned = _takeAll ? this : (UIElement) img1;
+            _mouseOffset = TranslatePoint(_mousePt, adorned);
+            _mouseOffset.X -= adorned.DesiredSize.Width/2;
+            _mouseOffset.Y -= adorned.DesiredSize.Height/2;
+            _adorner = new Adorners.DragAdorner(adorned);
+            AdornerLayer.GetAdornerLayer(_adorner.AdornedElement).Add(_adorner);
         }
 
-        private void DragDelta(double dx, double dy)
+        private static void DragDelta(double dx, double dy)
         {
-            adorner.LeftOffset = mouseOffset.X + dx;
-            adorner.TopOffset = mouseOffset.Y + dy;
+            _adorner.LeftOffset = _mouseOffset.X + dx;
+            _adorner.TopOffset = _mouseOffset.Y + dy;
         }
 
         private void DragCompleted()
         {
-            ((AdornerLayer) adorner.Parent).Remove(adorner);
-            adorner = null;
+            ((AdornerLayer) _adorner.Parent).Remove(_adorner);
+            _adorner = null;
             var marker = (Marker) DataContext;
-            ushort count = takeAll ? marker.Count : (ushort) 1;
+            ushort count = _takeAll ? marker.Count : (ushort) 1;
             var e = new MarkerEventArgs(this, marker, count);
             Mouse.DirectlyOver.RaiseEvent(e);
             if (Keyboard.IsKeyUp(Key.LeftAlt) && !e.Handled)

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Octgn.Launcher;
 using Skylabs.Lobby;
 
 namespace Octgn.Controls
@@ -11,7 +12,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for FriendListItem.xaml
     /// </summary>
-    public partial class GroupChatListItem : UserControl
+    public partial class GroupChatListItem
     {
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
             "UserName", typeof (string), typeof (GroupChatListItem));
@@ -26,7 +27,7 @@ namespace Octgn.Controls
             "StatusPicture", typeof (ImageSource), typeof (GroupChatListItem));
 
 
-        private long ChatRoomID;
+        private long _chatRoomId;
 
         public GroupChatListItem()
         {
@@ -40,52 +41,48 @@ namespace Octgn.Controls
 
         public ChatRoom ThisRoom
         {
-            get { return Program.lobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID); }
+            get { return Program.LobbyClient.Chatting.GetChatRoomFromRID(_chatRoomId); }
             set
             {
-                ChatRoomID = value.ID;
-                ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(ChatRoomID);
-                if (cr != null)
+                _chatRoomId = value.Id;
+                ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(_chatRoomId);
+                if (cr == null) return;
+                if (cr.Id == 0)
                 {
-                    if (cr.ID == 0)
-                    {
-                        SetValue(UsernameProperty, "Lobby Chat");
-                        image1.Opacity = 0;
-                    }
-                    else
-                    {
-                        image1.Opacity = 1;
-                        String users = String.Join<User>(",", cr.GetUserList());
-                        if (users.Length > 100)
-                            users = users.Substring(0, 97);
-                        users += "...";
-                        SetValue(UsernameProperty, users);
-                    }
+                    SetValue(UsernameProperty, "Lobby Chat");
+                    image1.Opacity = 0;
+                }
+                else
+                {
+                    image1.Opacity = 1;
+                    String users = String.Join<User>(",", cr.GetUserList());
+                    if (users.Length > 100)
+                        users = users.Substring(0, 97);
+                    users += "...";
+                    SetValue(UsernameProperty, users);
                 }
             }
         }
 
-        private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        private void UserControlMouseDown(object sender, MouseButtonEventArgs e)
         {
             //Focus();
         }
 
-        private void flistitem_MouseUp(object sender, MouseButtonEventArgs e)
+        private void FlistitemMouseUp(object sender, MouseButtonEventArgs e)
         {
             Focus();
         }
 
-        private void image1_MouseUp(object sender, MouseButtonEventArgs e)
+        private void Image1MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (ChatRoomID != 0)
-            {
-                var firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.ID == ThisRoom.ID);
-                if (firstOrDefault != null)
-                    firstOrDefault.CloseChatWindow();
-                var sp = Parent as StackPanel;
-                if (sp != null)
-                    sp.Children.Remove(this);
-            }
+            if (_chatRoomId == 0) return;
+            ChatWindow firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.Id);
+            if (firstOrDefault != null)
+                firstOrDefault.CloseChatWindow();
+            var sp = Parent as StackPanel;
+            if (sp != null)
+                sp.Children.Remove(this);
         }
     }
 }

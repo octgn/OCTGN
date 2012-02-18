@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using Microsoft.Win32;
 using Octgn.Data;
 
@@ -11,7 +10,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for GameList.xaml
     /// </summary>
-    public partial class SetList : Page
+    public partial class SetList
     {
         public Data.Game SelectedGame;
 
@@ -21,12 +20,12 @@ namespace Octgn.Launcher
             SelectedGame = selectedGame;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        public void PageLoaded(object sender, RoutedEventArgs e)
         {
-            Refresh_List();
+            RefreshList();
         }
 
-        public void Refresh_List()
+        public void RefreshList()
         {
             lbSetList.Items.Clear();
             foreach (Set s in SelectedGame.Sets)
@@ -35,20 +34,45 @@ namespace Octgn.Launcher
             }
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
         }
 
-        public void Deleted_Selected()
+        public void DeletedSelected()
         {
-            foreach (Set s in lbSetList.SelectedItems)
+            var wnd = new ChangeSetsProgressDialog("Removing Sets...") { Owner = Program.ClientWindow };
+            System.Collections.IList items = lbSetList.SelectedItems;
+            ThreadPool.QueueUserWorkItem(_ =>
             {
-                SelectedGame.DeleteSet(s);
-            }
-            Refresh_List();
+                int current = 0, max = items.Count;
+                wnd.UpdateProgress(current, max, null, false);
+                wnd.ShowMessage("Set Removal can take some time. Please be patient.");
+                foreach (Set s in items)
+                {
+                    ++current;
+                    try
+                    {
+                        wnd.ShowMessage(string.Format("Removing '{0}' ...", s.Name));
+                        SelectedGame.DeleteSet(s);
+                        wnd.UpdateProgress(current, max,
+                                           string.Format("'{0}' removed.", s.Name),
+                                           false);
+                    }
+                    catch (Exception ex)
+                    {
+                        wnd.UpdateProgress(current, max,
+                                           string.Format(
+                                               "'{0}' an error occured during removal:",
+                                               s.Name), true);
+                        wnd.UpdateProgress(current, max, ex.Message, true);
+                    }
+                }
+            });
+            wnd.ShowDialog();
+            RefreshList();
         }
 
-        public void Install_Sets()
+        public void InstallSets()
         {
             var ofd = new OpenFileDialog
                           {
@@ -63,7 +87,7 @@ namespace Octgn.Launcher
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            var wnd = new InstallSetsProgressDialog {Owner = Program.ClientWindow};
+            var wnd = new ChangeSetsProgressDialog("Installing Sets...") {Owner = Program.ClientWindow};
             ThreadPool.QueueUserWorkItem(_ =>
                                              {
                                                  int current = 0, max = ofd.FileNames.Length;
@@ -74,11 +98,13 @@ namespace Octgn.Launcher
                                                      string shortName = Path.GetFileName(setName);
                                                      try
                                                      {
-                                                         string copyto = Path.Combine(path, shortName);
-                                                         if (setName.ToLower() != copyto.ToLower())
-                                                             File.Copy(setName, copyto, true);
-
-                                                         SelectedGame.InstallSet(copyto);
+                                                         if (shortName != null)
+                                                         {
+                                                             string copyto = Path.Combine(path, shortName);
+                                                             if (setName.ToLower() != copyto.ToLower())
+                                                                 File.Copy(setName, copyto, true);
+                                                             SelectedGame.InstallSet(copyto);
+                                                         }
                                                          wnd.UpdateProgress(current, max,
                                                                             string.Format("'{0}' installed.", shortName),
                                                                             false);
@@ -94,13 +120,13 @@ namespace Octgn.Launcher
                                                  }
                                              });
             wnd.ShowDialog();
-            Refresh_List();
+            RefreshList();
         }
 
-        public void Patch_Selected()
+        public void PatchSelected()
         {
             new PatchDialog {Owner = Program.ClientWindow}.ShowDialog();
-            Refresh_List();
+            RefreshList();
         }
     }
 }

@@ -8,11 +8,11 @@ namespace Octgn.Networking
 {
     internal sealed class BinaryParser
     {
-        private readonly Handler handler;
+        private readonly Handler _handler;
 
         public BinaryParser(Handler handler)
         {
-            this.handler = handler;
+            _handler = handler;
         }
 
         public void Parse(byte[] data)
@@ -26,25 +26,25 @@ namespace Octgn.Networking
             {
                 case 0:
                     {
-                        handler.Binary();
+                        _handler.Binary();
                         break;
                     }
                 case 1:
                     {
                         string arg0 = reader.ReadString();
-                        handler.Error(arg0);
+                        _handler.Error(arg0);
                         break;
                     }
                 case 3:
                     {
                         byte arg0 = reader.ReadByte();
-                        handler.Welcome(arg0);
+                        _handler.Welcome(arg0);
                         break;
                     }
                 case 4:
                     {
                         bool arg0 = reader.ReadBoolean();
-                        handler.Settings(arg0);
+                        _handler.Settings(arg0);
                         break;
                     }
                 case 5:
@@ -56,7 +56,7 @@ namespace Octgn.Networking
                             return;
                         }
                         bool arg1 = reader.ReadBoolean();
-                        handler.PlayerSettings(arg0, arg1);
+                        _handler.PlayerSettings(arg0, arg1);
                         break;
                     }
                 case 6:
@@ -64,7 +64,7 @@ namespace Octgn.Networking
                         byte arg0 = reader.ReadByte();
                         string arg1 = reader.ReadString();
                         ulong arg2 = reader.ReadUInt64();
-                        handler.NewPlayer(arg0, arg1, arg2);
+                        _handler.NewPlayer(arg0, arg1, arg2);
                         break;
                     }
                 case 7:
@@ -75,7 +75,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[Leave] Player not found.");
                             return;
                         }
-                        handler.Leave(arg0);
+                        _handler.Leave(arg0);
                         break;
                     }
                 case 9:
@@ -87,12 +87,12 @@ namespace Octgn.Networking
                             return;
                         }
                         string arg1 = reader.ReadString();
-                        handler.Nick(arg0, arg1);
+                        _handler.Nick(arg0, arg1);
                         break;
                     }
                 case 10:
                     {
-                        handler.Start();
+                        _handler.Start();
                         break;
                     }
                 case 12:
@@ -103,7 +103,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[Reset] Player not found.");
                             return;
                         }
-                        handler.Reset(arg0);
+                        _handler.Reset(arg0);
                         break;
                     }
                 case 13:
@@ -114,7 +114,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[NextTurn] Player not found.");
                             return;
                         }
-                        handler.NextTurn(arg0);
+                        _handler.NextTurn(arg0);
                         break;
                     }
                 case 15:
@@ -125,7 +125,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[StopTurn] Player not found.");
                             return;
                         }
-                        handler.StopTurn(arg0);
+                        _handler.StopTurn(arg0);
                         break;
                     }
                 case 17:
@@ -137,7 +137,7 @@ namespace Octgn.Networking
                             return;
                         }
                         string arg1 = reader.ReadString();
-                        handler.Chat(arg0, arg1);
+                        _handler.Chat(arg0, arg1);
                         break;
                     }
                 case 19:
@@ -149,7 +149,7 @@ namespace Octgn.Networking
                             return;
                         }
                         string arg1 = reader.ReadString();
-                        handler.Print(arg0, arg1);
+                        _handler.Print(arg0, arg1);
                         break;
                     }
                 case 21:
@@ -163,7 +163,7 @@ namespace Octgn.Networking
                         int arg1 = reader.ReadInt32();
                         int arg2 = reader.ReadInt32();
                         int arg3 = reader.ReadInt32();
-                        handler.Random(arg0, arg1, arg2, arg3);
+                        _handler.Random(arg0, arg1, arg2, arg3);
                         break;
                     }
                 case 23:
@@ -176,7 +176,7 @@ namespace Octgn.Networking
                         }
                         int arg1 = reader.ReadInt32();
                         ulong arg2 = reader.ReadUInt64();
-                        handler.RandomAnswer1(arg0, arg1, arg2);
+                        _handler.RandomAnswer1(arg0, arg1, arg2);
                         break;
                     }
                 case 25:
@@ -189,7 +189,7 @@ namespace Octgn.Networking
                         }
                         int arg1 = reader.ReadInt32();
                         ulong arg2 = reader.ReadUInt64();
-                        handler.RandomAnswer2(arg0, arg1, arg2);
+                        _handler.RandomAnswer2(arg0, arg1, arg2);
                         break;
                     }
                 case 27:
@@ -207,7 +207,7 @@ namespace Octgn.Networking
                             return;
                         }
                         int arg2 = reader.ReadInt32();
-                        handler.Counter(arg0, arg1, arg2);
+                        _handler.Counter(arg0, arg1, arg2);
                         break;
                     }
                 case 28:
@@ -228,7 +228,7 @@ namespace Octgn.Networking
                             if (arg2[i] == null)
                                 Debug.WriteLine("[LoadDeck] Group not found.");
                         }
-                        handler.LoadDeck(arg0, arg1, arg2);
+                        _handler.LoadDeck(arg0, arg1, arg2);
                         break;
                     }
                 case 29:
@@ -247,7 +247,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[CreateCard] Group not found.");
                             return;
                         }
-                        handler.CreateCard(arg0, arg1, arg2);
+                        _handler.CreateCard(arg0, arg1, arg2);
                         break;
                     }
                 case 30:
@@ -274,7 +274,7 @@ namespace Octgn.Networking
                             arg4[i] = reader.ReadInt32();
                         bool arg5 = reader.ReadBoolean();
                         bool arg6 = reader.ReadBoolean();
-                        handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+                        _handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
                         break;
                     }
                 case 31:
@@ -287,7 +287,7 @@ namespace Octgn.Networking
                         var arg1 = new ulong[length];
                         for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadUInt64();
-                        handler.CreateAlias(arg0, arg1);
+                        _handler.CreateAlias(arg0, arg1);
                         break;
                     }
                 case 33:
@@ -312,7 +312,7 @@ namespace Octgn.Networking
                         }
                         int arg3 = reader.ReadInt32();
                         bool arg4 = reader.ReadBoolean();
-                        handler.MoveCard(arg0, arg1, arg2, arg3, arg4);
+                        _handler.MoveCard(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case 35:
@@ -333,7 +333,7 @@ namespace Octgn.Networking
                         int arg3 = reader.ReadInt32();
                         int arg4 = reader.ReadInt32();
                         bool arg5 = reader.ReadBoolean();
-                        handler.MoveCardAt(arg0, arg1, arg2, arg3, arg4, arg5);
+                        _handler.MoveCardAt(arg0, arg1, arg2, arg3, arg4, arg5);
                         break;
                     }
                 case 36:
@@ -346,7 +346,7 @@ namespace Octgn.Networking
                         }
                         ulong arg1 = reader.ReadUInt64();
                         var arg2 = new Guid(reader.ReadBytes(16));
-                        handler.Reveal(arg0, arg1, arg2);
+                        _handler.Reveal(arg0, arg1, arg2);
                         break;
                     }
                 case 38:
@@ -369,7 +369,7 @@ namespace Octgn.Networking
                         var arg2 = new ulong[length];
                         for (int i = 0; i < length; ++i)
                             arg2[i] = reader.ReadUInt64();
-                        handler.RevealTo(arg0, arg1, arg2);
+                        _handler.RevealTo(arg0, arg1, arg2);
                         break;
                     }
                 case 40:
@@ -386,7 +386,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[Peek] Card not found.");
                             return;
                         }
-                        handler.Peek(arg0, arg1);
+                        _handler.Peek(arg0, arg1);
                         break;
                     }
                 case 42:
@@ -403,7 +403,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[Untarget] Card not found.");
                             return;
                         }
-                        handler.Untarget(arg0, arg1);
+                        _handler.Untarget(arg0, arg1);
                         break;
                     }
                 case 44:
@@ -420,7 +420,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[Target] Card not found.");
                             return;
                         }
-                        handler.Target(arg0, arg1);
+                        _handler.Target(arg0, arg1);
                         break;
                     }
                 case 46:
@@ -443,7 +443,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[TargetArrow] Card not found.");
                             return;
                         }
-                        handler.TargetArrow(arg0, arg1, arg2);
+                        _handler.TargetArrow(arg0, arg1, arg2);
                         break;
                     }
                 case 47:
@@ -456,7 +456,7 @@ namespace Octgn.Networking
                         }
                         string temp1 = reader.ReadString();
                         Color? arg1 = temp1 == "" ? null : (Color?) ColorConverter.ConvertFromString(temp1);
-                        handler.Highlight(arg0, arg1);
+                        _handler.Highlight(arg0, arg1);
                         break;
                     }
                 case 49:
@@ -474,7 +474,7 @@ namespace Octgn.Networking
                             return;
                         }
                         bool arg2 = reader.ReadBoolean();
-                        handler.Turn(arg0, arg1, arg2);
+                        _handler.Turn(arg0, arg1, arg2);
                         break;
                     }
                 case 51:
@@ -492,7 +492,7 @@ namespace Octgn.Networking
                             return;
                         }
                         var arg2 = (CardOrientation) reader.ReadByte();
-                        handler.Rotate(arg0, arg1, arg2);
+                        _handler.Rotate(arg0, arg1, arg2);
                         break;
                     }
                 case 52:
@@ -507,7 +507,7 @@ namespace Octgn.Networking
                         var arg1 = new int[length];
                         for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadInt32();
-                        handler.Shuffle(arg0, arg1);
+                        _handler.Shuffle(arg0, arg1);
                         break;
                     }
                 case 53:
@@ -526,7 +526,7 @@ namespace Octgn.Networking
                         var arg2 = new short[length];
                         for (int i = 0; i < length; ++i)
                             arg2[i] = reader.ReadInt16();
-                        handler.Shuffled(arg0, arg1, arg2);
+                        _handler.Shuffled(arg0, arg1, arg2);
                         break;
                     }
                 case 54:
@@ -537,7 +537,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[UnaliasGrp] Group not found.");
                             return;
                         }
-                        handler.UnaliasGrp(arg0);
+                        _handler.UnaliasGrp(arg0);
                         break;
                     }
                 case 55:
@@ -550,7 +550,7 @@ namespace Octgn.Networking
                         var arg1 = new ulong[length];
                         for (int i = 0; i < length; ++i)
                             arg1[i] = reader.ReadUInt64();
-                        handler.Unalias(arg0, arg1);
+                        _handler.Unalias(arg0, arg1);
                         break;
                     }
                 case 57:
@@ -570,7 +570,7 @@ namespace Octgn.Networking
                         var arg2 = new Guid(reader.ReadBytes(16));
                         string arg3 = reader.ReadString();
                         ushort arg4 = reader.ReadUInt16();
-                        handler.AddMarker(arg0, arg1, arg2, arg3, arg4);
+                        _handler.AddMarker(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case 59:
@@ -590,7 +590,7 @@ namespace Octgn.Networking
                         var arg2 = new Guid(reader.ReadBytes(16));
                         string arg3 = reader.ReadString();
                         ushort arg4 = reader.ReadUInt16();
-                        handler.RemoveMarker(arg0, arg1, arg2, arg3, arg4);
+                        _handler.RemoveMarker(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case 61:
@@ -610,7 +610,7 @@ namespace Octgn.Networking
                         var arg2 = new Guid(reader.ReadBytes(16));
                         string arg3 = reader.ReadString();
                         ushort arg4 = reader.ReadUInt16();
-                        handler.SetMarker(arg0, arg1, arg2, arg3, arg4);
+                        _handler.SetMarker(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case 63:
@@ -636,7 +636,7 @@ namespace Octgn.Networking
                         var arg3 = new Guid(reader.ReadBytes(16));
                         string arg4 = reader.ReadString();
                         ushort arg5 = reader.ReadUInt16();
-                        handler.TransferMarker(arg0, arg1, arg2, arg3, arg4, arg5);
+                        _handler.TransferMarker(arg0, arg1, arg2, arg3, arg4, arg5);
                         break;
                     }
                 case 65:
@@ -660,7 +660,7 @@ namespace Octgn.Networking
                             return;
                         }
                         bool arg3 = reader.ReadBoolean();
-                        handler.PassTo(arg0, arg1, arg2, arg3);
+                        _handler.PassTo(arg0, arg1, arg2, arg3);
                         break;
                     }
                 case 67:
@@ -677,7 +677,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[TakeFrom] Player not found.");
                             return;
                         }
-                        handler.TakeFrom(arg0, arg1);
+                        _handler.TakeFrom(arg0, arg1);
                         break;
                     }
                 case 69:
@@ -688,7 +688,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[DontTake] ControllableObject not found.");
                             return;
                         }
-                        handler.DontTake(arg0);
+                        _handler.DontTake(arg0);
                         break;
                     }
                 case 70:
@@ -699,7 +699,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[FreezeCardsVisibility] Group not found.");
                             return;
                         }
-                        handler.FreezeCardsVisibility(arg0);
+                        _handler.FreezeCardsVisibility(arg0);
                         break;
                     }
                 case 72:
@@ -718,7 +718,7 @@ namespace Octgn.Networking
                         }
                         bool arg2 = reader.ReadBoolean();
                         bool arg3 = reader.ReadBoolean();
-                        handler.GroupVis(arg0, arg1, arg2, arg3);
+                        _handler.GroupVis(arg0, arg1, arg2, arg3);
                         break;
                     }
                 case 74:
@@ -741,7 +741,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[GroupVisAdd] Player not found.");
                             return;
                         }
-                        handler.GroupVisAdd(arg0, arg1, arg2);
+                        _handler.GroupVisAdd(arg0, arg1, arg2);
                         break;
                     }
                 case 76:
@@ -764,7 +764,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[GroupVisRemove] Player not found.");
                             return;
                         }
-                        handler.GroupVisRemove(arg0, arg1, arg2);
+                        _handler.GroupVisRemove(arg0, arg1, arg2);
                         break;
                     }
                 case 78:
@@ -783,7 +783,7 @@ namespace Octgn.Networking
                             return;
                         }
                         bool arg3 = reader.ReadBoolean();
-                        handler.LookAt(arg0, arg1, arg2, arg3);
+                        _handler.LookAt(arg0, arg1, arg2, arg3);
                         break;
                     }
                 case 80:
@@ -803,7 +803,7 @@ namespace Octgn.Networking
                         }
                         int arg3 = reader.ReadInt32();
                         bool arg4 = reader.ReadBoolean();
-                        handler.LookAtTop(arg0, arg1, arg2, arg3, arg4);
+                        _handler.LookAtTop(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case 82:
@@ -823,7 +823,7 @@ namespace Octgn.Networking
                         }
                         int arg3 = reader.ReadInt32();
                         bool arg4 = reader.ReadBoolean();
-                        handler.LookAtBottom(arg0, arg1, arg2, arg3, arg4);
+                        _handler.LookAtBottom(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case 84:
@@ -838,7 +838,7 @@ namespace Octgn.Networking
                         var arg1 = new Guid[length];
                         for (int i = 0; i < length; ++i)
                             arg1[i] = new Guid(reader.ReadBytes(16));
-                        handler.StartLimited(arg0, arg1);
+                        _handler.StartLimited(arg0, arg1);
                         break;
                     }
                 case 86:
@@ -849,7 +849,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[CancelLimited] Player not found.");
                             return;
                         }
-                        handler.CancelLimited(arg0);
+                        _handler.CancelLimited(arg0);
                         break;
                     }
                 case 87:
@@ -861,7 +861,7 @@ namespace Octgn.Networking
                             return;
                         }
                         bool arg1 = reader.ReadBoolean();
-                        handler.IsAlternateImage(arg0, arg1);
+                        _handler.IsAlternateImage(arg0, arg1);
 
                         break;
                     }
@@ -881,14 +881,14 @@ namespace Octgn.Networking
                         }
                         String n = reader.ReadString();
                         String v = reader.ReadString();
-                        handler.PlayerSetGlobalVariable(f, p, n, v);
+                        _handler.PlayerSetGlobalVariable(f, p, n, v);
                         break;
                     }
                 case 89:
                     {
                         String n = reader.ReadString();
                         String v = reader.ReadString();
-                        handler.SetGlobalVariable(n, v);
+                        _handler.SetGlobalVariable(n, v);
                         break;
                     }
                 case 90:

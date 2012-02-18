@@ -12,17 +12,16 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Octgn.Data;
-using Octgn.Properties;
 
 namespace Octgn.DeckBuilder
 {
-    public partial class DeckBuilderWindow : Window, INotifyPropertyChanged
+    public partial class DeckBuilderWindow : INotifyPropertyChanged
     {
         private Deck _deck;
+        private string _deckFilename;
         private Data.Game _game;
         private Deck.Section _section;
-        private string deckFilename;
-        private bool unsaved;
+        private bool _unsaved;
 
         public DeckBuilderWindow()
         {
@@ -33,12 +32,12 @@ namespace Octgn.DeckBuilder
             {
                 Game = Program.GamesRepository.Games[0];
                 Deck = new Deck(Game);
-                deckFilename = null;
+                _deckFilename = null;
             }
-            Version Oversion = Assembly.GetExecutingAssembly().GetName().Version;
+            Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             newSubMenu.ItemsSource = Program.GamesRepository.AllGames;
             loadSubMenu.ItemsSource = Program.GamesRepository.AllGames;
-            Title = "OCTGN Deck Editor  version " + Oversion;
+            Title = "OCTGN Deck Editor  version " + oversion;
         }
 
         #region Search tabs
@@ -85,7 +84,7 @@ namespace Octgn.DeckBuilder
             {
                 if (_deck == value) return;
                 _deck = value;
-                unsaved = false;
+                _unsaved = false;
                 ActiveSection = value.Sections.FirstOrDefault();
                 OnPropertyChanged("Deck");
             }
@@ -99,18 +98,16 @@ namespace Octgn.DeckBuilder
                 if (_game == value) return;
 
                 if (_game != null)
-                    _game.CloseDatabase();
+                {
+                }
 
                 _game = value;
                 ActiveSection = null;
 
-                if (value != null)
-                {
-                    value.OpenDatabase(true);
+                if (value == null) return;
                     cardImage.Source = new BitmapImage(value.GetCardBackUri());//Sets initial preview to default backing (!isFaceUp Image)
-                    Searches.Clear();
-                    AddSearchTab();
-                }
+                Searches.Clear();
+                AddSearchTab();
             }
         }
 
@@ -148,13 +145,12 @@ namespace Octgn.DeckBuilder
                 }
             }
             Deck = new Deck(Game);
-            deckFilename = null;
+            _deckFilename = null;
         }
 
         private void NewClicked(object sender, RoutedEventArgs e)
         {
-            //Magnus: First Commit!
-            if (unsaved)
+            if (_unsaved)
             {
                 MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
                                                           MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -172,7 +168,7 @@ namespace Octgn.DeckBuilder
             Game = (Data.Game) ((MenuItem) e.OriginalSource).DataContext;
             CommandManager.InvalidateRequerySuggested();
             Deck = new Deck(Game);
-            deckFilename = null;
+            _deckFilename = null;
         }
 
         private void SaveDeck(object sender, ExecutedRoutedEventArgs e)
@@ -189,15 +185,15 @@ namespace Octgn.DeckBuilder
 
         private void Save()
         {
-            if (deckFilename == null)
+            if (_deckFilename == null)
             {
                 SaveAs();
                 return;
             }
             try
             {
-                Deck.Save(deckFilename);
-                unsaved = false;
+                Deck.Save(_deckFilename);
+                _unsaved = false;
             }
             catch (Exception ex)
             {
@@ -213,17 +209,17 @@ namespace Octgn.DeckBuilder
                               AddExtension = true,
                               Filter = "OCTGN decks|*.o8d",
                               InitialDirectory =
-                                  (Settings.Default.DeckDirLastUsed == "")
+                                  SimpleConfig.ReadValue("DeckDirLastUsed", "none") == "none"
                                       ? Game.DefaultDecksPath
-                                      : Settings.Default.DeckDirLastUsed
+                                      : SimpleConfig.ReadValue("DeckDirLastUsed")
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
             try
             {
                 Deck.Save(sfd.FileName);
-                unsaved = false;
-                deckFilename = sfd.FileName;
-                Registry.WriteValue("lastFolder", Path.GetFileName(deckFilename));
+                _unsaved = false;
+                _deckFilename = sfd.FileName;
+                SimpleConfig.WriteValue("lastFolder", Path.GetFileName(_deckFilename));
             }
             catch (Exception ex)
             {
@@ -246,7 +242,7 @@ namespace Octgn.DeckBuilder
 
         private void LoadDeck(Data.Game game)
         {
-            if (unsaved)
+            if (_unsaved)
             {
                 MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
                                                           MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -266,12 +262,12 @@ namespace Octgn.DeckBuilder
                           {
                               Filter = "OCTGN deck files (*.o8d) | *.o8d",
                               InitialDirectory =
-                                  ((game != null) && (Registry.ReadValue("lastFolder")) == "")
+                                  ((game != null) && (SimpleConfig.ReadValue("lastFolder")) == "")
                                       ? game.DefaultDecksPath
-                                      : Registry.ReadValue("lastFolder")
+                                      : SimpleConfig.ReadValue("lastFolder")
                           };
             if (ofd.ShowDialog() != true) return;
-            Registry.WriteValue("lastFolder", Path.GetDirectoryName(ofd.FileName));
+            SimpleConfig.WriteValue("lastFolder", Path.GetDirectoryName(ofd.FileName));
 
             // Try to load the file contents
             Deck newDeck;
@@ -292,7 +288,7 @@ namespace Octgn.DeckBuilder
             }
             Game = Program.GamesRepository.Games.First(g => g.Id == newDeck.GameId);
             Deck = newDeck;
-            deckFilename = ofd.FileName;
+            _deckFilename = ofd.FileName;
             CommandManager.InvalidateRequerySuggested();
         }
 
@@ -305,7 +301,7 @@ namespace Octgn.DeckBuilder
         {
             base.OnClosing(e);
 
-            if (unsaved)
+            if (_unsaved)
             {
                 MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
                                                           MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
@@ -354,7 +350,7 @@ namespace Octgn.DeckBuilder
 
         private void AddResultCard(object sender, SearchCardIdEventArgs e)
         {
-            unsaved = true;
+            _unsaved = true;
             Deck.Element element = ActiveSection.Cards.FirstOrDefault(c => c.Card.Id == e.CardId);
             if (element != null)
                 element.Quantity += 1;
@@ -364,14 +360,12 @@ namespace Octgn.DeckBuilder
 
         private void RemoveResultCard(object sender, SearchCardIdEventArgs e)
         {
-            unsaved = true;
+            _unsaved = true;
             Deck.Element element = ActiveSection.Cards.FirstOrDefault(c => c.Card.Id == e.CardId);
-            if (element != null)
-            {
-                element.Quantity -= 1;
-                if (element.Quantity == 0)
-                    ActiveSection.Cards.Remove(element);
-            }
+            if (element == null) return;
+            element.Quantity -= 1;
+            if (element.Quantity == 0)
+                ActiveSection.Cards.Remove(element);
         }
 
         private void DeckKeyDownHandler(object sender, KeyEventArgs e)
@@ -386,7 +380,7 @@ namespace Octgn.DeckBuilder
             int moveDown = grid.SelectedIndex + 1;
             if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
             {
-                unsaved = true;
+                _unsaved = true;
                 if (moveDown <= items)
                     ActiveSection.Cards.Move(grid.SelectedIndex, moveDown);
                 grid.Focus();
@@ -394,7 +388,7 @@ namespace Octgn.DeckBuilder
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Subtract))
             {
-                unsaved = true;
+                _unsaved = true;
                 if (moveUp >= 0)
                     ActiveSection.Cards.Move(grid.SelectedIndex, moveUp);
                 grid.Focus();
@@ -402,21 +396,26 @@ namespace Octgn.DeckBuilder
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.Add) || e.KeyboardDevice.IsKeyDown(Key.Insert))
             {
-                unsaved = true;
+                _unsaved = true;
                 element.Quantity += 1;
                 e.Handled = true;
             }
             else if (e.KeyboardDevice.IsKeyDown(Key.Delete) || e.KeyboardDevice.IsKeyDown(Key.Subtract))
             {
-                unsaved = true;
+                _unsaved = true;
                 element.Quantity -= 1;
                 e.Handled = true;
             }
-        }
+		}
+
+        private void DeckSort_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //TODO: Sort Decklist according to selected property
+        }		
 
         private void ElementEditEnd(object sender, DataGridCellEditEndingEventArgs e)
         {
-            unsaved = true;
+            _unsaved = true;
         }
 
         private void SetActiveSection(object sender, RoutedEventArgs e)
@@ -430,7 +429,7 @@ namespace Octgn.DeckBuilder
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void PreventExpanderBehavior(object sender, MouseButtonEventArgs e)
+        private void PreventExpanderBehavior(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
         }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Threading;
 using Skylabs.Net;
@@ -12,8 +11,7 @@ namespace Skylabs.LobbyServer
     {
         static Chatting()
         {
-            Rooms = new List<ChatRoom>();
-            Rooms.Add(new ChatRoom(0, null));
+            Rooms = new List<ChatRoom> {new ChatRoom(0, null)};
         }
 
         /// <summary>
@@ -28,10 +26,8 @@ namespace Skylabs.LobbyServer
         /// <param name="s"> Socket message stuffed with data. </param>
         public static void JoinChatRoom(Client c, SocketMessage s)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                Logger.L(MethodBase.GetCurrentMethod().Name, "Rooms");
                 var rid = (long?) s["roomid"];
                 if (rid == null)
                     return;
@@ -39,13 +35,12 @@ namespace Skylabs.LobbyServer
                     MakeRoom(c);
                 else
                 {
-                    ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
+                    ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
                     if (cr != null)
                         cr.AddUser(c.Me);
                     else
                         MakeRoom(c);
                 }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
             }
         }
 
@@ -59,23 +54,17 @@ namespace Skylabs.LobbyServer
             var user = (User) s["user"];
             if (user == null)
                 return;
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
-            long id = -1;
             lock (Rooms)
             {
-                foreach (ChatRoom cr in Rooms)
+                if (
+                    Rooms.Select(cr => cr.GetUserList()).Any(
+                        ul => ul.Contains(user) && ul.Contains(c.Me) && ul.Length == 2))
                 {
-                    User[] ul = cr.GetUserList();
-                    if (ul.Contains(user) && ul.Contains(c.Me) && ul.Length == 2)
-                    {
-                        Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
-                        return;
-                    }
+                    return;
                 }
-                id = MakeRoom(c);
+                long id = MakeRoom(c);
+                s.AddData("roomid", id);
             }
-            Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
-            s.AddData("roomid", id);
             AddUserToChat(c, s);
         }
 
@@ -86,32 +75,24 @@ namespace Skylabs.LobbyServer
         /// <param name="s"> Socket message with the user data and stuff </param>
         public static void AddUserToChat(Client c, SocketMessage s)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
                 var rid = (long?) s["roomid"];
                 if (rid == null || rid == -1)
                 {
-                    Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
                     return;
                 }
                 var user = (User) s["user"];
                 if (user == null)
                 {
-                    Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
                     return;
                 }
-                ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
+                ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
                 if (cr != null)
                 {
-                    if (cr.AddUser(user))
-                    {
-                        Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
-                        return;
-                    }
+                    cr.AddUser(user);
                 }
             }
-            Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
         }
 
         /// <summary>
@@ -121,13 +102,13 @@ namespace Skylabs.LobbyServer
         /// <returns> The unique chat room id. </returns>
         private static long MakeRoom(Client c)
         {
-            long newID = DateTime.Now.Ticks;
-            while (Rooms.Count(r => r.ID == newID) != 0)
+            long newId = DateTime.Now.Ticks;
+            while (Rooms.Count(r => r.Id == newId) != 0)
             {
-                newID = DateTime.Now.Ticks;
+                newId = DateTime.Now.Ticks;
             }
-            Rooms.Add(new ChatRoom(newID, c.Me));
-            return newID;
+            Rooms.Add(new ChatRoom(newId, c.Me));
+            return newId;
         }
 
         /// <summary>
@@ -136,11 +117,9 @@ namespace Skylabs.LobbyServer
         /// <param name="room"> Chat room to remove </param>
         public static void RemoveRoom(ChatRoom room)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
                 Rooms.Remove(room);
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
             }
         }
 
@@ -150,7 +129,6 @@ namespace Skylabs.LobbyServer
         /// <param name="u"> User </param>
         public static void UserOffline(User u)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
                 var roomstocan = new List<long>();
@@ -159,14 +137,13 @@ namespace Skylabs.LobbyServer
                     ChatRoom cr = c;
                     LazyAsync.Invoke(() => cr.UserExit(u));
                     User[] ul = c.GetUserList();
-                    if (ul.Length - 1 <= 0 && c.ID != 0)
-                        roomstocan.Add(c.ID);
+                    if (ul.Length - 1 <= 0 && c.Id != 0)
+                        roomstocan.Add(c.Id);
                 }
                 foreach (long l in roomstocan)
                 {
-                    Rooms.RemoveAll(r => r.ID == l);
+                    Rooms.RemoveAll(r => r.Id == l);
                 }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
             }
         }
 
@@ -177,18 +154,14 @@ namespace Skylabs.LobbyServer
         /// <param name="rid"> Room id </param>
         public static void UserLeaves(User u, long rid)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
-                ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid);
-                if (cr != null)
-                {
-                    LazyAsync.Invoke(() => cr.UserExit(u));
-                    User[] ul = cr.GetUserList();
-                    if (ul.Length - 1 <= 0 && cr.ID != 0)
-                        Rooms.RemoveAll(r => r.ID == cr.ID);
-                }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
+                ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
+                if (cr == null) return;
+                LazyAsync.Invoke(() => cr.UserExit(u));
+                User[] ul = cr.GetUserList();
+                if (ul.Length - 1 <= 0 && cr.Id != 0)
+                    Rooms.RemoveAll(r => r.Id == cr.Id);
             }
         }
 
@@ -199,28 +172,24 @@ namespace Skylabs.LobbyServer
         /// <param name="sm"> Data as the data. </param>
         public static void ChatMessage(Client c, SocketMessage sm)
         {
-            Logger.TL(MethodBase.GetCurrentMethod().Name, "Rooms");
             lock (Rooms)
             {
                 var rid = (long?) sm["roomid"];
                 var mess = (string) sm["mess"];
                 if (rid == null || mess == null)
                 {
-                    Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
                     return;
                 }
                 if (String.IsNullOrWhiteSpace(mess))
                 {
-                    Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
                     return;
                 }
                 var rid2 = (long) rid;
-                ChatRoom cr = Rooms.FirstOrDefault(r => r.ID == rid2);
+                ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid2);
                 if (cr != null)
                 {
                     LazyAsync.Invoke(() => cr.ChatMessage(c.Me, mess));
                 }
-                Logger.UL(MethodBase.GetCurrentMethod().Name, "Rooms");
             }
         }
     }

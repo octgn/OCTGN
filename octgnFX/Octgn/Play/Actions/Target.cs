@@ -5,16 +5,16 @@ namespace Octgn.Play.Actions
 {
     internal sealed class Target : ActionBase
     {
-        internal bool doTarget;
-        internal Card fromCard, toCard;
-        internal Player who;
+        internal bool DoTarget;
+        internal Card FromCard, ToCard;
+        internal Player Who;
 
         public Target(Player who, Card fromCard, Card toCard, bool doTarget)
         {
-            this.who = who;
-            this.fromCard = fromCard;
-            this.toCard = toCard;
-            this.doTarget = doTarget;
+            Who = who;
+            FromCard = fromCard;
+            ToCard = toCard;
+            DoTarget = doTarget;
         }
 
         internal static event EventHandler CreatingArrow;
@@ -23,9 +23,9 @@ namespace Octgn.Play.Actions
         public override void Do()
         {
             base.Do();
-            if (doTarget)
+            if (DoTarget)
             {
-                if (toCard == null) SingleTarget();
+                if (ToCard == null) SingleTarget();
                 else ArrowTarget();
             }
             else
@@ -34,25 +34,25 @@ namespace Octgn.Play.Actions
 
         private void SingleTarget()
         {
-            fromCard.SetTargetedBy(who);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
-                                     "{0} targets '{1}'", who, fromCard);
+            FromCard.SetTargetedBy(Who);
+            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(Who),
+                                     "{0} targets '{1}'", Who, FromCard);
         }
 
         private void ArrowTarget()
         {
             if (CreatingArrow != null) CreatingArrow(this, EventArgs.Empty);
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(who),
-                                     "{0} targets '{2}' with '{1}'", who, fromCard, toCard);
+            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(Who),
+                                     "{0} targets '{2}' with '{1}'", Who, FromCard, ToCard);
         }
 
         private void ClearTarget()
         {
-            if (fromCard.TargetsOtherCards && DeletingArrows != null)
+            if (FromCard.TargetsOtherCards && DeletingArrows != null)
                 DeletingArrows(this, EventArgs.Empty);
 
-            if (fromCard.TargetedBy != null)
-                fromCard.SetTargetedBy(null);
+            if (FromCard.TargetedBy != null)
+                FromCard.SetTargetedBy(null);
         }
     }
 }

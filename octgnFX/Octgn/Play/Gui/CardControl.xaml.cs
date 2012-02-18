@@ -13,15 +13,17 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.Definitions;
+using Octgn.Play.Gui.Adorners;
 using Octgn.Scripting;
+using Octgn.Utils;
 
 namespace Octgn.Play.Gui
 {
-    public partial class CardControl : UserControl
+    public partial class CardControl
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
-        [Import] protected Engine scriptEngine;
+        [Import] protected Engine ScriptEngine;
 
 #pragma warning restore 649
 
@@ -71,8 +73,8 @@ namespace Octgn.Play.Gui
 
         #endregion
 
-        private readonly Window mainWin;
-        private ScaleTransform invertTransform;
+        private readonly Window _mainWin;
+        private ScaleTransform _invertTransform;
 
         public CardControl()
         {
@@ -82,7 +84,7 @@ namespace Octgn.Play.Gui
             Program.Game.ComposeParts(this);
 
             //fix MAINWINDOW bug
-            mainWin = Program.PlayWindow;
+            _mainWin = Program.PlayWindow;
             int markerSize = Program.Game.Definition.MarkerSize;
             if (markerSize == 0) markerSize = 20;
             markers.Margin = new Thickness(markerSize/8);
@@ -121,10 +123,10 @@ namespace Octgn.Play.Gui
             base.OnVisualParentChanged(oldParent);
 
             IsOnTableCanvas = IsInverted = false;
-            if (invertTransform != null)
+            if (_invertTransform != null)
             {
                 RenderTransform = null;
-                invertTransform = null;
+                _invertTransform = null;
             }
             DependencyObject iter = this;
             while (iter != null)
@@ -134,9 +136,9 @@ namespace Octgn.Play.Gui
                     IsOnTableCanvas = true;
                     if (Program.GameSettings.UseTwoSidedTable)
                     {
-                        invertTransform = new ScaleTransform();
+                        _invertTransform = new ScaleTransform();
                         UpdateInvertedTransform();
-                        RenderTransform = invertTransform;
+                        RenderTransform = _invertTransform;
                         RenderTransformOrigin = new Point(0.5, 0.5);
                     }
                     break;
@@ -202,7 +204,7 @@ namespace Octgn.Play.Gui
         private static void IsAlwaysUpChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var cardCtrl = (CardControl) sender;
-            cardCtrl.IsUp = (bool) e.NewValue ? true : cardCtrl.Card != null && cardCtrl.Card.FaceUp;
+            cardCtrl.IsUp = (bool) e.NewValue || cardCtrl.Card != null && cardCtrl.Card.FaceUp;
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -220,37 +222,30 @@ namespace Octgn.Play.Gui
 
         #region Card changes and animation
 
-        private Card _card;
-
-        public Card Card
-        {
-            get { return _card; }
-        }
+        public Card Card { get; private set; }
 
         private void CardChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (_card != null)
-                _card.PropertyChanged -= PropertyChangeHandler;
+            if (Card != null)
+                Card.PropertyChanged -= PropertyChangeHandler;
 
-            _card = DataContext as Card;
+            Card = DataContext as Card;
 
-            if (_card != null)
-            {
-                bool oldIsUp = IsUp;
-                IsUp = IsAlwaysUp || _card.FaceUp;
-                // If IsUp changes, it automatically updates the picture. 
-                // Otherwise do it explicitely
-                if (oldIsUp == IsUp)
-                    SetDisplayedPicture(_card.GetPicture(IsUp));
-                AnimateOrientation(_card.Orientation);
-                UpdateInvertedTransform();
-                _card.PropertyChanged += PropertyChangeHandler;
-            }
+            if (Card == null) return;
+            bool oldIsUp = IsUp;
+            IsUp = IsAlwaysUp || Card.FaceUp;
+            // If IsUp changes, it automatically updates the picture. 
+            // Otherwise do it explicitely
+            if (oldIsUp == IsUp)
+                SetDisplayedPicture(Card.GetPicture(IsUp));
+            AnimateOrientation(Card.Orientation);
+            UpdateInvertedTransform();
+            Card.PropertyChanged += PropertyChangeHandler;
         }
 
         private void RemoveCardHandler(object sender, RoutedEventArgs e)
         {
-            if (_card == null) return;
+            if (Card == null) return;
 
             // Three cases are possible.
             // 1. The container is unloaded (e.g. one closes a GroupWindow). 
@@ -269,11 +264,11 @@ namespace Octgn.Play.Gui
             GroupControl groupCtrl = GroupControl;
             if (groupCtrl != null && groupCtrl.IsLoaded) return;
 
-            _card.PropertyChanged -= PropertyChangeHandler;
-            _card = null;
+            Card.PropertyChanged -= PropertyChangeHandler;
+            Card = null;
         }
 
-        private void RestoreCardHandler(object sender, RoutedEventArgs e)
+        private static void RestoreCardHandler(object sender, RoutedEventArgs e)
         {
             // Fix: This code is called during Loaded event and is useful if WPF
             // detaches and then re-attaches the control, e.g. when we change Z-order
@@ -308,21 +303,19 @@ namespace Octgn.Play.Gui
 
         private void UpdateInvertedTransform()
         {
-            if (invertTransform == null || Card == null) return;
+            if (_invertTransform == null || Card == null) return;
             IsInverted = TableControl.IsInInvertedZone(Card.Y);
-            invertTransform.ScaleX = invertTransform.ScaleY = IsInverted ? -1 : 1;
+            _invertTransform.ScaleX = _invertTransform.ScaleY = IsInverted ? -1 : 1;
         }
 
         private void AnimateLoad(object sender, RoutedEventArgs e)
         {
             // Fix: Card may sometime be null (e.g. moving a card from Top X window to the bottom of the same pile)
             if (Card == null) return;
-            if (IsAlwaysUp && !Card.FaceUp && GetAnimateLoad(this))
-            {
-                IsUp = false;
-                AnimateTurn(true);
-                SetAnimateLoad(this, false);
-            }
+            if (!IsAlwaysUp || Card.FaceUp || !GetAnimateLoad(this)) return;
+            IsUp = false;
+            AnimateTurn(true);
+            SetAnimateLoad(this, false);
         }
 
         private void AnimateOrientation(CardOrientation newOrientation)
@@ -335,12 +328,10 @@ namespace Octgn.Play.Gui
                                {EasingFunction = new ExponentialEase()};
                 rotate90.BeginAnimation(RotateTransform.AngleProperty, anim);
             }
-            if (Math.Abs(target180 - rotate180.Angle) > double.Epsilon)
-            {
-                var anim = new DoubleAnimation(target180, TimeSpan.FromMilliseconds(600), FillBehavior.HoldEnd)
-                               {EasingFunction = new ExponentialEase()};
-                rotate180.BeginAnimation(RotateTransform.AngleProperty, anim);
-            }
+            if (Math.Abs(target180 - rotate180.Angle) <= double.Epsilon) return;
+            var animation = new DoubleAnimation(target180, TimeSpan.FromMilliseconds(600), FillBehavior.HoldEnd)
+                                {EasingFunction = new ExponentialEase()};
+            rotate180.BeginAnimation(RotateTransform.AngleProperty, animation);
         }
 
         private void AnimateTurn(bool newIsUp)
@@ -360,9 +351,9 @@ namespace Octgn.Play.Gui
 
         protected void Turned(object sender, EventArgs e)
         {
-            if (_card == null) return;
+            if (Card == null) return;
 
-            IsUp = _card.FaceUp || IsAlwaysUp;
+            IsUp = Card.FaceUp || IsAlwaysUp;
             var animY = new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.Stop);
             var anim = new DoubleAnimation(1, new Duration(TimeSpan.FromMilliseconds(150)), FillBehavior.Stop);
             turn.BeginAnimation(ScaleTransform.ScaleYProperty, animY);
@@ -398,42 +389,40 @@ namespace Octgn.Play.Gui
             Target
         };
 
-        private static DragSource dragSource = DragSource.None;
-        private static Point mousePt; // mousePt is useful to determine the mouse pointer offset inside the card
+        private static DragSource _dragSource = DragSource.None;
+        private static Point _mousePt; // mousePt is useful to determine the mouse pointer offset inside the card
 
-        private static Point mouseWindowPt;
+        private static Point _mouseWindowPt;
         // mouesWindowPt should be use to determine movement, because the card origin itself may move (e.g. scroll in a list)
 
-        private static ArrowAdorner draggedArrow;
-        private static bool isDragging, isOverCount;
-        private static IInputElement lastDragTarget;
+        private static ArrowAdorner _draggedArrow;
+        private static bool _isDragging, _isOverCount;
+        private static IInputElement _lastDragTarget;
 
-        private static readonly List<Card> draggedCards = new List<Card>(4);
-        private static readonly List<CardDragAdorner> overlayElements = new List<CardDragAdorner>(4);
-        private static Vector mouseOffset;
-        internal static Size scaleFactor;
+        private static readonly List<Card> DraggedCards = new List<Card>(4);
+        private static readonly List<CardDragAdorner> OverlayElements = new List<CardDragAdorner>(4);
+        private static Vector _mouseOffset;
+        internal static Size ScaleFactor;
 
         protected void LeftButtonDownOverImage(object sender, MouseEventArgs e)
         {
             e.Handled = true;
 
-            if (!isDragging)
-            {
-                isOverCount = false;
-                if (!Card.Selected) Selection.Clear();
-                mousePt = e.GetPosition(this);
-                var window = Window.GetWindow(this);
-                if (window != null)
-                    mouseWindowPt = TranslatePoint(mousePt, (UIElement) window.Content);
-                dragSource = Keyboard.Modifiers == ModifierKeys.Shift ? DragSource.Target : DragSource.Card;
-                CaptureMouse();
-            }
+            if (_isDragging) return;
+            _isOverCount = false;
+            if (!Card.Selected) Selection.Clear();
+            _mousePt = e.GetPosition(this);
+            Window window = Window.GetWindow(this);
+            if (window != null)
+                _mouseWindowPt = TranslatePoint(_mousePt, (UIElement) window.Content);
+            _dragSource = Keyboard.Modifiers == ModifierKeys.Shift ? DragSource.Target : DragSource.Card;
+            CaptureMouse();
         }
 
         protected void LeftButtonDownOverCount(object sender, MouseEventArgs e)
         {
             LeftButtonDownOverImage(sender, e);
-            isOverCount = true;
+            _isOverCount = true;
         }
 
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -469,43 +458,48 @@ namespace Octgn.Play.Gui
             base.OnMouseMove(e);
             e.Handled = true;
             Point pt = e.GetPosition(this);
-            if (!isDragging)
+            if (!_isDragging)
             {
                 // Check if the button was pressed over the card, and was not release on another control in the meantime 
                 // (possible if the cursor is near the border of the card)
                 if (Mouse.LeftButton == MouseButtonState.Pressed &&
                     // Check if has moved enough to start a drag and drop
-                    (Math.Abs(pt.X - mousePt.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                     Math.Abs(pt.Y - mousePt.Y) > SystemParameters.MinimumVerticalDragDistance))
+                    (Math.Abs(pt.X - _mousePt.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                     Math.Abs(pt.Y - _mousePt.Y) > SystemParameters.MinimumVerticalDragDistance))
                 {
-                    if (dragSource == DragSource.Card)
+                    if (_dragSource == DragSource.Card)
                     {
                         DragCardStarted();
                     }
                         // Fix: Card could be null if a keyboard shortut was used when the mouse button was pressed.
-                    else if (dragSource == DragSource.Target && Card != null && Card.Group is Table)
+                    else if (_dragSource == DragSource.Target && Card != null && Card.Group is Table)
                     {
-                        isDragging = true;
+                        _isDragging = true;
                         RaiseEvent(new CardEventArgs(CardHoveredEvent, this));
                         AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
-                        draggedArrow = new ArrowAdorner(Player.LocalPlayer, this);
-                        layer.Add(draggedArrow);
+                        _draggedArrow = new ArrowAdorner(Player.LocalPlayer, this);
+                        layer.Add(_draggedArrow);
                     }
                 }
             }
             else
             {
-                if (dragSource == DragSource.Card)
+                switch (_dragSource)
                 {
-                    var window = Window.GetWindow(this);
-                    if (window != null)
-                    {
-                        Point windowPt = e.GetPosition((IInputElement) window.Content);
-                        DragMouseDelta(windowPt.X - mouseWindowPt.X, windowPt.Y - mouseWindowPt.Y);
-                    }
+                    case DragSource.Card:
+                        {
+                            Window window = Window.GetWindow(this);
+                            if (window != null)
+                            {
+                                Point windowPt = e.GetPosition((IInputElement) window.Content);
+                                DragMouseDelta(windowPt.X - _mouseWindowPt.X, windowPt.Y - _mouseWindowPt.Y);
+                            }
+                        }
+                        break;
+                    case DragSource.Target:
+                        DragTargetDelta(pt);
+                        break;
                 }
-                else if (dragSource == DragSource.Target)
-                    DragTargetDelta(pt);
             }
         }
 
@@ -518,38 +512,38 @@ namespace Octgn.Play.Gui
                 case MouseButton.Left:
                     if (IsMouseCaptured) ReleaseMouseCapture();
 
-                    if (dragSource == DragSource.Card)
+                    if (_dragSource == DragSource.Card)
                     {
                         e.Handled = true;
-                        dragSource = DragSource.None;
-                        if (isDragging)
+                        _dragSource = DragSource.None;
+                        if (_isDragging)
                         {
-                            isDragging = false;
+                            _isDragging = false;
                             DragCardCompleted();
                         }
                         break;
                     }
 
-                    if (dragSource == DragSource.Target)
+                    if (_dragSource == DragSource.Target)
                     {
                         e.Handled = true;
-                        dragSource = DragSource.None;
-                        if (draggedArrow != null)
+                        _dragSource = DragSource.None;
+                        if (_draggedArrow != null)
                         {
-                            draggedArrow.RemoveFromLayer();
-                            draggedArrow = null;
+                            _draggedArrow.RemoveFromLayer();
+                            _draggedArrow = null;
                         }
 
-                        if (isDragging)
+                        if (_isDragging)
                         {
-                            isDragging = false;
+                            _isDragging = false;
                         }
 
                         var dependencyObject = Mouse.DirectlyOver as DependencyObject;
                         while (dependencyObject != null && !(dependencyObject is CardControl))
                         {
-                            DependencyObject parent = LogicalTreeHelper.GetParent(dependencyObject);
-                            if (parent == null) parent = VisualTreeHelper.GetParent(dependencyObject);
+                            DependencyObject parent = LogicalTreeHelper.GetParent(dependencyObject) ??
+                                                      VisualTreeHelper.GetParent(dependencyObject);
                             dependencyObject = parent;
                         }
 
@@ -564,36 +558,39 @@ namespace Octgn.Play.Gui
 
         protected void DragCardStarted()
         {
-            draggedCards.Clear();
+            DraggedCards.Clear();
             // in theory draggedCards should already be empty, but it's better to recover if there was a problem during last DnD						
             if (!Selection.IsEmpty())
-                draggedCards.AddRange(Selection.Cards);
-            else if (isOverCount)
-                draggedCards.AddRange(MultipleCards.Cast<Card>());
+                DraggedCards.AddRange(Selection.Cards);
+            else if (_isOverCount)
+                DraggedCards.AddRange(MultipleCards.Cast<Card>());
             else if (Card != null)
-                draggedCards.Add(Card);
+                DraggedCards.Add(Card);
             else
                 return;
             // Fix: Card == null can occur, e.g. hold the mouse down but don't move, dismiss the card with a keyboard shortcut (e.g. Delete) and move the mouse after that (with the left button still down).
 
-            isDragging = true;
+            _isDragging = true;
 
             // Keep control of the card and the group it's in
-            foreach (Card c in draggedCards) c.KeepControl();
+            foreach (Card c in DraggedCards) c.KeepControl();
             Card.Group.KeepControl();
 
             // Hides the card view
             RaiseEvent(new CardEventArgs(CardHoveredEvent, this));
 
             // Starts the drag-and-drop            
-            scaleFactor = TransformToAncestor(mainWin).TransformBounds(new Rect(0, 0, 1, 1)).Size;
-            bool rot90 = (Card.Orientation & CardOrientation.Rot90) != 0;
-            mouseOffset =
-                new Vector(mousePt.X*Program.Game.Definition.CardDefinition.Width/ActualWidth,
-                           mousePt.Y*Program.Game.Definition.CardDefinition.Height/ActualHeight);
+            ScaleFactor = TransformToAncestor(_mainWin).TransformBounds(new Rect(0, 0, 1, 1)).Size;
+            //bool rot90 = (Card.Orientation & CardOrientation.Rot90) != 0;
+            _mouseOffset =
+                new Vector(_mousePt.X*Program.Game.Definition.CardDefinition.Width/ActualWidth,
+                           _mousePt.Y*Program.Game.Definition.CardDefinition.Height/ActualHeight);
 
             // Create adorners
-            AdornerLayer layer = AdornerLayer.GetAdornerLayer(mainWin.Content as Visual);
+            var mwn = _mainWin.Content as Visual;
+            AdornerLayer layer = null;
+            if (mwn != null)
+                layer = AdornerLayer.GetAdornerLayer(mwn);
             double offset = 0;
             double step = ActualWidth*1.05;
             // HACK: if the selected card is in HandControl, its ContentPresenter has a RenderTransform, 
@@ -609,73 +606,77 @@ namespace Octgn.Play.Gui
                 // Create an adorner                
                 if (Card.Group is Table)
                 {
-                    var overlay = new CardDragAdorner(cardCtrl, mouseOffset);
-                    overlayElements.Add(overlay);
-                    layer.Add(overlay);
+                    var overlay = new CardDragAdorner(cardCtrl, _mouseOffset);
+                    OverlayElements.Add(overlay);
+                    if (layer != null) layer.Add(overlay);
                 }
                 else
                 {
                     // If there are multiple cards but they don't come from the table, 
                     // layout the adorners properly
-                    var overlay = new CardDragAdorner(this, cardCtrl, mouseOffset);
-                    overlayElements.Add(overlay);
+                    var overlay = new CardDragAdorner(this, cardCtrl, _mouseOffset);
+                    OverlayElements.Add(overlay);
                     if (cardCtrl != this)
                     {
                         offset += step;
                         overlay.OffsetBy(offset, 0);
                         overlay.CollapseTo(0, 0, false);
                     }
-                    layer.Add(overlay);
+                    if (layer != null) layer.Add(overlay);
                 }
 
                 // Make the card translucent
                 cardCtrl.Opacity = 0.4;
             }
-            if (Selection.IsEmpty() && isOverCount)
+            if (!Selection.IsEmpty() || !_isOverCount) return;
+            // Create additional fake adorners when dragging from the count label
+            offset = 0;
+            foreach (Card c in MultipleCards.Skip(1))
             {
-                // Create additional fake adorners when dragging from the count label
-                offset = 0;
-                foreach (Card c in MultipleCards.Skip(1))
-                {
-                    offset += step;
-                    var overlay = new CardDragAdorner(this, mouseOffset);
-                    overlay.OffsetBy(offset, 0);
-                    overlay.CollapseTo(0, 0, false);
-                    overlayElements.Add(overlay);
-                    layer.Add(overlay);
-                }
+                offset += step;
+                var overlay = new CardDragAdorner(this, _mouseOffset);
+                overlay.OffsetBy(offset, 0);
+                overlay.CollapseTo(0, 0, false);
+                OverlayElements.Add(overlay);
+                if (layer != null) layer.Add(overlay);
             }
         }
 
         protected void DragCardCompleted()
         {
             // Release the card and its group
-            foreach (Card c in draggedCards) c.ReleaseControl();
+            foreach (Card c in DraggedCards) c.ReleaseControl();
             Card.Group.ReleaseControl();
 
             // Remove the visual feedback
-            AdornerLayer layer = AdornerLayer.GetAdornerLayer(mainWin.Content as Visual);
-            foreach (CardDragAdorner overlay in overlayElements)
+            var mwc = _mainWin.Content as Visual;
+            if (mwc != null)
             {
-                layer.Remove(overlay);
-                overlay.Dispose();
+                AdornerLayer layer = AdornerLayer.GetAdornerLayer(mwc);
+                foreach (CardDragAdorner overlay in OverlayElements)
+                {
+                    layer.Remove(overlay);
+                    overlay.Dispose();
+                }
             }
-            overlayElements.Clear();
+            OverlayElements.Clear();
 
             // Raise CardOutEvent
-            if (lastDragTarget != null)
+            if (_lastDragTarget != null)
             {
-                lastDragTarget.RaiseEvent(new CardsEventArgs(Card, draggedCards, CardOutEvent, this));
-                lastDragTarget = null;
+                _lastDragTarget.RaiseEvent(new CardsEventArgs(Card, DraggedCards, CardOutEvent, this));
+                _lastDragTarget = null;
             }
 
             // Raise CardDroppedEvent
             IInputElement res = Mouse.DirectlyOver;
             if (res != null)
             {
-                var args = new CardsEventArgs(Card, draggedCards, CardDroppedEvent, this);
-                args.MouseOffset = mouseOffset;
-                args.FaceUp = !(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift));
+                var args = new CardsEventArgs(Card, DraggedCards, CardDroppedEvent, this)
+                               {
+                                   MouseOffset = _mouseOffset,
+                                   FaceUp = !(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                               };
                 res.RaiseEvent(args);
             }
 
@@ -688,62 +689,62 @@ namespace Octgn.Play.Gui
                 foreach (CardControl cardCtrl in Selection.GetCardControls(groupCtrl, this))
                     cardCtrl.Opacity = 1;
 
-            draggedCards.Clear();
+            DraggedCards.Clear();
         }
 
         protected void DragMouseDelta(double dx, double dy)
         {
-            IInputElement res = mainWin.InputHitTest(Mouse.GetPosition(mainWin));
+            IInputElement res = _mainWin.InputHitTest(Mouse.GetPosition(_mainWin));
 
             // Raise CardOverEvent
             if (res != null)
             {
-                foreach (CardDragAdorner overlay in overlayElements) overlay.onHoverRequestInverted = false;
-                var overArgs = new CardsEventArgs(Card, draggedCards, CardOverEvent, this)
-                                   {MouseOffset = mouseOffset, Adorners = overlayElements};
+                foreach (CardDragAdorner overlay in OverlayElements) overlay.OnHoverRequestInverted = false;
+                var overArgs = new CardsEventArgs(Card, DraggedCards, CardOverEvent, this)
+                                   {MouseOffset = _mouseOffset, Adorners = OverlayElements};
                 res.RaiseEvent(overArgs);
 
                 // Collapse/Expand multiple cards when inside/outside of table
-                DragCollapseSelection(lastDragTarget, overArgs.Handler);
+                DragCollapseSelection(_lastDragTarget, overArgs.Handler);
 
                 // Keep track of previous target and raise CardOutEvent
-                if (overArgs.Handler != lastDragTarget && lastDragTarget != null)
-                    lastDragTarget.RaiseEvent(new CardsEventArgs(Card, draggedCards, CardOutEvent, this));
-                lastDragTarget = overArgs.Handler;
+                if (overArgs.Handler != _lastDragTarget && _lastDragTarget != null)
+                    _lastDragTarget.RaiseEvent(new CardsEventArgs(Card, DraggedCards, CardOutEvent, this));
+                _lastDragTarget = overArgs.Handler;
 
                 if (overArgs.CanDrop)
                 {
                     if (!overArgs.FaceUp.HasValue)
                         overArgs.FaceUp = (Keyboard.Modifiers & ModifierKeys.Shift) == 0;
 
-                    foreach (CardDragAdorner overlay in overlayElements)
+                    foreach (CardDragAdorner overlay in OverlayElements)
                         overlay.SetState(dx, dy, true, overArgs.CardSize, overArgs.FaceUp.Value,
-                                         overlay.onHoverRequestInverted);
+                                         overlay.OnHoverRequestInverted);
 
                     return;
                 }
             }
-            else if (lastDragTarget != null)
+            else if (_lastDragTarget != null)
             {
-                lastDragTarget.RaiseEvent(new CardsEventArgs(Card, draggedCards, CardOutEvent, this));
-                lastDragTarget = null;
+                _lastDragTarget.RaiseEvent(new CardsEventArgs(Card, DraggedCards, CardOutEvent, this));
+                _lastDragTarget = null;
             }
 
             // Update the visual feedback (can't drop)
-            foreach (CardDragAdorner overlay in overlayElements)
+            foreach (CardDragAdorner overlay in OverlayElements)
                 overlay.SetState(dx, dy, false, Size.Empty, false, false);
         }
 
         private void DragCollapseSelection(IInputElement previous, IInputElement current)
         {
             if (current == previous) return;
-            if (draggedCards.Count <= 1) return;
+            if (DraggedCards.Count <= 1) return;
 
             bool isFirst = true;
             // Collapse if we leave the table
             if (previous is TableControl)
             {
-                foreach (CardDragAdorner overlay in overlayElements)
+                foreach (CardDragAdorner overlay in OverlayElements)
                 {
                     if (overlay.SourceCard == this && isFirst)
                     {
@@ -752,13 +753,13 @@ namespace Octgn.Play.Gui
                     }
                     CardControl cardCtrl = overlay.SourceCard;
                     double dx = Card.X - cardCtrl.Card.X, dy = Card.Y - cardCtrl.Card.Y;
-                    overlay.CollapseTo(dx*scaleFactor.Width, dy*scaleFactor.Height);
+                    overlay.CollapseTo(dx*ScaleFactor.Width, dy*ScaleFactor.Height);
                 }
             }
                 // Expand if we enter the table 			
             else if (current is TableControl)
             {
-                foreach (CardDragAdorner overlay in overlayElements)
+                foreach (CardDragAdorner overlay in OverlayElements)
                 {
                     if (overlay.SourceCard == this && isFirst)
                     {
@@ -772,7 +773,7 @@ namespace Octgn.Play.Gui
 
         protected void DragTargetDelta(Point pt)
         {
-            draggedArrow.UpdateToPoint(pt);
+            _draggedArrow.UpdateToPoint(pt);
         }
 
         public void CreateArrowTo(Player player, CardControl toCard)
@@ -795,13 +796,10 @@ namespace Octgn.Play.Gui
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
-            if (e.Property == IsMouseOverProperty)
-            {
-                if (IsMouseOver)
-                    RaiseEvent(new CardEventArgs(Card, CardHoveredEvent, this));
-                else
-                    RaiseEvent(new CardEventArgs(CardHoveredEvent, this));
-            }
+            if (e.Property != IsMouseOverProperty) return;
+            RaiseEvent(IsMouseOver
+                           ? new CardEventArgs(Card, CardHoveredEvent, this)
+                           : new CardEventArgs(CardHoveredEvent, this));
         }
 
         #endregion
@@ -820,24 +818,22 @@ namespace Octgn.Play.Gui
         {
             base.OnMouseDoubleClick(e);
 
-            if (isDragging) return;
+            if (_isDragging) return;
 
             // Double-click ends any manipulation which may be in progress. 
             // Otherwise bugs may happen (e.g. if the default action moves the card)
             if (IsMouseCaptured) ReleaseMouseCapture();
-            dragSource = DragSource.None;
+            _dragSource = DragSource.None;
 
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                e.Handled = true;
-                GroupControl.ExecuteDefaultAction(Card);
-            }
+            if (e.ChangedButton != MouseButton.Left) return;
+            e.Handled = true;
+            GroupControl.ExecuteDefaultAction(Card);
         }
 
         private void TableKeyDown(object source, TableKeyEventArgs te)
         {
             // Fix: keyboard shortcuts are forbidden during a DnD
-            if (isDragging)
+            if (_isDragging)
             {
                 te.Handled = te.KeyEventArgs.Handled = true;
                 return;
@@ -881,9 +877,9 @@ namespace Octgn.Play.Gui
                                          ? ((TableControl) GroupControl).MousePosition()
                                          : (Point?) null;
                         if (match.ActionDef.Execute != null)
-                            scriptEngine.ExecuteOnCards(match.ActionDef.Execute, targets, pos);
+                            ScriptEngine.ExecuteOnCards(match.ActionDef.Execute, targets, pos);
                         else if (match.ActionDef.BatchExecute != null)
-                            scriptEngine.ExecuteOnBatch(match.ActionDef.BatchExecute, targets, pos);
+                            ScriptEngine.ExecuteOnBatch(match.ActionDef.BatchExecute, targets, pos);
                         e.Handled = te.Handled = true;
                         break;
                     }
@@ -937,18 +933,16 @@ namespace Octgn.Play.Gui
         private void MarkerDropped(object sender, MarkerEventArgs e)
         {
             e.Handled = true;
-            if (e.Marker.Card != Card)
+            if (e.Marker.Card == Card) return;
+            if (Keyboard.IsKeyUp(Key.LeftAlt))
             {
-                if (Keyboard.IsKeyUp(Key.LeftAlt))
-                {
-                    Program.Client.Rpc.TransferMarkerReq(e.Marker.Card, Card, e.Marker.Model.id, e.Marker.Model.Name,
-                                                         e.Count);
-                    e.Marker.Card.RemoveMarker(e.Marker, e.Count);
-                }
-                else
-                    Program.Client.Rpc.AddMarkerReq(Card, e.Marker.Model.id, e.Marker.Model.Name, e.Count);
-                Card.AddMarker(e.Marker.Model, e.Count);
+                Program.Client.Rpc.TransferMarkerReq(e.Marker.Card, Card, e.Marker.Model.Id, e.Marker.Model.Name,
+                                                     e.Count);
+                e.Marker.Card.RemoveMarker(e.Marker, e.Count);
             }
+            else
+                Program.Client.Rpc.AddMarkerReq(Card, e.Marker.Model.Id, e.Marker.Model.Name, e.Count);
+            Card.AddMarker(e.Marker.Model, e.Count);
         }
 
         #endregion
@@ -959,8 +953,8 @@ namespace Octgn.Play.Gui
         {
             get
             {
-                FrameworkElement iter = ItemsControl.ItemsControlFromItemContainer(VisualTreeHelper.GetParent(this));
-                if (iter == null) iter = Parent as FrameworkElement;
+                FrameworkElement iter = ItemsControl.ItemsControlFromItemContainer(VisualTreeHelper.GetParent(this)) ??
+                                        Parent as FrameworkElement;
                 while (iter != null)
                 {
                     iter = iter.Parent as FrameworkElement;
@@ -981,7 +975,7 @@ namespace Octgn.Play.Gui
         {
             var middlePt = new Point(ActualWidth/2, ActualHeight/2);
             Point rotatedPt = rotate90.Transform(middlePt);
-            if (invertRotation && invertTransform != null)
+            if (invertRotation && _invertTransform != null)
                 rotatedPt = new Point(2*middlePt.X - rotatedPt.X, 2*middlePt.Y - rotatedPt.Y);
             return rotatedPt;
         }

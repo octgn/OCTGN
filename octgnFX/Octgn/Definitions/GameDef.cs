@@ -62,9 +62,8 @@ namespace Octgn.Definitions
         internal void CreateFolders()
         {
             var folders = new[] {BasePath, DecksPath, SetsPath};
-            foreach (string path in folders)
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
+            foreach (string path in folders.Where(path => !Directory.Exists(path)))
+                Directory.CreateDirectory(path);
         }
 
         public bool CheckVersion()
@@ -90,7 +89,7 @@ namespace Octgn.Definitions
 
         private static GameDef LoadFromXml(XElement xml, PackagePart part)
         {
-            if (xml.Name != Defs.xmlnsOctgn + "game")
+            if (xml.Name != Defs.XmlnsOctgn + "game")
                 throw new InvalidFormatException("The root document element must be <game>.");
 
             return new GameDef

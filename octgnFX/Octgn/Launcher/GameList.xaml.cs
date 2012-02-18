@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
 using Octgn.Controls;
@@ -13,7 +12,7 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for GameList.xaml
     /// </summary>
-    public partial class GameList : Page
+    public partial class GameList
     {
         #region LoadEvent enum
 
@@ -25,36 +24,35 @@ namespace Octgn.Launcher
 
         #endregion
 
+        static public bool GamesChanged = false;
+
         public GameList()
         {
             InitializeComponent();
-            Program.GamesRepository.GameInstalled += GamesRepository_GameInstalled;
+            Program.GamesRepository.GameInstalled += GamesRepositoryGameInstalled;
         }
 
         public GameList(LoadEvent le)
         {
             InitializeComponent();
-            Program.GamesRepository.GameInstalled += GamesRepository_GameInstalled;
+            Program.GamesRepository.GameInstalled += GamesRepositoryGameInstalled;
             if (le == LoadEvent.InstallGame)
-                Install_Game();
+                InstallGame();
         }
 
         public event EventHandler OnGameClick;
 
-        private void Reload_Game_List()
+        private void ReloadGameList()
         {
             stackPanel1.Children.Clear();
-            foreach (Data.Game g in Program.GamesRepository.AllGames)
+            foreach (GameListItem gs in Program.GamesRepository.AllGames.Select(g => new GameListItem {Game = g}))
             {
-                var gs = new GameListItem();
-                gs.Game = g;
-                //gs.MouseDoubleClick += new MouseButtonEventHandler(gs_MouseDoubleClick);
-                gs.MouseUp += gs_MouseUp;
+                gs.MouseUp += GsMouseUp;
                 stackPanel1.Children.Add(gs);
             }
         }
 
-        private void gs_MouseUp(object sender, MouseButtonEventArgs e)
+        private void GsMouseUp(object sender, MouseButtonEventArgs e)
         {
             var gs = (GameListItem) sender;
             if (OnGameClick != null)
@@ -63,34 +61,25 @@ namespace Octgn.Launcher
             }
         }
 
-        private void GamesRepository_GameInstalled(object sender, EventArgs e)
+        private void GamesRepositoryGameInstalled(object sender, EventArgs e)
         {
-            Reload_Game_List();
+            ReloadGameList();
+            GamesChanged = true;
         }
 
-        private void gs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void PageLoaded(object sender, RoutedEventArgs e)
         {
-            var gs = (GameListItem) sender;
-            if (OnGameClick != null)
-            {
-                OnGameClick.Invoke(gs.Game, new EventArgs());
-            }
+            ReloadGameList();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Reload_Game_List();
+            Program.GamesRepository.GameInstalled -= GamesRepositoryGameInstalled;
         }
 
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        public void InstallGame()
         {
-            Program.GamesRepository.GameInstalled -= GamesRepository_GameInstalled;
-        }
-
-        public void Install_Game()
-        {
-            var ofd = new OpenFileDialog();
-            ofd.Filter = "Game definition files (*.o8g)|*.o8g";
+            var ofd = new OpenFileDialog {Filter = "Game definition files (*.o8g)|*.o8g"};
             if (ofd.ShowDialog() != true) return;
 
             //Fix def filename
@@ -155,7 +144,7 @@ namespace Octgn.Launcher
                                            game.SharedDeckDefinition == null
                                                ? null
                                                : game.SharedDeckDefinition.Sections.Keys,
-                                       repository = Program.GamesRepository
+                                       Repository = Program.GamesRepository
                                    };
                 Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
             }

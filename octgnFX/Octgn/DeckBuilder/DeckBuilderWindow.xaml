@@ -94,5 +94,8 @@
 
     <GridSplitter Grid.Row="1" Grid.RowSpan="2" ResizeDirection="Columns" Width="4" HorizontalAlignment="Right"
                   Background="Transparent" />
-  </Grid>
+    <ComboBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="11,181,0,0" Name="DeckSort" VerticalAlignment="Top" Width="229" ItemsSource="{Binding Deck.}" SelectionChanged="DeckSort_SelectionChanged" />
+    <!--TODO: Fill in Combobox with properties. On selection re-sort deck according to selected property-->
+
+    </Grid>
 </Window>

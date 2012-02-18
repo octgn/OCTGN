@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Skylabs
+namespace Skylabs.Lobby
 {
     public static class ValueConverters
     {
@@ -34,8 +34,8 @@ namespace Skylabs
         {
             using (var hashTool = new SHA512Managed())
             {
-                Byte[] passwordAsByte = Encoding.ASCII.GetBytes(password);
-                Byte[] encryptedBytes = hashTool.ComputeHash(passwordAsByte);
+                byte[] passwordAsByte = Encoding.ASCII.GetBytes(password);
+                byte[] encryptedBytes = hashTool.ComputeHash(passwordAsByte);
                 hashTool.Clear();
                 return BitConverter.ToString(encryptedBytes).Replace("-", "").ToLowerInvariant();
             }

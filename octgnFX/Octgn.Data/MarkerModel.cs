@@ -5,9 +5,10 @@ namespace Octgn.Data
 {
     public class MarkerModel
     {
-        private readonly string iconUri;
-        private readonly Set set;
-        public Guid id;
+        private readonly string _iconUri;
+        private readonly Set _set;
+        public Guid Id;
+        // TODO: Should be renamed at some point
         protected string name;
 
         public MarkerModel(XmlReader reader, Set set)
@@ -15,27 +16,27 @@ namespace Octgn.Data
             reader.MoveToAttribute("name");
             name = reader.Value;
             reader.MoveToAttribute("id");
-            id = new Guid(reader.Value);
+            Id = new Guid(reader.Value);
             reader.Read(); // <marker />
-            this.set = set;
+            _set = set;
         }
 
         protected MarkerModel(Guid id)
         {
-            this.id = id;
+            Id = id;
         }
 
         public MarkerModel(Guid id, string name, string icon, Set set)
         {
-            this.set = set;
-            iconUri = icon;
+            _set = set;
+            _iconUri = icon;
             this.name = name;
-            this.id = id;
+            Id = id;
         }
 
         public virtual string Picture
         {
-            get { return set.GetPackUri() + iconUri; }
+            get { return _set.GetPackUri() + _iconUri; }
         }
 
         public string Name

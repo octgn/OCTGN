@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace Octgn.Data
@@ -15,7 +16,8 @@ namespace Octgn.Data
             using (XmlReader reader = XmlReader.Create(stringReader))
             {
                 reader.Read();
-                Id = new Guid(reader.GetAttribute("id"));
+                string guid = reader.GetAttribute("id");
+                if (guid != null) Id = new Guid(guid);
                 Name = reader.GetAttribute("name");
                 reader.ReadStartElement("pack");
                 Definition = new PackDefinition(reader);
@@ -122,9 +124,8 @@ namespace Octgn.Data
             public PackContent GenerateContent(Pack pack)
             {
                 var result = new PackContent();
-                foreach (BasePackItem def in this)
+                foreach (PackContent defContent in this.Select(def => def.GetCards(pack)))
                 {
-                    PackContent defContent = def.GetCards(pack);
                     result.Merge(defContent);
                 }
                 return result;
@@ -140,7 +141,7 @@ namespace Octgn.Data
             public Pick(XmlReader reader)
             {
                 string qtyAttribute = reader.GetAttribute("qty");
-                Quantity = qtyAttribute == "unlimited" ? -1 : int.Parse(qtyAttribute);
+                if (qtyAttribute != null) Quantity = qtyAttribute == "unlimited" ? -1 : int.Parse(qtyAttribute);
                 Key = reader.GetAttribute("key");
                 Value = reader.GetAttribute("value");
                 reader.Read(); // <pick />

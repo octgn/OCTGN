@@ -6,7 +6,7 @@ using System.Windows.Media.Animation;
 
 namespace Octgn.Play.Gui
 {
-    public partial class PileCollapsedControl : PileBaseControl
+    public partial class PileCollapsedControl
     {
         public PileCollapsedControl()
         {
@@ -17,13 +17,11 @@ namespace Octgn.Play.Gui
         {
             base.GroupChanged();
             var pile = (Pile) group;
-            if (pile.AnimateInsertion)
-            {
-                pile.AnimateInsertion = false;
-                var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
-                               {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
-            }
+            if (!pile.AnimateInsertion) return;
+            pile.AnimateInsertion = false;
+            var anim = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
+                           {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, anim);
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -51,7 +49,7 @@ namespace Octgn.Play.Gui
         protected override void OnCardOver(object sender, CardsEventArgs e)
         {
             base.OnCardOver(sender, e);
-            e.CardSize = new Size(30*group.def.Width/group.def.Height, 30);
+            e.CardSize = new Size(30*group.Def.Width/group.Def.Height, 30);
         }
 
         protected override void OnCardDropped(object sender, CardsEventArgs e)

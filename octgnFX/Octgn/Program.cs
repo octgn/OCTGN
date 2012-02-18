@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
@@ -11,7 +13,6 @@ using Octgn.DeckBuilder;
 using Octgn.Launcher;
 using Octgn.Networking;
 using Octgn.Play;
-using Octgn.Properties;
 using Skylabs.Lobby;
 using RE = System.Text.RegularExpressions;
 
@@ -27,7 +28,7 @@ namespace Octgn
         public static List<ChatWindow> ChatWindows;
 
         public static Game Game;
-        public static LobbyClient lobbyClient;
+        public static LobbyClient LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository;
         internal static Client Client;
@@ -49,7 +50,9 @@ namespace Octgn
         internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
         internal static Inline LastChatTrace;
 
-        private static Process LobbyServerProcess;
+#if(DEBUG)
+        private static Process _lobbyServerProcess;
+#endif
         private static bool _locationUpdating;
 
 #if(TestServer)
@@ -70,8 +73,8 @@ namespace Octgn
             BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
             StartLobbyServer();
-            var e = new Exception();
-            string s = e.Message.Substring(0);
+            //var e = new Exception();
+            //string s = e.Message.Substring(0);
             LauncherWindow = new LauncherWindow();
             Application.Current.MainWindow = LauncherWindow;
         }
@@ -79,11 +82,14 @@ namespace Octgn
         public static void StartLobbyServer()
         {
 #if(DEBUG)
-            LobbyServerProcess = new Process();
-            LobbyServerProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Skylabs.LobbyServer.exe";
+            _lobbyServerProcess = new Process
+                                      {
+                                          StartInfo =
+                                              {FileName = Directory.GetCurrentDirectory() + "/Skylabs.LobbyServer.exe"}
+                                      };
             try
             {
-                LobbyServerProcess.Start();
+                _lobbyServerProcess.Start();
             }
             catch (Exception e)
             {
@@ -108,32 +114,31 @@ namespace Octgn
 
         public static void SaveLocation()
         {
-            if (!_locationUpdating)
-            {
-                if (LauncherWindow != null && LauncherWindow.IsLoaded)
-                {
-                    _locationUpdating = true;
-                    Settings.Default.LoginLeftLoc = LauncherWindow.Left;
-                    Settings.Default.LoginTopLoc = LauncherWindow.Top;
-                    Settings.Default.Save();
-                    _locationUpdating = false;
-                }
-            }
+            if (_locationUpdating) return;
+            if (LauncherWindow == null || !LauncherWindow.IsLoaded) return;
+            _locationUpdating = true;
+            SimpleConfig.WriteValue("LoginLeftLoc", LauncherWindow.Left.ToString(CultureInfo.InvariantCulture));
+            SimpleConfig.WriteValue("LoginTopLoc", LauncherWindow.Top.ToString(CultureInfo.InvariantCulture));
+            _locationUpdating = false;
         }
 
         public static void Exit()
         {
             Application.Current.MainWindow = null;
-            if (lobbyClient != null && lobbyClient.Connected)
-                lobbyClient.Stop();
+            if (LobbyClient != null && LobbyClient.Connected)
+                LobbyClient.Stop();
 
             SaveLocation();
             try
             {
-                DebugWindow.Close();
+                if (DebugWindow != null)
+                    if (DebugWindow.IsLoaded)
+                        DebugWindow.Close();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             if (LauncherWindow != null)
                 if (LauncherWindow.IsLoaded)
@@ -146,24 +151,32 @@ namespace Octgn
                     PlayWindow.Close();
             try
             {
-                foreach (ChatWindow cw in ChatWindows)
+                foreach (ChatWindow cw in ChatWindows.Where(cw => cw.IsLoaded))
                 {
                     cw.CloseChatWindow();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
             }
-            if (LobbyServerProcess != null)
+
+#if(DEBUG)
+            if (_lobbyServerProcess != null)
             {
                 try
                 {
-                    LobbyServerProcess.Kill();
+                    if (!_lobbyServerProcess.HasExited)
+                        _lobbyServerProcess.Kill();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
             }
+#endif
             Application.Current.Shutdown(0);
         }
 
@@ -219,8 +232,7 @@ namespace Octgn
 
         internal static void TracePlayerEvent(Player player, string message, params object[] args)
         {
-            var args1 = new List<object>(args);
-            args1.Add(player);
+            var args1 = new List<object>(args) {player};
             Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), message,
                              args1.ToArray());
         }

@@ -2,13 +2,12 @@
 using System.Globalization;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Data;
 
 namespace Octgn.DeckBuilder
 {
-    public partial class FilterControl : UserControl
+    public partial class FilterControl
     {
         private static readonly SqlComparison[] StringComparisons = new[]
                                                                         {
@@ -44,15 +43,15 @@ namespace Octgn.DeckBuilder
                                                                           new CharInComparison("One of", "{0} IN ({1})")
                                                                       };
 
-        private PropertyDef property;
+        private PropertyDef _property;
 
         public FilterControl()
         {
             InitializeComponent();
             DataContextChanged += delegate
                                       {
-                                          property = DataContext as PropertyDef;
-                                          if (property == null) return; // Happens when the control is unloaded
+                                          _property = DataContext as PropertyDef;
+                                          if (_property == null) return; // Happens when the control is unloaded
                                           CreateComparisons();
                                       };
         }
@@ -61,26 +60,26 @@ namespace Octgn.DeckBuilder
 
         public string GetSqlCondition()
         {
-            if (property is SetPropertyDef)
+            if (_property is SetPropertyDef)
                 return "set_id = '" + ((Set) comparisonList.SelectedItem).Id.ToString("D") + "'";
-            return ((SqlComparison) comparisonList.SelectedItem).GetSql(property.Name, comparisonText.Text);
+            return ((SqlComparison) comparisonList.SelectedItem).GetSql(_property.Name, comparisonText.Text);
         }
 
         private void CreateComparisons()
         {
-            if (property is SetPropertyDef)
+            if (_property is SetPropertyDef)
             {
                 comparisonList.Width = 262;
                 comparisonText.Visibility = Visibility.Collapsed;
 
-                comparisonList.ItemsSource = ((SetPropertyDef) property).Sets;
+                comparisonList.ItemsSource = ((SetPropertyDef) _property).Sets;
             }
             else
             {
                 comparisonList.Width = 100;
                 comparisonText.Visibility = Visibility.Visible;
 
-                switch (property.Type)
+                switch (_property.Type)
                 {
                     case PropertyType.String:
                         comparisonList.ItemsSource = StringComparisons;
@@ -105,7 +104,7 @@ namespace Octgn.DeckBuilder
                 RemoveFilter(TemplatedParent, e);
         }
 
-        private void comparisonText_KeyDown(object sender, KeyEventArgs e)
+        private void ComparisonTextKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.OemOpenBrackets || e.Key == Key.OemCloseBrackets) e.Handled = true;
         }
@@ -127,7 +126,7 @@ namespace Octgn.DeckBuilder
         public virtual string GetSql(string field, string value)
         {
             if (EscapeQuotes) value = value.Replace("'", "''");
-            return string.Format(SqlFormat, field, value);
+            return string.Format(SqlFormat, "[" + field + "]", value);
         }
     }
 

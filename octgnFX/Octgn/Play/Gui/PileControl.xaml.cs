@@ -5,9 +5,9 @@ using System.Windows.Media.Animation;
 
 namespace Octgn.Play.Gui
 {
-    partial class PileControl : PileBaseControl
+    partial class PileControl
     {
-        private static readonly DoubleAnimation anim = new DoubleAnimation
+        private static readonly DoubleAnimation Anim = new DoubleAnimation
                                                            {
                                                                Duration = new Duration(TimeSpan.FromMilliseconds(150)),
                                                                AccelerationRatio = 0.3,
@@ -25,15 +25,13 @@ namespace Octgn.Play.Gui
         protected override void GroupChanged()
         {
             base.GroupChanged();
-            grid.ColumnDefinitions[0].Width = new GridLength(100*group.def.Width/group.def.Height);
+            grid.ColumnDefinitions[0].Width = new GridLength(100*group.Def.Width/group.Def.Height);
             var pile = (Pile) group;
-            if (pile.AnimateInsertion)
-            {
-                pile.AnimateInsertion = false;
-                var doubleAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
-                                          {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
-                scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
-            }
+            if (!pile.AnimateInsertion) return;
+            pile.AnimateInsertion = false;
+            var doubleAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300))
+                                      {EasingFunction = new ExponentialEase(), FillBehavior = FillBehavior.Stop};
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, doubleAnimation);
         }
 
         private void CollapseClicked(object sender, RoutedEventArgs e)
@@ -63,15 +61,15 @@ namespace Octgn.Play.Gui
             if (bottomZone.Visibility != Visibility.Visible)
             {
                 bottomZone.Visibility = Visibility.Visible;
-                anim.From = 0;
-                anim.To = 0.4;
-                bottomZone.BeginAnimation(OpacityProperty, anim);
-                anim.From = null;
+                Anim.From = 0;
+                Anim.To = 0.4;
+                bottomZone.BeginAnimation(OpacityProperty, Anim);
+                Anim.From = null;
             }
             else
             {
-                anim.To = 0.4;
-                bottomZone.BeginAnimation(OpacityProperty, anim);
+                Anim.To = 0.4;
+                bottomZone.BeginAnimation(OpacityProperty, Anim);
             }
         }
 
@@ -99,8 +97,8 @@ namespace Octgn.Play.Gui
         private void OnCardOverBottom(object sender, CardsEventArgs e)
         {
             OnCardOver(sender, e);
-            anim.To = 0.8;
-            bottomZone.BeginAnimation(OpacityProperty, anim);
+            Anim.To = 0.8;
+            bottomZone.BeginAnimation(OpacityProperty, Anim);
         }
 
         #endregion

@@ -8,53 +8,45 @@ namespace Octgn
 {
     public static class Database
     {
-        private static Data.Game openedGame;
-
-        public static Data.Game OpenedGame
-        {
-            get { return openedGame; }
-        }
+        public static Data.Game OpenedGame { get; private set; }
 
         public static void Open(GameDef game, bool readOnly)
         {
-            openedGame = Program.GamesRepository.Games.First(g => g.Id == game.Id);
-            openedGame.OpenDatabase(readOnly);
+            OpenedGame = Program.GamesRepository.Games.First(g => g.Id == game.Id);
         }
 
         public static void Close()
         {
-            if (openedGame != null)
-                openedGame.CloseDatabase();
         }
 
         public static CardModel GetCardByName(string name)
         {
-            return openedGame.GetCardByName(name);
+            return OpenedGame.GetCardByName(name);
         }
 
         public static CardModel GetCardById(Guid id)
         {
-            return openedGame.GetCardById(id);
+            return OpenedGame.GetCardById(id);
         }
 
         public static IEnumerable<MarkerModel> GetAllMarkers()
         {
-            return openedGame.GetAllMarkers();
+            return OpenedGame.GetAllMarkers();
         }
 
         public static IEnumerable<CardModel> GetCards(params string[] conditions)
         {
-            return openedGame.SelectCardModels(conditions);
+            return OpenedGame.SelectCardModels(conditions);
         }
 
         public static IEnumerable<Set> GetAllSets()
         {
-            return openedGame.Sets;
+            return OpenedGame.Sets;
         }
 
         internal static Pack GetPackById(Guid packId)
         {
-            return openedGame.GetPackById(packId);
+            return OpenedGame.GetPackById(packId);
         }
     }
 }

@@ -9,26 +9,25 @@ using System.Windows.Media.Animation;
 using Octgn.Data;
 using Octgn.Play;
 
-namespace Octgn.Script
+namespace Octgn.Scripting.Controls
 {
-    public partial class MarkerDlg : Window
+    public partial class MarkerDlg
     {
         public static readonly DependencyProperty IsModelSelectedProperty =
             DependencyProperty.Register("IsModelSelected", typeof (bool), typeof (MarkerDlg),
                                         new UIPropertyMetadata(false));
 
-        private readonly ICollectionView allMarkersView;
-        private string filterText = "";
-        private MarkerModel result;
+        private readonly ICollectionView _allMarkersView;
+        private string _filterText = "";
 
         public MarkerDlg()
         {
             InitializeComponent();
-            allMarkersView = CollectionViewSource.GetDefaultView(Program.Game.Markers);
-            allMarkersView.Filter =
+            _allMarkersView = CollectionViewSource.GetDefaultView(Program.Game.Markers);
+            _allMarkersView.Filter =
                 marker =>
-                ((MarkerModel) marker).Name.IndexOf(filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
-            allList.ItemsSource = allMarkersView;
+                ((MarkerModel) marker).Name.IndexOf(_filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
+            allList.ItemsSource = _allMarkersView;
             defaultList.ItemsSource = Marker.DefaultMarkers;
             recentList.ItemsSource = Program.Game.RecentMarkers;
         }
@@ -39,10 +38,7 @@ namespace Octgn.Script
             set { SetValue(IsModelSelectedProperty, value); }
         }
 
-        public MarkerModel MarkerModel
-        {
-            get { return result; }
-        }
+        public MarkerModel MarkerModel { get; private set; }
 
         public int Quantity
         {
@@ -57,16 +53,16 @@ namespace Octgn.Script
             // (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
             if (sender is ListBox && ((ListBox) sender).SelectedIndex == -1) return;
 
-            if (recentList.SelectedIndex != -1) result = (MarkerModel) recentList.SelectedItem;
-            if (allList.SelectedIndex != -1) result = (MarkerModel) allList.SelectedItem;
+            if (recentList.SelectedIndex != -1) MarkerModel = (MarkerModel) recentList.SelectedItem;
+            if (allList.SelectedIndex != -1) MarkerModel = (MarkerModel) allList.SelectedItem;
             if (defaultList.SelectedIndex != -1)
             {
                 var m = ((DefaultMarkerModel) defaultList.SelectedItem);
                 m.SetName(nameBox.Text);
-                result = m.Clone();
+                MarkerModel = m.Clone();
             }
 
-            if (result == null) return;
+            if (MarkerModel == null) return;
 
             int qty;
             if (!int.TryParse(quantityBox.Text, out qty) || qty < 0)
@@ -77,7 +73,7 @@ namespace Octgn.Script
                 return;
             }
 
-            Program.Game.AddRecentMarker(result);
+            Program.Game.AddRecentMarker(MarkerModel);
             DialogResult = true;
         }
 
@@ -97,17 +93,15 @@ namespace Octgn.Script
 
         private void FilterChanged(object sender, EventArgs e)
         {
-            filterText = filterBox.Text;
-            allMarkersView.Refresh();
+            _filterText = filterBox.Text;
+            _allMarkersView.Refresh();
         }
 
         private void PreviewFilterKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape && filterBox.Text.Length > 0)
-            {
-                filterBox.Clear();
-                e.Handled = true;
-            }
+            if (e.Key != Key.Escape || filterBox.Text.Length <= 0) return;
+            filterBox.Clear();
+            e.Handled = true;
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -9,7 +8,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for GameListItem.xaml
     /// </summary>
-    public partial class GameListItem : UserControl
+    public partial class GameListItem
     {
         public static DependencyProperty GameNameProperty = DependencyProperty.Register(
             "GameName", typeof (string), typeof (GameListItem));
@@ -41,12 +40,12 @@ namespace Octgn.Controls
             }
         }
 
-        private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        private void UserControlMouseDown(object sender, MouseButtonEventArgs e)
         {
             //Focus();
         }
 
-        private void flistitem_MouseUp(object sender, MouseButtonEventArgs e)
+        private void FlistitemMouseUp(object sender, MouseButtonEventArgs e)
         {
             Focus();
         }

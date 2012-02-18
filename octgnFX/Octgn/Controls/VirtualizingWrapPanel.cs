@@ -75,9 +75,10 @@ namespace Octgn.Controls
                     if (isNewlyRealized)
                     {
                         if (childIndex >= children.Count)
-                            base.AddInternalChild(child);
-                        else
-                            base.InsertInternalChild(childIndex, child);
+                        {
+                            if (child != null) AddInternalChild(child);
+                        }
+                        else if (child != null) InsertInternalChild(childIndex, child);
                         generator.PrepareItemContainer(child);
                     }
                     else
@@ -116,11 +117,9 @@ namespace Octgn.Controls
             {
                 var childGeneratorPos = new GeneratorPosition(i, 0);
                 int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
-                if (itemIndex < minDesiredGenerated || itemIndex > maxDesiredGenerated)
-                {
-                    generator.Remove(childGeneratorPos, 1);
-                    RemoveInternalChildRange(i, 1);
-                }
+                if (itemIndex >= minDesiredGenerated && itemIndex <= maxDesiredGenerated) continue;
+                generator.Remove(childGeneratorPos, 1);
+                RemoveInternalChildRange(i, 1);
             }
         }
 
@@ -178,11 +177,9 @@ namespace Octgn.Controls
         private int CalculateChildrenPerRow(Size availableSize)
         {
             // Figure out how many children fit on each row
-            int childrenPerRow;
-            if (double.IsPositiveInfinity(availableSize.Width))
-                childrenPerRow = Children.Count;
-            else
-                childrenPerRow = Math.Max(1, (int) Math.Floor(availableSize.Width/ChildWidth));
+            int childrenPerRow = double.IsPositiveInfinity(availableSize.Width)
+                                     ? Children.Count
+                                     : Math.Max(1, (int) Math.Floor(availableSize.Width/ChildWidth));
             return childrenPerRow;
         }
 
@@ -345,12 +342,10 @@ namespace Octgn.Controls
                     _owner.InvalidateScrollInfo();
             }
             // Update viewport
-            if (availableSize != _viewport)
-            {
-                _viewport = availableSize;
-                if (_owner != null)
-                    _owner.InvalidateScrollInfo();
-            }
+            if (availableSize == _viewport) return;
+            _viewport = availableSize;
+            if (_owner != null)
+                _owner.InvalidateScrollInfo();
         }
 
         #endregion
@@ -363,9 +358,9 @@ namespace Octgn.Controls
             DependencyProperty.Register("AnimatableVerticalOffset", typeof (double), typeof (VirtualizingWrapPanel),
                                         new UIPropertyMetadata(0.0, AnimatableVerticalOffsetChanged));
 
-        private DoubleAnimation scrollAnimation;
-        private int scrollDirection;
-        private double scrollTarget;
+        private DoubleAnimation _scrollAnimation;
+        private int _scrollDirection;
+        private double _scrollTarget;
 
         private double AnimatableVerticalOffset
         {
@@ -385,27 +380,27 @@ namespace Octgn.Controls
             // Add inerita to scrolling for a very smooth effect      
             int sign = Math.Sign(delta);
             double offset = -sign*48.0;
-            if (sign == scrollDirection)
-                scrollTarget += offset;
+            if (sign == _scrollDirection)
+                _scrollTarget += offset;
             else
             {
-                scrollDirection = sign;
-                scrollTarget = VerticalOffset + offset;
+                _scrollDirection = sign;
+                _scrollTarget = VerticalOffset + offset;
             }
             EnsureScrollAnimation();
-            scrollAnimation.From = VerticalOffset;
-            scrollAnimation.To = scrollTarget;
-            BeginAnimation(AnimatableVerticalOffsetProperty, scrollAnimation);
+            _scrollAnimation.From = VerticalOffset;
+            _scrollAnimation.To = _scrollTarget;
+            BeginAnimation(AnimatableVerticalOffsetProperty, _scrollAnimation);
         }
 
         private void EnsureScrollAnimation()
         {
-            scrollAnimation = new DoubleAnimation {Duration = SmoothScrollDuration, DecelerationRatio = 0.5};
-            scrollAnimation.Completed += delegate
-                                             {
-                                                 scrollAnimation = null;
-                                                 scrollDirection = 0;
-                                             };
+            _scrollAnimation = new DoubleAnimation {Duration = SmoothScrollDuration, DecelerationRatio = 0.5};
+            _scrollAnimation.Completed += delegate
+                                              {
+                                                  _scrollAnimation = null;
+                                                  _scrollDirection = 0;
+                                              };
         }
 
         #endregion

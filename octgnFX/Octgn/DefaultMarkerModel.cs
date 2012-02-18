@@ -5,29 +5,29 @@ namespace Octgn
 {
     public class DefaultMarkerModel : MarkerModel
     {
-        private readonly string key;
+        private readonly string _key;
 
         public DefaultMarkerModel(string key, Guid id)
             : base(id)
         {
-            this.key = key;
+            _key = key;
         }
 
         public override string Picture
         {
-            get { return "pack://application:,,,/Resources/Markers/" + key + ".png"; }
+            get { return "pack://application:,,,/Resources/Markers/" + _key + ".png"; }
         }
 
         public override bool Equals(object obj)
         {
             var other = obj as DefaultMarkerModel;
             if (other == null) return false;
-            return other.id == id && other.name == name;
+            return other.Id == Id && other.name == name;
         }
 
         public override int GetHashCode()
         {
-            return id.GetHashCode() ^ (name != null ? name.GetHashCode() : 0);
+            return Id.GetHashCode() ^ (name != null ? name.GetHashCode() : 0);
         }
 
         public void SetName(string lName)
@@ -37,8 +37,7 @@ namespace Octgn
 
         public DefaultMarkerModel Clone()
         {
-            var result = new DefaultMarkerModel(key, id);
-            result.name = name;
+            var result = new DefaultMarkerModel(_key, Id) {name = name};
             return result;
         }
     }

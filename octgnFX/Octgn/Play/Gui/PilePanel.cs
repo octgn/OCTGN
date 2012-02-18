@@ -14,7 +14,7 @@ namespace Octgn.Play.Gui
             int count = parent != null && parent.HasItems ? parent.Items.Count : 0;
 
             // Next line needed otherwise ItemContainerGenerator is null (bug in WinFX ?)
-            UIElementCollection children = base.InternalChildren;
+            UIElementCollection children = InternalChildren;
             IItemContainerGenerator generator = ItemContainerGenerator;
 
             if (count == 0)
@@ -31,13 +31,14 @@ namespace Octgn.Play.Gui
                 bool newlyRealized;
                 // Get or create the child
                 var child = generator.GenerateNext(out newlyRealized) as UIElement;
-                if (newlyRealized)
-                {
-                    AddInternalChild(child);
-                    generator.PrepareItemContainer(child);
-                }
+
                 if (child != null)
                 {
+                    if (newlyRealized)
+                    {
+                        AddInternalChild(child);
+                        generator.PrepareItemContainer(child);
+                    }
                     child.Measure(availableSize);
                     desiredSize = child.DesiredSize;
                 }
@@ -48,11 +49,9 @@ namespace Octgn.Play.Gui
             {
                 var childGeneratorPos = new GeneratorPosition(i, 0);
                 int itemIndex = generator.IndexFromGeneratorPosition(childGeneratorPos);
-                if (itemIndex != count - 1)
-                {
-                    generator.Remove(childGeneratorPos, 1);
-                    RemoveInternalChildRange(i, 1);
-                }
+                if (itemIndex == count - 1) continue;
+                generator.Remove(childGeneratorPos, 1);
+                RemoveInternalChildRange(i, 1);
             }
             return desiredSize;
         }

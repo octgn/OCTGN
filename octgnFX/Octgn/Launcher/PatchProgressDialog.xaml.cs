@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace Octgn.Launcher
 {
-    public partial class PatchProgressDialog : Window
+    public partial class PatchProgressDialog
     {
         public PatchProgressDialog()
         {
@@ -32,7 +32,7 @@ namespace Octgn.Launcher
                                                   }));
         }
 
-        private void OKClicked(object sender, RoutedEventArgs e)
+        private void OkClicked(object sender, RoutedEventArgs e)
         {
             Close();
         }

@@ -11,11 +11,11 @@ namespace Octgn.Networking
 {
     internal sealed class XmlParser
     {
-        private readonly Handler handler;
+        private readonly Handler _handler;
 
         public XmlParser(Handler handler)
         {
-            this.handler = handler;
+            _handler = handler;
         }
 
         public void Parse(string xml)
@@ -25,16 +25,13 @@ namespace Octgn.Networking
             reader.Read();
             string method = reader.Name;
             string muted = reader.GetAttribute("muted");
-            if (!string.IsNullOrEmpty(muted))
-                Program.Client.Muted = int.Parse(muted);
-            else
-                Program.Client.Muted = 0;
+            Program.Client.Muted = !string.IsNullOrEmpty(muted) ? int.Parse(muted) : 0;
             reader.ReadStartElement(); // <method>
             switch (method)
             {
                 case "Binary":
                     {
-                        handler.Binary();
+                        _handler.Binary();
                         break;
                     }
                 case "IsAlternate":
@@ -50,26 +47,26 @@ namespace Octgn.Networking
                         int arg0 = int.Parse(reader.ReadElementString("cardid"));
                         bool arg1 = bool.Parse(reader.ReadElementString("isalternateimage"));
                         Card c = Card.Find(arg0);
-                        handler.IsAlternateImage(c, arg1);
+                        _handler.IsAlternateImage(c, arg1);
                         break;
                     }
 
                 case "Error":
                     {
                         string arg0 = reader.ReadElementString("msg");
-                        handler.Error(arg0);
+                        _handler.Error(arg0);
                         break;
                     }
                 case "Welcome":
                     {
                         byte arg0 = byte.Parse(reader.ReadElementString("id"), CultureInfo.InvariantCulture);
-                        handler.Welcome(arg0);
+                        _handler.Welcome(arg0);
                         break;
                     }
                 case "Settings":
                     {
                         bool arg0 = bool.Parse(reader.ReadElementString("twoSidedTable"));
-                        handler.Settings(arg0);
+                        _handler.Settings(arg0);
                         break;
                     }
                 case "PlayerSettings":
@@ -82,7 +79,7 @@ namespace Octgn.Networking
                             return;
                         }
                         bool arg1 = bool.Parse(reader.ReadElementString("invertedTable"));
-                        handler.PlayerSettings(arg0, arg1);
+                        _handler.PlayerSettings(arg0, arg1);
                         break;
                     }
                 case "NewPlayer":
@@ -90,7 +87,7 @@ namespace Octgn.Networking
                         byte arg0 = byte.Parse(reader.ReadElementString("id"), CultureInfo.InvariantCulture);
                         string arg1 = reader.ReadElementString("nick");
                         ulong arg2 = ulong.Parse(reader.ReadElementString("pkey"), CultureInfo.InvariantCulture);
-                        handler.NewPlayer(arg0, arg1, arg2);
+                        _handler.NewPlayer(arg0, arg1, arg2);
                         break;
                     }
                 case "Leave":
@@ -102,7 +99,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[Leave] Player not found.");
                             return;
                         }
-                        handler.Leave(arg0);
+                        _handler.Leave(arg0);
                         break;
                     }
                 case "Nick":
@@ -115,12 +112,12 @@ namespace Octgn.Networking
                             return;
                         }
                         string arg1 = reader.ReadElementString("nick");
-                        handler.Nick(arg0, arg1);
+                        _handler.Nick(arg0, arg1);
                         break;
                     }
                 case "Start":
                     {
-                        handler.Start();
+                        _handler.Start();
                         break;
                     }
                 case "Reset":
@@ -132,7 +129,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[Reset] Player not found.");
                             return;
                         }
-                        handler.Reset(arg0);
+                        _handler.Reset(arg0);
                         break;
                     }
                 case "NextTurn":
@@ -144,7 +141,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[NextTurn] Player not found.");
                             return;
                         }
-                        handler.NextTurn(arg0);
+                        _handler.NextTurn(arg0);
                         break;
                     }
                 case "StopTurn":
@@ -156,7 +153,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[StopTurn] Player not found.");
                             return;
                         }
-                        handler.StopTurn(arg0);
+                        _handler.StopTurn(arg0);
                         break;
                     }
                 case "Chat":
@@ -169,7 +166,7 @@ namespace Octgn.Networking
                             return;
                         }
                         string arg1 = reader.ReadElementString("text");
-                        handler.Chat(arg0, arg1);
+                        _handler.Chat(arg0, arg1);
                         break;
                     }
                 case "Print":
@@ -182,7 +179,7 @@ namespace Octgn.Networking
                             return;
                         }
                         string arg1 = reader.ReadElementString("text");
-                        handler.Print(arg0, arg1);
+                        _handler.Print(arg0, arg1);
                         break;
                     }
                 case "Random":
@@ -197,7 +194,7 @@ namespace Octgn.Networking
                         int arg1 = int.Parse(reader.ReadElementString("id"), CultureInfo.InvariantCulture);
                         int arg2 = int.Parse(reader.ReadElementString("min"), CultureInfo.InvariantCulture);
                         int arg3 = int.Parse(reader.ReadElementString("max"), CultureInfo.InvariantCulture);
-                        handler.Random(arg0, arg1, arg2, arg3);
+                        _handler.Random(arg0, arg1, arg2, arg3);
                         break;
                     }
                 case "RandomAnswer1":
@@ -211,7 +208,7 @@ namespace Octgn.Networking
                         }
                         int arg1 = int.Parse(reader.ReadElementString("id"), CultureInfo.InvariantCulture);
                         ulong arg2 = ulong.Parse(reader.ReadElementString("value"), CultureInfo.InvariantCulture);
-                        handler.RandomAnswer1(arg0, arg1, arg2);
+                        _handler.RandomAnswer1(arg0, arg1, arg2);
                         break;
                     }
                 case "RandomAnswer2":
@@ -225,7 +222,7 @@ namespace Octgn.Networking
                         }
                         int arg1 = int.Parse(reader.ReadElementString("id"), CultureInfo.InvariantCulture);
                         ulong arg2 = ulong.Parse(reader.ReadElementString("value"), CultureInfo.InvariantCulture);
-                        handler.RandomAnswer2(arg0, arg1, arg2);
+                        _handler.RandomAnswer2(arg0, arg1, arg2);
                         break;
                     }
                 case "Counter":
@@ -245,7 +242,7 @@ namespace Octgn.Networking
                             return;
                         }
                         int arg2 = int.Parse(reader.ReadElementString("value"), CultureInfo.InvariantCulture);
-                        handler.Counter(arg0, arg1, arg2);
+                        _handler.Counter(arg0, arg1, arg2);
                         break;
                     }
                 case "LoadDeck":
@@ -271,7 +268,7 @@ namespace Octgn.Networking
                             list2.Add(g);
                         }
                         Group[] arg2 = list2.ToArray();
-                        handler.LoadDeck(arg0, arg1, arg2);
+                        _handler.LoadDeck(arg0, arg1, arg2);
                         break;
                     }
                 case "CreateCard":
@@ -291,7 +288,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[CreateCard] Group not found.");
                             return;
                         }
-                        handler.CreateCard(arg0, arg1, arg2);
+                        _handler.CreateCard(arg0, arg1, arg2);
                         break;
                     }
                 case "CreateCardAt":
@@ -318,7 +315,7 @@ namespace Octgn.Networking
                         int[] arg4 = list4.ToArray();
                         bool arg5 = bool.Parse(reader.ReadElementString("faceUp"));
                         bool arg6 = bool.Parse(reader.ReadElementString("persist"));
-                        handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+                        _handler.CreateCardAt(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
                         break;
                     }
                 case "CreateAlias":
@@ -331,7 +328,7 @@ namespace Octgn.Networking
                         while (reader.IsStartElement("type"))
                             list1.Add(ulong.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         ulong[] arg1 = list1.ToArray();
-                        handler.CreateAlias(arg0, arg1);
+                        _handler.CreateAlias(arg0, arg1);
                         break;
                     }
                 case "MoveCard":
@@ -346,7 +343,7 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[MoveCard] Card not found.", method));
+                            Debug.WriteLine(string.Format("[MoveCard] Card not found."));
                             return;
                         }
                         Group arg2 =
@@ -358,7 +355,7 @@ namespace Octgn.Networking
                         }
                         int arg3 = int.Parse(reader.ReadElementString("idx"), CultureInfo.InvariantCulture);
                         bool arg4 = bool.Parse(reader.ReadElementString("faceUp"));
-                        handler.MoveCard(arg0, arg1, arg2, arg3, arg4);
+                        _handler.MoveCard(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case "MoveCardAt":
@@ -373,14 +370,14 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[MoveCardAt] Card not found.", method));
+                            Debug.WriteLine(string.Format("[MoveCardAt] Card not found."));
                             return;
                         }
                         int arg2 = int.Parse(reader.ReadElementString("x"), CultureInfo.InvariantCulture);
                         int arg3 = int.Parse(reader.ReadElementString("y"), CultureInfo.InvariantCulture);
                         int arg4 = int.Parse(reader.ReadElementString("idx"), CultureInfo.InvariantCulture);
                         bool arg5 = bool.Parse(reader.ReadElementString("faceUp"));
-                        handler.MoveCardAt(arg0, arg1, arg2, arg3, arg4, arg5);
+                        _handler.MoveCardAt(arg0, arg1, arg2, arg3, arg4, arg5);
                         break;
                     }
                 case "Reveal":
@@ -388,12 +385,12 @@ namespace Octgn.Networking
                         Card arg0 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg0 == null)
                         {
-                            Debug.WriteLine(string.Format("[Reveal] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Reveal] Card not found."));
                             return;
                         }
                         ulong arg1 = ulong.Parse(reader.ReadElementString("revealed"), CultureInfo.InvariantCulture);
                         var arg2 = new Guid(reader.ReadElementString("guid"));
-                        handler.Reveal(arg0, arg1, arg2);
+                        _handler.Reveal(arg0, arg1, arg2);
                         break;
                     }
                 case "RevealTo":
@@ -414,14 +411,14 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[RevealTo] Card not found.", method));
+                            Debug.WriteLine(string.Format("[RevealTo] Card not found."));
                             return;
                         }
                         var list2 = new List<ulong>(30);
                         while (reader.IsStartElement("encrypted"))
                             list2.Add(ulong.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         ulong[] arg2 = list2.ToArray();
-                        handler.RevealTo(arg0, arg1, arg2);
+                        _handler.RevealTo(arg0, arg1, arg2);
                         break;
                     }
                 case "Peek":
@@ -436,10 +433,10 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Peek] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Peek] Card not found."));
                             return;
                         }
-                        handler.Peek(arg0, arg1);
+                        _handler.Peek(arg0, arg1);
                         break;
                     }
                 case "Untarget":
@@ -454,10 +451,10 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Untarget] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Untarget] Card not found."));
                             return;
                         }
-                        handler.Untarget(arg0, arg1);
+                        _handler.Untarget(arg0, arg1);
                         break;
                     }
                 case "Target":
@@ -472,10 +469,10 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Target] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Target] Card not found."));
                             return;
                         }
-                        handler.Target(arg0, arg1);
+                        _handler.Target(arg0, arg1);
                         break;
                     }
                 case "TargetArrow":
@@ -490,17 +487,17 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[TargetArrow] Card not found.", method));
+                            Debug.WriteLine(string.Format("[TargetArrow] Card not found."));
                             return;
                         }
                         Card arg2 =
                             Card.Find(int.Parse(reader.ReadElementString("otherCard"), CultureInfo.InvariantCulture));
                         if (arg2 == null)
                         {
-                            Debug.WriteLine(string.Format("[TargetArrow] Card not found.", method));
+                            Debug.WriteLine(string.Format("[TargetArrow] Card not found."));
                             return;
                         }
-                        handler.TargetArrow(arg0, arg1, arg2);
+                        _handler.TargetArrow(arg0, arg1, arg2);
                         break;
                     }
                 case "Highlight":
@@ -508,12 +505,12 @@ namespace Octgn.Networking
                         Card arg0 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg0 == null)
                         {
-                            Debug.WriteLine(string.Format("[Highlight] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Highlight] Card not found."));
                             return;
                         }
                         string temp1 = reader.ReadElementString("color");
                         Color? arg1 = temp1 == "" ? null : (Color?) ColorConverter.ConvertFromString(temp1);
-                        handler.Highlight(arg0, arg1);
+                        _handler.Highlight(arg0, arg1);
                         break;
                     }
                 case "Turn":
@@ -528,11 +525,11 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Turn] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Turn] Card not found."));
                             return;
                         }
                         bool arg2 = bool.Parse(reader.ReadElementString("up"));
-                        handler.Turn(arg0, arg1, arg2);
+                        _handler.Turn(arg0, arg1, arg2);
                         break;
                     }
                 case "Rotate":
@@ -547,12 +544,12 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[Rotate] Card not found.", method));
+                            Debug.WriteLine(string.Format("[Rotate] Card not found."));
                             return;
                         }
                         var arg2 =
                             (CardOrientation) Enum.Parse(typeof (CardOrientation), reader.ReadElementString("rot"));
-                        handler.Rotate(arg0, arg1, arg2);
+                        _handler.Rotate(arg0, arg1, arg2);
                         break;
                     }
                 case "Shuffle":
@@ -568,7 +565,7 @@ namespace Octgn.Networking
                         while (reader.IsStartElement("card"))
                             list1.Add(int.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         int[] arg1 = list1.ToArray();
-                        handler.Shuffle(arg0, arg1);
+                        _handler.Shuffle(arg0, arg1);
                         break;
                     }
                 case "Shuffled":
@@ -588,7 +585,7 @@ namespace Octgn.Networking
                         while (reader.IsStartElement("pos"))
                             list2.Add(short.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         short[] arg2 = list2.ToArray();
-                        handler.Shuffled(arg0, arg1, arg2);
+                        _handler.Shuffled(arg0, arg1, arg2);
                         break;
                     }
                 case "UnaliasGrp":
@@ -600,7 +597,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[UnaliasGrp] Group not found.");
                             return;
                         }
-                        handler.UnaliasGrp(arg0);
+                        _handler.UnaliasGrp(arg0);
                         break;
                     }
                 case "Unalias":
@@ -613,7 +610,7 @@ namespace Octgn.Networking
                         while (reader.IsStartElement("type"))
                             list1.Add(ulong.Parse(reader.ReadElementString(), CultureInfo.InvariantCulture));
                         ulong[] arg1 = list1.ToArray();
-                        handler.Unalias(arg0, arg1);
+                        _handler.Unalias(arg0, arg1);
                         break;
                     }
                 case "AddMarker":
@@ -628,13 +625,13 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[AddMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[AddMarker] Card not found."));
                             return;
                         }
                         var arg2 = new Guid(reader.ReadElementString("id"));
                         string arg3 = reader.ReadElementString("name");
                         ushort arg4 = ushort.Parse(reader.ReadElementString("count"), CultureInfo.InvariantCulture);
-                        handler.AddMarker(arg0, arg1, arg2, arg3, arg4);
+                        _handler.AddMarker(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case "RemoveMarker":
@@ -649,13 +646,13 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[RemoveMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[RemoveMarker] Card not found."));
                             return;
                         }
                         var arg2 = new Guid(reader.ReadElementString("id"));
                         string arg3 = reader.ReadElementString("name");
                         ushort arg4 = ushort.Parse(reader.ReadElementString("count"), CultureInfo.InvariantCulture);
-                        handler.RemoveMarker(arg0, arg1, arg2, arg3, arg4);
+                        _handler.RemoveMarker(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case "SetMarker":
@@ -670,13 +667,13 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("card"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[SetMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[SetMarker] Card not found."));
                             return;
                         }
                         var arg2 = new Guid(reader.ReadElementString("id"));
                         string arg3 = reader.ReadElementString("name");
                         ushort arg4 = ushort.Parse(reader.ReadElementString("count"), CultureInfo.InvariantCulture);
-                        handler.SetMarker(arg0, arg1, arg2, arg3, arg4);
+                        _handler.SetMarker(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case "TransferMarker":
@@ -691,19 +688,19 @@ namespace Octgn.Networking
                         Card arg1 = Card.Find(int.Parse(reader.ReadElementString("from"), CultureInfo.InvariantCulture));
                         if (arg1 == null)
                         {
-                            Debug.WriteLine(string.Format("[TransferMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[TransferMarker] Card not found."));
                             return;
                         }
                         Card arg2 = Card.Find(int.Parse(reader.ReadElementString("to"), CultureInfo.InvariantCulture));
                         if (arg2 == null)
                         {
-                            Debug.WriteLine(string.Format("[TransferMarker] Card not found.", method));
+                            Debug.WriteLine(string.Format("[TransferMarker] Card not found."));
                             return;
                         }
                         var arg3 = new Guid(reader.ReadElementString("id"));
                         string arg4 = reader.ReadElementString("name");
                         ushort arg5 = ushort.Parse(reader.ReadElementString("count"), CultureInfo.InvariantCulture);
-                        handler.TransferMarker(arg0, arg1, arg2, arg3, arg4, arg5);
+                        _handler.TransferMarker(arg0, arg1, arg2, arg3, arg4, arg5);
                         break;
                     }
                 case "PassTo":
@@ -731,7 +728,7 @@ namespace Octgn.Networking
                             return;
                         }
                         bool arg3 = bool.Parse(reader.ReadElementString("requested"));
-                        handler.PassTo(arg0, arg1, arg2, arg3);
+                        _handler.PassTo(arg0, arg1, arg2, arg3);
                         break;
                     }
                 case "TakeFrom":
@@ -751,7 +748,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[TakeFrom] Player not found.");
                             return;
                         }
-                        handler.TakeFrom(arg0, arg1);
+                        _handler.TakeFrom(arg0, arg1);
                         break;
                     }
                 case "DontTake":
@@ -764,7 +761,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[DontTake] ControllableObject not found.");
                             return;
                         }
-                        handler.DontTake(arg0);
+                        _handler.DontTake(arg0);
                         break;
                     }
                 case "FreezeCardsVisibility":
@@ -776,7 +773,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[FreezeCardsVisibility] Group not found.");
                             return;
                         }
-                        handler.FreezeCardsVisibility(arg0);
+                        _handler.FreezeCardsVisibility(arg0);
                         break;
                     }
                 case "GroupVis":
@@ -797,7 +794,7 @@ namespace Octgn.Networking
                         }
                         bool arg2 = bool.Parse(reader.ReadElementString("defined"));
                         bool arg3 = bool.Parse(reader.ReadElementString("visible"));
-                        handler.GroupVis(arg0, arg1, arg2, arg3);
+                        _handler.GroupVis(arg0, arg1, arg2, arg3);
                         break;
                     }
                 case "GroupVisAdd":
@@ -823,7 +820,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[GroupVisAdd] Player not found.");
                             return;
                         }
-                        handler.GroupVisAdd(arg0, arg1, arg2);
+                        _handler.GroupVisAdd(arg0, arg1, arg2);
                         break;
                     }
                 case "GroupVisRemove":
@@ -849,7 +846,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[GroupVisRemove] Player not found.");
                             return;
                         }
-                        handler.GroupVisRemove(arg0, arg1, arg2);
+                        _handler.GroupVisRemove(arg0, arg1, arg2);
                         break;
                     }
                 case "LookAt":
@@ -870,7 +867,7 @@ namespace Octgn.Networking
                             return;
                         }
                         bool arg3 = bool.Parse(reader.ReadElementString("look"));
-                        handler.LookAt(arg0, arg1, arg2, arg3);
+                        _handler.LookAt(arg0, arg1, arg2, arg3);
                         break;
                     }
                 case "LookAtTop":
@@ -892,7 +889,7 @@ namespace Octgn.Networking
                         }
                         int arg3 = int.Parse(reader.ReadElementString("count"), CultureInfo.InvariantCulture);
                         bool arg4 = bool.Parse(reader.ReadElementString("look"));
-                        handler.LookAtTop(arg0, arg1, arg2, arg3, arg4);
+                        _handler.LookAtTop(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case "LookAtBottom":
@@ -914,7 +911,7 @@ namespace Octgn.Networking
                         }
                         int arg3 = int.Parse(reader.ReadElementString("count"), CultureInfo.InvariantCulture);
                         bool arg4 = bool.Parse(reader.ReadElementString("look"));
-                        handler.LookAtBottom(arg0, arg1, arg2, arg3, arg4);
+                        _handler.LookAtBottom(arg0, arg1, arg2, arg3, arg4);
                         break;
                     }
                 case "StartLimited":
@@ -930,7 +927,7 @@ namespace Octgn.Networking
                         while (reader.IsStartElement("packs"))
                             list1.Add(new Guid(reader.ReadElementString()));
                         Guid[] arg1 = list1.ToArray();
-                        handler.StartLimited(arg0, arg1);
+                        _handler.StartLimited(arg0, arg1);
                         break;
                     }
                 case "CancelLimited":
@@ -942,7 +939,7 @@ namespace Octgn.Networking
                             Debug.WriteLine("[CancelLimited] Player not found.");
                             return;
                         }
-                        handler.CancelLimited(arg0);
+                        _handler.CancelLimited(arg0);
                         break;
                     }
                 case "PlayerSetGlobalVariable":
@@ -962,14 +959,14 @@ namespace Octgn.Networking
                         }
                         string n = reader.ReadElementString("name");
                         string v = reader.ReadElementString("value");
-                        handler.PlayerSetGlobalVariable(f, p, n, v);
+                        _handler.PlayerSetGlobalVariable(f, p, n, v);
                         break;
                     }
                 case "SetGlobalVariable":
                     {
                         string n = reader.ReadElementString("name");
                         string v = reader.ReadElementString("value");
-                        handler.SetGlobalVariable(n, v);
+                        _handler.SetGlobalVariable(n, v);
                         break;
                     }
                 default:

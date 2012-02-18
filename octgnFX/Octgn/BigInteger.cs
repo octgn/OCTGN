@@ -898,9 +898,7 @@ namespace Octgn
 
             // same sign
             int len = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength;
-            for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--)
-            {
-            }
+            for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--) ;
 
             if (pos >= 0)
             {
@@ -926,9 +924,7 @@ namespace Octgn
 
             // same sign
             int len = (bi1.dataLength > bi2.dataLength) ? bi1.dataLength : bi2.dataLength;
-            for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--)
-            {
-            }
+            for (pos = len - 1; pos >= 0 && bi1.data[pos] == bi2.data[pos]; pos--) ;
 
             if (pos >= 0)
             {

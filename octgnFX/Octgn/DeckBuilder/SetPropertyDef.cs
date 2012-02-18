@@ -6,17 +6,17 @@ namespace Octgn.DeckBuilder
 {
     public class SetPropertyDef : PropertyDef
     {
-        private readonly IList<Set> allSets;
+        private readonly IList<Set> _allSets;
 
         public SetPropertyDef(IEnumerable<Set> allSets)
             : base("Set", 0)
         {
-            this.allSets = allSets.OrderBy(s => s.Name).ToList();
+            _allSets = allSets.OrderBy(s => s.Name).ToList();
         }
 
         public IList<Set> Sets
         {
-            get { return allSets; }
+            get { return _allSets; }
         }
     }
 }

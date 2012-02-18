@@ -9,9 +9,9 @@ namespace Octgn.Play
     {
         #region Private fields
 
-        private readonly Player owner;
-        private Player controller; // The player who controlls this object (null for the table)
-        private byte keepControl; // > 0 if this object should not be passed to someone else
+        private readonly Player _owner;
+        private Player _controller; // The player who controlls this object (null for the table)
+        private byte _keepControl; // > 0 if this object should not be passed to someone else
 
         #endregion
 
@@ -20,8 +20,8 @@ namespace Octgn.Play
         // Id of this object 
         protected ControllableObject(Player owner)
         {
-            this.owner = Controller = owner;
-            keepControl = 0;
+            _owner = Controller = owner;
+            _keepControl = 0;
         }
 
         internal abstract int Id { get; }
@@ -38,21 +38,19 @@ namespace Octgn.Play
         // Player who owns this object (if any)
         public Player Owner
         {
-            get { return owner; }
+            get { return _owner; }
         }
 
         // Get the controller of this object
         public Player Controller
         {
-            get { return controller; }
+            get { return _controller; }
             internal set
             {
-                if (controller != value)
-                {
-                    controller = value;
-                    OnControllerChanged();
-                    OnPropertyChanged("Controller");
-                }
+                if (_controller == value) return;
+                _controller = value;
+                OnControllerChanged();
+                OnPropertyChanged("Controller");
             }
         }
 
@@ -97,7 +95,7 @@ namespace Octgn.Play
 
         internal void TakingControl(Player p)
         {
-            if (keepControl > 0)
+            if (_keepControl > 0)
                 Program.Client.Rpc.DontTakeReq(this, p);
             else
                 PassControlTo(p, Player.LocalPlayer, true, true);
@@ -124,13 +122,13 @@ namespace Octgn.Play
         // Prevents others from acquiring control of this object
         internal void KeepControl()
         {
-            keepControl++;
+            _keepControl++;
         }
 
         // Allow others to take control of this object
         internal void ReleaseControl()
         {
-            if (keepControl > 0) keepControl--;
+            if (_keepControl > 0) _keepControl--;
             else
                 Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame,
                                          "[ReleaseControl] Called with no matching call to KeepControl().");

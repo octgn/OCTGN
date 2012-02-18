@@ -58,7 +58,8 @@
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="343,10,1,1" Padding="5"
+                <TextBox Height="23" Name="SearchString" Width="367" DataContext="{Binding}" Text="Combined SQL Search command here." AcceptsTab="True" />
+                <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="343,10,1,1" Padding="5"
                 Click="RefreshSearch" IsDefault="True" />
       </StackPanel>
     </Border>
@@ -66,9 +67,9 @@
 
     <DataGrid x:Name="resultsGrid" Grid.Row="2" AutoGenerateColumns="False" Margin="0,10,0,0"
               HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray" HeadersVisibility="Column"
-              SelectionMode="Single" SelectionUnit="FullRow" IsReadOnly="True" AlternatingRowBackground="#ffffc7"
+              SelectionUnit="FullRow" IsReadOnly="True" AlternatingRowBackground="#ffffc7"
               VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
-              SelectionChanged="ResultCardSelected" Keyboard.PreviewKeyDown="ResultKeyDownHandler">
+              SelectionChanged="ResultCardSelected" Keyboard.PreviewKeyDown="ResultKeyDownHandler" SelectionMode="Extended">
       <DataGrid.RowStyle>
         <Style>
           <EventSetter Event="DataGridRow.MouseDoubleClick" Handler="ResultDoubleClick" />

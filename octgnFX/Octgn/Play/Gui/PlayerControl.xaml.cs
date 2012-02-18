@@ -2,13 +2,12 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Animation;
 
 namespace Octgn.Play.Gui
 {
-    public partial class PlayerControl : UserControl
+    public partial class PlayerControl
     {
         public PlayerControl()
         {
@@ -63,8 +62,7 @@ namespace Octgn.Play.Gui
         private void IsCollapsedPile(object sender, FilterEventArgs e)
         {
             var pile = e.Item as Pile;
-            if (pile == null) e.Accepted = false;
-            else e.Accepted = pile.Collapsed;
+            e.Accepted = pile != null && pile.Collapsed;
         }
 
         private void IsExpandedPile(object sender, FilterEventArgs e)

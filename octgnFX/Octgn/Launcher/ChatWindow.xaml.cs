@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,46 +17,45 @@ namespace Octgn.Launcher
     /// <summary>
     ///   Interaction logic for ChatWindow.xaml
     /// </summary>
-    public partial class ChatWindow : Window
+    public partial class ChatWindow
     {
+        private Boolean _justScrolledToBottom;
         private bool _realClose;
-        private Boolean justScrolledToBottom;
 
         public ChatWindow(long id)
         {
             InitializeComponent();
             Users = new List<User>();
-            ID = id;
-            if (ID == 0)
+            Id = id;
+            if (Id == 0)
                 miLeaveChat.IsEnabled = false;
-            Program.lobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
+            Program.LobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
             var cm = new ContextMenu();
-            var mi = new MenuItem();
-            mi.Header = "Add to friends list";
-            mi.Click += mi_Click;
+            var mi = new MenuItem {Header = "Add to friends list"};
+            mi.Click += MiClick;
             cm.Items.Add(mi);
             listBox1.ContextMenu = cm;
 
             richTextBox1.Document.LineHeight = 2;
         }
 
-        public long ID { get; private set; }
+        public long Id { get; private set; }
         public List<User> Users { get; private set; }
 
         private void LobbyClientOnOnUserStatusChanged(UserStatus eve, User user)
         {
-            Program.lobbyClient.Chatting.UserStatusChange(ID, user, eve);
+            Program.LobbyClient.Chatting.UserStatusChange(Id, user, eve);
             ResetUserList();
         }
 
         public void ChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
-            Chatting_eChatEvent(cr, e, user, data);
+            ChattingEChatEvent(cr, e, user, data);
         }
 
-        private void Chatting_eChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
+        private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
-            if (cr.ID == ID)
+            if (cr.Id == Id)
             {
                 Dispatcher.Invoke(new Action(() =>
                                                  {
@@ -64,10 +64,10 @@ namespace Octgn.Launcher
                                                          case Chatting.ChatEvent.ChatMessage:
                                                              {
                                                                  Brush b = Brushes.Black;
-                                                                 if (user.Uid == Program.lobbyClient.Me.Uid)
+                                                                 if (user.Uid == Program.LobbyClient.Me.Uid)
                                                                      b = Brushes.Blue;
 
-                                                                 Run r = getUserRun(user.DisplayName,
+                                                                 Run r = GetUserRun(user.DisplayName,
                                                                                     "[" + user.DisplayName + "] : ");
                                                                  r.Foreground = b;
                                                                  var mess = data as string;
@@ -82,7 +82,8 @@ namespace Octgn.Launcher
                                                          case Chatting.ChatEvent.UserJoinedChat:
                                                              {
                                                                  string reg =
-                                                                     Registry.ReadValue("Options_HideLoginNotifications");
+                                                                     SimpleConfig.ReadValue(
+                                                                         "Options_HideLoginNotifications");
                                                                  if (reg == "false" || reg == null)
                                                                  {
                                                                      var r = new Run("#" + user.DisplayName + ": ");
@@ -98,7 +99,8 @@ namespace Octgn.Launcher
                                                          case Chatting.ChatEvent.UserLeftChat:
                                                              {
                                                                  string reg =
-                                                                     Registry.ReadValue("Options_HideLoginNotifications");
+                                                                     SimpleConfig.ReadValue(
+                                                                         "Options_HideLoginNotifications");
                                                                  if (reg == "false" || reg == null)
                                                                  {
                                                                      var r = new Run("#" + user.DisplayName + ": ");
@@ -116,7 +118,7 @@ namespace Octgn.Launcher
             }
         }
 
-        private void AddChatText(Run headerRun, string chat, Brush b = null)
+        private void AddChatText(Inline headerRun, string chat, Brush b = null)
         {
             if (b == null) b = Brushes.Black;
             bool rtbatbottom = false;
@@ -143,18 +145,17 @@ namespace Octgn.Launcher
                 if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
                 {
                     rtbatbottom = true;
-                    justScrolledToBottom = false;
+                    _justScrolledToBottom = false;
                 }
                 else
                 {
-                    if (!justScrolledToBottom)
+                    if (!_justScrolledToBottom)
                     {
                         var pa = new Paragraph();
-                        var ru = new Run("------------------------------");
-                        ru.Foreground = Brushes.Red;
+                        var ru = new Run("------------------------------") {Foreground = Brushes.Red};
                         pa.Inlines.Add(new Bold(ru));
                         richTextBox1.Document.Blocks.Add(pa);
-                        justScrolledToBottom = true;
+                        _justScrolledToBottom = true;
                     }
                 }
             }
@@ -165,27 +166,21 @@ namespace Octgn.Launcher
             if (chat.Contains("\n"))
             {
                 String[] lines = chat.Split(new[] {'\n'});
-                foreach (String line in lines)
+                foreach (
+                    Inline inn in
+                        lines.Select(line => line.Split(new[] {' '})).SelectMany(
+                            words => words.Select(word => StringToRun(word, b))))
                 {
-                    String[] words = line.Split(new[] {' '});
-                    foreach (String word in words)
-                    {
-                        Inline inn = StringToRun(word, b);
-
-                        if (inn != null)
-                            p.Inlines.Add(inn);
-                        p.Inlines.Add(new Run(" "));
-                    }
-                    //p.Inlines.Add(new Run("\n"));
+                    if (inn != null)
+                        p.Inlines.Add(inn);
+                    p.Inlines.Add(new Run(" "));
                 }
             }
             else
             {
                 String[] words = chat.Split(new[] {' '});
-                foreach (String word in words)
+                foreach (Inline inn in words.Select(word => StringToRun(word, b)))
                 {
-                    Inline inn = StringToRun(word, b);
-
                     if (inn != null)
                         p.Inlines.Add(inn);
                     p.Inlines.Add(new Run(" "));
@@ -198,8 +193,10 @@ namespace Octgn.Launcher
                 {
                     richTextBox1.Document.Blocks.Remove(richTextBox1.Document.Blocks.FirstBlock);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
+                    if (Debugger.IsAttached) Debugger.Break();
                 }
             }
             if (rtbatbottom)
@@ -219,7 +216,7 @@ namespace Octgn.Launcher
             {
                 b = Brushes.LightBlue;
                 var h = new Hyperlink(r);
-                h.RequestNavigate += h_RequestNavigate;
+                h.RequestNavigate += HRequestNavigate;
                 try
                 {
                     h.NavigateUri = new Uri(s);
@@ -234,14 +231,14 @@ namespace Octgn.Launcher
                     catch (Exception)
                     {
                         r.Foreground = b;
-                        var ul = new Underline(r);
+                        //var ul = new Underline(r);
                     }
                 }
                 ret = h;
             }
             else
             {
-                if (s.Equals(Program.lobbyClient.Me.DisplayName))
+                if (s.Equals(Program.LobbyClient.Me.DisplayName))
                 {
                     b = Brushes.Blue;
                     ret = new Bold(r);
@@ -249,21 +246,16 @@ namespace Octgn.Launcher
                 else
                 {
                     Boolean fUser = false;
-                    foreach (User u in listBox1.Items)
+                    if (listBox1.Items.Cast<User>().Any(u => u.DisplayName == s))
                     {
-                        if (u.DisplayName == s)
-                        {
-                            b = Brushes.LightGreen;
-                            ret = new Bold(r);
-                            ret.ToolTip = "Click to whisper";
-                            r.Cursor = Cursors.Hand;
-                            r.Background = Brushes.White;
-                            r.MouseEnter +=
-                                delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
-                            r.MouseLeave += delegate { r.Background = Brushes.White; };
-                            fUser = true;
-                            break;
-                        }
+                        b = Brushes.LightGreen;
+                        ret = new Bold(r) {ToolTip = "Click to whisper"};
+                        r.Cursor = Cursors.Hand;
+                        r.Background = Brushes.White;
+                        r.MouseEnter +=
+                            delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
+                        r.MouseLeave += delegate { r.Background = Brushes.White; };
+                        fUser = true;
                     }
                     if (!fUser)
                     {
@@ -275,7 +267,7 @@ namespace Octgn.Launcher
             return ret;
         }
 
-        private void h_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        private static void HRequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             var hl = (Hyperlink) sender;
             string navigateUri = hl.NavigateUri.ToString();
@@ -283,19 +275,25 @@ namespace Octgn.Launcher
             {
                 Process.Start(new ProcessStartInfo(navigateUri));
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(ex);
+                if (Debugger.IsAttached) Debugger.Break();
             }
             e.Handled = true;
         }
 
-        private Run getUserRun(String user, string fulltext)
+        private static Run GetUserRun(String user, string fulltext)
         {
-            var r = new Run(fulltext);
-            r.ToolTip = DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() + "\nClick to whisper " +
-                        user;
-            r.Cursor = Cursors.Hand;
-            r.Background = Brushes.White;
+            var r = new Run(fulltext)
+                        {
+                            ToolTip =
+                                DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() +
+                                "\nClick to whisper " +
+                                user,
+                            Cursor = Cursors.Hand,
+                            Background = Brushes.White
+                        };
             r.MouseEnter += delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
             r.MouseLeave += delegate { r.Background = Brushes.White; };
             return r;
@@ -305,74 +303,62 @@ namespace Octgn.Launcher
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
-                                                 ChatRoom cr = Program.lobbyClient.Chatting.GetChatRoomFromRID(ID);
-                                                 if (cr != null)
-                                                 {
-                                                     listBox1.Items.Clear();
-                                                     Users = new List<User>();
+                                                 ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(Id);
+                                                 if (cr == null) return;
+                                                 listBox1.Items.Clear();
+                                                 Users = new List<User>();
 
-                                                     foreach (User u in cr.GetUserList())
-                                                     {
-                                                         listBox1.Items.Add(u);
-                                                         Users.Add(u);
-                                                     }
+                                                 foreach (User u in cr.GetUserList())
+                                                 {
+                                                     listBox1.Items.Add(u);
+                                                     Users.Add(u);
                                                  }
                                              }));
         }
 
-        private void Window_Drop(object sender, DragEventArgs e)
+        private void WindowDrop(object sender, DragEventArgs e)
         {
             var s = e.Data.GetData(typeof (String)) as String;
-            if (s != null)
+            if (s == null) return;
+            int uid;
+            if (!Int32.TryParse(s, out uid)) return;
+            //TODO: Should be pulling from FriendList
+            User u = Program.LobbyClient.GetFriendFromUid(uid);
+            if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
             {
-                int uid;
-                if (Int32.TryParse(s, out uid))
-                {
-                    //BUG Should be pulling from FriendList
-                    User u = Program.lobbyClient.GetFriendFromUID(uid);
-                    if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
-                    {
-                        Program.lobbyClient.Chatting.AddUserToChat(u, ID);
-                    }
-                }
+                Program.LobbyClient.Chatting.AddUserToChat(u, Id);
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void WindowLoaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.Chatting.eChatEvent += Chatting_eChatEvent;
+            Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
         }
 
-        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        private void WindowUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.lobbyClient.Chatting.LeaveChatRoom(ID);
-            Program.lobbyClient.Chatting.eChatEvent -= Chatting_eChatEvent;
-            Program.ChatWindows.RemoveAll(r => r.ID == ID);
-            Program.lobbyClient.OnUserStatusChanged -= LobbyClientOnOnUserStatusChanged;
+            Program.LobbyClient.Chatting.LeaveChatRoom(Id);
+            Program.LobbyClient.Chatting.EChatEvent -= ChattingEChatEvent;
+            Program.ChatWindows.RemoveAll(r => r.Id == Id);
+            Program.LobbyClient.OnUserStatusChanged -= LobbyClientOnOnUserStatusChanged;
             var cl = Program.ClientWindow.frame1.Content as ContactList;
             if (cl != null)
                 cl.RefreshList();
         }
 
-        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        private void TextBox1KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                if (textBox1.Text.Trim().Length > 0)
-                {
-                    Program.lobbyClient.Chatting.SendChatMessage(ID, textBox1.Text);
-                    textBox1.Text = "";
-                }
-            }
+            if (e.Key != Key.Enter) return;
+            if (textBox1.Text.Trim().Length <= 0) return;
+            Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
+            textBox1.Text = "";
         }
 
-        private void Window_Closing(object sender, CancelEventArgs e)
+        private void WindowClosing(object sender, CancelEventArgs e)
         {
-            if (!_realClose)
-            {
-                e.Cancel = true;
-                Hide();
-            }
+            if (_realClose) return;
+            e.Cancel = true;
+            Hide();
         }
 
         public void CloseChatWindow()
@@ -381,21 +367,21 @@ namespace Octgn.Launcher
             Close();
         }
 
-        private void miLeaveChat_Click(object sender, RoutedEventArgs e)
+        private void MiLeaveChatClick(object sender, RoutedEventArgs e)
         {
             _realClose = true;
             Close();
         }
 
-        private void listBox1_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void ListBox1MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
         }
 
-        private void mi_Click(object sender, RoutedEventArgs e)
+        private void MiClick(object sender, RoutedEventArgs e)
         {
             var u = listBox1.SelectedItem as User;
             if (u != null)
-                Program.lobbyClient.AddFriend(u.Email);
+                Program.LobbyClient.AddFriend(u.Email);
         }
     }
 }

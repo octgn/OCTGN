@@ -33,31 +33,25 @@ namespace Skylabs.ConsoleHelper
 
         private static void HandleInput(ConsoleMessage cm)
         {
-            if (EConsoleInput != null)
-            {
-                if (EConsoleInput.GetInvocationList().Length > 0)
-                    EConsoleInput.Invoke(cm);
-            }
+            if (EConsoleInput == null) return;
+            if (EConsoleInput.GetInvocationList().Length > 0)
+                EConsoleInput.Invoke(cm);
         }
 
         public static void Stop()
         {
-            if (_thread != null)
-            {
-                if (_thread.ThreadState == ThreadState.Running)
-                {
-                    Console.In.Close();
+            if (_thread == null) return;
+            if (_thread.ThreadState != ThreadState.Running) return;
+            Console.In.Close();
 
-                    _thread.Abort();
-                    _thread = null;
-                    //thread.Join();
-                }
-            }
+            _thread.Abort();
+            _thread = null;
+            //thread.Join();
         }
 
         private static void Run()
         {
-            Boolean endLine = false;
+            bool endLine = false;
             var sb = new StringBuilder();
             while (true)
             {

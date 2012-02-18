@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -8,7 +7,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   Interaction logic for NotificationListItem.xaml
     /// </summary>
-    public partial class NotificationListItem : UserControl
+    public partial class NotificationListItem
     {
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
             "Message", typeof (string), typeof (FriendListItem));
@@ -25,12 +24,12 @@ namespace Octgn.Controls
 
         public event MouseEventHandler OnClose;
 
-        private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+        private void UserControlMouseDown(object sender, MouseButtonEventArgs e)
         {
             Focus();
         }
 
-        private void imgDismiss_MouseUp(object sender, MouseButtonEventArgs e)
+        private void ImgDismissMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (OnClose != null)
                 OnClose.Invoke(this, new MouseEventArgs(e.MouseDevice, e.Timestamp));

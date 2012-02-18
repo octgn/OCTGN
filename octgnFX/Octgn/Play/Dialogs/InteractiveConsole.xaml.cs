@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -11,21 +11,23 @@ using Octgn.Scripting;
 
 namespace Octgn.Play.Dialogs
 {
-    public partial class InteractiveConsole : Window
+    public partial class InteractiveConsole
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
-        [Import] private Engine scriptEngine;
+        [Import] private Engine _scriptEngine;
 
 #pragma warning restore 649
 
-        private readonly ScriptScope scope;
+        private readonly ScriptScope _scope;
+        private List<string> _commandHistory = new List<string>();
+        private int _commandHistoryLoc = 0;
 
         public InteractiveConsole()
         {
             InitializeComponent();
             Program.Game.ComposeParts(this);
-            scope = scriptEngine.CreateScope();
+            _scope = _scriptEngine.CreateScope();
 
             Loaded += (s, a) => prompt.Focus();
         }
@@ -37,6 +39,24 @@ namespace Octgn.Play.Dialogs
                 int position = prompt.CaretIndex;
                 prompt.Text = prompt.Text.Insert(position, "    ");
                 prompt.CaretIndex = position + 4;
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Up || e.Key == Key.Down)
+            {
+                if (e.Key == Key.Up && _commandHistoryLoc != 0)
+                {
+                    _commandHistoryLoc -= 1;
+                    prompt.Text = _commandHistory[_commandHistoryLoc];
+                    prompt.CaretIndex = prompt.Text.Length;
+                }
+                else if (e.Key == Key.Down && _commandHistoryLoc < _commandHistory.Count - 1 && _commandHistory.Count != 0)
+                {
+                    _commandHistoryLoc += 1;
+                    prompt.Text = _commandHistory[_commandHistoryLoc];
+                    prompt.CaretIndex = prompt.Text.Length;
+                }
                 e.Handled = true;
                 return;
             }
@@ -65,12 +85,12 @@ namespace Octgn.Play.Dialogs
                 return;
             }
 
+            _commandHistory.Add(input);
+            _commandHistoryLoc = _commandHistory.Count;
             prompt.IsEnabled = false;
-            if (!scriptEngine.TryExecuteInteractiveCode(input, scope, ExecutionCompleted))
-            {
-                prompt.IsEnabled = true;
-                PromptNewIndentedLine();
-            }
+            if (_scriptEngine.TryExecuteInteractiveCode(input, _scope, ExecutionCompleted)) return;
+            prompt.IsEnabled = true;
+            PromptNewIndentedLine();
         }
 
         private void ExecutionCompleted(ExecutionResult result)
@@ -82,7 +102,7 @@ namespace Octgn.Play.Dialogs
             prompt.IsEnabled = true;
         }
 
-        private static readonly string[] terminators = new[] {"pass", "break", "continue", "return"};
+        private static readonly string[] Terminators = new[] {"pass", "break", "continue", "return"};
 
         private void PromptNewIndentedLine()
         {
@@ -111,7 +131,7 @@ namespace Octgn.Play.Dialogs
             // Check if the indentation shoud be modified
             curLine = curLine.Trim();
             if (curLine.EndsWith(":")) newIndent += indent;
-            else if (terminators.Any(t => curLine.StartsWith(t)))
+            else if (Terminators.Any(t => curLine.StartsWith(t)))
                 newIndent = new string(' ', Math.Max(0, newIndent.Length - indent.Length));
 
             return newIndent;

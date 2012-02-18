@@ -54,13 +54,13 @@ namespace Skylabs.Lobby
         /// <summary>
         ///   Meh, failed attempt for Asyncronus callbacks. Don't delete it, it gets used, but still.
         /// </summary>
-        private readonly Dictionary<string, SocketMessageResult> Callbacks;
+        private readonly Dictionary<string, SocketMessageResult> _callbacks;
 
-        private readonly SkySocket Socket;
-        private readonly object friendLocker = new object();
+        private readonly object _friendLocker = new object();
 
-        private readonly object gameLocker = new object();
-        private readonly object noteLocker = new object();
+        private readonly object _gameLocker = new object();
+        private readonly object _noteLocker = new object();
+        private readonly SkySocket _socket;
 
         /// <summary>
         ///   Assembly version of the LobbySoftware I think.
@@ -76,21 +76,21 @@ namespace Skylabs.Lobby
         {
             FriendList = new List<User>();
             Notifications = new List<Notification>();
-            Callbacks = new Dictionary<string, SocketMessageResult>();
+            _callbacks = new Dictionary<string, SocketMessageResult>();
             Games = new List<HostedGame>();
             Chatting = new Chatting(this);
-            Socket = new SkySocket();
-            Socket.OnMessageReceived += OnMessageReceived;
-            Socket.OnConnectionClosed += Socket_OnConnectionClosed;
+            _socket = new SkySocket();
+            _socket.OnMessageReceived += OnMessageReceived;
+            _socket.OnConnectionClosed += Socket_OnConnectionClosed;
         }
 
         public LobbyClient(SkySocket c)
         {
             FriendList = new List<User>();
             Notifications = new List<Notification>();
-            Callbacks = new Dictionary<string, SocketMessageResult>();
+            _callbacks = new Dictionary<string, SocketMessageResult>();
             Games = new List<HostedGame>();
-            Socket = c;
+            _socket = c;
         }
 
         /// <summary>
@@ -100,14 +100,7 @@ namespace Skylabs.Lobby
 
         public bool Connected
         {
-            get
-            {
-                if (Socket != null)
-                {
-                    return Socket.Connected;
-                }
-                return false;
-            }
+            get { return _socket != null && _socket.Connected; }
         }
 
         /// <summary>
@@ -167,7 +160,7 @@ namespace Skylabs.Lobby
 
         public bool Connect(string host, int port)
         {
-            return Socket.Connect(host, port);
+            return _socket.Connect(host, port);
         }
 
         private void Socket_OnConnectionClosed(SkySocket socket)
@@ -176,7 +169,7 @@ namespace Skylabs.Lobby
             {
                 OnDisconnect.BeginInvoke(null, null, null, null);
             }
-            Socket.Dispose();
+            _socket.Dispose();
         }
 
         /// <summary>
@@ -184,17 +177,15 @@ namespace Skylabs.Lobby
         /// </summary>
         public void Stop()
         {
-            if (!_didCallStop)
-            {
-                _didCallStop = true;
-                WriteMessage(new SocketMessage("end"));
-                Socket.Stop();
-            }
+            if (_didCallStop) return;
+            _didCallStop = true;
+            WriteMessage(new SocketMessage("end"));
+            _socket.Stop();
         }
 
         public void WriteMessage(SocketMessage sm)
         {
-            Socket.WriteMessage(sm);
+            _socket.WriteMessage(sm);
         }
 
         /// <summary>
@@ -206,8 +197,8 @@ namespace Skylabs.Lobby
         /// <param name="password"> Password </param>
         public void BeginHostGame(SocketMessageResult callback, Game game, string gamename, string password)
         {
-            Callbacks.Clear();
-            Callbacks.Add("hostgameresponse", callback);
+            _callbacks.Clear();
+            _callbacks.Add("hostgameresponse", callback);
             var sm = new SocketMessage("hostgame");
             sm.AddData("game", game.Id);
             sm.AddData("version", game.Version);
@@ -218,7 +209,7 @@ namespace Skylabs.Lobby
 
         public Notification[] GetNotificationList()
         {
-            lock (noteLocker)
+            lock (_noteLocker)
             {
                 return Notifications.ToArray();
             }
@@ -226,7 +217,7 @@ namespace Skylabs.Lobby
 
         public void RemoveNotification(Notification note)
         {
-            lock (noteLocker)
+            lock (_noteLocker)
             {
                 Notifications.Remove(note);
             }
@@ -234,7 +225,7 @@ namespace Skylabs.Lobby
 
         public HostedGame[] GetHostedGames()
         {
-            lock (gameLocker)
+            lock (_gameLocker)
             {
                 return Games.ToArray();
             }
@@ -242,22 +233,17 @@ namespace Skylabs.Lobby
 
         public User[] GetFriendsList()
         {
-            lock (friendLocker)
+            lock (_friendLocker)
             {
                 return FriendList.ToArray();
             }
         }
 
-        public User GetFriendFromUID(int uid)
+        public User GetFriendFromUid(int uid)
         {
-            lock (friendLocker)
+            lock (_friendLocker)
             {
-                foreach (User u in FriendList)
-                {
-                    if (u.Uid == uid)
-                        return u;
-                }
-                return null;
+                return FriendList.FirstOrDefault(u => u.Uid == uid);
             }
         }
 
@@ -266,12 +252,10 @@ namespace Skylabs.Lobby
         /// </summary>
         public void HostedGameStarted()
         {
-            if (CurrentHostedGamePort != -1)
-            {
-                var sm = new SocketMessage("gamestarted");
-                sm.AddData("port", CurrentHostedGamePort);
-                WriteMessage(sm);
-            }
+            if (CurrentHostedGamePort == -1) return;
+            var sm = new SocketMessage("gamestarted");
+            sm.AddData("port", CurrentHostedGamePort);
+            WriteMessage(sm);
         }
 
         /// <summary>
@@ -297,59 +281,57 @@ namespace Skylabs.Lobby
         public void Login(LoginFinished onFinish, LoginProgressUpdate onUpdate, string email, string password,
                           string captcha, UserStatus status)
         {
-            if (Socket.Connected)
-            {
-                var t = new Thread(() =>
+            if (!_socket.Connected) return;
+            var t = new Thread(() =>
+                                   {
+                                       //TODO Need to add a method to handle 2-step signin.
+                                       _onLoginFinished = onFinish;
+                                       string appName = "skylabs-LobbyClient-" + Version;
+                                       var s = new Service("code", appName);
+                                       s.setUserCredentials(email, password);
+                                       if (captcha != null && _mCaptchaToken != null)
                                        {
-                                           //TODO Need to add a method to handle 2-step signin.
-                                           _onLoginFinished = onFinish;
-                                           String appName = "skylabs-LobbyClient-" + Version;
-                                           var s = new Service("code", appName);
-                                           s.setUserCredentials(email, password);
-                                           if (captcha != null && _mCaptchaToken != null)
+                                           onUpdate.Invoke("Verifying captcha");
+                                           if (!String.IsNullOrWhiteSpace(captcha) ||
+                                               !String.IsNullOrWhiteSpace(_mCaptchaToken))
                                            {
-                                               onUpdate.Invoke("Verifying captcha");
-                                               if (!String.IsNullOrWhiteSpace(captcha) ||
-                                                   !String.IsNullOrWhiteSpace(_mCaptchaToken))
-                                               {
-                                                   s.Credentials.CaptchaToken = _mCaptchaToken;
-                                                   s.Credentials.CaptchaAnswer = captcha;
-                                               }
+                                               s.Credentials.CaptchaToken = _mCaptchaToken;
+                                               s.Credentials.CaptchaAnswer = captcha;
                                            }
-                                           try
-                                           {
-                                               Debug.WriteLine("Querying Google...");
-                                               onUpdate.Invoke("Logging into Google...");
-                                               string ret = s.QueryClientLoginToken();
-                                               onUpdate.Invoke("Sending login token to Server...");
-                                               Debug.WriteLine("Received login token.");
-                                               var sm = new SocketMessage("login");
-                                               sm.AddData("email", email);
-                                               sm.AddData("token", ret);
-                                               sm.AddData("status", status);
-                                               WriteMessage(sm);
-                                               onUpdate.Invoke("Waiting for server response...");
-                                           }
-                                           catch (CaptchaRequiredException ce)
-                                           {
-                                               _mCaptchaToken = ce.Token;
-                                               if (OnCaptchaRequired != null)
-                                                   OnCaptchaRequired.Invoke(
-                                                       "https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
-                                           }
-                                           catch (AuthenticationException re)
-                                           {
-                                               // var cu = (string) re.Data["CaptchaUrl"]; // unused
-                                               onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
-                                           }
-                                           catch (WebException)
-                                           {
-                                               onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
-                                           }
-                                           onFinish.Invoke(LoginResult.WaitingForResponse, DateTime.Now, "");
-                                       });
-                t.Start();
-            }
+                                       }
+                                       try
+                                       {
+                                           Debug.WriteLine("Querying Google...");
+                                           onUpdate.Invoke("Logging into Google...");
+                                           string ret = s.QueryClientLoginToken();
+                                           onUpdate.Invoke("Sending login token to Server...");
+                                           Debug.WriteLine("Received login token.");
+                                           var sm = new SocketMessage("login");
+                                           sm.AddData("email", email);
+                                           sm.AddData("token", ret);
+                                           sm.AddData("status", status);
+                                           WriteMessage(sm);
+                                           onUpdate.Invoke("Waiting for server response...");
+                                       }
+                                       catch (CaptchaRequiredException ce)
+                                       {
+                                           _mCaptchaToken = ce.Token;
+                                           if (OnCaptchaRequired != null)
+                                               OnCaptchaRequired.Invoke(
+                                                   "https://www.google.com/accounts/DisplayUnlockCaptcha", ce.Url);
+                                       }
+                                       catch (AuthenticationException re)
+                                       {
+                                           // var cu = (string) re.Data["CaptchaUrl"]; // unused
+                                           onFinish.Invoke(LoginResult.Failure, DateTime.Now, re.Message);
+                                       }
+                                       catch (WebException)
+                                       {
+                                           onFinish.Invoke(LoginResult.Failure, DateTime.Now, "Connection problem.");
+                                       }
+                                       onFinish.Invoke(LoginResult.WaitingForResponse, DateTime.Now, "");
+                                   });
+            t.Start();
         }
 
         /// <summary>
@@ -360,13 +342,13 @@ namespace Skylabs.Lobby
         private void OnMessageReceived(SkySocket ss, SocketMessage sm)
         {
             User u;
-            if (Callbacks.ContainsKey(sm.Header.ToLower()))
+            if (_callbacks.ContainsKey(sm.Header.ToLower()))
             {
-                SocketMessageResult a = Callbacks[sm.Header.ToLower()];
+                SocketMessageResult a = _callbacks[sm.Header.ToLower()];
                 if (a != null)
                 {
                     a.Invoke(sm);
-                    Callbacks.Remove(sm.Header.ToLower());
+                    _callbacks.Remove(sm.Header.ToLower());
                     return;
                 }
             }
@@ -398,7 +380,7 @@ namespace Skylabs.Lobby
                                             (sm["message"] != null) ? (string) sm["message"] : "");
                     break;
                 case "friends":
-                    lock (friendLocker)
+                    lock (_friendLocker)
                     {
                         FriendList = new List<User>();
                         foreach (NameValuePair p in sm.Data)
@@ -423,17 +405,12 @@ namespace Skylabs.Lobby
                         break;
                     }
                 case "friendrequest":
-                    lock (noteLocker)
+                    lock (_noteLocker)
                     {
                         u = (User) sm.Data[0].Value;
-                        foreach (Notification n in Notifications)
+                        if (Notifications.OfType<FriendRequestNotification>().Any(fr => fr.User.Uid == u.Uid))
                         {
-                            var fr = n as FriendRequestNotification;
-                            if (fr != null)
-                            {
-                                if (fr.User.Uid == u.Uid)
-                                    return;
-                            }
+                            return;
                         }
                         Notifications.Add(new FriendRequestNotification(u, this, _nextNoteId));
                         _nextNoteId++;
@@ -443,7 +420,7 @@ namespace Skylabs.Lobby
                     }
                     break;
                 case "status":
-                    lock (friendLocker)
+                    lock (_friendLocker)
                     {
                         u = (User) sm.Data[0].Value;
                         User f = FriendList.FirstOrDefault(us => us.Equals(u));
@@ -468,7 +445,7 @@ namespace Skylabs.Lobby
                     }
                     break;
                 case "customstatus":
-                    lock (friendLocker)
+                    lock (_friendLocker)
                     {
                         u = (User) sm["user"];
                         var s = (string) sm["status"];
@@ -495,7 +472,7 @@ namespace Skylabs.Lobby
                     break;
                 case "gamelist":
                     {
-                        lock (gameLocker)
+                        lock (_gameLocker)
                         {
                             var games = sm["list"] as List<HostedGame>;
                             Games = games;
@@ -508,7 +485,7 @@ namespace Skylabs.Lobby
                     }
                 case "gamehosting":
                     {
-                        lock (gameLocker)
+                        lock (_gameLocker)
                         {
                             var gm = new HostedGame(sm);
                             Games.Add(gm);
@@ -519,14 +496,14 @@ namespace Skylabs.Lobby
                     }
                 case "gamestarted":
                     {
-                        lock (gameLocker)
+                        lock (_gameLocker)
                         {
                             var p = (int) sm["port"];
 
                             HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
                             {
-                                gm.GameStatus = HostedGame.eHostedGame.GameInProgress;
+                                gm.GameStatus = HostedGame.EHostedGame.GameInProgress;
                                 if (OnGameHostEvent != null)
                                     LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
                             }
@@ -535,14 +512,14 @@ namespace Skylabs.Lobby
                     }
                 case "gameend":
                     {
-                        lock (gameLocker)
+                        lock (_gameLocker)
                         {
                             var p = (int) sm["port"];
 
                             HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
                             {
-                                gm.GameStatus = HostedGame.eHostedGame.StoppedHosting;
+                                gm.GameStatus = HostedGame.EHostedGame.StoppedHosting;
                                 if (OnGameHostEvent != null)
                                     LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
                                 Games.Remove(gm);
@@ -600,11 +577,11 @@ namespace Skylabs.Lobby
         /// <summary>
         ///   Sets the users custom status.
         /// </summary>
-        /// <param name="CustomStatus"> </param>
-        public void SetCustomStatus(string CustomStatus)
+        /// <param name="customStatus"> </param>
+        public void SetCustomStatus(string customStatus)
         {
             var sm = new SocketMessage("customstatus");
-            sm.AddData("customstatus", CustomStatus);
+            sm.AddData("customstatus", customStatus);
             WriteMessage(sm);
         }
 

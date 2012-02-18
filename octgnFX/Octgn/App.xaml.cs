@@ -11,7 +11,7 @@ using Octgn.Launcher;
 
 namespace Octgn
 {
-    public partial class OctgnApp : Application
+    public partial class OctgnApp
     {
         internal const string ClientName = "OCTGN.NET";
         internal static readonly Version OctgnVersion = GetClientVersion();
@@ -20,16 +20,14 @@ namespace Octgn
         private static Version GetClientVersion()
         {
             Assembly asm = typeof (OctgnApp).Assembly;
-            var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0];
+            //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0];
             return asm.GetName().Version;
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            Updates.UpgradeSettings();
-
-            Updates.PerformHouskeeping();
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            base.OnStartup(e);
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
             Program.GamesRepository = new GamesRepository();
 
@@ -52,7 +50,7 @@ namespace Octgn
             Program.LauncherWindow.Show();
             Program.ChatWindows = new List<ChatWindow>();
 #else
-            UpdateChecker uc = new UpdateChecker();
+            var uc = new UpdateChecker();
             uc.ShowDialog();
             if (!uc.IsClosingDown)
             {
@@ -61,7 +59,7 @@ namespace Octgn
             }
             else
             {
-                Application.Current.MainWindow = null;
+                Current.MainWindow = null;
                 Program.LauncherWindow.Close();
                 Program.Exit();
             }
@@ -72,17 +70,18 @@ namespace Octgn
                 Properties["ArbitraryArgName"] = e.Args[0];
             }
 
-            base.OnStartup(e);
+
+
         }
 
-        private void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
+        private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
             Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, e.Exception.ToString());
 #endif
         }
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception) e.ExceptionObject;
             if (!Debugger.IsAttached)

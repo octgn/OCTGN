@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Windows;
 
-namespace Octgn.Script
+namespace Octgn.Scripting.Controls
 {
-    // TODO : refactor this class
+    // TODO : refactor this class ... why is it named OCTGN
     public static class OCTGN
     {
         public static int InputInt(string title, string prompt, int n)

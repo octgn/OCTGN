@@ -17,7 +17,7 @@ namespace Octgn.Data
          * */
 
         public SortedList<string, object> Properties;
-        public Set set;
+        public Set Set;
 
         public CardModel()
         {
@@ -39,7 +39,7 @@ namespace Octgn.Data
                                                   Name, ImageUri));
             reader.Read(); // <card>
 
-            this.set = set;
+            Set = set;
 
             while (reader.IsStartElement("property"))
             {
@@ -106,7 +106,7 @@ namespace Octgn.Data
 
         public string Picture
         {
-            get { return set.GetPackUri() + ImageUri; }
+            get { return Set.GetPackUri() + ImageUri; }
         }
 
         public string AlternatePicture
@@ -114,7 +114,7 @@ namespace Octgn.Data
             get
             {
                 string alternateUri = ImageUri.Replace(".jpg", ".b.jpg");
-                return set.GetPackUri() + alternateUri;
+                return Set.GetPackUri() + alternateUri;
             }
         }
 
@@ -131,7 +131,7 @@ namespace Octgn.Data
                            Name = Name,
                            ImageUri = ImageUri,
                            Properties = Properties,
-                           set = set,
+                           Set = Set
                            Alternate = Alternate
                        };
         }
@@ -144,7 +144,7 @@ namespace Octgn.Data
                                  Id = (Guid) row["id"],
                                  Name = (string) row["name"],
                                  ImageUri = (string) row["image"],
-                                 set = game.GetSet((Guid) row["setId"]),
+                                 Set = game.GetSet((Guid) row["setId"]),
                                  Alternate = (Guid) row["Alternate"],
                                  Properties =
                                      new SortedList<string, object>(columns.Count - 4,
@@ -163,13 +163,13 @@ namespace Octgn.Data
 
     public class CardPropertyComparer : IComparer, IComparer<CardModel>
     {
-        private readonly bool isName;
-        private readonly string propertyName;
+        private readonly bool _isName;
+        private readonly string _propertyName;
 
         public CardPropertyComparer(string propertyName)
         {
-            this.propertyName = propertyName;
-            isName = propertyName == "Name";
+            _propertyName = propertyName;
+            _isName = propertyName == "Name";
         }
 
         #region IComparer Members
@@ -185,11 +185,11 @@ namespace Octgn.Data
 
         public int Compare(CardModel x, CardModel y)
         {
-            if (isName)
+            if (_isName)
                 return String.CompareOrdinal(x.Name, y.Name);
 
-            object px = x.Properties[propertyName];
-            object py = y.Properties[propertyName];
+            object px = x.Properties[_propertyName];
+            object py = y.Properties[_propertyName];
             if (px == null) return py == null ? 0 : -1;
             return ((IComparable) px).CompareTo(py);
         }

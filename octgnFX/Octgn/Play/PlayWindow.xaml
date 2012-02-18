@@ -81,6 +81,8 @@
           <ms:RibbonButton Label="About OCTGN" LargeImageSource="/Resources/Icons/About.png" Click="ShowAboutWindow" />
           <ms:RibbonButton Label="Console" x:Name="Console" LargeImageSource="/Resources/Icons/console.png"
                            Click="ConsoleClicked" Visibility="Hidden" />
+          <ms:RibbonButton Label="Game Rules" x:Name="Rules" LargeImageSource="/Resources/Icons/rules.png"
+                           Click="ShowRules" />
         </ms:RibbonGroup>
       </ms:RibbonTab>
     </ms:Ribbon>
