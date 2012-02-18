@@ -75,6 +75,7 @@ namespace Octgn.Play
         private Group _group;
         private Color? _highlight;
         private bool _isAlternateImage;
+        private bool _isAlternate;
 
         // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
 
@@ -666,7 +667,7 @@ namespace Octgn.Play
 
         internal bool hasProperty(string propertyName)
         {
-            return (Type.model.hasProperty(propertyName));
+            return (Type.Model.hasProperty(propertyName));
         }
     }
 }

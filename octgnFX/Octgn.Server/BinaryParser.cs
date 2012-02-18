@@ -488,7 +488,7 @@ namespace Octgn.Server
                         {
                             int arg0 = reader.ReadInt32();
                             bool arg1 = reader.ReadBoolean();
-                            handler.IsAlternate(arg0, arg1);
+                            _handler.IsAlternate(arg0, arg1);
                             break;
                         }
                     case 255:

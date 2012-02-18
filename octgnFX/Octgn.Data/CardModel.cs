@@ -131,7 +131,7 @@ namespace Octgn.Data
                            Name = Name,
                            ImageUri = ImageUri,
                            Properties = Properties,
-                           Set = Set
+                           Set = Set,
                            Alternate = Alternate
                        };
         }

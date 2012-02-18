@@ -363,7 +363,7 @@ namespace Octgn.Server
 
         public void IsAlternate(int c, bool isAlternate)
         {
-            broadcaster.IsAlternate(c, isAlternate);
+            _broadcaster.IsAlternate(c, isAlternate);
         }
         public void IsAlternateImage(int c, bool isAlternateImage)
         {

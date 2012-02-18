@@ -1020,7 +1020,7 @@ namespace Octgn.Server
             stream.Seek(4, SeekOrigin.Begin);
             var writer = new BinaryWriter(stream);
 
-            writer.Write(handler.muted);
+            writer.Write(_handler.Muted);
             writer.Write((byte)90);
             writer.Write(c);
             writer.Write(isAlternate);

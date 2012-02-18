@@ -53,7 +53,7 @@ namespace Octgn.Server
                             int arg0 = int.Parse(reader.ReadElementString("cardid"));
                             bool arg1 = bool.Parse(reader.ReadElementString("isalternate"));
 
-                            handler.IsAlternate(arg0, arg1);
+                            _handler.IsAlternate(arg0, arg1);
                             break;
                         }
                     case "IsAlternateImage":

@@ -894,11 +894,11 @@ namespace Octgn.Server
         public void IsAlternate(int c, bool isAlternate)
         {
             StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("IsAlternate");
-            if (handler.muted != 0)
-                writer.WriteAttributeString("muted", handler.muted.ToString(CultureInfo.InvariantCulture));
+            if (_handler.Muted != 0)
+                writer.WriteAttributeString("muted", _handler.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("cardid", c.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("isalternate", isAlternate.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();

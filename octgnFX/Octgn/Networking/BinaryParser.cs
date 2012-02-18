@@ -897,7 +897,7 @@ namespace Octgn.Networking
                         if (arg0 == null)
                         { Debug.WriteLine("[Alternate] Card not found."); return; }
                         bool arg1 = reader.ReadBoolean();
-                        handler.IsAlternate(arg0, arg1);
+                        _handler.IsAlternate(arg0, arg1);
                         break;
                     }
                 default:

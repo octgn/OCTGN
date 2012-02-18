@@ -50,7 +50,7 @@ namespace Octgn.Networking
         public void IsAlternate(Card c, bool isAlternate)
         {
             StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(sb, xmlSettings);
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
             writer.WriteStartElement("IsAlternate");
             if (Program.Client.Muted != 0)

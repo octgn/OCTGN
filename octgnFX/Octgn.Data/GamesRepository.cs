@@ -179,7 +179,7 @@ namespace Octgn.Data
                 }
                     //special case of "Alternate" property - removing this operation will result in requiring the Game Def to have 
                     //"Alternate" listed as a custom property in order to use it
-                    using (var com = sc.CreateCommand())
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
                     {
                         com.CommandText = command;
                         com.Parameters.AddWithValue("@card_id", "");
