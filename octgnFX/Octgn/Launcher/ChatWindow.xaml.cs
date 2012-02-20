@@ -27,7 +27,8 @@ namespace Octgn.Launcher
             InitializeComponent();
             Users = new List<User>();
             Id = id;
-            if (Id == 0)
+            ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(id);
+            if (Id == 0 || cr.UserCount <= 2)
                 miLeaveChat.IsEnabled = false;
             Program.LobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
             var cm = new ContextMenu();
@@ -114,6 +115,10 @@ namespace Octgn.Launcher
                                                                  break;
                                                              }
                                                      }
+                                                    if (Id == 0 || cr.UserCount <= 2)
+                                                        miLeaveChat.IsEnabled = false;
+                                                    else
+                                                        miLeaveChat.IsEnabled = true;
                                                  }));
             }
         }
