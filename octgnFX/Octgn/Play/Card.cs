@@ -57,27 +57,24 @@ namespace Octgn.Play
 
         private readonly int _id;
 
+        internal List<Player> PlayersLooking = new List<Player>(1);
+         // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
         private readonly ObservableCollection<Player> _playersPeeking = new ObservableCollection<Player>();
+        // List of players, who had peeked at this card. The list is reset when the card changes group.
         internal bool MayBeConsideredFaceUp;
-
-        
-        private bool isAlternate = false;
         /* For better responsiveness, turning a card face down is applied immediately,
 															   without waiting on the server.
 															   If a script tries to print the card's lName, when the message arrives the card is already
 															   face down although it should still be up. */
 
-        internal List<Player> PlayersLooking = new List<Player>(1);
-        // List of players, who had peeked at this card. The list is reset when the card changes group.
-
+        
         //private CardDef _definition;
         private bool _faceUp;
         private Group _group;
         private Color? _highlight;
         private bool _isAlternateImage;
-        private bool _isAlternate;
-
-        // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
+        private CardModel _alternateOf;
+        private CardModel _alternate;
 
         private CardOrientation _rot;
         private bool _selected;
@@ -85,21 +82,7 @@ namespace Octgn.Play
         private double _x, _y;
 
         #endregion Private fields
-        public bool IsAlternate
-        {
-            get { return isAlternate; }
-            set
-            {
-                if (value != isAlternate)
-                {
-                    Program.Client.Rpc.IsAlternate(this, value);
-
-                    isAlternate = value;
-                    OnPropertyChanged("CardModel");
-                }
-            }
-        }
-
+        
         internal Card(Player owner, int id, ulong key, CardDef def, CardModel model, bool mySecret)
             : base(owner)
         {
@@ -107,7 +90,8 @@ namespace Octgn.Play
             Type = new CardIdentity(id) {Alias = false, Key = key, Model = model, MySecret = mySecret};
             // var _definition = def;
             All.Add(id, this);
-            _isAlternate = false;
+            _alternateOf = null;
+            loadAlternate();
             _isAlternateImage = false;
         }
 
@@ -198,8 +182,8 @@ namespace Octgn.Play
                 PeekingPlayers.Clear();
                 //Switch back to original image.
                     IsAlternateImage = false;
-                    //if (switchWithAlternateOnGroupChange) TODO
-                    //{ switchWithAlternate(); }
+                    //if (revertToOriginalOnGroupChange) TODO
+                    //{ SetModel(_alternateOf); }
             }
         }
 
@@ -480,7 +464,17 @@ namespace Octgn.Play
         internal void SetModel(CardModel model)
         {
             Type.Model = model;
-            OnPropertyChanged("Picture");
+            OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
+            loadAlternate();
+        }
+
+        internal void loadAlternate()
+        {
+           if (Type.Model.hasProperty("Alternate"))
+            {
+               //if (Type.Model.isMutable) TODO: Deal with already loaded models
+                _alternate = new CardModel(Type.Model.Alternate);
+            }
         }
 
         internal bool IsVisibleToAll()
@@ -668,6 +662,36 @@ namespace Octgn.Play
         internal bool hasProperty(string propertyName)
         {
             return (Type.Model.hasProperty(propertyName));
+        }
+
+        internal void SwitchWithAlternate()
+        {
+            if (_alternate != null)
+            {//if there is an alternate, we want to switch to it
+                if (_alternateOf == null)
+                {//Switching to first alternate
+                    _alternateOf = Type.Model;
+                }
+                else
+                {//Not the first, not the last
+
+                }
+                SetModel(_alternate);//TODO SetModel needs to load up the alternate
+                Program.Client.Rpc.SwitchWithAlternate(this);
+            }
+            //if there is no alternate, we might have reached the end of the chain
+            else if (_alternateOf != null)
+            {//Then we've come from somewhere, and we want to go back.
+                SetModel(_alternateOf);
+                _alternateOf = null;
+
+            }
+            //if we don't have a specified alternate, and we haven't come from an alternate, do nothing.
+        }
+
+        public bool isAlternate()
+        {
+            return (_alternateOf == null);//
         }
     }
 }

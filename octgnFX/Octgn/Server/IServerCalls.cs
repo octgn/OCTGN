@@ -8,7 +8,7 @@ namespace Octgn.Server
     {
         void IsAlternateImage(Card c, bool isAlternateImage);
 
-        void IsAlternate(Card c, bool isAlternate);
+        void SwitchWithAlternate(Card c);
 
         void Binary();
 

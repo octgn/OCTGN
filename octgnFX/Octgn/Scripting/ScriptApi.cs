@@ -179,7 +179,7 @@ namespace Octgn.Scripting
 
         public bool IsAlternate(int id)
         {
-            return Card.Find(id).IsAlternate;
+            return Card.Find(id).isAlternate();
         }
         public bool IsAlternateImage(int id)
         {
@@ -197,7 +197,7 @@ namespace Octgn.Scripting
             {
                 Guid alternateCard = (Guid)c.GetProperty("Alternate");
                 //c.SetModel(findModel(c, alternateCard)); 
-                _engine.Invoke(() => { c.IsAlternate = (c.IsAlternate != true); });
+                _engine.Invoke(() => { c.SwitchWithAlternate(); });
             }
  //           Data.CardModel newModel = new Data.CardModel c.GetProperty;
  //           c.IsAlternate = !c.IsAlternate;

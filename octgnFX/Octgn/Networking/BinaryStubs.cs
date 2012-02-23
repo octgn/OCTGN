@@ -11,7 +11,7 @@ namespace Octgn.Networking
     {
         #region IServerCalls Members
 
-        public void IsAlternate(Card c, bool isAlternate)
+        public void SwitchWithAlternate(Card c)
         {
             MemoryStream stream = new MemoryStream(512);
             stream.Seek(4, SeekOrigin.Begin);
@@ -23,8 +23,8 @@ namespace Octgn.Networking
                 writer.Write(0);
             writer.Write((byte)90);
             writer.Write(c.Id);
-            writer.Write(isAlternate);
-            writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+            writer.Flush(); 
+            writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int)stream.Length);
             writer.Close();
             Send(stream.ToArray());

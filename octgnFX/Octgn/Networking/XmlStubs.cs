@@ -47,16 +47,15 @@ namespace Octgn.Networking
             Send(sb.ToString());
         }
 
-        public void IsAlternate(Card c, bool isAlternate)
+        public void SwitchWithAlternate(Card c)
         {
             StringBuilder sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
-            writer.WriteStartElement("IsAlternate");
+            writer.WriteStartElement("SwitchWithAlternate");
             if (Program.Client.Muted != 0)
                 writer.WriteAttributeString("muted", Program.Client.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("cardid", c.Id.ToString());
-            writer.WriteElementString("isalternate", isAlternate.ToString());
             writer.WriteEndElement();
             writer.Close();
             Send(sb.ToString());

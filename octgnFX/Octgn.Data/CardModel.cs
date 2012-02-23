@@ -12,12 +12,13 @@ namespace Octgn.Data
     {
         /*
          *  The CardModel holds all the information the Set Definition gives to us. Access to the model itself
-         *  I would expect to be off limits.
+         *  I would expect to be off limits to the game def.
          * 
          * */
 
         public SortedList<string, object> Properties;
         public Set Set;
+        private Guid guid;
 
         public CardModel()
         {
@@ -31,7 +32,8 @@ namespace Octgn.Data
             Name = reader.Value;
             reader.MoveToAttribute("id");
             Id = new Guid(reader.Value);
-            isAlternate = false;
+            isMutable = false;
+            Alternate = System.Guid.Empty;
             Uri cardImageUri = definition.GetRelationship("C" + Id.ToString("N")).TargetUri;
             ImageUri = cardImageUri.OriginalString;
             if (!package.PartExists(cardImageUri))
@@ -44,55 +46,55 @@ namespace Octgn.Data
             while (reader.IsStartElement("property"))
             {
                 reader.MoveToAttribute("name");
-                PropertyDef prop = game.CustomProperties.FirstOrDefault(p => p.Name == reader.Value);
-                if (prop == null)
-                    throw new ArgumentException(string.Format("The property '{0}' is unknown", reader.Value));
-                reader.MoveToAttribute("value");
-                try
+                if (reader.Value.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    switch (prop.Type)
+                    //Alternate contains the GUID of the card it switches to.
+                    try
+                    { Alternate = new Guid(reader.Value); }
+                    catch (Exception e)
                     {
-                        case PropertyType.String:
-                            if (prop.Name == "alternate")
-                            {
-                                String s = reader.Value;
-                                if (s.Equals("true"))
-                                {
-                                    isAlternate = true;//This card is the end of an alternate chain (an alternate chain is a singly-linked list)
-                                }
-                                else
-                                {//Alternate contains the GUID of the card it switches to.
-                                    try
-                                    { Alternate = new Guid(s); }
-                                    catch (Exception e)
-                                    {
-                                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property {1}. Alternate must be either a GUID or 'TRUE'",
-                                                               reader.Value, prop.Name));
-                                    }
-                                }
-                            }
-                            else
-                                { Properties.Add(prop.Name, reader.Value); }
-                            break;
-                        case PropertyType.Integer:
-                            Properties.Add(prop.Name, Int32.Parse(reader.Value));
-                            break;
-                        case PropertyType.Char:
-                            Properties.Add(prop.Name, Char.Parse(reader.Value));
-                            break;
-                        default:
-                            throw new NotImplementedException();
+                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property Alternate. Alternate must be a GUID.",
+                                                reader.Value));
                     }
                 }
-                catch (FormatException)
+                else
                 {
-                    throw new ArgumentException(String.Format("The value {0} is not of expected type for property {1}",
-                                                              reader.Value, prop.Name));
+                    PropertyDef prop = game.CustomProperties.FirstOrDefault(p => p.Name == reader.Value);
+                    if (prop == null)
+                        throw new ArgumentException(string.Format("The property '{0}' is unknown", reader.Value));
+                    reader.MoveToAttribute("value");
+                    try
+                    {
+                        switch (prop.Type)
+                        {
+                            case PropertyType.String:
+                                Properties.Add(prop.Name, reader.Value);
+                                break;
+                            case PropertyType.Integer:
+                                Properties.Add(prop.Name, Int32.Parse(reader.Value));
+                                break;
+                            case PropertyType.Char:
+                                Properties.Add(prop.Name, Char.Parse(reader.Value));
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property {1}",
+                                                                  reader.Value, prop.Name));
+                    }
                 }
                 reader.Read(); // <property/>
             }
 
             reader.Read(); // </card>
+        }
+
+        public CardModel(Guid guid)
+        {//This constructor will generate a new CardModel by accessing the database and searching for the appropriate GUID
+            
         }
 
         public Guid Id { get; internal set; }
@@ -101,8 +103,9 @@ namespace Octgn.Data
 
         public string ImageUri { get; internal set; }
 
-        public Guid Alternate { get; internal set; }//The location of the alternate, if any (may be null)
-        public bool isAlternate { get; internal set; }//a flag; if true, this card is read-only. (and will only be instanced once<TODO>)
+        public Guid Alternate { get; internal set; }//The location of the alternate. If none is specified, will be System.Guid.Empty
+        public bool AlternateOnly { get; internal set; }//a flag; if true, this card will not be used stand-alone. Mainly used in Deck Editor<TODO>
+        public bool isMutable { get; internal set; }//a flag; if true, this card is read-only. (and will only be instanced once<TODO>)
 
         public string Picture
         {
@@ -157,6 +160,7 @@ namespace Octgn.Data
 
         public bool hasProperty(string propertyName)
         {
+            if (propertyName == "Alternate") return (Alternate != System.Guid.Empty);
             return Properties.ContainsKey(propertyName);
         }
     }
