@@ -23,7 +23,14 @@ namespace Octgn.Data
         public CardModel()
         {
         }
-
+        /// <summary>
+        /// This constructor parses the XML in reader. Used when reading a card from XML, mainly when installing a set.
+        /// </summary>
+        /// <param name="reader">The XML</param>
+        /// <param name="game"></param>
+        /// <param name="set"></param>
+        /// <param name="definition"></param>
+        /// <param name="package"></param>
         public CardModel(XmlReader reader, Game game, Set set, PackagePart definition, Package package)
         {
             Properties = new SortedList<string, object>(game.CustomProperties.Count,
@@ -32,8 +39,9 @@ namespace Octgn.Data
             Name = reader.Value;
             reader.MoveToAttribute("id");
             Id = new Guid(reader.Value);
-            isMutable = false;
+ //           isMutable = false;
             Alternate = System.Guid.Empty;
+            AlternateOnly = false;
             Uri cardImageUri = definition.GetRelationship("C" + Id.ToString("N")).TargetUri;
             ImageUri = cardImageUri.OriginalString;
             if (!package.PartExists(cardImageUri))
@@ -50,11 +58,26 @@ namespace Octgn.Data
                 {
                     //Alternate contains the GUID of the card it switches to.
                     try
-                    { Alternate = new Guid(reader.Value); }
+                    {
+                        reader.MoveToAttribute("value");
+                        Alternate = new Guid(reader.Value); 
+                    }
                     catch (Exception e)
                     {
                         throw new ArgumentException(String.Format("The value {0} is not of expected type for property Alternate. Alternate must be a GUID.",
                                                 reader.Value));
+                    }
+                }
+                else if (reader.Value.Equals("AlternateOnly", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    reader.MoveToAttribute("value");
+                    bool temp;
+                    if (Boolean.TryParse(reader.Value, out temp))
+                    { AlternateOnly = temp; }
+                    else
+                    {
+                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property AlternateOnly. AlternateOnly must be either true or false.",
+                                                  reader.Value));
                     }
                 }
                 else
@@ -104,7 +127,7 @@ namespace Octgn.Data
         public string ImageUri { get; internal set; }
 
         public Guid Alternate { get; internal set; }//The location of the alternate. If none is specified, will be System.Guid.Empty
-        public bool AlternateOnly { get; internal set; }//a flag; if true, this card will not be used stand-alone. Mainly used in Deck Editor<TODO>
+        public bool AlternateOnly { get; internal set; }//a flag; if true, this card will not be placed inside a deck. Mainly used in Deck Editor<TODO>
         public bool isMutable { get; internal set; }//a flag; if true, this card is read-only. (and will only be instanced once<TODO>)
 
         public string Picture
@@ -135,7 +158,8 @@ namespace Octgn.Data
                            ImageUri = ImageUri,
                            Properties = Properties,
                            Set = Set,
-                           Alternate = Alternate
+                           Alternate = Alternate,
+                           AlternateOnly = AlternateOnly
                        };
         }
 
@@ -149,6 +173,7 @@ namespace Octgn.Data
                                  ImageUri = (string) row["image"],
                                  Set = game.GetSet((Guid) row["setId"]),
                                  Alternate = (Guid) row["Alternate"],
+                                 AlternateOnly = (bool) row["AlternateOnly"],
                                  Properties =
                                      new SortedList<string, object>(columns.Count - 4,
                                                                     StringComparer.InvariantCultureIgnoreCase)
@@ -160,7 +185,8 @@ namespace Octgn.Data
 
         public bool hasProperty(string propertyName)
         {
-            if (propertyName == "Alternate") return (Alternate != System.Guid.Empty);
+            if (propertyName.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase)) return (Alternate != System.Guid.Empty);
+            if (propertyName.Equals("AlternateOnly", StringComparison.InvariantCultureIgnoreCase)) return (AlternateOnly != null);
             return Properties.ContainsKey(propertyName);
         }
     }

@@ -361,9 +361,9 @@ namespace Octgn.Server
                 _turnStopPlayers.Remove(id);
         }
 
-        public void IsAlternate(int c, bool isAlternate)
+        public void SwitchWithAlternate(int c)
         {
-            _broadcaster.IsAlternate(c, isAlternate);
+            _broadcaster.SwitchWithAlternate(c);
         }
         public void IsAlternateImage(int c, bool isAlternateImage)
         {

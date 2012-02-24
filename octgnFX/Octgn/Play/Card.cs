@@ -473,7 +473,7 @@ namespace Octgn.Play
            if (Type.Model.hasProperty("Alternate"))
             {
                //if (Type.Model.isMutable) TODO: Deal with already loaded models
-                _alternate = new CardModel(Type.Model.Alternate);
+                _alternate = Database.GetCardById(Type.Model.Alternate);
             }
         }
 

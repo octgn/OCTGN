@@ -428,9 +428,9 @@ namespace Octgn.Data
             {
                 //Build Query
                 sb.Append("INSERT INTO [cards](");
-                sb.Append("[id],[game_id],[set_real_id],[name], [image], [alternate]");
+                sb.Append("[id],[game_id],[set_real_id],[name], [image], [alternate], [alternateOnly]");
                 sb.Append(") VALUES(");
-                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image,@alternate");
+                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image,@alternate,@alternateOnly");
                 sb.Append(");\n");
                 com.CommandText = sb.ToString();
 
@@ -440,6 +440,7 @@ namespace Octgn.Data
                 com.Parameters.AddWithValue("@name", card.Name);
                 com.Parameters.AddWithValue("@image", card.ImageUri);
                 com.Parameters.AddWithValue("@alternate", card.Alternate.ToString());
+                com.Parameters.AddWithValue("@alternateOnly", card.AlternateOnly.ToString());
                 com.ExecuteNonQuery();
             }
             //Add custom properties for the card.
@@ -452,8 +453,12 @@ namespace Octgn.Data
             string command = sb.ToString();
             foreach (KeyValuePair<string, object> pair in card.Properties)
             {
-                if (pair.Key == "Alternate")
+                if (pair.Key.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase)
+                    || pair.Key.Equals("AlternateOnly", StringComparison.InvariantCultureIgnoreCase)
+                    //|| pair.Key.Equals("Mutable", StringComparison.InvariantCultureIgnoreCase)
+                    )
                 {
+                    //Do nothing - these properties are already taken care of
                 }
                 else
                 {

@@ -548,12 +548,12 @@ namespace Octgn.Server
                 }
             //					Program.server.Disconnected(kvp.Key);
         }
-        public void IsAlternate(int c, bool isAlternate)
+        public void SwitchWithAlternate(int c)
         {
             if (_xml != null)
-                _xml.IsAlternate(c, isAlternate);
+                _xml.SwitchWithAlternate(c);
             if (_bin != null)
-                _bin.IsAlternate(c, isAlternate);
+                _bin.SwitchWithAlternate(c);
             Send();
         }
 

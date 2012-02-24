@@ -1014,7 +1014,7 @@ namespace Octgn.Server
 
         protected abstract void Send(byte[] data);
 
-        public void IsAlternate(int c, bool isAlternate)
+        public void SwitchWithAlternate(int c)
         {
             var stream = new MemoryStream(512);
             stream.Seek(4, SeekOrigin.Begin);
@@ -1023,7 +1023,6 @@ namespace Octgn.Server
             writer.Write(_handler.Muted);
             writer.Write((byte)90);
             writer.Write(c);
-            writer.Write(isAlternate);
             writer.Flush();
             writer.Seek(0, SeekOrigin.Begin);
             writer.Write((int)stream.Length);

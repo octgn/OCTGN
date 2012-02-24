@@ -35,7 +35,9 @@ CREATE TABLE [cards] (
   [set_real_id] INTEGER REFERENCES [sets]([real_id]) ON DELETE CASCADE ON UPDATE CASCADE, 
   [name] TEXT NOT NULL, 
   [image] TEXT NOT NULL,
-  [alternate] TEXT);
+  [alternate] TEXT,
+  [alternateOnly] BOOLEAN);
+
 
 CREATE TABLE [custom_properties] (
   [real_id] INTEGER PRIMARY KEY AUTOINCREMENT, 

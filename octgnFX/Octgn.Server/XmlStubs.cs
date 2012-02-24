@@ -891,16 +891,15 @@ namespace Octgn.Server
 
         protected abstract void Send(string xml);
 
-        public void IsAlternate(int c, bool isAlternate)
+        public void SwitchWithAlternate(int c)
         {
             StringBuilder sb = new StringBuilder();
             XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
 
-            writer.WriteStartElement("IsAlternate");
+            writer.WriteStartElement("SwitchWithAlternate");
             if (_handler.Muted != 0)
                 writer.WriteAttributeString("muted", _handler.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("cardid", c.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("isalternate", isAlternate.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
             Send(sb.ToString());
