@@ -63,8 +63,8 @@ namespace Octgn.Play
 
         private readonly Group[] _groups; // Groups this lPlayer owns
         private readonly Hand _hand; // Hand of this lPlayer (may be null)
-        private readonly Brush _solidBrush;
-        private readonly Brush _transparentBrush;
+        private Brush _solidBrush;
+        private Brush _transparentBrush;
         private bool _invertedTable;
         private string _name;
 
@@ -127,7 +127,6 @@ namespace Octgn.Play
 
 
         //Color for the chat.
-        //TODO: extend this to be game wide and be exposed to python. ralig98
         // Associated color
         public Color Color { get; set; }
 
@@ -135,17 +134,21 @@ namespace Octgn.Play
         public Brush Brush
         {
             get { return _solidBrush; }
+            set { _solidBrush = value; }
         }
 
         public Brush TransparentBrush
         {
             get { return _transparentBrush; }
+            set { _transparentBrush = value; }
         }
 
-        private static Color DeterminePlayerColor(int idx)
+        //Set the player's color based on their id.
+        public void SetPlayerColor(int idx)
         {
             // Create the Player's Color
             Color[] baseColors = {
+                                     Color.FromRgb(0x00, 0x00, 0x00),
                                      Color.FromRgb(0x00, 0x66, 0x00),
                                      Color.FromRgb(0x66, 0x00, 0x00),
                                      Color.FromRgb(0x00, 0x00, 0x66),
@@ -167,12 +170,19 @@ namespace Octgn.Play
                                      Color.FromRgb(0xFF, 0x00, 0x00)
                                  };
             if (idx == 255)
-                return baseColors[0];
-            if (idx == 0)
-                return baseColors[18];
+                idx = 0;
             if (idx > 18)
                 idx = idx - 18;
-            return baseColors[idx];
+            Color = baseColors[idx];
+            _solidBrush = new SolidColorBrush(Color);
+            _solidBrush.Freeze();
+            _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
+            _transparentBrush.Freeze();
+
+            //Notify clients that this has changed
+            OnPropertyChanged("Color");
+            OnPropertyChanged("Brush");
+            OnPropertyChanged("TransparentBrush");
         }
 
         #endregion
@@ -188,15 +198,8 @@ namespace Octgn.Play
             PublicKey = pkey;
             // Register the lPlayer
             all.Add(this);
-            OnPropertyChanged("Color");
             //Create the color brushes           
-            Color = DeterminePlayerColor(Id);
-            _solidBrush = new SolidColorBrush(Color);
-            _solidBrush.Freeze();
-            _transparentBrush = new SolidColorBrush(Color) {Opacity = 0.4};
-            _transparentBrush.Freeze();
-            OnPropertyChanged("Brush");
-            OnPropertyChanged("TransparentBrush");
+            SetPlayerColor(id);
             // Create counters
             _counters = new Counter[g.PlayerDefinition.Counters != null ? g.PlayerDefinition.Counters.Length : 0];
             for (int i = 0; i < Counters.Length; i++)
