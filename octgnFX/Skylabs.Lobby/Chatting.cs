@@ -97,10 +97,13 @@ namespace Skylabs.Lobby
         /// <param name="message"> </param>
         public void SendChatMessage(long rid, string message)
         {
-            var sm = new SocketMessage("chatmessage");
-            sm.AddData("roomid", rid);
-            sm.AddData("mess", message);
-            _parent.WriteMessage(sm);
+            if (message.Length < 2000)
+            {
+                var sm = new SocketMessage("chatmessage");
+                sm.AddData("roomid", rid);
+                sm.AddData("mess", message);
+                _parent.WriteMessage(sm);
+            }
         }
 
         /// <summary>

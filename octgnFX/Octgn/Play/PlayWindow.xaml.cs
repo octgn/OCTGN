@@ -77,10 +77,12 @@ namespace Octgn.Play
             Loaded += (sender, args) => Keyboard.Focus(table);
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
+#if(!DEBUG)
             // Show the Scripting console in dev only
             if (Application.Current.Properties["ArbitraryArgName"] == null) return;
             string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
             if (fname != "/developer") return;
+#endif
             Console.Visibility = Visibility.Visible;
             Loaded += (sender, args) =>
                           {

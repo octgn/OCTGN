@@ -27,8 +27,8 @@ namespace Octgn.Launcher
             InitializeComponent();
             Users = new List<User>();
             Id = id;
-            if (Id == 0)
-                miLeaveChat.IsEnabled = false;
+            ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(id);
+            miLeaveChat.IsEnabled = cr.IsGroupChat && cr.Id != 0;
             Program.LobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
             var cm = new ContextMenu();
             var mi = new MenuItem {Header = "Add to friends list"};
@@ -114,6 +114,7 @@ namespace Octgn.Launcher
                                                                  break;
                                                              }
                                                      }
+                                                     miLeaveChat.IsEnabled = cr.IsGroupChat && cr.Id != 0;
                                                  }));
             }
         }
