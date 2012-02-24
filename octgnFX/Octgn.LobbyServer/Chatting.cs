@@ -75,23 +75,22 @@ namespace Skylabs.LobbyServer
         /// <param name="s"> Socket message with the user data and stuff </param>
         public static void AddUserToChat(Client c, SocketMessage s)
         {
-            lock (Rooms)
+            var rid = (long?) s["roomid"];
+            if (rid == null || rid == -1)
             {
-                var rid = (long?) s["roomid"];
-                if (rid == null || rid == -1)
-                {
-                    return;
-                }
-                var user = (User) s["user"];
-                if (user == null)
-                {
-                    return;
-                }
-                ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
-                if (cr != null)
-                {
-                    cr.AddUser(user);
-                }
+                return;
+            }
+            var user = (User) s["user"];
+            if (user == null)
+            {
+                return;
+            }
+            ChatRoom cr;
+            lock(Rooms)
+                cr = Rooms.FirstOrDefault(r => r.Id == rid);
+            if (cr != null)
+            {
+                cr.AddUser(user);
             }
         }
 
@@ -137,7 +136,7 @@ namespace Skylabs.LobbyServer
                     ChatRoom cr = c;
                     LazyAsync.Invoke(() => cr.UserExit(u));
                     User[] ul = c.GetUserList();
-                    if (ul.Length - 1 <= 0 && c.Id != 0)
+                    if (ul.Length - 1 <= 1 && c.Id != 0)
                         roomstocan.Add(c.Id);
                 }
                 foreach (long l in roomstocan)
@@ -160,7 +159,7 @@ namespace Skylabs.LobbyServer
                 if (cr == null) return;
                 LazyAsync.Invoke(() => cr.UserExit(u));
                 User[] ul = cr.GetUserList();
-                if (ul.Length - 1 <= 0 && cr.Id != 0)
+                if (ul.Length - 1 <= 1 && cr.Id != 0)
                     Rooms.RemoveAll(r => r.Id == cr.Id);
             }
         }
@@ -172,24 +171,23 @@ namespace Skylabs.LobbyServer
         /// <param name="sm"> Data as the data. </param>
         public static void ChatMessage(Client c, SocketMessage sm)
         {
+            var rid = (long?) sm["roomid"];
+            var mess = (string) sm["mess"];
+            if (rid == null || mess == null)
+                return;
+            if (String.IsNullOrWhiteSpace(mess))
+                return;
+            if (mess.Length > 2000)
+                return;
+            var rid2 = (long) rid;
+            ChatRoom cr;
             lock (Rooms)
             {
-                var rid = (long?) sm["roomid"];
-                var mess = (string) sm["mess"];
-                if (rid == null || mess == null)
-                {
-                    return;
-                }
-                if (String.IsNullOrWhiteSpace(mess))
-                {
-                    return;
-                }
-                var rid2 = (long) rid;
-                ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid2);
-                if (cr != null)
-                {
-                    LazyAsync.Invoke(() => cr.ChatMessage(c.Me, mess));
-                }
+                cr = Rooms.FirstOrDefault(r => r.Id == rid2);
+            }
+            if (cr != null)
+            {
+                LazyAsync.Invoke(() => cr.ChatMessage(c.Me, mess));
             }
         }
     }

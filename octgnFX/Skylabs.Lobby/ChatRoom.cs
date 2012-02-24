@@ -11,10 +11,13 @@ namespace Skylabs.Lobby
         {
             Id = id;
             Users = new List<User>();
+            IsGroupChat = (id == 0);
         }
 
         public long Id { get; private set; }
         private List<User> Users { get; set; }
+
+        public bool IsGroupChat { get; private set; }
 
         public int UserCount
         {
@@ -57,6 +60,8 @@ namespace Skylabs.Lobby
             lock (_userLocker)
             {
                 Users = users;
+                if (Users.Count > 2)
+                    IsGroupChat = true;
             }
         }
 

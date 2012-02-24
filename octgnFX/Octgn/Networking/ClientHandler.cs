@@ -171,6 +171,7 @@ namespace Octgn.Networking
         public void Welcome(byte id)
         {
             Player.LocalPlayer.Id = id;
+            Player.LocalPlayer.SetPlayerColor(id);
             Program.Client.StartPings();
         }
 
