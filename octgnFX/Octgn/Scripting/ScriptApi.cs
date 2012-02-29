@@ -194,7 +194,7 @@ namespace Octgn.Scripting
             Card c = Card.Find(id);
             if (c.hasProperty("Alternate"))
             {
-                //c.SwitchWithAlternate(); This might not be necessary - Need to test.
+                c.SwitchWithAlternate(); // This might not be necessary - Need to test.
                 _engine.Invoke(() => { c.SwitchWithAlternate(); });
             }
  //           Data.CardModel newModel = new Data.CardModel c.GetProperty;

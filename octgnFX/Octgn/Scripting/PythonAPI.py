@@ -98,7 +98,7 @@ class Card(object):
   @property
   def isAlternate(self): return _api.IsAlternate(self._id)
   @property
-  def switchWithAlternate(self): return _api.SwitchWithAlternate(self._id)
+  def switchWithAlternate(self): _api.SwitchWithAlternate(self._id)
   @property
   def model(self): return _api.CardModel(self._id)
   @property
