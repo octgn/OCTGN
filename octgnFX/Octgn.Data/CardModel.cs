@@ -18,7 +18,6 @@ namespace Octgn.Data
 
         public SortedList<string, object> Properties;
         public Set Set;
-        private Guid guid;
 
         public CardModel()
         {

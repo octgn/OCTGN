@@ -258,7 +258,7 @@ namespace Octgn
                         ids[j] = id;
                         keys[j] = Crypto.ModExp(key);
                         groups[j] = group;
-                        var card = new Card(player, id, key, cardDef, element.Card, true);
+                        var card = new Card(player, id, key, cardDef, Database.GetCardById(element.Card.Id), true);
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
                     }

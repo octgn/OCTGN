@@ -92,23 +92,25 @@ namespace Octgn.Data
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
-                    "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE [name]=@name;";
+                    "SELECT id, name, image, alternate, alternateOnly, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE [name]=@name;";
 
                 com.Parameters.AddWithValue("@name", name);
-                using (SQLiteDataReader dr = com.ExecuteReader())
+                using (SQLiteDataReader dataReader = com.ExecuteReader())
                 {
-                    if (dr.Read())
+                    if (dataReader.Read())
                     {
-                        var did = dr["id"] as string;
-                        var sid = dr["sed_id"] as string;
-                        if (did != null && sid != null)
+                        var did = dataReader["id"] as string;
+                        var setID = dataReader["set_id"] as string;
+                        if (did != null && setID != null)
                         {
                             var result = new CardModel
                                              {
                                                  Id = Guid.Parse(did),
-                                                 Name = (string) dr["name"],
-                                                 ImageUri = (string) dr["image"],
-                                                 Set = GetSet(Guid.Parse(sid)),
+                                                 Name = (string) dataReader["name"],
+                                                 ImageUri = (string) dataReader["image"],
+                                                 Set = GetSet(Guid.Parse(setID)),
+                                                 Alternate = (Guid) dataReader["alternate"],
+                                                 AlternateOnly = (bool) dataReader["alternateOnly"],
                                                  Properties = GetCardProperties(Guid.Parse(did))
                                              };
                             return result;
