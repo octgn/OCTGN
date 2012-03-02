@@ -17,7 +17,8 @@ namespace Octgn.Data
         public static string BasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                                                      "Octgn");
 
-        private static readonly string DatabaseFile = Path.Combine(BasePath, "Database", "master.db3");
+        private static readonly string DatabasePath = Path.Combine(BasePath, "Database");
+        private static readonly string DatabaseFile = Path.Combine(DatabasePath, "master.db3");
         private static readonly string ConString = "URI=file:" + DatabaseFile;
         internal static SQLiteConnection DatabaseConnection;
         private ObservableCollection<Game> _allCachedGames;
@@ -37,6 +38,7 @@ namespace Octgn.Data
             bool buildSchema = false;
             if (!File.Exists(DatabaseFile))
             {
+                Directory.CreateDirectory(DatabasePath);
                 SQLiteConnection.CreateFile(DatabaseFile);
                 buildSchema = true;
             }

@@ -62,7 +62,7 @@ namespace Octgn.Data
                                                  select new XElement("card",
                                                                      new XAttribute("qty", card.Quantity),
                                                                      new XAttribute("id", card.Card.Id),
-                                                                     card.Card.Name))));//Card.Name is unnecessary information. Vote to remove (V)_V
+                                                                     card.Card.Name))));
             doc.Save(file);
         }
 
