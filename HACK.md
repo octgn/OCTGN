@@ -44,4 +44,4 @@ For example, the following code found in [PythonApi.py](https://github.com/kelly
 It calls Random with a min and max value that is located in [ScriptApi.cs](https://github.com/kellyelton/OCTGN/blob/master/octgnFX/Octgn/Scripting/ScriptAPI.cs).
 
 # octgnFX/Octgn
-Most of the work in this project is shouldered by Game.cs. Inside Game.cs is a IVistaDBDatabase that has all card data installed in it. Card data is read and dropped into a CardModel format, which is stored in a Dictionary<Guid, CardModel> cardModelCache. CardModels are wrapped in a CardIdentity class (apparently for anti-cheating), which is wrapped in a Card class. Cards are placed into Piles and manipulated according to the gamedef.
+Most of the work in this project is shouldered by Game.cs. Inside Game.cs is a SQL Database that has all card data installed in it. Card data is read and dropped into a CardModel format, which is stored in a Dictionary<Guid, CardModel> cardModelCache. CardModels are wrapped in a CardIdentity class (apparently for anti-cheating), which is wrapped in a Card class. Cards are placed into Piles and manipulated according to the gamedef.
