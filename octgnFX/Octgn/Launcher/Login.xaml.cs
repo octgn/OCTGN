@@ -247,7 +247,7 @@ namespace Octgn.Launcher
             return result;
         }
 
-        private static string[] ReadUpdateXML(string url)
+        private static string[] ReadUpdateXml(string url)
         {
             var values = new string[2];
 
@@ -283,7 +283,7 @@ namespace Octgn.Launcher
         private void MenuUpdateClick(object sender, RoutedEventArgs e)
         {
             if (!FileExists("http://www.skylabsonline.com/downloads/octgn/update.xml")) return;
-            string[] update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
+            string[] update = ReadUpdateXml("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             Version local = assembly.GetName().Version;

@@ -55,7 +55,7 @@ namespace Octgn.Launcher
                                                          gs.MouseUp += GsMouseUp;
                                                      stackPanel1.Children.Add(gs);
                                                      if (filterList.Contains(g.GameGuid))
-                                                        gs.Visibility= System.Windows.Visibility.Collapsed;
+                                                        gs.Visibility= Visibility.Collapsed;
                                                  }
                                              }));
         }
@@ -96,15 +96,9 @@ namespace Octgn.Launcher
         public void FilterGames(Guid g, Boolean show)
         {
             //let's cycle through the game list and hide/show them from the StackPanel
-            foreach (HostedGameListItem hg in stackPanel1.Children)
+            foreach (HostedGameListItem hg in stackPanel1.Children.Cast<HostedGameListItem>().Where(hg => hg.Game.GameGuid == g))
             {
-                if (hg.Game.GameGuid == g)
-                {
-                    if (show)
-                        hg.Visibility = System.Windows.Visibility.Visible;
-                    else
-                        hg.Visibility = System.Windows.Visibility.Collapsed;
-                }
+                hg.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
             }
         }
     }
