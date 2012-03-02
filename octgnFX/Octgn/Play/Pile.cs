@@ -49,6 +49,7 @@ namespace Octgn.Play
             if (cards.Count == 0) return false;
 
             if (Player.Count > 1)
+            //if (false)
             {
                 WantToShuffle = Locked = true;
                 bool ready = true;
