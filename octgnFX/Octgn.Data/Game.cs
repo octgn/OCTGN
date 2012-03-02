@@ -100,7 +100,7 @@ namespace Octgn.Data
                     if (dr.Read())
                     {
                         var did = dr["id"] as string;
-                        var sid = dr["sed_id"] as string;
+                        var sid = dr["set_id"] as string;
                         if (did != null && sid != null)
                         {
                             var result = new CardModel

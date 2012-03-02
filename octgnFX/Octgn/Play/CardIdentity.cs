@@ -7,7 +7,7 @@ namespace Octgn.Play
 {
     public class CardIdentity
     {
-        private static readonly Dictionary<int, CardIdentity> All = new Dictionary<int, CardIdentity>(100);
+        private static Dictionary<int, CardIdentity> All = new Dictionary<int, CardIdentity>(100);
 
         public readonly int Id; // id of the card (playerId << 16 | localId)
         public bool Alias; // if alias is true, the type in key is not a card type but another CardIdentity to substitue
