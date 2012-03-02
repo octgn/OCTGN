@@ -27,7 +27,7 @@ namespace Octgn.Launcher
             InitializeComponent();
             Users = new List<User>();
             Id = id;
-            ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(id);
+            ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRid(id);
             miLeaveChat.IsEnabled = cr.IsGroupChat && cr.Id != 0;
             Program.LobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
             var cm = new ContextMenu();
@@ -304,7 +304,7 @@ namespace Octgn.Launcher
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
-                                                 ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRID(Id);
+                                                 ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRid(Id);
                                                  if (cr == null) return;
                                                  listBox1.Items.Clear();
                                                  Users = new List<User>();

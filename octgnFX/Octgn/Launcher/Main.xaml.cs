@@ -92,23 +92,26 @@ namespace Octgn.Launcher
 
         public void RefreshGameFilter(bool ForceRefresh = false)
         {
-            if (GameList.GamesChanged || ForceRefresh)
+            if (!GameList.GamesChanged && !ForceRefresh) return;
+            bFilterGames.Items.Clear();
+            foreach (Data.Game g in Program.GamesRepository.AllGames)
             {
-                bFilterGames.Items.Clear();
-                foreach (Octgn.Data.Game g in Program.GamesRepository.AllGames)
-                {
-                    Controls.HostedGameListFilterItem h = new Controls.HostedGameListFilterItem();
-                    h.GameId = g.Id;
-                    h.Label = g.Name;
-                    h.LargeImageSource = new System.Windows.Media.ImageSourceConverter().ConvertFrom(g.GetCardBackUri()) as System.Windows.Media.ImageSource;
-                    string s = SimpleConfig.ReadValue("FilterGames_" + g.Name);
-                    h.IsChecked = s == null ? true : Convert.ToBoolean(s);
-                    h.Checked += new RoutedEventHandler(GameFilterItem_Checked);
-                    h.Unchecked += new RoutedEventHandler(GameFilterItem_Unchecked);
-                    bFilterGames.Items.Add(h);
-                }
-                GameList.GamesChanged = false;
+                Controls.HostedGameListFilterItem h = new Controls.HostedGameListFilterItem
+                                                          {
+                                                              GameId = g.Id,
+                                                              Label = g.Name,
+                                                              LargeImageSource =
+                                                                  new System.Windows.Media.ImageSourceConverter().
+                                                                      ConvertFrom(g.GetCardBackUri()) as
+                                                                  System.Windows.Media.ImageSource
+                                                          };
+                string s = SimpleConfig.ReadValue("FilterGames_" + g.Name);
+                h.IsChecked = s == null || Convert.ToBoolean(s);
+                h.Checked += GameFilterItem_Checked;
+                h.Unchecked += GameFilterItem_Unchecked;
+                bFilterGames.Items.Add(h);
             }
+            GameList.GamesChanged = false;
         }
 
         void GameFilterItem_Checked(object sender, RoutedEventArgs e)
@@ -126,8 +129,10 @@ namespace Octgn.Launcher
         void GameFiltered(Controls.HostedGameListFilterItem sender, Boolean show)
         {
             SimpleConfig.WriteValue("FilterGames_" + sender.Label, show.ToString());
-            if (frame1.Content.GetType() == typeof(HostedGameList))
-                (frame1.Content as HostedGameList).FilterGames(sender.GameId, show);
+            if (frame1.Content.GetType() != typeof (HostedGameList)) return;
+            HostedGameList hostedGameList = frame1.Content as HostedGameList;
+            if (hostedGameList != null)
+                hostedGameList.FilterGames(sender.GameId, show);
         }
 
         public string IsHideJoinsChecked
