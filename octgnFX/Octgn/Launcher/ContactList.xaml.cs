@@ -92,15 +92,10 @@ namespace Octgn.Launcher
         {
             var fi = sender as FriendListItem;
             if (fi == null) return;
-            foreach (ChatRoom r in Program.LobbyClient.Chatting.Rooms)
+            foreach (var cw in from r in Program.LobbyClient.Chatting.Rooms where r.ContainsUser(Program.LobbyClient.Me) && r.ContainsUser(fi.ThisUser) && !r.IsGroupChat && r.Id != 0 select (ChatWindow) (Program.ChatWindows.FirstOrDefault(c => c.Id == r.Id) ?? new ChatWindow(r.Id)))
             {
-                //Two person chat already exists between these two users.
-                if (r.ContainsUser(Program.LobbyClient.Me) && r.ContainsUser(fi.ThisUser) && !r.IsGroupChat && r.Id != 0)
-                {
-                    var cw = Program.ChatWindows.FirstOrDefault(c => c.Id == r.Id) ?? new ChatWindow(r.Id);
-                    cw.Show();
-                    return;
-                }
+                cw.Show();
+                return;
             }
             Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
         }
