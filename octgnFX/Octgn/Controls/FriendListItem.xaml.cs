@@ -231,7 +231,7 @@ namespace Octgn.Controls
 
             // We enable Drag & Drop in our scope ...  We are not implementing Drop, so it is OK, but this allows us to get DragOver 
             bool previousDrop = DragScope != null && DragScope.AllowDrop;
-            DragScope.AllowDrop = true;
+            if (DragScope != null) DragScope.AllowDrop = true;
 
             // Let's wire our usual events.. 
             // GiveFeedback just tells it to use no standard cursors..  

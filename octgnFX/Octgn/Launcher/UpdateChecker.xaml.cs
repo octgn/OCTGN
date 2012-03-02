@@ -38,7 +38,7 @@ namespace Octgn.Launcher
         {
             try
             {
-                string[] update = ReadUpdateXML("http://www.skylabsonline.com/downloads/octgn/update.xml");
+                string[] update = ReadUpdateXml("http://www.skylabsonline.com/downloads/octgn/update.xml");
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -156,7 +156,7 @@ namespace Octgn.Launcher
         }
 */
 
-        private static string[] ReadUpdateXML(string url)
+        private static string[] ReadUpdateXml(string url)
         {
             var values = new string[2];
             try
