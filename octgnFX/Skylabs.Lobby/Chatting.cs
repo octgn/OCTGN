@@ -35,7 +35,7 @@ namespace Skylabs.Lobby
         public List<ChatRoom> Rooms { get; private set; }
         public event ChatEventDelegate EChatEvent;
 
-        public ChatRoom GetChatRoomFromRID(long rid)
+        public ChatRoom GetChatRoomFromRid(long rid)
         {
             lock (Rooms)
             {
@@ -97,13 +97,11 @@ namespace Skylabs.Lobby
         /// <param name="message"> </param>
         public void SendChatMessage(long rid, string message)
         {
-            if (message.Length < 2000)
-            {
-                var sm = new SocketMessage("chatmessage");
-                sm.AddData("roomid", rid);
-                sm.AddData("mess", message);
-                _parent.WriteMessage(sm);
-            }
+            if (message.Length >= 2000) return;
+            var sm = new SocketMessage("chatmessage");
+            sm.AddData("roomid", rid);
+            sm.AddData("mess", message);
+            _parent.WriteMessage(sm);
         }
 
         /// <summary>

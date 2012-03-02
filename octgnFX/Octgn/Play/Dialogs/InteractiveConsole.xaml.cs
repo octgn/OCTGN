@@ -20,7 +20,7 @@ namespace Octgn.Play.Dialogs
 #pragma warning restore 649
 
         private readonly ScriptScope _scope;
-        private List<string> _commandHistory = new List<string>();
+        private readonly List<string> _commandHistory = new List<string>();
         private int _commandHistoryLoc = 0;
 
         public InteractiveConsole()

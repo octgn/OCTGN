@@ -62,8 +62,7 @@ namespace Octgn.Scripting
         {
             if (Program.Game.TurnPlayer == null)
                 return false;
-            else
-                return (Program.Game.TurnPlayer.Id == id);
+            return (Program.Game.TurnPlayer.Id == id);
         }
 
         public List<KeyValuePair<int, string>> PlayerCounters(int id)

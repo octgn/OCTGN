@@ -11,7 +11,7 @@ namespace Octgn.Launcher
         {
             InitializeComponent();
             AAText.Text = header;
-            this.Title = header;
+            Title = header;
         }
 
         public void UpdateProgress(int current, int max, string message, bool isError)
