@@ -152,6 +152,12 @@ namespace Octgn.Play
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            if (MessageBox.Show(
+                "Are you sure you want to quit?",
+                "Octgn",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) != MessageBoxResult.Yes)
+                e.Cancel = true;
             // Fix for this bug: http://wpf.codeplex.com/workitem/14078
             ribbon.IsMinimized = false;
 
