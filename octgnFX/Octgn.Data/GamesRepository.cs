@@ -199,9 +199,9 @@ namespace Octgn.Data
                     com.Parameters.AddWithValue("@card_id", "");
                     com.Parameters.AddWithValue("@vint", 0);
                     com.Parameters.AddWithValue("@vstr", " ");
-                    com.Parameters.AddWithValue("@id", "AlternateOnly" + game.Id);
+                    com.Parameters.AddWithValue("@id", "Dependent" + game.Id);
                     com.Parameters.AddWithValue("@game_id", game.Id.ToString());
-                    com.Parameters.AddWithValue("@name", "AlternateOnly");
+                    com.Parameters.AddWithValue("@name", "Dependent");
                     com.Parameters.AddWithValue("@type", 0); //string
                     com.ExecuteNonQuery();
                 }  

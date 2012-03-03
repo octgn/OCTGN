@@ -40,7 +40,7 @@ namespace Octgn.Data
             Id = new Guid(reader.Value);
  //           isMutable = false;
             Alternate = System.Guid.Empty;
-            AlternateOnly = false;
+            Dependent = false;
             Uri cardImageUri = definition.GetRelationship("C" + Id.ToString("N")).TargetUri;
             ImageUri = cardImageUri.OriginalString;
             if (!package.PartExists(cardImageUri))
@@ -67,15 +67,15 @@ namespace Octgn.Data
                                                 reader.Value));
                     }
                 }
-                else if (reader.Value.Equals("AlternateOnly", StringComparison.InvariantCultureIgnoreCase))
+                else if (reader.Value.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase))
                 {
                     reader.MoveToAttribute("value");
                     bool temp;
                     if (Boolean.TryParse(reader.Value, out temp))
-                    { AlternateOnly = temp; }
+                    { Dependent = temp; }
                     else
                     {
-                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property AlternateOnly. AlternateOnly must be either true or false.",
+                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property Dependent. Dependent must be either true or false.",
                                                   reader.Value));
                     }
                 }
@@ -126,7 +126,7 @@ namespace Octgn.Data
         public string ImageUri { get; internal set; }
 
         public Guid Alternate { get; internal set; }//The location of the alternate. If none is specified, will be System.Guid.Empty
-        public bool AlternateOnly { get; internal set; }//a flag; if true, this card will not be placed inside a deck. Mainly used in Deck Editor<TODO>
+        public bool Dependent { get; internal set; }//a flag; if true, this card will not be placed inside a deck. Mainly used in Deck Editor<TODO>
         public bool isMutable { get; internal set; }//a flag; if true, this card is read-only. (and will only be instanced once<TODO>)
 
         public string Picture
@@ -158,7 +158,7 @@ namespace Octgn.Data
                            Properties = Properties,
                            Set = Set,
                            Alternate = Alternate,
-                           AlternateOnly = AlternateOnly
+                           Dependent = Dependent
                        };
         }
 
@@ -172,7 +172,7 @@ namespace Octgn.Data
                                  ImageUri = (string) row["image"],
                                  Set = game.GetSet((Guid) row["setId"]),
                                  Alternate = (Guid) row["Alternate"],
-                                 AlternateOnly = (bool) row["AlternateOnly"],
+                                 Dependent = (bool) row["Dependent"],
                                  Properties =
                                      new SortedList<string, object>(columns.Count - 4,
                                                                     StringComparer.InvariantCultureIgnoreCase)
@@ -185,7 +185,7 @@ namespace Octgn.Data
         public bool hasProperty(string propertyName)
         {
             if (propertyName.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase)) return (Alternate != System.Guid.Empty);
-            if (propertyName.Equals("AlternateOnly", StringComparison.InvariantCultureIgnoreCase)) return (AlternateOnly != null);
+            if (propertyName.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase)) return (Dependent != null);
             return Properties.ContainsKey(propertyName);
         }
     }

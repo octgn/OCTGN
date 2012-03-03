@@ -601,6 +601,7 @@
     </None>
     <Resource Include="Launcher\Game.xsx">
       <DependentUpon>Game.xsd</DependentUpon>
+      <SubType>Designer</SubType>
     </Resource>
     <None Include="app.config" />
     <None Include="Networking\BinaryParser.tt">

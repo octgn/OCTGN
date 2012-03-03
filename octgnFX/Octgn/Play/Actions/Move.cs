@@ -44,6 +44,9 @@ namespace Octgn.Play.Actions
             if (Doing != null) Doing(this, EventArgs.Empty);
 
             base.Do();
+#if(DEBUG)
+            Debug.WriteLine("Moving " + Card.Name + " from " + From + " to " + To);
+#endif
             bool shouldSee = Card.FaceUp, shouldLog = true;
             // Move the card
             if (Card.Group != To)
@@ -51,9 +54,12 @@ namespace Octgn.Play.Actions
                 Card.Group.Remove(Card);
                 if (Card.DeleteWhenLeavesGroup)
                     Card.Group = null;
+                    //TODO Card.Delete();
+                //TODO: else if (RevertsToOriginalOnGroupChange)
+                    //TODO
                 else
                 {
-                    Card.SetFaceUp(FaceUp);
+                    Card.SetFaceUp(FaceUp);//FaceUp may be false - it's one of the constructor parameters for this
                     Card.SetOverrideGroupVisibility(false);
                     Card.X = X;
                     Card.Y = Y;

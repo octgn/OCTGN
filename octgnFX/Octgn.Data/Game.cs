@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -92,7 +93,7 @@ namespace Octgn.Data
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
-                    "SELECT id, name, image, alternate, alternateOnly, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE [name]=@name;";
+                    "SELECT id, name, image, alternate, dependent, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE [name]=@name;";
 
                 com.Parameters.AddWithValue("@name", name);
                 using (SQLiteDataReader dataReader = com.ExecuteReader())
@@ -110,7 +111,7 @@ namespace Octgn.Data
                                                  ImageUri = (string) dataReader["image"],
                                                  Set = GetSet(Guid.Parse(setID)),
                                                  Alternate = (Guid) dataReader["alternate"],
-                                                 AlternateOnly = (bool) dataReader["alternateOnly"],
+                                                 Dependent = (bool) dataReader["dependent"],
                                                  Properties = GetCardProperties(Guid.Parse(did))
                                              };
                             return result;
@@ -169,23 +170,25 @@ namespace Octgn.Data
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
-                    "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id;";
+                    "SElECT id, name, image, alternate, dependent, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id;";
 
                 com.Parameters.AddWithValue("@id", id.ToString());
-                using (SQLiteDataReader dr = com.ExecuteReader())
+                using (SQLiteDataReader dataReader = com.ExecuteReader())
                 {
-                    if (dr.Read())
+                    if (dataReader.Read())
                     {
-                        var did = dr["id"] as string;
-                        var sid = dr["set_id"] as string;
-                        if (sid != null && did != null)
+                        var did = dataReader["id"] as string;
+                        var setID = dataReader["set_id"] as string;
+                        if (setID != null && did != null)
                         {
                             var result = new CardModel
                                              {
                                                  Id = Guid.Parse(did),
-                                                 Name = (string) dr["name"],
-                                                 ImageUri = (string) dr["image"],
-                                                 Set = GetSet(Guid.Parse(sid)),
+                                                 Name = (string) dataReader["name"],
+                                                 ImageUri = (string) dataReader["image"],
+                                                 Set = GetSet(Guid.Parse(setID)),
+                                                 Alternate = Guid.Parse(dataReader["alternate"] as string),
+                                                 Dependent = (bool) dataReader["dependent"],
                                                  Properties = GetCardProperties(id)
                                              };
                             return result;
@@ -430,9 +433,9 @@ namespace Octgn.Data
             {
                 //Build Query
                 sb.Append("INSERT INTO [cards](");
-                sb.Append("[id],[game_id],[set_real_id],[name], [image], [alternate], [alternateOnly]");
+                sb.Append("[id],[game_id],[set_real_id],[name], [image], [alternate], [dependent]");
                 sb.Append(") VALUES(");
-                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image,@alternate,@alternateOnly");
+                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image,@alternate,@dependent");
                 sb.Append(");\n");
                 com.CommandText = sb.ToString();
 
@@ -442,7 +445,16 @@ namespace Octgn.Data
                 com.Parameters.AddWithValue("@name", card.Name);
                 com.Parameters.AddWithValue("@image", card.ImageUri);
                 com.Parameters.AddWithValue("@alternate", card.Alternate.ToString());
-                com.Parameters.AddWithValue("@alternateOnly", card.AlternateOnly.ToString());
+                com.Parameters.AddWithValue("@dependent", card.Dependent.ToString());
+
+                
+#if(DEBUG)
+                Debug.WriteLine(com.CommandText);
+                foreach (SQLiteParameter p in com.Parameters)
+                {
+                   Debug.Write("ParameterName: " + p.ParameterName +"\r\n Value: " + p.Value + "\r\n");
+                }
+#endif
                 com.ExecuteNonQuery();
             }
             //Add custom properties for the card.
@@ -456,7 +468,7 @@ namespace Octgn.Data
             foreach (KeyValuePair<string, object> pair in card.Properties)
             {
                 if (pair.Key.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase)
-                    || pair.Key.Equals("AlternateOnly", StringComparison.InvariantCultureIgnoreCase)
+                    || pair.Key.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase)
                     //|| pair.Key.Equals("Mutable", StringComparison.InvariantCultureIgnoreCase)
                     )
                 {

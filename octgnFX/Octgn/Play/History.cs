@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Octgn.Play.Actions;
+using System.Diagnostics;
 
 namespace Octgn.Play
 {
@@ -16,6 +17,9 @@ namespace Octgn.Play
         public static void Reset()
         {
             history.Clear();
+#if(DEBUG)
+            Debug.WriteLine("Resetting history");
+#endif
         }
     }
 }
