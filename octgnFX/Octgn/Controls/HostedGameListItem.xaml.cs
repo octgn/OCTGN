@@ -22,6 +22,10 @@ namespace Octgn.Controls
         public static DependencyProperty GameLengthProperty = DependencyProperty.Register(
             "GameLength", typeof (string), typeof (HostedGameListItem));
 
+        public static DependencyProperty GameVersionProperty = DependencyProperty.Register(
+            "GameVersion", typeof (string), typeof (HostedGameListItem)
+            );
+
         public static DependencyProperty GamePictureProperty = DependencyProperty.Register(
             "GamePicture", typeof (ImageSource), typeof (HostedGameListItem));
 
@@ -46,6 +50,7 @@ namespace Octgn.Controls
                 SetValue(GameLengthProperty,
                          string.Format("runtime: {0:0,0} minutes",
                                        (DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes));
+                SetValue(GameVersionProperty,_hostedGame.GameVersion.ToString());
                 //SetValue(GameLengthProperty, "runtime: "+(System.DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes.ToString("N")+" minutes");
                 foreach (
                     BitmapImage bi in
