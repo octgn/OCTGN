@@ -57,8 +57,8 @@ namespace Skylabs.LobbyServer
                 while (Games.ContainsKey(_currentHostPort) || !Networking.IsPortAvailable(_currentHostPort))
                 {
                     _currentHostPort++;
-                    if (_currentHostPort >= 8000)
-                        _currentHostPort = 5000;
+                    if (_currentHostPort >= 20000)
+                        _currentHostPort = 10000;
                 }
                 var hs = new HostedGame(_currentHostPort, g, v, name, pass, u);
                 hs.HostedGameDone += HostedGameExited;
