@@ -137,7 +137,7 @@ namespace Octgn.DeckBuilder
                 var filterCtrl = (FilterControl) VisualTreeHelper.GetChild(container, 0);
                 conditions[i] = filterCtrl.GetSqlCondition();
             }
-            SearchString.Text = ConvertToSQLString(conditions);
+            //SearchString.Text = ConvertToSQLString(conditions);
             //TODO Implement a way to take the text of SearchString and use it as the search parameters. 
             //It should be exactly the SQL Query, so no parsing *should* be needed (but be prepared for it to fail).
             resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
