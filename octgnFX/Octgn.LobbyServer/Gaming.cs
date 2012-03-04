@@ -18,7 +18,7 @@ namespace Skylabs.LobbyServer
             Games = new Dictionary<int, HostedGame>();
         }
 
-        private static Dictionary<int, HostedGame> Games { get; set; }
+        public static Dictionary<int, HostedGame> Games { get; private set; }
 
         public static int GameCount()
         {
