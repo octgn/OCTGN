@@ -191,11 +191,8 @@ namespace Octgn.Scripting
             //alternate may be considered the "back" of the card, or another card entirely - up to Game Definer.
             //id will remain the same, all other data should change.
             Card c = Card.Find(id);
-            if (c.hasProperty("Alternate"))
-            {
-                c.SwitchWithAlternate(); // This might not be necessary - Need to test.
-                _engine.Invoke(() => { c.SwitchWithAlternate(); });
-            }
+            c.SwitchWithAlternate(); // This might not be necessary - Need to test.
+            //_engine.Invoke(() => { c.SwitchWithAlternate(); });
  //           Data.CardModel newModel = new Data.CardModel c.GetProperty;
  //           c.IsAlternate = !c.IsAlternate;
  //           CardModel AlternateModel = 

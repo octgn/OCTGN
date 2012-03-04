@@ -464,16 +464,20 @@ namespace Octgn.Play
         internal void SetModel(CardModel model)
         {
             Type.Model = model;
-            OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
+            //OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
             loadAlternate();
         }
 
         internal void loadAlternate()
         {
-           if (Type.Model.hasProperty("Alternate"))
+            if (Type.Model.hasProperty("Alternate"))
             {
-               //if (Type.Model.isMutable) TODO: Deal with already loaded models
+                //if (Type.Model.isMutable) TODO: Deal with already loaded models
                 _alternate = Database.GetCardById(Type.Model.Alternate);
+            }
+            else
+            {
+                _alternate = null;
             }
         }
 
