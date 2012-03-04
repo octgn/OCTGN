@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.LobbyServer", "..\O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.Lobby", "..\Skylabs.Lobby\Skylabs.Lobby.csproj", "{131805CF-7971-4813-848B-CE156D4F6827}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleHelper", "..\ConsoleHelper\ConsoleHelper.csproj", "{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.StandAloneServer", "..\Octgn.StandAloneServer\Octgn.StandAloneServer.csproj", "{160EEC3E-F158-4F2C-9F75-69DBA056013F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.MultiLogin", "..\Skylabs.MultiLogin\Skylabs.MultiLogin.csproj", "{96C9ABEF-70FB-40CC-99D7-67F73C0AF726}"
@@ -20,6 +18,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassiniDev.Lib4", "..\CassiniDev\CassiniDev\CassiniDev.Lib4.csproj", "{070AE36D-4CE1-4708-BD0F-2896A6F117FC}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -151,26 +153,6 @@ Global
 		{131805CF-7971-4813-848B-CE156D4F6827}.ReleaseMode with Debug|Mixed Platforms.ActiveCfg = ReleaseMode with Debug|Any CPU
 		{131805CF-7971-4813-848B-CE156D4F6827}.ReleaseMode with Debug|Mixed Platforms.Build.0 = ReleaseMode with Debug|Any CPU
 		{131805CF-7971-4813-848B-CE156D4F6827}.ReleaseMode with Debug|x86.ActiveCfg = ReleaseMode with Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release w Debug vs TestServer|Any CPU.ActiveCfg = Release w Debug vs TestServer|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release w Debug vs TestServer|Any CPU.Build.0 = Release w Debug vs TestServer|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release w Debug vs TestServer|Mixed Platforms.ActiveCfg = Release w Debug vs TestServer|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release w Debug vs TestServer|Mixed Platforms.Build.0 = Release w Debug vs TestServer|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release w Debug vs TestServer|x86.ActiveCfg = Release w Debug vs TestServer|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.Release|x86.ActiveCfg = Release|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.ReleaseMode with Debug|Any CPU.ActiveCfg = ReleaseMode with Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.ReleaseMode with Debug|Any CPU.Build.0 = ReleaseMode with Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.ReleaseMode with Debug|Mixed Platforms.ActiveCfg = ReleaseMode with Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.ReleaseMode with Debug|Mixed Platforms.Build.0 = ReleaseMode with Debug|Any CPU
-		{C823F5F5-09E8-4EA0-9482-EA1E2165A0A1}.ReleaseMode with Debug|x86.ActiveCfg = ReleaseMode with Debug|Any CPU
 		{160EEC3E-F158-4F2C-9F75-69DBA056013F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{160EEC3E-F158-4F2C-9F75-69DBA056013F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{160EEC3E-F158-4F2C-9F75-69DBA056013F}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
@@ -242,9 +224,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
