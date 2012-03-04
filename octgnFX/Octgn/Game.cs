@@ -61,7 +61,10 @@ namespace Octgn
             }
             else
             {
-                nick = Program.LobbyClient.Me.DisplayName;
+                if(Program.LobbyClient == null || Program.LobbyClient.Me == null)
+                    nick = "User" + new Random().Next().ToString(CultureInfo.InvariantCulture);
+                else
+                    nick = Program.LobbyClient.Me.DisplayName;
             }
         }
 
