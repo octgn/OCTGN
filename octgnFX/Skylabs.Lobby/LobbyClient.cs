@@ -37,7 +37,7 @@ namespace Skylabs.Lobby
 
         public delegate void FriendRequest(User u);
 
-        public delegate void GameHostEvent(HostedGame g);
+        public delegate void GameHostEvent(HostedGameData g);
 
         public delegate void HandleCaptcha(string fullurl, string imageurl);
 
@@ -77,7 +77,7 @@ namespace Skylabs.Lobby
             FriendList = new List<User>();
             Notifications = new List<Notification>();
             _callbacks = new Dictionary<string, SocketMessageResult>();
-            Games = new List<HostedGame>();
+            Games = new List<HostedGameData>();
             Chatting = new Chatting(this);
             _socket = new SkySocket();
             _socket.OnMessageReceived += OnMessageReceived;
@@ -89,14 +89,14 @@ namespace Skylabs.Lobby
             FriendList = new List<User>();
             Notifications = new List<Notification>();
             _callbacks = new Dictionary<string, SocketMessageResult>();
-            Games = new List<HostedGame>();
+            Games = new List<HostedGameData>();
             _socket = c;
         }
 
         /// <summary>
         ///   A list of Hosted games
         /// </summary>
-        private List<HostedGame> Games { get; set; }
+        private List<HostedGameData> Games { get; set; }
 
         public bool Connected
         {
@@ -223,7 +223,7 @@ namespace Skylabs.Lobby
             }
         }
 
-        public HostedGame[] GetHostedGames()
+        public HostedGameData[] GetHostedGames()
         {
             lock (_gameLocker)
             {
@@ -474,7 +474,7 @@ namespace Skylabs.Lobby
                     {
                         lock (_gameLocker)
                         {
-                            var games = sm["list"] as List<HostedGame>;
+                            var games = sm["list"] as List<HostedGameData>;
                             Games = games;
                             if (games != null && games.Count > 0)
                                 if (OnGameHostEvent != null)
@@ -487,7 +487,7 @@ namespace Skylabs.Lobby
                     {
                         lock (_gameLocker)
                         {
-                            var gm = new HostedGame(sm);
+                            var gm = new HostedGameData(sm);
                             Games.Add(gm);
                             if (OnGameHostEvent != null)
                                 LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
@@ -500,10 +500,10 @@ namespace Skylabs.Lobby
                         {
                             var p = (int) sm["port"];
 
-                            HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
+                            HostedGameData gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
                             {
-                                gm.GameStatus = HostedGame.EHostedGame.GameInProgress;
+                                gm.GameStatus = HostedGameData.EHostedGame.GameInProgress;
                                 if (OnGameHostEvent != null)
                                     LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
                             }
@@ -516,10 +516,10 @@ namespace Skylabs.Lobby
                         {
                             var p = (int) sm["port"];
 
-                            HostedGame gm = Games.FirstOrDefault(g => g.Port == p);
+                            HostedGameData gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
                             {
-                                gm.GameStatus = HostedGame.EHostedGame.StoppedHosting;
+                                gm.GameStatus = HostedGameData.EHostedGame.StoppedHosting;
                                 if (OnGameHostEvent != null)
                                     LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
                                 Games.Remove(gm);

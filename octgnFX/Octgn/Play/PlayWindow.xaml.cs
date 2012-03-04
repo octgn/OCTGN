@@ -27,6 +27,7 @@ namespace Octgn.Play
 {
     public partial class PlayWindow
     {
+        private bool _isLocal;
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
         [Import] protected Engine ScriptEngine;
@@ -48,9 +49,10 @@ namespace Octgn.Play
 
         #endregion
 
-        public PlayWindow()
+        public PlayWindow(bool islocal = false)
         {
             InitializeComponent();
+            _isLocal = islocal;
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "OCTGN  version : " + oversion + " : " + Program.Game.Definition.Name;
@@ -147,6 +149,7 @@ namespace Octgn.Play
         protected void Close(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+
             Close();
         }
 
@@ -168,7 +171,9 @@ namespace Octgn.Play
         {
             base.OnClosed(e);
             Program.PlayWindow = null;
-            Program.StopGame();
+            Program.StopGame();            
+            if(_isLocal)
+                Program.LauncherWindow.Visibility = Visibility.Visible;
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
         }
 

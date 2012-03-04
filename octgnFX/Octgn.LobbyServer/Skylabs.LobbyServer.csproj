@@ -167,10 +167,8 @@
     <Compile Include="Chatting.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Gaming.cs" />
-    <Compile Include="HostedGame.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MySqlCup.cs" />
-    <Compile Include="Networking.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />

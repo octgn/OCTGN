@@ -120,9 +120,10 @@ namespace Octgn.Definitions
             string fhash = "";
             //Get hash for file.
             using (MD5 md5 = new MD5CryptoServiceProvider()) {
-                using (FileStream file = new FileStream(filename, FileMode.Open)) {
+                using (FileStream file = new FileStream(filename, FileMode.Open,FileAccess.Read,FileShare.Read)) {
                     byte[] retVal = md5.ComputeHash(file);
                     fhash =  BitConverter.ToString(retVal).Replace("-", "");	// hex string
+                    file.Close();
                 }
             }
             using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -136,6 +137,7 @@ namespace Octgn.Definitions
                     GameDef result = LoadFromXml(xDoc.Root, definition);
                     result.FileHash = fhash;
                     result.FileName = filename;
+                    reader.Close();
                     return result;
                 }
             }

@@ -32,15 +32,15 @@ namespace Octgn.Controls
         public static DependencyProperty PictureProperty = DependencyProperty.Register(
             "Picture", typeof (ImageSource), typeof (HostedGameListItem));
 
-        private HostedGame _hostedGame;
+        private HostedGameData _hostedGame;
 
-        public HostedGameListItem(HostedGame g)
+        public HostedGameListItem(HostedGameData g)
         {
             InitializeComponent();
             Game = g;
         }
 
-        public HostedGame Game
+        public HostedGameData Game
         {
             get { return _hostedGame; }
             set
@@ -66,10 +66,10 @@ namespace Octgn.Controls
                 SetValue(GameNameProperty, _hostedGame.Name);
                 switch (_hostedGame.GameStatus)
                 {
-                    case HostedGame.EHostedGame.GameInProgress:
+                    case HostedGameData.EHostedGame.GameInProgress:
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusAway.png";
                         break;
-                    case HostedGame.EHostedGame.StartedHosting:
+                    case HostedGameData.EHostedGame.StartedHosting:
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusOnline.png";
                         break;
                     default: //Offline or anything else

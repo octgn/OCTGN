@@ -492,7 +492,7 @@ namespace Octgn.Launcher
         private void hgl_OnGameClick(object sender, EventArgs e)
         {
             if (Program.PlayWindow != null) return;
-            var hg = sender as HostedGame;
+            var hg = sender as HostedGameData;
             Program.IsHost = false;
             Data.Game theGame =
                 Program.GamesRepository.AllGames.FirstOrDefault(g => hg != null && g.Id == hg.GameGuid);

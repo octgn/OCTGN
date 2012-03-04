@@ -53,8 +53,11 @@
     <Menu Grid.Row="0" Height="23" HorizontalAlignment="Stretch" Name="menu1" VerticalAlignment="Top">
       <MenuItem Name="menuOctgn" Header="Octgn">
         <MenuItem Name="menuDeckEditor" Header="Deck Editor" Click="MenuDeckEditorClick" />
-        <MenuItem Name="menuUpdate" Header="Check for updates" Click="MenuUpdateClick" />
-        <MenuItem Name="menuExit" Header="Exit" Click="MenuExitClick" />
+            <MenuItem Header="Offline Play">
+                <MenuItem Name="menuOffline" Header="Host Game" Click="MenuOfflineClick" />
+                <MenuItem Name="menuConnectOffline" Header="Connect To Game" Click="MenuOfflineConnectClick"/>                    
+            </MenuItem>
+            <MenuItem Name="menuExit" Header="Exit" Click="MenuExitClick" />
       </MenuItem>
 
     </Menu>

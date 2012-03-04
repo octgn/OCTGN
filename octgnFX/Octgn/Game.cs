@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Media.Imaging;
@@ -12,6 +13,7 @@ using Octgn.Data;
 using Octgn.Definitions;
 using Octgn.Play;
 using Octgn.Play.Gui;
+using Octgn.Scripting.Controls;
 using Octgn.Utils;
 
 namespace Octgn
@@ -32,8 +34,13 @@ namespace Octgn
         private Player _turnPlayer;
         private ushort _uniqueId;
 
-        public Game(GameDef def)
+        private string nick;
+
+        public bool IsLocal { get; private set; }
+
+        public Game(GameDef def, bool isLocal = false)
         {
+            IsLocal = isLocal;
             _definition = def;
             _table = new Table(def.TableDefinition);
             Variables = new Dictionary<string, int>();
@@ -42,6 +49,20 @@ namespace Octgn
             GlobalVariables = new Dictionary<string, string>();
             foreach (GlobalVariableDef varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
+
+            if(IsLocal)
+            {
+                var i = new InputDlg("Choose a nickname", "Choose a nickname",
+                                     "User" + new Random().Next().ToString(CultureInfo.InvariantCulture));
+                var ret = i.GetString();
+                if (ret == "")
+                    ret = "User" + new Random().Next().ToString(CultureInfo.InvariantCulture);
+                nick = ret;
+            }
+            else
+            {
+                nick = Program.LobbyClient.Me.DisplayName;
+            }
         }
 
         public int TurnNumber { get; set; }
@@ -118,7 +139,7 @@ namespace Octgn
             _uniqueId = 1;
             TurnNumber = 0;
             TurnPlayer = null;
-            string nick = Program.LobbyClient.Me.DisplayName;
+
             CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
