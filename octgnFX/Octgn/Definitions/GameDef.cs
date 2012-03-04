@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
@@ -116,14 +117,14 @@ namespace Octgn.Definitions
             // HACK: workaround for the BitmapDecoder bug (see also GameManager.xaml.cs, in c'tor)
             GC.Collect(GC.MaxGeneration);
             GC.WaitForPendingFinalizers();
-            const string fhash = "";
+            string fhash = "";
             //Get hash for file.
-            //using (MD5 md5 = new MD5CryptoServiceProvider()) {
-            //    using (FileStream file = new FileStream(filename, FileMode.Open)) {
-            //        byte[] retVal = md5.ComputeHash(file);
-            //        fhash =  BitConverter.ToString(retVal).Replace("-", "");	// hex string
-            //    }
-            //}
+            using (MD5 md5 = new MD5CryptoServiceProvider()) {
+                using (FileStream file = new FileStream(filename, FileMode.Open)) {
+                    byte[] retVal = md5.ComputeHash(file);
+                    fhash =  BitConverter.ToString(retVal).Replace("-", "");	// hex string
+                }
+            }
             using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 PackageRelationship defRelationship =

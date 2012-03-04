@@ -139,7 +139,7 @@ namespace Octgn
 
         public void TestBegin()
         {
-            Database.Open(Definition, true);
+            //Database.Open(Definition, true);
             // Init fields
             _uniqueId = 1;
             TurnNumber = 0;
@@ -157,8 +157,9 @@ namespace Octgn
             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
             //                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
-            foreach (MarkerModel m in Database.GetAllMarkers())
-                _markersById.Add(m.Id, m);
+            //Program.Game.
+            //foreach (MarkerModel m in Database.GetAllMarkers())
+            //    _markersById.Add(m.Id, m);
 
             //Program.IsGameRunning = true;
         }
