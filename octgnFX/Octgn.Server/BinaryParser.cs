@@ -17,13 +17,14 @@ namespace Octgn.Server
         public void Parse(byte[] data)
         {
             BinaryReader reader = null;
+            byte method = 254;
             try
             {
                 var stream = new MemoryStream(data);
                 reader = new BinaryReader(stream);
                 short length;
                 _handler.Muted = reader.ReadInt32();
-                byte method = reader.ReadByte();
+                method = reader.ReadByte();
                 switch (method)
                 {
                     case 0:
@@ -497,7 +498,7 @@ namespace Octgn.Server
             }
             catch (Exception ex)
             {
-                Console.WriteLine(Resource1.BinaryParser_Parse_Parse_error_in_binaryparser__ + ex.StackTrace);
+                Console.WriteLine("(" + method.ToString() + ")" + Resource1.BinaryParser_Parse_Parse_error_in_binaryparser__ + ex.StackTrace);
             }
             finally
             {

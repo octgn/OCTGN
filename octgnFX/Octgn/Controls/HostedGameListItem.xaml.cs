@@ -22,21 +22,25 @@ namespace Octgn.Controls
         public static DependencyProperty GameLengthProperty = DependencyProperty.Register(
             "GameLength", typeof (string), typeof (HostedGameListItem));
 
+        public static DependencyProperty GameVersionProperty = DependencyProperty.Register(
+            "GameVersion", typeof (string), typeof (HostedGameListItem)
+            );
+
         public static DependencyProperty GamePictureProperty = DependencyProperty.Register(
             "GamePicture", typeof (ImageSource), typeof (HostedGameListItem));
 
         public static DependencyProperty PictureProperty = DependencyProperty.Register(
             "Picture", typeof (ImageSource), typeof (HostedGameListItem));
 
-        private HostedGame _hostedGame;
+        private HostedGameData _hostedGame;
 
-        public HostedGameListItem(HostedGame g)
+        public HostedGameListItem(HostedGameData g)
         {
             InitializeComponent();
             Game = g;
         }
 
-        public HostedGame Game
+        public HostedGameData Game
         {
             get { return _hostedGame; }
             set
@@ -46,6 +50,7 @@ namespace Octgn.Controls
                 SetValue(GameLengthProperty,
                          string.Format("runtime: {0:0,0} minutes",
                                        (DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes));
+                SetValue(GameVersionProperty,_hostedGame.GameVersion.ToString());
                 //SetValue(GameLengthProperty, "runtime: "+(System.DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes.ToString("N")+" minutes");
                 foreach (
                     BitmapImage bi in
@@ -61,10 +66,10 @@ namespace Octgn.Controls
                 SetValue(GameNameProperty, _hostedGame.Name);
                 switch (_hostedGame.GameStatus)
                 {
-                    case HostedGame.EHostedGame.GameInProgress:
+                    case HostedGameData.EHostedGame.GameInProgress:
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusAway.png";
                         break;
-                    case HostedGame.EHostedGame.StartedHosting:
+                    case HostedGameData.EHostedGame.StartedHosting:
                         guri = @"pack://application:,,,/OCTGN;component/Resources/statusOnline.png";
                         break;
                     default: //Offline or anything else

@@ -479,7 +479,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
-                List<Lobby.HostedGame> sendgames = Gaming.GetLobbyList();
+                List<Lobby.HostedGameData> sendgames = Gaming.GetLobbyList();
                 var sm = new SocketMessage("gamelist");
                 sm.AddData("list", sendgames);
                 _socket.WriteMessage(sm);

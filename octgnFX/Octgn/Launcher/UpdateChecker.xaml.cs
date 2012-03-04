@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Xml;
 using Octgn.Data;
@@ -30,6 +31,25 @@ namespace Octgn.Launcher
             lblStatus.Content = "";
             //Thread t = new Thread(VerifyAllDefs);
             //t.Start();
+        }
+
+        public static bool CheckGameDef(GameDef game)
+        {
+            Program.Game = new Game(game);
+            Program.Game.TestBegin();
+            var engine = new Engine(true);
+            string[] terr = engine.TestScripts(Program.Game);
+            Program.Game.End();
+            if (terr.Length > 0)
+            {
+                String ewe = terr.Aggregate("",
+                                            (current, s) =>
+                                            current +
+                                            (s + Environment.NewLine));
+                var er = new ErrorWindow(ewe);
+                er.ShowDialog();
+            }
+            return terr.Length == 0;
         }
 
         public bool IsClosingDown { get; set; }
@@ -79,23 +99,40 @@ namespace Octgn.Launcher
                 if (Program.GamesRepository == null)
                     Program.GamesRepository = new GamesRepository();
                 var g2R = new List<Data.Game>();
-                foreach (Data.Game g in Program.GamesRepository.Games)
+                using (MD5 md5 = new MD5CryptoServiceProvider())
                 {
-                    UpdateStatus("Checking Game: " + g.Name);
-                    if (!File.Exists(g.Filename))
+                    foreach (Data.Game g in Program.GamesRepository.Games)
                     {
-                        _errors.Add("[" + g.Name + "]: Def file doesn't exist at " + g.Filename);
-                        continue;
+                        string fhash = "";
+
+                        UpdateStatus("Checking Game: " + g.Name);
+
+                        if (!File.Exists(g.Filename))
+                        {
+                            _errors.Add("[" + g.Name + "]: Def file doesn't exist at " + g.Filename);
+                            continue;
+                        }
+                        using (var file = new FileStream(g.Filename, FileMode.Open))
+                        {
+                            byte[] retVal = md5.ComputeHash(file);
+                            fhash = BitConverter.ToString(retVal).Replace("-", ""); // hex string
+                        }
+                        if (fhash.ToLower() == g.FileHash.ToLower()) continue;
+
+                        Program.Game = new Game(GameDef.FromO8G(g.Filename));
+                        Program.Game.TestBegin();
+                        //IEnumerable<Player> plz = Player.All;
+                        var engine = new Engine(true);
+                        string[] terr = engine.TestScripts(Program.Game);
+                        Program.Game.End();
+                        if (terr.Length <= 0)
+                        {
+                            Program.GamesRepository.UpdateGameHash(g,fhash);
+                            continue;
+                        }
+                        _errors.AddRange(terr);
+                        g2R.Add(g);
                     }
-                    Program.Game = new Game(GameDef.FromO8G(g.Filename));
-                    Program.Game.TestBegin();
-                    //IEnumerable<Player> plz = Player.All;
-                    var engine = new Engine(true);
-                    string[] terr = engine.TestScripts(Program.Game);
-                    Program.Game.End();
-                    if (terr.Length <= 0) continue;
-                    _errors.AddRange(terr);
-                    g2R.Add(g);
                 }
                 foreach (Data.Game g in g2R)
                     Program.GamesRepository.Games.Remove(g);

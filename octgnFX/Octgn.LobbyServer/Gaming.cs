@@ -57,8 +57,8 @@ namespace Skylabs.LobbyServer
                 while (Games.ContainsKey(_currentHostPort) || !Networking.IsPortAvailable(_currentHostPort))
                 {
                     _currentHostPort++;
-                    if (_currentHostPort >= 8000)
-                        _currentHostPort = 5000;
+                    if (_currentHostPort >= 20000)
+                        _currentHostPort = 10000;
                 }
                 var hs = new HostedGame(_currentHostPort, g, v, name, pass, u);
                 hs.HostedGameDone += HostedGameExited;
@@ -79,7 +79,7 @@ namespace Skylabs.LobbyServer
             {
                 try
                 {
-                    Games[port].Status = Lobby.HostedGame.EHostedGame.GameInProgress;
+                    Games[port].Status = Lobby.HostedGameData.EHostedGame.GameInProgress;
                 }
                 catch (Exception e)
                 {
@@ -89,14 +89,14 @@ namespace Skylabs.LobbyServer
             }
         }
 
-        public static List<Lobby.HostedGame> GetLobbyList()
+        public static List<Lobby.HostedGameData> GetLobbyList()
         {
             lock (GamingLocker)
             {
-                List<Lobby.HostedGame> sendgames =
+                List<Lobby.HostedGameData> sendgames =
                     Games.Select(
                         g =>
-                        new Lobby.HostedGame(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(), g.Value.Port,
+                        new Lobby.HostedGameData(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(), g.Value.Port,
                                              (string) g.Value.Name.Clone(), !String.IsNullOrWhiteSpace(g.Value.Password),
                                              (User) g.Value.Hoster.Clone(), g.Value.TimeStarted)
                             {GameStatus = g.Value.Status}).ToList();
@@ -110,7 +110,7 @@ namespace Skylabs.LobbyServer
             {
                 var s = sender as HostedGame;
                 if (s == null) return;
-                s.Status = Lobby.HostedGame.EHostedGame.StoppedHosting;
+                s.Status = Lobby.HostedGameData.EHostedGame.StoppedHosting;
                 var sm = new SocketMessage("gameend");
                 sm.AddData("port", s.Port);
                 Action t = () => Server.AllUserMessage(sm);

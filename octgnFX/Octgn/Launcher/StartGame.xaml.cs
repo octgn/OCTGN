@@ -11,11 +11,11 @@ namespace Octgn.Launcher
     public partial class StartGame
     {
         private bool _startingGame;
-
-        public StartGame()
+        private readonly bool _isLocal;
+        public StartGame(bool isLocal = false)
         {
             InitializeComponent();
-
+            _isLocal = isLocal;
             if (Program.IsHost)
             {
                 descriptionLabel.Text =
@@ -40,7 +40,8 @@ namespace Octgn.Launcher
                               // Otherwise, messages notifying a disconnection may be lost
                               try
                               {
-                                  Dispatcher.BeginInvoke(new Action(Program.Game.Begin));
+                                  if(Program.Game != null)
+                                    Dispatcher.BeginInvoke(new Action(Program.Game.Begin));
                               }
                               catch (Exception)
                               {
@@ -82,9 +83,15 @@ namespace Octgn.Launcher
 
             if (Program.PlayWindow != null) return;
             Program.Client.Rpc.Start();
-            Program.PlayWindow = new PlayWindow();
+            Program.PlayWindow = new PlayWindow(true);
             Program.PlayWindow.Show();
-            Program.ClientWindow.HostJoinTab();
+            if (!_isLocal)
+                Program.ClientWindow.HostJoinTab();
+            else
+            {
+                Program.LauncherWindow.Navigate(new Login());
+                Program.LauncherWindow.Hide();
+            }
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
@@ -102,12 +109,17 @@ namespace Octgn.Launcher
             Back();
         }
 
-        private static void Back()
+        private void Back()
         {
-            Program.ClientWindow.HostJoinTab();
+            if (!_isLocal)
+                Program.ClientWindow.HostJoinTab();
+            else
+            {
+                Program.LauncherWindow.NavigationService.Navigate(new Login());
+            }
         }
 
-        private static void HandshakeError(object sender, ServerErrorEventArgs e)
+        private void HandshakeError(object sender, ServerErrorEventArgs e)
         {
             MessageBox.Show("The server returned an error:\n" + e.Message, "Error", MessageBoxButton.OK,
                             MessageBoxImage.Error);

@@ -167,7 +167,7 @@ namespace Skylabs.LobbyServer
         private static string InsertRunningGames(string rawpage)
         {
             string insert = string.Empty;
-            List<Lobby.HostedGame> games = Gaming.GetLobbyList();
+            List<Lobby.HostedGameData> games = Gaming.GetLobbyList();
 
             Version v = Assembly.GetCallingAssembly().GetName().Version;
             string ret = rawpage.Replace("$version", v.ToString());
@@ -177,7 +177,7 @@ namespace Skylabs.LobbyServer
             ret = ret.Replace("$totmem", "256 MB");
 
             //construct game table
-            foreach (Lobby.HostedGame game in games)
+            foreach (Lobby.HostedGameData game in games)
             {
                 var ts = new TimeSpan(DateTime.Now.Ticks - game.TimeStarted.Ticks);
                 insert = insert + "<tr>";
