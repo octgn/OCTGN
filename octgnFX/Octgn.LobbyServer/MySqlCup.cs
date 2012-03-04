@@ -109,12 +109,12 @@ namespace Skylabs.LobbyServer
                                     break;
                                 }
                             }
-                            Con.Close();
+                            ;
                         }
                         else
                         {
                             dr.Close();
-                            Con.Close();
+                            ;
                         }
                     }
                 }
@@ -188,7 +188,7 @@ namespace Skylabs.LobbyServer
                             }
                             dr.Close();
                         }
-                        Con.Close();
+                        ;
                     }
                 }
                 catch (Exception ex)
@@ -236,7 +236,7 @@ namespace Skylabs.LobbyServer
                             }
                             dr.Close();
                         }
-                        Con.Close();
+                        ;
                     }
                 }
                 catch (Exception ex)
@@ -379,7 +379,7 @@ namespace Skylabs.LobbyServer
                         }
                         dr.Close();
                     }
-                    Con.Close();
+                    ;
                     return ret;
                 }
                 catch (Exception e)
@@ -522,7 +522,7 @@ namespace Skylabs.LobbyServer
                                 friends.Add(temp);
                             }
                             dr.Close();
-                            Con.Close();
+                            ;
                             return friends;
                         }
                     }

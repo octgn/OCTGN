@@ -356,7 +356,8 @@ namespace Octgn.Launcher
                 }
                 Program.LauncherWindow = new LauncherWindow();
                 Program.LauncherWindow.Show();
-                Application.Current.MainWindow = Program.LauncherWindow;
+                if(Application.Current != null)
+                    Application.Current.MainWindow = Program.LauncherWindow;
             }
             else
             {

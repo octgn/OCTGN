@@ -19,6 +19,7 @@ namespace Skylabs.Lobby
         /// <param name="hoster"> User hosting the game </param>
         public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, User hoster, bool localGame = false)
         {
+            GameLog = "";
             GameGuid = gameguid;
             GameVersion = gameversion;
             Name = name;
@@ -28,15 +29,10 @@ namespace Skylabs.Lobby
             Port = port;
             TimeStarted = new DateTime(0);
             LocalGame = localGame;
-            StandAloneApp = new Process
-                                {
-                                    StartInfo =
-                                        {
-                                            FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe",
-                                            Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
-                                                        Port.ToString(CultureInfo.InvariantCulture)
-                                        }
-                                };
+            StandAloneApp = new Process();
+            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
+            StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
+                                                Port.ToString(CultureInfo.InvariantCulture);
 #if(DEBUG || TestServer)
 #else
             if(!LocalGame)
@@ -48,8 +44,26 @@ namespace Skylabs.Lobby
             }
 
 #endif
+
+            StandAloneApp.StartInfo.RedirectStandardOutput = true;
+            StandAloneApp.StartInfo.RedirectStandardInput = true;
+            StandAloneApp.StartInfo.RedirectStandardError = true;
+            StandAloneApp.StartInfo.UseShellExecute = false;
+            StandAloneApp.StartInfo.CreateNoWindow = true;
             StandAloneApp.Exited += StandAloneAppExited;
+            StandAloneApp.ErrorDataReceived += new DataReceivedEventHandler(StandAloneAppOnErrorDataReceived);
+            StandAloneApp.OutputDataReceived += new DataReceivedEventHandler(StandAloneAppOnOutputDataReceived);
             StandAloneApp.EnableRaisingEvents = true;
+        }
+
+        private void StandAloneAppOnOutputDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
+        {
+            GameLog += dataReceivedEventArgs.Data + Environment.NewLine;
+        }
+
+        private void StandAloneAppOnErrorDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
+        {
+            GameLog += dataReceivedEventArgs.Data + Environment.NewLine;
         }
 
         /// <summary>
@@ -115,6 +129,8 @@ namespace Skylabs.Lobby
 
         public event EventHandler HostedGameDone;
 
+        public string GameLog { get; private set; }
+
         public void Stop()
         {
             try
@@ -134,6 +150,8 @@ namespace Skylabs.Lobby
             try
             {
                 StandAloneApp.Start();
+                StandAloneApp.BeginErrorReadLine();
+                StandAloneApp.BeginOutputReadLine();
                 Status = Lobby.HostedGameData.EHostedGame.StartedHosting;
                 TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
                 return true;
@@ -159,7 +177,7 @@ namespace Skylabs.Lobby
         {
             if (HostedGameDone != null)
                 HostedGameDone(this, e);
-            Console.WriteLine("Ending Game[" + Port + "]");
+            Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]",Port,Environment.NewLine,GameLog);
         }
     }
 }
