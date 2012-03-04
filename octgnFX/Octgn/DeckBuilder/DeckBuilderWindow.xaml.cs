@@ -403,7 +403,12 @@ namespace Octgn.DeckBuilder
                 element.Quantity -= 1;
                 e.Handled = true;
             }
-        }
+		}
+
+        private void DeckSort_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //TODO: Sort Decklist according to selected property
+        }		
 
         private void ElementEditEnd(object sender, DataGridCellEditEndingEventArgs e)
         {

@@ -58,7 +58,7 @@ namespace Octgn.Launcher
         {
             try
             {
-                string[] update = ReadUpdateXml("http://www.skylabsonline.com/downloads/octgn/update.xml");
+                string[] update = ReadUpdateXml("https://raw.github.com/kellyelton/OCTGN/master/currentversion.xml");
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
