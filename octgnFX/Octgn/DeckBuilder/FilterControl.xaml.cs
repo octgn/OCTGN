@@ -10,16 +10,13 @@ namespace Octgn.DeckBuilder
     public partial class FilterControl
     {
         private static readonly SqlComparison[] StringComparisons = new[]
-                                                                        {
-                                                                            new SqlComparison("Contains",
-                                                                                              "{0} LIKE '*{1}*'")
-                                                                                {EscapeQuotes = true},
-                                                                            new SqlComparison("Starts with",
-                                                                                              "{0} LIKE '{1}*'")
-                                                                                {EscapeQuotes = true},
-                                                                            new SqlComparison("Equals", "{0} = '{1}'")
-                                                                                {EscapeQuotes = true}
-                                                                        };
+                                            {
+                                                new SqlComparison("Contains", "Card.[{0}] LIKE '%{1}%'") { EscapeQuotes = true },
+                                                new SqlComparison("Does Not Contain", "Card.[{0}] NOT LIKE '%{1}%'") { EscapeQuotes = true },
+                                                new SqlComparison("Starts with", "Card.[{0}] LIKE '{1}%'") { EscapeQuotes = true },
+                                                new SqlComparison("Ends with", "Card.[{0}] LIKE '%{1}'") { EscapeQuotes = true },
+                                                new SqlComparison("Equals", "Card.[{0}] = '{1}'") { EscapeQuotes = true}
+                                            };
 
         private static readonly SqlComparison[] IntegerComparisons = new SqlComparison[]
                                                                          {
