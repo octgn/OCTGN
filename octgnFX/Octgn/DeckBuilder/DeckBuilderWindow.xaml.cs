@@ -35,8 +35,8 @@ namespace Octgn.DeckBuilder
                 _deckFilename = null;
             }
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
-            newSubMenu.ItemsSource = Program.GamesRepository.AllGames;
-            loadSubMenu.ItemsSource = Program.GamesRepository.AllGames;
+            newSubMenu.ItemsSource = Program.GamesRepository.Games;
+            loadSubMenu.ItemsSource = Program.GamesRepository.Games;
             Title = "OCTGN Deck Editor  version " + oversion;
         }
 
@@ -95,16 +95,12 @@ namespace Octgn.DeckBuilder
             get { return _game; }
             set
             {
-                if (_game == value) return;
-
-                if (_game != null)
-                {
-                }
+                if (_game == value || value == null ) return;
 
                 _game = value;
+
                 ActiveSection = null;
 
-                if (value == null) return;
                     cardImage.Source = new BitmapImage(value.GetCardBackUri());//Sets initial preview to default backing (!isFaceUp Image)
                 Searches.Clear();
                 AddSearchTab();

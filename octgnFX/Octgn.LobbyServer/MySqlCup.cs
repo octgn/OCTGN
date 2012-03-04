@@ -8,17 +8,19 @@ using Skylabs.Lobby;
 
 namespace Skylabs.LobbyServer
 {
-    public class MySqlCup
+    public static class MySqlCup
     {
-        private readonly object _dbLocker = new object();
-        public string ConnectionString;
+        private static readonly object _dbLocker = new object();
+        public static string ConnectionString;
 
-        public MySqlCup(string user, string pass, string host, string db)
+        public static MySqlConnection Con;
+
+        static MySqlCup()
         {
-            DbUser = user;
-            DbPass = pass;
-            DbHost = host;
-            DbName = db;
+            DbUser = Program.Settings["dbUser"];
+            DbPass = Program.Settings["dbPass"];
+            DbHost = Program.Settings["dbHost"];
+            DbName = Program.Settings["db"];
             var sb = new MySqlConnectionStringBuilder
                          {
                              Database = DbName,
@@ -27,23 +29,25 @@ namespace Skylabs.LobbyServer
                              Server = DbHost
                          };
             ConnectionString = sb.ToString();
+            Con = new MySqlConnection(ConnectionString);
+            Con.Open();
         }
 
-        public string DbUser { get; private set; }
+        public static string DbUser { get; private set; }
 
-        public string DbPass { get; private set; }
+        public static string DbPass { get; private set; }
 
-        public string DbHost { get; private set; }
+        public static string DbHost { get; private set; }
 
-        public string DbName { get; private set; }
+        public static string DbName { get; private set; }
 
         /// <summary>
         ///   Is the current user banned?
         /// </summary>
         /// <param name="uid"> User ID </param>
         /// <param name="endpoint"> The Endpoint </param>
-        /// <returns> -1 if not banned. Timestamp of ban end if banned. Timestamp can be converted to DateTime with fromPHPTime. </returns>
-        public int IsBanned(int uid, EndPoint endpoint)
+        /// <returns> -1 if not banned. Timestamp of ban end if banned. Timestamp can be Converted to DateTime with fromPHPTime. </returns>
+        public static int IsBanned(int uid, EndPoint endpoint)
         {
             lock (_dbLocker)
             {
@@ -54,67 +58,63 @@ namespace Skylabs.LobbyServer
                 int ret = -1;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
+                    string ip = endpoint.ToString();
+
+                    MySqlCommand cmd = Con.CreateCommand();
+                    try
                     {
-                        con.Open();
-                        string ip = endpoint.ToString();
+                        ip = ip.Substring(0, ip.IndexOf(':'));
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine(ip);
+                    }
 
-                        MySqlCommand cmd = con.CreateCommand();
-                        try
-                        {
-                            ip = ip.Substring(0, ip.IndexOf(':'));
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine(ip);
-                        }
+                    cmd.CommandText = "SELECT * FROM bans WHERE uid=@uid OR ip=@ip;";
+                    cmd.Prepare();
+                    cmd.Parameters.Add("@uid", MySqlDbType.Int32);
+                    cmd.Parameters.Add("@ip", MySqlDbType.VarChar, 15);
+                    cmd.Parameters["@uid"].Value = uid;
+                    cmd.Parameters["@ip"].Value = ip;
 
-                        cmd.CommandText = "SELECT * FROM bans WHERE uid=@uid OR ip=@ip;";
-                        cmd.Prepare();
-                        cmd.Parameters.Add("@uid", MySqlDbType.Int32);
-                        cmd.Parameters.Add("@ip", MySqlDbType.VarChar, 15);
-                        cmd.Parameters["@uid"].Value = uid;
-                        cmd.Parameters["@ip"].Value = ip;
-
-                        using (MySqlDataReader dr = cmd.ExecuteReader())
+                    using (MySqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.HasRows)
                         {
-                            if (dr.HasRows)
+                            var bans = new List<Ban>();
+                            while (dr.Read())
                             {
-                                var bans = new List<Ban>();
-                                while (dr.Read())
-                                {
-                                    var b = new Ban
-                                                {
-                                                    Bid = dr.GetInt32("bid"),
-                                                    Uid = dr.GetInt32("uid"),
-                                                    EndTime = dr.GetInt32("end"),
-                                                    Ip = dr.GetString("ip")
-                                                };
+                                var b = new Ban
+                                            {
+                                                Bid = dr.GetInt32("bid"),
+                                                Uid = dr.GetInt32("uid"),
+                                                EndTime = dr.GetInt32("end"),
+                                                Ip = dr.GetString("ip")
+                                            };
 
-                                    bans.Add(b);
-                                }
-                                dr.Close();
-                                foreach (Ban b in bans)
-                                {
-                                    string bid = b.Bid.ToString(CultureInfo.InvariantCulture);
-                                    DateTime endtime = ValueConverters.FromPhpTime(b.EndTime);
-                                    if (DateTime.Now >= endtime)
-                                    {
-                                        DeleteRow(con, "bans", "bid", bid);
-                                    }
-                                    else
-                                    {
-                                        ret = (int) b.EndTime;
-                                        break;
-                                    }
-                                }
-                                con.Close();
+                                bans.Add(b);
                             }
-                            else
+                            dr.Close();
+                            foreach (Ban b in bans)
                             {
-                                dr.Close();
-                                con.Close();
+                                string bid = b.Bid.ToString(CultureInfo.InvariantCulture);
+                                DateTime endtime = ValueConverters.FromPhpTime(b.EndTime);
+                                if (DateTime.Now >= endtime)
+                                {
+                                    DeleteRow("bans", "bid", bid);
+                                }
+                                else
+                                {
+                                    ret = (int) b.EndTime;
+                                    break;
+                                }
                             }
+                            ;
+                        }
+                        else
+                        {
+                            dr.Close();
+                            ;
                         }
                     }
                 }
@@ -132,13 +132,13 @@ namespace Skylabs.LobbyServer
         /// <summary>
         ///   Just a generic delete row function.
         /// </summary>
-        /// <param name="con"> Connection </param>
+        /// <param name="Con"> Connection </param>
         /// <param name="table"> Table to delete from </param>
         /// <param name="columnname"> Column name to check against. </param>
         /// <param name="columnvalue"> The value, that if exists in said column, will cause the row to go bye bye. </param>
-        private static void DeleteRow(MySqlConnection con, string table, string columnname, string columnvalue)
+        private static void DeleteRow(string table, string columnname, string columnvalue)
         {
-            MySqlCommand cmd = con.CreateCommand();
+            MySqlCommand cmd = Con.CreateCommand();
             cmd.CommandText = "DELETE FROM @table WHERE @col=@val;";
             cmd.Prepare();
             cmd.Parameters.Add("@table");
@@ -155,7 +155,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="email"> Users e-mail </param>
         /// <returns> User data, such as UID and whatnot, or NULL if none found. </returns>
-        public User GetUser(string email)
+        public static User GetUser(string email)
         {
             lock (_dbLocker)
             {
@@ -166,33 +166,29 @@ namespace Skylabs.LobbyServer
                 User ret = null;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
+                    using (MySqlCommand com = Con.CreateCommand())
                     {
-                        con.Open();
-                        using (MySqlCommand com = con.CreateCommand())
+                        com.CommandText = "SELECT * FROM users WHERE email=@email;";
+                        com.Prepare();
+                        com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
+                        com.Parameters["@email"].Value = email;
+                        using (MySqlDataReader dr = com.ExecuteReader())
                         {
-                            com.CommandText = "SELECT * FROM users WHERE email=@email;";
-                            com.Prepare();
-                            com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
-                            com.Parameters["@email"].Value = email;
-                            using (MySqlDataReader dr = com.ExecuteReader())
+                            if (dr.Read())
                             {
-                                if (dr.Read())
-                                {
-                                    ret = new User
-                                              {
-                                                  Email = dr.GetString("email"),
-                                                  DisplayName = dr.GetString("name"),
-                                                  Uid = dr.GetInt32("uid"),
-                                                  CustomStatus = dr.GetString("status"),
-                                                  Status = UserStatus.Unknown,
-                                                  Level = (UserLevel) dr.GetInt32("level")
-                                              };
-                                }
-                                dr.Close();
+                                ret = new User
+                                            {
+                                                Email = dr.GetString("email"),
+                                                DisplayName = dr.GetString("name"),
+                                                Uid = dr.GetInt32("uid"),
+                                                CustomStatus = dr.GetString("status"),
+                                                Status = UserStatus.Unknown,
+                                                Level = (UserLevel) dr.GetInt32("level")
+                                            };
                             }
-                            con.Close();
+                            dr.Close();
                         }
+                        ;
                     }
                 }
                 catch (Exception ex)
@@ -208,7 +204,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="uid"> UID of the user </param>
         /// <returns> User that matches, or null. </returns>
-        public User GetUser(int uid)
+        public static User GetUser(int uid)
         {
             lock (_dbLocker)
             {
@@ -217,33 +213,30 @@ namespace Skylabs.LobbyServer
                 User ret = null;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
+
+                    using (MySqlCommand com = Con.CreateCommand())
                     {
-                        con.Open();
-                        using (MySqlCommand com = con.CreateCommand())
+                        com.CommandText = "SELECT * FROM users WHERE uid=@uid;";
+                        com.Prepare();
+                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                        com.Parameters["@uid"].Value = uid;
+                        using (MySqlDataReader dr = com.ExecuteReader())
                         {
-                            com.CommandText = "SELECT * FROM users WHERE uid=@uid;";
-                            com.Prepare();
-                            com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                            com.Parameters["@uid"].Value = uid;
-                            using (MySqlDataReader dr = com.ExecuteReader())
+                            if (dr.Read())
                             {
-                                if (dr.Read())
-                                {
-                                    ret = new User
-                                              {
-                                                  Email = dr.GetString("email"),
-                                                  DisplayName = dr.GetString("name"),
-                                                  Uid = dr.GetInt32("uid"),
-                                                  CustomStatus = dr.GetString("status"),
-                                                  Status = UserStatus.Unknown,
-                                                  Level = (UserLevel) dr.GetInt32("level")
-                                              };
-                                }
-                                dr.Close();
+                                ret = new User
+                                            {
+                                                Email = dr.GetString("email"),
+                                                DisplayName = dr.GetString("name"),
+                                                Uid = dr.GetInt32("uid"),
+                                                CustomStatus = dr.GetString("status"),
+                                                Status = UserStatus.Unknown,
+                                                Level = (UserLevel) dr.GetInt32("level")
+                                            };
                             }
-                            con.Close();
+                            dr.Close();
                         }
+                        ;
                     }
                 }
                 catch (Exception ex)
@@ -260,7 +253,7 @@ namespace Skylabs.LobbyServer
         /// <param name="email"> users e-mail </param>
         /// <param name="name"> display name </param>
         /// <returns> true on success, false on failure. </returns>
-        public bool RegisterUser(string email, string name)
+        public static bool RegisterUser(string email, string name)
         {
             lock (_dbLocker)
             {
@@ -270,19 +263,15 @@ namespace Skylabs.LobbyServer
                     return false;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
-                    {
-                        con.Open();
-                        MySqlCommand com = con.CreateCommand();
-                        com.CommandText = "INSERT INTO users(email,name) VALUES(@email,@name);";
-                        com.Prepare();
-                        com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
-                        com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
-                        com.Parameters["@email"].Value = email;
-                        com.Parameters["@name"].Value = name;
-                        com.ExecuteNonQuery();
-                        return true;
-                    }
+                    MySqlCommand com = Con.CreateCommand();
+                    com.CommandText = "INSERT INTO users(email,name) VALUES(@email,@name);";
+                    com.Prepare();
+                    com.Parameters.Add("@email", MySqlDbType.VarChar, 60);
+                    com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
+                    com.Parameters["@email"].Value = email;
+                    com.Parameters["@name"].Value = name;
+                    com.ExecuteNonQuery();
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -297,7 +286,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="requesteeuid"> Requestee's UID </param>
         /// <param name="friendemail"> To be friends email </param>
-        public void RemoveFriendRequest(int requesteeuid, string friendemail)
+        public static void RemoveFriendRequest(int requesteeuid, string friendemail)
         {
             lock (_dbLocker)
             {
@@ -307,18 +296,14 @@ namespace Skylabs.LobbyServer
                     return;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
-                    {
-                        con.Open();
-                        MySqlCommand cmd = con.CreateCommand();
-                        cmd.CommandText = "DELETE FROM friendrequests WHERE uid=@uid AND email=@email;";
-                        cmd.Prepare();
-                        cmd.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                        cmd.Parameters.Add("@email", MySqlDbType.String, 100);
-                        cmd.Parameters["@uid"].Value = requesteeuid;
-                        cmd.Parameters["@email"].Value = friendemail;
-                        cmd.ExecuteNonQuery();
-                    }
+                    MySqlCommand cmd = Con.CreateCommand();
+                    cmd.CommandText = "DELETE FROM friendrequests WHERE uid=@uid AND email=@email;";
+                    cmd.Prepare();
+                    cmd.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    cmd.Parameters.Add("@email", MySqlDbType.String, 100);
+                    cmd.Parameters["@uid"].Value = requesteeuid;
+                    cmd.Parameters["@email"].Value = friendemail;
+                    cmd.ExecuteNonQuery();
                 }
                 catch (Exception e)
                 {
@@ -333,7 +318,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="uid"> Users UID. </param>
         /// <param name="friendemail"> Friend-to-bes e-mail </param>
-        public void AddFriendRequest(int uid, string friendemail)
+        public static void AddFriendRequest(int uid, string friendemail)
         {
             lock (_dbLocker)
             {
@@ -345,18 +330,14 @@ namespace Skylabs.LobbyServer
                     return;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
-                    {
-                        con.Open();
-                        MySqlCommand com = con.CreateCommand();
-                        com.CommandText = "INSERT INTO friendrequests(uid,email) VALUES(@uid,@email);";
-                        com.Prepare();
-                        com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
-                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                        com.Parameters["@email"].Value = friendemail;
-                        com.Parameters["@uid"].Value = uid;
-                        com.ExecuteNonQuery();
-                    }
+                    MySqlCommand com = Con.CreateCommand();
+                    com.CommandText = "INSERT INTO friendrequests(uid,email) VALUES(@uid,@email);";
+                    com.Prepare();
+                    com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
+                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    com.Parameters["@email"].Value = friendemail;
+                    com.Parameters["@uid"].Value = uid;
+                    com.ExecuteNonQuery();
                 }
                 catch (Exception e)
                 {
@@ -371,7 +352,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="email"> The users e-mail address </param>
         /// <returns> List of UID's of users that want to be the users friend. </returns>
-        public List<int> GetFriendRequests(string email)
+        public static List<int> GetFriendRequests(string email)
         {
             lock (_dbLocker)
             {
@@ -382,28 +363,24 @@ namespace Skylabs.LobbyServer
                 List<int> ret = null;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
+                    MySqlCommand com = Con.CreateCommand();
+                    com.CommandText = "SELECT * FROM friendrequests WHERE email=@email;";
+                    com.Prepare();
+                    com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
+                    com.Parameters["@email"].Value = email;
+                    using (MySqlDataReader dr = com.ExecuteReader())
                     {
-                        con.Open();
-                        MySqlCommand com = con.CreateCommand();
-                        com.CommandText = "SELECT * FROM friendrequests WHERE email=@email;";
-                        com.Prepare();
-                        com.Parameters.Add("@email", MySqlDbType.VarChar, 100);
-                        com.Parameters["@email"].Value = email;
-                        using (MySqlDataReader dr = com.ExecuteReader())
+                        while (dr.Read())
                         {
-                            while (dr.Read())
-                            {
-                                if (ret == null)
-                                    ret = new List<int>();
-                                int uid = dr.GetInt32("uid");
-                                ret.Add(uid);
-                            }
-                            dr.Close();
+                            if (ret == null)
+                                ret = new List<int>();
+                            int uid = dr.GetInt32("uid");
+                            ret.Add(uid);
                         }
-                        con.Close();
-                        return ret;
+                        dr.Close();
                     }
+                    ;
+                    return ret;
                 }
                 catch (Exception e)
                 {
@@ -419,7 +396,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="useruid"> User id </param>
         /// <param name="frienduid"> Friend id </param>
-        public void AddFriend(int useruid, int frienduid)
+        public static void AddFriend(int useruid, int frienduid)
         {
             lock (_dbLocker)
             {
@@ -427,25 +404,21 @@ namespace Skylabs.LobbyServer
                     return;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
-                    {
-                        con.Open();
-                        MySqlCommand com = con.CreateCommand();
-                        List<User> myFriendList = GetFriendsList(useruid);
-                        List<User> oFriendlist = GetFriendsList(frienduid);
-                        com.CommandText = "INSERT INTO friends(uid,fid) VALUES(@uid,@fid);";
-                        com.Prepare();
-                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                        com.Parameters.Add("@fid", MySqlDbType.Int32, 11);
-                        com.Parameters["@uid"].Value = useruid;
-                        com.Parameters["@fid"].Value = frienduid;
-                        if (!myFriendList.Exists(u => u.Uid == frienduid))
-                            com.ExecuteNonQuery();
-                        com.Parameters["@uid"].Value = frienduid;
-                        com.Parameters["@fid"].Value = useruid;
-                        if (!oFriendlist.Exists(u => u.Uid == useruid))
-                            com.ExecuteNonQuery();
-                    }
+                    MySqlCommand com = Con.CreateCommand();
+                    List<User> myFriendList = GetFriendsList(useruid);
+                    List<User> oFriendlist = GetFriendsList(frienduid);
+                    com.CommandText = "INSERT INTO friends(uid,fid) VALUES(@uid,@fid);";
+                    com.Prepare();
+                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    com.Parameters.Add("@fid", MySqlDbType.Int32, 11);
+                    com.Parameters["@uid"].Value = useruid;
+                    com.Parameters["@fid"].Value = frienduid;
+                    if (!myFriendList.Exists(u => u.Uid == frienduid))
+                        com.ExecuteNonQuery();
+                    com.Parameters["@uid"].Value = frienduid;
+                    com.Parameters["@fid"].Value = useruid;
+                    if (!oFriendlist.Exists(u => u.Uid == useruid))
+                        com.ExecuteNonQuery();
                 }
                 catch (Exception e)
                 {
@@ -461,7 +434,7 @@ namespace Skylabs.LobbyServer
         /// <param name="uid"> Users uid </param>
         /// <param name="status"> Custom status. </param>
         /// <returns> Returns a false if the data it got was bullshit. </returns>
-        public bool SetCustomStatus(int uid, string status)
+        public static bool SetCustomStatus(int uid, string status)
         {
             lock (_dbLocker)
             {
@@ -471,19 +444,15 @@ namespace Skylabs.LobbyServer
                     return false;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
-                    {
-                        con.Open();
-                        MySqlCommand com = con.CreateCommand();
-                        com.CommandText = "UPDATE users SET status=@status WHERE uid=@uid;";
-                        com.Prepare();
-                        com.Parameters.Add("@status", MySqlDbType.VarChar, 200);
-                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                        com.Parameters["@status"].Value = status;
-                        com.Parameters["@uid"].Value = uid;
-                        com.ExecuteNonQuery();
-                        return true;
-                    }
+                    MySqlCommand com = Con.CreateCommand();
+                    com.CommandText = "UPDATE users SET status=@status WHERE uid=@uid;";
+                    com.Prepare();
+                    com.Parameters.Add("@status", MySqlDbType.VarChar, 200);
+                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    com.Parameters["@status"].Value = status;
+                    com.Parameters["@uid"].Value = uid;
+                    com.ExecuteNonQuery();
+                    return true;
                 }
                 catch (Exception)
                 {
@@ -498,7 +467,7 @@ namespace Skylabs.LobbyServer
         /// <param name="uid"> Users uid </param>
         /// <param name="name"> Users display name </param>
         /// <returns> True on success, or false if the data is fucked. </returns>
-        public bool SetDisplayName(int uid, string name)
+        public static bool SetDisplayName(int uid, string name)
         {
             lock (_dbLocker)
             {
@@ -508,19 +477,15 @@ namespace Skylabs.LobbyServer
                     return false;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
-                    {
-                        con.Open();
-                        MySqlCommand com = con.CreateCommand();
-                        com.CommandText = "UPDATE users SET name=@name WHERE uid=@uid;";
-                        com.Prepare();
-                        com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
-                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                        com.Parameters["@name"].Value = name;
-                        com.Parameters["@uid"].Value = uid;
-                        com.ExecuteNonQuery();
-                        return true;
-                    }
+                    MySqlCommand com = Con.CreateCommand();
+                    com.CommandText = "UPDATE users SET name=@name WHERE uid=@uid;";
+                    com.Prepare();
+                    com.Parameters.Add("@name", MySqlDbType.VarChar, 60);
+                    com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                    com.Parameters["@name"].Value = name;
+                    com.Parameters["@uid"].Value = uid;
+                    com.ExecuteNonQuery();
+                    return true;
                 }
                 catch (Exception)
                 {
@@ -534,7 +499,7 @@ namespace Skylabs.LobbyServer
         /// </summary>
         /// <param name="uid"> Users UID </param>
         /// <returns> List of friends as Users, or NULL. </returns>
-        public List<User> GetFriendsList(int uid)
+        public static List<User> GetFriendsList(int uid)
         {
             lock (_dbLocker)
             {
@@ -542,27 +507,23 @@ namespace Skylabs.LobbyServer
                     return null;
                 try
                 {
-                    using (var con = new MySqlConnection(ConnectionString))
+                    using (MySqlCommand com = Con.CreateCommand())
                     {
-                        con.Open();
-                        using (MySqlCommand com = con.CreateCommand())
+                        com.CommandText = "SELECT * FROM friends WHERE uid=@uid;";
+                        com.Prepare();
+                        com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
+                        com.Parameters["@uid"].Value = uid;
+                        using (MySqlDataReader dr = com.ExecuteReader())
                         {
-                            com.CommandText = "SELECT * FROM friends WHERE uid=@uid;";
-                            com.Prepare();
-                            com.Parameters.Add("@uid", MySqlDbType.Int32, 11);
-                            com.Parameters["@uid"].Value = uid;
-                            using (MySqlDataReader dr = com.ExecuteReader())
+                            var friends = new List<User>();
+                            while (dr.Read())
                             {
-                                var friends = new List<User>();
-                                while (dr.Read())
-                                {
-                                    User temp = GetUser(dr.GetInt32("fid"));
-                                    friends.Add(temp);
-                                }
-                                dr.Close();
-                                con.Close();
-                                return friends;
+                                User temp = GetUser(dr.GetInt32("fid"));
+                                friends.Add(temp);
                             }
+                            dr.Close();
+                            ;
+                            return friends;
                         }
                     }
                 }

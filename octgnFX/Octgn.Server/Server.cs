@@ -19,10 +19,11 @@ namespace Octgn.Server
         private readonly Handler _handler; // Message handler
         private readonly TcpListener _tcp; // Underlying windows socket
 
-        private Timer _checkConnectionDrops;
         private bool _closed;
         private Thread _serverThread;
         public event EventHandler OnStop;
+
+        private TcpClient _hostClient;
 
         #endregion
 
@@ -44,9 +45,6 @@ namespace Octgn.Server
             // Stop the server and release resources
             _closed = true;
 
-            //drop connection timer cleanup
-            _checkConnectionDrops.Dispose();
-
             try
             {
                 _tcp.Server.Close();
@@ -54,23 +52,11 @@ namespace Octgn.Server
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
                 if (Debugger.IsAttached) Debugger.Break();
             }
             // Close all open connections
-            while (true)
-            {
-                Connection client = null;
-                lock (_clients)
-                {
-                    if (_clients.Count > 0)
-                        client = _clients[0];
-                }
-                if (client != null)
-                    client.Disconnect();
-                else
-                    break;
-            }
+            _clients.ForEach(x=>x.Disconnect());
+            _clients.Clear();
             if (OnStop != null)
                 OnStop.Invoke(this, null);
         }
@@ -87,32 +73,10 @@ namespace Octgn.Server
             // Flag used to wait until the server is really started
             var started = new ManualResetEvent(false);
 
-            //start checking for dropped connections every 60 seconds
-            TimerCallback tcb = CheckForDroppedConnection;
-            _checkConnectionDrops = new Timer(tcb, null, 0, 60000);
-
 
             // Start the server
             _serverThread.Start(started);
             started.WaitOne();
-        }
-
-        // Called when a client gets disconnected
-        public bool Disconnected(TcpClient lost)
-        {
-            bool ret = false;
-            lock (_clients)
-            {
-                // Search the client
-                foreach (Connection t in _clients.Where(t => t.Client == lost))
-                {
-                    // Remove it
-                    t.Disconnected();
-                    ret = true;
-                    break;
-                }
-            }
-            return ret;
         }
 
         private void CheckConnections()
@@ -122,33 +86,21 @@ namespace Octgn.Server
                 Thread.Sleep(10000);
                 lock (_clients)
                 {
-                    if (_clients.Count == 0)
+                    if (_clients.Count == 0 )
                     {
                         Stop();
+                        break;
                     }
-                    DoAgain:
-                    for (int i = 0; i < _clients.Count; i++)
+                    if(_hostClient == null)
+                        _hostClient = _handler.Players.SingleOrDefault(x => x.Value.Id == 1).Key;
+                    if (_hostClient == null && _handler.GameStarted == false)
                     {
-                        if (!_clients[i].Disposed) continue;
-                        _clients.RemoveAt(i);
-                        goto DoAgain;
+                        Stop();
+                        break;
                     }
+                    _clients.FindAll(x=> x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 60).ForEach(me=>me.Disconnect());
+                    _clients.RemoveAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 60);
                 }
-            }
-        }
-
-        private void CheckForDroppedConnection(object stateInfo)
-        {
-            if (_closed) return;
-            Connection[] connections = _clients.ToArray();
-            foreach (
-                Connection t in
-                    from t in connections
-                    let ts = new TimeSpan(DateTime.Now.Ticks - t.LastPingTime.Ticks)
-                    where ts.Seconds > 60
-                    select t)
-            {
-                t.Disconnected();
             }
         }
 
@@ -162,11 +114,12 @@ namespace Octgn.Server
             started.Set();
             try
             {
-                while (true)
+                while (!_closed)
                 {
                     // Accept new connections
                     var sc = new Connection(this, _tcp.AcceptTcpClient());
                     lock (_clients) _clients.Add(sc);
+                    _hostClient = _handler.Players.SingleOrDefault(x => x.Value.Id == 1).Key;
                     if (_connectionChecker == null)
                     {
                     }
@@ -227,7 +180,7 @@ namespace Octgn.Server
                     {
                         var ts = new TimeSpan(DateTime.Now.Ticks - _lastPing.Ticks);
                         if (ts.TotalSeconds > 20)
-                            _server.Disconnected(Client);
+                            Disconnect();
                         //TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
                         if (Disposed) return;
                     }
@@ -270,7 +223,7 @@ namespace Octgn.Server
                     }
                     else
                     {
-                        lock (_server._clients) _server._clients.Remove(this);
+                        Disconnected();
                     }
                 }
                 catch (Exception e)
@@ -367,8 +320,6 @@ namespace Octgn.Server
                         if (Debugger.IsAttached) Debugger.Break();
                     }
                 // Remove it from the list
-                lock (_server._clients)
-                    _server._clients.Remove(this);
             }
 
             // Notify that the client was unexpectedly disconnected

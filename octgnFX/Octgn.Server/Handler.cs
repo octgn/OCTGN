@@ -42,6 +42,13 @@ namespace Octgn.Server
 
         #endregion Private fields
 
+        public Dictionary<TcpClient, PlayerInfo> Players
+        {
+            get { return _clients; }
+        }
+
+        public bool GameStarted { get; private set; }
+
         #region Internal methods
 
         private readonly Guid _gameId;
@@ -51,6 +58,7 @@ namespace Octgn.Server
         // C'tor
         internal Handler(Guid gameId, Version gameVersion)
         {
+            GameStarted = false;
             _gameId = gameId;
             _gameVersion = gameVersion;
             // Init fields
@@ -135,6 +143,7 @@ namespace Octgn.Server
         {
             _acceptPlayers = false;
             _broadcaster.Start();
+            GameStarted = true;
         }
 
         public void Settings(bool twoSidedTable)

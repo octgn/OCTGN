@@ -286,6 +286,9 @@
     <Compile Include="Launcher\ChatWindow.xaml.cs">
       <DependentUpon>ChatWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Launcher\ConnectLocalGame.xaml.cs">
+      <DependentUpon>ConnectLocalGame.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Launcher\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
@@ -695,6 +698,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Launcher\ChatWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\ConnectLocalGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

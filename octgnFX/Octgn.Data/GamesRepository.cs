@@ -221,6 +221,25 @@ namespace Octgn.Data
                 GameInstalled.Invoke(game, new EventArgs());
         }
 
+        public void UpdateGameHash(Game game, string hash)
+        {
+            try
+            {
+                using (var com = DatabaseConnection.CreateCommand())
+                {
+                    com.CommandText = "UPDATE games SET file_hash=@file_hash WHERE id=@id";
+                    com.Parameters.AddWithValue("@file_hash", hash);
+                    com.Parameters.AddWithValue("@id", game.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+            }
+            catch (Exception)
+            {
+                if(Debugger.IsAttached)Debugger.Break();
+            }
+
+        }
+
         private void GetGamesList()
         {
             _allCachedGames = new ObservableCollection<Game>();
@@ -256,6 +275,7 @@ namespace Octgn.Data
                 sharedDeckSections = null;
             else
                 sharedDeckSections = (string) read["shared_deck_sections"];
+            
             var g = new Game
                         {
                             Id = Guid.Parse((string) read["id"]),
@@ -268,7 +288,8 @@ namespace Octgn.Data
                             DeckSections = DeserializeList((string) read["deck_sections"]),
                             SharedDeckSections =
                                 sharedDeckSections == null ? null : DeserializeList(sharedDeckSections),
-                            Repository = this
+                            Repository = this,
+                            FileHash = read["file_hash"] == DBNull.Value ? "" : (string) read["file_hash"]
                         };
 
 

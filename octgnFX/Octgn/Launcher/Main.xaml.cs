@@ -356,7 +356,8 @@ namespace Octgn.Launcher
                 }
                 Program.LauncherWindow = new LauncherWindow();
                 Program.LauncherWindow.Show();
-                Application.Current.MainWindow = Program.LauncherWindow;
+                if(Application.Current != null)
+                    Application.Current.MainWindow = Program.LauncherWindow;
             }
             else
             {
@@ -492,7 +493,7 @@ namespace Octgn.Launcher
         private void hgl_OnGameClick(object sender, EventArgs e)
         {
             if (Program.PlayWindow != null) return;
-            var hg = sender as HostedGame;
+            var hg = sender as HostedGameData;
             Program.IsHost = false;
             Data.Game theGame =
                 Program.GamesRepository.AllGames.FirstOrDefault(g => hg != null && g.Id == hg.GameGuid);
