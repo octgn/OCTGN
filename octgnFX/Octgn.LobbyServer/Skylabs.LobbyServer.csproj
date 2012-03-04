@@ -215,6 +215,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="webserver\game.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="webserver\css\main.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

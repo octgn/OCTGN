@@ -14,7 +14,7 @@
                 totalTime = rtime;
                 $.ajax({
                     type: 'GET',
-                    url: "index.htm",
+                    url: "index",
                     data: { "time": rtime.toString() },
                     success: restartDone
                 });
@@ -52,7 +52,7 @@
                 </a>
             </div>
         </div>
-        <a href="/games.htm">Games</a>
+        <a href="/games">Games</a>
         <br />
         <a>Users Online: $onlineusers</a>
         <br />
