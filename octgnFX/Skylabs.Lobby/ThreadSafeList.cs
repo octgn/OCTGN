@@ -70,7 +70,7 @@ namespace Skylabs.Lobby
         }
 
 
-        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+       void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }

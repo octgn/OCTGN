@@ -199,7 +199,15 @@ namespace Skylabs.LobbyServer
             if (uid <= -1)
                 return null;
             User ret = null;
-            Locker.EnterReadLock();
+            bool lockthis = false;
+            if (!Locker.IsReadLockHeld)
+            {
+                lockthis = true;
+            }
+            if (lockthis)
+            {
+                Locker.EnterReadLock();
+            }
             try
             {
                 using(var Con = new MySqlConnection(ConnectionString))
@@ -233,7 +241,10 @@ namespace Skylabs.LobbyServer
             {
                 Logger.Er(ex);
             }
-            Locker.ExitReadLock();
+            if (lockthis)
+            {
+                Locker.ExitReadLock();
+            }
             return ret;
         }
 
