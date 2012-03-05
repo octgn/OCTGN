@@ -78,6 +78,9 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="agsXMPP">
+      <HintPath>..\Lib\agsXMPP.dll</HintPath>
+    </Reference>
     <Reference Include="Google.GData.Client">
       <HintPath>..\Lib\Google.GData.Client.dll</HintPath>
     </Reference>
@@ -87,11 +90,13 @@
   <ItemGroup>
     <Compile Include="ChatRoom.cs" />
     <Compile Include="Chatting.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="FriendRequestNotification.cs" />
     <Compile Include="HostedGame.cs" />
     <Compile Include="HostedGameData.cs" />
     <Compile Include="LobbyClient.cs" />
     <Compile Include="Networking.cs" />
+    <Compile Include="NewUser.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="Pair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

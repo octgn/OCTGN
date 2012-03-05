@@ -7,6 +7,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Skylabs.Lobby;
+using agsXMPP;
+using agsXMPP.protocol.client;
 
 namespace Octgn.Controls
 {
@@ -32,29 +34,29 @@ namespace Octgn.Controls
         private Window _dragdropWindow;
         private AdornerLayer _layer;
 
-        private User _mUser = new User();
+        private NewUser _mUser = new NewUser(new Jid(""));
         private Point _startPoint;
 
         public FriendListItem()
         {
             InitializeComponent();
-            ThisUser = new User();
+            ThisUser = new NewUser(new Jid(""));
         }
 
         public bool IsDragging { get; set; }
         public FrameworkElement DragScope { get; set; }
 
-        public User ThisUser
+        public NewUser ThisUser
         {
             get { return _mUser; }
             set
             {
                 _mUser = value;
                 SetValue(CustomStatusProperty, value.CustomStatus);
-                string h = ValueConverters.HashEmailAddress(value.Email.ToLower().Trim());
+                string h = ValueConverters.HashEmailAddress("poop");
                 string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt=";
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
-                SetValue(UsernameProperty, value.DisplayName);
+                SetValue(UsernameProperty, value.User.User);
                 switch (value.Status)
                 {
                     case UserStatus.Away:

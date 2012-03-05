@@ -14,6 +14,7 @@ using Octgn.Launcher;
 using Octgn.Networking;
 using Octgn.Play;
 using Skylabs.Lobby;
+using Client = Octgn.Networking.Client;
 using RE = System.Text.RegularExpressions;
 
 namespace Octgn
@@ -29,6 +30,7 @@ namespace Octgn
 
         public static Game Game;
         public static LobbyClient LobbyClient;
+        public static Skylabs.Lobby.Client LClient;
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository;
         internal static Client Client;
@@ -69,6 +71,7 @@ namespace Octgn
 
         static Program()
         {
+            LClient = new Skylabs.Lobby.Client();
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);

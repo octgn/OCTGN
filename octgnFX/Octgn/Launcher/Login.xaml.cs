@@ -20,6 +20,7 @@ using Octgn.DeckBuilder;
 using Octgn.Networking;
 using Skylabs.Lobby;
 using Octgn.Definitions;
+using Client = Octgn.Networking.Client;
 
 namespace Octgn.Launcher
 {
@@ -57,6 +58,7 @@ namespace Octgn.Launcher
                 cbSavePassword.IsChecked = true;
             }
             textBox1.Text = SimpleConfig.ReadValue("E-Mail");
+            Program.LClient.OnStateChanged += delegate(object sender, string state) { UpdateLoginStatus(state); };
         }
 
         private static void lobbyClient_OnDataRecieved(DataRecType type, object e)
@@ -90,7 +92,37 @@ namespace Octgn.Launcher
 
         private void Button1Click(object sender, RoutedEventArgs e)
         {
-            DoLogin();
+            if (_isLoggingIn) return;
+            _isLoggingIn = true;
+            StartSpinning();
+            bError.Visibility = Visibility.Hidden;
+            Program.LClient.BeginLogin(textBox1.Text,passwordBox1.Password);
+            Program.LClient.OnLoginComplete += new Skylabs.Lobby.Client.dLoginComplete(LClient_OnLoginComplete);
+        }
+
+        void LClient_OnLoginComplete(object sender, Skylabs.Lobby.Client.LoginResults results)
+        {
+            
+            switch (results)
+            {
+                case Skylabs.Lobby.Client.LoginResults.ConnectionError:
+                    Dispatcher.Invoke(new Action(() =>
+                                                     {
+                                                        UpdateLoginStatus("");
+                                                        _isLoggingIn = false;
+                                                        DoErrorMessage("Could not connect to the server.");
+                                                        StopSpinning();    
+                                                     }));
+
+                    break;
+                case Skylabs.Lobby.Client.LoginResults.Success:
+                    LoginFinished(LoginResult.Success, DateTime.Now,"");
+                    break;
+                case Skylabs.Lobby.Client.LoginResults.Failure:
+                    LoginFinished(LoginResult.Failure, DateTime.Now,"Username/Password Incorrect.");
+                    break;
+            }
+            _isLoggingIn = false;
         }
 
         private void DoLogin()
@@ -204,9 +236,8 @@ namespace Octgn.Launcher
                                                                                 cbSavePassword.IsChecked == true
                                                                                     ? passwordBox1.Password.Encrypt()
                                                                                     : "");
-                                                        SimpleConfig.WriteValue("E-Mail", textBox1.Text);
-                                                        SimpleConfig.WriteValue("Nickname",
-                                                                                Program.LobbyClient.Me.DisplayName);
+                                                        SimpleConfig.WriteValue("Username", textBox1.Text);
+                                                        SimpleConfig.WriteValue("Nickname",textBox1.Text);
                                                         Program.ClientWindow = new Main();
                                                         Program.ClientWindow.Show();
                                                         Application.Current.MainWindow = Program.ClientWindow;
@@ -481,6 +512,11 @@ namespace Octgn.Launcher
             Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
             Program.LauncherWindow.Navigate(new ConnectLocalGame());
         }
+
+        private void btnRegister_Click(object sender, RoutedEventArgs e)
+        {
+            Program.LauncherWindow.Navigate(new Register());
+        }
     }
 
     public static class ExtensionMethods
@@ -497,7 +533,7 @@ namespace Octgn.Launcher
         {
             // Create a hash of current nickname to use as the Cryptographic Key
             RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.LobbyClient.Me.DisplayName));
+            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.LClient.Username));
             return Cryptor.Encrypt(text, BitConverter.ToString(hasher));
         }
     }

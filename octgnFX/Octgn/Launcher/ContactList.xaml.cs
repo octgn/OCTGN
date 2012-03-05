@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using Octgn.Controls;
 using Skylabs.Lobby;
+using agsXMPP;
 
 namespace Octgn.Launcher
 {
@@ -18,6 +19,16 @@ namespace Octgn.Launcher
             Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
             Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
             Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
+
+            Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
+        }
+
+        private void LClientOnOnDataRecieved(object sender, Client.DataRecType type, object data)
+        {
+            if (type == Client.DataRecType.FriendList)
+            {
+                RefreshList();
+            }
         }
 
         private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User u, object data)
@@ -33,7 +44,7 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
                                              {
                 stackPanel1.Children.Clear();
-                User[] flist = Program.LobbyClient.GetFriendsList();
+                NewUser[] flist = Program.LClient.Friends.ToArray();
                 foreach (FriendListItem f in flist.Select(u => new FriendListItem
                                                                 {
                                                                     ThisUser = u,
@@ -92,12 +103,12 @@ namespace Octgn.Launcher
         {
             var fi = sender as FriendListItem;
             if (fi == null) return;
-            foreach (var cw in from r in Program.LobbyClient.Chatting.Rooms where r.ContainsUser(Program.LobbyClient.Me) && r.ContainsUser(fi.ThisUser) && !r.IsGroupChat && r.Id != 0 select (ChatWindow) (Program.ChatWindows.FirstOrDefault(c => c.Id == r.Id) ?? new ChatWindow(r.Id)))
-            {
-                cw.Show();
-                return;
-            }
-            Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
+            //foreach (var cw in from r in Program.LobbyClient.Chatting.Rooms where r.ContainsUser(Program.LobbyClient.Me) && r.ContainsUser(fi.ThisUser) && !r.IsGroupChat && r.Id != 0 select (ChatWindow) (Program.ChatWindows.FirstOrDefault(c => c.Id == r.Id) ?? new ChatWindow(r.Id)))
+            //{
+             //   cw.Show();
+              //  return;
+            //}
+            //Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
         }
 
         private void PageLoaded(object sender, RoutedEventArgs e)
@@ -115,6 +126,7 @@ namespace Octgn.Launcher
             Program.LobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
             Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
             Program.LobbyClient.Chatting.EChatEvent -= ChattingEChatEvent;
+            Program.LClient.OnDataRecieved -= LClientOnOnDataRecieved;
         }
     }
 }

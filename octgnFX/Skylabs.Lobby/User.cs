@@ -11,18 +11,6 @@ namespace Skylabs.Lobby
         Moderator = 1,
         Admin = 2
     };
-
-    [Serializable]
-    public enum UserStatus
-    {
-        Unknown = 0,
-        Offline = 1,
-        Online = 2,
-        Away = 3,
-        DoNotDisturb = 4,
-        Invisible = 5
-    };
-
     [Serializable]
     public class User : IEquatable<User>, ICloneable
     {

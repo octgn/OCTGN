@@ -19,8 +19,11 @@ using Octgn.DeckBuilder;
 using Octgn.Definitions;
 using Octgn.Networking;
 using Skylabs.Lobby;
+using agsXMPP;
+using agsXMPP.protocol.client;
 using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
+using Client = Octgn.Networking.Client;
 using ContextMenu = System.Windows.Forms.ContextMenu;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
@@ -65,13 +68,14 @@ namespace Octgn.Launcher
             var kg = new KeyGesture(Key.M, ModifierKeys.Control);
             var ib = new InputBinding(DebugWindowCommand, kg);
             InputBindings.Add(ib);
-            Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
+            //Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
+            Program.LClient.OnFriendRequest += LClientOnOnFriendRequest;
             Program.LobbyClient.OnDisconnect += lobbyClient_OnDisconnectEvent;
             Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
             Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
             Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
-            tbUsername.Text = Program.LobbyClient.Me.DisplayName;
-            tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
+            tbUsername.Text = Program.LClient.Username;
+            tbStatus.Text = "No Custom Status Yet.";
             _originalBorderBrush = NotificationTab.Background;
             var cm = new ContextMenu();
             cm.MenuItems.Add("Show", CmShowClick).DefaultItem = true;
@@ -88,6 +92,17 @@ namespace Octgn.Launcher
             SystemTrayIcon.DoubleClick += SystemTrayIconDoubleClick;
             // Insert code required on object creation below this point.
             RefreshGameFilter(true);
+        }
+
+        private void LClientOnOnFriendRequest(object sender, Jid user)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                if (frame1.Content as NotificationList != null) return;
+                NotificationTab.HeaderStyle =
+                    Resources["AlertHeaderColor"] as Style;
+                NotificationTab.InvalidateVisual();
+            }));
         }
 
         public void RefreshGameFilter(bool ForceRefresh = false)
@@ -372,7 +387,8 @@ namespace Octgn.Launcher
                 Application.Current.MainWindow = Program.ClientWindow;
             }
             Program.ClientWindow.Close();
-            Program.LobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
+            Program.LClient.OnFriendRequest -= LClientOnOnFriendRequest;
+            //Program.LobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
             Program.LobbyClient.OnDisconnect -= lobbyClient_OnDisconnectEvent;
             Program.LobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
             Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
@@ -525,25 +541,25 @@ namespace Octgn.Launcher
         private void BOnlineStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bOnlineStatus.LargeImageSource;
-            Program.LobbyClient.SetStatus(UserStatus.Online);
+            Program.LClient.SetStatus(UserStatus.Online);
         }
 
         private void BBusyStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bBusyStatus.LargeImageSource;
-            Program.LobbyClient.SetStatus(UserStatus.DoNotDisturb);
+            Program.LClient.SetStatus(UserStatus.DoNotDisturb);
         }
 
         private void BOfflineStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
-            Program.LobbyClient.SetStatus(UserStatus.Invisible);
+            Program.LClient.SetStatus(UserStatus.Invisible);
         }
 
         private void BAwayStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bAwayStatus.LargeImageSource;
-            Program.LobbyClient.SetStatus(UserStatus.Away);
+            Program.LClient.SetStatus(UserStatus.Away);
         }
 
         private void lobbyClient_OnUserStatusChanged(UserStatus eve, User u)
@@ -567,19 +583,21 @@ namespace Octgn.Launcher
         private void TbUsernameLostFocus(object sender, RoutedEventArgs e)
         {
             tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbUsername.Text = Program.LobbyClient.Me.DisplayName;
+            tbUsername.Text = Program.LClient.Username;
+            //tbUsername.Text = Program.LobbyClient.Me.DisplayName;
         }
 
         private void TbUsernameLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbUsername.Text = Program.LobbyClient.Me.DisplayName;
+            tbUsername.Text = Program.LClient.Username;
+            //tbUsername.Text = Program.LobbyClient.Me.DisplayName;
         }
 
         private void TbUsernameKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
-            Program.LobbyClient.SetDisplayName(tbUsername.Text);
+            //Program.LobbyClient.SetDisplayName(tbUsername.Text);
             tbUsername.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
         }
 
@@ -593,7 +611,7 @@ namespace Octgn.Launcher
         private void TbStatusLostFocus(object sender, RoutedEventArgs e)
         {
             tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
+            tbStatus.Text = Program.LClient.CustomStatus;
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
         }
@@ -601,7 +619,7 @@ namespace Octgn.Launcher
         private void TbStatusLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
+            tbStatus.Text = Program.LClient.CustomStatus;
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
         }
@@ -609,7 +627,7 @@ namespace Octgn.Launcher
         private void TbStatusKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
-            Program.LobbyClient.SetCustomStatus(tbStatus.Text);
+            Program.LClient.SetCustomStatus(tbStatus.Text);
             tbStatus.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
         }
 

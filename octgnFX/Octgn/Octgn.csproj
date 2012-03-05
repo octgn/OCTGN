@@ -159,6 +159,9 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="agsXMPP, Version=1.1.1.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86, processorArchitecture=MSIL">
+      <HintPath>..\Lib\agsXMPP.dll</HintPath>
+    </Reference>
     <Reference Include="IronPython, Version=2.6.10920.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\IronPython.dll</HintPath>
@@ -303,6 +306,9 @@
     </Compile>
     <Compile Include="Launcher\NotificationList.xaml.cs">
       <DependentUpon>NotificationList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\Register.xaml.cs">
+      <DependentUpon>Register.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\SetList.xaml.cs">
       <DependentUpon>SetList.xaml</DependentUpon>
@@ -723,6 +729,10 @@
     <Page Include="Launcher\NotificationList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\Register.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\SetList.xaml">
       <Generator>MSBuild:Compile</Generator>

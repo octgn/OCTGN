@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Threading;
 using Skylabs.Net;
@@ -9,15 +10,13 @@ namespace Skylabs.LobbyServer
 {
     public static class Chatting
     {
+        private static ReaderWriterLockSlim Locker = new ReaderWriterLockSlim();
+        private static List<ChatRoom> Rooms { get; set; }
+
         static Chatting()
         {
             Rooms = new List<ChatRoom> {new ChatRoom(0, null)};
         }
-
-        /// <summary>
-        ///   List of all the open ChatRooms
-        /// </summary>
-        private static List<ChatRoom> Rooms { get; set; }
 
         /// <summary>
         ///   Join a chat room.
@@ -26,21 +25,19 @@ namespace Skylabs.LobbyServer
         /// <param name="s"> Socket message stuffed with data. </param>
         public static void JoinChatRoom(Client c, SocketMessage s)
         {
-            lock (Rooms)
+            
+            var rid = (long?) s["roomid"];
+            if (rid == null)
+                return;
+            if (rid == -1)
+                MakeRoom(c);
+            else
             {
-                var rid = (long?) s["roomid"];
-                if (rid == null)
-                    return;
-                if (rid == -1)
-                    MakeRoom(c);
+                ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
+                if (cr != null)
+                    cr.AddUser(c.Me);
                 else
-                {
-                    ChatRoom cr = Rooms.FirstOrDefault(r => r.Id == rid);
-                    if (cr != null)
-                        cr.AddUser(c.Me);
-                    else
-                        MakeRoom(c);
-                }
+                    MakeRoom(c);
             }
         }
 

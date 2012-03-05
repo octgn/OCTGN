@@ -407,16 +407,6 @@ namespace Skylabs.Lobby
                 case "friendrequest":
                     lock (_noteLocker)
                     {
-                        u = (User) sm.Data[0].Value;
-                        if (Notifications.OfType<FriendRequestNotification>().Any(fr => fr.User.Uid == u.Uid))
-                        {
-                            return;
-                        }
-                        Notifications.Add(new FriendRequestNotification(u, this, _nextNoteId));
-                        _nextNoteId++;
-                        if (OnFriendRequest != null)
-                            foreach (FriendRequest fr in OnFriendRequest.GetInvocationList())
-                                fr.BeginInvoke(u, r => { }, null);
                     }
                     break;
                 case "status":
