@@ -70,12 +70,13 @@ namespace Octgn.Launcher
             InputBindings.Add(ib);
             //Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
             Program.LClient.OnFriendRequest += LClientOnOnFriendRequest;
+            Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
             Program.LobbyClient.OnDisconnect += lobbyClient_OnDisconnectEvent;
             Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
             Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
             Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
             tbUsername.Text = Program.LClient.Username;
-            tbStatus.Text = "No Custom Status Yet.";
+            tbStatus.Text = Program.LClient.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
             var cm = new ContextMenu();
             cm.MenuItems.Add("Show", CmShowClick).DefaultItem = true;
@@ -92,6 +93,37 @@ namespace Octgn.Launcher
             SystemTrayIcon.DoubleClick += SystemTrayIconDoubleClick;
             // Insert code required on object creation below this point.
             RefreshGameFilter(true);
+        }
+
+        private void LClientOnOnDataRecieved(object sender, Skylabs.Lobby.Client.DataRecType type, object data)
+        {
+            Dispatcher.Invoke(new Action(()=>
+            {
+
+                tbStatus.Text = Program.LClient.CustomStatus;
+                switch(Program.LClient.Status)
+                {
+                    case UserStatus.Unknown:
+                        rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
+                        break;
+                    case UserStatus.Offline:
+                        rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
+                        break;
+                    case UserStatus.Online:
+                        rgStatus.LargeImageSource = bOnlineStatus.LargeImageSource;
+                        break;
+                    case UserStatus.Away:
+                        rgStatus.LargeImageSource = bAwayStatus.LargeImageSource;
+                        break;
+                    case UserStatus.DoNotDisturb:
+                        rgStatus.LargeImageSource = bBusyStatus.LargeImageSource;
+                        break;
+                    case UserStatus.Invisible:
+                        rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
+                        break;
+                }
+            }
+            ));
         }
 
         private void LClientOnOnFriendRequest(object sender, Jid user)

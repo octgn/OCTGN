@@ -17,7 +17,7 @@ namespace Skylabs.Lobby
         #region Enums
             public enum RegisterResults{ConnectionError,Success,UsernameTaken,UsernameInvalid,PasswordFailure}
             public enum LoginResults{ConnectionError,Success,Failure}
-            public enum DataRecType{FriendList}
+            public enum DataRecType{FriendList,MyInfo}
         #endregion
         #region Delegates
             public delegate void dRegisterComplete(object sender, RegisterResults results);
@@ -87,6 +87,9 @@ namespace Skylabs.Lobby
             if (pres.From.User == Xmpp.MyJID.User)
             {
                 myPresence = pres;
+                Xmpp.Status = myPresence.Status ?? Xmpp.Status;
+                if(OnDataRecieved != null)
+                    OnDataRecieved.Invoke(this,DataRecType.MyInfo, pres);
                 return;
             }
             switch(pres.Type)
@@ -137,12 +140,15 @@ namespace Skylabs.Lobby
             switch(item.Subscription)
             {
                 case SubscriptionType.to:
-                    Friends.Add(new NewUser(item.Jid));
+                    if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
+                        Friends.Add(new NewUser(item.Jid));
                     break;
                 case SubscriptionType.from:
+                    if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
                     Friends.Add(new NewUser(item.Jid));
                     break;
                 case SubscriptionType.both:
+                    if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
                     Friends.Add(new NewUser(item.Jid));
                     break;
                 case SubscriptionType.remove:
@@ -255,6 +261,18 @@ namespace Skylabs.Lobby
                     Xmpp.Send(p);
                     break;
             }
+        }
+        public void SendFriendRequest(string username)
+        {
+            Jid j = new Jid(username,Xmpp.Server,"");
+
+            Xmpp.RosterManager.AddRosterItem(j);
+            
+            Xmpp.PresenceManager.Subscribe(j);
+        }
+        public void RemoveFriend(NewUser user)
+        {
+            Xmpp.PresenceManager.Unsubscribe(user.User);
         }
     }
 }

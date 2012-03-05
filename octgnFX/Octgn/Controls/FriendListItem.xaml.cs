@@ -303,5 +303,15 @@ namespace Octgn.Controls
             _adorner.LeftOffset = args.GetPosition(DragScope).X /* - _startPoint.X */;
             _adorner.TopOffset = args.GetPosition(DragScope).Y /* - _startPoint.Y */;
         }
+
+        private void image1_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+        }
+
+        private void image1_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+
+            Program.LClient.RemoveFriend(ThisUser);
+        }
     }
 }
