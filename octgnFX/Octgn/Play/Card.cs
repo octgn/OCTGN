@@ -464,8 +464,8 @@ namespace Octgn.Play
         internal void SetModel(CardModel model)
         {
             Type.Model = model;
-            //OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
             loadAlternate();
+            OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
         }
 
         internal void loadAlternate()
@@ -681,14 +681,13 @@ namespace Octgn.Play
 
                 }
                 SetModel(_alternate);//TODO SetModel needs to load up the alternate
-                Program.Client.Rpc.SwitchWithAlternate(this);
+                Program.Client.Rpc.SwitchWithAlternate(this);//I'm relying on this to send the message to other clients. TODO: Need to fully test
             }
             //if there is no alternate, we might have reached the end of the chain
             else if (_alternateOf != null)
             {//Then we've come from somewhere, and we want to go back.
                 SetModel(_alternateOf);
                 _alternateOf = null;
-
             }
             //if we don't have a specified alternate, and we haven't come from an alternate, do nothing.
         }
