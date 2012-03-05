@@ -150,8 +150,8 @@ namespace Skylabs.LobbyServer
                                 int pnum = 0;
                                 if (Int32.TryParse(id, out pnum))
                                 {
-                                    HostedGame hg;
-                                    if (Gaming.Games.TryGetValue(pnum, out hg))
+                                    HostedGame hg = Gaming.GetGame(pnum);
+                                    if (hg != null)
                                     {
                                         string spage = File.ReadAllText("webserver/game.htm");
                                         spage = ReplaceVariables(spage);

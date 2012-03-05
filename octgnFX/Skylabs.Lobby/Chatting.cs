@@ -29,10 +29,10 @@ namespace Skylabs.Lobby
         public Chatting(LobbyClient c)
         {
             _parent = c;
-            Rooms = new List<ChatRoom> {new ChatRoom(0)};
+            Rooms = new ThreadSafeList<ChatRoom> {new ChatRoom(0)};
         }
 
-        public List<ChatRoom> Rooms { get; private set; }
+        public ThreadSafeList<ChatRoom> Rooms { get; private set; }
         public event ChatEventDelegate EChatEvent;
 
         public ChatRoom GetChatRoomFromRid(long rid)
