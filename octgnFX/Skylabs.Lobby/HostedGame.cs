@@ -1,79 +1,183 @@
 ﻿using System;
-using System.Collections.Generic;
-using Skylabs.Net;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using Skylabs.Lobby;
 
 namespace Skylabs.Lobby
 {
-    [Serializable]
-    public class HostedGame : IEquatable<HostedGame>, IEqualityComparer<HostedGame>
+    public class HostedGame : IEquatable<HostedGame>
     {
-        #region EHostedGame enum
-
-        [Serializable]
-        public enum EHostedGame
+        /// <summary>
+        ///   Host a game.
+        /// </summary>
+        /// <param name="port"> Port we are hosting on. </param>
+        /// <param name="gameguid"> GUID of the game </param>
+        /// <param name="gameversion"> Version of the game </param>
+        /// <param name="name"> Name of the room </param>
+        /// <param name="password"> Password for the game </param>
+        /// <param name="hoster"> User hosting the game </param>
+        public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, User hoster, bool localGame = false)
         {
-            StartedHosting,
-            GameInProgress,
-            StoppedHosting
-        };
-
-        #endregion
-
-        public HostedGame(Guid gameguid, Version gameversion, int port, string name, bool passreq, User huser,
-                          DateTime startTime)
-        {
+            GameLog = "";
             GameGuid = gameguid;
             GameVersion = gameversion;
-            Port = port;
             Name = name;
-            PasswordRequired = passreq;
-            UserHosting = huser;
-            GameStatus = EHostedGame.StartedHosting;
-            TimeStarted = startTime;
+            Password = password;
+            Hoster = hoster;
+            Status = Lobby.HostedGameData.EHostedGame.StoppedHosting;
+            Port = port;
+            TimeStarted = new DateTime(0);
+            LocalGame = localGame;
+            StandAloneApp = new Process();
+            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
+            StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
+                                                Port.ToString(CultureInfo.InvariantCulture);
+#if(DEBUG || TestServer)
+#else
+            if(!LocalGame)
+            {
+            StandAloneApp.StartInfo.FileName = "/opt/mono-2.10/bin/mono";
+            StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" +
+                                                GameGuid + " -v=" + GameVersion + " -p=" +
+                                                Port.ToString(CultureInfo.InvariantCulture);
+            }
+
+#endif
+
+            StandAloneApp.StartInfo.RedirectStandardOutput = true;
+            StandAloneApp.StartInfo.RedirectStandardInput = true;
+            StandAloneApp.StartInfo.RedirectStandardError = true;
+            StandAloneApp.StartInfo.UseShellExecute = false;
+            StandAloneApp.StartInfo.CreateNoWindow = true;
+            StandAloneApp.Exited += StandAloneAppExited;
+            StandAloneApp.ErrorDataReceived += new DataReceivedEventHandler(StandAloneAppOnErrorDataReceived);
+            StandAloneApp.OutputDataReceived += new DataReceivedEventHandler(StandAloneAppOnOutputDataReceived);
+            StandAloneApp.EnableRaisingEvents = true;
         }
 
-        public HostedGame(SocketMessage sm)
+        private void StandAloneAppOnOutputDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
         {
-            GameGuid = (Guid) sm["guid"];
-            GameVersion = (Version) sm["version"];
-            Port = (int) sm["port"];
-            Name = (string) sm["name"];
-            PasswordRequired = (bool) sm["passrequired"];
-            UserHosting = (User) sm["hoster"];
-            GameStatus = EHostedGame.StartedHosting;
-            TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
+            GameLog += dataReceivedEventArgs.Data + Environment.NewLine;
         }
 
+        private void StandAloneAppOnErrorDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
+        {
+            GameLog += dataReceivedEventArgs.Data + Environment.NewLine;
+        }
+
+        /// <summary>
+        ///   Games GUID. Based on the GameDefinitionFiles.
+        /// </summary>
         public Guid GameGuid { get; private set; }
+
+        /// <summary>
+        /// Is this game a Local Game(not hosted by a LobbyServer)?
+        /// </summary>
+        public bool LocalGame { get; private set; }
+
+        /// <summary>
+        ///   Games Version. Based on the GameDefinitionFiles.
+        /// </summary>
         public Version GameVersion { get; private set; }
+
+        /// <summary>
+        ///   Port we're hosting on.
+        /// </summary>
         public int Port { get; private set; }
+
+        /// <summary>
+        ///   Name of the hosted game.
+        /// </summary>
         public String Name { get; private set; }
-        public bool PasswordRequired { get; private set; }
-        public User UserHosting { get; private set; }
-        public EHostedGame GameStatus { get; set; }
+
+        /// <summary>
+        ///   Password for the hosted game.
+        /// </summary>
+        public String Password { get; private set; }
+
+        /// <summary>
+        ///   The process of the StandAloneServer that hosts the game.
+        /// </summary>
+        public Process StandAloneApp { get; set; }
+
+        /// <summary>
+        ///   Hoster of this crazy game.
+        /// </summary>
+        public User Hoster { get; private set; }
+
+        /// <summary>
+        ///   The status of the hosted game.
+        /// </summary>
+        public Lobby.HostedGameData.EHostedGame Status { get; set; }
+
         public DateTime TimeStarted { get; private set; }
-
-        #region IEqualityComparer<HostedGame> Members
-
-        public bool Equals(HostedGame x, HostedGame y)
-        {
-            return x.Port == y.Port;
-        }
-
-        public int GetHashCode(HostedGame obj)
-        {
-            return obj.Port;
-        }
-
-        #endregion
 
         #region IEquatable<HostedGame> Members
 
+        /// <summary>
+        ///   Just an equality verifier. All hosted games are uniquly identified by there port.
+        /// </summary>
+        /// <param name="other"> Hosted game to check against. </param>
+        /// <returns> </returns>
         public bool Equals(HostedGame other)
         {
-            return other.Port == Port;
+            return other.Port.Equals(Port);
         }
 
         #endregion
+
+        public event EventHandler HostedGameDone;
+
+        public string GameLog { get; private set; }
+
+        public void Stop()
+        {
+            try
+            {
+                StandAloneApp.Close();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
+        }
+
+        public bool StartProcess()
+        {
+            Status = Lobby.HostedGameData.EHostedGame.StoppedHosting;
+            try
+            {
+                StandAloneApp.Start();
+                StandAloneApp.BeginErrorReadLine();
+                StandAloneApp.BeginOutputReadLine();
+                Status = Lobby.HostedGameData.EHostedGame.StartedHosting;
+                TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
+                return true;
+            }
+            catch (Exception e)
+            {
+                //TODO Need some sort of proper error handling here.
+                Console.WriteLine("");
+                Console.WriteLine(StandAloneApp.StartInfo.FileName);
+                Console.WriteLine(StandAloneApp.StartInfo.Arguments);
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+            return false;
+        }
+
+        /// <summary>
+        ///   This happens when the Octgn.Server in StandAloneServer stops. This means eather all of the users disconnected, or it crashed. Eaither way, its unjoinable at this point.
+        /// </summary>
+        /// <param name="sender"> Who knows </param>
+        /// <param name="e"> Jesus </param>
+        private void StandAloneAppExited(object sender, EventArgs e)
+        {
+            if (HostedGameDone != null)
+                HostedGameDone(this, e);
+            Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]",Port,Environment.NewLine,GameLog);
+        }
     }
 }

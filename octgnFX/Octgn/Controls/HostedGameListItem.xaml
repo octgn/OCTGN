@@ -24,12 +24,16 @@
         </Border.Background>
 
       </Border>
-      <TextBlock Text="{Binding ElementName=flistitem, Path=GameName}" Grid.Column="2" HorizontalAlignment="Left"
-                 Foreground="Black" Name="tbGameName" VerticalAlignment="Top" Grid.ColumnSpan="1" Margin="2" FontWeight="Bold" />
-      <TextBlock Text="{Binding ElementName=flistitem, Path=UserName}" Grid.Column="2" HorizontalAlignment="Left"
-                 Name="tbUsername" VerticalAlignment="Bottom" Foreground="#FFA7A7A7" Margin="2" />
-      <TextBlock Text="{Binding ElementName=flistitem, Path=GameLength}" Grid.Column="2" Grid.Row="1"
-                 HorizontalAlignment="Left" Name="tbGameLength" VerticalAlignment="Top" Foreground="#FFA7A7A7" Margin="2" />
+        <StackPanel Grid.Column="2" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TextBlock Text="{Binding ElementName=flistitem, Path=GameName}" Name="tbGameName" 
+                       HorizontalAlignment="Stretch" Foreground="Black"  Margin="0" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="{Binding ElementName=flistitem, Path=UserName}" Name="tbUsername" 
+                       HorizontalAlignment="Stretch" Foreground="#9B9B9B"  Margin="0"  />
+            <TextBlock Text="{Binding ElementName=flistitem, Path=GameLength}" Name="tbGameLength" 
+                       HorizontalAlignment="Stretch" Foreground="#9B9B9B"  Margin="0"  />
+            <TextBlock Text="{Binding ElementName=flistitem, Path=GameVersion}" Name="tbGameVersion" 
+                       HorizontalAlignment="Stretch" Foreground="#9B9B9B"  Margin="0"  />
+        </StackPanel>
       <Image Source="{Binding ElementName=flistitem, Path=Picture}" Grid.Column="1" Height="32" Name="image2"
              Stretch="Fill" Width="32" />
     </Grid>

@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Octgn.Data;
+using System.Text;
 
 namespace Octgn.DeckBuilder
 {
@@ -136,8 +137,28 @@ namespace Octgn.DeckBuilder
                 var filterCtrl = (FilterControl) VisualTreeHelper.GetChild(container, 0);
                 conditions[i] = filterCtrl.GetSqlCondition();
             }
-
+            //SearchString.Text = ConvertToSQLString(conditions);
+            //TODO Implement a way to take the text of SearchString and use it as the search parameters. 
+            //It *should* be exactly the SQL Query, but it's input by the user (read: prone to typos)
             resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
+        }
+        private string ConvertToSQLString(string[] conditions)
+        {
+            var sb = new StringBuilder();
+            sb.Append("SELECT * FROM Card");
+            if (conditions != null)
+            {
+                string connector = " WHERE ";
+                foreach (string condition in conditions)
+                {
+                    sb.Append(connector);
+                    sb.Append("(");
+                    sb.Append(condition);
+                    sb.Append(")");
+                    connector = " AND ";
+                }
+            }
+            return sb.ToString();
         }
     }
 

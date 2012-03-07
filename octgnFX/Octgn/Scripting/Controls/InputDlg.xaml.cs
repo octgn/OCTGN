@@ -41,6 +41,13 @@ namespace Octgn.Scripting.Controls
             return _intResult;
         }
 
+        public string GetString()
+        {
+            _kind = Kind.Text;
+            ShowDialog();
+            return inputBox.Text;
+        }
+
         protected void OkClicked(object sender, RoutedEventArgs e)
         {
             DialogResult = true;

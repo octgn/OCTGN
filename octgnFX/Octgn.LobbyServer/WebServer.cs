@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using Skylabs.Lobby;
+using Google.GData.Client;
 
 namespace Skylabs.LobbyServer
 {
@@ -19,6 +21,7 @@ namespace Skylabs.LobbyServer
         {
             _running = false;
             _server = new HttpListener();
+            _server.AuthenticationSchemes = AuthenticationSchemes.Basic;
             int port;
             try
             {
@@ -81,6 +84,27 @@ namespace Skylabs.LobbyServer
             }
         }
 
+        private bool GoogleAuthenticate(string username, string pass)
+        {
+            try
+            {
+                string appName = "skylabs-LobbyServer-" + Server.Version;
+                var s = new Service("code", appName);
+                s.Credentials = new GDataCredentials(username,pass);
+                s.QueryClientLoginToken();
+                return true;
+            }
+            catch (AuthenticationException e)
+            {
+                return false;
+            }
+            catch (WebException e)
+            {
+
+                return false;
+            }
+        }
+
         private void HandleConnection(IAsyncResult res)
         {
             try
@@ -88,6 +112,18 @@ namespace Skylabs.LobbyServer
                 HttpListenerContext con = _server.EndGetContext(res);
                 HttpListenerRequest req = con.Request;
 
+                HttpListenerBasicIdentity identity = (HttpListenerBasicIdentity)con.User.Identity;
+                if (!identity.IsAuthenticated)
+                {
+                    User u = MySqlCup.GetUser(identity.Name);
+                    if (u == null || u.Level != UserLevel.Admin || !GoogleAuthenticate(identity.Name, identity.Password))
+                    {
+                        con.Response.StatusCode = 401;
+                        SendItem(con.Response, "Not Authorized.");
+                        AcceptConnections();
+                        return;
+                    }
+                }
                 string page = req.Url.AbsolutePath.Trim('/');
                 page = page.ToLower();
                 switch (page)
@@ -99,14 +135,45 @@ namespace Skylabs.LobbyServer
                             SendItem(con.Response, spage);
                             break;
                         }
-                    case "games.htm":
+                    case "games":
                         {
                             string spage = File.ReadAllText("webserver/games.htm");
                             spage = InsertRunningGames(spage);
                             SendItem(con.Response, spage);
                             break;
                         }
-                    case "index.htm":
+                    case "gameinfo":
+                        {
+                            var id = req.QueryString["id"];
+                            if (id != null)
+                            {
+                                int pnum = 0;
+                                if (Int32.TryParse(id, out pnum))
+                                {
+                                    HostedGame hg = Gaming.GetGame(pnum);
+                                    if (hg != null)
+                                    {
+                                        string spage = File.ReadAllText("webserver/game.htm");
+                                        spage = ReplaceVariables(spage);
+                                        var sb = new StringBuilder();
+                                        foreach (var p in hg.GetType().GetProperties())
+                                        {
+                                            sb.Append("<b>");
+                                            sb.Append(p.Name);
+                                            sb.Append("</b><br/>");
+                                            sb.Append("<A>");
+                                            sb.Append(p.GetValue(hg, null).ToString());
+                                            sb.Append("</a><br/>");
+                                        }
+                                        spage = spage.Replace("$gameinfo", sb.ToString());
+                                        SendItem(con.Response,spage);
+                                        break;
+                                    }
+                                }
+                            }
+                            goto default;
+                        }
+                    case "index":
                         {
                             string time = req.QueryString["time"];
                             if (time != null)
@@ -167,7 +234,7 @@ namespace Skylabs.LobbyServer
         private static string InsertRunningGames(string rawpage)
         {
             string insert = string.Empty;
-            List<Lobby.HostedGame> games = Gaming.GetLobbyList();
+            List<Lobby.HostedGameData> games = Gaming.GetLobbyList();
 
             Version v = Assembly.GetCallingAssembly().GetName().Version;
             string ret = rawpage.Replace("$version", v.ToString());
@@ -177,11 +244,11 @@ namespace Skylabs.LobbyServer
             ret = ret.Replace("$totmem", "256 MB");
 
             //construct game table
-            foreach (Lobby.HostedGame game in games)
+            foreach (Lobby.HostedGameData game in games)
             {
                 var ts = new TimeSpan(DateTime.Now.Ticks - game.TimeStarted.Ticks);
                 insert = insert + "<tr>";
-                insert = insert + "<td>" + game.Name + "</td>";
+                insert = insert + "<td><a href='gameinfo?id=" + game.Port.ToString() + "'>" + game.Name + "</a></td>";
                 insert = insert + "<td>" + game.Port + "</td>";
                 insert = insert + "<td>" + game.GameStatus + "</td>";
                 insert = insert + "<td>" + game.GameVersion + "</td>";

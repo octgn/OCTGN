@@ -27,8 +27,6 @@ namespace Skylabs.LobbyServer
             Id = id;
             LoggedIn = false;
             Me = new User();
-            Cup = new MySqlCup(Program.Settings["dbUser"], Program.Settings["dbPass"], Program.Settings["dbHost"],
-                               Program.Settings["db"]);
             _socket = socket;
             _socket.OnMessageReceived += Socket_OnMessageReceived;
             _socket.OnConnectionClosed += Socket_OnConnectionClosed;
@@ -58,11 +56,6 @@ namespace Skylabs.LobbyServer
         public bool LoggedIn { get; private set; }
 
         /// <summary>
-        ///   A MySql class to handle all of the database work.
-        /// </summary>
-        private MySqlCup Cup { get; set; }
-
-        /// <summary>
         ///   The user information on the currently connected user
         /// </summary>
         public User Me { get; private set; }
@@ -78,7 +71,6 @@ namespace Skylabs.LobbyServer
                 _socket.OnConnectionClosed -= Socket_OnConnectionClosed;
                 _friends.Clear();
                 _friends = null;
-                Cup = null;
                 if (_socket != null)
                     _socket.Dispose();
                 IsDisposed = true;
@@ -249,7 +241,7 @@ namespace Skylabs.LobbyServer
             {
                 if (status.Length > 200)
                     status = status.Substring(0, 197) + "...";
-                if (!Cup.SetCustomStatus(Me.Uid, status)) return;
+                if (!MySqlCup.SetCustomStatus(Me.Uid, status)) return;
                 Me.CustomStatus = status;
                 LazyAsync.Invoke(() => Server.OnUserEvent(Me.Status, this, false));
             }
@@ -310,7 +302,7 @@ namespace Skylabs.LobbyServer
                     name = name.Substring(0, 57) + "...";
                 else if (String.IsNullOrWhiteSpace(name))
                     name = Me.DisplayName;
-                if (!Cup.SetDisplayName(Me.Uid, name)) return;
+                if (!MySqlCup.SetDisplayName(Me.Uid, name)) return;
                 Me.DisplayName = name;
                 LazyAsync.Invoke(() => Server.OnUserEvent(Me.Status, this, false));
             }
@@ -320,7 +312,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
-                User requestee = Cup.GetUser(uid);
+                User requestee = MySqlCup.GetUser(uid);
                 if (requestee == null)
                     return;
                 if (accept)
@@ -335,12 +327,12 @@ namespace Skylabs.LobbyServer
                         c.AddFriend(Me);
                     }
                     //Add to database
-                    Cup.AddFriend(Me.Uid, requestee.Uid);
+                    MySqlCup.AddFriend(Me.Uid, requestee.Uid);
                 }
                 //Remove any database friend requests
-                Cup.RemoveFriendRequest(requestee.Uid, Me.Email);
+                MySqlCup.RemoveFriendRequest(requestee.Uid, Me.Email);
                 if (!Me.Equals(requestee))
-                    Cup.RemoveFriendRequest(Me.Uid, requestee.Email);
+                    MySqlCup.RemoveFriendRequest(Me.Uid, requestee.Email);
                 LazyAsync.Invoke(SendFriendsList);
             }
         }
@@ -369,7 +361,7 @@ namespace Skylabs.LobbyServer
                 if (!Verify.IsEmail(email))
                     return;
                 email = email.ToLower();
-                Cup.AddFriendRequest(Me.Uid, email);
+                MySqlCup.AddFriendRequest(Me.Uid, email);
                 var smm = new SocketMessage("friendrequest");
                 smm.AddData("user", Me);
                 Server.WriteMessageToClient(smm, email);
@@ -411,11 +403,12 @@ namespace Skylabs.LobbyServer
                         return;
                     }
                     Trace.WriteLine(String.Format("Client[{0}]:Getting db User", Id));
-                    User u = Cup.GetUser(email);
+                    User u = MySqlCup.GetUser(email);
                     string[] emailparts = email.Split('@');
                     if (u == null)
                     {
-                        if (!Cup.RegisterUser(email, emailparts[0]))
+                        Trace.WriteLine(String.Format("Client[{0}]:DBuser was null", Id));
+                        if (!MySqlCup.RegisterUser(email, emailparts[0]))
                         {
                             Trace.WriteLine(String.Format("Client[{0}]:Registering User", Id));
                             LoggedIn = false;
@@ -425,10 +418,15 @@ namespace Skylabs.LobbyServer
                             return;
                         }
                     }
-                    u = Cup.GetUser(email);
 
                     if (u == null)
                     {
+                        Trace.WriteLine(String.Format("Client[{0}]:DBuser was null, trying to grab again.", Id));
+                        u = MySqlCup.GetUser(email);
+                    }
+                    if (u == null)
+                    {
+                        Trace.WriteLine(String.Format("Client[{0}]:DBuser STILL was null.", Id));
                         LoggedIn = false;
                         sm = new SocketMessage("loginfailed");
                         sm.AddData("message", "Server error");
@@ -436,7 +434,9 @@ namespace Skylabs.LobbyServer
                         Trace.WriteLine(String.Format("Client[{0}]:Login Failed", Id));
                         return;
                     }
-                    int banned = Cup.IsBanned(u.Uid, _socket.RemoteEndPoint);
+                    Trace.WriteLine(String.Format("Client[{0}]:Checking for ban.", Id));
+                    int banned = MySqlCup.IsBanned(u.Uid, _socket.RemoteEndPoint);
+                    Trace.WriteLine(String.Format("Client[{0}]:Ban checked.", Id));
                     if (banned == -1)
                     {
                         Trace.WriteLine(String.Format("Client[{0}]:Starting to Stop and remove by uid={1}", Id, u.Uid));
@@ -453,7 +453,10 @@ namespace Skylabs.LobbyServer
                         LoggedIn = true;
                         if (res.Item1 == 0)
                             LazyAsync.Invoke(() => Server.OnUserEvent(status, this));
-                        _friends = Cup.GetFriendsList(Me.Uid);
+                        
+                        Trace.WriteLine(String.Format("Client[{0}]:Grabbing friend list.", Id));
+                        _friends = MySqlCup.GetFriendsList(Me.Uid);
+                        Trace.WriteLine(String.Format("Client[{0}]:Grabbed friend list.", Id));
 
 
                         LazyAsync.Invoke(SendFriendsList);
@@ -479,7 +482,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
-                List<Lobby.HostedGame> sendgames = Gaming.GetLobbyList();
+                List<Lobby.HostedGameData> sendgames = Gaming.GetLobbyList();
                 var sm = new SocketMessage("gamelist");
                 sm.AddData("list", sendgames);
                 _socket.WriteMessage(sm);
@@ -490,16 +493,22 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
-                List<int> r = Cup.GetFriendRequests(Me.Email);
+                LogInfo("Sending friend requests start.");
+                LogInfo("Grab friend requests from db.");
+                List<int> r = MySqlCup.GetFriendRequests(Me.Email);
+                LogInfo("Got friend requests from db.");
                 if (r == null)
                     return;
                 foreach (int e in r)
                 {
                     var smm = new SocketMessage("friendrequest");
-                    User u = Cup.GetUser(e);
+                    LogInfo("Grab user from db.");
+                    User u = MySqlCup.GetUser(e);
+                    LogInfo("Grabbed user from db.");
                     smm.AddData("user", u);
                     _socket.WriteMessage(smm);
                 }
+                LogInfo("Sending friend requests done.");
             }
         }
 
@@ -507,6 +516,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
+                LogInfo("Sending friend list start.");
                 var sm = new SocketMessage("friends");
                 foreach (User u in _friends)
                 {
@@ -519,7 +529,8 @@ namespace Skylabs.LobbyServer
                     }
                     else
                     {
-                        n = c.Me;
+                        if (c.Me == null) continue;
+                        n = c.Me; //potential
                         if (n.Status == UserStatus.Invisible)
                             n.Status = UserStatus.Offline;
                     }
@@ -527,6 +538,13 @@ namespace Skylabs.LobbyServer
                 }
                 _socket.WriteMessage(sm);
             }
+            LogInfo("Sending friend list done.");
+        }
+        private void LogInfo(string format,params string[] otherinfo)
+        {
+            string ret = String.Format("Client[{0}]:", Id);
+            string end = String.Format(format, otherinfo);
+            Trace.WriteLine(ret + end);
         }
     }
 }

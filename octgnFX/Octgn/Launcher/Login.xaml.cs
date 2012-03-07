@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -16,7 +17,9 @@ using System.Windows.Threading;
 using System.Xml;
 using Octgn.Controls;
 using Octgn.DeckBuilder;
+using Octgn.Networking;
 using Skylabs.Lobby;
+using Octgn.Definitions;
 
 namespace Octgn.Launcher
 {
@@ -279,6 +282,66 @@ namespace Octgn.Launcher
                 }
             return values;
         }
+        private void MenuOfflineClick(object sender, RoutedEventArgs e)
+        {
+            var g = new GameList();
+            var sg = new StartGame();
+            g.Row2.Height = new GridLength(25);
+            g.btnCancel.Click += delegate(object o, RoutedEventArgs args)
+                                     {
+                                         Program.LauncherWindow.NavigationService.GoBack();
+                                     };
+            g.OnGameClick += GOnOnGameClick;
+            Program.LauncherWindow.Navigate(g);
+        }
+
+        private void GOnOnGameClick(object sender, EventArgs eventArgs)
+        {
+            var hg = sender as Octgn.Data.Game;
+            if (hg == null || Program.PlayWindow != null)
+            {
+                Program.LauncherWindow.Navigate(new Login());
+                return;
+            }
+            var hostport = 5000;
+            while (!Skylabs.Lobby.Networking.IsPortAvailable(hostport))
+                hostport++;
+            var hs = new HostedGame(hostport, hg.Id, hg.Version, "LocalGame", "", null,true);
+            hs.HostedGameDone += hs_HostedGameDone;
+            if (!hs.StartProcess())
+            {
+                hs.HostedGameDone -= hs_HostedGameDone;
+                Program.LauncherWindow.Navigate(new Login());
+                return;
+            }
+
+            Program.IsHost = true;
+            Data.Game theGame =
+                Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
+            if (theGame == null) return;
+            Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
+
+            var ad = new IPAddress[1];
+            IPAddress ip = IPAddress.Parse("127.0.0.1");
+
+            if (ad.Length <= 0) return;
+            try
+            {
+                Program.Client = new Client(ip, hostport);
+                Program.Client.Connect();
+                Dispatcher.Invoke(new Action(() => Program.LauncherWindow.NavigationService.Navigate(new StartGame(true){Width = 400})));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
+        }
+
+        void hs_HostedGameDone(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
 
         private void MenuUpdateClick(object sender, RoutedEventArgs e)
         {
@@ -384,6 +447,39 @@ namespace Octgn.Launcher
                 UpdateLoginStatus("");
                 DoErrorMessage("Server Unavailable");
             }
+        }
+
+        private void MenuOfflineConnectClick(object sender, RoutedEventArgs e)
+        {
+            var g = new GameList();
+            g.Row2.Height = new GridLength(25);
+            g.btnCancel.Click += delegate(object o, RoutedEventArgs args)
+            {
+                Program.LauncherWindow.NavigationService.GoBack();
+            };
+            g.OnGameClick += GOoffConnOnGameClick;
+            Program.LauncherWindow.Navigate(g);
+            
+        }
+
+        private void GOoffConnOnGameClick(object sender, EventArgs eventArgs)
+        {
+            var hg = sender as Octgn.Data.Game;
+            if (hg == null || Program.PlayWindow != null)
+            {
+                Program.LauncherWindow.NavigationService.Navigate(new Login());
+                return;
+            }
+            Program.IsHost = false;
+            Data.Game theGame =
+                Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
+            if (theGame == null)
+            {
+                Program.LauncherWindow.Navigate(new Login());
+                return;
+            }
+            Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
+            Program.LauncherWindow.Navigate(new ConnectLocalGame());
         }
     }
 

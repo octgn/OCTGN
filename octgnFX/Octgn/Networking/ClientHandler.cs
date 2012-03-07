@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media;
+using Octgn.Launcher;
 using Octgn.Play;
 using Octgn.Play.Actions;
 
@@ -59,7 +60,14 @@ namespace Octgn.Networking
 
         public void Start()
         {
-            Program.ClientWindow.StartGame();
+            if (!Program.Game.IsLocal)
+                Program.ClientWindow.StartGame();
+            else
+            {
+                var sg = Program.LauncherWindow.Content as StartGame;
+                if(sg != null)
+                    sg.Start();
+            }
         }
 
         public void Settings(bool twoSidedTable)

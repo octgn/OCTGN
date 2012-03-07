@@ -123,6 +123,10 @@ namespace Octgn.Launcher
                 GameDef game = GameDef.FromO8G(newFilename);
                 if (!game.CheckVersion()) return;
 
+                //Check game scripts
+                if (!UpdateChecker.CheckGameDef(game))
+                    return;
+
                 // Check if the game already exists
                 if (Program.GamesRepository.Games.Any(g => g.Id == game.Id))
                     if (
@@ -144,7 +148,8 @@ namespace Octgn.Launcher
                                            game.SharedDeckDefinition == null
                                                ? null
                                                : game.SharedDeckDefinition.Sections.Keys,
-                                       Repository = Program.GamesRepository
+                                       Repository = Program.GamesRepository,
+                                       FileHash = game.FileHash
                                    };
                 Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
             }

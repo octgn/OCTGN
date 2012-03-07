@@ -20,7 +20,7 @@ namespace Octgn.Launcher
 
         public event EventHandler OnGameClick;
 
-        private void lobbyClient_OnGameHostEvent(HostedGame g)
+        private void lobbyClient_OnGameHostEvent(HostedGameData g)
         {
             ReloadGameList();
         }
@@ -41,17 +41,17 @@ namespace Octgn.Launcher
                                                      count++;
                                                  }
 
-                                                 HostedGame[] gl =
+                                                 HostedGameData[] gl =
                                                      Program.LobbyClient.GetHostedGames().OrderByDescending(
                                                          item => item.TimeStarted).ToArray();
-                                                 foreach (HostedGame g in gl)
+                                                 foreach (HostedGameData g in gl)
                                                  {
                                                      if (!gids.Contains(g.GameGuid) ||
-                                                         g.GameStatus != HostedGame.EHostedGame.StartedHosting ||
+                                                         g.GameStatus != HostedGameData.EHostedGame.StartedHosting ||
                                                          g.UserHosting.Status == UserStatus.Offline ||
                                                          g.UserHosting.Status == UserStatus.Unknown) continue;
                                                      var gs = new HostedGameListItem(g);
-                                                     if (g.GameStatus == HostedGame.EHostedGame.StartedHosting)
+                                                     if (g.GameStatus == HostedGameData.EHostedGame.StartedHosting)
                                                          gs.MouseUp += GsMouseUp;
                                                      stackPanel1.Children.Add(gs);
                                                      if (filterList.Contains(g.GameGuid))

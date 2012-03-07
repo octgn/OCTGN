@@ -14,7 +14,7 @@ namespace Skylabs.LobbyServer
         /// <summary>
         ///   List of users in the chat room.8
         /// </summary>
-        private readonly List<Pair<int, User>> _users = new List<Pair<int, User>>();
+        private List<Pair<int, User>> _users = new List<Pair<int, User>>();
 
         /// <summary>
         ///   initializes a chat room, and adds the initial user. This should only be called by Chatting.cs
