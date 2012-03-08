@@ -2,7 +2,7 @@ OCTGN 3.0
 =================================================
 This is the new home for the OCTGN open source project.
 
-* IRC: irc.freenode.net | #octgn
+* Want to help with the project? Join our developers chat on IRC: irc.freenode.net | #octgn
   * Web Client -> http://webchat.freenode.net/?channels=octgn
   * IRC client -> irc://irc.freenode.net/#octgn
 * Mailing List: http://groups.google.com/group/octgn-dev
