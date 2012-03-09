@@ -328,14 +328,25 @@ namespace Octgn.Play
             }
         }
 
+        /// <summary>
+        /// This could possibly be the function used when enlarging a card to make selecting it easier,
+        /// such as upon mouseover of a card that is but one of many in the hand.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ViewCardModel(object sender, CardModelEventArgs e)
-        {
+        {//This might be the 
             if (e.CardModel == null)
                 _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
             else
                 ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture)));
         }
 
+        /// <summary>
+        /// I suspect this is the function that gets called to show the very large image upon mouseover.
+        /// With SPC, the image covers nearly half the table
+        /// </summary>
+        /// <param name="img"></param>
         private void ShowCardPicture(BitmapSource img)
         {
             cardViewer.Height = img.PixelHeight;

@@ -151,7 +151,7 @@ namespace Octgn.Play
 
         protected void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
+            if (PropertyChanged != null)//test to see if the handler is hooked
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 

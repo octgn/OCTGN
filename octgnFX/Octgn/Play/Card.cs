@@ -464,7 +464,7 @@ namespace Octgn.Play
         internal void SetModel(CardModel model)
         {
             Type.Model = model;
-            loadAlternate();
+            loadAlternate();//Updates _alternate
             OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
         }
 
@@ -668,8 +668,14 @@ namespace Octgn.Play
             return (Type.Model.hasProperty(propertyName));
         }
 
-        internal void SwitchWithAlternate()
-        {
+        /// <summary>
+        /// Switches the underlying card model with some predefined Alternate
+        /// Returns true if the model was switched
+        /// Returns false if it did nothing.
+        /// </summary>
+        /// <returns></returns>
+        internal bool SwitchWithAlternate()
+        {//This function will change the underlying Model of a Card to some predefined alternate version.
             if (_alternate != null)
             {//if there is an alternate, we want to switch to it
                 if (_alternateOf == null)
@@ -680,21 +686,23 @@ namespace Octgn.Play
                 {//Not the first, not the last
 
                 }
-                SetModel(_alternate);//TODO SetModel needs to load up the alternate
-                Program.Client.Rpc.SwitchWithAlternate(this);//I'm relying on this to send the message to other clients. TODO: Need to fully test
+                SetModel(_alternate);
+                return true;
             }
             //if there is no alternate, we might have reached the end of the chain
             else if (_alternateOf != null)
             {//Then we've come from somewhere, and we want to go back.
                 SetModel(_alternateOf);
                 _alternateOf = null;
+                return true;
             }
             //if we don't have a specified alternate, and we haven't come from an alternate, do nothing.
+            return false;
         }
 
         public bool isAlternate()
         {
-            return (_alternateOf == null);//
+            return (_alternateOf == null);//If there is an original version, we are not allowed to be on it.
         }
     }
 }
