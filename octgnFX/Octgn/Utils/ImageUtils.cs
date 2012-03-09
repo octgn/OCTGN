@@ -49,10 +49,5 @@ namespace Octgn.Utils
             imgsrc.Freeze();
             return imgsrc;
         }
-        public static void RemoveFromCache(Uri uri)
-        {
-            BitmapImage imagesource = GetImageFromCache(uri);
-
-        }
     }
 }

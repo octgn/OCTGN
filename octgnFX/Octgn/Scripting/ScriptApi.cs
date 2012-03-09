@@ -185,22 +185,17 @@ namespace Octgn.Scripting
             return Card.Find(id).IsAlternateImage;
         }
 
+        /// <summary>
+        /// takes a card with id, and swaps it with the predefined "alternate" version of the card
+        /// alternate may be considered the "back" of the card, or another card entirely - up to Game Definer.
+        /// id and identity will remain the same, all other data should change.
+        /// </summary>
+        /// <param name="id"></param>
         public void SwitchWithAlternate(int id)
         {
-            //takes a card with id, and swaps it with the predefined "alternate" version of the card
-            //alternate may be considered the "back" of the card, or another card entirely - up to Game Definer.
-            //id will remain the same, all other data should change.
             Card c = Card.Find(id);
-            //c.SwitchWithAlternate(); // This might not be necessary - Need to test.
-            _engine.Invoke(() => {
-                                    Program.Client.Rpc.SwitchWithAlternate(c);
+            _engine.Invoke(() => Program.Client.Rpc.SwitchWithAlternate(c) );
                 //I'm relying on this to send the message to other clients. TODO: Need to fully test
-                                  } );
- //           Data.CardModel newModel = new Data.CardModel c.GetProperty;
- //           c.IsAlternate = !c.IsAlternate;
- //           CardModel AlternateModel = 
- //           c.SetModel(AlternateModel);
-
         }
         public void SwitchImage(int id)
         {

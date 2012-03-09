@@ -335,7 +335,7 @@ namespace Octgn.Play
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ViewCardModel(object sender, CardModelEventArgs e)
-        {//This might be the 
+        {
             if (e.CardModel == null)
                 _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
             else
