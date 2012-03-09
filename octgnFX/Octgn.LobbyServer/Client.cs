@@ -407,6 +407,7 @@ namespace Skylabs.LobbyServer
                     string[] emailparts = email.Split('@');
                     if (u == null)
                     {
+                        Trace.WriteLine(String.Format("Client[{0}]:DBuser was null", Id));
                         if (!MySqlCup.RegisterUser(email, emailparts[0]))
                         {
                             Trace.WriteLine(String.Format("Client[{0}]:Registering User", Id));
@@ -417,10 +418,15 @@ namespace Skylabs.LobbyServer
                             return;
                         }
                     }
-                    u = MySqlCup.GetUser(email);
 
                     if (u == null)
                     {
+                        Trace.WriteLine(String.Format("Client[{0}]:DBuser was null, trying to grab again.", Id));
+                        u = MySqlCup.GetUser(email);
+                    }
+                    if (u == null)
+                    {
+                        Trace.WriteLine(String.Format("Client[{0}]:DBuser STILL was null.", Id));
                         LoggedIn = false;
                         sm = new SocketMessage("loginfailed");
                         sm.AddData("message", "Server error");
@@ -428,7 +434,9 @@ namespace Skylabs.LobbyServer
                         Trace.WriteLine(String.Format("Client[{0}]:Login Failed", Id));
                         return;
                     }
+                    Trace.WriteLine(String.Format("Client[{0}]:Checking for ban.", Id));
                     int banned = MySqlCup.IsBanned(u.Uid, _socket.RemoteEndPoint);
+                    Trace.WriteLine(String.Format("Client[{0}]:Ban checked.", Id));
                     if (banned == -1)
                     {
                         Trace.WriteLine(String.Format("Client[{0}]:Starting to Stop and remove by uid={1}", Id, u.Uid));
@@ -445,7 +453,10 @@ namespace Skylabs.LobbyServer
                         LoggedIn = true;
                         if (res.Item1 == 0)
                             LazyAsync.Invoke(() => Server.OnUserEvent(status, this));
+                        
+                        Trace.WriteLine(String.Format("Client[{0}]:Grabbing friend list.", Id));
                         _friends = MySqlCup.GetFriendsList(Me.Uid);
+                        Trace.WriteLine(String.Format("Client[{0}]:Grabbed friend list.", Id));
 
 
                         LazyAsync.Invoke(SendFriendsList);
@@ -482,16 +493,22 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
+                LogInfo("Sending friend requests start.");
+                LogInfo("Grab friend requests from db.");
                 List<int> r = MySqlCup.GetFriendRequests(Me.Email);
+                LogInfo("Got friend requests from db.");
                 if (r == null)
                     return;
                 foreach (int e in r)
                 {
                     var smm = new SocketMessage("friendrequest");
+                    LogInfo("Grab user from db.");
                     User u = MySqlCup.GetUser(e);
+                    LogInfo("Grabbed user from db.");
                     smm.AddData("user", u);
                     _socket.WriteMessage(smm);
                 }
+                LogInfo("Sending friend requests done.");
             }
         }
 
@@ -499,6 +516,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
+                LogInfo("Sending friend list start.");
                 var sm = new SocketMessage("friends");
                 foreach (User u in _friends)
                 {
@@ -511,7 +529,8 @@ namespace Skylabs.LobbyServer
                     }
                     else
                     {
-                        n = c.Me;
+                        if (c.Me == null) continue;
+                        n = c.Me; //potential
                         if (n.Status == UserStatus.Invisible)
                             n.Status = UserStatus.Offline;
                     }
@@ -519,6 +538,13 @@ namespace Skylabs.LobbyServer
                 }
                 _socket.WriteMessage(sm);
             }
+            LogInfo("Sending friend list done.");
+        }
+        private void LogInfo(string format,params string[] otherinfo)
+        {
+            string ret = String.Format("Client[{0}]:", Id);
+            string end = String.Format(format, otherinfo);
+            Trace.WriteLine(ret + end);
         }
     }
 }

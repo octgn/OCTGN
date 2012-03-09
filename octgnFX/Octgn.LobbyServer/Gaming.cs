@@ -20,10 +20,10 @@ namespace Skylabs.LobbyServer
         static Gaming()
         {
             Locker = new ReaderWriterLockSlim();
-            Games = new ThreadSafeDictionary<int, HostedGame>();
+            Games = new Dictionary<int, HostedGame>();
         }
 
-        private static ThreadSafeDictionary<int, HostedGame> Games { get; set; }
+        private static Dictionary<int, HostedGame> Games { get; set; }
 
         public static int GameCount()
         {
