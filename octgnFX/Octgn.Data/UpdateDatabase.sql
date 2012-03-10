@@ -8,7 +8,7 @@ END
 WHEN ver = 2 THEN
     UPDATE [dbinfo] SET [version]=3;
     ver = 3;
-    ALTER TABLE [cards] ADD COLUMN [dependent] BOOLEAN;
+    ALTER TABLE [cards] ADD COLUMN [dependent] TEXT NOT NULL;
     ALTER TABLE [cards] ADD COLUMN [mutable] BOOLEAN;
 END
 commit transaction;

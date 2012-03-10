@@ -35,7 +35,7 @@ CREATE TABLE [cards] (
   [set_real_id] INTEGER REFERENCES [sets]([real_id]) ON DELETE CASCADE ON UPDATE CASCADE, 
   [name] TEXT NOT NULL, 
   [alternate] TEXT NOT NULL,
-  [dependent] BOOLEAN,
+  [dependent] TEXT NOT NULL,
   [mutable] BOOLEAN,
   [image] TEXT NOT NULL);
 
