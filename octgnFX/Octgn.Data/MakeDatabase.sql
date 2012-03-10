@@ -4,7 +4,7 @@ CREATE TABLE [dbinfo] (
   [version] INTEGER NOT NULL
 );
 
-INSERT INTO dbinfo([version]) VALUES(2);
+INSERT INTO dbinfo([version]) VALUES(3);
 
 CREATE TABLE [games] (
   [real_id] INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -35,6 +35,8 @@ CREATE TABLE [cards] (
   [set_real_id] INTEGER REFERENCES [sets]([real_id]) ON DELETE CASCADE ON UPDATE CASCADE, 
   [name] TEXT NOT NULL, 
   [alternate] TEXT NOT NULL,
+  [dependent] BOOLEAN,
+  [mutable] BOOLEAN,
   [image] TEXT NOT NULL);
 
 CREATE TABLE [custom_properties] (
