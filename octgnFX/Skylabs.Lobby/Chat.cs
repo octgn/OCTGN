@@ -11,6 +11,10 @@ namespace Skylabs.Lobby
 {
     public class Chat
     {
+        public delegate void dCreateChatRoom(object sender , NewChatRoom room);
+
+        public event dCreateChatRoom OnCreateRoom;
+
         private long _lastRid = 0;
         private Client _client;
         public List<NewChatRoom> Rooms; 
@@ -43,9 +47,9 @@ namespace Skylabs.Lobby
                     switch (msg.Chatstate)
                     {
                         case Chatstate.None:
-                            if (!RoomExists(new NewUser(msg.From)))
+                            if (!RoomExists(new NewUser(msg.From.Bare)))
                             {
-                                var nc = GetRoom(new NewUser(msg.From));
+                                var nc = GetRoom(new NewUser(msg.From.Bare));
                                 nc.OnMessage(sender , msg);
                             }
                             break;
@@ -73,11 +77,31 @@ namespace Skylabs.Lobby
             }
         }
         public bool RoomExists(NewUser otherUser) { return Rooms.SingleOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat) != null; }
-        public NewChatRoom GetRoom(NewUser otherUser)
+        public NewChatRoom GetRoom(NewUser otherUser, bool group=false)
         {
-            var ret = Rooms.SingleOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat)
-                      ?? new NewChatRoom(NextRid,_xmpp,new NewUser(_xmpp.MyJID),otherUser);
-            return ret;
+            if(group)
+            {
+                var ret = Rooms.SingleOrDefault(x => x.IsGroupChat && x.GroupUser.Equals(otherUser) );
+                if(ret == null)
+                {
+                    ret = new NewChatRoom(NextRid , _xmpp , otherUser);
+                    Rooms.Add(ret);
+                    if (OnCreateRoom != null) OnCreateRoom(this , ret);
+                }
+                return ret;
+            }
+            else
+            {
+                var ret = Rooms.SingleOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat);
+                if(ret == null)
+                {
+                    ret = new NewChatRoom(NextRid,_xmpp,otherUser);
+                    Rooms.Add(ret);
+                    if (OnCreateRoom != null) OnCreateRoom(this , ret);
+                }
+                
+                return ret;
+            }
         }
         public long SendMessage(NewUser to, string message)
         {

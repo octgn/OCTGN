@@ -82,6 +82,15 @@ namespace Octgn
             //string s = e.Message.Substring(0);
             LauncherWindow = new LauncherWindow();
             Application.Current.MainWindow = LauncherWindow;
+            LClient.Chatting.OnCreateRoom += new Chat.dCreateChatRoom(Chatting_OnCreateRoom);
+        }
+
+        static void Chatting_OnCreateRoom(object sender, NewChatRoom room)
+        {
+            if(ClientWindow != null)
+                ClientWindow.Dispatcher.Invoke(new Action(()=>ChatWindows.Add(new ChatWindow(room))));
+            else if(LauncherWindow != null)
+                LauncherWindow.Dispatcher.Invoke(new Action(()=>ChatWindows.Add(new ChatWindow(room))));
         }
 
         public static void StartLobbyServer()

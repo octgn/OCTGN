@@ -42,7 +42,8 @@ namespace Skylabs.Lobby
         #endregion
 
         public List<Notification> Notifications { get; set; }
-        public List<NewUser> Friends { get; set; } 
+        public List<NewUser> Friends { get; set; }
+        //public List<NewUser> GroupChats { get; set; }
         public string Username { get; private set; }
         public string Password { get; private set; }
         public string CustomStatus { get { return Xmpp.Status; }set{SetCustomStatus(value);} }
@@ -75,6 +76,7 @@ namespace Skylabs.Lobby
             Xmpp.OnReadXml += XmppOnOnReadXml;
             Notifications = new List<Notification>();
             Friends = new List<NewUser>();
+            //GroupChats = new List<NewUser>();
             myPresence = new Presence();
             Chatting = new Chat(this,Xmpp);
         }
@@ -86,17 +88,16 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnIq(object sender, IQ iq)
         {
-            Debug.WriteLine(iq);
+
         }
 
         private void XmppOnOnAgentItem(object sender, Agent agent)
         {
-            Debug.WriteLine(agent);
+
         }
 
         private void XmppOnOnPresence(object sender, Presence pres)
         {
-            Debug.WriteLine(pres);
             if (pres.From.User == Xmpp.MyJID.User)
             {
                 myPresence = pres;
@@ -107,6 +108,14 @@ namespace Skylabs.Lobby
             }
             switch(pres.Type)
             {
+                case PresenceType.available:
+                    if(pres.MucUser != null)//Means we are dealing with a group chizzle
+                    {
+                        var ruser = new NewUser(new Jid(pres.From.Bare));
+                        var nr = Chatting.GetRoom(ruser , true);
+                        nr.Users.Add(new NewUser(pres.MucUser.Item.Jid));
+                    }
+                break;
                 case PresenceType.subscribe:
                     Notifications.Add(new FriendRequestNotification(pres.From,this,_noteId));
                     _noteId++;
@@ -133,7 +142,7 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnMessage(object sender, Message msg)
         {
-            System.Diagnostics.Debug.WriteLine(msg);
+            //System.Diagnostics.Debug.WriteLine(msg);
         }
 
         private void XmppOnOnRosterStart(object sender)
@@ -145,6 +154,8 @@ namespace Skylabs.Lobby
         {
             if(OnDataRecieved != null)
                 OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
+            if(Chatting.Rooms.Count(x=>x.IsGroupChat && x.GroupUser.User.Bare == "lobby@conference.skylabsonline.com") == 0)
+                Xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference.skylabsonline.com"));
         }
 
         private void XmppOnOnRosterItem(object sender, RosterItem item)
@@ -152,6 +163,12 @@ namespace Skylabs.Lobby
             //Friends.Add(item.);
             switch(item.Subscription)
             {
+                case SubscriptionType.none:
+                    if (item.Jid.Server == "conference.skylabsonline.com")
+                    {
+                        Chatting.GetRoom(new NewUser(item.Jid),true);
+                    }
+                    break;
                 case SubscriptionType.to:
                     if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
                         Friends.Add(new NewUser(item.Jid));
@@ -181,6 +198,9 @@ namespace Skylabs.Lobby
         private void XmppOnOnLogin(object sender)
         {
             MucManager = new MucManager(Xmpp);
+            Jid room = new Jid("lobby@conference.skylabsonline.com");
+            MucManager.AcceptDefaultConfiguration(room);
+            MucManager.JoinRoom(room,Username,Password,false);
             Me = new NewUser(Xmpp.MyJID);
             if(OnLoginComplete != null)
                 OnLoginComplete.Invoke(this,LoginResults.Success);

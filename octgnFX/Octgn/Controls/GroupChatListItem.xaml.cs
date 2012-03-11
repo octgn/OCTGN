@@ -29,38 +29,35 @@ namespace Octgn.Controls
 
         private long _chatRoomId;
 
+        private NewChatRoom _chatRoom;
+
         public GroupChatListItem()
         {
             InitializeComponent();
-            ThisRoom = new ChatRoom(0);
+            ThisRoom = null;
         }
 
         public bool IsDragging { get; set; }
 
         public FrameworkElement DragScope { get; set; }
 
-        public ChatRoom ThisRoom
+        public NewChatRoom ThisRoom
         {
-            get { return Program.LobbyClient.Chatting.GetChatRoomFromRid(_chatRoomId); }
+            get { return _chatRoom; }
             set
             {
-                _chatRoomId = value.Id;
-                ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRid(_chatRoomId);
-                if (cr == null) return;
-                if (cr.Id == 0)
+                if (value != null)
                 {
-                    SetValue(UsernameProperty, "Lobby Chat");
-                    image1.Opacity = 0;
+                    _chatRoomId = value.RID;
+                    image1.Opacity = 1;
+                    SetValue(UsernameProperty , value.GroupUser.User.User);
                 }
                 else
                 {
-                    image1.Opacity = 1;
-                    String users = String.Join<User>(",", cr.GetUserList());
-                    if (users.Length > 100)
-                        users = users.Substring(0, 97);
-                    users += "...";
-                    SetValue(UsernameProperty, users);
+                    _chatRoomId = 0;
+                    SetValue(UsernameProperty,"null");
                 }
+                _chatRoom = value;
             }
         }
 
@@ -76,8 +73,8 @@ namespace Octgn.Controls
 
         private void Image1MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (_chatRoomId == 0) return;
-            ChatWindow firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.Id);
+            if (_chatRoom.GroupUser.User.User == "lobby") return;
+            ChatWindow firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.RID);
             if (firstOrDefault != null)
                 firstOrDefault.CloseChatWindow();
             var sp = Parent as StackPanel;

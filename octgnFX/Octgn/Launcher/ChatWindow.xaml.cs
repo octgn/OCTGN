@@ -34,6 +34,7 @@ namespace Octgn.Launcher
             listBox1.ContextMenu = cm;
             richTextBox1.Document.LineHeight = 2;
             Room.OnMessageRecieved += RoomOnOnMessageRecieved;
+            if (!room.IsGroupChat || room.GroupUser != null && room.GroupUser.User.User == "lobby") miLeaveChat.IsEnabled = false;
             ResetUserList();
         }
 
@@ -331,6 +332,7 @@ namespace Octgn.Launcher
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
+            ResetUserList();
         }
 
         private void WindowUnloaded(object sender, RoutedEventArgs e)
@@ -346,7 +348,8 @@ namespace Octgn.Launcher
             if (e.Key != Key.Enter) return;
             if (textBox1.Text.Trim().Length <= 0) return;
             Room.SendMessage(textBox1.Text);
-            RoomOnOnMessageRecieved(this,Program.LClient.Me,textBox1.Text);
+            if(!Room.IsGroupChat)
+                RoomOnOnMessageRecieved(this,Program.LClient.Me,textBox1.Text);
             //Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
             textBox1.Text = "";
         }

@@ -58,19 +58,15 @@ namespace Octgn.Launcher
                     f.MouseDoubleClick += FMouseDoubleClick;
                     stackPanel1.Children.Add(f);
                 }
-                foreach (
-                    GroupChatListItem gi in
-                        from cr in Program.LobbyClient.Chatting.Rooms
-                        where cr.IsGroupChat
-                        select new GroupChatListItem
-                                {
-                                    ThisRoom = cr,
-                                    HorizontalAlignment =
-                                        HorizontalAlignment.Stretch
-                                })
+                foreach( var g in Program.LClient.Chatting.Rooms.Where(x=>x.IsGroupChat))
                 {
-                    gi.MouseDoubleClick += GiMouseDoubleClick;
-                    stackPanel1.Children.Add(gi);
+                    var gc = new GroupChatListItem()
+                    {
+                        ThisRoom = g ,
+                        HorizontalAlignment = HorizontalAlignment.Stretch
+                    };
+                    gc.MouseDoubleClick += GiMouseDoubleClick;
+                    stackPanel1.Children.Add(gc);
                 }
                                              }));
         }
@@ -84,18 +80,17 @@ namespace Octgn.Launcher
         }
 
         private static void GiMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {/*
-            var gi = sender as GroupChatListItem;
-            if (gi == null) return;
-            foreach (ChatWindow cw in Program.ChatWindows.Where(cw => gi.ThisRoom.Id == cw.Id))
+        {
+            var fi = sender as GroupChatListItem;
+            if (fi == null) return;
+            var room = Program.LClient.Chatting.GetRoom(fi.ThisRoom.GroupUser,true);
+            var cw = Program.ChatWindows.SingleOrDefault(x => x.Id == room.RID);
+            if(cw == null)
             {
-                cw.Show();
-                return;
+                cw = new ChatWindow(room);
+                Program.ChatWindows.Add(cw);
             }
-            if (gi.ThisRoom.Id != 0) return;
-            var cw2 = new ChatWindow(0);
-            Program.ChatWindows.Add(cw2);
-            cw2.Show();*/
+            cw.Show();
         }
 
 
