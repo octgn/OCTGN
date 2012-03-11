@@ -69,5 +69,6 @@ namespace Skylabs.Lobby
         {
             return other.User.User == User.User;
         }
+        public override string ToString() { return User.User; }
     }
 }

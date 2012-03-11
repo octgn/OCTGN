@@ -268,26 +268,6 @@ namespace Octgn.Launcher
 
         private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
-            Dispatcher.Invoke(new Action(() =>
-                                             {
-                                                 ChatWindow cw =
-                                                     Program.ChatWindows.FirstOrDefault(cww => cww.Id == cr.Id);
-                                                 if (cw == null)
-                                                 {
-                                                     var c = new ChatWindow(cr.Id);
-                                                     c.Loaded += delegate { c.ChatEvent(cr, e, user, data); };
-                                                     Program.ChatWindows.Add(c);
-                                                     if (cr.Id != 0)
-                                                         c.Show();
-                                                 }
-                                                 else
-                                                 {
-                                                     if (cw.Id != 0)
-                                                     {
-                                                         cw.Show();
-                                                     }
-                                                 }
-                                             }));
         }
 
         private void CmQuitClick(object sender, EventArgs e)

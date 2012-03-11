@@ -21,31 +21,35 @@ namespace Octgn.Launcher
     {
         private Boolean _justScrolledToBottom;
         private bool _realClose;
-
-        public ChatWindow(long id)
+        public NewChatRoom Room;
+        public long Id { get { return Room.RID; } }
+        public ChatWindow(NewChatRoom room)
         {
             InitializeComponent();
-            Users = new List<User>();
-            Id = id;
-            ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRid(id);
-            miLeaveChat.IsEnabled = cr.IsGroupChat && cr.Id != 0;
-            Program.LobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
+            Room = room;
             var cm = new ContextMenu();
             var mi = new MenuItem {Header = "Add to friends list"};
             mi.Click += MiClick;
             cm.Items.Add(mi);
             listBox1.ContextMenu = cm;
-
             richTextBox1.Document.LineHeight = 2;
+            Room.OnMessageRecieved += RoomOnOnMessageRecieved;
+            ResetUserList();
         }
 
-        public long Id { get; private set; }
-        public List<User> Users { get; private set; }
-
-        private void LobbyClientOnOnUserStatusChanged(UserStatus eve, User user)
+        private void RoomOnOnMessageRecieved(object sender , NewUser from , string message)
         {
-            Program.LobbyClient.Chatting.UserStatusChange(Id, user, eve);
-            ResetUserList();
+            Dispatcher.Invoke(new Action(()=>
+                {
+                    Brush b = Brushes.Black;
+                    if (from.Equals(Program.LClient.Me))
+                        b = Brushes.Blue;
+
+                    Run r = GetUserRun(from.User.User,
+                                       "[" + from.User.User + "] : ");
+                    r.Foreground = b;
+                    AddChatText(r, message);   
+                }));
         }
 
         public void ChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
@@ -55,8 +59,6 @@ namespace Octgn.Launcher
 
         private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
         {
-            if (cr.Id == Id)
-            {
                 Dispatcher.Invoke(new Action(() =>
                                                  {
                                                      switch (e)
@@ -116,7 +118,7 @@ namespace Octgn.Launcher
                                                      }
                                                      miLeaveChat.IsEnabled = cr.IsGroupChat && cr.Id != 0;
                                                  }));
-            }
+            
         }
 
         private void AddChatText(Inline headerRun, string chat, Brush b = null)
@@ -239,7 +241,7 @@ namespace Octgn.Launcher
             }
             else
             {
-                if (s.Equals(Program.LobbyClient.Me.DisplayName))
+                if (s.Equals(Program.LClient.Username))
                 {
                     b = Brushes.Blue;
                     ret = new Bold(r);
@@ -247,7 +249,7 @@ namespace Octgn.Launcher
                 else
                 {
                     Boolean fUser = false;
-                    if (listBox1.Items.Cast<User>().Any(u => u.DisplayName == s))
+                    if (listBox1.Items.Cast<NewUser>().Any(u => u.User.User == s))
                     {
                         b = Brushes.LightGreen;
                         ret = new Bold(r) {ToolTip = "Click to whisper"};
@@ -304,15 +306,10 @@ namespace Octgn.Launcher
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
-                                                 ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRid(Id);
-                                                 if (cr == null) return;
                                                  listBox1.Items.Clear();
-                                                 Users = new List<User>();
-
-                                                 foreach (User u in cr.GetUserList())
+                                                 foreach (var u in Room.Users)
                                                  {
                                                      listBox1.Items.Add(u);
-                                                     Users.Add(u);
                                                  }
                                              }));
         }
@@ -338,10 +335,7 @@ namespace Octgn.Launcher
 
         private void WindowUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.Chatting.LeaveChatRoom(Id);
-            Program.LobbyClient.Chatting.EChatEvent -= ChattingEChatEvent;
             Program.ChatWindows.RemoveAll(r => r.Id == Id);
-            Program.LobbyClient.OnUserStatusChanged -= LobbyClientOnOnUserStatusChanged;
             var cl = Program.ClientWindow.frame1.Content as ContactList;
             if (cl != null)
                 cl.RefreshList();
@@ -351,7 +345,9 @@ namespace Octgn.Launcher
         {
             if (e.Key != Key.Enter) return;
             if (textBox1.Text.Trim().Length <= 0) return;
-            Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
+            Room.SendMessage(textBox1.Text);
+            RoomOnOnMessageRecieved(this,Program.LClient.Me,textBox1.Text);
+            //Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
             textBox1.Text = "";
         }
 

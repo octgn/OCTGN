@@ -28,14 +28,6 @@ namespace Skylabs.Lobby
             }
         }
 
-        public bool ContainsUser(User u)
-        {
-            lock (_userLocker)
-            {
-                return Users.Contains(u);
-            }
-        }
-
         public User[] GetUserList()
         {
             lock (_userLocker)
@@ -51,7 +43,6 @@ namespace Skylabs.Lobby
                 if (utochange == null) return;
                 utochange.Status = newUserData;
                 utochange.CustomStatus = userToChange.CustomStatus;
-                utochange.DisplayName = userToChange.DisplayName;
             }
         }
 

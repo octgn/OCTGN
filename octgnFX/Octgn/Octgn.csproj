@@ -611,7 +611,9 @@
     <Resource Include="Launcher\Game.xsx">
       <DependentUpon>Game.xsd</DependentUpon>
     </Resource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Networking\BinaryParser.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryParser.cs</LastGenOutput>

@@ -26,6 +26,16 @@ namespace Skylabs.Lobby
 
         private readonly LobbyClient _parent;
 
+        private long _lastRid = 0;
+        public long NextRID
+        {
+            get { var r = _lastRid;
+                _lastRid++;
+                if (_lastRid == long.MaxValue)
+                    _lastRid = 0;
+                return r;
+            }
+        }
         public Chatting(LobbyClient c)
         {
             _parent = c;
@@ -47,11 +57,12 @@ namespace Skylabs.Lobby
         ///   Create a chat room with another user.
         /// </summary>
         /// <param name="otherUser"> </param>
-        public void CreateChatRoom(User otherUser)
+        public void CreateChatRoom(NewUser otherUser)
         {
-            var sm = new SocketMessage("twopersonchat");
-            sm.AddData("user", otherUser);
-            _parent.WriteMessage(sm);
+            ChatRoom cr = new ChatRoom(_lastRid);
+            _lastRid++;
+            if (_lastRid == long.MaxValue)
+                _lastRid = 0;
         }
 
         /// <summary>

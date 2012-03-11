@@ -88,6 +88,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Chat.cs" />
     <Compile Include="ChatRoom.cs" />
     <Compile Include="Chatting.cs" />
     <Compile Include="Client.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="HostedGameData.cs" />
     <Compile Include="LobbyClient.cs" />
     <Compile Include="Networking.cs" />
+    <Compile Include="NewChatRoom.cs" />
     <Compile Include="NewUser.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="Pair.cs" />

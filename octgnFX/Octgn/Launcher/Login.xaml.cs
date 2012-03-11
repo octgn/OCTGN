@@ -59,6 +59,7 @@ namespace Octgn.Launcher
             }
             textBox1.Text = SimpleConfig.ReadValue("E-Mail");
             Program.LClient.OnStateChanged += delegate(object sender, string state) { UpdateLoginStatus(state); };
+            Program.LClient.OnLoginComplete += new Skylabs.Lobby.Client.dLoginComplete(LClient_OnLoginComplete);
         }
 
         private static void lobbyClient_OnDataRecieved(DataRecType type, object e)
@@ -97,7 +98,6 @@ namespace Octgn.Launcher
             StartSpinning();
             bError.Visibility = Visibility.Hidden;
             Program.LClient.BeginLogin(textBox1.Text,passwordBox1.Password);
-            Program.LClient.OnLoginComplete += new Skylabs.Lobby.Client.dLoginComplete(LClient_OnLoginComplete);
         }
 
         void LClient_OnLoginComplete(object sender, Skylabs.Lobby.Client.LoginResults results)

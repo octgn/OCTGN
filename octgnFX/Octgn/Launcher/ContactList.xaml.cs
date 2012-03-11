@@ -84,7 +84,7 @@ namespace Octgn.Launcher
         }
 
         private static void GiMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
+        {/*
             var gi = sender as GroupChatListItem;
             if (gi == null) return;
             foreach (ChatWindow cw in Program.ChatWindows.Where(cw => gi.ThisRoom.Id == cw.Id))
@@ -95,7 +95,7 @@ namespace Octgn.Launcher
             if (gi.ThisRoom.Id != 0) return;
             var cw2 = new ChatWindow(0);
             Program.ChatWindows.Add(cw2);
-            cw2.Show();
+            cw2.Show();*/
         }
 
 
@@ -103,12 +103,14 @@ namespace Octgn.Launcher
         {
             var fi = sender as FriendListItem;
             if (fi == null) return;
-            //foreach (var cw in from r in Program.LobbyClient.Chatting.Rooms where r.ContainsUser(Program.LobbyClient.Me) && r.ContainsUser(fi.ThisUser) && !r.IsGroupChat && r.Id != 0 select (ChatWindow) (Program.ChatWindows.FirstOrDefault(c => c.Id == r.Id) ?? new ChatWindow(r.Id)))
-            //{
-             //   cw.Show();
-              //  return;
-            //}
-            //Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
+            var room = Program.LClient.Chatting.GetRoom(fi.ThisUser);
+            var cw = Program.ChatWindows.SingleOrDefault(x => x.Id == room.RID);
+            if(cw == null)
+            {
+                cw = new ChatWindow(room);
+                Program.ChatWindows.Add(cw);
+            }
+            cw.Show();
         }
 
         private void PageLoaded(object sender, RoutedEventArgs e)

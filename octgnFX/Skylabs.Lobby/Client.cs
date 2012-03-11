@@ -9,6 +9,7 @@ using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.agent;
 using agsXMPP.protocol.iq.register;
 using agsXMPP.protocol.iq.roster;
+using agsXMPP.protocol.x.muc;
 
 namespace Skylabs.Lobby
 {
@@ -34,9 +35,10 @@ namespace Skylabs.Lobby
             public event dDataRecieved OnDataRecieved;
         #endregion
         #region PrivateAccessors
-            private XmppClientConnection Xmpp;
+            public XmppClientConnection Xmpp;
             private int _noteId = 0;
             private Presence myPresence;
+            
         #endregion
 
         public List<Notification> Notifications { get; set; }
@@ -44,6 +46,10 @@ namespace Skylabs.Lobby
         public string Username { get; private set; }
         public string Password { get; private set; }
         public string CustomStatus { get { return Xmpp.Status; }set{SetCustomStatus(value);} }
+        public MucManager MucManager { get; set; }
+        public NewUser Me { get; private set; }
+        public Chat Chatting { get; set; }
+
         public UserStatus Status
         {
             get { return NewUser.PresenceToStatus(myPresence); }
@@ -66,9 +72,16 @@ namespace Skylabs.Lobby
             Xmpp.OnPresence += XmppOnOnPresence;
             Xmpp.OnAgentItem += XmppOnOnAgentItem;
             Xmpp.OnIq += XmppOnOnIq;
+            Xmpp.OnReadXml += XmppOnOnReadXml;
             Notifications = new List<Notification>();
             Friends = new List<NewUser>();
             myPresence = new Presence();
+            Chatting = new Chat(this,Xmpp);
+        }
+
+        private void XmppOnOnReadXml(object sender , string xml)
+        {
+            Debug.WriteLine(xml);
         }
 
         private void XmppOnOnIq(object sender, IQ iq)
@@ -167,6 +180,8 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnLogin(object sender)
         {
+            MucManager = new MucManager(Xmpp);
+            Me = new NewUser(Xmpp.MyJID);
             if(OnLoginComplete != null)
                 OnLoginComplete.Invoke(this,LoginResults.Success);
         }
@@ -200,6 +215,7 @@ namespace Skylabs.Lobby
                 Xmpp.AutoRoster = true;
                 Xmpp.Username = username;
                 Xmpp.Password = password;
+                Xmpp.Priority = 1;
                 Xmpp.Open();
             }
         }
