@@ -40,6 +40,17 @@ namespace Skylabs.Lobby
             switch (msg.Type)
             {
                 case MessageType.normal:
+                    if(msg.From.Server == "conference.skylabsonline.com")
+                    {
+                        var rname = msg.From.User;
+                        MucManager m = new MucManager(_xmpp);
+                        m.JoinRoom(msg.From , msg.From.User);
+                        var theRoom = GetRoom(new NewUser(msg.From) , true);
+                        _xmpp.RosterManager.AddRosterItem(msg.From,msg.From.User);
+                        if(OnCreateRoom != null)
+                            OnCreateRoom.Invoke(this,theRoom);
+
+                    }
                     break;
                 case MessageType.error:
                     break;
@@ -47,11 +58,8 @@ namespace Skylabs.Lobby
                     switch (msg.Chatstate)
                     {
                         case Chatstate.None:
-                            if (!RoomExists(new NewUser(msg.From.Bare)))
-                            {
-                                var nc = GetRoom(new NewUser(msg.From.Bare));
-                                nc.OnMessage(sender , msg);
-                            }
+                            var nc = GetRoom(new NewUser(msg.From.Bare));
+                            nc.OnMessage(sender , msg);
                             break;
                         case Chatstate.active:
 
@@ -69,14 +77,17 @@ namespace Skylabs.Lobby
                     }
                     break;
                 case MessageType.groupchat:
+                {
+                    var nc = GetRoom(new NewUser(msg.From.Bare) , true);
+                    nc.OnMessage(this , msg);
                     break;
+                }
                 case MessageType.headline:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
-        public bool RoomExists(NewUser otherUser) { return Rooms.SingleOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat) != null; }
         public NewChatRoom GetRoom(NewUser otherUser, bool group=false)
         {
             if(group)
@@ -84,7 +95,7 @@ namespace Skylabs.Lobby
                 var ret = Rooms.SingleOrDefault(x => x.IsGroupChat && x.GroupUser.Equals(otherUser) );
                 if(ret == null)
                 {
-                    ret = new NewChatRoom(NextRid , _xmpp , otherUser);
+                    ret = new NewChatRoom(NextRid , _client , otherUser);
                     Rooms.Add(ret);
                     if (OnCreateRoom != null) OnCreateRoom(this , ret);
                 }
@@ -95,19 +106,13 @@ namespace Skylabs.Lobby
                 var ret = Rooms.SingleOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat);
                 if(ret == null)
                 {
-                    ret = new NewChatRoom(NextRid,_xmpp,otherUser);
+                    ret = new NewChatRoom(NextRid,_client,otherUser);
                     Rooms.Add(ret);
                     if (OnCreateRoom != null) OnCreateRoom(this , ret);
                 }
                 
                 return ret;
             }
-        }
-        public long SendMessage(NewUser to, string message)
-        {
-            Message m = new Message(to.User,message);
-            _client.Xmpp.Send(m);
-            return 0;
         }
     }
 }

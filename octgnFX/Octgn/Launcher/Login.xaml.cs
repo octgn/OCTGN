@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -7,19 +8,26 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using System.Xml;
+using LinqToTwitter;
 using Octgn.Controls;
 using Octgn.DeckBuilder;
 using Octgn.Networking;
 using Skylabs.Lobby;
 using Octgn.Definitions;
+using Skylabs.Lobby.Threading;
 using Client = Octgn.Networking.Client;
 
 namespace Octgn.Launcher
@@ -33,6 +41,7 @@ namespace Octgn.Launcher
         private bool _bSpin;
         private bool _isLoggingIn;
         private Timer _loginTimer;
+        private ThicknessAnimation _scrollAnimation;
 
         public Login()
         {
@@ -60,6 +69,109 @@ namespace Octgn.Launcher
             textBox1.Text = SimpleConfig.ReadValue("E-Mail");
             Program.LClient.OnStateChanged += delegate(object sender, string state) { UpdateLoginStatus(state); };
             Program.LClient.OnLoginComplete += new Skylabs.Lobby.Client.dLoginComplete(LClient_OnLoginComplete);
+            LazyAsync.Invoke(GetTwitterStuff);
+
+
+        }
+        private void GetTwitterStuff()
+        {
+            LinqToTwitter.TwitterContext tc = new TwitterContext();
+            var tweets =
+                (from tweet in tc.Status 
+                where tweet.Type == StatusType.User
+                      && tweet.ScreenName == "SkylabsOnline"
+                      && tweet.Count == 5
+                select tweet).ToList();
+            Dispatcher.Invoke(new Action(()=>ShowTwitterStuff(tweets)));           
+        }
+        private void ShowTwitterStuff(List<Status> tweets )
+        {
+            textBlock5.HorizontalAlignment = HorizontalAlignment.Stretch;
+            textBlock5.Inlines.Clear();
+            textBlock5.Text = "";
+            foreach( var tweet in tweets)
+            {
+                Inline dtime =
+                    new Run(tweet.CreatedAt.ToShortDateString()
+                            + tweet.CreatedAt.ToShortTimeString());
+                dtime.Foreground =
+                    new SolidColorBrush(Colors.Khaki);
+                textBlock5.Inlines.Add(dtime);
+                textBlock5.Inlines.Add("\n");
+                var inlines = AddTweetText(tweet.Text).Inlines.ToArray();
+                foreach(var i in inlines)
+                    textBlock5.Inlines.Add(i);     
+                textBlock5.Inlines.Add("\n\n");
+            }
+            //Dispatcher.BeginInvoke(new Action(StartTwitterAnim) , DispatcherPriority.Background);
+        }
+        private Paragraph AddTweetText(string text)
+        {
+            var ret = new Paragraph();
+            var words = text.Split(' ');
+            var b = new SolidColorBrush(Colors.White);
+            foreach(var inn in words.Select(word=>StringToRun(word,b)))
+            {
+                if(inn != null)
+                    ret.Inlines.Add(inn);
+                ret.Inlines.Add(" ");
+            }
+            return ret;
+        }
+        public Inline StringToRun(String s, Brush b)
+        {
+            Inline ret = null;
+            const string strUrlRegex =
+                "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
+            var reg = new Regex(strUrlRegex);
+            s = s.Trim();
+            //b = Brushes.Black;
+            Inline r = new Run(s);
+            if(reg.IsMatch(s))
+            {
+                b = Brushes.LightBlue;
+                var h = new Hyperlink(r);
+                h.Foreground = new SolidColorBrush(Colors.LawnGreen);
+                h.RequestNavigate += HOnRequestNavigate;
+                try
+                {
+                    h.NavigateUri = new Uri(s);
+                }
+                catch(UriFormatException)
+                {
+                    s = "http://" + s;
+                    try
+                    {
+                        h.NavigateUri = new Uri(s);
+                    }
+                    catch(Exception)
+                    {
+                        r.Foreground = b;
+                        //var ul = new Underline(r);
+                    }
+                }
+                ret = h;
+            }
+            else
+                ret = new Run(s){Foreground = b};
+            return ret;
+        }
+
+        private void HOnRequestNavigate(object sender , RequestNavigateEventArgs e) 
+        {
+ 
+            var hl = (Hyperlink) sender;
+            string navigateUri = hl.NavigateUri.ToString();
+            try
+            {
+                Process.Start(new ProcessStartInfo(navigateUri));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                if (Debugger.IsAttached) Debugger.Break();
+            }
+            e.Handled = true;
         }
 
         private static void lobbyClient_OnDataRecieved(DataRecType type, object e)

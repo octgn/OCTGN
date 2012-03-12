@@ -21,6 +21,12 @@ namespace Octgn.Launcher
             Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
 
             Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
+            Program.LClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
+        }
+
+        private void ChattingOnOnCreateRoom(object sender , NewChatRoom room)
+        {
+            RefreshList();
         }
 
         private void LClientOnOnDataRecieved(object sender, Client.DataRecType type, object data)

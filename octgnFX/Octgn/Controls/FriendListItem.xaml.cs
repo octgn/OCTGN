@@ -119,10 +119,10 @@ namespace Octgn.Controls
             IsDragging = true;
             CreateDragDropWindow(this);
             //DataObject data = new DataObject(System.Windows.DataFormats.Text.ToString(), "abcd");
-            //var data = new DataObject(DataFormats.Text, m_User.Uid.ToString(CultureInfo.InvariantCulture));
+            var data = new DataObject(DataFormats.Text, _mUser.User.Bare);
             //DataObject data = new DataObject(this.m_User);
             _dragdropWindow.Show();
-            //DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
+            DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
             DestroyDragDropWindow();
             IsDragging = false;
             GiveFeedback -= feedbackhandler;

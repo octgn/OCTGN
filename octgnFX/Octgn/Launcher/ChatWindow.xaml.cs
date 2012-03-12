@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Skylabs.Lobby;
+using agsXMPP;
+using Uri = System.Uri;
 
 namespace Octgn.Launcher
 {
@@ -34,7 +36,13 @@ namespace Octgn.Launcher
             listBox1.ContextMenu = cm;
             richTextBox1.Document.LineHeight = 2;
             Room.OnMessageRecieved += RoomOnOnMessageRecieved;
+            Room.OnUserListChange += RoomOnOnUserListChange;
             if (!room.IsGroupChat || room.GroupUser != null && room.GroupUser.User.User == "lobby") miLeaveChat.IsEnabled = false;
+            ResetUserList();
+        }
+
+        private void RoomOnOnUserListChange(object sender,List<NewUser> users)
+        {
             ResetUserList();
         }
 
@@ -307,7 +315,12 @@ namespace Octgn.Launcher
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
-                                                 listBox1.Items.Clear();
+
+                                                this.Title = (Room.IsGroupChat)
+                                                                 ? Room.GroupUser.User.User
+                                                                 : "Chat with: "
+                                                                   + Room.Users.SingleOrDefault(x => x.User.Bare != Program.LClient.Me.User.Bare).User.User;
+                                                                 listBox1.Items.Clear();
                                                  foreach (var u in Room.Users)
                                                  {
                                                      listBox1.Items.Add(u);
@@ -319,19 +332,24 @@ namespace Octgn.Launcher
         {
             var s = e.Data.GetData(typeof (String)) as String;
             if (s == null) return;
-            int uid;
-            if (!Int32.TryParse(s, out uid)) return;
+            Room.AddUser(new NewUser(new Jid(s)));
+            if (Room.IsGroupChat && Room.GroupUser.User.User != "lobby") miLeaveChat.IsEnabled = true;
             //TODO: Should be pulling from FriendList
-            User u = Program.LobbyClient.GetFriendFromUid(uid);
-            if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
-            {
-                Program.LobbyClient.Chatting.AddUserToChat(u, Id);
-            }
+            //aser u = Program.LobbyClient.GetFriendFromUid(uid);
+            //if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
+            //{
+            //   Program.LobbyClient.Chatting.AddUserToChat(u, Id);
+            //}
         }
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
+
+            this.Title = (Room.IsGroupChat)
+                             ? Room.GroupUser.User.User
+                             : "Chat with: "
+                               + Room.Users.SingleOrDefault(x => x.User.Bare != Program.LClient.Me.User.Bare).User.User;
             ResetUserList();
         }
 

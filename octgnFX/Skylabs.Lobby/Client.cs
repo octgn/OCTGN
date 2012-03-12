@@ -35,7 +35,7 @@ namespace Skylabs.Lobby
             public event dDataRecieved OnDataRecieved;
         #endregion
         #region PrivateAccessors
-            public XmppClientConnection Xmpp;
+            private XmppClientConnection Xmpp;
             private int _noteId = 0;
             private Presence myPresence;
             
@@ -48,6 +48,7 @@ namespace Skylabs.Lobby
         public string Password { get; private set; }
         public string CustomStatus { get { return Xmpp.Status; }set{SetCustomStatus(value);} }
         public MucManager MucManager { get; set; }
+        public RosterManager RosterManager { get { return Xmpp.RosterManager; } }
         public NewUser Me { get; private set; }
         public Chat Chatting { get; set; }
 
@@ -108,19 +109,31 @@ namespace Skylabs.Lobby
             }
             switch(pres.Type)
             {
-                case PresenceType.available:
-                    if(pres.MucUser != null)//Means we are dealing with a group chizzle
+                case PresenceType.available:                    
+                    if(pres.From.Server == "conference.skylabsonline.com")
                     {
-                        var ruser = new NewUser(new Jid(pres.From.Bare));
-                        var nr = Chatting.GetRoom(ruser , true);
-                        nr.Users.Add(new NewUser(pres.MucUser.Item.Jid));
+                        var rm = Chatting.GetRoom(new NewUser(pres.From), true);
+                        rm.AddUser(new NewUser(pres.MucUser.Item.Jid),false);
                     }
                 break;
+                case PresenceType.unavailable:
+                {
+                    if(pres.From.Server == "conference.skylabsonline.com")
+                    {
+                        var rm = Chatting.GetRoom(new NewUser(pres.From),true);
+                        rm.UserLeft(new NewUser(pres.MucUser.Item.Jid));
+                    }
+                    break;
+                }
                 case PresenceType.subscribe:
-                    Notifications.Add(new FriendRequestNotification(pres.From,this,_noteId));
-                    _noteId++;
-                    if(OnFriendRequest != null)
-                        OnFriendRequest.Invoke(this,pres.From);
+                    if (!Friends.Contains(new NewUser(pres.From)))
+                    {
+                        Notifications.Add(new FriendRequestNotification(pres.From , this , _noteId));
+                        _noteId++;
+                        if(OnFriendRequest != null) OnFriendRequest.Invoke(this , pres.From);
+                    }
+                    else
+                        AcceptFriendship(pres.From);
                     break;
                 case PresenceType.subscribed:
                     break;
@@ -223,6 +236,16 @@ namespace Skylabs.Lobby
             if(OnRegisterComplete != null)
                 OnRegisterComplete.Invoke(this,RegisterResults.Success);
         }
+        
+        public void Send(Element e)
+        {
+            Xmpp.Send(e);
+        }
+        public void Send(string s)
+        {
+            Xmpp.Send(s);
+        }
+        
         public void BeginLogin(string username, string password)
         {
             if (Xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
@@ -257,6 +280,9 @@ namespace Skylabs.Lobby
         {
             Xmpp.PresenceManager.ApproveSubscriptionRequest(user);
             Xmpp.PresenceManager.Subscribe(user);
+            Xmpp.RosterManager.UpdateRosterItem(user);
+            if(OnDataRecieved != null)
+                OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
         }
         public void DeclineFriendship(Jid user)
         {
@@ -300,6 +326,8 @@ namespace Skylabs.Lobby
         }
         public void SendFriendRequest(string username)
         {
+            username = username.ToLower();
+            if (username == Me.User.User.ToLower()) return;
             Jid j = new Jid(username,Xmpp.Server,"");
 
             Xmpp.RosterManager.AddRosterItem(j);
@@ -309,6 +337,8 @@ namespace Skylabs.Lobby
         public void RemoveFriend(NewUser user)
         {
             Xmpp.PresenceManager.Unsubscribe(user.User);
+            RosterManager.RemoveRosterItem(user.User);
+            Friends.Remove(user);
         }
     }
 }

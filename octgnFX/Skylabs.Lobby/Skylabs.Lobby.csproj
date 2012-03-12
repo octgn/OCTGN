@@ -102,6 +102,12 @@
     <Compile Include="Notification.cs" />
     <Compile Include="Pair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Randomness.cs" />
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
     <Compile Include="Sockets\SkySocket.cs" />
     <Compile Include="Sockets\SocketMessage.cs" />
     <Compile Include="Sockets\SocketMessageBuilder.cs" />
@@ -139,6 +145,18 @@
       <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
       <Name>Octgn.Data</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\jargonlist.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\nounlist.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

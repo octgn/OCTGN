@@ -76,7 +76,11 @@ namespace Octgn.Controls
             if (_chatRoom.GroupUser.User.User == "lobby") return;
             ChatWindow firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.RID);
             if (firstOrDefault != null)
+            {
+                firstOrDefault.Room.LeaveRoom();
+                Program.LClient.Chatting.Rooms.Remove(firstOrDefault.Room);
                 firstOrDefault.CloseChatWindow();
+            }
             var sp = Parent as StackPanel;
             if (sp != null)
                 sp.Children.Remove(this);

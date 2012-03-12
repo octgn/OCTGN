@@ -26,7 +26,7 @@ namespace Skylabs.Lobby
 
         public NewUser(Jid user)
         {
-            User = user;
+            User = user.Bare;
             Status = UserStatus.Offline;
             CustomStatus = "";
         }
@@ -36,7 +36,7 @@ namespace Skylabs.Lobby
             Status = NewUser.PresenceToStatus(p);
         }
         public static UserStatus PresenceToStatus(Presence p)
-        {
+        {//TODO needs work for when a user subscribes to someone.
             UserStatus Status = UserStatus.Unknown;
             if(p.Type == PresenceType.unavailable)
                 Status = UserStatus.Offline;
@@ -67,8 +67,27 @@ namespace Skylabs.Lobby
         }
         public bool Equals(NewUser other)
         {
-            return other.User.User == User.User;
+            return other.User.Bare == User.Bare;
         }
+        public static bool operator ==(NewUser a, NewUser b)
+        {
+            string rid1 = null;
+            string rid2 = null;
+            try
+            {
+                rid1 = a.User.Bare;
+            }
+            catch { }
+            try
+            {
+                rid2 = b.User.Bare;
+            }
+            catch { }
+
+            if (rid1 == null && rid2 == null) return true;
+            return rid1 == rid2;
+        }
+        public static bool operator !=(NewUser a , NewUser b) { return !(a == b); }
         public override string ToString() { return User.User; }
     }
 }
