@@ -111,7 +111,7 @@ namespace Octgn.Data
                                                  ImageUri = (string) dataReader["image"],
                                                  Set = GetSet(Guid.Parse(setID)),
                                                  Alternate = (Guid) dataReader["alternate"],
-                                                 Dependent = (bool) dataReader["dependent"],
+                                                 Dependent = (string) dataReader["dependent"],
                                                  Properties = GetCardProperties(Guid.Parse(did))
                                              };
                             return result;
@@ -188,7 +188,7 @@ namespace Octgn.Data
                                                  ImageUri = (string) dataReader["image"],
                                                  Set = GetSet(Guid.Parse(setID)),
                                                  Alternate = Guid.Parse(dataReader["alternate"] as string),
-                                                 Dependent = (bool) dataReader["dependent"],
+                                                 Dependent = (string) dataReader["dependent"],
                                                  Properties = GetCardProperties(id)
                                              };
                             return result;
@@ -342,10 +342,11 @@ namespace Octgn.Data
                     trans.Commit();
                 }
             }
-            catch
+            catch (Exception e)
             {
+
                 trans.Rollback();
-                throw;
+                throw e;
             }
         }
 

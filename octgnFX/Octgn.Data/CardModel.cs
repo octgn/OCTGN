@@ -39,8 +39,37 @@ namespace Octgn.Data
             reader.MoveToAttribute("id");
             Id = new Guid(reader.Value);
  //           isMutable = false;
-            Alternate = System.Guid.Empty;
-            Dependent = false;
+            if ( reader.MoveToAttribute ("alternate") )
+            {
+                try { Alternate = new Guid(reader.Value); }
+                catch (Exception e) 
+                {
+                    throw new ArgumentException(String.Format("The value {0} is not of expected type for property Alternate. Alternate must be a GUID.",
+                                                reader.Value));
+                }
+            }
+            else { Alternate = System.Guid.Empty; }
+            if (reader.MoveToAttribute("dependent")) 
+            {
+                try 
+                {
+                     Dependent = new Guid(reader.Value).ToString(); 
+                }
+                catch (Exception e)
+                {
+                    try
+                    {
+                        Dependent = Boolean.Parse(reader.Value).ToString();
+                    }
+                    catch (Exception eff)
+                    {
+
+                         throw new ArgumentException(String.Format("The value {0} is not of expected type for property Dependent. Dependent must be either true/false, or the Guid of the card to use instead.",
+                                                       reader.Value));
+                    }
+                }
+            }
+            else { Dependent = String.Empty; }
             Uri cardImageUri = definition.GetRelationship("C" + Id.ToString("N")).TargetUri;
             ImageUri = cardImageUri.OriginalString;
             if (!package.PartExists(cardImageUri))
@@ -53,60 +82,31 @@ namespace Octgn.Data
             while (reader.IsStartElement("property"))
             {
                 reader.MoveToAttribute("name");
-                if (reader.Value.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase))
+                PropertyDef prop = game.CustomProperties.FirstOrDefault(p => p.Name == reader.Value);
+                if (prop == null)
+                    throw new ArgumentException(string.Format("The property '{0}' is unknown", reader.Value));
+                reader.MoveToAttribute("value");
+                try
                 {
-                    //Alternate contains the GUID of the card it switches to.
-                    try
+                    switch (prop.Type)
                     {
-                        reader.MoveToAttribute("value");
-                        Alternate = new Guid(reader.Value); 
-                    }
-                    catch (Exception e)
-                    {
-                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property Alternate. Alternate must be a GUID.",
-                                                reader.Value));
+                        case PropertyType.String:
+                            Properties.Add(prop.Name, reader.Value);
+                            break;
+                        case PropertyType.Integer:
+                            Properties.Add(prop.Name, Int32.Parse(reader.Value));
+                            break;
+                        case PropertyType.Char:
+                            Properties.Add(prop.Name, Char.Parse(reader.Value));
+                            break;
+                        default:
+                            throw new NotImplementedException();
                     }
                 }
-                else if (reader.Value.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase))
+                catch (FormatException)
                 {
-                    reader.MoveToAttribute("value");
-                    bool temp;
-                    if (Boolean.TryParse(reader.Value, out temp))
-                    { Dependent = temp; }
-                    else
-                    {
-                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property Dependent. Dependent must be either true or false.",
-                                                  reader.Value));
-                    }
-                }
-                else
-                {
-                    PropertyDef prop = game.CustomProperties.FirstOrDefault(p => p.Name == reader.Value);
-                    if (prop == null)
-                        throw new ArgumentException(string.Format("The property '{0}' is unknown", reader.Value));
-                    reader.MoveToAttribute("value");
-                    try
-                    {
-                        switch (prop.Type)
-                        {
-                            case PropertyType.String:
-                                Properties.Add(prop.Name, reader.Value);
-                                break;
-                            case PropertyType.Integer:
-                                Properties.Add(prop.Name, Int32.Parse(reader.Value));
-                                break;
-                            case PropertyType.Char:
-                                Properties.Add(prop.Name, Char.Parse(reader.Value));
-                                break;
-                            default:
-                                throw new NotImplementedException();
-                        }
-                    }
-                    catch (FormatException)
-                    {
-                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property {1}",
-                                                                  reader.Value, prop.Name));
-                    }
+                    throw new ArgumentException(String.Format("The value {0} is not of expected type for property {1}",
+                                                                reader.Value, prop.Name));
                 }
                 reader.Read(); // <property/>
             }
@@ -126,7 +126,7 @@ namespace Octgn.Data
         public string ImageUri { get; internal set; }
 
         public Guid Alternate { get; internal set; }//The location of the alternate. If none is specified, will be System.Guid.Empty
-        public bool Dependent { get; internal set; }//a flag; if true, this card will not be placed inside a deck. Mainly used in Deck Editor<TODO>
+        public string Dependent { get; internal set; }//If not Guid.Empty, this card will not be placed inside a deck - The Guid card will be used instead. Mainly used in Deck Editor<TODO>
         public bool isMutable { get; internal set; }//a flag; if true, this card is read-only. (and will only be instanced once<TODO>)
 
         public string Picture
@@ -172,7 +172,7 @@ namespace Octgn.Data
                                  ImageUri = (string) row["image"],
                                  Set = game.GetSet((Guid) row["setId"]),
                                  Alternate = (Guid) row["Alternate"],
-                                 Dependent = (bool) row["Dependent"],
+                                 Dependent = (string) row["Dependent"],
                                  Properties =
                                      new SortedList<string, object>(columns.Count - 4,
                                                                     StringComparer.InvariantCultureIgnoreCase)
@@ -185,7 +185,7 @@ namespace Octgn.Data
         public bool hasProperty(string propertyName)
         {
             if (propertyName.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase)) return (Alternate != System.Guid.Empty);
-            if (propertyName.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase)) return (Dependent != null);
+            if (propertyName.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase)) return (Dependent != null || Dependent.Equals(String.Empty));
             return Properties.ContainsKey(propertyName);
         }
     }
