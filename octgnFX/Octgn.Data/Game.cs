@@ -269,6 +269,7 @@ namespace Octgn.Data
                     using (
                         Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (GamesRepository),
                                                                                              "CardSet.xsd"))
+                    //CardSet.xsd determines the "attributes" of a card (name, guid, alternate, dependent)
                         if (s != null)
                             using (XmlReader reader = XmlReader.Create(s))
                                 settings.Schemas.Add(null, reader);
@@ -329,6 +330,7 @@ namespace Octgn.Data
                             reader.ReadStartElement(); // <cards>
                             while (reader.IsStartElement("card"))
                                 InsertCard(new CardModel(reader, this, set, definition, package));
+                            // cards are parsed through the CardModel constructor, which are then inserted individually into the database
                             reader.ReadEndElement(); // </cards>
                         }
 
