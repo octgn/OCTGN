@@ -470,6 +470,7 @@ namespace Octgn.Play
 
         internal void loadAlternate()
         {
+            if (Type.Model == null) return;//If the model is null, do nothing.
             if (Type.Model.hasProperty("Alternate"))
             {
                 //if (Type.Model.isMutable) TODO: Deal with already loaded models
