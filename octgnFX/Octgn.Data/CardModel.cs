@@ -126,7 +126,8 @@ namespace Octgn.Data
         public string ImageUri { get; internal set; }
 
         public Guid Alternate { get; internal set; }//The location of the alternate. If none is specified, will be System.Guid.Empty
-        public string Dependent { get; internal set; }//If not Guid.Empty, this card will not be placed inside a deck - The Guid card will be used instead. Mainly used in Deck Editor<TODO>
+        public string Dependent { get; internal set; }//If not Guid.Empty.ToString(), this card will not be placed inside a deck - 
+        //The card with guid == dependent will be used instead. Mainly used in Deck Editor<TODO>
         public bool isMutable { get; internal set; }//a flag; if true, this card is read-only. (and will only be instanced once<TODO>)
 
         public string Picture

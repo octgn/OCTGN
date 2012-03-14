@@ -74,7 +74,7 @@ namespace Octgn.Play
         private Color? _highlight;
         private bool _isAlternateImage;
         private CardModel _alternateOf;
-        private CardModel _alternate;
+        private int numberOfSwitchWithAlternatesNotPerformed = 0;
 
         private CardOrientation _rot;
         private bool _selected;
@@ -91,7 +91,7 @@ namespace Octgn.Play
             // var _definition = def;
             All.Add(id, this);
             _alternateOf = null;
-            loadAlternate();
+            numberOfSwitchWithAlternatesNotPerformed = 0;
             _isAlternateImage = false;
         }
 
@@ -464,22 +464,7 @@ namespace Octgn.Play
         internal void SetModel(CardModel model)
         {
             Type.Model = model;
-            loadAlternate();//Updates _alternate
             OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
-        }
-
-        internal void loadAlternate()
-        {
-            if (Type.Model == null) return;//If the model is null, do nothing.
-            if (Type.Model.hasProperty("Alternate"))
-            {
-                //if (Type.Model.isMutable) TODO: Deal with already loaded models
-                _alternate = Database.GetCardById(Type.Model.Alternate);
-            }
-            else
-            {
-                _alternate = null;
-            }
         }
 
         internal bool IsVisibleToAll()
@@ -671,39 +656,47 @@ namespace Octgn.Play
 
         /// <summary>
         /// Switches the underlying card model with some predefined Alternate
-        /// Returns true if the model was switched
+        /// Returns true if the model was switched (or the switch was recorded to be performed when applicable)
         /// Returns false if it did nothing.
         /// </summary>
         /// <returns></returns>
         internal bool SwitchWithAlternate()
         {//This function will change the underlying Model of a Card to some predefined alternate version.
-            if (_alternate != null)
-            {//if there is an alternate, we want to switch to it
-                if (_alternateOf == null)
-                {//Switching to first alternate
-                    _alternateOf = Type.Model;
-                }
-                else
-                {//Not the first, not the last
+            if (_faceUp)
+            {
+                if (Type.Model.hasProperty("Alternate"))
+                {//if there is an alternate, we want to switch to it
+                    if (_alternateOf == null)
+                    {//Switching to first alternate
+                        _alternateOf = Type.Model;
+                    }
+                    else
+                    {//Not the first, not the last
 
+                    }
+                    SetModel(Database.GetCardById(Type.Model.Alternate));
+                    return true;
                 }
-                SetModel(_alternate);
+                //if there is no alternate, we might have reached the end of the chain
+                else if (_alternateOf != null)
+                {//Then we've come from somewhere, and we want to go back.
+                    SetModel(_alternateOf);
+                    _alternateOf = null;
+                    return true;
+                }
+                //if we don't have a specified alternate, and we haven't come from an alternate, do nothing.
+                return false;
+            }
+            else //if not face up
+            {
+                numberOfSwitchWithAlternatesNotPerformed++;//the number of switches
                 return true;
             }
-            //if there is no alternate, we might have reached the end of the chain
-            else if (_alternateOf != null)
-            {//Then we've come from somewhere, and we want to go back.
-                SetModel(_alternateOf);
-                _alternateOf = null;
-                return true;
-            }
-            //if we don't have a specified alternate, and we haven't come from an alternate, do nothing.
-            return false;
         }
 
         public bool isAlternate()
         {
-            return (_alternateOf == null);//If there is an original version, we are not allowed to be on it.
+            return (_alternateOf == null);//If there is an original version, return true.
         }
     }
 }
