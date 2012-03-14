@@ -66,8 +66,8 @@ namespace Octgn.Data
             _cachedPacks = new List<Pack>();
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
-                com.CommandText = "SELECT [xml] FROM [packs] WHERE [set_id]=@set_id ORDER BY [name]";
-                com.Parameters.AddWithValue("@set_id", Id.ToString());
+                com.CommandText = "SELECT [xml] FROM [packs] JOIN [sets] ON [packs].[set_real_id]=[sets].[real_id] WHERE [sets].[id]=@id ORDER BY [packs].[name]";
+                com.Parameters.AddWithValue("@id", Id.ToString());
                 using (SQLiteDataReader reader = com.ExecuteReader())
                 {
                     while (reader.Read())
