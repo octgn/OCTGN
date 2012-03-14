@@ -111,10 +111,10 @@ namespace Octgn.Data
             DataColumnCollection columns = row.Table.Columns;
             var result = new CardModel
                              {
-                                 Id = (Guid) row["id"],
+                                 Id = Guid.Parse(row["id"].ToString()),
                                  Name = (string) row["name"],
                                  ImageUri = (string) row["image"],
-                                 Set = game.GetSet((Guid) row["setId"]),
+                                 Set = game.GetSet(Guid.Parse(row["set_id"].ToString())),
                                  Properties =
                                      new SortedList<string, object>(columns.Count - 4,
                                                                     StringComparer.InvariantCultureIgnoreCase)
