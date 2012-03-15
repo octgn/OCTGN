@@ -53,7 +53,7 @@ namespace Octgn.Launcher
             InitializeComponent();
             //Set title with version info.
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            Title = "OCTGN  verson " + version;
+            Title = "OCTGN  version " + version;
 
             frame1.Navigate(new ContactList());
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
