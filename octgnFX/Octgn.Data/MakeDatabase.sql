@@ -34,9 +34,6 @@ CREATE TABLE [cards] (
   [game_id] TEXT NOT NULL,
   [set_real_id] INTEGER REFERENCES [sets]([real_id]) ON DELETE CASCADE ON UPDATE CASCADE, 
   [name] TEXT NOT NULL, 
-  [alternate] TEXT NOT NULL,
-  [dependent] TEXT NOT NULL,
-  [mutable] BOOLEAN,
   [image] TEXT NOT NULL);
 
 CREATE TABLE [custom_properties] (

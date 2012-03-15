@@ -155,8 +155,8 @@ namespace Octgn.Data
             {
                 var result = new PackContent();
                 var conditions = new string[2];
-                conditions[0] = "setId = '" + pack.Set.Id + "'";
-                conditions[1] = string.Format("Card.[{0}] = '{1}'", Key, Value);
+                conditions[0] = "set_id = '" + pack.Set.Id + "'";
+                conditions[1] = string.Format("{0} = '{1}'", Key, Value);
                 if (Quantity < 0)
                     result.UnlimitedCards.AddRange(pack.Set.Game.SelectCardModels(conditions));
                 else
