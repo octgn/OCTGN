@@ -34,7 +34,9 @@ CREATE TABLE [cards] (
   [game_id] TEXT NOT NULL,
   [set_real_id] INTEGER REFERENCES [sets]([real_id]) ON DELETE CASCADE ON UPDATE CASCADE, 
   [name] TEXT NOT NULL, 
-  [image] TEXT NOT NULL);
+  [image] TEXT NOT NULL,
+  [alternate] TEXT,
+  [dependent] TEXT);
 
 CREATE TABLE [custom_properties] (
   [real_id] INTEGER PRIMARY KEY AUTOINCREMENT, 
