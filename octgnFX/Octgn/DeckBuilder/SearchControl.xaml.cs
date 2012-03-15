@@ -136,6 +136,8 @@ namespace Octgn.DeckBuilder
                 DependencyObject container = generator.ContainerFromIndex(i);
                 var filterCtrl = (FilterControl) VisualTreeHelper.GetChild(container, 0);
                 conditions[i] = filterCtrl.GetSqlCondition();
+                //HACK: strip out the Card. that the sql query inserts
+                conditions[i] = conditions[i].Replace("Card.", "");
             }
             //SearchString.Text = ConvertToSQLString(conditions);
             //TODO Implement a way to take the text of SearchString and use it as the search parameters. 

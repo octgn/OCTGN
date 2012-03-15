@@ -123,7 +123,7 @@ namespace Octgn.DeckBuilder
         public virtual string GetSql(string field, string value)
         {
             if (EscapeQuotes) value = value.Replace("'", "''");
-            return string.Format(SqlFormat, "[" + field + "]", value);
+            return string.Format(SqlFormat, field, value);
         }
     }
 
