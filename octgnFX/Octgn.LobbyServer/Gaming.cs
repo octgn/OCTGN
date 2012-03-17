@@ -62,7 +62,7 @@ namespace Skylabs.LobbyServer
             
         }
 
-        public static int HostGame(Guid g, Version v, string name, string pass, User u)
+        public static int HostGame(Guid g, Version v, string name, string pass, NewUser u)
         {
             Locker.EnterWriteLock();//Enter Lock
             while (Games.ContainsKey(_currentHostPort) || !Networking.IsPortAvailable(_currentHostPort))
@@ -108,8 +108,7 @@ namespace Skylabs.LobbyServer
                 Games.Select(
                     g =>
                     new Lobby.HostedGameData(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(), g.Value.Port,
-                                            (string) g.Value.Name.Clone(), !String.IsNullOrWhiteSpace(g.Value.Password),
-                                            (User) g.Value.Hoster.Clone(), g.Value.TimeStarted)
+                                            (string) g.Value.Name.Clone(), (NewUser) g.Value.Hoster, g.Value.TimeStarted)
                         {GameStatus = g.Value.Status}).ToList();
             Locker.ExitReadLock();
             return sendgames;

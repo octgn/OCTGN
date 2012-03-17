@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace Skylabs.Lobby
         DoNotDisturb = 4,
         Invisible = 5
     };
-    public class NewUser : IEquatable<NewUser>
+    public class NewUser : IEquatable<NewUser>,IEqualityComparer
     { 
         public Jid User { get; private set; }
 
@@ -36,7 +37,7 @@ namespace Skylabs.Lobby
             Status = NewUser.PresenceToStatus(p);
         }
         public static UserStatus PresenceToStatus(Presence p)
-        {//TODO needs work for when a user subscribes to someone.
+        {
             UserStatus Status = UserStatus.Unknown;
             if(p.Type == PresenceType.unavailable)
                 Status = UserStatus.Offline;
@@ -89,5 +90,9 @@ namespace Skylabs.Lobby
         }
         public static bool operator !=(NewUser a , NewUser b) { return !(a == b); }
         public override string ToString() { return User.User; }
+        public new bool Equals(object x, object y) { return x == y; }
+        public int GetHashCode(object obj) { return obj.GetHashCode(); }
+        public override int GetHashCode() { return User.GetHashCode(); }
+        public override bool Equals(object obj) { return obj.GetHashCode() == GetHashCode(); }
     }
 }

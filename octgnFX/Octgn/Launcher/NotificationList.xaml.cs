@@ -46,18 +46,10 @@ namespace Octgn.Launcher
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
             ReloadList();
-            Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
-        }
-
-        private void lobbyClient_OnFriendRequest(User u)
-        {
-            //Reload_List();
-            Dispatcher.Invoke(new Action(ReloadList));
         }
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
         }
     }
 }

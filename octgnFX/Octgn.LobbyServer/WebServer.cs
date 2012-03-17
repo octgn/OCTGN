@@ -94,11 +94,11 @@ namespace Skylabs.LobbyServer
                 s.QueryClientLoginToken();
                 return true;
             }
-            catch (AuthenticationException e)
+            catch (AuthenticationException)
             {
                 return false;
             }
-            catch (WebException e)
+            catch (WebException)
             {
 
                 return false;
@@ -253,20 +253,6 @@ namespace Skylabs.LobbyServer
                 insert = insert + "<td>" + game.GameStatus + "</td>";
                 insert = insert + "<td>" + game.GameVersion + "</td>";
                 insert = insert + "<td>" + ts + "</td>";
-                Client c = Server.GetOnlineClientByUid(game.UserHosting.Uid);
-                User user;
-                if (c == null)
-                {
-                    user = game.UserHosting;
-                    user.Status = UserStatus.Offline;
-                }
-                else
-                    user = c.Me;
-
-                insert = insert + "<td>Name: " + user.DisplayName + "<br />";
-                insert = insert + "Status: " + Enum.GetName(typeof (UserStatus), user.Status) + "<br />";
-                insert = insert + "Email: " + user.Email + "<br />";
-                insert = insert + "Uid: " + user.Uid + "</td>";
 
                 insert = insert + "</tr>";
             }

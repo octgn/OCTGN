@@ -37,7 +37,6 @@ namespace Octgn
                                 Height = adornElement.DesiredSize.Height
                             };
 
-                //TODO: questioning DesiredSize vs. Actual 
 
                 XCenter = adornElement.DesiredSize.Width/2;
                 YCenter = adornElement.DesiredSize.Height/2;

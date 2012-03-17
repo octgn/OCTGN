@@ -55,7 +55,7 @@ namespace Octgn.Play.Dialogs
 
             Program.Client.Rpc.StartLimitedReq(Packs.Select(p => p.Id).ToArray());
             Close();
-            // Solves an issue where OCTGN isn't the active window anymore if the confirmation dialog above was shown
+            // Solves an issue where Dialog isn't the active window anymore if the confirmation dialog above was shown
             //fix MAINWINDOW bug
             Program.PlayWindow.Activate();
         }

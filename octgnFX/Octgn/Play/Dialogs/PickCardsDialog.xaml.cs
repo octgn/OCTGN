@@ -99,8 +99,6 @@ namespace Octgn.Play.Dialogs
             else
                 section.Cards.Add(new Deck.Element {Card = card, Quantity = 1});
 
-            // TODO: Hide the big card preview, this is ineffective as it immediately comes into view again as the 
-            // mouse enters another card.
             // RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, sender));
         }
 

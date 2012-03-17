@@ -60,16 +60,16 @@ namespace Octgn.Controls
                 switch (value.Status)
                 {
                     case UserStatus.Away:
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusAway.png";
+                        guri = @"pack://application:,,,/Dialog;component/Resources/statusAway.png";
                         break;
                     case UserStatus.DoNotDisturb:
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusDND.png";
+                        guri = @"pack://application:,,,/Dialog;component/Resources/statusDND.png";
                         break;
                     case UserStatus.Online:
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusOnline.png";
+                        guri = @"pack://application:,,,/Dialog;component/Resources/statusOnline.png";
                         break;
                     default: //Offline or anything else
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusOffline.png";
+                        guri = @"pack://application:,,,/Dialog;component/Resources/statusOffline.png";
                         break;
                 }
                 SetValue(StatusPictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
@@ -134,7 +134,6 @@ namespace Octgn.Controls
         {
             Debug.Assert(_dragdropWindow == null);
             Debug.Assert(dragElement != null);
-            // TODO: FE? or UIE??   FE cause I am lazy on size . 
             Debug.Assert(dragElement is FrameworkElement);
 
             _dragdropWindow = new Window
@@ -151,7 +150,6 @@ namespace Octgn.Controls
 
             _dragdropWindow.SourceInitialized += delegate
                                                      {
-                                                         //TODO assert that we can do this.. 
                                                          PresentationSource windowSource =
                                                              PresentationSource.FromVisual(_dragdropWindow);
                                                          var hwndSource = (HwndSource) windowSource;

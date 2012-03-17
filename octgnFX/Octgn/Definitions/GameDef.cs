@@ -72,7 +72,7 @@ namespace Octgn.Definitions
             if (OctgnVersion > OctgnApp.OctgnVersion)
             {
                 MessageBox.Show(
-                    string.Format("This game requires OCTGN {0} or higher", OctgnVersion.ToString(4)),
+                    string.Format("This game requires Dialog {0} or higher", OctgnVersion.ToString(4)),
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
@@ -80,7 +80,7 @@ namespace Octgn.Definitions
             if (OctgnVersion < OctgnApp.BackwardCompatibility)
             {
                 MessageBox.Show(
-                    "This game is incompatible with newer OCTGN versions",
+                    "This game is incompatible with newer Dialog versions",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }

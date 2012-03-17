@@ -24,6 +24,7 @@ using System.Xml;
 using LinqToTwitter;
 using Octgn.Controls;
 using Octgn.DeckBuilder;
+using Octgn.Extentions;
 using Octgn.Networking;
 using Skylabs.Lobby;
 using Octgn.Definitions;
@@ -46,13 +47,6 @@ namespace Octgn.Launcher
         public Login()
         {
             InitializeComponent();
-            if (Program.LobbyClient != null)
-            {
-                Program.LobbyClient.Stop();
-                Program.LobbyClient = null;
-            }
-            Program.LobbyClient = new LobbyClient();
-            Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
 
             SpinnerRotate.CenterX = image2.Width/2;
             SpinnerRotate.CenterY = image2.Height/2;
@@ -67,586 +61,381 @@ namespace Octgn.Launcher
                 cbSavePassword.IsChecked = true;
             }
             textBox1.Text = SimpleConfig.ReadValue("E-Mail");
-            Program.LClient.OnStateChanged += delegate(object sender, string state) { UpdateLoginStatus(state); };
+            Program.LClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state);
             Program.LClient.OnLoginComplete += new Skylabs.Lobby.Client.dLoginComplete(LClient_OnLoginComplete);
             LazyAsync.Invoke(GetTwitterStuff);
+        }
 
-
-        }
-        private void GetTwitterStuff()
-        {
-            LinqToTwitter.TwitterContext tc = new TwitterContext();
-            var tweets =
-                (from tweet in tc.Status 
-                where tweet.Type == StatusType.User
-                      && tweet.ScreenName == "SkylabsOnline"
-                      && tweet.Count == 5
-                select tweet).ToList();
-            Dispatcher.Invoke(new Action(()=>ShowTwitterStuff(tweets)));           
-        }
-        private void ShowTwitterStuff(List<Status> tweets )
-        {
-            textBlock5.HorizontalAlignment = HorizontalAlignment.Stretch;
-            textBlock5.Inlines.Clear();
-            textBlock5.Text = "";
-            foreach( var tweet in tweets)
+        #region News Feed
+            private void GetTwitterStuff()
             {
-                Inline dtime =
-                    new Run(tweet.CreatedAt.ToShortDateString()
-                            + tweet.CreatedAt.ToShortTimeString());
-                dtime.Foreground =
-                    new SolidColorBrush(Colors.Khaki);
-                textBlock5.Inlines.Add(dtime);
-                textBlock5.Inlines.Add("\n");
-                var inlines = AddTweetText(tweet.Text).Inlines.ToArray();
-                foreach(var i in inlines)
-                    textBlock5.Inlines.Add(i);     
-                textBlock5.Inlines.Add("\n\n");
+                LinqToTwitter.TwitterContext tc = new TwitterContext();
+                var tweets =
+                    (from tweet in tc.Status 
+                    where tweet.Type == StatusType.User
+                            && tweet.ScreenName == "SkylabsOnline"
+                            && tweet.Count == 5
+                    select tweet).ToList();
+                Dispatcher.Invoke(new Action(()=>ShowTwitterStuff(tweets)));           
             }
-            //Dispatcher.BeginInvoke(new Action(StartTwitterAnim) , DispatcherPriority.Background);
-        }
-        private Paragraph AddTweetText(string text)
-        {
-            var ret = new Paragraph();
-            var words = text.Split(' ');
-            var b = new SolidColorBrush(Colors.White);
-            foreach(var inn in words.Select(word=>StringToRun(word,b)))
+            private void ShowTwitterStuff(List<Status> tweets )
             {
-                if(inn != null)
-                    ret.Inlines.Add(inn);
-                ret.Inlines.Add(" ");
-            }
-            return ret;
-        }
-        public Inline StringToRun(String s, Brush b)
-        {
-            Inline ret = null;
-            const string strUrlRegex =
-                "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
-            var reg = new Regex(strUrlRegex);
-            s = s.Trim();
-            //b = Brushes.Black;
-            Inline r = new Run(s);
-            if(reg.IsMatch(s))
-            {
-                b = Brushes.LightBlue;
-                var h = new Hyperlink(r);
-                h.Foreground = new SolidColorBrush(Colors.LawnGreen);
-                h.RequestNavigate += HOnRequestNavigate;
-                try
+                textBlock5.HorizontalAlignment = HorizontalAlignment.Stretch;
+                textBlock5.Inlines.Clear();
+                textBlock5.Text = "";
+                foreach( var tweet in tweets)
                 {
-                    h.NavigateUri = new Uri(s);
+                    Inline dtime =
+                        new Run(tweet.CreatedAt.ToShortDateString()
+                                + tweet.CreatedAt.ToShortTimeString());
+                    dtime.Foreground =
+                        new SolidColorBrush(Colors.Khaki);
+                    textBlock5.Inlines.Add(dtime);
+                    textBlock5.Inlines.Add("\n");
+                    var inlines = AddTweetText(tweet.Text).Inlines.ToArray();
+                    foreach(var i in inlines)
+                        textBlock5.Inlines.Add(i);     
+                    textBlock5.Inlines.Add("\n\n");
                 }
-                catch(UriFormatException)
+                //Dispatcher.BeginInvoke(new Action(StartTwitterAnim) , DispatcherPriority.Background);
+            }
+            private Paragraph AddTweetText(string text)
+            {
+                var ret = new Paragraph();
+                var words = text.Split(' ');
+                var b = new SolidColorBrush(Colors.White);
+                foreach(var inn in words.Select(word=>StringToRun(word,b)))
                 {
-                    s = "http://" + s;
+                    if(inn != null)
+                        ret.Inlines.Add(inn);
+                    ret.Inlines.Add(" ");
+                }
+                return ret;
+            }
+            public Inline StringToRun(String s, Brush b)
+            {
+                Inline ret = null;
+                const string strUrlRegex =
+                    "(?i)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))";
+                var reg = new Regex(strUrlRegex);
+                s = s.Trim();
+                //b = Brushes.Black;
+                Inline r = new Run(s);
+                if(reg.IsMatch(s))
+                {
+                    b = Brushes.LightBlue;
+                    var h = new Hyperlink(r);
+                    h.Foreground = new SolidColorBrush(Colors.LawnGreen);
+                    h.RequestNavigate += HOnRequestNavigate;
                     try
                     {
                         h.NavigateUri = new Uri(s);
                     }
-                    catch(Exception)
+                    catch(UriFormatException)
                     {
-                        r.Foreground = b;
-                        //var ul = new Underline(r);
-                    }
-                }
-                ret = h;
-            }
-            else
-                ret = new Run(s){Foreground = b};
-            return ret;
-        }
-
-        private void HOnRequestNavigate(object sender , RequestNavigateEventArgs e) 
-        {
- 
-            var hl = (Hyperlink) sender;
-            string navigateUri = hl.NavigateUri.ToString();
-            try
-            {
-                Process.Start(new ProcessStartInfo(navigateUri));
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-                if (Debugger.IsAttached) Debugger.Break();
-            }
-            e.Handled = true;
-        }
-
-        private static void lobbyClient_OnDataRecieved(DataRecType type, object e)
-        {
-            if (type != DataRecType.ServerMessage) return;
-            var m = e as string;
-            if (m != null && !String.IsNullOrWhiteSpace(m))
-            {
-                MessageBox.Show(m, "Server Message", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-        }
-
-        private void StartSpinning()
-        {
-            if (_bSpin || _animationTimer.IsEnabled) return;
-            _bSpin = true;
-            _animationTimer.Start();
-        }
-
-        private void StopSpinning()
-        {
-            _bSpin = false;
-        }
-
-        private void HandleAnimationTick(object sender, EventArgs e)
-        {
-            SpinnerRotate.Angle = (SpinnerRotate.Angle + 10)%360;
-            if (Math.Abs(SpinnerRotate.Angle - 0) < double.Epsilon && _bSpin == false)
-                _animationTimer.Stop();
-        }
-
-        private void Button1Click(object sender, RoutedEventArgs e)
-        {
-            if (_isLoggingIn) return;
-            _isLoggingIn = true;
-            StartSpinning();
-            bError.Visibility = Visibility.Hidden;
-            Program.LClient.BeginLogin(textBox1.Text,passwordBox1.Password);
-        }
-
-        void LClient_OnLoginComplete(object sender, Skylabs.Lobby.Client.LoginResults results)
-        {
-            
-            switch (results)
-            {
-                case Skylabs.Lobby.Client.LoginResults.ConnectionError:
-                    Dispatcher.Invoke(new Action(() =>
-                                                     {
-                                                        UpdateLoginStatus("");
-                                                        _isLoggingIn = false;
-                                                        DoErrorMessage("Could not connect to the server.");
-                                                        StopSpinning();    
-                                                     }));
-
-                    break;
-                case Skylabs.Lobby.Client.LoginResults.Success:
-                    LoginFinished(LoginResult.Success, DateTime.Now,"");
-                    break;
-                case Skylabs.Lobby.Client.LoginResults.Failure:
-                    LoginFinished(LoginResult.Failure, DateTime.Now,"Username/Password Incorrect.");
-                    break;
-            }
-            _isLoggingIn = false;
-        }
-
-        private void DoLogin()
-        {
-            if (_isLoggingIn) return;
-            _isLoggingIn = true;
-            StartSpinning();
-            Program.LauncherWindow.Closing += LauncherWindowClosing;
-            bError.Visibility = Visibility.Hidden;
-            bool c = Program.LobbyClient.Connected;
-            if (!c)
-            {
-                UpdateLoginStatus("Connecting to server...");
-                c = Program.LobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort);
-            }
-            if (c)
-            {
-                Program.SaveLocation();
-                //TODO Sometimes it takes forever, maybe retry if it doesn't log in in like 10 seconds.
-                Program.LobbyClient.OnCaptchaRequired += lobbyClient_OnCaptchaRequired;
-                Program.LobbyClient.Login(LoginFinished, UpdateLoginStatus, textBox1.Text, passwordBox1.Password, "",
-                                          UserStatus.Online);
-            }
-            else
-            {
-                UpdateLoginStatus("");
-                _isLoggingIn = false;
-                DoErrorMessage("Could not connect to the server.");
-            }
-        }
-
-        private void LauncherWindowClosing(object sender, CancelEventArgs e)
-        {
-            if (_isLoggingIn)
-            {
-                e.Cancel = true;
-            }
-        }
-
-        private void UpdateLoginStatus(string message)
-        {
-            Dispatcher.Invoke(new Action(() => lblLoginStatus.Content = message));
-        }
-
-        private void lobbyClient_OnCaptchaRequired(string fullurl, string imageurl)
-        {
-            Dispatcher.Invoke((Action) (() =>
-                                            {
-                                                var pm = new PopupWindowMessage();
-                                                var i = new Image();
-                                                var tb = new TextBox();
-                                                var b = new Button
-                                                            {
-                                                                Width = 70,
-                                                                Height = 30,
-                                                                HorizontalAlignment = HorizontalAlignment.Right,
-                                                                Content = "Ok"
-                                                            };
-
-                                                b.Click += (o, e) => pm.HideMessage();
-                                                tb.Name = "tbCaptcha";
-
-                                                i.Source = new BitmapImage(new Uri(imageurl));
-                                                pm.AddControl(i);
-                                                pm.AddControl(tb);
-                                                pm.AddControl(b);
-                                                pm.OnPopupWindowClose += delegate(object sender, bool xClosed)
-                                                                             {
-                                                                                 _isLoggingIn = false;
-                                                                                 if (!xClosed)
-                                                                                 {
-                                                                                     Button1Click(null, null);
-                                                                                 }
-
-                                                                                 StopSpinning();
-                                                                             };
-                                                pm.ShowMessage(MainGrid);
-                                            }));
-        }
-
-        private void WebBrowser1Navigated(object sender, NavigationEventArgs e)
-        {
-            //if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-        }
-
-        private void LoginFinished(LoginResult success, DateTime banEnd, string message)
-        {
-            if (success == LoginResult.WaitingForResponse)
-            {
-                _loginTimer =
-                    new Timer(o => LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again."),
-                              null, 10000, 10000);
-                return;
-            }
-            Trace.TraceInformation("Login finished.");
-            if (_loginTimer != null)
-            {
-                _loginTimer.Dispose();
-                _loginTimer = null;
-            }
-            Dispatcher.Invoke((Action) (() =>
-                                            {
-                                                Program.LobbyClient.OnCaptchaRequired -= lobbyClient_OnCaptchaRequired;
-                                                Program.LauncherWindow.Closing -= LauncherWindowClosing;
-                                                _isLoggingIn = false;
-                                                StopSpinning();
-                                                switch (success)
-                                                {
-                                                    case LoginResult.Success:
-                                                        SimpleConfig.WriteValue("Password",
-                                                                                cbSavePassword.IsChecked == true
-                                                                                    ? passwordBox1.Password.Encrypt()
-                                                                                    : "");
-                                                        SimpleConfig.WriteValue("Username", textBox1.Text);
-                                                        SimpleConfig.WriteValue("Nickname",textBox1.Text);
-                                                        Program.ClientWindow = new Main();
-                                                        Program.ClientWindow.Show();
-                                                        Application.Current.MainWindow = Program.ClientWindow;
-                                                        Program.LauncherWindow.Close();
-                                                        break;
-                                                    case LoginResult.Banned:
-                                                        DoErrorMessage("You have been banned until " +
-                                                                       banEnd.ToShortTimeString() + " on " +
-                                                                       banEnd.ToShortDateString());
-                                                        break;
-                                                    case LoginResult.Failure:
-                                                        DoErrorMessage("Login Failed: " + message);
-                                                        break;
-                                                }
-                                            }), new object[] {});
-        }
-
-        private void MenuExitClick(object sender, RoutedEventArgs e)
-        {
-            if (!_isLoggingIn)
-            {
-                Program.Exit();
-            }
-        }
-
-        private static bool FileExists(string url)
-        {
-            bool result;
-            using (var client = new WebClient())
-            {
-                try
-                {
-                    Stream str = client.OpenRead(url);
-                    result = str != null;
-                }
-                catch
-                {
-                    result = false;
-                }
-            }
-            return result;
-        }
-
-        private static string[] ReadUpdateXml(string url)
-        {
-            var values = new string[2];
-
-            Stream wbr = WebRequest.Create(url).GetResponse().GetResponseStream();
-            if (wbr != null)
-                using (XmlReader reader = XmlReader.Create(wbr))
-                {
-                    while (reader.Read())
-                    {
-                        if (!reader.IsStartElement()) continue;
-                        if (reader.IsEmptyElement) continue;
-                        switch (reader.Name)
+                        s = "http://" + s;
+                        try
                         {
-                            case "Version":
-                                values = new string[2];
-                                if (reader.Read())
-                                {
-                                    values[0] = reader.Value;
-                                }
-                                break;
-                            case "Location":
-                                if (reader.Read())
-                                {
-                                    values[1] = reader.Value;
-                                }
-                                break;
+                            h.NavigateUri = new Uri(s);
+                        }
+                        catch(Exception)
+                        {
+                            r.Foreground = b;
+                            //var ul = new Underline(r);
                         }
                     }
+                    ret = h;
                 }
-            return values;
-        }
-        private void MenuOfflineClick(object sender, RoutedEventArgs e)
-        {
-            var g = new GameList();
-            var sg = new StartGame();
-            g.Row2.Height = new GridLength(25);
-            g.btnCancel.Click += delegate(object o, RoutedEventArgs args)
-                                     {
-                                         Program.LauncherWindow.NavigationService.GoBack();
-                                     };
-            g.OnGameClick += GOnOnGameClick;
-            Program.LauncherWindow.Navigate(g);
-        }
-
-        private void GOnOnGameClick(object sender, EventArgs eventArgs)
-        {
-            var hg = sender as Octgn.Data.Game;
-            if (hg == null || Program.PlayWindow != null)
-            {
-                Program.LauncherWindow.Navigate(new Login());
-                return;
-            }
-            var hostport = 5000;
-            while (!Skylabs.Lobby.Networking.IsPortAvailable(hostport))
-                hostport++;
-            var hs = new HostedGame(hostport, hg.Id, hg.Version, "LocalGame", "", null,true);
-            hs.HostedGameDone += hs_HostedGameDone;
-            if (!hs.StartProcess())
-            {
-                hs.HostedGameDone -= hs_HostedGameDone;
-                Program.LauncherWindow.Navigate(new Login());
-                return;
+                else
+                    ret = new Run(s){Foreground = b};
+                return ret;
             }
 
-            Program.IsHost = true;
-            Data.Game theGame =
-                Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
-            if (theGame == null) return;
-            Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
-
-            var ad = new IPAddress[1];
-            IPAddress ip = IPAddress.Parse("127.0.0.1");
-
-            if (ad.Length <= 0) return;
-            try
+            private void HOnRequestNavigate(object sender , RequestNavigateEventArgs e) 
             {
-                Program.Client = new Client(ip, hostport);
-                Program.Client.Connect();
-                Dispatcher.Invoke(new Action(() => Program.LauncherWindow.NavigationService.Navigate(new StartGame(true){Width = 400})));
+ 
+                var hl = (Hyperlink) sender;
+                string navigateUri = hl.NavigateUri.ToString();
+                try
+                {
+                    Process.Start(new ProcessStartInfo(navigateUri));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
+                e.Handled = true;
             }
-            catch (Exception ex)
+        #endregion
+
+        #region LoginStuff
+            private void StartSpinning()
             {
-                Debug.WriteLine(ex);
-                if (Debugger.IsAttached) Debugger.Break();
+                if (_bSpin || _animationTimer.IsEnabled) return;
+                _bSpin = true;
+                _animationTimer.Start();
             }
-        }
 
-        void hs_HostedGameDone(object sender, EventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
-
-        private void MenuUpdateClick(object sender, RoutedEventArgs e)
-        {
-            if (!FileExists("http://www.skylabsonline.com/downloads/octgn/update.xml")) return;
-            string[] update = ReadUpdateXml("http://www.skylabsonline.com/downloads/octgn/update.xml");
-
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Version local = assembly.GetName().Version;
-            var online = new Version(update[0]);
-            if (online <= local) return;
-            switch (
-                MessageBox.Show("An update is available. Would you like to download now?", "Update Available",
-                                MessageBoxButton.YesNo, MessageBoxImage.Question))
+            private void StopSpinning()
             {
-                case MessageBoxResult.Yes:
-                    Process.Start(update[1]);
-                    Program.Exit();
-                    break;
-                case MessageBoxResult.No:
-                    //
-                    break;
+                _bSpin = false;
             }
-        }
 
-        private void MenuDeckEditorClick(object sender, RoutedEventArgs e)
-        {
-            if (Program.GamesRepository.Games.Count == 0)
+            private void HandleAnimationTick(object sender, EventArgs e)
             {
-                MessageBox.Show("You have no game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                SpinnerRotate.Angle = (SpinnerRotate.Angle + 10)%360;
+                if (Math.Abs(SpinnerRotate.Angle - 0) < double.Epsilon && _bSpin == false)
+                    _animationTimer.Stop();
             }
-            if (Program.DeckEditor == null)
+
+            void LClient_OnLoginComplete(object sender, Skylabs.Lobby.Client.LoginResults results)
             {
-                Program.DeckEditor = new DeckBuilderWindow();
-                Program.DeckEditor.Show();
+                
+                switch (results)
+                {
+                    case Skylabs.Lobby.Client.LoginResults.ConnectionError:
+                        Dispatcher.Invoke(new Action(() =>
+                                                         {
+                                                            UpdateLoginStatus("");
+                                                            _isLoggingIn = false;
+                                                            DoErrorMessage("Could not connect to the server.");
+                                                            StopSpinning();    
+                                                         }));
+
+                        break;
+                    case Skylabs.Lobby.Client.LoginResults.Success:
+                        LoginFinished(LoginResult.Success, DateTime.Now,"");
+                        break;
+                    case Skylabs.Lobby.Client.LoginResults.Failure:
+                        LoginFinished(LoginResult.Failure, DateTime.Now,"Username/Password Incorrect.");
+                        break;
+                }
+                _isLoggingIn = false;
             }
-            else if (Program.DeckEditor.IsVisible == false)
+
+            private void DoLogin()
             {
-                Program.DeckEditor = new DeckBuilderWindow();
-                Program.DeckEditor.Show();
+                if (_isLoggingIn) return;
+                _isLoggingIn = true;
+                StartSpinning();
+                bError.Visibility = Visibility.Hidden;
+                Program.LClient.BeginLogin(textBox1.Text,passwordBox1.Password);
             }
-        }
 
-        private void TextBox1TextChanged(object sender, TextChangedEventArgs e)
-        {
-            bError.Visibility = Visibility.Hidden;
-        }
 
-        private void DoErrorMessage(string message)
-        {
-            Dispatcher.Invoke((Action) (() =>
-                                            {
-                                                lError.Text = message;
-                                                bError.Visibility = Visibility.Visible;
-                                            }), new object[] {});
-        }
-
-        private void PasswordBox1PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            bError.Visibility = Visibility.Hidden;
-        }
-
-        private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
-        {
-            Process.Start(e.Uri.ToString());
-            e.Handled = true;
-        }
-
-        private void TextBox1KeyUp(object sender, KeyEventArgs e)
-        {
-            if (cbSavePassword.IsChecked != true) return;
-            cbSavePassword.IsChecked = false;
-            SimpleConfig.WriteValue("Password", "");
-        }
-
-        private void PasswordBox1KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
+            private void UpdateLoginStatus(string message)
             {
-                DoLogin();
+                Dispatcher.Invoke(new Action(() => lblLoginStatus.Content = message));
             }
-            else if (cbSavePassword.IsChecked == true)
+
+            private void LoginFinished(LoginResult success, DateTime banEnd, string message)
             {
+                if (success == LoginResult.WaitingForResponse)
+                {
+                    _loginTimer =
+                        new Timer(o => LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again."),
+                                  null, 10000, 10000);
+                    return;
+                }
+                Trace.TraceInformation("Login finished.");
+                if (_loginTimer != null)
+                {
+                    _loginTimer.Dispose();
+                    _loginTimer = null;
+                }
+                Dispatcher.Invoke((Action) (() =>
+                                                {
+                                                    Program.LauncherWindow.Closing -= LauncherWindowClosing;
+                                                    _isLoggingIn = false;
+                                                    StopSpinning();
+                                                    switch (success)
+                                                    {
+                                                        case LoginResult.Success:
+                                                            SimpleConfig.WriteValue("Password",
+                                                                                    cbSavePassword.IsChecked == true
+                                                                                        ? passwordBox1.Password.Encrypt()
+                                                                                        : "");
+                                                            SimpleConfig.WriteValue("Username", textBox1.Text);
+                                                            SimpleConfig.WriteValue("Nickname",textBox1.Text);
+                                                            Program.ClientWindow = new Main();
+                                                            Program.ClientWindow.Show();
+                                                            Application.Current.MainWindow = Program.ClientWindow;
+                                                            Program.LauncherWindow.Close();
+                                                            break;
+                                                        case LoginResult.Banned:
+                                                            DoErrorMessage("You have been banned until " +
+                                                                           banEnd.ToShortTimeString() + " on " +
+                                                                           banEnd.ToShortDateString());
+                                                            break;
+                                                        case LoginResult.Failure:
+                                                            DoErrorMessage("Login Failed: " + message);
+                                                            break;
+                                                    }
+                                                }), new object[] {});
+            }
+
+            private void DoErrorMessage(string message)
+            {
+                Dispatcher.Invoke((Action) (() =>
+                                                {
+                                                    lError.Text = message;
+                                                    bError.Visibility = Visibility.Visible;
+                                                }), new object[] {});
+            }
+        #endregion
+
+        #region Offline Gaming
+            private void MenuOfflineClick(object sender, RoutedEventArgs e)
+            {
+                var g = new GameList();
+                var sg = new StartGame();
+                g.Row2.Height = new GridLength(25);
+                g.btnCancel.Click += delegate(object o, RoutedEventArgs args)
+                                         {
+                                             Program.LauncherWindow.NavigationService.GoBack();
+                                         };
+                g.OnGameClick += GOnOnGameClick;
+                Program.LauncherWindow.Navigate(g);
+            }
+
+            private void GOnOnGameClick(object sender, EventArgs eventArgs)
+            {
+                var hg = sender as Octgn.Data.Game;
+                if (hg == null || Program.PlayWindow != null)
+                {
+                    Program.LauncherWindow.Navigate(new Login());
+                    return;
+                }
+                var hostport = 5000;
+                while (!Skylabs.Lobby.Networking.IsPortAvailable(hostport))
+                    hostport++;
+                var hs = new HostedGame(hostport, hg.Id, hg.Version, "LocalGame", "", null,true);
+                hs.HostedGameDone += hs_HostedGameDone;
+                if (!hs.StartProcess())
+                {
+                    hs.HostedGameDone -= hs_HostedGameDone;
+                    Program.LauncherWindow.Navigate(new Login());
+                    return;
+                }
+
+                Program.IsHost = true;
+                Data.Game theGame =
+                    Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
+                if (theGame == null) return;
+                Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
+
+                var ad = new IPAddress[1];
+                IPAddress ip = IPAddress.Parse("127.0.0.1");
+
+                if (ad.Length <= 0) return;
+                try
+                {
+                    Program.Client = new Client(ip, hostport);
+                    Program.Client.Connect();
+                    Dispatcher.Invoke(new Action(() => Program.LauncherWindow.NavigationService.Navigate(new StartGame(true){Width = 400})));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    if (Debugger.IsAttached) Debugger.Break();
+                }
+            }
+            
+            void hs_HostedGameDone(object sender, EventArgs e)
+            {
+                //throw new NotImplementedException();
+            }
+            private void GOoffConnOnGameClick(object sender, EventArgs eventArgs)
+            {
+                var hg = sender as Octgn.Data.Game;
+                if (hg == null || Program.PlayWindow != null)
+                {
+                    Program.LauncherWindow.NavigationService.Navigate(new Login());
+                    return;
+                }
+                Program.IsHost = false;
+                Data.Game theGame =
+                    Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
+                if (theGame == null)
+                {
+                    Program.LauncherWindow.Navigate(new Login());
+                    return;
+                }
+                Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
+                Program.LauncherWindow.Navigate(new ConnectLocalGame());
+            }
+
+            private void MenuOfflineConnectClick(object sender, RoutedEventArgs e)
+            {
+                var g = new GameList();
+                g.Row2.Height = new GridLength(25);
+                g.btnCancel.Click += delegate(object o, RoutedEventArgs args)
+                {
+                    Program.LauncherWindow.NavigationService.GoBack();
+                };
+                g.OnGameClick += GOoffConnOnGameClick;
+                Program.LauncherWindow.Navigate(g);
+                
+            }
+        #endregion
+
+        #region UI Events
+            private void Button1Click(object sender, RoutedEventArgs e) { DoLogin(); }
+            private void MenuDeckEditorClick(object sender, RoutedEventArgs e)
+            {
+                if (Program.GamesRepository.Games.Count == 0)
+                {
+                    MessageBox.Show("You have no game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                if (Program.DeckEditor == null)
+                {
+                    Program.DeckEditor = new DeckBuilderWindow();
+                    Program.DeckEditor.Show();
+                }
+                else if (Program.DeckEditor.IsVisible == false)
+                {
+                    Program.DeckEditor = new DeckBuilderWindow();
+                    Program.DeckEditor.Show();
+                }
+            }
+            private void TextBox1TextChanged(object sender, TextChangedEventArgs e){bError.Visibility = Visibility.Hidden;}
+            private void PasswordBox1PasswordChanged(object sender, RoutedEventArgs e){bError.Visibility = Visibility.Hidden;}
+            private void btnRegister_Click(object sender, RoutedEventArgs e){Program.LauncherWindow.Navigate(new Register());}
+            private void TextBox1KeyUp(object sender, KeyEventArgs e)
+            {
+                if (cbSavePassword.IsChecked != true) return;
                 cbSavePassword.IsChecked = false;
                 SimpleConfig.WriteValue("Password", "");
             }
-        }
-
-        private void PageUnloaded(object sender, RoutedEventArgs e)
-        {
-            Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
-        }
-
-        private void PageLoaded(object sender, RoutedEventArgs e)
-        {
-            UpdateLoginStatus("Connecting to server...");
-            if (Program.LobbyClient.Connect(Program.LobbySettings.Server, Program.LobbySettings.ServerPort))
+            private void PasswordBox1KeyUp(object sender, KeyEventArgs e)
             {
-                UpdateLoginStatus("Server available");
+                if (e.Key == Key.Enter)
+                {
+                    DoLogin();
+                }
+                else if (cbSavePassword.IsChecked == true)
+                {
+                    cbSavePassword.IsChecked = false;
+                    SimpleConfig.WriteValue("Password", "");
+                }
             }
-            else
-            {
-                UpdateLoginStatus("");
-                DoErrorMessage("Server Unavailable");
-            }
-        }
+        #endregion
 
-        private void MenuOfflineConnectClick(object sender, RoutedEventArgs e)
-        {
-            var g = new GameList();
-            g.Row2.Height = new GridLength(25);
-            g.btnCancel.Click += delegate(object o, RoutedEventArgs args)
+        #region Window stuff
+            private void PageUnloaded(object sender, RoutedEventArgs e)
             {
-                Program.LauncherWindow.NavigationService.GoBack();
-            };
-            g.OnGameClick += GOoffConnOnGameClick;
-            Program.LauncherWindow.Navigate(g);
-            
-        }
-
-        private void GOoffConnOnGameClick(object sender, EventArgs eventArgs)
-        {
-            var hg = sender as Octgn.Data.Game;
-            if (hg == null || Program.PlayWindow != null)
-            {
-                Program.LauncherWindow.NavigationService.Navigate(new Login());
-                return;
             }
-            Program.IsHost = false;
-            Data.Game theGame =
-                Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
-            if (theGame == null)
-            {
-                Program.LauncherWindow.Navigate(new Login());
-                return;
-            }
-            Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
-            Program.LauncherWindow.Navigate(new ConnectLocalGame());
-        }
 
-        private void btnRegister_Click(object sender, RoutedEventArgs e)
-        {
-            Program.LauncherWindow.Navigate(new Register());
-        }
+            private void PageLoaded(object sender, RoutedEventArgs e)
+            {
+                //TODO Check for server here
+            }
+            private void LauncherWindowClosing(object sender, CancelEventArgs e){if (_isLoggingIn)e.Cancel = true;}
+            private void MenuExitClick(object sender, RoutedEventArgs e){if (!_isLoggingIn)Program.Exit();}
+        #endregion
+
     }
 
-    public static class ExtensionMethods
-    {
-        public static string Decrypt(this string text)
-        {
-            RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(SimpleConfig.ReadValue("Nickname") ?? "null"));
-            text = Cryptor.Decrypt(text, BitConverter.ToString(hasher));
-            return text;
-        }
-
-        public static string Encrypt(this string text)
-        {
-            // Create a hash of current nickname to use as the Cryptographic Key
-            RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.LClient.Username));
-            return Cryptor.Encrypt(text, BitConverter.ToString(hasher));
-        }
-    }
 }

@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ms="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
         xmlns:octgn="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play" xmlns:gui="clr-namespace:Octgn.Play.Gui"
-        xmlns:ctrl="clr-namespace:Octgn.Controls" x:Name="self" Title="OCTGN" Icon="pack://application:,,,/Resources/Icon.ico"
+        xmlns:ctrl="clr-namespace:Octgn.Controls" x:Name="self" Title="Dialog" Icon="pack://application:,,,/Resources/Icon.ico"
         Height="800" Width="900" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True"
         RenderOptions.BitmapScalingMode="Fant">
 
@@ -78,7 +78,7 @@
       </ms:RibbonTab>
       <ms:RibbonTab Header="Help">
         <ms:RibbonGroup>
-          <ms:RibbonButton Label="About OCTGN" LargeImageSource="/Resources/Icons/About.png" Click="ShowAboutWindow" />
+          <ms:RibbonButton Label="About Dialog" LargeImageSource="/Resources/Icons/About.png" Click="ShowAboutWindow" />
           <ms:RibbonButton Label="Console" x:Name="Console" LargeImageSource="/Resources/Icons/console.png"
                            Click="ConsoleClicked" Visibility="Hidden" />
           <ms:RibbonButton Label="Game Rules" x:Name="Rules" LargeImageSource="/Resources/Icons/rules.png"

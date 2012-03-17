@@ -39,7 +39,7 @@ namespace Octgn.Launcher
             e.Handled = true;
             _beginHost = true;
             _ns = NavigationService;
-            Program.LobbyClient.BeginHostGame(EndHostGame, _game, textBox1.Text, textBox2.Text);
+            Program.LClient.BeginHostGame(_game, textBox1.Text);
             Program.ClientWindow.HostJoinTab();
         }
 
@@ -48,7 +48,7 @@ namespace Octgn.Launcher
             var port = (int) sm["port"];
             Program.DebugTrace.TraceEvent(TraceEventType.Information, 0,
                                           "Connecting to port: " + port.ToString(CultureInfo.InvariantCulture));
-            Program.LobbyClient.CurrentHostedGamePort = port;
+            Program.LClient.CurrentHostedGamePort = port;
             if (port <= -1) return;
             Program.GameSettings.UseTwoSidedTable = true;
             Program.Game = new Game(GameDef.FromO8G(_game.Filename));

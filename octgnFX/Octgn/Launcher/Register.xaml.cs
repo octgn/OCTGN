@@ -44,7 +44,7 @@ namespace Octgn.Launcher
                             lblErrors.Content = "There was a connection error. Please try again.";
                             break;
                         case Client.RegisterResults.Success:
-                            MessageBox.Show("Registration Success!", "OCTGN", MessageBoxButton.OK,
+                            MessageBox.Show("Registration Success!", "Dialog", MessageBoxButton.OK,
                                             MessageBoxImage.Information);
                             var l = new Login();
                             l.textBox1.Text = Program.LClient.Username;

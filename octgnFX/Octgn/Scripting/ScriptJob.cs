@@ -13,7 +13,7 @@ namespace Octgn.Scripting
         public Action<ExecutionResult> continuation;
         public object invokeResult;
         public Func<object> invokedOperation;
-        // Indicates whether OCTGN logs actions or is muted
+        // Indicates whether Dialog logs actions or is muted
         public int muted;
         // Indicates whether the script is suspend (waiting on an async event, such as random value, reveal or shuffle)
         // The execution result

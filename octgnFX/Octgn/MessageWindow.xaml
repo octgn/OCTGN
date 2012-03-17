@@ -1,5 +1,5 @@
 ﻿<Window x:Class="Octgn.MessageWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="OCTGN" Width="500" SizeToContent="Height"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Dialog" Width="500" SizeToContent="Height"
         Style="{StaticResource DialogWindow}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         x:Name="Me">
   <Grid Margin="4">

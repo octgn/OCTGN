@@ -17,7 +17,7 @@ namespace Skylabs.Lobby
         /// <param name="name"> Name of the room </param>
         /// <param name="password"> Password for the game </param>
         /// <param name="hoster"> User hosting the game </param>
-        public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, User hoster, bool localGame = false)
+        public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, NewUser hoster, bool localGame = false)
         {
             GameLog = "";
             GameGuid = gameguid;
@@ -104,7 +104,7 @@ namespace Skylabs.Lobby
         /// <summary>
         ///   Hoster of this crazy game.
         /// </summary>
-        public User Hoster { get; private set; }
+        public NewUser Hoster { get; private set; }
 
         /// <summary>
         ///   The status of the hosted game.
@@ -158,7 +158,6 @@ namespace Skylabs.Lobby
             }
             catch (Exception e)
             {
-                //TODO Need some sort of proper error handling here.
                 Console.WriteLine("");
                 Console.WriteLine(StandAloneApp.StartInfo.FileName);
                 Console.WriteLine(StandAloneApp.StartInfo.Arguments);

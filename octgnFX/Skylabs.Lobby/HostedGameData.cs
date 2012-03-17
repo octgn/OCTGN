@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Skylabs.Net;
+using agsXMPP;
+using agsXMPP.protocol.component;
 
 namespace Skylabs.Lobby
 {
     [Serializable]
-    public class HostedGameData : IEquatable<HostedGameData>, IEqualityComparer<HostedGameData>
+    public class HostedGameData :IQ, IEquatable<HostedGameData>, IEqualityComparer<HostedGameData>
     {
         #region EHostedGame enum
 
@@ -19,14 +21,13 @@ namespace Skylabs.Lobby
 
         #endregion
 
-        public HostedGameData(Guid gameguid, Version gameversion, int port, string name, bool passreq, User huser,
+        public HostedGameData(Guid gameguid, Version gameversion, int port, string name, NewUser huser,
                           DateTime startTime)
         {
             GameGuid = gameguid;
             GameVersion = gameversion;
             Port = port;
             Name = name;
-            PasswordRequired = passreq;
             UserHosting = huser;
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = startTime;
@@ -38,20 +39,69 @@ namespace Skylabs.Lobby
             GameVersion = (Version) sm["version"];
             Port = (int) sm["port"];
             Name = (string) sm["name"];
-            PasswordRequired = (bool) sm["passrequired"];
-            UserHosting = (User) sm["hoster"];
+            UserHosting = ((NewUser) sm["hoster"]);
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
         }
 
-        public Guid GameGuid { get; private set; }
-        public Version GameVersion { get; private set; }
-        public int Port { get; private set; }
-        public String Name { get; private set; }
-        public bool PasswordRequired { get; private set; }
-        public User UserHosting { get; private set; }
-        public EHostedGame GameStatus { get; set; }
-        public DateTime TimeStarted { get; private set; }
+        public Guid GameGuid
+        {
+            get
+            {
+                Guid ret = Guid.Empty;
+                Guid.TryParse(GetTag("guid"),out ret);
+                return ret;
+            } 
+            private set{SetTag("guid",value.ToString());}
+        }
+        public Version GameVersion
+        {
+            get
+            {
+                Version v = new Version(0,0);
+                Version.TryParse(GetTag("version") , out v);
+                return v;
+            } 
+            private set
+            {
+                SetTag("version",value.ToString());
+            }
+        }
+        public int Port
+        {
+            get { return GetTagInt("port"); }
+            set{SetTag("port",value);}
+        }
+        public String Name
+        {
+            get { return GetTag("name"); }
+            private set{SetTag("name",value);}
+        }
+        public NewUser UserHosting
+        {
+            get { return new NewUser(GetTagJid("userhosting")); }
+            private set{SetTag("userhosting",value.User.Bare);}
+        }
+        public EHostedGame GameStatus
+        {
+            get
+            {
+                EHostedGame ret = EHostedGame.StoppedHosting;
+                Enum.TryParse(GetTag("gamestatus") , out ret);
+                return ret;
+            }
+            set{SetTag("gamestatus",value.ToString());}
+        }
+        public DateTime TimeStarted
+        {
+            get
+            {
+                DateTime ret = DateTime.Now;
+                DateTime.TryParse(GetTag("timestarted") , out ret);
+                return ret;
+            }
+            private set{SetTag("timestarted",value.ToString());}
+        }
 
         #region IEqualityComparer<HostedGame> Members
 

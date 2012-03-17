@@ -7,7 +7,6 @@ using System;
 namespace CassiniDev.ServerLog
 {
     /// <summary>
-    ///   TODO: get rid of status code and url in the database and simply parse the headers
     /// </summary>
     [Serializable]
     public class LogInfo : ICloneable

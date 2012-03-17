@@ -46,7 +46,7 @@ namespace Octgn.Controls
             set
             {
                 _hostedGame = value;
-                SetValue(UserNameProperty, _hostedGame.UserHosting.DisplayName);
+                SetValue(UserNameProperty, _hostedGame.UserHosting.User);
                 SetValue(GameLengthProperty,
                          string.Format("runtime: {0:0,0} minutes",
                                        (DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes));
@@ -67,13 +67,13 @@ namespace Octgn.Controls
                 switch (_hostedGame.GameStatus)
                 {
                     case HostedGameData.EHostedGame.GameInProgress:
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusAway.png";
+                        guri = @"pack://application:,,,/Dialog;component/Resources/statusAway.png";
                         break;
                     case HostedGameData.EHostedGame.StartedHosting:
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusOnline.png";
+                        guri = @"pack://application:,,,/Dialog;component/Resources/statusOnline.png";
                         break;
                     default: //Offline or anything else
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusOffline.png";
+                        guri = @"pack://application:,,,/Dialog;component/Resources/statusOffline.png";
                         break;
                 }
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);

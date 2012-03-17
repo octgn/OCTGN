@@ -289,6 +289,7 @@
     <Compile Include="ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extentions\String.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="BigInteger.cs" />
     <Compile Include="Launcher\ChatWindow.xaml.cs">

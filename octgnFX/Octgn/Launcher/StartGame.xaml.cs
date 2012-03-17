@@ -98,7 +98,7 @@ namespace Octgn.Launcher
         {
             if (_startingGame) return;
             _startingGame = true;
-            Program.LobbyClient.HostedGameStarted();
+            Program.LClient.HostedGameStarted();
             e.Handled = true;
             Start();
         }

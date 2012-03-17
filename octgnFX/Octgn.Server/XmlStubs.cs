@@ -962,7 +962,6 @@ namespace Octgn.Server
                 stream.Write(_buffer, 0, length);
                 stream.Flush();
             }
-                // TODO: notify disconnections
             catch (Exception e)
             {
                 Debug.WriteLine(e);

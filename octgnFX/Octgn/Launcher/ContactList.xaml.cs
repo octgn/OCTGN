@@ -16,10 +16,6 @@ namespace Octgn.Launcher
         public ContactList()
         {
             InitializeComponent();
-            Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
-            Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
-            Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
-
             Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
             Program.LClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
         }
@@ -32,14 +28,6 @@ namespace Octgn.Launcher
         private void LClientOnOnDataRecieved(object sender, Client.DataRecType type, object data)
         {
             if (type == Client.DataRecType.FriendList)
-            {
-                RefreshList();
-            }
-        }
-
-        private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User u, object data)
-        {
-            if (e != Chatting.ChatEvent.ChatMessage)
             {
                 RefreshList();
             }
@@ -77,13 +65,6 @@ namespace Octgn.Launcher
                                              }));
         }
 
-        private void lobbyClient_OnDataRecieved(DataRecType type, object e)
-        {
-            if (type == DataRecType.FriendList)
-            {
-                RefreshList();
-            }
-        }
 
         private static void GiMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -119,16 +100,9 @@ namespace Octgn.Launcher
             RefreshList();
         }
 
-        private void lobbyClient_OnUserStatusChanged(UserStatus eve, User u)
-        {
-            RefreshList();
-        }
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
-            Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
-            Program.LobbyClient.Chatting.EChatEvent -= ChattingEChatEvent;
             Program.LClient.OnDataRecieved -= LClientOnOnDataRecieved;
         }
     }

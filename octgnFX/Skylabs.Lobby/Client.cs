@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Octgn.Data;
 using agsXMPP;
 using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
@@ -18,7 +19,7 @@ namespace Skylabs.Lobby
         #region Enums
             public enum RegisterResults{ConnectionError,Success,UsernameTaken,UsernameInvalid,PasswordFailure}
             public enum LoginResults{ConnectionError,Success,Failure}
-            public enum DataRecType{FriendList,MyInfo}
+            public enum DataRecType{FriendList,MyInfo,GameList}
         #endregion
         #region Delegates
             public delegate void dRegisterComplete(object sender, RegisterResults results);
@@ -35,7 +36,7 @@ namespace Skylabs.Lobby
             public event dDataRecieved OnDataRecieved;
         #endregion
         #region PrivateAccessors
-            private XmppClientConnection Xmpp;
+            public XmppClientConnection Xmpp;
             private int _noteId = 0;
             private Presence myPresence;
             
@@ -51,6 +52,7 @@ namespace Skylabs.Lobby
         public RosterManager RosterManager { get { return Xmpp.RosterManager; } }
         public NewUser Me { get; private set; }
         public Chat Chatting { get; set; }
+        public int CurrentHostedGamePort { get; set; }
 
         public UserStatus Status
         {
@@ -80,7 +82,10 @@ namespace Skylabs.Lobby
             //GroupChats = new List<NewUser>();
             myPresence = new Presence();
             Chatting = new Chat(this,Xmpp);
+            CurrentHostedGamePort = -1;
         }
+
+        #region XMPP
 
         private void XmppOnOnReadXml(object sender , string xml)
         {
@@ -89,6 +94,8 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnIq(object sender, IQ iq)
         {
+            //TODO Watch for login error shit.vvvvv
+            //<Information>[6:39 AM 3/12/2012]0 - <iq xmlns="jabber:client" id="agsXMPP_2" type="error" from="skylabsonline.com"><session xmlns="urn:ietf:params:xml:ns:xmpp-session" /><error type="cancel" code="405"><not-allowed xmlns="urn:ietf:params:xml:ns:xmpp-stanzas" /></error></iq>
 
         }
 
@@ -236,7 +243,9 @@ namespace Skylabs.Lobby
             if(OnRegisterComplete != null)
                 OnRegisterComplete.Invoke(this,RegisterResults.Success);
         }
-        
+
+        #endregion 
+
         public void Send(Element e)
         {
             Xmpp.Send(e);
@@ -274,6 +283,11 @@ namespace Skylabs.Lobby
                 Xmpp.Password = password;
                 Xmpp.Open();
             }
+        }
+
+        public void BeginHostGame(Game game, string gamename)
+        {
+            //TODO Fill this up with jibberish
         }
 
         public void AcceptFriendship(Jid user)
@@ -340,5 +354,16 @@ namespace Skylabs.Lobby
             RosterManager.RemoveRosterItem(user.User);
             Friends.Remove(user);
         }
+        public HostedGameData[] GetHostedGames()
+        {
+            //TODO PUT CODE HERE HOMO!
+            return new HostedGameData[0];
+        }
+        public void HostedGameStarted()
+        {
+            if (CurrentHostedGamePort == -1) return;
+            //TODO Write message to game bot saying we started the game.
+        }
+        public void Stop(){Xmpp.Close();}
     }
 }

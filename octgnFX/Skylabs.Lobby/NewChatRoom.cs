@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -17,7 +18,7 @@ using Presence = agsXMPP.protocol.client.Presence;
 
 namespace Skylabs.Lobby
 {
-    public class NewChatRoom: IDisposable,IEquatable<NewChatRoom> 
+    public class NewChatRoom: IDisposable,IEquatable<NewChatRoom>,IEqualityComparer
     {
         public delegate void dMessageReceived(object sender , NewUser from, string message);
 
@@ -159,6 +160,7 @@ namespace Skylabs.Lobby
 
         }
         public bool Equals(NewChatRoom other) { return other.RID == RID; }
+        public override bool Equals(Object o) { return this.GetHashCode() == o.GetHashCode(); }
         public static bool operator==(NewChatRoom a, NewChatRoom b)
         {
             long rid1 = -1;
@@ -178,5 +180,8 @@ namespace Skylabs.Lobby
             return rid1 == rid2;
         }
         public static bool operator !=(NewChatRoom a , NewChatRoom b) { return !(a == b); }
+        public new bool Equals(object x , object y) { return x.GetHashCode() == y.GetHashCode(); }
+        public int GetHashCode(object obj) { return obj.GetHashCode(); }
+        public override int GetHashCode() { return (int)this.RID; }
     }
 }

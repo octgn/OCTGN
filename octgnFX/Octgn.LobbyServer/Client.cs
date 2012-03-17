@@ -251,7 +251,7 @@ namespace Skylabs.LobbyServer
         {
             lock (_clientLocker)
             {
-                int port = Gaming.HostGame(g, v, name, pass, Me);
+                int port = -1;//Gaming.HostGame(g, v, name, pass, Me);
                 var som = new SocketMessage("hostgameresponse");
                 som.AddData("port", port);
                 _socket.WriteMessage(som);

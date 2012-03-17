@@ -67,7 +67,6 @@ namespace Skylabs.Lobby
         {
             if (u == null)
             {
-                //TODO Something Causes u to be null, need to figger it out.
                 //if(System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
                 return false;
             }

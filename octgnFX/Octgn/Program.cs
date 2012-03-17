@@ -29,7 +29,6 @@ namespace Octgn
         public static List<ChatWindow> ChatWindows;
 
         public static Game Game;
-        public static LobbyClient LobbyClient;
         public static Skylabs.Lobby.Client LClient;
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository;
@@ -140,8 +139,8 @@ namespace Octgn
         public static void Exit()
         {
             Application.Current.MainWindow = null;
-            if (LobbyClient != null && LobbyClient.Connected)
-                LobbyClient.Stop();
+            if (LClient != null)
+                LClient.Xmpp.Close();
 
             SaveLocation();
             try
@@ -193,19 +192,6 @@ namespace Octgn
             }
 #endif
             Application.Current.Shutdown(0);
-        }
-
-        //TODO: Get rid of this method at some point
-        internal static void OnServerError(string serverMessage)
-        {
-            var args = new ServerErrorEventArgs {Message = serverMessage};
-            if (ServerError != null)
-                ServerError(null, args);
-            if (args.Handled) return;
-
-            MessageBox.Show(Application.Current.MainWindow,
-                            "The server has returned an error:\n" + serverMessage,
-                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         internal static void Print(Player player, string text)

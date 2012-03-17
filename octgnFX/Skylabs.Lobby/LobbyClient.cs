@@ -121,7 +121,6 @@ namespace Skylabs.Lobby
         /// <summary>
         ///   List of Notifications? I don't know offhand
         /// </summary>
-        //TODO Figure out what this is for
         private List<Notification> Notifications { get; set; }
 
         /// <summary>
@@ -284,7 +283,6 @@ namespace Skylabs.Lobby
             if (!_socket.Connected) return;
             var t = new Thread(() =>
                                    {
-                                       //TODO Need to add a method to handle 2-step signin.
                                        _onLoginFinished = onFinish;
                                        string appName = "skylabs-LobbyClient-" + Version;
                                        var s = new Service("code", appName);

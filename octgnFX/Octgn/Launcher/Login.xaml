@@ -81,7 +81,7 @@
             <ColumnDefinition Width="96*" />
           </Grid.ColumnDefinitions>
           <TextBlock FontSize="48" FontStyle="Italic" FontWeight="Bold" Foreground="#FFFF0000"
-                     HorizontalAlignment="Left" Margin="157,0,0,3" Style="{x:Null}" Text="OCTGN" VerticalAlignment="Center">
+                     HorizontalAlignment="Left" Margin="157,0,0,3" Style="{x:Null}" Text="Dialog" VerticalAlignment="Center">
             <TextBlock.Effect>
               <DropShadowEffect Opacity="0.4" ShadowDepth="2" />
             </TextBlock.Effect>
@@ -200,7 +200,7 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
             </Canvas>
           </Viewbox>
           <Image Height="99" HorizontalAlignment="Center" Name="image2" Stretch="None" VerticalAlignment="Center"
-                 Width="93" Source="/OCTGN;component/Resources/logoback.png" Margin="15,0,6,-2" Grid.Column="1">
+                 Width="93" Source="/Dialog;component/Resources/logoback.png" Margin="15,0,6,-2" Grid.Column="1">
             <Image.RenderTransform>
               <RotateTransform x:Name="SpinnerRotate" Angle="0" />
             </Image.RenderTransform>

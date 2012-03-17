@@ -95,7 +95,6 @@ namespace Octgn.Scripting.Controls
                 return;
             }
             // Filter asynchronously (so the UI doesn't freeze on huge lists)
-            // TODO .NET 4: use PLINQ to make this filter more efficient, and include cancellation of unrequired work
             if (_allCards == null) return;
             ThreadPool.QueueUserWorkItem(searchObj =>
                                              {
