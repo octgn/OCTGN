@@ -19,11 +19,13 @@ namespace Skylabs.LobbyServer
         {  }
         static GameBot() 
         {
-#if(DEBUG)
+//#if(DEBUG)
             Xmpp = new XmppClientConnection("skylabsonline.com");
-#else
-            Xmpp = new XmppClientConnection("localhost");
-#endif            
+//#else
+//            Xmpp = new XmppClientConnection();
+//            Xmpp.ConnectServer = "127.0.0.1";
+//            Xmpp.AutoResolveConnectServer = false;
+//#endif            
             
             Xmpp.RegisterAccount = false;
             Xmpp.AutoAgents = true;

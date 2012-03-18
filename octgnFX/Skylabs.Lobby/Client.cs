@@ -7,7 +7,6 @@ using Octgn.Data;
 using agsXMPP;
 using agsXMPP.Factory;
 using agsXMPP.Xml.Dom;
-using agsXMPP.net;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.agent;
 using agsXMPP.protocol.iq.register;
