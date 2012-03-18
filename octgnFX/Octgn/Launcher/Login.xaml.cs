@@ -43,7 +43,7 @@ namespace Octgn.Launcher
         private bool _isLoggingIn;
         private Timer _loginTimer;
         private ThicknessAnimation _scrollAnimation;
-
+        private bool _inLoginDone = false;
         public Login()
         {
             InitializeComponent();
@@ -62,7 +62,7 @@ namespace Octgn.Launcher
             }
             textBox1.Text = SimpleConfig.ReadValue("Username");
             Program.LClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state);
-            Program.LClient.OnLoginComplete += new Skylabs.Lobby.Client.dLoginComplete(LClient_OnLoginComplete);
+            Program.LClient.OnLoginComplete += LClient_OnLoginComplete;
             LazyAsync.Invoke(GetTwitterStuff);
         }
 
@@ -231,11 +231,14 @@ namespace Octgn.Launcher
 
             private void LoginFinished(Skylabs.Lobby.Client.LoginResult success, DateTime banEnd, string message)
             {
+                if (_inLoginDone) return;
+                _inLoginDone = true;
                 if (success == Skylabs.Lobby.Client.LoginResult.WaitingForResponse)
                 {
                     _loginTimer =
                         new Timer(o => LoginFinished(Skylabs.Lobby.Client.LoginResult.Failure, DateTime.Now, "Please try again."),
                                   null, 10000, 10000);
+                    _inLoginDone = false;
                     return;
                 }
                 Trace.TraceInformation("Login finished.");
@@ -272,6 +275,7 @@ namespace Octgn.Launcher
                                                             DoErrorMessage("Login Failed: " + message);
                                                             break;
                                                     }
+                                                    _inLoginDone = false;
                                                 }), new object[] {});
             }
 

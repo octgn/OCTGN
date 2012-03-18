@@ -67,6 +67,8 @@ namespace Octgn.Launcher
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
+
+            Program.LClient.OnRegisterComplete -= LClientOnOnRegisterComplete;
             Program.LauncherWindow.Navigate(new Login());
         }
     }
