@@ -172,8 +172,8 @@ namespace Octgn.Play
             base.OnClosed(e);
             Program.PlayWindow = null;
             Program.StopGame();            
-            if(_isLocal)
-                Program.LauncherWindow.Visibility = Visibility.Visible;
+            //if(_isLocal)
+            //    Program.LauncherWindow.Visibility = Visibility.Visible;
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
         }
 
