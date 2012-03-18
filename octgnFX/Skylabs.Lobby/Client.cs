@@ -23,6 +23,7 @@ namespace Skylabs.Lobby
             public enum RegisterResults{ConnectionError,Success,UsernameTaken,UsernameInvalid,PasswordFailure}
             public enum LoginResults{ConnectionError,Success,Failure}
             public enum DataRecType{FriendList,MyInfo,GameList,HostedGameReady,GamesNeedRefresh}
+            public enum LoginResult{Success,Failure,Banned,WaitingForResponse};
         #endregion
         #region Delegates
             public delegate void dRegisterComplete(object sender, RegisterResults results);

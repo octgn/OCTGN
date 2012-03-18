@@ -205,10 +205,10 @@ namespace Octgn.Launcher
 
                         break;
                     case Skylabs.Lobby.Client.LoginResults.Success:
-                        LoginFinished(LoginResult.Success, DateTime.Now,"");
+                        LoginFinished(Skylabs.Lobby.Client.LoginResult.Success, DateTime.Now,"");
                         break;
                     case Skylabs.Lobby.Client.LoginResults.Failure:
-                        LoginFinished(LoginResult.Failure, DateTime.Now,"Username/Password Incorrect.");
+                        LoginFinished(Skylabs.Lobby.Client.LoginResult.Failure, DateTime.Now,"Username/Password Incorrect.");
                         break;
                 }
                 _isLoggingIn = false;
@@ -229,12 +229,12 @@ namespace Octgn.Launcher
                 Dispatcher.Invoke(new Action(() => lblLoginStatus.Content = message));
             }
 
-            private void LoginFinished(LoginResult success, DateTime banEnd, string message)
+            private void LoginFinished(Skylabs.Lobby.Client.LoginResult success, DateTime banEnd, string message)
             {
-                if (success == LoginResult.WaitingForResponse)
+                if (success == Skylabs.Lobby.Client.LoginResult.WaitingForResponse)
                 {
                     _loginTimer =
-                        new Timer(o => LoginFinished(LoginResult.Failure, DateTime.Now, "Please try again."),
+                        new Timer(o => LoginFinished(Skylabs.Lobby.Client.LoginResult.Failure, DateTime.Now, "Please try again."),
                                   null, 10000, 10000);
                     return;
                 }
@@ -251,7 +251,7 @@ namespace Octgn.Launcher
                                                     StopSpinning();
                                                     switch (success)
                                                     {
-                                                        case LoginResult.Success:
+                                                        case Skylabs.Lobby.Client.LoginResult.Success:
                                                             SimpleConfig.WriteValue("Password",
                                                                                     cbSavePassword.IsChecked == true
                                                                                         ? passwordBox1.Password.Encrypt()
@@ -263,12 +263,12 @@ namespace Octgn.Launcher
                                                             Application.Current.MainWindow = Program.ClientWindow;
                                                             Program.LauncherWindow.Close();
                                                             break;
-                                                        case LoginResult.Banned:
+                                                        case Skylabs.Lobby.Client.LoginResult.Banned:
                                                             DoErrorMessage("You have been banned until " +
                                                                            banEnd.ToShortTimeString() + " on " +
                                                                            banEnd.ToShortDateString());
                                                             break;
-                                                        case LoginResult.Failure:
+                                                        case Skylabs.Lobby.Client.LoginResult.Failure:
                                                             DoErrorMessage("Login Failed: " + message);
                                                             break;
                                                     }
