@@ -125,8 +125,10 @@ namespace Octgn.Data
             string sealedDir = Path.Combine(cacheDir, "Sealed");
             if (Directory.GetFiles(sealedDir).Length > 0)
             {
-                Directory.Delete(sealedDir);
-                Directory.CreateDirectory(sealedDir);
+                foreach (string file in Directory.GetFiles(sealedDir))
+                {
+                    File.Delete(file);
+                }
             }
         }
 
