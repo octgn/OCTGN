@@ -17,7 +17,7 @@
       <TextBlock Text="{Binding ElementName=flistitem, Path=Message}" Grid.Column="1" HorizontalAlignment="Stretch"
                  Foreground="Black" Name="tbUsername" VerticalAlignment="Center" Margin="2" />
       <Image Grid.Column="2" Height="16" HorizontalAlignment="Center" Name="imgDismiss" Stretch="Fill"
-             VerticalAlignment="Top" Width="16" Source="/OCTGN;component/Resources/cross.png" MouseUp="ImgDismissMouseUp" />
+             VerticalAlignment="Top" Width="16" Source="/Octgn;component/Resources/cross.png" MouseUp="ImgDismissMouseUp" />
     </Grid>
   </Border>
   <UserControl.Resources>

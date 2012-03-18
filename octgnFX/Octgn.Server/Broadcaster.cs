@@ -540,7 +540,6 @@ namespace Octgn.Server
                         stream.Write(_xmlData, 0, _xmlLength);
                     stream.Flush();
                 }
-                    // TODO notify disconnection
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);

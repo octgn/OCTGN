@@ -24,7 +24,6 @@ namespace Octgn
         private const int MaxRecentCards = 10;
 
         private readonly GameDef _definition;
-        // TODO: why a SortedList? Wouldn't a Dictionary be sufficient?
         private readonly SortedList<Guid, MarkerModel> _markersById = new SortedList<Guid, MarkerModel>();
         private readonly List<RandomRequest> _random = new List<RandomRequest>();
         private readonly List<CardModel> _recentCards = new List<CardModel>(MaxRecentCards);
@@ -63,10 +62,10 @@ namespace Octgn
             }
             else
             {
-                if(Program.LobbyClient == null || Program.LobbyClient.Me == null)
+                if(Program.LClient == null || Program.LClient.Me == null)
                     nick = "User" + new Random().Next().ToString(CultureInfo.InvariantCulture);
                 else
-                    nick = Program.LobbyClient.Me.DisplayName;
+                    nick = Program.LClient.Me.User.User;
             }
         }
 

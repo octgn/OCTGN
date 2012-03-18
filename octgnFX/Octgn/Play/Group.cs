@@ -17,7 +17,6 @@ namespace Octgn.Play
 
         private static readonly KeyGestureConverter KeyConverter = new KeyGestureConverter();
 
-        // TODO: Should be Cards
         // List of cards in this group        
 
         internal GroupDef Def;
@@ -36,7 +35,6 @@ namespace Octgn.Play
         protected ObservableCollection<Card> cards = new ObservableCollection<Card>();
         // List of players who can see cards in this group, or null where this is irrelevant (Visibility.Undefined)
 
-        // TODO: Should be Visibility 
         protected GroupVisibility visibility; // Visibility of the group
 
         #endregion

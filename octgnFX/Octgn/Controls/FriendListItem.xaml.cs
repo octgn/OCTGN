@@ -7,6 +7,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Skylabs.Lobby;
+using agsXMPP;
+using agsXMPP.protocol.client;
 
 namespace Octgn.Controls
 {
@@ -32,42 +34,42 @@ namespace Octgn.Controls
         private Window _dragdropWindow;
         private AdornerLayer _layer;
 
-        private User _mUser = new User();
+        private NewUser _mUser = new NewUser(new Jid(""));
         private Point _startPoint;
 
         public FriendListItem()
         {
             InitializeComponent();
-            ThisUser = new User();
+            ThisUser = new NewUser(new Jid(""));
         }
 
         public bool IsDragging { get; set; }
         public FrameworkElement DragScope { get; set; }
 
-        public User ThisUser
+        public NewUser ThisUser
         {
             get { return _mUser; }
             set
             {
                 _mUser = value;
                 SetValue(CustomStatusProperty, value.CustomStatus);
-                string h = ValueConverters.HashEmailAddress(value.Email.ToLower().Trim());
+                string h = ValueConverters.HashEmailAddress(_mUser.Email);
                 string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt=";
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
-                SetValue(UsernameProperty, value.DisplayName);
+                SetValue(UsernameProperty, value.User.User);
                 switch (value.Status)
                 {
                     case UserStatus.Away:
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusAway.png";
+                        guri = @"pack://application:,,,/Octgn;component/Resources/statusAway.png";
                         break;
                     case UserStatus.DoNotDisturb:
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusDND.png";
+                        guri = @"pack://application:,,,/Octgn;component/Resources/statusDND.png";
                         break;
                     case UserStatus.Online:
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusOnline.png";
+                        guri = @"pack://application:,,,/Octgn;component/Resources/statusOnline.png";
                         break;
                     default: //Offline or anything else
-                        guri = @"pack://application:,,,/OCTGN;component/Resources/statusOffline.png";
+                        guri = @"pack://application:,,,/Octgn;component/Resources/statusOffline.png";
                         break;
                 }
                 SetValue(StatusPictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
@@ -117,10 +119,10 @@ namespace Octgn.Controls
             IsDragging = true;
             CreateDragDropWindow(this);
             //DataObject data = new DataObject(System.Windows.DataFormats.Text.ToString(), "abcd");
-            //var data = new DataObject(DataFormats.Text, m_User.Uid.ToString(CultureInfo.InvariantCulture));
+            var data = new DataObject(DataFormats.Text, _mUser.User.Bare);
             //DataObject data = new DataObject(this.m_User);
             _dragdropWindow.Show();
-            //DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
+            DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
             DestroyDragDropWindow();
             IsDragging = false;
             GiveFeedback -= feedbackhandler;
@@ -132,7 +134,6 @@ namespace Octgn.Controls
         {
             Debug.Assert(_dragdropWindow == null);
             Debug.Assert(dragElement != null);
-            // TODO: FE? or UIE??   FE cause I am lazy on size . 
             Debug.Assert(dragElement is FrameworkElement);
 
             _dragdropWindow = new Window
@@ -149,7 +150,6 @@ namespace Octgn.Controls
 
             _dragdropWindow.SourceInitialized += delegate
                                                      {
-                                                         //TODO assert that we can do this.. 
                                                          PresentationSource windowSource =
                                                              PresentationSource.FromVisual(_dragdropWindow);
                                                          var hwndSource = (HwndSource) windowSource;
@@ -300,6 +300,16 @@ namespace Octgn.Controls
             if (_adorner == null) return;
             _adorner.LeftOffset = args.GetPosition(DragScope).X /* - _startPoint.X */;
             _adorner.TopOffset = args.GetPosition(DragScope).Y /* - _startPoint.Y */;
+        }
+
+        private void image1_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+        }
+
+        private void image1_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+
+            Program.LClient.RemoveFriend(ThisUser);
         }
     }
 }

@@ -399,7 +399,7 @@ namespace Octgn.Scripting
 
         public bool Confirm(string message)
         {
-            return _engine.Invoke<bool>(() => OCTGN.Confirm(message));
+            return _engine.Invoke<bool>(() => Dialog.Confirm(message));
         }
 
         public int? AskInteger(string question, int defaultValue)
@@ -607,7 +607,7 @@ namespace Octgn.Scripting
         {
             if (url.StartsWith("http://") || url.StartsWith("https://") || url.StartsWith("ftp://"))
             {
-                if (_engine.Invoke<bool>(() => OCTGN.Confirm("Do you wish to go to the site: " + url + "?")))
+                if (_engine.Invoke<bool>(() => Dialog.Confirm("Do you wish to go to the site: " + url + "?")))
                 {
                     try
                     {

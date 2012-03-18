@@ -24,7 +24,8 @@
     <ManifestKeyFile>OctgnKey.pfx</ManifestKeyFile>
     <GenerateManifests>false</GenerateManifests>
     <SignManifests>false</SignManifests>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <ExpressionBlendVersion>4.0.20421.0</ExpressionBlendVersion>
     <Utf8Output>true</Utf8Output>
     <PublishUrl>C:\OCTGN FX\Publish\</PublishUrl>
@@ -159,12 +160,18 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="agsXMPP">
+      <HintPath>..\Lib\agsXMPP.dll</HintPath>
+    </Reference>
     <Reference Include="IronPython, Version=2.6.10920.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\IronPython.dll</HintPath>
     </Reference>
     <Reference Include="IronPython.Modules">
       <HintPath>..\Lib\IronPython.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="LinqToTwitter">
+      <HintPath>..\Lib\LinqToTwitter.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Scripting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -187,6 +194,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -281,6 +289,7 @@
     <Compile Include="ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extentions\String.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="BigInteger.cs" />
     <Compile Include="Launcher\ChatWindow.xaml.cs">
@@ -303,6 +312,9 @@
     </Compile>
     <Compile Include="Launcher\NotificationList.xaml.cs">
       <DependentUpon>NotificationList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\Register.xaml.cs">
+      <DependentUpon>Register.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\SetList.xaml.cs">
       <DependentUpon>SetList.xaml</DependentUpon>
@@ -537,6 +549,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Scripting\PythonAPI.py" />
     <EmbeddedResource Include="Scripting\CaseInsensitiveDict.py" />
@@ -606,7 +619,9 @@
       <DependentUpon>Game.xsd</DependentUpon>
       <SubType>Designer</SubType>
     </Resource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Networking\BinaryParser.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryParser.cs</LastGenOutput>
@@ -724,6 +739,10 @@
     <Page Include="Launcher\NotificationList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\Register.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\SetList.xaml">
       <Generator>MSBuild:Compile</Generator>

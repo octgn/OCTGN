@@ -14,7 +14,6 @@ namespace Skylabs.LobbyServer
     public static class Program
     {
         public static Dictionary<string, string> Settings;
-        public static WebServer WebServer;
         private static DateTime _killTime;
         private static Timer _killTimer;
         private static bool _sentMinuteWarning;
@@ -25,16 +24,14 @@ namespace Skylabs.LobbyServer
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
             Trace.WriteLine(String.Format("[LobbyServer] V{0}", Assembly.GetExecutingAssembly().GetName().Version));
-            RunThread.Start();
             if (!LoadSettings())
                 return;
             //Console.WriteLine(String.Format("[LobbyServer] V{0}",Assembly.GetExecutingAssembly().GetName().Version.ToString()));
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
-            StartServer();
-            WebServer = new WebServer();
-            WebServer.Start();
+            RunThread.Start();            
             _killTimer = new Timer(CheckKillTime, _killTime, 1000, 1000);
+            GameBot.Init();
         }
 
         private static void Runner()
@@ -88,7 +85,6 @@ namespace Skylabs.LobbyServer
             var sm = new SocketMessage("servermessage");
             sm.AddData("message",
                        "Server will be shutting down in " + minutes.ToString(CultureInfo.InvariantCulture) + " minutes");
-            Server.AllUserMessage(sm);
         }
 
         private static void CheckKillTime(Object stateInfo)
@@ -103,7 +99,6 @@ namespace Skylabs.LobbyServer
                     {
                         var sm = new SocketMessage("servermessage");
                         sm.AddData("message", "Server will be shutting down in about a minute.");
-                        Server.AllUserMessage(sm);
                         _sentMinuteWarning = true;
                     }
                 }
@@ -115,7 +110,6 @@ namespace Skylabs.LobbyServer
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
         {
             Quit();
-            Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime));
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -124,15 +118,8 @@ namespace Skylabs.LobbyServer
             var ex = (Exception) e.ExceptionObject;
             Console.WriteLine(ex.Message);
             Console.WriteLine(ex.StackTrace);
-            Console.WriteLine(String.Format("TotalRunTime: {0}", Server.ServerRunTime));
             Console.WriteLine("--------------------------------");
             Quit();
-        }
-
-        private static void StartServer()
-        {
-            IPAddress cto = Settings["BindTo"] == "*" ? IPAddress.Any : IPAddress.Parse(Settings["BindTo"]);
-            Server.Start(cto, Int32.Parse(Settings["BindPort"]));
         }
 
         private static void Quit()
@@ -140,15 +127,6 @@ namespace Skylabs.LobbyServer
             try
             {
                 Gaming.Stop();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                if (Debugger.IsAttached) Debugger.Break();
-            }
-            try
-            {
-                Server.Stop();
             }
             catch (Exception e)
             {

@@ -405,6 +405,5 @@ namespace Octgn.Controls
 
         #endregion
 
-        // TODO: this code duplicated from CardListControl.xaml.cs
     }
 }

@@ -5,7 +5,7 @@ namespace Skylabs.Lobby
 {
     public class Notification : IEqualityComparer<Notification>
     {
-        public Notification(LobbyClient lc, int id)
+        public Notification(Client lc, int id)
         {
             Id = id;
             Time = DateTime.Now;
@@ -14,7 +14,7 @@ namespace Skylabs.Lobby
         }
 
         public DateTime Time { get; set; }
-        public LobbyClient LobbyClient { get; set; }
+        public Client LobbyClient { get; set; }
         public bool Dismissed { get; set; }
         public int Id { get; private set; }
 

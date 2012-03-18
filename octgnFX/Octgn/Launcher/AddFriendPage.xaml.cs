@@ -22,7 +22,7 @@ namespace Octgn.Launcher
 
         private void Button1Click(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.AddFriend(textBox1.Text);
+            Program.LClient.SendFriendRequest(textBox1.Text);
             Program.ClientWindow.LobbyTab();
         }
 

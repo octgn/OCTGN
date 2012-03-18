@@ -142,7 +142,7 @@ namespace Octgn.Launcher
                                        Version = game.Version,
                                        CardWidth = game.CardDefinition.Width,
                                        CardHeight = game.CardDefinition.Height,
-                                       CardBack = game.CardDefinition.back,
+                                       CardBack = game.CardDefinition.Back,
                                        DeckSections = game.DeckDefinition.Sections.Keys,
                                        SharedDeckSections =
                                            game.SharedDeckDefinition == null

@@ -181,7 +181,6 @@ namespace Octgn.Server
                         var ts = new TimeSpan(DateTime.Now.Ticks - _lastPing.Ticks);
                         if (ts.TotalSeconds > 20)
                             Disconnect();
-                        //TODO We want to disconnect, but we also want to inform the server to lock the game until a rejoin, or a vote to kick happens.
                         if (Disposed) return;
                     }
                     Thread.Sleep(1000);

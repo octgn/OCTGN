@@ -19,7 +19,6 @@ namespace Octgn.Play.Gui.DragOperations
             Target = target;
             _oldPos = Mouse.GetPosition(target);
             target.CaptureMouse();
-            // TODO: Calling a virtual constructure in a future object, bad news
             StartDragCore(_oldPos);
         }
 

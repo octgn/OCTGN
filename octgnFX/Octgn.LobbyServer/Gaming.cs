@@ -62,7 +62,7 @@ namespace Skylabs.LobbyServer
             
         }
 
-        public static int HostGame(Guid g, Version v, string name, string pass, User u)
+        public static int HostGame(Guid g, Version v, string name, string pass, NewUser u)
         {
             Locker.EnterWriteLock();//Enter Lock
             while (Games.ContainsKey(_currentHostPort) || !Networking.IsPortAvailable(_currentHostPort))
@@ -91,7 +91,7 @@ namespace Skylabs.LobbyServer
             Locker.EnterWriteLock();
                 try
                 {
-                    Games[port].Status = Lobby.HostedGameData.EHostedGame.GameInProgress;
+                    Games[port].Status = Lobby.EHostedGame.GameInProgress;
                 }
                 catch (Exception e)
                 {
@@ -108,8 +108,7 @@ namespace Skylabs.LobbyServer
                 Games.Select(
                     g =>
                     new Lobby.HostedGameData(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(), g.Value.Port,
-                                            (string) g.Value.Name.Clone(), !String.IsNullOrWhiteSpace(g.Value.Password),
-                                            (User) g.Value.Hoster.Clone(), g.Value.TimeStarted)
+                                            (string) g.Value.Name.Clone(), (NewUser) g.Value.Hoster, g.Value.TimeStarted)
                         {GameStatus = g.Value.Status}).ToList();
             Locker.ExitReadLock();
             return sendgames;
@@ -121,10 +120,8 @@ namespace Skylabs.LobbyServer
                 var s = sender as HostedGame;
                 if (s == null)
                     {Locker.ExitWriteLock();return;}
-                s.Status = Lobby.HostedGameData.EHostedGame.StoppedHosting;
-                var sm = new SocketMessage("gameend");
-                sm.AddData("port", s.Port);
-                LazyAsync.Invoke(() => Server.AllUserMessage(sm));
+                s.Status = Lobby.EHostedGame.StoppedHosting;
+                LazyAsync.Invoke(GameBot.RefreshLists);
                 Games.Remove(s.Port);
             Locker.ExitWriteLock();
         }
