@@ -34,6 +34,13 @@ namespace Octgn.Networking
                         _handler.Binary();
                         break;
                     }
+                case "SwitchWithAlternate":
+                    {
+                        int arg0 = int.Parse(reader.ReadElementString("cardid"));
+                        Card c = Card.Find(arg0);
+                        _handler.SwitchWithAlternate(c);
+                        break;
+                    }
                 case "IsAlternateImage":
                     {
                         int arg0 = int.Parse(reader.ReadElementString("cardid"));

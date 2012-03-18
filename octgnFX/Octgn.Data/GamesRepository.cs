@@ -179,7 +179,33 @@ namespace Octgn.Data
                         com.ExecuteNonQuery();
                     }
                 }
-                trans.Commit();
+         /*           //special case of "Alternate" property - removing this operation will result in requiring the Game Def to have 
+                    //"Alternate" listed as a custom property in order to use it
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                    {
+                        com.CommandText = command;
+                        com.Parameters.AddWithValue("@card_id", "");
+                        com.Parameters.AddWithValue("@vint", 0);
+                        com.Parameters.AddWithValue("@vstr", " ");
+                        com.Parameters.AddWithValue("@id", "Alternate" + game.Id);
+                        com.Parameters.AddWithValue("@game_id", game.Id.ToString());
+                        com.Parameters.AddWithValue("@name", "Alternate");
+                        com.Parameters.AddWithValue("@type", 0);
+                        com.ExecuteNonQuery();
+                    } 
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                {
+                    com.CommandText = command;
+                    com.Parameters.AddWithValue("@card_id", "");
+                    com.Parameters.AddWithValue("@vint", 0);
+                    com.Parameters.AddWithValue("@vstr", " ");
+                    com.Parameters.AddWithValue("@id", "Dependent" + game.Id);
+                    com.Parameters.AddWithValue("@game_id", game.Id.ToString());
+                    com.Parameters.AddWithValue("@name", "Dependent");
+                    com.Parameters.AddWithValue("@type", 0); //string
+                    com.ExecuteNonQuery();
+                }  
+           */     trans.Commit();
             }
             catch (Exception)
             {
