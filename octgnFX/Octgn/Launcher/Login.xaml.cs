@@ -60,7 +60,7 @@ namespace Octgn.Launcher
                 passwordBox1.Password = password.Decrypt();
                 cbSavePassword.IsChecked = true;
             }
-            textBox1.Text = SimpleConfig.ReadValue("E-Mail");
+            textBox1.Text = SimpleConfig.ReadValue("Username");
             Program.LClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state);
             Program.LClient.OnLoginComplete += new Skylabs.Lobby.Client.dLoginComplete(LClient_OnLoginComplete);
             LazyAsync.Invoke(GetTwitterStuff);
