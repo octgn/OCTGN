@@ -1,5 +1,5 @@
 ﻿<Window x:Class="Octgn.Launcher.UpgradeMessage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Dialog - Upgrade" Style="{StaticResource DialogWindow}"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Octgn - Upgrade" Style="{StaticResource DialogWindow}"
         Width="451" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterScreen">
   <Border Style="{StaticResource Panel}" Margin="8" Padding="8">
     <Grid>
@@ -8,7 +8,7 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <TextBlock Margin="0,0,0,20">
-        The way Dialog manages your games has changed since the last release.
+        The way Octgn manages your games has changed since the last release.
         <LineBreak />
         <LineBreak />
         Its database is now in %LocalAppData%\Octgn. Your old Octgn data folder is not used anymore, you can

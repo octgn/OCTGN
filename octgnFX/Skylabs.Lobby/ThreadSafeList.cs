@@ -21,7 +21,7 @@ namespace Skylabs.Lobby
 
         void ICollection.CopyTo(Array array, int index)
         {
-            throw new NotImplementedException();
+            array.SetValue(_list[index],index);
         }
 
         bool ICollection.IsSynchronized
@@ -213,7 +213,7 @@ namespace Skylabs.Lobby
 
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            array[arrayIndex] = _list[arrayIndex];
         }
 
         bool ICollection<T>.IsReadOnly

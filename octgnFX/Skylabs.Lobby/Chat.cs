@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace Skylabs.Lobby
 
         private long _lastRid = 0;
         private Client _client;
-        public List<NewChatRoom> Rooms; 
+        public ThreadSafeList<NewChatRoom> Rooms; 
         private XmppClientConnection _xmpp;
         public long NextRid
         {
@@ -27,10 +28,11 @@ namespace Skylabs.Lobby
                 return _lastRid;
             }
         }
+
         public Chat(Client c, XmppClientConnection xmpp)
         {
             _client = c;
-            Rooms = new List<NewChatRoom>();
+            Rooms = new ThreadSafeList<NewChatRoom>();
             _xmpp = xmpp;
             _xmpp.OnMessage += XmppOnOnMessage;
         }

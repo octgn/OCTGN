@@ -53,23 +53,23 @@ namespace Octgn.Controls
             {
                 _mUser = value;
                 SetValue(CustomStatusProperty, value.CustomStatus);
-                string h = ValueConverters.HashEmailAddress("poop");
+                string h = ValueConverters.HashEmailAddress(_mUser.Email);
                 string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt=";
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
                 SetValue(UsernameProperty, value.User.User);
                 switch (value.Status)
                 {
                     case UserStatus.Away:
-                        guri = @"pack://application:,,,/Dialog;component/Resources/statusAway.png";
+                        guri = @"pack://application:,,,/Octgn;component/Resources/statusAway.png";
                         break;
                     case UserStatus.DoNotDisturb:
-                        guri = @"pack://application:,,,/Dialog;component/Resources/statusDND.png";
+                        guri = @"pack://application:,,,/Octgn;component/Resources/statusDND.png";
                         break;
                     case UserStatus.Online:
-                        guri = @"pack://application:,,,/Dialog;component/Resources/statusOnline.png";
+                        guri = @"pack://application:,,,/Octgn;component/Resources/statusOnline.png";
                         break;
                     default: //Offline or anything else
-                        guri = @"pack://application:,,,/Dialog;component/Resources/statusOffline.png";
+                        guri = @"pack://application:,,,/Octgn;component/Resources/statusOffline.png";
                         break;
                 }
                 SetValue(StatusPictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);

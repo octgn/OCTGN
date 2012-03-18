@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using Skylabs.Net;
 using agsXMPP;
+using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.component;
 
 namespace Skylabs.Lobby
-{
+{        
     [Serializable]
-    public class HostedGameData :IQ, IEquatable<HostedGameData>, IEqualityComparer<HostedGameData>
+    public enum EHostedGame
     {
-        #region EHostedGame enum
-
-        [Serializable]
-        public enum EHostedGame
+        StartedHosting,
+        GameInProgress,
+        StoppedHosting
+    };
+    public class HostedGameData :Element
+    {
+        public HostedGameData() : base("gameitem","gameitem","octgn:gameitem")
         {
-            StartedHosting,
-            GameInProgress,
-            StoppedHosting
-        };
-
-        #endregion
+            
+        }
 
         public HostedGameData(Guid gameguid, Version gameversion, int port, string name, NewUser huser,
                           DateTime startTime)
+            : base("gameitem", "gameitem", "octgn:gameitem")
         {
             GameGuid = gameguid;
             GameVersion = gameversion;
@@ -34,6 +35,7 @@ namespace Skylabs.Lobby
         }
 
         public HostedGameData(SocketMessage sm)
+            : base("gameitem", "gameitem", "octgn:gameitem")
         {
             GameGuid = (Guid) sm["guid"];
             GameVersion = (Version) sm["version"];
@@ -52,7 +54,7 @@ namespace Skylabs.Lobby
                 Guid.TryParse(GetTag("guid"),out ret);
                 return ret;
             } 
-            private set{SetTag("guid",value.ToString());}
+            set{SetTag("guid",value.ToString());}
         }
         public Version GameVersion
         {
@@ -62,7 +64,7 @@ namespace Skylabs.Lobby
                 Version.TryParse(GetTag("version") , out v);
                 return v;
             } 
-            private set
+            set
             {
                 SetTag("version",value.ToString());
             }
@@ -75,12 +77,12 @@ namespace Skylabs.Lobby
         public String Name
         {
             get { return GetTag("name"); }
-            private set{SetTag("name",value);}
+            set{SetTag("name",value);}
         }
         public NewUser UserHosting
         {
             get { return new NewUser(GetTagJid("userhosting")); }
-            private set{SetTag("userhosting",value.User.Bare);}
+            set{SetTag("userhosting",value.User.Bare);}
         }
         public EHostedGame GameStatus
         {
@@ -100,30 +102,7 @@ namespace Skylabs.Lobby
                 DateTime.TryParse(GetTag("timestarted") , out ret);
                 return ret;
             }
-            private set{SetTag("timestarted",value.ToString());}
+            set{SetTag("timestarted",value.ToString());}
         }
-
-        #region IEqualityComparer<HostedGame> Members
-
-        public bool Equals(HostedGameData x, HostedGameData y)
-        {
-            return x.Port == y.Port;
-        }
-
-        public int GetHashCode(HostedGameData obj)
-        {
-            return obj.Port;
-        }
-
-        #endregion
-
-        #region IEquatable<HostedGame> Members
-
-        public bool Equals(HostedGameData other)
-        {
-            return other.Port == Port;
-        }
-
-        #endregion
     }
 }

@@ -426,6 +426,7 @@ namespace Octgn.Launcher
         #region Window stuff
             private void PageUnloaded(object sender, RoutedEventArgs e)
             {
+                Program.LClient.OnLoginComplete -= LClient_OnLoginComplete;
             }
 
             private void PageLoaded(object sender, RoutedEventArgs e)

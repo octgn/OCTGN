@@ -25,16 +25,23 @@ namespace Skylabs.LobbyServer
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
             Trace.WriteLine(String.Format("[LobbyServer] V{0}", Assembly.GetExecutingAssembly().GetName().Version));
-            RunThread.Start();
             if (!LoadSettings())
                 return;
             //Console.WriteLine(String.Format("[LobbyServer] V{0}",Assembly.GetExecutingAssembly().GetName().Version.ToString()));
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
-            StartServer();
+            try {StartServer();}
+            catch(Exception)
+            {
+                Trace.WriteLine("Port already in use. Exiting.");
+                return;
+                throw;
+            }
+            RunThread.Start();            
             WebServer = new WebServer();
             WebServer.Start();
             _killTimer = new Timer(CheckKillTime, _killTime, 1000, 1000);
+            GameBot.Init();
         }
 
         private static void Runner()

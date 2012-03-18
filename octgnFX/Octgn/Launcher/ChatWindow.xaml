@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Octgn.Launcher.ChatWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Lobby Chat" Height="448" Width="710" Drop="WindowDrop"
         Loaded="WindowLoaded" Unloaded="WindowUnloaded" AllowDrop="True" Closing="WindowClosing"
-        Icon="/Dialog;component/Resources/chaticon.png">
+        Icon="/Octgn;component/Resources/chaticon.png">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="100*" />

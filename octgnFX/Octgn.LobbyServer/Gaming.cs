@@ -91,7 +91,7 @@ namespace Skylabs.LobbyServer
             Locker.EnterWriteLock();
                 try
                 {
-                    Games[port].Status = Lobby.HostedGameData.EHostedGame.GameInProgress;
+                    Games[port].Status = Lobby.EHostedGame.GameInProgress;
                 }
                 catch (Exception e)
                 {
@@ -120,10 +120,8 @@ namespace Skylabs.LobbyServer
                 var s = sender as HostedGame;
                 if (s == null)
                     {Locker.ExitWriteLock();return;}
-                s.Status = Lobby.HostedGameData.EHostedGame.StoppedHosting;
-                var sm = new SocketMessage("gameend");
-                sm.AddData("port", s.Port);
-                LazyAsync.Invoke(() => Server.AllUserMessage(sm));
+                s.Status = Lobby.EHostedGame.StoppedHosting;
+                LazyAsync.Invoke(GameBot.RefreshLists);
                 Games.Remove(s.Port);
             Locker.ExitWriteLock();
         }

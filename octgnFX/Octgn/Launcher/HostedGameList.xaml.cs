@@ -15,6 +15,7 @@ namespace Octgn.Launcher
         public HostedGameList()
         {
             InitializeComponent();
+            Program.LClient.BeginGetGameList();
             Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
         }
 
@@ -22,6 +23,8 @@ namespace Octgn.Launcher
         {
             if(type == Client.DataRecType.GameList)
                 ReloadGameList();
+            else if(type == Client.DataRecType.GamesNeedRefresh)
+                Program.LClient.BeginGetGameList();
         }
 
         public event EventHandler OnGameClick;
@@ -48,11 +51,9 @@ namespace Octgn.Launcher
                                                  foreach (HostedGameData g in gl)
                                                  {
                                                      if (!gids.Contains(g.GameGuid) ||
-                                                         g.GameStatus != HostedGameData.EHostedGame.StartedHosting ||
-                                                         g.UserHosting.Status == UserStatus.Offline ||
-                                                         g.UserHosting.Status == UserStatus.Unknown) continue;
+                                                         g.GameStatus != EHostedGame.StartedHosting) continue;
                                                      var gs = new HostedGameListItem(g);
-                                                     if (g.GameStatus == HostedGameData.EHostedGame.StartedHosting)
+                                                     if (g.GameStatus == EHostedGame.StartedHosting)
                                                          gs.MouseUp += GsMouseUp;
                                                      stackPanel1.Children.Add(gs);
                                                      if (filterList.Contains(g.GameGuid))

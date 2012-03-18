@@ -55,7 +55,7 @@ namespace Octgn.Play
             _isLocal = islocal;
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
-            Title = "Dialog  version : " + oversion + " : " + Program.Game.Definition.Name;
+            Title = "Octgn  version : " + oversion + " : " + Program.Game.Definition.Name;
             Program.Game.ComposeParts(this);
         }
 
@@ -183,7 +183,7 @@ namespace Octgn.Play
             // Show the dialog to choose the file
             var ofd = new OpenFileDialog
                           {
-                              Filter = "Dialog deck files (*.o8d) | *.o8d",
+                              Filter = "Octgn deck files (*.o8d) | *.o8d",
                               InitialDirectory = SimpleConfig.ReadValue("lastFolder")
                           };
             //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
@@ -203,7 +203,7 @@ namespace Octgn.Play
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Dialog couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
+                MessageBox.Show("Octgn couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -424,7 +424,7 @@ namespace Octgn.Play
             var sfd = new SaveFileDialog
                           {
                               AddExtension = true,
-                              Filter = "Dialog decks|*.o8d",
+                              Filter = "Octgn decks|*.o8d",
                               InitialDirectory = Program.Game.Definition.DecksPath
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;

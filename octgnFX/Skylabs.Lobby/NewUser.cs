@@ -25,11 +25,14 @@ namespace Skylabs.Lobby
 
         public string CustomStatus { get; set; }
 
+        public string Email { get; set; }
+
         public NewUser(Jid user)
         {
             User = user.Bare;
             Status = UserStatus.Offline;
             CustomStatus = "";
+            Email = "";
         }
 
         public void SetStatus(Presence p)

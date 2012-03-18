@@ -58,7 +58,7 @@ namespace Octgn.Launcher
         {
             try
             {
-                string[] update = ReadUpdateXml("https://raw.github.com/kellyelton/Dialog/master/currentversion.xml");
+                string[] update = ReadUpdateXml("https://raw.github.com/kellyelton/Octgn/master/currentversion.xml");
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();

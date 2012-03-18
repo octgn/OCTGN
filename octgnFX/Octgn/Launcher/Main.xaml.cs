@@ -59,7 +59,7 @@ namespace Octgn.Launcher
             InitializeComponent();
             //Set title with version info.
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            Title = "Dialog  verson " + version;
+            Title = "Octgn  verson " + version;
 
             frame1.Navigate(new ContactList());
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
@@ -98,7 +98,7 @@ namespace Octgn.Launcher
         {
             Dispatcher.Invoke(new Action(()=>
             {
-                
+
                 tbStatus.Text = Program.LClient.CustomStatus;
                 switch(Program.LClient.Status)
                 {
@@ -368,6 +368,7 @@ namespace Octgn.Launcher
                 Application.Current.MainWindow = Program.ClientWindow;
             }
             Program.ClientWindow.Close();
+            Program.LClient.OnDataRecieved -= LClientOnOnDataRecieved;
             Program.LClient.OnFriendRequest -= LClientOnOnFriendRequest;
             Program.LClient.Stop();
             Program.Exit();
@@ -618,8 +619,8 @@ namespace Octgn.Launcher
             if (_isLegitClosing) return;
             SystemTrayIcon.Visible = true;
             Visibility = Visibility.Hidden;
-            SystemTrayIcon.ShowBalloonTip(5000, "Dialog",
-                                          "Dialog has minimized to your system tray and is still running. Double click the icon to open it again.",
+            SystemTrayIcon.ShowBalloonTip(5000, "Octgn",
+                                          "Octgn has minimized to your system tray and is still running. Double click the icon to open it again.",
                                           ToolTipIcon.Info);
             e.Cancel = true;
         }

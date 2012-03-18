@@ -37,7 +37,7 @@ namespace Octgn.DeckBuilder
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             newSubMenu.ItemsSource = Program.GamesRepository.Games;
             loadSubMenu.ItemsSource = Program.GamesRepository.Games;
-            Title = "Dialog Deck Editor  version " + oversion;
+            Title = "Octgn Deck Editor  version " + oversion;
         }
 
         #region Search tabs
@@ -204,7 +204,7 @@ namespace Octgn.DeckBuilder
             var sfd = new SaveFileDialog
                           {
                               AddExtension = true,
-                              Filter = "Dialog decks|*.o8d",
+                              Filter = "Octgn decks|*.o8d",
                               InitialDirectory =
                                   SimpleConfig.ReadValue("DeckDirLastUsed", "none") == "none"
                                       ? Game.DefaultDecksPath
@@ -257,7 +257,7 @@ namespace Octgn.DeckBuilder
             // Show the dialog to choose the file
             var ofd = new OpenFileDialog
                           {
-                              Filter = "Dialog deck files (*.o8d) | *.o8d",
+                              Filter = "Octgn deck files (*.o8d) | *.o8d",
                               InitialDirectory =
                                   ((game != null) && (SimpleConfig.ReadValue("lastFolder")) == "")
                                       ? game.DefaultDecksPath
@@ -279,7 +279,7 @@ namespace Octgn.DeckBuilder
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Dialog couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
+                MessageBox.Show("Octgn couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }

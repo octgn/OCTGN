@@ -29,7 +29,7 @@ namespace Octgn.Launcher
         {
             progressBar1.Visibility = Visibility.Visible;
             Program.LClient.OnRegisterComplete += LClientOnOnRegisterComplete;
-            Program.LClient.BeginRegister(tbUsername.Text,tbPass1.Password);
+            Program.LClient.BeginRegister(tbUsername.Text,tbPass1.Password,tbEmail.Text);
         }
 
         private void LClientOnOnRegisterComplete(object sender, Client.RegisterResults results)
@@ -44,7 +44,7 @@ namespace Octgn.Launcher
                             lblErrors.Content = "There was a connection error. Please try again.";
                             break;
                         case Client.RegisterResults.Success:
-                            MessageBox.Show("Registration Success!", "Dialog", MessageBoxButton.OK,
+                            MessageBox.Show("Registration Success!", "Octgn", MessageBoxButton.OK,
                                             MessageBoxImage.Information);
                             var l = new Login();
                             l.textBox1.Text = Program.LClient.Username;

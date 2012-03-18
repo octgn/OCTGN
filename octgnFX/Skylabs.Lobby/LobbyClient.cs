@@ -491,7 +491,7 @@ namespace Skylabs.Lobby
                             HostedGameData gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
                             {
-                                gm.GameStatus = HostedGameData.EHostedGame.GameInProgress;
+                                gm.GameStatus =EHostedGame.GameInProgress;
                                 if (OnGameHostEvent != null)
                                     LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
                             }
@@ -507,7 +507,7 @@ namespace Skylabs.Lobby
                             HostedGameData gm = Games.FirstOrDefault(g => g.Port == p);
                             if (gm != null)
                             {
-                                gm.GameStatus = HostedGameData.EHostedGame.StoppedHosting;
+                                gm.GameStatus = EHostedGame.StoppedHosting;
                                 if (OnGameHostEvent != null)
                                     LazyAsync.Invoke(() => OnGameHostEvent.Invoke(gm));
                                 Games.Remove(gm);

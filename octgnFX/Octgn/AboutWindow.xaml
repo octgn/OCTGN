@@ -221,7 +221,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
           </Grid.RowDefinitions>
-          <TextBlock Margin="3" Text="Dialog version:" />
+          <TextBlock Margin="3" Text="Octgn version:" />
           <TextBlock Margin="3" Grid.Column="1" Text="1.9" x:Name="octgnVersionBlock" />
           <TextBlock Margin="3" Grid.Row="1" Text="Client version:" />
           <TextBlock Margin="3" Grid.Row="1" Grid.Column="1" Text="0.2.0.0" x:Name="clientVersionBlock" />
@@ -229,7 +229,7 @@
           <TextBlock Margin="3" Grid.Row="2" Grid.Column="1" Text="jods" />
           <TextBlock Margin="3" Grid.Row="3" Text="Main tester:" />
           <TextBlock Margin="3" Grid.Row="3" Grid.Column="1" Text="Fork" />
-          <TextBlock Margin="3" Grid.Row="4" Grid.ColumnSpan="2" Text="Thanks to the whole Dialog admin team!" />
+          <TextBlock Margin="3" Grid.Row="4" Grid.ColumnSpan="2" Text="Thanks to the whole Octgn admin team!" />
           <TextBlock Margin="3" Grid.Row="5" Grid.ColumnSpan="2">
             Visit us at
             <Hyperlink Click="GoToWebSite" FontStyle="Normal" Foreground="Red">www.octgn.net</Hyperlink>
@@ -241,10 +241,10 @@
         <TextBlock TextWrapping="Wrap">
           The definitive license is not yet determined. But it will most probably be a very permissive license.
           It's surely not going to be GPL, though.
-          Because of the very restricted nature of the GPL, this means you will NOT be able to use Dialog code in a GPL project.
+          Because of the very restricted nature of the GPL, this means you will NOT be able to use Octgn code in a GPL project.
           <LineBreak />
           <LineBreak />
-          Please wait until Dialog 2 is released if the license is important for you.
+          Please wait until Octgn 2 is released if the license is important for you.
         </TextBlock>
       </TabItem>
     </TabControl>

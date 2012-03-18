@@ -60,7 +60,7 @@
   <xs:element name="game">
     <xs:annotation>
       <xs:documentation>
-        This element defines a game for Dialog.
+        This element defines a game for Octgn.
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
@@ -255,7 +255,7 @@
       <xs:attribute name="octgnVersion" use="required" type="version">
         <xs:annotation>
           <xs:documentation>
-            Minimum version of Dialog required to run this game
+            Minimum version of Octgn required to run this game
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>

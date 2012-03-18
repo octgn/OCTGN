@@ -13,7 +13,7 @@ namespace Octgn
 {
     public partial class OctgnApp
     {
-        internal const string ClientName = "Dialog.NET";
+        internal const string ClientName = "Octgn.NET";
         internal static readonly Version OctgnVersion = GetClientVersion();
         internal static readonly Version BackwardCompatibility = new Version(0, 2, 0, 0);
 
@@ -37,7 +37,7 @@ namespace Octgn
             {
                 var sb =
                     new StringBuilder(
-                        "Dialog cannot find the following files. The corresponding games have been disabled.\n\n");
+                        "Octgn cannot find the following files. The corresponding games have been disabled.\n\n");
                 foreach (string file in Program.GamesRepository.MissingFiles)
                     sb.Append(file).Append("\n\n");
                 sb.Append("You should restore those files, or re-install the corresponding games.");
