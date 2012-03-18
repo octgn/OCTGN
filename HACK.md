@@ -43,9 +43,9 @@ For example, the following code found in [PythonApi.py](https://github.com/kelly
 
 It calls Random with a min and max value that is located in [ScriptApi.cs](https://github.com/kellyelton/OCTGN/blob/master/octgnFX/Octgn/Scripting/ScriptAPI.cs).
 
-# octgnFX/Octgn
-Most of the work in this project is shouldered by Game.cs. Game.cs fetches card data from the database. Card data is read and dropped into a CardModel format, which is stored in a Dictionary<Guid, CardModel> cardModelCache. CardModels are wrapped in a CardIdentity class (apparently for anti-cheating), which is wrapped in a Card class. Cards are placed into Groups and manipulated according to the gamedef.
-
 # octgnFX/Octgn.Data
 Octgn.Data is the access to the database (mostly). OCTGN uses a SQLite Database to hold all game, set, and card data. This project provides access to that data in meaningful formats. Most of the items in this project are relatively self-explanatory, but keep in mind that many of them are only the data counterparts of octgnFX/Octgn classes.
+
 Some of the classes do not (as of yet) have direct connections to the database. Deck.cs is a prime example. Currently all decks are stored/accessed as individual files with the user determining name and location.
+
+Cards are installed through [Octgn.Data/Game.cs](https://github.com/kellyelton/OCTGN/blob/master/octgnFX/Octgn.Data/Game.cs). Data is read from a Set Def, which is a zip file that contains XML card definitions, images, and relationship data. OCTGN parses the cards through a [CardModel.cs](https://github.com/kellyelton/OCTGN/blob/master/octgnFX/Octgn.Data/CardModel.cs) constructor (passing along an XML reader), and Inserts the models individually into the database. 
