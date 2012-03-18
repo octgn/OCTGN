@@ -154,8 +154,12 @@ namespace Octgn.Data
 
         public void AddToCache(string[] conditions, DataTable table)
         {
-            _cache.Add(ConcentateConditions(conditions), table.Copy());
-            SaveCacheFile();
+            string key = ConcentateConditions(conditions);
+            if (key != string.Empty)
+            {
+                _cache.Add(ConcentateConditions(conditions), table.Copy());
+                SaveCacheFile();
+            }
         }
 
         public bool IsCached(string[] conditions)
@@ -166,6 +170,10 @@ namespace Octgn.Data
 
         private string ConcentateConditions(string[] conditions)
         {
+            if (conditions == null)
+            {
+                return string.Empty;
+            }
             StringBuilder s = new StringBuilder();
             foreach (string condition in conditions)
             {
