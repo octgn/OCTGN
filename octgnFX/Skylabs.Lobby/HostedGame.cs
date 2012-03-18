@@ -17,7 +17,7 @@ namespace Skylabs.Lobby
         /// <param name="name"> Name of the room </param>
         /// <param name="password"> Password for the game </param>
         /// <param name="hoster"> User hosting the game </param>
-        public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, User hoster, bool localGame = false)
+        public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, NewUser hoster, bool localGame = false)
         {
             GameLog = "";
             GameGuid = gameguid;
@@ -25,7 +25,7 @@ namespace Skylabs.Lobby
             Name = name;
             Password = password;
             Hoster = hoster;
-            Status = Lobby.HostedGameData.EHostedGame.StoppedHosting;
+            Status = Lobby.EHostedGame.StoppedHosting;
             Port = port;
             TimeStarted = new DateTime(0);
             LocalGame = localGame;
@@ -104,12 +104,12 @@ namespace Skylabs.Lobby
         /// <summary>
         ///   Hoster of this crazy game.
         /// </summary>
-        public User Hoster { get; private set; }
+        public NewUser Hoster { get; private set; }
 
         /// <summary>
         ///   The status of the hosted game.
         /// </summary>
-        public Lobby.HostedGameData.EHostedGame Status { get; set; }
+        public Lobby.EHostedGame Status { get; set; }
 
         public DateTime TimeStarted { get; private set; }
 
@@ -146,19 +146,18 @@ namespace Skylabs.Lobby
 
         public bool StartProcess()
         {
-            Status = Lobby.HostedGameData.EHostedGame.StoppedHosting;
+            Status = Lobby.EHostedGame.StoppedHosting;
             try
             {
                 StandAloneApp.Start();
                 StandAloneApp.BeginErrorReadLine();
                 StandAloneApp.BeginOutputReadLine();
-                Status = Lobby.HostedGameData.EHostedGame.StartedHosting;
+                Status = Lobby.EHostedGame.StartedHosting;
                 TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
                 return true;
             }
             catch (Exception e)
             {
-                //TODO Need some sort of proper error handling here.
                 Console.WriteLine("");
                 Console.WriteLine(StandAloneApp.StartInfo.FileName);
                 Console.WriteLine(StandAloneApp.StartInfo.Arguments);

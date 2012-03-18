@@ -55,7 +55,6 @@ namespace Octgn.Networking
         public void Error(string msg)
         {
             Program.Trace.TraceEvent(TraceEventType.Error, EventIds.NonGame, "The server has returned an error: {0}", msg);
-            Program.OnServerError(msg);
         }
 
         public void Start()
@@ -169,8 +168,6 @@ namespace Octgn.Networking
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
             var player = new Player(Program.Game.Definition, nick, id, pkey);
             // Define the default table side if we are the host
-            //TODO All references to player list should be hosted on server.
-            //And all decisions based on players should be hosted there aswell.
             if (Program.IsHost)
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
         }
@@ -558,7 +555,6 @@ namespace Octgn.Networking
             card.RevealTo(Enumerable.Repeat(player, 1));
             if (player != Player.LocalPlayer)
             {
-                // TODO: Better indicate which card is being peeked
                 Program.TracePlayerEvent(player, "{0} peeks at a card ({1}).", player,
                   card.Group is Table ? "on table" : "in " + card.Group.FullName);
             }
@@ -644,7 +640,6 @@ namespace Octgn.Networking
                     ci.Visible = false;
                 }
                 // Give a random position to the card
-                // TODO: I don't think this shuffling algorithm generates all possibilities equiprobably
                 group.MyShufflePos[i] = (short)Crypto.Random(group.Count);
             }
             // Send the results

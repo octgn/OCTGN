@@ -30,7 +30,7 @@ namespace Octgn.Scripting
         private readonly Queue<ScriptJob> _executionQueue = new Queue<ScriptJob>(4);
         private readonly MemoryStream _outputStream = new MemoryStream();
         private readonly StreamWriter _outputWriter;
-        // This is a hack. The sponsor object is used to keep the remote side of the OCTGN API alive.
+        // This is a hack. The sponsor object is used to keep the remote side of the Dialog API alive.
         // I would like to make this cleaner but it really seems to be an impass at the moment.
         // Combining Scripting + Remoting + Lifetime management + Garbage Collection + Partial trust
         // is an aweful and ugly mess.
@@ -52,7 +52,6 @@ namespace Octgn.Scripting
             _api = new ScriptApi(this);
 
             ActionsScope = CreateScope();
-            // TODO: what if a new game is played (other definition, or maybe even simply a reset?)
             if (Program.Game == null || forTesting) return;
             foreach (
                 ScriptSource src in
@@ -221,7 +220,7 @@ namespace Octgn.Scripting
             {
                 job.source.Execute(job.scope);
                 result.Output = Encoding.UTF8.GetString(_outputStream.ToArray(), 0, (int) _outputStream.Length);
-                // HACK: It looks like Python adds some \r in front of \n, which sometimes 
+                // It looks like Python adds some \r in front of \n, which sometimes 
                 // (depending on the string source) results in doubled \r\r
                 result.Output = result.Output.Replace("\r\r", "\r");
                 _outputStream.SetLength(0);

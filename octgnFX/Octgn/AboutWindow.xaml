@@ -1,5 +1,5 @@
 ﻿<Window x:Class="Octgn.AboutWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="About OCTGN"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="About Dialog"
         Icon="pack://application:,,,/Resources/Icon.ico" Height="326" Width="464" Style="{StaticResource DialogWindow}"
         ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
 
@@ -56,7 +56,7 @@
     <Border VerticalAlignment="Stretch" Margin="8" Style="{StaticResource Panel}">
       <Grid>
         <TextBlock FontSize="48" FontStyle="Italic" FontWeight="Bold" Foreground="#FFFF0000" HorizontalAlignment="Left"
-                   VerticalAlignment="Center" Margin="157,0,0,3" Style="{x:Null}" Text="OCTGN">
+                   VerticalAlignment="Center" Margin="157,0,0,3" Style="{x:Null}" Text="Dialog">
           <TextBlock.Effect>
             <DropShadowEffect Opacity="0.4" ShadowDepth="2" />
           </TextBlock.Effect>
@@ -221,7 +221,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
           </Grid.RowDefinitions>
-          <TextBlock Margin="3" Text="OCTGN version:" />
+          <TextBlock Margin="3" Text="Octgn version:" />
           <TextBlock Margin="3" Grid.Column="1" Text="1.9" x:Name="octgnVersionBlock" />
           <TextBlock Margin="3" Grid.Row="1" Text="Client version:" />
           <TextBlock Margin="3" Grid.Row="1" Grid.Column="1" Text="0.2.0.0" x:Name="clientVersionBlock" />
@@ -229,7 +229,7 @@
           <TextBlock Margin="3" Grid.Row="2" Grid.Column="1" Text="jods" />
           <TextBlock Margin="3" Grid.Row="3" Text="Main tester:" />
           <TextBlock Margin="3" Grid.Row="3" Grid.Column="1" Text="Fork" />
-          <TextBlock Margin="3" Grid.Row="4" Grid.ColumnSpan="2" Text="Thanks to the whole OCTGN admin team!" />
+          <TextBlock Margin="3" Grid.Row="4" Grid.ColumnSpan="2" Text="Thanks to the whole Octgn admin team!" />
           <TextBlock Margin="3" Grid.Row="5" Grid.ColumnSpan="2">
             Visit us at
             <Hyperlink Click="GoToWebSite" FontStyle="Normal" Foreground="Red">www.octgn.net</Hyperlink>
@@ -241,10 +241,10 @@
         <TextBlock TextWrapping="Wrap">
           The definitive license is not yet determined. But it will most probably be a very permissive license.
           It's surely not going to be GPL, though.
-          Because of the very restricted nature of the GPL, this means you will NOT be able to use OCTGN code in a GPL project.
+          Because of the very restricted nature of the GPL, this means you will NOT be able to use Octgn code in a GPL project.
           <LineBreak />
           <LineBreak />
-          Please wait until OCTGN 2 is released if the license is important for you.
+          Please wait until Octgn 2 is released if the license is important for you.
         </TextBlock>
       </TabItem>
     </TabControl>

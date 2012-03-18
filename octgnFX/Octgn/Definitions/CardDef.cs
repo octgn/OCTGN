@@ -8,8 +8,7 @@ namespace Octgn.Definitions
 {
     public class CardDef
     {
-        // TODO: make these private
-        public string back, front;
+        private string back, front;
 
         public string Back
         {

@@ -9,7 +9,6 @@ using System.Web;
 namespace CassiniDev
 {
     /// <summary>
-    ///   TODO: get this into resources
     /// </summary>
     internal static class Messages
     {

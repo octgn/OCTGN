@@ -342,6 +342,10 @@ namespace Octgn.Data
                 trans.Rollback();
                 throw;
             }
+            if (SimpleDataTableCache.CacheExists())
+            {
+                SimpleDataTableCache.ClearCache();
+            }
         }
 
         public void DeleteSet(Set set)
@@ -351,6 +355,10 @@ namespace Octgn.Data
                 com.CommandText = "DELETE FROM [sets] WHERE [id]=@id;";
                 com.Parameters.AddWithValue("@id", set.Id.ToString());
                 com.ExecuteNonQuery();
+            }
+            if (SimpleDataTableCache.CacheExists())
+            {
+                SimpleDataTableCache.ClearCache();
             }
         }
 
@@ -376,6 +384,10 @@ namespace Octgn.Data
                 com.Parameters.AddWithValue("@package", set.PackageName);
                 com.ExecuteNonQuery();
             }
+            if (SimpleDataTableCache.CacheExists())
+            {
+                SimpleDataTableCache.ClearCache();
+            }
         }
 
         private static void InsertPack(Pack pack, string xml, Guid setId)
@@ -396,6 +408,10 @@ namespace Octgn.Data
                 com.Parameters.AddWithValue("@name", pack.Name);
                 com.Parameters.AddWithValue("@xml", xml);
                 com.ExecuteNonQuery();
+            }
+            if (SimpleDataTableCache.CacheExists())
+            {
+                SimpleDataTableCache.ClearCache();
             }
         }
 
@@ -590,51 +606,58 @@ namespace Octgn.Data
         public DataTable SelectCards(string[] conditions)
         {
             var cards = new DataTable();
-            var customProperties = new DataTable();
-            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
+            if (!SimpleDataTableCache.GetInstance().IsCached(conditions))
             {
-                com.CommandText =
-                    "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE game_id=@game_id;";
-                com.Parameters.AddWithValue("@game_id", Id.ToString());
-                cards.Load(com.ExecuteReader());
-
-                com.CommandText =
-                    "SELECT * FROM [custom_properties] WHERE [game_id]=@game_id";
-                com.Parameters.AddWithValue("@game_id", Id.ToString());
-                customProperties.Load(com.ExecuteReader());
-            }
-            foreach (PropertyDef d in CustomProperties)
-            {
-                cards.Columns.Add(d.Name);
-            }
-
-            int i = 0;
-            foreach (
-                DataRow[] props in
-                    from DataRow card in cards.Rows select customProperties.Select("card_real_id = " + card["real_id"]))
-            {
-                foreach (DataRow prop in props)
+                var customProperties = new DataTable();
+                using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
                 {
-                    var cname = prop["name"] as string;
-                    if (cname == null || !cards.Columns.Contains(cname))
-                        continue;
-                    var t = (int) ((long) prop["type"]);
-                    switch (t)
-                    {
-                        case 0:
-                            cards.Rows[i][cname] = prop["vstr"] as string;
-                            break;
-                        case 1:
-                            cards.Rows[i][cname] = (int) ((long) prop["vint"]);
-                            break;
-                        default:
-                            cards.Rows[i][cname] = prop["vstr"] as string;
-                            break;
-                    }
-                }
-                i++;
-            }
+                    com.CommandText =
+                        "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE game_id=@game_id;";
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    cards.Load(com.ExecuteReader());
 
+                    com.CommandText =
+                        "SELECT * FROM [custom_properties] WHERE [game_id]=@game_id";
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    customProperties.Load(com.ExecuteReader());
+                }
+                foreach (PropertyDef d in CustomProperties)
+                {
+                    cards.Columns.Add(d.Name);
+                }
+
+                int i = 0;
+                foreach (
+                    DataRow[] props in
+                        from DataRow card in cards.Rows select customProperties.Select("card_real_id = " + card["real_id"]))
+                {
+                    foreach (DataRow prop in props)
+                    {
+                        var cname = prop["name"] as string;
+                        if (cname == null || !cards.Columns.Contains(cname))
+                            continue;
+                        var t = (int)((long)prop["type"]);
+                        switch (t)
+                        {
+                            case 0:
+                                cards.Rows[i][cname] = prop["vstr"] as string;
+                                break;
+                            case 1:
+                                cards.Rows[i][cname] = (int)((long)prop["vint"]);
+                                break;
+                            default:
+                                cards.Rows[i][cname] = prop["vstr"] as string;
+                                break;
+                        }
+                    }
+                    i++;
+                }
+                SimpleDataTableCache.GetInstance().AddToCache(conditions, cards);
+            }
+            else
+            {
+                cards = SimpleDataTableCache.GetInstance().GetCache(conditions);
+            }
             //Now apply the search query to it
             var sb = new StringBuilder();
             if (conditions != null && conditions.Length > 0)

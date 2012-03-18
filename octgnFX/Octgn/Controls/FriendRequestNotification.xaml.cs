@@ -33,10 +33,10 @@ namespace Octgn.Controls
             set
             {
                 _notify = value;
-                string h = ValueConverters.HashEmailAddress(_notify.User.Email.ToLower().Trim());
+                string h = ValueConverters.HashEmailAddress("poop");
                 string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x";
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
-                SetValue(FriendNameProperty, _notify.User.DisplayName);
+                SetValue(FriendNameProperty, _notify.User.User);
             }
         }
 
