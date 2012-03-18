@@ -49,7 +49,7 @@ namespace Octgn.Launcher
                             var l = new Login();
                             l.textBox1.Text = Program.LClient.Username;
                             l.passwordBox1.Password = Program.LClient.Password;
-                            Program.LauncherWindow.Navigate(new Login());
+                            Program.LauncherWindow.Navigate(l);
                             break;
                         case Client.RegisterResults.UsernameTaken:
                             lblErrors.Content = "That username is already taken.";
