@@ -95,7 +95,7 @@ namespace Octgn
 
         public static void StartLobbyServer()
         {
-#if(DEBUG)
+#if(titties)
             _lobbyServerProcess = new Process
                                       {
                                           StartInfo =

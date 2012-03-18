@@ -70,7 +70,7 @@ namespace Skylabs.LobbyServer
 
         private static void XmppOnOnReadXml(object sender , string xml)
         {
-            //Trace.WriteLine("[Bot]RawData:" + xml);
+            Trace.WriteLine("[Bot]RawData:\n" + xml + "\n");
         }
 
         static void Xmpp_OnAuthError(object sender, agsXMPP.Xml.Dom.Element e)
@@ -120,7 +120,7 @@ namespace Skylabs.LobbyServer
                     }
                     else if(msg.Subject == "gamelist")
                     {
-                        Trace.WriteLine("[Bot]Request GameList: " + msg.From.User);
+                        //Trace.WriteLine("[Bot]Request GameList: " + msg.From.User);
                         var list = Gaming.GetLobbyList().Where(x=>x.GameStatus == EHostedGame.StartedHosting);
                         var m = new Message(msg.From , MessageType.normal , "" , "gamelist");
                         m.GenerateId();

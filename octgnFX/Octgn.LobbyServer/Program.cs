@@ -114,11 +114,11 @@ namespace Skylabs.LobbyServer
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Console.WriteLine("------UNHANDLED EXCEPTION-------");
+            Trace.WriteLine("------UNHANDLED EXCEPTION-------");
             var ex = (Exception) e.ExceptionObject;
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            Console.WriteLine("--------------------------------");
+            Trace.WriteLine(ex.Message);
+            Trace.WriteLine(ex.StackTrace);
+            Trace.WriteLine("--------------------------------");
             Quit();
         }
 
@@ -143,6 +143,7 @@ namespace Skylabs.LobbyServer
                 if (Debugger.IsAttached) Debugger.Break();
             }
             _running = false;
+            Trace.WriteLine("###PROCESS QUIT####");
         }
     }
 }
