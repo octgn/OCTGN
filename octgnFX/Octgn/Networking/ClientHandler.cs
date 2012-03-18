@@ -241,6 +241,10 @@ namespace Octgn.Networking
             }
         }
 
+        public void SwitchWithAlternate(Card c)
+        {
+            c.SwitchWithAlternate();
+        }
         public void IsAlternateImage(Card c, bool isAlternateImage)
         {
             c.IsAlternateImage = isAlternateImage;

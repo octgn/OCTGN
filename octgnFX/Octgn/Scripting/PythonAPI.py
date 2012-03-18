@@ -96,6 +96,10 @@ class Card(object):
   @property
   def switchImage(self): _api.SwitchImage(self._id)
   @property
+  def isAlternate(self): return _api.IsAlternate(self._id)
+  @property
+  def switchWithAlternate(self): _api.SwitchWithAlternate(self._id)
+  @property
   def model(self): return _api.CardModel(self._id)
   @property
   def name(self): return _api.CardName(self._id)

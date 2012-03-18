@@ -891,6 +891,20 @@ namespace Octgn.Server
 
         protected abstract void Send(string xml);
 
+        public void SwitchWithAlternate(int c)
+        {
+            StringBuilder sb = new StringBuilder();
+            XmlWriter writer = XmlWriter.Create(sb, XmlSettings);
+
+            writer.WriteStartElement("SwitchWithAlternate");
+            if (_handler.Muted != 0)
+                writer.WriteAttributeString("muted", _handler.Muted.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("cardid", c.ToString(CultureInfo.InvariantCulture));
+            writer.WriteEndElement();
+            writer.Close();
+            Send(sb.ToString());
+        }
+
         public void IsAlternateImage(int c, bool isAlternateImage)
         {
             var sb = new StringBuilder();

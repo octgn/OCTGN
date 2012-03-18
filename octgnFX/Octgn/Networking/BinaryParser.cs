@@ -891,6 +891,14 @@ namespace Octgn.Networking
                         _handler.SetGlobalVariable(n, v);
                         break;
                     }
+                case 90:
+                    {
+                        Card arg0 = Card.Find(reader.ReadInt32());
+                        if (arg0 == null)
+                        { Debug.WriteLine("[Alternate] Card not found."); return; }
+                        _handler.SwitchWithAlternate(arg0);
+                        break;
+                    }
                 default:
                     Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
                     break;
