@@ -20,7 +20,7 @@
       </Grid.ColumnDefinitions>
       <Border CornerRadius="10" BorderThickness="1" Grid.RowSpan="2" BorderBrush="#FFD2D2D2">
         <Border.Background>
-          <ImageBrush ImageSource="/OCTGN;component/Resources/chaticon.png" Stretch="Uniform" TileMode="None" />
+          <ImageBrush ImageSource="/Octgn;component/Resources/chaticon.png" Stretch="Uniform" TileMode="None" />
         </Border.Background>
       </Border>
       <TextBlock Text="{Binding ElementName=flistitem, Path=UserName}" Grid.Column="2" HorizontalAlignment="Left"
@@ -28,7 +28,7 @@
       <TextBlock Text="{Binding ElementName=flistitem, Path=CustomStatus}" Grid.Column="2" Grid.Row="1"
                  HorizontalAlignment="Left" Name="tbStatus" VerticalAlignment="Top" Foreground="Silver" Margin="2" />
       <Image Grid.Column="3" Height="16" HorizontalAlignment="Center" Name="image1" Stretch="Fill"
-             VerticalAlignment="Top" Width="16" Source="/OCTGN;component/Resources/cross.png" MouseUp="Image1MouseUp" />
+             VerticalAlignment="Top" Width="16" Source="/Octgn;component/Resources/cross.png" MouseUp="Image1MouseUp" />
     </Grid>
   </Border>
   <UserControl.Resources>

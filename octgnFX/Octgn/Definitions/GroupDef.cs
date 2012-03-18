@@ -8,7 +8,6 @@ namespace Octgn.Definitions
 {
     public class GroupDef
     {
-        // TODO: Make these private
         public BaseActionDef[] CardActions;
         public BaseActionDef[] GroupActions;
         public string background;

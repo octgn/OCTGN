@@ -14,6 +14,7 @@ using Octgn.Launcher;
 using Octgn.Networking;
 using Octgn.Play;
 using Skylabs.Lobby;
+using Client = Octgn.Networking.Client;
 using RE = System.Text.RegularExpressions;
 
 namespace Octgn
@@ -28,7 +29,7 @@ namespace Octgn
         public static List<ChatWindow> ChatWindows;
 
         public static Game Game;
-        public static LobbyClient LobbyClient;
+        public static Skylabs.Lobby.Client LClient;
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository;
         internal static Client Client;
@@ -69,6 +70,7 @@ namespace Octgn
 
         static Program()
         {
+            LClient = new Skylabs.Lobby.Client();
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
@@ -79,6 +81,16 @@ namespace Octgn
             //string s = e.Message.Substring(0);
             LauncherWindow = new LauncherWindow();
             Application.Current.MainWindow = LauncherWindow;
+            LClient.Chatting.OnCreateRoom += new Chat.dCreateChatRoom(Chatting_OnCreateRoom);
+        }
+
+        static void Chatting_OnCreateRoom(object sender, NewChatRoom room)
+        {
+            if (ChatWindows.All(x => x.Room.RID != room.RID))
+            {
+                if(ClientWindow != null) ClientWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
+                else if(LauncherWindow != null) LauncherWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
+            }
         }
 
         public static void StartLobbyServer()
@@ -127,8 +139,8 @@ namespace Octgn
         public static void Exit()
         {
             Application.Current.MainWindow = null;
-            if (LobbyClient != null && LobbyClient.Connected)
-                LobbyClient.Stop();
+            if (LClient != null)
+                LClient.Xmpp.Close();
 
             SaveLocation();
             try
@@ -180,19 +192,6 @@ namespace Octgn
             }
 #endif
             Application.Current.Shutdown(0);
-        }
-
-        //TODO: Get rid of this method at some point
-        internal static void OnServerError(string serverMessage)
-        {
-            var args = new ServerErrorEventArgs {Message = serverMessage};
-            if (ServerError != null)
-                ServerError(null, args);
-            if (args.Handled) return;
-
-            MessageBox.Show(Application.Current.MainWindow,
-                            "The server has returned an error:\n" + serverMessage,
-                            "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         internal static void Print(Player player, string text)

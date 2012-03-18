@@ -223,7 +223,6 @@ namespace CassiniDev
 
             string contentType = CommonExtensions.GetContentType(fileName);
 
-            //TODO: i am pretty sure this is unnecessary
             if (contentType == null)
             {
                 WriteErrorAndClose(HttpForbidden);

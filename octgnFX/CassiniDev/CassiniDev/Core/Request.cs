@@ -1099,7 +1099,6 @@ namespace CassiniDev
         }
 
         /// <summary>
-        ///   TODO: defer response until request is written
         /// </summary>
         /// <returns> </returns>
         private bool TryParseRequest()

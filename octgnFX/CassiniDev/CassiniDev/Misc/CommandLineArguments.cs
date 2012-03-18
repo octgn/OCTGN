@@ -367,7 +367,6 @@ namespace CassiniDev
 
 
                     // start waiting....
-                    //TODO: design this hack away.... why am I waiting in a validation method?
                     int now = Environment.TickCount;
 
                     // wait until either 1) the specified port is available or 2) the specified amount of time has passed

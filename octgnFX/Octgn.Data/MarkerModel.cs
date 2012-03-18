@@ -8,7 +8,6 @@ namespace Octgn.Data
         private readonly string _iconUri;
         private readonly Set _set;
         public Guid Id;
-        // TODO: Should be renamed at some point
         protected string name;
 
         public MarkerModel(XmlReader reader, Set set)
