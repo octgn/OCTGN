@@ -185,7 +185,7 @@ namespace Octgn.Data
 
         public bool hasProperty(string propertyName)
         {
-            if (propertyName.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase)) return (Alternate != System.Guid.Empty);
+            if (propertyName.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase)) return (Alternate != null && Alternate != System.Guid.Empty);
             if (propertyName.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase)) return (Dependent != null || Dependent.Equals(String.Empty));
             return Properties.ContainsKey(propertyName);
         }
