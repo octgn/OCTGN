@@ -166,13 +166,19 @@ namespace Octgn.Data
         internal static CardModel FromDataRow(Game game, DataRow row)
         {
             DataColumnCollection columns = row.Table.Columns;
+            Guid alternateGuid = Guid.Empty;
+            bool parseable = Guid.TryParse(row["alternate"].ToString(), out alternateGuid);
+            if (!parseable)
+            {
+                alternateGuid = Guid.Empty;
+            }
             var result = new CardModel
                              {
                                  Id = Guid.Parse(row["id"].ToString()),
                                  Name = (string) row["name"],
                                  ImageUri = (string) row["image"],
                                  Set = game.GetSet(Guid.Parse(row["set_id"].ToString())),
-                                 Alternate = (Guid) row["Alternate"],
+                                 Alternate = alternateGuid,
                                  Dependent = (string) row["Dependent"],
                                  Properties =
                                      new SortedList<string, object>(columns.Count - 4,

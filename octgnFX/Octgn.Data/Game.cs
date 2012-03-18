@@ -52,8 +52,8 @@ namespace Octgn.Data
 
         public Uri GetCardBackUri()
         {
-            String s = Path.Combine(GamesRepository.BasePath, Filename).Replace('\\', ',');
-            var u = new Uri("pack://file:,,," + s + CardBack);
+            String s = Path.Combine(GamesRepository.BasePath, Filename);//.Replace('\\', ',');
+            var u = new Uri(CardBack); //new Uri("pack://file:,,," + s + CardBack);
             return u;
         }
 

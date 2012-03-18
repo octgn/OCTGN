@@ -136,6 +136,10 @@ namespace Octgn.Data
 
             string rootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
             string cacheDir = Path.Combine(rootPath, "Cache");
+            if (!Directory.Exists(cacheDir))
+            {
+                return false;
+            }
             string sealedDir = Path.Combine(cacheDir, "Sealed");
             ret = (Directory.GetFiles(sealedDir).Length > 0);
 
