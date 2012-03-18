@@ -485,6 +485,12 @@ namespace Octgn.Server
                             _handler.SetGlobalVariable(n, v);
                             break;
                         }
+                    case 90:
+                        {
+                            int arg0 = reader.ReadInt32();
+                            _handler.SwitchWithAlternate(arg0);
+                            break;
+                        }
                     case 255:
                         {
                             _handler.PingReceived();

@@ -172,8 +172,8 @@ namespace Octgn.Play
             base.OnClosed(e);
             Program.PlayWindow = null;
             Program.StopGame();            
-            if(_isLocal)
-                Program.LauncherWindow.Visibility = Visibility.Visible;
+            //if(_isLocal)
+            //    Program.LauncherWindow.Visibility = Visibility.Visible;
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
         }
 
@@ -328,6 +328,12 @@ namespace Octgn.Play
             }
         }
 
+        /// <summary>
+        /// This could possibly be the function used when enlarging a card to make selecting it easier,
+        /// such as upon mouseover of a card that is but one of many in the hand.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ViewCardModel(object sender, CardModelEventArgs e)
         {
             if (e.CardModel == null)
@@ -336,6 +342,11 @@ namespace Octgn.Play
                 ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture)));
         }
 
+        /// <summary>
+        /// I suspect this is the function that gets called to show the very large image upon mouseover.
+        /// With SPC, the image covers nearly half the table
+        /// </summary>
+        /// <param name="img"></param>
         private void ShowCardPicture(BitmapSource img)
         {
             cardViewer.Height = img.PixelHeight;

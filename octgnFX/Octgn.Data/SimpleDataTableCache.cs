@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.IO.Compression;
 
 namespace Octgn.Data
 {
@@ -66,10 +67,13 @@ namespace Octgn.Data
             {
                 using (Stream stream = File.OpenRead(file))
                 {
-                    DataTable temp = new DataTable();
-                    temp.ReadXml(stream);
-                    temp.TableName = string.Empty;
-                    _cache.Add(DecodeFrom64(file.Substring(file.LastIndexOf("\\")+1)), temp);
+                    using (GZipStream zip = new GZipStream(stream, CompressionMode.Decompress))
+                    {
+                        DataTable temp = new DataTable();
+                        temp.ReadXml(zip);
+                        temp.TableName = string.Empty;
+                        _cache.Add(DecodeFrom64(file.Substring(file.LastIndexOf("\\") + 1)), temp);
+                    }
                 }
             }
             
@@ -86,8 +90,11 @@ namespace Octgn.Data
                     string fileName = EncodeTo64UTF8(kvi.Key);
                     using (Stream stream = File.Open(Path.Combine(GetPath(), fileName), FileMode.Create))
                     {
-                        kvi.Value.TableName = kvi.Key;
-                        kvi.Value.WriteXml(stream, XmlWriteMode.WriteSchema, true);
+                        using (GZipStream zip = new GZipStream(stream, CompressionMode.Compress))
+                        {
+                            kvi.Value.TableName = kvi.Key;
+                            kvi.Value.WriteXml(zip, XmlWriteMode.WriteSchema, true);
+                        }
                     }
                 }
             }
@@ -129,6 +136,10 @@ namespace Octgn.Data
 
             string rootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
             string cacheDir = Path.Combine(rootPath, "Cache");
+            if (!Directory.Exists(cacheDir))
+            {
+                return false;
+            }
             string sealedDir = Path.Combine(cacheDir, "Sealed");
             ret = (Directory.GetFiles(sealedDir).Length > 0);
 

@@ -48,6 +48,12 @@ namespace Octgn.Server
                             _handler.Error(arg0);
                             break;
                         }
+                    case "SwitchWithAlternate":
+                        {
+                            int arg0 = int.Parse(reader.ReadElementString("cardid"));
+                            _handler.SwitchWithAlternate(arg0);
+                            break;
+                        }
                     case "IsAlternateImage":
                         {
                             int arg0 = int.Parse(reader.ReadElementString("cardid"));

@@ -1014,6 +1014,22 @@ namespace Octgn.Server
 
         protected abstract void Send(byte[] data);
 
+        public void SwitchWithAlternate(int c)
+        {
+            var stream = new MemoryStream(512);
+            stream.Seek(4, SeekOrigin.Begin);
+            var writer = new BinaryWriter(stream);
+
+            writer.Write(_handler.Muted);
+            writer.Write((byte)90);
+            writer.Write(c);
+            writer.Flush();
+            writer.Seek(0, SeekOrigin.Begin);
+            writer.Write((int)stream.Length);
+            writer.Close();
+            Send(stream.ToArray());
+        }
+
         public void IsAlternateImage(int c, bool isAlternateImage)
         {
             var stream = new MemoryStream(512);

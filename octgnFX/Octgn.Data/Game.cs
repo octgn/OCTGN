@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -51,8 +52,8 @@ namespace Octgn.Data
 
         public Uri GetCardBackUri()
         {
-            String s = Path.Combine(GamesRepository.BasePath, Filename).Replace('\\', ',');
-            var u = new Uri("pack://file:,,," + s + CardBack);
+            String s = Path.Combine(GamesRepository.BasePath, Filename);//.Replace('\\', ',');
+            var u = new Uri(CardBack); //new Uri("pack://file:,,," + s + CardBack);
             return u;
         }
 
@@ -92,23 +93,25 @@ namespace Octgn.Data
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
-                    "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE [name]=@name;";
+                    "SELECT id, name, image, alternate, dependent, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE [name]=@name;";
 
                 com.Parameters.AddWithValue("@name", name);
-                using (SQLiteDataReader dr = com.ExecuteReader())
+                using (SQLiteDataReader dataReader = com.ExecuteReader())
                 {
-                    if (dr.Read())
+                    if (dataReader.Read())
                     {
-                        var did = dr["id"] as string;
-                        var sid = dr["set_id"] as string;
-                        if (did != null && sid != null)
+                        var did = dataReader["id"] as string;
+                        var setID = dataReader["set_id"] as string;
+                        if (did != null && setID != null)
                         {
                             var result = new CardModel
                                              {
                                                  Id = Guid.Parse(did),
-                                                 Name = (string) dr["name"],
-                                                 ImageUri = (string) dr["image"],
-                                                 Set = GetSet(Guid.Parse(sid)),
+                                                 Name = (string) dataReader["name"],
+                                                 ImageUri = (string) dataReader["image"],
+                                                 Set = GetSet(Guid.Parse(setID)),
+                                                 Alternate = (Guid) dataReader["alternate"],
+                                                 Dependent = (string) dataReader["dependent"],
                                                  Properties = GetCardProperties(Guid.Parse(did))
                                              };
                             return result;
@@ -167,23 +170,25 @@ namespace Octgn.Data
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
-                    "SElECT id, name, image, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id;";
+                    "SElECT id, name, image, alternate, dependent, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id;";
 
                 com.Parameters.AddWithValue("@id", id.ToString());
-                using (SQLiteDataReader dr = com.ExecuteReader())
+                using (SQLiteDataReader dataReader = com.ExecuteReader())
                 {
-                    if (dr.Read())
+                    if (dataReader.Read())
                     {
-                        var did = dr["id"] as string;
-                        var sid = dr["set_id"] as string;
-                        if (sid != null && did != null)
+                        var did = dataReader["id"] as string;
+                        var setID = dataReader["set_id"] as string;
+                        if (setID != null && did != null)
                         {
                             var result = new CardModel
                                              {
                                                  Id = Guid.Parse(did),
-                                                 Name = (string) dr["name"],
-                                                 ImageUri = (string) dr["image"],
-                                                 Set = GetSet(Guid.Parse(sid)),
+                                                 Name = (string) dataReader["name"],
+                                                 ImageUri = (string) dataReader["image"],
+                                                 Set = GetSet(Guid.Parse(setID)),
+                                                 Alternate = Guid.Parse(dataReader["alternate"] as string),
+                                                 Dependent = (string) dataReader["dependent"],
                                                  Properties = GetCardProperties(id)
                                              };
                             return result;
@@ -264,6 +269,7 @@ namespace Octgn.Data
                     using (
                         Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof (GamesRepository),
                                                                                              "CardSet.xsd"))
+                    //CardSet.xsd determines the "attributes" of a card (name, guid, alternate, dependent)
                         if (s != null)
                             using (XmlReader reader = XmlReader.Create(s))
                                 settings.Schemas.Add(null, reader);
@@ -324,6 +330,7 @@ namespace Octgn.Data
                             reader.ReadStartElement(); // <cards>
                             while (reader.IsStartElement("card"))
                                 InsertCard(new CardModel(reader, this, set, definition, package));
+                            // cards are parsed through the CardModel constructor, which are then inserted individually into the database
                             reader.ReadEndElement(); // </cards>
                         }
 
@@ -337,10 +344,11 @@ namespace Octgn.Data
                     trans.Commit();
                 }
             }
-            catch
+            catch (Exception e)
             {
+
                 trans.Rollback();
-                throw;
+                throw e;
             }
             if (SimpleDataTableCache.CacheExists())
             {
@@ -444,9 +452,9 @@ namespace Octgn.Data
             {
                 //Build Query
                 sb.Append("INSERT INTO [cards](");
-                sb.Append("[id],[game_id],[set_real_id],[name], [image]");
+                sb.Append("[id],[game_id],[set_real_id],[name], [image], [alternate], [dependent]");
                 sb.Append(") VALUES(");
-                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image");
+                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image,@alternate,@dependent");
                 sb.Append(");\n");
                 com.CommandText = sb.ToString();
 
@@ -455,6 +463,17 @@ namespace Octgn.Data
                 com.Parameters.AddWithValue("@set_id", card.Set.Id.ToString());
                 com.Parameters.AddWithValue("@name", card.Name);
                 com.Parameters.AddWithValue("@image", card.ImageUri);
+                com.Parameters.AddWithValue("@alternate", card.Alternate.ToString());
+                com.Parameters.AddWithValue("@dependent", card.Dependent.ToString());
+
+                
+#if(DEBUG)
+                Debug.WriteLine(com.CommandText);
+                foreach (SQLiteParameter p in com.Parameters)
+                {
+                   Debug.Write("ParameterName: " + p.ParameterName +"\r\n Value: " + p.Value + "\r\n");
+                }
+#endif
                 com.ExecuteNonQuery();
             }
             //Add custom properties for the card.
@@ -467,32 +486,42 @@ namespace Octgn.Data
             string command = sb.ToString();
             foreach (KeyValuePair<string, object> pair in card.Properties)
             {
-                using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
+                if (pair.Key.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase)
+                    || pair.Key.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase)
+                    //|| pair.Key.Equals("Mutable", StringComparison.InvariantCultureIgnoreCase)
+                    )
                 {
-                    com.CommandText = command;
-                    com.Parameters.AddWithValue("@id", pair.Key + card.Id);
-                    com.Parameters.AddWithValue("@card_id", card.Id.ToString());
-                    com.Parameters.AddWithValue("@game_id", Id.ToString());
-                    com.Parameters.AddWithValue("@name", pair.Key);
-                    if (pair.Value is string)
+                    //Do nothing - these properties are already taken care of
+                }
+                else
+                {
+                    using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
                     {
-                        com.Parameters.AddWithValue("@type", 0);
-                        com.Parameters.AddWithValue("@vstr", pair.Value);
-                        com.Parameters.AddWithValue("@vint", null);
+                        com.CommandText = command;
+                        com.Parameters.AddWithValue("@id", pair.Key + card.Id);
+                        com.Parameters.AddWithValue("@card_id", card.Id.ToString());
+                        com.Parameters.AddWithValue("@game_id", Id.ToString());
+                        com.Parameters.AddWithValue("@name", pair.Key);
+                        if (pair.Value is string)
+                        {
+                            com.Parameters.AddWithValue("@type", 0);
+                            com.Parameters.AddWithValue("@vstr", pair.Value);
+                            com.Parameters.AddWithValue("@vint", null);
+                        }
+                        else if (pair.Value is int)
+                        {
+                            com.Parameters.AddWithValue("@type", 1);
+                            com.Parameters.AddWithValue("@vstr", null);
+                            com.Parameters.AddWithValue("@vint", (int)pair.Value);
+                        }
+                        else // char
+                        {
+                            com.Parameters.AddWithValue("@type", 2);
+                            com.Parameters.AddWithValue("@vstr", pair.Value.ToString());
+                            com.Parameters.AddWithValue("@vint", null);
+                        }
+                        com.ExecuteNonQuery();
                     }
-                    else if (pair.Value is int)
-                    {
-                        com.Parameters.AddWithValue("@type", 1);
-                        com.Parameters.AddWithValue("@vstr", null);
-                        com.Parameters.AddWithValue("@vint", (int) pair.Value);
-                    }
-                    else // char
-                    {
-                        com.Parameters.AddWithValue("@type", 2);
-                        com.Parameters.AddWithValue("@vstr", pair.Value.ToString());
-                        com.Parameters.AddWithValue("@vint", null);
-                    }
-                    com.ExecuteNonQuery();
                 }
             }
         }
@@ -543,8 +572,8 @@ namespace Octgn.Data
                     var dl = new Dictionary<string, PropertyType>();
                     while (dr.Read())
                     {
-                        var name = dr["name"] as string;
-                        var t = (int) ((long) dr["type"]);
+                        var name = dr["name"] as string;//name of property
+                        var t = (int) ((long) dr["type"]);//type of property (String, Int, Char)
                         PropertyType pt;
                         switch (t)
                         {

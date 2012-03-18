@@ -176,11 +176,27 @@ namespace Octgn.Scripting
             return Tuple.Create(def.Width, def.Height);
         }
 
+        public bool IsAlternate(int id)
+        {
+            return Card.Find(id).isAlternate();
+        }
         public bool IsAlternateImage(int id)
         {
             return Card.Find(id).IsAlternateImage;
         }
 
+        /// <summary>
+        /// takes a card with id, and swaps it with the predefined "alternate" version of the card
+        /// alternate may be considered the "back" of the card, or another card entirely - up to Game Definer.
+        /// id and identity will remain the same, all other data should change.
+        /// </summary>
+        /// <param name="id"></param>
+        public void SwitchWithAlternate(int id)
+        {
+            Card c = Card.Find(id);
+            _engine.Invoke(() => Program.Client.Rpc.SwitchWithAlternate(c) );
+                //I'm relying on this to send the message to other clients. TODO: Need to fully test
+        }
         public void SwitchImage(int id)
         {
             Card c = Card.Find(id);
@@ -194,6 +210,7 @@ namespace Octgn.Scripting
         }
 
         public string CardModel(int id)
+        //Why is this public? I would expect the model to be private - (V)_V
         {
             Card c = Card.Find(id);
             if (!c.FaceUp || c.Type.Model == null) return null;

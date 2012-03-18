@@ -44,9 +44,11 @@
 
     <Border Grid.Row="2" Margin="4,2,2,4" Padding="6" Style="{StaticResource Panel}">
       <ScrollViewer VerticalScrollBarVisibility="Auto">
+          
         <ItemsControl ItemsSource="{Binding Deck.Sections, ElementName=self}"
                       ScrollViewer.VerticalScrollBarVisibility="Visible">
-          <ItemsControl.ItemTemplate>
+          <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
+                    <ItemsControl.ItemTemplate>
             <DataTemplate>
               <Expander IsExpanded="True" GotFocus="SetActiveSection">
                 <Expander.Header>

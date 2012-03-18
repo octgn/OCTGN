@@ -57,23 +57,24 @@ namespace Octgn.Play
 
         private readonly int _id;
 
+        internal List<Player> PlayersLooking = new List<Player>(1);
+         // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
         private readonly ObservableCollection<Player> _playersPeeking = new ObservableCollection<Player>();
+        // List of players, who had peeked at this card. The list is reset when the card changes group.
         internal bool MayBeConsideredFaceUp;
         /* For better responsiveness, turning a card face down is applied immediately,
 															   without waiting on the server.
 															   If a script tries to print the card's lName, when the message arrives the card is already
 															   face down although it should still be up. */
 
-        internal List<Player> PlayersLooking = new List<Player>(1);
-        // List of players, who had peeked at this card. The list is reset when the card changes group.
-
+        
         //private CardDef _definition;
         private bool _faceUp;
         private Group _group;
         private Color? _highlight;
         private bool _isAlternateImage;
-
-        // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
+        internal CardModel _alternateOf;
+        private int numberOfSwitchWithAlternatesNotPerformed = 0;
 
         private CardOrientation _rot;
         private bool _selected;
@@ -81,7 +82,7 @@ namespace Octgn.Play
         private double _x, _y;
 
         #endregion Private fields
-
+        
         internal Card(Player owner, int id, ulong key, CardDef def, CardModel model, bool mySecret)
             : base(owner)
         {
@@ -89,6 +90,8 @@ namespace Octgn.Play
             Type = new CardIdentity(id) {Alias = false, Key = key, Model = model, MySecret = mySecret};
             // var _definition = def;
             All.Add(id, this);
+            _alternateOf = null;
+            numberOfSwitchWithAlternatesNotPerformed = 0;
             _isAlternateImage = false;
         }
 
@@ -178,7 +181,9 @@ namespace Octgn.Play
                 // Clear peeking (if any)
                 PeekingPlayers.Clear();
                 //Switch back to original image.
-                IsAlternateImage = false;
+                    IsAlternateImage = false;
+                    //if (revertToOriginalOnGroupChange) TODO
+                    //{ SetModel(_alternateOf); }
             }
         }
 
@@ -191,6 +196,19 @@ namespace Octgn.Play
                 Program.Client.Rpc.TurnReq(this, value);
                 if (_faceUp) MayBeConsideredFaceUp = true; // See comment for mayBeConsideredFaceUp
                 new Turn(Player.LocalPlayer, this, value).Do();
+                if (value) catchUpOnAlternateSwitches();
+            }
+        }
+        //Okay, someone please explain to me why we have the setter above and the set function below? (V)_V
+        internal void SetFaceUp(bool lFaceUp)
+        {
+            if (_faceUp == lFaceUp) return;
+            _faceUp = lFaceUp;
+            OnPropertyChanged("FaceUp");
+            if (lFaceUp)
+            {
+                PeekingPlayers.Clear();
+                catchUpOnAlternateSwitches();
             }
         }
 
@@ -403,14 +421,6 @@ namespace Octgn.Play
             OnPropertyChanged("Orientation");
         }
 
-        internal void SetFaceUp(bool lFaceUp)
-        {
-            if (_faceUp == lFaceUp) return;
-            _faceUp = lFaceUp;
-            OnPropertyChanged("FaceUp");
-            if (lFaceUp) PeekingPlayers.Clear();
-        }
-
         internal void SetOverrideGroupVisibility(bool overrides)
         {
             OverrideGroupVisibility = overrides;
@@ -458,8 +468,14 @@ namespace Octgn.Play
 
         internal void SetModel(CardModel model)
         {
+#if (DEBUG)
+            Debug.WriteLine("SetModel event happened!");
+#endif
+            bool processSwitches = false;
+            if (Type.Model == null) processSwitches = true;//if there is no current model, we've built up unperformed Alternate Switches
             Type.Model = model;
-            OnPropertyChanged("Picture");
+            OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
+            if (processSwitches) catchUpOnAlternateSwitches();
         }
 
         internal bool IsVisibleToAll()
@@ -493,9 +509,12 @@ namespace Octgn.Play
             // It then leads to bugs if not taken good care of.
             if (Type.Revealing) return;
 
+#if (DEBUG)
+            Debug.WriteLine("REVEAL event about to fire!");
+#endif
             Type.Revealing = true;
             if (!Type.MySecret) return;
-            Program.Client.Rpc.Reveal(this, _type.Key, _type.Alias ? Guid.Empty : _type.Model.Id);
+            Program.Client.Rpc.Reveal(this, _type.Key, _type.Alias ? Guid.Empty : isAlternate() ? _alternateOf.Id : _type.Model.Id);
         }
 
         internal void RevealTo(IEnumerable<Player> players)
@@ -643,5 +662,95 @@ namespace Octgn.Play
         }
 
         #endregion Markers
+
+        internal bool hasProperty(string propertyName)
+        {
+            return (Type.Model.hasProperty(propertyName));
+        }
+
+        /// <summary>
+        /// Switches the underlying card model with some predefined Alternate
+        /// Returns true if the model was switched (or the switch was recorded to be performed when applicable)
+        /// Returns false if it did nothing.
+        /// </summary>
+        /// <returns></returns>
+        internal bool SwitchWithAlternate()
+        {//This function will change the underlying Model of a Card to some predefined alternate version.
+#if (DEBUG)
+            Debug.WriteLine("Attempting to SwitchWithAlternate on " + Name);
+#endif
+            if (_faceUp)
+            {
+                if (Type.Model.hasProperty("Alternate"))
+                {//if there is an alternate, we want to switch to it
+                    if (_alternateOf == null)
+                    {//Switching to first alternate
+                        _alternateOf = Type.Model;
+#if (DEBUG)
+                        Debug.WriteLine("Switching for the first time!");
+#endif
+                    }
+                    else
+                    {//Not the first, not the last
+#if (DEBUG)
+                        Debug.WriteLine("Not the first, not the last.");
+#endif
+                    }
+                    SetModel(Database.GetCardById(Type.Model.Alternate));
+                    return true;
+                }
+                //if there is no alternate, we might have reached the end of the chain
+                else if (_alternateOf != null)
+                {//Then we've come from somewhere, and we want to go back.
+                    SetModel(_alternateOf);
+                    _alternateOf = null;
+#if (DEBUG)
+                    Debug.WriteLine("Reached the end of the chain - Going back to the original");
+#endif
+                    return true;
+                }
+                //if we don't have a specified alternate, and we haven't come from an alternate, do nothing.
+#if (DEBUG)
+                Debug.WriteLine("No Alternate, No Original - Doin' Nothin.");
+#endif
+                return false;
+            }
+            else //if not face up
+            {
+                numberOfSwitchWithAlternatesNotPerformed++;//the number of switches
+#if (DEBUG)
+                Debug.WriteLine("Not FaceUp. Catching the missed switch. New Number: " + numberOfSwitchWithAlternatesNotPerformed);
+#endif
+                return true;
+            }
+        }
+
+        public bool isAlternate()
+        {
+#if (DEBUG)
+            Debug.WriteLine(this.Name + " is Alternate? " + (_alternateOf != null));
+#endif
+            return (_alternateOf != null);//If there is an original version, return true.
+        }
+        private bool catchUpOnAlternateSwitches()
+        {
+#if (DEBUG)
+            Debug.WriteLine("Time to catch up on the Alternate Switches we missed! Number: " + numberOfSwitchWithAlternatesNotPerformed);
+#endif
+            try
+            {
+                while( 0 < numberOfSwitchWithAlternatesNotPerformed)
+                {
+                    SwitchWithAlternate();
+                    numberOfSwitchWithAlternatesNotPerformed--;
+                }
+                return true;
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine("Unable To Catchup on Alternate Switches at this time. Please try again Later.");
+            }
+            return false;
+        }
     }
 }
