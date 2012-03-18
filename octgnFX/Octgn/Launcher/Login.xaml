@@ -205,10 +205,7 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
               <RotateTransform x:Name="SpinnerRotate" Angle="0" />
             </Image.RenderTransform>
           </Image>
-          <Image Height="34" HorizontalAlignment="Left" Margin="516,33,0,0" Name="image3" Stretch="None"
-                 VerticalAlignment="Top" Width="112" Source="/OCTGN;component/Resources/logowords.png" Grid.ColumnSpan="2" />
-
-        </Grid>
+                </Grid>
       </Border>
       <Line Grid.Row="2" StrokeThickness="4" HorizontalAlignment="Center" X1="1" X2="1" Y1="1" Y2="217" Margin="308,0"
             Grid.ColumnSpan="2" Grid.RowSpan="2">
@@ -224,13 +221,11 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
       <Border BorderBrush="Silver" BorderThickness="1" Height="32" HorizontalAlignment="Center" Margin="12,7,18,0"
               Name="border2" Style="{StaticResource Panel}" VerticalAlignment="Top" Visibility="Visible" Width="279" Grid.Row="2">
         <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock1"
-                   Text="Google Signin" VerticalAlignment="Stretch" FontSize="20" />
+                   Text="Signin/Register" VerticalAlignment="Stretch" FontSize="20" />
       </Border>
-      <Image Height="43" HorizontalAlignment="Left" Margin="23,1,0,0" Name="image1" Stretch="Uniform"
-             VerticalAlignment="Top" Width="82" Source="/OCTGN;component/Resources/google.png" ClipToBounds="False" Grid.Row="2" />
-      <StackPanel x:Name="spleft" Grid.Row="3">
-        <Label Content="E-mail Address" Height="26" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top"
-               Width="119" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10,0" />
+            <StackPanel x:Name="spleft" Grid.Row="3">
+        <Label Content="Username(no e-mails)" Height="26" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top"
+               Width="223" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10,0" />
         <TextBox Height="23" HorizontalAlignment="Stretch" Name="textBox1" VerticalAlignment="Top"
                  TextChanged="TextBox1TextChanged" Margin="10,0" KeyUp="TextBox1KeyUp" />
         <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White" Height="28"
