@@ -164,9 +164,8 @@ namespace Octgn.Play.Dialogs
         {
             var src = e.Source as FrameworkElement;
             if (src == null) return;
-            var element = src.DataContext as Deck.Element;
-            if (element == null) return;
-            CardModel model = element.Card;
+            var model = src.DataContext as CardModel ?? (src.DataContext as Deck.Element).Card;
+            if (model == null) return;
             RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
         }
 
