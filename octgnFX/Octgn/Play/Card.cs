@@ -289,7 +289,7 @@ namespace Octgn.Play
             get
             {
                 if (IsAlternateImage)
-                    return Type.Model.AlternatePicture;
+                    return Type.Model.AlternatePicture == null ? DefaultFront : Type.Model.Picture;
                 if (!FaceUp) return DefaultBack;
                 return Type.Model == null ? DefaultFront : Type.Model.Picture;
             }
@@ -393,7 +393,7 @@ namespace Octgn.Play
         internal string GetPicture(bool up)
         {
             if (IsAlternateImage)
-                return Type.Model.AlternatePicture;
+                return Type.Model.AlternatePicture == null ? DefaultFront : Program.Game.CardFrontBitmap.ToString();
             if (!up) return DefaultBack;
             if (Type == null || Type.Model == null) return DefaultFront;
             return Type.Model.Picture;
@@ -402,8 +402,18 @@ namespace Octgn.Play
         internal BitmapImage GetBitmapImage(bool up)
         {
             if (IsAlternateImage)
-            {
-                var bmp = new BitmapImage(new Uri(Type.Model.AlternatePicture)) {CacheOption = BitmapCacheOption.OnLoad};
+            {       
+                BitmapImage bmp = null;
+                try
+                {
+                    bmp = new BitmapImage(new Uri(Type.Model.AlternatePicture)) { CacheOption = BitmapCacheOption.OnLoad };
+                }
+                catch (Exception ex)
+                {
+                   
+                }
+                if (bmp == null)
+                    bmp = Program.Game.CardFrontBitmap;
                 bmp.Freeze();
                 return bmp;
             }
