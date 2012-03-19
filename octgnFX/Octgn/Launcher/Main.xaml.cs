@@ -365,13 +365,13 @@ namespace Octgn.Launcher
                     }
                     Program.LauncherWindow = null;
                 }
-                Application.Current.MainWindow = Program.ClientWindow;
+                Application.Current.MainWindow = Program.ClientWindow;                
             }
             Program.ClientWindow.Close();
             Program.LClient.OnDataRecieved -= LClientOnOnDataRecieved;
             Program.LClient.OnFriendRequest -= LClientOnOnFriendRequest;
             Program.LClient.Stop();
-            Program.Exit();
+            if (exiting) Program.Exit();
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
 
