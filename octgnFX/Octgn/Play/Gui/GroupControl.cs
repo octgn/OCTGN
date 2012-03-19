@@ -20,7 +20,6 @@ namespace Octgn.Play.Gui
 
 #pragma warning restore 649
 
-        // TODO: Should be Group
         protected Group group;
 
         private readonly CollectionContainer _groupMenu = new CollectionContainer();
@@ -167,7 +166,6 @@ namespace Octgn.Play.Gui
 
         #region Context Menus
 
-        // TODO: the way contextual menu are built is really poorly written...
         internal virtual void ShowContextMenu(Card card, bool showGroupActions = true)
         {
             // Modify selection
@@ -328,7 +326,7 @@ namespace Octgn.Play.Gui
             playerItem = new MenuItem {Header = "Everybody", IsCheckable = true};
             playerItem.Click += delegate { group.SetVisibility(true, true); };
             item.Items.Add(playerItem);
-            // TODO: this is a quick hack to enable some BlueMoon card scenario. One should find a better solution
+            // HACK: this is a quick hack to enable some BlueMoon card scenario. One should find a better solution
             //playerItem = new MenuItem { Header = "Freeze current cards" };
             //playerItem.Click += delegate { group.FreezeCardsVisibility(true); };
             //item.Items.Add(playerItem);

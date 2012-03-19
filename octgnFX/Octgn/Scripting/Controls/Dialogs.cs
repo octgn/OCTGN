@@ -3,8 +3,7 @@ using System.Windows;
 
 namespace Octgn.Scripting.Controls
 {
-    // TODO : refactor this class ... why is it named OCTGN
-    public static class OCTGN
+    public static class Dialog
     {
         public static int InputInt(string title, string prompt, int n)
         {

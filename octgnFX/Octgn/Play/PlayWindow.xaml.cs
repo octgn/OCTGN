@@ -55,7 +55,7 @@ namespace Octgn.Play
             _isLocal = islocal;
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
-            Title = "OCTGN  version : " + oversion + " : " + Program.Game.Definition.Name;
+            Title = "Octgn  version : " + oversion + " : " + Program.Game.Definition.Name;
             Program.Game.ComposeParts(this);
         }
 
@@ -172,8 +172,8 @@ namespace Octgn.Play
             base.OnClosed(e);
             Program.PlayWindow = null;
             Program.StopGame();            
-            if(_isLocal)
-                Program.LauncherWindow.Visibility = Visibility.Visible;
+            //if(_isLocal)
+            //    Program.LauncherWindow.Visibility = Visibility.Visible;
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
         }
 
@@ -183,7 +183,7 @@ namespace Octgn.Play
             // Show the dialog to choose the file
             var ofd = new OpenFileDialog
                           {
-                              Filter = "OCTGN deck files (*.o8d) | *.o8d",
+                              Filter = "Octgn deck files (*.o8d) | *.o8d",
                               InitialDirectory = SimpleConfig.ReadValue("lastFolder")
                           };
             //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
@@ -203,7 +203,7 @@ namespace Octgn.Play
             }
             catch (Exception ex)
             {
-                MessageBox.Show("OCTGN couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
+                MessageBox.Show("Octgn couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -328,6 +328,12 @@ namespace Octgn.Play
             }
         }
 
+        /// <summary>
+        /// This could possibly be the function used when enlarging a card to make selecting it easier,
+        /// such as upon mouseover of a card that is but one of many in the hand.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ViewCardModel(object sender, CardModelEventArgs e)
         {
             if (e.CardModel == null)
@@ -336,6 +342,11 @@ namespace Octgn.Play
                 ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture)));
         }
 
+        /// <summary>
+        /// I suspect this is the function that gets called to show the very large image upon mouseover.
+        /// With SPC, the image covers nearly half the table
+        /// </summary>
+        /// <param name="img"></param>
         private void ShowCardPicture(BitmapSource img)
         {
             cardViewer.Height = img.PixelHeight;
@@ -424,7 +435,7 @@ namespace Octgn.Play
             var sfd = new SaveFileDialog
                           {
                               AddExtension = true,
-                              Filter = "OCTGN decks|*.o8d",
+                              Filter = "Octgn decks|*.o8d",
                               InitialDirectory = Program.Game.Definition.DecksPath
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;

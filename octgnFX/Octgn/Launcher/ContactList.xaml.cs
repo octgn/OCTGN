@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using Octgn.Controls;
 using Skylabs.Lobby;
+using agsXMPP;
 
 namespace Octgn.Launcher
 {
@@ -15,14 +16,18 @@ namespace Octgn.Launcher
         public ContactList()
         {
             InitializeComponent();
-            Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
-            Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
-            Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
+            Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
+            Program.LClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
         }
 
-        private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User u, object data)
+        private void ChattingOnOnCreateRoom(object sender , NewChatRoom room)
         {
-            if (e != Chatting.ChatEvent.ChatMessage)
+            RefreshList();
+        }
+
+        private void LClientOnOnDataRecieved(object sender, Client.DataRecType type, object data)
+        {
+            if (type == Client.DataRecType.FriendList)
             {
                 RefreshList();
             }
@@ -33,7 +38,7 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
                                              {
                 stackPanel1.Children.Clear();
-                User[] flist = Program.LobbyClient.GetFriendsList();
+                NewUser[] flist = Program.LClient.Friends.ToArray();
                 foreach (FriendListItem f in flist.Select(u => new FriendListItem
                                                                 {
                                                                     ThisUser = u,
@@ -47,44 +52,32 @@ namespace Octgn.Launcher
                     f.MouseDoubleClick += FMouseDoubleClick;
                     stackPanel1.Children.Add(f);
                 }
-                foreach (
-                    GroupChatListItem gi in
-                        from cr in Program.LobbyClient.Chatting.Rooms
-                        where cr.IsGroupChat
-                        select new GroupChatListItem
-                                {
-                                    ThisRoom = cr,
-                                    HorizontalAlignment =
-                                        HorizontalAlignment.Stretch
-                                })
+                foreach( var g in Program.LClient.Chatting.Rooms.Where(x=>x.IsGroupChat))
                 {
-                    gi.MouseDoubleClick += GiMouseDoubleClick;
-                    stackPanel1.Children.Add(gi);
+                    var gc = new GroupChatListItem()
+                    {
+                        ThisRoom = g ,
+                        HorizontalAlignment = HorizontalAlignment.Stretch
+                    };
+                    gc.MouseDoubleClick += GiMouseDoubleClick;
+                    stackPanel1.Children.Add(gc);
                 }
                                              }));
         }
 
-        private void lobbyClient_OnDataRecieved(DataRecType type, object e)
-        {
-            if (type == DataRecType.FriendList)
-            {
-                RefreshList();
-            }
-        }
 
         private static void GiMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var gi = sender as GroupChatListItem;
-            if (gi == null) return;
-            foreach (ChatWindow cw in Program.ChatWindows.Where(cw => gi.ThisRoom.Id == cw.Id))
+            var fi = sender as GroupChatListItem;
+            if (fi == null) return;
+            var room = Program.LClient.Chatting.GetRoom(fi.ThisRoom.GroupUser,true);
+            var cw = Program.ChatWindows.SingleOrDefault(x => x.Id == room.RID);
+            if(cw == null)
             {
-                cw.Show();
-                return;
+                cw = new ChatWindow(room);
+                Program.ChatWindows.Add(cw);
             }
-            if (gi.ThisRoom.Id != 0) return;
-            var cw2 = new ChatWindow(0);
-            Program.ChatWindows.Add(cw2);
-            cw2.Show();
+            cw.Show();
         }
 
 
@@ -92,12 +85,14 @@ namespace Octgn.Launcher
         {
             var fi = sender as FriendListItem;
             if (fi == null) return;
-            foreach (var cw in from r in Program.LobbyClient.Chatting.Rooms where r.ContainsUser(Program.LobbyClient.Me) && r.ContainsUser(fi.ThisUser) && !r.IsGroupChat && r.Id != 0 select (ChatWindow) (Program.ChatWindows.FirstOrDefault(c => c.Id == r.Id) ?? new ChatWindow(r.Id)))
+            var room = Program.LClient.Chatting.GetRoom(fi.ThisUser);
+            var cw = Program.ChatWindows.SingleOrDefault(x => x.Id == room.RID);
+            if(cw == null)
             {
-                cw.Show();
-                return;
+                cw = new ChatWindow(room);
+                Program.ChatWindows.Add(cw);
             }
-            Program.LobbyClient.Chatting.CreateChatRoom(fi.ThisUser);
+            cw.Show();
         }
 
         private void PageLoaded(object sender, RoutedEventArgs e)
@@ -105,16 +100,10 @@ namespace Octgn.Launcher
             RefreshList();
         }
 
-        private void lobbyClient_OnUserStatusChanged(UserStatus eve, User u)
-        {
-            RefreshList();
-        }
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
-            Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
-            Program.LobbyClient.Chatting.EChatEvent -= ChattingEChatEvent;
+            Program.LClient.OnDataRecieved -= LClientOnOnDataRecieved;
         }
     }
 }

@@ -5,12 +5,14 @@
   <xs:simpleType name="guid">
     <xs:annotation>
       <xs:documentation>
-        Defines a GUID, with or without the enclosing curly braces.
+        Defines a GUID, with or without the enclosing curly braces. Accepts formats both with and without hyphens.
       </xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
       <xs:pattern value="\{[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}\}" />
       <xs:pattern value="[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}" />
+      <xs:pattern value="[A-Fa-f0-9]{32}" />
+      <xs:pattern value="\{[A-Fa-f0-9]{32}\}" />
     </xs:restriction>
   </xs:simpleType>
 
@@ -157,6 +159,20 @@
                     <xs:annotation>
                       <xs:documentation>
                         This attribute is the card's unique id.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="alternate" type="guid" use="optional">
+                    <xs:annotation>
+                      <xs:documentation>
+                        A GUID, with or without the enclosing curly braces. Used for defining an Alternate CardModel (that python can switch this one to)
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="dependent" type="xs:string" use="optional">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Anything means "True, this card is dependent" (and therefore AlternateOnly), but a specific guid to use instead may be declared.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>

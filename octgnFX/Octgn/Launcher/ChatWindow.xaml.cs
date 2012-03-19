@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Skylabs.Lobby;
+using agsXMPP;
+using Uri = System.Uri;
 
 namespace Octgn.Launcher
 {
@@ -21,103 +23,44 @@ namespace Octgn.Launcher
     {
         private Boolean _justScrolledToBottom;
         private bool _realClose;
-
-        public ChatWindow(long id)
+        public NewChatRoom Room;
+        public long Id { get { return Room.RID; } }
+        public ChatWindow(NewChatRoom room)
         {
             InitializeComponent();
-            Users = new List<User>();
-            Id = id;
-            ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRid(id);
-            miLeaveChat.IsEnabled = cr.IsGroupChat && cr.Id != 0;
-            Program.LobbyClient.OnUserStatusChanged += LobbyClientOnOnUserStatusChanged;
+            Room = room;
             var cm = new ContextMenu();
             var mi = new MenuItem {Header = "Add to friends list"};
             mi.Click += MiClick;
             cm.Items.Add(mi);
             listBox1.ContextMenu = cm;
-
             richTextBox1.Document.LineHeight = 2;
-        }
-
-        public long Id { get; private set; }
-        public List<User> Users { get; private set; }
-
-        private void LobbyClientOnOnUserStatusChanged(UserStatus eve, User user)
-        {
-            Program.LobbyClient.Chatting.UserStatusChange(Id, user, eve);
+            Room.OnMessageRecieved += RoomOnOnMessageRecieved;
+            Room.OnUserListChange += RoomOnOnUserListChange;
+            if (!room.IsGroupChat || room.GroupUser != null && room.GroupUser.User.User == "lobby") miLeaveChat.IsEnabled = false;
             ResetUserList();
         }
 
-        public void ChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
+        private void RoomOnOnUserListChange(object sender,List<NewUser> users)
         {
-            ChattingEChatEvent(cr, e, user, data);
+            ResetUserList();
         }
 
-        private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
+        private void RoomOnOnMessageRecieved(object sender , NewUser from , string message)
         {
-            if (cr.Id == Id)
-            {
-                Dispatcher.Invoke(new Action(() =>
-                                                 {
-                                                     switch (e)
-                                                     {
-                                                         case Chatting.ChatEvent.ChatMessage:
-                                                             {
-                                                                 Brush b = Brushes.Black;
-                                                                 if (user.Uid == Program.LobbyClient.Me.Uid)
-                                                                     b = Brushes.Blue;
+            Dispatcher.Invoke(new Action(()=>
+                {
+                    Brush b = Brushes.Black;
+                    if (from.Equals(Program.LClient.Me))
+                        b = Brushes.Blue;
 
-                                                                 Run r = GetUserRun(user.DisplayName,
-                                                                                    "[" + user.DisplayName + "] : ");
-                                                                 r.Foreground = b;
-                                                                 var mess = data as string;
-                                                                 AddChatText(r, mess);
-                                                                 break;
-                                                             }
-                                                         case Chatting.ChatEvent.MeJoinedChat:
-                                                             {
-                                                                 ResetUserList();
-                                                                 break;
-                                                             }
-                                                         case Chatting.ChatEvent.UserJoinedChat:
-                                                             {
-                                                                 string reg =
-                                                                     SimpleConfig.ReadValue(
-                                                                         "Options_HideLoginNotifications");
-                                                                 if (reg == "false" || reg == null)
-                                                                 {
-                                                                     var r = new Run("#" + user.DisplayName + ": ");
-                                                                     Brush b = Brushes.DarkGray;
-                                                                     r.ToolTip = DateTime.Now.ToLongTimeString() + " " +
-                                                                                 DateTime.Now.ToLongDateString();
-                                                                     r.Foreground = b;
-                                                                     AddChatText(r, "Joined the chat.", b);
-                                                                     ResetUserList();
-                                                                 }
-                                                                 break;
-                                                             }
-                                                         case Chatting.ChatEvent.UserLeftChat:
-                                                             {
-                                                                 string reg =
-                                                                     SimpleConfig.ReadValue(
-                                                                         "Options_HideLoginNotifications");
-                                                                 if (reg == "false" || reg == null)
-                                                                 {
-                                                                     var r = new Run("#" + user.DisplayName + ": ");
-                                                                     Brush b = Brushes.LightGray;
-                                                                     r.ToolTip = DateTime.Now.ToLongTimeString() + " " +
-                                                                                 DateTime.Now.ToLongDateString();
-                                                                     r.Foreground = b;
-                                                                     AddChatText(r, "Left the chat.", b);
-                                                                     ResetUserList();
-                                                                 }
-                                                                 break;
-                                                             }
-                                                     }
-                                                     miLeaveChat.IsEnabled = cr.IsGroupChat && cr.Id != 0;
-                                                 }));
-            }
+                    Run r = GetUserRun(from.User.User,
+                                       "[" + from.User.User + "] : ");
+                    r.Foreground = b;
+                    AddChatText(r, message);   
+                }));
         }
+
 
         private void AddChatText(Inline headerRun, string chat, Brush b = null)
         {
@@ -239,7 +182,7 @@ namespace Octgn.Launcher
             }
             else
             {
-                if (s.Equals(Program.LobbyClient.Me.DisplayName))
+                if (s.Equals(Program.LClient.Username))
                 {
                     b = Brushes.Blue;
                     ret = new Bold(r);
@@ -247,7 +190,7 @@ namespace Octgn.Launcher
                 else
                 {
                     Boolean fUser = false;
-                    if (listBox1.Items.Cast<User>().Any(u => u.DisplayName == s))
+                    if (listBox1.Items.Cast<NewUser>().Any(u => u.User.User == s))
                     {
                         b = Brushes.LightGreen;
                         ret = new Bold(r) {ToolTip = "Click to whisper"};
@@ -304,15 +247,15 @@ namespace Octgn.Launcher
         {
             Dispatcher.Invoke(new Action(() =>
                                              {
-                                                 ChatRoom cr = Program.LobbyClient.Chatting.GetChatRoomFromRid(Id);
-                                                 if (cr == null) return;
-                                                 listBox1.Items.Clear();
-                                                 Users = new List<User>();
 
-                                                 foreach (User u in cr.GetUserList())
+                                                this.Title = (Room.IsGroupChat)
+                                                                 ? Room.GroupUser.User.User
+                                                                 : "Chat with: "
+                                                                   + Room.Users.SingleOrDefault(x => x.User.Bare != Program.LClient.Me.User.Bare).User.User;
+                                                                 listBox1.Items.Clear();
+                                                 foreach (var u in Room.Users)
                                                  {
                                                      listBox1.Items.Add(u);
-                                                     Users.Add(u);
                                                  }
                                              }));
         }
@@ -321,27 +264,23 @@ namespace Octgn.Launcher
         {
             var s = e.Data.GetData(typeof (String)) as String;
             if (s == null) return;
-            int uid;
-            if (!Int32.TryParse(s, out uid)) return;
-            //TODO: Should be pulling from FriendList
-            User u = Program.LobbyClient.GetFriendFromUid(uid);
-            if (u != null && (u.Status != UserStatus.Offline || u.Status != UserStatus.Unknown))
-            {
-                Program.LobbyClient.Chatting.AddUserToChat(u, Id);
-            }
+            Room.AddUser(new NewUser(new Jid(s)));
+            if (Room.IsGroupChat && Room.GroupUser.User.User != "lobby") miLeaveChat.IsEnabled = true;
         }
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
+
+            this.Title = (Room.IsGroupChat)
+                             ? Room.GroupUser.User.User
+                             : "Chat with: "
+                               + Room.Users.SingleOrDefault(x => x.User.Bare != Program.LClient.Me.User.Bare).User.User;
+            ResetUserList();
         }
 
         private void WindowUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.Chatting.LeaveChatRoom(Id);
-            Program.LobbyClient.Chatting.EChatEvent -= ChattingEChatEvent;
             Program.ChatWindows.RemoveAll(r => r.Id == Id);
-            Program.LobbyClient.OnUserStatusChanged -= LobbyClientOnOnUserStatusChanged;
             var cl = Program.ClientWindow.frame1.Content as ContactList;
             if (cl != null)
                 cl.RefreshList();
@@ -351,7 +290,10 @@ namespace Octgn.Launcher
         {
             if (e.Key != Key.Enter) return;
             if (textBox1.Text.Trim().Length <= 0) return;
-            Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
+            Room.SendMessage(textBox1.Text);
+            if(!Room.IsGroupChat)
+                RoomOnOnMessageRecieved(this,Program.LClient.Me,textBox1.Text);
+            //Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
             textBox1.Text = "";
         }
 
@@ -380,9 +322,9 @@ namespace Octgn.Launcher
 
         private void MiClick(object sender, RoutedEventArgs e)
         {
-            var u = listBox1.SelectedItem as User;
+            var u = listBox1.SelectedItem as NewUser;
             if (u != null)
-                Program.LobbyClient.AddFriend(u.Email);
+                Program.LClient.SendFriendRequest(u.User.Bare);
         }
     }
 }

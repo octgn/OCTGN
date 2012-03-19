@@ -1,6 +1,6 @@
 ﻿<Window x:Class="Octgn.Launcher.UpdateChecker" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Loading Octgn..." Height="112" Width="438"
-        WindowStartupLocation="CenterScreen" Icon="/OCTGN;component/Resources/Icons/Reset.png" ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen" Icon="/Octgn;component/Resources/Icons/Reset.png" ResizeMode="NoResize"
         ShowInTaskbar="False" Topmost="False" WindowStyle="None">
 
   <Border BorderBrush="Silver" BorderThickness="1" Name="border1">

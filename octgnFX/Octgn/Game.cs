@@ -24,12 +24,13 @@ namespace Octgn
         private const int MaxRecentCards = 10;
 
         private readonly GameDef _definition;
-        // TODO: why a SortedList? Wouldn't a Dictionary be sufficient?
         private readonly SortedList<Guid, MarkerModel> _markersById = new SortedList<Guid, MarkerModel>();
         private readonly List<RandomRequest> _random = new List<RandomRequest>();
         private readonly List<CardModel> _recentCards = new List<CardModel>(MaxRecentCards);
         private readonly List<MarkerModel> _recentMarkers = new List<MarkerModel>(MaxRecentMarkers);
         private readonly Table _table;
+
+        //wouldn't a heap be best for these caches? 
         private bool _stopTurn;
         private Player _turnPlayer;
         private ushort _uniqueId;
@@ -61,10 +62,10 @@ namespace Octgn
             }
             else
             {
-                if(Program.LobbyClient == null || Program.LobbyClient.Me == null)
+                if(Program.LClient == null || Program.LClient.Me == null)
                     nick = "User" + new Random().Next().ToString(CultureInfo.InvariantCulture);
                 else
-                    nick = Program.LobbyClient.Me.DisplayName;
+                    nick = Program.LClient.Me.User.User;
             }
         }
 
@@ -275,13 +276,13 @@ namespace Octgn
                 foreach (Deck.Element element in section.Cards)
                 {
                     for (int i = 0; i < element.Quantity; i++)
-                    {
-                        ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | element.Card.Id.Condense();
+                    { //for every card in the deck, generate a unique key for it, ID for it
+                        ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | element.Card.Id.Condense();
                         int id = GenerateCardId();
                         ids[j] = id;
                         keys[j] = Crypto.ModExp(key);
                         groups[j] = group;
-                        var card = new Card(player, id, key, cardDef, element.Card, true);
+                        var card = new Card(player, id, key, cardDef, Database.GetCardById(element.Card.Id), true);
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
                     }

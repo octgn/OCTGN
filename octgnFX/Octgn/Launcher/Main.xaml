@@ -1,7 +1,7 @@
 ﻿<ribbon:RibbonWindow x:Class="Octgn.Launcher.Main" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary" Title="Octgn"
-                     x:Name="Window" Width="416" Height="519" Icon="/OCTGN;component/Resources/icon.ico" MinWidth="368"
+                     x:Name="Window" Width="416" Height="559" Icon="/Octgn;component/Resources/icon.ico" MinWidth="368"
                      Closing="WindowClosing">
   <ribbon:RibbonWindow.Resources>
     <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
@@ -81,27 +81,27 @@
       <ribbon:RibbonTab Header="Games">
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton Label="Select Game" LargeImageSource="/Resources/Icons/bullet_arrow_down.png"
-                               Click="RibbonButtonClick1" SmallImageSource="/OCTGN;component/Resources/Icons/bullet_arrow_down_small.png" />
+                               Click="RibbonButtonClick1" SmallImageSource="/Octgn;component/Resources/Icons/bullet_arrow_down_small.png" />
           <ribbon:RibbonButton x:Name="bDeckEditor" Label="Deck Editor"
                                LargeImageSource="/Resources/Icons/page_edit.png" Click="BDeckEditorClick"
-                               SmallImageSource="/OCTGN;component/Resources/Icons/page_edit_small.png" />
+                               SmallImageSource="/Octgn;component/Resources/Icons/page_edit_small.png" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton Label="Install Game" LargeImageSource="/Resources/Icons/ruby_Add.png"
-                               Click="RibbonButtonClick" SmallImageSource="/OCTGN;component/Resources/Icons/ruby_add_small.png" />
+                               Click="RibbonButtonClick" SmallImageSource="/Octgn;component/Resources/Icons/ruby_add_small.png" />
           <ribbon:RibbonButton Label="Remove Game" LargeImageSource="/Resources/Icons/ruby_delete.png"
-                               IsEnabled="False" SmallImageSource="/OCTGN;component/Resources/Icons/ruby_delete_small.png" />
+                               IsEnabled="False" SmallImageSource="/Octgn;component/Resources/Icons/ruby_delete_small.png" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton x:Name="bInstallSets" Label="Install Sets"
                                LargeImageSource="/Resources/Icons/image_add.png" Click="BInstallSetsClick"
-                               SmallImageSource="/OCTGN;component/Resources/Icons/image_add_small.png" />
+                               SmallImageSource="/Octgn;component/Resources/Icons/image_add_small.png" />
           <ribbon:RibbonButton x:Name="bRemoveSets" Label="Remove Sets"
                                LargeImageSource="/Resources/Icons/image_delete.png" Click="RibbonButtonClick2"
-                               SmallImageSource="/OCTGN;component/Resources/Icons/image_delete_small.png" />
+                               SmallImageSource="/Octgn;component/Resources/Icons/image_delete_small.png" />
           <ribbon:RibbonButton x:Name="bPatchSets" Label="Patch All Sets"
                                LargeImageSource="/Resources/Icons/image_link.png" Click="BPatchSetsClick"
-                               SmallImageSource="/OCTGN;component/Resources/Icons/image_link_small.png" />
+                               SmallImageSource="/Octgn;component/Resources/Icons/image_link_small.png" />
         </ribbon:RibbonGroup>
       </ribbon:RibbonTab>
       <ribbon:RibbonTab Header="Options" Foreground="Black">

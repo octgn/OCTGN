@@ -19,8 +19,11 @@ using Octgn.DeckBuilder;
 using Octgn.Definitions;
 using Octgn.Networking;
 using Skylabs.Lobby;
+using agsXMPP;
+using agsXMPP.protocol.client;
 using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
+using Client = Octgn.Networking.Client;
 using ContextMenu = System.Windows.Forms.ContextMenu;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
@@ -36,9 +39,12 @@ namespace Octgn.Launcher
         public static readonly DependencyProperty IsHideLoginNotificationsCheckedProperty =
             DependencyProperty.Register("IsHideLoginNotificationsChecked", typeof (string), typeof (Window),
                                         new UIPropertyMetadata(Prefs.HideLoginNotifications));
-
         private readonly Duration _duration = new Duration(TimeSpan.FromSeconds(.5));
-
+        public string IsHideJoinsChecked
+        {
+            get { return (string) GetValue(IsHideLoginNotificationsCheckedProperty); }
+            set { SetValue(IsHideLoginNotificationsCheckedProperty, value); }
+        }
         public RoutedCommand DebugWindowCommand = new RoutedCommand();
         public NotifyIcon SystemTrayIcon;
         private bool _allowDirectNavigation;
@@ -53,7 +59,7 @@ namespace Octgn.Launcher
             InitializeComponent();
             //Set title with version info.
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            Title = "OCTGN  version " + version;
+            Title = "Octgn  verson " + version;
 
             frame1.Navigate(new ContactList());
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
@@ -65,13 +71,11 @@ namespace Octgn.Launcher
             var kg = new KeyGesture(Key.M, ModifierKeys.Control);
             var ib = new InputBinding(DebugWindowCommand, kg);
             InputBindings.Add(ib);
-            Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
-            Program.LobbyClient.OnDisconnect += lobbyClient_OnDisconnectEvent;
-            Program.LobbyClient.OnUserStatusChanged += lobbyClient_OnUserStatusChanged;
-            Program.LobbyClient.Chatting.EChatEvent += ChattingEChatEvent;
-            Program.LobbyClient.OnDataRecieved += lobbyClient_OnDataRecieved;
-            tbUsername.Text = Program.LobbyClient.Me.DisplayName;
-            tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
+            //Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
+            Program.LClient.OnFriendRequest += LClientOnOnFriendRequest;
+            Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
+            tbUsername.Text = Program.LClient.Username;
+            tbStatus.Text = Program.LClient.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
             var cm = new ContextMenu();
             cm.MenuItems.Add("Show", CmShowClick).DefaultItem = true;
@@ -88,6 +92,49 @@ namespace Octgn.Launcher
             SystemTrayIcon.DoubleClick += SystemTrayIconDoubleClick;
             // Insert code required on object creation below this point.
             RefreshGameFilter(true);
+        }
+
+        private void LClientOnOnDataRecieved(object sender, Skylabs.Lobby.Client.DataRecType type, object data)
+        {
+            Dispatcher.Invoke(new Action(()=>
+            {
+
+                tbStatus.Text = Program.LClient.CustomStatus;
+                switch(Program.LClient.Status)
+                {
+                    case UserStatus.Unknown:
+                        rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
+                        break;
+                    case UserStatus.Offline:
+                        rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
+                        break;
+                    case UserStatus.Online:
+                        rgStatus.LargeImageSource = bOnlineStatus.LargeImageSource;
+                        break;
+                    case UserStatus.Away:
+                        rgStatus.LargeImageSource = bAwayStatus.LargeImageSource;
+                        break;
+                    case UserStatus.DoNotDisturb:
+                        rgStatus.LargeImageSource = bBusyStatus.LargeImageSource;
+                        break;
+                    case UserStatus.Invisible:
+                        rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
+                        break;
+                }
+                SimpleConfig.WriteValue("Nickname", Program.LClient.Me.User.User);
+            }
+            ));
+        }
+
+        private void LClientOnOnFriendRequest(object sender, Jid user)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                if (frame1.Content as NotificationList != null) return;
+                NotificationTab.HeaderStyle =
+                    Resources["AlertHeaderColor"] as Style;
+                NotificationTab.InvalidateVisual();
+            }));
         }
 
         public void RefreshGameFilter(bool ForceRefresh = false)
@@ -133,12 +180,6 @@ namespace Octgn.Launcher
             HostedGameList hostedGameList = frame1.Content as HostedGameList;
             if (hostedGameList != null)
                 hostedGameList.FilterGames(sender.GameId, show);
-        }
-
-        public string IsHideJoinsChecked
-        {
-            get { return (string) GetValue(IsHideLoginNotificationsCheckedProperty); }
-            set { SetValue(IsHideLoginNotificationsCheckedProperty, value); }
         }
 
         private void FrameNavigating(object sender, NavigatingCancelEventArgs e)
@@ -191,17 +232,7 @@ namespace Octgn.Launcher
                                                          frame1.BeginAnimation(OpacityProperty, animation0);
                                                      });
         }
-
-        private static void lobbyClient_OnDataRecieved(DataRecType type, object e)
-        {
-            if (type != DataRecType.ServerMessage) return;
-            var m = e as string;
-            if (m != null && !String.IsNullOrWhiteSpace(m))
-            {
-                MessageBox.Show(m, "Server Message", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-        }
-
+        
         private void MainInitialized(object sender, EventArgs e)
         {
             Left = double.Parse(SimpleConfig.ReadValue("MainLeftLoc", "100"));
@@ -219,30 +250,6 @@ namespace Octgn.Launcher
             CmShowClick(sender, e);
         }
 
-        private void ChattingEChatEvent(ChatRoom cr, Chatting.ChatEvent e, User user, object data)
-        {
-            Dispatcher.Invoke(new Action(() =>
-                                             {
-                                                 ChatWindow cw =
-                                                     Program.ChatWindows.FirstOrDefault(cww => cww.Id == cr.Id);
-                                                 if (cw == null)
-                                                 {
-                                                     var c = new ChatWindow(cr.Id);
-                                                     c.Loaded += delegate { c.ChatEvent(cr, e, user, data); };
-                                                     Program.ChatWindows.Add(c);
-                                                     if (cr.Id != 0)
-                                                         c.Show();
-                                                 }
-                                                 else
-                                                 {
-                                                     if (cw.Id != 0)
-                                                     {
-                                                         cw.Show();
-                                                     }
-                                                 }
-                                             }));
-        }
-
         private void CmQuitClick(object sender, EventArgs e)
         {
             CloseDownShop(true);
@@ -257,17 +264,6 @@ namespace Octgn.Launcher
         {
             Visibility = Visibility.Visible;
             SystemTrayIcon.Visible = false;
-        }
-
-        private void lobbyClient_OnFriendRequest(User u)
-        {
-            Dispatcher.Invoke(new Action(() =>
-                                             {
-                                                 if (frame1.Content as NotificationList != null) return;
-                                                 NotificationTab.HeaderStyle =
-                                                     Resources["AlertHeaderColor"] as Style;
-                                                 NotificationTab.InvalidateVisual();
-                                             }));
         }
 
         private void RibbonSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -372,11 +368,9 @@ namespace Octgn.Launcher
                 Application.Current.MainWindow = Program.ClientWindow;
             }
             Program.ClientWindow.Close();
-            Program.LobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
-            Program.LobbyClient.OnDisconnect -= lobbyClient_OnDisconnectEvent;
-            Program.LobbyClient.OnUserStatusChanged -= lobbyClient_OnUserStatusChanged;
-            Program.LobbyClient.OnDataRecieved -= lobbyClient_OnDataRecieved;
-            Program.LobbyClient.Stop();
+            Program.LClient.OnDataRecieved -= LClientOnOnDataRecieved;
+            Program.LClient.OnFriendRequest -= LClientOnOnFriendRequest;
+            Program.LClient.Stop();
             Program.Exit();
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
@@ -525,36 +519,25 @@ namespace Octgn.Launcher
         private void BOnlineStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bOnlineStatus.LargeImageSource;
-            Program.LobbyClient.SetStatus(UserStatus.Online);
+            Program.LClient.SetStatus(UserStatus.Online);
         }
 
         private void BBusyStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bBusyStatus.LargeImageSource;
-            Program.LobbyClient.SetStatus(UserStatus.DoNotDisturb);
+            Program.LClient.SetStatus(UserStatus.DoNotDisturb);
         }
 
         private void BOfflineStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
-            Program.LobbyClient.SetStatus(UserStatus.Invisible);
+            Program.LClient.SetStatus(UserStatus.Invisible);
         }
 
         private void BAwayStatusClick(object sender, RoutedEventArgs e)
         {
             rgStatus.LargeImageSource = bAwayStatus.LargeImageSource;
-            Program.LobbyClient.SetStatus(UserStatus.Away);
-        }
-
-        private void lobbyClient_OnUserStatusChanged(UserStatus eve, User u)
-        {
-            Dispatcher.Invoke(new Action(() =>
-                                             {
-                                                 if (!u.Equals(Program.LobbyClient.Me)) return;
-                                                 tbUsername.Text = Program.LobbyClient.Me.DisplayName;
-                                                 tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
-                                                 SimpleConfig.WriteValue("Nickname", Program.LobbyClient.Me.DisplayName);
-                                             }));
+            Program.LClient.SetStatus(UserStatus.Away);
         }
 
         private void TbUsernameMouseUp(object sender, MouseButtonEventArgs e)
@@ -567,19 +550,21 @@ namespace Octgn.Launcher
         private void TbUsernameLostFocus(object sender, RoutedEventArgs e)
         {
             tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbUsername.Text = Program.LobbyClient.Me.DisplayName;
+            tbUsername.Text = Program.LClient.Username;
+            //tbUsername.Text = Program.LobbyClient.Me.DisplayName;
         }
 
         private void TbUsernameLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             tbUsername.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbUsername.Text = Program.LobbyClient.Me.DisplayName;
+            tbUsername.Text = Program.LClient.Username;
+            //tbUsername.Text = Program.LobbyClient.Me.DisplayName;
         }
 
         private void TbUsernameKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
-            Program.LobbyClient.SetDisplayName(tbUsername.Text);
+            //Program.LobbyClient.SetDisplayName(tbUsername.Text);
             tbUsername.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
         }
 
@@ -593,7 +578,7 @@ namespace Octgn.Launcher
         private void TbStatusLostFocus(object sender, RoutedEventArgs e)
         {
             tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
+            tbStatus.Text = Program.LClient.CustomStatus;
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
         }
@@ -601,7 +586,7 @@ namespace Octgn.Launcher
         private void TbStatusLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             tbStatus.Style = (Style) TryFindResource("LabelBoxUnSelected");
-            tbStatus.Text = Program.LobbyClient.Me.CustomStatus;
+            tbStatus.Text = Program.LClient.CustomStatus;
             if (String.IsNullOrWhiteSpace(tbStatus.Text) && !tbStatus.IsKeyboardFocused)
                 tbStatus.Text = "Set a custom status here";
         }
@@ -609,7 +594,7 @@ namespace Octgn.Launcher
         private void TbStatusKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
-            Program.LobbyClient.SetCustomStatus(tbStatus.Text);
+            Program.LClient.SetCustomStatus(tbStatus.Text);
             tbStatus.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left));
         }
 
@@ -634,8 +619,8 @@ namespace Octgn.Launcher
             if (_isLegitClosing) return;
             SystemTrayIcon.Visible = true;
             Visibility = Visibility.Hidden;
-            SystemTrayIcon.ShowBalloonTip(5000, "OCTGN",
-                                          "OCTGN has minimized to your system tray and is still running. Double click the icon to open it again.",
+            SystemTrayIcon.ShowBalloonTip(5000, "Octgn",
+                                          "Octgn has minimized to your system tray and is still running. Double click the icon to open it again.",
                                           ToolTipIcon.Info);
             e.Cancel = true;
         }

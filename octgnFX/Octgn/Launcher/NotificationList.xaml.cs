@@ -18,7 +18,7 @@ namespace Octgn.Launcher
 
         private void ReloadList()
         {
-            Notification[] nlist = Program.LobbyClient.GetNotificationList();
+            Notification[] nlist = Program.LClient.GetNotificationList();
             foreach (FriendRequestNotification fi in from n in nlist
                                                      where
                                                          n.GetType() == typeof (Skylabs.Lobby.FriendRequestNotification)
@@ -46,18 +46,10 @@ namespace Octgn.Launcher
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
             ReloadList();
-            Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
-        }
-
-        private void lobbyClient_OnFriendRequest(User u)
-        {
-            //Reload_List();
-            Dispatcher.Invoke(new Action(ReloadList));
         }
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.OnFriendRequest -= lobbyClient_OnFriendRequest;
         }
     }
 }

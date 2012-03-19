@@ -540,13 +540,20 @@ namespace Octgn.Server
                         stream.Write(_xmlData, 0, _xmlLength);
                     stream.Flush();
                 }
-                    // TODO notify disconnection
                 catch (Exception e)
                 {
                     Debug.WriteLine(e);
                     if (Debugger.IsAttached) Debugger.Break();
                 }
             //					Program.server.Disconnected(kvp.Key);
+        }
+        public void SwitchWithAlternate(int c)
+        {
+            if (_xml != null)
+                _xml.SwitchWithAlternate(c);
+            if (_bin != null)
+                _bin.SwitchWithAlternate(c);
+            Send();
         }
 
         public void IsAlternateImage(int c, bool isaltertnate)

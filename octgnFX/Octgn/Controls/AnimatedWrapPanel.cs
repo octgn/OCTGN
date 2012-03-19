@@ -40,7 +40,6 @@ namespace Octgn.Controls
                 Point arrangePosition;
                 Transform currentTransform = GetCurrentLayoutInfo(child, out arrangePosition);
 
-                //HACK: see the comment at the end of this method
                 bool bypassTransform = _isAnimationValid != (int) GetValue(IsAnimationValidProperty);
 
                 // If we had previously stored an arrange position, see if it has moved
@@ -55,7 +54,6 @@ namespace Octgn.Controls
                         // If we apply the current transform to the saved arrange position, we'll see where
                         // it was last rendered
                         Point lastRenderPosition = currentTransform.Transform(savedArrangePosition);
-                        // HACK: see the comment at the end of this method
                         if (bypassTransform)
                             lastRenderPosition = (Point) child.GetValue(SavedCurrentPositionProperty);
                         else
@@ -85,7 +83,7 @@ namespace Octgn.Controls
                 // Save off the previous arrange position				
                 child.SetValue(SavedArrangePositionProperty, arrangePosition);
             }
-            // HACK: currently WPF doesn't allow me to read a value right after the call to BeginAnimation
+            // currently WPF doesn't allow me to read a value right after the call to BeginAnimation
             // this code enables me to trick it and know whether I can trust the current position or not.
             _isAnimationValid = (int) GetValue(IsAnimationValidProperty) + 1;
             BeginAnimation(IsAnimationValidProperty,

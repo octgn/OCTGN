@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Octgn.DeckBuilder.DeckBuilderWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ctrl="clr-namespace:Octgn.Controls"
         xmlns:gui="clr-namespace:Octgn.Play.Gui" xmlns:deck="clr-namespace:Octgn.DeckBuilder" x:Name="self"
-        Title="OCTGN Deck Builder" Height="600" Width="776" Style="{StaticResource DialogWindow}">
+        Title="Octgn Deck Builder" Height="600" Width="776" Style="{StaticResource DialogWindow}">
 
   <Window.CommandBindings>
     <CommandBinding Command="gui:Commands.LoadDeck" Executed="LoadDeckCommand" />
@@ -44,9 +44,11 @@
 
     <Border Grid.Row="2" Margin="4,2,2,4" Padding="6" Style="{StaticResource Panel}">
       <ScrollViewer VerticalScrollBarVisibility="Auto">
+          
         <ItemsControl ItemsSource="{Binding Deck.Sections, ElementName=self}"
                       ScrollViewer.VerticalScrollBarVisibility="Visible">
-          <ItemsControl.ItemTemplate>
+          <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
+                    <ItemsControl.ItemTemplate>
             <DataTemplate>
               <Expander IsExpanded="True" GotFocus="SetActiveSection">
                 <Expander.Header>

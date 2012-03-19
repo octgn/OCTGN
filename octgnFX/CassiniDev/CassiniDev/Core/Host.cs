@@ -250,7 +250,6 @@ namespace CassiniDev
 
         private void AddPendingCall()
         {
-            //TODO: investigate this issue - ref var not volitile
 #pragma warning disable 0420
             Interlocked.Increment(ref _pendingCallsCount);
 #pragma warning restore 0420
@@ -258,7 +257,6 @@ namespace CassiniDev
 
         private void RemovePendingCall()
         {
-            //TODO: investigate this issue - ref var not volitile
 #pragma warning disable 0420
             Interlocked.Decrement(ref _pendingCallsCount);
 #pragma warning restore 0420

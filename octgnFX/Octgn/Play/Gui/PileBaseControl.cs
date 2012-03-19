@@ -44,7 +44,7 @@ namespace Octgn.Play.Gui
         protected void ViewTopCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            int count = OCTGN.InputPositiveInt("View top cards", "How many cards do you want to see?", 1);
+            int count = Dialog.InputPositiveInt("View top cards", "How many cards do you want to see?", 1);
             var playWindow = (PlayWindow) Window.GetWindow(this);
             if (playWindow == null) return;
             ChildWindowManager manager = playWindow.wndManager;
@@ -54,7 +54,7 @@ namespace Octgn.Play.Gui
         protected void ViewBottomCards(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-            int count = OCTGN.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1);
+            int count = Dialog.InputPositiveInt("View bottom cards", "How many cards do you want to see?", 1);
             var playWindow = (PlayWindow) Window.GetWindow(this);
             if (playWindow == null) return;
             ChildWindowManager manager = playWindow.wndManager;

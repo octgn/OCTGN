@@ -1,79 +1,108 @@
 ﻿using System;
 using System.Collections.Generic;
 using Skylabs.Net;
+using agsXMPP;
+using agsXMPP.Xml.Dom;
+using agsXMPP.protocol.component;
 
 namespace Skylabs.Lobby
-{
+{        
     [Serializable]
-    public class HostedGameData : IEquatable<HostedGameData>, IEqualityComparer<HostedGameData>
+    public enum EHostedGame
     {
-        #region EHostedGame enum
-
-        [Serializable]
-        public enum EHostedGame
+        StartedHosting,
+        GameInProgress,
+        StoppedHosting
+    };
+    public class HostedGameData :Element
+    {
+        public HostedGameData() : base("gameitem","gameitem","octgn:gameitem")
         {
-            StartedHosting,
-            GameInProgress,
-            StoppedHosting
-        };
+            
+        }
 
-        #endregion
-
-        public HostedGameData(Guid gameguid, Version gameversion, int port, string name, bool passreq, User huser,
+        public HostedGameData(Guid gameguid, Version gameversion, int port, string name, NewUser huser,
                           DateTime startTime)
+            : base("gameitem", "gameitem", "octgn:gameitem")
         {
             GameGuid = gameguid;
             GameVersion = gameversion;
             Port = port;
             Name = name;
-            PasswordRequired = passreq;
             UserHosting = huser;
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = startTime;
         }
 
         public HostedGameData(SocketMessage sm)
+            : base("gameitem", "gameitem", "octgn:gameitem")
         {
             GameGuid = (Guid) sm["guid"];
             GameVersion = (Version) sm["version"];
             Port = (int) sm["port"];
             Name = (string) sm["name"];
-            PasswordRequired = (bool) sm["passrequired"];
-            UserHosting = (User) sm["hoster"];
+            UserHosting = ((NewUser) sm["hoster"]);
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
         }
 
-        public Guid GameGuid { get; private set; }
-        public Version GameVersion { get; private set; }
-        public int Port { get; private set; }
-        public String Name { get; private set; }
-        public bool PasswordRequired { get; private set; }
-        public User UserHosting { get; private set; }
-        public EHostedGame GameStatus { get; set; }
-        public DateTime TimeStarted { get; private set; }
-
-        #region IEqualityComparer<HostedGame> Members
-
-        public bool Equals(HostedGameData x, HostedGameData y)
+        public Guid GameGuid
         {
-            return x.Port == y.Port;
+            get
+            {
+                Guid ret = Guid.Empty;
+                Guid.TryParse(GetTag("guid"),out ret);
+                return ret;
+            } 
+            set{SetTag("guid",value.ToString());}
         }
-
-        public int GetHashCode(HostedGameData obj)
+        public Version GameVersion
         {
-            return obj.Port;
+            get
+            {
+                Version v = new Version(0,0);
+                Version.TryParse(GetTag("version") , out v);
+                return v;
+            } 
+            set
+            {
+                SetTag("version",value.ToString());
+            }
         }
-
-        #endregion
-
-        #region IEquatable<HostedGame> Members
-
-        public bool Equals(HostedGameData other)
+        public int Port
         {
-            return other.Port == Port;
+            get { return GetTagInt("port"); }
+            set{SetTag("port",value);}
         }
-
-        #endregion
+        public String Name
+        {
+            get { return GetTag("name"); }
+            set{SetTag("name",value);}
+        }
+        public NewUser UserHosting
+        {
+            get { return new NewUser(GetTagJid("userhosting")); }
+            set{SetTag("userhosting",value.User.Bare);}
+        }
+        public EHostedGame GameStatus
+        {
+            get
+            {
+                EHostedGame ret = EHostedGame.StoppedHosting;
+                Enum.TryParse(GetTag("gamestatus") , out ret);
+                return ret;
+            }
+            set{SetTag("gamestatus",value.ToString());}
+        }
+        public DateTime TimeStarted
+        {
+            get
+            {
+                DateTime ret = DateTime.Now;
+                DateTime.TryParse(GetTag("timestarted") , out ret);
+                return ret;
+            }
+            set{SetTag("timestarted",value.ToString());}
+        }
     }
 }

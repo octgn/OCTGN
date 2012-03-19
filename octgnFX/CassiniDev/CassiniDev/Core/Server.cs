@@ -735,7 +735,6 @@ namespace CassiniDev
             catch
                 // ReSharper restore EmptyGeneralCatchClause
             {
-                // TODO: why the swallow?
             }
             finally
             {
@@ -761,7 +760,6 @@ namespace CassiniDev
             catch
                 // ReSharper restore EmptyGeneralCatchClause
             {
-                // TODO: what am i afraid of here?
             }
         }
 
