@@ -32,7 +32,7 @@ namespace Skylabs.LobbyServer
             Xmpp.AutoPresence = true;
             Xmpp.AutoRoster = true;
             Xmpp.Username = "gameserv";
-            Xmpp.Password = "123456";
+            Xmpp.Password = "12345";
 
             Xmpp.Priority = 1;
             Xmpp.OnLogin += XmppOnOnLogin;
@@ -42,19 +42,27 @@ namespace Skylabs.LobbyServer
             Xmpp.OnAuthError += new XmppElementHandler(Xmpp_OnAuthError);
             Xmpp.OnReadXml += XmppOnOnReadXml;
             Xmpp.OnPresence += XmppOnOnPresence;
+            Xmpp.OnWriteXml += XmppOnOnWriteXml;
             Xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
             _userList = new ThreadSafeList<Jid>();
             Xmpp.Open();
         }
 
+        private static void XmppOnOnWriteXml(object sender , string xml)
+        {
+            
+        }
+
         private static void XmppOnOnPresence(object sender , Presence pres)
         {
+            Trace.WriteLine("[Bot]OnPresence");
             switch (pres.Type)
             {
                 case PresenceType.available:
                     if(pres.From.Server == "conference.skylabsonline.com")
                     {
-                        _userList.Add(pres.MucUser.Item.Jid.Bare);
+                        if (!_userList.Contains(pres.MucUser.Item.Jid.Bare))
+                            _userList.Add(pres.MucUser.Item.Jid.Bare);
                     }
                     break;
                 case PresenceType.unavailable:
@@ -66,6 +74,7 @@ namespace Skylabs.LobbyServer
                     break;
                 }
             }
+            Trace.WriteLine("[Bot]OnPresenceEnd");
         }
 
         private static void XmppOnOnReadXml(object sender , string xml)
@@ -153,11 +162,14 @@ namespace Skylabs.LobbyServer
 
         public static void RefreshLists()
         {
-            foreach(var u in _userList)
+            Trace.WriteLine("[Bot]RefreshList");
+            var arr = _userList.ToArray();
+            foreach(var u in arr)
             {
                 var m = new Message(u , MessageType.normal , "" , "refresh");
                 Xmpp.Send(m);
             }
+            Trace.WriteLine("[Bot]RefreshListEnd");
         }
 
         private static void XmppOnOnLogin(object sender) 

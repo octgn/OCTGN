@@ -556,7 +556,7 @@ namespace Octgn.Play
                     else
                     {
                         pArray[0] = p;
-                        Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.Encrypt(Type.Model.Id, p.PublicKey));
+                        Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.Encrypt(isAlternate() ? _alternateOf.Id : Type.Model.Id, p.PublicKey));
                     }
                 }
             }

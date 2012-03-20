@@ -686,7 +686,7 @@ namespace Octgn.Server
                 writer.WriteAttributeString("muted", _handler.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("player", player.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("from", from.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("lTo", lTo.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("to", lTo.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString());
             writer.WriteElementString("name", name);
             writer.WriteElementString("count", count.ToString(CultureInfo.InvariantCulture));
@@ -705,7 +705,7 @@ namespace Octgn.Server
                 writer.WriteAttributeString("muted", _handler.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("player", player.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("lTo", lTo.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("to", lTo.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("requested", requested.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
@@ -721,7 +721,7 @@ namespace Octgn.Server
             if (_handler.Muted != 0)
                 writer.WriteAttributeString("muted", _handler.Muted.ToString(CultureInfo.InvariantCulture));
             writer.WriteElementString("id", id.ToString(CultureInfo.InvariantCulture));
-            writer.WriteElementString("lTo", lTo.ToString(CultureInfo.InvariantCulture));
+            writer.WriteElementString("to", lTo.ToString(CultureInfo.InvariantCulture));
             writer.WriteEndElement();
             writer.Close();
             Send(sb.ToString());
