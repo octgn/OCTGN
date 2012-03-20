@@ -167,8 +167,8 @@ namespace Octgn.Data
         {
             DataColumnCollection columns = row.Table.Columns;
             Guid alternateGuid;
-            if (!Guid.TryParse(row["alternate"].ToString(), out alternateGuid))//If the guid fails, set to 0;
-                { alternateGuid = Guid.Empty; }
+            if (!Guid.TryParse(row["alternate"].ToString(), out alternateGuid))
+                { alternateGuid = Guid.Empty; }//If the guid fails, set to 0;
             var result = new CardModel
                              {
                                  Id = Guid.Parse(row["id"].ToString()),
