@@ -22,6 +22,7 @@
 *.vssscc
 *_i.c
 *_p.c
+*.orig
 .svn
 /octgnFX/CassiniDev/CassiniDev/bin
 /octgnFX/CassiniDev/CassiniDev/obj

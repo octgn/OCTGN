@@ -95,7 +95,7 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnReadXml(object sender , string xml)
         {
-            Debug.WriteLine(xml);
+            Trace.WriteLine(xml);
         }
 
         private void XmppOnOnIq(object sender, IQ iq)
