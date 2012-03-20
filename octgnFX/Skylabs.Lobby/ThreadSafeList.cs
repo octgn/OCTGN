@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Skylabs.Lobby
 {
-    public class ThreadSafeList<T> : IList<T>, ICollection, IDisposable
+    public class ThreadSafeList<T> : IList<T>, IDisposable
     {
         private readonly ReaderWriterLockSlim _rwLock;
         private List<T> _list;
@@ -16,25 +16,6 @@ namespace Skylabs.Lobby
             _list = new List<T>();
             _rwLock = new ReaderWriterLockSlim();
         }
-
-        #region ICollection Members
-
-        void ICollection.CopyTo(Array array, int index)
-        {
-            array.SetValue(_list[index],index);
-        }
-
-        bool ICollection.IsSynchronized
-        {
-            get { return false; }
-        }
-
-        object ICollection.SyncRoot
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        #endregion
 
         #region IDisposable Members
 
@@ -213,7 +194,9 @@ namespace Skylabs.Lobby
 
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
-            array[arrayIndex] = _list[arrayIndex];
+            _rwLock.EnterReadLock();
+            _list.CopyTo(array,arrayIndex);
+            _rwLock.ExitReadLock();
         }
 
         bool ICollection<T>.IsReadOnly

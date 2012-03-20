@@ -13,7 +13,7 @@ namespace Skylabs.LobbyServer
     public static class Gaming
     {
         //private static readonly object GamingLocker = new object();
-        private static int _currentHostPort = 5000;
+        private static int _currentHostPort = 10000;
         private static long _totalHostedGames;
         private static readonly ReaderWriterLockSlim Locker; 
 
@@ -27,44 +27,58 @@ namespace Skylabs.LobbyServer
 
         public static int GameCount()
         {
+            Logger.PreLock();
             Locker.EnterReadLock();
+            Logger.InLock();
                 int ret = Games.Count;
             Locker.ExitReadLock();
+            Logger.EndLock();
             return ret;
         }
 
         public static HostedGame GetGame(int port)
         {
             HostedGame ret;
+            Logger.PreLock();
             Locker.EnterReadLock();
+            Logger.InLock();
                 Games.TryGetValue(port, out ret);
             Locker.ExitReadLock();
+            Logger.EndLock();
             return ret;
         }
 
         public static void Stop()
         {
+            Logger.PreLock();
             Locker.EnterWriteLock();
+            Logger.InLock();
                 foreach (var g in Games)
                 {
                     g.Value.Stop();
                 }
                 Games.Clear();
             Locker.ExitWriteLock();
+            Logger.EndLock();
         }
 
         public static long TotalHostedGames()
         {
+            Logger.PreLock();
             Locker.EnterReadLock();
+            Logger.InLock();
                 long ret = _totalHostedGames;
             Locker.ExitReadLock();
+            Logger.EndLock();
             return ret;
             
         }
 
         public static int HostGame(Guid g, Version v, string name, string pass, NewUser u)
         {
+            Logger.PreLock();
             Locker.EnterWriteLock();//Enter Lock
+            Logger.InLock();
             while (Games.ContainsKey(_currentHostPort) || !Networking.IsPortAvailable(_currentHostPort))
             {
                 _currentHostPort++;
@@ -78,32 +92,38 @@ namespace Skylabs.LobbyServer
                 Games.Add(_currentHostPort, hs);
                 _totalHostedGames++;
                 Locker.ExitWriteLock();//Exit Lock
+                Logger.EndLock();
                 return _currentHostPort;
             }
             hs.HostedGameDone -= HostedGameExited;
             Locker.ExitWriteLock();//Exit Lock
+            Logger.EndLock();
             return -1;
 
         }
 
         public static void StartGame(int port)
         {
+            Logger.PreLock();
             Locker.EnterWriteLock();
+            Logger.InLock();
                 try
                 {
                     Games[port].Status = Lobby.EHostedGame.GameInProgress;
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine(e);
-                    if (Debugger.IsAttached) Debugger.Break();
+                    Logger.Er(e);
                 }
             Locker.ExitWriteLock();
+            Logger.EndLock();
         }
 
         public static List<Lobby.HostedGameData> GetLobbyList()
         {
+            Logger.PreLock();
             Locker.EnterReadLock();
+            Logger.InLock();
             List<Lobby.HostedGameData> sendgames =
                 Games.Select(
                     g =>
@@ -111,19 +131,27 @@ namespace Skylabs.LobbyServer
                                             (string) g.Value.Name.Clone(), (NewUser) g.Value.Hoster, g.Value.TimeStarted)
                         {GameStatus = g.Value.Status}).ToList();
             Locker.ExitReadLock();
+            Logger.EndLock();
             return sendgames;
         }
 
         private static void HostedGameExited(object sender, EventArgs e)
         {
+            Logger.PreLock();
             Locker.EnterWriteLock();
+            Logger.InLock();
                 var s = sender as HostedGame;
                 if (s == null)
-                    {Locker.ExitWriteLock();return;}
+                {
+                    Locker.ExitWriteLock();
+                    Logger.EndLock();
+                    return;
+                }
                 s.Status = Lobby.EHostedGame.StoppedHosting;
                 LazyAsync.Invoke(GameBot.RefreshLists);
                 Games.Remove(s.Port);
             Locker.ExitWriteLock();
+            Logger.EndLock();
         }
     }
 }

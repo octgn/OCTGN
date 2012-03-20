@@ -6,44 +6,59 @@ using System.Threading;
 
 namespace Skylabs.LobbyServer
 {
+
     public static class Logger
     {
-        private const int CurIndent = 1;
-
-        private static string Tab
+        public static void PreLock()
         {
-            get
-            {
-                var sb = new StringBuilder();
-                for (int i = 0; i < CurIndent; i++)
-                {
-                    sb.Append("    ");
-                }
-                return sb.ToString();
-            }
+            var method = GetPreviousMethod();
+            //WriteLine("#PreLock[{1}]: {0}",method,Thread.CurrentThread.ManagedThreadId);
+            WriteTag("PreLock");
         }
-
+        public static void InLock()
+        {
+            var method = GetPreviousMethod();
+            //WriteLine("#InLock[{1}]: {0}", method, Thread.CurrentThread.ManagedThreadId);
+            WriteTag("InLock");
+        }
+        public static void EndLock()
+        {
+            var method = GetPreviousMethod();
+            //WriteLine("#EndLock[{1}]: {0}", method, Thread.CurrentThread.ManagedThreadId);
+            WriteTag("EndLock");
+        }
         public static void Er(Exception e, params string[] extras)
         {
-            var st = new StackTrace();
-            StackFrame[] frames = st.GetFrames();
-            string methodName = "UnknownMethod";
-            if (frames != null)
-                for (int i = 0; i < frames.Length; i++)
-                {
-                    if (frames[i].GetMethod().Name != MethodBase.GetCurrentMethod().Name) continue;
-                    if (i + 1 >= frames.Length) continue;
-                    methodName = frames[i + 1].GetMethod().Name;
-                    break;
-                }
-            Console.WriteLine(String.Format("{1}[{4}:{5}][ERROR({2})]{0}:{3}", methodName, Tab,
+            string methodName = GetPreviousMethod();
+            WriteLine(String.Format("{1}[{4}:{5}][ERROR({2})]{0}:{3}", methodName, "",
                                             Thread.CurrentThread.ManagedThreadId, e.Message,
                                             DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString()));
-            Console.WriteLine("==========StackTrace==========");
-            Console.WriteLine(e.StackTrace ?? st.ToString());
-            Console.WriteLine("=============END==============");
+            WriteLine("==========StackTrace==========");
+            WriteLine(e.StackTrace ?? new StackTrace().ToString());
+            WriteLine("=============END==============");
             foreach (string s in extras)
-                Console.WriteLine(s);
+                WriteLine(s);
+        }
+        private static string GetPreviousMethod(int back = 2)
+        {
+            StackTrace st =  new StackTrace();
+            StackFrame[] frames = st.GetFrames();
+            string methodName = "UnknownMethod";
+            if (frames != null && frames.Length > (back + 1)) methodName = frames[back].GetMethod().Name;
+            return methodName;
+        }
+        private static string MakeHeader(string tname)
+        {
+            return String.Format("#{0}[{1}][{2}:{3}][{4}]: " , tname , Thread.CurrentThread.ManagedThreadId ,
+                          DateTime.Now.ToShortDateString() , DateTime.Now.ToShortTimeString() , GetPreviousMethod(4));
+        }
+        private static void WriteTag(string name,string format = "", params object[] args)
+        {
+            WriteLine(MakeHeader(name) + format,args);
+        }
+        private static void WriteLine(string format, params object[] args)
+        {
+            Trace.WriteLine(String.Format(format,args));
         }
     }
 }
