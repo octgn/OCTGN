@@ -740,8 +740,9 @@ namespace Octgn.Networking
                             Debug.WriteLine("[TakeFrom] ControllableObject not found.");
                             return;
                         }
-                        Player arg1 =
-                            Player.Find(byte.Parse(reader.ReadElementString("to"), CultureInfo.InvariantCulture));
+                        Player arg1 =//Fixed bug:  Message=Element 'to' was not found. Line 1, position 26.
+                            Player.Find(byte.Parse(reader.ReadElementString("to"), CultureInfo.InvariantCulture)); 
+                        //Why are we running byte.Parse on a long?
                         if (arg1 == null)
                         {
                             Debug.WriteLine("[TakeFrom] Player not found.");
