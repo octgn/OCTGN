@@ -47,9 +47,10 @@ namespace Octgn.Controls
             {
                 _hostedGame = value;
                 SetValue(UserNameProperty, _hostedGame.UserHosting.User.User);
+                double r = (DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes;
+                r = r < 0 ? 0 : r;
                 SetValue(GameLengthProperty,
-                         string.Format("runtime: {0:0,0} minutes",
-                                       (DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes));
+                         string.Format("runtime: about {0,0} minutes",r));
                 SetValue(GameVersionProperty,_hostedGame.GameVersion.ToString());
                 //SetValue(GameLengthProperty, "runtime: "+(System.DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes.ToString("N")+" minutes");
                 foreach (
