@@ -690,7 +690,7 @@ namespace Octgn.Networking
                             Debug.WriteLine(string.Format("[TransferMarker] Card not found."));
                             return;
                         }
-                        Card arg2 = Card.Find(int.Parse(reader.ReadElementString("lTo"), CultureInfo.InvariantCulture));
+                        Card arg2 = Card.Find(int.Parse(reader.ReadElementString("to"), CultureInfo.InvariantCulture));
                         if (arg2 == null)
                         {
                             Debug.WriteLine(string.Format("[TransferMarker] Card not found."));
@@ -720,7 +720,7 @@ namespace Octgn.Networking
                             return;
                         }
                         Player arg2 =
-                            Player.Find(byte.Parse(reader.ReadElementString("lTo"), CultureInfo.InvariantCulture));
+                            Player.Find(byte.Parse(reader.ReadElementString("to"), CultureInfo.InvariantCulture));
                         if (arg2 == null)
                         {
                             Debug.WriteLine("[PassTo] Player not found.");
@@ -741,7 +741,7 @@ namespace Octgn.Networking
                             return;
                         }
                         Player arg1 =//Fixed bug:  Message=Element 'to' was not found. Line 1, position 26.
-                            Player.Find(byte.Parse(reader.ReadElementString("lTo"), CultureInfo.InvariantCulture)); 
+                            Player.Find(byte.Parse(reader.ReadElementString("to"), CultureInfo.InvariantCulture)); 
                         //Why are we running byte.Parse on a long?
                         if (arg1 == null)
                         {
