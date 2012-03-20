@@ -55,6 +55,7 @@ namespace Skylabs.LobbyServer
 
         private static void XmppOnOnPresence(object sender , Presence pres)
         {
+            Trace.WriteLine("[Bot]OnPresence");
             switch (pres.Type)
             {
                 case PresenceType.available:
@@ -73,6 +74,7 @@ namespace Skylabs.LobbyServer
                     break;
                 }
             }
+            Trace.WriteLine("[Bot]OnPresenceEnd");
         }
 
         private static void XmppOnOnReadXml(object sender , string xml)
@@ -160,12 +162,14 @@ namespace Skylabs.LobbyServer
 
         public static void RefreshLists()
         {
+            Trace.WriteLine("[Bot]RefreshList");
             var arr = _userList.ToArray();
             foreach(var u in arr)
             {
                 var m = new Message(u , MessageType.normal , "" , "refresh");
                 Xmpp.Send(m);
             }
+            Trace.WriteLine("[Bot]RefreshListEnd");
         }
 
         private static void XmppOnOnLogin(object sender) 

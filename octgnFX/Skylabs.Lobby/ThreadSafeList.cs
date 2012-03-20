@@ -44,7 +44,7 @@ namespace Skylabs.Lobby
 
         #region IList<T> Members
 
-        
+
 
         bool ICollection<T>.IsReadOnly
         {
