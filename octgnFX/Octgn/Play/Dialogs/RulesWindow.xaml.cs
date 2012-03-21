@@ -29,9 +29,9 @@ namespace Octgn.Play.Dialogs
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
-            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
+            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');            
             using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
+            {                
                 PackageRelationship defRelationship =
                     package.GetRelationshipsByType("http://schemas.octgn.org/game/rules").First();
                 PackagePart definition = package.GetPart(defRelationship.TargetUri);
@@ -97,7 +97,7 @@ namespace Octgn.Play.Dialogs
         public TextRange FindTextInRange(TextRange searchRange, string searchText)
         {
             // Search the text with IndexOf
-            int offset = searchRange.Text.IndexOf(searchText, StringComparison.Ordinal);
+            int offset = searchRange.Text.IndexOf(searchText, StringComparison.InvariantCultureIgnoreCase);
             if (offset < 0)
                 return null; // Not found
             // Try to select the text as a contiguous range
@@ -106,7 +106,7 @@ namespace Octgn.Play.Dialogs
                  start = start.GetPositionAtOffset(1))
             {
                 var result = new TextRange(start, start.GetPositionAtOffset(searchText.Length));
-                if (result.Text == searchText)
+                if (result.Text.ToLower() == searchText.ToLower())
                     return result;
             }
             return null;
