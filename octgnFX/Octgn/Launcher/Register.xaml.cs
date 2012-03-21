@@ -27,6 +27,12 @@ namespace Octgn.Launcher
 
         private void btnRegister_Click(object sender, RoutedEventArgs e)
         {
+            lblErrors.Content = "";
+            if (tbPass1.Password != tbPass2.Password)
+            {
+                lblErrors.Content = "Passwords do not match";
+                return;
+            }
             progressBar1.Visibility = Visibility.Visible;
             Program.LClient.OnRegisterComplete += LClientOnOnRegisterComplete;
             Program.LClient.BeginRegister(tbUsername.Text,tbPass1.Password,tbEmail.Text);
