@@ -78,6 +78,7 @@ namespace Octgn.Launcher
                 Program.ChatWindows.Add(cw);
             }
             cw.Show();
+            cw.richTextBox1.ScrollToEnd();
         }
 
 
