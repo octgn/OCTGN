@@ -150,14 +150,14 @@ namespace Octgn.Data
 
         public DataTable GetCache(string[] conditions)
         {
-            DataTable ret = _cache[ConcentateConditions(conditions)];
+            DataTable ret = _cache[ConcentateConditions(conditions)].Copy();
             return (ret);
         }
 
         public void AddToCache(string[] conditions, DataTable table)
         {
             string key = ConcentateConditions(conditions);
-            if (key != string.Empty)
+            if (key != string.Empty && !IsCached(conditions))
             {
                 _cache.Add(ConcentateConditions(conditions), table.Copy());
                 SaveCacheFile();
