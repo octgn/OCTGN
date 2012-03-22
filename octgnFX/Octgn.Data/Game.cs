@@ -110,7 +110,7 @@ namespace Octgn.Data
                                                  Name = (string) dataReader["name"],
                                                  ImageUri = (string) dataReader["image"],
                                                  Set = GetSet(Guid.Parse(setID)),
-                                                 Alternate = (Guid) dataReader["alternate"],
+                                                 Alternate = Guid.Parse((string) dataReader["alternate"]),
                                                  Dependent = (string) dataReader["dependent"],
                                                  Properties = GetCardProperties(Guid.Parse(did))
                                              };
