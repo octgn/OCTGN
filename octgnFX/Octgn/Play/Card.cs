@@ -181,9 +181,8 @@ namespace Octgn.Play
                 // Clear peeking (if any)
                 PeekingPlayers.Clear();
                 //Switch back to original image.
-                    IsAlternateImage = false;
-                    //if (revertToOriginalOnGroupChange) TODO
-                    //{ SetModel(_alternateOf); }
+                IsAlternateImage = false;
+                if (Program.Game.Definition.CardsRevertOnGroupChange) { RevertToOriginal(); } 
             }
         }
 
@@ -761,6 +760,10 @@ namespace Octgn.Play
                 Debug.WriteLine("Unable To Catchup on Alternate Switches at this time. Please try again Later.");
             }
             return false;
+        }
+        public void RevertToOriginal()
+        {
+            SetModel(_alternateOf);
         }
     }
 }

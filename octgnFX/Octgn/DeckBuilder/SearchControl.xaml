@@ -31,7 +31,8 @@
             <DataTemplate DataType="{x:Type data:PropertyDef}">
               <Border x:Name="highlight" CornerRadius="5" Margin="0,0,7,0" Padding="3,1">
                 <TextBlock Text="{Binding Name}" Foreground="#555555" Cursor="Hand" MouseLeftButtonUp="AddFilter" />
-              </Border>
+                                <!--The Binding names come from the CardDef, which is defined in the o8g. -->
+                            </Border>
               <DataTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                   <Setter Property="Background" Value="#a0eeee00" TargetName="highlight" />
@@ -58,7 +59,7 @@
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
-                <!--TextBox Height="23" Name="SearchString" Width="367" DataContext="{Binding}" Text="Combined SQL Search command here." AcceptsTab="True" /-->
+                <TextBox Height="23" Name="SearchString" Width="367" DataContext="{Binding}" Text="Combined SQL Search command here." AcceptsTab="True" />
                 <Button Content="Search" FontSize="14" HorizontalAlignment="Left" Width="80" Margin="343,10,1,1" Padding="5"
                 Click="RefreshSearch" IsDefault="True" />
       </StackPanel>

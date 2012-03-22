@@ -129,6 +129,7 @@ namespace Octgn
 
         public Dictionary<string, int> Variables { get; private set; }
         public Dictionary<string, string> GlobalVariables { get; private set; }
+        public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
         #region INotifyPropertyChanged Members
 
