@@ -174,8 +174,13 @@ namespace Skylabs.Lobby
         /// <param name="e"> Jesus </param>
         private void StandAloneAppExited(object sender, EventArgs e)
         {
+            StandAloneApp.CancelErrorRead();
+            StandAloneApp.CancelOutputRead();
+            StandAloneApp.Exited -= StandAloneAppExited;
+            StandAloneApp.OutputDataReceived -= StandAloneAppOnOutputDataReceived;
+            StandAloneApp.ErrorDataReceived -= StandAloneAppOnErrorDataReceived;
             if (HostedGameDone != null)
-                HostedGameDone(this, e);
+                HostedGameDone.BeginInvoke(this, e, ar => ar.AsyncWaitHandle.Close() , new object());
             Console.WriteLine("Game Log[{0}]{1}{2}End Game Log[{0}]",Port,Environment.NewLine,GameLog);
         }
     }

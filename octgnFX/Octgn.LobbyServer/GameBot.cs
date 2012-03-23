@@ -32,7 +32,7 @@ namespace Skylabs.LobbyServer
             Xmpp.AutoPresence = true;
             Xmpp.AutoRoster = true;
             Xmpp.Username = "gameserv";
-            Xmpp.Password = "12345";
+            Xmpp.Password = "12345";//Don't commit real password
 
             Xmpp.Priority = 1;
             Xmpp.OnLogin += XmppOnOnLogin;
