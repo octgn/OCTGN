@@ -55,9 +55,9 @@ namespace Octgn.Play.Actions
                 if (Card.DeleteWhenLeavesGroup)
                     Card.Group = null;
                     //TODO Card.Delete();
-                if (Program.Game.Definition.CardsRevertOnGroupChange) { Card.RevertToOriginal();}
                 else
                 {
+                    if (Program.Game.Definition.CardsRevertToOriginalOnGroupChange) { Card.RevertToOriginal(); }
                     Card.SetFaceUp(FaceUp);//FaceUp may be false - it's one of the constructor parameters for this
                     Card.SetOverrideGroupVisibility(false);
                     Card.X = X;

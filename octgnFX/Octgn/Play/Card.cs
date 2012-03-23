@@ -182,7 +182,7 @@ namespace Octgn.Play
                 PeekingPlayers.Clear();
                 //Switch back to original image.
                 IsAlternateImage = false;
-                if (Program.Game.Definition.CardsRevertOnGroupChange) { RevertToOriginal(); } 
+                if (Program.Game.Definition.CardsRevertToOriginalOnGroupChange) { RevertToOriginal(); } 
             }
         }
 
@@ -763,7 +763,8 @@ namespace Octgn.Play
         }
         public void RevertToOriginal()
         {
-            SetModel(_alternateOf);
+            if (isAlternate()) { SetModel(_alternateOf); }
+            numberOfSwitchWithAlternatesNotPerformed = 0;
         }
     }
 }

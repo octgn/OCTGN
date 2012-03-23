@@ -29,7 +29,7 @@ namespace Octgn.Definitions
         public PlayerDef PlayerDefinition { get; private set; }
         public SharedDef GlobalDefinition { get; private set; }
         public int MarkerSize { get; private set; }
-        public bool CardsRevertOnGroupChange { get; private set; }
+        public bool CardsRevertToOriginalOnGroupChange { get; private set; }
         public List<ScriptDef> Scripts { get; private set; }
         public List<VariableDef> Variables { get; private set; }
         public List<GlobalVariableDef> GlobalVariables { get; private set; }
@@ -101,7 +101,7 @@ namespace Octgn.Definitions
                            Version = xml.Attr<Version>("version"),
                            OctgnVersion = xml.Attr<Version>("octgnVersion"),
                            MarkerSize = xml.Attr<int>("markersize"),
-                           CardsRevertOnGroupChange = xml.Attr<bool>("cardsRevertOnGroupChange"),
+                           CardsRevertToOriginalOnGroupChange = xml.Attr<bool>("cardsRevertToOriginalOnGroupChange"),
                            CardDefinition = CardDef.LoadFromXml(xml.Child("card"), part),
                            DeckDefinition = DeckDef.LoadFromXml(xml.Child("deck")),
                            SharedDeckDefinition = DeckDef.LoadFromXml(xml.Child("sharedDeck")),
