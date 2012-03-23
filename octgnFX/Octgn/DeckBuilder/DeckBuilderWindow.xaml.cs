@@ -351,7 +351,16 @@ namespace Octgn.DeckBuilder
             if (element != null)
                 element.Quantity += 1;
             else
-                ActiveSection.Cards.Add(new Deck.Element {Card = Game.GetCardById(e.CardId), Quantity = 1});
+            {
+                CardModel Card = Game.GetCardById(e.CardId);
+                if (Card.isDependent())
+                {
+                    MessageBox.Show("Unable to add " + Card.Name +
+                       "to the deck. It is marked as dependent, which implies it is the alternate version of another card. Please try to add the original instead.",
+                       "Warning: Add dependent card failed.", MessageBoxButton.OK);
+                }
+                ActiveSection.Cards.Add(new Deck.Element { Card = Game.GetCardById(e.CardId), Quantity = 1 });
+            }
         }
 
         private void RemoveResultCard(object sender, SearchCardIdEventArgs e)
