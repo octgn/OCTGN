@@ -241,7 +241,7 @@
       <xs:attribute name="name" type="xs:string">
         <xs:annotation>
           <xs:documentation>
-            Full name of this game.
+            Full name of this game. 
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -263,6 +263,13 @@
         <xs:annotation>
           <xs:documentation>
             Size of markers, relative to the table
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="cardsRevertToOriginalOnGroupChange" use="optional" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            Whether or not cards that go through a switchWithAlternate return to their original forms on groups change.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
