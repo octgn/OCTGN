@@ -192,6 +192,13 @@ namespace Octgn.Data
             if (propertyName.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase)) return (Dependent != null || Dependent.Equals(String.Empty));
             return Properties.ContainsKey(propertyName);
         }
+
+        public bool isDependent()
+        {
+            if (Dependent == null || Dependent.Length < 1 || Dependent.Equals(String.Empty) || Dependent.Equals("false", StringComparison.InvariantCultureIgnoreCase))
+                return false;
+            return true;
+        }
     }
 
     public class CardPropertyComparer : IComparer, IComparer<CardModel>

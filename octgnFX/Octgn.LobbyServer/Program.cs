@@ -15,32 +15,39 @@ namespace Skylabs.LobbyServer
     {
         public static Dictionary<string, string> Settings;
         private static DateTime _killTime;
-        private static Timer _killTimer;
         private static bool _sentMinuteWarning;
         private static readonly Thread RunThread = new Thread(Runner);
         private static bool _running = true;
-
+        private static DateTime _startTime;
         private static void Main()
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
-            Trace.WriteLine(String.Format("[LobbyServer] V{0}", Assembly.GetExecutingAssembly().GetName().Version));
+            Trace.WriteLine(String.Format("[LobbyServer]: V{0}\nStart Time: {1} {2}", Assembly.GetExecutingAssembly().GetName().Version,DateTime.Now.ToShortDateString(),DateTime.Now.ToShortTimeString()));
             if (!LoadSettings())
                 return;
             //Console.WriteLine(String.Format("[LobbyServer] V{0}",Assembly.GetExecutingAssembly().GetName().Version.ToString()));
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
+            RunThread.Name = "Main";
             RunThread.Start();            
-            _killTimer = new Timer(CheckKillTime, _killTime, 1000, 1000);
             GameBot.Init();
+            _startTime = DateTime.Now;
         }
 
         private static void Runner()
         {
+            int i = 0;
+            DateTime dt = DateTime.Now;
             while (_running)
             {
-                if (!_running)
-                    return;
+                if(!_running) return;
                 Thread.Sleep(100);
+                if(new TimeSpan(DateTime.Now.Ticks - dt.Ticks).Minutes > 1)
+                {
+                    dt = DateTime.Now;
+                    var ts = new TimeSpan(dt.Ticks - _startTime.Ticks);
+                    Trace.WriteLine(String.Format("[Running For]: {0} Days, {1} Hours, {2} Minutes",ts.Days,ts.Hours, ts.Minutes));
+                }
             }
         }
 
@@ -87,26 +94,6 @@ namespace Skylabs.LobbyServer
                        "Server will be shutting down in " + minutes.ToString(CultureInfo.InvariantCulture) + " minutes");
         }
 
-        private static void CheckKillTime(Object stateInfo)
-        {
-            if (_killTime == new DateTime(0))
-                return;
-            if (_killTime.Ticks > DateTime.Now.Ticks)
-            {
-                if (new TimeSpan(_killTime.Ticks - DateTime.Now.Ticks).TotalMinutes <= 1)
-                {
-                    if (!_sentMinuteWarning)
-                    {
-                        var sm = new SocketMessage("servermessage");
-                        sm.AddData("message", "Server will be shutting down in about a minute.");
-                        _sentMinuteWarning = true;
-                    }
-                }
-                return;
-            }
-            Quit();
-        }
-
         private static void CurrentDomainProcessExit(object sender, EventArgs e)
         {
             Quit();
@@ -127,15 +114,6 @@ namespace Skylabs.LobbyServer
             try
             {
                 Gaming.Stop();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                if (Debugger.IsAttached) Debugger.Break();
-            }
-            try
-            {
-                _killTimer.Dispose();
             }
             catch (Exception e)
             {

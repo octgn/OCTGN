@@ -110,7 +110,7 @@ namespace Octgn.Data
                                                  Name = (string) dataReader["name"],
                                                  ImageUri = (string) dataReader["image"],
                                                  Set = GetSet(Guid.Parse(setID)),
-                                                 Alternate = (Guid) dataReader["alternate"],
+                                                 Alternate = Guid.Parse((string) dataReader["alternate"]),
                                                  Dependent = (string) dataReader["dependent"],
                                                  Properties = GetCardProperties(Guid.Parse(did))
                                              };
@@ -213,13 +213,13 @@ namespace Octgn.Data
                     while (dr.Read())
                     {
                         var did = dr["id"] as string;
-                        var sid = dr["set_id"] as string;
-                        if (sid == null || did == null) return ret;
+                        var setID = dr["set_id"] as string;
+                        if (setID == null || did == null) return ret;
                         var result = new MarkerModel(
                             Guid.Parse(did),
                             (string) dr["name"],
                             (string) dr["icon"],
-                            GetSet(Guid.Parse(sid))
+                            GetSet(Guid.Parse(setID))
                             );
                         ret.Add(result);
                     }

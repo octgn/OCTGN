@@ -148,10 +148,10 @@ namespace Skylabs.LobbyServer
                     return;
                 }
                 s.Status = Lobby.EHostedGame.StoppedHosting;
-                LazyAsync.Invoke(GameBot.RefreshLists);
                 Games.Remove(s.Port);
             Locker.ExitWriteLock();
             Logger.EndLock();
+            GameBot.RefreshLists();
         }
     }
 }

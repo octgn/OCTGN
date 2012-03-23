@@ -6,6 +6,7 @@ using System.Text;
 using Octgn.Data;
 using agsXMPP;
 using agsXMPP.Factory;
+using agsXMPP.Net;
 using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.agent;
@@ -335,6 +336,8 @@ namespace Skylabs.Lobby
                 Xmpp.Username = username;
                 Xmpp.Password = password;
                 Xmpp.Priority = 1;
+                Xmpp.SocketConnectionType = SocketConnectionType.Direct;
+                Xmpp.UseSSL = false;
                 Xmpp.Open();
             }
         }
