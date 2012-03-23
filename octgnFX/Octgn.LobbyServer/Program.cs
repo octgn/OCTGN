@@ -48,6 +48,7 @@ namespace Skylabs.LobbyServer
                     var ts = new TimeSpan(dt.Ticks - _startTime.Ticks);
                     Trace.WriteLine(String.Format("[Running For]: {0} Days, {1} Hours, {2} Minutes",ts.Days,ts.Hours, ts.Minutes));
                 }
+                
             }
         }
 

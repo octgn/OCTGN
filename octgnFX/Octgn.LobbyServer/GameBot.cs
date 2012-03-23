@@ -33,8 +33,8 @@ namespace Skylabs.LobbyServer
             Xmpp.AutoRoster = true;
             Xmpp.Username = "gameserv";
             Xmpp.Password = "12345";//Don't commit real password
-
             Xmpp.Priority = 1;
+            Xmpp.ClientSocket.OnDisconnect += ClientSocketOnOnDisconnect;
             Xmpp.OnLogin += XmppOnOnLogin;
             Xmpp.OnMessage += XmppOnOnMessage;
             Xmpp.OnIq += XmppOnOnIq;
@@ -43,11 +43,36 @@ namespace Skylabs.LobbyServer
             Xmpp.OnReadXml += XmppOnOnReadXml;
             Xmpp.OnPresence += XmppOnOnPresence;
             Xmpp.OnWriteXml += XmppOnOnWriteXml;
+            Xmpp.OnSocketError += XmppOnOnSocketError;
             Xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
+            Xmpp.OnClose += XmppOnOnClose;
             _userList = new ThreadSafeList<Jid>();
             Xmpp.Open();
         }
 
+        private static void XmppOnOnSocketError(object sender , Exception exception)
+        {
+            Trace.WriteLine("[Bot]Socket Error: " + exception.Message);
+            if(!Xmpp.ClientSocket.Connected)
+                Xmpp.Open();
+        }
+
+        private static void ClientSocketOnOnDisconnect(object sender) 
+        {
+            Trace.WriteLine("[Bot]BotSocketDisconnected:");
+            Xmpp.Open();
+        }
+
+        private static void XmppOnOnClose(object sender) 
+        {
+            Trace.WriteLine("[Bot]Closed:");
+            Xmpp.Open();
+        }
+
+        public static void CheckBotStatus()
+        {
+            
+        }
         private static void XmppOnOnWriteXml(object sender , string xml)
         {
             
