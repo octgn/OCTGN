@@ -288,7 +288,7 @@ namespace Octgn.Play
             get
             {
                 if (IsAlternateImage)
-                    return Type.Model.AlternatePicture == null ? DefaultFront : Type.Model.Picture;
+                    return Type.Model.AlternatePicture ?? DefaultFront;
                 if (!FaceUp) return DefaultBack;
                 return Type.Model == null ? DefaultFront : Type.Model.Picture;
             }
@@ -392,7 +392,8 @@ namespace Octgn.Play
         internal string GetPicture(bool up)
         {
             if (IsAlternateImage)
-                return Type.Model.AlternatePicture == null ? DefaultFront : Program.Game.CardFrontBitmap.ToString();
+                //return Type.Model.AlternatePicture == null ? DefaultFront : Program.Game.CardFrontBitmap.ToString();
+                return Type.Model.AlternatePicture ?? DefaultFront;
             if (!up) return DefaultBack;
             if (Type == null || Type.Model == null) return DefaultFront;
             return Type.Model.Picture;

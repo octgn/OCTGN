@@ -44,8 +44,20 @@ namespace Octgn.Utils
             var imgsrc = new BitmapImage();
             imgsrc.BeginInit();
             imgsrc.CacheOption = BitmapCacheOption.OnLoad;
-            imgsrc.UriSource = uri;
-            imgsrc.EndInit();
+            // catch bad Uri's and load Front Bitmap "?"
+            try
+            {                                               
+                imgsrc.UriSource = uri;
+                imgsrc.EndInit();                
+            }
+            catch (Exception ex)
+            {
+                imgsrc = new BitmapImage();
+                imgsrc.BeginInit();
+                imgsrc.CacheOption = BitmapCacheOption.OnLoad;
+                imgsrc.UriSource = Program.Game.CardFrontBitmap.UriSource;
+                imgsrc.EndInit();              
+            }
             imgsrc.Freeze();
             return imgsrc;
         }
