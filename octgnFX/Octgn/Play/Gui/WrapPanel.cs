@@ -78,7 +78,7 @@ namespace Octgn.Play.Gui
                     HideInsertIndicator();
                     return;
                 }
-                var visualChild = (FrameworkElement) GetVisualChild(idx - 1);
+                var visualChild = (FrameworkElement)GetVisualChild(idx);
                 if (visualChild != null && (idx > 0 && visualChild.DataContext == source))
                 {
                     HideInsertIndicator();
