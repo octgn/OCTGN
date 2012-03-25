@@ -205,9 +205,9 @@ namespace Octgn.DeckBuilder
                               AddExtension = true,
                               Filter = "Octgn decks|*.o8d",
                               InitialDirectory =
-                                  SimpleConfig.ReadValue("DeckDirLastUsed", "none") == "none"
+                                  SimpleConfig.ReadValue("lastFolder") == ""
                                       ? Game.DefaultDecksPath
-                                      : SimpleConfig.ReadValue("DeckDirLastUsed")
+                                      : SimpleConfig.ReadValue("lastFolder")
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
             try
@@ -215,7 +215,7 @@ namespace Octgn.DeckBuilder
                 Deck.Save(sfd.FileName);
                 _unsaved = false;
                 _deckFilename = sfd.FileName;
-                SimpleConfig.WriteValue("lastFolder", Path.GetFileName(_deckFilename));
+                SimpleConfig.WriteValue("lastFolder", Path.GetDirectoryName(_deckFilename));
             }
             catch (Exception ex)
             {
