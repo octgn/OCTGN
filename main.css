@@ -2,6 +2,19 @@ body
 {
 	background-color:#222;
 }
+a
+{
+	text-decoration:none;
+	color:#0061ff;
+}
+a:link
+{
+	color:#0061ff;
+}
+a:hover
+{
+	color:#9bc1ff;
+}
 #mainarea
 {
     display:block;
