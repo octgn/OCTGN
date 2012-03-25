@@ -221,6 +221,7 @@ namespace Octgn.Scripting
         {
             Card c = Card.Find(id);
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
+            if (!c.Type.Model.Properties.ContainsKey(property)) { return IronPython.Modules.Builtin.None; }
             return c.Type.Model.Properties[property];
         }
 
