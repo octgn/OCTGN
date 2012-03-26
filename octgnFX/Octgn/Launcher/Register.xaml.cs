@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Skylabs.Lobby;
+using System.Text.RegularExpressions;
 
 namespace Octgn.Launcher
 {
@@ -28,7 +29,18 @@ namespace Octgn.Launcher
         private void btnRegister_Click(object sender, RoutedEventArgs e)
         {
             lblErrors.Content = "";
-            if (tbPass1.Password != tbPass2.Password)
+            string pattern = @"^[a-zA-Z0-9.\-_]{2,30}$";
+            if (!Regex.Match(tbUsername.Text, pattern).Success)
+            {
+                lblErrors.Content = "Usernames must only contain letters, numbers and . - _";
+                return;
+            }
+            if (tbPass1.Password == "")
+            {
+                lblErrors.Content = "Password cannot be empty.";
+                return;
+            }
+            if (tbPass1.Password != tbPass2.Password || tbPass1.Password == "")
             {
                 lblErrors.Content = "Passwords do not match";
                 return;
