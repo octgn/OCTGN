@@ -83,7 +83,7 @@ namespace Octgn.Launcher
 
             if (Program.PlayWindow != null) return;
             Program.Client.Rpc.Start();
-            Program.PlayWindow = new PlayWindow(true);
+            Program.PlayWindow = new PlayWindow(_isLocal);
             Program.PlayWindow.Show();
             if (!_isLocal)
                 Program.ClientWindow.HostJoinTab();
