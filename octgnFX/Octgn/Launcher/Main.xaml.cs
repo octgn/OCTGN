@@ -283,7 +283,7 @@ namespace Octgn.Launcher
                     gl.OnGameClick += gl_OnGameDoubleClick;
                     frame1.Navigate(gl);
                     break;
-                case "!":
+                case "Alerts":
                     frame1.Navigate(new NotificationList());
                     NotificationTab.HeaderStyle = Resources["NormalHeaderColor"] as Style;
                     NotificationTab.InvalidateVisual();

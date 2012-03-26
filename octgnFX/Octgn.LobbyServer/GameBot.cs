@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,25 +15,34 @@ namespace Skylabs.LobbyServer
     {
         private static XmppClientConnection Xmpp { get; set; }
         private static ThreadSafeList<Jid> _userList { get; set; }
+        public static ObjectHandler OnCheckRecieved { get; set; }
         public static void Init() 
         {  }
         static GameBot() 
         {
-//#if(DEBUG)
+            RemakeXmpp();
+        }
+        public static void RemakeXmpp()
+        {
+            if (Xmpp != null)
+            {
+                Xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
+                Xmpp.Close();
+                Xmpp = null;
+            }
             Xmpp = new XmppClientConnection("skylabsonline.com");
-//#else
-//            Xmpp = new XmppClientConnection();
-//            Xmpp.ConnectServer = "127.0.0.1";
-//            Xmpp.AutoResolveConnectServer = false;
-//#endif            
-            
+            //#else
+            //            Xmpp = new XmppClientConnection();
+            //            Xmpp.ConnectServer = "127.0.0.1";
+            //            Xmpp.AutoResolveConnectServer = false;
+            //#endif            
+
             Xmpp.RegisterAccount = false;
             Xmpp.AutoAgents = true;
             Xmpp.AutoPresence = true;
             Xmpp.AutoRoster = true;
             Xmpp.Username = "gameserv";
             Xmpp.Password = "12345";//Don't commit real password
-
             Xmpp.Priority = 1;
             Xmpp.OnLogin += XmppOnOnLogin;
             Xmpp.OnMessage += XmppOnOnMessage;
@@ -43,11 +52,24 @@ namespace Skylabs.LobbyServer
             Xmpp.OnReadXml += XmppOnOnReadXml;
             Xmpp.OnPresence += XmppOnOnPresence;
             Xmpp.OnWriteXml += XmppOnOnWriteXml;
+            Xmpp.KeepAlive = true;
+            Xmpp.KeepAliveInterval = 60;
+            Xmpp.OnAgentStart += XmppOnOnAgentStart;
             Xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
             _userList = new ThreadSafeList<Jid>();
             Xmpp.Open();
         }
 
+        private static void XmppOnOnAgentStart(object sender) 
+        {
+            if(OnCheckRecieved != null)
+                OnCheckRecieved.Invoke(sender);
+        }
+
+        public static void CheckBotStatus()
+        {
+            Xmpp.RequestAgents();
+        }
         private static void XmppOnOnWriteXml(object sender , string xml)
         {
             
@@ -61,7 +83,7 @@ namespace Skylabs.LobbyServer
                 case PresenceType.available:
                     if(pres.From.Server == "conference.skylabsonline.com")
                     {
-                        if (!_userList.Contains(pres.MucUser.Item.Jid.Bare))
+                        if (!_userList.Contains(pres.MucUser.Item.Jid.Bare) && pres.MucUser.Item.Jid.Bare != Xmpp.MyJID.Bare)
                             _userList.Add(pres.MucUser.Item.Jid.Bare);
                     }
                     break;
@@ -101,7 +123,7 @@ namespace Skylabs.LobbyServer
         {
             Trace.WriteLine("[Bot]ConState:" + state.ToString());
             if(state == XmppConnectionState.Disconnected)
-                Xmpp.Open();
+                RemakeXmpp();
         }
 
         private static void XmppOnOnMessage(object sender , Message msg)
@@ -166,7 +188,8 @@ namespace Skylabs.LobbyServer
             var arr = _userList.ToArray();
             foreach(var u in arr)
             {
-                var m = new Message(u , MessageType.normal , "" , "refresh");
+                if (u.Bare == Xmpp.MyJID.Bare) continue;
+                var m = new Message(u.Bare , MessageType.normal , "" , "refresh");
                 Xmpp.Send(m);
             }
             Trace.WriteLine("[Bot]RefreshListEnd");

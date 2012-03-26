@@ -8,17 +8,17 @@ using System.Net;
 using System.Reflection;
 using System.Threading;
 using Skylabs.Net;
+using agsXMPP;
 
 namespace Skylabs.LobbyServer
 {
     public static class Program
     {
         public static Dictionary<string, string> Settings;
-        private static DateTime _killTime;
-        private static bool _sentMinuteWarning;
         private static readonly Thread RunThread = new Thread(Runner);
         private static bool _running = true;
         private static DateTime _startTime;
+        private static bool _gotCheckBack;
         private static void Main()
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
@@ -32,6 +32,14 @@ namespace Skylabs.LobbyServer
             RunThread.Start();            
             GameBot.Init();
             _startTime = DateTime.Now;
+            _gotCheckBack = true;
+            GameBot.OnCheckRecieved += OnCheckRecieved;
+        }
+
+        private static void OnCheckRecieved(object sender)
+        {
+            _gotCheckBack = true; 
+            Trace.WriteLine("[Status]Bot Alive.");
         }
 
         private static void Runner()
@@ -42,15 +50,24 @@ namespace Skylabs.LobbyServer
             {
                 if(!_running) return;
                 Thread.Sleep(100);
+                if(new TimeSpan(DateTime.Now.Ticks - dt.Ticks).Seconds > 30 && _gotCheckBack == false)
+                {
+                    Trace.WriteLine("[Status]Bot must have died. Remaking.");
+                    GameBot.RemakeXmpp();
+                    _gotCheckBack = true;
+                }
                 if(new TimeSpan(DateTime.Now.Ticks - dt.Ticks).Minutes > 1)
                 {
                     dt = DateTime.Now;
                     var ts = new TimeSpan(dt.Ticks - _startTime.Ticks);
                     Trace.WriteLine(String.Format("[Running For]: {0} Days, {1} Hours, {2} Minutes",ts.Days,ts.Hours, ts.Minutes));
+                    GameBot.CheckBotStatus();
+                    Trace.WriteLine("[Status]Bot Checking...");
+                    _gotCheckBack = false;
                 }
+                
             }
         }
-
         private static bool LoadSettings()
         {
             Settings = new Dictionary<string, string>();
@@ -84,11 +101,11 @@ namespace Skylabs.LobbyServer
         {
             if (minutes == 0)
             {
-                _sentMinuteWarning = false;
-                _killTime = new DateTime(0);
+                //_sentMinuteWarning = false;
+                //_killTime = new DateTime(0);
                 return;
             }
-            _killTime = DateTime.Now.AddMinutes(minutes);
+            //_killTime = DateTime.Now.AddMinutes(minutes);
             var sm = new SocketMessage("servermessage");
             sm.AddData("message",
                        "Server will be shutting down in " + minutes.ToString(CultureInfo.InvariantCulture) + " minutes");
