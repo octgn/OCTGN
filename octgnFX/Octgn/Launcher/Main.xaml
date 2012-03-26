@@ -5,7 +5,8 @@
                      Closing="WindowClosing">
   <ribbon:RibbonWindow.Resources>
     <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
-      <Setter Property="Foreground" Value="Red" />
+      <Setter Property="Background" Value="Red" />
+      <Setter Property="Foreground" Value="White" />
       <Setter Property="FontWeight" Value="Bold" />
     </Style>
     <Style TargetType="ribbon:RibbonTabHeader" x:Key="NormalHeaderColor" x:Name="NormalHeaderColor">
@@ -111,7 +112,7 @@
                                  Unchecked="BHideLoginNotificationsUnchecked" />
         </ribbon:RibbonGroup>
       </ribbon:RibbonTab>
-      <ribbon:RibbonTab Header="!" x:Name="NotificationTab"></ribbon:RibbonTab>
+      <ribbon:RibbonTab Header="Alerts" x:Name="NotificationTab"></ribbon:RibbonTab>
     </ribbon:Ribbon>
     <Frame Grid.Row="1" HorizontalAlignment="Stretch" Name="frame1" VerticalAlignment="Stretch"
            Navigating="FrameNavigating" NavigationUIVisibility="Hidden" />
