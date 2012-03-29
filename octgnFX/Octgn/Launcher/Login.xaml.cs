@@ -73,7 +73,7 @@ namespace Octgn.Launcher
                 var tweets =
                     (from tweet in tc.Status 
                     where tweet.Type == StatusType.User
-                            && tweet.ScreenName == "SkylabsOnline"
+                            && tweet.ScreenName == "octgn_official"
                             && tweet.Count == 5
                     select tweet).ToList();
                 Dispatcher.Invoke(new Action(()=>ShowTwitterStuff(tweets)));           
