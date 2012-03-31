@@ -292,6 +292,9 @@
     <Compile Include="Extentions\String.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="BigInteger.cs" />
+    <Compile Include="Launcher\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Launcher\ChatWindow.xaml.cs">
       <DependentUpon>ChatWindow.xaml</DependentUpon>
     </Compile>
@@ -599,6 +602,7 @@
     <Resource Include="Resources\Icons\console.png" />
     <Resource Include="Resources\Icons\rules.png" />
     <Resource Include="Resources\Icons\FilterGames.png" />
+    <Resource Include="Images\Avatar9_80.jpg" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -711,6 +715,10 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\ChatWindow.xaml">
       <SubType>Designer</SubType>
