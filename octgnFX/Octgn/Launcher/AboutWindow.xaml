@@ -1,0 +1,32 @@
+﻿<Window x:Class="Octgn.Launcher.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About The Dev Team" Height="333" Width="504" WindowStartupLocation="CenterOwner">
+    <Grid Width="480">
+        <TextBlock Height="270" HorizontalAlignment="Left" Margin="269,12,0,0" Name="textAbout" 
+                   Text="OCTGN was originally developed by Joel Dumas aka jods. This, OCTGN3, is it's predecessor." 
+                   VerticalAlignment="Top" Width="199" Opacity="1" TextWrapping="Wrap" Padding="5" />
+        <Image Height="80" HorizontalAlignment="Left" Margin="12,12,0,0" Name="imgDrilus" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+               Source="/OCTGN;component/Images/Avatar9_80.jpg" Opacity="0.25" MouseEnter="imgDrilus_MouseEnter" MouseLeave="imgDrilus_MouseLeave" />
+        <Label Content="Drilus" Height="28" HorizontalAlignment="Left" Margin="12,91,0,0" Name="lblDrilus" VerticalAlignment="Top" Width="79" 
+               HorizontalContentAlignment="Center" />
+        <Image Height="80" HorizontalAlignment="Left" Margin="12,125,0,0" Name="image2" Stretch="Fill" VerticalAlignment="Top" Width="80" />
+        <Label Content="Ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="12,204,0,0" Name="lblRalig98" 
+               VerticalAlignment="Top" Width="79" />
+        <Image Height="80" HorizontalAlignment="Left" Margin="97,12,0,0" Name="image3" Stretch="Fill" VerticalAlignment="Top" Width="80" />
+        <Image Height="80" HorizontalAlignment="Left" Margin="97,125,0,0" Name="image4" Stretch="Fill" VerticalAlignment="Top" Width="80" />
+        <Label Content="Gravecorp" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="97,91,0,0" Name="lblGraveCorp" 
+               VerticalAlignment="Top" Width="79" />
+        <Label Content="d0c" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="97,204,0,0" Name="lblD0c" 
+               VerticalAlignment="Top" Width="79" />
+        <TextBlock Height="270" HorizontalAlignment="Left" Margin="269,12,0,0" Name="textDrilus" 
+                   Text="Kent Jones is a part time programmer experienced in Delphi and C#. His first card game was Star Trek and has been enthusiastic ever since." 
+                   VerticalAlignment="Top" Width="199" Opacity="0" TextWrapping="Wrap" />
+        <Image Height="80" HorizontalAlignment="Left" Margin="183,12,0,0" Name="image1" Stretch="Fill" VerticalAlignment="Top" Width="80" />
+        <Label Content="Brine" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="183,91,0,0" Name="lblBrine" 
+               VerticalAlignment="Top" Width="79" />
+        <Image Height="80" HorizontalAlignment="Left" Margin="183,125,0,0" Name="image5" Stretch="Fill" VerticalAlignment="Top" Width="80" />
+        <Label Content="Others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="183,204,0,0" Name="lblOthers" 
+               VerticalAlignment="Top" Width="79" />
+    </Grid>
+</Window>
