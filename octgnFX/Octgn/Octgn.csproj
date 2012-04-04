@@ -603,6 +603,7 @@
     <Resource Include="Resources\Icons\rules.png" />
     <Resource Include="Resources\Icons\FilterGames.png" />
     <Resource Include="Images\Avatar9_80.jpg" />
+    <Resource Include="Images\ralig.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

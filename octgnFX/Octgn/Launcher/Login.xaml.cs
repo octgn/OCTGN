@@ -406,8 +406,9 @@ namespace Octgn.Launcher
             }
             private void menuAboutUs_Click(object sender, RoutedEventArgs e)
             {
-                var wnd = new AboutWindow();
-                wnd.Show();
+                //var wnd = new AboutWindow();
+                //wnd.Show();
+                Program.LauncherWindow.Navigate(new AboutWindow());
             }
             private void TextBox1TextChanged(object sender, TextChangedEventArgs e){bError.Visibility = Visibility.Hidden;}
             private void PasswordBox1PasswordChanged(object sender, RoutedEventArgs e){bError.Visibility = Visibility.Hidden;}
