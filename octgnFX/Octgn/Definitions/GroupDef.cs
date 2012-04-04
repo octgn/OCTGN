@@ -78,8 +78,8 @@ namespace Octgn.Definitions
                            board = board,
                            BoardPosition = xml.Attr<Rect>("boardPosition"),
                            Visibility = xml.Attr<GroupVisibility>("visibility"),
-                           Width = xml.Attr<int>("width"),
-                           Height = xml.Attr<int>("height"),
+                           Width = xml.Attribute("width") != null ? xml.Attr<int>("width") : 0,
+                           Height = xml.Attribute("height") != null ? xml.Attr<int>("height") : 0,
                            Ordered = xml.Attr("ordered", true),
                            Collapsed = xml.Attr<bool>("collapsed"),
                            CardActions = xml.Elements()
