@@ -604,6 +604,9 @@
     <Resource Include="Resources\Icons\FilterGames.png" />
     <Resource Include="Images\Avatar9_80.jpg" />
     <Resource Include="Images\ralig.png" />
+    <Resource Include="Images\d0c.jpeg" />
+    <Resource Include="Images\GravecorpAvatar.jpg" />
+    <Resource Include="Images\smith_user.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

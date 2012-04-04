@@ -30,21 +30,20 @@
                    Name="imgDrilus" Opacity="0.25" Source="/OCTGN;component/Images/Avatar9_80.jpg" Stretch="Fill" VerticalAlignment="Top" Width="80" />
             <Label Content="drilus" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="6,85,0,0" Name="lblDrilus" 
                    VerticalAlignment="Top" Width="79" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="5,152,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="49,152,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80" 
                    Opacity="0.25" Source="/OCTGN;component/Images/ralig.png" MouseEnter="imgRalig98_MouseEnter" MouseLeave="imgRalig98_MouseLeave" />
-            <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="5,231,0,0" Name="lblRalig98" 
+            <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="49,231,0,0" Name="lblRalig98" 
                    VerticalAlignment="Top" Width="79" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="91,6,0,0" Name="image3" Stretch="Fill" VerticalAlignment="Top" Width="80" Opacity="0.25" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="90,152,0,0" Name="image4" Stretch="Fill" VerticalAlignment="Top" Width="80" Opacity="0.25" />
+            <Image Height="80" HorizontalAlignment="Left" Margin="91,6,0,0" Name="imgGravecorp" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+                   Opacity="0.25" Source="/OCTGN;component/Images/GravecorpAvatar.jpg" MouseEnter="imgGravecorp_MouseEnter" MouseLeave="imgGravecorp_MouseLeave" />
+            <Image Height="80" HorizontalAlignment="Left" Margin="177,6,0,0" Name="imgD0c" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+                   Opacity="0.25" Source="/OCTGN;component/Images/d0c.jpeg" MouseEnter="imgD0c_MouseEnter" MouseLeave="imgD0c_MouseLeave" />
             <Label Content="gravecorp" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="91,85,0,0" Name="lblGraveCorp" 
                    VerticalAlignment="Top" Width="79" />
-            <Label Content="d0c" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="90,231,0,0" Name="lblD0c" 
+            <Label Content="d0c" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,85,0,0" Name="lblD0c" 
                    VerticalAlignment="Top" Width="79" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="177,6,0,0" Name="image1" Stretch="Fill" VerticalAlignment="Top" Width="80" Opacity="0.25" />
-            <Label Content="brine" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,85,0,0" Name="lblBrine" 
-                   VerticalAlignment="Top" Width="79" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="176,0,0,46" Name="image5" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" />
-            <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="176,231,0,0" Name="lblOthers" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="134,0,0,46" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Images/smith_user.png" MouseEnter="imgOther_MouseEnter" MouseLeave="imgOther_MouseLeave" />
+            <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="134,231,0,0" Name="lblOthers" 
                    VerticalAlignment="Top" Width="79" />
             <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textAbout" 
                    Text="OCTGN &quot;Online Card and Tabletop Gaming Network&quot; was originally developed by jods &quot;Joel Dumas&quot;. &#13;&#13;This program allows anyone to create a game file for use in OCTGN. A game file is typically a TCG (Trading Card Game).&#13;&#13;Feel free to submit any ideas or bugs you may have. We look forward to hearing from you. Enjoy the games!" 
@@ -53,7 +52,16 @@
                    Text="Kent Jones is a part time programmer experienced in Delphi and C#.&#13;&#13;His first card game was Star Trek and he's been a TCG enthusiast ever since.&#13;&#13;^.^" 
                    VerticalAlignment="Top" Width="199" Opacity="0" TextWrapping="Wrap" FontSize="14" />
             <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textRalig98" 
-                   Text="Chris Martin. Not much is known about him.&#13;&#13;He once said &quot;Anal isn't gay if you call 'No homo'. Oh, and make sure the balls don't touch&quot;." 
+                   Text="Chris Martin. Not much is known about him.&#13;&#13;He once said &quot;Anal isn't gay if you call 'No homo'. Oh, and make sure the balls don't touch&quot;."
+                   VerticalAlignment="Top" Width="199" Opacity="0" TextWrapping="Wrap" FontSize="14" />
+            <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textGravecorp" 
+                   Text="Gravecorp (Uri)&#13;&#13;Can program in almost any programming language by abusing his code monkey army!&#13;&#13;KkNvdmVycyB1cCogU3RvcCBkZWNyeXB0aW5nIG1lIHdpdGggeW91ciBleWVzISEh" 
+                   VerticalAlignment="Top" Width="199" Opacity="0" TextWrapping="Wrap" FontSize="14" />
+            <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textOther" 
+                   Text="brine: Thanks for all the python help!&#13;&#13;MagnusVortex:Thanks for some cool ideas. =]&#13;&#13;Robertmeta (Robert Melton):Wow. Thanks for the amazing amount of code and time you contributed. Check out his fork @ https://github.com/robertmeta/open-octgn ." 
+                   VerticalAlignment="Top" Width="199" Opacity="0" TextWrapping="Wrap" FontSize="12" />
+            <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textD0c" 
+                   Text="Kelly Elton&#13;&#13;Not content without rocking a mullet. He also puts his nipple hair into ponytails.&#13;&#13;Now imagine what he can do with code!" 
                    VerticalAlignment="Top" Width="199" Opacity="0" TextWrapping="Wrap" FontSize="14" />
         </Grid>
     </Grid>
