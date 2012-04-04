@@ -238,7 +238,7 @@
       <Name>Octgn.Data</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <!--<PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)bin\x86\$(ConfigurationName)\$(TargetFileName)"</PostBuildEvent>-->
   </PropertyGroup>
@@ -247,7 +247,8 @@
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
-	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)bin\x86\$(ConfigurationName)\$(TargetFileName)">
+	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SolutionDir)bin\x86\$(Configuration)\$(TargetFileName)" />
+	<Message Text="$(TargetPath)   , $(SolutionDir)bin\x86\$(Configuration)\$(TargetFileName)" />
   </Target>
   -->
 </Project>
