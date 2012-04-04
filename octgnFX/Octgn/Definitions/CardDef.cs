@@ -47,8 +47,8 @@ namespace Octgn.Definitions
                        {
                            back = backUri,
                            front = frontUri,
-                           Width = xml.Attribute("width")!=null? xml.Attr<int>("width"):0,
-                           Height = xml.Attribute("height")!=null? xml.Attr<int>("height"):0,
+                           Width = xml.Attr<int>("width"),
+                           Height = xml.Attr<int>("height"),
                            CornerRadius = xml.Attr<int>("cornerRadius"),
                            Properties = xml.Elements(Defs.XmlnsOctgn + "property")
                                .Select(PropertyDef.LoadFromXml)
