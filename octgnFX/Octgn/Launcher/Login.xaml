@@ -60,8 +60,8 @@
             <MenuItem Name="menuExit" Header="Exit" Click="MenuExitClick" />
       </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="Report a bug" />
-                <MenuItem Header="Need Help?" />
+                <MenuItem Name="menuBug" Header="Report a bug" Click="menuBug_Click" />
+                <MenuItem Name="menuHelp" Header="Need Help?" Click="menuHelp_Click" />
                 <Separator />
                 <MenuItem Name="menuAboutUs" Header="About Us" Click="menuAboutUs_Click" />
             </MenuItem>
