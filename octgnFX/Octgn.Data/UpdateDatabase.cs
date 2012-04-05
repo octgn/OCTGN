@@ -16,13 +16,19 @@ namespace Octgn.Data
         {
             bool ret = false;
             int dbVersion = CurrentVersion(connection);
-            while (GetQueries(dbVersion) != string.Empty)
+            while (GetQueries(dbVersion).Item1 != string.Empty)
             {
                 using (SQLiteCommand com = connection.CreateCommand())
                 {
-                    com.CommandText = GetQueries(dbVersion);
+                    Tuple<string, int> queryData = GetQueries(dbVersion);
+                    com.CommandText = queryData.Item1;
                     int affectedRows = com.ExecuteNonQuery();
 
+                    if (queryData.Item2 > 0)
+                    {
+                        com.CommandText = "UPDATE dbinfo SET version=" + queryData.Item2;
+                        com.ExecuteNonQuery();
+                    }
                     ret = ret ? true : (affectedRows > 0);
                 }
                 dbVersion = CurrentVersion(connection);
@@ -37,7 +43,6 @@ namespace Octgn.Data
             {
                 com.CommandText = "SELECT version FROM dbinfo";
                 object scalarValue = com.ExecuteScalar();
-                int value = 0;
                 if (scalarValue != null)
                 {
                     ret = int.Parse(scalarValue.ToString());
@@ -46,9 +51,9 @@ namespace Octgn.Data
             return (ret);
         }
 
-        internal static string GetQueries(int currentDBVersion)
+        internal static Tuple<string,int> GetQueries(int currentDBVersion)
         {
-            string ret = string.Empty;
+            Tuple<string, int> ret = new Tuple<string, int>(string.Empty, 0);
 
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(Resource1.UpdataDatabaseQueries);
@@ -57,7 +62,9 @@ namespace Octgn.Data
             {
                 if (node.Attributes["from"] != null && int.Parse(node.Attributes["from"].Value) == currentDBVersion)
                 {
-                    ret = node.FirstChild.InnerText;
+                    string query = node.FirstChild.InnerText;
+                    int newVersion = (node.Attributes["to"] != null) ? int.Parse(node.Attributes["to"].Value) : 0;
+                    ret = new Tuple<string, int>(query, newVersion);
                 }
             }
 
