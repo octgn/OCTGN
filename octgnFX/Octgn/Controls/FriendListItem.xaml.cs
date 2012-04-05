@@ -6,6 +6,8 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Octgn.Play;
+using Octgn.Utils;
 using Skylabs.Lobby;
 using agsXMPP;
 using agsXMPP.protocol.client;
@@ -226,7 +228,7 @@ namespace Octgn.Controls
         private void StartDragInProcAdorner(MouseEventArgs e)
         {
             // Let's define our DragScope .. In this case it is every thing inside our main window .. 
-            DragScope = Program.ClientWindow.Content as FrameworkElement;
+            DragScope = Program.MainWindow.Content as FrameworkElement;
             Debug.Assert(DragScope != null);
 
             // We enable Drag & Drop in our scope ...  We are not implementing Drop, so it is OK, but this allows us to get DragOver 
@@ -309,7 +311,7 @@ namespace Octgn.Controls
         private void image1_MouseUp(object sender, MouseButtonEventArgs e)
         {
 
-            Program.LClient.RemoveFriend(ThisUser);
+            Program.LobbyClient.RemoveFriend(ThisUser);
         }
     }
 }

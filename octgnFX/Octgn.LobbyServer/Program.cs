@@ -44,7 +44,6 @@ namespace Skylabs.LobbyServer
 
         private static void Runner()
         {
-            int i = 0;
             DateTime dt = DateTime.Now;
             while (_running)
             {

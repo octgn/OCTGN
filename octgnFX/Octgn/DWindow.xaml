@@ -1,8 +1,0 @@
-﻿<Window x:Class="Octgn.DWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="DebugWindow" Height="244" Width="460"
-        IsVisibleChanged="WindowIsVisibleChanged" Closing="WindowClosing">
-  <Grid>
-    <RichTextBox x:Name="output" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Visible"
-                 BorderThickness="0" Background="Transparent" />
-  </Grid>
-</Window>

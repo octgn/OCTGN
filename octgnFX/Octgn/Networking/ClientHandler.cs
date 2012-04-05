@@ -6,6 +6,7 @@ using System.Windows.Media;
 using Octgn.Launcher;
 using Octgn.Play;
 using Octgn.Play.Actions;
+using Octgn.Utils;
 
 namespace Octgn.Networking
 {
@@ -60,7 +61,7 @@ namespace Octgn.Networking
         public void Start()
         {
             if (!Program.Game.IsLocal)
-                Program.ClientWindow.StartGame();
+                Program.MainWindow.StartGame();
             else
             {
                 var sg = Program.LauncherWindow.Content as StartGame;

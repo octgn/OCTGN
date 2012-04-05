@@ -17,8 +17,8 @@ namespace Octgn.Launcher
         public ContactList()
         {
             InitializeComponent();
-            Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
-            Program.LClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
+            Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
         }
 
         private void ChattingOnOnCreateRoom(object sender , NewChatRoom room)
@@ -26,7 +26,7 @@ namespace Octgn.Launcher
             LazyAsync.Invoke(RefreshList);
         }
 
-        private void LClientOnOnDataRecieved(object sender, Client.DataRecType type, object data)
+        private void LobbyClientOnOnDataRecieved(object sender, Client.DataRecType type, object data)
         {
             if (type == Client.DataRecType.FriendList)
             {
@@ -39,7 +39,7 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
                                              {
                 stackPanel1.Children.Clear();
-                NewUser[] flist = Program.LClient.Friends.ToArray();
+                NewUser[] flist = Program.LobbyClient.Friends.ToArray();
                 foreach (FriendListItem f in flist.Select(u => new FriendListItem
                                                                 {
                                                                     ThisUser = u,
@@ -53,7 +53,7 @@ namespace Octgn.Launcher
                     f.MouseDoubleClick += FMouseDoubleClick;
                     stackPanel1.Children.Add(f);
                 }
-                foreach( var g in Program.LClient.Chatting.Rooms.Where(x=>x.IsGroupChat))
+                foreach( var g in Program.LobbyClient.Chatting.Rooms.Where(x=>x.IsGroupChat))
                 {
                     var gc = new GroupChatListItem()
                     {
@@ -71,11 +71,11 @@ namespace Octgn.Launcher
         {
             var fi = sender as GroupChatListItem;
             if (fi == null) return;
-            var room = Program.LClient.Chatting.GetRoom(fi.ThisRoom.GroupUser,true);
+            var room = Program.LobbyClient.Chatting.GetRoom(fi.ThisRoom.GroupUser,true);
             var cw = Program.ChatWindows.SingleOrDefault(x => x.Id == room.RID);
             if(cw == null)
             {
-                cw = new ChatWindow(room);
+                cw = new Windows.ChatWindow(room);
                 Program.ChatWindows.Add(cw);
             }
             cw.Show();
@@ -87,11 +87,11 @@ namespace Octgn.Launcher
         {
             var fi = sender as FriendListItem;
             if (fi == null) return;
-            var room = Program.LClient.Chatting.GetRoom(fi.ThisUser);
+            var room = Program.LobbyClient.Chatting.GetRoom(fi.ThisUser);
             var cw = Program.ChatWindows.SingleOrDefault(x => x.Id == room.RID);
             if(cw == null)
             {
-                cw = new ChatWindow(room);
+                cw = new Windows.ChatWindow(room);
                 Program.ChatWindows.Add(cw);
             }
             cw.Show();
@@ -105,7 +105,7 @@ namespace Octgn.Launcher
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LClient.OnDataRecieved -= LClientOnOnDataRecieved;
+            Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved;
         }
     }
 }

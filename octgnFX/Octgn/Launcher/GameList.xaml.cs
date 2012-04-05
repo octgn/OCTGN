@@ -124,7 +124,7 @@ namespace Octgn.Launcher
                 if (!game.CheckVersion()) return;
 
                 //Check game scripts
-                if (!UpdateChecker.CheckGameDef(game))
+                if (!Windows.UpdateChecker.CheckGameDef(game))
                     return;
 
                 // Check if the game already exists

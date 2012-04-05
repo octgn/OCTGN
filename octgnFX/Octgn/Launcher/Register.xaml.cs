@@ -46,13 +46,13 @@ namespace Octgn.Launcher
                 return;
             }
             progressBar1.Visibility = Visibility.Visible;
-            Program.LClient.OnRegisterComplete += LClientOnOnRegisterComplete;
-            Program.LClient.BeginRegister(tbUsername.Text,tbPass1.Password,tbEmail.Text);
+            Program.LobbyClient.OnRegisterComplete += LobbyClientOnOnRegisterComplete;
+            Program.LobbyClient.BeginRegister(tbUsername.Text,tbPass1.Password,tbEmail.Text);
         }
 
-        private void LClientOnOnRegisterComplete(object sender, Client.RegisterResults results)
+        private void LobbyClientOnOnRegisterComplete(object sender, Client.RegisterResults results)
         {
-            Program.LClient.OnRegisterComplete -= LClientOnOnRegisterComplete;
+            Program.LobbyClient.OnRegisterComplete -= LobbyClientOnOnRegisterComplete;
             Dispatcher.Invoke(new Action(()=>
                 {
                     progressBar1.Visibility = Visibility.Hidden;
@@ -65,8 +65,8 @@ namespace Octgn.Launcher
                             MessageBox.Show("Registration Success!", "Octgn", MessageBoxButton.OK,
                                             MessageBoxImage.Information);
                             var l = new Login();
-                            l.textBox1.Text = Program.LClient.Username;
-                            l.passwordBox1.Password = Program.LClient.Password;
+                            l.textBox1.Text = Program.LobbyClient.Username;
+                            l.passwordBox1.Password = Program.LobbyClient.Password;
                             Program.LauncherWindow.Navigate(l);
                             break;
                         case Client.RegisterResults.UsernameTaken:
@@ -86,7 +86,7 @@ namespace Octgn.Launcher
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
 
-            Program.LClient.OnRegisterComplete -= LClientOnOnRegisterComplete;
+            Program.LobbyClient.OnRegisterComplete -= LobbyClientOnOnRegisterComplete;
             Program.LauncherWindow.Navigate(new Login());
         }
     }

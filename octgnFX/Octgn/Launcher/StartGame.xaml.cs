@@ -86,7 +86,7 @@ namespace Octgn.Launcher
             Program.PlayWindow = new PlayWindow(_isLocal);
             Program.PlayWindow.Show();
             if (!_isLocal)
-                Program.ClientWindow.HostJoinTab();
+                Program.MainWindow.HostJoinTab();
             else
             {
                 Program.LauncherWindow.Navigate(new Login());
@@ -98,7 +98,7 @@ namespace Octgn.Launcher
         {
             if (_startingGame) return;
             _startingGame = true;
-            Program.LClient.HostedGameStarted();
+            Program.LobbyClient.HostedGameStarted();
             e.Handled = true;
             Start();
         }
@@ -112,7 +112,7 @@ namespace Octgn.Launcher
         private void Back()
         {
             if (!_isLocal)
-                Program.ClientWindow.HostJoinTab();
+                Program.MainWindow.HostJoinTab();
             else
             {
                 Program.LauncherWindow.NavigationService.Navigate(new Login());

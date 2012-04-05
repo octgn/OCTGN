@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Octgn.Launcher;
 using Skylabs.Lobby;
+using ChatWindow = Octgn.Windows.ChatWindow;
 
 namespace Octgn.Controls
 {
