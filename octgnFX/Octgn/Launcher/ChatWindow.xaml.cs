@@ -25,6 +25,7 @@ namespace Octgn.Launcher
         private bool _realClose;
         public NewChatRoom Room;
         public long Id { get { return Room.RID; } }
+        public bool IsLobbyChat { get; private set; }
         public ChatWindow(NewChatRoom room)
         {
             InitializeComponent();
@@ -37,7 +38,8 @@ namespace Octgn.Launcher
             richTextBox1.Document.LineHeight = 2;
             Room.OnMessageRecieved += RoomOnOnMessageRecieved;
             Room.OnUserListChange += RoomOnOnUserListChange;
-            if (!room.IsGroupChat || room.GroupUser != null && room.GroupUser.User.User == "lobby") miLeaveChat.IsEnabled = false;
+            IsLobbyChat = (room.GroupUser != null && room.GroupUser.User.User == "lobby");
+            if (!room.IsGroupChat || IsLobbyChat) miLeaveChat.IsEnabled = false;
             ResetUserList();
         }
 
@@ -57,7 +59,9 @@ namespace Octgn.Launcher
                     Run r = GetUserRun(from.User.User,
                                        "[" + from.User.User + "] : ");
                     r.Foreground = b;
-                    AddChatText(r, message);   
+                    AddChatText(r, message);
+                    if (this.Visibility != Visibility.Visible && Program.LClient.Me.Status != UserStatus.DoNotDisturb && !IsLobbyChat)
+                            Show();
                 }));
         }
 

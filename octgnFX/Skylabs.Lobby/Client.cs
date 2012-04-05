@@ -40,7 +40,7 @@ namespace Skylabs.Lobby
             public event dDataRecieved OnDataRecieved;
         #endregion
         #region PrivateAccessors
-            public XmppClientConnection Xmpp;
+            private XmppClientConnection Xmpp;
             private int _noteId = 0;
             private Presence myPresence;
             private List<HostedGameData> _games;
@@ -418,6 +418,7 @@ namespace Skylabs.Lobby
                     Xmpp.Send(p);
                     break;
             }
+            Me.Status = status;
         }
         public void SendFriendRequest(string username)
         {

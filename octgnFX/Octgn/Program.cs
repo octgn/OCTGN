@@ -140,7 +140,7 @@ namespace Octgn
         {
             Application.Current.MainWindow = null;
             if (LClient != null)
-                LClient.Xmpp.Close();
+                LClient.Stop();
 
             SaveLocation();
             try
