@@ -15,7 +15,24 @@ namespace Octgn.Data
         public static bool Update(SQLiteConnection connection)
         {
             bool ret = false;
+            int dbVersion = CurrentVersion(connection);
+            while (GetQueries(dbVersion) != string.Empty)
+            {
+                using (SQLiteCommand com = connection.CreateCommand())
+                {
+                    com.CommandText = GetQueries(dbVersion);
+                    int affectedRows = com.ExecuteNonQuery();
 
+                    ret = ret ? true : (affectedRows > 0);
+                }
+                dbVersion = CurrentVersion(connection);
+            }
+            return (ret);
+        }
+
+        internal static int CurrentVersion(SQLiteConnection connection)
+        {
+            int ret = 0;
             using (SQLiteCommand com = connection.CreateCommand())
             {
                 com.CommandText = "SELECT version FROM dbinfo";
@@ -23,13 +40,8 @@ namespace Octgn.Data
                 int value = 0;
                 if (scalarValue != null)
                 {
-                    value = int.Parse(scalarValue.ToString());
+                    ret = int.Parse(scalarValue.ToString());
                 }
-
-                com.CommandText = GetQueries(value);
-                int affectedRows = com.ExecuteNonQuery();
-
-                ret = (affectedRows > 0);
             }
             return (ret);
         }
