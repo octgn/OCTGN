@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<updates>
+  <update from="1" to="2">
+      <![CDATA[
+        UPDATE dbinfo SET version=2;
+      ]]>
+  </update>
+  <update from="2" to="3">
+      <![CDATA[
+        ALTER TABLE cards ADD alternate TEXT DEFAULT '00000000-0000-0000-0000-000000000000';
+        ALTER TABLE cards ADD dependent TEXT;
+        UPDATE dbinfo SET version=3;
+      ]]>
+  </update>
+</updates>
