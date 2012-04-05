@@ -502,7 +502,7 @@ namespace Octgn.Windows
             IPAddress ip = IPAddress.Parse("127.0.0.1");
 
 #else
-            var ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
+            var ad = Dns.GetHostAddresses("www.skylabsonline.com");
             IPAddress ip = ad[0];
 #endif
 
