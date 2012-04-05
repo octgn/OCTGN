@@ -49,7 +49,7 @@ namespace Octgn.Launcher
 
         }
 
-        private void RoomOnOnMessageRecieved(object sender , NewUser from , string message)
+        private void RoomOnOnMessageRecieved(object sender , NewUser from , string message, DateTime rTime)
         {
             Dispatcher.Invoke(new Action(()=>
                 {
@@ -58,7 +58,7 @@ namespace Octgn.Launcher
                         b = Brushes.Blue;
 
                     Run r = GetUserRun(from.User.User,
-                                       "[" + from.User.User + "] : ");
+                                       "[" + from.User.User + "] : ",rTime);
                     r.Foreground = b;
                     AddChatText(r, message);
                     if (this.Visibility != Visibility.Visible && Program.LClient.Me.Status != UserStatus.DoNotDisturb && !IsLobbyChat)
@@ -232,12 +232,12 @@ namespace Octgn.Launcher
             e.Handled = true;
         }
 
-        private static Run GetUserRun(String user, string fulltext)
+        private static Run GetUserRun(String user, string fulltext, DateTime rTime)
         {
             var r = new Run(fulltext)
                         {
                             ToolTip =
-                                DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToLongDateString() +
+                                rTime.ToLongTimeString() + " " + rTime.ToLongDateString() +
                                 "\nClick to whisper " +
                                 user,
                             Cursor = Cursors.Hand,
@@ -245,6 +245,15 @@ namespace Octgn.Launcher
                         };
             r.MouseEnter += delegate { r.Background = new RadialGradientBrush(Colors.DarkGray, Colors.WhiteSmoke); };
             r.MouseLeave += delegate { r.Background = Brushes.White; };
+            r.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler
+                (delegate{
+                    if (user == Program.LClient.Me.User.User) return;
+                    var room = Program.LClient.Chatting.GetRoom(new NewUser(new Jid(user + "@skylabsonline.com")));
+                    var cw = Program.ChatWindows.SingleOrDefault(x => x.Room.RID == room.RID);
+                    if(cw != null)
+                        cw.Show();
+
+                }));
             return r;
         }
 
@@ -306,7 +315,7 @@ namespace Octgn.Launcher
             if (textBox1.Text.Trim().Length <= 0) return;
             Room.SendMessage(textBox1.Text);
             if(!Room.IsGroupChat)
-                RoomOnOnMessageRecieved(this,Program.LClient.Me,textBox1.Text);
+                RoomOnOnMessageRecieved(this,Program.LClient.Me,textBox1.Text,DateTime.Now);
             //Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
             textBox1.Text = "";
         }

@@ -20,7 +20,7 @@ namespace Skylabs.Lobby
 {
     public class NewChatRoom: IDisposable,IEquatable<NewChatRoom>,IEqualityComparer
     {
-        public delegate void dMessageReceived(object sender , NewUser from, string message);
+        public delegate void dMessageReceived(object sender , NewUser from, string message, DateTime rTime);
 
         public delegate void dUserListChange(object sender,List<NewUser> users );
 
@@ -74,6 +74,8 @@ namespace Skylabs.Lobby
         }
         public  void OnMessage(object sender , Message msg) 
         {
+            var rTime = DateTime.Now;
+            if (msg.XDelay != null && msg.XDelay.Stamp != null) rTime = msg.XDelay.Stamp.ToLocalTime();
             switch(msg.Type)
             {
                 case MessageType.normal:
@@ -85,7 +87,7 @@ namespace Skylabs.Lobby
                     {
                         case Chatstate.None:
                             if(!IsGroupChat && !String.IsNullOrWhiteSpace(msg.Body) && OnMessageRecieved != null && Users.Contains(new NewUser(msg.From.Bare)))
-                                OnMessageRecieved.Invoke(this,new NewUser(msg.From.Bare),msg.Body );
+                                OnMessageRecieved.Invoke(this,new NewUser(msg.From.Bare),msg.Body,rTime );
                             break;
                         case Chatstate.active:
                             
@@ -109,7 +111,7 @@ namespace Skylabs.Lobby
                         {
                             if(!String.IsNullOrWhiteSpace(msg.Body))
                                 if(OnMessageRecieved != null)
-                                    OnMessageRecieved.Invoke(this,new NewUser(new Jid(msg.From.Resource + "@skylabsonline.com")),msg.Body );
+                                    OnMessageRecieved.Invoke(this,new NewUser(new Jid(msg.From.Resource + "@skylabsonline.com")),msg.Body ,rTime);
                         }
                     }
                     break;
