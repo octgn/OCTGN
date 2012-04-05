@@ -405,9 +405,15 @@ namespace Octgn.Launcher
             }
             private void menuAboutUs_Click(object sender, RoutedEventArgs e)
             {
-                //var wnd = new AboutWindow();
-                //wnd.Show();
                 Program.LauncherWindow.Navigate(new Windows.AboutWindow());
+            }
+            private void menuHelp_Click(object sender, RoutedEventArgs e)
+            {
+                Process.Start("https://github.com/kellyelton/OCTGN/wiki");
+            }
+            private void menuBug_Click(object sender, RoutedEventArgs e)
+            {
+                Process.Start("https://github.com/kellyelton/OCTGN/issues");
             }
             private void TextBox1TextChanged(object sender, TextChangedEventArgs e){bError.Visibility = Visibility.Hidden;}
             private void PasswordBox1PasswordChanged(object sender, RoutedEventArgs e){bError.Visibility = Visibility.Hidden;}
@@ -444,7 +450,7 @@ namespace Octgn.Launcher
             }
             private void LauncherWindowClosing(object sender, CancelEventArgs e){if (_isLoggingIn)e.Cancel = true;}
             private void MenuExitClick(object sender, RoutedEventArgs e){if (!_isLoggingIn)Program.Exit();}
-        #endregion
+        #endregion            
 
     }
 
