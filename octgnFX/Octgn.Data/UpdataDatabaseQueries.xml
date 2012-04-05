@@ -2,7 +2,7 @@
 <updates>
   <update from="1" to="2">
       <![CDATA[
-        --update version only
+        --use these sort of sql comments if you only need to increment the database version.
       ]]>
   </update>
   <update from="2" to="3">
