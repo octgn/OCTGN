@@ -59,8 +59,13 @@
             </MenuItem>
             <MenuItem Name="menuExit" Header="Exit" Click="MenuExitClick" />
       </MenuItem>
-
-    </Menu>
+            <MenuItem Header="Help">
+                <MenuItem Header="Report a bug" />
+                <MenuItem Header="Need Help?" />
+                <Separator />
+                <MenuItem Name="menuAboutUs" Header="About Us" Click="menuAboutUs_Click" />
+            </MenuItem>
+        </Menu>
     <Grid x:Name="MainGrid" Margin="10" Grid.Row="1" Background="{x:Null}">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="378*" />
