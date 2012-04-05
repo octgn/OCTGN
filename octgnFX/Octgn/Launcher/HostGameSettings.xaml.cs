@@ -27,13 +27,13 @@ namespace Octgn.Launcher
 
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
-            Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
+            Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
         }
 
-        private void PageUnloaded(object sender, RoutedEventArgs e) { Program.LClient.OnDataRecieved -= LClientOnOnDataRecieved; }
+        private void PageUnloaded(object sender, RoutedEventArgs e) { Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved; }
 
 
-        private void LClientOnOnDataRecieved(object sender , Skylabs.Lobby.Client.DataRecType type , object data)
+        private void LobbyClientOnOnDataRecieved(object sender , Skylabs.Lobby.Client.DataRecType type , object data)
         {
             if (type == Skylabs.Lobby.Client.DataRecType.HostedGameReady)
             {
@@ -54,7 +54,7 @@ namespace Octgn.Launcher
             e.Handled = true;
             _beginHost = true;
             _ns = NavigationService;
-            Program.LClient.BeginHostGame(_game, textBox1.Text);
+            Program.LobbyClient.BeginHostGame(_game, textBox1.Text);
             
         }
 
@@ -62,7 +62,7 @@ namespace Octgn.Launcher
         {
             Program.DebugTrace.TraceEvent(TraceEventType.Information, 0,
                                           "Connecting to port: " + port.ToString(CultureInfo.InvariantCulture));
-            Program.LClient.CurrentHostedGamePort = port;
+            Program.LobbyClient.CurrentHostedGamePort = port;
             if (port <= -1) return;//TODO Somekind of user shit to tell them game couldn't be hosted.
             Program.GameSettings.UseTwoSidedTable = true;
             Program.Game = new Game(GameDef.FromO8G(_game.Filename));
@@ -88,7 +88,7 @@ namespace Octgn.Launcher
 
         private void Button2Click(object sender, RoutedEventArgs e)
         {
-            Program.ClientWindow.HostJoinTab();
+            Program.MainWindow.HostJoinTab();
         }
     }
 }

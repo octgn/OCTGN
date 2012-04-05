@@ -194,6 +194,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -216,9 +217,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AboutWindow.xaml.cs">
-      <DependentUpon>AboutWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -253,19 +251,17 @@
     </Compile>
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
-    <Compile Include="Cryptor.cs" />
-    <Compile Include="Database.cs" />
-    <Compile Include="DEBUGLobbySettings.Designer.cs">
+    <Compile Include="Networking\IServerCalls.cs">
+      <DependentUpon>IServerCalls.tt</DependentUpon>
       <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>DEBUGLobbySettings.settings</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="CacheTraceListener.cs" />
+    <Compile Include="Play\DefaultMarkerModel.cs" />
+    <Compile Include="Play\DragAdorner.cs" />
+    <Compile Include="Utils\CacheTraceListener.cs" />
+    <Compile Include="Utils\Cryptor.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="Definitions\GlobalVariableDef.cs" />
-    <Compile Include="DragAdorner.cs" />
-    <Compile Include="DWindow.xaml.cs">
-      <DependentUpon>DWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DeckBuilder\DeckBuilderWindow.xaml.cs">
       <DependentUpon>DeckBuilderWindow.xaml</DependentUpon>
     </Compile>
@@ -276,7 +272,6 @@
       <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DeckBuilder\SetPropertyDef.cs" />
-    <Compile Include="DefaultMarkerModel.cs" />
     <Compile Include="Definitions\ActionDef.cs" />
     <Compile Include="Definitions\CardDef.cs" />
     <Compile Include="Definitions\CounterDef.cs" />
@@ -286,18 +281,9 @@
     <Compile Include="Definitions\LocalDef.cs" />
     <Compile Include="Definitions\ScriptDef.cs" />
     <Compile Include="Definitions\VariableDef.cs" />
-    <Compile Include="ErrorWindow.xaml.cs">
-      <DependentUpon>ErrorWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Extentions\String.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="BigInteger.cs" />
-    <Compile Include="Launcher\AboutWindow.xaml.cs">
-      <DependentUpon>AboutWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\ChatWindow.xaml.cs">
-      <DependentUpon>ChatWindow.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Utils\BigInteger.cs" />
     <Compile Include="Launcher\ConnectLocalGame.xaml.cs">
       <DependentUpon>ConnectLocalGame.xaml</DependentUpon>
     </Compile>
@@ -325,45 +311,16 @@
     <Compile Include="Launcher\GameList.xaml.cs">
       <DependentUpon>GameList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\ChangeSetsProgressDialog.xaml.cs">
-      <DependentUpon>ChangeSetsProgressDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Launcher\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\Main.xaml.cs">
-      <DependentUpon>Main.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\PatchDialog.xaml.cs">
-      <DependentUpon>PatchDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\PatchProgressDialog.xaml.cs">
-      <DependentUpon>PatchProgressDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\UpdateChecker.xaml.cs">
-      <DependentUpon>UpdateChecker.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\GameSelector.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>GameSelector.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\LauncherWindow.xaml.cs">
-      <DependentUpon>LauncherWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Launcher\StartGame.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>StartGame.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Launcher\UpgradeMessage.xaml.cs">
-      <DependentUpon>UpgradeMessage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="lobbysettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>lobbysettings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="MessageWindow.xaml.cs">
-      <DependentUpon>MessageWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Networking\BinaryParser.cs">
       <AutoGen>True</AutoGen>
@@ -376,7 +333,7 @@
       <DependentUpon>BinaryStubs.tt</DependentUpon>
     </Compile>
     <Compile Include="Networking\ClientHandler.cs" />
-    <Compile Include="Crypto.cs" />
+    <Compile Include="Utils\Crypto.cs" />
     <Compile Include="Networking\Mute.cs" />
     <Compile Include="Networking\XmlParser.cs">
       <AutoGen>True</AutoGen>
@@ -496,13 +453,7 @@
       <DependentUpon>MarkerDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Scripting\Controls\Dialogs.cs" />
-    <Compile Include="Server\IServerCalls.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>IServerCalls.tt</DependentUpon>
-    </Compile>
     <Compile Include="Networking\ServerErrorEventArgs.cs" />
-    <Compile Include="GroupVisibility.cs" />
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Play\Card.cs" />
     <Compile Include="Play\CardIdentity.cs" />
@@ -519,24 +470,57 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\GroupVisibility.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
-    <Compile Include="Utils\LinqExtensions.cs" />
-    <Compile Include="Win32.cs" />
+    <Compile Include="Extentions\LinqExtensions.cs" />
+    <Compile Include="Utils\Win32.cs" />
+    <Compile Include="Windows\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ChangeSetsProgressDialog.xaml.cs">
+      <DependentUpon>ChangeSetsProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ChatWindow.xaml.cs">
+      <DependentUpon>ChatWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\DWindow.xaml.cs">
+      <DependentUpon>DWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ErrorWindow.xaml.cs">
+      <DependentUpon>ErrorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\LauncherWindow.xaml.cs">
+      <DependentUpon>LauncherWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\MessageWindow.xaml.cs">
+      <DependentUpon>MessageWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PatchDialog.xaml.cs">
+      <DependentUpon>PatchDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PatchProgressDialog.xaml.cs">
+      <DependentUpon>PatchProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UpdateChecker.xaml.cs">
+      <DependentUpon>UpdateChecker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UpgradeMessage.xaml.cs">
+      <DependentUpon>UpgradeMessage.xaml</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Launcher\Game.xsd">
       <SubType>
       </SubType>
     </EmbeddedResource>
-    <None Include="DEBUGLobbySettings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>DEBUGLobbySettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="lobbysettings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>lobbysettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="Networking\BinaryStubs.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryStubs.cs</LastGenOutput>
+    </None>
+    <None Include="Networking\IServerCalls.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IServerCalls.cs</LastGenOutput>
     </None>
     <None Include="Networking\XmlParser.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -604,6 +588,9 @@
     <Resource Include="Resources\Icons\FilterGames.png" />
     <Resource Include="Images\Avatar9_80.jpg" />
     <Resource Include="Images\ralig.png" />
+    <Resource Include="Images\d0c.jpeg" />
+    <Resource Include="Images\GravecorpAvatar.jpg" />
+    <Resource Include="Images\smith_user.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -616,10 +603,6 @@
     <Content Include="Scripting\Lib\_abcoll.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Server\IServerCalls.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>IServerCalls.cs</LastGenOutput>
-    </None>
     <Resource Include="Launcher\Game.xsx">
       <DependentUpon>Game.xsd</DependentUpon>
       <SubType>Designer</SubType>
@@ -647,12 +630,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="AboutWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\CircularProgressBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -689,10 +666,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="DeckBuilder\DeckBuilderWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -710,20 +683,6 @@
       <Generator>MSBuild:Compile</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ErrorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Launcher\AboutWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Launcher\ChatWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\ConnectLocalGame.xaml">
       <SubType>Designer</SubType>
@@ -761,27 +720,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Launcher\ChangeSetsProgressDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Launcher\Login.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Launcher\Main.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Launcher\PatchDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Launcher\PatchProgressDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Launcher\UpdateChecker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -789,23 +728,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Launcher\LauncherWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Launcher\StartGame.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Launcher\UpgradeMessage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MessageWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Play\Dialogs\InteractiveConsole.xaml">
       <SubType>Designer</SubType>
@@ -964,6 +889,54 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Windows\AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ChangeSetsProgressDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ChatWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\DWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ErrorWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\LauncherWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Main.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\MessageWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\PatchDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\PatchProgressDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\UpdateChecker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\UpgradeMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Folder.png" />
@@ -995,6 +968,10 @@
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
       <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
       <Name>Octgn.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
+      <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>
+      <Name>Octgn.Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
@@ -1046,6 +1023,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Effects\" />
+    <Folder Include="Server\" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

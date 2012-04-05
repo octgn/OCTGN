@@ -40,7 +40,7 @@ namespace Skylabs.Lobby
             public event dDataRecieved OnDataRecieved;
         #endregion
         #region PrivateAccessors
-            public XmppClientConnection Xmpp;
+            private XmppClientConnection Xmpp;
             private int _noteId = 0;
             private Presence myPresence;
             private List<HostedGameData> _games;
@@ -151,6 +151,7 @@ namespace Skylabs.Lobby
                 {
                     if(pres.From.Server == "conference.skylabsonline.com")
                     {
+                        if (pres.MucUser.Item.Jid.Bare == Me.User.Bare) break;
                         var rm = Chatting.GetRoom(new NewUser(pres.From),true);
                         rm.UserLeft(new NewUser(pres.MucUser.Item.Jid));
                     }
@@ -418,6 +419,7 @@ namespace Skylabs.Lobby
                     Xmpp.Send(p);
                     break;
             }
+            Me.Status = status;
         }
         public void SendFriendRequest(string username)
         {

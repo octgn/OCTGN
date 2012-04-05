@@ -1,5 +1,0 @@
-I:\Visual Studio Projects\CassiniDev\Samples\FixtureSamples\CassiniDev.TestSite2\bin\CassiniDev.TestSite.dll
-I:\Visual Studio Projects\CassiniDev\Samples\FixtureSamples\CassiniDev.TestSite2\bin\CassiniDev.TestSite.pdb
-I:\Visual Studio Projects\CassiniDev\Samples\FixtureSamples\CassiniDev.TestSite2\obj\x86\Debug\ResolveAssemblyReference.cache
-I:\Visual Studio Projects\CassiniDev\Samples\FixtureSamples\CassiniDev.TestSite2\obj\x86\Debug\CassiniDev.TestSite.dll
-I:\Visual Studio Projects\CassiniDev\Samples\FixtureSamples\CassiniDev.TestSite2\obj\x86\Debug\CassiniDev.TestSite.pdb

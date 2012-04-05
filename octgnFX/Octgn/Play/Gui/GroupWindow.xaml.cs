@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Octgn.Data;
+using Octgn.Extentions;
 using Octgn.Utils;
 
 namespace Octgn.Play.Gui

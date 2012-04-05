@@ -64,9 +64,10 @@ namespace Octgn.Data
 
             using (SQLiteCommand com = DatabaseConnection.CreateCommand())
             {
-                string md = Resource1.UpdateDatabase;
-                com.CommandText = md;
-                com.ExecuteNonQuery();
+                UpdateDatabase.Update(DatabaseConnection);
+                //string md = Resource1.UpdateDatabase;
+                //com.CommandText = md;
+                //com.ExecuteNonQuery();
             }
         }
 

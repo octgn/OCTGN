@@ -40,7 +40,7 @@ namespace Octgn.Launcher
 
         public void DeletedSelected()
         {
-            var wnd = new ChangeSetsProgressDialog("Removing Sets...") { Owner = Program.ClientWindow };
+            var wnd = new Windows.ChangeSetsProgressDialog("Removing Sets...") { Owner = Program.MainWindow };
             System.Collections.IList items = lbSetList.SelectedItems;
             ThreadPool.QueueUserWorkItem(_ =>
             {
@@ -87,7 +87,7 @@ namespace Octgn.Launcher
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            var wnd = new ChangeSetsProgressDialog("Installing Sets...") {Owner = Program.ClientWindow};
+            var wnd = new Windows.ChangeSetsProgressDialog("Installing Sets...") {Owner = Program.MainWindow};
             ThreadPool.QueueUserWorkItem(_ =>
                                              {
                                                  int current = 0, max = ofd.FileNames.Length;
@@ -125,7 +125,7 @@ namespace Octgn.Launcher
 
         public void PatchSelected()
         {
-            new PatchDialog {Owner = Program.ClientWindow}.ShowDialog();
+            new Windows.PatchDialog {Owner = Program.MainWindow}.ShowDialog();
             RefreshList();
         }
     }

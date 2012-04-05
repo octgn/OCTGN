@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Octgn.Utils;
 
 namespace Octgn.Extentions
 {
@@ -20,7 +21,7 @@ namespace Octgn.Extentions
         {
             // Create a hash of current nickname to use as the Cryptographic Key
             RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.LClient.Username));
+            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Program.LobbyClient.Username));
             return Cryptor.Encrypt(text, BitConverter.ToString(hasher));
         }
     }

@@ -1,9 +1,0 @@
-I:\Visual Studio Projects\CassiniDev\Tests\CassiniDev.MSTests\bin\test-page.htm
-I:\Visual Studio Projects\CassiniDev\Tests\CassiniDev.MSTests\bin\CassiniDev.MSTests.dll
-I:\Visual Studio Projects\CassiniDev\Tests\CassiniDev.MSTests\bin\CassiniDev.MSTests.pdb
-I:\Visual Studio Projects\CassiniDev\Tests\CassiniDev.MSTests\bin\CassiniDev4-lib.dll
-I:\Visual Studio Projects\CassiniDev\Tests\CassiniDev.MSTests\bin\Common.Logging.dll
-I:\Visual Studio Projects\CassiniDev\Tests\CassiniDev.MSTests\bin\CassiniDev4-lib.pdb
-I:\Visual Studio Projects\CassiniDev\Tests\CassiniDev.MSTests\obj\x86\Debug\ResolveAssemblyReference.cache
-I:\Visual Studio Projects\CassiniDev\Tests\CassiniDev.MSTests\obj\x86\Debug\CassiniDev.MSTests.dll
-I:\Visual Studio Projects\CassiniDev\Tests\CassiniDev.MSTests\obj\x86\Debug\CassiniDev.MSTests.pdb

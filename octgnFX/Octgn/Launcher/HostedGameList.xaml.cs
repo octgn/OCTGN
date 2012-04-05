@@ -15,16 +15,16 @@ namespace Octgn.Launcher
         public HostedGameList()
         {
             InitializeComponent();
-            Program.LClient.BeginGetGameList();
-            Program.LClient.OnDataRecieved += LClientOnOnDataRecieved;
+            Program.LobbyClient.BeginGetGameList();
+            Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
         }
 
-        private void LClientOnOnDataRecieved(object sender , Client.DataRecType type , object data)
+        private void LobbyClientOnOnDataRecieved(object sender , Client.DataRecType type , object data)
         {
             if(type == Client.DataRecType.GameList)
                 ReloadGameList();
             else if(type == Client.DataRecType.GamesNeedRefresh)
-                Program.LClient.BeginGetGameList();
+                Program.LobbyClient.BeginGetGameList();
         }
 
         public event EventHandler OnGameClick;
@@ -46,7 +46,7 @@ namespace Octgn.Launcher
                                                  }
 
                                                  HostedGameData[] gl =
-                                                     Program.LClient.GetHostedGames().OrderByDescending(
+                                                     Program.LobbyClient.GetHostedGames().OrderByDescending(
                                                          item => item.TimeStarted).ToArray();
                                                  foreach (HostedGameData g in gl)
                                                  {
@@ -92,7 +92,7 @@ namespace Octgn.Launcher
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LClient.OnDataRecieved -= LClientOnOnDataRecieved;
+            Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved;
         }
 
         public void FilterGames(Guid g, Boolean show)

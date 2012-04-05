@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Octgn.Launcher;
 using Skylabs.Lobby;
+using ChatWindow = Octgn.Windows.ChatWindow;
 
 namespace Octgn.Controls
 {
@@ -14,6 +15,8 @@ namespace Octgn.Controls
     /// </summary>
     public partial class GroupChatListItem
     {
+        private bool _isRemoving = false;
+
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
             "UserName", typeof (string), typeof (GroupChatListItem));
 
@@ -68,7 +71,8 @@ namespace Octgn.Controls
 
         private void FlistitemMouseUp(object sender, MouseButtonEventArgs e)
         {
-            Focus();
+            if(!_isRemoving)
+                Focus();
         }
 
         private void Image1MouseUp(object sender, MouseButtonEventArgs e)
@@ -76,14 +80,8 @@ namespace Octgn.Controls
             if (_chatRoom.GroupUser.User.User == "lobby") return;
             ChatWindow firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.RID);
             if (firstOrDefault != null)
-            {
-                firstOrDefault.Room.LeaveRoom();
-                Program.LClient.Chatting.Rooms.Remove(firstOrDefault.Room);
                 firstOrDefault.CloseChatWindow();
-            }
-            var sp = Parent as StackPanel;
-            if (sp != null)
-                sp.Children.Remove(this);
+            _isRemoving = true;
         }
     }
 }

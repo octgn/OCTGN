@@ -50,7 +50,7 @@ namespace Octgn.Utils
                 imgsrc.UriSource = uri;
                 imgsrc.EndInit();                
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 imgsrc = new BitmapImage();
                 imgsrc.BeginInit();

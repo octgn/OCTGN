@@ -11,6 +11,7 @@ using Octgn.Data;
 using Octgn.Definitions;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui;
+using Octgn.Utils;
 
 namespace Octgn.Play
 {
@@ -408,7 +409,7 @@ namespace Octgn.Play
                 {
                     bmp = new BitmapImage(new Uri(Type.Model.AlternatePicture)) { CacheOption = BitmapCacheOption.OnLoad };
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                    
                 }
@@ -756,7 +757,7 @@ namespace Octgn.Play
                 }
                 return true;
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 Debug.WriteLine("Unable To Catchup on Alternate Switches at this time. Please try again Later.");
             }

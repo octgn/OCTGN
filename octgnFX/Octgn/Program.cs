@@ -13,23 +13,27 @@ using Octgn.DeckBuilder;
 using Octgn.Launcher;
 using Octgn.Networking;
 using Octgn.Play;
+using Octgn.Utils;
 using Skylabs.Lobby;
+using ChatWindow = Octgn.Windows.ChatWindow;
 using Client = Octgn.Networking.Client;
+using LauncherWindow = Octgn.Windows.LauncherWindow;
+using Main = Octgn.Windows.Main;
 using RE = System.Text.RegularExpressions;
 
 namespace Octgn
 {
     public static class Program
     {
-        public static DWindow DebugWindow;
-        public static Main ClientWindow;
+        public static Windows.DWindow DebugWindow;
+        public static Main MainWindow;
         public static LauncherWindow LauncherWindow;
         public static DeckBuilderWindow DeckEditor;
         public static PlayWindow PlayWindow;
         public static List<ChatWindow> ChatWindows;
 
         public static Game Game;
-        public static Skylabs.Lobby.Client LClient;
+        public static Skylabs.Lobby.Client LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository;
         internal static Client Client;
@@ -40,7 +44,9 @@ namespace Octgn
 
         internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
+#pragma warning disable 67
         internal static event EventHandler<ServerErrorEventArgs> ServerError;
+#pragma warning restore 67
 
         internal static bool IsHost { get; set; }
 
@@ -51,65 +57,28 @@ namespace Octgn
         internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
         internal static Inline LastChatTrace;
 
-#if(DEBUG)
-        private static Process _lobbyServerProcess;
-#else
-
-#endif
         private static bool _locationUpdating;
-
-#if(TestServer)
-        public static TestServerSettings LobbySettings = TestServerSettings.Default;
-#else
-    #if(DEBUG)
-            public static DEBUGLobbySettings LobbySettings = DEBUGLobbySettings.Default;
-    #else
-            public static lobbysettings LobbySettings = lobbysettings.Default;
-    #endif
-#endif
 
         static Program()
         {
-            LClient = new Skylabs.Lobby.Client();
+            LobbyClient = new Skylabs.Lobby.Client();
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
             BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
-            StartLobbyServer();
-            //var e = new Exception();
-            //string s = e.Message.Substring(0);
             LauncherWindow = new LauncherWindow();
             Application.Current.MainWindow = LauncherWindow;
-            LClient.Chatting.OnCreateRoom += new Chat.dCreateChatRoom(Chatting_OnCreateRoom);
+            LobbyClient.Chatting.OnCreateRoom += Chatting_OnCreateRoom;
         }
 
         static void Chatting_OnCreateRoom(object sender, NewChatRoom room)
         {
             if (ChatWindows.All(x => x.Room.RID != room.RID))
             {
-                if(ClientWindow != null) ClientWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
+                if(MainWindow != null) MainWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
                 else if(LauncherWindow != null) LauncherWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
             }
-        }
-
-        public static void StartLobbyServer()
-        {
-#if(titties)
-            _lobbyServerProcess = new Process
-                                      {
-                                          StartInfo =
-                                              {FileName = Directory.GetCurrentDirectory() + "/Skylabs.LobbyServer.exe"}
-                                      };
-            try
-            {
-                _lobbyServerProcess.Start();
-            }
-            catch (Exception e)
-            {
-                DebugTrace.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
-            }
-#endif
         }
 
         public static void StopGame()
@@ -139,8 +108,8 @@ namespace Octgn
         public static void Exit()
         {
             Application.Current.MainWindow = null;
-            if (LClient != null)
-                LClient.Xmpp.Close();
+            if (LobbyClient != null)
+                LobbyClient.Stop();
 
             SaveLocation();
             try
@@ -157,9 +126,9 @@ namespace Octgn
             if (LauncherWindow != null)
                 if (LauncherWindow.IsLoaded)
                     LauncherWindow.Close();
-            if (ClientWindow != null)
-                if (ClientWindow.IsLoaded)
-                    ClientWindow.Close();
+            if (MainWindow != null)
+                if (MainWindow.IsLoaded)
+                    MainWindow.Close();
             if (PlayWindow != null)
                 if (PlayWindow.IsLoaded)
                     PlayWindow.Close();
@@ -176,21 +145,6 @@ namespace Octgn
                 if (Debugger.IsAttached) Debugger.Break();
             }
 
-#if(DEBUG)
-            if (_lobbyServerProcess != null)
-            {
-                try
-                {
-                    if (!_lobbyServerProcess.HasExited)
-                        _lobbyServerProcess.Kill();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
-            }
-#endif
             Application.Current.Shutdown(0);
         }
 

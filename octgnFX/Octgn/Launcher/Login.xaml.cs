@@ -42,7 +42,6 @@ namespace Octgn.Launcher
         private bool _bSpin;
         private bool _isLoggingIn;
         private Timer _loginTimer;
-        private ThicknessAnimation _scrollAnimation;
         private bool _inLoginDone = false;
         public Login()
         {
@@ -61,8 +60,8 @@ namespace Octgn.Launcher
                 cbSavePassword.IsChecked = true;
             }
             textBox1.Text = SimpleConfig.ReadValue("Username");
-            Program.LClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state);
-            Program.LClient.OnLoginComplete += LClient_OnLoginComplete;
+            Program.LobbyClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state);
+            Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
             LazyAsync.Invoke(GetTwitterStuff);
         }
 
@@ -189,7 +188,7 @@ namespace Octgn.Launcher
                     _animationTimer.Stop();
             }
 
-            void LClient_OnLoginComplete(object sender, Skylabs.Lobby.Client.LoginResults results)
+            void LobbyClientOnLoginComplete(object sender, Skylabs.Lobby.Client.LoginResults results)
             {
                 
                 switch (results)
@@ -220,7 +219,7 @@ namespace Octgn.Launcher
                 _isLoggingIn = true;
                 StartSpinning();
                 bError.Visibility = Visibility.Hidden;
-                Program.LClient.BeginLogin(textBox1.Text,passwordBox1.Password);
+                Program.LobbyClient.BeginLogin(textBox1.Text,passwordBox1.Password);
             }
 
 
@@ -261,9 +260,9 @@ namespace Octgn.Launcher
                                                                                         : "");
                                                             SimpleConfig.WriteValue("Username", textBox1.Text);
                                                             SimpleConfig.WriteValue("Nickname",textBox1.Text);
-                                                            Program.ClientWindow = new Main();
-                                                            Program.ClientWindow.Show();
-                                                            Application.Current.MainWindow = Program.ClientWindow;
+                                                            Program.MainWindow = new Windows.Main();
+                                                            Program.MainWindow.Show();
+                                                            Application.Current.MainWindow = Program.MainWindow;
                                                             Program.LauncherWindow.Close();
                                                             break;
                                                         case Skylabs.Lobby.Client.LoginResult.Banned:
@@ -408,7 +407,7 @@ namespace Octgn.Launcher
             {
                 //var wnd = new AboutWindow();
                 //wnd.Show();
-                Program.LauncherWindow.Navigate(new AboutWindow());
+                Program.LauncherWindow.Navigate(new Windows.AboutWindow());
             }
             private void TextBox1TextChanged(object sender, TextChangedEventArgs e){bError.Visibility = Visibility.Hidden;}
             private void PasswordBox1PasswordChanged(object sender, RoutedEventArgs e){bError.Visibility = Visibility.Hidden;}
@@ -436,7 +435,7 @@ namespace Octgn.Launcher
         #region Window stuff
             private void PageUnloaded(object sender, RoutedEventArgs e)
             {
-                Program.LClient.OnLoginComplete -= LClient_OnLoginComplete;
+                Program.LobbyClient.OnLoginComplete -= LobbyClientOnLoginComplete;
             }
 
             private void PageLoaded(object sender, RoutedEventArgs e)

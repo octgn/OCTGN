@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows;
 using Octgn.Data;
 using Octgn.Launcher;
+using ChatWindow = Octgn.Windows.ChatWindow;
 
 namespace Octgn
 {
@@ -44,7 +45,7 @@ namespace Octgn
 
                 ShutdownMode oldShutdown = ShutdownMode;
                 ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                new MessageWindow(sb.ToString()).ShowDialog();
+                new Windows.MessageWindow(sb.ToString()).ShowDialog();
                 ShutdownMode = oldShutdown;
             }
 
@@ -88,7 +89,7 @@ namespace Octgn
             var ex = (Exception) e.ExceptionObject;
             if (!Debugger.IsAttached)
             {
-                var wnd = new ErrorWindow(ex);
+                var wnd = new Windows.ErrorWindow(ex);
                 wnd.ShowDialog();
             }
             else
