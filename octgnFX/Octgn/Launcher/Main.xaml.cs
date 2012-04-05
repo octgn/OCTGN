@@ -25,6 +25,7 @@ using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
 using Client = Octgn.Networking.Client;
 using ContextMenu = System.Windows.Forms.ContextMenu;
+using Cursors = System.Windows.Input.Cursors;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
@@ -92,6 +93,10 @@ namespace Octgn.Launcher
             SystemTrayIcon.DoubleClick += SystemTrayIconDoubleClick;
             // Insert code required on object creation below this point.
             RefreshGameFilter(true);
+            tbUsername.Cursor = Cursors.Arrow;
+            tbUsername.ForceCursor = true;
+            tbStatus.Cursor = Cursors.Pen;
+            tbStatus.ForceCursor = true;
         }
 
         private void LClientOnOnDataRecieved(object sender, Skylabs.Lobby.Client.DataRecType type, object data)
@@ -542,9 +547,9 @@ namespace Octgn.Launcher
 
         private void TbUsernameMouseUp(object sender, MouseButtonEventArgs e)
         {
-            tbUsername.Style = (Style) TryFindResource(typeof (TextBox));
-            tbUsername.Focus();
-            tbUsername.SelectAll();
+            //tbUsername.Style = (Style) TryFindResource(typeof (TextBox));
+            //tbUsername.Focus();
+            //tbUsername.SelectAll();
         }
 
         private void TbUsernameLostFocus(object sender, RoutedEventArgs e)
