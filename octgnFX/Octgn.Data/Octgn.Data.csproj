@@ -186,9 +186,6 @@
     <EmbeddedResource Include="MakeDatabase.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UpdateDatabase.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="UpdataDatabaseQueries.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
