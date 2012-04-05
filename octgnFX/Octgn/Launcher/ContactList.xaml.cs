@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using Octgn.Controls;
 using Skylabs.Lobby;
+using Skylabs.Lobby.Threading;
 using agsXMPP;
 
 namespace Octgn.Launcher
@@ -22,7 +23,7 @@ namespace Octgn.Launcher
 
         private void ChattingOnOnCreateRoom(object sender , NewChatRoom room)
         {
-            RefreshList();
+            LazyAsync.Invoke(RefreshList);
         }
 
         private void LClientOnOnDataRecieved(object sender, Client.DataRecType type, object data)

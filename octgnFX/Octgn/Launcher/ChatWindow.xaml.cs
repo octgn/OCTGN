@@ -46,6 +46,7 @@ namespace Octgn.Launcher
         private void RoomOnOnUserListChange(object sender,List<NewUser> users)
         {
             ResetUserList();
+
         }
 
         private void RoomOnOnMessageRecieved(object sender , NewUser from , string message)
@@ -269,7 +270,13 @@ namespace Octgn.Launcher
             var s = e.Data.GetData(typeof (String)) as String;
             if (s == null) return;
             Room.AddUser(new NewUser(new Jid(s)));
-            if (Room.IsGroupChat && Room.GroupUser.User.User != "lobby") miLeaveChat.IsEnabled = true;
+            if (Room.IsGroupChat && Room.GroupUser.User.User != "lobby")
+            {
+                miLeaveChat.IsEnabled = true;
+                var cl = Program.ClientWindow.frame1.Content as ContactList;
+                if(cl != null)
+                    cl.RefreshList();
+            }
         }
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
@@ -286,6 +293,9 @@ namespace Octgn.Launcher
         {
             Program.ChatWindows.RemoveAll(r => r.Id == Id);
             var cl = Program.ClientWindow.frame1.Content as ContactList;
+            Room.OnMessageRecieved -= RoomOnOnMessageRecieved;
+            Room.OnUserListChange -= RoomOnOnUserListChange;
+            Room.LeaveRoom();
             if (cl != null)
                 cl.RefreshList();
         }
@@ -310,8 +320,12 @@ namespace Octgn.Launcher
 
         public void CloseChatWindow()
         {
-            _realClose = true;
-            Close();
+            Dispatcher.Invoke(new Action(() =>
+                                         {
+                                            _realClose = true;
+                                            Close();                                             
+                                         }));
+
         }
 
         private void MiLeaveChatClick(object sender, RoutedEventArgs e)

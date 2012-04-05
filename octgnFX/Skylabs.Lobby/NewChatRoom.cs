@@ -152,8 +152,9 @@ namespace Skylabs.Lobby
         {
             if(IsGroupChat && GroupUser.User != "lobby")
             {
-                _client.MucManager.LeaveRoom(GroupUser.User,GroupUser.User.User);
-                _client.RosterManager.RemoveRosterItem(GroupUser.User);
+                _client.MucManager.LeaveRoom(GroupUser.User.Bare,_client.Me.User.User);
+                _client.RosterManager.RemoveRosterItem(GroupUser.User.Bare);
+                _client.Chatting.RemoveRoom(this);
             }
         }
         public void Dispose() { 

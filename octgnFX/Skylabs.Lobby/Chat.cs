@@ -37,6 +37,8 @@ namespace Skylabs.Lobby
             _xmpp.OnMessage += XmppOnOnMessage;
         }
 
+        public void RemoveRoom(NewChatRoom room) { Rooms.Remove(room); }
+
         private void XmppOnOnMessage(object sender , Message msg)
         {
             switch (msg.Type)
