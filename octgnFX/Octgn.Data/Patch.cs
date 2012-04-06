@@ -86,7 +86,7 @@ namespace Octgn.Data
 
         private void Apply(Package package, string localFilename, bool installed)
         {
-            using (Package setPkg = Package.Open(localFilename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read))
+            using (Package setPkg = Package.Open(localFilename, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
             {
                 // Extract information about the target set
                 PackageRelationship defRelationship =
