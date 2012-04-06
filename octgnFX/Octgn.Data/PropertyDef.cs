@@ -6,6 +6,7 @@ namespace Octgn.Data
     {
         String,
         Integer,
+        GUID,
         Char
     };
 
