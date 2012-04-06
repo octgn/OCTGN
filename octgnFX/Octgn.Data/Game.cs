@@ -677,7 +677,7 @@ namespace Octgn.Data
                 var customProperties = new DataTable();
                 using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
                 {
-                    if (conditions != null && conditions.Length > 0)
+                    if (conditions != null && conditions.Any(x => x.Contains("set_id")))
                     {
                         string setID = string.Empty;
                         foreach (string s in conditions)
