@@ -594,6 +594,7 @@
     <Resource Include="Images\d0c.jpeg" />
     <Resource Include="Images\GravecorpAvatar.jpg" />
     <Resource Include="Images\smith_user.png" />
+    <Resource Include="Resources\none.jpg" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
