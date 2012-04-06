@@ -488,7 +488,7 @@ namespace Octgn.Data
             {
                 string name = pair.Key;
                 PropertyType type = PropertyType.String;
-                string value = null;
+                object value = "";
                 if (pair.Value is string)
                 {
                     type = PropertyType.String;
@@ -497,7 +497,7 @@ namespace Octgn.Data
                 else if (pair.Value is int)
                 {
                     type = PropertyType.Integer;
-                    value = (string)pair.Value;
+                    value = (int)pair.Value;
                 }
                 else
                 {
