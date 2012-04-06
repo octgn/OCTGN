@@ -156,6 +156,11 @@ namespace Octgn.Data
                 string command = sb.ToString();
                 foreach (PropertyDef pair in properties)
                 {
+                    if (!DatabaseHandler.ColumnExists("cards", pair.Name, DatabaseConnection))
+                    {
+                        DatabaseHandler.AddColumn("cards", pair.Name, pair.Type, DatabaseConnection);
+                    }
+
                     using (SQLiteCommand com = DatabaseConnection.CreateCommand())
                     {
                         com.CommandText = command;
