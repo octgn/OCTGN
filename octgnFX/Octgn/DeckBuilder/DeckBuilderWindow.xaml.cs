@@ -22,6 +22,7 @@ namespace Octgn.DeckBuilder
         private Data.Game _game;
         private Deck.Section _section;
         private bool _unsaved;
+        private SearchCardImageEventArgs selection;
 
         public DeckBuilderWindow()
         {
@@ -319,6 +320,7 @@ namespace Octgn.DeckBuilder
 
         private void CardSelected(object sender, SearchCardImageEventArgs e)
         {
+            selection = e;
             cardImage.Source = new BitmapImage(e.Image != null
                                                    ? CardModel.GetPictureUri(Game, e.SetId, e.Image)
                                                    : Game.GetCardBackUri());
@@ -436,6 +438,37 @@ namespace Octgn.DeckBuilder
         private void PreventExpanderBehavior(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void btnTransform_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Button btn = (Button)sender;          
+            System.Windows.Media.Animation.DoubleAnimation anim = new System.Windows.Media.Animation.DoubleAnimation(1, TimeSpan.FromSeconds(0.25));
+            btn.BeginAnimation(OpacityProperty, anim);
+        }
+
+        private void btnTransform_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Button btn = (Button)sender;
+            System.Windows.Media.Animation.DoubleAnimation anim = new System.Windows.Media.Animation.DoubleAnimation(0, TimeSpan.FromSeconds(0.25));
+            btn.BeginAnimation(OpacityProperty, anim);
+        }
+
+        private void btnTransform_Click(object sender, RoutedEventArgs e)
+        {
+            if (cardImage.Source.ToString().Contains(selection.Image))
+            {
+                string alternate = cardImage.Source.ToString().Replace(".jpg", ".b.jpg");
+                try
+                {
+                    cardImage.Source = new BitmapImage(new Uri(alternate));
+                }
+                catch
+                {
+                    cardImage.Source = new BitmapImage(Game.GetCardBackUri());
+                }
+            }
+            else cardImage.Source = new BitmapImage(CardModel.GetPictureUri(Game, selection.SetId, selection.Image));
         }
     }
 

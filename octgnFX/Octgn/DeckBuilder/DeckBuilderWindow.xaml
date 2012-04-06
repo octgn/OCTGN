@@ -94,7 +94,10 @@
 
     <GridSplitter Grid.Row="1" Grid.RowSpan="2" ResizeDirection="Columns" Width="4" HorizontalAlignment="Right"
                   Background="Transparent" />
-    <!--ComboBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="11,181,0,0" Name="DeckSort" VerticalAlignment="Bottom" Width="229" ItemsSource="{Binding Deck.}" SelectionChanged="DeckSort_SelectionChanged" /-->
+        <Button Grid.Row="1" Height="24" HorizontalAlignment="Left" Margin="12,319,0,0" Name="btnTransform" VerticalAlignment="Top" Width="24" MouseEnter="btnTransform_MouseEnter" MouseLeave="btnTransform_MouseLeave" Click="btnTransform_Click" Opacity="0" >
+            <Image Source="/OCTGN;component/Images/stock_flip_horizontally.png"></Image>
+        </Button>
+        <!--ComboBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="11,181,0,0" Name="DeckSort" VerticalAlignment="Bottom" Width="229" ItemsSource="{Binding Deck.}" SelectionChanged="DeckSort_SelectionChanged" /-->
     <!--TODO: Fill in Combobox with properties. On selection re-sort deck according to selected property-->
 
     </Grid>
