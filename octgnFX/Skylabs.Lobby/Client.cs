@@ -134,12 +134,12 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnWriteXml(object sender, string xml)
         {
-            //Trace.WriteLine("[out]" + xml);
+            Trace.WriteLine("[Xmpp]out: " + xml);
         }
 
         private void XmppOnOnReadXml(object sender , string xml)
         {
-            //Trace.WriteLine("[in]" + xml);
+            Trace.WriteLine("[Xmpp]in: " + xml);
         }
 
         private void XmppOnOnIq(object sender, IQ iq)
@@ -202,14 +202,14 @@ namespace Skylabs.Lobby
                     break;
                 }
                 case PresenceType.subscribe:
-                    if (!Friends.Contains(new NewUser(pres.From)))
+                    if (!Friends.Contains(new NewUser(pres.From.Bare)))
                     {
-                        Notifications.Add(new FriendRequestNotification(pres.From , this , _noteId));
+                        Notifications.Add(new FriendRequestNotification(pres.From.Bare , this , _noteId));
                         _noteId++;
-                        if(OnFriendRequest != null) OnFriendRequest.Invoke(this , pres.From);
+                        if(OnFriendRequest != null) OnFriendRequest.Invoke(this , pres.From.Bare);
                     }
                     else
-                        AcceptFriendship(pres.From);
+                        AcceptFriendship(pres.From.Bare);
                     break;
                 case PresenceType.subscribed:
                     break;
@@ -222,10 +222,15 @@ namespace Skylabs.Lobby
                 case PresenceType.probe:
                     break;
             }
-            var f = Friends.SingleOrDefault(x => x.User.User == pres.From.User);
-            if (f == null) return;
-            f.CustomStatus = pres.Status ?? "";
-            f.SetStatus(pres);
+            for(int i=0;i<Friends.Count;i++)
+            {
+                if(Friends[i].User.User == pres.From.User)
+                {
+                    Friends[i].CustomStatus = pres.Status ?? "";
+                    Friends[i].SetStatus(pres);
+                    break;
+                }
+            }
             XmppOnOnRosterEnd(this);
         }
 
@@ -449,9 +454,10 @@ namespace Skylabs.Lobby
         {
             Xmpp.PresenceManager.ApproveSubscriptionRequest(user);
             Xmpp.PresenceManager.Subscribe(user);
-            Xmpp.RosterManager.UpdateRosterItem(user);
+            Xmpp.SendMyPresence();
             if(OnDataRecieved != null)
                 OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
+            //Xmpp.RequestRoster();
         }
         
         public void DeclineFriendship(Jid user)
@@ -496,7 +502,7 @@ namespace Skylabs.Lobby
                     Xmpp.Send(p);
                     break;
             }
-            Me.Status = status;
+            Me.SetStatus(status);
         }
         
         public void SendFriendRequest(string username)
@@ -515,6 +521,7 @@ namespace Skylabs.Lobby
             Xmpp.PresenceManager.Unsubscribe(user.User);
             RosterManager.RemoveRosterItem(user.User);
             Friends.Remove(user);
+            OnDataRecieved.Invoke(this,DataRecType.FriendList, this);
         }
         
         public HostedGameData[] GetHostedGames() { return _games.ToArray(); }

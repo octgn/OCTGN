@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using agsXMPP;
@@ -21,7 +22,7 @@ namespace Skylabs.Lobby
     { 
         public Jid User { get; private set; }
 
-        public UserStatus Status { get; set; }
+        public UserStatus Status { get; private set; }
 
         public string CustomStatus { get; set; }
 
@@ -37,10 +38,17 @@ namespace Skylabs.Lobby
 
         public void SetStatus(Presence p)
         {
+            Trace.WriteLine("[SetStatus]For: " + p.From);
             Status = NewUser.PresenceToStatus(p);
+            Trace.WriteLine("[SetStatus]Status: " + Status.ToString());
         }
+        public void SetStatus(UserStatus status) { Status = status; }
         public static UserStatus PresenceToStatus(Presence p)
         {
+            if(p.From == null)return UserStatus.Unknown;
+            System.Diagnostics.Trace.WriteLine("[p2s]From: " + p.From);
+            System.Diagnostics.Trace.WriteLine("[p2s]Type: " + p.Type.ToString());
+            System.Diagnostics.Trace.WriteLine("[p2s]Show: " + p.Show.ToString());
             UserStatus Status = UserStatus.Unknown;
             if(p.Type == PresenceType.unavailable)
                 Status = UserStatus.Offline;
@@ -67,6 +75,7 @@ namespace Skylabs.Lobby
                         break;
                 }
             }
+            System.Diagnostics.Trace.WriteLine("[p2s]Result: " + Status.ToString());
             return Status;
         }
         public bool Equals(NewUser other)
