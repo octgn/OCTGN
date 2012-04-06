@@ -21,7 +21,7 @@ namespace Octgn.Data
                     {
                         int nameColumnOrdinal = reader.GetOrdinal("name");
                         string dbColumnName = reader.GetString(nameColumnOrdinal);
-                        if (SanatizeColumnNames(columnName).Equals(dbColumnName, StringComparison.InvariantCultureIgnoreCase))
+                        if (columnName.Equals(dbColumnName, StringComparison.InvariantCultureIgnoreCase))
                         {
                             ret = true;
                             break;
@@ -40,9 +40,9 @@ namespace Octgn.Data
             {
                 //YES I AM USING A STRINGBUILDER BECAUSE SQLITE WAS BEING A FUCKER. CHANGE IT IF YOU CAN MAKE IT WORK >_<
                 //BLOODY PARAMETERS FUCKING UP CONSTANTLY. SQLITE IS SHIT IN MY OPINION </endrage>
-                StringBuilder sb = new StringBuilder("ALTER TABLE @tablename ADD @columnname @type DEFAULT '@default'");
+                StringBuilder sb = new StringBuilder("ALTER TABLE @tablename ADD [@columnname] @type DEFAULT '@default'");
                 sb = sb.Replace("@tablename", tableName);
-                sb = sb.Replace("@columnname", SanatizeColumnNames(columnName));
+                sb = sb.Replace("@columnname", columnName);
                 switch (type)
                 {
                     case PropertyType.String:
@@ -73,6 +73,11 @@ namespace Octgn.Data
         public static string SanatizeColumnNames(string columnName)
         {
             return (columnName.Replace(" ", "_"));
+        }
+
+        public static string UnSanatizeColumnNames(string columnName)
+        {
+            return (columnName.Replace("_", " "));
         }
     }
 }
