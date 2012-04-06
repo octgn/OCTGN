@@ -74,6 +74,7 @@ namespace Octgn.Windows
             //Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
             Program.LobbyClient.OnFriendRequest += LobbyClientOnOnFriendRequest;
             Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             tbUsername.Text = Program.LobbyClient.Username;
             tbStatus.Text = Program.LobbyClient.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
@@ -96,6 +97,24 @@ namespace Octgn.Windows
             tbUsername.ForceCursor = true;
             tbStatus.Cursor = Cursors.Pen;
             tbStatus.ForceCursor = true;
+        }
+
+        private void LobbyClientOnOnDisconnect(object sender , EventArgs eventArgs)
+        {
+
+            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
+            Dispatcher.Invoke(new Action(() =>
+                                         {
+
+            var win = ReconnectingWindow.Reconnect();
+            if (win.Canceled)
+            {
+                CloseDownShop(false);
+                return;
+            }
+            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+
+                                         }));
         }
 
         private void LobbyClientOnOnDataRecieved(object sender, Skylabs.Lobby.Client.DataRecType type, object data)
@@ -374,6 +393,7 @@ namespace Octgn.Windows
             Program.MainWindow.Close();
             Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved;
             Program.LobbyClient.OnFriendRequest -= LobbyClientOnOnFriendRequest;
+            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             Program.LobbyClient.Stop();
             if (exiting) Program.Exit();
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);

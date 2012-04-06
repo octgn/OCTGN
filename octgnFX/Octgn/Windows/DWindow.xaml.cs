@@ -20,7 +20,7 @@ namespace Octgn.Windows
         public DWindow()
         {
             InitializeComponent();
-            Color color = Color.FromRgb(0xFF, 0x00, 0x00);
+            Color color = Color.FromRgb(0x00, 0x00, 0x00);
             _turnBrush = new SolidColorBrush(color);
             _turnBrush.Freeze();
 
@@ -52,7 +52,8 @@ namespace Octgn.Windows
             {
                 Program.DebugListener.OnEventAdd += AddEvent;
                 output.Document.Blocks.Clear();
-                foreach (TraceEvent te in Program.DebugListener.Events)
+                var events = Program.DebugListener.Events.ToArray();
+                foreach (TraceEvent te in events)
                 {
                     AddEvent(te);
                 }
