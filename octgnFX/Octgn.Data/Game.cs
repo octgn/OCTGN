@@ -486,6 +486,44 @@ namespace Octgn.Data
             string command = sb.ToString();
             foreach (KeyValuePair<string, object> pair in card.Properties)
             {
+                string name = pair.Key;
+                PropertyType type = PropertyType.String;
+                string value = null;
+                if (pair.Value is string)
+                {
+                    type = PropertyType.String;
+                    value = (string)pair.Value;
+                }
+                else if (pair.Value is int)
+                {
+                    type = PropertyType.Integer;
+                    value = (string)pair.Value;
+                }
+                else
+                {
+                    type = PropertyType.String;
+                    value = (string)pair.Value;
+                }
+
+                if (!DatabaseHandler.ColumnExists("cards", name, GamesRepository.DatabaseConnection))
+                {
+                    DatabaseHandler.AddColumn("cards", name, type, GamesRepository.DatabaseConnection);
+                }
+            }
+
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
+            {
+                foreach (KeyValuePair<string, object> pair in card.Properties)
+                {
+                    com.CommandText = string.Format("UPDATE [cards] SET [{0}]=$value WHERE [id]=$id",DatabaseHandler.SanatizeColumnNames(pair.Key));
+                    com.Parameters.AddWithValue("$value", pair.Value);
+                    com.Parameters.AddWithValue("$id", card.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+            }
+            
+            foreach (KeyValuePair<string, object> pair in card.Properties)
+            {
                 if (pair.Key.Equals("Alternate", StringComparison.InvariantCultureIgnoreCase)
                     || pair.Key.Equals("Dependent", StringComparison.InvariantCultureIgnoreCase)
                     //|| pair.Key.Equals("Mutable", StringComparison.InvariantCultureIgnoreCase)

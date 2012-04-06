@@ -13,17 +13,19 @@ namespace Octgn.Data
             bool ret = false;
             using (SQLiteCommand com = connection.CreateCommand())
             {
-                com.CommandText = "PRAGMA table_info(@tablename)";
-                com.Parameters.AddWithValue("@tablename", tableName);
-                SQLiteDataReader reader = com.ExecuteReader();
-                while (reader.Read())
+                com.CommandText = "PRAGMA table_info(" + tableName + ")";
+                com.Prepare();
+                using (SQLiteDataReader reader = com.ExecuteReader())
                 {
-                    int nameColumnOrdinal = reader.GetOrdinal("name");
-                    string dbColumnName = reader.GetString(nameColumnOrdinal);
-                    if (columnName.Equals(dbColumnName, StringComparison.InvariantCultureIgnoreCase))
+                    while (reader.Read())
                     {
-                        ret = true;
-                        break;
+                        int nameColumnOrdinal = reader.GetOrdinal("name");
+                        string dbColumnName = reader.GetString(nameColumnOrdinal);
+                        if (SanatizeColumnNames(columnName).Equals(dbColumnName, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            ret = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -36,33 +38,41 @@ namespace Octgn.Data
 
             using (SQLiteCommand com = connection.CreateCommand())
             {
-                com.CommandText = "ALTER TABLE @tablename ADD @columnname @type DEFAULT '@default'";
-                com.Parameters.AddWithValue("@tablename", tableName);
-                com.Parameters.AddWithValue("@columnname", columnName);
+                //YES I AM USING A STRINGBUILDER BECAUSE SQLITE WAS BEING A FUCKER. CHANGE IT IF YOU CAN MAKE IT WORK >_<
+                //BLOODY PARAMETERS FUCKING UP CONSTANTLY. SQLITE IS SHIT IN MY OPINION </endrage>
+                StringBuilder sb = new StringBuilder("ALTER TABLE @tablename ADD @columnname @type DEFAULT '@default'");
+                sb = sb.Replace("@tablename", tableName);
+                sb = sb.Replace("@columnname", SanatizeColumnNames(columnName));
                 switch (type)
                 {
                     case PropertyType.String:
-                        com.Parameters.AddWithValue("@type", "TEXT");
-                        com.Parameters.AddWithValue("@default", "");
+                        sb = sb.Replace("@type", "TEXT");
+                        sb = sb.Replace("@default", "");
                         break;
                     case PropertyType.Integer:
-                        com.Parameters.AddWithValue("@type", "INTEGER");
-                        com.Parameters.AddWithValue("@default", 0);
+                        sb = sb.Replace("@type", "INTEGER");
+                        sb = sb.Replace("@default", "");
                         break;
                     case PropertyType.GUID:
-                        com.Parameters.AddWithValue("@type", "TEXT");
-                        com.Parameters.AddWithValue("@default", "00000000-0000-0000-0000-000000000000");
+                        sb = sb.Replace("@type", "TEXT");
+                        sb = sb.Replace("@default", "00000000-0000-0000-0000-000000000000");
                         break;
                     default:
-                        com.Parameters.AddWithValue("@type", "TEXT");
-                        com.Parameters.AddWithValue("@default", "");
+                        sb = sb.Replace("@type", "TEXT");
+                        sb = sb.Replace("@default", "");
                         break;
                 }
+                com.CommandText = sb.ToString();
                 com.ExecuteNonQuery();
             }
 
             ret = ColumnExists(tableName, columnName, connection);
             return (ret);
+        }
+
+        public static string SanatizeColumnNames(string columnName)
+        {
+            return (columnName.Replace(" ", "_"));
         }
     }
 }
