@@ -276,6 +276,7 @@ namespace Octgn
                 }
                 foreach (Deck.Element element in section.Cards)
                 {
+                    CardModel mod = Database.GetCardById(element.Card.Id);
                     for (int i = 0; i < element.Quantity; i++)
                     { //for every card in the deck, generate a unique key for it, ID for it
                         ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | element.Card.Id.Condense();
@@ -283,7 +284,7 @@ namespace Octgn
                         ids[j] = id;
                         keys[j] = Crypto.ModExp(key);
                         groups[j] = group;
-                        var card = new Card(player, id, key, cardDef, Database.GetCardById(element.Card.Id), true);
+                        var card = new Card(player, id, key, cardDef, mod, true);
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
                     }
