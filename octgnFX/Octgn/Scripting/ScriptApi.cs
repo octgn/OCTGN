@@ -221,9 +221,11 @@ namespace Octgn.Scripting
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
+            property = property.ToLower();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
-            if (!c.Type.Model.Properties.ContainsKey(property)) { return IronPython.Modules.Builtin.None; }
-            return c.Type.Model.Properties[property];
+            if (!c.Type.Model.Properties.Keys.Select(x => x.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
+            object ret = c.Type.Model.Properties.Single(x => x.Key.ToLower().Equals(property)).Value;
+            return (ret);
         }
 
         public int CardOwner(int id)
