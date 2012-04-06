@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using Polenter.Serialization;
 
@@ -28,14 +29,21 @@ namespace Octgn
         /// <returns> A string value </returns>
         public static string ReadValue(string valName)
         {
-            if (File.Exists(GetPath()))
+            try
             {
-                var serializer = new SharpSerializer();
-                var config = (Hashtable) serializer.Deserialize(GetPath());
-                if (config.ContainsKey(valName))
+                if (File.Exists(GetPath()))
                 {
-                    return config[valName].ToString();
+                    var serializer = new SharpSerializer();
+                    var config = (Hashtable)serializer.Deserialize(GetPath());
+                    if (config.ContainsKey(valName))
+                    {
+                        return config[valName].ToString();
+                    }
                 }
+            }
+            catch(Exception e)
+            {
+                Trace.WriteLine("[SimpleConfig]ReadValue Error: " + e.Message);
             }
             return null;
         }
@@ -53,14 +61,22 @@ namespace Octgn
         /// <param name="value"> String to write for value </param>
         public static void WriteValue(string valName, string value)
         {
-            var serializer = new SharpSerializer();
-            var config = new Hashtable();
-            if (File.Exists(GetPath()))
+            try
             {
-                config = (Hashtable) serializer.Deserialize(GetPath());
+                var serializer = new SharpSerializer();
+                var config = new Hashtable();
+                if (File.Exists(GetPath()))
+                {
+                    config = (Hashtable) serializer.Deserialize(GetPath());
+                }
+                config[valName] = value;
+                serializer.Serialize(config, GetPath());                
             }
-            config[valName] = value;
-            serializer.Serialize(config, GetPath());
+            catch(Exception e)
+            {
+                Trace.WriteLine("[SimpleConfig]WriteValue Error: " + e.Message);
+            }
+
         }
     }
 }
