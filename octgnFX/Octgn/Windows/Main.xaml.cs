@@ -52,6 +52,7 @@ namespace Octgn.Windows
         private bool _isLegitClosing;
         private NavigatingCancelEventArgs _navArgs;
         private Brush _originalBorderBrush;
+        private bool _joiningGame = false;
 
         public Main()
         {
@@ -512,10 +513,12 @@ namespace Octgn.Windows
         {
             if (Program.PlayWindow != null) return;
             var hg = sender as HostedGameData;
-            Program.IsHost = false;
             Data.Game theGame =
                 Program.GamesRepository.AllGames.FirstOrDefault(g => hg != null && g.Id == hg.GameGuid);
             if (theGame == null) return;
+            if (_joiningGame) return;
+            _joiningGame = true;
+            Program.IsHost = false;
             Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
 #if(DEBUG)
             var ad = new IPAddress[1];
@@ -532,9 +535,11 @@ namespace Octgn.Windows
                 if (hg != null) Program.Client = new Client(ip, hg.Port);
                 Program.Client.Connect();
                 Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
+                _joiningGame = false;
             }
             catch (Exception ex)
             {
+                _joiningGame = false;
                 Debug.WriteLine(ex);
                 if (Debugger.IsAttached) Debugger.Break();
             }
