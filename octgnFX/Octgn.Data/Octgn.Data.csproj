@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardModel.cs" />
+    <Compile Include="DatabaseHandler.cs" />
     <Compile Include="Deck.cs" />
     <Compile Include="DeckExceptions.cs" />
     <Compile Include="Def.cs" />

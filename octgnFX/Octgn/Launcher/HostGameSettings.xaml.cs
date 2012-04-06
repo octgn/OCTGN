@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
+using System.Threading;
 using System.Windows;
 using System.Windows.Navigation;
 using Octgn.Definitions;
@@ -18,6 +19,7 @@ namespace Octgn.Launcher
         private readonly Data.Game _game;
         private bool _beginHost;
         private NavigationService _ns;
+        private Timer _startGameTimer;
 
         public HostGameSettings(Data.Game game)
         {
@@ -30,7 +32,13 @@ namespace Octgn.Launcher
             Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
         }
 
-        private void PageUnloaded(object sender, RoutedEventArgs e) { Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved; }
+        private void PageUnloaded(object sender, RoutedEventArgs e)
+        {
+            Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved;
+            if(_startGameTimer != null)
+                _startGameTimer.Dispose();
+
+        }
 
 
         private void LobbyClientOnOnDataRecieved(object sender , Skylabs.Lobby.Client.DataRecType type , object data)
@@ -50,7 +58,16 @@ namespace Octgn.Launcher
 
         private void Button1Click(object sender, RoutedEventArgs e)
         {
+            lblError.Content = "";
+            if (String.IsNullOrWhiteSpace(textBox1.Text))
+            {
+                lblError.Content = "Please enter a game name.";
+                return;
+            }
             if (_beginHost) return;
+            _startGameTimer = new Timer((object a)=> EndHostGame(-1) ,null,10000,Timeout.Infinite);
+            progressBar1.Visibility = Visibility.Visible;
+            button1.IsEnabled = false;
             e.Handled = true;
             _beginHost = true;
             _ns = NavigationService;
@@ -60,10 +77,20 @@ namespace Octgn.Launcher
 
         private void EndHostGame(int port)
         {
-            Program.DebugTrace.TraceEvent(TraceEventType.Information, 0,
-                                          "Connecting to port: " + port.ToString(CultureInfo.InvariantCulture));
+            if (port <= -1)
+            {
+                _startGameTimer.Dispose();
+                _beginHost = false;
+                Dispatcher.Invoke(new Action(() =>
+                                             {
+                                                 progressBar1.Visibility = Visibility.Hidden;
+                                                 button1.IsEnabled = true;
+                                                 lblError.Content = "Could not start game.";
+                                             }));
+                return;
+            }
+            Trace.WriteLine("Connecting to port: " + port.ToString(CultureInfo.InvariantCulture));
             Program.LobbyClient.CurrentHostedGamePort = port;
-            if (port <= -1) return;//TODO Somekind of user shit to tell them game couldn't be hosted.
             Program.GameSettings.UseTwoSidedTable = true;
             Program.Game = new Game(GameDef.FromO8G(_game.Filename));
             Program.IsHost = true;

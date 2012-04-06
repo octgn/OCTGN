@@ -18,12 +18,12 @@ namespace Octgn.Utils
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendFormat("<{0}>", Type);
+            //sb.AppendFormat("<{0}>", Type);
             if (Cache != null)
                 sb.AppendFormat("[{0} {1}]", Cache.DateTime.ToShortTimeString(), Cache.DateTime.ToShortDateString());
             if (Source != null)
                 sb.AppendFormat("'{0}'", Source);
-            sb.Append(Id);
+            //sb.Append(Id);
             sb.Append(" - ");
             if (Message == null && Args != null && Format != null)
             {

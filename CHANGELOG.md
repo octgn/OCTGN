@@ -14,6 +14,8 @@
 	<ul>Headlines on login page</ul>
 	<ul>Offline messages</ul>
 	<ul>Fixed several UI bugs</ul>
+	<ul>Added About window and links on login page</ul>
+	<ul>Lobby reconnects on disconnect</ul>
 </ul>
 3.0.0.3
 <ul style="display: block; ">

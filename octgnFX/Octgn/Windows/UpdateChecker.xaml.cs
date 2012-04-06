@@ -231,7 +231,9 @@ namespace Octgn.Windows
             catch (Exception e)
             {
                 Debug.WriteLine(e);
+#if(DEBUG)
                 if (Debugger.IsAttached) Debugger.Break();
+#endif
             }
             return values;
         }

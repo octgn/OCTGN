@@ -55,9 +55,17 @@ namespace Octgn.Controls
             {
                 _mUser = value;
                 SetValue(CustomStatusProperty, value.CustomStatus);
-                string h = ValueConverters.HashEmailAddress(_mUser.Email);
-                string guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt=";
-                SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);
+                string guri = "";
+                if(String.IsNullOrWhiteSpace(_mUser.Email))
+                {
+                    guri = @"pack://application:,,,/Octgn;component/Resources/none.jpg";
+                }
+                else
+                {
+                    string h = ValueConverters.HashEmailAddress(_mUser.Email);
+                    guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt=";
+                }
+                SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);                    
                 SetValue(UsernameProperty, value.User.User);
                 switch (value.Status)
                 {
