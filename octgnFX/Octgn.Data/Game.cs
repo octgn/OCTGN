@@ -126,7 +126,7 @@ namespace Octgn.Data
         {
             var ret = new SortedList<string, object>();
 
-
+            //New way
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText = "SELECT * FROM [cards] WHERE [id]=@id;";
@@ -144,6 +144,8 @@ namespace Octgn.Data
                 
                 
             }
+
+            //old way still here for reference untill everything is tested.
 
             //using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             //{
