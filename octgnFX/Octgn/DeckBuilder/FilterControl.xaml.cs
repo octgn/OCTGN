@@ -19,26 +19,19 @@ namespace Octgn.DeckBuilder
                                             };
 
         private static readonly SqlComparison[] IntegerComparisons = new SqlComparison[]
-                                                                         {
-                                                                             new IntegerComparison("Equals", "{0} = {1}")
-                                                                             ,
-                                                                             new IntegerComparison("Greater than",
-                                                                                                   "{0} > {1}"),
-                                                                             new IntegerComparison("Less than",
-                                                                                                   "{0} < {1}")
-                                                                         };
+                                            {
+                                                new IntegerComparison("Equals", "Card.[{0}] = {1}"),
+                                                new IntegerComparison("Greater than", "Card.[{0}] > {1}"),
+                                                new IntegerComparison("Less than", "Card.[{0}] < {1}")
+                                            };
 
         private static readonly SqlComparison[] CharComparisons = new[]
-                                                                      {
-                                                                          new SqlComparison("Equals", "{0} = '{1}'")
-                                                                              {EscapeQuotes = true},
-                                                                          new SqlComparison("Greater than",
-                                                                                            "{0} > '{1}'")
-                                                                              {EscapeQuotes = true},
-                                                                          new SqlComparison("Less than", "{0} < '{1}'")
-                                                                              {EscapeQuotes = true},
-                                                                          new CharInComparison("One of", "{0} IN ({1})")
-                                                                      };
+                                            {
+                                                new SqlComparison("Equals", "Card.[{0}] = '{1}'") {EscapeQuotes = true},
+                                                new SqlComparison("Greater than", "Card.[{0}] > '{1}'") {EscapeQuotes = true},
+                                                new SqlComparison("Less than", "Card.[{0}] < '{1}'") {EscapeQuotes = true},
+                                                new CharInComparison("One of", "Card.[{0}] IN ({1})")
+                                            };
 
         private PropertyDef _property;
 
