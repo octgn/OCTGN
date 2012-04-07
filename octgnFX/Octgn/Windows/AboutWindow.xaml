@@ -52,7 +52,7 @@
                    Text="Kent Jones is a part time programmer experienced in Delphi and C#.&#13;&#13;His first card game was Star Trek and he's been a TCG enthusiast ever since.&#13;&#13;^.^" 
                    VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" />
             <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textRalig98" 
-                   Text="Chris Martin. Not much is known about him.&#13;&#13;He once said &quot;Anal isn't gay if you call 'No homo'. Oh, and make sure the balls don't touch&quot;."
+                   Text="Chris Martin. Not much is known about him.&#13;&#13;He likes to spout random movie quotes that make no sense in context. For example, &quot;One morning I shot an elephant in my pajamas. How he got in my pajamas, I don't know.&quot;"
                    VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" />
             <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textGravecorp" 
                    Text="Gravecorp (Uri)&#13;&#13;Can program in almost any programming language by abusing his code monkey army!&#13;&#13;KkNvdmVycyB1cCogU3RvcCBkZWNyeXB0aW5nIG1lIHdpdGggeW91ciBleWVzISEh" 
