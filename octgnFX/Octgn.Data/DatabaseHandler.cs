@@ -8,28 +8,29 @@ namespace Octgn.Data
 {
     class DatabaseHandler
     {
+        private static Dictionary<string, List<string>> columnCache = new Dictionary<string, List<string>>();
+
         public static bool ColumnExists(string tableName, string columnName, SQLiteConnection connection)
         {
-            bool ret = false;
-            using (SQLiteCommand com = connection.CreateCommand())
+            if (!columnCache.ContainsKey(columnName) || !columnCache[tableName].Contains(columnName))
             {
-                com.CommandText = "PRAGMA table_info(" + tableName + ")";
-                com.Prepare();
-                using (SQLiteDataReader reader = com.ExecuteReader())
+                columnCache[tableName] = new List<string>();
+                using (SQLiteCommand com = connection.CreateCommand())
                 {
-                    while (reader.Read())
+                    com.CommandText = "PRAGMA table_info(" + tableName + ")";
+                    com.Prepare();
+                    using (SQLiteDataReader reader = com.ExecuteReader())
                     {
-                        int nameColumnOrdinal = reader.GetOrdinal("name");
-                        string dbColumnName = reader.GetString(nameColumnOrdinal);
-                        if (columnName.Equals(dbColumnName, StringComparison.InvariantCultureIgnoreCase))
+                        while (reader.Read())
                         {
-                            ret = true;
-                            break;
+                            int nameColumnOrdinal = reader.GetOrdinal("name");
+                            string dbColumnName = reader.GetString(nameColumnOrdinal);
+                            columnCache[tableName].Add(dbColumnName);
                         }
                     }
                 }
             }
-            return (ret);
+            return (columnCache[tableName].Contains(columnName));
         }
 
         public static bool AddColumn(string tableName, string columnName, PropertyType type, SQLiteConnection connection)
@@ -79,5 +80,7 @@ namespace Octgn.Data
         {
             return (columnName.Replace("_", " "));
         }
+
+
     }
 }
