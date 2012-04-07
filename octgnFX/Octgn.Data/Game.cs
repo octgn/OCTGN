@@ -125,43 +125,63 @@ namespace Octgn.Data
         public SortedList<string, object> GetCardProperties(Guid cardId)
         {
             var ret = new SortedList<string, object>();
+
+
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
-                com.CommandText =
-                    "SElECT id, type, name, vstr, vint FROM [custom_properties] WHERE [card_real_id]=(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1);";
-
-                com.Parameters.AddWithValue("@card_id", cardId.ToString());
-                using (SQLiteDataReader dr = com.ExecuteReader())
+                com.CommandText = "SELECT * FROM [cards] WHERE [id]=@id;";
+                com.Parameters.AddWithValue("@id", cardId.ToString());
+                using (SQLiteDataReader reader = com.ExecuteReader())
                 {
-                    while (dr.Read())
+                    while (reader.Read())
                     {
-                        var vt = (int) ((long) dr["type"]);
-                        var name = dr["name"] as string;
-                        if (name != null)
-                            switch (vt)
-                            {
-                                case 0: // String
-                                    {
-                                        var val = dr["vstr"] as string;
-                                        ret.Add(name, val);
-                                        break;
-                                    }
-                                case 1: // int
-                                    {
-                                        var val = (int) ((long) dr["vint"]);
-                                        ret.Add(name, val);
-                                        break;
-                                    }
-                                case 2: //char
-                                    {
-                                        var val = dr["vstr"] as string;
-                                        ret.Add(name, val);
-                                        break;
-                                    }
-                            }
+                        foreach (PropertyDef pDef in CustomProperties)
+                        {
+                            ret.Add(pDef.Name, reader[pDef.Name]);
+                        }
                     }
                 }
+                
+                
             }
+
+            //using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
+            //{
+            //    com.CommandText =
+            //        "SElECT id, type, name, vstr, vint FROM [custom_properties] WHERE [card_real_id]=(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1);";
+
+            //    com.Parameters.AddWithValue("@card_id", cardId.ToString());
+            //    using (SQLiteDataReader dr = com.ExecuteReader())
+            //    {
+            //        while (dr.Read())
+            //        {
+            //            var vt = (int) ((long) dr["type"]);
+            //            var name = dr["name"] as string;
+            //            if (name != null)
+            //                switch (vt)
+            //                {
+            //                    case 0: // String
+            //                        {
+            //                            var val = dr["vstr"] as string;
+            //                            ret.Add(name, val);
+            //                            break;
+            //                        }
+            //                    case 1: // int
+            //                        {
+            //                            var val = (int) ((long) dr["vint"]);
+            //                            ret.Add(name, val);
+            //                            break;
+            //                        }
+            //                    case 2: //char
+            //                        {
+            //                            var val = dr["vstr"] as string;
+            //                            ret.Add(name, val);
+            //                            break;
+            //                        }
+            //                }
+            //        }
+            //    }
+            //}
             return ret;
         }
 
@@ -447,45 +467,16 @@ namespace Octgn.Data
 
         private void InsertCard(CardModel card)
         {
-            var sb = new StringBuilder();
-            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
-            {
-                //Build Query
-                sb.Append("INSERT INTO [cards](");
-                sb.Append("[id],[game_id],[set_real_id],[name], [image], [alternate], [dependent]");
-                sb.Append(") VALUES(");
-                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image,@alternate,@dependent");
-                sb.Append(");\n");
-                com.CommandText = sb.ToString();
+            StringBuilder fields = new StringBuilder();
+            StringBuilder values = new StringBuilder();
+            fields.Append("[id],[game_id],[set_real_id],[name],[image],[alternate],[dependent]");
+            values.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image,@alternate,@dependent");
 
-                com.Parameters.AddWithValue("@id", card.Id.ToString());
-                com.Parameters.AddWithValue("@game_id", Id.ToString());
-                com.Parameters.AddWithValue("@set_id", card.Set.Id.ToString());
-                com.Parameters.AddWithValue("@name", card.Name);
-                com.Parameters.AddWithValue("@image", card.ImageUri);
-                com.Parameters.AddWithValue("@alternate", card.Alternate.ToString());
-                com.Parameters.AddWithValue("@dependent", card.Dependent.ToString());
-
-
-#if(DEBUG)
-                Debug.WriteLine(com.CommandText);
-                foreach (SQLiteParameter p in com.Parameters)
-                {
-                   Debug.Write("ParameterName: " + p.ParameterName +"\r\n Value: " + p.Value + "\r\n");
-                }
-#endif
-                com.ExecuteNonQuery();
-            }
-            //Add custom properties for the card.
-            //sb = new StringBuilder();
-            //sb.Append("INSERT INTO [custom_properties](");
-            //sb.Append("[id],[card_real_id],[game_id],[name],[type],[vint],[vstr]");
-            //sb.Append(") VALUES(");
-            //sb.Append("@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
-            //sb.Append(");\n");
-            //string command = sb.ToString();
             foreach (KeyValuePair<string, object> pair in card.Properties)
             {
+                fields.Append(string.Format(",[{0}]", pair.Key));
+                values.Append(string.Format(",@{0}", pair.Key.Replace(" ", "")));
+
                 string name = pair.Key;
                 PropertyType type = PropertyType.String;
                 object value = "";
@@ -511,16 +502,81 @@ namespace Octgn.Data
                 }
             }
 
+            StringBuilder query = new StringBuilder();
+            query.Append("INSERT INTO [cards](");
+            query.Append(fields.ToString());
+            query.Append(") VALUES(");
+            query.Append(values.ToString());
+            query.Append(");");
+
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
+                com.CommandText = query.ToString();
+                com.Parameters.AddWithValue("@id", card.Id.ToString());
+                com.Parameters.AddWithValue("@game_id", Id.ToString());
+                com.Parameters.AddWithValue("@set_id", card.Set.Id.ToString());
+                com.Parameters.AddWithValue("@name", card.Name);
+                com.Parameters.AddWithValue("@image", card.ImageUri);
+                com.Parameters.AddWithValue("@alternate", card.Alternate.ToString());
+                com.Parameters.AddWithValue("@dependent", card.Dependent.ToString());
                 foreach (KeyValuePair<string, object> pair in card.Properties)
                 {
-                    com.CommandText = string.Format("UPDATE [cards] SET [{0}]=$value WHERE [id]=$id",pair.Key);
-                    com.Parameters.AddWithValue("$value", pair.Value);
-                    com.Parameters.AddWithValue("$id", card.Id.ToString());
-                    com.ExecuteNonQuery();
+                    string key = string.Format("@{0}", pair.Key.Replace(" ", ""));
+                    com.Parameters.AddWithValue(key, pair.Value);
                 }
+                com.ExecuteNonQuery();
             }
+
+
+//            var sb = new StringBuilder();
+//            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
+//            {
+//                //Build Query
+//                sb.Append("INSERT INTO [cards](");
+//                sb.Append("[id],[game_id],[set_real_id],[name], [image], [alternate], [dependent]");
+//                sb.Append(") VALUES(");
+//                sb.Append("@id,@game_id,(SELECT real_id FROM sets WHERE id = @set_id LIMIT 1),@name,@image,@alternate,@dependent");
+//                sb.Append(");\n");
+//                com.CommandText = sb.ToString();
+
+//                com.Parameters.AddWithValue("@id", card.Id.ToString());
+//                com.Parameters.AddWithValue("@game_id", Id.ToString());
+//                com.Parameters.AddWithValue("@set_id", card.Set.Id.ToString());
+//                com.Parameters.AddWithValue("@name", card.Name);
+//                com.Parameters.AddWithValue("@image", card.ImageUri);
+//                com.Parameters.AddWithValue("@alternate", card.Alternate.ToString());
+//                com.Parameters.AddWithValue("@dependent", card.Dependent.ToString());
+
+
+//#if(DEBUG)
+//                Debug.WriteLine(com.CommandText);
+//                foreach (SQLiteParameter p in com.Parameters)
+//                {
+//                   Debug.Write("ParameterName: " + p.ParameterName +"\r\n Value: " + p.Value + "\r\n");
+//                }
+//#endif
+//                com.ExecuteNonQuery();
+//            }
+            //Add custom properties for the card.
+            //sb = new StringBuilder();
+            //sb.Append("INSERT INTO [custom_properties](");
+            //sb.Append("[id],[card_real_id],[game_id],[name],[type],[vint],[vstr]");
+            //sb.Append(") VALUES(");
+            //sb.Append("@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
+            //sb.Append(");\n");
+            //string command = sb.ToString();
+            
+
+            //using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
+            //{
+            //    foreach (KeyValuePair<string, object> pair in card.Properties)
+            //    {
+            //        com.CommandText = string.Format("UPDATE [cards] SET [{0}]=$value WHERE [id]=$id",pair.Key);
+            //        com.Parameters.AddWithValue("$value", pair.Value);
+            //        com.Parameters.AddWithValue("$id", card.Id.ToString());
+            //        com.ExecuteNonQuery();
+            //    }
+            //}
             
             //foreach (KeyValuePair<string, object> pair in card.Properties)
             //{
