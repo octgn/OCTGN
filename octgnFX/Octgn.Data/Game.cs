@@ -695,7 +695,8 @@ namespace Octgn.Data
 
         internal void CopyDecks(string filename)
         {
-            using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            var filepath = Path.Combine(GamesRepository.BasePath , "Decks" , filename);
+            using (Package package = Package.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 CopyDecks(package);
             }

@@ -327,7 +327,7 @@ namespace Octgn.Launcher
                 Data.Game theGame =
                     Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
                 if (theGame == null) return;
-                Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
+                Program.Game = new Game(GameDef.FromO8G(Path.Combine(GamesRepository.BasePath,"Defs",theGame.Filename)),true);
 
                 var ad = new IPAddress[1];
                 IPAddress ip = IPAddress.Parse("127.0.0.1");
@@ -366,7 +366,7 @@ namespace Octgn.Launcher
                     Program.LauncherWindow.Navigate(new Login());
                     return;
                 }
-                Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
+                Program.Game = new Game(GameDef.FromO8G(Path.Combine(GamesRepository.BasePath,"Defs",theGame.Filename)),true);
                 Program.LauncherWindow.Navigate(new ConnectLocalGame());
             }
 

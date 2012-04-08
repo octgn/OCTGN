@@ -106,20 +106,20 @@ namespace Octgn.Windows
                         string fhash = "";
 
                         UpdateStatus("Checking Game: " + g.Name);
-
-                        if (!File.Exists(g.Filename))
+                        var fpath = Path.Combine(GamesRepository.BasePath , "Defs" , g.Filename);
+                        if (!File.Exists(fpath))
                         {
-                            _errors.Add("[" + g.Name + "]: Def file doesn't exist at " + g.Filename);
+                            _errors.Add("[" + g.Name + "]: Def file doesn't exist at " + fpath);
                             continue;
                         }
-                        using (var file = new FileStream(g.Filename, FileMode.Open))
+                        using (var file = new FileStream(fpath, FileMode.Open))
                         {
                             byte[] retVal = md5.ComputeHash(file);
                             fhash = BitConverter.ToString(retVal).Replace("-", ""); // hex string
                         }
                         if (fhash.ToLower() == g.FileHash.ToLower()) continue;
 
-                        Program.Game = new Game(GameDef.FromO8G(g.Filename));
+                        Program.Game = new Game(GameDef.FromO8G(fpath));
                         Program.Game.TestBegin();
                         //IEnumerable<Player> plz = Player.All;
                         var engine = new Engine(true);

@@ -140,7 +140,7 @@ namespace Octgn.Launcher
                                    {
                                        Id = game.Id,
                                        Name = game.Name,
-                                       Filename = newFilename,
+                                       Filename = new FileInfo(newFilename).Name,
                                        Version = game.Version,
                                        CardWidth = game.CardDefinition.Width,
                                        CardHeight = game.CardDefinition.Height,

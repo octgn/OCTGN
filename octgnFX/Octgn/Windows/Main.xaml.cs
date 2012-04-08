@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -520,7 +521,7 @@ namespace Octgn.Windows
             if (_joiningGame) return;
             _joiningGame = true;
             Program.IsHost = false;
-            Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
+            Program.Game = new Game(GameDef.FromO8G(Path.Combine(GamesRepository.BasePath,"Defs",theGame.Filename)));
 #if(DEBUG)
             var ad = new IPAddress[1];
             IPAddress ip = IPAddress.Parse("127.0.0.1");
