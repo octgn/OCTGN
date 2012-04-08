@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using Octgn.Data;
 using Octgn.Definitions;
 
 namespace Octgn.Launcher
@@ -28,7 +30,7 @@ namespace Octgn.Launcher
         {
             get
             {
-                return _games.Count == 0 ? null : new Game(GameDef.FromO8G(_games[_selectedIdx].Filename));
+                return _games.Count == 0 ? null : new Game(GameDef.FromO8G(_games[_selectedIdx].FullPath));
                 //var serializer = new BinaryFormatter();
                 //var memStream = new MemoryStream(games[selectedIdx].Data);
                 //GameDef def = (GameDef)serializer.Deserialize(memStream);

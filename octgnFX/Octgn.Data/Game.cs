@@ -29,6 +29,11 @@ namespace Octgn.Data
         public string FileHash { get; set; }
         public IEnumerable<string> DeckSections { get; set; }
         public IEnumerable<string> SharedDeckSections { get; set; }
+        public string FullPath
+        {
+            get { return Path.Combine(GamesRepository.BasePath , "Games" , Id.ToString() , "Defs" , Filename); }
+        }
+
 
         public ObservableCollection<Set> Sets
         {
@@ -52,7 +57,7 @@ namespace Octgn.Data
 
         public Uri GetCardBackUri()
         {
-            String s = Path.Combine(GamesRepository.BasePath, Filename);//.Replace('\\', ',');
+            //String s = Path.Combine(GamesRepository.BasePath, Filename);//.Replace('\\', ',');
             var u = new Uri(CardBack); //new Uri("pack://file:,,," + s + CardBack);
             return u;
         }
@@ -693,9 +698,10 @@ namespace Octgn.Data
             return ret;
         }
 
-        internal void CopyDecks(string filename)
+        internal void CopyDecks()
         {
-            using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            //var filepath = Path.Combine(GamesRepository.BasePath , "Decks" , filename);
+            using (Package package = Package.Open(FullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 CopyDecks(package);
             }

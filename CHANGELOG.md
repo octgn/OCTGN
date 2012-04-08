@@ -16,6 +16,8 @@
 	<ul>Fixed several UI bugs</ul>
 	<ul>Added About window and links on login page</ul>
 	<ul>Lobby reconnects on disconnect</ul>
+	<ul>Sub directory for sets</ul>
+	<ul>Can set custom data directory for octgn</ul>
 </ul>
 3.0.0.3
 <ul style="display: block; ">

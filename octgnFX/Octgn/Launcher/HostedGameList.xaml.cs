@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using Octgn.Controls;
 using Skylabs.Lobby;
+using Octgn.Data;
 
 namespace Octgn.Launcher
 {

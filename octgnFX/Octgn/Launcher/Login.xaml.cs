@@ -9,10 +9,10 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -30,6 +30,12 @@ using Skylabs.Lobby;
 using Octgn.Definitions;
 using Skylabs.Lobby.Threading;
 using Client = Octgn.Networking.Client;
+using Octgn.Data;
+using Application = System.Windows.Application;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MessageBox = System.Windows.MessageBox;
+using Timer = System.Threading.Timer;
 
 namespace Octgn.Launcher
 {
@@ -326,7 +332,7 @@ namespace Octgn.Launcher
                 Data.Game theGame =
                     Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
                 if (theGame == null) return;
-                Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
+                Program.Game = new Game(GameDef.FromO8G(theGame.FullPath),true);
 
                 var ad = new IPAddress[1];
                 IPAddress ip = IPAddress.Parse("127.0.0.1");
@@ -365,7 +371,7 @@ namespace Octgn.Launcher
                     Program.LauncherWindow.Navigate(new Login());
                     return;
                 }
-                Program.Game = new Game(GameDef.FromO8G(theGame.Filename),true);
+                Program.Game = new Game(GameDef.FromO8G(theGame.FullPath),true);
                 Program.LauncherWindow.Navigate(new ConnectLocalGame());
             }
 
@@ -451,6 +457,29 @@ namespace Octgn.Launcher
             private void LauncherWindowClosing(object sender, CancelEventArgs e){if (_isLoggingIn)e.Cancel = true;}
             private void MenuExitClick(object sender, RoutedEventArgs e){if (!_isLoggingIn)Program.Exit();}
         #endregion            
+
+            private void menuCD_Click(object sender, RoutedEventArgs e)
+            {
+                System.Windows.Forms.FolderBrowserDialog pf = new FolderBrowserDialog();
+                pf.SelectedPath = GamesRepository.BasePath;
+                var dr = pf.ShowDialog();
+                if(dr == DialogResult.OK)
+                {
+                    if(pf.SelectedPath.ToLower() != GamesRepository.BasePath.ToLower())
+                    {
+                        SimpleConfig.WriteValue("datadirectory",pf.SelectedPath);
+                        var asm = System.Reflection.Assembly.GetExecutingAssembly();
+                        var thispath = asm.Location;
+                        Program.Exit();
+                        Process.Start(thispath);
+                        /*Application.Current.Exit += delegate(object o , ExitEventArgs args)
+                                                    {
+                                                        Process.Start(thispath);
+
+                                                    };*/
+                    }
+                }
+            }
 
     }
 
