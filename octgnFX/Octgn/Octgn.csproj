@@ -434,7 +434,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SimpleConfig.cs" />
     <Compile Include="Scripting\Engine.cs" />
     <Compile Include="Scripting\ExecutionResult.cs" />
     <Compile Include="Scripting\OCounter.cs" />

@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using Polenter.Serialization;
 
-namespace Octgn
+namespace Octgn.Data
 {
-    internal class SimpleConfig
+    public class SimpleConfig
     {
         private static string GetPath()
         {
