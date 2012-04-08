@@ -101,9 +101,10 @@ namespace Octgn.Launcher
 
             try
             {
+                GameDef game = GameDef.FromO8G(newFilename);
                 //Move the definition file to a new location, so that the old one can be deleted
                 string path = Path.Combine(SimpleConfig.ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn")),
-                                           "Defs");
+                                           "Games", game.Id.ToString(), "Defs");
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
                 var fi = new FileInfo(newFilename);
@@ -121,7 +122,7 @@ namespace Octgn.Launcher
                 }
                 newFilename = copyto;
                 // Open the archive
-                GameDef game = GameDef.FromO8G(newFilename);
+                game = GameDef.FromO8G(newFilename);
                 if (!game.CheckVersion()) return;
 
                 //Check game scripts
