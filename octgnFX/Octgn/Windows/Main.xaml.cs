@@ -28,6 +28,7 @@ using Cursors = System.Windows.Input.Cursors;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
+using Octgn.Data;
 
 namespace Octgn.Windows
 {

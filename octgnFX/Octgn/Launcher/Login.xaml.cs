@@ -30,6 +30,7 @@ using Skylabs.Lobby;
 using Octgn.Definitions;
 using Skylabs.Lobby.Threading;
 using Client = Octgn.Networking.Client;
+using Octgn.Data;
 
 namespace Octgn.Launcher
 {
