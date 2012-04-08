@@ -172,7 +172,7 @@ namespace Octgn.Data
                         if (!Directory.Exists(Path.Combine(BasePath, "Decks")))
                             Directory.CreateDirectory(Path.Combine(BasePath, "Decks"));
 
-                        game.CopyDecks(game.Filename);
+                        game.CopyDecks();
                     }
                 }
                 //Add custom properties for the card.
@@ -292,14 +292,14 @@ namespace Octgn.Data
                 }
             }
             _missingFiles = (from g in _allCachedGames
-                             let fullname = Path.Combine(BasePath, "Defs", g.Filename)
+                             let fullname =g.FullPath
                              where !File.Exists(fullname)
                              select fullname).ToList();
 
             _cachedGames = _missingFiles.Count > 0
                                ? new ObservableCollection<Game>(
                                      _allCachedGames.Where(
-                                         g => !_missingFiles.Contains(Path.Combine(BasePath, "Defs", g.Filename))))
+                                         g => !_missingFiles.Contains(g.FullPath)))
                                : _allCachedGames;
         }
 

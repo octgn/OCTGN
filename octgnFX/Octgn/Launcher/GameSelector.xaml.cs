@@ -30,7 +30,7 @@ namespace Octgn.Launcher
         {
             get
             {
-                return _games.Count == 0 ? null : new Game(GameDef.FromO8G(Path.Combine(GamesRepository.BasePath,"Defs",_games[_selectedIdx].Filename)));
+                return _games.Count == 0 ? null : new Game(GameDef.FromO8G(_games[_selectedIdx].FullPath));
                 //var serializer = new BinaryFormatter();
                 //var memStream = new MemoryStream(games[selectedIdx].Data);
                 //GameDef def = (GameDef)serializer.Deserialize(memStream);

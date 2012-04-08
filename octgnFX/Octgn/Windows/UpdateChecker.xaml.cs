@@ -106,7 +106,7 @@ namespace Octgn.Windows
                         string fhash = "";
 
                         UpdateStatus("Checking Game: " + g.Name);
-                        var fpath = Path.Combine(GamesRepository.BasePath , "Defs" , g.Filename);
+                        var fpath = g.FullPath;
                         if (!File.Exists(fpath))
                         {
                             _errors.Add("[" + g.Name + "]: Def file doesn't exist at " + fpath);

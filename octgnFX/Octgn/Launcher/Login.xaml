@@ -57,8 +57,9 @@
                 <MenuItem Name="menuOffline" Header="Host Game" Click="MenuOfflineClick" />
                 <MenuItem Name="menuConnectOffline" Header="Connect To Game" Click="MenuOfflineConnectClick"/>                    
             </MenuItem>
-            <MenuItem Name="menuExit" Header="Exit" Click="MenuExitClick" />
-      </MenuItem>
+                <MenuItem Name="menuCD" Header="Set Data Directory" Click="menuCD_Click" />
+                <MenuItem Name="menuExit" Header="Exit" Click="MenuExitClick" />
+  </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Name="menuBug" Header="Report a bug" Click="menuBug_Click" />
                 <MenuItem Name="menuHelp" Header="Need Help?" Click="menuHelp_Click" />

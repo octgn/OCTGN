@@ -94,7 +94,7 @@ namespace Octgn.Launcher
             Trace.WriteLine("Connecting to port: " + port.ToString(CultureInfo.InvariantCulture));
             Program.LobbyClient.CurrentHostedGamePort = port;
             Program.GameSettings.UseTwoSidedTable = true;
-            Program.Game = new Game(GameDef.FromO8G(Path.Combine(GamesRepository.BasePath,"Defs",_game.Filename)));
+            Program.Game = new Game(GameDef.FromO8G(_game.FullPath));
             Program.IsHost = true;
 #if(DEBUG)
             var ad = new IPAddress[1];

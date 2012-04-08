@@ -521,7 +521,7 @@ namespace Octgn.Windows
             if (_joiningGame) return;
             _joiningGame = true;
             Program.IsHost = false;
-            Program.Game = new Game(GameDef.FromO8G(Path.Combine(GamesRepository.BasePath,"Defs",theGame.Filename)));
+            Program.Game = new Game(GameDef.FromO8G(theGame.FullPath));
 #if(DEBUG)
             var ad = new IPAddress[1];
             IPAddress ip = IPAddress.Parse("127.0.0.1");
