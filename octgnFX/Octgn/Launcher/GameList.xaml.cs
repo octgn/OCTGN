@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Microsoft.Win32;
 using Octgn.Controls;
 using Octgn.Definitions;
+using Octgn.Data;
 
 namespace Octgn.Launcher
 {
@@ -101,7 +102,7 @@ namespace Octgn.Launcher
             try
             {
                 //Move the definition file to a new location, so that the old one can be deleted
-                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn",
+                string path = Path.Combine(SimpleConfig.ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn")),
                                            "Defs");
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);

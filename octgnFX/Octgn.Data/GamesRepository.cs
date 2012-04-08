@@ -14,8 +14,7 @@ namespace Octgn.Data
 {
     public class GamesRepository
     {
-        public static string BasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                                     "Octgn");
+        public static string BasePath = SimpleConfig.ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn"));
 
         private static readonly string DatabasePath = Path.Combine(BasePath, "Database");
         private static readonly string DatabaseFile = Path.Combine(DatabasePath, "master.db3");
@@ -27,9 +26,7 @@ namespace Octgn.Data
 
         static GamesRepository()
         {
-            BasePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "Octgn");
+            BasePath = SimpleConfig.ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn"));
             Directory.CreateDirectory(BasePath);
         }
 
