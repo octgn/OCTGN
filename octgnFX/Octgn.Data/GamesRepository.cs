@@ -105,42 +105,75 @@ namespace Octgn.Data
 
         public void InstallGame(Game game, IEnumerable<PropertyDef> properties)
         {
+            Game existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
             SQLiteTransaction trans = null;
             try
             {
                 var sb = new StringBuilder();
                 trans = DatabaseConnection.BeginTransaction();
-                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+
+                if (existingGame != null && existingGame.Id == game.Id)
                 {
-                    //Build Query
-                    sb.Append("INSERT OR REPLACE INTO [games](");
-                    sb.Append(
-                        "[id],[name],[filename],[version], [card_width],[card_height],[card_back],[deck_sections],[shared_deck_sections],[file_hash]");
-                    sb.Append(") VALUES(");
-                    sb.Append(
-                        "@id,@name,@filename,@version,@card_width,@card_height,@card_back,@deck_sections,@shared_deck_sections,@file_hash");
-                    sb.Append(");\n");
-                    com.CommandText = sb.ToString();
+                    using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                    {
+                        //Build Query
+                        sb.Append("UPDATE [games] SET ");
+                        sb.Append("[filename]=@filename, [version]=@version, ");
+                        sb.Append("[card_width]=@card_width, [card_height]=@card_height, [card_back]=@card_back, ");
+                        sb.Append("[deck_sections]=@deck_sections, [shared_deck_sections]=@shared_deck_sections, [file_hash]=@file_hash");
+                        sb.Append(" WHERE [id]=@id;");
+                        com.CommandText = sb.ToString();
 
-                    com.Parameters.AddWithValue("@id", game.Id.ToString());
-                    com.Parameters.AddWithValue("@name", game.Name);
-                    com.Parameters.AddWithValue("@filename", game.Filename);
-                    com.Parameters.AddWithValue("@version", game.Version.ToString());
-                    com.Parameters.AddWithValue("@card_width", game.CardWidth);
-                    com.Parameters.AddWithValue("@card_height", game.CardHeight);
-                    com.Parameters.AddWithValue("@card_back", game.CardBack);
-                    com.Parameters.AddWithValue("@deck_sections", SerializeList(game.DeckSections));
-                    if (game.SharedDeckSections != null)
-                        com.Parameters.AddWithValue("@shared_deck_sections", SerializeList(game.SharedDeckSections));
-                    else
-                        com.Parameters.AddWithValue("@shared_deck_sections", DBNull.Value);
-                    com.Parameters.AddWithValue("@file_hash", game.FileHash);
+                        com.Parameters.AddWithValue("@id", game.Id.ToString());
+                        com.Parameters.AddWithValue("@filename", game.Filename);
+                        com.Parameters.AddWithValue("@version", game.Version.ToString());
+                        com.Parameters.AddWithValue("@card_width", game.CardWidth);
+                        com.Parameters.AddWithValue("@card_height", game.CardHeight);
+                        com.Parameters.AddWithValue("@card_back", game.CardBack);
+                        com.Parameters.AddWithValue("@deck_sections", SerializeList(game.DeckSections));
+                        if (game.SharedDeckSections != null)
+                            com.Parameters.AddWithValue("@shared_deck_sections", SerializeList(game.SharedDeckSections));
+                        else
+                            com.Parameters.AddWithValue("@shared_deck_sections", DBNull.Value);
+                        com.Parameters.AddWithValue("@file_hash", game.FileHash);
 
-                    com.ExecuteNonQuery();
-                    if (!Directory.Exists(Path.Combine(BasePath, "Decks")))
-                        Directory.CreateDirectory(Path.Combine(BasePath, "Decks"));
+                        com.ExecuteNonQuery();
+                    }
+                }
+                else
+                {
+                    using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                    {
+                        //Build Query
+                        sb.Append("INSERT OR REPLACE INTO [games](");
+                        sb.Append(
+                            "[id],[name],[filename],[version], [card_width],[card_height],[card_back],[deck_sections],[shared_deck_sections],[file_hash]");
+                        sb.Append(") VALUES(");
+                        sb.Append(
+                            "@id,@name,@filename,@version,@card_width,@card_height,@card_back,@deck_sections,@shared_deck_sections,@file_hash");
+                        sb.Append(");\n");
+                        com.CommandText = sb.ToString();
 
-                    game.CopyDecks(game.Filename);
+                        com.Parameters.AddWithValue("@id", game.Id.ToString());
+                        com.Parameters.AddWithValue("@name", game.Name);
+                        com.Parameters.AddWithValue("@filename", game.Filename);
+                        com.Parameters.AddWithValue("@version", game.Version.ToString());
+                        com.Parameters.AddWithValue("@card_width", game.CardWidth);
+                        com.Parameters.AddWithValue("@card_height", game.CardHeight);
+                        com.Parameters.AddWithValue("@card_back", game.CardBack);
+                        com.Parameters.AddWithValue("@deck_sections", SerializeList(game.DeckSections));
+                        if (game.SharedDeckSections != null)
+                            com.Parameters.AddWithValue("@shared_deck_sections", SerializeList(game.SharedDeckSections));
+                        else
+                            com.Parameters.AddWithValue("@shared_deck_sections", DBNull.Value);
+                        com.Parameters.AddWithValue("@file_hash", game.FileHash);
+
+                        com.ExecuteNonQuery();
+                        if (!Directory.Exists(Path.Combine(BasePath, "Decks")))
+                            Directory.CreateDirectory(Path.Combine(BasePath, "Decks"));
+
+                        game.CopyDecks(game.Filename);
+                    }
                 }
                 //Add custom properties for the card.
                 sb = new StringBuilder();
@@ -217,7 +250,7 @@ namespace Octgn.Data
                 if (Debugger.IsAttached) Debugger.Break();
                 return;
             }
-            Game existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
+            existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
             if (existingGame != null) _cachedGames.Remove(existingGame);
             _cachedGames.Add(game);
             if (GameInstalled != null)
