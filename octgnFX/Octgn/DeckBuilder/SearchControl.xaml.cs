@@ -139,9 +139,6 @@ namespace Octgn.DeckBuilder
                 //HACK: strip out the Card. that the sql query inserts
                 conditions[i] = conditions[i].Replace("Card.", "");
             }
-            SearchString.Text = ConvertToSQLString(conditions);
-            //TODO Implement a way to take the text of SearchString and use it as the search parameters. 
-            //It *should* be exactly the SQL Query, but it's input by the user (read: prone to typos)
             resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
         }
         private string ConvertToSQLString(string[] conditions)
