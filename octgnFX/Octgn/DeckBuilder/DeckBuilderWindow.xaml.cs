@@ -331,14 +331,14 @@ namespace Octgn.DeckBuilder
         private void ElementSelected(object sender, SelectionChangedEventArgs e)
         {
             var grid = (DataGrid) sender;
-            var element = (Deck.Element) grid.SelectedItem;
-
-            selection = element.Card.ImageUri;
-            set_id = element.Card.Set.Id;
+            var element = (Deck.Element) grid.SelectedItem;            
 
             // Don't hide the picture if the selected element was removed 
             // with a keyboard shortcut from the results grid
             if (element == null && !grid.IsFocused) return;
+
+            selection = element.Card.ImageUri;
+            set_id = element.Card.Set.Id;
 
             cardImage.Source = new BitmapImage(element != null
                                                    ? new Uri(element.Card.Picture)
