@@ -434,7 +434,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SimpleConfig.cs" />
     <Compile Include="Scripting\Engine.cs" />
     <Compile Include="Scripting\ExecutionResult.cs" />
     <Compile Include="Scripting\OCounter.cs" />
@@ -503,6 +502,9 @@
     </Compile>
     <Compile Include="Windows\PatchProgressDialog.xaml.cs">
       <DependentUpon>PatchProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ReconnectingWindow.xaml.cs">
+      <DependentUpon>ReconnectingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\UpdateChecker.xaml.cs">
       <DependentUpon>UpdateChecker.xaml</DependentUpon>
@@ -591,6 +593,8 @@
     <Resource Include="Images\d0c.jpeg" />
     <Resource Include="Images\GravecorpAvatar.jpg" />
     <Resource Include="Images\smith_user.png" />
+    <Resource Include="Resources\none.jpg" />
+    <Resource Include="Images\stock_flip_horizontally.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -928,6 +932,10 @@
     <Page Include="Windows\PatchProgressDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ReconnectingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\UpdateChecker.xaml">
       <Generator>MSBuild:Compile</Generator>

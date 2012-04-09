@@ -144,8 +144,9 @@ namespace Octgn
                 Debug.WriteLine(e);
                 if (Debugger.IsAttached) Debugger.Break();
             }
-
-            Application.Current.Shutdown(0);
+            //Apparently this can be null sometimes?
+            if(Application.Current != null)
+                Application.Current.Shutdown(0);
         }
 
         internal static void Print(Player player, string text)

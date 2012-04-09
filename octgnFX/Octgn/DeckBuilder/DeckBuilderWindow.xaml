@@ -37,9 +37,9 @@
         <MenuItem Header="Close" Click="CloseClicked" />
       </MenuItem>
     </Menu>
-
-    <Image Margin="4,4,2,2" Grid.Row="1" x:Name="cardImage" />
-    <GridSplitter Grid.Row="1" ResizeDirection="Rows" Height="4" Margin="0,0,0,-2" VerticalAlignment="Bottom"
+        
+        <Image Margin="4,4,2,2" Grid.Row="1" x:Name="cardImage" MouseDown="cardImage_MouseDown" />
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows" Height="4" Margin="0,0,0,-2" VerticalAlignment="Bottom"
                   HorizontalAlignment="Stretch" Background="Transparent" />
 
     <Border Grid.Row="2" Margin="4,2,2,4" Padding="6" Style="{StaticResource Panel}">
@@ -93,8 +93,8 @@
     </TabControl>
 
     <GridSplitter Grid.Row="1" Grid.RowSpan="2" ResizeDirection="Columns" Width="4" HorizontalAlignment="Right"
-                  Background="Transparent" />
-    <!--ComboBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="11,181,0,0" Name="DeckSort" VerticalAlignment="Bottom" Width="229" ItemsSource="{Binding Deck.}" SelectionChanged="DeckSort_SelectionChanged" /-->
+                  Background="Transparent" />        
+        <!--ComboBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="11,181,0,0" Name="DeckSort" VerticalAlignment="Bottom" Width="229" ItemsSource="{Binding Deck.}" SelectionChanged="DeckSort_SelectionChanged" /-->
     <!--TODO: Fill in Combobox with properties. On selection re-sort deck according to selected property-->
 
     </Grid>

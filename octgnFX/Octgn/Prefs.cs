@@ -1,4 +1,5 @@
-﻿namespace Octgn
+﻿using Octgn.Data;
+namespace Octgn
 {
     public static class Prefs
     {

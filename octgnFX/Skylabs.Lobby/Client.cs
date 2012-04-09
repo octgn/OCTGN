@@ -38,6 +38,7 @@ namespace Skylabs.Lobby
             public event dStateChanged OnStateChanged;
             public event dFriendRequest OnFriendRequest;
             public event dDataRecieved OnDataRecieved;
+            public event EventHandler OnDisconnect;
         #endregion
         #region PrivateAccessors
             private XmppClientConnection Xmpp;
@@ -68,6 +69,17 @@ namespace Skylabs.Lobby
         
         public Client()
         {
+            RebuildXmpp();
+        }
+
+        private void RebuildXmpp()
+        {
+            if(Xmpp != null)
+            {
+                Xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
+                Xmpp.Close();
+                Xmpp = null;
+            }
             Xmpp = new XmppClientConnection("skylabsonline.com");
             Xmpp.OnRegistered += XmppOnOnRegistered;
             Xmpp.OnRegisterError += XmppOnOnRegisterError;
@@ -82,11 +94,16 @@ namespace Skylabs.Lobby
             Xmpp.OnAgentItem += XmppOnOnAgentItem;
             Xmpp.OnIq += XmppOnOnIq;
             Xmpp.OnReadXml += XmppOnOnReadXml;
+            Xmpp.OnClose += XmppOnOnClose;
+            Xmpp.OnWriteXml += XmppOnOnWriteXml;
+            Xmpp.OnError += XmppOnOnError;
+            Xmpp.OnSocketError += XmppOnOnSocketError;
+            Xmpp.OnStreamError += XmppOnOnStreamError;
             Notifications = new List<Notification>();
             Friends = new List<NewUser>();
             //GroupChats = new List<NewUser>();
             myPresence = new Presence();
-            Chatting = new Chat(this,Xmpp);
+            Chatting = new Chat(this, Xmpp);
             CurrentHostedGamePort = -1;
             _games = new List<HostedGameData>();
             agsXMPP.Factory.ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
@@ -94,9 +111,35 @@ namespace Skylabs.Lobby
 
         #region XMPP
 
+
+        private void XmppOnOnStreamError(object sender, Element element)
+        {
+            Trace.WriteLine("[Xmpp]StreamError: " + element);
+        }
+
+        private void XmppOnOnSocketError(object sender, Exception exception)
+        {
+            Trace.WriteLine("[Xmpp]SocketError: " + exception.Message);
+        }
+
+        private void XmppOnOnError(object sender, Exception exception)
+        {
+            Trace.WriteLine("[Xmpp]Error: " + exception.Message);
+        }
+
+        private void XmppOnOnClose(object sender)
+        {
+            Trace.WriteLine("[Xmpp]Closed");
+        }
+
+        private void XmppOnOnWriteXml(object sender, string xml)
+        {
+            Trace.WriteLine("[Xmpp]out: " + xml);
+        }
+
         private void XmppOnOnReadXml(object sender , string xml)
         {
-            Trace.WriteLine(xml);
+            Trace.WriteLine("[Xmpp]in: " + xml);
         }
 
         private void XmppOnOnIq(object sender, IQ iq)
@@ -133,6 +176,7 @@ namespace Skylabs.Lobby
             if (pres.From.User == Xmpp.MyJID.User)
             {
                 myPresence = pres;
+                myPresence.Type = PresenceType.available;
                 Xmpp.Status = myPresence.Status ?? Xmpp.Status;
                 if(OnDataRecieved != null)
                     OnDataRecieved.Invoke(this,DataRecType.MyInfo, pres);
@@ -158,14 +202,14 @@ namespace Skylabs.Lobby
                     break;
                 }
                 case PresenceType.subscribe:
-                    if (!Friends.Contains(new NewUser(pres.From)))
+                    if (!Friends.Contains(new NewUser(pres.From.Bare)))
                     {
-                        Notifications.Add(new FriendRequestNotification(pres.From , this , _noteId));
+                        Notifications.Add(new FriendRequestNotification(pres.From.Bare , this , _noteId));
                         _noteId++;
-                        if(OnFriendRequest != null) OnFriendRequest.Invoke(this , pres.From);
+                        if(OnFriendRequest != null) OnFriendRequest.Invoke(this , pres.From.Bare);
                     }
                     else
-                        AcceptFriendship(pres.From);
+                        AcceptFriendship(pres.From.Bare);
                     break;
                 case PresenceType.subscribed:
                     break;
@@ -178,10 +222,15 @@ namespace Skylabs.Lobby
                 case PresenceType.probe:
                     break;
             }
-            var f = Friends.SingleOrDefault(x => x.User.User == pres.From.User);
-            if (f == null) return;
-            f.CustomStatus = pres.Status ?? "";
-            f.SetStatus(pres);
+            for(int i=0;i<Friends.Count;i++)
+            {
+                if(Friends[i].User.User == pres.From.User)
+                {
+                    Friends[i].CustomStatus = pres.Status ?? "";
+                    Friends[i].SetStatus(pres);
+                    break;
+                }
+            }
             XmppOnOnRosterEnd(this);
         }
 
@@ -276,11 +325,13 @@ namespace Skylabs.Lobby
         {
             if(OnLoginComplete != null)
                 OnLoginComplete.Invoke(this,LoginResults.Failure);
+            Trace.WriteLine("[XMPP]AuthError: Closing...");
             Xmpp.Close();
         }
 
         private void XmppOnOnLogin(object sender)
         {
+            myPresence.Type = PresenceType.available;
             MucManager = new MucManager(Xmpp);
             Jid room = new Jid("lobby@conference.skylabsonline.com");
             MucManager.AcceptDefaultConfiguration(room);
@@ -292,13 +343,17 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnXmppConnectionStateChanged(object sender, XmppConnectionState state)
         {
+            Trace.WriteLine("[Xmpp]State: " + state.ToString());
             if (OnStateChanged != null)
                 OnStateChanged.Invoke(this, state.ToString());
+            if(state == XmppConnectionState.Disconnected)
+                if(OnDisconnect != null)OnDisconnect.Invoke(this,null);
         }
 
         private void XmppOnOnRegisterError(object sender, Element element)
         {
             OnRegisterComplete.Invoke(this,RegisterResults.UsernameTaken);
+            Trace.WriteLine("[Xmpp]Register Error...Closing...");
             Xmpp.Close();
         }
 
@@ -319,6 +374,7 @@ namespace Skylabs.Lobby
         {
             Xmpp.Send(e);
         }
+        
         public void Send(string s)
         {
             Xmpp.Send(s);
@@ -372,27 +428,54 @@ namespace Skylabs.Lobby
             Xmpp.Send(m);
         }
 
+        public void BeginReconnect()
+        {
+            //Xmpp.Close();
+            RebuildXmpp();
+            BeginLogin(Username,Password);
+            /*
+            switch(Xmpp.XmppConnectionState)
+            {
+                case XmppConnectionState.Disconnected:
+                    myPresence.Type = PresenceType.available;
+                    Xmpp.Open();
+                    Trace.WriteLine("[Xmpp]Reconnect: Opening");
+                    break;
+                default:
+                    Trace.WriteLine("[Xmpp]Reconnect: Closing");
+                    Xmpp.Close();
+                    Xmpp.SocketDisconnect();
+                    Xmpp.ClientSocket.Disconnect();
+                    break;
+            }*/
+        }
+
         public void AcceptFriendship(Jid user)
         {
             Xmpp.PresenceManager.ApproveSubscriptionRequest(user);
             Xmpp.PresenceManager.Subscribe(user);
-            Xmpp.RosterManager.UpdateRosterItem(user);
+            Xmpp.SendMyPresence();
             if(OnDataRecieved != null)
                 OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
+            //Xmpp.RequestRoster();
         }
+        
         public void DeclineFriendship(Jid user)
         {
             Xmpp.PresenceManager.RefuseSubscriptionRequest(user);
         }
+        
         public Notification[] GetNotificationList()
         {
             return Notifications.ToArray();
         }
+        
         public void SetCustomStatus(string status)
         {
             Xmpp.Status = status;
             Xmpp.SendMyPresence();
         }
+        
         public void SetStatus(UserStatus status)
         {
             Presence p;
@@ -419,8 +502,9 @@ namespace Skylabs.Lobby
                     Xmpp.Send(p);
                     break;
             }
-            Me.Status = status;
+            Me.SetStatus(status);
         }
+        
         public void SendFriendRequest(string username)
         {
             username = username.ToLower();
@@ -431,19 +515,28 @@ namespace Skylabs.Lobby
             
             Xmpp.PresenceManager.Subscribe(j);
         }
+        
         public void RemoveFriend(NewUser user)
         {
             Xmpp.PresenceManager.Unsubscribe(user.User);
             RosterManager.RemoveRosterItem(user.User);
             Friends.Remove(user);
+            OnDataRecieved.Invoke(this,DataRecType.FriendList, this);
         }
+        
         public HostedGameData[] GetHostedGames() { return _games.ToArray(); }
+        
         public void HostedGameStarted()
         {
             var m = new Message("gameserv@skylabsonline.com" , MessageType.normal , CurrentHostedGamePort.ToString() ,
                                 "gamestarted");
             Xmpp.Send(m);
         }
-        public void Stop(){Xmpp.Close();}
+        
+        public void Stop()
+        {
+            Trace.WriteLine("[Lobby]Stop Called.");
+            Xmpp.Close();
+        }
     }
 }

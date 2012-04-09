@@ -130,6 +130,9 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Polenter.SharpSerializer">
+      <HintPath>..\Lib\Polenter.SharpSerializer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -149,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardModel.cs" />
+    <Compile Include="DatabaseHandler.cs" />
     <Compile Include="Deck.cs" />
     <Compile Include="DeckExceptions.cs" />
     <Compile Include="Def.cs" />
@@ -166,6 +170,7 @@
     </Compile>
     <Compile Include="PropertyDef.cs" />
     <Compile Include="Set.cs" />
+    <Compile Include="SimpleConfig.cs" />
     <Compile Include="SimpleDataTableCache.cs" />
     <Compile Include="UpdateDatabase.cs" />
   </ItemGroup>

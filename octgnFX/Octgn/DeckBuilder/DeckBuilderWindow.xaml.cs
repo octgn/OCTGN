@@ -22,6 +22,8 @@ namespace Octgn.DeckBuilder
         private Data.Game _game;
         private Deck.Section _section;
         private bool _unsaved;
+        private string selection = null;
+        private Guid set_id;
 
         public DeckBuilderWindow()
         {
@@ -319,6 +321,8 @@ namespace Octgn.DeckBuilder
 
         private void CardSelected(object sender, SearchCardImageEventArgs e)
         {
+            selection = e.Image;
+            set_id = e.SetId;
             cardImage.Source = new BitmapImage(e.Image != null
                                                    ? CardModel.GetPictureUri(Game, e.SetId, e.Image)
                                                    : Game.GetCardBackUri());
@@ -328,6 +332,9 @@ namespace Octgn.DeckBuilder
         {
             var grid = (DataGrid) sender;
             var element = (Deck.Element) grid.SelectedItem;
+
+            selection = element.Card.ImageUri;
+            set_id = element.Card.Set.Id;
 
             // Don't hide the picture if the selected element was removed 
             // with a keyboard shortcut from the results grid
@@ -436,6 +443,24 @@ namespace Octgn.DeckBuilder
         private void PreventExpanderBehavior(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void cardImage_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (selection == null) return;
+            if (cardImage.Source.ToString().Contains(selection))
+            {
+                string alternate = cardImage.Source.ToString().Replace(".jpg", ".b.jpg");
+                try
+                {
+                    cardImage.Source = new BitmapImage(new Uri(alternate));
+                }
+                catch
+                {
+                    cardImage.Source = new BitmapImage(Game.GetCardBackUri());
+                }
+            }
+            else cardImage.Source = new BitmapImage(CardModel.GetPictureUri(Game, set_id, selection));
         }
     }
 

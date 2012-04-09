@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -28,6 +29,7 @@ using Cursors = System.Windows.Input.Cursors;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
 using TextBox = System.Windows.Controls.TextBox;
+using Octgn.Data;
 
 namespace Octgn.Windows
 {
@@ -52,6 +54,7 @@ namespace Octgn.Windows
         private bool _isLegitClosing;
         private NavigatingCancelEventArgs _navArgs;
         private Brush _originalBorderBrush;
+        private bool _joiningGame = false;
 
         public Main()
         {
@@ -74,6 +77,7 @@ namespace Octgn.Windows
             //Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
             Program.LobbyClient.OnFriendRequest += LobbyClientOnOnFriendRequest;
             Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             tbUsername.Text = Program.LobbyClient.Username;
             tbStatus.Text = Program.LobbyClient.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
@@ -96,6 +100,24 @@ namespace Octgn.Windows
             tbUsername.ForceCursor = true;
             tbStatus.Cursor = Cursors.Pen;
             tbStatus.ForceCursor = true;
+        }
+
+        private void LobbyClientOnOnDisconnect(object sender , EventArgs eventArgs)
+        {
+
+            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
+            Dispatcher.Invoke(new Action(() =>
+                                         {
+
+            var win = ReconnectingWindow.Reconnect();
+            if (win.Canceled)
+            {
+                CloseDownShop(false);
+                return;
+            }
+            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+
+                                         }));
         }
 
         private void LobbyClientOnOnDataRecieved(object sender, Skylabs.Lobby.Client.DataRecType type, object data)
@@ -374,6 +396,7 @@ namespace Octgn.Windows
             Program.MainWindow.Close();
             Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved;
             Program.LobbyClient.OnFriendRequest -= LobbyClientOnOnFriendRequest;
+            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             Program.LobbyClient.Stop();
             if (exiting) Program.Exit();
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
@@ -492,17 +515,19 @@ namespace Octgn.Windows
         {
             if (Program.PlayWindow != null) return;
             var hg = sender as HostedGameData;
-            Program.IsHost = false;
             Data.Game theGame =
                 Program.GamesRepository.AllGames.FirstOrDefault(g => hg != null && g.Id == hg.GameGuid);
             if (theGame == null) return;
-            Program.Game = new Game(GameDef.FromO8G(theGame.Filename));
+            if (_joiningGame) return;
+            _joiningGame = true;
+            Program.IsHost = false;
+            Program.Game = new Game(GameDef.FromO8G(theGame.FullPath));
 #if(DEBUG)
             var ad = new IPAddress[1];
             IPAddress ip = IPAddress.Parse("127.0.0.1");
 
 #else
-            var ad = Dns.GetHostAddresses(Program.LobbySettings.Server);
+            var ad = Dns.GetHostAddresses("www.skylabsonline.com");
             IPAddress ip = ad[0];
 #endif
 
@@ -512,9 +537,11 @@ namespace Octgn.Windows
                 if (hg != null) Program.Client = new Client(ip, hg.Port);
                 Program.Client.Connect();
                 Dispatcher.Invoke(new Action(() => frame1.Navigate(new StartGame())));
+                _joiningGame = false;
             }
             catch (Exception ex)
             {
+                _joiningGame = false;
                 Debug.WriteLine(ex);
                 if (Debugger.IsAttached) Debugger.Break();
             }

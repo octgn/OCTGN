@@ -11,4 +11,9 @@
         ALTER TABLE cards ADD dependent TEXT;
       ]]>
   </update>
+  <update from="3" to="4">
+    <![CDATA[
+      CREATE UNIQUE INDEX "SearchIndex" ON [cards] ("id","game_id");
+    ]]>
+  </update>
 </updates>
