@@ -19,6 +19,7 @@
 + Sub directory for sets
 + Can set custom data directory for octgn
 + Can now filter game list by game name
++ Clicking the preview image in DeckEditor flips cards
 + Fixed too many bugs to count.  Take a look at https://github.com/kellyelton/OCTGN/issues?sort=updated&direction=desc&state=closed
 
 #3.0.0.3:
