@@ -41,6 +41,7 @@ namespace Octgn.Data
             {
                 //YES I AM USING A STRINGBUILDER BECAUSE SQLITE WAS BEING A FUCKER. CHANGE IT IF YOU CAN MAKE IT WORK >_<
                 //BLOODY PARAMETERS FUCKING UP CONSTANTLY. SQLITE IS SHIT IN MY OPINION </endrage>
+                //TODO: Find out why ALTER commands do not always play nice with sqlitecommand parameters.
                 StringBuilder sb = new StringBuilder("ALTER TABLE @tablename ADD [@columnname] @type DEFAULT '@default'");
                 sb = sb.Replace("@tablename", tableName);
                 sb = sb.Replace("@columnname", columnName);
@@ -70,17 +71,5 @@ namespace Octgn.Data
             ret = ColumnExists(tableName, columnName, connection);
             return (ret);
         }
-
-        public static string SanatizeColumnNames(string columnName)
-        {
-            return (columnName.Replace(" ", "_"));
-        }
-
-        public static string UnSanatizeColumnNames(string columnName)
-        {
-            return (columnName.Replace("_", " "));
-        }
-
-
     }
 }
