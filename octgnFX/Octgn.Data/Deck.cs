@@ -178,6 +178,7 @@ namespace Octgn.Data
             foreach (Element e in deck.Sections.SelectMany(s => s.Cards))
                 try
                 {
+                    //TODO: This can be done better or in batch. Future implementation idea!
                     // First try by id, if one is provided
                     if (e.LoadedId != null) e.Card = game.GetCardById(new Guid(e.LoadedId));
                     // If there's no id, or if it doesn't match a card in the database, try to fallback on the name
