@@ -33,8 +33,14 @@ namespace Octgn.Controls
             set
             {
                 _game = value;
-                var bi = new BitmapImage(_game.GetCardBackUri());
-                SetValue(PictureProperty, bi);
+
+                var bim = new BitmapImage();
+                bim.BeginInit();
+                bim.CacheOption = BitmapCacheOption.OnLoad;
+                bim.UriSource = _game.GetCardBackUri();
+                bim.EndInit();
+
+                SetValue(PictureProperty, bim);
                 SetValue(GameNameProperty, _game.Name);
                 SetValue(VersionProperty, _game.Version.ToString());
             }

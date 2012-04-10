@@ -16,6 +16,7 @@ using Octgn.Play.Actions;
 using Octgn.Play.Gui.Adorners;
 using Octgn.Play.Gui.DragOperations;
 using Octgn.Utils;
+using Octgn.Extentions;
 
 namespace Octgn.Play.Gui
 {
@@ -101,7 +102,13 @@ namespace Octgn.Play.Gui
 
         private void SetBackground(GroupDef tableDef)
         {
-            var backBrush = new ImageBrush(new BitmapImage(new Uri(tableDef.Background)));
+            var bim = new BitmapImage();
+            bim.BeginInit();
+            bim.CacheOption = BitmapCacheOption.OnLoad;
+            bim.UriSource = new Uri(tableDef.Background);
+            bim.EndInit();
+
+            var backBrush = new ImageBrush(bim);
             if (tableDef.BackgroundStyle != null)
                 switch (tableDef.BackgroundStyle)
                 {
@@ -128,7 +135,7 @@ namespace Octgn.Play.Gui
             Rect pos = tableDef.BoardPosition;
             var img = new Image
                           {
-                              Source = new BitmapImage(new Uri(tableDef.Board)),
+                              Source = ExtensionMethods.BitmapFromUri(new Uri(tableDef.Board)),
                               Width = pos.Width,
                               Height = pos.Height,
                               HorizontalAlignment = HorizontalAlignment.Left,
