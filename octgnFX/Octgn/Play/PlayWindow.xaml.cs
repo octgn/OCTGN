@@ -79,6 +79,8 @@ namespace Octgn.Play
             Loaded += (sender, args) => Keyboard.Focus(table);
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
+            if (!PartExists()) Rules.Visibility = Visibility.Hidden;
+
 #if(!DEBUG)
             // Show the Scripting console in dev only
             if (Application.Current.Properties["ArbitraryArgName"] == null) return;
@@ -91,6 +93,21 @@ namespace Octgn.Play
                               var wnd = new InteractiveConsole {Owner = this};
                               wnd.Show();
                           };
+        }
+
+        private Boolean PartExists()
+        {
+            Boolean value = false;
+            var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
+            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
+            using (System.IO.Packaging.Package package = System.IO.Packaging.Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                System.IO.Packaging.PackageRelationship defRelationship =
+                    package.GetRelationshipsByType("http://schemas.octgn.org/game/rules").FirstOrDefault();
+                if (defRelationship != null)
+                    if (package.PartExists(defRelationship.TargetUri)) value = true;
+            }
+            return value;
         }
 
         private void InitializePlayerSummary(object sender, EventArgs e)
