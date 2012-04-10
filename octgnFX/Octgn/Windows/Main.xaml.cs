@@ -88,7 +88,7 @@ namespace Octgn.Windows
             cm.MenuItems.Add("Quit", CmQuitClick);
             SystemTrayIcon = new NotifyIcon
                                  {
-                                     Icon = new Icon("Resources/Icon.ico"),
+                                     Icon = Properties.Resources.Icon,
                                      Visible = false,
                                      ContextMenu = cm,
                                      Text = Properties.Resources.Main_Main_Octgn
