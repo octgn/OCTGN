@@ -34,7 +34,8 @@ namespace Octgn.Play.Dialogs
             {                
                 PackageRelationship defRelationship =
                     package.GetRelationshipsByType("http://schemas.octgn.org/game/rules").First();
-                PackagePart definition = package.GetPart(defRelationship.TargetUri);
+                if (!package.PartExists(defRelationship.TargetUri)) return;
+                PackagePart definition = package.GetPart(defRelationship.TargetUri);                
                 using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
                 {
                     // Change the 75 for performance.  Find a number that suits your application best
