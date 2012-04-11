@@ -63,6 +63,13 @@ namespace Octgn.Play.Gui.Adorners
             _faceUp = sourceCard.IsAlwaysUp || sourceCard.Card.FaceUp;
             _lightRedBrush = Brushes.Red.Clone();
             _faceDownBrush = new ImageBrush(sourceCard.Card.GetBitmapImage(false));
+
+            var bim = new BitmapImage();
+            bim.BeginInit();
+            bim.CacheOption = BitmapCacheOption.OnLoad;
+            bim.UriSource = new Uri(Program.Game.Definition.CardDefinition.Front);
+            bim.EndInit();
+
             _faceUpBrush = _faceUp
                                ? new VisualBrush(sourceCard.GetCardVisual())
                                      {
@@ -70,7 +77,7 @@ namespace Octgn.Play.Gui.Adorners
                                          ViewboxUnits = BrushMappingMode.Absolute
                                      }
                                : (Brush)
-                                 new ImageBrush(new BitmapImage(new Uri(Program.Game.Definition.CardDefinition.Front)));
+                                 new ImageBrush(bim);
             _invertTransform = new ScaleTransform {CenterX = 0.5, CenterY = 0.5};
             _faceUpBrush.RelativeTransform = _invertTransform;
             if (_faceUpBrush is VisualBrush)

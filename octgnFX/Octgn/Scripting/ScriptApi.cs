@@ -221,6 +221,7 @@ namespace Octgn.Scripting
         public object CardProperty(int id, string property)
         {
             Card c = Card.Find(id);
+            //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
             property = property.ToLower();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
             if (!c.Type.Model.Properties.Keys.Select(x => x.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }

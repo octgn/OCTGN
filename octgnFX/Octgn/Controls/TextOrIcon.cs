@@ -42,7 +42,12 @@ namespace Octgn.Controls
             {
                 if (Icon != null)
                 {
-                    _img.Source = new BitmapImage(new Uri(Icon));
+                    var bim = new BitmapImage();
+                    bim.BeginInit();
+                    bim.CacheOption = BitmapCacheOption.OnLoad;
+                    bim.UriSource = new Uri(Icon);
+                    bim.EndInit();
+                    _img.Source = bim;
                     Content = _img;
                 }
                 else

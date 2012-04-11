@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Cache;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -102,8 +103,12 @@ namespace Octgn.DeckBuilder
                 _game = value;
 
                 ActiveSection = null;
-
-                    cardImage.Source = new BitmapImage(value.GetCardBackUri());//Sets initial preview to default backing (!isFaceUp Image)
+                var bim = new BitmapImage();
+                bim.BeginInit();
+                bim.CacheOption = BitmapCacheOption.OnLoad;
+                bim.UriSource = value.GetCardBackUri();
+                bim.EndInit();
+                cardImage.Source = bim;
                 Searches.Clear();
                 AddSearchTab();
             }
@@ -315,7 +320,8 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
-
+            cardImage.Source = null;
+            cardImage = null;
             Game = null; // Close DB if required
         }
 
@@ -323,9 +329,13 @@ namespace Octgn.DeckBuilder
         {
             selection = e.Image;
             set_id = e.SetId;
-            cardImage.Source = new BitmapImage(e.Image != null
-                                                   ? CardModel.GetPictureUri(Game, e.SetId, e.Image)
-                                                   : Game.GetCardBackUri());
+
+            var bim = new BitmapImage();
+            bim.BeginInit();
+            bim.CacheOption = BitmapCacheOption.OnLoad;
+            bim.UriSource = e.Image != null ? CardModel.GetPictureUri(Game, e.SetId, e.Image) : Game.GetCardBackUri(); 
+            bim.EndInit();
+            cardImage.Source = bim;
         }
 
         private void ElementSelected(object sender, SelectionChangedEventArgs e)
@@ -340,9 +350,13 @@ namespace Octgn.DeckBuilder
             selection = element.Card.ImageUri;
             set_id = element.Card.Set.Id;
 
-            cardImage.Source = new BitmapImage(element != null
-                                                   ? new Uri(element.Card.Picture)
-                                                   : Game.GetCardBackUri());
+            var bim = new BitmapImage();
+            bim.BeginInit();
+            bim.CacheOption = BitmapCacheOption.OnLoad;
+            bim.UriSource = element != null ? new Uri(element.Card.Picture) : Game.GetCardBackUri();
+            bim.EndInit();
+            cardImage.Source = bim;
+
         }
 
         private void IsDeckOpen(object sender, CanExecuteRoutedEventArgs e)
@@ -453,14 +467,32 @@ namespace Octgn.DeckBuilder
                 string alternate = cardImage.Source.ToString().Replace(".jpg", ".b.jpg");
                 try
                 {
-                    cardImage.Source = new BitmapImage(new Uri(alternate));
+                    var bim = new BitmapImage();
+                    bim.BeginInit();
+                    bim.CacheOption = BitmapCacheOption.OnLoad;
+                    bim.UriSource = new Uri(alternate);
+                    bim.EndInit();
+                    cardImage.Source = bim;
                 }
                 catch
                 {
-                    cardImage.Source = new BitmapImage(Game.GetCardBackUri());
+                    var bim = new BitmapImage();
+                    bim.BeginInit();
+                    bim.CacheOption = BitmapCacheOption.OnLoad;
+                    bim.UriSource = Game.GetCardBackUri();
+                    bim.EndInit();
+                    cardImage.Source = bim;
                 }
             }
-            else cardImage.Source = new BitmapImage(CardModel.GetPictureUri(Game, set_id, selection));
+            else
+            {
+                var bim = new BitmapImage();
+                bim.BeginInit();
+                bim.CacheOption = BitmapCacheOption.OnLoad;
+                bim.UriSource = CardModel.GetPictureUri(Game, set_id, selection);
+                bim.EndInit();
+                cardImage.Source = bim;
+            }
         }
     }
 

@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Octgn.Data;
 using Octgn.Definitions;
+using Octgn.Extentions;
 using Octgn.Play.Dialogs;
 using Octgn.Play.Gui;
 using Octgn.Scripting;
@@ -70,7 +71,7 @@ namespace Octgn.Play
             _fadeIn = (Storyboard) Resources["ImageFadeIn"];
             _fadeOut = (Storyboard) Resources["ImageFadeOut"];
 
-            cardViewer.Source = new BitmapImage(new Uri(Program.Game.Definition.CardDefinition.Back));
+            cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.Game.Definition.CardDefinition.Back));
             if (Program.Game.Definition.CardDefinition.CornerRadius > 0)
                 cardViewer.Clip = new RectangleGeometry();
             AddHandler(CardControl.CardHoveredEvent, new CardEventHandler(CardHovered));

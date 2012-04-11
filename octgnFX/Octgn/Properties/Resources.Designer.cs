@@ -96,6 +96,13 @@ namespace Octgn.Properties {
             }
         }
         
+        internal static System.Drawing.Icon Icon {
+            get {
+                object obj = ResourceManager.GetObject("Icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Octgn.
         /// </summary>

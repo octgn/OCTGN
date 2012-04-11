@@ -53,14 +53,17 @@ namespace Octgn.Controls
                          string.Format("runtime: about {0,0} minutes",r));
                 SetValue(GameVersionProperty,_hostedGame.GameVersion.ToString());
                 //SetValue(GameLengthProperty, "runtime: "+(System.DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes.ToString("N")+" minutes");
-                foreach (
-                    BitmapImage bi in
-                        from g in Program.GamesRepository.AllGames
-                        where g.Id == _hostedGame.GameGuid
-                        select new BitmapImage(g.GetCardBackUri()))
+                foreach(var g in Program.GamesRepository.Games)
                 {
-                    SetValue(GamePictureProperty, bi);
-                    break;
+                    if(_hostedGame.GameGuid == g.Id)
+                    {
+                        var bim = new BitmapImage();
+                        bim.BeginInit();
+                        bim.CacheOption = BitmapCacheOption.OnLoad;
+                        bim.UriSource = g.GetCardBackUri();
+                        bim.EndInit();
+                        SetValue(GamePictureProperty, bim);
+                    }
                 }
 
                 string guri;

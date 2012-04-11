@@ -128,7 +128,10 @@
     <value>..\scripting\pythonapi.py;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
     <comment>Script defining the Python API to Octgn</comment>
   </data>
-  <data name="Main_Main_Octgn">
-    <value xml:space="preserve">Octgn</value>
+  <data name="Main_Main_Octgn" xml:space="preserve">
+    <value>Octgn</value>
+  </data>
+  <data name="Icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
