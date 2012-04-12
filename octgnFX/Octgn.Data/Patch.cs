@@ -64,6 +64,11 @@ namespace Octgn.Data
 
                 foreach (string set in uninstalledSets)
                     SafeApply(package, set, false);
+
+                if (SimpleDataTableCache.CacheExists())
+                {
+                    SimpleDataTableCache.ClearCache();
+                }
             }
         }
 
