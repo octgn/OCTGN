@@ -335,9 +335,13 @@ namespace Octgn.Play
                     outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Left;
 
                 var ctrl = e.OriginalSource as CardControl;                  
-                if (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt))
+                if (e.Card != null && ((Keyboard.IsKeyDown(Key.LeftAlt)) || (Keyboard.IsKeyDown(Key.RightAlt))))
                 {
-                    string alternate = e.Card.Picture.Replace(".jpg", ".b.jpg");
+                    string alternate;
+                    if (e.Card.IsAlternateImage)
+                        alternate = e.Card.Picture.Replace(".b.jpg", ".jpg");
+                    else
+                        alternate = e.Card.Picture.Replace(".jpg", ".b.jpg");
                     try
                     {
                         var img = new BitmapImage();
@@ -354,6 +358,7 @@ namespace Octgn.Play
                 }
                 else
                 {
+                    // TODO: Change to readable code
                     var img = e.Card != null
                                           ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
                                                                                                       e.Card.PeekingPlayers.
