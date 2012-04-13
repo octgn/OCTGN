@@ -655,5 +655,15 @@ namespace Octgn.Windows
                                           ToolTipIcon.Info);
             e.Cancel = true;
         }
+
+        private void bHideBoard_Checked(object sender, RoutedEventArgs e)
+        {
+            Program.GameSettings.HideBoard = true;
+        }
+
+        private void bHideBoard_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Program.GameSettings.HideBoard = false;
+        }
     }
 }
