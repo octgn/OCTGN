@@ -6,6 +6,7 @@ namespace Octgn.Data
     {
         private readonly bool _initialized;
         private bool _useTwoSidedTable = true;
+        private bool _hideBoard = false;
 
         public GameSettings()
         {
@@ -21,6 +22,18 @@ namespace Octgn.Data
                 _useTwoSidedTable = value;
                 if (_initialized)
                     OnPropertyChanged("UseTwoSidedTable");
+            }
+        }
+
+        public bool HideBoard
+        {
+            get { return _hideBoard; }
+            set
+            {
+                if (value == _hideBoard) return;
+                _hideBoard = value;
+                if (_initialized)
+                    OnPropertyChanged("HideBoard");
             }
         }
 

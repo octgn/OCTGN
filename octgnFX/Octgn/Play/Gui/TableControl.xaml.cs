@@ -36,8 +36,9 @@ namespace Octgn.Play.Gui
             GroupDef tableDef = Program.Game.Definition.TableDefinition;
             if (tableDef.Background != null)
                 SetBackground(tableDef);
-            if (tableDef.Board != null)
-                SetBoard(tableDef);
+            if (!Program.GameSettings.HideBoard)
+                if (tableDef.Board != null)
+                    SetBoard(tableDef);
 
             if (!Program.GameSettings.UseTwoSidedTable)
                 middleLine.Visibility = Visibility.Collapsed;
@@ -142,7 +143,7 @@ namespace Octgn.Play.Gui
                               VerticalAlignment = VerticalAlignment.Top,
                               Margin = new Thickness(pos.Left, pos.Top, 0, 0)
                           };
-            boardContainer.Children.Insert(0, img);
+            boardContainer.Children.Insert(0, img);        
         }
 
         public static bool IsInInvertedZone(double y)

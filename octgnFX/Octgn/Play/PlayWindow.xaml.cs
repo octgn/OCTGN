@@ -334,24 +334,43 @@ namespace Octgn.Play
                 else if (mousePt.X > 0.6*clientArea.ActualWidth)
                     outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Left;
 
-                var ctrl = e.OriginalSource as CardControl;
-                BitmapImage img = e.Card != null
-                                      ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
-                                                                                                  e.Card.PeekingPlayers.
-                                                                                                      Contains(
-                                                                                                          Player.
-                                                                                                              LocalPlayer)))
-                                      : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture));
-                ShowCardPicture(img);
+                var ctrl = e.OriginalSource as CardControl;                  
+                if (e.Card != null && ((Keyboard.IsKeyDown(Key.LeftAlt)) || (Keyboard.IsKeyDown(Key.RightAlt))))
+                {
+                    string alternate;
+                    if (e.Card.IsAlternateImage)
+                        alternate = e.Card.Picture.Replace(".b.jpg", ".jpg");
+                    else
+                        alternate = e.Card.Picture.Replace(".jpg", ".b.jpg");
+                    try
+                    {
+                        var img = new BitmapImage();
+                        img.BeginInit();
+                        img.CacheOption = BitmapCacheOption.OnLoad;
+                        img.UriSource = new Uri(alternate);
+                        img.EndInit();
+                        ShowCardPicture(img);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                else
+                {
+                    // TODO: Change to readable code
+                    var img = e.Card != null
+                                          ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
+                                                                                                      e.Card.PeekingPlayers.
+                                                                                                          Contains(
+                                                                                                              Player.
+                                                                                                                  LocalPlayer)))
+                                          : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture));
+                    ShowCardPicture(img);
+                }                
             }
         }
 
-        /// <summary>
-        /// This could possibly be the function used when enlarging a card to make selecting it easier,
-        /// such as upon mouseover of a card that is but one of many in the hand.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ViewCardModel(object sender, CardModelEventArgs e)
         {
             if (e.CardModel == null)
@@ -360,11 +379,6 @@ namespace Octgn.Play
                 ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture)));
         }
 
-        /// <summary>
-        /// I suspect this is the function that gets called to show the very large image upon mouseover.
-        /// With SPC, the image covers nearly half the table
-        /// </summary>
-        /// <param name="img"></param>
         private void ShowCardPicture(BitmapSource img)
         {
             cardViewer.Height = img.PixelHeight;

@@ -110,7 +110,8 @@
           <ribbon:RibbonCheckBox x:Name="bHideLoginNotifications" Label="Hide user login notifications"
                                  IsChecked="{Binding ElementName=Window, Path=IsHideLoginNotificationsChecked}" Checked="BHideLoginNotificationsChecked"
                                  Unchecked="BHideLoginNotificationsUnchecked" />
-        </ribbon:RibbonGroup>
+          <ribbon:RibbonCheckBox x:Name="bHideBoard" Label="Hide game board" Checked="bHideBoard_Checked" Unchecked="bHideBoard_Unchecked" />
+                </ribbon:RibbonGroup>
       </ribbon:RibbonTab>
       <ribbon:RibbonTab Header="Alerts" x:Name="NotificationTab"></ribbon:RibbonTab>
     </ribbon:Ribbon>
