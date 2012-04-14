@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Windows;
 using System.Xml;
 using Octgn.Data;
@@ -20,42 +21,131 @@ namespace Octgn.Windows
     /// </summary>
     public partial class UpdateChecker
     {
+        public bool IsClosingDown { get; set; }
+
+        private bool _realCloseWindow = false;
         private readonly List<string> _errors = new List<string>();
-        // private bool stopReading; // not used
+        private bool _isUpToDate = false;
+        private string _downloadURL = "";
 
         public UpdateChecker()
         {
             IsClosingDown = false;
             InitializeComponent();
-            LazyAsync.Invoke(VerifyAllDefs);
-            lblStatus.Content = "";
-            //Thread t = new Thread(VerifyAllDefs);
-            //t.Start();
-        }
-
-        public static bool CheckGameDef(GameDef game)
-        {
-            Program.Game = new Game(game);
-            Program.Game.TestBegin();
-            var engine = new Engine(true);
-            string[] terr = engine.TestScripts(Program.Game);
-            Program.Game.End();
-            if (terr.Length > 0)
+            if (Program.GamesRepository == null)
+                Program.GamesRepository = new GamesRepository();
+            ThreadPool.QueueUserWorkItem(s =>
             {
-                String ewe = terr.Aggregate("",
-                                            (current, s) =>
-                                            current +
-                                            (s + Environment.NewLine));
-                var er = new Windows.ErrorWindow(ewe);
-                er.ShowDialog();
-            }
-            return terr.Length == 0;
+                InstallDefsFromFolders();
+                InstallSetsFromFolders();
+                VerifyAllDefs();
+                CheckForUpdates();
+                UpdateCheckDone(_isUpToDate,_downloadURL);
+            });
+            lblStatus.Content = "";
         }
 
-        public bool IsClosingDown { get; set; }
+        private void InstallDefsFromFolders()
+        {
+            UpdateStatus("Checking folders for games that aren't installed.");
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
+            var path2 = GamesRepository.BasePath;
+
+            //Grab all def files
+            var defList = Directory.GetFiles(path , "*.o8g" , SearchOption.AllDirectories);
+            String[] defList2 = new string[0];
+            if(path != path2)
+                defList2 = Directory.GetFiles(path2, "*.o8g", SearchOption.AllDirectories);
+
+            //Install if they aren't already
+            var dList = defList.Union(defList2);
+            foreach(var d in dList)
+            {
+                var gd = GameDef.FromO8G(d);
+                var og = Program.GamesRepository.AllGames.SingleOrDefault(x => x.Id == gd.Id);
+                if(og != null)
+                {
+                    if (gd.Version > og.Version || (gd.Version == og.Version && gd.FileHash != og.FileHash))
+                    {
+                        UpdateStatus("Installing game " + gd.Name);
+                        if(!gd.Install())
+                            UpdateStatus("Couldn't install game " + gd.Name);
+                        else
+                            UpdateStatus("Installed game " + gd.Name);
+                    }
+                }
+                else
+                {
+                    UpdateStatus("Installing game " + gd.Name);
+                    if (!gd.Install())
+                        UpdateStatus("Couldn't install game " + gd.Name);
+                    else
+                        UpdateStatus("Installed game " + gd.Name);
+                }
+            }
+        }
+
+        private void InstallSetsFromFolders()
+        {
+            UpdateStatus("Checking folders for sets that aren't installed.");
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
+            var path2 = GamesRepository.BasePath;
+
+            //Grab all def files
+            var setList = Directory.GetFiles(path, "*.o8s", SearchOption.AllDirectories);
+            String[] setList2 = new string[0];
+            if (path != path2)
+                setList2 = Directory.GetFiles(path2, "*.o8s", SearchOption.AllDirectories);
+
+            //Install if they aren't already
+            var sList = setList.Union(setList2);
+            foreach(var s in sList)
+            {
+                var ns = Set.SetFromFile(s , Program.GamesRepository);
+                if (ns.Game == null) continue;
+                var osg = Program.GamesRepository.AllGames.SingleOrDefault(x => x.Id == ns.Game.Id);
+                if(osg == null)
+                    continue;
+                var os = osg.GetSet(ns.Id);
+                if(os == null)
+                    InstallSet(s,osg);
+                else if(ns.Version > os.Version)
+                    InstallSet(s,osg);
+
+            }
+        }
+
+        private void InstallSet(string fname, Octgn.Data.Game SelectedGame)
+        {
+            string shortName = Path.GetFileName(fname);
+            UpdateStatus("Installing Set " + shortName);
+            string path = Path.Combine(Prefs.DataDirectory, "Games", SelectedGame.Id.ToString(), "Sets");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+
+            
+            try
+            {
+                if (shortName != null)
+                {
+                    string copyto = Path.Combine(path, shortName);
+                    if (fname.ToLower() != copyto.ToLower())
+                        File.Copy(fname, copyto, true);
+                    SelectedGame.InstallSet(copyto);
+                }
+                UpdateStatus(string.Format("Set '{0}' installed.", shortName));
+            }
+            catch (Exception ex)
+            {
+                UpdateStatus(string.Format("'{0}' an error occured during installation:",shortName));
+                UpdateStatus(ex.Message);
+            }
+        }
 
         private void CheckForUpdates()
         {
+            UpdateStatus("Checking for updates...");
             try
             {
                 string[] update = ReadUpdateXml("https://raw.github.com/kellyelton/Octgn/master/currentversion.xml");
@@ -64,31 +154,37 @@ namespace Octgn.Windows
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
                 var online = new Version(update[0]);
-                bool isupdate = online > local;
-                string ustring = update[1];
-                Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), isupdate, ustring);
+                _isUpToDate = online > local;
+                _downloadURL = update[1];
             }
             catch (Exception)
             {
-                Dispatcher.BeginInvoke(new Action<bool, string>(UpdateCheckDone), false, "");
+                _isUpToDate = false;
+                _downloadURL = "";
             }
         }
 
         private void UpdateCheckDone(bool result, string url)
         {
-            if (result)
-            {
-                IsClosingDown = true;
-                switch (
-                    MessageBox.Show("An update is available. Would you like to download now?", "Update Available",
-                                    MessageBoxButton.YesNo, MessageBoxImage.Question))
+            Dispatcher.Invoke(new Action(() =>
+                                         {
+                                             _realCloseWindow = true;
+                if (result)
                 {
-                    case MessageBoxResult.Yes:
-                        Process.Start(url);
-                        break;
+                    IsClosingDown = true;
+                    
+                    switch (
+                        MessageBox.Show("An update is available. Would you like to download now?", "Update Available",
+                                        MessageBoxButton.YesNo, MessageBoxImage.Question))
+                    {
+                        case MessageBoxResult.Yes:
+                            Process.Start(url);
+                            break;
+                    }
                 }
-            }
-            Close();
+                
+                Close();
+            }));
         }
 
         private void VerifyAllDefs()
@@ -96,8 +192,6 @@ namespace Octgn.Windows
             UpdateStatus("Loading Game Definitions...");
             try
             {
-                if (Program.GamesRepository == null)
-                    Program.GamesRepository = new GamesRepository();
                 var g2R = new List<Data.Game>();
                 using (MD5 md5 = new MD5CryptoServiceProvider())
                 {
@@ -148,14 +242,13 @@ namespace Octgn.Windows
                                                               er.ShowDialog();
                                                           }));
                 }
-                UpdateStatus("Checking for updates...");
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
                 if (Debugger.IsAttached) Debugger.Break();
             }
-            CheckForUpdates();
+            
         }
 
         private void UpdateStatus(string stat)
@@ -165,6 +258,11 @@ namespace Octgn.Windows
                                                       try
                                                       {
                                                           lblStatus.Content = stat;
+                                                          listBox1.Items.Add(String.Format("[{0}] {1}" ,
+                                                                                           DateTime.Now.
+                                                                                               ToShortTimeString() ,
+                                                                                           stat));
+                                                          listBox1.SelectedIndex = listBox1.Items.Count - 1;
                                                       }
                                                       catch (Exception)
                                                       {
@@ -172,26 +270,6 @@ namespace Octgn.Windows
                                                       }
                                                   }));
         }
-
-/*
-        private bool FileExists(string url)
-        {
-            bool result;
-            using (var client = new WebClient())
-            {
-                try
-                {
-                    Stream str = client.OpenRead(url);
-                    result = str != null;
-                }
-                catch
-                {
-                    result = false;
-                }
-            }
-            return result;
-        }
-*/
 
         private static string[] ReadUpdateXml(string url)
         {
@@ -236,6 +314,30 @@ namespace Octgn.Windows
 #endif
             }
             return values;
+        }
+
+        public static bool CheckGameDef(GameDef game)
+        {
+            Program.Game = new Game(game);
+            Program.Game.TestBegin();
+            var engine = new Engine(true);
+            string[] terr = engine.TestScripts(Program.Game);
+            Program.Game.End();
+            if (terr.Length > 0)
+            {
+                String ewe = terr.Aggregate("",
+                                            (current, s) =>
+                                            current +
+                                            (s + Environment.NewLine));
+                var er = new Windows.ErrorWindow(ewe);
+                er.ShowDialog();
+            }
+            return terr.Length == 0;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!_realCloseWindow) e.Cancel = true;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Octgn.Data;
+﻿using System;
+using System.IO;
+using Octgn.Data;
 namespace Octgn
 {
     public static class Prefs
@@ -18,6 +20,18 @@ namespace Octgn
             {
                 _hideLoginNotifications = value;
                 SimpleConfig.WriteValue("Options_HideLoginNotifications", value);
+            }
+        }
+        
+        public static string DataDirectory
+        {
+            get
+            {
+                return SimpleConfig.ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn"));
+            }
+            set
+            {
+                SimpleConfig.WriteValue("datadirectory",value);
             }
         }
     }
