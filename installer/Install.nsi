@@ -1,6 +1,7 @@
 !include "LogicLib.nsh"
 !include "DotNetVer.nsh"
 !include "GetDotNet.nsh"
+!include "GetVC.nsh"
 
 Name "OCTGN 3.0"
 OutFile "OCTGN Setup.exe"
@@ -14,8 +15,8 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A tabletop engine"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Skylabs"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" ""
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "OCTGN release 1"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "OCTGN release 2"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.0.1.0"
 
 ; Make plugin directory same as script
 !addplugindir .
@@ -45,6 +46,7 @@ Section ""
     DetailPrint "Microsoft .NET Framework 4.0 missing."
     !insertmacro GetDotNet
   ${EndIf}
+  !insertmacro GetVC++
 SectionEnd
  
 ; Start default section
