@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.IO;
+using System.IO.Packaging;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 
 namespace Octgn.Data
@@ -12,6 +15,33 @@ namespace Octgn.Data
 
         internal Set()
         {
+        }
+        
+        public static Set SetFromFile(string filename, GamesRepository repo)
+        {
+            using (Package package = Package.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                PackageRelationship defRelationship =
+                    package.GetRelationshipsByType("http://schemas.octgn.org/set/definition").First();
+                PackagePart definition = package.GetPart(defRelationship.TargetUri);
+
+                var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema, IgnoreWhitespace = true };
+                using (
+                    Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(GamesRepository),
+                                                                                         "CardSet.xsd"))
+                    //CardSet.xsd determines the "attributes" of a card (name, guid, alternate, dependent)
+                    if (s != null)
+                        using (XmlReader reader = XmlReader.Create(s))
+                            settings.Schemas.Add(null, reader);
+
+                // Read the cards
+                using (XmlReader reader = XmlReader.Create(definition.GetStream(), settings))
+                {
+                    reader.ReadToFollowing("set"); // <?xml ... ?>
+
+                    return new Set(filename, reader, repo);
+                }
+            }
         }
 
         public Set(string packageName, XmlReader reader, GamesRepository repository)
@@ -24,7 +54,7 @@ namespace Octgn.Data
             if (gi != null)
             {
                 var gameId = new Guid(gi);
-                Game = repository.Games.First(g => g.Id == gameId);
+                Game = repository.Games.FirstOrDefault(g => g.Id == gameId);
             }
             string gv = reader.GetAttribute("gameVersion");
             if (gv != null) GameVersion = new Version(gv);

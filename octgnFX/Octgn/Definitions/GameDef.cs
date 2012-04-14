@@ -88,6 +88,89 @@ namespace Octgn.Definitions
 
             return true;
         }
+        
+        public bool Install()
+        {
+            //Fix def filename
+            String newFilename = Uri.UnescapeDataString(FileName);
+            if (!newFilename.ToLower().Equals(FileName.ToLower()))
+            {
+                try
+                {
+                    File.Move(FileName, newFilename);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show(
+                        "This file is currently in use. Please close whatever application is using it and try again.");
+                    return false;
+                }
+            }
+
+            try
+            {
+                GameDef game = GameDef.FromO8G(newFilename);
+                //Move the definition file to a new location, so that the old one can be deleted
+                string path = Path.Combine(Prefs.DataDirectory,"Games", game.Id.ToString(), "Defs");
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                var fi = new FileInfo(newFilename);
+                string copyto = Path.Combine(path, fi.Name);
+                try
+                {
+                    if (newFilename.ToLower() != copyto.ToLower())
+                        File.Copy(newFilename, copyto, true);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show(
+                        "File in use. You shouldn't install games or sets when in the deck editor or when playing a game.");
+                    return false;
+                }
+                newFilename = copyto;
+                // Open the archive
+                game = GameDef.FromO8G(newFilename);
+                if (!game.CheckVersion()) return false;
+
+                //Check game scripts
+                if (!Windows.UpdateChecker.CheckGameDef(game))
+                    return false;
+
+                // Check if the game already exists
+                if (Program.GamesRepository.Games.Any(g => g.Id == game.Id))
+                    if (
+                        MessageBox.Show("This game already exists.\r\nDo you want to overwrite it?", "Confirmation",
+                                        MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+                        return false;
+
+                var gameData = new Data.Game
+                                   {
+                                       Id = game.Id,
+                                       Name = game.Name,
+                                       Filename = new FileInfo(newFilename).Name,
+                                       Version = game.Version,
+                                       CardWidth = game.CardDefinition.Width,
+                                       CardHeight = game.CardDefinition.Height,
+                                       CardBack = game.CardDefinition.Back,
+                                       DeckSections = game.DeckDefinition.Sections.Keys,
+                                       SharedDeckSections =
+                                           game.SharedDeckDefinition == null
+                                               ? null
+                                               : game.SharedDeckDefinition.Sections.Keys,
+                                       Repository = Program.GamesRepository,
+                                       FileHash = game.FileHash
+                                   };
+                Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
+                return true;
+            }
+            catch (FileFormatException)
+            {
+                //Removed ex.Message. The user doesn't need to see the exception
+                MessageBox.Show("Your game definition file is corrupt. Please redownload it.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+        }
 
         private static GameDef LoadFromXml(XElement xml, PackagePart part)
         {

@@ -82,7 +82,8 @@ namespace Octgn.Launcher
         {
             var ofd = new OpenFileDialog {Filter = "Game definition files (*.o8g)|*.o8g"};
             if (ofd.ShowDialog() != true) return;
-
+    
+            //TODO Everything below here now exists in GameDef.Install(), so you could make a def from the file and install.
             //Fix def filename
             String newFilename = Uri.UnescapeDataString(ofd.FileName);
             if (!newFilename.ToLower().Equals(ofd.FileName.ToLower()))
