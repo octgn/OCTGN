@@ -3,13 +3,13 @@
 !include "GetDotNet.nsh"
 !include "GetVC.nsh"
 
-Name "OCTGN 3.0"
+Name "OCTGN 3.0.1.0"
 OutFile "OCTGN Setup.exe"
 ShowInstDetails show
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ; Version Information
-VIProductVersion "1.0.0.0"
+VIProductVersion "3.0.1.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A tabletop engine"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Skylabs"
@@ -75,6 +75,19 @@ SectionEnd
 Section ""
   ; Run hash program
   ExecWait '"$INSTDIR\HashGenCLI.exe"' $0
+  ; REMOVE FOR NEXT RELEASE
+  ; REMOVE FOR NEXT RELEASE
+  ; REMOVE FOR NEXT RELEASE
+  ; REMOVE FOR NEXT RELEASE
+  ; REMOVE FOR NEXT RELEASE
+  ; REMOVE FOR NEXT RELEASE
+  ; REMOVE FOR NEXT RELEASE; REMOVE FOR NEXT RELEASE
+  ; REMOVE FOR NEXT RELEASE
+  ; REMOVE FOR NEXT RELEASE
+  ; REMOVE FOR NEXT RELEASE; REMOVE FOR NEXT RELEASE
+  
+  ; Delete beta database
+  Delete "$DOCUMENTS\OCTGN\Database\master.db3"
 SectionEnd
  
 Section "Uninstall" 
