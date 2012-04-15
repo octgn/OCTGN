@@ -22,7 +22,7 @@ namespace Octgn.Data
             {
                 _cache = new Dictionary<string, DataTable>();
                 serializeTable = new Dictionary<string, string>();
-                LoadCache();
+                //LoadCache();
             }
         }
 
@@ -61,7 +61,7 @@ namespace Octgn.Data
 
         private void LoadCache()
         {
-            EnsurePathExists();
+            /*EnsurePathExists();
             string[] files = Directory.GetFiles(GetPath());
             foreach (string file in files)
             {
@@ -75,13 +75,14 @@ namespace Octgn.Data
                         _cache.Add(DecodeFrom64(file.Substring(file.LastIndexOf("\\") + 1)), temp);
                     }
                 }
-            }
+            }*/
             
         }
 
 
         private void SaveCacheFile()
         {
+            _cache.Clear();
             if (_cache.Count > 0)
             {
                 EnsurePathExists();
@@ -93,7 +94,7 @@ namespace Octgn.Data
                         using (GZipStream zip = new GZipStream(stream, CompressionMode.Compress))
                         {
                             kvi.Value.TableName = kvi.Key;
-                            kvi.Value.WriteXml(zip, XmlWriteMode.WriteSchema, true);
+                            //kvi.Value.WriteXml(zip, XmlWriteMode.WriteSchema, true);
                         }
                     }
                 }
@@ -159,15 +160,15 @@ namespace Octgn.Data
             string key = ConcentateConditions(conditions);
             if (key != string.Empty && !IsCached(conditions))
             {
-                _cache.Add(ConcentateConditions(conditions), table.Copy());
-                SaveCacheFile();
+                //_cache.Add(ConcentateConditions(conditions), table.Copy());
+                //SaveCacheFile();
             }
         }
 
         public bool IsCached(string[] conditions)
         {
             bool ret = _cache.ContainsKey(ConcentateConditions(conditions));
-            return (ret);
+            return (false);
         }
 
         private string ConcentateConditions(string[] conditions)
