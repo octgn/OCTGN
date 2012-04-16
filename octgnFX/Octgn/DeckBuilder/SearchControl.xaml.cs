@@ -14,6 +14,7 @@ namespace Octgn.DeckBuilder
 {
     public partial class SearchControl
     {
+        private DataView _CurrentView = null;
         public SearchControl(Data.Game game)
         {
             Game = game;
@@ -23,7 +24,8 @@ namespace Octgn.DeckBuilder
                     Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets), 1).Union(
                         game.AllProperties.Where(p => !p.Hidden)));
             GenerateColumns(game);
-            resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
+            //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
+            UpdateDataGrid(game.SelectCards(null).DefaultView);
         }//Why are we populating the list on load? I'd rather wait until the search is run with no parameters (V)_V
 
         public int SearchIndex { get; set; }
@@ -128,7 +130,7 @@ namespace Octgn.DeckBuilder
 
         private void RefreshSearch(object sender, RoutedEventArgs e)
         {
-            e.Handled = true;
+            ((Button)sender).IsEnabled = false;
             var conditions = new string[filterList.Items.Count];
             ItemContainerGenerator generator = filterList.ItemContainerGenerator;
             for (int i = 0; i < filterList.Items.Count; i++)
@@ -139,7 +141,10 @@ namespace Octgn.DeckBuilder
                 //HACK: strip out the Card. that the sql query inserts
                 conditions[i] = conditions[i].Replace("Card.", "");
             }
-            resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
+            //resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
+            UpdateDataGrid(Game.SelectCards(conditions).DefaultView);
+            e.Handled = true;
+            ((Button)sender).IsEnabled = true;
         }
         private string ConvertToSQLString(string[] conditions)
         {
@@ -159,6 +164,23 @@ namespace Octgn.DeckBuilder
             }
             return sb.ToString();
         }
+
+        public void UpdateDataGrid(DataView view)
+        {
+            if (_CurrentView == null)
+            {
+                _CurrentView = view;
+                resultsGrid.ItemsSource = _CurrentView;
+                return;
+            }
+            _CurrentView.Table.Clear();
+
+            foreach (DataRow row in view.Table.Rows)
+            {
+                _CurrentView.Table.ImportRow(row);
+            }
+        }
+
     }
 
     public class SearchCardIdEventArgs : EventArgs
