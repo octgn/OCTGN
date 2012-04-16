@@ -74,14 +74,27 @@ namespace Octgn.Launcher
         #region News Feed
             private void GetTwitterStuff()
             {
-                LinqToTwitter.TwitterContext tc = new TwitterContext();
-                var tweets =
-                    (from tweet in tc.Status 
-                    where tweet.Type == StatusType.User
-                            && tweet.ScreenName == "octgn_official"
-                            && tweet.Count == 5
-                    select tweet).ToList();
-                Dispatcher.Invoke(new Action(()=>ShowTwitterStuff(tweets)));           
+
+                try
+                {
+                    LinqToTwitter.TwitterContext tc = new TwitterContext();
+
+                    var tweets =
+                        (from tweet in tc.Status
+                         where tweet.Type == StatusType.User
+                               && tweet.ScreenName == "octgn_official"
+                               && tweet.Count == 5
+                         select tweet).ToList();
+                    Dispatcher.Invoke(new Action(() => ShowTwitterStuff(tweets)));
+                }
+                catch (TwitterQueryException)
+                {
+                    Dispatcher.Invoke(new Action(()=>textBlock5.Text="Could not retrieve news feed."));
+                }         
+                catch(Exception)
+                {
+                    Dispatcher.Invoke(new Action(() => textBlock5.Text = "Could not retrieve news feed."));
+                }
             }
             private void ShowTwitterStuff(List<Status> tweets )
             {
