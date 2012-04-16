@@ -235,6 +235,15 @@ namespace Octgn.Launcher
             private void DoLogin()
             {
                 if (_isLoggingIn) return;
+                _loginTimer =
+                    new Timer(
+                        o =>
+                        {
+                            Program.LobbyClient.Stop();
+                            LoginFinished(Skylabs.Lobby.Client.LoginResult.Failure , DateTime.Now ,
+                                          "Please try again.");
+                        } ,
+                        null , 10000 , System.Threading.Timeout.Infinite);
                 _isLoggingIn = true;
                 StartSpinning();
                 bError.Visibility = Visibility.Hidden;
@@ -251,14 +260,6 @@ namespace Octgn.Launcher
             {
                 if (_inLoginDone) return;
                 _inLoginDone = true;
-                if (success == Skylabs.Lobby.Client.LoginResult.WaitingForResponse)
-                {
-                    _loginTimer =
-                        new Timer(o => LoginFinished(Skylabs.Lobby.Client.LoginResult.Failure, DateTime.Now, "Please try again."),
-                                  null, 10000, 10000);
-                    _inLoginDone = false;
-                    return;
-                }
                 Trace.TraceInformation("Login finished.");
                 if (_loginTimer != null)
                 {
