@@ -536,7 +536,7 @@ namespace Skylabs.Lobby
         public void Stop()
         {
             Trace.WriteLine("[Lobby]Stop Called.");
-            Xmpp.Close();
+            RebuildXmpp();
         }
     }
 }

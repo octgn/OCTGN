@@ -60,6 +60,8 @@ namespace Octgn.Windows
         {
             Initialized += MainInitialized;
             InitializeComponent();
+            frame1.NavigationService.LoadCompleted += delegate(object sender, NavigationEventArgs args)
+                                                      { this.frame1.NavigationService.RemoveBackEntry(); };
             //Set title with version info.
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "Octgn  version " + version;
@@ -665,5 +667,6 @@ namespace Octgn.Windows
         {
             Program.GameSettings.HideBoard = false;
         }
+
     }
 }

@@ -1,4 +1,4 @@
-#3.0.1.0 Running List:
+#3.0.1.0:
 
 + Chatting service seperated from game hosting service
 + Offline play added

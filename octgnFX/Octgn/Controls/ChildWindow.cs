@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -25,9 +26,17 @@ namespace Octgn.Controls
         public ChildWindow()
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
-            RenderTransform = new ScaleTransform();
-            // HACK: This shouldn't be required with the code in the cctor, but I can't get it to work otherwise
-            Style = (Style)FindResource(typeof(ChildWindow));
+            try 
+            {            
+                RenderTransform = new ScaleTransform();
+                // HACK: This shouldn't be required with the code in the cctor, but I can't get it to work otherwise
+                Style = (Style)FindResource(typeof(ChildWindow));
+            }
+            catch(Exception e)
+            {
+                Trace.WriteLine("[Octgn.Controls.ChildWindow]Error: " + e.Message);
+            }
+
         }
 
         #region Title property

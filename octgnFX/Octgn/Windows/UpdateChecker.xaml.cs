@@ -101,16 +101,27 @@ namespace Octgn.Windows
             var sList = setList.Union(setList2);
             foreach(var s in sList)
             {
-                var ns = Set.SetFromFile(s , Program.GamesRepository);
-                if (ns.Game == null) continue;
-                var osg = Program.GamesRepository.AllGames.SingleOrDefault(x => x.Id == ns.Game.Id);
-                if(osg == null)
-                    continue;
-                var os = osg.GetSet(ns.Id);
-                if(os == null)
-                    InstallSet(s,osg);
-                else if(ns.Version > os.Version)
-                    InstallSet(s,osg);
+                try
+                {
+                    var ns = Set.SetFromFile(s , Program.GamesRepository);
+                    if (ns.Game == null) continue;
+                    var osg = Program.GamesRepository.AllGames.SingleOrDefault(x => x.Id == ns.Game.Id);
+                    if(osg == null)
+                        continue;
+                    var os = osg.GetSet(ns.Id);
+                    if(os == null)
+                        InstallSet(s,osg);
+                    else if(ns.Version > os.Version)
+                        InstallSet(s,osg);                    
+                }
+                catch(Exception e)
+                {
+                    UpdateStatus("Could not process set " + s + ": " + e.Message);
+                    UpdateStatus("---------------------");
+                    UpdateStatus(e.StackTrace);
+                    UpdateStatus("---------------------");
+                }
+
 
             }
         }
