@@ -7,9 +7,9 @@
  
 ; CheckVCplusplus:
   ${If} ${RunningX64} 
-   ReadRegDWORD $0 HKLM Software\Microsoft\VisualStudio\10.0\VC\Runtimes\x64 Installed
+   ReadRegDWORD $0 HKLM Software\Microsoft\VisualStudio\10.0\VC\VCRedist\x64 Installed
   ${else}
-   ReadRegDWORD $0 HKLM Software\Microsoft\VisualStudio\10.0\VC\Runtimes\x86 Installed
+   ReadRegDWORD $0 HKLM Software\Microsoft\VisualStudio\10.0\VC\VCRedist\x86 Installed
   ${EndIf}
   IfErrors DownloadVCplusplus
   IntCmp $0 1 VCplusplusInstalled
