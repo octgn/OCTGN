@@ -8,11 +8,11 @@
 ; CheckVCplusplus:
   Push 0
   Pop $1
-  ${If} ${RunningX64} 
-   ReadRegDWORD $1 HKLM Software\Microsoft\VisualStudio\10.0\VC\VCRedist\x64 Installed
-  ${else}
+  ;${If} ${RunningX64} 
+  ; ReadRegDWORD $1 HKLM Software\Microsoft\VisualStudio\10.0\VC\VCRedist\x64 Installed
+  ;${else}
    ReadRegDWORD $1 HKLM Software\Microsoft\VisualStudio\10.0\VC\VCRedist\x86 Installed
-  ${EndIf}
+  ;${EndIf}
   IntCmp $1 1 VCplusplusInstalled DownloadVCplusplus DownloadVCplusplus
   
   VCplusplusInstalled:
@@ -22,20 +22,20 @@
 ; DownloadDotNET:
   DownloadVCplusplus:
   DetailPrint "Beginning download of latest VC++ Redistributable."
-  ${If} ${RunningX64} 
-   inetc::get /TIMEOUT=30000 ${VCplus_URL64} "$TEMP\vcredist_x64.exe" /END
-  ${else}
+  ;${If} ${RunningX64} 
+  ; inetc::get /TIMEOUT=30000 ${VCplus_URL64} "$TEMP\vcredist_x64.exe" /END
+  ;${else}
    inetc::get /TIMEOUT=30000 ${VCplus_URL} "$TEMP\vcredist_x86.exe" /END
-  ${EndIf}
+  ;${EndIf}
   Pop $0
   DetailPrint "Result: $0"
   StrCmp $0 "OK" InstallVCplusplus
   StrCmp $0 "cancelled" GiveUpVCplusplus
-  ${If} ${RunningX64} 
-   inetc::get /TIMEOUT=30000 /NOPROXY ${VCplus_URL64} "$TEMP\vcredist_x64.exe" /END
-  ${else}
+  ;${If} ${RunningX64} 
+  ; inetc::get /TIMEOUT=30000 /NOPROXY ${VCplus_URL64} "$TEMP\vcredist_x64.exe" /END
+  ;${else}
    inetc::get /TIMEOUT=30000 /NOPROXY ${VCplus_URL} "$TEMP\vcredist_x86.exe" /END
-  ${EndIf}
+  ;${EndIf}
   Pop $0
   DetailPrint "Result: $0"
   StrCmp $0 "OK" InstallVCplusplus
@@ -53,17 +53,17 @@
 ;  TryFailedDownload:
   DetailPrint "Pausing installation while downloaded VC++ installer runs."
   DetailPrint "Installation could take several minutes to complete."
-  ${If} ${RunningX64} 
-   ExecWait '$TEMP\vcredist_x64.exe /passive /norestart'
-  ${else}
+  ;${If} ${RunningX64} 
+  ; ExecWait '$TEMP\vcredist_x64.exe /passive /norestart'
+  ;${else}
    ExecWait '$TEMP\vcredist_x86.exe /passive /norestart'
-  ${EndIf}
+  ;${EndIf}
   DetailPrint "Completed .NET Framework install/update. Removing VC++ installer."
-  ${If} ${RunningX64} 
-   Delete "$TEMP\vcredist_x64.exe"
-  ${else}
+  ;${If} ${RunningX64} 
+  ; Delete "$TEMP\vcredist_x64.exe"
+  ;${else}
    Delete "$TEMP\vcredist_x86.exe"
-  ${EndIf}
+  ;${EndIf}
   
   DetailPrint "VC++ installer removed."
   goto NewVCplusplus
