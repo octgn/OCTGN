@@ -2,7 +2,7 @@
 
 +Added option in File menu to disable installing sets/defs on startup
 +Fixed problems with installer(SQLite and others)
-
++Fixed issue with pregame lobby not changing size
 
 #3.0.1.1:
 
