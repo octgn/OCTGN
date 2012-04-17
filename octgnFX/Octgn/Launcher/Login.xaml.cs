@@ -467,6 +467,7 @@ namespace Octgn.Launcher
             private void PageLoaded(object sender, RoutedEventArgs e)
             {
                 //TODO Check for server here
+                menuInstallOnBoot.IsChecked = SimpleConfig.InstallOnBoot;
             }
             private void LauncherWindowClosing(object sender, CancelEventArgs e){if (_isLoggingIn)e.Cancel = true;}
             private void MenuExitClick(object sender, RoutedEventArgs e){if (!_isLoggingIn)Program.Exit();}
@@ -493,6 +494,13 @@ namespace Octgn.Launcher
                                                     };*/
                     }
                 }
+            }
+
+            private void menuInstallOnBoot_Checked(object sender, RoutedEventArgs e) { SimpleConfig.InstallOnBoot = menuInstallOnBoot.IsChecked; }
+
+            private void menuInstallOnBoot_Unchecked(object sender, RoutedEventArgs e)
+            {
+                SimpleConfig.InstallOnBoot = menuInstallOnBoot.IsChecked;
             }
 
     }

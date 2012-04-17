@@ -1,13 +1,28 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using Polenter.Serialization;
 
 namespace Octgn.Data
 {
-    public class SimpleConfig
+    public static class SimpleConfig
     {
+        public static bool InstallOnBoot
+        {
+            get
+            {
+                bool ret = true;
+                bool.TryParse(ReadValue("InstallOnBoot" , true.ToString(CultureInfo.InvariantCulture)) , out ret);
+                return ret;
+            }
+            set
+            {
+                WriteValue("InstallOnBoot",value.ToString(CultureInfo.InvariantCulture));
+            }
+        }
+
         private static string GetPath()
         {
             string p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
