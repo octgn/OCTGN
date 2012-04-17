@@ -6,13 +6,14 @@
   !define VCplus_URL64 "http://download.microsoft.com/download/3/2/2/3224B87F-CFA0-4E70-BDA3-3DE650EFEBA5/vcredist_x64.exe"
  
 ; CheckVCplusplus:
+  Push 0
+  Pop $1
   ${If} ${RunningX64} 
-   ReadRegDWORD $0 HKLM Software\Microsoft\VisualStudio\10.0\VC\VCRedist\x64 Installed
+   ReadRegDWORD $1 HKLM Software\Microsoft\VisualStudio\10.0\VC\VCRedist\x64 Installed
   ${else}
-   ReadRegDWORD $0 HKLM Software\Microsoft\VisualStudio\10.0\VC\VCRedist\x86 Installed
+   ReadRegDWORD $1 HKLM Software\Microsoft\VisualStudio\10.0\VC\VCRedist\x86 Installed
   ${EndIf}
-  IfErrors DownloadVCplusplus
-  IntCmp $0 1 VCplusplusInstalled
+  IntCmp $1 1 VCplusplusInstalled DownloadVCplusplus DownloadVCplusplus
   
   VCplusplusInstalled:
   DetailPrint "VC++ Runtime already installed."
