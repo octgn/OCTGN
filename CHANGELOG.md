@@ -1,17 +1,17 @@
 #3.0.1.2:
 
-+Added option in File menu to disable installing sets/defs on startup
-+Fixed problems with installer(SQLite and others)
-+Fixed issue with pregame lobby not changing size
++ Added option in File menu to disable installing sets/defs on startup
++ Fixed problems with installer(SQLite and others)
++ Fixed issue with pregame lobby not changing size
 
 #3.0.1.1:
 
-+Catches errors when installing/checking defs/sets on startup
-+Fixed crash when OCTGN can't access news feed
-+Fixed memory leak in deck editor
-+Fixed deck editor crashes 
-+Fixed midgame crashes due to SimpleDataTableCache
-+Fixed ram usage issues
++ Catches errors when installing/checking defs/sets on startup
++ Fixed crash when OCTGN can't access news feed
++ Fixed memory leak in deck editor
++ Fixed deck editor crashes 
++ Fixed midgame crashes due to SimpleDataTableCache
++ Fixed ram usage issues
 
 
 #3.0.1.0:
