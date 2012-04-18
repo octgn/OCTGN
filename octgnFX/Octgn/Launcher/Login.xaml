@@ -51,22 +51,25 @@
       <RowDefinition Height="100*" />
     </Grid.RowDefinitions>
     <Menu Grid.Row="0" Height="23" HorizontalAlignment="Stretch" Name="menu1" VerticalAlignment="Top">
-      <MenuItem Name="menuOctgn" Header="Octgn">
-        <MenuItem Name="menuDeckEditor" Header="Deck Editor" Click="MenuDeckEditorClick" />
+        <MenuItem Name="menuOctgn" Header="Octgn">
+            <MenuItem Name="menuDeckEditor" Header="Deck Editor" Click="MenuDeckEditorClick" />
             <MenuItem Header="Offline Play">
                 <MenuItem Name="menuOffline" Header="Host Game" Click="MenuOfflineClick" />
                 <MenuItem Name="menuConnectOffline" Header="Connect To Game" Click="MenuOfflineConnectClick"/>                    
             </MenuItem>
+            <MenuItem Name="menuOptions" Header="Options">
                 <MenuItem Name="menuCD" Header="Set Data Directory" Click="menuCD_Click" />
-                <MenuItem Name="menuExit" Header="Exit" Click="MenuExitClick" />
-  </MenuItem>
-            <MenuItem Header="Help">
-                <MenuItem Name="menuBug" Header="Report a bug" Click="menuBug_Click" />
-                <MenuItem Name="menuHelp" Header="Need Help?" Click="menuHelp_Click" />
-                <Separator />
-                <MenuItem Name="menuAboutUs" Header="About Us" Click="menuAboutUs_Click" />
+                    <MenuItem Name="menuInstallOnBoot" Header="Install On Launch" IsCheckable="True" IsChecked="False" Checked="menuInstallOnBoot_Checked" Unchecked="menuInstallOnBoot_Unchecked"></MenuItem>
             </MenuItem>
-        </Menu>
+            <MenuItem Name="menuExit" Header="Exit" Click="MenuExitClick" />
+        </MenuItem>
+        <MenuItem Header="Help">
+            <MenuItem Name="menuBug" Header="Report a bug" Click="menuBug_Click" />
+            <MenuItem Name="menuHelp" Header="Need Help?" Click="menuHelp_Click" />
+            <Separator />
+            <MenuItem Name="menuAboutUs" Header="About Us" Click="menuAboutUs_Click" />
+        </MenuItem>
+    </Menu>
     <Grid x:Name="MainGrid" Margin="10" Grid.Row="1" Background="{x:Null}">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="378*" />

@@ -36,8 +36,11 @@ namespace Octgn.Windows
                 Program.GamesRepository = new GamesRepository();
             ThreadPool.QueueUserWorkItem(s =>
             {
-                InstallDefsFromFolders();
-                InstallSetsFromFolders();
+                if (SimpleConfig.InstallOnBoot)
+                {
+                    InstallDefsFromFolders();
+                    InstallSetsFromFolders();
+                }
                 VerifyAllDefs();
                 CheckForUpdates();
                 UpdateCheckDone(_isUpToDate,_downloadURL);
@@ -124,6 +127,7 @@ namespace Octgn.Windows
 
 
             }
+            SimpleConfig.InstallOnBoot = false;
         }
 
         private void InstallSet(string fname, Octgn.Data.Game SelectedGame)

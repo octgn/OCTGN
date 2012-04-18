@@ -16,6 +16,13 @@ namespace Octgn.Launcher
         {
             InitializeComponent();
             _isLocal = isLocal;
+            if(!isLocal)
+            {
+                this.HorizontalAlignment = HorizontalAlignment.Stretch;
+                this.VerticalAlignment = VerticalAlignment.Stretch;
+                this.Width = Double.NaN;
+                this.Height = Double.NaN;
+            }
             if (Program.IsHost)
             {
                 descriptionLabel.Text =
