@@ -36,6 +36,7 @@ namespace Octgn.Play.Gui
         private MenuItem _cardHeader;
         private ActionDef _defaultCardAction, _defaultGroupAction;
         private int _turnAnimationTimestamp, _turnAnimationDelay;
+        public static FontFamily groupFont;
 
         public Group Group
         {
@@ -172,7 +173,7 @@ namespace Octgn.Play.Gui
             // Modify selection
             if (card == null || !card.Selected) Selection.Clear();
 
-            var menuItems = new CompositeCollection();
+            var menuItems = new CompositeCollection();            
             ContextGroup = group;
             ContextMenu = new ContextMenu {ItemsSource = menuItems, Tag = card};
             // card has to captured somehow, otherwise it may be overwritten before released in the OnClosed handler, e.g. when rightclicking on a card, then directly right-clicking on another card.
@@ -252,6 +253,7 @@ namespace Octgn.Play.Gui
             // Required to trigger the ReleaseControl calls if the ContextMenu was already open
             ContextMenu.UpdateLayout(); // Required if the ContextMenu was already open
             ContextMenu.IsOpen = true;
+            ContextMenu.FontFamily = groupFont;
         }
 
         private void CreateContextMenus()
