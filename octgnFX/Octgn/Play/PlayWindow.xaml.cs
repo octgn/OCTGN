@@ -116,13 +116,16 @@ namespace Octgn.Play
 
         private void UpdateFont()
         {
-            Uri fontUri = new Uri(Directory.GetCurrentDirectory().Replace('\\', '/') + "/" + fontName);
-            System.Drawing.Text.PrivateFontCollection pf = new System.Drawing.Text.PrivateFontCollection();
+            System.Drawing.Text.PrivateFontCollection pf = new System.Drawing.Text.PrivateFontCollection();            
             pf.AddFontFile(Directory.GetCurrentDirectory() + "\\" + fontName);
+            string name = pf.Families[0].Name;
+            // self = player tab information
+            // watermark = type to chat (ctrl+t)
 
-            chat.input.FontFamily = new FontFamily(fontUri, "LCDMono Normal");
-            chat.output.FontFamily = new FontFamily(fontUri, "LCDMono Normal");
-            chat.watermark.FontFamily = new FontFamily(fontUri, "LCDMono Normal");
+            chat.watermark.FontFamily = new FontFamily("file:///" + 
+                Directory.GetCurrentDirectory().Replace('\\', '/') + "/#" + name);
+            GroupControl.groupFont = new FontFamily("file:///" +
+                Directory.GetCurrentDirectory().Replace('\\', '/') + "/#" + name);
         }
 
         private Boolean PartExists(string schema)
