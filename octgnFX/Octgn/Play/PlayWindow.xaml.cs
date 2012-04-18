@@ -84,6 +84,8 @@ namespace Octgn.Play
 
             if (!PartExists("http://schemas.octgn.org/game/rules")) Rules.Visibility = Visibility.Hidden;
             if (PartExists("http://schemas.octgn.info/game/font")) ExtractFont();
+            else
+                GroupControl.groupFont = new FontFamily("Segoe UI");
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
