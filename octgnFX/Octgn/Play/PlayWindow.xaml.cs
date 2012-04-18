@@ -23,6 +23,7 @@ using Octgn.Play.Dialogs;
 using Octgn.Play.Gui;
 using Octgn.Scripting;
 using Octgn.Utils;
+using System.IO.Packaging;
 
 namespace Octgn.Play
 {
@@ -61,6 +62,7 @@ namespace Octgn.Play
         }
 
         private Storyboard _fadeIn, _fadeOut;
+        private static string fontName;
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -80,7 +82,8 @@ namespace Octgn.Play
             Loaded += (sender, args) => Keyboard.Focus(table);
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
-            if (!PartExists()) Rules.Visibility = Visibility.Hidden;
+            if (!PartExists("http://schemas.octgn.org/game/rules")) Rules.Visibility = Visibility.Hidden;
+            if (PartExists("http://schemas.octgn.info/game/font")) ExtractFont();
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
@@ -96,7 +99,33 @@ namespace Octgn.Play
                           };
         }
 
-        private Boolean PartExists()
+        private void ExtractFont()
+        {
+            var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
+            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
+            using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                PackageRelationship defRelationship =
+                    package.GetRelationshipsByType("http://schemas.octgn.info/game/font").FirstOrDefault();
+                if (!package.PartExists(defRelationship.TargetUri)) return;
+                PackagePart definition = package.GetPart(defRelationship.TargetUri);
+                ExtractPart(definition, Directory.GetCurrentDirectory() + "\\temp.ttf");
+                UpdateFont();
+            }
+        }
+
+        private void UpdateFont()
+        {
+            Uri fontUri = new Uri(Directory.GetCurrentDirectory().Replace('\\', '/') + "/" + fontName);
+            System.Drawing.Text.PrivateFontCollection pf = new System.Drawing.Text.PrivateFontCollection();
+            pf.AddFontFile(Directory.GetCurrentDirectory() + "\\" + fontName);
+
+            chat.input.FontFamily = new FontFamily(fontUri, "LCDMono Normal");
+            chat.output.FontFamily = new FontFamily(fontUri, "LCDMono Normal");
+            chat.watermark.FontFamily = new FontFamily(fontUri, "LCDMono Normal");
+        }
+
+        private Boolean PartExists(string schema)
         {
             Boolean value = false;
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
@@ -104,11 +133,33 @@ namespace Octgn.Play
             using (System.IO.Packaging.Package package = System.IO.Packaging.Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 System.IO.Packaging.PackageRelationship defRelationship =
-                    package.GetRelationshipsByType("http://schemas.octgn.org/game/rules").FirstOrDefault();
+                    package.GetRelationshipsByType(schema).FirstOrDefault();
                 if (defRelationship != null)
                     if (package.PartExists(defRelationship.TargetUri)) value = true;
             }
             return value;
+        }
+
+        private static void ExtractPart(PackagePart packagePart, string targetDirectory)
+        {
+            // Remove leading slash from the Part Uri and make a new
+            // relative Uri from the result.
+            string stringPart = packagePart.Uri.ToString().TrimStart('/');
+            Uri partUri = new Uri(stringPart, UriKind.Relative);
+
+            // Create an absolute file URI by combining the target directory
+            // with the relative part URI created from the part name.
+            Uri uriFullFilePath = new Uri(new Uri(targetDirectory, UriKind.Absolute), partUri);
+            fontName = partUri.OriginalString;
+
+            // Create the necessary directories based on the full part path
+            Directory.CreateDirectory(Path.GetDirectoryName(uriFullFilePath.LocalPath));
+
+            // Write the file from the part’s content stream.
+            using (FileStream fileStream = File.Create(uriFullFilePath.LocalPath))
+            {
+                packagePart.GetStream().CopyTo(fileStream);
+            }
         }
 
         private void InitializePlayerSummary(object sender, EventArgs e)
