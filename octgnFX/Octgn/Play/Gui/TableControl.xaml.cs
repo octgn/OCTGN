@@ -625,7 +625,7 @@ namespace Octgn.Play.Gui
 
             item = new MenuItem {Header = "Send to back", InputGestureText = "PgDn"};
             item.Click += delegate { Selection.Do(c => Program.Game.Table.SendToBack(c), ContextCard); };
-            items.Add(item);
+            items.Add(item);            
 
             return items;
         }
