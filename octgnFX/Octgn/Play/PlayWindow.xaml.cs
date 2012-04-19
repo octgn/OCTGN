@@ -59,7 +59,7 @@ namespace Octgn.Play
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "Octgn  version : " + oversion + " : " + Program.Game.Definition.Name;
-            Program.Game.ComposeParts(this);
+            Program.Game.ComposeParts(this);            
         }
 
         private Storyboard _fadeIn, _fadeOut;
@@ -83,11 +83,11 @@ namespace Octgn.Play
             Loaded += (sender, args) => Keyboard.Focus(table);
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
+            fontName.Clear();
+            GroupControl.groupFont = new FontFamily("Segoe UI");
             if (!PartExists("http://schemas.octgn.org/game/rules")) Rules.Visibility = Visibility.Hidden;
             if (PartExists("http://schemas.octgn.info/game/font")) 
                 ExtractFont("http://schemas.octgn.info/game/font");
-            else
-                GroupControl.groupFont = new FontFamily("Segoe UI");
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
@@ -250,7 +250,6 @@ namespace Octgn.Play
                 e.Cancel = true;
             // Fix for this bug: http://wpf.codeplex.com/workitem/14078
             ribbon.IsMinimized = false;
-
             base.OnClosing(e);
         }
 
