@@ -24,6 +24,7 @@ using Octgn.Play.Gui;
 using Octgn.Scripting;
 using Octgn.Utils;
 using System.IO.Packaging;
+using System.Collections.Generic;
 
 namespace Octgn.Play
 {
@@ -58,11 +59,11 @@ namespace Octgn.Play
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "Octgn  version : " + oversion + " : " + Program.Game.Definition.Name;
-            Program.Game.ComposeParts(this);
+            Program.Game.ComposeParts(this);            
         }
 
         private Storyboard _fadeIn, _fadeOut;
-        private static string fontName;
+        private static List<string> fontName = new List<string>();
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -82,10 +83,11 @@ namespace Octgn.Play
             Loaded += (sender, args) => Keyboard.Focus(table);
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
+            fontName.Clear();
+            GroupControl.groupFont = new FontFamily("Segoe UI");
             if (!PartExists("http://schemas.octgn.org/game/rules")) Rules.Visibility = Visibility.Hidden;
-            if (PartExists("http://schemas.octgn.info/game/font")) ExtractFont();
-            else
-                GroupControl.groupFont = new FontFamily("Segoe UI");
+            if (PartExists("http://schemas.octgn.info/game/font")) 
+                ExtractFont("http://schemas.octgn.info/game/font");
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
@@ -101,33 +103,45 @@ namespace Octgn.Play
                           };
         }
 
-        private void ExtractFont()
+        private void ExtractFont(string Schema)
         {
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
             string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
             using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                PackageRelationship defRelationship =
-                    package.GetRelationshipsByType("http://schemas.octgn.info/game/font").FirstOrDefault();
-                if (!package.PartExists(defRelationship.TargetUri)) return;
-                PackagePart definition = package.GetPart(defRelationship.TargetUri);
-                ExtractPart(definition, Directory.GetCurrentDirectory() + "\\temp.ttf");
+                foreach (PackageRelationship relationship in package.GetRelationshipsByType(Schema))
+                {
+                    if (!package.PartExists(relationship.TargetUri)) return;
+                    PackagePart definition = package.GetPart(relationship.TargetUri);
+                    ExtractPart(definition, Directory.GetCurrentDirectory() + "\\temp.ttf");
+                }                
                 UpdateFont();
             }
         }
 
         private void UpdateFont()
         {
-            System.Drawing.Text.PrivateFontCollection pf = new System.Drawing.Text.PrivateFontCollection();            
-            pf.AddFontFile(Directory.GetCurrentDirectory() + "\\" + fontName);
-            string name = pf.Families[0].Name;
+            string curDir = Directory.GetCurrentDirectory();
+            string uri = "file:///" + curDir.Replace('\\', '/') + "/#";
+            System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
+            System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
+
+            foreach (string s in fontName)
+            {
+                if (s == "chat.ttf")
+                    chatname.AddFontFile(curDir + "\\" + s);
+                else
+                    context.AddFontFile(curDir + "\\" + s);
+            }      
+
             // self = player tab information
             // watermark = type to chat (ctrl+t)
+            // output = chatbox
 
-            chat.watermark.FontFamily = new FontFamily("file:///" + 
-                Directory.GetCurrentDirectory().Replace('\\', '/') + "/#" + name);
-            GroupControl.groupFont = new FontFamily("file:///" +
-                Directory.GetCurrentDirectory().Replace('\\', '/') + "/#" + name);
+            chat.watermark.FontFamily = new FontFamily(uri + context.Families[0].Name);
+            GroupControl.groupFont = new FontFamily(uri + context.Families[0].Name);
+            if (File.Exists(curDir + "\\chat.ttf"))
+                chat.output.FontFamily = new FontFamily(uri + chatname.Families[0].Name);
         }
 
         private Boolean PartExists(string schema)
@@ -135,10 +149,9 @@ namespace Octgn.Play
             Boolean value = false;
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
             string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
-            using (System.IO.Packaging.Package package = System.IO.Packaging.Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                System.IO.Packaging.PackageRelationship defRelationship =
-                    package.GetRelationshipsByType(schema).FirstOrDefault();
+                PackageRelationship defRelationship = package.GetRelationshipsByType(schema).FirstOrDefault();
                 if (defRelationship != null)
                     if (package.PartExists(defRelationship.TargetUri)) value = true;
             }
@@ -155,7 +168,7 @@ namespace Octgn.Play
             // Create an absolute file URI by combining the target directory
             // with the relative part URI created from the part name.
             Uri uriFullFilePath = new Uri(new Uri(targetDirectory, UriKind.Absolute), partUri);
-            fontName = partUri.OriginalString;
+            fontName.Add(partUri.OriginalString);
 
             // Create the necessary directories based on the full part path
             Directory.CreateDirectory(Path.GetDirectoryName(uriFullFilePath.LocalPath));
@@ -237,7 +250,6 @@ namespace Octgn.Play
                 e.Cancel = true;
             // Fix for this bug: http://wpf.codeplex.com/workitem/14078
             ribbon.IsMinimized = false;
-
             base.OnClosing(e);
         }
 
