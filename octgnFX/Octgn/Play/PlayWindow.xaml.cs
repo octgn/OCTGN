@@ -111,7 +111,7 @@ namespace Octgn.Play
             {
                 foreach (PackageRelationship relationship in package.GetRelationshipsByType(Schema))
                 {
-                    if (!package.PartExists(relationship.TargetUri)) return;
+                    if (!package.PartExists(relationship.TargetUri)) continue;
                     PackagePart definition = package.GetPart(relationship.TargetUri);
                     ExtractPart(definition, Directory.GetCurrentDirectory() + "\\temp.ttf");
                 }                
@@ -171,12 +171,17 @@ namespace Octgn.Play
             fontName.Add(partUri.OriginalString);
 
             // Create the necessary directories based on the full part path
-            Directory.CreateDirectory(Path.GetDirectoryName(uriFullFilePath.LocalPath));
-
-            // Write the file from the part’s content stream.
-            using (FileStream fileStream = File.Create(uriFullFilePath.LocalPath))
+            if (!Directory.Exists(Path.GetDirectoryName(uriFullFilePath.LocalPath)))
             {
-                packagePart.GetStream().CopyTo(fileStream);
+                Directory.CreateDirectory(Path.GetDirectoryName(uriFullFilePath.LocalPath));
+            }
+            // Write the file from the part’s content stream.
+            if (!File.Exists(uriFullFilePath.LocalPath))
+            {
+                using (FileStream fileStream = File.Create(uriFullFilePath.LocalPath))
+                {
+                    packagePart.GetStream().CopyTo(fileStream);
+                }
             }
         }
 
