@@ -63,7 +63,7 @@ namespace Octgn.Play
         }
 
         private Storyboard _fadeIn, _fadeOut;
-        private static List<string> fontName = new List<string>();
+        private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -83,8 +83,9 @@ namespace Octgn.Play
             Loaded += (sender, args) => Keyboard.Focus(table);
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
-            fontName.Clear();
             GroupControl.groupFont = new FontFamily("Segoe UI");
+            chat.output.FontFamily = new FontFamily("Seqoe UI");
+            chat.watermark.FontFamily = new FontFamily("Sequo UI");
             if (!PartExists("http://schemas.octgn.org/game/rules")) Rules.Visibility = Visibility.Hidden;
             if (PartExists("http://schemas.octgn.info/game/font")) 
                 ExtractFont("http://schemas.octgn.info/game/font");
@@ -105,6 +106,8 @@ namespace Octgn.Play
 
         private void ExtractFont(string Schema)
         {
+            fontName.Clear();
+
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
             string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
             using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -113,10 +116,10 @@ namespace Octgn.Play
                 {
                     if (!package.PartExists(relationship.TargetUri)) continue;
                     PackagePart definition = package.GetPart(relationship.TargetUri);
-                    ExtractPart(definition, Directory.GetCurrentDirectory() + "\\temp.ttf");
-                }                
-                UpdateFont();
+                    ExtractPart(definition, Directory.GetCurrentDirectory() + "\\temp.ttf", relationship);                    
+                }                                
             }
+            UpdateFont();
         }
 
         private void UpdateFont()
@@ -126,12 +129,16 @@ namespace Octgn.Play
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
             System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
 
-            foreach (string s in fontName)
+            Boolean inchat = false;
+            foreach (List<string> s in fontName)
             {
-                if (s == "chat.ttf")
-                    chatname.AddFontFile(curDir + "\\" + s);
+                if (s[1] == "chat")
+                {
+                    inchat = true;
+                    chatname.AddFontFile(curDir + "\\" + s[0]);
+                }
                 else
-                    context.AddFontFile(curDir + "\\" + s);
+                    context.AddFontFile(curDir + "\\" + s[0]);
             }      
 
             // self = player tab information
@@ -140,49 +147,50 @@ namespace Octgn.Play
 
             chat.watermark.FontFamily = new FontFamily(uri + context.Families[0].Name);
             GroupControl.groupFont = new FontFamily(uri + context.Families[0].Name);
-            if (File.Exists(curDir + "\\chat.ttf"))
+            if (inchat)
                 chat.output.FontFamily = new FontFamily(uri + chatname.Families[0].Name);
         }
 
         private Boolean PartExists(string schema)
         {
-            Boolean value = false;
+            Boolean exists = false;
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
             string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
             using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 PackageRelationship defRelationship = package.GetRelationshipsByType(schema).FirstOrDefault();
                 if (defRelationship != null)
-                    if (package.PartExists(defRelationship.TargetUri)) value = true;
+                    if (package.PartExists(defRelationship.TargetUri)) 
+                        exists = true;
             }
-            return value;
+            return exists;
         }
 
-        private static void ExtractPart(PackagePart packagePart, string targetDirectory)
+        private static void ExtractPart(PackagePart packagePart, string targetDirectory, PackageRelationship relationship)
         {
-            // Remove leading slash from the Part Uri and make a new
-            // relative Uri from the result.
             string stringPart = packagePart.Uri.ToString().TrimStart('/');
             Uri partUri = new Uri(stringPart, UriKind.Relative);
-
-            // Create an absolute file URI by combining the target directory
-            // with the relative part URI created from the part name.
             Uri uriFullFilePath = new Uri(new Uri(targetDirectory, UriKind.Absolute), partUri);
-            fontName.Add(partUri.OriginalString);
+
+            List<string> str = new List<string>();
+            str.Add(partUri.OriginalString);
+            str.Add(relationship.Id);
+            fontName.Add(str);
 
             // Create the necessary directories based on the full part path
             if (!Directory.Exists(Path.GetDirectoryName(uriFullFilePath.LocalPath)))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(uriFullFilePath.LocalPath));
             }
-            // Write the file from the part’s content stream.
+
             if (!File.Exists(uriFullFilePath.LocalPath))
             {
+                // Write the file from the part’s content stream.
                 using (FileStream fileStream = File.Create(uriFullFilePath.LocalPath))
                 {
                     packagePart.GetStream().CopyTo(fileStream);
                 }
-            }
+            }                        
         }
 
         private void InitializePlayerSummary(object sender, EventArgs e)
@@ -265,7 +273,7 @@ namespace Octgn.Play
             Program.StopGame();            
             if(_isLocal)
                 Program.LauncherWindow.Visibility = Visibility.Visible;
-            // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game
+            // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
         }
 
         private void Open(object sender, RoutedEventArgs e)
