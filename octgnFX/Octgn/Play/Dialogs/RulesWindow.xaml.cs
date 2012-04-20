@@ -47,7 +47,7 @@ namespace Octgn.Play.Dialogs
                         fileReader.Read(buffer, 0, readLength);
                         // This will help the file load much faster 
                         // RichText loads \n as a new paragraph. Very slow for large text
-                        string currentLine = new string(buffer).Replace("\n", string.Empty);
+                        string currentLine = new string(buffer).Replace("\n", string.Empty).Trim('\0');                     
                         // Load in background
                         Dispatcher.BeginInvoke(new Action(() =>
                                                               {
