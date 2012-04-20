@@ -31,7 +31,7 @@
           <ComboBox x:Name="setsCombo" ItemsSource="{Binding Sets, ElementName=This, Mode=OneTime}"
                     DisplayMemberPath="Name" />
           <ComboBox x:Name="packsCombo" Grid.Column="1" Margin="2,0"
-                    ItemsSource="{Binding ElementName=setsCombo, Path=SelectedItem.Packs}" DisplayMemberPath="Name" />
+                    ItemsSource="{Binding ElementName=setsCombo, Path=SelectedItem.Packs}" SelectedIndex="0" DisplayMemberPath="Name" />
           <Button Content="Add" FontSize="14" Grid.Column="2" Width="80" Padding="2" Click="AddSetClicked" />
         </Grid>
         <ListBox ItemsSource="{Binding Packs, ElementName=This, Mode=OneTime}" Margin="0,4,0,0" MinHeight="100">
