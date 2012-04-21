@@ -84,7 +84,9 @@ namespace Octgn.Play
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
             GroupControl.groupFont = new FontFamily("Segoe UI");
+            GroupControl.fontsize = 12;
             chat.output.FontFamily = new FontFamily("Seqoe UI");
+            chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
             if (!PartExists("http://schemas.octgn.org/game/rules")) Rules.Visibility = Visibility.Hidden;
             if (PartExists("http://schemas.octgn.info/game/font")) 
@@ -145,10 +147,24 @@ namespace Octgn.Play
             // watermark = type to chat (ctrl+t)
             // output = chatbox
 
+            int chatsize = 12;
+            int fontsize = 12;
+            foreach (GlobalVariableDef varD in Program.Game.Definition.GlobalVariables)
+            {
+                if (varD.Name == "chatsize")
+                    chatsize = Convert.ToInt16(varD.Value);
+                if (varD.Name == "fontsize")
+                    fontsize = Convert.ToInt16(varD.Value);
+            }
+                
             chat.watermark.FontFamily = new FontFamily(uri + context.Families[0].Name);
             GroupControl.groupFont = new FontFamily(uri + context.Families[0].Name);
+            GroupControl.fontsize = fontsize;
             if (inchat)
+            {
                 chat.output.FontFamily = new FontFamily(uri + chatname.Families[0].Name);
+                chat.output.FontSize = chatsize;
+            }
         }
 
         private Boolean PartExists(string schema)
