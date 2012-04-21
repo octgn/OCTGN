@@ -12,7 +12,7 @@ This is the new home for the OCTGN open source project.
 * Bugs? Want features? https://github.com/kellyelton/OCTGN/issues
 * License: https://github.com/kellyelton/OCTGN/blob/master/LICENSE.md
 * Get Coding: https://github.com/kellyelton/OCTGN/blob/master/HACK.md
-
+* Fun Stats: http://cia.vc/stats/project/Octgn
 
 Useful Links
 =================================================
