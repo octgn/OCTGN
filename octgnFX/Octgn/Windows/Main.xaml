@@ -82,16 +82,16 @@
       <ribbon:RibbonTab Header="Games">
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton Label="Select Game" LargeImageSource="/Resources/Icons/bullet_arrow_down.png"
-                               Click="RibbonButtonClick1" SmallImageSource="/Octgn;component/Resources/Icons/bullet_arrow_down_small.png" />
+                               Click="BSelectGameClick" SmallImageSource="/Octgn;component/Resources/Icons/bullet_arrow_down_small.png" />
           <ribbon:RibbonButton x:Name="bDeckEditor" Label="Deck Editor"
                                LargeImageSource="/Resources/Icons/page_edit.png" Click="BDeckEditorClick"
                                SmallImageSource="/Octgn;component/Resources/Icons/page_edit_small.png" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton Label="Install Game" LargeImageSource="/Resources/Icons/ruby_Add.png"
-                               Click="RibbonButtonClick" SmallImageSource="/Octgn;component/Resources/Icons/ruby_add_small.png" />
+                               Click="BInstallGameClick" SmallImageSource="/Octgn;component/Resources/Icons/ruby_add_small.png" />
           <ribbon:RibbonButton Label="Remove Game" LargeImageSource="/Resources/Icons/ruby_delete.png"
-                               IsEnabled="False" SmallImageSource="/Octgn;component/Resources/Icons/ruby_delete_small.png" />
+                               Click="BUninstallGameClick" SmallImageSource="/Octgn;component/Resources/Icons/ruby_delete_small.png" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton x:Name="bInstallSets" Label="Install Sets"

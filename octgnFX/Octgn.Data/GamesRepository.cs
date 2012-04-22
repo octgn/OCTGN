@@ -99,7 +99,164 @@ namespace Octgn.Data
         }
 
         public event EventHandler GameInstalled;
-
+        public event EventHandler<EventArgs<Game>> GameUninstalled;
+
+        
+        /// <summary>
+        /// Raises the GameUninstalled event if any listeners are attached.
+        /// </summary>
+        /// <param name="uninstalled">The Game that was uninstalled</param>
+        public void RaiseGameInstalled(Game installed)
+        {
+            if (GameInstalled != null)
+            {
+                //TODO: Change usage to recommended pattern
+                GameInstalled(installed, EventArgs.Empty);
+            }
+        }
+        
+        /// <summary>
+        /// Raises the GameUninstalled event if any listeners are attached.
+        /// </summary>
+        /// <param name="uninstalled">The Game that was uninstalled</param>
+        public void RaiseGameUninstalled(Game uninstalled)
+        {
+            if (GameUninstalled != null)
+            {
+                GameUninstalled(this, new EventArgs<Game>(uninstalled));
+            }
+        }
+        
+        
+        
+        /// <summary>
+        /// Removes a game and all it's related entries from the database.
+        /// </summary>
+        /// <param name="game">The game to uninstall</param>
+        public void UninstallGame(Game game)
+        {
+            /*
+             * games
+             * +- // cards (via game.game_id)
+             * +- custom_properties (via game.game_id)
+             * +- // markers (via game.game_id)
+             * +- sets (via game.real_id)
+             *    +- cards (via set.real_id)
+             *    +- packs (via set.real_id)
+             *    +- markers (via set.real_id)
+             */
+            
+            // If game doesn't exist, abort
+            if (!_cachedGames.Any(g => g.Id == game.Id)) return;
+            
+            SQLiteTransaction trans = null;
+            try
+            {
+                trans = DatabaseConnection.BeginTransaction();
+                
+                #region remove the cards from the database
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                {
+                    //Build Query
+                    com.CommandText = 
+@"DELETE FROM [cards]
+WHERE [set_real_id]=(
+    SELECT [real_id] FROM [sets] WHERE [game_real_id]=(
+        SELECT [real_id] FROM [games] WHERE [id]=@id
+    )
+);";
+                    com.Parameters.AddWithValue("@id", game.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+                #endregion
+                
+                #region remove the packs from the database
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                {
+                    //Build Query
+                    com.CommandText = 
+@"DELETE FROM [packs]
+WHERE [set_real_id]=(
+    SELECT [real_id] FROM [sets] WHERE [game_real_id]=(
+        SELECT [real_id] FROM [games] WHERE [id]=@id
+    )
+);";
+                    com.Parameters.AddWithValue("@id", game.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+                #endregion
+                
+                #region remove the markers from the database
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                {
+                    //Build Query
+                    com.CommandText = 
+@"DELETE FROM [markers]
+WHERE [set_real_id]=(
+    SELECT [real_id] FROM [sets] WHERE [game_real_id]=(
+        SELECT [real_id] FROM [games] WHERE [id]=@id
+    )
+);";
+                    com.Parameters.AddWithValue("@id", game.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+                #endregion
+                
+                #region remove the sets from the database
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                {
+                    //Build Query
+                    com.CommandText =
+@"DELETE FROM [sets]
+WHERE [game_real_id]=(
+    SELECT [real_id] FROM [games] WHERE [id]=@id
+);";
+                    com.Parameters.AddWithValue("@id", game.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+                #endregion
+                
+                #region remove the custom properties from the database
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                {
+                    //Build Query
+                    com.CommandText = @"DELETE FROM [custom_properties] WHERE [game_id]=@id;";
+                    com.Parameters.AddWithValue("@id", game.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+                #endregion
+                
+                #region remove the game from the database
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                {
+                    //Build Query
+                    com.CommandText = @"DELETE FROM [games] WHERE [id]=@id;";
+                    com.Parameters.AddWithValue("@id", game.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+                #endregion
+                
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                    trans.Rollback();
+                if (Debugger.IsAttached) Debugger.Break();
+                return;
+            }
+            
+            var existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
+            if (existingGame != null) _cachedGames.Remove(existingGame);
+            
+            RaiseGameUninstalled(game);
+        }
+        
+        /// <summary>
+        /// Adds a game and all directly related entries to the database.
+        /// </summary>
+        /// <param name="game">The game definition to install</param>
+        /// <param name="properties">The card properties to install</param>
         public void InstallGame(Game game, IEnumerable<PropertyDef> properties)
         {
             Game existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
@@ -111,15 +268,21 @@ namespace Octgn.Data
 
                 if (existingGame != null && existingGame.Id == game.Id)
                 {
+                    #region Update the game entry
                     using (SQLiteCommand com = DatabaseConnection.CreateCommand())
                     {
                         //Build Query
-                        sb.Append("UPDATE [games] SET ");
-                        sb.Append("[filename]=@filename, [version]=@version, ");
-                        sb.Append("[card_width]=@card_width, [card_height]=@card_height, [card_back]=@card_back, ");
-                        sb.Append("[deck_sections]=@deck_sections, [shared_deck_sections]=@shared_deck_sections, [file_hash]=@file_hash");
-                        sb.Append(" WHERE [id]=@id;");
-                        com.CommandText = sb.ToString();
+                        com.CommandText =
+@"UPDATE [games] SET
+    [filename]=@filename,
+    [version]=@version,
+    [card_width]=@card_width,
+    [card_height]=@card_height,
+    [card_back]=@card_back,
+    [deck_sections]=@deck_sections,
+    [shared_deck_sections]=@shared_deck_sections,
+    [file_hash]=@file_hash
+WHERE [id]=@id;";
 
                         com.Parameters.AddWithValue("@id", game.Id.ToString());
                         com.Parameters.AddWithValue("@filename", game.Filename);
@@ -136,20 +299,20 @@ namespace Octgn.Data
 
                         com.ExecuteNonQuery();
                     }
+                    #endregion
                 }
                 else
                 {
+                    #region Insert a new game entry
                     using (SQLiteCommand com = DatabaseConnection.CreateCommand())
                     {
                         //Build Query
-                        sb.Append("INSERT OR REPLACE INTO [games](");
-                        sb.Append(
-                            "[id],[name],[filename],[version], [card_width],[card_height],[card_back],[deck_sections],[shared_deck_sections],[file_hash]");
-                        sb.Append(") VALUES(");
-                        sb.Append(
-                            "@id,@name,@filename,@version,@card_width,@card_height,@card_back,@deck_sections,@shared_deck_sections,@file_hash");
-                        sb.Append(");\n");
-                        com.CommandText = sb.ToString();
+                        com.CommandText =
+@"INSERT OR REPLACE INTO [games](
+    [id], [name], [filename], [version], [card_width], [card_height], [card_back], [deck_sections], [shared_deck_sections], [file_hash]
+) VALUES (
+    @id, @name, @filename, @version, @card_width, @card_height, @card_back, @deck_sections, @shared_deck_sections, @file_hash
+);";
 
                         com.Parameters.AddWithValue("@id", game.Id.ToString());
                         com.Parameters.AddWithValue("@name", game.Name);
@@ -171,16 +334,18 @@ namespace Octgn.Data
 
                         game.CopyDecks();
                     }
+                    #endregion
                 }
-                //Add custom properties for the card.
-                sb = new StringBuilder();
-                sb.Append("INSERT OR REPLACE INTO [custom_properties](");
-                sb.Append("[id],[card_real_id],[game_id],[name], [type],[vint],[vstr]");
-                sb.Append(") VALUES(");
-                sb.Append(
-                    "@id,(SELECT real_id FROM cards WHERE id = @card_id LIMIT 1),@game_id,@name,@type,@vint,@vstr");
-                sb.Append(");\n");
-                string command = sb.ToString();
+                
+                #region Add custom properties for the card.
+                string command =
+@"INSERT OR REPLACE INTO [custom_properties](
+    [id], [card_real_id], [game_id], [name], [type], [vint], [vstr]
+) VALUES(
+    @id, (
+        SELECT real_id FROM cards WHERE id = @card_id LIMIT 1
+    ), @game_id, @name, @type, @vint, @vstr
+);";
                 foreach (PropertyDef pair in properties)
                 {
                     if (!DatabaseHandler.ColumnExists("cards", pair.Name, DatabaseConnection))
@@ -212,20 +377,31 @@ namespace Octgn.Data
                         com.ExecuteNonQuery();
                     }
                 }
-            trans.Commit();
+                #endregion
+                
+                trans.Commit();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (trans != null)
                     trans.Rollback();
                 if (Debugger.IsAttached) Debugger.Break();
                 return;
+                /*
+   bei System.Data.SQLite.SQLite3.Prepare(SQLiteConnection cnn, String strSql, SQLiteStatement previous, UInt32 timeoutMS, String& strRemain) in c:\dev\sqlite\dotnet\System.Data.SQLite\SQLite3.cs:Zeile 476.
+   bei System.Data.SQLite.SQLiteCommand.BuildNextCommand() in c:\dev\sqlite\dotnet\System.Data.SQLite\SQLiteCommand.cs:Zeile 294.
+   bei System.Data.SQLite.SQLiteCommand.GetStatement(Int32 index) in c:\dev\sqlite\dotnet\System.Data.SQLite\SQLiteCommand.cs:Zeile 306.
+   bei System.Data.SQLite.SQLiteDataReader.NextResult() in c:\dev\sqlite\dotnet\System.Data.SQLite\SQLiteDataReader.cs:Zeile 1146.
+   bei System.Data.SQLite.SQLiteDataReader..ctor(SQLiteCommand cmd, CommandBehavior behave) in c:\dev\sqlite\dotnet\System.Data.SQLite\SQLiteDataReader.cs:Zeile 103.
+   bei System.Data.SQLite.SQLiteCommand.ExecuteReader(CommandBehavior behavior) in c:\dev\sqlite\dotnet\System.Data.SQLite\SQLiteCommand.cs:Zeile 592.
+   bei System.Data.SQLite.SQLiteCommand.ExecuteNonQuery() in c:\dev\sqlite\dotnet\System.Data.SQLite\SQLiteCommand.cs:Zeile 622.
+   bei Octgn.Data.GamesRepository.InstallGame(Game game, IEnumerable`1 properties) in c:\Users\dschachtler\Documents\SharpDevelop Projects\OCTGN\octgnFX\Octgn.Data\GamesRepository.cs:Zeile 330."                 */
             }
             existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
             if (existingGame != null) _cachedGames.Remove(existingGame);
             _cachedGames.Add(game);
-            if (GameInstalled != null)
-                GameInstalled.Invoke(game, new EventArgs());
+            
+            RaiseGameInstalled(game);
         }
 
         public void UpdateGameHash(Game game, string hash)
