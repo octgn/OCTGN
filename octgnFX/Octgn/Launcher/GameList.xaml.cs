@@ -31,12 +31,14 @@ namespace Octgn.Launcher
         {
             InitializeComponent();
             Program.GamesRepository.GameInstalled += GamesRepositoryGameInstalled;
+            Program.GamesRepository.GameUninstalled += GamesRepositoryGameUninstalled;
         }
 
         public GameList(LoadEvent le)
         {
             InitializeComponent();
             Program.GamesRepository.GameInstalled += GamesRepositoryGameInstalled;
+            Program.GamesRepository.GameUninstalled += GamesRepositoryGameUninstalled;
             if (le == LoadEvent.InstallGame)
                 InstallGame();
         }
@@ -68,6 +70,12 @@ namespace Octgn.Launcher
             GamesChanged = true;
         }
 
+        private void GamesRepositoryGameUninstalled(object sender, EventArgs<Data.Game> e)
+        {
+            ReloadGameList();
+            GamesChanged = true;
+        }
+
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
             ReloadGameList();
@@ -76,6 +84,7 @@ namespace Octgn.Launcher
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
             Program.GamesRepository.GameInstalled -= GamesRepositoryGameInstalled;
+            Program.GamesRepository.GameUninstalled -= GamesRepositoryGameUninstalled;
         }
 
         public void InstallGame()

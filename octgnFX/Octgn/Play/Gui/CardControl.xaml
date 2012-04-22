@@ -5,11 +5,11 @@
 
   <UserControl.Resources>
     <!-- FIX: This hack is meant to work around the TextBlock style 
-							defined inside the PanelControl style, which affects the 
-							cards markers text. It adds a shadow effect, 
-							which is wrong and currently crashes when combined with
-							the OuterGlowBitmapEffect
-					-->
+              defined inside the PanelControl style, which affects the 
+              cards markers text. It adds a shadow effect, 
+              which is wrong and currently crashes when combined with
+              the OuterGlowBitmapEffect
+          -->
     <Style TargetType="TextBlock">
       <Setter Property="Effect" Value="{x:Null}" />
     </Style>

@@ -404,7 +404,7 @@ namespace Octgn.Windows
             //Program.lobbyClient.Close(DisconnectReason.CleanDisconnect);
         }
 
-        private void RibbonButtonClick(object sender, RoutedEventArgs e)
+        private void BInstallGameClick(object sender, RoutedEventArgs e)
         {
             var gl = frame1.Content as GameList;
             if (gl == null)
@@ -416,8 +416,18 @@ namespace Octgn.Windows
             else
                 gl.InstallGame();
         }
+        
+        private void BUninstallGameClick(object sender, RoutedEventArgs e)
+        {
+            SetList setlist = frame1.Content as SetList;
+            if (setlist != null && setlist.SelectedGame != null)
+            {
+                Program.GamesRepository.UninstallGame(setlist.SelectedGame);
+                BSelectGameClick(this, e);
+            }
+        }
 
-        private void RibbonButtonClick1(object sender, RoutedEventArgs e)
+        private void BSelectGameClick(object sender, RoutedEventArgs e)
         {
             _currentSetList = null;
             var gl = new GameList();

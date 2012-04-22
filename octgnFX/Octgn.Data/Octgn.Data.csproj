@@ -156,6 +156,7 @@
     <Compile Include="Deck.cs" />
     <Compile Include="DeckExceptions.cs" />
     <Compile Include="Def.cs" />
+    <Compile Include="EventArgs.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="GamesRepository.cs" />
