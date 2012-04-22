@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
       Height="316" Width="390"
-	Title="Register">
+    Title="Register">
 
     <Grid>
         <Grid.RowDefinitions>
