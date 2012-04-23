@@ -168,6 +168,11 @@ namespace Skylabs.Lobby
         {
             long rid1 = -1;
             long rid2 = -1;
+            if ((object.Equals(a, null) && !object.Equals(b, null)) || (object.Equals(b, null) && !object.Equals(a, null))) return false;
+
+            if (!object.Equals(a, null)) rid1 = a.RID;
+            if (!object.Equals(b, null)) rid2 = b.RID;
+            /*
             try
             {
                 rid1 = a.RID;
@@ -178,7 +183,7 @@ namespace Skylabs.Lobby
                 rid2 = b.RID;
             }
             catch {}
-
+            */
             if (rid1 == -1 && rid2 == -1) return true;
             return rid1 == rid2;
         }
