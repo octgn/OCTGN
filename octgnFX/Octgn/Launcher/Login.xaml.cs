@@ -440,9 +440,7 @@ namespace Octgn.Launcher
             private void btnRegister_Click(object sender, RoutedEventArgs e){Program.LauncherWindow.Navigate(new Register());}
             private void TextBox1KeyUp(object sender, KeyEventArgs e)
             {
-                if (cbSavePassword.IsChecked != true) return;
                 cbSavePassword.IsChecked = false;
-                SimpleConfig.WriteValue("Password", "");
             }
             private void PasswordBox1KeyUp(object sender, KeyEventArgs e)
             {
@@ -453,7 +451,6 @@ namespace Octgn.Launcher
                 else if (cbSavePassword.IsChecked == true)
                 {
                     cbSavePassword.IsChecked = false;
-                    SimpleConfig.WriteValue("Password", "");
                 }
             }
         #endregion
