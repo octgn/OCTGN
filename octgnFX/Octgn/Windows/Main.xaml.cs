@@ -108,18 +108,30 @@ namespace Octgn.Windows
         {
 
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
-            Dispatcher.Invoke(new Action(() =>
-                                         {
-
-            var win = ReconnectingWindow.Reconnect();
-            if (win.Canceled)
+            if(!Program.LobbyClient.DisconnectedBecauseConnectionReplaced)
             {
-                CloseDownShop(false);
-                return;
-            }
-            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+                Dispatcher.Invoke(new Action(() =>
+                {
 
-                                         }));
+                    var win = ReconnectingWindow.Reconnect();
+                    if(win.Canceled)
+                    {
+                        CloseDownShop(false);
+                        return;
+                    }
+                    Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+                }));
+            }
+            else
+            {
+                Dispatcher.Invoke(new Action(() =>
+                {
+
+                    CloseDownShop(false);
+                    MessageBox.Show("You have been logged out because you signed in somewhere else.");
+                    Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+                }));                
+            }
         }
 
         private void LobbyClientOnOnDataRecieved(object sender, Skylabs.Lobby.Client.DataRecType type, object data)
