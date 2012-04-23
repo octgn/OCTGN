@@ -59,6 +59,7 @@ namespace Skylabs.Lobby
         public NewUser Me { get; private set; }
         public Chat Chatting { get; set; }
         public int CurrentHostedGamePort { get; set; }
+        public bool DisconnectedBecauseConnectionReplaced { get; set; }
 
         public UserStatus Status
         {
@@ -80,6 +81,7 @@ namespace Skylabs.Lobby
                 Xmpp.Close();
                 Xmpp = null;
             }
+            DisconnectedBecauseConnectionReplaced = false;
             Xmpp = new XmppClientConnection("skylabsonline.com");
             Xmpp.OnRegistered += XmppOnOnRegistered;
             Xmpp.OnRegisterError += XmppOnOnRegisterError;
@@ -114,6 +116,8 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnStreamError(object sender, Element element)
         {
+            var textTag = element.GetTag("text");
+            if (!String.IsNullOrWhiteSpace(textTag) && textTag.Trim().ToLower() == "replaced by new connection") DisconnectedBecauseConnectionReplaced = true;
             Trace.WriteLine("[Xmpp]StreamError: " + element);
         }
 
