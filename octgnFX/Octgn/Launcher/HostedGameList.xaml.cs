@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Octgn.Controls;
 using Skylabs.Lobby;
@@ -13,19 +14,28 @@ namespace Octgn.Launcher
     /// </summary>
     public partial class HostedGameList
     {
+        private Border Refreshing;
         public HostedGameList()
         {
             InitializeComponent();
-            Program.LobbyClient.BeginGetGameList();
+            Refreshing = bRefreshing;
             Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.BeginGetGameList();
         }
 
         private void LobbyClientOnOnDataRecieved(object sender , Client.DataRecType type , object data)
         {
             if(type == Client.DataRecType.GameList)
                 ReloadGameList();
-            else if(type == Client.DataRecType.GamesNeedRefresh)
+            else if (type == Client.DataRecType.GamesNeedRefresh)
+            {
+                Dispatcher.Invoke(new Action(() =>
+                                             {
+                                                 stackPanel1.Children.Clear();
+                                                 stackPanel1.Children.Add(Refreshing);
+                                             }));
                 Program.LobbyClient.BeginGetGameList();
+            }
         }
 
         public event EventHandler OnGameClick;

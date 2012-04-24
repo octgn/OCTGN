@@ -186,8 +186,12 @@ namespace Skylabs.LobbyServer
         {
             Trace.WriteLine("[Bot]RefreshList");
             var arr = _userList.ToArray();
+            if(arr == null) Trace.WriteLine("[Bot]arr=null");
             foreach(var u in arr)
             {
+                if (u.Bare == null) continue;
+                if(Xmpp.MyJID == null)Trace.WriteLine("[Bot]Xmpp.MyJid == null");
+                if (Xmpp.MyJID.Bare == null) Trace.WriteLine("[Bot]Xmpp.MyJid.Bare == null");
                 if (u.Bare == Xmpp.MyJID.Bare) continue;
                 var m = new Message(u.Bare , MessageType.normal , "" , "refresh");
                 Xmpp.Send(m);
