@@ -147,8 +147,8 @@ namespace Octgn.Data
 
                 //games
                 sb.Clear();
-                sb.Append("INSERT INTO \"games\"(\"real_id\",\"id\",\"name\",\"filename\",\"version\",\"card_height\",\"card_back\",\"deck_sections\",\"shared_deck_sections\",\"file_hash\") ");
-                sb.Append(string.Format("SELECT \"real_id\",\"id\",\"name\",\"filename\",\"version\",\"card_height\",\"card_back\",\"deck_sections\",\"shared_deck_sections\",\"file_hash\" FROM \"{0}games\"", suffix));
+                sb.Append("INSERT INTO \"games\"(\"real_id\",\"id\",\"name\",\"filename\",\"version\",\"card_height\",\"card_width\",\"card_back\",\"deck_sections\",\"shared_deck_sections\",\"file_hash\") ");
+                sb.Append(string.Format("SELECT \"real_id\",\"id\",\"name\",\"filename\",\"version\",\"card_height\",\"card_width\",\"card_back\",\"deck_sections\",\"shared_deck_sections\",\"file_hash\" FROM \"{0}games\"", suffix));
                 command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
 
