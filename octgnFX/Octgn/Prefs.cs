@@ -34,5 +34,14 @@ namespace Octgn
                 SimpleConfig.WriteValue("datadirectory",value);
             }
         }
+
+        public static string LastRoomName
+        {
+            get { return SimpleConfig.ReadValue("lastroomname" , Skylabs.Lobby.Randomness.RandomRoomName()); }
+            set
+            {
+                SimpleConfig.WriteValue("lastroomname",value);
+            }
+        }
     }
 }
