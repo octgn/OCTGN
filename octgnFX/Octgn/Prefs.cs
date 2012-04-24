@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using Octgn.Data;
 namespace Octgn
@@ -41,6 +42,23 @@ namespace Octgn
             set
             {
                 SimpleConfig.WriteValue("lastroomname",value);
+            }
+        }
+        
+        public static bool TwoSidedTable
+        {
+            get
+            {
+                bool val = true;
+                if(!Boolean.TryParse(SimpleConfig.ReadValue("twosidedtable" , true.ToString(CultureInfo.InvariantCulture)),out val))
+                {
+                    SimpleConfig.WriteValue("twosidedtable",true.ToString(CultureInfo.InvariantCulture));
+                }
+                return val;
+            }
+            set
+            {
+                SimpleConfig.WriteValue("twosidedtable",value.ToString(CultureInfo.InvariantCulture));
             }
         }
     }
