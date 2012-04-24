@@ -24,6 +24,7 @@ namespace Skylabs.Lobby
             public enum LoginResults{ConnectionError,Success,Failure}
             public enum DataRecType{FriendList,MyInfo,GameList,HostedGameReady,GamesNeedRefresh}
             public enum LoginResult{Success,Failure,Banned,WaitingForResponse};
+            public enum LobbyMessageType { Standard, Error, Topic };
         #endregion
         #region Delegates
             public delegate void dRegisterComplete(object sender, RegisterResults results);
@@ -199,6 +200,7 @@ namespace Skylabs.Lobby
                 {
                     if(pres.From.Server == "conference.skylabsonline.com")
                     {
+                        if (pres.MucUser.Item.Jid == null) break;
                         if (pres.MucUser.Item.Jid.Bare == Me.User.Bare) break;
                         var rm = Chatting.GetRoom(new NewUser(pres.From),true);
                         rm.UserLeft(new NewUser(pres.MucUser.Item.Jid));

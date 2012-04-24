@@ -27,6 +27,14 @@ namespace Octgn.Windows
         public NewChatRoom Room;
         public long Id { get { return Room.RID; } }
         public bool IsLobbyChat { get; private set; }
+
+        private Brush _bBackColor = Brushes.White;
+        private Brush _bMeColor = Brushes.Blue;
+        private Brush _bOtherColor = Brushes.Black;
+        private Brush _bTopicColor = Brushes.Green;
+        private Brush _bTopicBackColor = Brushes.White;
+        private Brush _bErrorColor = Brushes.Red;
+
         public ChatWindow(NewChatRoom room)
         {
             InitializeComponent();
@@ -50,27 +58,50 @@ namespace Octgn.Windows
 
         }
 
-        private void RoomOnOnMessageRecieved(object sender , NewUser from , string message, DateTime rTime)
+        private void RoomOnOnMessageRecieved(object sender , NewUser from , string message, DateTime rTime, Client.LobbyMessageType mType)
         {
             Dispatcher.Invoke(new Action(()=>
                 {
-                    Brush b = Brushes.Black;
-                    if (from.Equals(Program.LobbyClient.Me))
-                        b = Brushes.Blue;
+                    switch(mType)
+                    {
+                        case Client.LobbyMessageType.Standard:
+                        {
+                            Brush b = _bOtherColor;
 
-                    Run r = GetUserRun(from.User.User,
-                                       "[" + from.User.User + "] : ",rTime);
-                    r.Foreground = b;
-                    AddChatText(r, message);
-                    if (this.Visibility != Visibility.Visible && Program.LobbyClient.Me.Status != UserStatus.DoNotDisturb && !IsLobbyChat)
-                            Show();
+                            if (from.Equals(Program.LobbyClient.Me)) b = _bMeColor;
+                            Run r = GetUserRun(from.User.User,
+                                               "[" + from.User.User + "] : ", rTime);
+                            r.Foreground = b;
+                            AddChatText(r, message);
+                            if (this.Visibility != Visibility.Visible
+                               && Program.LobbyClient.Me.Status != UserStatus.DoNotDisturb && !IsLobbyChat) Show();
+                            break;
+                        }
+                        case Client.LobbyMessageType.Topic:
+                        {
+                            Run r = new Run("");
+                            r.Foreground = _bTopicColor;
+                            r.Background = _bTopicBackColor;
+                            AddChatText(r, message, _bTopicColor, _bTopicBackColor);
+                            break;
+                        }
+                        case Client.LobbyMessageType.Error:
+                        {
+                            Run r = new Run("");
+                            r.Foreground = _bErrorColor;
+                            AddChatText(r, message, _bErrorColor);
+                            break;
+                        }
+                    }
+
                 }));
         }
 
 
-        private void AddChatText(Inline headerRun, string chat, Brush b = null)
+        private void AddChatText(Inline headerRun, string chat, Brush fB = null, Brush bB =null)
         {
-            if (b == null) b = Brushes.Black;
+            if (fB == null) fB = _bOtherColor;
+            if (bB == null) bB = _bBackColor;
             bool rtbatbottom = false;
 
             // bool firstAutoScroll = true; // never used 
@@ -119,7 +150,7 @@ namespace Octgn.Windows
                 foreach (
                     Inline inn in
                         lines.Select(line => line.Split(new[] {' '})).SelectMany(
-                            words => words.Select(word => StringToRun(word, b))))
+                            words => words.Select(word => StringToRun(word, fB))))
                 {
                     if (inn != null)
                         p.Inlines.Add(inn);
@@ -129,15 +160,16 @@ namespace Octgn.Windows
             else
             {
                 String[] words = chat.Split(new[] {' '});
-                foreach (Inline inn in words.Select(word => StringToRun(word, b)))
+                foreach (Inline inn in words.Select(word => StringToRun(word, fB)))
                 {
                     if (inn != null)
                         p.Inlines.Add(inn);
                     p.Inlines.Add(new Run(" "));
                 }
             }
+            p.Background = bB;
             richTextBox1.Document.Blocks.Add(p);
-            if (richTextBox1.Document.Blocks.Count > 200)
+            if (richTextBox1.Document.Blocks.Count > 1000)
             {
                 try
                 {
@@ -315,8 +347,8 @@ namespace Octgn.Windows
             if (e.Key != Key.Enter) return;
             if (textBox1.Text.Trim().Length <= 0) return;
             Room.SendMessage(textBox1.Text);
-            if(!Room.IsGroupChat)
-                RoomOnOnMessageRecieved(this,Program.LobbyClient.Me,textBox1.Text,DateTime.Now);
+            if(!Room.IsGroupChat && textBox1.Text[0] != '/')
+                RoomOnOnMessageRecieved(this,Program.LobbyClient.Me,textBox1.Text,DateTime.Now,Client.LobbyMessageType.Standard);
             //Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
             textBox1.Text = "";
         }
