@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -138,7 +139,24 @@ namespace Octgn.Windows
         {
             Dispatcher.Invoke(new Action(()=>
             {
-
+                switch(type)
+                {
+                    case Skylabs.Lobby.Client.DataRecType.FriendList:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.MyInfo:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.GameList:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.HostedGameReady:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.GamesNeedRefresh:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.Announcement:
+                        var d = data as Dictionary<String , String>;
+                        if(d != null)
+                            MessageBox.Show(d["Message"] , d["Subject"] , MessageBoxButton.OK , MessageBoxImage.Exclamation);
+                        break;
+                }
                 tbStatus.Text = Program.LobbyClient.CustomStatus;
                 switch(Program.LobbyClient.Status)
                 {

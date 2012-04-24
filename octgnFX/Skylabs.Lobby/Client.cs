@@ -22,7 +22,7 @@ namespace Skylabs.Lobby
         #region Enums
             public enum RegisterResults{ConnectionError,Success,UsernameTaken,UsernameInvalid,PasswordFailure}
             public enum LoginResults{ConnectionError,Success,Failure}
-            public enum DataRecType{FriendList,MyInfo,GameList,HostedGameReady,GamesNeedRefresh}
+            public enum DataRecType{FriendList,MyInfo,GameList,HostedGameReady,GamesNeedRefresh,Announcement}
             public enum LoginResult{Success,Failure,Banned,WaitingForResponse};
             public enum LobbyMessageType { Standard, Error, Topic };
         #endregion
@@ -139,12 +139,16 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnWriteXml(object sender, string xml)
         {
+#if(FDEBUG)
             Trace.WriteLine("[Xmpp]out: " + xml);
+#endif
         }
 
         private void XmppOnOnReadXml(object sender , string xml)
         {
+#if(FDEBUG)
             Trace.WriteLine("[Xmpp]in: " + xml);
+#endif
         }
 
         private void XmppOnOnIq(object sender, IQ iq)
@@ -274,6 +278,16 @@ namespace Skylabs.Lobby
                 {
                     if(OnDataRecieved!=null)
                         OnDataRecieved.Invoke(this,DataRecType.GamesNeedRefresh,null);
+                }
+                else if(msg.From.Bare.ToLower() == Xmpp.MyJID.Server.ToLower())
+                {
+                    if (msg.Subject == null) msg.Subject = "";
+                    if (msg.Body == null) msg.Body = "";
+                    var d = new Dictionary<string , string>();
+                    d["Message"] = msg.Body;
+                    d["Subject"] = msg.Subject;
+                    if(OnDataRecieved != null)
+                        OnDataRecieved.Invoke(this,DataRecType.Announcement, d);
                 }
             }
         }
