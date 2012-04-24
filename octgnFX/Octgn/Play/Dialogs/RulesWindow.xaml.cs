@@ -31,30 +31,57 @@ namespace Octgn.Play.Dialogs
             var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
             string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');            
             using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {                
-                PackageRelationship defRelationship =
-                    package.GetRelationshipsByType("http://schemas.octgn.org/game/rules").First();
-                if (!package.PartExists(defRelationship.TargetUri)) return;
-                PackagePart definition = package.GetPart(defRelationship.TargetUri);                
-                using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
+            {
+                foreach (PackageRelationship defRelationship in package.GetRelationshipsByType("http://schemas.octgn.org/game/rules"))
                 {
-                    // Change the 75 for performance.  Find a number that suits your application best
-                    const int bufferLength = 1024*75;
-                    while (!fileReader.EndOfStream)
+                    if (!package.PartExists(defRelationship.TargetUri)) continue;
+
+                    // Check if the file is for Rules
+                    if (defRelationship.Id == PlayWindow.txt)
                     {
-                        const int readLength = bufferLength;
-                        var buffer = new char[readLength];
-                        fileReader.Read(buffer, 0, readLength);
-                        // This will help the file load much faster 
-                        // RichText loads \n as a new paragraph. Very slow for large text
-                        string currentLine = new string(buffer).Replace("\n", string.Empty).Trim('\0');                     
-                        // Load in background
-                        Dispatcher.BeginInvoke(new Action(() =>
-                                                              {
-                                                                  new TextRange(rules.Document.ContentEnd,
-                                                                                rules.Document.ContentEnd)
-                                                                      {Text = currentLine};
-                                                              }), DispatcherPriority.Normal);
+                        PackagePart definition = package.GetPart(defRelationship.TargetUri);
+                        using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
+                        {
+                            const int bufferLength = 1024 * 75;
+                            while (!fileReader.EndOfStream)
+                            {
+                                const int readLength = bufferLength;
+                                var buffer = new char[readLength];
+                                fileReader.Read(buffer, 0, readLength);
+                                // RichText loads \n as a new paragraph. Very slow for large text
+                                string currentLine = new string(buffer).Replace("\n", string.Empty).Trim('\0');
+                                // Load in background
+                                Dispatcher.BeginInvoke(new Action(() =>
+                                                                      {
+                                                                          new TextRange(rules.Document.ContentEnd,
+                                                                                        rules.Document.ContentEnd) { Text = currentLine };
+                                                                      }), DispatcherPriority.Normal);
+                            }
+                        }
+                        return;
+                    }
+
+                    // Check if the file is for Help
+                    if (defRelationship.Id == PlayWindow.txt)
+                    {
+                        PackagePart definition = package.GetPart(defRelationship.TargetUri);
+                        using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
+                        {
+                            const int bufferLength = 1024 * 75;
+                            while (!fileReader.EndOfStream)
+                            {
+                                const int readLength = bufferLength;
+                                var buffer = new char[readLength];
+                                fileReader.Read(buffer, 0, readLength);
+                                string currentLine = new string(buffer).Replace("\n", string.Empty).Trim('\0');
+                                Dispatcher.BeginInvoke(new Action(() =>
+                                                                        {
+                                                                            new TextRange(rules.Document.ContentEnd,
+                                                                                          rules.Document.ContentEnd) { Text = currentLine };
+                                                                        }), DispatcherPriority.Normal);
+                            }
+                        }
+                        return;
                     }
                 }
             }

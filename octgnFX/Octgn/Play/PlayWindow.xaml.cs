@@ -88,7 +88,11 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
-            if (!PartExists("http://schemas.octgn.org/game/rules")) Rules.Visibility = Visibility.Hidden;
+            if (!PartExists("http://schemas.octgn.org/game/rules"))
+            {
+                Rules.Visibility = Visibility.Hidden;
+                Help.Visibility = Visibility.Hidden;
+            }
             if (PartExists("http://schemas.octgn.info/game/font")) 
                 ExtractFont("http://schemas.octgn.info/game/font");
 
@@ -539,10 +543,21 @@ namespace Octgn.Play
             ribbon.SelectedItem = limitedTab;
         }
 
+        public static string txt = "rul";
+
         private void ShowRules(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             var wnd = new RulesWindow {Owner = this};
+            txt = "rul";
+            wnd.ShowDialog();
+        }
+
+        private void ShowHelp(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var wnd = new RulesWindow { Owner = this };
+            txt = "hlp";
             wnd.ShowDialog();
         }
 
