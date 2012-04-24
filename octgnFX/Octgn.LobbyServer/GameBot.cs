@@ -146,6 +146,8 @@ namespace Skylabs.LobbyServer
                             var m = new Message(msg.From , msg.To , MessageType.normal , port.ToString() , "gameready");
                             m.GenerateId();
                             Xmpp.Send(m);
+                            var gameMessage = String.Format(" {0} is hosting a game called '{1}'" ,msg.From.User,gameName);
+                            m = new Message(new Jid("lobby@conference.skylabsonline.com"),msg.To,MessageType.groupchat,gameMessage);
                             RefreshLists();
                         }
                     }
@@ -190,9 +192,14 @@ namespace Skylabs.LobbyServer
             foreach(var u in arr)
             {
                 if (u.Bare == null) continue;
-                if(Xmpp.MyJID == null)Trace.WriteLine("[Bot]Xmpp.MyJid == null");
-                if (Xmpp.MyJID.Bare == null) Trace.WriteLine("[Bot]Xmpp.MyJid.Bare == null");
+                if (Xmpp.MyJID == null) { Trace.WriteLine("[Bot]Xmpp.MyJid == null");
+                    continue;
+                }
+                if (Xmpp.MyJID.Bare == null) { Trace.WriteLine("[Bot]Xmpp.MyJid.Bare == null");
+                    continue;
+                }
                 if (u.Bare == Xmpp.MyJID.Bare) continue;
+                if (u.Resource.ToLower() != "agsxmpp") continue;
                 var m = new Message(u.Bare , MessageType.normal , "" , "refresh");
                 Xmpp.Send(m);
             }
