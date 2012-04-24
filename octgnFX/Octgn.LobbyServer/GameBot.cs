@@ -83,15 +83,15 @@ namespace Skylabs.LobbyServer
                 case PresenceType.available:
                     if(pres.From.Server == "conference.skylabsonline.com")
                     {
-                        if (!_userList.Contains(pres.MucUser.Item.Jid.Bare) && pres.MucUser.Item.Jid.Bare != Xmpp.MyJID.Bare)
-                            _userList.Add(pres.MucUser.Item.Jid.Bare);
+                        if (!_userList.Contains(pres.MucUser.Item.Jid) && pres.MucUser.Item.Jid != Xmpp.MyJID)
+                            _userList.Add(pres.MucUser.Item.Jid);
                     }
                     break;
                 case PresenceType.unavailable:
                 {
                     if (pres.From.Server == "conference.skylabsonline.com")
                     {
-                        _userList.Remove(pres.MucUser.Item.Jid.Bare);
+                        _userList.Remove(pres.MucUser.Item.Jid);
                     }
                     break;
                 }
@@ -148,6 +148,7 @@ namespace Skylabs.LobbyServer
                             Xmpp.Send(m);
                             var gameMessage = String.Format(" {0} is hosting a game called '{1}'" ,msg.From.User,gameName);
                             m = new Message(new Jid("lobby@conference.skylabsonline.com"),msg.To,MessageType.groupchat,gameMessage);
+                            Xmpp.Send(m);
                             RefreshLists();
                         }
                     }
