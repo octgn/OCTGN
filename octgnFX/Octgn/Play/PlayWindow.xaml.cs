@@ -118,7 +118,8 @@ namespace Octgn.Play
                 {
                     if (!package.PartExists(relationship.TargetUri)) continue;
                     PackagePart definition = package.GetPart(relationship.TargetUri);
-                    ExtractPart(definition, Directory.GetCurrentDirectory() + "\\temp.ttf", relationship);                    
+                    string targetDir = Path.Combine(SimpleConfig.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
+                    ExtractPart(definition, targetDir + "\\temp.ttf", relationship);                    
                 }                                
             }
             UpdateFont();
@@ -126,7 +127,7 @@ namespace Octgn.Play
 
         private void UpdateFont()
         {
-            string curDir = Directory.GetCurrentDirectory();
+            string curDir = Path.Combine(SimpleConfig.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
             string uri = "file:///" + curDir.Replace('\\', '/') + "/#";
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
             System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
