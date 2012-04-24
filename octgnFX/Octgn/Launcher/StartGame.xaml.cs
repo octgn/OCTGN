@@ -38,7 +38,7 @@ namespace Octgn.Launcher
 
             Loaded += delegate
                           {
-                              Program.GameSettings.UseTwoSidedTable = true;
+                              Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
                               Program.Dispatcher = Dispatcher;
                               Program.ServerError += HandshakeError;
                               Program.GameSettings.PropertyChanged += SettingsChanged;

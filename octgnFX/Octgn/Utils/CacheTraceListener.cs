@@ -58,6 +58,12 @@ namespace Octgn.Utils
             var te = new TraceEvent
                          {Cache = new TraceEventCache(), Message = message, Type = TraceEventType.Information};
             Events.Add(te);
+            try
+            {
+                if (Events.Count > 1000)
+                    Events.RemoveAt(0);
+            }
+            catch (Exception) { }
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
@@ -71,6 +77,12 @@ namespace Octgn.Utils
                              Type = TraceEventType.Information
                          };
             Events.Add(te);
+            try
+            {
+                if (Events.Count > 1000)
+                    Events.RemoveAt(0);
+            }
+            catch (Exception) { }
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
@@ -80,6 +92,12 @@ namespace Octgn.Utils
         {
             var te = new TraceEvent {Cache = eventCache, Source = source, Type = eventType, Id = id, Message = message};
             Events.Add(te);
+            try
+            {
+                if (Events.Count > 1000)
+                    Events.RemoveAt(0);
+            }
+            catch (Exception) { }
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
@@ -88,6 +106,12 @@ namespace Octgn.Utils
         {
             var te = new TraceEvent {Cache = eventCache, Source = source, Type = eventType, Id = id};
             Events.Add(te);
+            try
+            {
+                if (Events.Count > 1000)
+                    Events.RemoveAt(0);
+            }
+            catch (Exception) { }
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }
@@ -98,6 +122,12 @@ namespace Octgn.Utils
             var te = new TraceEvent
                          {Cache = eventCache, Source = source, Type = eventType, Id = id, Format = format, Args = args};
             Events.Add(te);
+            try
+            {
+                if (Events.Count > 1000)
+                    Events.RemoveAt(0);
+            }
+            catch(Exception){}
             if (OnEventAdd != null)
                 OnEventAdd.Invoke(te);
         }

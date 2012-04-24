@@ -83,15 +83,15 @@ namespace Skylabs.LobbyServer
                 case PresenceType.available:
                     if(pres.From.Server == "conference.skylabsonline.com")
                     {
-                        if (!_userList.Contains(pres.MucUser.Item.Jid.Bare) && pres.MucUser.Item.Jid.Bare != Xmpp.MyJID.Bare)
-                            _userList.Add(pres.MucUser.Item.Jid.Bare);
+                        if (!_userList.Contains(pres.MucUser.Item.Jid) && pres.MucUser.Item.Jid != Xmpp.MyJID)
+                            _userList.Add(pres.MucUser.Item.Jid);
                     }
                     break;
                 case PresenceType.unavailable:
                 {
                     if (pres.From.Server == "conference.skylabsonline.com")
                     {
-                        _userList.Remove(pres.MucUser.Item.Jid.Bare);
+                        _userList.Remove(pres.MucUser.Item.Jid);
                     }
                     break;
                 }
@@ -146,6 +146,9 @@ namespace Skylabs.LobbyServer
                             var m = new Message(msg.From , msg.To , MessageType.normal , port.ToString() , "gameready");
                             m.GenerateId();
                             Xmpp.Send(m);
+                            var gameMessage = String.Format(" {0} is hosting a game called '{1}'" ,msg.From.User,gameName);
+                            m = new Message(new Jid("lobby@conference.skylabsonline.com"),msg.To,MessageType.groupchat,gameMessage);
+                            Xmpp.Send(m);
                             RefreshLists();
                         }
                     }
@@ -186,9 +189,18 @@ namespace Skylabs.LobbyServer
         {
             Trace.WriteLine("[Bot]RefreshList");
             var arr = _userList.ToArray();
+            if(arr == null) Trace.WriteLine("[Bot]arr=null");
             foreach(var u in arr)
             {
+                if (u.Bare == null) continue;
+                if (Xmpp.MyJID == null) { Trace.WriteLine("[Bot]Xmpp.MyJid == null");
+                    continue;
+                }
+                if (Xmpp.MyJID.Bare == null) { Trace.WriteLine("[Bot]Xmpp.MyJid.Bare == null");
+                    continue;
+                }
                 if (u.Bare == Xmpp.MyJID.Bare) continue;
+                if (u.Resource.ToLower() != "agsxmpp") continue;
                 var m = new Message(u.Bare , MessageType.normal , "" , "refresh");
                 Xmpp.Send(m);
             }

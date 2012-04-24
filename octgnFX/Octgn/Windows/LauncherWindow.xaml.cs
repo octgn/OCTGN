@@ -126,8 +126,8 @@ namespace Octgn.Windows
 
         public void LauncherInitialized(object sender, EventArgs e)
         {
-            Top = double.Parse(SimpleConfig.ReadValue("LoginTopLoc", "100"));
-            Left = double.Parse(SimpleConfig.ReadValue("LoginLeftLoc", "100"));
+            Top = Prefs.LoginLocation.Y;
+            Left = Prefs.LoginLocation.X;
         }
 
         #endregion Constructors
