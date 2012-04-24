@@ -83,7 +83,9 @@
                            Click="ConsoleClicked" Visibility="Hidden" />
           <ms:RibbonButton Label="Game Rules" x:Name="Rules" LargeImageSource="/Resources/Icons/rules.png"
                            Click="ShowRules" />
-        </ms:RibbonGroup>
+          <ms:RibbonButton Label="Game Help" x:Name="Help" LargeImageSource="/Resources/Icons/rules.png"
+                           Click="ShowHelp" />
+                </ms:RibbonGroup>
       </ms:RibbonTab>
     </ms:Ribbon>
 
