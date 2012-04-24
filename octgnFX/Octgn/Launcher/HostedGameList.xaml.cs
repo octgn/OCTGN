@@ -51,7 +51,7 @@ namespace Octgn.Launcher
                                                  foreach (Data.Game game in Program.GamesRepository.Games)
                                                  {
                                                      gids[count] = game.Id;
-                                                     if (SimpleConfig.ReadValue("FilterGames_"+game.Name) == "False")
+                                                     if (!Prefs.getFilterGame(game.Name))
                                                         filterList[count] = game.Id;
                                                      count++;
                                                  }

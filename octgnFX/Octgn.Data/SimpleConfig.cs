@@ -9,17 +9,18 @@ namespace Octgn.Data
 {
     public static class SimpleConfig
     {
-        public static bool InstallOnBoot
+        /// <summary>
+        /// Special case since it's required in Octgn.Data, and Prefs can't go there
+        /// </summary>
+        public static string DataDirectory
         {
             get
             {
-                bool ret = true;
-                bool.TryParse(ReadValue("InstallOnBoot" , true.ToString(CultureInfo.InvariantCulture)) , out ret);
-                return ret;
+                return ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn"));
             }
             set
             {
-                WriteValue("InstallOnBoot",value.ToString(CultureInfo.InvariantCulture));
+                WriteValue("datadirectory", value);
             }
         }
 
