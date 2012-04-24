@@ -49,11 +49,11 @@ namespace Octgn
 
         public static bool getFilterGame(string name)
         {
-            bool ret = false;
-            if (!Boolean.TryParse(SimpleConfig.ReadValue("FilterGames_" + name, "false"), out ret))
+            bool ret = true;
+            if (!Boolean.TryParse(SimpleConfig.ReadValue("FilterGames_" + name, "true"), out ret))
             {
-                ret = false;
-                SimpleConfig.WriteValue("FilterGames_" + name , false.ToString(CultureInfo.InvariantCulture));
+                ret = true;
+                SimpleConfig.WriteValue("FilterGames_" + name , true.ToString(CultureInfo.InvariantCulture));
             }
             return ret;
         }

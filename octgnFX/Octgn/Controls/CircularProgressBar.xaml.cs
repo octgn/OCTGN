@@ -9,7 +9,7 @@ namespace Octgn.Controls
     /// <summary>
     ///   A circular type progress bar, that is simliar to popular web based progress bars
     /// </summary>
-    public partial class CircularProgressBar
+    public partial class CircularProgressBar : INotifyPropertyChanged
     {
         #region Data
 
@@ -22,6 +22,15 @@ namespace Octgn.Controls
         public CircularProgressBar()
         {
             InitializeComponent();
+            C0.Fill = Foreground;
+            C1.Fill = Foreground;
+            C2.Fill = Foreground;
+            C3.Fill = Foreground;
+            C4.Fill = Foreground;
+            C5.Fill = Foreground;
+            C6.Fill = Foreground;
+            C7.Fill = Foreground;
+            C8.Fill = Foreground;
             _animationTimer = new DispatcherTimer(
                 DispatcherPriority.ContextIdle, Dispatcher) {Interval = new TimeSpan(0, 0, 0, 0, 100)};
         }
@@ -117,5 +126,7 @@ namespace Octgn.Controls
         {
             SetPositions();
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

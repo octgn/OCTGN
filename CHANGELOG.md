@@ -1,3 +1,8 @@
+#3.0.1.4:
+
++ Fixed hosted games not showing up
++ Fixed bug when switching filter
+
 #3.0.1.3:
 
 + Problem with two OCTGN's open at once, booting eachother off fixed

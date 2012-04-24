@@ -11,13 +11,13 @@
         <GradientStop Color="#FFEBEBEB" Offset="0.5" />
       </LinearGradientBrush>
     </ScrollViewer.Background>
-    <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Top">
-            <Border BorderBrush="Silver" BorderThickness="1" Name="bRefreshing">
-                <StackPanel HorizontalAlignment="Stretch" Name="stackPanel2" VerticalAlignment="Top">
-                    <my:CircularProgressBar x:Name="circularProgressBar1" HorizontalAlignment="Center" />
-                    <Label Content="Refreshing Game List..." Height="28" Name="label1" HorizontalAlignment="Center" />
+            <StackPanel HorizontalAlignment="Stretch" Name="stackPanel2" VerticalAlignment="Top">
+                <Border BorderBrush="Silver" BorderThickness="1" Name="bRefreshing">
+                    <ProgressBar Height="23" Name="progressBar1" IsIndeterminate="True" />
+                </Border>
+                <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Top">
                 </StackPanel>
-            </Border>
-        </StackPanel>
+            </StackPanel>
+
   </ScrollViewer>
 </Page>
