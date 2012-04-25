@@ -2,6 +2,7 @@
 
 + Fixed hosted games not showing up
 + Fixed bug when switching filter
++ Optional custom font support
 
 #3.0.1.3:
 
