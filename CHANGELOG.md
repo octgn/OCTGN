@@ -1,3 +1,8 @@
+#3.0.1.5:
++ Fixed font permission issue with UAC
++ New database rebuild table
++ Supports help.txt documents
+
 #3.0.1.4:
 
 + Fixed hosted games not showing up
