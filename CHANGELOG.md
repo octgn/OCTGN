@@ -1,7 +1,14 @@
+#3.0.1.5:
++ Fixed font permission issue with UAC
++ New database rebuild table
++ Supports help.txt documents
++ Fixed deck editor display empty fields on a deleted game
+
 #3.0.1.4:
 
 + Fixed hosted games not showing up
 + Fixed bug when switching filter
++ Optional custom font support
 
 #3.0.1.3:
 

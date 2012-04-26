@@ -88,7 +88,11 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
-            if (!PartExists("http://schemas.octgn.org/game/rules")) Rules.Visibility = Visibility.Hidden;
+            if (!PartExists("http://schemas.octgn.org/game/rules"))
+            {
+                Rules.Visibility = Visibility.Hidden;
+                Help.Visibility = Visibility.Hidden;
+            }
             if (PartExists("http://schemas.octgn.info/game/font")) 
                 ExtractFont("http://schemas.octgn.info/game/font");
 
@@ -118,7 +122,8 @@ namespace Octgn.Play
                 {
                     if (!package.PartExists(relationship.TargetUri)) continue;
                     PackagePart definition = package.GetPart(relationship.TargetUri);
-                    ExtractPart(definition, Directory.GetCurrentDirectory() + "\\temp.ttf", relationship);                    
+                    string targetDir = Path.Combine(SimpleConfig.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
+                    ExtractPart(definition, targetDir + "\\temp.ttf", relationship);                    
                 }                                
             }
             UpdateFont();
@@ -126,7 +131,7 @@ namespace Octgn.Play
 
         private void UpdateFont()
         {
-            string curDir = Directory.GetCurrentDirectory();
+            string curDir = Path.Combine(SimpleConfig.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
             string uri = "file:///" + curDir.Replace('\\', '/') + "/#";
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
             System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
@@ -538,10 +543,21 @@ namespace Octgn.Play
             ribbon.SelectedItem = limitedTab;
         }
 
+        public static string txt = "rul";
+
         private void ShowRules(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             var wnd = new RulesWindow {Owner = this};
+            txt = "rul";
+            wnd.ShowDialog();
+        }
+
+        private void ShowHelp(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var wnd = new RulesWindow { Owner = this };
+            txt = "hlp";
             wnd.ShowDialog();
         }
 
