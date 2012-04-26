@@ -57,6 +57,7 @@ namespace Octgn
             }
             return ret;
         }
+        
         public static void setFilterGame(string name, bool value)
         {
             SimpleConfig.WriteValue("FilterGames_" + name, value.ToString(CultureInfo.InvariantCulture));
