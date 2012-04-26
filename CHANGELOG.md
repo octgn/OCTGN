@@ -2,6 +2,7 @@
 + Fixed font permission issue with UAC
 + New database rebuild table
 + Supports help.txt documents
++ Fixed deck editor display empty fields on a deleted game
 
 #3.0.1.4:
 
