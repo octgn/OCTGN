@@ -43,8 +43,13 @@ Section ""
   ${If} ${HasDotNet4.0}
     DetailPrint "Microsoft .NET Framework 4.0 installed."
   ${Else}
-    DetailPrint "Microsoft .NET Framework 4.0 missing."
-    !insertmacro GetDotNet
+    ${If} ${DOTNETVER_4_0} HasDotNetClientProfile 1
+        DetailPrint "Microsoft .NET Framework 4.0 (Client Profile) available."
+	${Else}
+		DetailPrint "Microsoft .NET Framework 4.0 (Client Profile) missing."
+		!insertmacro GetDotNet
+    ${EndIf}
+    
   ${EndIf}
   !insertmacro GetVC++
 SectionEnd
