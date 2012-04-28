@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Text;
 using System.Windows;
@@ -93,11 +93,6 @@ namespace Octgn.DeckBuilder
             if (RemoveFilter != null)
                 RemoveFilter(TemplatedParent, e);
         }
-
-        private void ComparisonTextKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.OemOpenBrackets || e.Key == Key.OemCloseBrackets) e.Handled = true;
-        }
     }
 
     internal class SqlComparison
@@ -113,9 +108,46 @@ namespace Octgn.DeckBuilder
 
         public string Name { get; protected set; }
 
+        /// <summary>
+        /// Escapes special SQL characters like '*%[]
+        /// </summary>
+        /// <param name="original">the unescaped character</param>
+        /// <returns>The escaped replacement string</returns>
+        protected String EscapeChar(char original)
+        {
+            switch (original)
+            {
+                case '\'':
+                    return "''";
+                
+                case '*':
+                    return "[*]";
+                    
+                case '%':
+                    return "[%]";
+                    
+                case '[':
+                    return "[[]";
+                    
+                case ']':
+                    return "[]]";
+                    
+                default:
+                    return original.ToString();
+            }
+        }
+        
         public virtual string GetSql(string field, string value)
         {
-            if (EscapeQuotes) value = value.Replace("'", "''");
+            if (EscapeQuotes)
+            {
+                StringBuilder strb = new StringBuilder();
+                foreach (char c in value)
+                {
+                    strb.Append(EscapeChar(c));
+                }
+                value = strb.ToString();
+            }
             return string.Format(SqlFormat, field, value);
         }
     }
@@ -151,7 +183,7 @@ namespace Octgn.DeckBuilder
             foreach (char c in value)
             {
                 if (sb.Length > 0) sb.AppendFormat(",");
-                sb.AppendFormat("'{0}'", c == '\'' ? "''" : (object) c);
+                sb.AppendFormat("'{0}'", EscapeChar(c));
             }
             return string.Format(SqlFormat, field, sb);
         }

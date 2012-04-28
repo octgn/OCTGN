@@ -1,10 +1,10 @@
-﻿<UserControl x:Class="Octgn.DeckBuilder.FilterControl"
+<UserControl x:Class="Octgn.DeckBuilder.FilterControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <StackPanel Orientation="Horizontal">
     <TextBlock Width="150" Margin="1,1,10,1" Text="{Binding Name}" FontWeight="Bold" />
     <ComboBox x:Name="comparisonList" Width="100" Margin="1" DisplayMemberPath="Name" />
-    <TextBox x:Name="comparisonText" Width="150" Margin="11,1,1,1" KeyDown="ComparisonTextKeyDown" />
+    <TextBox x:Name="comparisonText" Width="150" Margin="11,1,1,1" />
     <Button VerticalAlignment="Center" Margin="5,0,2,0" Cursor="Hand" Click="RemoveClicked">
       <Button.Template>
         <ControlTemplate>
