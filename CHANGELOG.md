@@ -1,3 +1,31 @@
+#3.0.1.6:
++ Changed .net framework requirements from full to client profile.
+
+#3.0.1.5:
++ Fixed font permission issue with UAC
++ New database rebuild table
++ Supports help.txt documents
++ Fixed deck editor display empty fields on a deleted game
+
+#3.0.1.4:
+
++ Fixed hosted games not showing up
++ Fixed bug when switching filter
++ Optional custom font support
+
+#3.0.1.3:
+
++ Problem with two OCTGN's open at once, booting eachother off fixed
++ Trim debug window so it doesn't overflow
++ Fixed up SimpleConfig
++ Chat topic can now be set by chat owners, and exists in Lobby chat
++ Remembers if you checked Two-Sided Table
++ Default game name, and remembers last game name
++ Announcements from server is now possible
++ Save password feature fixed
++ Game run time fixed
++ Games not refreshing fixed
+
 #3.0.1.2:
 
 + Added option in File menu to disable installing sets/defs on startup

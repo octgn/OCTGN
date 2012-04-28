@@ -57,9 +57,14 @@ namespace Skylabs.Lobby
                     }
                     break;
                 case MessageType.error:
+                {
+                    var nc = GetRoom(new NewUser(msg.From.Bare) , true);
+                    nc.OnMessage(this , msg);
                     break;
+                }
                 case MessageType.chat:
-                    switch (msg.Chatstate)
+                {
+                    switch(msg.Chatstate)
                     {
                         case Chatstate.None:
                             var nc = GetRoom(new NewUser(msg.From.Bare));
@@ -80,6 +85,7 @@ namespace Skylabs.Lobby
                             throw new ArgumentOutOfRangeException();
                     }
                     break;
+                }
                 case MessageType.groupchat:
                 {
                     var nc = GetRoom(new NewUser(msg.From.Bare) , true);

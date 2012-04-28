@@ -283,6 +283,21 @@ namespace Skylabs.Lobby
                 _rwLock.ExitWriteLock();
             }
         }
+        
+        public T[] ToArray()
+        {
+            _rwLock.EnterWriteLock();
+            T[] ret = null;
+            try
+            {
+                ret = _list.ToArray();
+            }
+            finally
+            {
+                _rwLock.ExitWriteLock();
+            }
+            return ret;
+        }
 
         public void Update(T value)
         {

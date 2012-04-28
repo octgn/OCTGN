@@ -13,7 +13,7 @@ namespace Octgn.Extentions
         public static string Decrypt(this string text)
         {
             RIPEMD160 hash = RIPEMD160.Create();
-            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(SimpleConfig.ReadValue("Nickname") ?? "null"));
+            byte[] hasher = hash.ComputeHash(Encoding.Unicode.GetBytes(Prefs.Username));
             text = Cryptor.Decrypt(text, BitConverter.ToString(hasher));
             return text;
         }

@@ -22,8 +22,9 @@ namespace Skylabs.Lobby
         #region Enums
             public enum RegisterResults{ConnectionError,Success,UsernameTaken,UsernameInvalid,PasswordFailure}
             public enum LoginResults{ConnectionError,Success,Failure}
-            public enum DataRecType{FriendList,MyInfo,GameList,HostedGameReady,GamesNeedRefresh}
+            public enum DataRecType{FriendList,MyInfo,GameList,HostedGameReady,GamesNeedRefresh,Announcement}
             public enum LoginResult{Success,Failure,Banned,WaitingForResponse};
+            public enum LobbyMessageType { Standard, Error, Topic };
         #endregion
         #region Delegates
             public delegate void dRegisterComplete(object sender, RegisterResults results);
@@ -59,6 +60,7 @@ namespace Skylabs.Lobby
         public NewUser Me { get; private set; }
         public Chat Chatting { get; set; }
         public int CurrentHostedGamePort { get; set; }
+        public bool DisconnectedBecauseConnectionReplaced { get; set; }
 
         public UserStatus Status
         {
@@ -80,6 +82,7 @@ namespace Skylabs.Lobby
                 Xmpp.Close();
                 Xmpp = null;
             }
+            DisconnectedBecauseConnectionReplaced = false;
             Xmpp = new XmppClientConnection("skylabsonline.com");
             Xmpp.OnRegistered += XmppOnOnRegistered;
             Xmpp.OnRegisterError += XmppOnOnRegisterError;
@@ -114,6 +117,8 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnStreamError(object sender, Element element)
         {
+            var textTag = element.GetTag("text");
+            if (!String.IsNullOrWhiteSpace(textTag) && textTag.Trim().ToLower() == "replaced by new connection") DisconnectedBecauseConnectionReplaced = true;
             Trace.WriteLine("[Xmpp]StreamError: " + element);
         }
 
@@ -134,12 +139,16 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnWriteXml(object sender, string xml)
         {
+#if(FDEBUG)
             Trace.WriteLine("[Xmpp]out: " + xml);
+#endif
         }
 
         private void XmppOnOnReadXml(object sender , string xml)
         {
+#if(FDEBUG)
             Trace.WriteLine("[Xmpp]in: " + xml);
+#endif
         }
 
         private void XmppOnOnIq(object sender, IQ iq)
@@ -195,6 +204,7 @@ namespace Skylabs.Lobby
                 {
                     if(pres.From.Server == "conference.skylabsonline.com")
                     {
+                        if (pres.MucUser.Item.Jid == null) break;
                         if (pres.MucUser.Item.Jid.Bare == Me.User.Bare) break;
                         var rm = Chatting.GetRoom(new NewUser(pres.From),true);
                         rm.UserLeft(new NewUser(pres.MucUser.Item.Jid));
@@ -268,6 +278,16 @@ namespace Skylabs.Lobby
                 {
                     if(OnDataRecieved!=null)
                         OnDataRecieved.Invoke(this,DataRecType.GamesNeedRefresh,null);
+                }
+                else if(msg.From.Bare.ToLower() == Xmpp.MyJID.Server.ToLower())
+                {
+                    if (msg.Subject == null) msg.Subject = "";
+                    if (msg.Body == null) msg.Body = "";
+                    var d = new Dictionary<string , string>();
+                    d["Message"] = msg.Body;
+                    d["Subject"] = msg.Subject;
+                    if(OnDataRecieved != null)
+                        OnDataRecieved.Invoke(this,DataRecType.Announcement, d);
                 }
             }
         }

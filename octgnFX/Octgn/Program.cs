@@ -100,8 +100,7 @@ namespace Octgn
             if (_locationUpdating) return;
             if (LauncherWindow == null || !LauncherWindow.IsLoaded) return;
             _locationUpdating = true;
-            SimpleConfig.WriteValue("LoginLeftLoc", LauncherWindow.Left.ToString(CultureInfo.InvariantCulture));
-            SimpleConfig.WriteValue("LoginTopLoc", LauncherWindow.Top.ToString(CultureInfo.InvariantCulture));
+            Prefs.LoginLocation = new Point(LauncherWindow.Left,LauncherWindow.Top);
             _locationUpdating = false;
         }
 

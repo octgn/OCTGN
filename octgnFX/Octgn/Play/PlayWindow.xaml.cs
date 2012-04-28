@@ -84,9 +84,15 @@ namespace Octgn.Play
             // Solve various issues, like disabled menus or non-available keyboard shortcuts
 
             GroupControl.groupFont = new FontFamily("Segoe UI");
+            GroupControl.fontsize = 12;
             chat.output.FontFamily = new FontFamily("Seqoe UI");
+            chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
-            if (!PartExists("http://schemas.octgn.org/game/rules")) Rules.Visibility = Visibility.Hidden;
+            if (!PartExists("http://schemas.octgn.org/game/rules"))
+            {
+                Rules.Visibility = Visibility.Hidden;
+                Help.Visibility = Visibility.Hidden;
+            }
             if (PartExists("http://schemas.octgn.info/game/font")) 
                 ExtractFont("http://schemas.octgn.info/game/font");
 
@@ -116,7 +122,8 @@ namespace Octgn.Play
                 {
                     if (!package.PartExists(relationship.TargetUri)) continue;
                     PackagePart definition = package.GetPart(relationship.TargetUri);
-                    ExtractPart(definition, Directory.GetCurrentDirectory() + "\\temp.ttf", relationship);                    
+                    string targetDir = Path.Combine(SimpleConfig.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
+                    ExtractPart(definition, targetDir + "\\temp.ttf", relationship);                    
                 }                                
             }
             UpdateFont();
@@ -124,7 +131,7 @@ namespace Octgn.Play
 
         private void UpdateFont()
         {
-            string curDir = Directory.GetCurrentDirectory();
+            string curDir = Path.Combine(SimpleConfig.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
             string uri = "file:///" + curDir.Replace('\\', '/') + "/#";
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
             System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
@@ -145,10 +152,24 @@ namespace Octgn.Play
             // watermark = type to chat (ctrl+t)
             // output = chatbox
 
+            int chatsize = 12;
+            int fontsize = 12;
+            foreach (GlobalVariableDef varD in Program.Game.Definition.GlobalVariables)
+            {
+                if (varD.Name == "chatsize")
+                    chatsize = Convert.ToInt16(varD.Value);
+                if (varD.Name == "fontsize")
+                    fontsize = Convert.ToInt16(varD.Value);
+            }
+                
             chat.watermark.FontFamily = new FontFamily(uri + context.Families[0].Name);
             GroupControl.groupFont = new FontFamily(uri + context.Families[0].Name);
+            GroupControl.fontsize = fontsize;
             if (inchat)
+            {
                 chat.output.FontFamily = new FontFamily(uri + chatname.Families[0].Name);
+                chat.output.FontSize = chatsize;
+            }
         }
 
         private Boolean PartExists(string schema)
@@ -283,11 +304,11 @@ namespace Octgn.Play
             var ofd = new OpenFileDialog
                           {
                               Filter = "Octgn deck files (*.o8d) | *.o8d",
-                              InitialDirectory = SimpleConfig.ReadValue("lastFolder")
+                              InitialDirectory = Prefs.LastFolder
                           };
             //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
             if (ofd.ShowDialog() != true) return;
-            SimpleConfig.WriteValue("lastFolder", Path.GetDirectoryName(ofd.FileName));
+            Prefs.LastFolder = Path.GetDirectoryName(ofd.FileName);
             // Try to load the file contents
             try
             {
@@ -522,10 +543,21 @@ namespace Octgn.Play
             ribbon.SelectedItem = limitedTab;
         }
 
+        public static string txt = "rul";
+
         private void ShowRules(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
             var wnd = new RulesWindow {Owner = this};
+            txt = "rul";
+            wnd.ShowDialog();
+        }
+
+        private void ShowHelp(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var wnd = new RulesWindow { Owner = this };
+            txt = "hlp";
             wnd.ShowDialog();
         }
 

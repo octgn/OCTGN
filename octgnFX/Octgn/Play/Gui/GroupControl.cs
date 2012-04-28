@@ -37,6 +37,7 @@ namespace Octgn.Play.Gui
         private ActionDef _defaultCardAction, _defaultGroupAction;
         private int _turnAnimationTimestamp, _turnAnimationDelay;
         public static FontFamily groupFont;
+        public static int fontsize;
 
         public Group Group
         {
@@ -254,6 +255,7 @@ namespace Octgn.Play.Gui
             ContextMenu.UpdateLayout(); // Required if the ContextMenu was already open
             ContextMenu.IsOpen = true;
             ContextMenu.FontFamily = groupFont;
+            ContextMenu.FontSize = fontsize;
         }
 
         private void CreateContextMenus()

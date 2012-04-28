@@ -59,13 +59,13 @@ namespace Octgn.Launcher
                                   {Interval = new TimeSpan(0, 0, 0, 0, 100)};
             versionText.Text = string.Format("Version {0}", OctgnApp.OctgnVersion.ToString(4));
             _animationTimer.Tick += HandleAnimationTick;
-            string password = SimpleConfig.ReadValue("Password");
+            string password = Prefs.Password;
             if (password != null)
             {
                 passwordBox1.Password = password.Decrypt();
                 cbSavePassword.IsChecked = true;
             }
-            textBox1.Text = SimpleConfig.ReadValue("Username");
+            textBox1.Text = Prefs.Username;
             Program.LobbyClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state);
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
             LazyAsync.Invoke(GetTwitterStuff);
@@ -274,12 +274,11 @@ namespace Octgn.Launcher
                                                     switch (success)
                                                     {
                                                         case Skylabs.Lobby.Client.LoginResult.Success:
-                                                            SimpleConfig.WriteValue("Password",
-                                                                                    cbSavePassword.IsChecked == true
-                                                                                        ? passwordBox1.Password.Encrypt()
-                                                                                        : "");
-                                                            SimpleConfig.WriteValue("Username", textBox1.Text);
-                                                            SimpleConfig.WriteValue("Nickname",textBox1.Text);
+                                                            Prefs.Password = cbSavePassword.IsChecked == true
+                                                                                 ? passwordBox1.Password.Encrypt()
+                                                                                 : "";
+                                                            Prefs.Username = textBox1.Text;
+                                                            Prefs.Nickname = textBox1.Text;
                                                             Program.MainWindow = new Windows.Main();
                                                             Program.MainWindow.Show();
                                                             Application.Current.MainWindow = Program.MainWindow;
@@ -440,9 +439,7 @@ namespace Octgn.Launcher
             private void btnRegister_Click(object sender, RoutedEventArgs e){Program.LauncherWindow.Navigate(new Register());}
             private void TextBox1KeyUp(object sender, KeyEventArgs e)
             {
-                if (cbSavePassword.IsChecked != true) return;
                 cbSavePassword.IsChecked = false;
-                SimpleConfig.WriteValue("Password", "");
             }
             private void PasswordBox1KeyUp(object sender, KeyEventArgs e)
             {
@@ -453,7 +450,6 @@ namespace Octgn.Launcher
                 else if (cbSavePassword.IsChecked == true)
                 {
                     cbSavePassword.IsChecked = false;
-                    SimpleConfig.WriteValue("Password", "");
                 }
             }
         #endregion
@@ -467,7 +463,7 @@ namespace Octgn.Launcher
             private void PageLoaded(object sender, RoutedEventArgs e)
             {
                 //TODO Check for server here
-                menuInstallOnBoot.IsChecked = SimpleConfig.InstallOnBoot;
+                menuInstallOnBoot.IsChecked = Prefs.InstallOnBoot;
             }
             private void LauncherWindowClosing(object sender, CancelEventArgs e){if (_isLoggingIn)e.Cancel = true;}
             private void MenuExitClick(object sender, RoutedEventArgs e){if (!_isLoggingIn)Program.Exit();}
@@ -482,7 +478,7 @@ namespace Octgn.Launcher
                 {
                     if(pf.SelectedPath.ToLower() != GamesRepository.BasePath.ToLower())
                     {
-                        SimpleConfig.WriteValue("datadirectory",pf.SelectedPath);
+                        Prefs.DataDirectory = pf.SelectedPath;
                         var asm = System.Reflection.Assembly.GetExecutingAssembly();
                         var thispath = asm.Location;
                         Program.Exit();
@@ -496,11 +492,11 @@ namespace Octgn.Launcher
                 }
             }
 
-            private void menuInstallOnBoot_Checked(object sender, RoutedEventArgs e) { SimpleConfig.InstallOnBoot = menuInstallOnBoot.IsChecked; }
+            private void menuInstallOnBoot_Checked(object sender, RoutedEventArgs e) { Prefs.InstallOnBoot = menuInstallOnBoot.IsChecked; }
 
             private void menuInstallOnBoot_Unchecked(object sender, RoutedEventArgs e)
             {
-                SimpleConfig.InstallOnBoot = menuInstallOnBoot.IsChecked;
+                Prefs.InstallOnBoot = menuInstallOnBoot.IsChecked;
             }
 
     }

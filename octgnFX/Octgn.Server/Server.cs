@@ -83,7 +83,7 @@ namespace Octgn.Server
         {
             while (!_closed)
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(20000);
                 lock (_clients)
                 {
                     if (_clients.Count == 0 )

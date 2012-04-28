@@ -106,6 +106,7 @@ namespace Octgn.Windows
                 switch(results)
                 {
                     case Client.LoginResults.Success:
+                        if (Program.LobbyClient.DisconnectedBecauseConnectionReplaced) Canceled = false;
                         Connected = true;
                         this.Close();
                         break;

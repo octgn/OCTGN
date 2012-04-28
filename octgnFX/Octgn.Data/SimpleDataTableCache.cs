@@ -37,7 +37,7 @@ namespace Octgn.Data
 
         private string GetPath()
         {
-            string rootPath = SimpleConfig.ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn"));
+            string rootPath = SimpleConfig.DataDirectory;
             string cacheDir = Path.Combine(rootPath, "Cache");
             string sealedDir = Path.Combine(cacheDir, "Sealed");
 
@@ -46,7 +46,7 @@ namespace Octgn.Data
 
         private void EnsurePathExists()
         {
-            string rootPath = SimpleConfig.ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn"));
+            string rootPath = SimpleConfig.DataDirectory;
             string cacheDir = Path.Combine(rootPath, "Cache");
             string sealedDir = Path.Combine(cacheDir, "Sealed");
             if(!Directory.Exists(cacheDir))
@@ -121,7 +121,7 @@ namespace Octgn.Data
 
         public static void ClearCache()
         {
-            string rootPath = SimpleConfig.ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn"));
+            string rootPath = SimpleConfig.DataDirectory;
             string cacheDir = Path.Combine(rootPath, "Cache");
             string sealedDir = Path.Combine(cacheDir, "Sealed");
             if (Directory.GetFiles(sealedDir).Length > 0)
@@ -137,7 +137,7 @@ namespace Octgn.Data
         {
             bool ret = false;
 
-            string rootPath = SimpleConfig.ReadValue("datadirectory", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn"));
+            string rootPath = SimpleConfig.DataDirectory;
             string cacheDir = Path.Combine(rootPath, "Cache");
             if (!Directory.Exists(cacheDir))
             {

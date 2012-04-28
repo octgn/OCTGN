@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -108,25 +109,54 @@ namespace Octgn.Windows
         {
 
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
-            Dispatcher.Invoke(new Action(() =>
-                                         {
-
-            var win = ReconnectingWindow.Reconnect();
-            if (win.Canceled)
+            if(!Program.LobbyClient.DisconnectedBecauseConnectionReplaced)
             {
-                CloseDownShop(false);
-                return;
-            }
-            Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+                Dispatcher.Invoke(new Action(() =>
+                {
 
-                                         }));
+                    var win = ReconnectingWindow.Reconnect();
+                    if(win.Canceled)
+                    {
+                        CloseDownShop(false);
+                        return;
+                    }
+                    Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+                }));
+            }
+            else
+            {
+                Dispatcher.Invoke(new Action(() =>
+                {
+
+                    CloseDownShop(false);
+                    MessageBox.Show("You have been logged out because you signed in somewhere else.");
+                    Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+                }));                
+            }
         }
 
         private void LobbyClientOnOnDataRecieved(object sender, Skylabs.Lobby.Client.DataRecType type, object data)
         {
             Dispatcher.Invoke(new Action(()=>
             {
-
+                switch(type)
+                {
+                    case Skylabs.Lobby.Client.DataRecType.FriendList:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.MyInfo:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.GameList:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.HostedGameReady:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.GamesNeedRefresh:
+                        break;
+                    case Skylabs.Lobby.Client.DataRecType.Announcement:
+                        var d = data as Dictionary<String , String>;
+                        if(d != null)
+                            MessageBox.Show(d["Message"] , d["Subject"] , MessageBoxButton.OK , MessageBoxImage.Exclamation);
+                        break;
+                }
                 tbStatus.Text = Program.LobbyClient.CustomStatus;
                 switch(Program.LobbyClient.Status)
                 {
@@ -149,7 +179,7 @@ namespace Octgn.Windows
                         rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
                         break;
                 }
-                SimpleConfig.WriteValue("Nickname", Program.LobbyClient.Me.User.User);
+                Prefs.Nickname = Program.LobbyClient.Me.User.User;
             }
             ));
         }
@@ -180,8 +210,7 @@ namespace Octgn.Windows
                                                                       ConvertFrom(g.GetCardBackUri()) as
                                                                   System.Windows.Media.ImageSource
                                                           };
-                string s = SimpleConfig.ReadValue("FilterGames_" + g.Name);
-                h.IsChecked = s == null || Convert.ToBoolean(s);
+                h.IsChecked = Prefs.getFilterGame(g.Name);
                 h.Checked += GameFilterItem_Checked;
                 h.Unchecked += GameFilterItem_Unchecked;
                 bFilterGames.Items.Add(h);
@@ -203,7 +232,7 @@ namespace Octgn.Windows
 
         void GameFiltered(Controls.HostedGameListFilterItem sender, Boolean show)
         {
-            SimpleConfig.WriteValue("FilterGames_" + sender.Label, show.ToString());
+            Prefs.setFilterGame(sender.Label,show);
             if (frame1.Content.GetType() != typeof (HostedGameList)) return;
             HostedGameList hostedGameList = frame1.Content as HostedGameList;
             if (hostedGameList != null)
@@ -263,14 +292,13 @@ namespace Octgn.Windows
         
         private void MainInitialized(object sender, EventArgs e)
         {
-            Left = double.Parse(SimpleConfig.ReadValue("MainLeftLoc", "100"));
-            Top = double.Parse(SimpleConfig.ReadValue("MainTopLoc", "100"));
+            Left = Prefs.MainLocation.X;
+            Top = Prefs.MainLocation.Y;
         }
 
         private void SaveLocation()
         {
-            SimpleConfig.WriteValue("MainLeftLoc", Left.ToString(CultureInfo.InvariantCulture));
-            SimpleConfig.WriteValue("MainTopLoc", Top.ToString(CultureInfo.InvariantCulture));
+            Prefs.MainLocation = new System.Windows.Point(Left,Top);
         }
 
         private void SystemTrayIconDoubleClick(object sender, EventArgs e)

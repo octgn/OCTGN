@@ -20,7 +20,7 @@ namespace Skylabs.Lobby
 {
     public class NewChatRoom: IDisposable,IEquatable<NewChatRoom>,IEqualityComparer
     {
-        public delegate void dMessageReceived(object sender , NewUser from, string message, DateTime rTime);
+        public delegate void dMessageReceived(object sender , NewUser from, string message, DateTime rTime,Client.LobbyMessageType mType = Client.LobbyMessageType.Standard);
 
         public delegate void dUserListChange(object sender,List<NewUser> users );
 
@@ -58,19 +58,51 @@ namespace Skylabs.Lobby
             //Debug.WriteLine("mcall:" + msg);
         }
 
-        public void SendMessage(string message)
+        public void SetTopic(string topic) 
         {
-            NewUser to;
-            to = IsGroupChat ? GroupUser : Users.SingleOrDefault(x => x.User.Bare != _client.Me.User.Bare);
-            if(to == null) return;
-
-            var j = new Jid(to.User );
-            var m = new Message(j , (IsGroupChat)?MessageType.groupchat : MessageType.chat , message);
+            if (!IsGroupChat || GroupUser == null)return;
+            var m = new Message(GroupUser.User.Bare , MessageType.groupchat , "" , topic);
             m.GenerateId();
             m.XEvent = new Event();
             m.XEvent.Delivered = true;
             m.XEvent.Displayed = true;
             _client.Send(m);
+        }
+
+        public void SendMessage(string message)
+        {
+            NewUser to;
+            to = IsGroupChat ? GroupUser : Users.SingleOrDefault(x => x.User.Bare != _client.Me.User.Bare);
+            if(to == null || String.IsNullOrWhiteSpace(message)) return;
+
+            if(message[0] == '/')
+            {
+                message = message.Substring(1);
+                var mend = message.IndexOf(' ');
+                var command = message.Substring(0 , mend).ToLower();
+                var mess = "";
+                if(message.Length > command.Length+1)
+                    mess = message.Substring(mend + 1);
+                switch(command)
+                {
+                    case "topic":
+                    {
+                        SetTopic(mess);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                var j = new Jid(to.User);
+                var m = new Message(j, (IsGroupChat) ? MessageType.groupchat : MessageType.chat, message);
+                m.GenerateId();
+                m.XEvent = new Event();
+                m.XEvent.Delivered = true;
+                m.XEvent.Displayed = true;
+                _client.Send(m);
+            }
+
         }
         public  void OnMessage(object sender , Message msg) 
         {
@@ -81,6 +113,8 @@ namespace Skylabs.Lobby
                 case MessageType.normal:
                     break;
                 case MessageType.error:
+                    if(msg.Error != null && !String.IsNullOrWhiteSpace(msg.Error.ErrorText))
+                        OnMessageRecieved.Invoke(this,new NewUser(msg.From),msg.Error.ErrorText,DateTime.Now,Client.LobbyMessageType.Error );
                     break;
                 case MessageType.chat:
                     switch(msg.Chatstate)
@@ -109,9 +143,22 @@ namespace Skylabs.Lobby
                     {
                         if(msg.From.Bare == GroupUser.User.Bare)
                         {
-                            if(!String.IsNullOrWhiteSpace(msg.Body))
+                            if(!String.IsNullOrWhiteSpace(msg.Subject))
+                            {
+                                if (OnMessageRecieved != null)
+                                    OnMessageRecieved.Invoke(this,
+                                                             new NewUser(
+                                                                 new Jid(msg.From.Resource + "@skylabsonline.com")),
+                                                             msg.Subject, rTime,Client.LobbyMessageType.Topic);                                
+                            }
+                            else if (!String.IsNullOrWhiteSpace(msg.Body))
+                            {
                                 if(OnMessageRecieved != null)
-                                    OnMessageRecieved.Invoke(this,new NewUser(new Jid(msg.From.Resource + "@skylabsonline.com")),msg.Body ,rTime);
+                                    OnMessageRecieved.Invoke(this ,
+                                                             new NewUser(
+                                                                 new Jid(msg.From.Resource + "@skylabsonline.com")) ,
+                                                             msg.Body , rTime);
+                            }
                         }
                     }
                     break;
@@ -168,6 +215,11 @@ namespace Skylabs.Lobby
         {
             long rid1 = -1;
             long rid2 = -1;
+            if ((object.Equals(a, null) && !object.Equals(b, null)) || (object.Equals(b, null) && !object.Equals(a, null))) return false;
+
+            if (!object.Equals(a, null)) rid1 = a.RID;
+            if (!object.Equals(b, null)) rid2 = b.RID;
+            /*
             try
             {
                 rid1 = a.RID;
@@ -178,7 +230,7 @@ namespace Skylabs.Lobby
                 rid2 = b.RID;
             }
             catch {}
-
+            */
             if (rid1 == -1 && rid2 == -1) return true;
             return rid1 == rid2;
         }
