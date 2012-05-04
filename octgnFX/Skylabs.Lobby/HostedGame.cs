@@ -37,7 +37,7 @@ namespace Skylabs.Lobby
 #else
             if(!LocalGame)
             {
-            StandAloneApp.StartInfo.FileName = "/opt/mono-2.10/bin/mono";
+            StandAloneApp.StartInfo.FileName = "mono";
             StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" +
                                                 GameGuid + " -v=" + GameVersion + " -p=" +
                                                 Port.ToString(CultureInfo.InvariantCulture);

@@ -156,7 +156,7 @@ namespace Skylabs.LobbyServer
                             Xmpp.Send(m);
                             var gameMessage = String.Format(" {0} is hosting a game called '{1}'" ,msg.From.User,gameName);
                             m = new Message(new Jid("lobby@conference.server.octgn.info"), msg.To, MessageType.groupchat, gameMessage);
-                            Xmpp.Send(m);
+                            //Xmpp.Send(m);
                             RefreshLists();
                         }
                     }
