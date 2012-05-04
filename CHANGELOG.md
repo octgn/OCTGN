@@ -1,5 +1,7 @@
 #3.0.1.6:
 + Changed .net framework requirements from full to client profile.
++ New server
++ Proper SQL query escaping for Deck Builder
 
 #3.0.1.5:
 + Fixed font permission issue with UAC
