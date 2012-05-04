@@ -83,7 +83,7 @@ namespace Skylabs.Lobby
                 Xmpp = null;
             }
             DisconnectedBecauseConnectionReplaced = false;
-            Xmpp = new XmppClientConnection("skylabsonline.com");
+            Xmpp = new XmppClientConnection("server.octgn.info");
             Xmpp.OnRegistered += XmppOnOnRegistered;
             Xmpp.OnRegisterError += XmppOnOnRegisterError;
             Xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
@@ -193,8 +193,8 @@ namespace Skylabs.Lobby
             }
             switch(pres.Type)
             {
-                case PresenceType.available:                    
-                    if(pres.From.Server == "conference.skylabsonline.com")
+                case PresenceType.available:
+                    if (pres.From.Server == "conference.server.octgn.info")
                     {
                         var rm = Chatting.GetRoom(new NewUser(pres.From), true);
                         rm.AddUser(new NewUser(pres.MucUser.Item.Jid),false);
@@ -202,7 +202,7 @@ namespace Skylabs.Lobby
                 break;
                 case PresenceType.unavailable:
                 {
-                    if(pres.From.Server == "conference.skylabsonline.com")
+                    if (pres.From.Server == "conference.server.octgn.info")
                     {
                         if (pres.MucUser.Item.Jid == null) break;
                         if (pres.MucUser.Item.Jid.Bare == Me.User.Bare) break;
@@ -307,8 +307,8 @@ namespace Skylabs.Lobby
             }
             if(OnDataRecieved != null)
                 OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
-            if(Chatting.Rooms.Count(x=>x.IsGroupChat && x.GroupUser.User.Bare == "lobby@conference.skylabsonline.com") == 0)
-                Xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference.skylabsonline.com"));
+            if (Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.User.Bare == "lobby@conference.server.octgn.info") == 0)
+                Xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference.server.octgn.info"));
         }
 
         private void XmppOnOnRosterItem(object sender, RosterItem item)
@@ -317,7 +317,7 @@ namespace Skylabs.Lobby
             switch(item.Subscription)
             {
                 case SubscriptionType.none:
-                    if (item.Jid.Server == "conference.skylabsonline.com")
+                    if (item.Jid.Server == "conference.server.octgn.info")
                     {
                         Chatting.GetRoom(new NewUser(item.Jid),true);
                     }
@@ -353,7 +353,7 @@ namespace Skylabs.Lobby
         {
             myPresence.Type = PresenceType.available;
             MucManager = new MucManager(Xmpp);
-            Jid room = new Jid("lobby@conference.skylabsonline.com");
+            Jid room = new Jid("lobby@conference.server.octgn.info");
             MucManager.AcceptDefaultConfiguration(room);
             MucManager.JoinRoom(room,Username,Password,false);
             Me = new NewUser(Xmpp.MyJID);
@@ -381,7 +381,7 @@ namespace Skylabs.Lobby
         {
             Vcard v = new Vcard();
             v.AddEmailAddress(new Email(EmailType.HOME, _email,true));
-            v.JabberId = new Jid(this.Username + "@skylabsonline.com");
+            v.JabberId = new Jid(this.Username + "@server.octgn.info");
             VcardIq vc = new VcardIq(IqType.set,v);
             Xmpp.IqGrabber.SendIq(vc);
             if(OnRegisterComplete != null)
@@ -436,14 +436,14 @@ namespace Skylabs.Lobby
         public void BeginHostGame(Game game, string gamename)
         {
             var data = String.Format("{0},:,{1},:,{2}",game.Id.ToString(),game.Version.ToString(),gamename);
-            var m = new Message(new Jid("gameserv@skylabsonline.com"),Me.User,MessageType.normal,data,"hostgame");
+            var m = new Message(new Jid("gameserv@server.octgn.info"), Me.User, MessageType.normal, data, "hostgame");
             m.GenerateId();
             Xmpp.Send(m);
         }
 
         public void BeginGetGameList() 
-        { 
-            var m = new Message(new Jid("gameserv@skylabsonline.com") , MessageType.normal , "" , "gamelist");
+        {
+            var m = new Message(new Jid("gameserv@server.octgn.info"), MessageType.normal, "", "gamelist");
             m.GenerateId();
             Xmpp.Send(m);
         }
@@ -548,7 +548,7 @@ namespace Skylabs.Lobby
         
         public void HostedGameStarted()
         {
-            var m = new Message("gameserv@skylabsonline.com" , MessageType.normal , CurrentHostedGamePort.ToString() ,
+            var m = new Message("gameserv@server.octgn.info", MessageType.normal, CurrentHostedGamePort.ToString(),
                                 "gamestarted");
             Xmpp.Send(m);
         }

@@ -281,7 +281,7 @@ namespace Octgn.Windows
             r.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler
                 (delegate{
                     if (user == Program.LobbyClient.Me.User.User) return;
-                    var room = Program.LobbyClient.Chatting.GetRoom(new NewUser(new Jid(user + "@skylabsonline.com")));
+                    var room = Program.LobbyClient.Chatting.GetRoom(new NewUser(new Jid(user + "@server.octgn.info")));
                     var cw = Program.ChatWindows.SingleOrDefault(x => x.Room.RID == room.RID);
                     if(cw != null)
                         cw.Show();
