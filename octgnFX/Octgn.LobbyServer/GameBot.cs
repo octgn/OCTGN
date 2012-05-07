@@ -91,15 +91,15 @@ namespace Skylabs.LobbyServer
                 case PresenceType.available:
                     if (pres.From.Server == "conference.server.octgn.info")
                     {
-                        if (!_userList.Contains(pres.MucUser.Item.Jid) && pres.MucUser.Item.Jid != Xmpp.MyJID)
-                            _userList.Add(pres.MucUser.Item.Jid);
+                        //if (!_userList.Contains(pres.MucUser.Item.Jid) && pres.MucUser.Item.Jid != Xmpp.MyJID)
+                            //_userList.Add(pres.MucUser.Item.Jid);
                     }
                     break;
                 case PresenceType.unavailable:
                 {
                     if (pres.From.Server == "conference.server.octgn.info")
                     {
-                        _userList.Remove(pres.MucUser.Item.Jid);
+                        //_userList.Remove(pres.MucUser.Item.Jid);
                     }
                     break;
                 }
@@ -157,7 +157,7 @@ namespace Skylabs.LobbyServer
                             var gameMessage = String.Format(" {0} is hosting a game called '{1}'" ,msg.From.User,gameName);
                             m = new Message(new Jid("lobby@conference.server.octgn.info"), msg.To, MessageType.groupchat, gameMessage);
                             //Xmpp.Send(m);
-                            RefreshLists();
+                            //RefreshLists();
                         }
                     }
                     else if(msg.Subject == "gamelist")
@@ -177,7 +177,7 @@ namespace Skylabs.LobbyServer
                         int port = -1;
                         if(Int32.TryParse(msg.Body,out port))
                             Gaming.StartGame(port);
-                        RefreshLists();
+                        //RefreshLists();
                     }
                     break;
                 case MessageType.error:
@@ -218,10 +218,10 @@ namespace Skylabs.LobbyServer
         private static void XmppOnOnLogin(object sender) 
         {
             Trace.WriteLine("[Bot]Login:" );
-            var muc = new MucManager(Xmpp);
-            Jid room = new Jid("lobby@conference.server.octgn.info");
-            muc.AcceptDefaultConfiguration(room);
-            muc.JoinRoom(room, Xmpp.Username, Xmpp.Password, false);
+            //var muc = new MucManager(Xmpp);
+            //Jid room = new Jid("lobby@conference.server.octgn.info");
+            //muc.AcceptDefaultConfiguration(room);
+            //muc.JoinRoom(room, Xmpp.Username, Xmpp.Password, false);
         }
     }
 }
