@@ -7,6 +7,7 @@ using Octgn.Launcher;
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Utils;
+using System.IO;
 
 namespace Octgn.Networking
 {
@@ -173,16 +174,14 @@ namespace Octgn.Networking
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
             if (Program.IsHost)
             {
-                PlaySound();
+                PlaySound(Properties.Resources.knockknock);
             }
         }
 
         System.Media.SoundPlayer snd = null;
-        private void PlaySound()
+        private void PlaySound(Stream sound)
         {
-            System.IO.Stream str = Properties.Resources.knockknock;
-            if(snd == null) 
-                snd = new System.Media.SoundPlayer(str);
+            snd = new System.Media.SoundPlayer(sound);
             snd.Play();
         }
 
@@ -338,6 +337,10 @@ namespace Octgn.Networking
         {
             player.Delete();
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has left the game.", player);
+            if (Program.IsHost)
+            {
+                PlaySound(Properties.Resources.doorclose);
+            }
         }
 
         public void MoveCard(Player player, Card card, Group to, int idx, bool faceUp)

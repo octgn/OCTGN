@@ -89,6 +89,12 @@ namespace Octgn.Properties {
             }
         }
         
+        internal static System.IO.UnmanagedMemoryStream doorclose {
+            get {
+                return ResourceManager.GetStream("doorclose", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap Error {
             get {
                 object obj = ResourceManager.GetObject("Error", resourceCulture);
