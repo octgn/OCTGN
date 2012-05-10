@@ -171,6 +171,19 @@ namespace Octgn.Networking
             // Define the default table side if we are the host
             if (Program.IsHost)
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
+            if (Program.IsHost)
+            {
+                PlaySound();
+            }
+        }
+
+        System.Media.SoundPlayer snd = null;
+        private void PlaySound()
+        {
+            System.IO.Stream str = Properties.Resources.knockknock;
+            if(snd == null) 
+                snd = new System.Media.SoundPlayer(str);
+            snd.Play();
         }
 
         /// <summary>Loads a player deck.</summary>
