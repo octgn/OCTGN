@@ -103,6 +103,12 @@ namespace Octgn.Properties {
             }
         }
         
+        internal static System.IO.UnmanagedMemoryStream knockknock {
+            get {
+                return ResourceManager.GetStream("knockknock", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Octgn.
         /// </summary>
