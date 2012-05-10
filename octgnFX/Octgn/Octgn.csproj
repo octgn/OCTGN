@@ -595,6 +595,7 @@
     <Resource Include="Resources\none.jpg" />
     <Resource Include="Images\stock_flip_horizontally.png" />
     <None Include="Resources\knockknock.wav" />
+    <None Include="Resources\doorclose.wav" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
