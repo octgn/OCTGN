@@ -1,3 +1,7 @@
+#4.0.0.0:
++ Scrapped all OCTGN code.
++ Started using WinForms with MONO
+
 #3.0.1.6:
 + Changed .net framework requirements from full to client profile.
 + New server
