@@ -104,7 +104,7 @@ namespace Octgn.Launcher
                 foreach( var tweet in tweets)
                 {
                     Inline dtime =
-                        new Run(tweet.CreatedAt.ToShortDateString()
+                        new Run(tweet.CreatedAt.ToShortDateString() + "  "
                                 + tweet.CreatedAt.ToShortTimeString());
                     dtime.Foreground =
                         new SolidColorBrush(Colors.Khaki);
