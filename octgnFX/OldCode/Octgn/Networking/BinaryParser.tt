@@ -1,0 +1,164 @@
+﻿<#@ template language="C#" hostspecific="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text" #>
+<#
+  XDocument doc = XDocument.Load(Host.ResolvePath(@"..\..\Octgn.Server\Protocol.xml"));
+#>
+/* 
+ * This file was automatically generated!
+ * Do not modify, changes will get lost when the file is regenerated!
+ */
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Media;
+using Octgn.Play;
+
+namespace Octgn.Networking
+{
+	sealed class BinaryParser
+	{
+		Handler handler;
+		
+		public BinaryParser(Handler handler)
+		{ this.handler = handler; }
+		
+		public void Parse(byte[] data)
+		{
+			MemoryStream stream = new MemoryStream(data);
+			BinaryReader reader = new BinaryReader(stream);
+			short length;
+			Program.Client.Muted = reader.ReadInt32();
+			byte method = reader.ReadByte();
+			switch (method)
+			{
+<#
+  int msgId = -1;
+  PushIndent("\t\t\t\t");
+  foreach (var msg in doc.Root.Elements("msg"))
+  {
+    ++msgId;
+    if ((bool?)msg.Attribute("client") != true) continue;
+    WriteLine("case {0}:", msgId);
+    WriteLine("{");
+    PushIndent("\t");
+    string msgName = msg.Attribute("name").Value;
+    int paramId = 0;
+    foreach (var param in msg.Elements("param"))
+    {
+      string code = paramTypes[param.Attribute("type").Value];
+      WriteLine(code, paramId++, msgName);
+    }    
+    WriteLine("handler.{0}({1});", msgName, BuildParameters(paramId));    
+    WriteLine("break;");
+    PopIndent();
+    WriteLine("}");
+  }
+  PopIndent();
+#>
+		  default:
+			  Debug.WriteLine("[Client Parser] Unknown message (id =" + method + ")");
+				break;
+			}
+			reader.Close();
+		}
+	}
+}
+<#+ 
+  private string BuildParameters(int paramCount)
+  {
+    var sb = new StringBuilder();
+    for (int i = 0; i < paramCount; ++i)
+    {
+      sb.Append("arg").Append(i).Append(", ");
+    }
+    if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
+    return sb.ToString();
+  }
+
+  private Dictionary<string, string> paramTypes = new Dictionary<string, string>()
+  {
+    { "byte", "byte arg{0} = reader.ReadByte();" },
+    { "ushort", "ushort arg{0} = reader.ReadUInt16();" },    
+    { "short", "short arg{0} = reader.ReadInt16();" },
+
+    { "short[]", @"length = reader.ReadInt16();
+short[] arg{0} = new short[length];
+for (int i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadInt16();" },
+
+    { "int", "int arg{0} = reader.ReadInt32();" },
+  
+    { "int[]", @"length = reader.ReadInt16();
+int[] arg{0} = new int[length];
+for (int i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadInt32();" },
+
+    { "ulong", "ulong arg{0} = reader.ReadUInt64();" },
+
+    { "ulong[]", @"length = reader.ReadInt16();
+ulong[] arg{0} = new ulong[length];
+for (int i = 0; i < length; ++i)
+	arg{0}[i] = reader.ReadUInt64();" },
+
+    { "float", "float arg{0} = reader.ReadSingle();" },
+    { "bool", "bool arg{0} = reader.ReadBoolean();" },
+    { "string", "string arg{0} = reader.ReadString();" },
+    { "Version", "Version arg{0} = new Version(reader.ReadString());" },
+    { "Guid", "Guid arg{0} = new Guid(reader.ReadBytes(16));" },
+
+    { "Guid[]", @"length = reader.ReadInt16();
+Guid[] arg{0} = new Guid[length];
+for (int i = 0; i < length; ++i)
+	arg{0}[i] = new Guid(reader.ReadBytes(16));" },
+
+    { "Player", @"Player arg{0} = Player.Find(reader.ReadByte());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Player not found.""); return; }}" },
+
+    { "Player[]", @"length = reader.ReadInt16();
+Player[] arg{0} = new Player[length];
+for (int i = 0; i < length; ++i)
+{{
+  arg{0}[i] = Player.Find(reader.ReadByte());
+  if (arg{0}[i] == null) 
+    Debug.WriteLine(""[{1}] Player not found."");
+}}" },
+
+    { "ControllableObject", @"ControllableObject arg{0} = ControllableObject.Find(reader.ReadInt32());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] ControllableObject not found.""); return; }}" },
+
+    { "Group", @"Group arg{0} = Group.Find(reader.ReadInt32());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Group not found.""); return; }}" },
+
+    { "Group[]", @"length = reader.ReadInt16();
+Group[] arg{0} = new Group[length];
+for (int i = 0; i < length; ++i)
+{{
+  arg{0}[i] = Group.Find(reader.ReadInt32());
+  if (arg{0}[i] == null) 
+    Debug.WriteLine(""[{1}] Group not found."");
+}}" },
+
+    { "Card", @"Card arg{0} = Card.Find(reader.ReadInt32());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Card not found.""); return; }}" },
+
+    { "Counter", @"Counter arg{0} = Counter.Find(reader.ReadInt32());
+if (arg{0} == null)
+{{ Debug.WriteLine(""[{1}] Counter not found.""); return; }}" },
+
+    { "CardOrientation", "CardOrientation arg{0} = (CardOrientation)reader.ReadByte();" },
+
+    { "Color?", @"string temp{0} = reader.ReadString();					
+Color? arg{0} = temp{0} == """" ? (Color?)null : (Color?)ColorConverter.ConvertFromString(temp{0});" }
+  };
+#>

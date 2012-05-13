@@ -1,0 +1,1090 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <UsingTask TaskName="ShaderBuildTask.PixelShaderCompile" AssemblyName="ShaderBuildTask, Version=1.0.3072.18169, Culture=neutral, PublicKeyToken=44e467d1687af125" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}</ProjectGuid>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <RootNamespace>Octgn</RootNamespace>
+    <AssemblyName>OCTGN</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <OutputType>winexe</OutputType>
+    <!-- Most people will use Publish dialog in Visual Studio to increment this -->
+    <StartupObject>Octgn.OctgnApp</StartupObject>
+    <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <ManifestCertificateThumbprint>95EF896D63BAD6C4EA21BEA2E16BEF4003BF8DC2</ManifestCertificateThumbprint>
+    <ManifestKeyFile>OctgnKey.pfx</ManifestKeyFile>
+    <GenerateManifests>false</GenerateManifests>
+    <SignManifests>false</SignManifests>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <ExpressionBlendVersion>4.0.20421.0</ExpressionBlendVersion>
+    <Utf8Output>true</Utf8Output>
+    <PublishUrl>C:\OCTGN FX\Publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://octgn.net/octgn-client/</InstallUrl>
+    <ProductName>OCTGN</ProductName>
+    <PublisherName>OCTGN</PublisherName>
+    <WebPage>publish.htm</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.10.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>true</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>default</LangVersion>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>default</LangVersion>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMode with Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ReleaseMode with Debug\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\OCTGN.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseMode with Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\ReleaseMode with Debug\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\x86\Debug\OCTGN.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <LangVersion>default</LangVersion>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release w Debug vs TestServer|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Release w Debug vs TestServer\</OutputPath>
+    <DefineConstants>TRACE;TestServer</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\OCTGN.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release w Debug vs TestServer|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Release w Debug vs TestServer\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\x86\Debug\OCTGN.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <LangVersion>default</LangVersion>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="agsXMPP">
+      <HintPath>..\Lib\agsXMPP.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython, Version=2.6.10920.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Modules">
+      <HintPath>..\Lib\IronPython.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="LinqToTwitterCP">
+      <HintPath>..\Lib\LinqToTwitterCP.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Scripting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="Polenter.SharpSerializer">
+      <HintPath>..\Lib\Polenter.SharpSerializer.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\RibbonControlsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ChildWindow.cs" />
+    <Compile Include="Controls\ChildWindowManager.cs" />
+    <Compile Include="Controls\CircularProgressBar.xaml.cs">
+      <DependentUpon>CircularProgressBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GroupChatListItem.xaml.cs">
+      <DependentUpon>GroupChatListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HostedGameListFilterItem.xaml.cs">
+      <DependentUpon>HostedGameListFilterItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HostedGameListItem.xaml.cs">
+      <DependentUpon>HostedGameListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FriendRequestNotification.xaml.cs">
+      <DependentUpon>FriendRequestNotification.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FriendListItem.xaml.cs">
+      <DependentUpon>FriendListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GameListItem.xaml.cs">
+      <DependentUpon>GameListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NotificationListItem.xaml.cs">
+      <DependentUpon>NotificationListItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PopupWindowMessage.xaml.cs">
+      <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TabCommands.cs" />
+    <Compile Include="Controls\VirtualizingWrapPanel.cs" />
+    <Compile Include="Extentions\BitmapImageExtensions.cs" />
+    <Compile Include="Networking\IServerCalls.cs">
+      <DependentUpon>IServerCalls.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Play\DefaultMarkerModel.cs" />
+    <Compile Include="Play\DragAdorner.cs" />
+    <Compile Include="Utils\CacheTraceListener.cs" />
+    <Compile Include="Utils\Cryptor.cs" />
+    <Compile Include="Database.cs" />
+    <Compile Include="Definitions\GlobalVariableDef.cs" />
+    <Compile Include="DeckBuilder\DeckBuilderWindow.xaml.cs">
+      <DependentUpon>DeckBuilderWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\FilterControl.xaml.cs">
+      <DependentUpon>FilterControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\SearchControl.xaml.cs">
+      <DependentUpon>SearchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DeckBuilder\SetPropertyDef.cs" />
+    <Compile Include="Definitions\ActionDef.cs" />
+    <Compile Include="Definitions\CardDef.cs" />
+    <Compile Include="Definitions\CounterDef.cs" />
+    <Compile Include="Definitions\DeckDef.cs" />
+    <Compile Include="Definitions\GameDef.cs" />
+    <Compile Include="Definitions\GroupDef.cs" />
+    <Compile Include="Definitions\LocalDef.cs" />
+    <Compile Include="Definitions\ScriptDef.cs" />
+    <Compile Include="Definitions\VariableDef.cs" />
+    <Compile Include="Extentions\String.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="Utils\BigInteger.cs" />
+    <Compile Include="Launcher\ConnectLocalGame.xaml.cs">
+      <DependentUpon>ConnectLocalGame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\ContactList.xaml.cs">
+      <DependentUpon>ContactList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\AddFriendPage.xaml.cs">
+      <DependentUpon>AddFriendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\HostedGameList.xaml.cs">
+      <DependentUpon>HostedGameList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\HostGameSettings.xaml.cs">
+      <DependentUpon>HostGameSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\NotificationList.xaml.cs">
+      <DependentUpon>NotificationList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\Register.xaml.cs">
+      <DependentUpon>Register.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\SetList.xaml.cs">
+      <DependentUpon>SetList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\GameList.xaml.cs">
+      <DependentUpon>GameList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\Login.xaml.cs">
+      <DependentUpon>Login.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\GameSelector.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>GameSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Launcher\StartGame.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>StartGame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Networking\BinaryParser.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BinaryParser.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Networking\BinaryStubs.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BinaryStubs.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Networking\ClientHandler.cs" />
+    <Compile Include="Utils\Crypto.cs" />
+    <Compile Include="Networking\Mute.cs" />
+    <Compile Include="Networking\XmlParser.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XmlParser.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Networking\XmlStubs.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XmlStubs.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Actions\Action.cs" />
+    <Compile Include="Play\Actions\Create.cs" />
+    <Compile Include="Play\Actions\Move.cs" />
+    <Compile Include="Play\Actions\Rotate.cs" />
+    <Compile Include="Play\Actions\Target.cs" />
+    <Compile Include="Play\Actions\Turn.cs" />
+    <Compile Include="Play\Counter.cs" />
+    <Compile Include="Play\Dialogs\InteractiveConsole.xaml.cs">
+      <DependentUpon>InteractiveConsole.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\PickCardsDialog.xaml.cs">
+      <DependentUpon>PickCardsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\RulesWindow.xaml.cs">
+      <DependentUpon>RulesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Events.cs" />
+    <Compile Include="Play\Gui\Adorners\ArrowAdorner.cs" />
+    <Compile Include="Play\Gui\Adorners\SelectAdorner.cs" />
+    <Compile Include="Play\Gui\ArrowControl.cs" />
+    <Compile Include="Play\Gui\CardControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>CardControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\Adorners\CardDragAdorner.cs" />
+    <Compile Include="Play\Gui\CardEvents.cs" />
+    <Compile Include="Play\Gui\CardListControl.xaml.cs">
+      <DependentUpon>CardListControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Dialogs\LimitedDialog.xaml.cs">
+      <DependentUpon>LimitedDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\PileBaseControl.cs" />
+    <Compile Include="Play\Gui\PileCollapsedControl.xaml.cs">
+      <DependentUpon>PileCollapsedControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\Commands.cs" />
+    <Compile Include="Play\Gui\Adorners\DragAdorner.cs" />
+    <Compile Include="Play\Gui\DragOperations\DragOperation.cs" />
+    <Compile Include="Play\Gui\FanPanel.cs" />
+    <Compile Include="Play\Gui\GroupControl.cs" />
+    <Compile Include="Play\Gui\GroupWindow.xaml.cs">
+      <DependentUpon>GroupWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\HandControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>HandControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\HslColor.cs" />
+    <Compile Include="Play\Gui\Adorners\InsertAdorner.cs" />
+    <Compile Include="Play\Gui\MarkerControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>MarkerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NumericUpDown.cs" />
+    <Compile Include="Controls\AnimatedWrapPanel.cs" />
+    <Compile Include="Play\Gui\Selection.cs" />
+    <Compile Include="Play\Gui\TableCanvas.cs" />
+    <Compile Include="Controls\TextOrIcon.cs" />
+    <Compile Include="Play\Gui\PileControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>PileControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\PilePanel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Play\Gui\PlayerControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>PlayerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Gui\TableControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TableControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Tooltip.cs" />
+    <Compile Include="Play\Gui\VirtualizingTilePanel.cs" />
+    <Compile Include="Play\Gui\WrapPanel.cs" />
+    <Compile Include="Play\Hand.cs" />
+    <Compile Include="Play\History.cs" />
+    <Compile Include="Play\Marker.cs" />
+    <Compile Include="Play\Pile.cs" />
+    <Compile Include="Play\Table.cs" />
+    <Compile Include="Play\RandomRequest.cs" />
+    <Compile Include="Prefs.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Engine.cs" />
+    <Compile Include="Scripting\ExecutionResult.cs" />
+    <Compile Include="Scripting\OCounter.cs" />
+    <Compile Include="Scripting\OPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Scripting\ScriptApi.cs" />
+    <Compile Include="Scripting\ScriptJob.cs" />
+    <Compile Include="Scripting\Controls\CardDlg.xaml.cs">
+      <DependentUpon>CardDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Controls\InputDlg.xaml.cs">
+      <DependentUpon>InputDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Controls\MarkerDlg.xaml.cs">
+      <DependentUpon>MarkerDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\Controls\Dialogs.cs" />
+    <Compile Include="Networking\ServerErrorEventArgs.cs" />
+    <Compile Include="Networking\Client.cs" />
+    <Compile Include="Play\Card.cs" />
+    <Compile Include="Play\CardIdentity.cs" />
+    <Compile Include="Play\ControllableObject.cs" />
+    <Compile Include="Play\Group.cs" />
+    <Compile Include="Play\Gui\ChatControl.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ChatControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Play\Player.cs" />
+    <Compile Include="Play\PlayWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>PlayWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\GroupVisibility.cs" />
+    <Compile Include="Utils\ImageUtils.cs" />
+    <Compile Include="Extentions\LinqExtensions.cs" />
+    <Compile Include="Utils\Win32.cs" />
+    <Compile Include="Windows\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ChangeSetsProgressDialog.xaml.cs">
+      <DependentUpon>ChangeSetsProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ChatWindow.xaml.cs">
+      <DependentUpon>ChatWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\DWindow.xaml.cs">
+      <DependentUpon>DWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ErrorWindow.xaml.cs">
+      <DependentUpon>ErrorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\LauncherWindow.xaml.cs">
+      <DependentUpon>LauncherWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\MessageWindow.xaml.cs">
+      <DependentUpon>MessageWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PatchDialog.xaml.cs">
+      <DependentUpon>PatchDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\PatchProgressDialog.xaml.cs">
+      <DependentUpon>PatchProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\ReconnectingWindow.xaml.cs">
+      <DependentUpon>ReconnectingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UpdateChecker.xaml.cs">
+      <DependentUpon>UpdateChecker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UpgradeMessage.xaml.cs">
+      <DependentUpon>UpgradeMessage.xaml</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Launcher\Game.xsd">
+      <SubType>
+      </SubType>
+    </EmbeddedResource>
+    <None Include="Networking\BinaryStubs.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryStubs.cs</LastGenOutput>
+    </None>
+    <None Include="Networking\IServerCalls.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IServerCalls.cs</LastGenOutput>
+    </None>
+    <None Include="Networking\XmlParser.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XmlParser.cs</LastGenOutput>
+    </None>
+    <None Include="Networking\XmlStubs.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>XmlStubs.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scripting\PythonAPI.py" />
+    <EmbeddedResource Include="Scripting\CaseInsensitiveDict.py" />
+    <Resource Include="Resources\eye.png" />
+    <Resource Include="Resources\Icons\LoadDeck.png" />
+    <Resource Include="Resources\Icons\LoadLimited.png" />
+    <Resource Include="Resources\Icons\FullScreen.png" />
+    <Resource Include="Resources\Icons\Quit.png" />
+    <Resource Include="Resources\Icons\About.png" />
+    <Resource Include="Resources\Icons\Help.png" />
+    <Resource Include="Resources\Icons\Reset.png" />
+    <Resource Include="Resources\Icons\Ok.png" />
+    <Resource Include="Resources\Icons\Save.png" />
+    <Resource Include="Resources\Icons\PiggyBank.png" />
+    <None Include="Resources\109_AllAnnotations_Error_24x24_72.png" />
+    <Resource Include="Utils\Images\109_AllAnnotations_Error_24x24_721.png" />
+    <Resource Include="Resources\gbreak.png" />
+    <Resource Include="Resources\google.png" />
+    <Resource Include="Resources\logo %281%29.png" />
+    <Resource Include="Resources\logoback.png" />
+    <Resource Include="Resources\logowords.png" />
+    <Resource Include="Resources\close.png" />
+    <Resource Include="Resources\Icons\cards.png" />
+    <Resource Include="Resources\Icons\layer_edit.png" />
+    <Resource Include="Resources\Icons\page_edit.png" />
+    <Resource Include="Resources\Icons\ruby_add.png" />
+    <Resource Include="Resources\Icons\user_add.png" />
+    <Resource Include="Resources\cross.png" />
+    <Resource Include="Resources\uicon.png" />
+    <Resource Include="Resources\statusAway.png" />
+    <Resource Include="Resources\statusDND.png" />
+    <Resource Include="Resources\statusOffline.png" />
+    <Resource Include="Resources\statusOnline.png" />
+    <Resource Include="Resources\Icons\ruby_delete.png" />
+    <Resource Include="Resources\Icons\bullet_arrow_down.png" />
+    <Resource Include="Resources\Icons\image_delete.png" />
+    <Resource Include="Resources\Icons\image_add.png" />
+    <Resource Include="Resources\Icons\image_link.png" />
+    <Resource Include="Resources\Icons\bullet_arrow_down_small.png" />
+    <Resource Include="Resources\Icons\page_edit_small.png" />
+    <Resource Include="Resources\Icons\ruby_add_small.png" />
+    <Resource Include="Resources\Icons\ruby_delete_small.png" />
+    <Resource Include="Resources\Icons\image_add_small.png" />
+    <Resource Include="Resources\Icons\image_delete_small.png" />
+    <Resource Include="Resources\Icons\image_link_small.png" />
+    <Resource Include="Resources\chaticon.png" />
+    <Resource Include="Resources\Icons\console.png" />
+    <Resource Include="Resources\Icons\rules.png" />
+    <Resource Include="Resources\Icons\FilterGames.png" />
+    <Resource Include="Images\Avatar9_80.jpg" />
+    <Resource Include="Images\ralig.png" />
+    <Resource Include="Images\d0c.jpeg" />
+    <Resource Include="Images\GravecorpAvatar.jpg" />
+    <Resource Include="Images\smith_user.png" />
+    <Resource Include="Resources\none.jpg" />
+    <Resource Include="Images\stock_flip_horizontally.png" />
+    <Content Include="Scripting\Lib\abc.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\collections.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\keyword.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\_abcoll.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Launcher\Game.xsx">
+      <DependentUpon>Game.xsd</DependentUpon>
+      <SubType>Designer</SubType>
+    </Resource>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Networking\BinaryParser.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryParser.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Controls\CircularProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GroupChatListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\HostedGameListFilterItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\HostedGameListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\FriendRequestNotification.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\FriendListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GameListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\NotificationListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PopupWindowMessage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DeckBuilder\DeckBuilderWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DeckBuilder\FilterControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DeckBuilder\SearchControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\ConnectLocalGame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\ContactList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\AddFriendPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\HostedGameList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\HostGameSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\NotificationList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\Register.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\SetList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\GameList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\Login.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Launcher\GameSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Launcher\StartGame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Dialogs\InteractiveConsole.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Dialogs\PickCardsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Dialogs\RulesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Gui\CardControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Gui\CardListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Gui\ChatControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Dialogs\LimitedDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Play\Gui\PileCollapsedControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Gui\GroupWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Gui\HandControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Gui\MarkerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Gui\PileControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Gui\PlayerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\Gui\TableControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Play\PlayWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\PlayResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Button.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\CardRun.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\ChildWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\CommonControls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Menu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\NumericUpDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Panel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\ProgressBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\ScrollBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Tabs.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\ChildWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Global.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\NumericUpDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Target.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Scripting\Controls\CardDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Scripting\Controls\InputDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Scripting\Controls\MarkerDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ChangeSetsProgressDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ChatWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\DWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ErrorWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\LauncherWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Main.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\MessageWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\PatchDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\PatchProgressDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\ReconnectingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\UpdateChecker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\UpgradeMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Folder.png" />
+    <Content Include="Resources\Icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Markers\black.png">
+    </Resource>
+    <Resource Include="Resources\Markers\blue.png">
+    </Resource>
+    <Resource Include="Resources\Markers\brown.png">
+    </Resource>
+    <Resource Include="Resources\Markers\green.png">
+    </Resource>
+    <Resource Include="Resources\Markers\orange.png">
+    </Resource>
+    <Resource Include="Resources\Markers\purple.png">
+    </Resource>
+    <Resource Include="Resources\Markers\red.png">
+    </Resource>
+    <Resource Include="Resources\Markers\white.png">
+    </Resource>
+    <Resource Include="Resources\Markers\yellow.png">
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
+      <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
+      <Name>Octgn.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
+      <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>
+      <Name>Octgn.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
+      <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
+      <Name>Skylabs.Lobby</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Front.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Back.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Effects\" />
+    <Folder Include="Server\" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\FileIcons\Deck.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FileIcons\Game.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\FileIcons\Patch.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Resources\Patch.png" />
+    <Content Include="Resources\FileIcons\Set.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <FileAssociation Include=".o8d">
+      <Visible>False</Visible>
+      <Description>OCTGN Deck</Description>
+      <Progid>O2DECK</Progid>
+      <DefaultIcon>Resources\FileIcons\Deck.ico</DefaultIcon>
+    </FileAssociation>
+    <FileAssociation Include=".o8g">
+      <Visible>False</Visible>
+      <Description>OCTGN Game definition</Description>
+      <Progid>O2GAME</Progid>
+      <DefaultIcon>Resources\FileIcons\Game.ico</DefaultIcon>
+    </FileAssociation>
+    <FileAssociation Include=".o8p">
+      <Visible>False</Visible>
+      <Description>OCTGN Patch</Description>
+      <Progid>O2PATCH</Progid>
+      <DefaultIcon>Resources\FileIcons\Patch.ico</DefaultIcon>
+    </FileAssociation>
+    <FileAssociation Include=".o8s">
+      <Visible>False</Visible>
+      <Description>OCTGN Card set</Description>
+      <Progid>O2SET</Progid>
+      <DefaultIcon>Resources\FileIcons\Set.ico</DefaultIcon>
+    </FileAssociation>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="EffectCompile" Condition="'@(Effect)' != '' ">
+    <PixelShaderCompile Sources="@(Effect)">
+      <Output TaskParameter="Outputs" ItemName="Resource" />
+    </PixelShaderCompile>
+  </Target>
+  <PropertyGroup>
+    <!-- Add effect compilation to the PrepareResourcesDependsOn so that the effect fx  get compiled before resources are collected -->
+    <PrepareResourcesDependsOn>EffectCompile;$(PrepareResourcesDependsOn)</PrepareResourcesDependsOn>
+  </PropertyGroup>
+</Project>

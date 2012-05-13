@@ -1,0 +1,217 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">
+
+  <Style TargetType="{x:Type CheckBox}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type CheckBox}">
+          <StackPanel Orientation="Horizontal" Height="{TemplateBinding Height}" Background="Transparent">
+            <Border x:Name="border" Padding="0" VerticalAlignment="Center" Style="{StaticResource ControlBorder}"
+                    Height="16" Width="16">
+              <Path x:Name="mark" Data="M4.3333333,9.0833333 L7.2503335,13.750333 14.916999,0.00033337181"
+                    Margin="1,-3,0,1" Stretch="Fill" Stroke="{StaticResource ColoredGlyphBrush}" StrokeThickness="2"
+                    StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Visibility="Collapsed" />
+            </Border>
+            <ContentPresenter Margin="4,0,0,0" VerticalAlignment="Center" />
+          </StackPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter TargetName="border" Property="Background" Value="{StaticResource DarkGlassPanelBrush}" />
+              <Setter TargetName="mark" Property="Stroke" Value="#FF6C6C6C" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="mark" Property="Visibility" Value="Visible" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type RadioButton}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type RadioButton}">
+          <StackPanel Orientation="Horizontal" Height="{TemplateBinding Height}" Background="Transparent">
+            <Border x:Name="border" Padding="0" Style="{StaticResource ControlBorder}" Width="16" Height="16"
+                    CornerRadius="8">
+              <Ellipse x:Name="mark" Margin="4" Fill="{StaticResource ColoredGlyphBrush}" Visibility="Collapsed" />
+            </Border>
+            <ContentPresenter Margin="4,0,0,0" VerticalAlignment="Center" />
+          </StackPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter TargetName="border" Property="Background" Value="{StaticResource DarkGlassPanelBrush}" />
+              <Setter TargetName="mark" Property="Fill" Value="#FF6C6C6C" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="mark" Property="Visibility" Value="Visible" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="ComboBoxReadonlyToggleButton" TargetType="{x:Type ToggleButton}">
+    <Setter Property="OverridesDefaultStyle" Value="true" />
+    <Setter Property="IsTabStop" Value="false" />
+    <Setter Property="Focusable" Value="false" />
+    <Setter Property="ClickMode" Value="Press" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ToggleButton}">
+          <Border x:Name="outerBorder" Style="{StaticResource PanelControl}"
+                  BorderBrush="{StaticResource RaisedBorderBrush}">
+            <Border x:Name="border" Width="24" HorizontalAlignment="Right" Style="{StaticResource PanelControl}"
+                    BorderBrush="{StaticResource RaisedBorderBrush}" CornerRadius="0,2,2,0" Margin="-1">
+              <Path x:Name="glyph" Data="M 4,4 l4,-4 h-8 Z" Fill="{StaticResource GlyphBrush}"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsChecked" Value="true">
+              <Setter TargetName="glyph" Property="Margin" Value="0,2,0,0" />
+              <Setter TargetName="border" Property="Background" Value="{StaticResource PressedBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+              <Setter TargetName="outerBorder" Property="Background" Value="{StaticResource DarkGlassPanelBrush}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="{x:Type ComboBox}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ComboBox}">
+          <Grid x:Name="grid">
+            <Popup x:Name="PART_Popup" AllowsTransparency="true"
+                   IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}" Margin="1"
+                   PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}" Placement="Bottom">
+              <Microsoft_Windows_Themes:SystemDropShadowChrome x:Name="Shdw" Color="Transparent"
+                                                               MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{Binding ActualWidth, ElementName=grid}">
+                <Border x:Name="DropDownBorder" BorderBrush="#FF727272" BorderThickness="1,0,1,1" Background="White">
+                  <ScrollViewer x:Name="DropDownScrollViewer" RenderOptions.ClearTypeHint="Enabled">
+                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" />
+                  </ScrollViewer>
+                </Border>
+              </Microsoft_Windows_Themes:SystemDropShadowChrome>
+            </Popup>
+            <ToggleButton
+IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+Style="{StaticResource ComboBoxReadonlyToggleButton}" />
+            <ContentPresenter ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Content="{TemplateBinding SelectionBoxItem}"
+                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" IsHitTestVisible="false" Margin="4,2,30,2"
+                              VerticalAlignment="Center" />
+          </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="HasDropShadow" SourceName="PART_Popup" Value="true">
+              <Setter Property="Margin" TargetName="Shdw" Value="0,0,5,5" />
+              <Setter Property="Color" TargetName="Shdw" Value="#71000000" />
+            </Trigger>
+            <Trigger Property="HasItems" Value="false">
+              <Setter Property="Height" TargetName="DropDownBorder" Value="95" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+              <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+            </Trigger>
+            <Trigger Property="IsGrouping" Value="true">
+              <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  <Style TargetType="{x:Type TextBox}" x:Key="LabelBoxUnSelected">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate>
+          <Border x:Name="cBorder" BorderThickness="0" CornerRadius="0" Padding="0" SnapsToDevicePixels="True"
+                  BorderBrush="Transparent" Background="Transparent">
+            <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Foreground" Value="Black" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Style.Resources>
+      <!-- HACK: see TextBlock below -->
+      <Style TargetType="TextBlock">
+        <Setter Property="Effect" Value="{x:Null}" />
+      </Style>
+    </Style.Resources>
+  </Style>
+  <Style TargetType="{x:Type TextBox}" x:Key="{x:Type TextBox}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate>
+          <Border x:Name="cBorder" BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
+                  BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}">
+            <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+              <Setter Property="BorderBrush" TargetName="cBorder">
+                <Setter.Value>
+                  <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                    <GradientStop Color="#FFFF8600" Offset="1.5" />
+                    <GradientStop x:Name="wLine" Color="#FFFF8600" Offset="-0.5" />
+                  </LinearGradientBrush>
+                </Setter.Value>
+              </Setter>
+
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Resources>
+      <!-- HACK: see TextBlock below -->
+      <Style TargetType="TextBlock">
+        <Setter Property="Effect" Value="{x:Null}" />
+      </Style>
+    </Style.Resources>
+  </Style>
+  <Style TargetType="{x:Type PasswordBox}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate>
+          <Border x:Name="cBorder" BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
+                  BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}">
+            <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+              <Setter Property="BorderBrush" TargetName="cBorder">
+                <Setter.Value>
+                  <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                    <GradientStop Color="#FFFF8600" Offset="1.5" />
+                    <GradientStop x:Name="wLine" Color="#FFFF8600" Offset="-0.5" />
+                  </LinearGradientBrush>
+                </Setter.Value>
+              </Setter>
+
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Resources>
+      <!-- HACK: see TextBlock below -->
+      <Style TargetType="TextBlock">
+        <Setter Property="Effect" Value="{x:Null}" />
+      </Style>
+    </Style.Resources>
+  </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,148 @@
+﻿<Window x:Class="Octgn.Play.PlayWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ms="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
+        xmlns:octgn="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play" xmlns:gui="clr-namespace:Octgn.Play.Gui"
+        xmlns:ctrl="clr-namespace:Octgn.Controls" x:Name="self" Title="Octgn" Icon="pack://application:,,,/Resources/Icon.ico"
+        Height="800" Width="900" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True"
+        RenderOptions.BitmapScalingMode="Fant">
+
+  <Window.Resources>
+    <Storyboard x:Key="ImageFadeIn">
+      <DoubleAnimation To="1" Duration="0:0:0.5" Storyboard.TargetProperty="Opacity" />
+    </Storyboard>
+
+    <Storyboard x:Key="ImageFadeOut">
+      <DoubleAnimation To="0" Duration="0:0:0.5" Storyboard.TargetProperty="Opacity" />
+    </Storyboard>
+
+    <play:CanPlayConverter x:Key="CanPlay" />
+
+    <play:ScaleConverter x:Key="Scale" />
+  </Window.Resources>
+
+  <Window.CommandBindings>
+    <CommandBinding Command="gui:Commands.Quit" Executed="Close" />
+    <CommandBinding Command="gui:Commands.LoadDeck" Executed="Open" />
+    <CommandBinding Command="gui:Commands.LimitedGame" Executed="LimitedGame" />
+    <CommandBinding Command="gui:Commands.FullScreen" Executed="ToggleFullScreen" />
+    <CommandBinding Command="gui:Commands.ResetGame" Executed="ResetGame" />
+    <CommandBinding Command="gui:Commands.Chat" Executed="ActivateChat" />
+  </Window.CommandBindings>
+
+  <Grid x:Name="clientArea">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" x:Name="menuRow" />
+      <RowDefinition Height="1*" x:Name="mainRow" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <ms:Ribbon x:Name="ribbon" Margin="0,-22,0,0" MouseEnter="MouseEnteredMenu" MouseLeave="MouseLeftMenu">
+      <ms:Ribbon.Resources>
+        <ms:RibbonGroupSizeDefinition x:Key="BigIcons">
+          <ms:RibbonControlSizeDefinition ImageSize="Large" />
+          <ms:RibbonControlSizeDefinition ImageSize="Large" />
+          <ms:RibbonControlSizeDefinition ImageSize="Large" />
+          <ms:RibbonControlSizeDefinition ImageSize="Large" />
+        </ms:RibbonGroupSizeDefinition>
+      </ms:Ribbon.Resources>
+      <ms:Ribbon.ApplicationMenu>
+        <ms:RibbonApplicationMenu Visibility="Collapsed" />
+      </ms:Ribbon.ApplicationMenu>
+      <ms:RibbonTab Header="Main">
+        <ms:RibbonGroup Header="Deck">
+          <ms:RibbonButton Label="Load deck" LargeImageSource="/Resources/Icons/LoadDeck.png"
+                           Command="gui:Commands.LoadDeck" />
+          <ms:RibbonButton Label="Limited game" LargeImageSource="/Resources/Icons/LoadLimited.png"
+                           Command="gui:Commands.LimitedGame" />
+        </ms:RibbonGroup>
+        <ms:RibbonGroup Header="View">
+          <ms:RibbonToggleButton Label="Full screen" LargeImageSource="/Resources/Icons/FullScreen.png"
+                                 IsChecked="{Binding IsFullScreen, ElementName=self, Mode=OneWay}" Command="gui:Commands.FullScreen" />
+        </ms:RibbonGroup>
+        <ms:RibbonGroup Header="Game">
+          <ms:RibbonButton Label="Reset" LargeImageSource="/Resources/Icons/Reset.png" Command="gui:Commands.ResetGame" />
+          <ms:RibbonButton Label="Quit" LargeImageSource="/Resources/Icons/Quit.png" Command="gui:Commands.Quit" />
+        </ms:RibbonGroup>
+      </ms:RibbonTab>
+      <ms:RibbonTab x:Name="limitedTab" Header="Limited" Visibility="Collapsed">
+        <ms:RibbonGroup Header="End limited">
+          <ms:RibbonButton Label="Load cards" LargeImageSource="/Resources/Icons/Ok.png" Click="LimitedOkClicked" />
+          <ms:RibbonButton Label="Cancel" LargeImageSource="/Resources/Icons/Quit.png" Click="LimitedCancelClicked" />
+        </ms:RibbonGroup>
+        <ms:RibbonGroup Header="Options">
+          <ms:RibbonButton Label="Save deck" LargeImageSource="/Resources/Icons/Save.png" Click="LimitedSaveClicked" />
+        </ms:RibbonGroup>
+      </ms:RibbonTab>
+      <ms:RibbonTab Header="Help">
+        <ms:RibbonGroup>
+          <ms:RibbonButton Label="About Octgn" LargeImageSource="/Resources/Icons/About.png" Click="ShowAboutWindow" />
+          <ms:RibbonButton Label="Console" x:Name="Console" LargeImageSource="/Resources/Icons/console.png"
+                           Click="ConsoleClicked" Visibility="Hidden" />
+          <ms:RibbonButton Label="Game Rules" x:Name="Rules" LargeImageSource="/Resources/Icons/rules.png"
+                           Click="ShowRules" />
+          <ms:RibbonButton Label="Game Help" x:Name="Help" LargeImageSource="/Resources/Icons/rules.png"
+                           Click="ShowHelp" />
+                </ms:RibbonGroup>
+      </ms:RibbonTab>
+    </ms:Ribbon>
+
+    <gui:TableControl Grid.Row="1" x:Name="table" DataContext="{Binding Table}" KeyboardNavigation.IsTabStop="True"
+                      KeyboardNavigation.TabNavigation="Contained" />
+
+    <Decorator Grid.Row="1" x:Name="backstage" Visibility="Collapsed" />
+
+    <Grid Grid.Row="2" Background="{StaticResource WindowBackgroundBrush}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <Border Style="{StaticResource Panel}" Margin="2" Padding="5"
+              MaxHeight="{Binding ElementName=playerTabs, Path=ActualHeight}">
+        <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" Width="300" DisplayKeyboardShortcut="True" />
+      </Border>
+
+      <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1" MinHeight="100"
+                  DataContext="{x:Static play:Player.All}" ItemsSource="{Binding}" SelectedItem="{x:Static play:Player.LocalPlayer}">
+        <TabControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal" Margin="0">
+              <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Focusable="False" />
+              <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"
+                         FontSize="11" Foreground="#282828" Initialized="InitializePlayerSummary" />
+              <ToggleButton VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
+                            IsChecked="{Binding Source={x:Static octgn:Program.Game}, Path=StopTurn}">
+                <ToggleButton.Style>
+                  <MultiBinding Converter="{StaticResource CanPlay}">
+                    <Binding Source="{x:Static octgn:Program.Game}" Path="TurnPlayer" />
+                    <Binding />
+                  </MultiBinding>
+                </ToggleButton.Style>
+              </ToggleButton>
+            </StackPanel>
+          </DataTemplate>
+        </TabControl.ItemTemplate>
+        <TabControl.ContentTemplate>
+          <DataTemplate>
+            <gui:PlayerControl />
+          </DataTemplate>
+        </TabControl.ContentTemplate>
+      </TabControl>
+    </Grid>
+
+    <ctrl:ChildWindowManager x:Name="wndManager" Grid.Row="1" Grid.RowSpan="2" />
+
+    <Decorator x:Name="outerCardViewer" Grid.Row="1" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top"
+               Opacity="0" IsHitTestVisible="False">
+      <Decorator.Effect>
+        <DropShadowEffect Opacity="0.5" ShadowDepth="8" BlurRadius="6" />
+      </Decorator.Effect>
+      <Image x:Name="cardViewer" HorizontalAlignment="Left"
+             MaxHeight="{Binding ElementName=table, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" />
+    </Decorator>
+
+  </Grid>
+</Window>
