@@ -14,17 +14,9 @@ namespace Octgn.App.Controllers
 	{
 		public ActionResult Index()
 		{
-            ChannelFactory<IBaseInterface> pipeFactory =
-        new ChannelFactory<IBaseInterface>(
-          new NetNamedPipeBinding(),
-          new EndpointAddress(
-            "net.pipe://localhost/PipeBase"));
 
-            IBaseInterface pipeProxy =
-              pipeFactory.CreateChannel();
-
-            ViewData["Message"] = pipeProxy.GetMessage();
-
+            ViewData["Message"] = WcfSingleton.GetInstance().GetChannel().GetMessage();
+            WcfSingleton.GetInstance().GetChannel().CreateRandomMessage();
 			//ViewData["Message"] = Octgn.Program.tester;
 
 			return View();

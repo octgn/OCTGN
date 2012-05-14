@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WcfSingleton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
