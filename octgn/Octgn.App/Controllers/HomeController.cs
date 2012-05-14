@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 
@@ -11,7 +12,7 @@ namespace Octgn.App.Controllers
 	{
 		public ActionResult Index()
 		{
-			ViewData["Message"] = "asdf";
+			ViewData["Message"] = Octgn.Program.tester;
 
 			return View();
 		}
