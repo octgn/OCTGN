@@ -11,7 +11,7 @@ namespace Octgn.App.Controllers
 	{
 		public ActionResult Index()
 		{
-			ViewData["Message"] = "Welcome to ASP.NET MVC!";
+			ViewData["Message"] = "asdf";
 
 			return View();
 		}
