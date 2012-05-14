@@ -58,7 +58,6 @@ Ankh.NoLoad
 ipch/
 obj/
 octgnFX/Webcontent/Bin
-packages/
 
 *.ctl
 *.vsp
