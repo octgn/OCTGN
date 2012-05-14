@@ -197,9 +197,30 @@ namespace Octgn
 			{
 				Console.WriteLine("No User defined");
 			}
+            GetInterface();
+            string msg = iBase.GetMessage();
+            Console.WriteLine("iBase value: {0}", iBase.GetMessage());
 
 			Console.ForegroundColor = oldColour;
 		}
+
+
+        private IBaseInterface iBase = null;
+        private IBaseInterface GetInterface()
+        {
+            if (iBase == null)
+            {
+                System.ServiceModel.ChannelFactory<IBaseInterface> pipeFactory =
+        new System.ServiceModel.ChannelFactory<IBaseInterface>(
+          new System.ServiceModel.NetNamedPipeBinding(),
+          new System.ServiceModel.EndpointAddress(
+            "net.pipe://localhost/PipeBase"));
+
+                iBase = pipeFactory.CreateChannel();
+            }
+
+            return (iBase);
+        }
 	}
 	public class RemoteDomain : MarshalByRefObject
 	{
