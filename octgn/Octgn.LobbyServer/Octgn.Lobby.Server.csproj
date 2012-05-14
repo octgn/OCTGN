@@ -150,7 +150,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="agsXMPP">
-      <HintPath>..\..\Lib\agsXMPP.dll</HintPath>
+      <HintPath>..\Lib\agsXMPP.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
