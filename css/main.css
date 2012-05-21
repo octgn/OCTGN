@@ -1,0 +1,118 @@
+html { overflow:scroll; }
+a {	text-decoration:none; color:#FE0101; }
+
+body { background: url(../images/crosshatch.png) repeat #222222; font:100% "Trebuchet MS", sans-serif; margin:0px; margin-top:1em;}
+#wrapper { width:900px; position:relative; margin: 0 auto; padding-bottom:4em;}
+#ologo { display:block;	margin-left:1em; margin-right:auto; }
+#header { margin:0 auto; }
+#version { float:right; cursor:pointer; padding-right:2em; top:0px; font-size:.7em; color:#999; text-align:right;}
+.download {
+	/*The div below the header used to hold the download button div*/
+	border:none;
+	position:relative;
+	display:block;
+	background-color:white;
+	margin-top:1em;
+	padding:1em;
+	
+	-webkit-border-radius:	1em;
+	-moz-border-radius:		1em;
+	border-radius:			1em;
+	z-index:1;
+}
+.downloadOCTGN {
+	/*The button within the download div*/
+	background-color:#5C9CCC;
+	border:2px solid #4280BE;
+	padding-left:3em;
+	padding-right:1em;
+	height:2.5em;
+	font-size:18px;
+	color:white;
+	font-family:Tahoma, Geneva, sans-serif;
+	cursor:pointer;
+
+	-webkit-border-radius:	.3em;
+	-moz-border-radius:		.3em;
+	border-radius:			.3em;
+}
+.downloadOCTGN_hover {
+	/*Add this on hover over the download button*/
+	/* IE10 */ 
+	background-image: -ms-linear-gradient(top, #DFEFFC 0%, #5C9CCC 100%);
+	/* Mozilla Firefox */ 
+	background-image: -moz-linear-gradient(top, #DFEFFC 0%, #5C9CCC 100%);
+	/* Opera */ 
+	background-image: -o-linear-gradient(top, #DFEFFC 0%, #5C9CCC 100%);
+	/* Webkit (Safari/Chrome 10) */ 
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #DFEFFC), color-stop(1, #5C9CCC));
+	/* Webkit (Chrome 11+) */ 
+	background-image: -webkit-linear-gradient(top, #DFEFFC 0%, #5C9CCC 100%);
+	/* Proposed W3C Markup */ 
+	background-image: linear-gradient(top, #DFEFFC 0%, #5C9CCC 100%);
+}
+/*#requirements {
+	display:none;
+	width:100%;
+	border:thin solid pink;
+}*/
+.mainarea {
+	border:none;
+	position:relative;
+	display:block;
+	background-color:white;
+	margin:0 auto;
+	margin-top:1em;
+	padding:3em;
+	
+	-webkit-border-radius:	1em;
+	-moz-border-radius:		1em;
+	border-radius:			1em;
+
+	-webkit-box-shadow:	0px 0px 8em 1px rgba(255, 0, 0, .7);
+	-moz-box-shadow: 	0px 0px 8em 1px rgba(255, 0, 0, .7);
+	box-shadow: 		0px 0px 8em 1px rgba(255, 0, 0, .7);
+}
+#socialShare {
+	position:absolute;
+	top:0px;
+	right:0px;
+	display:block;	
+	width:400px;
+	text-align:right
+}
+#footer { font-size:.8em; width:100%; position:fixed; bottom:0; background:#FFF; border-top:solid thin #222222; text-align:center;}
+.rightAlign { float:right; }
+.flist ul {
+    display:block;
+    display:none;
+    width:200px;
+    margin-left:50px;
+    text-align: left;
+}
+.flist { display:block;	margin-right:15px; }
+.demoHeaders { margin-top: 2em; }
+#dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
+#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+ul#icons {margin: 0; padding: 0;}
+ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+ul#icons span.ui-icon {float: left; margin: 0 4px;}
+.screenshot {
+	margin-left:1em;
+	-moz-box-shadow:    3px 3px 5px 6px #ccc;
+	-webkit-box-shadow: 3px 3px 5px 6px #ccc;
+	box-shadow:         3px 3px 5px 6px #ccc;
+}
+.gamedef { margin-left:1em; float:left; }
+a.github {
+	display: block;
+	float:left;
+	margin-right:1em;
+	width: 70px;
+	height: 30px;
+	background: transparent url(../images/github_logo.png) no-repeat;
+}
+a.github:hover { background-position: -70px 0; }
+.helpRight { float:right; width:550px; }
+.githubtext { font-size:.8em; border-radius:.2em; padding-left:.3em; padding-right:.3em; padding-bottom:.2em; float:left; }
+.clear { clear:both; }
