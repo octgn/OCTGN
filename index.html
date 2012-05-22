@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	    <!--<link type="text/css" href="css/smoothness/jquery-ui-1.8.20.custom.css" rel="stylesheet">-->
+        <link type="text/css" href="css/redmond/jquery-ui.css" rel="stylesheet">
+        <link type="text/css" rel="stylesheet" href="css/jquery.fancybox-1.3.4.css" media="screen">
+        <link type="text/css" rel="stylesheet" href="css/main.css">
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f112d55699b8459"></script>
+        <script type="text/javascript" src="js/jquery.mousewheel-3.0.4.pack.js"></script>
+		<script type="text/javascript" src="js/jquery.fancybox-1.3.4.pack.js"></script>
+		<script type="text/javascript" src="js/custom.js"></script>
+		<script type="text/javascript">
+            function showDiv(id) {
+                document.getElementById(id).style.display = 'block';
+            }
+        </script>
+	</head>
+<body>
+
+<div id="wrapper">
+
+<div id="header">
+    <img id="ologo" src="images/logo.png" alt="The OCTGN logo." />
+    <div id="socialShare">
+        <div class="addthis_toolbox addthis_default_style">
+            <span style="float:right;">
+                <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+                <a class="addthis_button_tweet"></a>
+                <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+                <a class="addthis_button_compact"></a>
+            </span>
+        </div>
+    </div>
+</div><!--Closes the header-->
+
+<div class="download">
+	<div style="width:300px; border:none; margin:0 auto; position:relative;"><!--Holds the download button-->
+        <div style="width:100%; border:none; position:relative;">
+            <img src="images/logo_o_s.png" style="width:60px; z-index:2; position:absolute; left:-18px; top:-7px;" />
+            <a href="https://github.com/downloads/kellyelton/OCTGN/OCTGN%203.0.1.6.exe">
+                <button class="downloadOCTGN">
+                    OCTGN <img style="border:none;" src="images/icon_downarrow.png" /> Free Download
+                </button>
+            </a>
+		</div>
+		<div onclick="showDiv('requirements')">
+    		<span id="version">Version: 3.0.1.6 (2012.05.04) | Requirements</span>
+		</div>
+	</div>
+    <div class="clear"></div>
+    <div id="requirements" style="display:none;">
+	<span style="color:#999; font-size:.8em;">
+    Minimum sytem requirements:<br>
+    - - - - - - - - - - - - - -
+    <p>Windows 98 / XP / Vista / 7 / 8</p>
+    <p>256MB RAM</p>
+    <p><a href="http://www.microsoft.com/en-us/download/details.aspx?id=17851">Microsoft .NET Framework 4</a></p>
+    <p><a href="http://www.microsoft.com/en-us/download/details.aspx?id=5555">Microsoft Visual C++ 2010 runtime components</a></p>
+    </span>
+    </div>
+</div>
+
+<div id="tabs" class="mainarea">
+    <ul>
+        <li><a href="#tabs-1">What it is </a></li>
+        <li><a href="#tabs-2">Get Started</a></li>
+        <li><a href="#tabs-3">Get Help</a></li>
+        <li><a href="#tabs-4">Offer Help</a></li>
+    </ul>
+    <div id="tabs-1">
+    	<p><img src="images/logo_small.png" /> [<strong>ok</strong>-<em>tuh</em>-gon] is a free virtual table top with an integrated player lobby and chat system that supports custom card and board games.</p>
+	  	<a id="showImage" href="images/screenshot_01.jpg"><img class="screenshot" alt="OCTGN Screenshot" src="images/screenshot_01_s.jpg" /></a>
+        <p>Join or host a game outside of a hobby shop. <img src="images/logo_small.png" /> allows you to connect to other players around the world.</p>
+        <a id="showImage" href="images/screenshot_04.jpg"><img class="screenshot" alt="OCTGN Screenshot" src="images/screenshot_04_s.jpg" /></a>
+        <a id="showImage" href="images/screenshot_05.jpg"><img class="screenshot" alt="OCTGN Screenshot" src="images/screenshot_05_s.jpg" /></a>
+        <p>Interact with the growing community. <img src="images/logo_small.png" /> is open source and frequently updated.</p>
+        <a id="showImage" href="images/screenshot_02.jpg"><img class="screenshot" alt="OCTGN Screenshot" src="images/screenshot_02_s.jpg" /></a>
+        <p>Numerous forums and users dedicate their time to creating and updating rule sets to add to the list of supported games.</p>
+        <a id="showImage" href="images/screenshot_03.jpg"><img class="screenshot" alt="OCTGN Screenshot" src="images/screenshot_03_s.jpg" /></a>
+	</div>
+    <div id="tabs-2">
+    	<div id="accordion">
+			<div>
+				<h3><a href="#">Overview</a></h3>
+				<div>Follow this short tutorial to get your copy of <img src="images/logo_small.png" />. You will be guided through each step from downloading to eventually playing. Begin your short journey by opening the next tab.</div>
+			</div>
+			<div>
+				<h3><a href="#">Setup <img src="images/logo_small.png" /> and Create an Account</a></h3>
+				<div>
+                	<p>Download the <img src="images/logo_small.png" /> program by clicking on the version number in the header.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_01_download.png" />
+                    <p>Install the program from the executable and move the game shortcut into your StartUp folder.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_02_startup.png" />
+                    <p>Open <img src="images/logo_small.png" />. Click <em>Octgn</em> in the top left and choose <em>Options</em> then <em>Set Data Directory</em>. Choose a folder somewhere on your computer that has at least 5GB of free space. This is where <img src="images/logo_small.png" /> will store your games.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_06_data.png" />
+                    <p>Click the <em>Register</em> button if you do not have an account.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_03_register.png" />
+                    <p>Fill in your email address. Your usename is how others will see you. Make sure you remember your password!</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_04_createnewaccount.png" />
+                    <p>You can now access the <img src="images/logo_small.png" /> player server. Log in with your username and password. Put a check in the <em>Save Password</em> box.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_05_login.png" />
+                </div>
+			</div>
+			<div>
+				<h3><a href="#">Obtaining Games</a></h3>
+				<div>
+                	<p>You need to tell <img src="images/logo_small.png" /> how to play your game then give it cards and maybe some extra files, like, tokens before you can start making a deck and playing.</p>
+                    <img class="gamedef" alt="Game rules" src="images/gamedef1.gif" />
+                    <div class="helpRight">The game rules are stored in the o8g file.</div>
+                    	<div class="clear"></div>
+                    <img class="gamedef" alt="Game rules" src="images/gamedef2.gif" />
+                    <div class="helpRight">The game sets/cards are stored in the o8s file.</div>
+                    	<div class="clear"></div>
+                    <img class="gamedef" alt="Game rules" src="images/gamedef3.gif" />
+                    <div class="helpRight">If needed, patches are released in o8p files.</div>
+                    	<div class="clear"></div>
+                    <img class="gamedef" alt="Game rules" src="images/gamedef4.gif" />
+                    <div class="helpRight">The extra cards, like tokens, are stored in o8s files.</div>
+                    	<div class="clear"></div>
+					<p>Do a <a href="http://google.com"><img src="images/google_logo.png" /></a> search for <em>OCTGN games</em> to find some files. Download the o8g and o8s files.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_07_filetypes.png" />
+                    <p>Log into the <img src="images/logo_small.png" /> client. Open the <em>Games</em> tab and choose <em>Install Game</em>. Choose the o8g file that you downloaded.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_08_installgame.png" /><p></p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_09_installgame2.png" />
+                    <p>Once again in the <em>Games</em> tab; click on your newly installed game and the list is blank! You need to install some sets. Click <em>Install Set</em> and choose the o8s file(s) that you downloaded.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_10_installset.png" /><p></p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_11_installset2.png" />
+    			</div>
+			</div>
+            <div>
+				<h3><a href="#">Voice Chat</a></h3>
+				<div>
+                	<p>Voice chat is more convenient than typing everything you want to tell your opponent. You will also not be teased for not knowing the difference between <em>your</em> and <em>you're</em>. Skype, teamspeak and Ventrillo are common choices.</p>
+                    <p>A voice chat server has been set up by <a href="https://github.com/db0">Divided by Zero</a> for <img src="images/logo_small.png" /> users through the Mumble client. Use the button below to download the client for your computer.</p>
+                	    <a href="http://mumble.sourceforge.net"><button class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text">PC</span></button></a>
+						<a href="https://play.google.com/store/apps/details?id=org.pcgod.mumbleclient&hl=en"><button class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text">Android</span></button></a>
+					<p>Install Mumble and finish its audio wizard with your microphone or headset. Choose <em>Server</em> from the top menu then click <em>Connect</em> (<em>CTRL+O</em>). Fill out the server iformation. The address is <strong>mumble.dbzer0.com</strong> and the port is <strong>63836</strong></p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_12_mumbleserver.png" />
+                    <p>Drag your username into the channel you want to join.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_13_mumbledrag.png" />
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_14_mumbledone.png" />
+    			</div>
+			</div>
+			<div>
+				<h3><a href="#">Joining or Hosting a Game</a></h3>
+				<div>
+                    <p>Within <img src="images/logo_small.png" /> open the <em>host/join</em> tab and choose <em>Join</em> to refresh the current games. By default only the games that you have installed are shown. Choose a game and meet the opponent! The lobby host will start the game when she or he is ready.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_15_joingame.png" /><p></p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_16_joingame.png" />
+                    <p>Is no one hosting a game you want to play? Host it yourself and have others join.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_17_hostgame.png" /><p></p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_18_hostgame.png" />
+                    <p>After others join you press <em>Start</em> to start the game.</p>
+                    <img class="screenshot" alt="OCTGN Screenshot" src="images/getStarted_19_hostgame.png" />
+    			</div>
+			</div>
+		</div><!--Closes the accordian-->
+    </div>
+    <div id="tabs-3">
+    	<p>
+        	<a style="float:left;" href="https://github.com/kellyelton/OCTGN/wiki"><button class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text">Wiki</span></button></a>
+        	<div class="helpRight">The wiki is community edited and will always have the most up-to-date information.</div>
+		</p>
+		<div class="clear"></div>
+        <p>
+        	<a style="float:left;" href="http://webchat.freenode.net/?channels=octgn&uio=d4"><button class="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"><span class="ui-button-text">Webchat</span></button></a>
+        	<div class="helpRight">Log into the Freenode webchat to talk with the developers and other people for help that you won't get by asking questions in the game lobby.</div>
+		</p>
+        <div class="clear"></div>
+    </div>
+    <div id="tabs-4">
+		<p><a class="github" href="https://github.com/kellyelton/OCTGN">&nbsp;</a>
+        	<div class="helpRight">Do you have programming experience?</div></p>
+		<div class="clear"></div>
+        <p>
+        	<span style="background-color:#0b02e1;" class="githubtext">
+        		<a style="color:#FFF;" href="https://github.com/kellyelton/OCTGN/issues?labels=Feature+Request&sort=created&direction=desc&state=open&page=1">Feature Request</a>
+            </span>
+            <div class="helpRight">Have you played <img src="images/logo_small.png" /> a while and thought of a good idea to improve the program?</div>
+		</p>
+        <div class="clear"></div>
+        <p>
+        	<span style="background-color:#DA0B01;" class="githubtext">
+        		<a style="color:#FFF;" href="https://github.com/kellyelton/OCTGN/issues?labels=Bugs&sort=created&direction=desc&state=open&page=1">Bugs</a>
+            </span>
+            <div class="helpRight">Did <img src="images/logo_small.png" /> crash or give you an error?</div>
+        </p>
+        <div class="clear"></div>
+    </div>
+</div><!--Closes the mainarea-->
+
+</div><!--Closes the wrapper-->
+
+<div id="footer">Maintained by Kelly Elton and the <a href="https://github.com/kellyelton/OCTGN/network/members">OCTGN Contributors</a>. </div>
+
+</body>
+</html>
