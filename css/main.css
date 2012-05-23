@@ -116,3 +116,4 @@ a.github:hover { background-position: -70px 0; }
 .helpRight { float:right; width:550px; }
 .githubtext { font-size:.8em; border-radius:.2em; padding-left:.3em; padding-right:.3em; padding-bottom:.2em; float:left; }
 .clear { clear:both; }
+.imgnoborder { border:none; }
