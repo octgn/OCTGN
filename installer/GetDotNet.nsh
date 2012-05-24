@@ -31,7 +31,7 @@
 ;  TryFailedDownload:
   DetailPrint "Pausing installation while downloaded .NET Framework installer runs."
   DetailPrint "Installation could take several minutes to complete."
-  ExecWait '$TEMP\dotNetFx40_Full_x86_x64.exe /q /norestart /c:"install /q"'
+  ExecWait '$TEMP\dotNetFx40_Client_x86_x64.exe /q /norestart /c:"install /q"'
   DetailPrint "Completed .NET Framework install/update. Removing .NET Framework installer."
   Delete "$TEMP\dotNetFx40_Client_x86_x64.exe"
   DetailPrint ".NET Framework installer removed."
