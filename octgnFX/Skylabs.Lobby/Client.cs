@@ -185,6 +185,16 @@ namespace Skylabs.Lobby
                         OnDataRecieved.Invoke(this,DataRecType.FriendList, Friends);
                 }
             }
+			else if(iq.Type == IqType.get)
+			{
+				Vcard v = new Vcard();
+				v.AddEmailAddress(new Email(EmailType.HOME, _email, true));
+				v.JabberId = new Jid(this.Username + "@" + Host);
+				VcardIq vc = new VcardIq(IqType.set, v);
+				vc.To = iq.From;
+				vc.GenerateId();
+				Xmpp.Send(vc);
+			}
 
         }
 
@@ -322,6 +332,8 @@ namespace Skylabs.Lobby
 						Type = IqType.get ,
 						To = n.User.Bare
 					};
+					viq.From = Me.User.Bare;
+					viq.Vcard.JabberId = n.User.Bare;
 					viq.GenerateId();
 					Xmpp.Send(viq);
 				}
@@ -382,6 +394,14 @@ namespace Skylabs.Lobby
             MucManager.AcceptDefaultConfiguration(room);
             MucManager.JoinRoom(room,Username,Password,false);
             Me = new NewUser(Xmpp.MyJID);
+
+			Vcard v = new Vcard();
+			v.AddEmailAddress(new Email(EmailType.HOME, _email, true));
+			v.JabberId = new Jid(this.Username + "@" + Host);
+			VcardIq vc = new VcardIq(IqType.set, v);
+			vc.GenerateId();
+        	Xmpp.IqGrabber.SendIq(vc);
+
             if(OnLoginComplete != null)
                 OnLoginComplete.Invoke(this,LoginResults.Success);
         }
