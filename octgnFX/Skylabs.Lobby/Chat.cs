@@ -44,7 +44,7 @@ namespace Skylabs.Lobby
             switch (msg.Type)
             {
                 case MessageType.normal:
-                    if (msg.From.Server == "conference.server.octgn.info")
+					if (msg.From.Server == "conference." + Skylabs.Lobby.Client.Host)
                     {
                         var rname = msg.From.User;
                         MucManager m = new MucManager(_xmpp);

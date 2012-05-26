@@ -98,13 +98,9 @@ namespace Octgn.Launcher
             Program.GameSettings.UseTwoSidedTable = true;
             Program.Game = new Game(GameDef.FromO8G(_game.FullPath));
             Program.IsHost = true;
-#if(DEBUG)
-            var ad = new IPAddress[1];
-            IPAddress ip = IPAddress.Parse("127.0.0.1");
-#else
-            var ad = Dns.GetHostAddresses("server.octgn.info");
+
+			var ad = Dns.GetHostAddresses(Skylabs.Lobby.Client.Host);
             IPAddress ip = ad[0];
-#endif
 
             if (ad.Length <= 0) return;
             Program.Client = new Client(ip, port);

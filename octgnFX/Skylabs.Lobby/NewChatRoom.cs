@@ -37,7 +37,7 @@ namespace Skylabs.Lobby
             RID = rid;
             Users = new List<NewUser>();
             _client = c;
-            if (user.User.Server == "conference.server.octgn.info")
+			if (user.User.Server == "conference." + Skylabs.Lobby.Client.Host)
             {
                 IsGroupChat = true;
                 GroupUser = new NewUser(new Jid(user.User.Bare));
@@ -148,7 +148,7 @@ namespace Skylabs.Lobby
                                 if (OnMessageRecieved != null)
                                     OnMessageRecieved.Invoke(this,
                                                              new NewUser(
-                                                                 new Jid(msg.From.Resource + "@server.octgn.info")),
+																 new Jid(msg.From.Resource + "@" + Skylabs.Lobby.Client.Host)),
                                                              msg.Subject, rTime,Client.LobbyMessageType.Topic);                                
                             }
                             else if (!String.IsNullOrWhiteSpace(msg.Body))
@@ -156,7 +156,7 @@ namespace Skylabs.Lobby
                                 if(OnMessageRecieved != null)
                                     OnMessageRecieved.Invoke(this ,
                                                              new NewUser(
-                                                                 new Jid(msg.From.Resource + "@server.octgn.info")),
+																 new Jid(msg.From.Resource + "@" + Skylabs.Lobby.Client.Host)),
                                                              msg.Body , rTime);
                             }
                         }
@@ -182,7 +182,7 @@ namespace Skylabs.Lobby
                 {
                     IsGroupChat = true;
                     var rname = Randomness.RandomRoomName();
-                    GroupUser = new NewUser(rname + "@conference.server.octgn.info");
+					GroupUser = new NewUser(rname + "@conference." + Skylabs.Lobby.Client.Host);
 
                     _client.MucManager.JoinRoom(GroupUser.User , _client.Me.User.User);
                     _client.RosterManager.AddRosterItem(GroupUser.User,GroupUser.User.User);
