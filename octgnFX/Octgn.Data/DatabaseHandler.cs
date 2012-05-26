@@ -1,16 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Data.SQLite;
 using Octgn.Data.Properties;
+using System.IO;
 
 namespace Octgn.Data
 {
-    class DatabaseHandler
+    public class DatabaseHandler
     {
         private static Dictionary<string, List<string>> columnCache = new Dictionary<string, List<string>>();
         private static string suffix = "oldtable";
+
+		public static string BasePath = SimpleConfig.DataDirectory;
+		private static readonly string DatabasePath = Path.Combine(BasePath, "Database");
+		private static readonly string DatabaseFile = Path.Combine(DatabasePath, "master.db3");
+		private static readonly string ConString = "URI=file:" + DatabaseFile;
+
+		public static string GetUser(string jid)
+		{
+			using (var con = new SQLiteConnection(ConString))
+			{
+				con.Open();
+				using(var com = con.CreateCommand())
+				{
+					com.CommandText = "SELECT email FROM users WHERE jid=@jid";
+					com.CommandType = CommandType.Text;
+					com.Parameters.AddWithValue("@jid" , jid);
+					using(var r = com.ExecuteReader())
+					{
+						if(r.Read())
+						{
+							return r.GetString(0);
+						}
+					}
+				}
+				con.Close();
+			}
+			return null;
+		}
+
+		public static void AddUser(string jid, string email)
+		{
+			using (var con = new SQLiteConnection(ConString))
+			{
+				con.Open();
+				using(var com = con.CreateCommand())
+				{
+					com.CommandText = "INSERT INTO users(jid,email) VALUES(@jid,@email)";
+					com.CommandType = CommandType.Text;
+					com.Parameters.AddWithValue("@jid" , jid);
+					com.Parameters.AddWithValue("@email" , email);
+					com.ExecuteNonQuery();
+				}
+			}
+		}
 
         public static bool ColumnExists(string tableName, string columnName, SQLiteConnection connection)
         {

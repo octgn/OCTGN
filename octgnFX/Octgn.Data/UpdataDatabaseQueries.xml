@@ -16,4 +16,13 @@
       CREATE UNIQUE INDEX "SearchIndex" ON [cards] ("id","game_id");
     ]]>
   </update>
+	<update from="4" to="5">
+		<![CDATA[
+			CREATE TABLE [users](
+				[id] INTEGER PRIMARY KEY AUTOINCREMENT,
+				[jid] TEXT NOT NULL,
+				[email] TEXT NOT NULL
+			);
+		]]>
+	</update>
 </updates>
