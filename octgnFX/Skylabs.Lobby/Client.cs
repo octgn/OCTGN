@@ -65,7 +65,7 @@ namespace Skylabs.Lobby
 #if(!DEBUG)
     	public const string Host = "server.octgn.info";
 #else
-		public const string Host = "server.octgn.info";
+    	public const string Host = "23.21.146.193";
 #endif
 
         public UserStatus Status
