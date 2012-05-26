@@ -1,3 +1,8 @@
+#3.0.1.7:
++ Minor boot changes
++ Lobby Sounds
++ Setup enhancements 
+
 #3.0.1.6:
 + Changed .net framework requirements from full to client profile.
 + New server
