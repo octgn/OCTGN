@@ -1,3 +1,6 @@
+#3.0.1.8
++ Fixed install game bug
+
 #3.0.1.7:
 + Minor boot changes
 + Lobby Sounds
