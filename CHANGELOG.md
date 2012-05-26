@@ -1,4 +1,4 @@
-#3.0.1.8
+#3.0.1.9
 + Fixed install game bug
 
 #3.0.1.7:
