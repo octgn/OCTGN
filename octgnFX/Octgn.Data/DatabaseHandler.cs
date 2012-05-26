@@ -147,6 +147,8 @@ namespace Octgn.Data
                 command.ExecuteNonQuery();
                 command.CommandText = string.Format("ALTER TABLE [packs] RENAME TO [{0}packs]", suffix);
                 command.ExecuteNonQuery();
+				command.CommandText = string.Format("ALTER TABLE [users] RENAME TO [{0}users]", suffix);
+				command.ExecuteNonQuery();
             }
 
             using (SQLiteCommand command = connection.CreateCommand())
