@@ -158,6 +158,9 @@
     <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="agsXMPP">
       <HintPath>..\Lib\agsXMPP.dll</HintPath>
@@ -511,6 +514,7 @@
     <Compile Include="Windows\UpgradeMessage.xaml.cs">
       <DependentUpon>UpgradeMessage.xaml</DependentUpon>
     </Compile>
+    <None Include="pbc.bat" />
     <EmbeddedResource Include="Launcher\Game.xsd">
       <SubType>
       </SubType>
@@ -1088,5 +1092,12 @@
   <PropertyGroup>
     <!-- Add effect compilation to the PrepareResourcesDependsOn so that the effect fx  get compiled before resources are collected -->
     <PrepareResourcesDependsOn>EffectCompile;$(PrepareResourcesDependsOn)</PrepareResourcesDependsOn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>start $(ProjectDir)pbc.bat</PostBuildEvent>
   </PropertyGroup>
 </Project>

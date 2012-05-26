@@ -4,7 +4,7 @@ CREATE TABLE [dbinfo] (
   [version] INTEGER NOT NULL
 );
 
-INSERT INTO dbinfo([version]) VALUES(3);
+INSERT INTO dbinfo([version]) VALUES(5);
 
 CREATE TABLE [games] (
   [real_id] INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -63,4 +63,9 @@ CREATE TABLE [packs] (
   [name] TEXT NOT NULL, 
   [xml] TEXT NOT NULL);
 
+CREATE TABLE [users](
+	[id] INTEGER PRIMARY KEY AUTOINCREMENT,
+	[jid] TEXT NOT NULL,
+	[email] TEXT NOT NULL
+);
 commit transaction;
