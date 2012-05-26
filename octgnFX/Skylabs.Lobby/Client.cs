@@ -314,9 +314,21 @@ namespace Skylabs.Lobby
         {
             foreach(var n in Friends)
             {
-                var viq = new VcardIq{Type = IqType.get , To = n.User.Bare};
-                viq.GenerateId();
-                Xmpp.Send(viq);
+            	var email = DatabaseHandler.GetUser(n.User.Bare);
+				if (String.IsNullOrWhiteSpace(email))
+				{
+					var viq = new VcardIq
+					{
+						Type = IqType.get ,
+						To = n.User.Bare
+					};
+					viq.GenerateId();
+					Xmpp.Send(viq);
+				}
+				else
+				{
+					n.Email = email;
+				}
             }
             if(OnDataRecieved != null)
                 OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
@@ -396,7 +408,8 @@ namespace Skylabs.Lobby
             v.AddEmailAddress(new Email(EmailType.HOME, _email,true));
 			v.JabberId = new Jid(this.Username + "@" + Host);
             VcardIq vc = new VcardIq(IqType.set,v);
-            Xmpp.IqGrabber.SendIq(vc);
+			vc.GenerateId();
+        	Xmpp.Send(vc);
             if(OnRegisterComplete != null)
                 OnRegisterComplete.Invoke(this,RegisterResults.Success);
         }
