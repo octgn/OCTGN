@@ -145,7 +145,7 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnWriteXml(object sender, string xml)
         {
-#if(FDEBUG)
+#if(DEBUG)
             Trace.WriteLine("[Xmpp]out: " + xml);
 #endif
         }
@@ -185,17 +185,6 @@ namespace Skylabs.Lobby
                         OnDataRecieved.Invoke(this,DataRecType.FriendList, Friends);
                 }
             }
-			else if(iq.Type == IqType.get)
-			{
-				Vcard v = new Vcard();
-				v.AddEmailAddress(new Email(EmailType.HOME, _email, true));
-				v.JabberId = new Jid(this.Username + "@" + Host);
-				VcardIq vc = new VcardIq(IqType.set, v);
-				vc.To = iq.From;
-				vc.GenerateId();
-				Xmpp.Send(vc);
-			}
-
         }
 
         private void XmppOnOnAgentItem(object sender, Agent agent)
@@ -327,6 +316,7 @@ namespace Skylabs.Lobby
             	var email = DatabaseHandler.GetUser(n.User.Bare);
 				if (String.IsNullOrWhiteSpace(email))
 				{
+					/*
 					var viq = new VcardIq
 					{
 						Type = IqType.get ,
@@ -336,6 +326,7 @@ namespace Skylabs.Lobby
 					viq.Vcard.JabberId = n.User.Bare;
 					viq.GenerateId();
 					Xmpp.Send(viq);
+					 */
 				}
 				else
 				{
@@ -395,13 +386,6 @@ namespace Skylabs.Lobby
             MucManager.JoinRoom(room,Username,Password,false);
             Me = new NewUser(Xmpp.MyJID);
 
-			Vcard v = new Vcard();
-			v.AddEmailAddress(new Email(EmailType.HOME, _email, true));
-			v.JabberId = new Jid(this.Username + "@" + Host);
-			VcardIq vc = new VcardIq(IqType.set, v);
-			vc.GenerateId();
-        	Xmpp.IqGrabber.SendIq(vc);
-
             if(OnLoginComplete != null)
                 OnLoginComplete.Invoke(this,LoginResults.Success);
         }
@@ -424,12 +408,19 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnRegistered(object sender)
         {
-            Vcard v = new Vcard();
-            v.AddEmailAddress(new Email(EmailType.HOME, _email,true));
+			Vcard v = new Vcard();
+			Email e = new Email
+			{
+				UserId = _email,
+				Type = EmailType.INTERNET,
+				Value = _email
+			};
+			v.AddChild(e);
 			v.JabberId = new Jid(this.Username + "@" + Host);
-            VcardIq vc = new VcardIq(IqType.set,v);
+			VcardIq vc = new VcardIq(IqType.set, v);
+			vc.To = Host;
 			vc.GenerateId();
-        	Xmpp.Send(vc);
+			Xmpp.Send(vc);
             if(OnRegisterComplete != null)
                 OnRegisterComplete.Invoke(this,RegisterResults.Success);
         }
