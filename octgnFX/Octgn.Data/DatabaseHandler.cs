@@ -122,11 +122,23 @@ namespace Octgn.Data
 
         public static void RebuildCardTable(SQLiteConnection connection)
         {
+            RemoveOldRemnants(connection);
             RenameTables(connection);
             MakeEmptyStructure(connection);
             CopyOverData(connection);
             CopyCardData(connection);
             DeleteTempTables(connection);
+        }
+        internal static void RemoveOldRemnants(SQLiteConnection connection)
+        {
+            if (ColumnExists(string.Format("{0}users", suffix), "email", connection))
+            {
+                using (SQLiteCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = string.Format("DROP TABLE [{0}users];", suffix);
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         internal static void RenameTables(SQLiteConnection connection)
