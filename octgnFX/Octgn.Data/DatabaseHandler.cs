@@ -229,6 +229,12 @@ namespace Octgn.Data
                 command.ExecuteNonQuery();
                 //cards
                 
+                //users
+                sb.Clear();
+                sb.Append("INSERT INTO \"users\"(\"id\",\"jid\",\"email\") ");
+                sb.Append(string.Format("SELECT \"id\", \"jid\", \"email\" FROM \"{0}users\"", suffix));
+                command.CommandText = sb.ToString();
+                command.ExecuteNonQuery();
             }
         }
 
@@ -313,6 +319,7 @@ namespace Octgn.Data
                 sb.Append(string.Format("DROP TABLE [{0}packs];", suffix));
                 sb.Append(string.Format("DROP TABLE [{0}custom_properties];", suffix));
                 sb.Append(string.Format("DROP TABLE [{0}cards];", suffix));
+                sb.Append(string.Format("DROP TABLE [{0}users];", suffix));
                 command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
             }
