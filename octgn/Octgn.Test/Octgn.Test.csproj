@@ -58,7 +58,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database.cs" />
+    <Compile Include="DataTests\ModelsTests\UserTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">

@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using Octgn.Data;
+using Octgn.Data.Models;
 
 namespace Octgn.App.Models
 {
@@ -115,10 +116,8 @@ namespace Octgn.App.Models
 			if (String.IsNullOrEmpty(userName)) throw new ArgumentException("Value cannot be null or empty.", "userName");
 			if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty.", "password");
 
-			using (var d = new Database())
-			{
-				return d.ValidateUser(userName, password);
-			}
+			using(var u = new User())
+				return u.ValidateUser(userName, password);
 		}
 
 		public MembershipCreateStatus CreateUser(string userName, string password, string email)
@@ -127,11 +126,8 @@ namespace Octgn.App.Models
 			if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty.", "password");
 			if (String.IsNullOrEmpty(email)) throw new ArgumentException("Value cannot be null or empty.", "email");
 
-			MembershipCreateStatus status;
-			using(var d = new Database())
-			{
-				return d.CreateUser(userName , password , email);
-			}
+			using(var u=new User())
+				return u.CreateUser(userName , password , email);
 		}
 
 		public bool ChangePassword(string userName, string oldPassword, string newPassword)
