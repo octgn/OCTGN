@@ -38,6 +38,12 @@
     <StartupObject>Octgn.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Mono-2.10.8\lib\mono\4.0\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.WebServer2, Version=0.4.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Mono-2.10.8\lib\mono\4.0\Mono.WebServer2.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
