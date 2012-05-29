@@ -115,7 +115,10 @@ namespace Octgn.App.Models
 			if (String.IsNullOrEmpty(userName)) throw new ArgumentException("Value cannot be null or empty.", "userName");
 			if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty.", "password");
 
-			return _provider.ValidateUser(userName, password);
+			using (var d = new Database())
+			{
+				return d.ValidateUser(userName, password);
+			}
 		}
 
 		public MembershipCreateStatus CreateUser(string userName, string password, string email)

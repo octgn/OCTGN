@@ -18,6 +18,8 @@ namespace Octgn.Data
 
 		public MembershipCreateStatus CreateUser(string username, string password, string email)
 		{
+			username = username.ToLower();
+			email = email.ToLower();
 			var r = database.Query<User>().Where(u => u.Username == username || u.Email == email);
 			if(r.Any())
 			{
@@ -30,6 +32,16 @@ namespace Octgn.Data
 				Username = username
 			});
 			return MembershipCreateStatus.Success;
+		}
+
+		public bool ValidateUser(string username, string password)
+		{
+			username = username.ToLower();
+			var r = database.Query<User>().Where(u => u.Username == username);
+			var us = r.FirstOrDefault();
+			if (us == null) return false;
+			if (us.PasswordHash == password) return true;
+			return false;
 		}
 
 		public void Dispose()
