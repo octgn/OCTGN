@@ -66,3 +66,4 @@ octgnFX/Webcontent/Bin
 *.*~
 *.typemock
 *.ncrunchsolution
+*master.db

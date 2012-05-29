@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using Octgn.Data;
 
 namespace Octgn.App.Models
 {
@@ -124,8 +125,10 @@ namespace Octgn.App.Models
 			if (String.IsNullOrEmpty(email)) throw new ArgumentException("Value cannot be null or empty.", "email");
 
 			MembershipCreateStatus status;
-			_provider.CreateUser(userName, password, email, null, null, true, null, out status);
-			return status;
+			using(var d = new Database())
+			{
+				return d.CreateUser(userName , password , email);
+			}
 		}
 
 		public bool ChangePassword(string userName, string oldPassword, string newPassword)
