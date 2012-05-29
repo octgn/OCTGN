@@ -21,14 +21,14 @@ namespace Octgn.Test.DataTests.ModelsTests
 			var f = A.Fake<Db4objects.Db4o.IObjectContainer>();
 			var fList = new List<User>();
 
-			A.CallTo(() => f.Query<User>()).Returns(fList);
-			A.CallTo(() => f.Store(new object())).WithAnyArguments().DoesNothing();
-
 			var db = new Database(f);
 			var user = new User(db);
 			user.Email = "fake@email.com";
 			user.Username = "fakeuser";
 			user.PasswordHash = "123456";
+
+			A.CallTo(() => db.DBConnection.Store(new object())).WithAnyArguments().DoesNothing();
+			A.CallTo(() => db.DBConnection.Query<User>()).Returns(fList);
 
 			fList.Add(user);
 
@@ -45,6 +45,33 @@ namespace Octgn.Test.DataTests.ModelsTests
 			//Test with conflicting email
 			ret = user.CreateUser("nuser", "pass", "fake@email.com");
 			Assert.AreEqual(ret, MembershipCreateStatus.DuplicateEmail);
+		}
+		[Test]
+		public void ValidateUserTest()
+		{
+			var f = A.Fake<Db4objects.Db4o.IObjectContainer>();
+			var fList = new List<User>();
+
+			var db = new Database(f);
+			var user = new User(db);
+			user.Email = "fake@email.com";
+			user.Username = "fakeuser";
+			user.PasswordHash = "123456";
+
+			A.CallTo(() => db.DBConnection.Store(new object())).WithAnyArguments().DoesNothing();
+			A.CallTo(() => db.DBConnection.Query<User>()).Returns(fList);
+
+			fList.Add(user);
+
+			//Validate good username & password
+			Assert.IsTrue(user.ValidateUser("fakeuser" , "123456"));
+
+			//Validate good username & bad password
+			Assert.IsFalse(user.ValidateUser("fakeuser", "BAD PASS"));
+
+			//Validate bad username & good password
+			Assert.IsFalse(user.ValidateUser("Bad Username", "123456"));
+
 		}
 	}
 }
