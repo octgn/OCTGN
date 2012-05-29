@@ -16,11 +16,14 @@ namespace Octgn.Data
 			database = Db4oEmbedded.OpenFile(Db4oEmbedded.NewConfiguration(), "master.db");
 		}
 
+		public Database(IObjectContainer db) { database = db; }
+
 		public MembershipCreateStatus CreateUser(string username, string password, string email)
 		{
 			username = username.ToLower();
 			email = email.ToLower();
-			var r = database.Query<User>().Where(u => u.Username == username || u.Email == email);
+			var r = database.Query<User>().Where(x => x.Username == username || x.Email == email);
+			//var r = ar.Where(x => x.Username == username || x.Email == email);
 			if(r.Any())
 			{
 				return r.AsParallel().Any(u => u.Email == email) ? MembershipCreateStatus.DuplicateEmail : MembershipCreateStatus.DuplicateUserName;
