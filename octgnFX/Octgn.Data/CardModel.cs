@@ -182,7 +182,7 @@ namespace Octgn.Data
                                                                     StringComparer.InvariantCultureIgnoreCase)
                              };
             for (int i = 4; i < columns.Count; ++i)
-                result.Properties.Add(columns[i].ColumnName, row.IsNull(i) ? null : row[i]);
+                result.Properties.Add(columns[i].ColumnName.Replace(game.Id.ToString().Replace("-",""),""), row.IsNull(i) ? null : row[i]);
             return result;
         }
 

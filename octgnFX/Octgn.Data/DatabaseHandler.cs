@@ -171,6 +171,8 @@ namespace Octgn.Data
                 command.ExecuteNonQuery();
                 command.CommandText = string.Format("ALTER TABLE [packs] RENAME TO [{0}packs]", suffix);
                 command.ExecuteNonQuery();
+                command.CommandText = string.Format("ALTER TABLE [users] RENAME TO [{0}users]", suffix);
+                command.ExecuteNonQuery();
             }
 
             using (SQLiteCommand command = connection.CreateCommand())
@@ -249,6 +251,14 @@ namespace Octgn.Data
                 sb.Append(string.Format("SELECT \"real_id\",\"id\",\"card_real_id\",\"game_id\",\"name\",\"type\",\"vint\",\"vstr\" FROM \"{0}custom_properties\"", suffix));
                 command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
+                
+                //users
+                sb.Clear();
+                sb.Append("INSERT INTO \"users\"(\"id\",\"jid\",\"email\") ");
+                sb.Append(string.Format("SELECT \"id\", \"jid\", \"email\" FROM \"{0}users\"", suffix));
+                command.CommandText = sb.ToString();
+                command.ExecuteNonQuery();
+                
                 //cards
             }
         }
@@ -259,9 +269,10 @@ namespace Octgn.Data
 
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT DISTINCT [name], [type] FROM [custom_properties]";
+                command.CommandText = "SELECT DISTINCT [name], [type], [game_id] FROM [custom_properties]";
                 int nameOrdinal = -1;
                 int typeOrdinal = -1;
+                int guidOrdinal = -1;
                 using (SQLiteDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read() != false)
@@ -270,8 +281,9 @@ namespace Octgn.Data
                         {
                             nameOrdinal = reader.GetOrdinal("name");
                             typeOrdinal = reader.GetOrdinal("type");
+                            guidOrdinal = reader.GetOrdinal("game_id");
                         }
-                        Tuple<string, int> nameTypePair = new Tuple<string, int>(reader.GetString(nameOrdinal), reader.GetInt32(typeOrdinal));
+                        Tuple<string, int> nameTypePair = new Tuple<string, int>(reader.GetString(guidOrdinal).Replace("-","") + reader.GetString(nameOrdinal), reader.GetInt32(typeOrdinal));
                         fieldList.Add(nameTypePair);
                     }
                 }
@@ -334,6 +346,7 @@ namespace Octgn.Data
                 sb.Append(string.Format("DROP TABLE [{0}packs];", suffix));
                 sb.Append(string.Format("DROP TABLE [{0}custom_properties];", suffix));
                 sb.Append(string.Format("DROP TABLE [{0}cards];", suffix));
+                sb.Append(string.Format("DROP TABLE [{0}users];", suffix));
                 command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
             }
