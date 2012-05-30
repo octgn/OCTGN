@@ -259,6 +259,53 @@ namespace Octgn.Data
 
         }
 
+        public void UninstallGame(Game game)
+        {
+            if (!_cachedGames.Any(g => g.Id == game.Id)) return;
+
+            SQLiteTransaction trans = null;
+            try
+            {
+                trans = DatabaseConnection.BeginTransaction();
+
+                #region remove the custom properties from the database
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                {
+                    //Build Query
+                    com.CommandText = @"DELETE FROM [custom_properties] WHERE [game_id]=@id;";
+                    com.Parameters.AddWithValue("@id", game.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+                #endregion
+
+                #region remove the game from the database
+                using (SQLiteCommand com = DatabaseConnection.CreateCommand())
+                {
+                    //Build Query
+                    com.CommandText = @"DELETE FROM [games] WHERE [id]=@id;";
+                    com.Parameters.AddWithValue("@id", game.Id.ToString());
+                    com.ExecuteNonQuery();
+                }
+                #endregion
+
+                //remove obsolete columns from the cards table
+                DatabaseHandler.RebuildCardTable(DatabaseConnection);
+
+                trans.Commit();
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                    trans.Rollback();
+                if (Debugger.IsAttached) Debugger.Break();
+                return;
+            }
+
+            var existingGame = _cachedGames.FirstOrDefault(g => g.Id == game.Id);
+            if (existingGame != null) _cachedGames.Remove(existingGame);
+
+        }
+
         private void GetGamesList()
         {
             _allCachedGames = new ObservableCollection<Game>();
