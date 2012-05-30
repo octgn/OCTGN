@@ -36,6 +36,14 @@ namespace Octgn.Windows
                 Program.GamesRepository = new GamesRepository();
             ThreadPool.QueueUserWorkItem(s =>
             {
+                if (Prefs.CleanDatabase)
+                {
+                    Program.GamesRepository.RemoveAllGames();
+                    Prefs.CleanDatabase = false;
+                    InstallDefsFromFolders();
+                    InstallSetsFromFolders();
+                }
+
                 if (Prefs.InstallOnBoot)
                 {
                     InstallDefsFromFolders();
