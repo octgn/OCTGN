@@ -122,11 +122,24 @@ namespace Octgn.Data
 
         public static void RebuildCardTable(SQLiteConnection connection)
         {
+            RemoveOldRemnants(connection);
             RenameTables(connection);
             MakeEmptyStructure(connection);
             CopyOverData(connection);
             CopyCardData(connection);
             DeleteTempTables(connection);
+        }
+
+        internal static void RemoveOldRemnants(SQLiteConnection connection)
+        {
+            if (ColumnExists(string.Format("{0}users", suffix), "email", connection))
+            {
+                using (SQLiteCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = string.Format("DROP TABLE [{0}users];", suffix);
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         internal static void RenameTables(SQLiteConnection connection)
@@ -147,8 +160,6 @@ namespace Octgn.Data
                 command.ExecuteNonQuery();
                 command.CommandText = string.Format("ALTER TABLE [packs] RENAME TO [{0}packs]", suffix);
                 command.ExecuteNonQuery();
-				command.CommandText = string.Format("ALTER TABLE [users] RENAME TO [{0}users]", suffix);
-				command.ExecuteNonQuery();
             }
 
             using (SQLiteCommand command = connection.CreateCommand())
@@ -228,13 +239,6 @@ namespace Octgn.Data
                 command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
                 //cards
-                
-                //users
-                sb.Clear();
-                sb.Append("INSERT INTO \"users\"(\"id\",\"jid\",\"email\") ");
-                sb.Append(string.Format("SELECT \"id\", \"jid\", \"email\" FROM \"{0}users\"", suffix));
-                command.CommandText = sb.ToString();
-                command.ExecuteNonQuery();
             }
         }
 
@@ -319,7 +323,6 @@ namespace Octgn.Data
                 sb.Append(string.Format("DROP TABLE [{0}packs];", suffix));
                 sb.Append(string.Format("DROP TABLE [{0}custom_properties];", suffix));
                 sb.Append(string.Format("DROP TABLE [{0}cards];", suffix));
-                sb.Append(string.Format("DROP TABLE [{0}users];", suffix));
                 command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
             }
