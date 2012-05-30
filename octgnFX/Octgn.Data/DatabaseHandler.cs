@@ -299,27 +299,30 @@ namespace Octgn.Data
                     }
                 }
             }
-
-            using (SQLiteCommand command = connection.CreateCommand())
+            if (fieldList.Count > 0)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("INSERT INTO \"cards\"(");
-                StringBuilder sb2 = new StringBuilder();
-                foreach (Tuple<string, int> nameTypePair in fieldList)
+
+                using (SQLiteCommand command = connection.CreateCommand())
                 {
-                    sb.Append(string.Format("\"{0}\",", nameTypePair.Item1));
-                    sb2.Append(string.Format("\"{0}\",", nameTypePair.Item1));
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("INSERT INTO \"cards\"(");
+                    StringBuilder sb2 = new StringBuilder();
+                    foreach (Tuple<string, int> nameTypePair in fieldList)
+                    {
+                        sb.Append(string.Format("\"{0}\",", nameTypePair.Item1));
+                        sb2.Append(string.Format("\"{0}\",", nameTypePair.Item1));
+                    }
+                    foreach (string columnName in columnCache["cards"])
+                    {
+                        sb.Append(string.Format("\"{0}\",", columnName));
+                        sb2.Append(string.Format("\"{0}\",", columnName));
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    sb2.Remove(sb2.Length - 1, 1);
+                    sb.Append(string.Format(") SELECT {0} FROM \"{1}cards\"", sb2.ToString(), suffix));
+                    command.CommandText = sb.ToString();
+                    command.ExecuteNonQuery();
                 }
-                foreach (string columnName in columnCache["cards"])
-                {
-                    sb.Append(string.Format("\"{0}\",", columnName));
-                    sb2.Append(string.Format("\"{0}\",", columnName));
-                }
-                sb.Remove(sb.Length - 1, 1);
-                sb2.Remove(sb2.Length - 1, 1);
-                sb.Append(string.Format(") SELECT {0} FROM \"{1}cards\"", sb2.ToString(), suffix));
-                command.CommandText = sb.ToString();
-                command.ExecuteNonQuery();
             }
         }
 

@@ -91,7 +91,7 @@
           <ribbon:RibbonButton Label="Install Game" LargeImageSource="/Resources/Icons/ruby_Add.png"
                                Click="RibbonButtonClick" SmallImageSource="/Octgn;component/Resources/Icons/ruby_add_small.png" />
           <ribbon:RibbonButton Label="Remove Game" LargeImageSource="/Resources/Icons/ruby_delete.png"
-                               IsEnabled="False" SmallImageSource="/Octgn;component/Resources/Icons/ruby_delete_small.png" />
+                               Click="RibbonButtonClick3" SmallImageSource="/Octgn;component/Resources/Icons/ruby_delete_small.png" />
         </ribbon:RibbonGroup>
         <ribbon:RibbonGroup>
           <ribbon:RibbonButton x:Name="bInstallSets" Label="Install Sets"
