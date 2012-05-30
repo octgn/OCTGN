@@ -159,9 +159,10 @@ namespace Octgn.Data
                 string command = sb.ToString();
                 foreach (PropertyDef pair in properties)
                 {
-                    if (!DatabaseHandler.ColumnExists("cards", pair.Name, DatabaseConnection))
+                    string name = string.Format("{0}{1}", game.Id.ToString().Replace("-", ""), pair.Name);
+                    if (!DatabaseHandler.ColumnExists("cards", name, DatabaseConnection))
                     {
-                        DatabaseHandler.AddColumn("cards", pair.Name, pair.Type, DatabaseConnection);
+                        DatabaseHandler.AddColumn("cards", name, pair.Type, DatabaseConnection);
                     }
 
                     using (SQLiteCommand com = DatabaseConnection.CreateCommand())
