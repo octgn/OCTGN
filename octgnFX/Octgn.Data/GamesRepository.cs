@@ -306,6 +306,12 @@ namespace Octgn.Data
 
         }
 
+        public void RemoveAllGames()
+        {
+            DatabaseHandler.ClearDatabase(DatabaseConnection);
+            _cachedGames.Clear();
+        }
+
         private void GetGamesList()
         {
             _allCachedGames = new ObservableCollection<Game>();

@@ -120,6 +120,18 @@ namespace Octgn.Data
             return (ret);
         }
 
+        public static void ClearDatabase(SQLiteConnection connection)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "DELETE FROM [custom_properties]";
+                command.ExecuteNonQuery();
+                command.CommandText = "DELETE FROM [games]";
+                command.ExecuteNonQuery();
+            }
+            RebuildCardTable(connection);
+        }
+
         public static void RebuildCardTable(SQLiteConnection connection)
         {
             RemoveOldRemnants(connection);

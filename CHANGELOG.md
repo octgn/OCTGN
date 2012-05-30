@@ -1,3 +1,8 @@
+#3.0.1.10
++ Fixed another game install bug
++ Added game isolation(games are unaware of each other)
++ Added game uninstallation(select a game to get to the set listing and click remove game)
+
 #3.0.1.9
 + Fixed install game bug
 
