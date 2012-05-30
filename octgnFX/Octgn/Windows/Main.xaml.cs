@@ -459,6 +459,17 @@ namespace Octgn.Windows
                 _currentSetList.DeletedSelected();
         }
 
+        private void RibbonButtonClick3(object sender, RoutedEventArgs e)
+        {
+            SetList setlist = frame1.Content as SetList;
+            if (setlist != null && setlist.SelectedGame != null)
+            {
+                Program.GamesRepository.UninstallGame(setlist.SelectedGame);
+                var gl = new GameList();
+                frame1.Navigate(gl);
+            }
+        }
+
         private void BInstallSetsClick(object sender, RoutedEventArgs e)
         {
             if (_currentSetList != null)
