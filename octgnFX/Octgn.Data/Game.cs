@@ -142,7 +142,7 @@ namespace Octgn.Data
                     {
                         foreach (PropertyDef pDef in CustomProperties)
                         {
-                            ret.Add(pDef.Name, reader[pDef.Name]);
+                            ret.Add(pDef.Name, reader[string.Format("{0}{1}",Id.ToString().Replace("-",""), pDef.Name)]);
                         }
                     }
                 }   
@@ -439,10 +439,12 @@ namespace Octgn.Data
 
             foreach (KeyValuePair<string, object> pair in card.Properties)
             {
-                fields.Append(string.Format(",[{0}]", pair.Key));
-                values.Append(string.Format(",@{0}", pair.Key.Replace(" ", "")));
+                
+                string name = string.Format("{0}{1}", Id.ToString().Replace("-",""), pair.Key);
 
-                string name = pair.Key;
+                fields.Append(string.Format(",[{0}]", name));
+                values.Append(string.Format(",@{0}", name.Replace(" ", "")));
+
                 PropertyType type = PropertyType.String;
                 object value = "";
                 if (pair.Value is string)
@@ -486,7 +488,8 @@ namespace Octgn.Data
                 com.Parameters.AddWithValue("@dependent", card.Dependent.ToString());
                 foreach (KeyValuePair<string, object> pair in card.Properties)
                 {
-                    string key = string.Format("@{0}", pair.Key.Replace(" ", ""));
+                    string name = string.Format("{0}{1}", Id.ToString().Replace("-",""), pair.Key);
+                    string key = string.Format("@{0}", name.Replace(" ", ""));
                     com.Parameters.AddWithValue(key, pair.Value);
                 }
 #if(DEBUG)
@@ -652,6 +655,12 @@ namespace Octgn.Data
             {
                 cards = SimpleDataTableCache.GetInstance().GetCache(conditions);
             }
+
+            for (int i = 0; i < cards.Columns.Count; i++)
+            {
+                cards.Columns[i].ColumnName = cards.Columns[i].ColumnName.Replace(Id.ToString().Replace("-", ""), "");
+            }
+
             //Now apply the search query to it
             var sb = new StringBuilder();
             if (conditions != null && conditions.Length > 0)
