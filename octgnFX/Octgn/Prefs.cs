@@ -29,6 +29,24 @@ namespace Octgn
             }
         }
 
+        public static bool CleanDatabase
+        {
+            get
+            {
+                bool ret = false;
+                bool present = bool.TryParse(SimpleConfig.ReadValue("CleanDatabase", true.ToString(CultureInfo.InvariantCulture)), out ret);
+                if (!present)
+                {
+                    ret = true;
+                }
+                return (ret);
+            }
+            set
+            {
+                SimpleConfig.WriteValue("CleanDatabase", value.ToString(CultureInfo.InvariantCulture));
+            }
+        }
+
         public static string Password
         {
             get { return SimpleConfig.ReadValue("Password" , ""); }
