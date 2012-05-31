@@ -464,9 +464,17 @@ namespace Octgn.Windows
             SetList setlist = frame1.Content as SetList;
             if (setlist != null && setlist.SelectedGame != null)
             {
-                Program.GamesRepository.UninstallGame(setlist.SelectedGame);
-                var gl = new GameList();
-                frame1.Navigate(gl);
+                MessageWindow msg = new MessageWindow(string.Format("Are you sure you want to delete {0}?", setlist.SelectedGame.Name));
+                bool? result = msg.ShowDialog();
+
+                if (result.HasValue && result.Value)
+                {
+                    Program.GamesRepository.UninstallGame(setlist.SelectedGame);
+                    _currentSetList = null;
+                    var gl = new GameList();
+                    gl.OnGameClick += gl_OnGameDoubleClick;
+                    frame1.Navigate(gl);
+                 }
             }
         }
 

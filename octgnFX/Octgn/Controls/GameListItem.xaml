@@ -27,8 +27,8 @@
                  Foreground="Black" Name="tbUsername" VerticalAlignment="Bottom" Grid.ColumnSpan="1" Margin="2" />
       <TextBlock Text="{Binding ElementName=flistitem, Path=Version}" Grid.Column="2" Grid.Row="1"
                  HorizontalAlignment="Left" Name="tbStatus" VerticalAlignment="Top" Foreground="Silver" Margin="2" />
-      <Image Grid.Column="3" Height="16" HorizontalAlignment="Center" Name="image1" Stretch="Fill"
-             VerticalAlignment="Top" Width="16" Source="/Octgn;component/Resources/cross.png" />
+      <!--<Image Grid.Column="3" Height="16" HorizontalAlignment="Center" Name="image1" Stretch="Fill"
+             VerticalAlignment="Top" Width="16" Source="/Octgn;component/Resources/cross.png" />-->
     </Grid>
   </Border>
   <UserControl.Resources>
