@@ -153,18 +153,6 @@ namespace Octgn.Data
             }
         }
 
-        internal static void RemoveOldRemnants(SQLiteConnection connection)
-        {
-            if (ColumnExists(string.Format("{0}users", suffix), "email", connection))
-            {
-                using (SQLiteCommand command = connection.CreateCommand())
-                {
-                    command.CommandText = string.Format("DROP TABLE [{0}users];", suffix);
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-
         internal static void RenameTables(SQLiteConnection connection)
         {
             using (SQLiteCommand command = connection.CreateCommand())
