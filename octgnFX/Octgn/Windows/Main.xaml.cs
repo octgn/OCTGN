@@ -464,10 +464,8 @@ namespace Octgn.Windows
             SetList setlist = frame1.Content as SetList;
             if (setlist != null && setlist.SelectedGame != null)
             {
-                MessageWindow msg = new MessageWindow(string.Format("Are you sure you want to delete {0}?", setlist.SelectedGame.Name));
-                bool? result = msg.ShowDialog();
-
-                if (result.HasValue && result.Value)
+                MessageBoxResult msg = MessageBox.Show(string.Format("Are you sure you want to delete {0}?", setlist.SelectedGame.Name), "Confirmation", MessageBoxButton.YesNo);
+                if (msg == MessageBoxResult.Yes)
                 {
                     Program.GamesRepository.UninstallGame(setlist.SelectedGame);
                     _currentSetList = null;
