@@ -18,6 +18,6 @@
         </ScrollViewer.Background>
         <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Top"></StackPanel>
       </ScrollViewer>
-      <Button Content="Cancel" Grid.Row="2" Height="25" HorizontalAlignment="Left" Name="btnCancel" VerticalAlignment="Top" Width="75" />  
+      <Button Content="Cancel" Grid.Row="2" Height="25" HorizontalAlignment="Left" Name="btnCancel" VerticalAlignment="Top" Width="75" />
     </Grid>
 </Page>
