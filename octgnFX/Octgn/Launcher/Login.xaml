@@ -45,7 +45,7 @@
     </EventTrigger>
   </Page.Triggers>
 
-  <Grid Height="380">
+  <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="20" />
       <RowDefinition Height="100*" />
@@ -70,7 +70,7 @@
             <MenuItem Name="menuAboutUs" Header="About Us" Click="menuAboutUs_Click" />
         </MenuItem>
     </Menu>
-    <Grid x:Name="MainGrid" Margin="10,10,10,12" Grid.Row="1" Background="{x:Null}">
+    <Grid x:Name="MainGrid" Margin="10" Grid.Row="1" Background="{x:Null}">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="378*" />
         <ColumnDefinition Width="375*" />
@@ -96,7 +96,7 @@
             </TextBlock.Effect>
           </TextBlock>
           <TextBlock Foreground="#FFF00000" HorizontalAlignment="Right" Margin="0,0,232,6" Name="versionText"
-                     Style="{x:Null}" TextWrapping="Wrap" VerticalAlignment="Bottom" Text="3.0.1.10"></TextBlock>
+                     Style="{x:Null}" TextWrapping="Wrap" VerticalAlignment="Bottom">Version 0.2.0.1</TextBlock>
           <Viewbox Height="82.137" HorizontalAlignment="Left" Margin="50,0,0,0" RenderTransformOrigin="0.5,0.5"
                    Stretch="UniformToFill" VerticalAlignment="Center" Width="82.137">
             <Viewbox.RenderTransform>
@@ -265,10 +265,10 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
                 </Grid>
             </StackPanel>
 
-        <Border BorderThickness="1" Height="227" HorizontalAlignment="Center" Margin="12,0,16,6" Name="border3"
+        <Border BorderThickness="1" Height="222" HorizontalAlignment="Center" Margin="18,0,10,6" Name="border3"
             Style="{StaticResource Panel}" VerticalAlignment="Bottom" Visibility="Visible" Width="347" Grid.Row="2" Grid.Column="1"
             Padding="5" Grid.RowSpan="2">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" ClipToBounds="True" Height="215">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" ClipToBounds="True">
                     <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock5"
                         VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" Text="Loading Headlines">
                     </TextBlock>
@@ -287,7 +287,8 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
           </LinearGradientBrush>
         </Border.BorderBrush>
       </Border>
-        </Grid>
+
+    </Grid>
 
   </Grid>
 </Page>

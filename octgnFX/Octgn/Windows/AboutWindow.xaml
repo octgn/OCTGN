@@ -30,20 +30,20 @@
                    Name="imgDrilus" Opacity="0.25" Source="/OCTGN;component/Images/Avatar9_80.jpg" Stretch="Fill" VerticalAlignment="Top" Width="80" />
             <Label Content="drilus" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="6,85,0,0" Name="lblDrilus" 
                    VerticalAlignment="Top" Width="79" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="6,152,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="49,152,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80" 
                    Opacity="0.25" Source="/OCTGN;component/Images/ralig.png" MouseEnter="imgRalig98_MouseEnter" MouseLeave="imgRalig98_MouseLeave" />
-            <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="6,231,0,0" Name="lblRalig98" 
+            <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="49,231,0,0" Name="lblRalig98" 
                    VerticalAlignment="Top" Width="79" />
             <Image Height="80" HorizontalAlignment="Left" Margin="91,6,0,0" Name="imgGravecorp" Stretch="Fill" VerticalAlignment="Top" Width="80" 
                    Opacity="0.25" Source="/OCTGN;component/Images/GravecorpAvatar.jpg" MouseEnter="imgGravecorp_MouseEnter" MouseLeave="imgGravecorp_MouseLeave" />
-            <Image Height="80" HorizontalAlignment="Right" Margin="0,6,316,0" Name="imgD0c" Stretch="Fill" VerticalAlignment="Top" Width="80" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="177,6,0,0" Name="imgD0c" Stretch="Fill" VerticalAlignment="Top" Width="80" 
                    Opacity="0.25" Source="/OCTGN;component/Images/d0c.jpeg" MouseEnter="imgD0c_MouseEnter" MouseLeave="imgD0c_MouseLeave" />
             <Label Content="gravecorp" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="91,85,0,0" Name="lblGraveCorp" 
                    VerticalAlignment="Top" Width="79" />
             <Label Content="d0c" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,85,0,0" Name="lblD0c" 
                    VerticalAlignment="Top" Width="79" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="91,0,0,46" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Images/smith_user.png" MouseEnter="imgOther_MouseEnter" MouseLeave="imgOther_MouseLeave" />
-            <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="91,231,0,0" Name="lblOthers" 
+            <Image Height="80" HorizontalAlignment="Left" Margin="134,0,0,46" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Images/smith_user.png" MouseEnter="imgOther_MouseEnter" MouseLeave="imgOther_MouseLeave" />
+            <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="134,231,0,0" Name="lblOthers" 
                    VerticalAlignment="Top" Width="79" />
             <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textAbout" 
                    Text="OCTGN &quot;Online Card and Tabletop Gaming Network&quot; was originally developed by jods &quot;Joel Dumas&quot;. &#13;&#13;This program allows anyone to create a game file for use in OCTGN. A game file is typically a TCG (Trading Card Game).&#13;&#13;Feel free to submit any ideas or bugs you may have. We look forward to hearing from you. Enjoy the games!" 
@@ -63,8 +63,6 @@
             <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textD0c" 
                    Text="Kelly Elton&#13;&#13;Team lead and full time software contractor. He wants to buy a desk, but can't justify shelling out the cash when he has a perfectly good table.&#13;&#13;Famous Quote:&#34;DAMN YOU KENT JONES!&#34;&#13;&#13;http://www.skylabsonline.com&#13;http://www.kellyelton.com" 
                    VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="176,0,0,46" Name="image1" Opacity="0.25" Source="/OCTGN;component/Images/esse.png" Stretch="Fill" VerticalAlignment="Bottom" Width="80" />
-            <Label Content="Esse" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="176,231,0,0" Name="label1" VerticalAlignment="Top" Width="79" />
         </Grid>
     </Grid>
 </Page>
