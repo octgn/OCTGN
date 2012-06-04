@@ -212,17 +212,32 @@ namespace Octgn.Windows
                             Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
                             xmli.installSet(this, game);
                             WebClient cli = new WebClient();
-                            String xml_val = cli.DownloadString(xml_link);
-                            game.WriteOldXmlByLink(xml_link, xml_val);  
+                            try
+                            {
+                                String xml_val = cli.DownloadString(xml_link);
+                                game.WriteOldXmlByLink(xml_link, xml_val);
+                            }
+                            catch
+                            {
+                                UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
+                            }
+
                         }
                     }
                     else
                     {
-                        Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
-                        xmli.installSet(this, game);
-                        WebClient cli = new WebClient();
-                        String xml_val = cli.DownloadString(xml_link);
-                        game.WriteOldXmlByLink(xml_link, xml_val);
+                        try
+                        {
+                            Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
+                            xmli.installSet(this, game);
+                            WebClient cli = new WebClient();
+                            String xml_val = cli.DownloadString(xml_link);
+                            game.WriteOldXmlByLink(xml_link, xml_val);
+                        }
+                        catch
+                        {
+                            UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
+                        }
                     }
                 }
 
