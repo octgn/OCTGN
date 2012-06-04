@@ -87,6 +87,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
+    <Compile Include="Models\Card.cs" />
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\Set.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\User.cs" />
   </ItemGroup>
