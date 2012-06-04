@@ -62,6 +62,38 @@ namespace Octgn.Data
             return u;
         }
 
+        public List<String> GetAllXmls()
+        {
+            List<String> list = Octgn.Data.DatabaseHandler.GetAllXmls(Id.ToString());
+            return list;
+        }
+
+        public String GetXmlByLink(string xml_link)
+        {
+            string str = Octgn.Data.DatabaseHandler.SearchXmlByLink(xml_link, Id.ToString());
+            return str;
+        }
+
+        public void DeleteXmlByLink(string xml_link)
+        {
+            Octgn.Data.DatabaseHandler.DeleteXmlByLink(xml_link, Id.ToString());
+        }
+
+        public void AddXml(string xml_link)
+        {
+            Octgn.Data.DatabaseHandler.AddXmlString(xml_link, Id.ToString());
+        }
+
+        public void WriteOldXmlByLink(string xml_link, string old_xml)
+        {
+            Octgn.Data.DatabaseHandler.WriteOldXmlByLink(xml_link, old_xml, Id.ToString());
+        }
+
+        public String GetOldXmlByLink(string xml_link)
+        {
+            return Octgn.Data.DatabaseHandler.GetOldXmlByLink(xml_link, Id.ToString());
+        }
+
         public Set GetSet(Guid id)
         {
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
@@ -718,4 +750,5 @@ namespace Octgn.Data
             return candidates.Select(r => CardModel.FromDataRow(this, r));
         }
     }
+
 }
