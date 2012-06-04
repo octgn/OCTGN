@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
+using System.Globalization;
 
 
 namespace Octgn.Utils
@@ -51,11 +52,15 @@ namespace Octgn.Utils
             return NodeIter.Current.Value;
         }
 
-        public double version()
+        public float version()
         {
             NodeIter = nav.Select("/set/version");
             NodeIter.MoveNext();
-            return Convert.ToDouble( NodeIter.Current.Value);
+            //because in Poland default separator is ',' which causes problems
+            CultureInfo ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+            ci.NumberFormat.CurrencyDecimalSeparator = ".";
+            float n = float.Parse(NodeIter.Current.Value, NumberStyles.Any,ci);
+            return n;
         }
 
         public string date()
