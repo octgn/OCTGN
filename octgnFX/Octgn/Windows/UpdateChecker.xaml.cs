@@ -207,7 +207,7 @@ namespace Octgn.Windows
                         {
                             UpdateStatus("Problem with xml at link " + xml_link + " - uuid of set changed");
                         }
-                        if (old_xml.date() != xmls.date() || old_xml.link() != xmls.link() || old_xml.name() != xmls.name() || old_xml.version() != xmls.version())
+                        if (xmls.version() > old_xml.version())
                         {
                             Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
                             xmli.installSet(this, game);

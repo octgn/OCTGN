@@ -51,11 +51,11 @@ namespace Octgn.Utils
             return NodeIter.Current.Value;
         }
 
-        public string version()
+        public double version()
         {
             NodeIter = nav.Select("/set/version");
             NodeIter.MoveNext();
-            return NodeIter.Current.Value;
+            return Convert.ToDouble( NodeIter.Current.Value);
         }
 
         public string date()
