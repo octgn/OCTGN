@@ -2,11 +2,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-[assembly: AssemblyTitle("Octgn - VDT")]
+[assembly: AssemblyTitle("Octgn")]
 [assembly: AssemblyDescription("Octgn 3.0 client")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Octgn / Esse")]
-[assembly: AssemblyProduct("Octgn - VDT")]
+[assembly: AssemblyCompany("Octgn")]
+[assembly: AssemblyProduct("Octgn")]
 [assembly: AssemblyCopyright("Copyright @ Skylabs 2005-2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

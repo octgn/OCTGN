@@ -19,29 +19,30 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
     <ManifestCertificateThumbprint>95EF896D63BAD6C4EA21BEA2E16BEF4003BF8DC2</ManifestCertificateThumbprint>
     <ManifestKeyFile>OctgnKey.pfx</ManifestKeyFile>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
     <SignManifests>false</SignManifests>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <ExpressionBlendVersion>4.0.20421.0</ExpressionBlendVersion>
     <Utf8Output>true</Utf8Output>
-    <PublishUrl>F:\programistyczne\publish\</PublishUrl>
+    <PublishUrl>C:\OCTGN FX\Publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ProductName>OCTGN - VDT</ProductName>
-    <PublisherName>Esse - OCTGN</PublisherName>
+    <InstallUrl>http://octgn.net/octgn-client/</InstallUrl>
+    <ProductName>OCTGN</ProductName>
+    <PublisherName>OCTGN</PublisherName>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>0.10.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -260,9 +261,6 @@
     <Compile Include="Play\DefaultMarkerModel.cs" />
     <Compile Include="Play\DragAdorner.cs" />
     <Compile Include="Utils\CacheTraceListener.cs" />
-    <Compile Include="Utils\XmlSimpleValidate.cs" />
-    <Compile Include="Utils\XmlInstaller.cs" />
-    <Compile Include="Utils\XmlSetParser.cs" />
     <Compile Include="Utils\Cryptor.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="Definitions\GlobalVariableDef.cs" />
@@ -516,12 +514,6 @@
     <Compile Include="Windows\UpgradeMessage.xaml.cs">
       <DependentUpon>UpgradeMessage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\UrlSetList.xaml.cs">
-      <DependentUpon>UrlSetList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\UrlSets.xaml.cs">
-      <DependentUpon>UrlSets.xaml</DependentUpon>
-    </Compile>
     <None Include="pbc.bat" />
     <EmbeddedResource Include="Launcher\Game.xsd">
       <SubType>
@@ -608,8 +600,6 @@
     <Resource Include="Images\stock_flip_horizontally.png" />
     <None Include="Resources\knockknock.wav" />
     <None Include="Resources\doorclose.wav" />
-    <Resource Include="Resources\Icons\image_xml.png" />
-    <Resource Include="Resources\Icons\image_xml_small.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -960,14 +950,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\UrlSetList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\UrlSets.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Folder.png" />
@@ -1116,7 +1098,6 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>start $(ProjectDir)pbc.bat</PostBuildEvent>
   </PropertyGroup>
 </Project>
