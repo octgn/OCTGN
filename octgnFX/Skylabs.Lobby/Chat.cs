@@ -67,6 +67,7 @@ namespace Skylabs.Lobby
                     switch(msg.Chatstate)
                     {
                         case Chatstate.None:
+							//TODO Group chat whispers in the form of {roomname}@conference.server.octgn.info/{username} need to be handled here.
                             var nc = GetRoom(new NewUser(msg.From.Bare));
                             nc.OnMessage(sender , msg);
                             break;
