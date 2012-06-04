@@ -76,6 +76,7 @@ namespace Octgn.StandAloneServer
         {
             var ex = (Exception) e.ExceptionObject;
             Console.WriteLine(ex.StackTrace);
+            Console.ReadLine();
         }
     }
 }

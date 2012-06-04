@@ -51,6 +51,7 @@ namespace Octgn.Windows
                 }
                 VerifyAllDefs();
                 CheckForUpdates();
+                CheckForXmlSetUpdates();
                 UpdateCheckDone(_isUpToDate,_downloadURL);
             });
             lblStatus.Content = "";
@@ -187,6 +188,48 @@ namespace Octgn.Windows
             }
         }
 
+        private void CheckForXmlSetUpdates()
+        {
+            UpdateStatus("Checking for xml game updates...");
+            foreach (Data.Game game in Program.GamesRepository.Games)
+            {
+                List<String> xml_links = game.GetAllXmls();
+                foreach (String xml_link in xml_links)
+                {
+                    Utils.XmlSetParser xmls = new Utils.XmlSetParser(xml_link);
+                    Utils.XmlSimpleValidate xml_validate = new Utils.XmlSimpleValidate(xmls);
+                    xml_validate.CheckXml(game);
+                    if (game.GetOldXmlByLink(xml_link) != null)
+                    {
+                        var xmlr = XmlReader.Create(new StringReader(game.GetOldXmlByLink(xml_link)));
+                        Utils.XmlSetParser old_xml = new Utils.XmlSetParser(xmlr);
+                        if (old_xml.uuid() != xmls.uuid())
+                        {
+                            UpdateStatus("Problem with xml at link " + xml_link + " - uuid of set changed");
+                        }
+                        if (old_xml.date() != xmls.date() || old_xml.link() != xmls.link() || old_xml.name() != xmls.name() || old_xml.version() != xmls.version())
+                        {
+                            Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
+                            xmli.installSet(this, game);
+                            WebClient cli = new WebClient();
+                            String xml_val = cli.DownloadString(xml_link);
+                            game.WriteOldXmlByLink(xml_link, xml_val);  
+                        }
+                    }
+                    else
+                    {
+                        Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
+                        xmli.installSet(this, game);
+                        WebClient cli = new WebClient();
+                        String xml_val = cli.DownloadString(xml_link);
+                        game.WriteOldXmlByLink(xml_link, xml_val);
+                    }
+                }
+
+            }
+
+        }
+
         private void UpdateCheckDone(bool result, string url)
         {
             Dispatcher.Invoke(new Action(() =>
@@ -274,7 +317,7 @@ namespace Octgn.Windows
             
         }
 
-        private void UpdateStatus(string stat)
+        public void UpdateStatus(string stat)
         {
             Dispatcher.BeginInvoke(new Action(() =>
                                                   {

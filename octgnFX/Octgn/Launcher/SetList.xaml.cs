@@ -13,6 +13,7 @@ namespace Octgn.Launcher
     public partial class SetList
     {
         public Data.Game SelectedGame;
+        private Data.Game game;
 
         public SetList(Data.Game selectedGame)
         {
@@ -126,6 +127,12 @@ namespace Octgn.Launcher
         public void PatchSelected()
         {
             new Windows.PatchDialog {Owner = Program.MainWindow}.ShowDialog();
+            RefreshList();
+        }
+
+        public void AddAutoUpdatedSets()
+        {
+            new Windows.UrlSetList { game = SelectedGame }.ShowDialog();
             RefreshList();
         }
     }

@@ -708,5 +708,11 @@ namespace Octgn.Windows
             Program.GameSettings.HideBoard = false;
         }
 
+        private void bUrlSets_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentSetList != null)
+                _currentSetList.AddAutoUpdatedSets();
+        }
+
     }
 }
