@@ -499,6 +499,7 @@ namespace Octgn.Launcher
                 Prefs.InstallOnBoot = menuInstallOnBoot.IsChecked;
             }
 
+
     }
 
 }
