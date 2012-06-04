@@ -383,6 +383,8 @@ namespace Octgn
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
+
+
         #region MEF stuff for easy services composition
 
         private static readonly AssemblyCatalog Catalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());

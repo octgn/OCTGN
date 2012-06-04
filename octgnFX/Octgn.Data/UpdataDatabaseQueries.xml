@@ -25,4 +25,14 @@
 			);
 		]]>
 	</update>
+  <update from="5" to="6">
+    <![CDATA[
+			CREATE TABLE[xml](
+	      [id] INTEGER PRIMARY KEY AUTOINCREMENT,
+	      [xml_link] TEXT NOT NULL,
+	      [gid] TEXT NOT NULL,
+	      [old_xml] TEXT
+       );
+		]]>
+  </update>
 </updates>

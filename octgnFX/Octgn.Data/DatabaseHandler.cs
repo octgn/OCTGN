@@ -42,6 +42,194 @@ namespace Octgn.Data
 			return null;
 		}
 
+
+
+        public static string GetXmlString(int id, string gid)
+        {
+            using (var con = new SQLiteConnection(ConString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {
+                    com.CommandText = "SELECT * FROM xml WHERE id=@id AND gid=@gid";
+                    com.CommandType = CommandType.Text;
+                    com.Parameters.AddWithValue("@id", id);
+                    com.Parameters.AddWithValue("@gid", gid);
+                    using(var r = com.ExecuteReader())
+					{
+						if(r.Read())
+						{
+							return r.GetString(0);
+						}
+					}
+				}
+				con.Close();
+            }
+            return null;
+        }
+
+        public static void AddXmlString(string xml_link, string gid)
+        {
+            using (var con = new SQLiteConnection(ConString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {
+                    com.CommandText = "INSERT INTO xml(xml_link, gid) VALUES(@xml_link, @gid)";
+                    com.Parameters.AddWithValue("@xml_link", xml_link);
+                    com.Parameters.AddWithValue("@gid", gid);
+                    com.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+        }
+
+        public static List<String> GetAllXmls(string gid)
+        {
+            var result = new List<String>();
+            using (var con = new SQLiteConnection(ConString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {
+                    com.CommandText = "SELECT xml_link FROM xml WHERE gid=@gid AND xml_link != ''";
+                    com.Parameters.AddWithValue("@gid", gid);
+                    using (var reader = com.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                con.Close();
+            }
+            return result;
+        }
+
+        public static void DeleteXml(string id, string gid)
+        {
+            using (var con = new SQLiteConnection(ConString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {
+                    com.CommandText = "DELETE FROM xml WHERE gid=@gid AND id=@id";
+                    com.Parameters.AddWithValue("@id", id);
+                    com.Parameters.AddWithValue("@gid", gid);
+                    com.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+        }
+
+        public static void DeleteXmlByLink(string xml_link, string gid)
+        {
+            using (var con = new SQLiteConnection(ConString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {
+                    com.CommandText = "DELETE FROM xml WHERE gid=@gid AND xml_link=@xml_link";
+                    com.Parameters.AddWithValue("@xml_link", xml_link);
+                    com.Parameters.AddWithValue("@gid", gid);
+                    com.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+        }
+
+        public static void AddOldXmlToXmlString(int id, string old_xml, string gid)
+        {
+            using (var con = new SQLiteConnection(ConString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {
+                    com.CommandText = "UPDATE xml SET old_xml=@old_xml WHERE id=@id AND gid=@gid";
+                    com.Parameters.AddWithValue("@old_xml", old_xml);
+                    com.Parameters.AddWithValue("@gid", gid);
+                    com.Parameters.AddWithValue("@id", id);
+                    com.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+        }
+
+        public static String GetOldXmlByLink(string xml_link, string gid)
+        {
+            var result = "";
+            using (var con = new SQLiteConnection(ConString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {
+                    com.CommandText = "SELECT old_xml FROM xml WHERE gid=@gid AND xml_link=@xml_link";
+                    com.Parameters.AddWithValue("@gid", gid);
+                    com.Parameters.AddWithValue("@xml_link", xml_link);
+                    using (var reader = com.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            try
+                            {
+                                result = reader.GetString(0);
+                            }
+                            catch
+                            {
+                                result = null;
+                            }
+                        }
+                    }
+                }
+                con.Close();
+            }
+            return result;
+
+        }
+
+        public static void WriteOldXmlByLink(string xml_link, string old_xml, string gid)
+        {
+            using (var con = new SQLiteConnection(ConString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {
+                    com.CommandText = "UPDATE xml SET old_xml=@old_xml WHERE xml_link=@xml_link AND gid=@gid";
+                    com.Parameters.AddWithValue("@old_xml", old_xml);
+                    com.Parameters.AddWithValue("@gid", gid);
+                    com.Parameters.AddWithValue("@xml_link", xml_link);
+                    com.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+        }
+
+        public static string SearchXmlByLink(string xml_link, string gid)
+        {
+            using (var con = new SQLiteConnection(ConString))
+            {
+                con.Open();
+                using (var com = con.CreateCommand())
+                {
+                    com.CommandText = "SELECT xml_link FROM xml WHERE xml_link=@xml_link AND gid=@gid";
+                    com.CommandType = CommandType.Text;
+                    com.Parameters.AddWithValue("@xml_link", xml_link);
+                    com.Parameters.AddWithValue("@gid", gid);
+                    using (var r = com.ExecuteReader())
+                    {
+                        if (r.Read())
+                        {
+                            return r.GetString(0);
+                        }
+                    }
+                }
+                con.Close();
+            }
+            return null;
+
+        }
+
 		public static void AddUser(string jid, string email)
 		{
 			using (var con = new SQLiteConnection(ConString))
@@ -173,6 +361,8 @@ namespace Octgn.Data
                 command.ExecuteNonQuery();
                 command.CommandText = string.Format("ALTER TABLE [users] RENAME TO [{0}users]", suffix);
                 command.ExecuteNonQuery();
+                command.CommandText = string.Format("ALTER TABLE [xml] RENAME TO [{0}xml]", suffix);
+                command.ExecuteNonQuery();
             }
 
             using (SQLiteCommand command = connection.CreateCommand())
@@ -256,6 +446,14 @@ namespace Octgn.Data
                 sb.Clear();
                 sb.Append("INSERT INTO \"users\"(\"id\",\"jid\",\"email\") ");
                 sb.Append(string.Format("SELECT \"id\", \"jid\", \"email\" FROM \"{0}users\"", suffix));
+                command.CommandText = sb.ToString();
+                command.ExecuteNonQuery();
+
+
+                //xml
+                sb.Clear();
+                sb.Append("INSERT INTO \"xml\"(\"id\",\"xml_link\",\"gid\",\"old_xml\") ");
+                sb.Append(string.Format("SELECT \"id\",\"xml_link\",\"gid\",\"old_xml\" FROM \"{0}xml\"", suffix));
                 command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
                 
@@ -350,6 +548,7 @@ namespace Octgn.Data
                 sb.Append(string.Format("DROP TABLE [{0}custom_properties];", suffix));
                 sb.Append(string.Format("DROP TABLE [{0}cards];", suffix));
                 sb.Append(string.Format("DROP TABLE [{0}users];", suffix));
+                sb.Append(string.Format("DROP TABLE [{0}xml];", suffix));
                 command.CommandText = sb.ToString();
                 command.ExecuteNonQuery();
             }
