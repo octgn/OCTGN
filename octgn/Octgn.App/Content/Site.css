@@ -145,7 +145,7 @@ ul#menu
     padding: 0 0 2px;
     position: relative;
     margin: 0;
-    text-align: right;
+    text-align: left;
 }
 
 ul#menu li
@@ -165,17 +165,36 @@ ul#menu li#greeting
 
 ul#menu li a
 {
+	
+	-webkit-border-radius:	.5em .5em 0 0;
+	-moz-border-radius:		.5em .5em 0 0;
+	border-radius:			.5em .5em 0 0;
+	
     padding: 10px 20px;
     font-weight: bold;
     text-decoration: none;
     line-height: 2.8em;
-    background-color: #e8eef4;
-    color: #034af3;
+    color: #ffffff;
+	
+	background-image: linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
+	background-image: -o-linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
+	background-image: -moz-linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
+	background-image: -webkit-linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
+	background-image: -ms-linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
+
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.45, rgb(218,75,58)),
+		color-stop(0.73, rgb(255,105,87)),
+		color-stop(0.87, rgb(255,137,114))
+	);
+    
 }
 
 ul#menu li a:hover
 {
-    background-color: #fff;
     text-decoration: none;
 }
 
@@ -262,7 +281,8 @@ table th
 
 #menucontainer
 {
-    margin-top:40px;
+    margin-top:60px;
+	padding-left: 20px;
 }
 
 div#title
