@@ -196,24 +196,43 @@ namespace Octgn.Windows
                 List<String> xml_links = game.GetAllXmls();
                 foreach (String xml_link in xml_links)
                 {
-                    Utils.XmlSetParser xmls = new Utils.XmlSetParser(xml_link);
-                    Utils.XmlSimpleValidate xml_validate = new Utils.XmlSimpleValidate(xmls);
-                    xml_validate.CheckXml(game);
-                    if (game.GetOldXmlByLink(xml_link) != null)
+                    try
                     {
-                        var xmlr = XmlReader.Create(new StringReader(game.GetOldXmlByLink(xml_link)));
-                        Utils.XmlSetParser old_xml = new Utils.XmlSetParser(xmlr);
-                        if (old_xml.uuid() != xmls.uuid())
+                        Utils.XmlSetParser xmls = new Utils.XmlSetParser(xml_link);
+                        Utils.XmlSimpleValidate xml_validate = new Utils.XmlSimpleValidate(xmls);
+                        xml_validate.CheckXml(game);
+                        if (game.GetOldXmlByLink(xml_link) != null)
                         {
-                            UpdateStatus("Problem with xml at link " + xml_link + " - uuid of set changed");
+                            var xmlr = XmlReader.Create(new StringReader(game.GetOldXmlByLink(xml_link)));
+                            Utils.XmlSetParser old_xml = new Utils.XmlSetParser(xmlr);
+                            if (old_xml.uuid() != xmls.uuid())
+                            {
+                                UpdateStatus("Problem with xml at link " + xml_link + " - uuid of set changed");
+                            }
+                            if (xmls.version() > old_xml.version())
+                            {
+                                Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
+                                xmli.installSet(this, game);
+                                WebClient cli = new WebClient();
+                                try
+                                {
+                                    String xml_val = cli.DownloadString(xml_link);
+                                    game.WriteOldXmlByLink(xml_link, xml_val);
+                                }
+                                catch
+                                {
+                                    UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
+                                }
+
+                            }
                         }
-                        if (xmls.version() > old_xml.version())
+                        else
                         {
-                            Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
-                            xmli.installSet(this, game);
-                            WebClient cli = new WebClient();
                             try
                             {
+                                Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
+                                xmli.installSet(this, game);
+                                WebClient cli = new WebClient();
                                 String xml_val = cli.DownloadString(xml_link);
                                 game.WriteOldXmlByLink(xml_link, xml_val);
                             }
@@ -221,23 +240,12 @@ namespace Octgn.Windows
                             {
                                 UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
                             }
-
                         }
                     }
-                    else
+                    catch
                     {
-                        try
-                        {
-                            Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
-                            xmli.installSet(this, game);
-                            WebClient cli = new WebClient();
-                            String xml_val = cli.DownloadString(xml_link);
-                            game.WriteOldXmlByLink(xml_link, xml_val);
-                        }
-                        catch
-                        {
-                            UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
-                        }
+                        MessageBox.Show("Problem with getting one of the xmls - " + xml_link);
+                        UpdateStatus("Problem with getting one of the xmls - " + xml_link);
                     }
                 }
 
