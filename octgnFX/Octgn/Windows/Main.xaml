@@ -97,7 +97,9 @@
           <ribbon:RibbonButton x:Name="bInstallSets" Label="Install Sets"
                                LargeImageSource="/Resources/Icons/image_add.png" Click="BInstallSetsClick"
                                SmallImageSource="/Octgn;component/Resources/Icons/image_add_small.png" />
-          <ribbon:RibbonButton x:Name="bRemoveSets" Label="Remove Sets"
+                    <ribbon:RibbonButton x:Name="bXmlSets" Label="Add autoupdated sets"
+                               LargeImageSource="/Resources/Icons/image_xml.png" SmallImageSource="/Resources/Icons/image_xml_small.png" Click="bUrlSets_Click" />
+                    <ribbon:RibbonButton x:Name="bRemoveSets" Label="Remove Sets"
                                LargeImageSource="/Resources/Icons/image_delete.png" Click="RibbonButtonClick2"
                                SmallImageSource="/Octgn;component/Resources/Icons/image_delete_small.png" />
           <ribbon:RibbonButton x:Name="bPatchSets" Label="Patch All Sets"
