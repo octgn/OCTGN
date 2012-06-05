@@ -474,7 +474,11 @@
     <Compile Include="Utils\GroupVisibility.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Extentions\LinqExtensions.cs" />
+    <Compile Include="Utils\IServerCalls.cs" />
     <Compile Include="Utils\Win32.cs" />
+    <Compile Include="Utils\XmlInstaller.cs" />
+    <Compile Include="Utils\XmlSetParser.cs" />
+    <Compile Include="Utils\XmlSimpleValidate.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
@@ -513,6 +517,12 @@
     </Compile>
     <Compile Include="Windows\UpgradeMessage.xaml.cs">
       <DependentUpon>UpgradeMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UrlSetList.xaml.cs">
+      <DependentUpon>UrlSetList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UrlSets.xaml.cs">
+      <DependentUpon>UrlSets.xaml</DependentUpon>
     </Compile>
     <None Include="pbc.bat" />
     <EmbeddedResource Include="Launcher\Game.xsd">
@@ -600,6 +610,8 @@
     <Resource Include="Images\stock_flip_horizontally.png" />
     <None Include="Resources\knockknock.wav" />
     <None Include="Resources\doorclose.wav" />
+    <Resource Include="Resources\Icons\image_xml.png" />
+    <Resource Include="Resources\Icons\image_xml_small.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -947,6 +959,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\UpgradeMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\UrlSetList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\UrlSets.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
