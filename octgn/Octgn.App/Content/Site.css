@@ -11,6 +11,7 @@ body
     margin: 0;
     padding: 0;
     color: #696969;
+	background: url(/Content/images/crosshatch.png);
 }
 
 a:link
@@ -68,6 +69,16 @@ h4
 h5, h6
 {
     font-size: 1em;
+}
+
+.redglow{
+	-webkit-border-radius:	1em;
+	-moz-border-radius:		1em;
+	border-radius:			1em;
+
+	-webkit-box-shadow:	0px 0px 8em 1px rgba(255, 0, 0, .7);
+	-moz-box-shadow: 	0px 0px 8em 1px rgba(255, 0, 0, .7);
+	box-shadow: 		0px 0px 8em 1px rgba(255, 0, 0, .7);	
 }
 
 /* this rule styles <h2> tags that are the 
@@ -131,7 +142,6 @@ page width. Or, you can specify an exact pixel width. */
 ----------------------------------------------------------*/
 ul#menu
 {
-    border-bottom: 1px #5C87B2 solid;
     padding: 0 0 2px;
     position: relative;
     margin: 0;
