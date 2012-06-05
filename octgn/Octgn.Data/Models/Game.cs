@@ -9,25 +9,35 @@ namespace Octgn.Data.Models
     {
 
         public Guid Guid { get; set; }
+        public string Name { get; set; }
 
         //todo the database stuff. something with only one connection in the docs?
         public Database DB { get; set; }
 
-        public Set GetSet(Guid setGuid)
+        public IEnumerable<GameObject> GetallObjects()
         {
-            Set example = new Set();
-            example.GameGuid = Guid;
-            example.Guid = setGuid;
-            Set ret = (Set)DB.DBConnection.QueryByExample(example)[0];
+            IEnumerable<GameObject> ret = DB.DBConnection.Query<GameObject>(delegate(GameObject gameObject)
+            {
+                return gameObject.GameGuid == Guid;
+            });
             return (ret);
         }
 
-        public List<Set> GetAllSets()
+        public IEnumerable<GameObject> GetAllObjectsByType(string type)
         {
-            List<Set> ret = (List<Set>)DB.DBConnection.Query<Set>(delegate(Set set)
+            IEnumerable<GameObject> ret = DB.DBConnection.Query<GameObject>(delegate(GameObject gameObject)
             {
-                return set.GameGuid == Guid;
+                return gameObject.GameGuid == Guid && gameObject.Type == type;
             });
+            return (ret);
+        }
+
+        public GameObject GetObjectByGuid(Guid guid)
+        {
+            GameObject ret = DB.DBConnection.Query<GameObject>(delegate(GameObject gameObject)
+            {
+                return gameObject.GameGuid == Guid && gameObject.Guid == guid;
+            }).FirstOrDefault<GameObject>();
             return (ret);
         }
 
