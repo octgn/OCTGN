@@ -176,19 +176,19 @@ ul#menu li a
     line-height: 2.8em;
     color: #ffffff;
 	
-	background-image: linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
-	background-image: -o-linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
-	background-image: -moz-linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
-	background-image: -webkit-linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
-	background-image: -ms-linear-gradient(bottom, rgb(218,75,58) 45%, rgb(255,105,87) 73%, rgb(255,137,114) 87%);
+	background-image: linear-gradient(bottom, rgb(218,75,58) 54%, rgb(255,105,87) 72%, rgb(255,137,114) 88%);
+	background-image: -o-linear-gradient(bottom, rgb(218,75,58) 54%, rgb(255,105,87) 72%, rgb(255,137,114) 88%);
+	background-image: -moz-linear-gradient(bottom, rgb(218,75,58) 54%, rgb(255,105,87) 72%, rgb(255,137,114) 88%);
+	background-image: -webkit-linear-gradient(bottom, rgb(218,75,58) 54%, rgb(255,105,87) 72%, rgb(255,137,114) 88%);
+	background-image: -ms-linear-gradient(bottom, rgb(218,75,58) 54%, rgb(255,105,87) 72%, rgb(255,137,114) 88%);
 
 	background-image: -webkit-gradient(
 		linear,
 		left bottom,
 		left top,
-		color-stop(0.45, rgb(218,75,58)),
-		color-stop(0.73, rgb(255,105,87)),
-		color-stop(0.87, rgb(255,137,114))
+		color-stop(0.54, rgb(218,75,58)),
+		color-stop(0.72, rgb(255,105,87)),
+		color-stop(0.88, rgb(255,137,114))
 	);
     
 }
@@ -196,6 +196,20 @@ ul#menu li a
 ul#menu li a:hover
 {
     text-decoration: none;
+	background-image: linear-gradient(bottom, #FF6957 54%, #FF8F82 72%, #ff8972 88%);
+	background-image: -o-linear-gradient(bottom, #FF6957 54%, #FF8F82 72%, #ff8972 88%);
+	background-image: -moz-linear-gradient(bottom, #FF6957 54%, #FF8F82 72%, #ff8972 88%);
+	background-image: -webkit-linear-gradient(bottom, #FF6957 54%, #FF8F82 72%, #ff8972 88%);
+	background-image: -ms-linear-gradient(bottom, #FF6957 54%, #FF8F82 72%, #ff8972 88%);
+
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.54, #FF6957),
+		color-stop(0.72, #FF8F82),
+		color-stop(0.88, #ff8972)
+	);
 }
 
 ul#menu li a:active
