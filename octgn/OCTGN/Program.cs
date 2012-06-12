@@ -16,14 +16,12 @@ namespace Octgn
 	public static class Program
 	{
         public static string tester = "test1";
-		public const int Port = 8080;
+		public const int Port = 8123;
 		public static AssemblyName AssName = Assembly.GetExecutingAssembly().GetName();
 		public static WebHoster Hoster;
         private static ServiceHost host;
 
-#if(DEBUG)
-		public static DirectoryInfo WebRoot { get { return new DirectoryInfo("../../../Octgn.App/"); } }
-#endif
+		public static DirectoryInfo WebRoot { get { return new DirectoryInfo(Directory.GetCurrentDirectory()); } }
 
 		private static void Main(string[] args)
 		{
