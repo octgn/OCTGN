@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Security.Principal;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
@@ -48,15 +43,9 @@ namespace Octgn.App.Controllers
 					{
 						return Redirect(returnUrl);
 					}
-					else
-					{
-						return RedirectToAction("Index", "Home");
-					}
+					return RedirectToAction("Index", "Home");
 				}
-				else
-				{
-					ModelState.AddModelError("", "The user name or password provided is incorrect.");
-				}
+				ModelState.AddModelError("", "The user name or password provided is incorrect.");
 			}
 
 			// If we got this far, something failed, redisplay form
@@ -97,10 +86,7 @@ namespace Octgn.App.Controllers
 					FormsService.SignIn(model.UserName, false /* createPersistentCookie */);
 					return RedirectToAction("Index", "Home");
 				}
-				else
-				{
-					ModelState.AddModelError("", AccountValidation.ErrorCodeToString(createStatus));
-				}
+				ModelState.AddModelError("", AccountValidation.ErrorCodeToString(createStatus));
 			}
 
 			// If we got this far, something failed, redisplay form
@@ -129,10 +115,7 @@ namespace Octgn.App.Controllers
 				{
 					return RedirectToAction("ChangePasswordSuccess");
 				}
-				else
-				{
-					ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
-				}
+				ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
 			}
 
 			// If we got this far, something failed, redisplay form

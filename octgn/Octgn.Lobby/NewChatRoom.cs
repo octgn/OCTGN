@@ -1,40 +1,32 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using agsXMPP;
-using agsXMPP.Collections;
-using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
-using agsXMPP.protocol.component;
 using agsXMPP.protocol.extensions.chatstates;
 using agsXMPP.protocol.x;
-using agsXMPP.protocol.x.muc;
 using Message = agsXMPP.protocol.client.Message;
-using Presence = agsXMPP.protocol.client.Presence;
 
 namespace Octgn.Lobby
 {
     public class NewChatRoom: IDisposable,IEquatable<NewChatRoom>,IEqualityComparer
     {
-        public delegate void dMessageReceived(object sender , NewUser from, string message, DateTime rTime,Client.LobbyMessageType mType = Client.LobbyMessageType.Standard);
+        public delegate void DMessageReceived(object sender , NewUser from, string message, DateTime rTime,Client.LobbyMessageType mType = Client.LobbyMessageType.Standard);
 
-        public delegate void dUserListChange(object sender,List<NewUser> users );
+        public delegate void DUserListChange(object sender,List<NewUser> users );
 
-        public event dMessageReceived OnMessageRecieved;
-        public event dUserListChange OnUserListChange;
+        public event DMessageReceived OnMessageRecieved;
+        public event DUserListChange OnUserListChange;
 
         public bool IsGroupChat { get; private set; }
-        public long RID { get; private set; }
+        public long Rid { get; private set; }
         public List<NewUser> Users { get; set; }
         public NewUser GroupUser { get; private set; }
-        private Client _client;
+        private readonly Client _client;
         public NewChatRoom(long rid, Client c,NewUser user)
         {
-            RID = rid;
+            Rid = rid;
             Users = new List<NewUser>();
             _client = c;
             if (user.User.Server == "conference.server.octgn.info")
@@ -53,26 +45,22 @@ namespace Octgn.Lobby
             if(OnUserListChange != null) OnUserListChange.Invoke(this , Users);
         }
 
-        private void MessageCallBack(object sender , Message msg , object data)
-        {
-            //Debug.WriteLine("mcall:" + msg);
-        }
-
-        public void SetTopic(string topic) 
+    	public void SetTopic(string topic) 
         {
             if (!IsGroupChat || GroupUser == null)return;
             var m = new Message(GroupUser.User.Bare , MessageType.groupchat , "" , topic);
             m.GenerateId();
-            m.XEvent = new Event();
-            m.XEvent.Delivered = true;
-            m.XEvent.Displayed = true;
-            _client.Send(m);
+            m.XEvent = new Event
+            {
+            	Delivered = true ,
+            	Displayed = true
+            };
+        	_client.Send(m);
         }
 
         public void SendMessage(string message)
         {
-            NewUser to;
-            to = IsGroupChat ? GroupUser : Users.SingleOrDefault(x => x.User.Bare != _client.Me.User.Bare);
+        	NewUser to = IsGroupChat ? GroupUser : Users.SingleOrDefault(x => x.User.Bare != _client.Me.User.Bare);
             if(to == null || String.IsNullOrWhiteSpace(message)) return;
 
             if(message[0] == '/')
@@ -97,10 +85,12 @@ namespace Octgn.Lobby
                 var j = new Jid(to.User);
                 var m = new Message(j, (IsGroupChat) ? MessageType.groupchat : MessageType.chat, message);
                 m.GenerateId();
-                m.XEvent = new Event();
-                m.XEvent.Delivered = true;
-                m.XEvent.Displayed = true;
-                _client.Send(m);
+                m.XEvent = new Event
+                {
+                	Delivered = true ,
+                	Displayed = true
+                };
+            	_client.Send(m);
             }
 
         }
@@ -173,7 +163,7 @@ namespace Octgn.Lobby
             IsGroupChat = true;
             GroupUser = gcu;
         }
-        public void AddUser(NewUser user, bool InviteUser = true)
+        public void AddUser(NewUser user, bool inviteUser = true)
         {
             if(!Users.Contains(user)) Users.Add(user);
             if (Users.Count > 2 || IsGroupChat)
@@ -188,7 +178,7 @@ namespace Octgn.Lobby
                     _client.RosterManager.AddRosterItem(GroupUser.User,GroupUser.User.User);
                     
                 }
-                if(InviteUser)
+                if(inviteUser)
                     foreach(var u in Users) if(u != _client.Me) _client.MucManager.Invite(u.User , GroupUser.User);
                 
             }
@@ -209,16 +199,16 @@ namespace Octgn.Lobby
         public void Dispose() { 
 
         }
-        public bool Equals(NewChatRoom other) { return other.RID == RID; }
-        public override bool Equals(Object o) { return this.GetHashCode() == o.GetHashCode(); }
+        public bool Equals(NewChatRoom other) { return other.Rid == Rid; }
+        public override bool Equals(Object o) { return GetHashCode() == o.GetHashCode(); }
         public static bool operator==(NewChatRoom a, NewChatRoom b)
         {
             long rid1 = -1;
             long rid2 = -1;
             if ((object.Equals(a, null) && !object.Equals(b, null)) || (object.Equals(b, null) && !object.Equals(a, null))) return false;
 
-            if (!object.Equals(a, null)) rid1 = a.RID;
-            if (!object.Equals(b, null)) rid2 = b.RID;
+            if (!object.Equals(a, null)) rid1 = a.Rid;
+            if (!object.Equals(b, null)) rid2 = b.Rid;
             /*
             try
             {
@@ -237,6 +227,6 @@ namespace Octgn.Lobby
         public static bool operator !=(NewChatRoom a , NewChatRoom b) { return !(a == b); }
         public new bool Equals(object x , object y) { return x.GetHashCode() == y.GetHashCode(); }
         public int GetHashCode(object obj) { return obj.GetHashCode(); }
-        public override int GetHashCode() { return (int)this.RID; }
+        public override int GetHashCode() { return (int)Rid; }
     }
 }

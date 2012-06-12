@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Octgn.Common;
 using agsXMPP;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.extensions.chatstates;
@@ -12,14 +10,14 @@ namespace Octgn.Lobby
 {
     public class Chat
     {
-        public delegate void dCreateChatRoom(object sender , NewChatRoom room);
+        public delegate void DCreateChatRoom(object sender , NewChatRoom room);
 
-        public event dCreateChatRoom OnCreateRoom;
+        public event DCreateChatRoom OnCreateRoom;
 
-        private long _lastRid = 0;
-        private Client _client;
+        private long _lastRid;
+        private readonly Client _client;
         public ThreadSafeList<NewChatRoom> Rooms; 
-        private XmppClientConnection _xmpp;
+        private readonly XmppClientConnection _xmpp;
         public long NextRid
         {
             get
@@ -46,8 +44,7 @@ namespace Octgn.Lobby
                 case MessageType.normal:
                     if (msg.From.Server == "conference.server.octgn.info")
                     {
-                        var rname = msg.From.User;
-                        MucManager m = new MucManager(_xmpp);
+                    	MucManager m = new MucManager(_xmpp);
                         m.JoinRoom(msg.From , msg.From.User);
                         var theRoom = GetRoom(new NewUser(msg.From) , true);
                         _xmpp.RosterManager.AddRosterItem(msg.From,msg.From.User);

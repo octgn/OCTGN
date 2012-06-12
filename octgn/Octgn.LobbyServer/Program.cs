@@ -4,13 +4,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Threading;
-using Octgn.Lobby.Sockets;
-using agsXMPP;
+using Octgn.Common.Sockets;
 
-namespace Octgn.LobbyServer
+namespace Octgn.Lobby.Server
 {
     public static class Program
     {

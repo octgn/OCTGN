@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using agsXMPP;
 using agsXMPP.protocol.client;
 
@@ -39,44 +36,44 @@ namespace Octgn.Lobby
         public void SetStatus(Presence p)
         {
             Trace.WriteLine("[SetStatus]For: " + p.From);
-            Status = NewUser.PresenceToStatus(p);
+            Status = PresenceToStatus(p);
             Trace.WriteLine("[SetStatus]Status: " + Status.ToString());
         }
         public void SetStatus(UserStatus status) { Status = status; }
         public static UserStatus PresenceToStatus(Presence p)
         {
             if(p.From == null)return UserStatus.Unknown;
-            System.Diagnostics.Trace.WriteLine("[p2s]From: " + p.From);
-            System.Diagnostics.Trace.WriteLine("[p2s]Type: " + p.Type.ToString());
-            System.Diagnostics.Trace.WriteLine("[p2s]Show: " + p.Show.ToString());
-            UserStatus Status = UserStatus.Unknown;
+            Trace.WriteLine("[p2s]From: " + p.From);
+            Trace.WriteLine("[p2s]Type: " + p.Type.ToString());
+            Trace.WriteLine("[p2s]Show: " + p.Show.ToString());
+            var status = UserStatus.Unknown;
             if(p.Type == PresenceType.unavailable)
-                Status = UserStatus.Offline;
+                status = UserStatus.Offline;
             else if(p.Type == PresenceType.available && p.Show == ShowType.NONE)
-                Status = UserStatus.Online;
+                status = UserStatus.Online;
             else
             {
                 switch(p.Show)
                 {
                     case ShowType.NONE:
-                        Status = UserStatus.Offline;
+                        status = UserStatus.Offline;
                         break;
                     case ShowType.away:
-                        Status = UserStatus.Away;
+                        status = UserStatus.Away;
                         break;
                     case ShowType.chat:
-                        Status = UserStatus.Online;
+                        status = UserStatus.Online;
                         break;
                     case ShowType.dnd:
-                        Status = UserStatus.DoNotDisturb;
+                        status = UserStatus.DoNotDisturb;
                         break;
                     case ShowType.xa:
-                        Status = UserStatus.DoNotDisturb;
+                        status = UserStatus.DoNotDisturb;
                         break;
                 }
             }
-            System.Diagnostics.Trace.WriteLine("[p2s]Result: " + Status.ToString());
-            return Status;
+            System.Diagnostics.Trace.WriteLine("[p2s]Result: " + status.ToString());
+            return status;
         }
         public bool Equals(NewUser other)
         {

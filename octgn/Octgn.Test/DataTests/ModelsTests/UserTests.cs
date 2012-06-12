@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-//using Db4objects.Db4o;
+﻿using System.Collections.Generic;
+	//using Db4objects.Db4o;
 //using Db4objects.Db4o.Query;
 using FakeItEasy;
 using System.Web.Security;
@@ -22,17 +18,19 @@ namespace Octgn.Test.DataTests.ModelsTests
 			var fList = new List<User>();
 
 			var db = new Database(f);
-			var user = new User(db);
-			user.Email = "fake@email.com";
-			user.Username = "fakeuser";
-			user.PasswordHash = "123456";
+			var user = new User(db)
+			{
+				Email = "fake@email.com" ,
+				Username = "fakeuser" ,
+				PasswordHash = "123456"
+			};
 
-			A.CallTo(() => db.DBConnection.Store(new object())).WithAnyArguments().DoesNothing();
-			A.CallTo(() => db.DBConnection.Query<User>()).Returns(fList);
+			A.CallTo(() => db.DbConnection.Store(new object())).WithAnyArguments().DoesNothing();
+			A.CallTo(() => db.DbConnection.Query<User>()).Returns(fList);
 
 			fList.Add(user);
 
-			MembershipCreateStatus ret = MembershipCreateStatus.ProviderError;
+			MembershipCreateStatus ret;
 
 			//Test with non conflicting user
 			ret = user.CreateUser("nuser", "npass", "nemail");
@@ -53,13 +51,15 @@ namespace Octgn.Test.DataTests.ModelsTests
 			var fList = new List<User>();
 
 			var db = new Database(f);
-			var user = new User(db);
-			user.Email = "fake@email.com";
-			user.Username = "fakeuser";
-			user.PasswordHash = "123456";
+			var user = new User(db)
+			{
+				Email = "fake@email.com" ,
+				Username = "fakeuser" ,
+				PasswordHash = "123456"
+			};
 
-			A.CallTo(() => db.DBConnection.Store(new object())).WithAnyArguments().DoesNothing();
-			A.CallTo(() => db.DBConnection.Query<User>()).Returns(fList);
+			A.CallTo(() => db.DbConnection.Store(new object())).WithAnyArguments().DoesNothing();
+			A.CallTo(() => db.DbConnection.Query<User>()).Returns(fList);
 
 			fList.Add(user);
 

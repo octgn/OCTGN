@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Octgn.Data.Models
 {
@@ -12,31 +10,31 @@ namespace Octgn.Data.Models
         public Guid Guid { get; set; }
         public Guid GameGuid { get; set; }
 
-        private List<GameObjectProperty> properties;
+        private List<GameObjectProperty> _properties;
 
         public List<GameObjectProperty> Properties
         {
             get
             {
-                if (properties == null)
+                if (_properties == null)
                 {
-                    properties = new List<GameObjectProperty>();
+                    _properties = new List<GameObjectProperty>();
                 }
-                return (properties);
+                return (_properties);
             }
         }
 
-        private List<GameObject> childObjects;
+        private List<GameObject> _childObjects;
 
         public List<GameObject> ChildObjects
         {
             get
             {
-                if (childObjects == null)
+                if (_childObjects == null)
                 {
-                    childObjects = new List<GameObject>();
+                    _childObjects = new List<GameObject>();
                 }
-                return (childObjects);
+                return (_childObjects);
             }
         }
     }

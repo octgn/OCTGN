@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using Octgn.Lobby.Sockets;
-using agsXMPP;
+using System.Globalization;
+using Octgn.Common.Sockets;
 using agsXMPP.Xml.Dom;
-using agsXMPP.protocol.component;
 
 namespace Octgn.Lobby
 {        
@@ -102,7 +100,7 @@ namespace Octgn.Lobby
                 DateTime.TryParse(GetTag("timestarted") , out ret);
                 return ret;
             }
-            set{SetTag("timestarted",value.ToString());}
+            set{SetTag("timestarted",value.ToString(CultureInfo.InvariantCulture));}
         }
     }
 }

@@ -2,22 +2,22 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using Octgn.Lobby;
 
 namespace Octgn.Lobby
 {
     public class HostedGame : IEquatable<HostedGame>
     {
-        /// <summary>
-        ///   Host a game.
-        /// </summary>
-        /// <param name="port"> Port we are hosting on. </param>
-        /// <param name="gameguid"> GUID of the game </param>
-        /// <param name="gameversion"> Version of the game </param>
-        /// <param name="name"> Name of the room </param>
-        /// <param name="password"> Password for the game </param>
-        /// <param name="hoster"> User hosting the game </param>
-        public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, NewUser hoster, bool localGame = false)
+    	/// <summary>
+    	///   Host a game.
+    	/// </summary>
+    	/// <param name="port"> Port we are hosting on. </param>
+    	/// <param name="gameguid"> GUID of the game </param>
+    	/// <param name="gameversion"> Version of the game </param>
+    	/// <param name="name"> Name of the room </param>
+    	/// <param name="password"> Password for the game </param>
+    	/// <param name="hoster"> User hosting the game </param>
+    	/// <param name="localGame">Is this game local? </param>
+    	public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, NewUser hoster, bool localGame = false)
         {
             GameLog = "";
             GameGuid = gameguid;
@@ -25,14 +25,24 @@ namespace Octgn.Lobby
             Name = name;
             Password = password;
             Hoster = hoster;
-            Status = Lobby.EHostedGame.StoppedHosting;
+            Status = EHostedGame.StoppedHosting;
             Port = port;
             TimeStarted = new DateTime(0);
             LocalGame = localGame;
-            StandAloneApp = new Process();
-            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
-            StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
-                                                Port.ToString(CultureInfo.InvariantCulture);
+            StandAloneApp = new Process
+            {
+            	StartInfo =
+            	{
+            		FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe" ,
+            		Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
+            		            Port.ToString(CultureInfo.InvariantCulture) ,
+            		RedirectStandardOutput = true ,
+            		RedirectStandardInput = true ,
+            		RedirectStandardError = true ,
+            		UseShellExecute = false ,
+            		CreateNoWindow = true
+            	}
+            };
 #if(DEBUG || TestServer)
 #else
             if(!LocalGame)
@@ -45,14 +55,9 @@ namespace Octgn.Lobby
 
 #endif
 
-            StandAloneApp.StartInfo.RedirectStandardOutput = true;
-            StandAloneApp.StartInfo.RedirectStandardInput = true;
-            StandAloneApp.StartInfo.RedirectStandardError = true;
-            StandAloneApp.StartInfo.UseShellExecute = false;
-            StandAloneApp.StartInfo.CreateNoWindow = true;
-            StandAloneApp.Exited += StandAloneAppExited;
-            StandAloneApp.ErrorDataReceived += new DataReceivedEventHandler(StandAloneAppOnErrorDataReceived);
-            StandAloneApp.OutputDataReceived += new DataReceivedEventHandler(StandAloneAppOnOutputDataReceived);
+    		StandAloneApp.Exited += StandAloneAppExited;
+            StandAloneApp.ErrorDataReceived += StandAloneAppOnErrorDataReceived;
+            StandAloneApp.OutputDataReceived += StandAloneAppOnOutputDataReceived;
             StandAloneApp.EnableRaisingEvents = true;
         }
 
@@ -109,7 +114,7 @@ namespace Octgn.Lobby
         /// <summary>
         ///   The status of the hosted game.
         /// </summary>
-        public Lobby.EHostedGame Status { get; set; }
+        public EHostedGame Status { get; set; }
 
         public DateTime TimeStarted { get; private set; }
 
@@ -146,13 +151,13 @@ namespace Octgn.Lobby
 
         public bool StartProcess()
         {
-            Status = Lobby.EHostedGame.StoppedHosting;
+            Status = EHostedGame.StoppedHosting;
             try
             {
                 StandAloneApp.Start();
                 StandAloneApp.BeginErrorReadLine();
                 StandAloneApp.BeginOutputReadLine();
-                Status = Lobby.EHostedGame.StartedHosting;
+                Status = EHostedGame.StartedHosting;
                 TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
                 return true;
             }

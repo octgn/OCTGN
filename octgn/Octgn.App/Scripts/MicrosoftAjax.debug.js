@@ -31,8 +31,8 @@ Function.createCallback = function Function$createCallback(method, context) {
             return method.apply(this, args);
         }
         return method.call(this, context);
-    }
-}
+    };
+                                                                            };
 Function.createDelegate = function Function$createDelegate(instance, method) {
     /// <summary locid="M:J#Function.createDelegate" />
     /// <param name="instance" mayBeNull="true"></param>
@@ -45,11 +45,11 @@ Function.createDelegate = function Function$createDelegate(instance, method) {
     if (e) throw e;
     return function() {
         return method.apply(instance, arguments);
-    }
-}
+    };
+                                                                             };
 Function.emptyFunction = Function.emptyMethod = function Function$emptyMethod() {
     /// <summary locid="M:J#Function.emptyMethod" />
-}
+};
 Function.validateParameters = function Function$validateParameters(parameters, expectedParameters, validateParameterCount) {
     /// <summary locid="M:J#Function.validateParameters" />
     /// <param name="parameters"></param>
@@ -63,7 +63,7 @@ Function.validateParameters = function Function$validateParameters(parameters, e
     ]);
     if (e) throw e;
     return Function._validateParams(parameters, expectedParameters, validateParameterCount);
-}
+};
 Function._validateParams = function Function$_validateParams(params, expectedParams, validateParameterCount) {
     var e, expectedLength = expectedParams.length;
     validateParameterCount = validateParameterCount || (typeof(validateParameterCount) === "undefined");
@@ -88,7 +88,7 @@ Function._validateParams = function Function$_validateParams(params, expectedPar
         }
     }
     return null;
-}
+};
 Function._validateParameterCount = function Function$_validateParameterCount(params, expectedParams, validateParameterCount) {
     var i, error,
         expectedLen = expectedParams.length,
@@ -120,7 +120,7 @@ Function._validateParameterCount = function Function$_validateParameterCount(par
         return e;
     }
     return null;
-}
+};
 Function._validateParameter = function Function$_validateParameter(param, expectedParam, paramName) {
     var e,
         expectedType = expectedParam.type,
@@ -150,7 +150,7 @@ Function._validateParameter = function Function$_validateParameter(param, expect
         }
     }
     return null;
-}
+};
 Function._validateParameterType = function Function$_validateParameterType(param, expectedType, expectedInteger, expectedDomElement, mayBeNull, paramName) {
     var e, i;
     if (typeof(param) === "undefined") {
@@ -220,8 +220,7 @@ Function._validateParameterType = function Function$_validateParameterType(param
         }
     }
     return null;
-}
- 
+};
 Error.__typeName = 'Error';
 Error.__class = true;
 Error.create = function Error$create(message, errorInfo) {
@@ -243,7 +242,7 @@ Error.create = function Error$create(message, errorInfo) {
     }
     err.popStackFrame();
     return err;
-}
+};
 Error.argument = function Error$argument(paramName, message) {
     /// <summary locid="M:J#Error.argument" />
     /// <param name="paramName" type="String" optional="true" mayBeNull="true"></param>
@@ -261,7 +260,7 @@ Error.argument = function Error$argument(paramName, message) {
     var err = Error.create(displayMessage, { name: "Sys.ArgumentException", paramName: paramName });
     err.popStackFrame();
     return err;
-}
+};
 Error.argumentNull = function Error$argumentNull(paramName, message) {
     /// <summary locid="M:J#Error.argumentNull" />
     /// <param name="paramName" type="String" optional="true" mayBeNull="true"></param>
@@ -279,7 +278,7 @@ Error.argumentNull = function Error$argumentNull(paramName, message) {
     var err = Error.create(displayMessage, { name: "Sys.ArgumentNullException", paramName: paramName });
     err.popStackFrame();
     return err;
-}
+};
 Error.argumentOutOfRange = function Error$argumentOutOfRange(paramName, actualValue, message) {
     /// <summary locid="M:J#Error.argumentOutOfRange" />
     /// <param name="paramName" type="String" optional="true" mayBeNull="true"></param>
@@ -306,7 +305,7 @@ Error.argumentOutOfRange = function Error$argumentOutOfRange(paramName, actualVa
     });
     err.popStackFrame();
     return err;
-}
+};
 Error.argumentType = function Error$argumentType(paramName, actualType, expectedType, message) {
     /// <summary locid="M:J#Error.argumentType" />
     /// <param name="paramName" type="String" optional="true" mayBeNull="true"></param>
@@ -343,7 +342,7 @@ Error.argumentType = function Error$argumentType(paramName, actualType, expected
     });
     err.popStackFrame();
     return err;
-}
+};
 Error.argumentUndefined = function Error$argumentUndefined(paramName, message) {
     /// <summary locid="M:J#Error.argumentUndefined" />
     /// <param name="paramName" type="String" optional="true" mayBeNull="true"></param>
@@ -361,7 +360,7 @@ Error.argumentUndefined = function Error$argumentUndefined(paramName, message) {
     var err = Error.create(displayMessage, { name: "Sys.ArgumentUndefinedException", paramName: paramName });
     err.popStackFrame();
     return err;
-}
+};
 Error.format = function Error$format(message) {
     /// <summary locid="M:J#Error.format" />
     /// <param name="message" type="String" optional="true" mayBeNull="true"></param>
@@ -374,7 +373,7 @@ Error.format = function Error$format(message) {
     var err = Error.create(displayMessage, {name: 'Sys.FormatException'});
     err.popStackFrame();
     return err;
-}
+};
 Error.invalidOperation = function Error$invalidOperation(message) {
     /// <summary locid="M:J#Error.invalidOperation" />
     /// <param name="message" type="String" optional="true" mayBeNull="true"></param>
@@ -387,7 +386,7 @@ Error.invalidOperation = function Error$invalidOperation(message) {
     var err = Error.create(displayMessage, {name: 'Sys.InvalidOperationException'});
     err.popStackFrame();
     return err;
-}
+};
 Error.notImplemented = function Error$notImplemented(message) {
     /// <summary locid="M:J#Error.notImplemented" />
     /// <param name="message" type="String" optional="true" mayBeNull="true"></param>
@@ -400,7 +399,7 @@ Error.notImplemented = function Error$notImplemented(message) {
     var err = Error.create(displayMessage, {name: 'Sys.NotImplementedException'});
     err.popStackFrame();
     return err;
-}
+};
 Error.parameterCount = function Error$parameterCount(message) {
     /// <summary locid="M:J#Error.parameterCount" />
     /// <param name="message" type="String" optional="true" mayBeNull="true"></param>
@@ -413,7 +412,7 @@ Error.parameterCount = function Error$parameterCount(message) {
     var err = Error.create(displayMessage, {name: 'Sys.ParameterCountException'});
     err.popStackFrame();
     return err;
-}
+};
 Error.prototype.popStackFrame = function Error$popStackFrame() {
     /// <summary locid="M:J#checkParam" />
     if (arguments.length !== 0) throw Error.parameterCount();
@@ -443,8 +442,7 @@ Error.prototype.popStackFrame = function Error$popStackFrame() {
     this.lineNumber = parseInt(nextFrameParts[2]);
     stackFrames.shift();
     this.stack = stackFrames.join("\n");
-}
- 
+};
 Object.__typeName = 'Object';
 Object.__class = true;
 Object.getType = function Object$getType(instance) {
@@ -460,7 +458,7 @@ Object.getType = function Object$getType(instance) {
         return Object;
     }
     return ctor;
-}
+};
 Object.getTypeName = function Object$getTypeName(instance) {
     /// <summary locid="M:J#Object.getTypeName" />
     /// <param name="instance"></param>
@@ -470,8 +468,7 @@ Object.getTypeName = function Object$getTypeName(instance) {
     ]);
     if (e) throw e;
     return Object.getType(instance).getName();
-}
- 
+};
 String.__typeName = 'String';
 String.__class = true;
 String.prototype.endsWith = function String$endsWith(suffix) {
@@ -483,7 +480,7 @@ String.prototype.endsWith = function String$endsWith(suffix) {
     ]);
     if (e) throw e;
     return (this.substr(this.length - suffix.length) === suffix);
-}
+};
 String.prototype.startsWith = function String$startsWith(prefix) {
     /// <summary locid="M:J#String.startsWith" />
     /// <param name="prefix" type="String"></param>
@@ -493,25 +490,25 @@ String.prototype.startsWith = function String$startsWith(prefix) {
     ]);
     if (e) throw e;
     return (this.substr(0, prefix.length) === prefix);
-}
+};
 String.prototype.trim = function String$trim() {
     /// <summary locid="M:J#String.trim" />
     /// <returns type="String"></returns>
     if (arguments.length !== 0) throw Error.parameterCount();
     return this.replace(/^\s+|\s+$/g, '');
-}
+};
 String.prototype.trimEnd = function String$trimEnd() {
     /// <summary locid="M:J#String.trimEnd" />
     /// <returns type="String"></returns>
     if (arguments.length !== 0) throw Error.parameterCount();
     return this.replace(/\s+$/, '');
-}
+};
 String.prototype.trimStart = function String$trimStart() {
     /// <summary locid="M:J#String.trimStart" />
     /// <returns type="String"></returns>
     if (arguments.length !== 0) throw Error.parameterCount();
     return this.replace(/^\s+/, '');
-}
+};
 String.format = function String$format(format, args) {
     /// <summary locid="M:J#String.format" />
     /// <param name="format" type="String"></param>
@@ -523,7 +520,7 @@ String.format = function String$format(format, args) {
     ]);
     if (e) throw e;
     return String._toFormattedString(false, arguments);
-}
+};
 String._toFormattedString = function String$_toFormattedString(useLocale, args) {
     var result = '';
     var format = args[0];
@@ -573,8 +570,7 @@ String._toFormattedString = function String$_toFormattedString(useLocale, args) 
         i = close + 1;
     }
     return result;
-}
- 
+};
 Boolean.__typeName = 'Boolean';
 Boolean.__class = true;
 Boolean.parse = function Boolean$parse(value) {
@@ -589,8 +585,7 @@ Boolean.parse = function Boolean$parse(value) {
     if (v === 'false') return false;
     if (v === 'true') return true;
     throw Error.argumentOutOfRange('value', value, Sys.Res.boolTrueOrFalse);
-}
- 
+};
 Date.__typeName = 'Date';
 Date.__class = true;
  
@@ -624,7 +619,7 @@ Type.prototype.callBaseMethod = function Type$callBaseMethod(instance, name, bas
     else {
         return baseMethod.apply(instance, baseArguments);
     }
-}
+};
 Type.prototype.getBaseMethod = function Type$getBaseMethod(instance, name) {
     /// <summary locid="M:J#Type.getBaseMethod" />
     /// <param name="instance"></param>
@@ -636,13 +631,13 @@ Type.prototype.getBaseMethod = function Type$getBaseMethod(instance, name) {
     ]);
     if (e) throw e;
     return Sys._getBaseMethod(this, instance, name);
-}
+};
 Type.prototype.getBaseType = function Type$getBaseType() {
     /// <summary locid="M:J#Type.getBaseType" />
     /// <returns type="Type" mayBeNull="true"></returns>
     if (arguments.length !== 0) throw Error.parameterCount();
     return (typeof(this.__baseType) === "undefined") ? null : this.__baseType;
-}
+};
 Type.prototype.getInterfaces = function Type$getInterfaces() {
     /// <summary locid="M:J#Type.getInterfaces" />
     /// <returns type="Array" elementType="Type" mayBeNull="false" elementMayBeNull="false"></returns>
@@ -662,13 +657,13 @@ Type.prototype.getInterfaces = function Type$getInterfaces() {
         type = type.__baseType;
     }
     return result;
-}
+};
 Type.prototype.getName = function Type$getName() {
     /// <summary locid="M:J#Type.getName" />
     /// <returns type="String"></returns>
     if (arguments.length !== 0) throw Error.parameterCount();
     return (typeof(this.__typeName) === "undefined") ? "" : this.__typeName;
-}
+};
 Type.prototype.implementsInterface = function Type$implementsInterface(interfaceType) {
     /// <summary locid="M:J#Type.implementsInterface" />
     /// <param name="interfaceType" type="Type"></param>
@@ -698,7 +693,7 @@ Type.prototype.implementsInterface = function Type$implementsInterface(interface
         baseType = baseType.__baseType;
     }
     return cache[interfaceName] = false;
-}
+};
 Type.prototype.inheritsFrom = function Type$inheritsFrom(parentType) {
     /// <summary locid="M:J#Type.inheritsFrom" />
     /// <param name="parentType" type="Type"></param>
@@ -716,7 +711,7 @@ Type.prototype.inheritsFrom = function Type$inheritsFrom(parentType) {
         baseType = baseType.__baseType;
     }
     return false;
-}
+};
 Type.prototype.initializeBase = function Type$initializeBase(instance, baseArguments) {
     /// <summary locid="M:J#Type.initializeBase" />
     /// <param name="instance"></param>
@@ -738,7 +733,7 @@ Type.prototype.initializeBase = function Type$initializeBase(instance, baseArgum
         }
     }
     return instance;
-}
+};
 Type.prototype.isImplementedBy = function Type$isImplementedBy(instance) {
     /// <summary locid="M:J#Type.isImplementedBy" />
     /// <param name="instance" mayBeNull="true"></param>
@@ -750,7 +745,7 @@ Type.prototype.isImplementedBy = function Type$isImplementedBy(instance) {
     if (typeof(instance) === "undefined" || instance === null) return false;
     var instanceType = Object.getType(instance);
     return !!(instanceType.implementsInterface && instanceType.implementsInterface(this));
-}
+};
 Type.prototype.isInstanceOfType = function Type$isInstanceOfType(instance) {
     /// <summary locid="M:J#Type.isInstanceOfType" />
     /// <param name="instance" mayBeNull="true"></param>
@@ -760,7 +755,7 @@ Type.prototype.isInstanceOfType = function Type$isInstanceOfType(instance) {
     ]);
     if (e) throw e;
     return Sys._isInstanceOfType(this, instance);
-}
+};
 Type.prototype.registerClass = function Type$registerClass(typeName, baseType, interfaceTypes) {
     /// <summary locid="M:J#Type.registerClass" />
     /// <param name="typeName" type="String"></param>
@@ -810,7 +805,7 @@ Type.prototype.registerClass = function Type$registerClass(typeName, baseType, i
     }
     Sys.__registeredTypes[typeName] = true;
     return this;
-}
+};
 Type.prototype.registerInterface = function Type$registerInterface(typeName) {
     /// <summary locid="M:J#Type.registerInterface" />
     /// <param name="typeName" type="String"></param>
@@ -835,7 +830,7 @@ Type.prototype.registerInterface = function Type$registerInterface(typeName) {
     this.__interface = true;
     Sys.__registeredTypes[typeName] = true;
     return this;
-}
+};
 Type.prototype.resolveInheritance = function Type$resolveInheritance() {
     /// <summary locid="M:J#Type.resolveInheritance" />
     if (arguments.length !== 0) throw Error.parameterCount();
@@ -850,13 +845,13 @@ Type.prototype.resolveInheritance = function Type$resolveInheritance() {
         }
         delete this.__basePrototypePending;
     }
-}
+};
 Type.getRootNamespaces = function Type$getRootNamespaces() {
     /// <summary locid="M:J#Type.getRootNamespaces" />
     /// <returns type="Array"></returns>
     if (arguments.length !== 0) throw Error.parameterCount();
     return Array.clone(Sys.__rootNamespaces);
-}
+};
 Type.isClass = function Type$isClass(type) {
     /// <summary locid="M:J#Type.isClass" />
     /// <param name="type" mayBeNull="true"></param>
@@ -867,7 +862,7 @@ Type.isClass = function Type$isClass(type) {
     if (e) throw e;
     if ((typeof(type) === 'undefined') || (type === null)) return false;
     return !!type.__class;
-}
+};
 Type.isInterface = function Type$isInterface(type) {
     /// <summary locid="M:J#Type.isInterface" />
     /// <param name="type" mayBeNull="true"></param>
@@ -878,7 +873,7 @@ Type.isInterface = function Type$isInterface(type) {
     if (e) throw e;
     if ((typeof(type) === 'undefined') || (type === null)) return false;
     return !!type.__interface;
-}
+};
 Type.isNamespace = function Type$isNamespace(object) {
     /// <summary locid="M:J#Type.isNamespace" />
     /// <param name="object" mayBeNull="true"></param>
@@ -889,7 +884,7 @@ Type.isNamespace = function Type$isNamespace(object) {
     if (e) throw e;
     if ((typeof(object) === 'undefined') || (object === null)) return false;
     return !!object.__namespace;
-}
+};
 Type.parse = function Type$parse(typeName, ns) {
     /// <summary locid="M:J#Type.parse" />
     /// <param name="typeName" type="String" mayBeNull="true"></param>
@@ -916,7 +911,7 @@ Type.parse = function Type$parse(typeName, ns) {
         Type.__htClasses[typeName] = fn;
     }
     return fn;
-}
+};
 Type.registerNamespace = function Type$registerNamespace(namespacePath) {
     /// <summary locid="M:J#Type.registerNamespace" />
     /// <param name="namespacePath" type="String"></param>
@@ -925,7 +920,7 @@ Type.registerNamespace = function Type$registerNamespace(namespacePath) {
     ]);
     if (e) throw e;
     Type._registerNamespace(namespacePath);
-}
+};
 Type._registerNamespace = function Type$_registerNamespace(namespacePath) {
     if (!Type.__fullyQualifiedIdentifierRegExp.test(namespacePath)) throw Error.argument('namespacePath', Sys.Res.invalidNameSpace);
     var rootObject = window;
@@ -962,11 +957,11 @@ Type._registerNamespace = function Type$_registerNamespace(namespacePath) {
                 delete rootObject[currentPart];
                 throw Error.argument('namespacePath', Sys.Res.invalidNameSpace);
             }
-            ns.getName = function ns$getName() {return this.__typeName;}
-        }
+            ns.getName = function ns$getName() {return this.__typeName;};
+                             }
         rootObject = ns;
     }
-}
+};
 Type._checkDependency = function Type$_checkDependency(dependency, featureName) {
     var scripts = Type._registerScript._scripts, isDependent = (scripts ? (!!scripts[dependency]) : false);
     if ((typeof(featureName) !== 'undefined') && !isDependent) {
@@ -974,7 +969,7 @@ Type._checkDependency = function Type$_checkDependency(dependency, featureName) 
         featureName, dependency));
     }
     return isDependent;
-}
+};
 Type._registerScript = function Type$_registerScript(scriptName, dependencies) {
     var scripts = Type._registerScript._scripts;
     if (!scripts) {
@@ -992,7 +987,7 @@ Type._registerScript = function Type$_registerScript(scriptName, dependencies) {
             }
         }
     }
-}
+};
 Type._registerNamespace("Sys");
 Sys.__upperCaseTypes = {};
 Sys.__rootNamespaces = [Sys];
@@ -1004,7 +999,7 @@ Sys._isInstanceOfType = function Sys$_isInstanceOfType(type, instance) {
     return !!(instanceType === type) ||
            (instanceType.inheritsFrom && instanceType.inheritsFrom(type)) ||
            (instanceType.implementsInterface && instanceType.implementsInterface(type));
-}
+};
 Sys._getBaseMethod = function Sys$_getBaseMethod(type, instance, name) {
     if (!Sys._isInstanceOfType(type, instance)) throw Error.argumentType('instance', Object.getType(instance), type);
     var baseType = type.getBaseType();
@@ -1013,7 +1008,7 @@ Sys._getBaseMethod = function Sys$_getBaseMethod(type, instance, name) {
         return (baseMethod instanceof Function) ? baseMethod : null;
     }
     return null;
-}
+};
 Sys._isDomElement = function Sys$_isDomElement(obj) {
     var val = false;
     if (typeof (obj.nodeType) !== 'number') {
@@ -1027,8 +1022,7 @@ Sys._isDomElement = function Sys$_isDomElement(obj) {
         }
     }
     return !val;
-}
- 
+};
 Array.__typeName = 'Array';
 Array.__class = true;
 Array.add = Array.enqueue = function Array$enqueue(array, item) {
@@ -1041,7 +1035,7 @@ Array.add = Array.enqueue = function Array$enqueue(array, item) {
     ]);
     if (e) throw e;
     array[array.length] = item;
-}
+};
 Array.addRange = function Array$addRange(array, items) {
     /// <summary locid="M:J#Array.addRange" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1052,7 +1046,7 @@ Array.addRange = function Array$addRange(array, items) {
     ]);
     if (e) throw e;
     array.push.apply(array, items);
-}
+};
 Array.clear = function Array$clear(array) {
     /// <summary locid="M:J#Array.clear" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1061,7 +1055,7 @@ Array.clear = function Array$clear(array) {
     ]);
     if (e) throw e;
     array.length = 0;
-}
+};
 Array.clone = function Array$clone(array) {
     /// <summary locid="M:J#Array.clone" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1076,7 +1070,7 @@ Array.clone = function Array$clone(array) {
     else {
         return Array.apply(null, array);
     }
-}
+};
 Array.contains = function Array$contains(array, item) {
     /// <summary locid="M:J#Array.contains" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1088,7 +1082,7 @@ Array.contains = function Array$contains(array, item) {
     ]);
     if (e) throw e;
     return (Sys._indexOf(array, item) >= 0);
-}
+};
 Array.dequeue = function Array$dequeue(array) {
     /// <summary locid="M:J#Array.dequeue" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1098,7 +1092,7 @@ Array.dequeue = function Array$dequeue(array) {
     ]);
     if (e) throw e;
     return array.shift();
-}
+};
 Array.forEach = function Array$forEach(array, method, instance) {
     /// <summary locid="M:J#Array.forEach" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1114,7 +1108,7 @@ Array.forEach = function Array$forEach(array, method, instance) {
         var elt = array[i];
         if (typeof(elt) !== 'undefined') method.call(instance, elt, i, array);
     }
-}
+};
 Array.indexOf = function Array$indexOf(array, item, start) {
     /// <summary locid="M:J#Array.indexOf" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1128,7 +1122,7 @@ Array.indexOf = function Array$indexOf(array, item, start) {
     ]);
     if (e) throw e;
     return Sys._indexOf(array, item, start);
-}
+};
 Array.insert = function Array$insert(array, index, item) {
     /// <summary locid="M:J#Array.insert" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1141,7 +1135,7 @@ Array.insert = function Array$insert(array, index, item) {
     ]);
     if (e) throw e;
     array.splice(index, 0, item);
-}
+};
 Array.parse = function Array$parse(value) {
     /// <summary locid="M:J#Array.parse" />
     /// <param name="value" type="String" mayBeNull="true"></param>
@@ -1154,7 +1148,7 @@ Array.parse = function Array$parse(value) {
     var v = eval(value);
     if (!Array.isInstanceOfType(v)) throw Error.argument('value', Sys.Res.arrayParseBadFormat);
     return v;
-}
+};
 Array.remove = function Array$remove(array, item) {
     /// <summary locid="M:J#Array.remove" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1170,7 +1164,7 @@ Array.remove = function Array$remove(array, item) {
         array.splice(index, 1);
     }
     return (index >= 0);
-}
+};
 Array.removeAt = function Array$removeAt(array, index) {
     /// <summary locid="M:J#Array.removeAt" />
     /// <param name="array" type="Array" elementMayBeNull="true"></param>
@@ -1181,7 +1175,7 @@ Array.removeAt = function Array$removeAt(array, index) {
     ]);
     if (e) throw e;
     array.splice(index, 1);
-}
+};
 Sys._indexOf = function Sys$_indexOf(array, item, start) {
     if (typeof(item) === "undefined") return -1;
     var length = array.length;
@@ -1205,7 +1199,7 @@ Sys._indexOf = function Sys$_indexOf(array, item, start) {
         }
     }
     return -1;
-}
+};
 Type._registerScript._scripts = {
 	"MicrosoftAjaxCore.js": true,
 	"MicrosoftAjaxGlobalization.js": true,
@@ -1217,13 +1211,14 @@ Type._registerScript._scripts = {
  
 Sys.IDisposable = function Sys$IDisposable() {
     throw Error.notImplemented();
-}
-    function Sys$IDisposable$dispose() {
+};
+
+function Sys$IDisposable$dispose() {
         throw Error.notImplemented();
     }
 Sys.IDisposable.prototype = {
     dispose: Sys$IDisposable$dispose
-}
+};
 Sys.IDisposable.registerInterface('Sys.IDisposable');
  
 Sys.StringBuilder = function Sys$StringBuilder(initialText) {
@@ -1237,8 +1232,9 @@ Sys.StringBuilder = function Sys$StringBuilder(initialText) {
         [initialText.toString()] : [];
     this._value = {};
     this._len = 0;
-}
-    function Sys$StringBuilder$append(text) {
+};
+
+function Sys$StringBuilder$append(text) {
         /// <summary locid="M:J#Sys.StringBuilder.append" />
         /// <param name="text" mayBeNull="true"></param>
         var e = Function._validateParams(arguments, [
@@ -1308,7 +1304,7 @@ Sys.StringBuilder.prototype = {
     clear: Sys$StringBuilder$clear,
     isEmpty: Sys$StringBuilder$isEmpty,
     toString: Sys$StringBuilder$toString
-}
+};
 Sys.StringBuilder.registerClass('Sys.StringBuilder');
  
 Sys.Browser = {};
@@ -1349,7 +1345,7 @@ else if (navigator.userAgent.indexOf('Opera/') > -1) {
 Sys.EventArgs = function Sys$EventArgs() {
     /// <summary locid="M:J#Sys.EventArgs.#ctor" />
     if (arguments.length !== 0) throw Error.parameterCount();
-}
+};
 Sys.EventArgs.registerClass('Sys.EventArgs');
 Sys.EventArgs.Empty = new Sys.EventArgs();
  
@@ -1358,8 +1354,9 @@ Sys.CancelEventArgs = function Sys$CancelEventArgs() {
     if (arguments.length !== 0) throw Error.parameterCount();
     Sys.CancelEventArgs.initializeBase(this);
     this._cancel = false;
-}
-    function Sys$CancelEventArgs$get_cancel() {
+};
+
+function Sys$CancelEventArgs$get_cancel() {
         /// <value type="Boolean" locid="P:J#Sys.CancelEventArgs.cancel"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._cancel;
@@ -1372,7 +1369,7 @@ Sys.CancelEventArgs = function Sys$CancelEventArgs() {
 Sys.CancelEventArgs.prototype = {
     get_cancel: Sys$CancelEventArgs$get_cancel,
     set_cancel: Sys$CancelEventArgs$set_cancel
-}
+};
 Sys.CancelEventArgs.registerClass('Sys.CancelEventArgs', Sys.EventArgs);
 Type.registerNamespace('Sys.UI');
  
@@ -1380,8 +1377,9 @@ Sys._Debug = function Sys$_Debug() {
     /// <summary locid="M:J#Sys.Debug.#ctor" />
     /// <field name="isDebug" type="Boolean" locid="F:J#Sys.Debug.isDebug"></field>
     if (arguments.length !== 0) throw Error.parameterCount();
-}
-    function Sys$_Debug$_appendConsole(text) {
+};
+
+function Sys$_Debug$_appendConsole(text) {
         if ((typeof(Debug) !== 'undefined') && Debug.writeln) {
             Debug.writeln(text);
         }
@@ -1532,7 +1530,7 @@ Sys._Debug.prototype = {
     trace: Sys$_Debug$trace,
     traceDump: Sys$_Debug$traceDump,
     _traceDump: Sys$_Debug$_traceDump
-}
+};
 Sys._Debug.registerClass('Sys._Debug');
 Sys.Debug = new Sys._Debug();
     Sys.Debug.isDebug = true;
@@ -1662,7 +1660,7 @@ Type.prototype.registerEnum = function Type$registerEnum(name, flags) {
     this.__flags = flags;
     this.__enum = true;
     Sys.__registeredTypes[name] = true;
-}
+};
 Type.isEnum = function Type$isEnum(type) {
     /// <summary locid="M:J#Type.isEnum" />
     /// <param name="type" mayBeNull="true"></param>
@@ -1673,7 +1671,7 @@ Type.isEnum = function Type$isEnum(type) {
     if (e) throw e;
     if ((typeof(type) === 'undefined') || (type === null)) return false;
     return !!type.__enum;
-}
+};
 Type.isFlags = function Type$isFlags(type) {
     /// <summary locid="M:J#Type.isFlags" />
     /// <param name="type" mayBeNull="true"></param>
@@ -1684,7 +1682,7 @@ Type.isFlags = function Type$isFlags(type) {
     if (e) throw e;
     if ((typeof(type) === 'undefined') || (type === null)) return false;
     return !!type.__flags;
-}
+};
 Sys.CollectionChange = function Sys$CollectionChange(action, newItems, newStartingIndex, oldItems, oldStartingIndex) {
     /// <summary locid="M:J#Sys.CollectionChange.#ctor" />
     /// <param name="action" type="Sys.NotifyCollectionChangedAction"></param>
@@ -1726,7 +1724,7 @@ Sys.CollectionChange = function Sys$CollectionChange(action, newItems, newStarti
         oldStartingIndex = -1;
     }
     this.oldStartingIndex = oldStartingIndex;
-}
+};
 Sys.CollectionChange.registerClass("Sys.CollectionChange");
 Sys.NotifyCollectionChangedAction = function Sys$NotifyCollectionChangedAction() {
     /// <summary locid="M:J#Sys.NotifyCollectionChangedAction.#ctor" />
@@ -1735,12 +1733,12 @@ Sys.NotifyCollectionChangedAction = function Sys$NotifyCollectionChangedAction()
     /// <field name="reset" type="Number" integer="true" static="true" locid="F:J#Sys.NotifyCollectionChangedAction.reset"></field>
     if (arguments.length !== 0) throw Error.parameterCount();
     throw Error.notImplemented();
-}
+};
 Sys.NotifyCollectionChangedAction.prototype = {
     add: 0,
     remove: 1,
     reset: 2
-}
+};
 Sys.NotifyCollectionChangedAction.registerEnum('Sys.NotifyCollectionChangedAction');
 Sys.NotifyCollectionChangedEventArgs = function Sys$NotifyCollectionChangedEventArgs(changes) {
     /// <summary locid="M:J#Sys.NotifyCollectionChangedEventArgs.#ctor" />
@@ -1751,19 +1749,20 @@ Sys.NotifyCollectionChangedEventArgs = function Sys$NotifyCollectionChangedEvent
     if (e) throw e;
     this._changes = changes;
     Sys.NotifyCollectionChangedEventArgs.initializeBase(this);
-}
-    function Sys$NotifyCollectionChangedEventArgs$get_changes() {
+};
+
+function Sys$NotifyCollectionChangedEventArgs$get_changes() {
         /// <value type="Array" elementType="Sys.CollectionChange" locid="P:J#Sys.NotifyCollectionChangedEventArgs.changes"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._changes || [];
     }
 Sys.NotifyCollectionChangedEventArgs.prototype = {
     get_changes: Sys$NotifyCollectionChangedEventArgs$get_changes
-}
+};
 Sys.NotifyCollectionChangedEventArgs.registerClass("Sys.NotifyCollectionChangedEventArgs", Sys.EventArgs);
 Sys.Observer = function Sys$Observer() {
     throw Error.invalidOperation();
-}
+};
 Sys.Observer.registerClass("Sys.Observer");
 Sys.Observer.makeObservable = function Sys$Observer$makeObservable(target) {
     /// <summary locid="M:J#Sys.Observer.makeObservable" />
@@ -1782,13 +1781,13 @@ Sys.Observer.makeObservable = function Sys$Observer$makeObservable(target) {
         o._addMethods(target, o._arrayMethods);
     }
     return target;
-}
+};
 Sys.Observer._ensureObservable = function Sys$Observer$_ensureObservable(target) {
     var type = typeof target;
     if ((type === "string") || (type === "number") || (type === "boolean") || (type === "date")) {
         throw Error.invalidOperation(String.format(Sys.Res.notObservable, type));
     }
-}
+};
 Sys.Observer._addMethods = function Sys$Observer$_addMethods(target, methods) {
     for (var m in methods) {
         if (target[m] && (target[m] !== methods[m])) {
@@ -1796,10 +1795,10 @@ Sys.Observer._addMethods = function Sys$Observer$_addMethods(target, methods) {
         }
         target[m] = methods[m];
     }
-}
+};
 Sys.Observer._addEventHandler = function Sys$Observer$_addEventHandler(target, eventName, handler) {
     Sys.Observer._getContext(target, true).events._addHandler(eventName, handler);
-}
+};
 Sys.Observer.addEventHandler = function Sys$Observer$addEventHandler(target, eventName, handler) {
     /// <summary locid="M:J#Sys.Observer.addEventHandler" />
     /// <param name="target"></param>
@@ -1813,10 +1812,10 @@ Sys.Observer.addEventHandler = function Sys$Observer$addEventHandler(target, eve
     if (e) throw e;
     Sys.Observer._ensureObservable(target);
     Sys.Observer._addEventHandler(target, eventName, handler);
-}
+};
 Sys.Observer._removeEventHandler = function Sys$Observer$_removeEventHandler(target, eventName, handler) {
     Sys.Observer._getContext(target, true).events._removeHandler(eventName, handler);
-}
+};
 Sys.Observer.removeEventHandler = function Sys$Observer$removeEventHandler(target, eventName, handler) {
     /// <summary locid="M:J#Sys.Observer.removeEventHandler" />
     /// <param name="target"></param>
@@ -1830,7 +1829,7 @@ Sys.Observer.removeEventHandler = function Sys$Observer$removeEventHandler(targe
     if (e) throw e;
     Sys.Observer._ensureObservable(target);
     Sys.Observer._removeEventHandler(target, eventName, handler);
-}
+};
 Sys.Observer.raiseEvent = function Sys$Observer$raiseEvent(target, eventName, eventArgs) {
     /// <summary locid="M:J#Sys.Observer.raiseEvent" />
     /// <param name="target"></param>
@@ -1849,7 +1848,7 @@ Sys.Observer.raiseEvent = function Sys$Observer$raiseEvent(target, eventName, ev
     if (handler) {
         handler(target, eventArgs);
     }
-}
+};
 Sys.Observer.addPropertyChanged = function Sys$Observer$addPropertyChanged(target, handler) {
     /// <summary locid="M:J#Sys.Observer.addPropertyChanged" />
     /// <param name="target" mayBeNull="false"></param>
@@ -1861,7 +1860,7 @@ Sys.Observer.addPropertyChanged = function Sys$Observer$addPropertyChanged(targe
     if (e) throw e;
     Sys.Observer._ensureObservable(target);
     Sys.Observer._addEventHandler(target, "propertyChanged", handler);
-}
+};
 Sys.Observer.removePropertyChanged = function Sys$Observer$removePropertyChanged(target, handler) {
     /// <summary locid="M:J#Sys.Observer.removePropertyChanged" />
     /// <param name="target" mayBeNull="false"></param>
@@ -1873,7 +1872,7 @@ Sys.Observer.removePropertyChanged = function Sys$Observer$removePropertyChanged
     if (e) throw e;
     Sys.Observer._ensureObservable(target);
     Sys.Observer._removeEventHandler(target, "propertyChanged", handler);
-}
+};
 Sys.Observer.beginUpdate = function Sys$Observer$beginUpdate(target) {
     /// <summary locid="M:J#Sys.Observer.beginUpdate" />
     /// <param name="target" mayBeNull="false"></param>
@@ -1883,7 +1882,7 @@ Sys.Observer.beginUpdate = function Sys$Observer$beginUpdate(target) {
     if (e) throw e;
     Sys.Observer._ensureObservable(target);
     Sys.Observer._getContext(target, true).updating = true;
-}
+};
 Sys.Observer.endUpdate = function Sys$Observer$endUpdate(target) {
     /// <summary locid="M:J#Sys.Observer.endUpdate" />
     /// <param name="target" mayBeNull="false"></param>
@@ -1905,7 +1904,7 @@ Sys.Observer.endUpdate = function Sys$Observer$endUpdate(target) {
         }
         Sys.Observer.raisePropertyChanged(target, "");
     }
-}
+};
 Sys.Observer.isUpdating = function Sys$Observer$isUpdating(target) {
     /// <summary locid="M:J#Sys.Observer.isUpdating" />
     /// <param name="target" mayBeNull="false"></param>
@@ -1917,7 +1916,7 @@ Sys.Observer.isUpdating = function Sys$Observer$isUpdating(target) {
     Sys.Observer._ensureObservable(target);
     var ctx = Sys.Observer._getContext(target);
     return ctx ? ctx.updating : false;
-}
+};
 Sys.Observer._setValue = function Sys$Observer$_setValue(target, propertyName, value) {
     var getter, setter, mainTarget = target, path = propertyName.split('.');
     for (var i = 0, l = (path.length - 1); i < l ; i++) {
@@ -1957,7 +1956,7 @@ Sys.Observer._setValue = function Sys$Observer$_setValue(target, propertyName, v
         };
         Sys.Observer.raisePropertyChanged(mainTarget, path[0]);
     }
-}
+};
 Sys.Observer.setValue = function Sys$Observer$setValue(target, propertyName, value) {
     /// <summary locid="M:J#Sys.Observer.setValue" />
     /// <param name="target" mayBeNull="false"></param>
@@ -1971,13 +1970,13 @@ Sys.Observer.setValue = function Sys$Observer$setValue(target, propertyName, val
     if (e) throw e;
     Sys.Observer._ensureObservable(target);
     Sys.Observer._setValue(target, propertyName, value);
-}
+};
 Sys.Observer.raisePropertyChanged = function Sys$Observer$raisePropertyChanged(target, propertyName) {
     /// <summary locid="M:J#Sys.Observer.raisePropertyChanged" />
     /// <param name="target" mayBeNull="false"></param>
     /// <param name="propertyName" type="String"></param>
     Sys.Observer.raiseEvent(target, "propertyChanged", new Sys.PropertyChangedEventArgs(propertyName));
-}
+};
 Sys.Observer.addCollectionChanged = function Sys$Observer$addCollectionChanged(target, handler) {
     /// <summary locid="M:J#Sys.Observer.addCollectionChanged" />
     /// <param name="target" type="Array" elementMayBeNull="true"></param>
@@ -1988,7 +1987,7 @@ Sys.Observer.addCollectionChanged = function Sys$Observer$addCollectionChanged(t
     ]);
     if (e) throw e;
     Sys.Observer._addEventHandler(target, "collectionChanged", handler);
-}
+};
 Sys.Observer.removeCollectionChanged = function Sys$Observer$removeCollectionChanged(target, handler) {
     /// <summary locid="M:J#Sys.Observer.removeCollectionChanged" />
     /// <param name="target" type="Array" elementMayBeNull="true"></param>
@@ -1999,7 +1998,7 @@ Sys.Observer.removeCollectionChanged = function Sys$Observer$removeCollectionCha
     ]);
     if (e) throw e;
     Sys.Observer._removeEventHandler(target, "collectionChanged", handler);
-}
+};
 Sys.Observer._collectionChange = function Sys$Observer$_collectionChange(target, change) {
     var ctx = Sys.Observer._getContext(target);
     if (ctx && ctx.updating) {
@@ -2016,7 +2015,7 @@ Sys.Observer._collectionChange = function Sys$Observer$_collectionChange(target,
         Sys.Observer.raiseCollectionChanged(target, [change]);
         Sys.Observer.raisePropertyChanged(target, 'length');
     }
-}
+};
 Sys.Observer.add = function Sys$Observer$add(target, item) {
     /// <summary locid="M:J#Sys.Observer.add" />
     /// <param name="target" type="Array" elementMayBeNull="true"></param>
@@ -2029,7 +2028,7 @@ Sys.Observer.add = function Sys$Observer$add(target, item) {
     var change = new Sys.CollectionChange(Sys.NotifyCollectionChangedAction.add, [item], target.length);
     Array.add(target, item);
     Sys.Observer._collectionChange(target, change);
-}
+};
 Sys.Observer.addRange = function Sys$Observer$addRange(target, items) {
     /// <summary locid="M:J#Sys.Observer.addRange" />
     /// <param name="target" type="Array" elementMayBeNull="true"></param>
@@ -2042,7 +2041,7 @@ Sys.Observer.addRange = function Sys$Observer$addRange(target, items) {
     var change = new Sys.CollectionChange(Sys.NotifyCollectionChangedAction.add, items, target.length);
     Array.addRange(target, items);
     Sys.Observer._collectionChange(target, change);
-}
+};
 Sys.Observer.clear = function Sys$Observer$clear(target) {
     /// <summary locid="M:J#Sys.Observer.clear" />
     /// <param name="target" type="Array" elementMayBeNull="true"></param>
@@ -2053,7 +2052,7 @@ Sys.Observer.clear = function Sys$Observer$clear(target) {
     var oldItems = Array.clone(target);
     Array.clear(target);
     Sys.Observer._collectionChange(target, new Sys.CollectionChange(Sys.NotifyCollectionChangedAction.reset, null, -1, oldItems, 0));
-}
+};
 Sys.Observer.insert = function Sys$Observer$insert(target, index, item) {
     /// <summary locid="M:J#Sys.Observer.insert" />
     /// <param name="target" type="Array" elementMayBeNull="true"></param>
@@ -2067,7 +2066,7 @@ Sys.Observer.insert = function Sys$Observer$insert(target, index, item) {
     if (e) throw e;
     Array.insert(target, index, item);
     Sys.Observer._collectionChange(target, new Sys.CollectionChange(Sys.NotifyCollectionChangedAction.add, [item], index));
-}
+};
 Sys.Observer.remove = function Sys$Observer$remove(target, item) {
     /// <summary locid="M:J#Sys.Observer.remove" />
     /// <param name="target" type="Array" elementMayBeNull="true"></param>
@@ -2085,7 +2084,7 @@ Sys.Observer.remove = function Sys$Observer$remove(target, item) {
         return true;
     }
     return false;
-}
+};
 Sys.Observer.removeAt = function Sys$Observer$removeAt(target, index) {
     /// <summary locid="M:J#Sys.Observer.removeAt" />
     /// <param name="target" type="Array" elementMayBeNull="true"></param>
@@ -2100,13 +2099,13 @@ Sys.Observer.removeAt = function Sys$Observer$removeAt(target, index) {
         Array.removeAt(target, index);
         Sys.Observer._collectionChange(target, new Sys.CollectionChange(Sys.NotifyCollectionChangedAction.remove, null, -1, [item], index));
     }
-}
+};
 Sys.Observer.raiseCollectionChanged = function Sys$Observer$raiseCollectionChanged(target, changes) {
     /// <summary locid="M:J#Sys.Observer.raiseCollectionChanged" />
     /// <param name="target"></param>
     /// <param name="changes" type="Array" elementType="Sys.CollectionChange"></param>
     Sys.Observer.raiseEvent(target, "collectionChanged", new Sys.NotifyCollectionChangedEventArgs(changes));
-}
+};
 Sys.Observer._observeMethods = {
     add_propertyChanged: function(handler) {
         Sys.Observer._addEventHandler(this, "propertyChanged", handler);
@@ -2171,7 +2170,7 @@ Sys.Observer._observeMethods = {
         /// <param name="name" type="String"></param>
         Sys.Observer.raiseEvent(this, "propertyChanged", new Sys.PropertyChangedEventArgs(name));
     }
-}
+};
 Sys.Observer._arrayMethods = {
     add_collectionChanged: function(handler) {
         Sys.Observer._addEventHandler(this, "collectionChanged", handler);
@@ -2215,7 +2214,7 @@ Sys.Observer._arrayMethods = {
         /// <param name="changes" type="Array" elementType="Sys.CollectionChange"></param>
         Sys.Observer.raiseEvent(this, "collectionChanged", new Sys.NotifyCollectionChangedEventArgs(changes));
     }
-}
+};
 Sys.Observer._getContext = function Sys$Observer$_getContext(obj, create) {
     var ctx = obj._observerContext;
     if (ctx) return ctx();
@@ -2223,15 +2222,15 @@ Sys.Observer._getContext = function Sys$Observer$_getContext(obj, create) {
         return (obj._observerContext = Sys.Observer._createContext())();
     }
     return null;
-}
+};
 Sys.Observer._createContext = function Sys$Observer$_createContext() {
     var ctx = {
         events: new Sys.EventHandlerList()
     };
     return function() {
         return ctx;
-    }
-}
+    };
+                                                                     };
 Date._appendPreOrPostMatch = function Date$_appendPreOrPostMatch(preMatch, strBuilder) {
     var quoteCount = 0;
     var escaped = false;
@@ -2254,7 +2253,7 @@ Date._appendPreOrPostMatch = function Date$_appendPreOrPostMatch(preMatch, strBu
         }
     }
     return quoteCount;
-}
+};
 Date._expandFormat = function Date$_expandFormat(dtf, format) {
     if (!format) {
         format = "F";
@@ -2288,7 +2287,7 @@ Date._expandFormat = function Date$_expandFormat(dtf, format) {
         format = format.charAt(1);
     }
     return format;
-}
+};
 Date._expandYear = function Date$_expandYear(dtf, year) {
     var now = new Date(),
         era = Date._getEra(now);
@@ -2300,7 +2299,7 @@ Date._expandYear = function Date$_expandYear(dtf, year) {
         }
     }
     return year;
-}
+};
 Date._getEra = function Date$_getEra(date, eras) {
     if (!eras) return 0;
     var start, ticks = date.getTime();
@@ -2311,14 +2310,14 @@ Date._getEra = function Date$_getEra(date, eras) {
         }
     }
     return 0;
-}
+};
 Date._getEraYear = function Date$_getEraYear(date, dtf, era, sortable) {
     var year = date.getFullYear();
     if (!sortable && dtf.eras) {
         year -= dtf.eras[era + 3];
     }    
     return year;
-}
+};
 Date._getParseRegExp = function Date$_getParseRegExp(dtf, format) {
     if (!dtf._parseRegExp) {
         dtf._parseRegExp = {};
@@ -2392,10 +2391,10 @@ Date._getParseRegExp = function Date$_getParseRegExp(dtf, format) {
     var parseRegExp = {'regExp': regexpStr, 'groups': groups};
     dtf._parseRegExp[format] = parseRegExp;
     return parseRegExp;
-}
+};
 Date._getTokenRegExp = function Date$_getTokenRegExp() {
     return /\/|dddd|ddd|dd|d|MMMM|MMM|MM|M|yyyy|yy|y|hh|h|HH|H|mm|m|ss|s|tt|t|fff|ff|f|zzz|zz|z|gg|g/g;
-}
+};
 Date.parseLocale = function Date$parseLocale(value, formats) {
     /// <summary locid="M:J#Date.parseLocale" />
     /// <param name="value" type="String"></param>
@@ -2407,7 +2406,7 @@ Date.parseLocale = function Date$parseLocale(value, formats) {
     ]);
     if (e) throw e;
     return Date._parse(value, Sys.CultureInfo.CurrentCulture, arguments);
-}
+};
 Date.parseInvariant = function Date$parseInvariant(value, formats) {
     /// <summary locid="M:J#Date.parseInvariant" />
     /// <param name="value" type="String"></param>
@@ -2419,7 +2418,7 @@ Date.parseInvariant = function Date$parseInvariant(value, formats) {
     ]);
     if (e) throw e;
     return Date._parse(value, Sys.CultureInfo.InvariantCulture, arguments);
-}
+};
 Date._parse = function Date$_parse(value, cultureInfo, args) {
     var i, l, date, format, formats, custom = false;
     for (i = 1, l = args.length; i < l; i++) {
@@ -2438,7 +2437,7 @@ Date._parse = function Date$_parse(value, cultureInfo, args) {
         }
     }
     return null;
-}
+};
 Date._parseExact = function Date$_parseExact(value, format, cultureInfo) {
     value = value.trim();
     var dtf = cultureInfo.dateTimeFormat,
@@ -2588,7 +2587,7 @@ Date._parseExact = function Date$_parseExact(value, format, cultureInfo) {
         result.setHours(result.getHours() + parseInt(adjustedMin/60, 10), adjustedMin%60);
     }
     return result;
-}
+};
 Date.prototype.format = function Date$format(format) {
     /// <summary locid="M:J#Date.format" />
     /// <param name="format" type="String"></param>
@@ -2598,7 +2597,7 @@ Date.prototype.format = function Date$format(format) {
     ]);
     if (e) throw e;
     return this._toFormattedString(format, Sys.CultureInfo.InvariantCulture);
-}
+};
 Date.prototype.localeFormat = function Date$localeFormat(format) {
     /// <summary locid="M:J#Date.localeFormat" />
     /// <param name="format" type="String"></param>
@@ -2608,7 +2607,7 @@ Date.prototype.localeFormat = function Date$localeFormat(format) {
     ]);
     if (e) throw e;
     return this._toFormattedString(format, Sys.CultureInfo.CurrentCulture);
-}
+};
 Date.prototype._toFormattedString = function Date$_toFormattedString(format, cultureInfo) {
     var dtf = cultureInfo.dateTimeFormat,
         convert = dtf.Calendar.convert;
@@ -2808,7 +2807,7 @@ Date.prototype._toFormattedString = function Date$_toFormattedString(format, cul
         }
     }
     return ret.toString();
-}
+};
 String.localeFormat = function String$localeFormat(format, args) {
     /// <summary locid="M:J#String.localeFormat" />
     /// <param name="format" type="String"></param>
@@ -2820,7 +2819,7 @@ String.localeFormat = function String$localeFormat(format, args) {
     ]);
     if (e) throw e;
     return String._toFormattedString(true, arguments);
-}
+};
 Number.parseLocale = function Number$parseLocale(value) {
     /// <summary locid="M:J#Number.parseLocale" />
     /// <param name="value" type="String"></param>
@@ -2830,7 +2829,7 @@ Number.parseLocale = function Number$parseLocale(value) {
     ], false);
     if (e) throw e;
     return Number._parse(value, Sys.CultureInfo.CurrentCulture);
-}
+};
 Number.parseInvariant = function Number$parseInvariant(value) {
     /// <summary locid="M:J#Number.parseInvariant" />
     /// <param name="value" type="String"></param>
@@ -2840,7 +2839,7 @@ Number.parseInvariant = function Number$parseInvariant(value) {
     ], false);
     if (e) throw e;
     return Number._parse(value, Sys.CultureInfo.InvariantCulture);
-}
+};
 Number._parse = function Number$_parse(value, cultureInfo) {
     value = value.trim();
     
@@ -2908,7 +2907,7 @@ Number._parse = function Number$_parse(value, cultureInfo) {
         return parseFloat(p);
     }
     return Number.NaN;
-}
+};
 Number._parseNumberNegativePattern = function Number$_parseNumberNegativePattern(value, numFormat, numberNegativePattern) {
     var neg = numFormat.NegativeSign;
     var pos = numFormat.PositiveSign;    
@@ -2944,7 +2943,7 @@ Number._parseNumberNegativePattern = function Number$_parseNumberNegativePattern
             Sys.Debug.fail("");
     }
     return ['', value];
-}
+};
 Number.prototype.format = function Number$format(format) {
     /// <summary locid="M:J#Number.format" />
     /// <param name="format" type="String"></param>
@@ -2954,7 +2953,7 @@ Number.prototype.format = function Number$format(format) {
     ]);
     if (e) throw e;
     return this._toFormattedString(format, Sys.CultureInfo.InvariantCulture);
-}
+};
 Number.prototype.localeFormat = function Number$localeFormat(format) {
     /// <summary locid="M:J#Number.localeFormat" />
     /// <param name="format" type="String"></param>
@@ -2964,7 +2963,7 @@ Number.prototype.localeFormat = function Number$localeFormat(format) {
     ]);
     if (e) throw e;
     return this._toFormattedString(format, Sys.CultureInfo.CurrentCulture);
-}
+};
 Number.prototype._toFormattedString = function Number$_toFormattedString(format, cultureInfo) {
     if (!format || (format.length === 0) || (format === 'i')) {
         if (cultureInfo && (cultureInfo.name.length > 0)) {
@@ -3123,8 +3122,7 @@ Number.prototype._toFormattedString = function Number$_toFormattedString(format,
         }
     }
     return ret;
-}
- 
+};
 Sys.CultureInfo = function Sys$CultureInfo(name, numberFormat, dateTimeFormat) {
     /// <summary locid="M:J#Sys.CultureInfo.#ctor" />
     /// <param name="name" type="String"></param>
@@ -3139,8 +3137,9 @@ Sys.CultureInfo = function Sys$CultureInfo(name, numberFormat, dateTimeFormat) {
     this.name = name;
     this.numberFormat = numberFormat;
     this.dateTimeFormat = dateTimeFormat;
-}
-    function Sys$CultureInfo$_getDateTimeFormats() {
+};
+
+function Sys$CultureInfo$_getDateTimeFormats() {
         if (! this._dateTimeFormats) {
             var dtf = this.dateTimeFormat;
             this._dateTimeFormats =
@@ -3210,7 +3209,7 @@ Sys.CultureInfo.prototype = {
     _getAbbrDayIndex: Sys$CultureInfo$_getAbbrDayIndex,
     _toUpperArray: Sys$CultureInfo$_toUpperArray,
     _toUpper: Sys$CultureInfo$_toUpper
-}
+};
 Sys.CultureInfo.registerClass('Sys.CultureInfo');
 Sys.CultureInfo._parse = function Sys$CultureInfo$_parse(value) {
     var dtf = value.dateTimeFormat;
@@ -3218,7 +3217,7 @@ Sys.CultureInfo._parse = function Sys$CultureInfo$_parse(value) {
         dtf.eras = value.eras;
     }
     return new Sys.CultureInfo(value.name, value.numberFormat, dtf);
-}
+};
 Sys.CultureInfo.InvariantCulture = Sys.CultureInfo._parse({"name":"","numberFormat":{"CurrencyDecimalDigits":2,"CurrencyDecimalSeparator":".","IsReadOnly":true,"CurrencyGroupSizes":[3],"NumberGroupSizes":[3],"PercentGroupSizes":[3],"CurrencyGroupSeparator":",","CurrencySymbol":"\u00A4","NaNSymbol":"NaN","CurrencyNegativePattern":0,"NumberNegativePattern":1,"PercentPositivePattern":0,"PercentNegativePattern":0,"NegativeInfinitySymbol":"-Infinity","NegativeSign":"-","NumberDecimalDigits":2,"NumberDecimalSeparator":".","NumberGroupSeparator":",","CurrencyPositivePattern":0,"PositiveInfinitySymbol":"Infinity","PositiveSign":"+","PercentDecimalDigits":2,"PercentDecimalSeparator":".","PercentGroupSeparator":",","PercentSymbol":"%","PerMilleSymbol":"\u2030","NativeDigits":["0","1","2","3","4","5","6","7","8","9"],"DigitSubstitution":1},"dateTimeFormat":{"AMDesignator":"AM","Calendar":{"MinSupportedDateTime":"@-62135568000000@","MaxSupportedDateTime":"@253402300799999@","AlgorithmType":1,"CalendarType":1,"Eras":[1],"TwoDigitYearMax":2029,"IsReadOnly":true},"DateSeparator":"/","FirstDayOfWeek":0,"CalendarWeekRule":0,"FullDateTimePattern":"dddd, dd MMMM yyyy HH:mm:ss","LongDatePattern":"dddd, dd MMMM yyyy","LongTimePattern":"HH:mm:ss","MonthDayPattern":"MMMM dd","PMDesignator":"PM","RFC1123Pattern":"ddd, dd MMM yyyy HH\':\'mm\':\'ss \'GMT\'","ShortDatePattern":"MM/dd/yyyy","ShortTimePattern":"HH:mm","SortableDateTimePattern":"yyyy\'-\'MM\'-\'dd\'T\'HH\':\'mm\':\'ss","TimeSeparator":":","UniversalSortableDateTimePattern":"yyyy\'-\'MM\'-\'dd HH\':\'mm\':\'ss\'Z\'","YearMonthPattern":"yyyy MMMM","AbbreviatedDayNames":["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],"ShortestDayNames":["Su","Mo","Tu","We","Th","Fr","Sa"],"DayNames":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"AbbreviatedMonthNames":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",""],"MonthNames":["January","February","March","April","May","June","July","August","September","October","November","December",""],"IsReadOnly":true,"NativeCalendarName":"Gregorian Calendar","AbbreviatedMonthGenitiveNames":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",""],"MonthGenitiveNames":["January","February","March","April","May","June","July","August","September","October","November","December",""]},"eras":[1,"A.D.",null,0]});
 if (typeof(__cultureInfo) === "object") {
     Sys.CultureInfo.CurrentCulture = Sys.CultureInfo._parse(__cultureInfo);
@@ -3231,7 +3230,7 @@ Type.registerNamespace('Sys.Serialization');
 Sys.Serialization.JavaScriptSerializer = function Sys$Serialization$JavaScriptSerializer() {
     /// <summary locid="M:J#Sys.Serialization.JavaScriptSerializer.#ctor" />
     if (arguments.length !== 0) throw Error.parameterCount();
-}
+};
 Sys.Serialization.JavaScriptSerializer.registerClass('Sys.Serialization.JavaScriptSerializer');
 Sys.Serialization.JavaScriptSerializer._charsToEscapeRegExs = [];
 Sys.Serialization.JavaScriptSerializer._charsToEscape = [];
@@ -3259,10 +3258,10 @@ Sys.Serialization.JavaScriptSerializer._init = function Sys$Serialization$JavaSc
         Sys.Serialization.JavaScriptSerializer._charsToEscapeRegExs[c] = new RegExp(c, 'g');
         Sys.Serialization.JavaScriptSerializer._escapeChars[c] = replaceChars[i];
     }
-}
+};
 Sys.Serialization.JavaScriptSerializer._serializeBooleanWithBuilder = function Sys$Serialization$JavaScriptSerializer$_serializeBooleanWithBuilder(object, stringBuilder) {
     stringBuilder.append(object.toString());
-}
+};
 Sys.Serialization.JavaScriptSerializer._serializeNumberWithBuilder = function Sys$Serialization$JavaScriptSerializer$_serializeNumberWithBuilder(object, stringBuilder) {
     if (isFinite(object)) {
         stringBuilder.append(String(object));
@@ -3270,7 +3269,7 @@ Sys.Serialization.JavaScriptSerializer._serializeNumberWithBuilder = function Sy
     else {
         throw Error.invalidOperation(Sys.Res.cannotSerializeNonFiniteNumbers);
     }
-}
+};
 Sys.Serialization.JavaScriptSerializer._serializeStringWithBuilder = function Sys$Serialization$JavaScriptSerializer$_serializeStringWithBuilder(string, stringBuilder) {
     stringBuilder.append('"');
     if (Sys.Serialization.JavaScriptSerializer._escapeRegEx.test(string)) {
@@ -3298,7 +3297,7 @@ Sys.Serialization.JavaScriptSerializer._serializeStringWithBuilder = function Sy
     }
     stringBuilder.append(string);
     stringBuilder.append('"');
-}
+};
 Sys.Serialization.JavaScriptSerializer._serializeWithBuilder = function Sys$Serialization$JavaScriptSerializer$_serializeWithBuilder(object, stringBuilder, sort, prevObjects) {
     var i;
     switch (typeof object) {
@@ -3403,7 +3402,7 @@ Sys.Serialization.JavaScriptSerializer._serializeWithBuilder = function Sys$Seri
         stringBuilder.append('null');
         break;
     }
-}
+};
 Sys.Serialization.JavaScriptSerializer.serialize = function Sys$Serialization$JavaScriptSerializer$serialize(object) {
     /// <summary locid="M:J#Sys.Serialization.JavaScriptSerializer.serialize" />
     /// <param name="object" mayBeNull="true"></param>
@@ -3415,7 +3414,7 @@ Sys.Serialization.JavaScriptSerializer.serialize = function Sys$Serialization$Ja
     var stringBuilder = new Sys.StringBuilder();
     Sys.Serialization.JavaScriptSerializer._serializeWithBuilder(object, stringBuilder, false);
     return stringBuilder.toString();
-}
+};
 Sys.Serialization.JavaScriptSerializer.deserialize = function Sys$Serialization$JavaScriptSerializer$deserialize(data, secure) {
     /// <summary locid="M:J#Sys.Serialization.JavaScriptSerializer.deserialize" />
     /// <param name="data" type="String"></param>
@@ -3438,15 +3437,16 @@ Sys.Serialization.JavaScriptSerializer.deserialize = function Sys$Serialization$
     catch (e) {
          throw Error.argument('data', Sys.Res.cannotDeserializeInvalidJson);
     }
-}
+};
 Type.registerNamespace('Sys.UI');
  
 Sys.EventHandlerList = function Sys$EventHandlerList() {
     /// <summary locid="M:J#Sys.EventHandlerList.#ctor" />
     if (arguments.length !== 0) throw Error.parameterCount();
     this._list = {};
-}
-    function Sys$EventHandlerList$_addHandler(id, handler) {
+};
+
+function Sys$EventHandlerList$_addHandler(id, handler) {
         Array.add(this._getEvent(id, true), handler);
     }
     function Sys$EventHandlerList$addHandler(id, handler) {
@@ -3507,7 +3507,7 @@ Sys.EventHandlerList.prototype = {
     removeHandler: Sys$EventHandlerList$removeHandler,
     getHandler: Sys$EventHandlerList$getHandler,
     _getEvent: Sys$EventHandlerList$_getEvent
-}
+};
 Sys.EventHandlerList.registerClass('Sys.EventHandlerList');
 Sys.CommandEventArgs = function Sys$CommandEventArgs(commandName, commandArgument, commandSource) {
     /// <summary locid="M:J#Sys.CommandEventArgs.#ctor" />
@@ -3524,8 +3524,9 @@ Sys.CommandEventArgs = function Sys$CommandEventArgs(commandName, commandArgumen
     this._commandName = commandName;
     this._commandArgument = commandArgument;
     this._commandSource = commandSource;
-}
-    function Sys$CommandEventArgs$get_commandName() {
+};
+
+function Sys$CommandEventArgs$get_commandName() {
         /// <value type="String" locid="P:J#Sys.CommandEventArgs.commandName"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._commandName;
@@ -3547,15 +3548,16 @@ Sys.CommandEventArgs.prototype = {
     get_commandName: Sys$CommandEventArgs$get_commandName,
     get_commandArgument: Sys$CommandEventArgs$get_commandArgument,
     get_commandSource: Sys$CommandEventArgs$get_commandSource
-}
+};
 Sys.CommandEventArgs.registerClass("Sys.CommandEventArgs", Sys.CancelEventArgs);
  
 Sys.INotifyPropertyChange = function Sys$INotifyPropertyChange() {
     /// <summary locid="M:J#Sys.INotifyPropertyChange.#ctor" />
     if (arguments.length !== 0) throw Error.parameterCount();
     throw Error.notImplemented();
-}
-    function Sys$INotifyPropertyChange$add_propertyChanged(handler) {
+};
+
+function Sys$INotifyPropertyChange$add_propertyChanged(handler) {
     /// <summary locid="E:J#Sys.INotifyPropertyChange.propertyChanged" />
     var e = Function._validateParams(arguments, [{name: "handler", type: Function}]);
     if (e) throw e;
@@ -3569,7 +3571,7 @@ Sys.INotifyPropertyChange = function Sys$INotifyPropertyChange() {
 Sys.INotifyPropertyChange.prototype = {
     add_propertyChanged: Sys$INotifyPropertyChange$add_propertyChanged,
     remove_propertyChanged: Sys$INotifyPropertyChange$remove_propertyChanged
-}
+};
 Sys.INotifyPropertyChange.registerInterface('Sys.INotifyPropertyChange');
  
 Sys.PropertyChangedEventArgs = function Sys$PropertyChangedEventArgs(propertyName) {
@@ -3581,24 +3583,25 @@ Sys.PropertyChangedEventArgs = function Sys$PropertyChangedEventArgs(propertyNam
     if (e) throw e;
     Sys.PropertyChangedEventArgs.initializeBase(this);
     this._propertyName = propertyName;
-}
- 
-    function Sys$PropertyChangedEventArgs$get_propertyName() {
+};
+
+function Sys$PropertyChangedEventArgs$get_propertyName() {
         /// <value type="String" locid="P:J#Sys.PropertyChangedEventArgs.propertyName"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._propertyName;
     }
 Sys.PropertyChangedEventArgs.prototype = {
     get_propertyName: Sys$PropertyChangedEventArgs$get_propertyName
-}
+};
 Sys.PropertyChangedEventArgs.registerClass('Sys.PropertyChangedEventArgs', Sys.EventArgs);
  
 Sys.INotifyDisposing = function Sys$INotifyDisposing() {
     /// <summary locid="M:J#Sys.INotifyDisposing.#ctor" />
     if (arguments.length !== 0) throw Error.parameterCount();
     throw Error.notImplemented();
-}
-    function Sys$INotifyDisposing$add_disposing(handler) {
+};
+
+function Sys$INotifyDisposing$add_disposing(handler) {
     /// <summary locid="E:J#Sys.INotifyDisposing.disposing" />
     var e = Function._validateParams(arguments, [{name: "handler", type: Function}]);
     if (e) throw e;
@@ -3612,15 +3615,16 @@ Sys.INotifyDisposing = function Sys$INotifyDisposing() {
 Sys.INotifyDisposing.prototype = {
     add_disposing: Sys$INotifyDisposing$add_disposing,
     remove_disposing: Sys$INotifyDisposing$remove_disposing
-}
+};
 Sys.INotifyDisposing.registerInterface("Sys.INotifyDisposing");
  
 Sys.Component = function Sys$Component() {
     /// <summary locid="M:J#Sys.Component.#ctor" />
     if (arguments.length !== 0) throw Error.parameterCount();
     if (Sys.Application) Sys.Application.registerDisposableObject(this);
-}
-    function Sys$Component$get_events() {
+};
+
+function Sys$Component$get_events() {
         /// <value type="Sys.EventHandlerList" locid="P:J#Sys.Component.events"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         if (!this._events) {
@@ -3731,7 +3735,7 @@ Sys.Component.prototype = {
     initialize: Sys$Component$initialize,
     raisePropertyChanged: Sys$Component$raisePropertyChanged,
     updated: Sys$Component$updated
-}
+};
 Sys.Component.registerClass('Sys.Component', null, Sys.IDisposable, Sys.INotifyPropertyChange, Sys.INotifyDisposing);
 function Sys$Component$_setProperties(target, properties) {
     /// <summary locid="M:J#Sys.Component._setProperties" />
@@ -3849,8 +3853,7 @@ var $create = Sys.Component.create = function Sys$Component$create(type, propert
         component.endUpdate();
     }
     return component;
-}
- 
+};
 Sys.UI.MouseButton = function Sys$UI$MouseButton() {
     /// <summary locid="M:J#Sys.UI.MouseButton.#ctor" />
     /// <field name="leftButton" type="Number" integer="true" static="true" locid="F:J#Sys.UI.MouseButton.leftButton"></field>
@@ -3858,12 +3861,12 @@ Sys.UI.MouseButton = function Sys$UI$MouseButton() {
     /// <field name="rightButton" type="Number" integer="true" static="true" locid="F:J#Sys.UI.MouseButton.rightButton"></field>
     if (arguments.length !== 0) throw Error.parameterCount();
     throw Error.notImplemented();
-}
+};
 Sys.UI.MouseButton.prototype = {
     leftButton: 0,
     middleButton: 1,
     rightButton: 2
-}
+};
 Sys.UI.MouseButton.registerEnum("Sys.UI.MouseButton");
  
 Sys.UI.Key = function Sys$UI$Key() {
@@ -3884,7 +3887,7 @@ Sys.UI.Key = function Sys$UI$Key() {
     /// <field name="del" type="Number" integer="true" static="true" locid="F:J#Sys.UI.Key.del"></field>
     if (arguments.length !== 0) throw Error.parameterCount();
     throw Error.notImplemented();
-}
+};
 Sys.UI.Key.prototype = {
     backspace: 8,
     tab: 9,
@@ -3900,7 +3903,7 @@ Sys.UI.Key.prototype = {
     right: 39,
     down: 40,
     del: 127
-}
+};
 Sys.UI.Key.registerEnum("Sys.UI.Key");
  
 Sys.UI.Point = function Sys$UI$Point(x, y) {
@@ -3916,7 +3919,7 @@ Sys.UI.Point = function Sys$UI$Point(x, y) {
     if (e) throw e;
     this.x = x;
     this.y = y;
-}
+};
 Sys.UI.Point.registerClass('Sys.UI.Point');
  
 Sys.UI.Bounds = function Sys$UI$Bounds(x, y, width, height) {
@@ -3940,7 +3943,7 @@ Sys.UI.Bounds = function Sys$UI$Bounds(x, y, width, height) {
     this.y = y;
     this.height = height;
     this.width = width;
-}
+};
 Sys.UI.Bounds.registerClass('Sys.UI.Bounds');
  
 Sys.UI.DomEvent = function Sys$UI$DomEvent(eventObject) {
@@ -4002,8 +4005,9 @@ Sys.UI.DomEvent = function Sys$UI$DomEvent(eventObject) {
     this.screenX = ev.screenX;
     this.screenY = ev.screenY;
     this.shiftKey = ev.shiftKey;
-}
-    function Sys$UI$DomEvent$preventDefault() {
+};
+
+function Sys$UI$DomEvent$preventDefault() {
         /// <summary locid="M:J#Sys.UI.DomEvent.preventDefault" />
         if (arguments.length !== 0) throw Error.parameterCount();
         if (this.rawEvent.preventDefault) {
@@ -4026,7 +4030,7 @@ Sys.UI.DomEvent = function Sys$UI$DomEvent(eventObject) {
 Sys.UI.DomEvent.prototype = {
     preventDefault: Sys$UI$DomEvent$preventDefault,
     stopPropagation: Sys$UI$DomEvent$stopPropagation
-}
+};
 Sys.UI.DomEvent.registerClass('Sys.UI.DomEvent');
 var $addHandler = Sys.UI.DomEvent.addHandler = function Sys$UI$DomEvent$addHandler(element, eventName, handler, autoRemove) {
     /// <summary locid="M:J#Sys.UI.DomEvent.addHandler" />
@@ -4054,16 +4058,17 @@ var $addHandler = Sys.UI.DomEvent.addHandler = function Sys$UI$DomEvent$addHandl
     if (element.addEventListener) {
         browserHandler = function(e) {
             return handler.call(element, new Sys.UI.DomEvent(e));
-        }
-        element.addEventListener(eventName, browserHandler, false);
+        };
+    	element.addEventListener(eventName, browserHandler, false);
     }
     else if (element.attachEvent) {
         browserHandler = function() {
             var e = {};
-            try {e = Sys.UI.DomElement._getWindow(element).event} catch(ex) {}
+            try {e = Sys.UI.DomElement._getWindow(element).event;
+                } catch(ex) {}
             return handler.call(element, new Sys.UI.DomEvent(e));
-        }
-        element.attachEvent('on' + eventName, browserHandler);
+        };
+    	element.attachEvent('on' + eventName, browserHandler);
     }
     eventCache[eventCache.length] = {handler: handler, browserHandler: browserHandler, autoRemove: autoRemove };
     if (autoRemove) {
@@ -4075,7 +4080,7 @@ var $addHandler = Sys.UI.DomEvent.addHandler = function Sys$UI$DomEvent$addHandl
             }
         }
     }
-}
+};
 var $addHandlers = Sys.UI.DomEvent.addHandlers = function Sys$UI$DomEvent$addHandlers(element, events, handlerOwner, autoRemove) {
     /// <summary locid="M:J#Sys.UI.DomEvent.addHandlers" />
     /// <param name="element"></param>
@@ -4098,7 +4103,7 @@ var $addHandlers = Sys.UI.DomEvent.addHandlers = function Sys$UI$DomEvent$addHan
         }
         $addHandler(element, name, handler, autoRemove || false);
     }
-}
+};
 var $clearHandlers = Sys.UI.DomEvent.clearHandlers = function Sys$UI$DomEvent$clearHandlers(element) {
     /// <summary locid="M:J#Sys.UI.DomEvent.clearHandlers" />
     /// <param name="element"></param>
@@ -4108,7 +4113,7 @@ var $clearHandlers = Sys.UI.DomEvent.clearHandlers = function Sys$UI$DomEvent$cl
     if (e) throw e;
     Sys.UI.DomEvent._ensureDomNode(element);
     Sys.UI.DomEvent._clearHandlers(element, false);
-}
+};
 Sys.UI.DomEvent._clearHandlers = function Sys$UI$DomEvent$_clearHandlers(element, autoRemoving) {
     if (element._events) {
         var cache = element._events;
@@ -4123,7 +4128,7 @@ Sys.UI.DomEvent._clearHandlers = function Sys$UI$DomEvent$_clearHandlers(element
         }
         element._events = null;
     }
-}
+};
 Sys.UI.DomEvent._disposeHandlers = function Sys$UI$DomEvent$_disposeHandlers() {
     Sys.UI.DomEvent._clearHandlers(this, true);
     var d = this._chainDispose, type = typeof(d);
@@ -4134,7 +4139,7 @@ Sys.UI.DomEvent._disposeHandlers = function Sys$UI$DomEvent$_disposeHandlers() {
             this.dispose();
         }
     }
-}
+};
 var $removeHandler = Sys.UI.DomEvent.removeHandler = function Sys$UI$DomEvent$removeHandler(element, eventName, handler) {
     /// <summary locid="M:J#Sys.UI.DomEvent.removeHandler" />
     /// <param name="element"></param>
@@ -4147,7 +4152,7 @@ var $removeHandler = Sys.UI.DomEvent.removeHandler = function Sys$UI$DomEvent$re
     ]);
     if (e) throw e;
     Sys.UI.DomEvent._removeHandler(element, eventName, handler);
-}
+};
 Sys.UI.DomEvent._removeHandler = function Sys$UI$DomEvent$_removeHandler(element, eventName, handler) {
     Sys.UI.DomEvent._ensureDomNode(element);
     var browserHandler = null;
@@ -4168,7 +4173,7 @@ Sys.UI.DomEvent._removeHandler = function Sys$UI$DomEvent$_removeHandler(element
         element.detachEvent('on' + eventName, browserHandler);
     }
     cache.splice(i, 1);
-}
+};
 Sys.UI.DomEvent._ensureDomNode = function Sys$UI$DomEvent$_ensureDomNode(element) {
     if (element.tagName && (element.tagName.toUpperCase() === "SCRIPT")) return;
     
@@ -4176,13 +4181,12 @@ Sys.UI.DomEvent._ensureDomNode = function Sys$UI$DomEvent$_ensureDomNode(element
     if ((typeof(element.document) !== 'object') && (element != doc) && (typeof(element.nodeType) !== 'number')) {
         throw Error.argument("element", Sys.Res.argumentDomNode);
     }
-}
- 
+};
 Sys.UI.DomElement = function Sys$UI$DomElement() {
     /// <summary locid="M:J#Sys.UI.DomElement.#ctor" />
     if (arguments.length !== 0) throw Error.parameterCount();
     throw Error.notImplemented();
-}
+};
 Sys.UI.DomElement.registerClass('Sys.UI.DomElement');
 Sys.UI.DomElement.addCssClass = function Sys$UI$DomElement$addCssClass(element, className) {
     /// <summary locid="M:J#Sys.UI.DomElement.addCssClass" />
@@ -4201,7 +4205,7 @@ Sys.UI.DomElement.addCssClass = function Sys$UI$DomElement$addCssClass(element, 
             element.className += ' ' + className;
         }
     }
-}
+};
 Sys.UI.DomElement.containsCssClass = function Sys$UI$DomElement$containsCssClass(element, className) {
     /// <summary locid="M:J#Sys.UI.DomElement.containsCssClass" />
     /// <param name="element" domElement="true"></param>
@@ -4213,7 +4217,7 @@ Sys.UI.DomElement.containsCssClass = function Sys$UI$DomElement$containsCssClass
     ]);
     if (e) throw e;
     return Array.contains(element.className.split(' '), className);
-}
+};
 Sys.UI.DomElement.getBounds = function Sys$UI$DomElement$getBounds(element) {
     /// <summary locid="M:J#Sys.UI.DomElement.getBounds" />
     /// <param name="element" domElement="true"></param>
@@ -4224,7 +4228,7 @@ Sys.UI.DomElement.getBounds = function Sys$UI$DomElement$getBounds(element) {
     if (e) throw e;
     var offset = Sys.UI.DomElement.getLocation(element);
     return new Sys.UI.Bounds(offset.x, offset.y, element.offsetWidth || 0, element.offsetHeight || 0);
-}
+};
 var $get = Sys.UI.DomElement.getElementById = function Sys$UI$DomElement$getElementById(id, element) {
     /// <summary locid="M:J#Sys.UI.DomElement.getElementById" />
     /// <param name="id" type="String"></param>
@@ -4259,7 +4263,7 @@ var $get = Sys.UI.DomElement.getElementById = function Sys$UI$DomElement$getElem
         }
     }
     return null;
-}
+};
 if (document.documentElement.getBoundingClientRect) {
     Sys.UI.DomElement.getLocation = function Sys$UI$DomElement$getLocation(element) {
         /// <summary locid="M:J#Sys.UI.DomElement.getLocation" />
@@ -4312,8 +4316,8 @@ if (document.documentElement.getBoundingClientRect) {
             }
         }
         return new Sys.UI.Point(offsetX, offsetY);
-    }
-}
+    };
+                                                    }
 else if (Sys.Browser.agent === Sys.Browser.Safari) {
     Sys.UI.DomElement.getLocation = function Sys$UI$DomElement$getLocation(element) {
         /// <summary locid="M:J#Sys.UI.DomElement.getLocation" />
@@ -4357,8 +4361,8 @@ else if (Sys.Browser.agent === Sys.Browser.Safari) {
             }
         }
         return new Sys.UI.Point(offsetX, offsetY);
-    }
-}
+    };
+                                                   }
 else {
     Sys.UI.DomElement.getLocation = function Sys$UI$DomElement$getLocation(element) {
         /// <summary locid="M:J#Sys.UI.DomElement.getLocation" />
@@ -4412,8 +4416,8 @@ else {
             }
         }
         return new Sys.UI.Point(offsetX, offsetY);
-    }
-}
+    };
+     }
 Sys.UI.DomElement.isDomElement = function Sys$UI$DomElement$isDomElement(obj) {
     /// <summary locid="M:J#Sys.UI.DomElement.isDomElement" />
     /// <param name="obj"></param>
@@ -4423,7 +4427,7 @@ Sys.UI.DomElement.isDomElement = function Sys$UI$DomElement$isDomElement(obj) {
     ]);
     if (e) throw e;
     return Sys._isDomElement(obj);
-}
+};
 Sys.UI.DomElement.removeCssClass = function Sys$UI$DomElement$removeCssClass(element, className) {
     /// <summary locid="M:J#Sys.UI.DomElement.removeCssClass" />
     /// <param name="element" domElement="true"></param>
@@ -4439,7 +4443,7 @@ Sys.UI.DomElement.removeCssClass = function Sys$UI$DomElement$removeCssClass(ele
         element.className = (currentClassName.substr(0, index) + ' ' +
             currentClassName.substring(index + className.length + 1, currentClassName.length)).trim();
     }
-}
+};
 Sys.UI.DomElement.resolveElement = function Sys$UI$DomElement$resolveElement(elementOrElementId, containerElement) {
     /// <summary locid="M:J#Sys.UI.DomElement.resolveElement" />
     /// <param name="elementOrElementId" mayBeNull="true"></param>
@@ -4462,7 +4466,7 @@ Sys.UI.DomElement.resolveElement = function Sys$UI$DomElement$resolveElement(ele
         throw Error.argument("elementOrElementId", Sys.Res.expectedElementOrId);
     }
     return el;
-}
+};
 Sys.UI.DomElement.raiseBubbleEvent = function Sys$UI$DomElement$raiseBubbleEvent(source, args) {
     /// <summary locid="M:J#Sys.UI.DomElement.raiseBubbleEvent" />
     /// <param name="source" domElement="true"></param>
@@ -4481,12 +4485,12 @@ Sys.UI.DomElement.raiseBubbleEvent = function Sys$UI$DomElement$raiseBubbleEvent
         }
         target = target.parentNode;
     }
-}
+};
 Sys.UI.DomElement._raiseBubbleEventFromControl = function Sys$UI$DomElement$_raiseBubbleEventFromControl(control, source, args) {
     if (!control.onBubbleEvent(source, args)) {
         control._raiseBubbleEvent(source, args);
     }
-}
+};
 Sys.UI.DomElement.setLocation = function Sys$UI$DomElement$setLocation(element, x, y) {
     /// <summary locid="M:J#Sys.UI.DomElement.setLocation" />
     /// <param name="element" domElement="true"></param>
@@ -4502,7 +4506,7 @@ Sys.UI.DomElement.setLocation = function Sys$UI$DomElement$setLocation(element, 
     style.position = 'absolute';
     style.left = x + "px";
     style.top = y + "px";
-}
+};
 Sys.UI.DomElement.toggleCssClass = function Sys$UI$DomElement$toggleCssClass(element, className) {
     /// <summary locid="M:J#Sys.UI.DomElement.toggleCssClass" />
     /// <param name="element" domElement="true"></param>
@@ -4518,7 +4522,7 @@ Sys.UI.DomElement.toggleCssClass = function Sys$UI$DomElement$toggleCssClass(ele
     else {
         Sys.UI.DomElement.addCssClass(element, className);
     }
-}
+};
 Sys.UI.DomElement.getVisibilityMode = function Sys$UI$DomElement$getVisibilityMode(element) {
     /// <summary locid="M:J#Sys.UI.DomElement.getVisibilityMode" />
     /// <param name="element" domElement="true"></param>
@@ -4530,7 +4534,7 @@ Sys.UI.DomElement.getVisibilityMode = function Sys$UI$DomElement$getVisibilityMo
     return (element._visibilityMode === Sys.UI.VisibilityMode.hide) ?
         Sys.UI.VisibilityMode.hide :
         Sys.UI.VisibilityMode.collapse;
-}
+};
 Sys.UI.DomElement.setVisibilityMode = function Sys$UI$DomElement$setVisibilityMode(element, value) {
     /// <summary locid="M:J#Sys.UI.DomElement.setVisibilityMode" />
     /// <param name="element" domElement="true"></param>
@@ -4553,7 +4557,7 @@ Sys.UI.DomElement.setVisibilityMode = function Sys$UI$DomElement$setVisibilityMo
         }
         element._visibilityMode = value;
     }
-}
+};
 Sys.UI.DomElement.getVisible = function Sys$UI$DomElement$getVisible(element) {
     /// <summary locid="M:J#Sys.UI.DomElement.getVisible" />
     /// <param name="element" domElement="true"></param>
@@ -4565,7 +4569,7 @@ Sys.UI.DomElement.getVisible = function Sys$UI$DomElement$getVisible(element) {
     var style = element.currentStyle || Sys.UI.DomElement._getCurrentStyle(element);
     if (!style) return true;
     return (style.visibility !== 'hidden') && (style.display !== 'none');
-}
+};
 Sys.UI.DomElement.setVisible = function Sys$UI$DomElement$setVisible(element, value) {
     /// <summary locid="M:J#Sys.UI.DomElement.setVisible" />
     /// <param name="element" domElement="true"></param>
@@ -4585,7 +4589,7 @@ Sys.UI.DomElement.setVisible = function Sys$UI$DomElement$setVisible(element, va
             element.style.display = 'none';
         }
     }
-}
+};
 Sys.UI.DomElement._ensureOldDisplayMode = function Sys$UI$DomElement$_ensureOldDisplayMode(element) {
     if (!element._oldDisplayMode) {
         var style = element.currentStyle || Sys.UI.DomElement._getCurrentStyle(element);
@@ -4607,11 +4611,11 @@ Sys.UI.DomElement._ensureOldDisplayMode = function Sys$UI$DomElement$_ensureOldD
             }
         }
     }
-}
+};
 Sys.UI.DomElement._getWindow = function Sys$UI$DomElement$_getWindow(element) {
     var doc = element.ownerDocument || element.document || element;
     return doc.defaultView || doc.parentWindow;
-}
+};
 Sys.UI.DomElement._getCurrentStyle = function Sys$UI$DomElement$_getCurrentStyle(element) {
     if (element.nodeType === 3) return null;
     var w = Sys.UI.DomElement._getWindow(element);
@@ -4634,12 +4638,12 @@ Sys.UI.DomElement._getCurrentStyle = function Sys$UI$DomElement$_getCurrentStyle
         computedStyle.display = 'none';
     }
     return computedStyle;
-}
- 
+};
 Sys.IContainer = function Sys$IContainer() {
     throw Error.notImplemented();
-}
-    function Sys$IContainer$addComponent(component) {
+};
+
+function Sys$IContainer$addComponent(component) {
         /// <summary locid="M:J#Sys.IContainer.addComponent" />
         /// <param name="component" type="Sys.Component"></param>
         var e = Function._validateParams(arguments, [
@@ -4678,7 +4682,7 @@ Sys.IContainer.prototype = {
     removeComponent: Sys$IContainer$removeComponent,
     findComponent: Sys$IContainer$findComponent,
     getComponents: Sys$IContainer$getComponents
-}
+};
 Sys.IContainer.registerInterface("Sys.IContainer");
  
 Sys.ApplicationLoadEventArgs = function Sys$ApplicationLoadEventArgs(components, isPartialLoad) {
@@ -4693,9 +4697,9 @@ Sys.ApplicationLoadEventArgs = function Sys$ApplicationLoadEventArgs(components,
     Sys.ApplicationLoadEventArgs.initializeBase(this);
     this._components = components;
     this._isPartialLoad = isPartialLoad;
-}
- 
-    function Sys$ApplicationLoadEventArgs$get_components() {
+};
+
+function Sys$ApplicationLoadEventArgs$get_components() {
         /// <value type="Array" elementType="Sys.Component" locid="P:J#Sys.ApplicationLoadEventArgs.components"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._components;
@@ -4708,7 +4712,7 @@ Sys.ApplicationLoadEventArgs = function Sys$ApplicationLoadEventArgs(components,
 Sys.ApplicationLoadEventArgs.prototype = {
     get_components: Sys$ApplicationLoadEventArgs$get_components,
     get_isPartialLoad: Sys$ApplicationLoadEventArgs$get_isPartialLoad
-}
+};
 Sys.ApplicationLoadEventArgs.registerClass('Sys.ApplicationLoadEventArgs', Sys.EventArgs);
  
 Sys._Application = function Sys$_Application() {
@@ -4722,8 +4726,9 @@ Sys._Application = function Sys$_Application() {
     this._unloadHandlerDelegate = Function.createDelegate(this, this._unloadHandler);
     Sys.UI.DomEvent.addHandler(window, "unload", this._unloadHandlerDelegate);
     this._domReady();
-}
-    function Sys$_Application$get_isCreatingComponents() {
+};
+
+function Sys$_Application$get_isCreatingComponents() {
         /// <value type="Boolean" locid="P:J#Sys.Application.isCreatingComponents"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._creatingComponents;
@@ -5022,8 +5027,8 @@ Sys._Application = function Sys$_Application() {
         var onload = function() {
             Sys.UI.DomEvent.removeHandler(window, "load", onload);
             init();
-        }
-        Sys.UI.DomEvent.addHandler(window, "load", onload);
+        };
+    	Sys.UI.DomEvent.addHandler(window, "load", onload);
         
         if (document.addEventListener) {
             try {
@@ -5047,8 +5052,8 @@ Sys._Application = function Sys$_Application() {
                     }
                     el = null;
                     init();
-                }
-                check();
+                };
+            	check();
             }
             else {
 		document.attachEvent("onreadystatechange", check = function() {
@@ -5102,7 +5107,7 @@ Sys._Application.prototype = {
     _domReady: Sys$_Application$_domReady,
     _raiseInit: Sys$_Application$_raiseInit,
     _unloadHandler: Sys$_Application$_unloadHandler
-}
+};
 Sys._Application.registerClass('Sys._Application', Sys.Component, Sys.IContainer);
 Sys.Application = new Sys._Application();
 var $find = Sys.Application.findComponent;
@@ -5123,8 +5128,9 @@ Sys.UI.Behavior = function Sys$UI$Behavior(element) {
     else {
         behaviors[behaviors.length] = this;
     }
-}
-    function Sys$UI$Behavior$get_element() {
+};
+
+function Sys$UI$Behavior$get_element() {
         /// <value domElement="true" locid="P:J#Sys.UI.Behavior.element"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._element;
@@ -5186,7 +5192,7 @@ Sys.UI.Behavior.prototype = {
     set_name: Sys$UI$Behavior$set_name,
     initialize: Sys$UI$Behavior$initialize,
     dispose: Sys$UI$Behavior$dispose
-}
+};
 Sys.UI.Behavior.registerClass('Sys.UI.Behavior', Sys.Component);
 Sys.UI.Behavior.getBehaviorByName = function Sys$UI$Behavior$getBehaviorByName(element, name) {
     /// <summary locid="M:J#Sys.UI.Behavior.getBehaviorByName" />
@@ -5200,7 +5206,7 @@ Sys.UI.Behavior.getBehaviorByName = function Sys$UI$Behavior$getBehaviorByName(e
     if (e) throw e;
     var b = element[name];
     return (b && Sys.UI.Behavior.isInstanceOfType(b)) ? b : null;
-}
+};
 Sys.UI.Behavior.getBehaviors = function Sys$UI$Behavior$getBehaviors(element) {
     /// <summary locid="M:J#Sys.UI.Behavior.getBehaviors" />
     /// <param name="element" domElement="true"></param>
@@ -5211,7 +5217,7 @@ Sys.UI.Behavior.getBehaviors = function Sys$UI$Behavior$getBehaviors(element) {
     if (e) throw e;
     if (!element._behaviors) return [];
     return Array.clone(element._behaviors);
-}
+};
 Sys.UI.Behavior.getBehaviorsByType = function Sys$UI$Behavior$getBehaviorsByType(element, type) {
     /// <summary locid="M:J#Sys.UI.Behavior.getBehaviorsByType" />
     /// <param name="element" domElement="true"></param>
@@ -5232,19 +5238,18 @@ Sys.UI.Behavior.getBehaviorsByType = function Sys$UI$Behavior$getBehaviorsByType
         }
     }
     return results;
-}
- 
+};
 Sys.UI.VisibilityMode = function Sys$UI$VisibilityMode() {
     /// <summary locid="M:J#Sys.UI.VisibilityMode.#ctor" />
     /// <field name="hide" type="Number" integer="true" static="true" locid="F:J#Sys.UI.VisibilityMode.hide"></field>
     /// <field name="collapse" type="Number" integer="true" static="true" locid="F:J#Sys.UI.VisibilityMode.collapse"></field>
     if (arguments.length !== 0) throw Error.parameterCount();
     throw Error.notImplemented();
-}
+};
 Sys.UI.VisibilityMode.prototype = {
     hide: 0,
     collapse: 1
-}
+};
 Sys.UI.VisibilityMode.registerEnum("Sys.UI.VisibilityMode");
  
 Sys.UI.Control = function Sys$UI$Control(element) {
@@ -5262,8 +5267,9 @@ Sys.UI.Control = function Sys$UI$Control(element) {
     if (role) {
         element.setAttribute("role", role);
     }
-}
-    function Sys$UI$Control$get_element() {
+};
+
+function Sys$UI$Control$get_element() {
         /// <value domElement="true" locid="P:J#Sys.UI.Control.element"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._element;
@@ -5334,8 +5340,8 @@ Sys.UI.Control = function Sys$UI$Control(element) {
         var e = Function._validateParams(arguments, [{name: "value", type: Boolean}]);
         if (e) throw e;
         if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
-        Sys.UI.DomElement.setVisible(this._element, value)
-    }
+        Sys.UI.DomElement.setVisible(this._element, value);
+                                               }
     function Sys$UI$Control$addCssClass(className) {
         /// <summary locid="M:J#Sys.UI.Control.addCssClass" />
         /// <param name="className" type="String"></param>
@@ -5426,7 +5432,7 @@ Sys.UI.Control.prototype = {
     _raiseBubbleEvent: Sys$UI$Control$_raiseBubbleEvent,
     removeCssClass: Sys$UI$Control$removeCssClass,
     toggleCssClass: Sys$UI$Control$toggleCssClass
-}
+};
 Sys.UI.Control.registerClass('Sys.UI.Control', Sys.Component);
 Sys.HistoryEventArgs = function Sys$HistoryEventArgs(state) {
     /// <summary locid="M:J#Sys.HistoryEventArgs.#ctor" />
@@ -5437,15 +5443,16 @@ Sys.HistoryEventArgs = function Sys$HistoryEventArgs(state) {
     if (e) throw e;
     Sys.HistoryEventArgs.initializeBase(this);
     this._state = state;
-}
-    function Sys$HistoryEventArgs$get_state() {
+};
+
+function Sys$HistoryEventArgs$get_state() {
         /// <value type="Object" locid="P:J#Sys.HistoryEventArgs.state"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._state;
     }
 Sys.HistoryEventArgs.prototype = {
     get_state: Sys$HistoryEventArgs$get_state
-}
+};
 Sys.HistoryEventArgs.registerClass('Sys.HistoryEventArgs', Sys.EventArgs);
 Sys.Application._appLoadHandler = null;
 Sys.Application._beginRequestHandler = null;
@@ -5780,8 +5787,8 @@ if (!window.XMLHttpRequest) {
             }
         }
         return null;
-    }
-}
+    };
+                            }
 Type.registerNamespace('Sys.Net');
  
 Sys.Net.WebRequestExecutor = function Sys$Net$WebRequestExecutor() {
@@ -5789,8 +5796,9 @@ Sys.Net.WebRequestExecutor = function Sys$Net$WebRequestExecutor() {
     if (arguments.length !== 0) throw Error.parameterCount();
     this._webRequest = null;
     this._resultObject = null;
-}
-    function Sys$Net$WebRequestExecutor$get_webRequest() {
+};
+
+function Sys$Net$WebRequestExecutor$get_webRequest() {
         /// <value type="Sys.Net.WebRequest" locid="P:J#Sys.Net.WebRequestExecutor.webRequest"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._webRequest;
@@ -5889,7 +5897,7 @@ Sys.Net.WebRequestExecutor.prototype = {
     abort: Sys$Net$WebRequestExecutor$abort,
     getResponseHeader: Sys$Net$WebRequestExecutor$getResponseHeader,
     getAllResponseHeaders: Sys$Net$WebRequestExecutor$getAllResponseHeaders
-}
+};
 Sys.Net.WebRequestExecutor.registerClass('Sys.Net.WebRequestExecutor');
  
 Sys.Net.XMLDOM = function Sys$Net$XMLDOM(markup) {
@@ -5922,7 +5930,7 @@ Sys.Net.XMLDOM = function Sys$Net$XMLDOM(markup) {
         }
     }
     return null;
-}
+};
 Sys.Net.XMLHttpExecutor = function Sys$Net$XMLHttpExecutor() {
     /// <summary locid="M:J#Sys.Net.XMLHttpExecutor.#ctor" />
     if (arguments.length !== 0) throw Error.parameterCount();
@@ -5972,8 +5980,9 @@ Sys.Net.XMLHttpExecutor = function Sys$Net$XMLHttpExecutor() {
             _this._xmlHttpRequest = null;
         }
     });
-}
-    function Sys$Net$XMLHttpExecutor$get_timedOut() {
+};
+
+function Sys$Net$XMLHttpExecutor$get_timedOut() {
         /// <value type="Boolean" locid="P:J#Sys.Net.XMLHttpExecutor.timedOut"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._timedOut;
@@ -6165,7 +6174,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
     get_statusText: Sys$Net$XMLHttpExecutor$get_statusText,
     get_xml: Sys$Net$XMLHttpExecutor$get_xml,
     abort: Sys$Net$XMLHttpExecutor$abort
-}
+};
 Sys.Net.XMLHttpExecutor.registerClass('Sys.Net.XMLHttpExecutor', Sys.Net.WebRequestExecutor);
  
 Sys.Net._WebRequestManager = function Sys$Net$_WebRequestManager() {
@@ -6173,8 +6182,9 @@ Sys.Net._WebRequestManager = function Sys$Net$_WebRequestManager() {
     if (arguments.length !== 0) throw Error.parameterCount();
     this._defaultTimeout = 0;
     this._defaultExecutorType = "Sys.Net.XMLHttpExecutor";
-}
-    function Sys$Net$_WebRequestManager$add_invokingRequest(handler) {
+};
+
+function Sys$Net$_WebRequestManager$add_invokingRequest(handler) {
         /// <summary locid="E:J#Sys.Net.WebRequestManager.invokingRequest" />
         var e = Function._validateParams(arguments, [{name: "handler", type: Function}]);
         if (e) throw e;
@@ -6269,7 +6279,7 @@ Sys.Net._WebRequestManager.prototype = {
     get_defaultExecutorType: Sys$Net$_WebRequestManager$get_defaultExecutorType,
     set_defaultExecutorType: Sys$Net$_WebRequestManager$set_defaultExecutorType,
     executeRequest: Sys$Net$_WebRequestManager$executeRequest
-}
+};
 Sys.Net._WebRequestManager.registerClass('Sys.Net._WebRequestManager');
 Sys.Net.WebRequestManager = new Sys.Net._WebRequestManager();
  
@@ -6282,15 +6292,16 @@ Sys.Net.NetworkRequestEventArgs = function Sys$Net$NetworkRequestEventArgs(webRe
     if (e) throw e;
     Sys.Net.NetworkRequestEventArgs.initializeBase(this);
     this._webRequest = webRequest;
-}
-    function Sys$Net$NetworkRequestEventArgs$get_webRequest() {
+};
+
+function Sys$Net$NetworkRequestEventArgs$get_webRequest() {
         /// <value type="Sys.Net.WebRequest" locid="P:J#Sys.Net.NetworkRequestEventArgs.webRequest"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._webRequest;
     }
 Sys.Net.NetworkRequestEventArgs.prototype = {
     get_webRequest: Sys$Net$NetworkRequestEventArgs$get_webRequest
-}
+};
 Sys.Net.NetworkRequestEventArgs.registerClass('Sys.Net.NetworkRequestEventArgs', Sys.CancelEventArgs);
  
 Sys.Net.WebRequest = function Sys$Net$WebRequest() {
@@ -6304,8 +6315,9 @@ Sys.Net.WebRequest = function Sys$Net$WebRequest() {
     this._executor = null;
     this._invokeCalled = false;
     this._timeout = 0;
-}
-    function Sys$Net$WebRequest$add_completed(handler) {
+};
+
+function Sys$Net$WebRequest$add_completed(handler) {
     /// <summary locid="E:J#Sys.Net.WebRequest.completed" />
     var e = Function._validateParams(arguments, [{name: "handler", type: Function}]);
     if (e) throw e;
@@ -6457,7 +6469,7 @@ Sys.Net.WebRequest.prototype = {
     set_timeout: Sys$Net$WebRequest$set_timeout,
     getResolvedUrl: Sys$Net$WebRequest$getResolvedUrl,
     invoke: Sys$Net$WebRequest$invoke
-}
+};
 Sys.Net.WebRequest._resolveUrl = function Sys$Net$WebRequest$_resolveUrl(url, baseUrl) {
     if (url && url.indexOf('://') !== -1) {
         return url;
@@ -6501,7 +6513,7 @@ Sys.Net.WebRequest._resolveUrl = function Sys$Net$WebRequest$_resolveUrl(url, ba
         }
         return baseUrl.substr(0, lastSlash+1) + url;
     }
-}
+};
 Sys.Net.WebRequest._createQueryString = function Sys$Net$WebRequest$_createQueryString(queryString, encodeMethod, addParams) {
     encodeMethod = encodeMethod || encodeURIComponent;
     var i = 0, obj, val, arg, sb = new Sys.StringBuilder();
@@ -6525,7 +6537,7 @@ Sys.Net.WebRequest._createQueryString = function Sys$Net$WebRequest$_createQuery
         sb.append(addParams);
     }
     return sb.toString();
-}
+};
 Sys.Net.WebRequest._createUrl = function Sys$Net$WebRequest$_createUrl(url, queryString, addParams) {
     if (!queryString && !addParams) {
         return url;
@@ -6534,7 +6546,7 @@ Sys.Net.WebRequest._createUrl = function Sys$Net$WebRequest$_createUrl(url, quer
     return qs.length
         ? url + ((url && url.indexOf('?') >= 0) ? "&" : "?") + qs
         : url;
-}
+};
 Sys.Net.WebRequest.registerClass('Sys.Net.WebRequest');
  
 Sys._ScriptLoaderTask = function Sys$_ScriptLoaderTask(scriptElement, completedCallback) {
@@ -6548,8 +6560,9 @@ Sys._ScriptLoaderTask = function Sys$_ScriptLoaderTask(scriptElement, completedC
     if (e) throw e;
     this._scriptElement = scriptElement;
     this._completedCallback = completedCallback;
-}
-    function Sys$_ScriptLoaderTask$get_scriptElement() {
+};
+
+function Sys$_ScriptLoaderTask$get_scriptElement() {
         /// <value domElement="true" locid="P:J#Sys._ScriptLoaderTask.scriptElement"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._scriptElement;
@@ -6633,18 +6646,19 @@ Sys._ScriptLoaderTask.prototype = {
     _removeScriptElementHandlers: Sys$_ScriptLoaderTask$_removeScriptElementHandlers,    
     _scriptErrorHandler: Sys$_ScriptLoaderTask$_scriptErrorHandler,
     _scriptLoadHandler: Sys$_ScriptLoaderTask$_scriptLoadHandler  
-}
+};
 Sys._ScriptLoaderTask.registerClass("Sys._ScriptLoaderTask", null, Sys.IDisposable);
 Sys._ScriptLoaderTask._clearScript = function Sys$_ScriptLoaderTask$_clearScript(scriptElement) {
     if (!Sys.Debug.isDebug) {
         scriptElement.parentNode.removeChild(scriptElement);
     }
-}
+};
 Type.registerNamespace('Sys.Net');
  
 Sys.Net.WebServiceProxy = function Sys$Net$WebServiceProxy() {
-}
-    function Sys$Net$WebServiceProxy$get_timeout() {
+};
+
+function Sys$Net$WebServiceProxy$get_timeout() {
         /// <value type="Number" locid="P:J#Sys.Net.WebServiceProxy.timeout"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._timeout || 0;
@@ -6756,7 +6770,7 @@ Sys.Net.WebServiceProxy.prototype = {
     get_jsonpCallbackParameter: Sys$Net$WebServiceProxy$get_jsonpCallbackParameter,
     set_jsonpCallbackParameter: Sys$Net$WebServiceProxy$set_jsonpCallbackParameter,
     _invoke: Sys$Net$WebServiceProxy$_invoke
-}
+};
 Sys.Net.WebServiceProxy.registerClass('Sys.Net.WebServiceProxy');
 Sys.Net.WebServiceProxy.invoke = function Sys$Net$WebServiceProxy$invoke(servicePath, methodName, useGet, params, onSuccess, onFailure, userContext, timeout, enableJsonp, jsonpCallbackParameter) {
     /// <summary locid="M:J#Sys.Net.WebServiceProxy.invoke" />
@@ -6912,8 +6926,8 @@ Sys.Net.WebServiceProxy.invoke = function Sys$Net$WebServiceProxy$invoke(service
                 msg = String.format(Sys.Res.webServiceTimedOut, methodName);
             }
             else {
-                msg = String.format(Sys.Res.webServiceFailedNoMsg, methodName)
-            }
+                msg = String.format(Sys.Res.webServiceFailedNoMsg, methodName);
+                 }
             if (onFailure) {
                 onFailure(new Sys.Net.WebServiceError(response.get_timedOut(), msg, "", ""), userContext, methodName);
             }
@@ -6923,17 +6937,17 @@ Sys.Net.WebServiceProxy.invoke = function Sys$Net$WebServiceProxy$invoke(service
         }
     }
     return request;
-}
+};
 Sys.Net.WebServiceProxy._createFailedError = function Sys$Net$WebServiceProxy$_createFailedError(methodName, errorMessage) {
     var displayMessage = "Sys.Net.WebServiceFailedException: " + errorMessage;
     var e = Error.create(displayMessage, { 'name': 'Sys.Net.WebServiceFailedException', 'methodName': methodName });
     e.popStackFrame();
     return e;
-}
+};
 Sys.Net.WebServiceProxy._defaultFailedCallback = function Sys$Net$WebServiceProxy$_defaultFailedCallback(err, methodName) {
     var error = err.get_exceptionType() + "-- " + err.get_message();
     throw Sys.Net.WebServiceProxy._createFailedError(methodName, String.format(Sys.Res.webServiceFailed, methodName, error));
-}
+};
 Sys.Net.WebServiceProxy._generateTypedConstructor = function Sys$Net$WebServiceProxy$_generateTypedConstructor(type) {
     return function(properties) {
         if (properties) {
@@ -6942,8 +6956,8 @@ Sys.Net.WebServiceProxy._generateTypedConstructor = function Sys$Net$WebServiceP
             }
         }
         this.__type = type;
-    }
-}
+    };
+                                                                                                                     };
 Sys._jsonp = 0;
 Sys.Net.WebServiceProxy._xdomain = /^\s*([a-zA-Z0-9\+\-\.]+\:)\/\/([^?#\/]+)/;
  
@@ -6968,8 +6982,9 @@ Sys.Net.WebServiceError = function Sys$Net$WebServiceError(timedOut, message, st
     this._exceptionType = exceptionType;
     this._errorObject = errorObject;
     this._statusCode = -1;
-}
-    function Sys$Net$WebServiceError$get_timedOut() {
+};
+
+function Sys$Net$WebServiceError$get_timedOut() {
         /// <value type="Boolean" locid="P:J#Sys.Net.WebServiceError.timedOut"></value>
         if (arguments.length !== 0) throw Error.parameterCount();
         return this._timedOut;
@@ -7006,7 +7021,7 @@ Sys.Net.WebServiceError.prototype = {
     get_stackTrace: Sys$Net$WebServiceError$get_stackTrace,
     get_exceptionType: Sys$Net$WebServiceError$get_exceptionType,
     get_errorObject: Sys$Net$WebServiceError$get_errorObject
-}
+};
 Sys.Net.WebServiceError.registerClass('Sys.Net.WebServiceError');
 
 

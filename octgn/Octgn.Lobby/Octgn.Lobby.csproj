@@ -8,8 +8,8 @@
     <ProjectGuid>{131805CF-7971-4813-848B-CE156D4F6827}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Skylabs.Lobby</RootNamespace>
-    <AssemblyName>Skylabs.Lobby</AssemblyName>
+    <RootNamespace>Octgn.Lobby</RootNamespace>
+    <AssemblyName>Octgn.Lobby</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -169,14 +169,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
-    <Compile Include="Sockets\SkySocket.cs" />
-    <Compile Include="Sockets\SocketMessage.cs" />
-    <Compile Include="Sockets\SocketMessageBuilder.cs" />
-    <Compile Include="Threading\Conductor.cs" />
-    <Compile Include="Threading\LazyAsync.cs" />
-    <Compile Include="ThreadSafeDictionary.cs" />
-    <Compile Include="ThreadSafeList.cs" />
-    <Compile Include="ValueConverters.cs" />
     <Compile Include="Verify.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +194,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Octgn.Common\Octgn.Common.csproj">
+      <Project>{0258DC29-F20D-4440-815F-265ED8BF7839}</Project>
+      <Name>Octgn.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
       <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
       <Name>Octgn.Data</Name>

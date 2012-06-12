@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Web;
-using System.Web.Hosting;
 using Mono.WebServer;
+using Octgn.Common;
 
 namespace Octgn
 {
@@ -18,33 +12,30 @@ namespace Octgn
 		public DirectoryInfo WebRoot { get; private set; }
 
 		private static bool _keepAppRunning = true;
-		private XSPWebSource webSource;
-		private ApplicationServer appServer;
+		private readonly XSPWebSource _webSource;
+		private readonly ApplicationServer _appServer;
 
 		public WebHoster(int port , DirectoryInfo webRoot)
 		{
 			Port = port;
 			WebRoot = webRoot;
 
-			webSource = new XSPWebSource(IPAddress.Any , Port);
-			appServer = new ApplicationServer(webSource);
+			//TODO Figure out how to deal with this obsolete issue.
+			_webSource = new XSPWebSource(IPAddress.Any , Port);
+			_appServer = new ApplicationServer(_webSource);
 
-			appServer.AddApplication("",Port,"/",WebRoot.FullName);
-			//appServer.AddApplicationsFromCommandLine(cmdLine);
+			_appServer.AddApplication("",Port,"/",WebRoot.FullName);
 		}
 
 		public void Start()
 		{
-
 			Log.L("Starting the new AppDomain to host our xsp runtime system...");
-			appServer.Start(true);
+			_appServer.Start(true);
 
 			while(_keepAppRunning)
 			{
 				Thread.Sleep(100);
 			}
-
-			// Close down our thread and listener if required.
 		}
 
 		public void Stop() { _keepAppRunning = false; }

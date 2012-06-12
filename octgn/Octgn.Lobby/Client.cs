@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-//using Octgn.Data;
+	//using Octgn.Data;
 using agsXMPP;
 using agsXMPP.Factory;
 using agsXMPP.Net;
 using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.agent;
-using agsXMPP.protocol.iq.register;
 using agsXMPP.protocol.iq.roster;
 using agsXMPP.protocol.iq.vcard;
 using agsXMPP.protocol.x.muc;
@@ -27,24 +26,24 @@ namespace Octgn.Lobby
             public enum LobbyMessageType { Standard, Error, Topic };
         #endregion
         #region Delegates
-            public delegate void dRegisterComplete(object sender, RegisterResults results);
-            public delegate void dStateChanged(object sender, string state);
-            public delegate void dFriendRequest(object sender, Jid user);
-            public delegate void dLoginComplete(object sender, LoginResults results);
-            public delegate void dDataRecieved(object sender, DataRecType type, object data);
+            public delegate void DRegisterComplete(object sender, RegisterResults results);
+            public delegate void DStateChanged(object sender, string state);
+            public delegate void DFriendRequest(object sender, Jid user);
+            public delegate void DLoginComplete(object sender, LoginResults results);
+            public delegate void DDataRecieved(object sender, DataRecType type, object data);
         #endregion
         #region Events
-            public event dRegisterComplete OnRegisterComplete;
-            public event dLoginComplete OnLoginComplete;
-            public event dStateChanged OnStateChanged;
-            public event dFriendRequest OnFriendRequest;
-            public event dDataRecieved OnDataRecieved;
+            public event DRegisterComplete OnRegisterComplete;
+            public event DLoginComplete OnLoginComplete;
+            public event DStateChanged OnStateChanged;
+            public event DFriendRequest OnFriendRequest;
+            public event DDataRecieved OnDataRecieved;
             public event EventHandler OnDisconnect;
         #endregion
         #region PrivateAccessors
-            private XmppClientConnection Xmpp;
-            private int _noteId = 0;
-            private Presence myPresence;
+            private XmppClientConnection _xmpp;
+            private int _noteId;
+            private Presence _myPresence;
             private List<HostedGameData> _games;
             private string _email;
         #endregion
@@ -54,9 +53,9 @@ namespace Octgn.Lobby
         //public List<NewUser> GroupChats { get; set; }
         public string Username { get; private set; }
         public string Password { get; private set; }
-        public string CustomStatus { get { return Xmpp.Status; }set{SetCustomStatus(value);} }
+        public string CustomStatus { get { return _xmpp.Status; }set{SetCustomStatus(value);} }
         public MucManager MucManager { get; set; }
-        public RosterManager RosterManager { get { return Xmpp.RosterManager; } }
+        public RosterManager RosterManager { get { return _xmpp.RosterManager; } }
         public NewUser Me { get; private set; }
         public Chat Chatting { get; set; }
         public int CurrentHostedGamePort { get; set; }
@@ -64,7 +63,7 @@ namespace Octgn.Lobby
 
         public UserStatus Status
         {
-            get { return NewUser.PresenceToStatus(myPresence); }
+            get { return NewUser.PresenceToStatus(_myPresence); }
             set { SetStatus(value); }
         }
 
@@ -76,40 +75,40 @@ namespace Octgn.Lobby
 
         private void RebuildXmpp()
         {
-            if(Xmpp != null)
+            if(_xmpp != null)
             {
-                Xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
-                Xmpp.Close();
-                Xmpp = null;
+                _xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
+                _xmpp.Close();
+                _xmpp = null;
             }
             DisconnectedBecauseConnectionReplaced = false;
-            Xmpp = new XmppClientConnection("server.octgn.info");
-            Xmpp.OnRegistered += XmppOnOnRegistered;
-            Xmpp.OnRegisterError += XmppOnOnRegisterError;
-            Xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
-            Xmpp.OnLogin += XmppOnOnLogin;
-            Xmpp.OnAuthError += XmppOnOnAuthError;
-            Xmpp.OnRosterItem += XmppOnOnRosterItem;
-            Xmpp.OnRosterEnd += XmppOnOnRosterEnd;
-            Xmpp.OnRosterStart += XmppOnOnRosterStart;
-            Xmpp.OnMessage += XmppOnOnMessage;
-            Xmpp.OnPresence += XmppOnOnPresence;
-            Xmpp.OnAgentItem += XmppOnOnAgentItem;
-            Xmpp.OnIq += XmppOnOnIq;
-            Xmpp.OnReadXml += XmppOnOnReadXml;
-            Xmpp.OnClose += XmppOnOnClose;
-            Xmpp.OnWriteXml += XmppOnOnWriteXml;
-            Xmpp.OnError += XmppOnOnError;
-            Xmpp.OnSocketError += XmppOnOnSocketError;
-            Xmpp.OnStreamError += XmppOnOnStreamError;
+            _xmpp = new XmppClientConnection("server.octgn.info");
+            _xmpp.OnRegistered += XmppOnOnRegistered;
+            _xmpp.OnRegisterError += XmppOnOnRegisterError;
+            _xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
+            _xmpp.OnLogin += XmppOnOnLogin;
+            _xmpp.OnAuthError += XmppOnOnAuthError;
+            _xmpp.OnRosterItem += XmppOnOnRosterItem;
+            _xmpp.OnRosterEnd += XmppOnOnRosterEnd;
+            _xmpp.OnRosterStart += XmppOnOnRosterStart;
+            _xmpp.OnMessage += XmppOnOnMessage;
+            _xmpp.OnPresence += XmppOnOnPresence;
+            _xmpp.OnAgentItem += XmppOnOnAgentItem;
+            _xmpp.OnIq += XmppOnOnIq;
+            _xmpp.OnReadXml += XmppOnOnReadXml;
+            _xmpp.OnClose += XmppOnOnClose;
+            _xmpp.OnWriteXml += XmppOnOnWriteXml;
+            _xmpp.OnError += XmppOnOnError;
+            _xmpp.OnSocketError += XmppOnOnSocketError;
+            _xmpp.OnStreamError += XmppOnOnStreamError;
             Notifications = new List<Notification>();
             Friends = new List<NewUser>();
             //GroupChats = new List<NewUser>();
-            myPresence = new Presence();
-            Chatting = new Chat(this, Xmpp);
+            _myPresence = new Presence();
+            Chatting = new Chat(this, _xmpp);
             CurrentHostedGamePort = -1;
             _games = new List<HostedGameData>();
-            agsXMPP.Factory.ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
+            ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
         }
 
         #region XMPP
@@ -182,11 +181,11 @@ namespace Octgn.Lobby
 
         private void XmppOnOnPresence(object sender, Presence pres)
         {
-            if (pres.From.User == Xmpp.MyJID.User)
+            if (pres.From.User == _xmpp.MyJID.User)
             {
-                myPresence = pres;
-                myPresence.Type = PresenceType.available;
-                Xmpp.Status = myPresence.Status ?? Xmpp.Status;
+                _myPresence = pres;
+                _myPresence.Type = PresenceType.available;
+                _xmpp.Status = _myPresence.Status ?? _xmpp.Status;
                 if(OnDataRecieved != null)
                     OnDataRecieved.Invoke(this,DataRecType.MyInfo, pres);
                 return;
@@ -232,67 +231,65 @@ namespace Octgn.Lobby
                 case PresenceType.probe:
                     break;
             }
-            for(int i=0;i<Friends.Count;i++)
-            {
-                if(Friends[i].User.User == pres.From.User)
-                {
-                    Friends[i].CustomStatus = pres.Status ?? "";
-                    Friends[i].SetStatus(pres);
-                    break;
-                }
+            foreach(NewUser t in Friends) {
+            	if(t.User.User != pres.From.User) continue;
+            	t.CustomStatus = pres.Status ?? "";
+            	t.SetStatus(pres);
+            	break;
             }
-            XmppOnOnRosterEnd(this);
+        	XmppOnOnRosterEnd(this);
         }
 
         private void XmppOnOnMessage(object sender, Message msg)
         {
-            if(msg.Type == MessageType.normal)
-            {
-                if (msg.Subject == "gameready")
-                {
-                    var port = -1;
-                    if(Int32.TryParse(msg.Body , out port) && port != -1)
-                    {
-                        if(OnDataRecieved != null)
-                            OnDataRecieved.Invoke(this , DataRecType.HostedGameReady , port);
-                        CurrentHostedGamePort = port;
-                    }
-                }
-                else if(msg.Subject == "gamelist")
-                {
-                    var list = new List<HostedGameData>();
-                    foreach( var a in msg.ChildNodes)
-                    {
-                        var gi = a as HostedGameData;
-                        if(gi != null)
-                            list.Add(gi);
-                        var el = a as Element;
-                        gi = el as HostedGameData;
-                        if (el == null) continue;
-                    }
-                    _games = list;
-                    if(OnDataRecieved != null)
-                        OnDataRecieved.Invoke(this,DataRecType.GameList, list);
-                }
-                else if(msg.Subject == "refresh")
-                {
-                    if(OnDataRecieved!=null)
-                        OnDataRecieved.Invoke(this,DataRecType.GamesNeedRefresh,null);
-                }
-                else if(msg.From.Bare.ToLower() == Xmpp.MyJID.Server.ToLower())
-                {
-                    if (msg.Subject == null) msg.Subject = "";
-                    if (msg.Body == null) msg.Body = "";
-                    var d = new Dictionary<string , string>();
-                    d["Message"] = msg.Body;
-                    d["Subject"] = msg.Subject;
-                    if(OnDataRecieved != null)
-                        OnDataRecieved.Invoke(this,DataRecType.Announcement, d);
-                }
-            }
+        	if(msg.Type != MessageType.normal) return;
+        	switch(msg.Subject)
+        	{
+        		case "gameready":
+        		{
+        			int port;
+        			if(Int32.TryParse(msg.Body , out port) && port != -1)
+        			{
+        				if(OnDataRecieved != null)
+        					OnDataRecieved.Invoke(this , DataRecType.HostedGameReady , port);
+        				CurrentHostedGamePort = port;
+        			}
+        		}
+        			break;
+        		case "gamelist":
+        		{
+        			var list = new List<HostedGameData>();
+        			foreach( var a in msg.ChildNodes)
+        			{
+        				var gi = a as HostedGameData;
+        				if(gi != null)
+        					list.Add(gi);
+        			}
+        			_games = list;
+        			if(OnDataRecieved != null)
+        				OnDataRecieved.Invoke(this,DataRecType.GameList, list);
+        		}
+        			break;
+        		case "refresh":
+        			if(OnDataRecieved!=null)
+        				OnDataRecieved.Invoke(this,DataRecType.GamesNeedRefresh,null);
+        			break;
+        		default:
+        			if(msg.From.Bare.ToLower() == _xmpp.MyJID.Server.ToLower())
+        			{
+        				if (msg.Subject == null) msg.Subject = "";
+        				if (msg.Body == null) msg.Body = "";
+        				var d = new Dictionary<string , string>();
+        				d["Message"] = msg.Body;
+        				d["Subject"] = msg.Subject;
+        				if(OnDataRecieved != null)
+        					OnDataRecieved.Invoke(this,DataRecType.Announcement, d);
+        			}
+        			break;
+        	}
         }
 
-        private void XmppOnOnRosterStart(object sender)
+    	private void XmppOnOnRosterStart(object sender)
         {
             Friends.Clear();
         }
@@ -303,12 +300,12 @@ namespace Octgn.Lobby
             {
                 var viq = new VcardIq{Type = IqType.get , To = n.User.Bare};
                 viq.GenerateId();
-                Xmpp.Send(viq);
+                _xmpp.Send(viq);
             }
             if(OnDataRecieved != null)
                 OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
             if (Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.User.Bare == "lobby@conference.server.octgn.info") == 0)
-                Xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference.server.octgn.info"));
+                _xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference.server.octgn.info"));
         }
 
         private void XmppOnOnRosterItem(object sender, RosterItem item)
@@ -346,17 +343,17 @@ namespace Octgn.Lobby
             if(OnLoginComplete != null)
                 OnLoginComplete.Invoke(this,LoginResults.Failure);
             Trace.WriteLine("[XMPP]AuthError: Closing...");
-            Xmpp.Close();
+            _xmpp.Close();
         }
 
         private void XmppOnOnLogin(object sender)
         {
-            myPresence.Type = PresenceType.available;
-            MucManager = new MucManager(Xmpp);
+            _myPresence.Type = PresenceType.available;
+            MucManager = new MucManager(_xmpp);
             Jid room = new Jid("lobby@conference.server.octgn.info");
             MucManager.AcceptDefaultConfiguration(room);
             MucManager.JoinRoom(room,Username,Password,false);
-            Me = new NewUser(Xmpp.MyJID);
+            Me = new NewUser(_xmpp.MyJID);
             if(OnLoginComplete != null)
                 OnLoginComplete.Invoke(this,LoginResults.Success);
         }
@@ -374,16 +371,16 @@ namespace Octgn.Lobby
         {
             OnRegisterComplete.Invoke(this,RegisterResults.UsernameTaken);
             Trace.WriteLine("[Xmpp]Register Error...Closing...");
-            Xmpp.Close();
+            _xmpp.Close();
         }
 
         private void XmppOnOnRegistered(object sender)
         {
             Vcard v = new Vcard();
             v.AddEmailAddress(new Email(EmailType.HOME, _email,true));
-            v.JabberId = new Jid(this.Username + "@server.octgn.info");
+            v.JabberId = new Jid(Username + "@server.octgn.info");
             VcardIq vc = new VcardIq(IqType.set,v);
-            Xmpp.IqGrabber.SendIq(vc);
+            _xmpp.IqGrabber.SendIq(vc);
             if(OnRegisterComplete != null)
                 OnRegisterComplete.Invoke(this,RegisterResults.Success);
         }
@@ -392,44 +389,44 @@ namespace Octgn.Lobby
 
         public void Send(Element e)
         {
-            Xmpp.Send(e);
+            _xmpp.Send(e);
         }
         
         public void Send(string s)
         {
-            Xmpp.Send(s);
+            _xmpp.Send(s);
         }
         
         public void BeginLogin(string username, string password)
         {
-            if (Xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
+            if (_xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
             {
                 Username = username;
                 Password = password;
-                Xmpp.RegisterAccount = false;
-                Xmpp.AutoAgents = true;
-                Xmpp.AutoPresence = true;
-                Xmpp.AutoRoster = true;
-                Xmpp.Username = username;
-                Xmpp.Password = password;
-                Xmpp.Priority = 1;
-                Xmpp.SocketConnectionType = SocketConnectionType.Direct;
-                Xmpp.UseSSL = false;
-                Xmpp.Open();
+                _xmpp.RegisterAccount = false;
+                _xmpp.AutoAgents = true;
+                _xmpp.AutoPresence = true;
+                _xmpp.AutoRoster = true;
+                _xmpp.Username = username;
+                _xmpp.Password = password;
+                _xmpp.Priority = 1;
+                _xmpp.SocketConnectionType = SocketConnectionType.Direct;
+                _xmpp.UseSSL = false;
+                _xmpp.Open();
             }
         }
 
         public void BeginRegister(string username, string password, string email)
         {
-            if (Xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
+            if (_xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
             {
                 Username = username;
                 Password = password;
-                Xmpp.RegisterAccount = true;
-                Xmpp.Username = username;
-                Xmpp.Password = password;
+                _xmpp.RegisterAccount = true;
+                _xmpp.Username = username;
+                _xmpp.Password = password;
                 _email = email;
-                Xmpp.Open();
+                _xmpp.Open();
             }
         }
 		//TODO Uncomment
@@ -446,7 +443,7 @@ namespace Octgn.Lobby
         {
             var m = new Message(new Jid("gameserv@server.octgn.info"), MessageType.normal, "", "gamelist");
             m.GenerateId();
-            Xmpp.Send(m);
+            _xmpp.Send(m);
         }
 
         public void BeginReconnect()
@@ -473,9 +470,9 @@ namespace Octgn.Lobby
 
         public void AcceptFriendship(Jid user)
         {
-            Xmpp.PresenceManager.ApproveSubscriptionRequest(user);
-            Xmpp.PresenceManager.Subscribe(user);
-            Xmpp.SendMyPresence();
+            _xmpp.PresenceManager.ApproveSubscriptionRequest(user);
+            _xmpp.PresenceManager.Subscribe(user);
+            _xmpp.SendMyPresence();
             if(OnDataRecieved != null)
                 OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
             //Xmpp.RequestRoster();
@@ -483,7 +480,7 @@ namespace Octgn.Lobby
         
         public void DeclineFriendship(Jid user)
         {
-            Xmpp.PresenceManager.RefuseSubscriptionRequest(user);
+            _xmpp.PresenceManager.RefuseSubscriptionRequest(user);
         }
         
         public Notification[] GetNotificationList()
@@ -493,8 +490,8 @@ namespace Octgn.Lobby
         
         public void SetCustomStatus(string status)
         {
-            Xmpp.Status = status;
-            Xmpp.SendMyPresence();
+            _xmpp.Status = status;
+            _xmpp.SendMyPresence();
         }
         
         public void SetStatus(UserStatus status)
@@ -503,24 +500,32 @@ namespace Octgn.Lobby
             switch (status)
             {
                 case UserStatus.Online:
-                    p = new Presence(ShowType.NONE, Xmpp.Status);
-                    p.Type = PresenceType.available;
-                    Xmpp.Send(p);
+                    p = new Presence(ShowType.NONE, _xmpp.Status)
+                    {
+                    	Type = PresenceType.available
+                    };
+            		_xmpp.Send(p);
                     break;
                 case UserStatus.Away:
-                    p = new Presence(ShowType.away, Xmpp.Status);
-                    p.Type = PresenceType.available;
-                    Xmpp.Send(p);
+                    p = new Presence(ShowType.away, _xmpp.Status)
+                    {
+                    	Type = PresenceType.available
+                    };
+            		_xmpp.Send(p);
                     break;
                 case UserStatus.DoNotDisturb:
-                    p = new Presence(ShowType.dnd, Xmpp.Status);
-                    p.Type = PresenceType.available;
-                    Xmpp.Send(p);
+                    p = new Presence(ShowType.dnd, _xmpp.Status)
+                    {
+                    	Type = PresenceType.available
+                    };
+            		_xmpp.Send(p);
                     break;
                 case UserStatus.Invisible:                    
-                    p = new Presence(ShowType.NONE, Xmpp.Status);
-                    p.Type = PresenceType.invisible;
-                    Xmpp.Send(p);
+                    p = new Presence(ShowType.NONE, _xmpp.Status)
+                    {
+                    	Type = PresenceType.invisible
+                    };
+            		_xmpp.Send(p);
                     break;
             }
             Me.SetStatus(status);
@@ -530,16 +535,16 @@ namespace Octgn.Lobby
         {
             username = username.ToLower();
             if (username == Me.User.User.ToLower()) return;
-            Jid j = new Jid(username,Xmpp.Server,"");
+            Jid j = new Jid(username,_xmpp.Server,"");
 
-            Xmpp.RosterManager.AddRosterItem(j);
+            _xmpp.RosterManager.AddRosterItem(j);
             
-            Xmpp.PresenceManager.Subscribe(j);
+            _xmpp.PresenceManager.Subscribe(j);
         }
         
         public void RemoveFriend(NewUser user)
         {
-            Xmpp.PresenceManager.Unsubscribe(user.User);
+            _xmpp.PresenceManager.Unsubscribe(user.User);
             RosterManager.RemoveRosterItem(user.User);
             Friends.Remove(user);
             OnDataRecieved.Invoke(this,DataRecType.FriendList, this);
@@ -549,9 +554,9 @@ namespace Octgn.Lobby
         
         public void HostedGameStarted()
         {
-            var m = new Message("gameserv@server.octgn.info", MessageType.normal, CurrentHostedGamePort.ToString(),
+            var m = new Message("gameserv@server.octgn.info", MessageType.normal, CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture),
                                 "gamestarted");
-            Xmpp.Send(m);
+            _xmpp.Send(m);
         }
         
         public void Stop()

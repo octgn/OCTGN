@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 
 namespace Octgn
 {
@@ -32,22 +29,22 @@ namespace Octgn
         ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class BaseClass : IBaseInterface
     {
-        private string msg = "testing through wcf";
+        private string _msg = "testing through wcf";
 
         public string GetMessage()
         {
-            return (msg);
+            return (_msg);
         }
 
         public void SetMessage(string message)
         {
-            msg = message;
+            _msg = message;
         }
 
         public void CreateRandomMessage()
         {
             Random r = new Random();
-            msg = string.Format("testing through wcf: {0}", r.Next(int.MinValue, int.MaxValue));
+            _msg = string.Format("testing through wcf: {0}", r.Next(int.MinValue, int.MaxValue));
         }
     }
 }

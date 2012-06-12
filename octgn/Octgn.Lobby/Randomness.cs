@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace Octgn.Lobby
@@ -25,8 +23,7 @@ namespace Octgn.Lobby
             var sb = new StringBuilder(len);
             for(var i = 0;i < len;i++)
             {
-                var offset = Rand.Next(0 , Alphabet.Length);
-                sb.Append(Alphabet[i]);
+            	sb.Append(Alphabet[i]);
             }
             return sb.ToString();
         }
@@ -38,7 +35,7 @@ namespace Octgn.Lobby
                 var l = new List<string>();
                 using(var s = new StringReader(Resource1.jargonlist))
                 {
-                    var ns = "";
+                    string ns;
                     while((ns = s.ReadLine()) != null)
                     {
                         l.Add(ns);
@@ -61,7 +58,7 @@ namespace Octgn.Lobby
                 var l = new List<string>();
                 using (var s = new StringReader(Resource1.nounlist))
                 {
-                    var ns = "";
+                    string ns;
                     while ((ns = s.ReadLine()) != null)
                     {
                         l.Add(ns);
@@ -78,10 +75,10 @@ namespace Octgn.Lobby
         }
         public static string RandomRoomName()
         {
-            var Jargon = GrabRandomJargonWord();
-            var Noun = GrabRandomNounWord();
+            var jargon = GrabRandomJargonWord();
+            var noun = GrabRandomNounWord();
             var rnum = Rand.Next(0 , 1000);
-            return Jargon + Noun + rnum.ToString(CultureInfo.InvariantCulture);
+            return jargon + noun + rnum.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

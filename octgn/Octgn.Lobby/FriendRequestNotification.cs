@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using agsXMPP;
+﻿using agsXMPP;
 
 namespace Octgn.Lobby
 {

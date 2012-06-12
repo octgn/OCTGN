@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 
-namespace Octgn.LobbyServer
+namespace Octgn.Lobby.Server
 {
 
     public static class Logger
     {
         public static void PreLock()
         {
-            var method = GetPreviousMethod();
+            //var method = GetPreviousMethod();
             //WriteLine("#PreLock[{1}]: {0}",method,Thread.CurrentThread.ManagedThreadId);
             WriteTag("PreLock");
         }
         public static void InLock()
         {
-            var method = GetPreviousMethod();
+            //var method = GetPreviousMethod();
             //WriteLine("#InLock[{1}]: {0}", method, Thread.CurrentThread.ManagedThreadId);
             WriteTag("InLock");
         }
         public static void EndLock()
         {
-            var method = GetPreviousMethod();
+            //var method = GetPreviousMethod();
             //WriteLine("#EndLock[{1}]: {0}", method, Thread.CurrentThread.ManagedThreadId);
             WriteTag("EndLock");
         }
@@ -41,9 +39,9 @@ namespace Octgn.LobbyServer
         }
         private static string GetPreviousMethod(int back = 2)
         {
-            StackTrace st =  new StackTrace();
-            StackFrame[] frames = st.GetFrames();
-            string methodName = "UnknownMethod";
+            var st =  new StackTrace();
+            var frames = st.GetFrames();
+            var methodName = "UnknownMethod";
             if (frames != null && frames.Length > (back + 1)) methodName = frames[back].GetMethod().Name;
             return methodName;
         }

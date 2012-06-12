@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
-using Octgn.Lobby;
-using Octgn.Lobby.Threading;
 
-namespace Octgn.LobbyServer
+namespace Octgn.Lobby.Server
 {
     public static class Gaming
     {
@@ -108,7 +104,7 @@ namespace Octgn.LobbyServer
             Logger.InLock();
                 try
                 {
-                    Games[port].Status = Lobby.EHostedGame.GameInProgress;
+                    Games[port].Status = EHostedGame.GameInProgress;
                 }
                 catch (Exception e)
                 {
@@ -118,16 +114,16 @@ namespace Octgn.LobbyServer
             Logger.EndLock();
         }
 
-        public static List<Lobby.HostedGameData> GetLobbyList()
+        public static List<HostedGameData> GetLobbyList()
         {
             Logger.PreLock();
             Locker.EnterReadLock();
             Logger.InLock();
-            List<Lobby.HostedGameData> sendgames =
+            List<HostedGameData> sendgames =
                 Games.Select(
                     g =>
-                    new Lobby.HostedGameData(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(), g.Value.Port,
-                                            (string) g.Value.Name.Clone(), (NewUser) g.Value.Hoster, g.Value.TimeStarted)
+                    new HostedGameData(g.Value.GameGuid, (Version) g.Value.GameVersion.Clone(), g.Value.Port,
+                                            (string) g.Value.Name.Clone(), g.Value.Hoster, g.Value.TimeStarted)
                         {GameStatus = g.Value.Status}).ToList();
             Locker.ExitReadLock();
             Logger.EndLock();

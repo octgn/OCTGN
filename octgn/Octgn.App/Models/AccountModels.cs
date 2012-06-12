@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using System.Web.Security;
-using Octgn.Data;
 using Octgn.Data.Models;
 
 namespace Octgn.App.Models
@@ -151,6 +146,10 @@ namespace Octgn.App.Models
 			{
 				return false;
 			}
+			catch(NullReferenceException)
+			{
+				return false;
+			}
 		}
 	}
 
@@ -221,11 +220,11 @@ namespace Octgn.App.Models
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 	public sealed class PropertiesMustMatchAttribute : ValidationAttribute
 	{
-		private const string _defaultErrorMessage = "'{0}' and '{1}' do not match.";
+		private const string DefaultErrorMessage = "'{0}' and '{1}' do not match.";
 		private readonly object _typeId = new object();
 
 		public PropertiesMustMatchAttribute(string originalProperty, string confirmProperty)
-			: base(_defaultErrorMessage)
+			: base(DefaultErrorMessage)
 		{
 			OriginalProperty = originalProperty;
 			ConfirmProperty = confirmProperty;
@@ -253,18 +252,18 @@ namespace Octgn.App.Models
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(value);
 			object originalValue = properties.Find(OriginalProperty, true /* ignoreCase */).GetValue(value);
 			object confirmValue = properties.Find(ConfirmProperty, true /* ignoreCase */).GetValue(value);
-			return Object.Equals(originalValue, confirmValue);
+			return Equals(originalValue, confirmValue);
 		}
 	}
 
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class ValidatePasswordLengthAttribute : ValidationAttribute
 	{
-		private const string _defaultErrorMessage = "'{0}' must be at least {1} characters long.";
+		private const string DefaultErrorMessage = "'{0}' must be at least {1} characters long.";
 		private readonly int _minCharacters = Membership.Provider.MinRequiredPasswordLength;
 
 		public ValidatePasswordLengthAttribute()
-			: base(_defaultErrorMessage)
+			: base(DefaultErrorMessage)
 		{
 		}
 

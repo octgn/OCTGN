@@ -3079,9 +3079,8 @@ jQuery.fn[ "live" ] = function( types, data, fn ) {
 	}
 	
 	return this;
-}
-
-jQuery.fn[ "die" ] = function( types, data, fn ) {
+};
+	jQuery.fn[ "die" ] = function( types, data, fn ) {
 	///	<summary>
 	///		Remove all event handlers previously attached using .live() from the elements.
 	///	</summary>
@@ -3121,9 +3120,9 @@ jQuery.fn[ "die" ] = function( types, data, fn ) {
 	}
 	
 	return this;
-}
+};
 
-function liveHandler( event ) {
+	function liveHandler( event ) {
 	var stop, elems = [], selectors = [], args = arguments,
 		related, match, fn, elem, j, i, l, data,
 		live = jQuery.extend({}, jQuery.data( this, "events" ).live);
@@ -4909,8 +4908,7 @@ jQuery.fn[ "parentsUntil" ] = function( until, selector ) {
 
 	var fn = function( elem, i, until ) {
 		return jQuery.dir( elem, "parentNode", until );
-	}
-
+	};
 	var ret = jQuery.map( this, fn, until );
 	
 	if ( !runtil.test( "parentsUntil" ) ) {
@@ -4943,8 +4941,7 @@ jQuery.fn[ "nextUntil" ] = function( until, selector ) {
 
 	var fn = function( elem, i, until ) {
 		return jQuery.dir( elem, "nextSibling", until );
-	}
-
+	};
 	var ret = jQuery.map( this, fn, until );
 	
 	if ( !runtil.test( "nextUntil" ) ) {
@@ -4977,8 +4974,7 @@ jQuery.fn[ "prevUntil" ] = function( until, selector ) {
 
 	var fn = function( elem, i, until ) {
 		return jQuery.dir( elem, "previousSibling", until );
-	}
-
+	};
 	var ret = jQuery.map( this, fn, until );
 	
 	if ( !runtil.test( "prevUntil" ) ) {

@@ -8,8 +8,8 @@
     <ProjectGuid>{CBEA967B-A33D-49AF-A61C-A84137874430}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Skylabs.LobbyServer</RootNamespace>
-    <AssemblyName>Skylabs.LobbyServer</AssemblyName>
+    <RootNamespace>Octgn.Lobby.Server</RootNamespace>
+    <AssemblyName>Octgn.Lobby.Server</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -191,6 +191,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Octgn.Common\Octgn.Common.csproj">
+      <Project>{0258DC29-F20D-4440-815F-265ED8BF7839}</Project>
+      <Name>Octgn.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Lobby\Octgn.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
       <Name>Octgn.Lobby</Name>

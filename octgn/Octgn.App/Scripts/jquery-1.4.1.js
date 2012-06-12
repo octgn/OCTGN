@@ -2435,7 +2435,7 @@ jQuery.each(["live", "die"], function( i, name ) {
 		}
 		
 		return this;
-	}
+	};
 });
 
 function liveHandler( event ) {
