@@ -43,6 +43,7 @@ namespace Octgn.Test.DataTests.ModelsTests
 			//Test with conflicting email
 			ret = user.CreateUser("nuser", "pass", "fake@email.com");
 			Assert.AreEqual(ret, MembershipCreateStatus.DuplicateEmail);
+			user.Dispose();
 		}
 		[Test]
 		public void ValidateUserTest()
@@ -71,6 +72,7 @@ namespace Octgn.Test.DataTests.ModelsTests
 
 			//Validate bad username & good password
 			Assert.IsFalse(user.ValidateUser("Bad Username", "123456"));
+			user.Dispose();
 
 		}
 	}
