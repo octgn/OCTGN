@@ -67,3 +67,5 @@ octgnFX/Webcontent/Bin
 *.typemock
 *.ncrunchsolution
 *master.db
+
+octgn/Octgn.Common/Octgn.Common.ncrunchproject

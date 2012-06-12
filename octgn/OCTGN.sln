@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Data", "Octgn.Data\Oc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.App", "Octgn.App\Octgn.App.csproj", "{2FFC6D93-4D27-41C9-AA95-41F6806166FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Common", "Octgn.Common\Octgn.Common.csproj", "{0258DC29-F20D-4440-815F-265ED8BF7839}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,16 @@ Global
 		{2FFC6D93-4D27-41C9-AA95-41F6806166FA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2FFC6D93-4D27-41C9-AA95-41F6806166FA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2FFC6D93-4D27-41C9-AA95-41F6806166FA}.Release|x86.ActiveCfg = Release|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0258DC29-F20D-4440-815F-265ED8BF7839}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -29,8 +29,6 @@ namespace Octgn
 			webSource = new XSPWebSource(IPAddress.Any , Port);
 			appServer = new ApplicationServer(webSource);
 
-			string cmdLine=Port+":/:"+WebRoot.FullName;
-			cmdLine = Port + ":/:" + "F:\\Programming\\OCTGN\\octgn\\Octgn.App";
 			appServer.AddApplication("",Port,"/",WebRoot.FullName);
 			//appServer.AddApplicationsFromCommandLine(cmdLine);
 		}
@@ -38,7 +36,7 @@ namespace Octgn
 		public void Start()
 		{
 
-			Console.WriteLine("Starting the new AppDomain to host our xsp runtime system...");
+			Log.L("Starting the new AppDomain to host our xsp runtime system...");
 			appServer.Start(true);
 
 			while(_keepAppRunning)
