@@ -9,64 +9,64 @@ namespace Octgn.Data.Models
 {
 	public class User : IUser
 	{
+		public Guid ID { get; set; }
 		public string Username { get; set; }
 		public string DisplayName { get; set; }
 		public UserStatus Status { get; set; }
-		public List<UserGroup> Groups { get; set; }
 
 		public string Email { get; set; }
 		public string PasswordHash { get; set; }
-		public DateTime LastRequest { get; set; }
+		public bool IsApproved { get; set; }
+		public DateTime CreationDate { get; set; }
+		public DateTime LastLoginDate { get; set; }
+		public DateTime LastPasswordChangedDate { get; set; }
+		public DateTime LastActivityDate { get; set; }
+		public DateTime LastLockoutDate { get; set; }
+		public DateTime LockoutExpiresDate { get; set; }
+		public bool IsLockedOut { get; set; }
+		public int FailedPasswordAttemptCount { get; set; }
 
 		public User()
 		{
 			
 		}
 
-		public static void CreateAdmin()
+		public static User CreateUser(string username, string displayname,string email, string passHash)
 		{
-			using (var client = Database.GetClient())
-			{
-				client.Store(new User
+			return new User
 				{
-					Email = "na",
-					PasswordHash = ValueConverters.CreateShaHash("password"),
-					Username = "admin",
-					DisplayName = "admin",
+					ID = Guid.NewGuid(),
+					Username = username,
+					DisplayName = displayname,
 					Status = UserStatus.Online,
-					LastRequest = DateTime.Now,
-					Groups = new List<UserGroup> { UserGroup.Admin,UserGroup.Moderator,UserGroup.User }
-				});
-			}
+					Email = email,
+					PasswordHash = passHash,
+					IsApproved = true,
+					CreationDate = DateTime.Now,
+					LastPasswordChangedDate = DateTime.Now,
+					LastActivityDate = DateTime.Now,
+					LastLockoutDate = DateTime.Now,
+					LockoutExpiresDate = DateTime.Now.AddDays(-1),
+					LastLoginDate = DateTime.Now,
+					IsLockedOut = true,
+					FailedPasswordAttemptCount = 0
+				};
 		}
 
-		public MembershipCreateStatus CreateUser(string username, string password, string email)
+		public static User CreateAdmin()
 		{
-			username = username.ToLower();
-			email = email.ToLower();
-			using (var client = Database.GetClient())
-			{
-				var r = client.Query<User>().Where(x => x.Username == username || x.Email == email);
-				if(r.Any())
-				{
-					return r.AsParallel().Any(u => u.Email == email)
-					       	? MembershipCreateStatus.DuplicateEmail
-					       	: MembershipCreateStatus.DuplicateUserName;
-				}
-				client.Store(new User
-				{
-					Email = email ,
-					PasswordHash = password ,
-					Username = username,
-					DisplayName = username,
-					Status=UserStatus.Online,
-					LastRequest = DateTime.Now,
-					Groups = new List<UserGroup>{UserGroup.User}
-				});
-				return MembershipCreateStatus.Success;
-			}
+			return CreateUser("admin" , "admin" , "na" , ValueConverters.CreateShaHash("password"));
 		}
-		public bool ValidateUser(string username, string password)
+
+		public MembershipUser ToMembershipUser()
+		{
+			var mUser = new MembershipUser("OctgnMembershipProvider" , Username , ID , Email , "" , "" , IsApproved , IsLockedOut ,
+			                               CreationDate , LastLoginDate , LastActivityDate , LastPasswordChangedDate ,
+			                               LastLockoutDate);
+			return mUser;
+		}
+
+		public static bool ValidateUser(string username, string password)
 		{
 			username = username.ToLower();
 			using (var client = Database.GetClient())
@@ -76,7 +76,7 @@ namespace Octgn.Data.Models
 				if(us == null) return false;
 				if(us.PasswordHash == password)
 				{
-					us.LastRequest = DateTime.Now;
+					//us.LastRequest = DateTime.Now;
 					us.Status = UserStatus.Online;
 					client.Store(us);
 					return true;

@@ -7,20 +7,20 @@ namespace Octgn.Data.Models
 {
 	public class SafeUser : IUser
 	{
+		public Guid ID { get; set; }
+
 		public string DisplayName { get; set; }
 
 		public string Username { get; set; }
 
 		public UserStatus Status { get; set; }
 
-		public List<UserGroup> Groups { get; set; }
-
 		public SafeUser(IUser u)
 		{
 			DisplayName = u.DisplayName;
 			Username = u.Username;
 			Status = u.Status;
-			Groups = u.Groups;
 		}
+
 	}
 }

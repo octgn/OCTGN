@@ -113,9 +113,7 @@ namespace Octgn.App.Models
 			if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty.", "password");
 
 			password = ValueConverters.CreateShaHash(password);
-
-			var u = new User();
-			return u.ValidateUser(userName, password);
+			return Membership.ValidateUser(userName , password);
 		}
 
 		public MembershipCreateStatus CreateUser(string userName, string password, string email)
@@ -126,8 +124,15 @@ namespace Octgn.App.Models
 
 			password = ValueConverters.CreateShaHash(password);
 
-			var u = new User();
-			return u.CreateUser(userName , password , email);
+			try
+			{
+				var u = Membership.CreateUser(userName , password , email);
+			}
+			catch(MembershipCreateUserException e)
+			{
+				return e.StatusCode;
+			}
+			return MembershipCreateStatus.Success;
 		}
 
 		public bool ChangePassword(string userName, string oldPassword, string newPassword)

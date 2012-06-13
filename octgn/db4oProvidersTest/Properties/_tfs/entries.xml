@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <entry name="" kind="folder" url="https://tfs04.codeplex.com:443/" path="$/db4oProviders/db4oProvidersTest/Properties/" id="3687" changeset="337" shadow="6d61a9dc4ec64603a2a6d377fb928838" />
+  <entry name="AssemblyInfo.cs" kind="file" id="3664" changeset="8203" />
+</entries>
