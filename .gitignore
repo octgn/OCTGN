@@ -69,3 +69,7 @@ octgnFX/Webcontent/Bin
 *master.db
 *.ncrunchproject
 monotorrent/
+octgn/UpgradeLog.XML
+octgn/UpgradeLog2.XML
+octgn/UpgradeLog3.XML
+octgn/_UpgradeReport_Files/*
