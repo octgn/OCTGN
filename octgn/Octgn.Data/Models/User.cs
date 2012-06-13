@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Security;
 using Db4objects.Db4o.Config.Attributes;
+using Octgn.Common;
 
 namespace Octgn.Data.Models
 {
@@ -10,6 +12,7 @@ namespace Octgn.Data.Models
 		public string Username { get; set; }
 		public string DisplayName { get; set; }
 		public UserStatus Status { get; set; }
+		public List<UserGroup> Groups { get; set; }
 
 		public string Email { get; set; }
 		public string PasswordHash { get; set; }
@@ -18,6 +21,23 @@ namespace Octgn.Data.Models
 		public User()
 		{
 			
+		}
+
+		public static void CreateAdmin()
+		{
+			using (var client = Database.GetClient())
+			{
+				client.Store(new User
+				{
+					Email = "na",
+					PasswordHash = ValueConverters.CreateShaHash("password"),
+					Username = "admin",
+					DisplayName = "admin",
+					Status = UserStatus.Online,
+					LastRequest = DateTime.Now,
+					Groups = new List<UserGroup> { UserGroup.Admin,UserGroup.Moderator,UserGroup.User }
+				});
+			}
 		}
 
 		public MembershipCreateStatus CreateUser(string username, string password, string email)
@@ -40,7 +60,8 @@ namespace Octgn.Data.Models
 					Username = username,
 					DisplayName = username,
 					Status=UserStatus.Online,
-					LastRequest = DateTime.Now
+					LastRequest = DateTime.Now,
+					Groups = new List<UserGroup>{UserGroup.User}
 				});
 				return MembershipCreateStatus.Success;
 			}

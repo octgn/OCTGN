@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using Db4objects.Db4o;
 using Db4objects.Db4o.Ext;
 
@@ -14,7 +15,12 @@ namespace Octgn.Data
 		{
 			TestClient = new ObjectContainerStub();
 			Process.GetCurrentProcess().Exited += DatabaseExited;
+			bool needAdmin = !File.Exists("master.db");
 			DbServer = Db4oFactory.OpenServer(Db4oFactory.Configure() , "master.db" , 0);
+			if(needAdmin)
+			{
+				Models.User.CreateAdmin();
+			}
 		}
 
 		static void DatabaseExited(object sender, EventArgs e)

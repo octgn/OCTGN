@@ -13,11 +13,14 @@ namespace Octgn.Data.Models
 
 		public UserStatus Status { get; set; }
 
+		public List<UserGroup> Groups { get; set; }
+
 		public SafeUser(IUser u)
 		{
 			DisplayName = u.DisplayName;
 			Username = u.Username;
 			Status = u.Status;
+			Groups = u.Groups;
 		}
 	}
 }
