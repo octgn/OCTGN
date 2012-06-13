@@ -1,32 +1,29 @@
 ﻿using System.Collections.Generic;
-	//using Db4objects.Db4o;
-//using Db4objects.Db4o.Query;
+using Db4objects.Db4o;
 using FakeItEasy;
 using System.Web.Security;
-using NUnit.Framework;
 using Octgn.Data;
-using Octgn.Data.Models;
+using Xunit;
+using User = Octgn.Data.Models.User;
 
 namespace Octgn.Test.DataTests.ModelsTests
 {
 	public class UserTests
 	{
-		[Test]
+		[Fact]
 		public void CreateUserTest()
 		{
-			var f = A.Fake<Db4objects.Db4o.IObjectContainer>();
 			var fList = new List<User>();
-
-			var db = new Database(f);
-			var user = new User(db)
+			Database.TestMode = true;
+			var user = new User()
 			{
 				Email = "fake@email.com" ,
 				Username = "fakeuser" ,
 				PasswordHash = "123456"
 			};
+			Database.TestClient = A.Fake<IObjectContainer>();
 
-			A.CallTo(() => db.DbConnection.Store(new object())).WithAnyArguments().DoesNothing();
-			A.CallTo(() => db.DbConnection.Query<User>()).Returns(fList);
+			A.CallTo(() => Database.TestClient.Query<User>()).Returns(fList);
 
 			fList.Add(user);
 
@@ -34,44 +31,43 @@ namespace Octgn.Test.DataTests.ModelsTests
 
 			//Test with non conflicting user
 			ret = user.CreateUser("nuser", "npass", "nemail");
-			Assert.AreEqual(ret, MembershipCreateStatus.Success);
+			Assert.Equal(ret, MembershipCreateStatus.Success);
 
 			//Test with Conflicting username
 			ret = user.CreateUser("fakeuser", "pass", "email");
-			Assert.AreEqual(ret, MembershipCreateStatus.DuplicateUserName);
+			Assert.Equal(ret, MembershipCreateStatus.DuplicateUserName);
 
 			//Test with conflicting email
 			ret = user.CreateUser("nuser", "pass", "fake@email.com");
-			Assert.AreEqual(ret, MembershipCreateStatus.DuplicateEmail);
+			Assert.Equal(ret, MembershipCreateStatus.DuplicateEmail);
 			user.Dispose();
 		}
-		[Test]
+		[Fact]
 		public void ValidateUserTest()
 		{
-			var f = A.Fake<Db4objects.Db4o.IObjectContainer>();
 			var fList = new List<User>();
-
-			var db = new Database(f);
-			var user = new User(db)
+			Database.TestMode = true;
+			var user = new User()
 			{
 				Email = "fake@email.com" ,
 				Username = "fakeuser" ,
 				PasswordHash = "123456"
 			};
 
-			A.CallTo(() => db.DbConnection.Store(new object())).WithAnyArguments().DoesNothing();
-			A.CallTo(() => db.DbConnection.Query<User>()).Returns(fList);
+			Database.TestClient = A.Fake<IObjectContainer>();
+
+			A.CallTo(() => Database.TestClient.Query<User>()).Returns(fList);
 
 			fList.Add(user);
 
 			//Validate good username & password
-			Assert.IsTrue(user.ValidateUser("fakeuser" , "123456"));
+			Assert.True(user.ValidateUser("fakeuser" , "123456"));
 
 			//Validate good username & bad password
-			Assert.IsFalse(user.ValidateUser("fakeuser", "BAD PASS"));
+			Assert.False(user.ValidateUser("fakeuser", "BAD PASS"));
 
 			//Validate bad username & good password
-			Assert.IsFalse(user.ValidateUser("Bad Username", "123456"));
+			Assert.False(user.ValidateUser("Bad Username", "123456"));
 			user.Dispose();
 
 		}

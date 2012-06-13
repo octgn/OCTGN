@@ -10,35 +10,42 @@ namespace Octgn.Data.Models
         public Guid Guid { get; set; }
         public string Name { get; set; }
 
-        //todo the database stuff. something with only one connection in the docs?
-        public Database Db { get; set; }
-
         public IEnumerable<GameObject> GetallObjects()
         {
-            IEnumerable<GameObject> ret = Db.DbConnection.Query<GameObject>(gameObject => gameObject.GameGuid == Guid);
-            return (ret);
+			using (var client = Database.GetClient())
+			{
+				IEnumerable<GameObject> ret = client.Query<GameObject>(gameObject => gameObject.GameGuid == Guid);
+				return (ret);
+			}
         }
 
         public IEnumerable<GameObject> GetAllObjectsByType(string type)
         {
-            IEnumerable<GameObject> ret = Db.DbConnection.Query<GameObject>(
-                                                                            gameObject =>
-                                                                            gameObject.GameGuid == Guid
-                                                                            && gameObject.Type == type);
-            return (ret);
+			using (var client = Database.GetClient())
+			{
+				IEnumerable<GameObject> ret = client.Query<GameObject>(
+				                                                                gameObject =>
+				                                                                gameObject.GameGuid == Guid
+				                                                                && gameObject.Type == type);
+				return (ret);
+			}
         }
 
         public GameObject GetObjectByGuid(Guid guid)
         {
-            GameObject ret = Db.DbConnection.Query<GameObject>(
-                                                               gameObject =>
-                                                               gameObject.GameGuid == Guid && gameObject.Guid == guid).FirstOrDefault<GameObject>();
-            return (ret);
+			using (var client = Database.GetClient())
+			{
+				GameObject ret = client.Query<GameObject>(
+				                                                   gameObject =>
+				                                                   gameObject.GameGuid == Guid && gameObject.Guid == guid).
+					FirstOrDefault<GameObject>();
+				return (ret);
+			}
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

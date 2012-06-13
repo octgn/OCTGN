@@ -1,24 +1,41 @@
 ﻿using System;
+using System.Diagnostics;
 using Db4objects.Db4o;
+using Db4objects.Db4o.Ext;
 
 namespace Octgn.Data
 {
-	public class Database : IDisposable
+	public static class Database
 	{
-		public IObjectContainer DbConnection { get; set; }
-		public Database()
+		public static IObjectServer DbServer { get; set; }
+		public static bool TestMode { get; set; }
+		public static IObjectContainer TestClient { get; set; }
+		static Database()
 		{
-			DbConnection = Db4oEmbedded.OpenFile(Db4oEmbedded.NewConfiguration(), "master.db");
+			TestClient = new ObjectContainerStub();
+			Process.GetCurrentProcess().Exited += DatabaseExited;
+			DbServer = Db4oFactory.OpenServer(Db4oFactory.Configure() , "master.db" , 0);
 		}
 
-		public Database(IObjectContainer db)
+		static void DatabaseExited(object sender, EventArgs e)
 		{
-			DbConnection = db;
+			try
+			{
+				DbServer.Close();
+			}
+			catch(Exception) {}
 		}
 
-		public void Dispose()
+		public static void Close()
 		{
-			DbConnection.Close();
+			DbServer.Close();
+		}
+
+		public static IObjectContainer GetClient()
+		{
+			if (!TestMode)
+				return DbServer.OpenClient();
+			return TestClient;
 		}
 	}
 }
