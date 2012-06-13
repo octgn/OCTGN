@@ -113,6 +113,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\monotorrent\src\MonoTorrent.Dht\MonoTorrent.Dht.csproj">
+      <Project>{7A2A7E73-FD43-4171-AA34-DA413D35459E}</Project>
+      <Name>MonoTorrent.Dht</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\monotorrent\src\MonoTorrent\MonoTorrent.csproj">
+      <Project>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</Project>
+      <Name>MonoTorrent</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Common\Octgn.Common.csproj">
       <Project>{0258DC29-F20D-4440-815F-265ED8BF7839}</Project>
       <Name>Octgn.Common</Name>
@@ -120,6 +128,10 @@
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
       <Project>{4ADD86EA-F66B-4F2E-86C2-A3956C870DAA}</Project>
       <Name>Octgn.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PeerSwarm\MonoTorrent.PeerSwarm\MonoTorrent.PeerSwarm.csproj">
+      <Project>{AA887EF5-1160-4A0A-931A-7282EDA3F1C3}</Project>
+      <Name>MonoTorrent.PeerSwarm</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
