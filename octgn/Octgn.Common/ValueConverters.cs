@@ -34,12 +34,20 @@ namespace Octgn.Common
         {
             using (var hashTool = new SHA512Managed())
             {
-                byte[] passwordAsByte = Encoding.ASCII.GetBytes(password);
-                byte[] encryptedBytes = hashTool.ComputeHash(passwordAsByte);
-                hashTool.Clear();
-                return BitConverter.ToString(encryptedBytes).Replace("-", "").ToLowerInvariant();
+            	return ComputeHash(password,hashTool);
             }
         }
+
+		public static string ComputeHash(string input, HashAlgorithm algorithm)
+		{
+			Byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+
+			Byte[] hashedBytes = algorithm.ComputeHash(inputBytes);
+
+			algorithm.Dispose();
+
+			return BitConverter.ToString(hashedBytes).Replace("-", "").ToLowerInvariant();
+		}
 
         public static string HashEmailAddress(string address)
         {

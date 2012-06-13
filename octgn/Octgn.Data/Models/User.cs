@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Security;
+using Db4objects.Db4o.Config.Attributes;
 
 namespace Octgn.Data.Models
 {
-	public class User : IDisposable
+	public class User : IUser
 	{
 		public string Username { get; set; }
+		public string DisplayName { get; set; }
+		public UserStatus Status { get; set; }
+
 		public string Email { get; set; }
 		public string PasswordHash { get; set; }
+		public DateTime LastRequest { get; set; }
 
 		public User()
 		{
@@ -32,7 +37,10 @@ namespace Octgn.Data.Models
 				{
 					Email = email ,
 					PasswordHash = password ,
-					Username = username
+					Username = username,
+					DisplayName = username,
+					Status=UserStatus.Online,
+					LastRequest = DateTime.Now
 				});
 				return MembershipCreateStatus.Success;
 			}
@@ -45,14 +53,15 @@ namespace Octgn.Data.Models
 				var r = client.Query<User>().Where(u => u.Username == username);
 				var us = r.FirstOrDefault();
 				if(us == null) return false;
-				if(us.PasswordHash == password) return true;
+				if(us.PasswordHash == password)
+				{
+					us.LastRequest = DateTime.Now;
+					us.Status = UserStatus.Online;
+					client.Store(us);
+					return true;
+				}
 				return false;
 			}
-		}
-
-		public void Dispose()
-		{
-			
 		}
 	}
 }

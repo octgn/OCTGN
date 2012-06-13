@@ -92,6 +92,8 @@
   <ItemGroup>
     <Compile Include="Contracts\IBaseCommunicationContract.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="Models\IUser.cs" />
+    <Compile Include="Models\SafeUser.cs" />
     <Compile Include="ObjectContainerStub.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GameObject.cs" />

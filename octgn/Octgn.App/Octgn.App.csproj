@@ -66,6 +66,12 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Db4objects.Db4o, Version=8.1.184.15492, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.dll</HintPath>
+    </Reference>
+    <Reference Include="Db4objects.Db4o.Linq, Version=8.1.184.15492, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -98,6 +104,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Areas\api\apiAreaRegistration.cs" />
+    <Compile Include="Areas\api\Controllers\UserController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -142,8 +150,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\api\Models\" />
+    <Folder Include="Areas\api\Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Octgn.Common\Octgn.Common.csproj">
+      <Project>{0258DC29-F20D-4440-815F-265ED8BF7839}</Project>
+      <Name>Octgn.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
       <Project>{4ADD86EA-F66B-4F2E-86C2-A3956C870DAA}</Project>
       <Name>Octgn.Data</Name>
@@ -152,6 +166,9 @@
       <Project>{1A8FA426-488D-4757-9613-E658C7E2A6F5}</Project>
       <Name>Octgn</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\api\Views\Web.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
