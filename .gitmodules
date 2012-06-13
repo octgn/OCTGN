@@ -1,0 +1,6 @@
+[submodule "PeerSwarm"]
+	path = PeerSwarm
+	url = https://github.com/kellyelton/PeerSwarm.git
+[submodule "monotorrent"]
+	path = monotorrent
+	url = https://github.com/kellyelton/monotorrent.git
