@@ -1,6 +1,6 @@
-[submodule "PeerSwarm"]
-	path = PeerSwarm
+[submodule "octgn/PeerSwarm"]
+	path = octgn/PeerSwarm
 	url = https://github.com/kellyelton/PeerSwarm.git
-[submodule "monotorrent"]
-	path = monotorrent
+[submodule "octgn/monotorrent"]
+	path = octgn/monotorrent
 	url = https://github.com/kellyelton/monotorrent.git
