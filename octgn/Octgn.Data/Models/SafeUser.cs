@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using WCSoft.db4oProviders;
 
 namespace Octgn.Data.Models
 {
-	public class SafeUser : IUser
+	public class SafeUser
 	{
 		public Guid ID { get; set; }
 
@@ -13,13 +14,11 @@ namespace Octgn.Data.Models
 
 		public string Username { get; set; }
 
-		public UserStatus Status { get; set; }
-
-		public SafeUser(IUser u)
+		public SafeUser(User u)
 		{
-			DisplayName = u.DisplayName;
+			ID = u.PKID;
+			DisplayName = u.Username;
 			Username = u.Username;
-			Status = u.Status;
 		}
 
 	}

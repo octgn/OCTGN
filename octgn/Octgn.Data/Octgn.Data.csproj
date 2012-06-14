@@ -93,19 +93,31 @@
   <ItemGroup>
     <Compile Include="Contracts\IBaseCommunicationContract.cs" />
     <Compile Include="Database.cs" />
-    <Compile Include="Models\IUser.cs" />
+    <Compile Include="db4oProvider\ConnectionStringStore.cs" />
+    <Compile Include="db4oProvider\DataContainer.cs" />
+    <Compile Include="db4oProvider\db4oBufferedWebEventProvider.cs" />
+    <Compile Include="db4oProvider\db4oMembershipProvider.cs" />
+    <Compile Include="db4oProvider\db4oProfileProvider.cs" />
+    <Compile Include="db4oProvider\db4oRoleProvider.cs" />
+    <Compile Include="db4oProvider\EnrolledUser.cs" />
+    <Compile Include="db4oProvider\Profile.cs" />
+    <Compile Include="db4oProvider\Role.cs" />
+    <Compile Include="db4oProvider\SafeDB.cs" />
+    <Compile Include="db4oProvider\User.cs" />
+    <Compile Include="db4oProvider\Utils.cs" />
+    <Compile Include="db4oProvider\ValidationKeyInfo.cs" />
     <Compile Include="Models\SafeUser.cs" />
     <Compile Include="ObjectContainerStub.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GameObject.cs" />
     <Compile Include="Models\GameObjectProperty.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="db4oProvider\packages.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Web.Security;
 using Db4objects.Db4o;
 using Db4objects.Db4o.Ext;
 
@@ -15,11 +16,18 @@ namespace Octgn.Data
 		{
 			TestClient = new ObjectContainerStub();
 			Process.GetCurrentProcess().Exited += DatabaseExited;
-			bool needAdmin = !File.Exists("master.db");
-			DbServer = Db4oFactory.OpenServer(Db4oFactory.Configure() , "master.db" , 0);
-			if(needAdmin)
+			try
 			{
-				Models.User.CreateAdmin();
+				DbServer = Db4oFactory.OpenServer(Db4oFactory.Configure() , "master.db" , 0);
+				if(Membership.FindUsersByName("admin").Count == 0)
+				{
+					var u = Membership.CreateUser("admin" , "password");
+					Roles.AddUserToRole("admin" , "administrator");
+				}
+			}catch(Exception e )
+			{
+				if(Debugger.IsAttached)
+					Debugger.Break();
 			}
 		}
 
