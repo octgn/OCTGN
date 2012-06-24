@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace Octgn.Data
 {
@@ -639,86 +640,220 @@ namespace Octgn.Data
             }
         }
 
+        // Precompile Regex.
+        private static readonly Regex GUID_REGEX = new Regex("^([0-9a-fA-F]){8}(-([0-9a-fA-F]){4}){3}-([0-9a-fA-F]){12}$");
+
+        // Empty return type for extractGuids method, so a
+        // new IList<Guid> doesn't have to be created each time.
+        private static readonly IList<Guid> GUID_EMPTY = (new List<Guid>()).AsReadOnly();
+
+        //
+        // Summary:
+        //     Extracts all of the GUIDs found in a provided string. Illegal GUIDs
+        //     are ignored.
+        //
+        // Parameters:
+        //   text:
+        //     The string possibly containing GUIDs.
+        //
+        // Returns:
+        //     The (readonly) list of found GUIDs or an empty
+        //     (readonly) list if none are found.
+        private static IList<Guid> ExtractGuids(string text)
+        {                
+            if (string.IsNullOrEmpty(text)) return GUID_EMPTY; // short circuit
+            if (text.Length < 32) return GUID_EMPTY;  // short circuit
+
+            MatchCollection mc = GUID_REGEX.Matches(text);
+            int c = mc.Count;
+            if (c < 1) return GUID_EMPTY;  // short circuit
+            List<Guid> list = new List<Guid>(c);
+            foreach (Match m in mc)
+            {
+                Guid g;
+                if (Guid.TryParse(m.Value, out g))
+                {
+                    list.Add(g);
+                }
+#if(DEBUG)
+                else { Debug.Write("GUID passed regex but was unable to parse: " + m.Value); }
+#endif
+            }
+
+            if (list.Count == 0) return GUID_EMPTY;  // short circuit
+
+            // Since our singleton 'short circuit' list is readonly, we should
+            // make our return value readonly as a consistency measure.
+            return list.AsReadOnly();
+        }
+
+        private static string CleanupSql(StringBuilder sql)
+        {
+            // Cleanup whitespace in SQL code.
+            sql = sql.Replace('\t', ' ');
+            sql = sql.Replace("\r\n", " ");
+            sql = sql.Replace('\r', ' ');
+
+            while (true)
+            {
+                int len = sql.Length;
+                sql = sql.Replace("  ", " ");
+
+                // If we didn't replace anything then quit loop
+                if (sql.Length == len) break;
+            }
+
+            String s = sql.ToString();
+            s = s.Trim();
+
+            return s;
+        }
+
         public DataTable SelectCards(string[] conditions)
         {
-            var cards = new DataTable();
-            if (!SimpleDataTableCache.GetInstance().IsCached(conditions))
+            // Make null-safe
+            if (conditions == null) conditions = new String[0];
+
+            // This provides multiple 'and' conditions but only one 'or' condition which
+            // should be OK for now, but will not accomodate multiple 'or' conditions
+            // without a re-write.
+            IList<String> consAnd = new List<String>();
+            IList<String> consOr = new List<String>();
+            foreach (string c in conditions)
             {
-                var customProperties = new DataTable();
-                using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
-                {
-                    if (conditions != null && conditions.Any(x => x.Contains("set_id")))
-                    {
-                        string setID = string.Empty;
-                        foreach (string s in conditions)
-                        {
-                            if (s.Contains("set_id"))
-                            {
-                                setID = s.Replace("'", "").Replace("set_id", "").Replace("=", "");
-                                setID = setID.Trim();
-                            }
-                        }
-                        if (setID != string.Empty)
-                        {
-                            com.CommandText =
-                            "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] , [games] INNER JOIN [sets] ON [cards].[set_real_id] = [sets].[real_id] " +
-                            "AND [sets].[game_real_id] = [games].[real_id] WHERE [games].[id] = @game_id " + 
-                            "AND [sets].[id] = @set_id";
-                            com.Parameters.AddWithValue("@game_id", Id.ToString());
-                            com.Parameters.AddWithValue("@set_id", setID);
-                            cards.Load(com.ExecuteReader());
-                        }
-                    }
-                    else
-                    {
-                        com.CommandText =
-                            "SELECT *, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM cards WHERE game_id=@game_id;";
-                        com.Parameters.AddWithValue("@game_id", Id.ToString());
-                        cards.Load(com.ExecuteReader());
-                    }
-                    com.CommandText =
-                        "SELECT * FROM [custom_properties] WHERE [game_id]=@game_id";
-                    com.Parameters.AddWithValue("@game_id", Id.ToString());
-                    customProperties.Load(com.ExecuteReader());
-                }
-                SimpleDataTableCache.GetInstance().AddToCache(conditions, cards);
+                if (c.Contains("set_id")) consOr.Add(c);
+                else consAnd.Add(c);
             }
-            else
+            
+            StringBuilder sb;
+            var cards = new DataTable();
+            if (SimpleDataTableCache.GetInstance().IsCached(conditions))
             {
                 cards = SimpleDataTableCache.GetInstance().GetCache(conditions);
             }
+            else
+            {
+                var customProperties = new DataTable();
+                IList<Guid> sets = GUID_EMPTY;
+                if (conditions != null)
+                {
+                    sets = conditions
+                        .Where(c => c.Contains("set_id"))
+                        .SelectMany(c => ExtractGuids(c))
+                        .ToList();                            
+                }
 
+
+                // We need 2 different queries here because it is possible for...
+                //   [cards].[game_id] <> [games].[id]
+                // ...or it is possible that there are cards not attached to a set
+                // in which case we need...
+                //   LEFT OUTER JOIN [sets]
+                // ...instead of...
+                //   INNER JOIN [sets]
+                // ...which is possible in theory because the columns [sets].[game_real_id]
+                // and [cards].[set_real_id] are both NULLABLE. This SQL implementation should
+                // produce the same query results as before.
+                sb = new StringBuilder();
+                if (sets.Count > 0) 
+                {
+                    sb.Append(" SELECT *, [sets].[id] AS [set_id] ");
+                    sb.Append(" FROM      [cards] ");
+                    sb.Append(" INNER JOIN	[sets]	ON	[sets].[real_id]  = [cards].[set_real_id] ");
+                    sb.Append(" INNER JOIN	[games]	ON	[games].[real_id] = [sets].[game_real_id] ");
+                    sb.Append(" WHERE [games].[id] = @game_id ");
+                    sb.Append(" AND ( ");
+                    for(int i =0; i < sets.Count; i++)
+                    {
+                        if (i > 0) sb.Append(" OR ");
+                        sb.Append(" [sets].[set_id] = @set_id" + i);
+                    }
+                    sb.Append(" ) ");
+                }
+                else
+                {
+                    sb.Append(" SELECT [cards].*, [sets].[id] AS [set_id] ");
+                    sb.Append(" FROM 			 [cards] ");
+                    sb.Append(" LEFT OUTER JOIN [sets]	ON	[sets].[real_id] = [cards].[set_real_id] ");
+                    sb.Append(" WHERE [cards].[game_id] = @game_id ");
+                }
+                    
+                String sql = CleanupSql(sb);
+
+#if(DEBUG)
+                Debug.Write(sql);
+#endif
+
+                using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
+                {
+                    // Cards query
+                    com.CommandText = sql;
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    for (int i = 0; i < sets.Count; i++)
+                    {
+                        com.Parameters.AddWithValue("@set_id" + i, sets[i]);
+                    }
+                    cards.Load(com.ExecuteReader());
+                    
+                    // Custom Properties query
+                    com.CommandText = "SELECT * FROM [custom_properties] WHERE [game_id] = @game_id";
+                    com.Parameters.AddWithValue("@game_id", Id.ToString());
+                    customProperties.Load(com.ExecuteReader());
+                }
+
+                // Update our cache
+                SimpleDataTableCache.GetInstance().AddToCache(conditions, cards);
+            }
+
+            // Appears to remove the game ID guid from the column names
+            string gameIdWithoutDashes = Id.ToString().Replace("-", "");
             for (int i = 0; i < cards.Columns.Count; i++)
             {
-                cards.Columns[i].ColumnName = cards.Columns[i].ColumnName.Replace(Id.ToString().Replace("-", ""), "");
+                cards.Columns[i].ColumnName = cards.Columns[i].ColumnName.Replace(gameIdWithoutDashes, "");
             }
 
             //Now apply the search query to it
-            var sb = new StringBuilder();
-            if (conditions != null && conditions.Length > 0)
+            sb = new StringBuilder();
+            for (int i = 0; i < consAnd.Count; i++)
             {
-                string connector = "";
-                foreach (string condition in conditions)
-                {
-                    sb.Append(connector);
-                    sb.Append("(");
-                    sb.Append(condition);
-                    sb.Append(")");
-                    connector = " AND ";
-                }
-                cards.CaseSensitive = false;
+                if (i > 0) sb.Append(" AND ");
+                sb.Append("(" + consAnd[i] + ")");
+            }
 
+            if (consOr.Count > 0)
+            {
+                // Do we already have some WHERE clause stuff, if so
+                // we append the 'AND' on to the end of it.
+                if (consAnd.Count > 0) sb.Append(" AND ");
+
+                sb.Append("(");
+                for (int i = 0; i < consOr.Count; i++)
+                {
+                    if (i > 0) sb.Append(" OR ");
+                    sb.Append("(" + consOr[i] + ")");
+                }
+                sb.Append(")");
+            }
+
+            String where = CleanupSql(sb);
+
+            // Did we actually create a 'WHERE' condition? If so,
+            // apply it to our data table.
+            if (!String.IsNullOrEmpty(where))
+            {
+                cards.CaseSensitive = false;
                 DataTable dtnw = cards.Clone();
                 dtnw.Rows.Clear();
 
-                DataRow[] rows = cards.Select(sb.ToString());
+                DataRow[] rows = cards.Select(where);
 
-                foreach (DataRow r in rows)
-                    dtnw.ImportRow(r);
+                foreach (DataRow r in rows) dtnw.ImportRow(r);
 
-                cards.Rows.Clear();
+                // This isn't needed since the cards should be GC'd
+                //cards.Rows.Clear();
                 cards = dtnw;
             }
+
             return cards;
         }
 
