@@ -48,7 +48,7 @@ namespace Octgn.Windows
             Room.OnMessageRecieved += RoomOnOnMessageRecieved;
             Room.OnUserListChange += RoomOnOnUserListChange;
             IsLobbyChat = (room.GroupUser != null && room.GroupUser.User.User == "lobby");
-            if (!room.IsGroupChat || IsLobbyChat) miLeaveChat.IsEnabled = false;
+            if (!room.IsGroupChat ) miLeaveChat.IsEnabled = false;
             ResetUserList();
         }
 
