@@ -566,7 +566,7 @@ namespace Skylabs.Lobby
         {
             username = username.ToLower();
             if (username == Me.User.User.ToLower()) return;
-            Jid j = new Jid(username,Xmpp.Server,"");
+            Jid j = new Jid(username + "@" + Client.Host);
 
             Xmpp.RosterManager.AddRosterItem(j);
             

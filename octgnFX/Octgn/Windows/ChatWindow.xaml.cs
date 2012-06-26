@@ -385,7 +385,7 @@ namespace Octgn.Windows
         {
             var u = listBox1.SelectedItem as NewUser;
             if (u != null)
-                Program.LobbyClient.SendFriendRequest(u.User.Bare);
+                Program.LobbyClient.SendFriendRequest(u.User.User);
         }
     }
 }

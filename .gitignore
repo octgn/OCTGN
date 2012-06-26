@@ -69,3 +69,4 @@ packages/
 *.ncrunchsolution
 octgn/_UpgradeReport_Files/*
 *.ncrunchproject
+octgn/UpgradeLog*.XML
