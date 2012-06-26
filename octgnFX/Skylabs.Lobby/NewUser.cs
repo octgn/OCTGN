@@ -31,7 +31,7 @@ namespace Skylabs.Lobby
         public NewUser(Jid user)
         {
             User = user.Bare;
-            Status = UserStatus.Offline;
+            Status = UserStatus.Unknown;
             CustomStatus = "";
             Email = "";
         }
@@ -39,7 +39,11 @@ namespace Skylabs.Lobby
         public void SetStatus(Presence p)
         {
             Trace.WriteLine("[SetStatus]For: " + p.From);
-            Status = NewUser.PresenceToStatus(p);
+        	var s = NewUser.PresenceToStatus(p);
+			if (s != UserStatus.Unknown) 
+				Status = s;
+			else if (Status == UserStatus.Unknown)
+				Status = UserStatus.Online;
             Trace.WriteLine("[SetStatus]Status: " + Status.ToString());
         }
         public void SetStatus(UserStatus status) { Status = status; }
@@ -52,14 +56,14 @@ namespace Skylabs.Lobby
             UserStatus Status = UserStatus.Unknown;
             if(p.Type == PresenceType.unavailable)
                 Status = UserStatus.Offline;
-            else if(p.Type == PresenceType.available && p.Show == ShowType.NONE)
-                Status = UserStatus.Online;
+            //else if(p.Type == PresenceType.available && p.Show == ShowType.NONE)
+            //    Status = UserStatus.Online;
             else
             {
                 switch(p.Show)
                 {
                     case ShowType.NONE:
-                        Status = UserStatus.Offline;
+                        //Status = UserStatus.Offline;
                         break;
                     case ShowType.away:
                         Status = UserStatus.Away;

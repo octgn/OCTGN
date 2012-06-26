@@ -70,7 +70,12 @@ namespace Skylabs.Lobby
 
         public UserStatus Status
         {
-            get { return NewUser.PresenceToStatus(myPresence); }
+            get
+            {
+				var s = NewUser.PresenceToStatus(myPresence);
+				if(s == UserStatus.Unknown) s = Me.Status;
+            	return s;
+            }
             set { SetStatus(value); }
         }
 
@@ -152,7 +157,7 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnReadXml(object sender , string xml)
         {
-#if(FDEBUG)
+#if(DEBUG)
             Trace.WriteLine("[Xmpp]in: " + xml);
 #endif
         }
@@ -194,14 +199,24 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnPresence(object sender, Presence pres)
         {
+			//if (pres.From.User != "lobby") Debugger.Break();
             if (pres.From.User == Xmpp.MyJID.User)
             {
-                myPresence = pres;
-                myPresence.Type = PresenceType.available;
-                Xmpp.Status = myPresence.Status ?? Xmpp.Status;
-                if(OnDataRecieved != null)
-                    OnDataRecieved.Invoke(this,DataRecType.MyInfo, pres);
-                return;
+				if (pres.Type == PresenceType.subscribe)
+				{
+					Xmpp.PresenceManager.ApproveSubscriptionRequest(pres.From);
+				}
+				else
+				{
+					myPresence = pres;
+					myPresence.Type = PresenceType.available;
+					if(pres.Show != ShowType.NONE)
+						myPresence.Show = pres.Show;
+					Xmpp.Status = myPresence.Status ?? Xmpp.Status;
+					if(OnDataRecieved != null) OnDataRecieved.Invoke(this , DataRecType.MyInfo , pres);
+					
+				}
+				return;
             }
             switch(pres.Type)
             {
@@ -351,14 +366,17 @@ namespace Skylabs.Lobby
                     }
                     break;
                 case SubscriptionType.to:
+					if (item.Jid.User == Me.User.User) break;
                     if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
                         Friends.Add(new NewUser(item.Jid));
                     break;
                 case SubscriptionType.from:
+					if (item.Jid.User == Me.User.User) break;
                     if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
                     Friends.Add(new NewUser(item.Jid));
                     break;
                 case SubscriptionType.both:
+					if (item.Jid.User == Me.User.User) break;
                     if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
                     Friends.Add(new NewUser(item.Jid));
                     break;
@@ -380,12 +398,14 @@ namespace Skylabs.Lobby
         private void XmppOnOnLogin(object sender)
         {
             myPresence.Type = PresenceType.available;
+        	myPresence.Show = ShowType.chat;
             MucManager = new MucManager(Xmpp);
 			Jid room = new Jid("lobby@conference." + Host);
             MucManager.AcceptDefaultConfiguration(room);
-            MucManager.JoinRoom(room,Username,Password,false);
+            //MucManager.JoinRoom(room,Username,Password,false);
             Me = new NewUser(Xmpp.MyJID);
-
+			Me.SetStatus(UserStatus.Online);
+			Xmpp.PresenceManager.Subscribe(Xmpp.MyJID);
             if(OnLoginComplete != null)
                 OnLoginComplete.Invoke(this,LoginResults.Success);
         }
@@ -542,21 +562,25 @@ namespace Skylabs.Lobby
                     p = new Presence(ShowType.NONE, Xmpp.Status);
                     p.Type = PresenceType.available;
                     Xmpp.Send(p);
+					Xmpp.SendMyPresence();
                     break;
                 case UserStatus.Away:
                     p = new Presence(ShowType.away, Xmpp.Status);
                     p.Type = PresenceType.available;
                     Xmpp.Send(p);
+					Xmpp.SendMyPresence();
                     break;
                 case UserStatus.DoNotDisturb:
                     p = new Presence(ShowType.dnd, Xmpp.Status);
                     p.Type = PresenceType.available;
                     Xmpp.Send(p);
+					Xmpp.SendMyPresence();
                     break;
                 case UserStatus.Invisible:                    
                     p = new Presence(ShowType.NONE, Xmpp.Status);
                     p.Type = PresenceType.invisible;
                     Xmpp.Send(p);
+					Xmpp.SendMyPresence();
                     break;
             }
             Me.SetStatus(status);
