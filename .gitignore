@@ -67,3 +67,5 @@ packages/
 *.*~
 *.typemock
 *.ncrunchsolution
+octgn/_UpgradeReport_Files/*
+*.ncrunchproject

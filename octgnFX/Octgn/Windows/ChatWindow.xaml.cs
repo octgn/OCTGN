@@ -300,7 +300,8 @@ namespace Octgn.Windows
                                                                  : "Chat with: "
                                                                    + Room.Users.SingleOrDefault(x => x.User.Bare != Program.LobbyClient.Me.User.Bare).User.User;
                                                                  listBox1.Items.Clear();
-                                                 foreach (var u in Room.Users)
+                                             	var ulist = from u in Room.Users orderby u.User.User select u;
+                                                 foreach (var u in ulist)
                                                  {
                                                      listBox1.Items.Add(u);
                                                  }
