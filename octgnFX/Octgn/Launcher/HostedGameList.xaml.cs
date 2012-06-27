@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,6 +16,7 @@ namespace Octgn.Launcher
     public partial class HostedGameList
     {
         private Border Refreshing;
+    	private Timer RefreshTimer;
         public HostedGameList()
         {
             InitializeComponent();
@@ -100,12 +102,24 @@ namespace Octgn.Launcher
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
             ReloadGameList();
+        	RefreshTimer = new Timer(state => GetGameListFromServer(),RefreshTimer,10000,10000);
         }
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
             Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved;
+			RefreshTimer.Dispose();
+        	RefreshTimer = null;
         }
+
+		private void GetGameListFromServer()
+		{
+			Dispatcher.Invoke(new Action(() =>
+			{
+				bRefreshing.Visibility = Visibility.Visible;
+				Program.LobbyClient.BeginGetGameList();
+			}));
+		}
 
         public void FilterGames(Guid g, Boolean show)
         {
