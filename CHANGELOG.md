@@ -1,3 +1,10 @@
+#3.0.1.11
++ Make gamelist autorefresh
++ Arrange user list in lobby by name
++ Adding friends and chatting works again
++ User status fixed
++ Lobby is now opt-in
+
 #3.0.1.10
 + Fixed another game install bug
 + Added game isolation(games are unaware of each other)
