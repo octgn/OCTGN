@@ -1,26 +1,19 @@
 <ribbon:RibbonWindow x:Class="Octgn.Windows.Main" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary" Title="Octgn"
-                     x:Name="Window" Width="416" Height="559" Icon="/Octgn;component/Resources/icon.ico" MinWidth="368"
+                     x:Name="Window" Width="500" Height="559" Icon="/Octgn;component/Resources/icon.ico" MinWidth="500"
                      Closing="WindowClosing">
-  <ribbon:RibbonWindow.Resources>
-    <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
-      <Setter Property="Background" Value="Red" />
-      <Setter Property="Foreground" Value="White" />
-      <Setter Property="FontWeight" Value="Bold" />
-    </Style>
-    <Style TargetType="ribbon:RibbonTabHeader" x:Key="NormalHeaderColor" x:Name="NormalHeaderColor">
-      <Setter Property="Foreground" Value="Black" />
-      <Setter Property="FontWeight" Value="Normal" />
-    </Style>
-  </ribbon:RibbonWindow.Resources>
   <Grid x:Name="LayoutRoot">
-    <Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="100*" />
+			<ColumnDefinition Width="230" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
-    <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="RibbonSelectionChanged">
+    <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="RibbonSelectionChanged" Grid.ColumnSpan="2">
       <ribbon:Ribbon.ApplicationMenu>
         <ribbon:RibbonApplicationMenu IsMainMenu="True" x:Name="MainMenu">
           <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOffClick"></ribbon:RibbonApplicationMenuItem>
@@ -118,6 +111,7 @@
       <ribbon:RibbonTab Header="Alerts" x:Name="NotificationTab"></ribbon:RibbonTab>
     </ribbon:Ribbon>
     <Frame Grid.Row="1" HorizontalAlignment="Stretch" Name="frame1" VerticalAlignment="Stretch"
-           Navigating="FrameNavigating" NavigationUIVisibility="Hidden" />
-  </Grid>
+           Navigating="FrameNavigating" NavigationUIVisibility="Hidden" Grid.ColumnSpan="1" />
+		<Frame Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" Name="FrameFriends" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Source="../Launcher/ContactList.xaml" />
+	</Grid>
 </ribbon:RibbonWindow>
