@@ -31,7 +31,7 @@ namespace Octgn
 			AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e) { Debug.WriteLine(e.ExceptionObject); Shutdown(); };
 			Thread.GetDomain().UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e) { Debug.WriteLine(e.ExceptionObject); Shutdown(); };
 
-			StartServiceHost();
+			//StartServiceHost();
 			StartPeerSwarm();
 			StartWebHoster();
 		}

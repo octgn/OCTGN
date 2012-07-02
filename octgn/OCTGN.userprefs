@@ -1,0 +1,26 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Octgn.Common/ValueConverters.cs">
+    <Files>
+      <File FileName="OCTGN/Program.cs" Line="34" Column="6" />
+      <File FileName="Octgn.Common/ValueConverters.cs" Line="51" Column="10" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Octgn" expanded="True" />
+          <Node name="Octgn.Common" expanded="True" />
+          <Node name="Octgn.Data" expanded="True">
+            <Node name="db4oProvider" expanded="True" />
+          </Node>
+          <Node name="Octgn.Lobby" expanded="True" />
+          <Node name="Octgn.Lobby.Server" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

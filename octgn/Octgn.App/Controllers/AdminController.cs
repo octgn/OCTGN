@@ -12,6 +12,10 @@ namespace Octgn.App.Controllers
 		[Authorize]
         public ActionResult Index()
         {
+			if(Roles.IsUserInRole("administrator"))
+			{
+				return View("Index");
+			}
             return View("NotAuthorized");
         }
 

@@ -44,8 +44,6 @@ namespace Octgn.Common
 
 			Byte[] hashedBytes = algorithm.ComputeHash(inputBytes);
 
-			algorithm.Dispose();
-
 			return BitConverter.ToString(hashedBytes).Replace("-", "").ToLowerInvariant();
 		}
 
