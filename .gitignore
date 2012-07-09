@@ -9,6 +9,7 @@
 *.exe
 *.ncb
 *.opensdf
+*.pidb
 *.pch
 *.resharper
 *.sbr

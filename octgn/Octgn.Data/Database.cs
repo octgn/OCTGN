@@ -14,20 +14,24 @@ namespace Octgn.Data
 		public static IObjectContainer TestClient { get; set; }
 		static Database()
 		{
+			TestMode = false;
 			TestClient = new ObjectContainerStub();
 			Process.GetCurrentProcess().Exited += DatabaseExited;
 			try
 			{
+				Common.Log.L ("Creating/Opening Database...");
 				DbServer = Db4oFactory.OpenServer(Db4oFactory.Configure() , "master.db" , 0);
 				if(Membership.FindUsersByName("admin").Count != 0) return;
 				if(!Roles.RoleExists("administrator"))
 					Roles.CreateRole("administrator");
 				var u = Membership.CreateUser("admin" , "password");
 				Roles.AddUserToRole("admin" , "administrator");
+				Common.Log.L ("Database Ready.");
 			}catch(Exception e )
 			{
-				if(Debugger.IsAttached)
-					Debugger.Break();
+				//if(Debugger.IsAttached)
+				//	Debugger.Break();
+				Common.Log.L("Database Init Error: {0}",e);
 			}
 		}
 
