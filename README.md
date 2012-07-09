@@ -1,4 +1,4 @@
-OCTGN 3.0
+OCTGN 4.0
 =================================================
 This is the new home for the OCTGN open source project.
 

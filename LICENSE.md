@@ -1,6 +1,3 @@
-This will be the license pending the original authors approval... for now see 
-the wiki under License to learn more about the current licensing.
-
 https://github.com/kellyelton/OCTGN/wiki/License
 
 ===============================================================================
