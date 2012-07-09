@@ -1,0 +1,442 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Db4objects.Db4o.Optional</name>
+    </assembly>
+    <members>
+        <member name="T:Db4objects.Db4o.Filestats.FileUsageStatsCollector">
+            <summary>
+            Collects database file usage statistics and prints them
+            to the console.
+            </summary>
+            <remarks>
+            Collects database file usage statistics and prints them
+            to the console.
+            </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Db4objects.Db4o.Filestats.FileUsageStatsCollector.Main(System.String[])" -->
+        <member name="T:Db4objects.Db4o.Monitoring.MonitoredStorage">
+            <summary>
+            Publishes performance counters for bytes read and written.
+            </summary>
+        </member>
+        <member name="T:Db4objects.Db4o.Monitoring.IReferenceSystemListener">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Cluster.Cluster">
+            <summary>allows running Queries against multiple ObjectContainers.</summary>
+            <remarks>allows running Queries against multiple ObjectContainers.</remarks>
+            <exclude></exclude>
+        </member>
+        <member name="M:Db4objects.Db4o.Cluster.Cluster.#ctor(Db4objects.Db4o.IObjectContainer[])">
+            <summary>
+            use this constructor to create a Cluster and call
+            add() to add ObjectContainers
+            </summary>
+        </member>
+        <member name="M:Db4objects.Db4o.Cluster.Cluster.Query">
+            <summary>
+            starts a query against all ObjectContainers in
+            this Cluster.
+            </summary>
+            <remarks>
+            starts a query against all ObjectContainers in
+            this Cluster.
+            </remarks>
+            <returns>the Query</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Cluster.Cluster.ObjectContainerFor(System.Object)">
+            <summary>
+            returns the ObjectContainer in this cluster where the passed object
+            is stored or null, if the object is not stored to any ObjectContainer
+            in this cluster
+            </summary>
+            <param name="obj">the object</param>
+            <returns>the ObjectContainer</returns>
+        </member>
+        <member name="T:Db4objects.Db4o.Consistency.ConsistencyCheckerUtil">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Filestats.BigSetMiscCollector">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Filestats.IMiscCollector">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Filestats.ClassNode">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Filestats.ClassUsageStats">
+            <summary>Statistics for the byte usage for a single class (instances, indices, etc.) in a db4o database file.
+            	</summary>
+            <remarks>Statistics for the byte usage for a single class (instances, indices, etc.) in a db4o database file.
+            	</remarks>
+            <exclude></exclude>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.ClassUsageStats.ClassName">
+            <returns>the name of the persistent class</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.ClassUsageStats.SlotUsage">
+            <returns>number of bytes used slots containing the actual class instances</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.ClassUsageStats.ClassIndexUsage">
+            <returns>number of bytes used for the index of class instances</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.ClassUsageStats.FieldIndexUsage">
+            <returns>number of bytes used for field indexes, if any</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.ClassUsageStats.MiscUsage">
+            <returns>
+            number of bytes used for features that are specific to this class (ex.: the BTree encapsulated within a
+            <see cref="T:Db4objects.Db4o.Internal.Collections.BigSet`1">Db4objects.Db4o.Internal.Collections.BigSet&lt;E&gt;
+            	</see>
+            instance)
+            </returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.ClassUsageStats.TotalUsage">
+            <returns>aggregated byte usage for this persistent class</returns>
+        </member>
+        <member name="T:Db4objects.Db4o.Filestats.FileUsageStats">
+            <summary>Byte usage statistics for a db4o database file</summary>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.FileHeader">
+            <returns>bytes used by the db4o file header (static and variable parts)</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.Freespace">
+            <returns>total number of bytes registered as freespace, available for reuse</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.IdSystem">
+            <returns>bytes used by the id system indices</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.ClassMetadata">
+            <returns>number of bytes used for class metadata (class metadata repository and schema definitions)
+            	</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.FreespaceUsage">
+            <returns>number of bytes used for the bookkeeping of the freespace system itself</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.UuidUsage">
+            <returns>number of bytes used for the uuid index</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.CommitTimestampUsage">
+            <returns>number of bytes used for the commit timestamp indexes</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.FileSize">
+            <returns>total file size in bytes</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.TotalUsage">
+            <returns>
+            number of bytes used aggregated from all categories - should always be equal to
+            <see cref="M:Db4objects.Db4o.Filestats.FileUsageStats.FileSize">FileSize()</see>
+            </returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.ClassUsageStats">
+            <returns>the statistics for each persisted class</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.Filestats.FileUsageStats.ClassStats(System.String)">
+            <param name="name">a fully qualified class name</param>
+            <returns>the statistics for the class with the given name</returns>
+        </member>
+        <member name="T:Db4objects.Db4o.Filestats.FileUsageStatsUtil">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Filestats.ISlotMap">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Filestats.NullSlotMap">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Filestats.SlotMapImpl">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.IO.DebugIoAdapter">
+            <exclude></exclude>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.DebugIoAdapter.#ctor(Db4objects.Db4o.IO.IoAdapter,System.String,System.Boolean,System.Int64,System.Boolean)">
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.DebugIoAdapter.Open(System.String,System.Boolean,System.Int64,System.Boolean)">
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.DebugIoAdapter.Seek(System.Int64)">
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="T:Db4objects.Db4o.IO.MemoryIoAdapter">
+            <summary>IoAdapter for in-memory operation.</summary>
+            <remarks>
+            IoAdapter for in-memory operation. <br/>
+            <br/>
+            Configure db4o to operate with this in-memory IoAdapter with
+            <code>
+            MemoryIoAdapter memoryIoAdapter = new MemoryIoAdapter();<br/>
+            Db4oFactory.Configure().Io(memoryIoAdapter);
+            </code><br/>
+            <br/>
+            <br/>
+            Use the normal #openFile() and #openServer() commands to open
+            ObjectContainers and ObjectServers. The names specified as file names will be
+            used to identify the <code>byte[]</code> content of the in-memory files in
+            the _memoryFiles Hashtable in the adapter. After working with an in-memory
+            ObjectContainer/ObjectServer the <code>byte[]</code> content is available
+            in the MemoryIoAdapter by using
+            <see cref="M:Db4objects.Db4o.IO.MemoryIoAdapter.Get(System.String)">
+            Db4objects.Db4o.IO.MemoryIoAdapter.Get
+            </see>
+            . To add old existing
+            database <code>byte[]</code> content to a MemoryIoAdapter use
+            <see cref="M:Db4objects.Db4o.IO.MemoryIoAdapter.Put(System.String,System.Byte[])">
+            Db4objects.Db4o.IO.MemoryIoAdapter.Put
+            
+            </see>
+            . To reduce memory consumption of memory file
+            names that will no longer be used call
+            <see cref="M:Db4objects.Db4o.IO.MemoryIoAdapter.Put(System.String,System.Byte[])">
+            Db4objects.Db4o.IO.MemoryIoAdapter.Put
+            
+            </see>
+            and pass
+            an empty byte array.
+            
+            </remarks>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.Put(System.String,System.Byte[])">
+            <summary>
+            creates an in-memory database with the passed content bytes and adds it
+            to the adapter for the specified name.
+            </summary>
+            <remarks>
+            creates an in-memory database with the passed content bytes and adds it
+            to the adapter for the specified name.
+            </remarks>
+            <param name="name">the name to be use for #openFile() or #openServer() calls</param>
+            <param name="bytes">the database content</param>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.Get(System.String)">
+            <summary>returns the content bytes for a database with the given name.</summary>
+            <remarks>returns the content bytes for a database with the given name.</remarks>
+            <param name="name">the name to be use for #openFile() or #openServer() calls</param>
+            <returns>the content bytes</returns>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.GrowBy(System.Int32)">
+            <summary>
+            configures the length a memory file should grow, if no more free slots
+            are found within.
+            </summary>
+            <remarks>
+            configures the length a memory file should grow, if no more free slots
+            are found within. <br />
+            <br />
+            Specify a large value (100,000 or more) for best performance. Specify a
+            small value (100) for the smallest memory consumption. The default
+            setting is 10,000.
+            </remarks>
+            <param name="length">the length in bytes</param>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.Close">
+            <summary>for internal processing only.</summary>
+            <remarks>for internal processing only.</remarks>
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.Exists(System.String)">
+            <summary>for internal processing only.</summary>
+            <remarks>for internal processing only.</remarks>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.GetLength">
+            <summary>for internal processing only.</summary>
+            <remarks>for internal processing only.</remarks>
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.Open(System.String,System.Boolean,System.Int64,System.Boolean)">
+            <summary>for internal processing only.</summary>
+            <remarks>for internal processing only.</remarks>
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.Read(System.Byte[],System.Int32)">
+            <summary>for internal processing only.</summary>
+            <remarks>for internal processing only.</remarks>
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.Seek(System.Int64)">
+            <summary>for internal processing only.</summary>
+            <remarks>for internal processing only.</remarks>
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.Sync">
+            <summary>for internal processing only.</summary>
+            <remarks>for internal processing only.</remarks>
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.MemoryIoAdapter.Write(System.Byte[],System.Int32)">
+            <summary>for internal processing only.</summary>
+            <remarks>for internal processing only.</remarks>
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="T:Db4objects.Db4o.IO.NonFlushingIoAdapter">
+            <summary>
+            Delegating IoAdapter that does not pass on calls to sync
+            data to the underlying device.
+            </summary>
+            <remarks>
+            Delegating IoAdapter that does not pass on calls to sync
+            data to the underlying device. <br/><br/>
+            This IoAdapter can be used to improve performance at the cost of a
+            higher risk of database file corruption upon abnormal termination
+            of a session against a database.<br/><br/>
+            An example of possible usage:<br/>
+            <code>
+            RandomAccessFileAdapter randomAccessFileAdapter = new RandomAccessFileAdapter();<br/>
+            NonFlushingIoAdapter nonFlushingIoAdapter = new NonFlushingIoAdapter(randomAccessFileAdapter);<br/>
+            CachedIoAdapter cachedIoAdapter = new CachedIoAdapter(nonFlushingIoAdapter);<br/>
+            Configuration configuration = Db4o.newConfiguration();<br/>
+            configuration.io(cachedIoAdapter);<br/>
+            </code>
+            <br/><br/>
+            db4o uses a resume-commit-on-crash strategy to ensure ACID transactions.
+            When a transaction commits,<br/>
+            - (1) a list "pointers that are to be modified" is written to the database file,<br/>
+            - (2) the database file is switched into "in-commit" mode, <br/>
+            - (3) the pointers are actually modified in the database file,<br/>
+            - (4) the database file is switched to "not-in-commit" mode.<br/>
+            If the system is halted by a hardware or power failure <br/>
+            - before (2)<br/>
+            all objects will be available as before the commit<br/>
+            - between (2) and (4)
+            the commit is restarted when the database file is opened the next time, all pointers
+            will be read from the "pointers to be modified" list and all of them will be modified
+            to the state they are intended to have after commit<br/>
+            - after (4)
+            no work is necessary, the transaction is committed.
+            <br/><br/>
+            In order for the above to be 100% failsafe, the order of writes to the
+            storage medium has to be obeyed. On operating systems that use in-memory
+            file caching, the OS cache may revert the order of writes to optimize
+            file performance.<br/><br/>
+            db4o enforces the correct write order by calling
+            <see cref="M:Db4objects.Db4o.IO.NonFlushingIoAdapter.Sync">Sync()</see>
+            after every single one of the above steps during transaction
+            commit. The calls to
+            <see cref="M:Db4objects.Db4o.IO.NonFlushingIoAdapter.Sync">Sync()</see>
+            have a high performance cost.
+            By using this IoAdapter it is possible to omit these calls, at the cost
+            of a risc of corrupted database files upon hardware-, power- or operating
+            system failures.<br/><br/>
+            </remarks>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.NonFlushingIoAdapter.#ctor(Db4objects.Db4o.IO.IoAdapter,System.String,System.Boolean,System.Int64,System.Boolean)">
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.NonFlushingIoAdapter.Open(System.String,System.Boolean,System.Int64,System.Boolean)">
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.NonFlushingIoAdapter.Sync">
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="T:Db4objects.Db4o.IO.SaveAsStorage">
+            <summary>
+            Storage that allows to save an open database file
+            as another file while keeping the reference system
+            in place.
+            </summary>
+            <remarks>
+            Storage that allows to save an open database file
+            as another file while keeping the reference system
+            in place. If anything goes wrong during copying the
+            storage tries to reopen the original file, so commit
+            operations can still take place against the original
+            file.
+            </remarks>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.SaveAsStorage.SaveAs(System.String,System.String)">
+            <summary>
+            call this method to save the content of a currently
+            open ObjectContainer session to a new file location.
+            </summary>
+            <remarks>
+            call this method to save the content of a currently
+            open ObjectContainer session to a new file location.
+            Invocation will close the old file without a commit,
+            keep the reference system in place and connect it to
+            the file in the new location. If anything goes wrong
+            during the copying operation or while opening it will
+            be attempted to reopen the old file. In this case a
+            Db4oException will be thrown.
+            </remarks>
+            <param name="oldUri">the path to the old open database file</param>
+            <param name="newUri">the path to the new database file</param>
+        </member>
+        <member name="M:Db4objects.Db4o.IO.SaveAsStorage.Open(Db4objects.Db4o.IO.BinConfiguration)">
+            <exception cref="T:Db4objects.Db4o.Ext.Db4oIOException"></exception>
+        </member>
+        <member name="T:Db4objects.Db4o.IO.SaveAsStorage.SaveAsBin">
+            <summary>
+            We could have nicely used BinDecorator here, but
+            BinDecorator doesn't allow exchanging the Bin.
+            </summary>
+            <remarks>
+            We could have nicely used BinDecorator here, but
+            BinDecorator doesn't allow exchanging the Bin. To
+            be compatible with released versions we do
+            </remarks>
+        </member>
+        <member name="T:Db4objects.Db4o.Internal.Cluster.ClusterConstraint">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Internal.Cluster.ClusterConstraints">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Internal.Cluster.ClusterQuery">
+            <exclude></exclude>
+        </member>
+        <member name="T:Db4objects.Db4o.Internal.Cluster.ClusterQueryResult">
+            <exclude></exclude>
+        </member>
+        <member name="M:Db4objects.Db4o.Internal.Cluster.ClusterQueryResult.LoadFromClassIndex(Db4objects.Db4o.Internal.ClassMetadata)">
+            <param name="c"></param>
+        </member>
+        <member name="M:Db4objects.Db4o.Internal.Cluster.ClusterQueryResult.LoadFromQuery(Db4objects.Db4o.Internal.Query.Processor.QQuery)">
+            <param name="q"></param>
+        </member>
+        <member name="M:Db4objects.Db4o.Internal.Cluster.ClusterQueryResult.LoadFromClassIndexes(Db4objects.Db4o.Internal.ClassMetadataIterator)">
+            <param name="i"></param>
+        </member>
+        <member name="M:Db4objects.Db4o.Internal.Cluster.ClusterQueryResult.LoadFromIdReader(Db4objects.Db4o.Internal.ByteArrayBuffer)">
+            <param name="r"></param>
+        </member>
+        <member name="T:Db4objects.Db4o.Monitoring.Internal.MonitoringReferenceSystem">
+            <exclude></exclude>
+        </member>
+        <member name="M:Db4objects.Db4o.Reflect.Self.SelfArray.#ctor(Db4objects.Db4o.Reflect.IReflector,Db4objects.Db4o.Reflect.Self.SelfReflectionRegistry)">
+            <param name="reflector"></param>
+        </member>
+        <member name="T:Db4objects.Db4o.Reflect.Self.SelfReflectionRegistry">
+            <summary>
+            Contains the application-specific reflection information (that would
+            be generated by a bytecode enhancer), as opposed to the 'generic'
+            functionality contained in SelfReflector.
+            </summary>
+            <remarks>
+            Contains the application-specific reflection information (that would
+            be generated by a bytecode enhancer), as opposed to the 'generic'
+            functionality contained in SelfReflector.
+            </remarks>
+        </member>
+        <member name="T:Db4objects.Db4o.Tools.Statistics">
+            <summary>prints statistics about a database file to System.out.</summary>
+            <remarks>
+            prints statistics about a database file to System.out.
+            <br /><br />Pass the database file path as an argument.
+            <br /><br /><b>This class is not part of db4o.jar!</b><br />
+            It is delivered as sourcecode in the
+            path ../com/db4o/tools/<br /><br />
+            </remarks>
+        </member>
+        <member name="M:Db4objects.Db4o.Tools.Statistics.Main(System.String[])">
+            <summary>the main method that runs the statistics.</summary>
+            <remarks>the main method that runs the statistics.</remarks>
+            <param name="args">
+            a String array of length 1, with the name of the database
+            file as element 0.
+            </param>
+        </member>
+    </members>
+</doc>

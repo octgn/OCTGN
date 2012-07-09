@@ -14,11 +14,12 @@ namespace Octgn.Data
 		public static IObjectContainer TestClient { get; set; }
 		static Database()
 		{
-			TestMode = false;
-			TestClient = new ObjectContainerStub();
-			Process.GetCurrentProcess().Exited += DatabaseExited;
 			try
 			{
+				Common.Log.L("Initializing Database");
+				TestMode = false;
+				TestClient = new ObjectContainerStub();
+				Process.GetCurrentProcess().Exited += DatabaseExited;
 				Common.Log.L ("Creating/Opening Database...");
 				DbServer = Db4oFactory.OpenServer(Db4oFactory.Configure() , "master.db" , 0);
 				if(Membership.FindUsersByName("admin").Count != 0) return;

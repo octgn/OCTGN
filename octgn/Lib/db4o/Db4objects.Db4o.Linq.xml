@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Db4objects.Db4o.Linq</name>
+    </assembly>
+    <members>
+        <member name="T:Db4objects.Db4o.Linq.Caching.CacheFactory`2">
+            <summary>
+            Generic wrappers for <see cref="T:Db4objects.Db4o.Internal.Caching.ICache4"/>.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+        </member>
+        <member name="T:Db4objects.Db4o.Linq.Db4oLinqQueryExtensions">
+            <summary>
+            A class that defines some standard linq query operations
+            that can be optimized.
+            </summary>
+        </member>
+        <member name="T:Db4objects.Db4o.Linq.IDb4oLinqQuery`1">
+            <summary>
+            IDb4oLinqQuery is the query type of Linq to db4o. Standard query operators
+            are defined in <see cref="T:Db4objects.Db4o.Linq.Db4oLinqQueryExtensions">Db4oLinqQueryExtensions</see>.
+            </summary>
+            <typeparam name="T">The type of the objects that are queried from the database.</typeparam>
+        </member>
+        <member name="T:Db4objects.Db4o.Linq.IDb4oLinqQueryable`1">
+            <summary>
+            IDb4oLinqQueryable is the query type of Linq to db4o when working with an API requiring
+            a LINQ provider implementing <see cref="T:System.Linq.IQueryable">IQueryable</see>.
+            <typeparam name="T">The type of the objects that are queried from the database.</typeparam>
+            </summary>
+        </member>
+        <member name="T:Db4objects.Db4o.Linq.ILinqQueryMonitor">
+            <summary>
+            commonConfiguration.Environment.Add(new MyLinqQueryMonitor());
+            </summary>
+        </member>
+        <member name="T:Db4objects.Db4o.Linq.Internals.ObjectSequence`1">
+            <summary>
+            A generic wrapper around a not generic IEnumerable,
+            Faithfully hoping that all items in the enumeration
+            are of the same kind, otherwise it will throw a
+            ClassCastException on access.
+            </summary>
+            <typeparam name="T">The type of the items</typeparam>
+        </member>
+        <member name="M:Db4objects.Db4o.Linq.ObjectContainerExtensions.Cast``1(Db4objects.Db4o.Query.ISodaQueryFactory)">
+            <summary>
+            This is the entry point of Linq to db4o.
+            It allows the compiler to call the standard query operators
+            in <see cref="T:Db4objects.Db4o.Linq.IDb4oLinqQuery">IDb4oLinqQuery</see>. The optimized methods are defined as extension methods
+            on the <see cref="T:Db4objects.Db4o.Linq.IDb4oLinqQuery">IDb4oLinqQuery</see> marker interface.
+            </summary>
+            <typeparam name="T">The type to query the ObjectContainer</typeparam>
+            <param name="self">A query factory (any IObjectContainer implementation)</param>
+            <returns>A <see cref="T:Db4objects.Db4o.Linq.IDb4oLinqQuery">IDb4oLinqQuery</see> marker interface</returns>
+        </member>
+    </members>
+</doc>

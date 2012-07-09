@@ -98,11 +98,11 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="Db4objects.Db4o, Version=8.1.184.15492, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
-      <HintPath>..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.dll</HintPath>
+    <Reference Include="Db4objects.Db4o.Linq">
+      <HintPath>..\Lib\db4o\Db4objects.Db4o.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Db4objects.Db4o.Linq, Version=8.1.184.15492, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb">
-      <HintPath>..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.Linq.dll</HintPath>
+    <Reference Include="Db4objects.Db4o">
+      <HintPath>..\Lib\db4o\Db4objects.Db4o.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
