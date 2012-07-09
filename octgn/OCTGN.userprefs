@@ -1,19 +1,20 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Octgn.Data/Database.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="PeerSwarm/MonoTorrent.PeerSwarm/TrackerBasedSwarm.cs">
     <Files>
       <File FileName="OCTGN/Program.cs" Line="96" Column="15" />
       <File FileName="Octgn.Data/Database.cs" Line="19" Column="29" />
+      <File FileName="PeerSwarm/MonoTorrent.PeerSwarm/TrackerBasedSwarm.cs" Line="55" Column="104" />
+      <File FileName="monotorrent/src/MonoTorrent/MonoTorrent.Client/Tracker/TrackerConnectionId.cs" Line="36" Column="11" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
-          <Node name="Octgn" expanded="True" />
-          <Node name="Octgn.Data" expanded="True">
+          <Node name="MonoTorrent.Tests" selected="True" />
+          <Node name="Octgn.Data">
             <Node name="db4oProvider">
               <Option id="ShowAllFiles" value="True" />
             </Node>
-            <Node name="Database.cs" selected="True" />
           </Node>
         </State>
       </Pad>
