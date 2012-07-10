@@ -61,14 +61,13 @@ namespace Octgn.Windows
         {
             Initialized += MainInitialized;
             InitializeComponent();
-            frame1.NavigationService.LoadCompleted += delegate { frame1.NavigationService.RemoveBackEntry(); };
-			FrameFriends.NavigationService.LoadCompleted += delegate { FrameFriends.NavigationService.RemoveBackEntry(); };
+            frame1.NavigationService.LoadCompleted += delegate(object sender, NavigationEventArgs args)
+                                                      { this.frame1.NavigationService.RemoveBackEntry(); };
             //Set title with version info.
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "Octgn  version " + version;
 
-            frame1.Navigate(new HostedGameList());
-        	//FrameFriends.Navigate(new ContactList());
+            frame1.Navigate(new ContactList());
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
 
             var cb = new CommandBinding(DebugWindowCommand,
@@ -242,7 +241,6 @@ namespace Octgn.Windows
 
         private void FrameNavigating(object sender, NavigatingCancelEventArgs e)
         {
-        	
             if (Content != null && !_allowDirectNavigation)
             {
                 e.Cancel = true;
@@ -252,8 +250,7 @@ namespace Octgn.Windows
                                                       {
                                                           var animation0 = new DoubleAnimation
                                                                                {From = 1, To = 0, Duration = _duration};
-                                                      	animation0.Completed +=
-                                                      		delegate(object animsender , EventArgs eargs) { SlideCompleted(frame1,eargs); };
+                                                          animation0.Completed += SlideCompleted;
                                                           frame1.BeginAnimation(OpacityProperty, animation0);
                                                       }));
             }
@@ -267,29 +264,29 @@ namespace Octgn.Windows
             {
                 case NavigationMode.New:
                     if (_navArgs.Uri == null)
-						frame1.Navigate(_navArgs.Content);
+                        frame1.Navigate(_navArgs.Content);
                     else
-						frame1.Navigate(_navArgs.Uri);
+                        frame1.Navigate(_navArgs.Uri);
                     break;
                 case NavigationMode.Back:
-					frame1.GoBack();
+                    frame1.GoBack();
                     break;
                 case NavigationMode.Forward:
-					frame1.GoForward();
+                    frame1.GoForward();
                     break;
                 case NavigationMode.Refresh:
-					frame1.Refresh();
+                    frame1.Refresh();
                     break;
             }
 
             Dispatcher.BeginInvoke(DispatcherPriority.Loaded,
                                    (ThreadStart) delegate
                                                      {
-														 frame1.UpdateLayout();
+                                                         frame1.UpdateLayout();
                                                          UpdateLayout();
                                                          var animation0 = new DoubleAnimation
                                                                               {From = 0, To = 1, Duration = _duration};
-														 frame1.BeginAnimation(OpacityProperty, animation0);
+                                                         frame1.BeginAnimation(OpacityProperty, animation0);
                                                      });
         }
         
@@ -332,7 +329,7 @@ namespace Octgn.Windows
             switch ((String) tab.Header)
             {
                 case "Lobby":
-                    //LobbyTab();
+                    LobbyTab();
                     break;
                 case "Host/Join":
                     HostJoinTab();
@@ -352,7 +349,7 @@ namespace Octgn.Windows
 
         public void LobbyTab()
         {
-            //frame1.Navigate(new ContactList());
+            frame1.Navigate(new ContactList());
         }
 
         public void HostJoinTab()
