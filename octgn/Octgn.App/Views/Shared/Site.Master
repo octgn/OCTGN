@@ -36,26 +36,26 @@
 		        <a class="brand" href="#">OCTGN <%: Assembly.GetCallingAssembly().GetName().Version %></a>
 		        <div class="nav-collapse">
 		          <ul class="nav">
-		            <li class="active"><a href="#">Home</a></li>
-		            <li><a href="#">Link</a></li>
-		            <li><a href="#">Link</a></li>
-		            <li><a href="#">Link</a></li>
 		            <li class="dropdown">
-		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">File<b class="caret"></b></a>
 		              <ul class="dropdown-menu">
-		                <li><a href="#">Action</a></li>
-		                <li><a href="#">Another action</a></li>
-		                <li><a href="#">Something else here</a></li>
+		                <li><a href="/">Home</a></li>
+		                <li><a href="/Home/About">About</a></li>
 		                <li class="divider"></li>
-		                <li class="nav-header">Nav header</li>
-		                <li><a href="#">Separated link</a></li>
-		                <li><a href="#">One more separated link</a></li>
 		              </ul>
 		            </li>
+		            <li><a href="#">Link</a></li>
+					<% if (Roles.IsUserInRole("administrator")){ %>
+			            <li class="dropdown">
+			              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin<b class="caret"></b></a>
+			              <ul class="dropdown-menu">
+			                <li><a href="/Admin">Page</a></li>
+			                <li class="divider"></li>
+							<li><a href="/Admin/Shutdown">Shut Down Server</a></li>
+			              </ul>
+			            </li>
+					<% } %>			
 		          </ul>
-		          <form class="navbar-search pull-left" action="">
-		            <input type="text" class="search-query span2" placeholder="Search"/>
-		          </form>
 		          <ul class="nav pull-right">
 		            <li class="divider-vertical"></li>
 					<% Html.RenderPartial("LogOnUserControl"); %>
@@ -64,27 +64,6 @@
 		      </div>
 		    </div><!-- /navbar-inner -->
 		  </div>
-
-        <div id="header">
-              
-            <div id="logindisplay">
-                
-            </div> 
-            
-            <div id="menucontainer">
-            
-                <ul id="menu">              
-                    <li><%: Html.ActionLink("Home", "Index", "Home")%></li>
-                    <li><%: Html.ActionLink("About", "About", "Home")%></li>
-					<% if (Roles.IsUserInRole("administrator"))
-					   { %>
-							<li><%: Html.ActionLink("Admin" , "Index" , "Admin") %></li>
-					<% } %>
-                </ul>
-            
-            </div>
-        </div>
-
         <div id="main" class="redglow">
             <asp:ContentPlaceHolder ID="MainContent" runat="server" />
 

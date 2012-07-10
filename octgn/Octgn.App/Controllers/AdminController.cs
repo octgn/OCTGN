@@ -18,6 +18,14 @@ namespace Octgn.App.Controllers
 			}
             return View("NotAuthorized");
         }
-
+		
+		[Authorize]
+		public ActionResult Shutdown()
+		{
+			if(!Roles.IsUserInRole("administrator"))
+				return View ("NotAuthorized");
+			Octgn.Program.Shutdown();
+			return Json ("Shutting Down...");
+		}
     }
 }

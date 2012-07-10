@@ -36,9 +36,9 @@ namespace Octgn
 			StartWebHoster();
 		}
 
-		private static void Shutdown()
+		public static void Shutdown()
 		{
-			_host.Close();
+			//_host.Close();
 			Hoster.Stop();
 			Swarm.Stop();
 		}
