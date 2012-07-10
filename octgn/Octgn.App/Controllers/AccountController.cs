@@ -80,18 +80,24 @@ namespace Octgn.App.Controllers
 			{
 				// Attempt to register the user
 				MembershipCreateStatus createStatus = MembershipService.CreateUser(model.UserName, model.Password, model.Email);
-
-				if (createStatus == MembershipCreateStatus.Success)
+				switch(createStatus)
 				{
-					FormsService.SignIn(model.UserName, false /* createPersistentCookie */);
-					return RedirectToAction("Index", "Home");
+					case MembershipCreateStatus.Success:
+						FormsService.SignIn(model.UserName, false /* createPersistentCookie */);	
+						return JsonReturn.Success();
+					case MembershipCreateStatus.DuplicateEmail:
+						return JsonReturn.Error("Email","Email already in use");
+					case MembershipCreateStatus.DuplicateUserName:
+						return JsonReturn.Error("UserName","Username already in use");
+					case MembershipCreateStatus.InvalidEmail:
+						return JsonReturn.Error("Email","Email is invalid");
+					case MembershipCreateStatus.InvalidUserName:
+						return JsonReturn.Error("UserName","Username is invalid");
+					case MembershipCreateStatus.InvalidPassword:
+						return JsonReturn.Error("Password","Password is invalid");	
 				}
-				ModelState.AddModelError("", AccountValidation.ErrorCodeToString(createStatus));
 			}
-
-			// If we got this far, something failed, redisplay form
-			ViewData["PasswordLength"] = MembershipService.MinPasswordLength;
-			return View(model);
+			return JsonReturn.Error("","Please try again later.");
 		}
 
 		// **************************************

@@ -9,6 +9,18 @@
 	<link href="../../Content/css/bootstrap.css" rel="stylesheet" type="text/css"/>
 	<script src="../../Content/js/jquery-1.7.2.min.js" type="text/javascript"></script>
 	<script src="../../Content/js/bootstrap.js" type="text/javascript"></script>
+	<script type="text/javascript">
+			$(function(){
+				$('#RegBox').modal({
+  					backdrop: true,
+					show:false
+				});
+			});
+			function ShowRegBox()
+			{
+				$("#RegBox").modal("show");
+			}
+	</script>
 </head>
 
 <body>
@@ -80,5 +92,6 @@
             </div>
         </div>
     </div>
+		<% Html.RenderPartial("RegisterControl");%>
 </body>
 </html>

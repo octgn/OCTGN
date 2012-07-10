@@ -4,6 +4,7 @@ using System.IO;
 using System.Web.Security;
 using Db4objects.Db4o;
 using Db4objects.Db4o.Ext;
+using Octgn.Common;
 
 namespace Octgn.Data
 {
@@ -25,7 +26,7 @@ namespace Octgn.Data
 				if(Membership.FindUsersByName("admin").Count != 0) return;
 				if(!Roles.RoleExists("administrator"))
 					Roles.CreateRole("administrator");
-				var u = Membership.CreateUser("admin" , "password");
+				var u = Membership.CreateUser("admin" , ValueConverters.CreateShaHash("password"));
 				Roles.AddUserToRole("admin" , "administrator");
 				Common.Log.L ("Database Ready.");
 			}catch(Exception e )

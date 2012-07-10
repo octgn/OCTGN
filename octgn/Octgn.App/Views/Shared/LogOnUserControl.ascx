@@ -16,13 +16,16 @@
       	<ul class="dropdown-menu">
         	<li>
 				<form class="well" action="/Account/LogOn" method="Post">
-					<input name="UserName" type="text" class="input" placeholder="Email"/>
+					<input name="UserName" type="text" class="input" placeholder="Username"/>
 					<input name="Password" type="password" class="input" placeholder="Password"/>
 					<label class="checkbox">
 						<input name="RememberMe" type="checkbox"> Remember me</input>
 					</label>
 					<button type="submit" class="btn">Sign in</button>
 				</form>
+			</li>
+			<li>
+				<a href="#" onClick="ShowRegBox();">Register</a>
 			</li>
       	</ul>
     </li>
