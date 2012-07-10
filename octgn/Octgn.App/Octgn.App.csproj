@@ -116,6 +116,8 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\JsonReturn.cs" />
+    <Compile Include="PeerHandler.cs" />
+    <Compile Include="Areas\api\Controllers\PeerController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
@@ -178,6 +180,18 @@
     <ProjectReference Include="..\OCTGN\Octgn.csproj">
       <Project>{1A8FA426-488D-4757-9613-E658C7E2A6F5}</Project>
       <Name>Octgn</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PeerSwarm\MonoTorrent.PeerSwarm\MonoTorrent.PeerSwarm.csproj">
+      <Project>{AA887EF5-1160-4A0A-931A-7282EDA3F1C3}</Project>
+      <Name>MonoTorrent.PeerSwarm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\monotorrent\src\MonoTorrent.Dht\MonoTorrent.Dht.csproj">
+      <Project>{7A2A7E73-FD43-4171-AA34-DA413D35459E}</Project>
+      <Name>MonoTorrent.Dht</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\monotorrent\src\MonoTorrent\MonoTorrent.csproj">
+      <Project>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</Project>
+      <Name>MonoTorrent</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
