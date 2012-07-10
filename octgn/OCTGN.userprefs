@@ -1,23 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Octgn.Data/Database.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="OCTGN/Program.cs">
     <Files>
-      <File FileName="OCTGN/Program.cs" Line="96" Column="15" />
-      <File FileName="Octgn.Data/Database.cs" Line="19" Column="29" />
+      <File FileName="Octgn.Data/Database.cs" Line="55" Column="5" />
+      <File FileName="OCTGN/Program.cs" Line="32" Column="6" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="Octgn" expanded="True" />
-          <Node name="Octgn.Data" expanded="True">
-            <Node name="db4oProvider">
-              <Option id="ShowAllFiles" value="True" />
-            </Node>
-            <Node name="Database.cs" selected="True" />
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
