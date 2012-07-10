@@ -25,6 +25,7 @@ namespace Octgn
 			_appServer = new ApplicationServer(_webSource);
 
 			_appServer.AddApplication("",Port,"/",WebRoot.FullName);
+			Common.Log.L("Web Root: {0}",WebRoot.FullName);
 		}
 
 		public void Start()
