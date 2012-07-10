@@ -117,7 +117,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Images\crosshatch.png" />
     <Content Include="Global.asax" />
     <Content Include="Views\Admin\Index.aspx" />
     <Content Include="Views\Shared\NotAuthorized.aspx" />
@@ -151,6 +150,13 @@
     <Content Include="Views\Shared\LogOnUserControl.ascx" />
     <Content Include="Views\Shared\Site.Master" />
     <Content Include="Views\Web.config" />
+    <Content Include="Content\css\bootstrap.css" />
+    <Content Include="Content\css\bootstrap.min.css" />
+    <Content Include="Content\img\glyphicons-halflings.png" />
+    <Content Include="Content\img\glyphicons-halflings-white.png" />
+    <Content Include="Content\js\bootstrap.js" />
+    <Content Include="Content\js\bootstrap.min.js" />
+    <Content Include="Content\img\crosshatch.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
