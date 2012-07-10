@@ -1,0 +1,40 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.1
+Created-By: 1.6.0_20 (Sun Microsystems Inc.)
+Bnd-LastModified: 1328407337436
+Bundle-ManifestVersion: 2
+Bundle-Name: smack
+Bundle-SymbolicName: org.igniterealtime.smack
+Bundle-Version: 0
+DSTAMP: 20120204
+Export-Package: org.jivesoftware.smack;uses:="org.jivesoftware.smack.f
+ ilter,org.jivesoftware.smack.util,org.jivesoftware.smack.packet,org.j
+ ivesoftware.smack.util.collections,org.jivesoftware.smack.debugger,ja
+ vax.security.auth.callback,javax.net,org.jivesoftware.smack.proxy,jav
+ ax.net.ssl,org.xmlpull.mxp1,org.xmlpull.v1,org.jivesoftware.smack.sas
+ l",org.jivesoftware.smack.debugger;uses:="org.jivesoftware.smack,org.
+ jivesoftware.smack.util,org.jivesoftware.smack.packet,javax.swing",or
+ g.jivesoftware.smack.filter;uses:="org.jivesoftware.smack.packet,org.
+ jivesoftware.smack.util",org.jivesoftware.smack.packet;uses:="org.jiv
+ esoftware.smack.util",org.jivesoftware.smack.provider;uses:="org.jive
+ software.smack.util,org.jivesoftware.smack.packet,org.xmlpull.v1,org.
+ xmlpull.mxp1",org.jivesoftware.smack.proxy;uses:="javax.net,org.jives
+ oftware.smack.util",org.jivesoftware.smack.sasl;uses:="javax.security
+ .auth.callback,org.jivesoftware.smack,org.jivesoftware.smack.packet,j
+ avax.security.sasl,org.jivesoftware.smack.util",org.jivesoftware.smac
+ k.util;uses:="org.jivesoftware.smack.util.collections,javax.naming,ja
+ vax.naming.directory,org.jivesoftware.smack,org.jivesoftware.smack.pa
+ cket,org.xmlpull.v1,org.jivesoftware.smack.sasl,org.jivesoftware.smac
+ k.provider,org.jivesoftware.smack.filter",org.jivesoftware.smack.util
+ .collections,org.xmlpull.mxp1;uses:="org.xmlpull.v1",org.xmlpull.v1
+Import-Package: javax.naming;resolution:=optional,javax.naming.directo
+ ry;resolution:=optional,javax.net;resolution:=optional,javax.net.ssl;
+ resolution:=optional,javax.security.auth.callback;resolution:=optiona
+ l,javax.security.sasl;resolution:=optional,javax.swing;resolution:=op
+ tional
+Originally-Created-By: 1.6.0_20-b02 (Sun Microsystems Inc.)
+Private-Package: .
+TODAY: February 4 2012
+Tool: Bnd-1.50.0
+TSTAMP: 2002
+

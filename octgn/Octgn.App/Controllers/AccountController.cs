@@ -28,7 +28,7 @@ namespace Octgn.App.Controllers
 
 		public ActionResult LogOn()
 		{
-			return View();
+			return RedirectToAction("Index", "Home");
 		}
 
 		[HttpPost]
@@ -49,7 +49,7 @@ namespace Octgn.App.Controllers
 			}
 
 			// If we got this far, something failed, redisplay form
-			return View(model);
+			return RedirectToAction("Index", "Home");
 		}
 
 		// **************************************

@@ -19,11 +19,14 @@ namespace Octgn
 		{
 			Port = port;
 			WebRoot = webRoot;
-
+#if(DEBUG)
+			var debugPath = Path.Combine(webRoot.Parent.Parent.FullName,"Octgn.App");
+			WebRoot = new DirectoryInfo(debugPath);
+#endif
 			//TODO Figure out how to deal with this obsolete issue.
 			_webSource = new XSPWebSource(IPAddress.Any , Port);
 			_appServer = new ApplicationServer(_webSource);
-
+			
 			_appServer.AddApplication("",Port,"/",WebRoot.FullName);
 			Common.Log.L("Web Root: {0}",WebRoot.FullName);
 		}

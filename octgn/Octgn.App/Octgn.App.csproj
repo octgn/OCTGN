@@ -157,6 +157,7 @@
     <Content Include="Content\js\bootstrap.js" />
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\img\crosshatch.png" />
+    <Content Include="Content\js\jquery-1.7.2.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

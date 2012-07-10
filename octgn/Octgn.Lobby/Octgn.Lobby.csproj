@@ -160,6 +160,12 @@
     <Reference Include="agsXMPP, Version=1.2.1.0, Culture=neutral, PublicKeyToken=ff839b81f1debe86">
       <HintPath>..\Lib\agsXMPP.dll</HintPath>
     </Reference>
+    <Reference Include="smack">
+      <HintPath>..\Lib\smack_3_2_2\smack.dll</HintPath>
+    </Reference>
+    <Reference Include="smackx">
+      <HintPath>..\Lib\smack_3_2_2\smackx.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chat.cs" />
