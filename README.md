@@ -1,5 +1,15 @@
 OCTGN 4.0
 =================================================
+To Pull
+* git pull --recursive https://github.com/kellyelton/OCTGN.git
+* git checkout 4.0
+
+To compile
+* MonoDevelop & Requirements(or VS Express 2010 or above)
+* AspNetMVC2_vs2008.exe http://www.microsoft.com/en-us/download/details.aspx?id=22079  (If you're running express visual studio)
+* Change 'MonoTorrent.Client.Tracker.TrackerConnectionID' from internal to public
+* Make the runtime for MonoTorrent.* all 4.0
+=================================================
 This is the new home for the OCTGN open source project.
 
 * Need general help? Join our open IRC chat: irc.freenode.net | #octgn
