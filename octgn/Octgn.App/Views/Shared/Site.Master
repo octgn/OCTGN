@@ -34,8 +34,8 @@
 </head>
 
 <body>
-    <div class="container">
-		<div class="navbar">
+    <!--<div class="container">-->
+		<div class="navbar redglow">
 		    <div class="navbar-inner">
 		      <div class="container">
 		        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -75,13 +75,29 @@
 		      </div>
 		    </div><!-- /navbar-inner -->
 		  </div>
-        <div id="main" class="redglow">
-            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
-
-            <div id="footer">
-            </div>
-        </div>
-    </div>
+		<div class="row-fluid">
+			<div class="span2">
+				<div class="well">
+				<ul class="nav nav-list">
+				  <li class="nav-header">
+				    Friends
+				  </li>
+				  <li class="active">
+				    <a href="#">Home</a>
+				  </li>
+				  <li>
+				    <a href="#">Library</a>
+				  </li>
+				</ul>
+				</div>
+			</div>
+	        <div class="span10">
+				<div class="well">
+	            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+				</div>
+	        </div>			
+		</div>
+    <!--</div>-->
 		<% Html.RenderPartial("RegisterControl");%>
 </body>
 </html>
