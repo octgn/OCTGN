@@ -50,6 +50,7 @@ namespace Octgn.App
 			Swarm.AddTracker("http://announce.torrentsmd.com:6969/announce");
 			Swarm.PeersFound += SwarmPeersFound;
 			Swarm.LogOutput += LogOutput;
+			Swarm.Start();
 		}
 		private static void LogOutput(object sender , LogEventArgs e)
 		{
