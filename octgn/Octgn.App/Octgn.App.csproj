@@ -115,6 +115,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\DefinitionResourceController.cs" />
+    <Compile Include="Controllers\GameboardController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -137,6 +138,7 @@
     <Content Include="Content\js\jquery-1.7.2.min.js" />
     <Content Include="Global.asax" />
     <Content Include="Views\Admin\Index.aspx" />
+    <Content Include="Views\Gameboard\Index.aspx" />
     <Content Include="Views\Shared\AddFriend.ascx" />
     <Content Include="Views\Shared\NotAuthorized.aspx" />
     <Content Include="Views\Shared\RegisterControl.ascx" />
