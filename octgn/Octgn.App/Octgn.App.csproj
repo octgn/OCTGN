@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Areas\api\apiAreaRegistration.cs" />
+    <Compile Include="Areas\api\Controllers\PeerController.cs" />
     <Compile Include="Areas\api\Controllers\UserController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
