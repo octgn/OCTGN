@@ -118,6 +118,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\JsonReturn.cs" />
     <Compile Include="PeerHandler.cs" />
+    <Compile Include="PeerMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -132,7 +133,9 @@
     <Content Include="Content\js\jquery-1.7.2.min.js" />
     <Content Include="Global.asax" />
     <Content Include="Views\Admin\Index.aspx" />
+    <Content Include="Views\Shared\AddFriend.ascx" />
     <Content Include="Views\Shared\NotAuthorized.aspx" />
+    <Content Include="Views\Shared\RegisterControl.ascx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

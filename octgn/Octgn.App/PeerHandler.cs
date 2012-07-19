@@ -7,6 +7,7 @@
 //  Copyright (c) 2012 Kelly Elton - Skylabs Corporation
 //  All Rights Reserved.
 using System;
+using System.Net.Sockets;
 using MonoTorrent.PeerSwarm;
 using MonoTorrent;
 using System.Security.Cryptography;
@@ -14,12 +15,23 @@ using System.Text;
 using System.Net;
 using MonoTorrent.Common;
 using System.IO;
+using Octgn.Common.Sockets;
 
 namespace Octgn.App
 {
 	public static class PeerHandler
 	{
 		public static PeerSwarmManager Swarm;
+		public static void MessagePeers(SocketMessage message)
+		{
+			var client = new UdpClient();
+			foreach(var s in Swarm.Peers)
+			{
+				var u = s.ConnectionUri;
+				var mb =SocketMessage.Serialize(message);
+				client.Send(mb , mb.Length , u.Host , u.Port + 1);
+			}
+		}
 		static PeerHandler ()
 		{
 			StartPeerSwarm();
