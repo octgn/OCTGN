@@ -17,54 +17,56 @@ namespace Octgn.App.Controllers
 
         public ActionResult Render(string gameID, string file, string resourcePath)
         {
-            MemoryStream ms = new MemoryStream();
-            string contentType = string.Empty;
-            string path = Path.Combine(gamesPath, gameID);
-            if (file.EndsWith("o8g") || file.EndsWith("o8s"))
+            using (MemoryStream ms = new MemoryStream())
             {
-                resourcePath = resourcePath.Replace("--", "/");
-                string[] files = Directory.GetFiles(path, file, SearchOption.AllDirectories);
-                if (files.Length > 0)
+                string contentType = string.Empty;
+                string path = Path.Combine(gamesPath, gameID);
+                if (file.EndsWith("o8g") || file.EndsWith("o8s"))
                 {
-                    using (ZipFile zip = ZipFile.Read(files[0]))
+                    resourcePath = resourcePath.Replace("--", "/");
+                    string[] files = Directory.GetFiles(path, file, SearchOption.AllDirectories);
+                    if (files.Length > 0)
                     {
-                        ICollection<ZipEntry> found = null;
-                        if (resourcePath.Contains('/'))
+                        using (ZipFile zip = ZipFile.Read(files[0]))
                         {
-                            found = zip.SelectEntries(resourcePath.Substring(resourcePath.LastIndexOf('/') + 1), resourcePath.Substring(0, resourcePath.LastIndexOf('/')));
-                        }
-                        else
-                        {
-                            found = zip.SelectEntries(resourcePath);
-                        }
-                        foreach (ZipEntry entry in found)
-                        {
-                            if (entry.FileName == resourcePath)
+                            ICollection<ZipEntry> found = null;
+                            if (resourcePath.Contains('/'))
                             {
-                                entry.OpenReader().CopyTo(ms);
-                                ms.Position = 0;
-                                break;
+                                found = zip.SelectEntries(resourcePath.Substring(resourcePath.LastIndexOf('/') + 1), resourcePath.Substring(0, resourcePath.LastIndexOf('/')));
                             }
+                            else
+                            {
+                                found = zip.SelectEntries(resourcePath);
+                            }
+                            foreach (ZipEntry entry in found)
+                            {
+                                if (entry.FileName == resourcePath)
+                                {
+                                    entry.OpenReader().CopyTo(ms);
+                                    ms.Position = 0;
+                                    break;
+                                }
+                            }
+                            contentType = ContentType(resourcePath);
                         }
-                        contentType = ContentType(resourcePath);
                     }
                 }
-            }
-            else
-            {
-                resourcePath = resourcePath.Replace("--", Path.DirectorySeparatorChar.ToString());
-                string target = Path.Combine(path, resourcePath,file);
-                if (System.IO.File.Exists(target))
+                else
                 {
-                    using (FileStream stream = System.IO.File.OpenRead(target))
+                    resourcePath = resourcePath.Replace("--", Path.DirectorySeparatorChar.ToString());
+                    string target = Path.Combine(path, resourcePath, file);
+                    if (System.IO.File.Exists(target))
                     {
-                        stream.CopyTo(ms);
-                        ms.Position = 0;
+                        using (FileStream stream = System.IO.File.OpenRead(target))
+                        {
+                            stream.CopyTo(ms);
+                            ms.Position = 0;
+                        }
+                        contentType = ContentType(target);
                     }
-                    contentType = ContentType(target);
                 }
+                return new FileStreamResult(ms, contentType);
             }
-            return new FileStreamResult(ms, contentType);
         }
 
         private string ContentType(string resourcePath)
