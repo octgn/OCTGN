@@ -12,6 +12,12 @@ namespace Octgn.App
 		{
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            routes.MapRoute(
+                "DefinitionResources",
+                "Resource/{gameID}/{file}/{resourcePath}",
+                new { controller = "DefinitionResource", action = "Render", file = "", gameID = "", resourcePath = "" }
+                );
+
 			routes.MapRoute(
 				"Default", // Route name
 				"{controller}/{action}/{id}", // URL with parameters
