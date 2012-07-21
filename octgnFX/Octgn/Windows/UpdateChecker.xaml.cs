@@ -271,7 +271,9 @@ namespace Octgn.Windows
 												 c.DownloadFileCompleted += delegate(object sender, AsyncCompletedEventArgs args)
 												 {
 													 if (!args.Cancelled)
-														 Process.Start(Path.Combine(Prefs.DataDirectory, "OctgnUpdate.exe"));
+													 {
+														 LazyAsync.Invoke(()=> Process.Start(Path.Combine(Prefs.DataDirectory , "OctgnUpdate.exe")));
+													 }
 													 else
 													 {
 														 UpdateStatus("Downloading the new version failed. Please manually download.");

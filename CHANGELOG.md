@@ -1,3 +1,5 @@
+#3.0.1.14
++ Fixed autoupdate bug.
 #3.0.1.13
 + Fixed bug that caused load to hang
 #3.0.1.12
