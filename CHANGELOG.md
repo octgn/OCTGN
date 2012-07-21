@@ -1,3 +1,8 @@
+#3.0.1.12
++ Removed the split screen
++ Added help in file menu
++ Added automatic updating
+
 #3.0.1.11
 + Make gamelist autorefresh
 + Arrange user list in lobby by name
