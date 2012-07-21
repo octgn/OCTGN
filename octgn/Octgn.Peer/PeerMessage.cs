@@ -8,6 +8,7 @@ using System.Web;
 
 namespace Octgn.App
 {
+	//TODO probubly poinless, should maybe just remove.
 	[Serializable]
 	public class PeerMessage
 	{

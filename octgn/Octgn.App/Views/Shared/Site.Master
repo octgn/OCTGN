@@ -1,5 +1,10 @@
 ﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 <%@ Import Namespace="System.Reflection" %>
+<%@ Import Namespace="Octgn.App" %>
+<%@ Import Namespace="Octgn.Peer" %>
+<%
+	SessionManager.StartSession();
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
@@ -9,7 +14,7 @@
 	<script src="../../Content/js/jquery-1.7.2.min.js" type="text/javascript"></script>
 	<script src="../../Content/js/bootstrap.js" type="text/javascript"></script>
 	<script type="text/javascript">
-			var PeerCount = <%: Octgn.App.PeerHandler.Swarm.Peers.Count %>
+			var PeerCount = <%: PeerHandler.Swarm.Peers.Count %>
 			$(function(){
 				$('#RegBox').modal({
   					backdrop: true,
@@ -73,7 +78,7 @@
 					<% } %>			
 		          </ul>
 		          <ul class="nav pull-right">
-					<li><a href="#" id="peercount"><i class="icon-user icon-white"></i> <%: Octgn.App.PeerHandler.Swarm.Peers.Count %></a></li>
+					<li><a href="#" id="peercount"><i class="icon-user icon-white"></i> <%: PeerHandler.Swarm.Peers.Count %></a></li>
 		            <li class="divider-vertical"></li>
 					<% Html.RenderPartial("LogOnUserControl"); %>
 		          </ul>

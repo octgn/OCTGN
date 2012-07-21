@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Octgn.Common.Sockets;
 using Octgn.Data;
 using Octgn.Data.Models;
+using Octgn.Peer;
 using WCSoft.db4oProviders;
 
 namespace Octgn.App.Areas.api.Controllers

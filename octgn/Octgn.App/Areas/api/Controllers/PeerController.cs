@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Octgn.Data;
 using Octgn.Data.Models;
+using Octgn.Peer;
 
 namespace Octgn.App.Areas.api.Controllers
 {

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="OCTGN">
+</Property><Property Name="Solution File" Value="F:\Programming\OCTGN\octgn\OCTGN.sln">
+</Property><Property Name="Date" Value="Saturday, July 21, 2012">
+</Property><Property Name="Time" Value="12:49 PM">
+</Property><Property Name="Log Number" Value="4">
+</Property></Properties><Event ErrorLevel="0" Project="Octgn" Source="OCTGN\Octgn.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn" Source="OCTGN\Octgn.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Test" Source="Octgn.Test\Octgn.Test.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Test" Source="Octgn.Test\Octgn.Test.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Lobby" Source="Octgn.Lobby\Octgn.Lobby.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Lobby" Source="Octgn.Lobby\Octgn.Lobby.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Lobby.Server" Source="Octgn.LobbyServer\Octgn.Lobby.Server.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Lobby.Server" Source="Octgn.LobbyServer\Octgn.Lobby.Server.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Data" Source="Octgn.Data\Octgn.Data.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Data" Source="Octgn.Data\Octgn.Data.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.App" Source="Octgn.App\Octgn.App.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.App" Source="Octgn.App\Octgn.App.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Common" Source="Octgn.Common\Octgn.Common.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Common" Source="Octgn.Common\Octgn.Common.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="MonoTorrent.PeerSwarm" Source="PeerSwarm\MonoTorrent.PeerSwarm\MonoTorrent.PeerSwarm.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="MonoTorrent.PeerSwarm" Source="PeerSwarm\MonoTorrent.PeerSwarm\MonoTorrent.PeerSwarm.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="MonoTorrent" Source="monotorrent\src\MonoTorrent\MonoTorrent.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="MonoTorrent" Source="monotorrent\src\MonoTorrent\MonoTorrent.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="MonoTorrent.Dht" Source="monotorrent\src\MonoTorrent.Dht\MonoTorrent.Dht.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="MonoTorrent.Dht" Source="monotorrent\src\MonoTorrent.Dht\MonoTorrent.Dht.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="MonoTorrent.Tests" Source="monotorrent\src\MonoTorrent.Tests\MonoTorrent.Tests.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="MonoTorrent.Tests" Source="monotorrent\src\MonoTorrent.Tests\MonoTorrent.Tests.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="OCTGN.sln" Description="The solution file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="" Source="OCTGN.sln" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="MonoTorrent.Tests" Source="monotorrent\src\MonoTorrent.Tests\MonoTorrent.Tests.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>
