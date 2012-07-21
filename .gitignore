@@ -70,3 +70,5 @@ packages/
 octgn/_UpgradeReport_Files/*
 *.ncrunchproject
 octgn/UpgradeLog*.XML
+octgn/monotorrent/
+octgn/PeerSwarm/

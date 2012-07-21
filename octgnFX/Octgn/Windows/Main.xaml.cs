@@ -714,5 +714,10 @@ namespace Octgn.Windows
                 _currentSetList.AddAutoUpdatedSets();
         }
 
+		private void Help_Click(object sender, RoutedEventArgs e)
+		{
+			Process.Start("https://github.com/kellyelton/OCTGN/wiki");
+		}
+
     }
 }

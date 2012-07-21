@@ -23,6 +23,7 @@
     <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="RibbonSelectionChanged">
       <ribbon:Ribbon.ApplicationMenu>
         <ribbon:RibbonApplicationMenu IsMainMenu="True" x:Name="MainMenu">
+          <ribbon:RibbonApplicationMenuItem x:Name="Help" Header="Help" Click="Help_Click"></ribbon:RibbonApplicationMenuItem>
           <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOffClick"></ribbon:RibbonApplicationMenuItem>
           <ribbon:RibbonApplicationMenuItem x:Name="Quit" Header="Quit" Click="QuitClick"></ribbon:RibbonApplicationMenuItem>
         </ribbon:RibbonApplicationMenu>
