@@ -259,32 +259,33 @@ namespace Octgn.Windows
             Dispatcher.Invoke(new Action(() =>
                                          {
                                              _realCloseWindow = true;
-                if (result)
-                {
-                    IsClosingDown = true;
+											 if (result)
+											 {
+												 IsClosingDown = true;
 
-                	UpdateStatus("Downloading new version.");
-                	var c = new WebClient();
-                	progressBar1.Maximum = 100;
-                	progressBar1.IsIndeterminate = false;
-                	progressBar1.Value = 0;
-					c.DownloadFileCompleted += delegate(object sender , AsyncCompletedEventArgs args)
-					{
-						if (!args.Cancelled)
-							Process.Start(Path.Combine(Prefs.DataDirectory, "OctgnUpdate.exe"));
-						else
-						{
-							UpdateStatus("Downloading the new version failed. Please manually download.");
-							Process.Start(url);
-						}
-						Close();
-					};
-					c.DownloadProgressChanged += delegate(object sender , DownloadProgressChangedEventArgs args)
-					{
-						progressBar1.Value = args.ProgressPercentage;
-					};
-                	c.DownloadFileAsync(new Uri(url) , Path.Combine(Prefs.DataDirectory , "OctgnUpdate.exe"));
-                }
+												 UpdateStatus("Downloading new version.");
+												 var c = new WebClient();
+												 progressBar1.Maximum = 100;
+												 progressBar1.IsIndeterminate = false;
+												 progressBar1.Value = 0;
+												 c.DownloadFileCompleted += delegate(object sender, AsyncCompletedEventArgs args)
+												 {
+													 if (!args.Cancelled)
+														 Process.Start(Path.Combine(Prefs.DataDirectory, "OctgnUpdate.exe"));
+													 else
+													 {
+														 UpdateStatus("Downloading the new version failed. Please manually download.");
+														 Process.Start(url);
+													 }
+													 Close();
+												 };
+												 c.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
+												 {
+													 progressBar1.Value = args.ProgressPercentage;
+												 };
+												 c.DownloadFileAsync(new Uri(url), Path.Combine(Prefs.DataDirectory, "OctgnUpdate.exe"));
+											 }
+											 else Close();
             }));
         }
 		

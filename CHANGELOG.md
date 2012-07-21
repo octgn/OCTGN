@@ -1,3 +1,5 @@
+#3.0.1.13
++ Fixed bug that caused load to hang
 #3.0.1.12
 + Removed the split screen
 + Added help in file menu
