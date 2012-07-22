@@ -13,9 +13,14 @@ namespace Octgn.App.Controllers
         //
         // GET: /Gameboard/
 
-        public ActionResult Index()
+        public ActionResult Index(string id)
         {
-            
+            if (id != null)
+            {
+                ViewData["Title"] = id;
+                string content = System.IO.File.ReadAllText(Server.MapPath(Url.Content("~/Content/CardGameTemplate.htm")));
+                ViewData["Content"] = content;
+            }
             return View();
         }
 

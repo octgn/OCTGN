@@ -17,8 +17,9 @@ namespace Octgn.App.Controllers
 
         public ActionResult Render(string gameID, string file, string resourcePath)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
+            //using (MemoryStream ms = new MemoryStream())
+           // {
+            MemoryStream ms = new MemoryStream();
                 string contentType = string.Empty;
                 string path = Path.Combine(gamesPath, gameID);
                 if (file.EndsWith("o8g") || file.EndsWith("o8s"))
@@ -66,7 +67,7 @@ namespace Octgn.App.Controllers
                     }
                 }
                 return new FileStreamResult(ms, contentType);
-            }
+         //   }
         }
 
         private string ContentType(string resourcePath)

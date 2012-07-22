@@ -111,6 +111,7 @@
   <ItemGroup>
     <Compile Include="Areas\api\apiAreaRegistration.cs" />
     <Compile Include="Areas\api\Controllers\PeerController.cs" />
+    <Compile Include="Areas\api\Controllers\ResourceListController.cs" />
     <Compile Include="Areas\api\Controllers\UserController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\CardGameTemplate.htm" />
     <Content Include="Content\css\bootstrap.css" />
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\Images\crosshatch.png" />
