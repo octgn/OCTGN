@@ -5,13 +5,14 @@ using System.Web;
 using System.Web.Mvc;
 using System.IO;
 using Ionic.Zip;
+using Octgn.Data;
 
 namespace Octgn.App.Controllers
 {
     public class DefinitionResourceController : Controller
     {
-        //TODO : change this to a general location once one is decided.
-        private static string gamesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Games");
+        
+        private static string gamesPath = SimpleConfig.DataDirectory
         //
         // GET: /DefinitionResource/
 
