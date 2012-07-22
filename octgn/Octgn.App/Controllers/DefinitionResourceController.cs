@@ -11,8 +11,8 @@ namespace Octgn.App.Controllers
 {
     public class DefinitionResourceController : Controller
     {
-        
-        private static string gamesPath = SimpleConfig.DataDirectory
+
+        private static string gamesPath = Path.Combine(SimpleConfig.DataDirectory, "Games");
         //
         // GET: /DefinitionResource/
 

@@ -12,7 +12,7 @@ namespace Octgn.App.Areas.api.Controllers
     public class ResourceListController : Controller
     {
 
-        private static string gamesPath = SimpleConfig.DataDirectory;
+        private static string gamesPath = Path.Combine(SimpleConfig.DataDirectory, "Games");
         
         //
         // GET: /api/ResourceList/

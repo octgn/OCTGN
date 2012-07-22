@@ -1,56 +1,153 @@
 ﻿<div id="script">
     <script language="javascript">
-        function GetList(dir)
-        {
-            $.get("/api/ResourceList/Get", { resourcePath: dir }, function (data) {
-                var dirs = [];
-                var files = [];
+            //Card back constant
+            var cardBackLocation = '';
 
-                $.each(data.directories, function (key, val) {
-                    dirs.push('<li id="' + key + '"><a href="#" onclick="GetList(\'' + val + '\')">' + val + '</a></li>');
-                });
-                $.each(data.files, function (key, val) {
-                    files.push('<li id="' + key + '">' + val + '</li>');
-                });
-                $('#dirdiv').empty();
-                $('<ul/>', {
-                    'class': 'my-new-list',
-                    html: dirs.join('')
-                }).appendTo('#dirdiv');
-                $('#filediv').empty();
-                $('<ul/>', {
-                    'class': 'my-new-list',
-                    html: files.join('')
-                }).appendTo('#filediv');
-            });
-        }
-        var first = false;
-        if(first)
-        {
-            GetList("");
-            first = false;
-        }
-        var cards = [];
-        $.get("/api/ResourceList/Get", { resourcePath: "a6c8d2e8-7cd8-11dd-8f94-e62b56d89593/Sets/cards" }, function (data) {
-            $.each(data.files, function (key, val) {
-                var insert = val.replace(/\//g, "--");
-                cards.push(insert);
-            });
-        });
-        var count = 0;
-        function GetNext()
-        {
-            if(count > cards.length)
+            //Check if magic is installed in normal octgn.
+            var installed = false;
+            var checkInstall = true;
+            if (checkInstall)
             {
-                count = 0;
+                $.get("/api/ResourceList/Get", { resourcePath: "" }, checkInstallCallback);
             }
-            $('#testimg').attr('src', "/Resource/" + cards[count]);
-            count = count + 1;
-        }
+
+            function checkInstallCallback(data) {
+                if (data.directories != null) {
+                    $.each(data.directories, function (key, val) {
+                        if (val.indexOf("a6c8d2e8-7cd8-11dd-8f94-e62b56d89593") >= 0) {
+                            installed = true;
+                            checkInstall = false;
+                            return false;
+                        }
+                    });
+                }
+                if(installed)
+                {
+                    GetCardBackLocation();
+                }
+                else
+                {
+                    alert("magic is not installed in octgn");
+                }
+            }
+
+            //set the card back constant from the o8g
+            function GetCardBackLocation() {
+                $.get("/api/ResourceList/Get", { resourcePath: "a6c8d2e8-7cd8-11dd-8f94-e62b56d89593/Defs"}, GetCardBackLocationCallback);
+            }
+
+            function GetCardBackLocationCallback(data)
+            {
+                if (data.files != null) {
+                    $.each(data.files, function (key, val) {
+                        if (val.lastIndexOf(".o8g") != -1) {
+                            cardBackLocation = "/Resource/cards--back.jpg/" + val.replace(/\//g, "--");
+                            return false;
+                        }
+                    });
+                }
+                if (cardBackLocation.length > 0)
+                {
+                    GetSetLocation();
+                }
+            }
+
+            //temp cardimage holder since there are no decks or shuffle stuff yet
+            var cards = [];
+
+            //get the first non marker set location
+            function GetSetLocation() {
+                $.get("/api/ResourceList/Get", { resourcePath: "a6c8d2e8-7cd8-11dd-8f94-e62b56d89593/Sets"}, GetSetLocationCallback);
+            }
+
+            function GetSetLocationCallback(data)
+            {
+                if(data.files != null)
+                {
+                    $.each(data.files, function (key, val) {
+                        if (val.indexOf("MarkersAndTokens") == -1 && val.lastIndexOf(".o8s") != -1) {
+                            setLocation = val;
+                            return false;
+                        }
+                    });
+                }
+                if(setLocation.length > 0)
+                {
+                    GetCardImageLocations();
+                }
+            }
+
+            //get the image locations inside the o8s set
+            function GetCardImageLocations() {
+                $.get("/api/ResourceList/Get", { resourcePath: "cards", o8xPath: setLocation }, GetCardImageLocationsCallback);
+            }
+
+            function GetCardImageLocationsCallback(data)
+            {
+                if(data.files != null)
+                {
+                    $.each(data.files, function (key, val) {
+                        var url = "/Resource/";
+                        var pathInO8x = val.replace(/\//g, "--");
+                        var pathToO8x = setLocation.replace(/\//g, "--");
+                        var url = url + pathInO8x + "/" + pathToO8x;
+                        cards.push(url);
+                    });
+                }
+                if(cards.length > 0)
+                {
+                    SetCardBackImage();
+                }
+            }
+
+            //set cardBack to #testimg
+            function SetCardBackImage() {
+                $('#testimg').attr('src', cardBackLocation);
+            }
+            
+
+            //Assign next card image to #testimg
+            var count = 0;
+            function GetNextCard()
+            {
+                if(count > cards.length)
+                {
+                    count = 0;
+                }
+                $('#testimg').attr('src', cards[count]);
+                count = count + 1;
+            }
+
+
+            //helper function for getting resource listing from normal filesystem
+            function GetDirs(dir)
+            {
+                $.get("/api/ResourceList/Get", { resourcePath: dir }, function (data) {
+                    var dirs = [];
+                    var files = [];
+
+                    $.each(data.directories, function (key, val) {
+                        dirs.push('<li id="' + key + '"><a href="#" onclick="GetList(\'' + val + '\')">' + val + '</a></li>');
+                    });
+                    $.each(data.files, function (key, val) {
+                        files.push('<li id="' + key + '">' + val + '</li>');
+                    });
+                    $('#dirdiv').empty();
+                    $('<ul/>', {
+                        'class': 'my-new-list',
+                        html: dirs.join('')
+                    }).appendTo('#dirdiv');
+                    $('#filediv').empty();
+                    $('<ul/>', {
+                        'class': 'my-new-list',
+                        html: files.join('')
+                    }).appendTo('#filediv');
+                });
+            }
     </script>
 </div>
 <div id="gameboard">
- <a href ="#" onclick="GetNext()"><img src="/Resource/cards--back.jpg/a6c8d2e8-7cd8-11dd-8f94-e62b56d89593--Defs--Magic-v3.0.8.o8g" id="testimg" height="120" width="90" /></a>
+ <a href ="#" onclick="GetNextCard()"><img src="" id="testimg" height="400" width="300" /></a>
  <h2>Directories:</h2>
  <div id="dirdiv"></div>
  <h2>Files:</h2>
