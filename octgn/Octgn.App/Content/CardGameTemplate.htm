@@ -2,7 +2,7 @@
     <script language="javascript">
         function GetList(dir)
         {
-            $.get("/api/ResourceList/Get", { path: dir }, function (data) {
+            $.get("/api/ResourceList/Get", { resourcePath: dir }, function (data) {
                 var dirs = [];
                 var files = [];
 
@@ -31,9 +31,10 @@
             first = false;
         }
         var cards = [];
-        $.get("/api/ResourceList/Get", { path: "a6c8d2e8-7cd8-11dd-8f94-e62b56d89593/Sets/cards" }, function (data) {
+        $.get("/api/ResourceList/Get", { resourcePath: "a6c8d2e8-7cd8-11dd-8f94-e62b56d89593/Sets/cards" }, function (data) {
             $.each(data.files, function (key, val) {
-                cards.push(val);
+                var insert = val.replace(/\//g, "--");
+                cards.push(insert);
             });
         });
         var count = 0;
@@ -49,7 +50,7 @@
     </script>
 </div>
 <div id="gameboard">
- <a href ="#" onclick="GetNext()"><img src="/Resource/a6c8d2e8-7cd8-11dd-8f94-e62b56d89593/Magic-v3.0.8.o8g/cards--back.jpg" id="testimg" height="120" width="90" /></a>
+ <a href ="#" onclick="GetNext()"><img src="/Resource/cards--back.jpg/a6c8d2e8-7cd8-11dd-8f94-e62b56d89593--Defs--Magic-v3.0.8.o8g" id="testimg" height="120" width="90" /></a>
  <h2>Directories:</h2>
  <div id="dirdiv"></div>
  <h2>Files:</h2>

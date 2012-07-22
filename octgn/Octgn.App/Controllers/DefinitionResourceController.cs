@@ -20,7 +20,7 @@ namespace Octgn.App.Controllers
             MemoryStream ms = new MemoryStream();
             
             string contentType = string.Empty;
-            if (o8xPath != null || o8xPath.Length == 0)
+            if (o8xPath != null && o8xPath.Length > 0)
             {
                 contentType = LoadResourceFromO8x(ms, resourcePath, o8xPath);
             }

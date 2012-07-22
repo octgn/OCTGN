@@ -20,7 +20,7 @@ namespace Octgn.App.Areas.api.Controllers
         public ActionResult Get(string resourcePath, string o8xPath)
         {
             Tuple<List<string>, List<string>> list;
-            if (o8xPath == null || o8xPath.Length == 0)
+            if (o8xPath != null && o8xPath.Length > 0)
             {
                 list = ListFromO8x(resourcePath, o8xPath);
             }
