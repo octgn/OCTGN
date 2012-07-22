@@ -29,7 +29,7 @@
 			function GetPeerCountDone(data)
 			{
 				if(data.Count != null)
-					$("#peercount").val(data.Count);
+					$("#peercount").text(data.Count);
 			}
 			function ShowRegBox()
 			{
@@ -78,7 +78,7 @@
 					<% } %>			
 		          </ul>
 		          <ul class="nav pull-right">
-					<li><a href="#" id="peercount"><i class="icon-user icon-white"></i> <%: PeerHandler.Swarm.Peers.Count %></a></li>
+					<li><a href="#"><i class="icon-user icon-white"></i><span  id="peercount"> <%: PeerHandler.Swarm.Peers.Count %></span></a></li>
 		            <li class="divider-vertical"></li>
 					<% Html.RenderPartial("LogOnUserControl"); %>
 		          </ul>
