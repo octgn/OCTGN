@@ -14,8 +14,8 @@ namespace Octgn.App
 
             routes.MapRoute(
                 "DefinitionResources",
-                "Resource/{gameID}/{file}/{resourcePath}",
-                new { controller = "DefinitionResource", action = "Render", file = "", gameID = "", resourcePath = "" }
+                "Resource/{resourcePath}/{o8xPath}",
+                new { controller = "DefinitionResource", action = "Render", resourcePath = "", o8xPath = ""}
                 );
 
 			routes.MapRoute(
