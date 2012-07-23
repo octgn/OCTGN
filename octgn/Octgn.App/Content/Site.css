@@ -3,11 +3,15 @@ The base color for this template is #5c87b2. If you'd like
 to use a different color start by replacing all instances of
 #5c87b2 with your new color.
 ----------------------------------------------------------*/
+html {
+	height: 100%;
+}
 body
 {
     background-color: #5c87b2;
     color: #696969;
 	background: url(/Content/img/crosshatch.png);
+	height: 100%;
 }
 
 .redglow{
@@ -25,6 +29,9 @@ body
     background-color: #fff;
     margin-top:50px;
     padding:10px;
+}
+#maincontent {
+	height: 100%;
 }
 
 /* TAB MENU   

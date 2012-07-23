@@ -3,8 +3,12 @@
       canvas {
         border: 1px solid #9C9898;
       }
+      #gameboard {
+      	height: 100%;
+      }
       </style>
-    <script language="javascript" src="/Content/js/kinetic-v3.10.3.min.js"></script>
+	<script language="javascript" src="/Content/js/kinetic-v3.10.3.min.js"></script>
+	<script language="javascript" src="/Content/js/jgestures.min.js"></script>
     <script language="javascript">
             //Card back constant
             var cardBackLocation = '';
@@ -107,11 +111,14 @@
             }
 
             //set cardBack to #testimg
-            function LoadStage2() {
+            function LoadStage2() { 
+            		var p = $("#container").parent();
+                	var pw = p.width();
+                	var ph = p.height();
                     var stage = new Kinetic.Stage({
                         container: "container",
-                        width: 1024,
-                        height: 768
+                        width: pw,
+                        height:ph
                     });
                     var layer = new Kinetic.Layer();
                     var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
@@ -162,41 +169,82 @@
                     stage.add(layer);
                 }
 
+				function getDistance(touch1, touch2) {
+					var x1 = touch1.clientX;
+					var x2 = touch2.clientX;
+					var y1 = touch1.clientY;
+					var y2 = touch2.clientY;
+
+					return Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+				}
                 var imageHeight = 200;
                 var imageWidth = 160;
                 var stage;
+                var curCard = undefined;
+                var boardlayer;
                 function LoadStage() {
+                	var p = $("#container").parent();
+                	var pw = p.width();
+                	var ph = p.height();
                     stage = new Kinetic.Stage({
                         container: "container",
-                        width: 1024,
-                        height: 768
+                        width: pw,
+                        height: ph
                     });
                     var layer = new Kinetic.Layer();
-
+                	boardlayer = new Kinetic.Layer();
                     var deckImageObj = new Image();
                     deckImageObj.onload = function () {
-                        var deckImage = new Kinetic.Image({
-                            x: stage.getWidth() - imageWidth,
-                            y: stage.getHeight() - imageHeight,
-                            image: deckImageObj,
-                            width: imageWidth,
-                            height: imageHeight,
-                            draggable: false,
-                            stroke: "black",
-                            strokeWidth: 1
-                        });
+                    	var deckImage = new Kinetic.Image({
+                    		x: stage.getWidth() - imageWidth,
+                    		y: stage.getHeight() - imageHeight,
+                    		image: deckImageObj,
+                    		width: imageWidth,
+                    		height: imageHeight,
+                    		draggable: false,
+                    		stroke: "black",
+                    		strokeWidth: 1
+                    	});
 
-                        deckImage.on("dblclick", function () {
-                            DrawCard();
-                        });
+                    	deckImage.on("dblclick  dbltap", function () {
+                    		DrawCard();
+                    	});
 
-                        // add the shape to the layer
-                        layer.add(deckImage);
+                    	// add the shape to the layer
+                    	layer.add(deckImage);
 
-                        // add the layer to the stage
-                        stage.add(layer);
+                    	// add the layer to the stage
+                    	stage.add(layer);
+                    	stage.add(boardlayer);
                     };
-                    deckImageObj.src = cardBackLocation;
+				    deckImageObj.src = cardBackLocation;
+				    stage.on("touchmove", function (evt) {
+				    	var touch1 = evt.touches[0];
+				    	var touch2 = evt.touches[1];
+				    	$("#touchcount").text(evt.touches.length);
+				    	if (touch1 && touch2 && curCard) {
+				    		if (curCard.startDistance === undefined) {
+				    			curCard.startDistance = getDistance(touch1, touch2);
+				    		} else {
+				    			var dist = getDistance(touch1, touch2);
+				    			var scale = (dist / curCard.startDistance) * curCard.startScale;
+				    			curCard.setScale(scale);
+				    			boardlayer.draw();
+				    		}
+				    	}
+				    });
+
+				    stage.on("touchend", function () {
+				    	$("#touchcount").text(0);
+				    	$("#container").css("background-color", "white");
+				    	if (curCard) {
+				    		//alert("done and shit");
+				    		curCard.startDistance = undefined;
+				    		curCard.startScale = curCard.scale.x;
+				    		curCard = undefined;
+				    		boardlayer.draw();
+				    	}
+				    });
                 }
                 var count = 0;
                 function DrawCard() {
@@ -204,48 +252,60 @@
                         count = 0;
                     }
                     
-                    var layer = new Kinetic.Layer();
                     var cardImageObj = new Image();
                     cardImageObj.onload = function () {
-                        var cardImage = new Kinetic.Image({
-                            x: stage.getWidth() - (imageWidth * 2),
-                            y: stage.getHeight() - imageHeight,
-                            image: cardImageObj,
-                            width: imageWidth,
-                            height: imageHeight,
-                            draggable: true,
-                            stroke: "black",
-                            strokeWidth: 1
-                        });
+                    	var cardImage = new Kinetic.Image({
+                    		x: stage.getWidth() - (imageWidth * 2),
+                    		y: stage.getHeight() - imageHeight,
+                    		image: cardImageObj,
+                    		width: imageWidth,
+                    		height: imageHeight,
+                    		draggable: true,
+                    		stroke: "black",
+                    		strokeWidth: 1,
+                    		startScale: 1
+                    	});
 
-                        cardImage.on("dragstart", function () {
-                            cardImage.moveToTop();
-                            layer.draw();
-                        });
 
-                        cardImage.on("dragmove", function () {
-                            document.body.style.cursor = "pointer";
-                        });
-                        /*
-                        * dblclick to remove box for desktop app
-                        * and dbltap to remove box for mobile app
-                        */
-                        cardImage.on("dblclick dbltap", function () {
-                            layer.remove(cardImage);
-                            layer.draw();
-                        });
+                    	cardImage.on("dblclick dbltap", function () {
+                    		boardlayer.remove(cardImage);
+                    		boardlayer.draw();
+                    	});
+                    	/*
+                    	Pinch Zoom cards
+                    	*/
 
-                        cardImage.on("mouseover", function () {
-                            document.body.style.cursor = "pointer";
-                        });
-                        cardImage.on("mouseout", function () {
-                            document.body.style.cursor = "default";
-                        });
+                    	cardImage.on("touchstart", function () {
+                    		//if (this.getDraggable() == false) {
+                    		this.moveToTop();
+                    		curCard = this;
+                    		//}
+                    	});
+                    	cardImage.on("click tap", function () {
+                    		//this.setDraggable(cardImage.getDraggable() != true);
+                    	});
 
-                        layer.add(cardImage);
+                    	/*
+                    	cardImage.on("click tap", function () {
+                    	var s = cardImage.getScale();
+                    	if (s.x == 2)
+                    	cardImage.setScale(1);
+                    	else
+                    	cardImage.setScale(2);
+                    	layer.draw();
+                    	});
+                    	*/
+                    	cardImage.on("mouseover", function () {
+                    		document.body.style.cursor = "pointer";
+                    	});
+                    	cardImage.on("mouseout", function () {
+                    		document.body.style.cursor = "default";
+                    	});
 
-                        // add the layer to the stage
-                        stage.add(layer);
+                    	boardlayer.add(cardImage);
+                    	boardlayer.draw();
+                    	// add the layer to the stage
+                    	//stage.add(layer);
                     };
                     cardImageObj.src = cards[count];
                     count = count + 1;
