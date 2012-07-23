@@ -219,9 +219,11 @@
                     };
 				    deckImageObj.src = cardBackLocation;
 				    stage.on("touchmove", function (evt) {
+
 				    	var touch1 = evt.touches[0];
 				    	var touch2 = evt.touches[1];
 				    	$("#touchcount").text(evt.touches.length);
+				    	return;
 				    	if (touch1 && touch2 && curCard) {
 				    		if (curCard.startDistance === undefined) {
 				    			curCard.startDistance = getDistance(touch1, touch2);
@@ -236,7 +238,7 @@
 
 				    stage.on("touchend", function () {
 				    	$("#touchcount").text(0);
-				    	$("#container").css("background-color", "white");
+				    	return;
 				    	if (curCard) {
 				    		//alert("done and shit");
 				    		curCard.startDistance = undefined;
@@ -268,7 +270,7 @@
 
 
                     	cardImage.on("dblclick dbltap", function () {
-                    		boardlayer.remove(cardImage);
+                    		boardlayer.remove(this);
                     		boardlayer.draw();
                     	});
                     	/*
@@ -282,6 +284,11 @@
                     		//}
                     	});
                     	cardImage.on("click tap", function () {
+                    		if (this.getScale().x == 2)
+                    			this.setScale(1);
+                    		else
+                    			this.setScale(2);
+                    		boardlayer.draw();
                     		//this.setDraggable(cardImage.getDraggable() != true);
                     	});
 
