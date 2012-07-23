@@ -139,6 +139,7 @@
     <Content Include="Content\js\bootstrap.js" />
     <Content Include="Content\js\bootstrap.min.js" />
     <Content Include="Content\js\jquery-1.7.2.min.js" />
+    <Content Include="Content\js\kinetic-v3.10.3.min.js" />
     <Content Include="Global.asax" />
     <Content Include="Views\Admin\Index.aspx" />
     <Content Include="Views\Chat\blah.aspx" />
