@@ -62,7 +62,7 @@ namespace Octgn.App.Areas.api.Controllers
 			if (theFriend != null) return JsonReturn.Success("Friend found in DB");
 			var mess = new SocketMessage("addfriend");
 			mess.AddData("email", email);
-			PeerHandler.MessagePeers(mess);
+			PeerHandler.MessageAllPeers(mess);
 			return JsonReturn.Success("Waiting to hear back from peers");
 		}
 

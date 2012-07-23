@@ -43,6 +43,7 @@
     <Compile Include="PeerHandler.cs" />
     <Compile Include="PeerMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="S2SHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\monotorrent\src\MonoTorrent.Dht\MonoTorrent.Dht.csproj">

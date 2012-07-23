@@ -24,19 +24,16 @@ namespace Octgn.Peer
 	public static class PeerHandler
 	{
 		public static PeerSwarmManager Swarm;
-		public static void MessagePeers(SocketMessage message)
-		{
-			var client = new UdpClient();
-			foreach(var s in Swarm.Peers)
-			{
-				var u = s.ConnectionUri;
-				var mb =SocketMessage.Serialize(message);
-				client.Send(mb , mb.Length , u.Host , u.Port + 1);
-			}
-		}
+		public static S2SHandler S2SHandler { get; set; }
 		static PeerHandler ()
 		{
+			S2SHandler = new S2SHandler(Prefs.S2SPort);
 			StartPeerSwarm();
+		}
+		public static void MessageAllPeers(SocketMessage message)
+		{
+			foreach(var s in Swarm.Peers)
+				S2SHandler.MessagePeer(message,s.ConnectionUri);
 		}
 		private static void StartPeerSwarm()
 		{
