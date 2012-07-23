@@ -1,4 +1,10 @@
 ﻿<div id="script">
+    <style>
+      canvas {
+        border: 1px solid #9C9898;
+      }
+      </style>
+    <script language="javascript" src="/Content/js/kinetic-v3.10.3.min.js"></script>
     <script language="javascript">
             //Card back constant
             var cardBackLocation = '';
@@ -96,14 +102,154 @@
                 }
                 if(cards.length > 0)
                 {
-                    SetCardBackImage();
+                    LoadStage();
                 }
             }
 
             //set cardBack to #testimg
-            function SetCardBackImage() {
-                $('#testimg').attr('src', cardBackLocation);
-            }
+            function LoadStage2() {
+                    var stage = new Kinetic.Stage({
+                        container: "container",
+                        width: 1024,
+                        height: 768
+                    });
+                    var layer = new Kinetic.Layer();
+                    var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+
+                    for (var n = 0; n < 6; n++) {
+                        // anonymous function to induce scope
+                        (function () {
+                            var i = n;
+                            var box = new Kinetic.Rect({
+                                x: i * 30 + 150,
+                                y: i * 18 + 40,
+                                fill: colors[i],
+                                stroke: "black",
+                                strokeWidth: 4,
+                                draggable: true,
+                                width: 100,
+                                height: 50
+                            });
+
+                            box.on("dragstart", function () {
+                                box.moveToTop();
+                                layer.draw();
+                            });
+
+                            box.on("dragmove", function () {
+                                document.body.style.cursor = "pointer";
+                            });
+                            /*
+                            * dblclick to remove box for desktop app
+                            * and dbltap to remove box for mobile app
+                            */
+                            box.on("dblclick dbltap", function () {
+                                layer.remove(box);
+                                layer.draw();
+                            });
+
+                            box.on("mouseover", function () {
+                                document.body.style.cursor = "pointer";
+                            });
+                            box.on("mouseout", function () {
+                                document.body.style.cursor = "default";
+                            });
+
+                            layer.add(box);
+                        })();
+                    }
+
+                    stage.add(layer);
+                }
+
+                var imageHeight = 200;
+                var imageWidth = 160;
+                var stage;
+                function LoadStage() {
+                    stage = new Kinetic.Stage({
+                        container: "container",
+                        width: 1024,
+                        height: 768
+                    });
+                    var layer = new Kinetic.Layer();
+
+                    var deckImageObj = new Image();
+                    deckImageObj.onload = function () {
+                        var deckImage = new Kinetic.Image({
+                            x: stage.getWidth() - imageWidth,
+                            y: stage.getHeight() - imageHeight,
+                            image: deckImageObj,
+                            width: imageWidth,
+                            height: imageHeight,
+                            draggable: false,
+                            stroke: "black",
+                            strokeWidth: 1
+                        });
+
+                        deckImage.on("dblclick", function () {
+                            DrawCard();
+                        });
+
+                        // add the shape to the layer
+                        layer.add(deckImage);
+
+                        // add the layer to the stage
+                        stage.add(layer);
+                    };
+                    deckImageObj.src = cardBackLocation;
+                }
+                var count = 0;
+                function DrawCard() {
+                    if (count > cards.length) {
+                        count = 0;
+                    }
+                    
+                    var layer = new Kinetic.Layer();
+                    var cardImageObj = new Image();
+                    cardImageObj.onload = function () {
+                        var cardImage = new Kinetic.Image({
+                            x: stage.getWidth() - (imageWidth * 2),
+                            y: stage.getHeight() - imageHeight,
+                            image: cardImageObj,
+                            width: imageWidth,
+                            height: imageHeight,
+                            draggable: true,
+                            stroke: "black",
+                            strokeWidth: 1
+                        });
+
+                        cardImage.on("dragstart", function () {
+                            cardImage.moveToTop();
+                            layer.draw();
+                        });
+
+                        cardImage.on("dragmove", function () {
+                            document.body.style.cursor = "pointer";
+                        });
+                        /*
+                        * dblclick to remove box for desktop app
+                        * and dbltap to remove box for mobile app
+                        */
+                        cardImage.on("dblclick dbltap", function () {
+                            layer.remove(cardImage);
+                            layer.draw();
+                        });
+
+                        cardImage.on("mouseover", function () {
+                            document.body.style.cursor = "pointer";
+                        });
+                        cardImage.on("mouseout", function () {
+                            document.body.style.cursor = "default";
+                        });
+
+                        layer.add(cardImage);
+
+                        // add the layer to the stage
+                        stage.add(layer);
+                    };
+                    cardImageObj.src = cards[count];
+                    count = count + 1;
+                }
             
 
             //Assign next card image to #testimg
@@ -147,9 +293,11 @@
     </script>
 </div>
 <div id="gameboard">
- <a href ="#" onclick="GetNextCard()"><img src="" id="testimg" height="400" width="300" /></a>
+ <!--<a href ="#" onclick="GetNextCard()"><img src="" id="testimg" height="400" width="300" /></a>
  <h2>Directories:</h2>
  <div id="dirdiv"></div>
  <h2>Files:</h2>
- <div id="filediv"></div>
+ <div id="filediv"></div>-->
+ <div id="container">
+ </div>
 </div>
