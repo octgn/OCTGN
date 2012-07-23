@@ -133,6 +133,7 @@
     <Content Include="Content\css\bootstrap.css" />
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\Images\crosshatch.png" />
+    <Content Include="Content\img\4-1.gif" />
     <Content Include="Content\img\crosshatch.png" />
     <Content Include="Content\img\glyphicons-halflings-white.png" />
     <Content Include="Content\img\glyphicons-halflings.png" />

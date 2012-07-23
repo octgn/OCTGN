@@ -10,6 +10,7 @@ namespace Octgn.App
 {
 	public static class SessionManager
 	{
+		private static bool Initialized = false;
 		private static Dictionary<Guid , Session> Sessions;
 		static SessionManager()
 		{
@@ -22,8 +23,12 @@ namespace Octgn.App
 		{
 			//Need to trace some values, that way this code doesn't get
 			//optimized away.
-			Trace.WriteLine("PeerCount: " + PeerHandler.Swarm.Peers.Count);
-			Trace.WriteLine("DBCount: " + Database.DbServer.Ext().ClientCount());
+			if (!Initialized)
+			{
+				Trace.WriteLine("PeerCount: " + PeerHandler.Swarm.Peers.Count);
+				Trace.WriteLine("DBCount: " + Database.DbServer.Ext().ClientCount());
+				Initialized = true;
+			}
 		}
 	}
 }

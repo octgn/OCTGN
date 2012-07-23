@@ -31,6 +31,7 @@ namespace Octgn.App
 			AreaRegistration.RegisterAllAreas();
 
 			RegisterRoutes(RouteTable.Routes);
+			SessionManager.StartSession();
 		}
 	}
 }
