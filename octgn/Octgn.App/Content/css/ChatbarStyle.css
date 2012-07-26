@@ -1,0 +1,95 @@
+/* icons and images */
+.chat-availability {
+    width: 20px;
+    height: 20px;
+    margin-top: 10px;
+	background-image: url("../img/chat-available-icon.png");
+	background-repeat: no-repeat;
+}
+
+.chat-icon-available {
+	background-image: url("../img/chat-available-icon.png");
+}
+
+.chat-icon-away {
+	background-image: url("../img/chat-away-icon.png");
+}
+
+.chat-icon-busy {
+	background-image: url("../img/chat-busy-icon.png");
+}
+
+.chat-icon-offline {
+	background-image: url("../img/chat-offline-icon.png");
+}
+
+.notifications {
+	width: 30px;
+	height: 30px;
+	margin-top: 5px;
+	margin-right: 5px;
+	padding-top: 6px;
+	padding-left: 10px;
+	font-size: large;
+	font-weight: bold;
+	color: white;
+	background-repeat: no-repeat;
+    background-image: url("../img/notifications-button-yes.png");
+}
+
+.notifications-yes {
+    background-image: url("../img/notifications-button-yes.png");
+}
+
+.notifications-no {
+    background-image: url("../img/notifications-button-no.png");
+}
+
+.message-box {
+
+   float: right;
+   height: 30px;
+   width: 100px;
+   padding-left: 50px;
+   padding-top: 9px;
+   color: black;
+   background-repeat: no-repeat;
+   background-image: url("../img/message-box.png");
+}
+
+
+.message-box-no {
+   background-image: url("../img/message-box.png");
+}
+.message-box-new {
+   background-image: url("../img/message-box-new.png");
+}
+.message-box:hover {
+	background-image: url("../img/message-box-no-hover.png");
+	cursor: pointer;
+}
+.message-box-new:hover {
+	background-image: url("../img/message-box-new-hover.png");
+	
+}
+
+
+/*element styles*/
+
+#chatwindow-expanded {
+	width: 150px;
+	padding: 3px 10px 3px 10px;
+	border: solid 1px black;
+}
+
+#chatwindow-expanded b {
+	color: black;
+}
+
+#chatwindow-expanded li {
+	margin: 3px 10px 3px 10px;
+}
+
+#chatwindow-expanded input {
+	width: 100%;
+}
