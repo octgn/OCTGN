@@ -23,7 +23,7 @@ namespace Octgn.Peer
 			{
 				_port = port;
 				_listener = new UdpClient(new IPEndPoint(IPAddress.Any , _port));
-				_listener.AllowNatTraversal(true);
+				//_listener.AllowNatTraversal(true);
 				BeginReceive();
 				RLog("Started Listening on Port {0}" , _port);
 			}
