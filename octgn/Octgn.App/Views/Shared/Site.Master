@@ -122,7 +122,7 @@
 			            </li>
 					<% } %>			
 		          </ul>
-				  
+
 		          <ul class="nav pull-right">
 					<li><a href="#"><i class="icon-hand-up icon-white"></i><span  id="touchcount">0</span></a></li>
 					<li><a href="#"><i class="icon-user icon-white"></i><span  id="peercount"> <%: PeerHandler.Swarm.Peers.Count %></span></a></li>
@@ -139,6 +139,9 @@
 				<img src="/Content/img/4-1.gif" />
 			</div>
 			<asp:ContentPlaceHolder ID="MainContent" runat="server" />
+		</div>
+		<div class="sticky-footer">
+			<% Html.RenderPartial("chatsystem");%>
 		</div>
     <!--</div>-->
 		<% Html.RenderPartial("RegisterControl");%>

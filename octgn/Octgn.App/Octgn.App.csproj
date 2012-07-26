@@ -15,12 +15,10 @@
     <AssemblyName>Octgn.App</AssemblyName>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>false</UseIISExpress>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>4.0</OldToolsVersion>
     <UpgradeBackupLocation />
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -180,6 +178,20 @@
     <Content Include="Views\Shared\LogOnUserControl.ascx" />
     <Content Include="Views\Shared\Site.Master" />
     <Content Include="Views\Web.config" />
+    <Content Include="Content\css\ChatbarStyle.css" />
+    <Content Include="Content\img\chat-available-icon.png" />
+    <Content Include="Content\img\chat-away-icon.png" />
+    <Content Include="Content\img\chat-busy-icon.png" />
+    <Content Include="Content\img\chat-offline-icon.png" />
+    <Content Include="Content\img\chatbar-settings-icon.png" />
+    <Content Include="Content\img\message-box-new.png" />
+    <Content Include="Content\img\message-box-no-hover.png" />
+    <Content Include="Content\img\message-box-yes-hover.png" />
+    <Content Include="Content\img\message-box.png" />
+    <Content Include="Content\img\notifications-button-no.png" />
+    <Content Include="Content\img\notifications-button-yes.png" />
+    <Content Include="Content\js\chatservice.js" />
+    <Content Include="Views\Shared\chatsystem.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -227,6 +239,7 @@
   <!--<Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />-->
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
