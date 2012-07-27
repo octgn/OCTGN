@@ -333,8 +333,22 @@ namespace Octgn.DeckBuilder
             var bim = new BitmapImage();
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
-            bim.UriSource = e.Image != null ? CardModel.GetPictureUri(Game, e.SetId, e.Image) : Game.GetCardBackUri(); 
-            bim.EndInit();
+
+            try
+            {
+                bim.UriSource = e.Image != null ? CardModel.GetPictureUri(Game, e.SetId, e.Image) : Game.GetCardBackUri();
+                bim.EndInit();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine("Error loading picture uri from game pack: " + ex.ToString());
+                bim = new BitmapImage();
+                bim.CacheOption = BitmapCacheOption.OnLoad;
+                bim.BeginInit();
+                bim.UriSource = new Uri(@"pack://application:,,,/Octgn;component/Resources/CardReadError.full.jpg");
+                bim.EndInit();
+                
+            }
             cardImage.Source = bim;
         }
 
