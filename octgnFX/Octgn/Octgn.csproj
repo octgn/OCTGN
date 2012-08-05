@@ -612,7 +612,6 @@
     <None Include="Resources\doorclose.wav" />
     <Resource Include="Resources\Icons\image_xml.png" />
     <Resource Include="Resources\Icons\image_xml_small.png" />
-    <Resource Include="Resources\CardReadError.full.jpg" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
