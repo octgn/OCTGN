@@ -345,7 +345,7 @@ namespace Octgn.DeckBuilder
                 bim = new BitmapImage();
                 bim.CacheOption = BitmapCacheOption.OnLoad;
                 bim.BeginInit();
-                bim.UriSource = new Uri(@"pack://application:,,,/Octgn;component/Resources/CardReadError.full.jpg");
+                bim.UriSource = new Uri(@"pack://application:,,,/Octgn;component/Resources/Front.jpg");
                 bim.EndInit();
                 
             }
