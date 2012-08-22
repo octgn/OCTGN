@@ -369,9 +369,9 @@ namespace Octgn.Windows
                                                                                            stat));
                                                           listBox1.SelectedIndex = listBox1.Items.Count - 1;
                                                       }
-                                                      catch (Exception)
+                                                      catch (Exception e)
                                                       {
-                                                          Debugger.Break();
+                                                          if(Debugger.IsAttached)Debugger.Break();
                                                       }
                                                   }));
         }
