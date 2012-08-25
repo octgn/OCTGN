@@ -72,4 +72,4 @@ octgn/_UpgradeReport_Files/*
 octgn/UpgradeLog*.XML
 octgn/monotorrent/
 octgn/PeerSwarm/
-*$tf/*
+$tf*
