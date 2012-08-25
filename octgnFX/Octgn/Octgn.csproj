@@ -24,7 +24,8 @@
     <ManifestKeyFile>OctgnKey.pfx</ManifestKeyFile>
     <GenerateManifests>false</GenerateManifests>
     <SignManifests>false</SignManifests>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <ExpressionBlendVersion>4.0.20421.0</ExpressionBlendVersion>
     <Utf8Output>true</Utf8Output>
     <PublishUrl>C:\OCTGN FX\Publish\</PublishUrl>
@@ -47,6 +48,10 @@
     <UseApplicationTrust>true</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -165,31 +170,40 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="agsXMPP">
-      <HintPath>..\Lib\agsXMPP.dll</HintPath>
+      <HintPath>packages\agsXMPP.1.1.1.0\lib\agsXMPP.dll</HintPath>
     </Reference>
-    <Reference Include="IronPython, Version=2.6.10920.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\IronPython.dll</HintPath>
+    <Reference Include="IronPython">
+      <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.dll</HintPath>
     </Reference>
     <Reference Include="IronPython.Modules">
-      <HintPath>..\Lib\IronPython.Modules.dll</HintPath>
+      <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.Modules.dll</HintPath>
     </Reference>
-    <Reference Include="LinqToTwitterCP">
-      <HintPath>..\Lib\LinqToTwitterCP.dll</HintPath>
+    <Reference Include="IronPython.SQLite">
+      <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.SQLite.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Scripting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Microsoft.Scripting.dll</HintPath>
+    <Reference Include="IronPython.Wpf">
+      <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="LinqToTwitter">
+      <HintPath>packages\LinqToTwitter.2.0.29\lib\net40\LinqToTwitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic">
+      <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting">
+      <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.AspNet">
+      <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata">
+      <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Polenter.SharpSerializer">
-      <HintPath>..\Lib\Polenter.SharpSerializer.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\RibbonControlsLibrary.dll</HintPath>
+      <HintPath>packages\RibbonControlsLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -526,6 +540,7 @@
     <Compile Include="Windows\UrlSets.xaml.cs">
       <DependentUpon>UrlSets.xaml</DependentUpon>
     </Compile>
+    <None Include="packages.config" />
     <None Include="pbc.bat" />
     <EmbeddedResource Include="Launcher\Game.xsd">
       <SubType>

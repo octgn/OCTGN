@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn", "Octgn.csproj", "{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Server", "..\Octgn.Server\Octgn.Server.csproj", "{6DD203AF-5003-4AF3-A982-67F10B704D4A}"
@@ -16,6 +16,32 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Releaser", "..\Octgn.Releaser\Octgn.Releaser.csproj", "{6EA9508A-62D4-4BDA-81A2-802CCA1BF900}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://octgn.tfspreview.com/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\Octgn.Data\\Octgn.Data.csproj
+		SccProjectName1 = ../Octgn.Data
+		SccLocalPath1 = ..\\Octgn.Data
+		SccProjectUniqueName2 = ..\\Octgn.LobbyServer\\Skylabs.LobbyServer.csproj
+		SccProjectName2 = ../Octgn.LobbyServer
+		SccLocalPath2 = ..\\Octgn.LobbyServer
+		SccProjectUniqueName3 = ..\\Octgn.Releaser\\Octgn.Releaser.csproj
+		SccProjectName3 = ../Octgn.Releaser
+		SccLocalPath3 = ..\\Octgn.Releaser
+		SccProjectUniqueName4 = ..\\Octgn.Server\\Octgn.Server.csproj
+		SccProjectName4 = ../Octgn.Server
+		SccLocalPath4 = ..\\Octgn.Server
+		SccProjectUniqueName5 = ..\\Octgn.StandAloneServer\\Octgn.StandAloneServer.csproj
+		SccProjectName5 = ../Octgn.StandAloneServer
+		SccLocalPath5 = ..\\Octgn.StandAloneServer
+		SccProjectUniqueName6 = Octgn.csproj
+		SccLocalPath6 = .
+		SccProjectUniqueName7 = ..\\Skylabs.Lobby\\Skylabs.Lobby.csproj
+		SccProjectName7 = ../Skylabs.Lobby
+		SccLocalPath7 = ..\\Skylabs.Lobby
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -49,6 +75,7 @@ Global
 		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Release|Mixed Platforms.Build.0 = Release|x86
 		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Release|x86.ActiveCfg = Release|x86
 		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Release|x86.Build.0 = Release|x86
+		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Release|x86.Deploy.0 = Release|x86
 		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.ReleaseMode with Debug|Any CPU.ActiveCfg = ReleaseMode with Debug|x86
 		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.ReleaseMode with Debug|Any CPU.Build.0 = ReleaseMode with Debug|x86
 		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.ReleaseMode with Debug|Mixed Platforms.ActiveCfg = ReleaseMode with Debug|x86
@@ -140,8 +167,8 @@ Global
 		{131805CF-7971-4813-848B-CE156D4F6827}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{131805CF-7971-4813-848B-CE156D4F6827}.Release|Any CPU.Build.0 = Release|Any CPU
 		{131805CF-7971-4813-848B-CE156D4F6827}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{131805CF-7971-4813-848B-CE156D4F6827}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{131805CF-7971-4813-848B-CE156D4F6827}.Release|x86.ActiveCfg = Release|Any CPU
+		{131805CF-7971-4813-848B-CE156D4F6827}.Release|x86.ActiveCfg = Release|x86
+		{131805CF-7971-4813-848B-CE156D4F6827}.Release|x86.Build.0 = Release|x86
 		{131805CF-7971-4813-848B-CE156D4F6827}.ReleaseMode with Debug|Any CPU.ActiveCfg = ReleaseMode with Debug|Any CPU
 		{131805CF-7971-4813-848B-CE156D4F6827}.ReleaseMode with Debug|Any CPU.Build.0 = ReleaseMode with Debug|Any CPU
 		{131805CF-7971-4813-848B-CE156D4F6827}.ReleaseMode with Debug|Mixed Platforms.ActiveCfg = ReleaseMode with Debug|Any CPU
