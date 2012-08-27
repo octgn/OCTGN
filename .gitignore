@@ -62,7 +62,6 @@ octgnFX/Webcontent/Bin
 *.vsp
 *.psess
 
-*.*~
 *.typemock
 *.ncrunchsolution
 octgn/_UpgradeReport_Files/*
@@ -71,4 +70,4 @@ octgn/UpgradeLog*.XML
 octgn/monotorrent/
 octgn/PeerSwarm/
 $tf*
-octgnFX\Octgn\_TeamCity.OCTGN
+/octgnFX/Octgn/_TeamCity.OCTGN
