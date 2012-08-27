@@ -71,3 +71,4 @@ octgn/UpgradeLog*.XML
 octgn/monotorrent/
 octgn/PeerSwarm/
 $tf*
+octgnFX\Octgn\_TeamCity.OCTGN

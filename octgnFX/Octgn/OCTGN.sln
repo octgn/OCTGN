@@ -22,33 +22,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BAADDC
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ROOT", "ROOT", "{6A113233-2D75-4926-A7C4-0F89C020BA81}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\.gitattributes = ..\..\.gitattributes
+		..\..\.gitignore = ..\..\.gitignore
+		..\..\Autoupdating XMLs.md = ..\..\Autoupdating XMLs.md
+		..\..\CHANGELOG.md = ..\..\CHANGELOG.md
+		..\..\CONTENT.md = ..\..\CONTENT.md
+		..\..\currentversion.xml = ..\..\currentversion.xml
+		..\..\HACK.md = ..\..\HACK.md
+		..\..\LICENSE.md = ..\..\LICENSE.md
+		..\..\README.md = ..\..\README.md
+		..\..\ss.txt = ..\..\ss.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Test", "..\Octgn.Test\Octgn.Test\Octgn.Test.csproj", "{2E28A69C-7169-4880-ADCC-29322F6D5E9E}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://octgn.tfspreview.com/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ..\\Octgn.Data\\Octgn.Data.csproj
-		SccProjectName1 = ../Octgn.Data
-		SccLocalPath1 = ..\\Octgn.Data
-		SccProjectUniqueName2 = ..\\Octgn.LobbyServer\\Skylabs.LobbyServer.csproj
-		SccProjectName2 = ../Octgn.LobbyServer
-		SccLocalPath2 = ..\\Octgn.LobbyServer
-		SccProjectUniqueName3 = ..\\Octgn.Releaser\\Octgn.Releaser.csproj
-		SccProjectName3 = ../Octgn.Releaser
-		SccLocalPath3 = ..\\Octgn.Releaser
-		SccProjectUniqueName4 = ..\\Octgn.Server\\Octgn.Server.csproj
-		SccProjectName4 = ../Octgn.Server
-		SccLocalPath4 = ..\\Octgn.Server
-		SccProjectUniqueName5 = ..\\Octgn.StandAloneServer\\Octgn.StandAloneServer.csproj
-		SccProjectName5 = ../Octgn.StandAloneServer
-		SccLocalPath5 = ..\\Octgn.StandAloneServer
-		SccProjectUniqueName6 = Octgn.csproj
-		SccLocalPath6 = .
-		SccProjectUniqueName7 = ..\\Skylabs.Lobby\\Skylabs.Lobby.csproj
-		SccProjectName7 = ../Skylabs.Lobby
-		SccLocalPath7 = ..\\Skylabs.Lobby
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -225,6 +215,26 @@ Global
 		{6EA9508A-62D4-4BDA-81A2-802CCA1BF900}.ReleaseMode with Debug|Mixed Platforms.Build.0 = Release|x86
 		{6EA9508A-62D4-4BDA-81A2-802CCA1BF900}.ReleaseMode with Debug|x86.ActiveCfg = Debug|x86
 		{6EA9508A-62D4-4BDA-81A2-802CCA1BF900}.ReleaseMode with Debug|x86.Build.0 = Debug|x86
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release w Debug vs TestServer|Any CPU.ActiveCfg = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release w Debug vs TestServer|Any CPU.Build.0 = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release w Debug vs TestServer|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release w Debug vs TestServer|Mixed Platforms.Build.0 = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release w Debug vs TestServer|x86.ActiveCfg = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|x86.ActiveCfg = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.ReleaseMode with Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.ReleaseMode with Debug|Any CPU.Build.0 = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.ReleaseMode with Debug|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.ReleaseMode with Debug|Mixed Platforms.Build.0 = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.ReleaseMode with Debug|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
