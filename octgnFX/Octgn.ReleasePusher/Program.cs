@@ -58,8 +58,8 @@ namespace Octgn.ReleasePusher
             UpdateStatus("New Installer Path: {0}", newInstallPath);
             UpdateStatus("New Update Path   : {0}", newUpdatePath);
 
-            File.Move(installFilePath,newInstallPath);
-            File.Move(updateZipPath,newUpdatePath);
+            File.Copy(installFilePath,newInstallPath);
+            File.Copy(updateZipPath,newUpdatePath);
 
             CreateUpdateXmlFile(ver,newInstallPathRelative,newUpdatePathRelative);
 
