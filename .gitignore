@@ -71,7 +71,4 @@ octgn/monotorrent/
 octgn/PeerSwarm/
 $tf*
 /octgnFX/Octgn/_TeamCity.OCTGN
-
-.nuget
-
 _TeamCity.OCTGN
