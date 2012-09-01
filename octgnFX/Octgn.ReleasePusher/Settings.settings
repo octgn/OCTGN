@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Octgn.ReleasePusher" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="OldVersionFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">c:\server\OctgnCurrentVersion.txt</Value>
+    </Setting>
+    <Setting Name="ServerPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\server\OCTGNSite\</Value>
+    </Setting>
+    <Setting Name="CurrentVersionTemplate" Type="System.String" Scope="User">
+      <Value Profile="(Default)">&lt;info&gt;
+  &lt;release&gt;
+    &lt;version&gt;{version}&lt;/version&gt;
+    &lt;installPath&gt;{installPath}&lt;/installPath&gt;
+    &lt;updatePath&gt;{updatePath}&lt;/updatePath&gt;
+  &lt;/release&gt;
+&lt;/info&gt;</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -37,10 +37,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "installer", "installer", "{
 		installer\DotNetVer.nsh = installer\DotNetVer.nsh
 		installer\GetDotNet.nsh = installer\GetDotNet.nsh
 		installer\GetVC.nsh = installer\GetVC.nsh
-		installer\Install.nsi = installer\Install.nsi
+		installer\InstallTemplate.nsi = installer\InstallTemplate.nsi
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Test", "octgnFX\Octgn.Test\Octgn.Test.csproj", "{2E28A69C-7169-4880-ADCC-29322F6D5E9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.ReleasePusher", "octgnFX\Octgn.ReleasePusher\Octgn.ReleasePusher.csproj", "{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,6 +102,12 @@ Global
 		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|x86.ActiveCfg = Release|Any CPU
+		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
