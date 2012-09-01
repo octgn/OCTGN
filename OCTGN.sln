@@ -40,7 +40,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "installer", "installer", "{
 		installer\Install.nsi = installer\Install.nsi
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Test", "..\OCTGN2\octgnFX\Octgn.Test\Octgn.Test.csproj", "{2E28A69C-7169-4880-ADCC-29322F6D5E9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Test", "octgnFX\Octgn.Test\Octgn.Test.csproj", "{2E28A69C-7169-4880-ADCC-29322F6D5E9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
