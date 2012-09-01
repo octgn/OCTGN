@@ -6,7 +6,6 @@
 *.ilk
 *.lib
 *.log
-*.exe
 *.ncb
 *.opensdf
 *.pch
