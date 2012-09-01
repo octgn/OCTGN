@@ -1,0 +1,107 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn", "octgnFX\Octgn\Octgn.csproj", "{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Data", "octgnFX\Octgn.Data\Octgn.Data.csproj", "{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Server", "octgnFX\Octgn.Server\Octgn.Server.csproj", "{6DD203AF-5003-4AF3-A982-67F10B704D4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.Lobby", "octgnFX\Skylabs.Lobby\Skylabs.Lobby.csproj", "{131805CF-7971-4813-848B-CE156D4F6827}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.StandAloneServer", "octgnFX\Octgn.StandAloneServer\Octgn.StandAloneServer.csproj", "{160EEC3E-F158-4F2C-9F75-69DBA056013F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylabs.LobbyServer", "octgnFX\Octgn.LobbyServer\Skylabs.LobbyServer.csproj", "{CBEA967B-A33D-49AF-A61C-A84137874430}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Root", "Root", "{0C909858-EC18-44E5-A07D-53D0AEEB22CD}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Autoupdating XMLs.md = Autoupdating XMLs.md
+		CHANGELOG.md = CHANGELOG.md
+		CONTENT.md = CONTENT.md
+		currentversion.xml = currentversion.xml
+		HACK.md = HACK.md
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+		ss.txt = ss.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{FC40019F-21A4-4208-B875-AC325657E949}"
+	ProjectSection(SolutionItems) = preProject
+		build\build.xml.config = build\build.xml.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "installer", "installer", "{8FE32867-B27F-42E7-B101-EB092A63ECB2}"
+	ProjectSection(SolutionItems) = preProject
+		installer\DotNetVer.nsh = installer\DotNetVer.nsh
+		installer\GetDotNet.nsh = installer\GetDotNet.nsh
+		installer\GetVC.nsh = installer\GetVC.nsh
+		installer\Install.nsi = installer\Install.nsi
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Test", "..\OCTGN2\octgnFX\Octgn.Test\Octgn.Test.csproj", "{2E28A69C-7169-4880-ADCC-29322F6D5E9E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Debug|x86.ActiveCfg = Debug|x86
+		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Debug|x86.Build.0 = Debug|x86
+		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Release|x86.ActiveCfg = Release|x86
+		{C6ADE75C-5BC2-47DB-9240-B99C66431EF3}.Release|x86.Build.0 = Release|x86
+		{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}.Debug|x86.ActiveCfg = Debug|x86
+		{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}.Debug|x86.Build.0 = Debug|x86
+		{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}.Release|x86.ActiveCfg = Release|x86
+		{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}.Release|x86.Build.0 = Release|x86
+		{6DD203AF-5003-4AF3-A982-67F10B704D4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DD203AF-5003-4AF3-A982-67F10B704D4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DD203AF-5003-4AF3-A982-67F10B704D4A}.Debug|x86.ActiveCfg = Debug|x86
+		{6DD203AF-5003-4AF3-A982-67F10B704D4A}.Debug|x86.Build.0 = Debug|x86
+		{6DD203AF-5003-4AF3-A982-67F10B704D4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DD203AF-5003-4AF3-A982-67F10B704D4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DD203AF-5003-4AF3-A982-67F10B704D4A}.Release|x86.ActiveCfg = Release|x86
+		{6DD203AF-5003-4AF3-A982-67F10B704D4A}.Release|x86.Build.0 = Release|x86
+		{131805CF-7971-4813-848B-CE156D4F6827}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{131805CF-7971-4813-848B-CE156D4F6827}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{131805CF-7971-4813-848B-CE156D4F6827}.Debug|x86.ActiveCfg = Debug|x86
+		{131805CF-7971-4813-848B-CE156D4F6827}.Debug|x86.Build.0 = Debug|x86
+		{131805CF-7971-4813-848B-CE156D4F6827}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{131805CF-7971-4813-848B-CE156D4F6827}.Release|Any CPU.Build.0 = Release|Any CPU
+		{131805CF-7971-4813-848B-CE156D4F6827}.Release|x86.ActiveCfg = Release|x86
+		{131805CF-7971-4813-848B-CE156D4F6827}.Release|x86.Build.0 = Release|x86
+		{160EEC3E-F158-4F2C-9F75-69DBA056013F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{160EEC3E-F158-4F2C-9F75-69DBA056013F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{160EEC3E-F158-4F2C-9F75-69DBA056013F}.Debug|x86.ActiveCfg = Debug|x86
+		{160EEC3E-F158-4F2C-9F75-69DBA056013F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{160EEC3E-F158-4F2C-9F75-69DBA056013F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{160EEC3E-F158-4F2C-9F75-69DBA056013F}.Release|x86.ActiveCfg = Release|x86
+		{CBEA967B-A33D-49AF-A61C-A84137874430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBEA967B-A33D-49AF-A61C-A84137874430}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBEA967B-A33D-49AF-A61C-A84137874430}.Debug|x86.ActiveCfg = Debug|x86
+		{CBEA967B-A33D-49AF-A61C-A84137874430}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBEA967B-A33D-49AF-A61C-A84137874430}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBEA967B-A33D-49AF-A61C-A84137874430}.Release|x86.ActiveCfg = Release|x86
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E28A69C-7169-4880-ADCC-29322F6D5E9E}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
