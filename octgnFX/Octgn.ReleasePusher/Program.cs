@@ -58,12 +58,17 @@ namespace Octgn.ReleasePusher
             UpdateStatus("New Installer Path: {0}", newInstallPath);
             UpdateStatus("New Update Path   : {0}", newUpdatePath);
 
+            if(File.Exists(newInstallPath))
+                File.Delete(newInstallPath);
             File.Copy(installFilePath,newInstallPath);
+            if(File.Exists(newUpdatePath))
+                File.Delete(newUpdatePath);
             File.Copy(updateZipPath,newUpdatePath);
 
             CreateUpdateXmlFile(ver,newInstallPathRelative,newUpdatePathRelative);
 
             PauseForKey();
+            UpdateStatus("Done.");
 
         }
         private static void PauseForKey()
@@ -75,6 +80,7 @@ namespace Octgn.ReleasePusher
         private static void CreateUpdateXmlFile(Version ver, string installPathRelative, string updatePathRelative)
         {
             var currentVersionPath = Path.Combine(Settings.Default.ServerPath, "currentversion.txt");
+            UpdateStatus("Creating Updater XML File at {0}", currentVersionPath);
             if(File.Exists(currentVersionPath))
                 File.Delete(currentVersionPath);
             var template = Settings.Default.CurrentVersionTemplate;
@@ -83,6 +89,7 @@ namespace Octgn.ReleasePusher
                 .Replace("{installPath}", installPathRelative)
                 .Replace("{updatePath}", updatePathRelative);
             File.WriteAllText(currentVersionPath,template);
+            UpdateStatus("Done creating Updater XML File");
 
         }
         private static Version GetVersion()
