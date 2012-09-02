@@ -39,12 +39,13 @@ namespace Octgn.ReleasePusher
                 return;
             }
 
-            UpdateStatus("Newer version detected. {0} - {1}",ver,oldVer);
+            var bnum = Environment.GetEnvironmentVariable("CCNetNumericLabel");
+            UpdateStatus("Newer version detected. {0} - {1}", ver, oldVer);
             var installFilePath = @"c:\server\OCTGN\installer\OCTGN-Setup-" + ver.ToString() + ".exe";
-            var updateZipPath = installFilePath;
+            var updateZipPath = @"C:\server\OCTGNBuilds\" + bnum + @"\update.zip";
 
-            UpdateStatus("Installer Path: {0}",installFilePath);
-            UpdateStatus("Update Path   : {0}",updateZipPath);
+            UpdateStatus("Installer Path: {0}", installFilePath);
+            UpdateStatus("Update Path   : {0}", updateZipPath);
 
             var installFile = new FileInfo(installFilePath);
             var updateFile = new FileInfo(updateZipPath);
@@ -58,14 +59,14 @@ namespace Octgn.ReleasePusher
             UpdateStatus("New Installer Path: {0}", newInstallPath);
             UpdateStatus("New Update Path   : {0}", newUpdatePath);
 
-            if(File.Exists(newInstallPath))
+            if (File.Exists(newInstallPath))
                 File.Delete(newInstallPath);
-            File.Copy(installFilePath,newInstallPath);
-            if(File.Exists(newUpdatePath))
+            File.Copy(installFilePath, newInstallPath);
+            if (File.Exists(newUpdatePath))
                 File.Delete(newUpdatePath);
-            File.Copy(updateZipPath,newUpdatePath);
+            File.Copy(updateZipPath, newUpdatePath);
 
-            CreateUpdateXmlFile(ver,newInstallPathRelative,newUpdatePathRelative);
+            CreateUpdateXmlFile(ver, newInstallPathRelative, newUpdatePathRelative);
 
             PauseForKey();
             UpdateStatus("Done.");
