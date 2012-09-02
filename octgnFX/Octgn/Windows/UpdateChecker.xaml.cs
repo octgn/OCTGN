@@ -179,8 +179,6 @@ namespace Octgn.Windows
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
-                //TODO KELLY E - CHANGE THIS SHIT BEFORE RELEASING
-                local = Version.Parse("3.0.1.14");
                 var online = new Version(update[0]);
                 _isNotUpToDate = online > local;
                 _updateURL = update[1];
