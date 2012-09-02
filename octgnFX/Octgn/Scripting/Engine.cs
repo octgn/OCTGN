@@ -302,6 +302,7 @@ namespace Octgn.Scripting
             permissions.AddPermission(
                 new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery,
                                      AppDomain.CurrentDomain.BaseDirectory));
+            permissions.AddPermission(new ReflectionPermission(PermissionState.Unrestricted));
             var appinfo = new AppDomainSetup {ApplicationBase = AppDomain.CurrentDomain.BaseDirectory};
 
             return AppDomain.CreateDomain("Scripting sandbox", null, appinfo, permissions);
