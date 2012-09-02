@@ -2,6 +2,7 @@
 + If multiple instances of OCTGN are running, prompts user if they want to kill them
 + If you log in, and another instance of OCTGN is logged in anywhere, it gets booted properly and doesn't create a never ending binding loop
 + Updates OCTGN links on the Desktop, Start Menu, Quick Launch, Pinned Task Bar, and Pinned Start Menu to point to the current install location on startup.
++ Unbroke offline games
 #3.0.1.18
 + Changed the updater
 + Fixed some url's
