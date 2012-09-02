@@ -25,14 +25,15 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "{{version}}"
 InstallDir $DOCUMENTS\OCTGN\OCTGN
 
 ; Create registry key for installation directory
-InstallDirRegKey HKCU "Software\OCTGN" "Install_Dir"
+; CHANGE THIS BACK AFTER THIS RELEASE
+;InstallDirRegKey HKCU "Software\OCTGN" "Install_Dir"
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
 
 ;Pages
 Page components
-Page directory
+;Page directory
 Page instfiles
 
 UninstPage uninstConfirm
@@ -53,7 +54,7 @@ SectionEnd
 Section "Main"
   SectionIn RO
   ; set the installation directory as the destination for the following actions
-  ;SetOutPath $INSTDIR
+  SetOutPath $INSTDIR
  
   ; Write the installation path into the registry
   WriteRegStr HKCU "SOFTWARE\OCTGN" "Install_Dir" "$INSTDIR"
