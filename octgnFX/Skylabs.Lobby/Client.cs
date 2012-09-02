@@ -9,6 +9,7 @@ using agsXMPP.Factory;
 //using agsXMPP.Net;
 using agsXMPP.Xml.Dom;
 using agsXMPP.net;
+using agsXMPP.protocol;
 using agsXMPP.protocol.client;
 using agsXMPP.protocol.iq.agent;
 using agsXMPP.protocol.iq.register;
@@ -129,6 +130,10 @@ namespace Skylabs.Lobby
 
         private void XmppOnOnStreamError(object sender, Element element)
         {
+            var st = element as agsXMPP.protocol.Error;
+            if(st != null && st.Condition == StreamErrorCondition.Conflict)
+                DisconnectedBecauseConnectionReplaced = true;
+            
             var textTag = element.GetTag("text");
             if (!String.IsNullOrWhiteSpace(textTag) && textTag.Trim().ToLower() == "replaced by new connection") DisconnectedBecauseConnectionReplaced = true;
             Trace.WriteLine("[Xmpp]StreamError: " + element);

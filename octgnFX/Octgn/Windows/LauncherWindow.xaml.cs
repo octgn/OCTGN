@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using Octgn.Data;
+using Octgn.Launcher;
 
 namespace Octgn.Windows
 {
@@ -147,6 +148,18 @@ namespace Octgn.Windows
             Program.DebugWindow.Visibility = Program.DebugWindow.Visibility == Visibility.Visible
                                                  ? Visibility.Hidden
                                                  : Visibility.Visible;
+        }
+
+        private void NavigationWindow_Loaded_1(object sender, RoutedEventArgs e)
+        {
+            //this.Source = new Uri();
+            this.Navigate(new Login());
+        }
+
+        private void NavigationWindow_LoadCompleted_1(object sender, NavigationEventArgs e)
+        {
+            //if(this.Content.GetType() != typeof(Login))
+            //    this.Navigate(new Login());
         }
     }
 }

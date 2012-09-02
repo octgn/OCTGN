@@ -111,7 +111,7 @@ namespace Octgn.Windows
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             if(!Program.LobbyClient.DisconnectedBecauseConnectionReplaced)
             {
-                Dispatcher.Invoke(new Action(() =>
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
 
                     var win = ReconnectingWindow.Reconnect();
@@ -125,7 +125,7 @@ namespace Octgn.Windows
             }
             else
             {
-                Dispatcher.Invoke(new Action(() =>
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
 
                     CloseDownShop(false);
@@ -137,7 +137,7 @@ namespace Octgn.Windows
 
         private void LobbyClientOnOnDataRecieved(object sender, Skylabs.Lobby.Client.DataRecType type, object data)
         {
-            Dispatcher.Invoke(new Action(()=>
+            Dispatcher.BeginInvoke(new Action(()=>
             {
                 switch(type)
                 {

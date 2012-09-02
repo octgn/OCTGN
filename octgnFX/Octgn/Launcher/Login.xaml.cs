@@ -85,7 +85,7 @@ namespace Octgn.Launcher
                                && tweet.ScreenName == "octgn_official"
                                && tweet.Count == 5
                          select tweet).ToList();
-                    Dispatcher.Invoke(new Action(() => ShowTwitterStuff(tweets)));
+                    Dispatcher.BeginInvoke(new Action(() => ShowTwitterStuff(tweets)));
                 }
                 catch (TwitterQueryException)
                 {
@@ -213,13 +213,10 @@ namespace Octgn.Launcher
                 switch (results)
                 {
                     case Skylabs.Lobby.Client.LoginResults.ConnectionError:
-                        Dispatcher.Invoke(new Action(() =>
-                                                         {
-                                                            UpdateLoginStatus("");
-                                                            _isLoggingIn = false;
-                                                            DoErrorMessage("Could not connect to the server.");
-                                                            StopSpinning();    
-                                                         }));
+                        UpdateLoginStatus("");
+                        _isLoggingIn = false;
+                        DoErrorMessage("Could not connect to the server.");
+                        StopSpinning();    
 
                         break;
                     case Skylabs.Lobby.Client.LoginResults.Success:
