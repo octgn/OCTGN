@@ -34,7 +34,7 @@ namespace Octgn.Updater
         {
 
 
-            var postURI = new Uri("http://23.21.146.193/errorreport.php");
+            var postURI = new Uri("http://server.octgn.info/errorreport.php");
             string postDataTemplate = @"name=updater&assembly=%%assembly%%&version=%%version%%&error=%%error%%";
 
             string errorData = textBox1.Text;

@@ -174,7 +174,7 @@ namespace Octgn.Windows
             UpdateStatus("Checking for updates...");
             try
             {
-                string[] update = ReadUpdateXml("http://23.21.146.193/currentversion.txt");
+                string[] update = ReadUpdateXml("http://server.octgn.info/currentversion.txt");
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -405,11 +405,11 @@ namespace Octgn.Windows
                                     break;
                                 case "updatepath":
                                     if (reader.Read())
-                                        values[1] = "http://23.21.146.193/" + reader.Value;
+                                        values[1] = "http://server.octgn.info/" + reader.Value;
                                     break;
                                 case "installpath":
                                     if (reader.Read())
-                                        values[2] = "http://23.21.146.193/" + reader.Value;
+                                        values[2] = "http://server.octgn.info/" + reader.Value;
                                     break;
 
                             }
