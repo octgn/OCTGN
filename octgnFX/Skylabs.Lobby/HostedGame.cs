@@ -30,7 +30,7 @@ namespace Skylabs.Lobby
             TimeStarted = new DateTime(0);
             LocalGame = localGame;
             StandAloneApp = new Process();
-            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe";
+            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.StandAloneServer.exe";
             StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
                                                 Port.ToString(CultureInfo.InvariantCulture);
 #if(DEBUG || TestServer)
@@ -38,7 +38,7 @@ namespace Skylabs.Lobby
             if(!LocalGame)
             {
             StandAloneApp.StartInfo.FileName = "mono";
-            StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "/Octgn.StandAloneServer.exe -g=" +
+            StandAloneApp.StartInfo.Arguments = Directory.GetCurrentDirectory() + "\\Octgn.StandAloneServer.exe -g=" +
                                                 GameGuid + " -v=" + GameVersion + " -p=" +
                                                 Port.ToString(CultureInfo.InvariantCulture);
             }
