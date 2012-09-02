@@ -87,8 +87,8 @@ namespace Octgn.ReleasePusher
             var template = Settings.Default.CurrentVersionTemplate;
             template = template
                 .Replace("{version}", ver.ToString())
-                .Replace("{installPath}", installPathRelative)
-                .Replace("{updatePath}", updatePathRelative);
+                .Replace("{installPath}", installPathRelative.Replace("\\","/"))
+                .Replace("{updatePath}", updatePathRelative.Replace("\\", "/"));
             File.WriteAllText(currentVersionPath,template);
             UpdateStatus("Done creating Updater XML File");
 
