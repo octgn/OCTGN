@@ -174,7 +174,7 @@ namespace Octgn.Windows
             UpdateStatus("Checking for updates...");
             try
             {
-                string[] update = ReadUpdateXml("http://server.octgn.info/currentversion.txt");
+                string[] update = ReadUpdateXml("http://www.octgn.info/currentversion.txt");
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -288,7 +288,7 @@ namespace Octgn.Windows
 												 {
 													 progressBar1.Value = args.ProgressPercentage;
 												 };
-												 c.DownloadFileAsync(new Uri(_updateURL), Path.Combine(Prefs.DataDirectory, "update.zip"));
+												 c.DownloadFileAsync(new Uri(_updateURL), Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"OCTGN","update.zip"));
 											 }
 											 else Close();
             }));
@@ -405,11 +405,11 @@ namespace Octgn.Windows
                                     break;
                                 case "updatepath":
                                     if (reader.Read())
-                                        values[1] = "http://server.octgn.info/" + reader.Value;
+                                        values[1] = "http://www.octgn.info/" + reader.Value;
                                     break;
                                 case "installpath":
                                     if (reader.Read())
-                                        values[2] = "http://server.octgn.info/" + reader.Value;
+                                        values[2] = "http://www.octgn.info/" + reader.Value;
                                     break;
 
                             }
