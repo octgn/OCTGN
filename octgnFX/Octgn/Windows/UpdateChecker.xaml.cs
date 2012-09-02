@@ -14,6 +14,7 @@ using Octgn.Data;
 using Octgn.Definitions;
 using Octgn.Scripting;
 using Skylabs.Lobby.Threading;
+using vbAccelerator.Components.Shell;
 
 namespace Octgn.Windows
 {
@@ -37,7 +38,8 @@ namespace Octgn.Windows
             if (Program.GamesRepository == null)
                 Program.GamesRepository = new GamesRepository();
             ThreadPool.QueueUserWorkItem(s =>
-            {
+                                             {
+                UpdateUserShortcuts();
                 if (Prefs.CleanDatabase)
                 {
                     Program.GamesRepository.RemoveAllGames();
@@ -57,6 +59,54 @@ namespace Octgn.Windows
                 UpdateCheckDone();
             });
             lblStatus.Content = "";
+        }
+
+        private void UpdateUserShortcuts()
+        {
+            UpdateStatus("Updating Links...");
+            var newWorkingDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN",
+                                       "OCTGN");
+            var newTarget = Path.Combine(newWorkingDirectory, "octgn.exe");
+
+            var fileList = new List<string>();
+
+            var sPath = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu);
+            if(Directory.Exists(sPath))
+                fileList.AddRange(Directory.GetFiles(sPath, "*.lnk", SearchOption.AllDirectories));
+
+            sPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            if(Directory.Exists(sPath))
+                fileList.AddRange(Directory.GetFiles(sPath, "*.lnk", SearchOption.AllDirectories));
+
+            //I guess doing a recursive search covers all pinned shortcuts in the taskbar and start menu as well in 7 and above
+            sPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"Microsoft","Internet Explorer","Quick Launch");
+            if(Directory.Exists(sPath))
+                fileList.AddRange(Directory.GetFiles(sPath, "*.lnk", SearchOption.AllDirectories));
+
+            //Look through files for an octgn link
+            foreach( var fs in fileList)
+            {
+                try
+                {
+                    using(var s = new ShellLink(fs))
+                    {
+                        var finfo = new FileInfo(s.Target);
+                        if (finfo.Name.ToLowerInvariant() != "octgn.exe")
+                            continue;
+                        if (s.Target.ToLowerInvariant() == newTarget.ToLowerInvariant() &&
+                            s.WorkingDirectory.ToLowerInvariant() == newWorkingDirectory.ToLowerInvariant()) continue;
+                        s.Target = newTarget;
+                        s.WorkingDirectory = newWorkingDirectory;
+                        s.Save();
+                    }
+                }
+                catch (Exception e)
+                {
+#if(DEBUG)
+                    UpdateStatus(String.Format("[UpdateLink Failure] {0}",e.Message));
+#endif
+                }
+            }
         }
 
         private void InstallDefsFromFolders()
