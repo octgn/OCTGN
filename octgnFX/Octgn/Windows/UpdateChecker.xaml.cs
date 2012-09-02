@@ -26,8 +26,9 @@ namespace Octgn.Windows
 
         private bool _realCloseWindow = false;
         private readonly List<string> _errors = new List<string>();
-        private bool _isUpToDate = false;
+        private bool _isNotUpToDate = false;
         private string _downloadURL = "";
+        private string _updateURL = "";
 
         public UpdateChecker()
         {
@@ -53,7 +54,7 @@ namespace Octgn.Windows
                 VerifyAllDefs();
                 CheckForUpdates();
                 CheckForXmlSetUpdates();
-                UpdateCheckDone(_isUpToDate,_downloadURL);
+                UpdateCheckDone();
             });
             lblStatus.Content = "";
         }
@@ -173,18 +174,21 @@ namespace Octgn.Windows
             UpdateStatus("Checking for updates...");
             try
             {
-                string[] update = ReadUpdateXml("https://raw.github.com/kellyelton/Octgn/master/currentversion.xml");
+                string[] update = ReadUpdateXml("http://23.21.146.193/currentversion.txt");
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
+                //TODO KELLY E - CHANGE THIS SHIT BEFORE RELEASING
+                local = Version.Parse("3.0.1.14");
                 var online = new Version(update[0]);
-                _isUpToDate = online > local;
-                _downloadURL = update[1];
+                _isNotUpToDate = online > local;
+                _updateURL = update[1];
+                _downloadURL = update[2];
             }
             catch (Exception)
             {
-                _isUpToDate = false;
+                _isNotUpToDate = false;
                 _downloadURL = "";
             }
         }
@@ -254,12 +258,12 @@ namespace Octgn.Windows
 
         }
 
-        private void UpdateCheckDone(bool result, string url)
+        private void UpdateCheckDone()
         {
             Dispatcher.Invoke(new Action(() =>
                                          {
                                              _realCloseWindow = true;
-											 if (result)
+											 if (_isNotUpToDate)
 											 {
 												 IsClosingDown = true;
 
@@ -272,12 +276,13 @@ namespace Octgn.Windows
 												 {
 													 if (!args.Cancelled)
 													 {
-														 LazyAsync.Invoke(()=> Process.Start(Path.Combine(Prefs.DataDirectory , "OctgnUpdate.exe")));
+
+														 LazyAsync.Invoke(()=> Process.Start(Path.Combine(Directory.GetCurrentDirectory(),"Updater","Octgn.Updater.exe")));
 													 }
 													 else
 													 {
 														 UpdateStatus("Downloading the new version failed. Please manually download.");
-														 Process.Start(url);
+														 Process.Start(_downloadURL);
 													 }
 													 Close();
 												 };
@@ -285,7 +290,7 @@ namespace Octgn.Windows
 												 {
 													 progressBar1.Value = args.ProgressPercentage;
 												 };
-												 c.DownloadFileAsync(new Uri(url), Path.Combine(Prefs.DataDirectory, "OctgnUpdate.exe"));
+												 c.DownloadFileAsync(new Uri(_updateURL), Path.Combine(Prefs.DataDirectory, "update.zip"));
 											 }
 											 else Close();
             }));
@@ -378,7 +383,7 @@ namespace Octgn.Windows
 
         private static string[] ReadUpdateXml(string url)
         {
-            var values = new string[2];
+            var values = new string[3];
             try
             {
                 WebRequest wr = WebRequest.Create(url);
@@ -386,30 +391,33 @@ namespace Octgn.Windows
                 WebResponse resp = wr.GetResponse();
                 Stream rgrp = resp.GetResponseStream();
                 if (rgrp != null)
+                {
                     using (XmlReader reader = XmlReader.Create(rgrp))
                     {
+                        
                         while (reader.Read())
                         {
                             if (!reader.IsStartElement()) continue;
                             if (reader.IsEmptyElement) continue;
-                            switch (reader.Name)
+                            switch (reader.Name.ToLowerInvariant())
                             {
-                                case "Version":
-                                    values = new string[2];
+                                case "version":
                                     if (reader.Read())
-                                    {
                                         values[0] = reader.Value;
-                                    }
                                     break;
-                                case "Location":
+                                case "updatepath":
                                     if (reader.Read())
-                                    {
-                                        values[1] = reader.Value;
-                                    }
+                                        values[1] = "http://23.21.146.193/" + reader.Value;
                                     break;
+                                case "installpath":
+                                    if (reader.Read())
+                                        values[2] = "http://23.21.146.193/" + reader.Value;
+                                    break;
+
                             }
                         }
                     }
+                }
             }
             catch (Exception e)
             {

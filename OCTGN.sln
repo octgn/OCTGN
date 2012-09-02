@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Test", "octgnFX\Octgn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.ReleasePusher", "octgnFX\Octgn.ReleasePusher\Octgn.ReleasePusher.csproj", "{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Updater", "octgnFX\Octgn.Updater\Octgn.Updater.csproj", "{B2331F49-0BB1-4C28-871A-FF66A61BD355}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,12 @@ Global
 		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{941A8A38-E0B2-44F5-9364-8D7A6C302AE3}.Release|x86.ActiveCfg = Release|Any CPU
+		{B2331F49-0BB1-4C28-871A-FF66A61BD355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2331F49-0BB1-4C28-871A-FF66A61BD355}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2331F49-0BB1-4C28-871A-FF66A61BD355}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B2331F49-0BB1-4C28-871A-FF66A61BD355}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2331F49-0BB1-4C28-871A-FF66A61BD355}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2331F49-0BB1-4C28-871A-FF66A61BD355}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

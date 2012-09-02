@@ -8,12 +8,12 @@
  
 ; DownloadDotNET:
   DetailPrint "Beginning download of latest .NET Framework version."
-  inetc::get /TIMEOUT=30000 ${DOTNET_URL} "$TEMP\dotNetFx40_Client_x86_x64.exe" /END
+  inetc::get /TIMEOUT=30000 ${DOTNET_URL} "$TEMP\dotNetFx40_Full_x86_x64.exe" /END
   Pop $0
   DetailPrint "Result: $0"
   StrCmp $0 "OK" InstallDotNet
   StrCmp $0 "cancelled" GiveUpDotNET
-  inetc::get /TIMEOUT=30000 /NOPROXY ${DOTNET_URL} "$TEMP\dotNetFx40_Client_x86_x64.exe" /END
+  inetc::get /TIMEOUT=30000 /NOPROXY ${DOTNET_URL} "$TEMP\dotNetFx40_Full_x86_x64.exe" /END
   Pop $0
   DetailPrint "Result: $0"
   StrCmp $0 "OK" InstallDotNet
@@ -31,9 +31,9 @@
 ;  TryFailedDownload:
   DetailPrint "Pausing installation while downloaded .NET Framework installer runs."
   DetailPrint "Installation could take several minutes to complete."
-  ExecWait '$TEMP\dotNetFx40_Client_x86_x64.exe /q /norestart /c:"install /q"'
+  ExecWait '$TEMP\dotNetFx40_Full_x86_x64.exe /q /norestart /c:"install /q"'
   DetailPrint "Completed .NET Framework install/update. Removing .NET Framework installer."
-  Delete "$TEMP\dotNetFx40_Client_x86_x64.exe"
+  Delete "$TEMP\dotNetFx40_Full_x86_x64.exe"
   DetailPrint ".NET Framework installer removed."
   goto NewDotNet
  

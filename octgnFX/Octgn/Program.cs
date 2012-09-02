@@ -41,7 +41,6 @@ namespace Octgn
         internal static bool IsGameRunning;
         internal static readonly string BasePath;
         internal static readonly string GamesPath;
-
         internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
 #pragma warning disable 67
@@ -61,6 +60,14 @@ namespace Octgn
 
         static Program()
         {
+            foreach(var p in Process.GetProcessesByName("OCTGN"))
+            {
+                if(p.Id != Process.GetCurrentProcess().Id)
+                    p.Kill();
+            }
+
+
+
             LobbyClient = new Skylabs.Lobby.Client();
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
@@ -141,7 +148,6 @@ namespace Octgn
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                if (Debugger.IsAttached) Debugger.Break();
             }
             //Apparently this can be null sometimes?
             if(Application.Current != null)

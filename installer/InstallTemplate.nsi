@@ -22,7 +22,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "{{version}}"
 !addplugindir .
 
 ; Installation directory
-InstallDir $PROGRAMFILES\OCTGN
+InstallDir $DOCUMENTS\OCTGN\OCTGN
 
 ; Create registry key for installation directory
 InstallDirRegKey HKCU "Software\OCTGN" "Install_Dir"
@@ -40,10 +40,10 @@ UninstPage instfiles
 
 ; DotNet Checkup and Install
 Section ""
-  ${If} ${DOTNETVER_4_0} HasDotNetClientProfile 1
-	DetailPrint "Microsoft .NET Framework 4.0 (Client Profile) available."
+  ${If} ${DOTNETVER_4_0} HasDotNetFullProfile 1
+	DetailPrint "Microsoft .NET Framework 4.0 available."
   ${Else}
-	DetailPrint "Microsoft .NET Framework 4.0 (Client Profile) missing."
+	DetailPrint "Microsoft .NET Framework 4.0 missing."
 	!insertmacro GetDotNet
   ${EndIf}
   !insertmacro GetVC++
@@ -53,7 +53,7 @@ SectionEnd
 Section "Main"
   SectionIn RO
   ; set the installation directory as the destination for the following actions
-  SetOutPath $INSTDIR
+  ;SetOutPath $INSTDIR
  
   ; Write the installation path into the registry
   WriteRegStr HKCU "SOFTWARE\OCTGN" "Install_Dir" "$INSTDIR"
@@ -62,7 +62,7 @@ Section "Main"
   WriteUninstaller "$INSTDIR\uninstall.exe"
  
   ; set folder and files to be included in setup
-  File /r ..\octgnFX\OCTGN\bin\x86\Release\*.*
+  File /r ..\octgnFX\OCTGN\bin\Release\*.*
 SectionEnd
 
 Section "Start Menu Shortcuts"
