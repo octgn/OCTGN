@@ -232,7 +232,7 @@ namespace Octgn.Windows
             UpdateStatus("Checking for updates...");
             try
             {
-                string[] update = ReadUpdateXml("http://www.octgn.info/currentversion.txt");
+                string[] update = ReadUpdateXml("http://www.octgn.info/download/currentversion.txt");
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();

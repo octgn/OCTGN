@@ -34,7 +34,7 @@ namespace Octgn.ReleasePusher {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\server\\OCTGNSite\\")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\server\\OCTGNServerFiles\\")]
         public string ServerPath {
             get {
                 return ((string)(this["ServerPath"]));

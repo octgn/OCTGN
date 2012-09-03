@@ -50,8 +50,8 @@ namespace Octgn.ReleasePusher
             var installFile = new FileInfo(installFilePath);
             var updateFile = new FileInfo(updateZipPath);
 
-            var newInstallPath = Path.Combine(Settings.Default.ServerPath, "download", installFile.Name);
-            var newUpdatePath = Path.Combine(Settings.Default.ServerPath, "download", updateFile.Name);
+            var newInstallPath = Path.Combine(Settings.Default.ServerPath, installFile.Name);
+            var newUpdatePath = Path.Combine(Settings.Default.ServerPath, updateFile.Name);
 
             var newInstallPathRelative = Path.Combine("download", installFile.Name);
             var newUpdatePathRelative = Path.Combine("download", updateFile.Name);

@@ -6,7 +6,7 @@
       <Value Profile="(Default)">c:\server\OctgnCurrentVersion.txt</Value>
     </Setting>
     <Setting Name="ServerPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\server\OCTGNSite\</Value>
+      <Value Profile="(Default)">C:\server\OCTGNServerFiles\</Value>
     </Setting>
     <Setting Name="CurrentVersionTemplate" Type="System.String" Scope="User">
       <Value Profile="(Default)">&lt;info&gt;
