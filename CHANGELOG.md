@@ -1,3 +1,5 @@
+#3.0.1.20
++ Fixed multiple instance of octen message box always showing up.
 #3.0.1.19
 + If multiple instances of OCTGN are running, prompts user if they want to kill them
 + If you log in, and another instance of OCTGN is logged in anywhere, it gets booted properly and doesn't create a never ending binding loop

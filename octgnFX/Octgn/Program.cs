@@ -61,7 +61,7 @@ namespace Octgn
         static Program()
         {
             var pList = Process.GetProcessesByName("OCTGN");
-            if(pList.Length > 0)
+            if(pList.Length > 0 && pList.Any(x=>x.Id != Process.GetCurrentProcess().Id))
             {
                 var res = MessageBox.Show("Another instance of OCTGN is current running. Would you like to close it?","OCTGN",MessageBoxButton.YesNo,MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes)
