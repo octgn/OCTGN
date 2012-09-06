@@ -1,3 +1,5 @@
+#3.0.1.21
++ Disabled sandboxing of python scripts.
 #3.0.1.20
 + Fixed multiple instance of OCTGN message box always showing up.
 + Removed OCTGN Shortcut updater, as it caused crashes issues on weird machines.

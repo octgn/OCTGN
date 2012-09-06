@@ -134,6 +134,7 @@ class Card(object):
   def moveToBottom(self, pile):
     self.moveTo(pile, len(pile))
   def moveToTable(self, x, y, forceFaceDown = False):
+    #notify("{} {}".format(x,y))
     _api.CardMoveToTable(self._id, x, y, forceFaceDown)
   def sendToBack(self):
     _api.CardSetIndex(self._id, 0, True)

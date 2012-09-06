@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Data.Odbc;
+using System.Data.OleDb;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
 using System.Security;
 using System.Security.Permissions;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Xaml.Permissions;
 using IronPython.Hosting;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
@@ -292,10 +301,13 @@ namespace Octgn.Scripting
         private static AppDomain CreateSandbox(bool forTesting)
         {
             var permissions = new PermissionSet(PermissionState.None);
-            if (forTesting)
+            //if (forTesting)
                 permissions = new PermissionSet(PermissionState.Unrestricted);
+            
+            //permissions.AddPermission(new Permission)
+
             permissions.AddPermission(
-                new SecurityPermission(SecurityPermissionFlag.SerializationFormatter | SecurityPermissionFlag.Execution));
+                new SecurityPermission(SecurityPermissionFlag.AllFlags));
             permissions.AddPermission(new UIPermission(UIPermissionWindow.AllWindows));
             permissions.AddPermission(
                 new TypeDescriptorPermission(TypeDescriptorPermissionFlags.RestrictedRegistrationAccess));
@@ -304,7 +316,6 @@ namespace Octgn.Scripting
                                      AppDomain.CurrentDomain.BaseDirectory));
             permissions.AddPermission(new ReflectionPermission(PermissionState.Unrestricted));
             var appinfo = new AppDomainSetup {ApplicationBase = AppDomain.CurrentDomain.BaseDirectory};
-
             return AppDomain.CreateDomain("Scripting sandbox", null, appinfo, permissions);
         }
 
