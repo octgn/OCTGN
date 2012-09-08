@@ -23,30 +23,11 @@ namespace Octgn.Server
 {
 	internal sealed class Broadcaster : Octgn.Server.IClientCalls
 	{
-		private byte[] xmlData = new byte[1024], binData;
-		private int xmlLength;
+		private byte[] binData = new byte[1024];
 		private Dictionary<TcpClient, Handler.PlayerInfo> to;
-		private XmlFormatter xml;
 		private BinFormatter bin;
 		private Handler handler;
 
-		private sealed class XmlFormatter : BaseXmlStub
-		{
-			private Broadcaster bcast;
-			
-			internal XmlFormatter(Broadcaster bcast, Handler handler) : base(handler)
-			{ this.bcast = bcast; }
-			
-			protected override void Send(string xml)
-			{
-				bcast.xmlLength = Encoding.UTF8.GetByteCount(xml) + 1;
-				if (bcast.xmlLength > bcast.xmlData.Length) 
-					bcast.xmlData = new byte[bcast.xmlLength];
-				Encoding.UTF8.GetBytes(xml, 0, xml.Length, bcast.xmlData, 0);
-				bcast.xmlData[bcast.xmlLength - 1] = 0;
-			}
-		}
-		
 		private sealed class BinFormatter : BaseBinaryStub
 		{
 			private Broadcaster bcast;
@@ -61,21 +42,12 @@ namespace Octgn.Server
 		internal Broadcaster(Dictionary<TcpClient, Handler.PlayerInfo> to, Handler handler)
 		{ 
 			this.to = to; this.handler = handler;
-			xml = new XmlFormatter(this, handler);
+			bin = new BinFormatter(this, handler);
 		}
 		
 		internal void RefreshTypes()
 		{
-			bool bBin = false, bXml = false;
-			foreach (Handler.PlayerInfo pi in to.Values)
-			{
-				bBin |= pi.binary == true;
-				bXml |= pi.binary == false;
-			}
-			if (bBin && bin == null) bin = new BinFormatter(this, handler);
-			else if (!bBin && bin != null) bin = null;
-			if (bXml && xml == null) xml = new XmlFormatter(this, handler);
-			else if (!bXml && xml != null) xml = null;
+
 		}
 		
 		internal void Send()
@@ -84,10 +56,7 @@ namespace Octgn.Server
 				try
 				{
 					Stream stream = kvp.Key.GetStream();
-					if (kvp.Value.binary)
-						stream.Write(binData, 0, binData.Length);
-					else
-						stream.Write(xmlData, 0, xmlLength);
+					stream.Write(binData, 0, binData.Length);
 					stream.Flush();
 				}
 				catch
@@ -104,10 +73,7 @@ namespace Octgn.Server
 
     public void <#= msgName #>(<#= DeclareParameters(msg) #>)
     {
-      if (xml != null)
-        xml.<#= msgName #>(<#= CallParameters(msg) #>);
-      if (bin != null)
-        bin.<#= msgName #>(<#= CallParameters(msg) #>);
+      bin.<#= msgName #>(<#= CallParameters(msg) #>);
       Send();
     }
 <# } #>

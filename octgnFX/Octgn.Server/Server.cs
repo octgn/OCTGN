@@ -143,7 +143,6 @@ namespace Octgn.Server
             private readonly Thread _pingThread;
             private readonly Server _server; // The containing server
             public bool Disposed; // Indicates if the connection has already been disposed
-            private bool _binary; // Receives Binary data ?
             private DateTime _lastPing = DateTime.Now;
             private byte[] _packet = new byte[512]; // Buffer where received data is processed in packets
             private int _packetPos; // Current position in the packet buffer
@@ -176,13 +175,13 @@ namespace Octgn.Server
             {
                 while (!Disposed)
                 {
-                    lock (this)
-                    {
+                    //lock (this)
+                    //{
                         var ts = new TimeSpan(DateTime.Now.Ticks - _lastPing.Ticks);
                         if (ts.TotalSeconds > 20)
-                            Disconnect();
+                            Disconnect("Ping timeout");
                         if (Disposed) return;
-                    }
+                    //}
                     Thread.Sleep(1000);
                 }
             }
@@ -197,7 +196,7 @@ namespace Octgn.Server
                     // 0 or less mean we were disconnected, or an error happened
                     if (count < 1)
                     {
-                        Disconnected();
+                        Disconnected("End of stream.");
                         return;
                     }
                     // Copy the new data in the packet buffer. Make the buffer larger if necessary.
@@ -210,10 +209,7 @@ namespace Octgn.Server
                     Array.Copy(_buffer, 0, _packet, _packetPos, count);
 
                     // Handle the received data, either as Binary or xml, depending on current status
-                    if (_binary)
-                        BinaryReceive(count);
-                    else
-                        XmlReceive(count);
+                    BinaryReceive(count);
                     // Check if the connection is still alive (might be refused by handler)
                     if (Client.Connected)
                     {
@@ -222,7 +218,7 @@ namespace Octgn.Server
                     }
                     else
                     {
-                        Disconnected();
+                        Disconnected("Receieved message but client not connected.");
                     }
                 }
                 catch (Exception e)
@@ -234,7 +230,7 @@ namespace Octgn.Server
                         Debug.WriteLine(e.Message + Environment.NewLine + e.StackTrace);
                     }
                     // Disconnect the client
-                    Disconnected();
+                    Disconnected(e.Message);
                 }
             }
 
@@ -264,50 +260,19 @@ namespace Octgn.Server
                 }
             }
 
-            // Handle the received data as an xml packet
-            private void XmlReceive(int count)
-            {
-                // Look for a 0 at the end of the packet
-                for (int i = _packetPos; i < _packetPos + count; i++)
-                {
-                    if (_packet[i] != 0) continue;
-                    // Get the message as xml
-                    string xml = Encoding.UTF8.GetString(_packet, 0, i);
-                    // Check if it's a request to switch to Binary mode
-                    if (xml == "<Binary />")
-                    {
-                        _binary = true;
-                    }
-                    else
-                    {
-                        // Lock the handler, because it is not thread-safe
-                        lock (_server._handler) _server._handler.ReceiveMessage(xml, Client, this);
-                    }
-                    // Adjust the packet position and contents
-                    count += _packetPos - i - 1;
-                    _packetPos = 0;
-                    Array.Copy(_packet, i + 1, _packet, 0, count);
-                    // Continue the loop
-                    i = -1;
-                }
-                // Ajust packet position
-                _packetPos += count;
-            }
-
             // Disconnect the client
-            internal void Disconnect()
+            internal void Disconnect(string message = "")
             {
                 // Lock the disposed field
-                lock (this)
-                {
+                    Console.WriteLine("Disconnect called for client : {0}",message);
                     Console.WriteLine(Resource1.Connection_Disconnect_Client_Disconnected_);
                     // Quit if this client is already disposed
                     if (Disposed) return;
                     // Mark as disposed
                     Disposed = true;
-                }
                 // If it is connected, close it
                 if (Client.Connected)
+                {
                     try
                     {
                         Client.GetStream().Close();
@@ -318,22 +283,25 @@ namespace Octgn.Server
                         Debug.WriteLine(e);
                         if (Debugger.IsAttached) Debugger.Break();
                     }
+                }
                 // Remove it from the list
             }
 
             // Notify that the client was unexpectedly disconnected
-            internal void Disconnected()
+            internal void Disconnected(string message ="")
             {
                 // Lock the disposed field
-                lock (this)
-                {
+                //lock (this)
+                //{
                     // Quit if the client is already disposed
                     if (Disposed) return;
                     // Disconnect the client
                     Disconnect();
                     // Notify the event
                     _server._handler.Disconnected(Client);
-                }
+                    Console.WriteLine("Disconnected: {0}",message);
+                //}
+
             }
         }
 

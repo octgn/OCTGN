@@ -23,10 +23,13 @@ namespace Octgn.Launcher
                 this.Width = Double.NaN;
                 this.Height = Double.NaN;
             }
+            
             if (Program.IsHost)
             {
                 descriptionLabel.Text =
                     "The following players have joined your game.\nClick 'Start' when everyone has joined. No one will be able to join once the game has started.";
+                if (isLocal)
+                    descriptionLabel.Text += "\nHosting on port: " + Program.Client.Port;
             }
             else
             {

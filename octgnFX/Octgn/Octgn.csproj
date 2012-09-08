@@ -301,16 +301,6 @@
     <Compile Include="Networking\ClientHandler.cs" />
     <Compile Include="Utils\Crypto.cs" />
     <Compile Include="Networking\Mute.cs" />
-    <Compile Include="Networking\XmlParser.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>XmlParser.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Networking\XmlStubs.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>XmlStubs.tt</DependentUpon>
-    </Compile>
     <Compile Include="Play\Actions\Action.cs" />
     <Compile Include="Play\Actions\Create.cs" />
     <Compile Include="Play\Actions\Move.cs" />
@@ -502,14 +492,6 @@
     <None Include="Networking\IServerCalls.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IServerCalls.cs</LastGenOutput>
-    </None>
-    <None Include="Networking\XmlParser.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>XmlParser.cs</LastGenOutput>
-    </None>
-    <None Include="Networking\XmlStubs.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>XmlStubs.cs</LastGenOutput>
     </None>
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>

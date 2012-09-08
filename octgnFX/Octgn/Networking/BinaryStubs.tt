@@ -22,7 +22,7 @@ using Octgn.Play;
 
 namespace Octgn.Networking
 {
-	public abstract class BaseBinaryStub : Octgn.Server.IServerCalls
+	public abstract class BaseBinaryStub : IServerCalls
 	{			
 		protected abstract void Send(byte[] data);
 <#
@@ -80,8 +80,6 @@ namespace Octgn.Networking
 			}
 			catch 
 			{ 
-				if (Program.Server != null && Program.Server.Disconnected(to))
-					return;
 				Program.Client.Disconnected();
 			}
 		}

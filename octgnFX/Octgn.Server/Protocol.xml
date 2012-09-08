@@ -421,4 +421,21 @@
   <msg name="CancelLimited" client="true">
     <param name="player" type="Player" />
   </msg>
+  <msg name="IsAlternateImage" server="true" client="true">
+    <param name="card" type="Card" />
+    <param name="isAlternateImage" type="bool" />
+  </msg>
+  <msg name="PlayerSetGlobalVariable" server="true" client="true">
+    <param name="player" type="Player"/>
+    <param name="name" type="string"/>
+    <param name="val" type="string"/>
+  </msg>
+  <msg name="SetGlobalVariable" server="true" client="true">
+    <param name="name" type="string"/>
+    <param name="val" type="string"/>
+  </msg>
+  <msg name="SwitchWithAlternate" server="true" client="true">
+    <param name="card" type="Card"/>
+  </msg>
+  <msg name="Ping" server="true" client="true"></msg>
 </protocol>
