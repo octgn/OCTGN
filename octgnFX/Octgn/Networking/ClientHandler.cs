@@ -148,6 +148,7 @@ namespace Octgn.Networking
         {
             Player.LocalPlayer.Id = id;
             Program.Client.StartPings();
+            Player.FireLocalPlayerWelcomed();
         }
 
         public void NewPlayer(byte id, string nick, ulong pkey)

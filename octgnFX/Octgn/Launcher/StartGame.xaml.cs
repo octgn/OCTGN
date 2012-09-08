@@ -15,6 +15,7 @@ namespace Octgn.Launcher
         public StartGame(bool isLocal = false)
         {
             InitializeComponent();
+            Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             _isLocal = isLocal;
             if(!isLocal)
             {
@@ -67,6 +68,14 @@ namespace Octgn.Launcher
                             };
         }
 
+        private void PlayerOnOnLocalPlayerWelcomed()
+        {
+            if (Player.LocalPlayer.Id == 255) return;
+            if(Player.LocalPlayer.Id == 1)
+            {
+                Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible;}));
+            }
+        }
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;

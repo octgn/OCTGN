@@ -18,9 +18,9 @@ namespace Octgn.StandAloneServer
             {
                 args = new[]
                            {
-                               "-p=8088",
+                               "-p=5000",
                                "-g=A6C8D2E8-7CD8-11DD-8F94-E62B56D89593",
-                               "-v=2.0.7"
+                               "-v=3.0.9"
                            };
             }
 
