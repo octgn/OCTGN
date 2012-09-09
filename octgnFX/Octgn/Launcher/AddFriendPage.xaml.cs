@@ -23,12 +23,12 @@ namespace Octgn.Launcher
         private void Button1Click(object sender, RoutedEventArgs e)
         {
             Program.LobbyClient.SendFriendRequest(textBox1.Text);
-            //Program.MainWindow.LobbyTab();
+            Program.MainWindow.LobbyTab();
         }
 
         private void Button2Click(object sender, RoutedEventArgs e)
         {
-            //Program.MainWindow.LobbyTab();
+            Program.MainWindow.LobbyTab();
         }
     }
 }

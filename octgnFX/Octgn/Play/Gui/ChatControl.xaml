@@ -7,7 +7,8 @@
     </Style>
   </UserControl.Resources>
 
-  <Border CornerRadius="2" >
+  <Border CornerRadius="2" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1"
+          Background="{StaticResource ControlFillBrush}">
     <Grid>
       <Grid.RowDefinitions>
         <RowDefinition Height="*" />
@@ -23,7 +24,7 @@
       <TextBox x:Name="input" Grid.Row="2" KeyDown="KeyDownHandler" GotFocus="InputGotFocus" LostFocus="InputLostFocus"
                BorderThickness="1" Background="Transparent" Style="{x:Null}" />
       <TextBlock x:Name="watermark" Grid.Row="2" VerticalAlignment="Center" Margin="4,0,4,0" IsHitTestVisible="False"
-                 Text="Type here to chat"  />
+                 Text="Type here to chat" Style="{StaticResource HintText}" />
     </Grid>
   </Border>
 </UserControl>

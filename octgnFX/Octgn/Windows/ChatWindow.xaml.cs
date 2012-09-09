@@ -316,9 +316,9 @@ namespace Octgn.Windows
             if (Room.IsGroupChat && Room.GroupUser.User.User != "lobby")
             {
                 miLeaveChat.IsEnabled = true;
-                //var cl = Program.MainWindow.frame1.Content as ContactList;
-                //if(cl != null)
-                //    cl.RefreshList();
+                var cl = Program.MainWindow.frame1.Content as ContactList;
+                if(cl != null)
+                    cl.RefreshList();
             }
         }
 
@@ -334,13 +334,13 @@ namespace Octgn.Windows
 
         private void WindowUnloaded(object sender, RoutedEventArgs e)
         {
-            //Program.ChatWindows.RemoveAll(r => r.Id == Id);
-            //var cl = Program.MainWindow.frame1.Content as ContactList;
-            //Room.OnMessageRecieved -= RoomOnOnMessageRecieved;
-            //Room.OnUserListChange -= RoomOnOnUserListChange;
-            //Room.LeaveRoom();
-            //if (cl != null)
-            //    cl.RefreshList();
+            Program.ChatWindows.RemoveAll(r => r.Id == Id);
+            var cl = Program.MainWindow.frame1.Content as ContactList;
+            Room.OnMessageRecieved -= RoomOnOnMessageRecieved;
+            Room.OnUserListChange -= RoomOnOnUserListChange;
+            Room.LeaveRoom();
+            if (cl != null)
+                cl.RefreshList();
         }
 
         private void TextBox1KeyUp(object sender, KeyEventArgs e)

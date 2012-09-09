@@ -82,8 +82,8 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
-            MainWindow = new Main();
-            Application.Current.MainWindow = MainWindow;
+            LauncherWindow = new LauncherWindow();
+            Application.Current.MainWindow = LauncherWindow;
             LobbyClient.Chatting.OnCreateRoom += Chatting_OnCreateRoom;
         }
 

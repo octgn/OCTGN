@@ -50,19 +50,24 @@ namespace Octgn
                 ShutdownMode = oldShutdown;
             }
 
+#if(DEBUG)
+            Program.LauncherWindow.Show();
+            Program.ChatWindows = new List<ChatWindow>();
+#else
             var uc = new UpdateChecker();
             uc.ShowDialog();
             if (!uc.IsClosingDown)
             {
-                Program.MainWindow.Show();
+                Program.LauncherWindow.Show();
                 Program.ChatWindows = new List<ChatWindow>();
             }
             else
             {
                 Current.MainWindow = null;
-                Program.MainWindow.Close();
+                Program.LauncherWindow.Close();
                 Program.Exit();
             }
+#endif
 
             if (e.Args.Any())
             {

@@ -115,7 +115,7 @@ namespace Octgn.Launcher
 
         private void Button2Click(object sender, RoutedEventArgs e)
         {
-            //Program.MainWindow.HostJoinTab();
+            Program.MainWindow.HostJoinTab();
         }
     }
 }

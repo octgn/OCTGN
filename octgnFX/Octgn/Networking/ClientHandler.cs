@@ -46,14 +46,14 @@ namespace Octgn.Networking
 
         public void Start()
         {
-            //if (!Program.Game.IsLocal)
-            //    Program.MainWindow.StartGame();
-            //else
-            //{
-            //    var sg = Program.LauncherWindow.Content as StartGame;
-            //    if(sg != null)
-            //        sg.Start();
-            //}
+            if (!Program.Game.IsLocal)
+                Program.MainWindow.StartGame();
+            else
+            {
+                var sg = Program.LauncherWindow.Content as StartGame;
+                if(sg != null)
+                    sg.Start();
+            }
         }
 
         public void Settings(bool twoSidedTable)

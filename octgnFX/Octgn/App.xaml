@@ -4,21 +4,14 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-          
-        <ResourceDictionary Source="/Resources/Themes/Full/ExpressionDark.xaml"/>
- 
-         <ResourceDictionary Source="/Resources/Themes/Global.xaml" />
+        <ResourceDictionary Source="/Resources/Themes/Global.xaml" />
         <ResourceDictionary Source="/Resources/Themes/NumericUpDown.xaml" />
-        <!--ResourceDictionary Source="/Resources/Themes/ChildWindow.xaml" /-->
+        <ResourceDictionary Source="/Resources/Themes/ChildWindow.xaml" />
         <ResourceDictionary Source="/Resources/Themes/Target.xaml" />
-          <!--ResourceDictionary Source="/Resources/Themes/BlueGlass/Panel.xaml" /-->
-          <ResourceDictionary Source="/Resources/Themes/BlueGlass/Button.xaml" />
-          <ResourceDictionary Source="/Resources/Themes/BlueGlass/Window.xaml" />
-          <!--
-        
-        
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Window.xaml" />
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Panel.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/CommonControls.xaml" />
-        
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/Button.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/ProgressBar.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/ScrollBar.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/NumericUpDown.xaml" />
@@ -26,7 +19,7 @@
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/ChildWindow.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/Menu.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/CardRun.xaml" />
--->
+
         <ResourceDictionary Source="/Resources/PlayResources.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
