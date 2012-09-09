@@ -42,7 +42,7 @@
           </CheckBox>
         </Grid>
 
-        <Border Grid.Row="2" Margin="16,8,8,8" Style="{StaticResource PanelControl}">
+        <Border Grid.Row="2" Margin="16,8,8,8" >
           <ItemsControl x:Name="playersList" ItemsSource="{x:Static play:Player.All}">
             <ItemsControl.Resources>
               <gui:LuminanceConverter x:Key="Luminance" />

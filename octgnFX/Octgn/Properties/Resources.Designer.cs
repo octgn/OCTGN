@@ -90,6 +90,16 @@ namespace Octgn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap closewindow {
+            get {
+                object obj = ResourceManager.GetObject("closewindow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
         internal static System.IO.UnmanagedMemoryStream doorclose {
@@ -133,6 +143,26 @@ namespace Octgn.Properties {
         internal static string Main_Main_Octgn {
             get {
                 return ResourceManager.GetString("Main_Main_Octgn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap minimize {
+            get {
+                object obj = ResourceManager.GetObject("minimize", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap minmax {
+            get {
+                object obj = ResourceManager.GetObject("minmax", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
