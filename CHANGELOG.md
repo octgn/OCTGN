@@ -1,21 +1,27 @@
 #3.0.1.21
 + Disabled sandboxing of python scripts.
+ 
 #3.0.1.20
 + Fixed multiple instance of OCTGN message box always showing up.
 + Removed OCTGN Shortcut updater, as it caused crashes issues on weird machines.
+ 
 #3.0.1.19
 + If multiple instances of OCTGN are running, prompts user if they want to kill them
 + If you log in, and another instance of OCTGN is logged in anywhere, it gets booted properly and doesn't create a never ending binding loop
 + Updates OCTGN links on the Desktop, Start Menu, Quick Launch, Pinned Task Bar, and Pinned Start Menu to point to the current install location on startup.
 + Unbroke offline games
+ 
 #3.0.1.18
 + Changed the updater
 + Fixed some url's
 + Added auto build+release stuff for CruiseControl.net
+ 
 #3.0.1.14
 + Fixed autoupdate bug.
++ 
 #3.0.1.13
 + Fixed bug that caused load to hang
+
 #3.0.1.12
 + Removed the split screen
 + Added help in file menu
