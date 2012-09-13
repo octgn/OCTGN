@@ -180,5 +180,20 @@ namespace Octgn
                 SimpleConfig.WriteValue("MainLeftLoc", value.X.ToString(CultureInfo.InvariantCulture));
             }
         } 
+
+        public static int LoginTimeout
+        {
+            get
+            {
+                var t = SimpleConfig.ReadValue("LoginTimeout", "10000");
+                var to = 10000;
+                int.TryParse(t, out to);
+                return to;
+            }
+            set
+            {
+                SimpleConfig.WriteValue("LoginTimeout",value.ToString(CultureInfo.InvariantCulture));
+            }
+        }
     }
 }

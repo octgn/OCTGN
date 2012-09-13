@@ -67,6 +67,8 @@ namespace Octgn.Data
         public static string ReadValue(string valName, string d)
         {
             string r = ReadValue(valName);
+            if(r == null)
+                WriteValue(valName,d);
             return r ?? d;
         }
 

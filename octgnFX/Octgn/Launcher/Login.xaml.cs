@@ -240,7 +240,7 @@ namespace Octgn.Launcher
                             LoginFinished(Skylabs.Lobby.Client.LoginResult.Failure , DateTime.Now ,
                                           "Please try again.");
                         } ,
-                        null , 10000 , System.Threading.Timeout.Infinite);
+                        null , Prefs.LoginTimeout , System.Threading.Timeout.Infinite);
                 _isLoggingIn = true;
                 StartSpinning();
                 bError.Visibility = Visibility.Hidden;
