@@ -16,26 +16,19 @@ namespace Octgn.Networking
         private readonly IPAddress _address; // Address to connect to
         private readonly byte[] _buffer = new byte[1024]; // Receive buffer
         private readonly Handler _handler; // Message handler
-        private readonly int _port; // Port number to connect to
+        public readonly int Port; // Port number to connect to
         private readonly TcpClient _tcp; // Underlying windows socket        
         private BinaryReceiveDelegate _binHandler; // Receive delegate when in binary mode
         private bool _disposed; // True when the client has been closed
         private byte[] _packet = new byte[1024]; // Packet buffer (gets the receive buffer's content)
         private int _packetPos; // Position in the packet buffer
         private Thread _pingThread;
-        private XmlReceiveDelegate _xmlHandler; // Receive delegate when in xml mode
 
         // Delegates definitions
 
         #region Nested type: BinaryReceiveDelegate
 
         private delegate void BinaryReceiveDelegate(byte[] data);
-
-        #endregion
-
-        #region Nested type: XmlReceiveDelegate
-
-        private delegate void XmlReceiveDelegate(string xmlMsg);
 
         #endregion
 
@@ -47,13 +40,13 @@ namespace Octgn.Networking
         public Client(IPAddress address, int port)
         {
             // Init fields
-            _port = port;
+            Port = port;
             _address = address;
             _tcp = new TcpClient(address.AddressFamily);
             _handler = new Handler();
-            _xmlHandler = _handler.ReceiveMessage;
+            _binHandler = _handler.ReceiveMessage;
             // Create a remote call interface
-            Rpc = new XmlSenderStub(_tcp);
+            Rpc = new BinarySenderStub(_tcp);
         }
 
         public bool IsConnected
@@ -77,7 +70,7 @@ namespace Octgn.Networking
         {
             _packetPos = 0;
             // Connect to the give address
-            _tcp.Connect(_address, _port);
+            _tcp.Connect(_address, Port);
             _disposed = false;
             // Start waiting for incoming data
             _tcp.GetStream().BeginRead(_buffer, 0, 1024, Receive, null);
@@ -106,7 +99,7 @@ namespace Octgn.Networking
         public void BeginConnect(EventHandler<ConnectedEventArgs> callback)
         {
             _packetPos = 0;
-            _tcp.BeginConnect(_address, _port,
+            _tcp.BeginConnect(_address, Port,
                               delegate(IAsyncResult ar)
                                   {
                                       try
@@ -212,10 +205,7 @@ namespace Octgn.Networking
                 }
                 Array.Copy(_buffer, 0, _packet, _packetPos, count);
                 // Handle the message
-                if (_binHandler != null)
-                    BinaryReceive(count);
-                else
-                    XmlReceive(count);
+                BinaryReceive(count);
                 // Wait for new data
                 _tcp.GetStream().BeginRead(_buffer, 0, 1024, Receive, null);
             }
@@ -252,34 +242,6 @@ namespace Octgn.Networking
                 _packetPos -= length;
                 Array.Copy(_packet, length, _packet, 0, _packetPos);
             }
-        }
-
-        // Handle an xml packet
-        private void XmlReceive(int count)
-        {
-            // Look for a 0 at the end.
-            for (int i = _packetPos; i < _packetPos + count; i++)
-            {
-                if (_packet[i] != 0) continue;
-                // Extract the xml
-                string xml = Encoding.UTF8.GetString(_packet, 0, i);
-                // Invoke the handler                                        
-                if (_xmlHandler != null)
-                    Program.Dispatcher.BeginInvoke(DispatcherPriority.Normal, _xmlHandler, xml);
-                // Switch to a binary handler if the message asked for it
-                if (xml == "<Binary />")
-                {
-                    _binHandler = _handler.ReceiveMessage;
-                    _xmlHandler = null;
-                }
-                // Adjust the packet buffer
-                count += _packetPos - i - 1;
-                _packetPos = 0;
-                Array.Copy(_packet, i + 1, _packet, 0, count);
-                i = -1;
-            }
-            // Adjust the position in the packet buffer
-            _packetPos += count;
         }
 
         #endregion

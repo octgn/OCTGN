@@ -33,7 +33,6 @@ namespace Octgn.Server
         private readonly GameSettings _gameSettings = new GameSettings();
         private readonly Dictionary<byte, PlayerInfo> _players = new Dictionary<byte, PlayerInfo>();
         private readonly HashSet<byte> _turnStopPlayers = new HashSet<byte>();
-        private readonly XmlParser _xmlParser; // Parser for xml messages
         private bool _acceptPlayers = true; // When false, no new players are accepted
         private Server.Connection _connection;
         private byte _playerId = 1; // Next free player id
@@ -53,7 +52,7 @@ namespace Octgn.Server
 
         private readonly Guid _gameId;
         private readonly Version _gameVersion;
-        internal int Muted;
+        internal int muted;
 
         // C'tor
         internal Handler(Guid gameId, Version gameVersion)
@@ -63,7 +62,6 @@ namespace Octgn.Server
             _gameVersion = gameVersion;
             // Init fields
             _broadcaster = new Broadcaster(_clients, this);
-            _xmlParser = new XmlParser(this);
             _binParser = new BinaryParser(this);
         }
 
@@ -74,36 +72,18 @@ namespace Octgn.Server
         //            cf.ShowDialog(parent);
         //        }
 
-        // Handle an XML message
-        internal void ReceiveMessage(string msg, TcpClient lSender, Server.Connection con)
-        {
-            // Check if this is the first message received
-            if (!_clients.ContainsKey(lSender))
-            {
-                // A new connection must always start with a <Hello> message.
-                if (!msg.StartsWith("<Hello>", StringComparison.Ordinal))
-                {
-                    // Refuse the connection
-                    lSender.GetStream().Close();
-                    return;
-                }
-            }
-            // Set the lSender field
-            _sender = lSender;
-            _connection = con;
-            // Parse and handle the message
-            _xmlParser.Parse(msg);
-        }
-
         // Handle a Binary message
         internal void ReceiveMessage(byte[] data, TcpClient lSender, Server.Connection con)
         {
             // Check if this is the first message received
             if (!_clients.ContainsKey(lSender))
             {
-                // A new connection must always start with a <Hello> xml message, refuse the connection
-                lSender.GetStream().Close();
-                return;
+                // A new connection must always start with a hello message, refuse the connection
+                if (data[4] != (byte)2)
+                {
+                    lSender.GetStream().Close();
+                    return;
+                }
             }
             // Set the lSender field
             _sender = lSender;
@@ -209,9 +189,9 @@ namespace Octgn.Server
             }
             // Check if the versions are compatible
 #if !DEBUG
-            if (clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor)
+            if ((clientVer.Major != ServerVersion.Major || clientVer.Minor != ServerVersion.Minor))
             {
-                var rpc = new XmlSenderStub(_sender, this);
+                var rpc = new BinarySenderStub(_sender, this);
                 rpc.Error(string.Format("Incompatible versions. This server is accepting {0}.* clients only.",
                                         ServerVersion.ToString(2)));
                 try
@@ -230,7 +210,7 @@ namespace Octgn.Server
             // Check if we accept new players
             if (!_acceptPlayers)
             {
-                var rpc = new XmlSenderStub(_sender, this);
+                var rpc = new BinarySenderStub(_sender, this);
                 rpc.Error("No more players are accepted in this game.");
                 try
                 {
@@ -247,7 +227,7 @@ namespace Octgn.Server
             // Check if the client wants to play the correct game
             if (lGameId != _gameId)
             {
-                var rpc = new XmlSenderStub(_sender, this);
+                var rpc = new BinarySenderStub(_sender, this);
                 rpc.Error(string.Format("Invalid game. This server is hosting another game (game id: {0}).", _gameId));
                 try
                 {
@@ -264,8 +244,8 @@ namespace Octgn.Server
             // Check if the client's major game version matches ours
             if (gameVer.Major != _gameVersion.Major)
             {
-                var rpc = new XmlSenderStub(_sender, this);
-                rpc.Error(string.Format("Incompatible game version. This server is hosting game version ."));
+                var rpc = new BinarySenderStub(_sender, this);
+                rpc.Error(string.Format("Incompatible game version. This server is hosting game version {0}.",_gameVersion));
                 try
                 {
                     _sender.Client.Close();
@@ -279,7 +259,7 @@ namespace Octgn.Server
                 return;
             }
             // Create the new endpoint
-            IClientCalls senderRpc = new XmlSenderStub(_sender, this);
+            IClientCalls senderRpc = new BinarySenderStub(_sender, this);
             string software = client + " (" + clientVer + ')';
             var pi = new PlayerInfo(_playerId++, nick, pkey, senderRpc, software);
             // Check if one can switch to Binary mode
@@ -352,7 +332,7 @@ namespace Octgn.Server
 
         public void PlayerSetGlobalVariable(byte p, string name, string value)
         {
-            _broadcaster.PlayerSetGlobalVariable(_clients[_sender].Id, p, name, value);
+            _broadcaster.PlayerSetGlobalVariable( p, name, value);
         }
 
         public void SetGlobalVariable(string name, string value)
@@ -580,7 +560,7 @@ namespace Octgn.Server
 
         // This class contains high-level infos about connected clients
 
-        internal void PingReceived()
+        internal void Ping()
         {
             _connection.PingReceived();
         }

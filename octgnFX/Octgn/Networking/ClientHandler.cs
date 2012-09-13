@@ -13,26 +13,11 @@ namespace Octgn.Networking
 {
     internal sealed class Handler
     {
-        private readonly XmlParser _xmlParser;
         private readonly BinaryParser _binParser;
 
         public Handler()
         {
-            _xmlParser = new XmlParser(this);
             _binParser = new BinaryParser(this);
-        }
-
-        public void ReceiveMessage(string msg)
-        {
-            // Fix: because ReceiveMessage is called through the Dispatcher queue, we may be called
-            // just after the Client has already been closed. In that case we should simply drop the message
-            // (otherwise NRE may occur)
-            if (Program.Client == null) return;
-
-            try
-            { _xmlParser.Parse(msg); }
-            finally
-            { if (Program.Client != null) Program.Client.Muted = 0; }
         }
 
         public void ReceiveMessage(byte[] data)
@@ -163,6 +148,7 @@ namespace Octgn.Networking
         {
             Player.LocalPlayer.Id = id;
             Program.Client.StartPings();
+            Player.FireLocalPlayerWelcomed();
         }
 
         public void NewPlayer(byte id, string nick, ulong pkey)
@@ -931,9 +917,8 @@ namespace Octgn.Networking
             Program.TracePlayerEvent(player, "{0} cancels out of the limited game.", player);
         }
 
-        public void PlayerSetGlobalVariable(Player fromp, Player p, string name, string value)
+        public void PlayerSetGlobalVariable(Player p, string name, string value)
         {
-            if (fromp.Id != p.Id) return;
             if (p.GlobalVariables.ContainsKey(name))
                 p.GlobalVariables[name] = value;
             else
@@ -946,6 +931,10 @@ namespace Octgn.Networking
                 Program.Game.GlobalVariables[name] = value;
             else
                 Program.Game.GlobalVariables.Add(name, value);
+        }
+        public void Ping()
+        {
+            
         }
     }
 }

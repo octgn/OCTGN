@@ -49,6 +49,13 @@ namespace Octgn.Play
             LocalPlayer = GlobalPlayer = null;
         }
 
+        public static event Action OnLocalPlayerWelcomed;
+        public static void FireLocalPlayerWelcomed()
+        {
+            if(OnLocalPlayerWelcomed != null)
+                OnLocalPlayerWelcomed.Invoke();
+        }
+
         // May be null if we're in pure server mode
 
         internal static event EventHandler<PlayerEventArgs> PlayerAdded;
@@ -67,6 +74,7 @@ namespace Octgn.Play
         private Brush _transparentBrush;
         private bool _invertedTable;
         private string _name;
+        private byte _id;
 
         public Counter[] Counters
         {
@@ -92,7 +100,15 @@ namespace Octgn.Play
         }
 
         public byte Id // Identifier
-        { get; set; }
+        {
+            get { return _id; }
+            set
+            {
+                if (_id == value) return;
+                _id = value;
+                OnPropertyChanged("Id");
+            }
+        }
 
         public string Name // Nickname
         {

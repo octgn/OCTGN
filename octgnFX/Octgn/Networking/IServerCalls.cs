@@ -61,10 +61,10 @@ namespace Octgn.Networking
 		void LookAtBottomReq(int uid, Group group, int count, bool look);
 		void StartLimitedReq(Guid[] packs);
 		void CancelLimitedReq();
-	    void IsAlternateImage(Card c , bool isAlternateImage);
-	    void Ping();
-	    void PlayerSetGlobalVariable(Player p , string n , string v);
-	    void SetGlobalVariable(string n , string v);
-	    void SwitchWithAlternate(Card c);
+		void IsAlternateImage(Card card, bool isAlternateImage);
+		void PlayerSetGlobalVariable(Player player, string name, string val);
+		void SetGlobalVariable(string name, string val);
+		void SwitchWithAlternate(Card card);
+		void Ping();
 	}
 }

@@ -15,6 +15,7 @@ namespace Octgn.Launcher
         public StartGame(bool isLocal = false)
         {
             InitializeComponent();
+            Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             _isLocal = isLocal;
             if(!isLocal)
             {
@@ -23,10 +24,13 @@ namespace Octgn.Launcher
                 this.Width = Double.NaN;
                 this.Height = Double.NaN;
             }
+            
             if (Program.IsHost)
             {
                 descriptionLabel.Text =
                     "The following players have joined your game.\nClick 'Start' when everyone has joined. No one will be able to join once the game has started.";
+                if (isLocal)
+                    descriptionLabel.Text += "\nHosting on port: " + Program.Client.Port;
             }
             else
             {
@@ -64,6 +68,14 @@ namespace Octgn.Launcher
                             };
         }
 
+        private void PlayerOnOnLocalPlayerWelcomed()
+        {
+            if (Player.LocalPlayer.Id == 255) return;
+            if(Player.LocalPlayer.Id == 1)
+            {
+                Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible;}));
+            }
+        }
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
