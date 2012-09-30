@@ -47,6 +47,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Updater", "octgnFX\Octgn.Updater\Octgn.Updater.csproj", "{B2331F49-0BB1-4C28-871A-FF66A61BD355}"
 EndProject
 Global
+	GlobalSection(CodealikeProperties) = postSolution
+		SolutionGuid = 1d777ca3-c82f-4a36-8f37-a6ed0e0952c4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86

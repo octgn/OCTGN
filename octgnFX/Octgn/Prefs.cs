@@ -185,8 +185,8 @@ namespace Octgn
         {
             get
             {
-                var t = SimpleConfig.ReadValue("LoginTimeout", "10000");
-                var to = 10000;
+                var t = SimpleConfig.ReadValue("LoginTimeout", "30000");
+                var to = 30000;
                 int.TryParse(t, out to);
                 return to;
             }
