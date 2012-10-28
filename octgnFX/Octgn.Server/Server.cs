@@ -92,7 +92,7 @@ namespace Octgn.Server
                         break;
                     }
                     if(_hostClient == null)
-                        _hostClient = _handler.Players.SingleOrDefault(x => x.Value.Id == 1).Key;
+                        _hostClient = _handler.Players.FirstOrDefault(x => x.Value.Id == 1).Key;
                     if (_hostClient == null && _handler.GameStarted == false)
                     {
                         Stop();
@@ -119,7 +119,7 @@ namespace Octgn.Server
                     // Accept new connections
                     var sc = new Connection(this, _tcp.AcceptTcpClient());
                     lock (_clients) _clients.Add(sc);
-                    _hostClient = _handler.Players.SingleOrDefault(x => x.Value.Id == 1).Key;
+                    _hostClient = _handler.Players.FirstOrDefault(x => x.Value.Id == 1).Key;
                     if (_connectionChecker == null)
                     {
                     }

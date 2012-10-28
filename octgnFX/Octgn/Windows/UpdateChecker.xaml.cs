@@ -134,7 +134,7 @@ namespace Octgn.Windows
             foreach(var d in dList)
             {
                 var gd = GameDef.FromO8G(d);
-                var og = Program.GamesRepository.AllGames.SingleOrDefault(x => x.Id == gd.Id);
+                var og = Program.GamesRepository.AllGames.FirstOrDefault(x => x.Id == gd.Id);
                 if(og != null)
                 {
                     if (gd.Version > og.Version || (gd.Version == og.Version && gd.FileHash != og.FileHash))
@@ -177,7 +177,7 @@ namespace Octgn.Windows
                 {
                     var ns = Set.SetFromFile(s , Program.GamesRepository);
                     if (ns.Game == null) continue;
-                    var osg = Program.GamesRepository.AllGames.SingleOrDefault(x => x.Id == ns.Game.Id);
+                    var osg = Program.GamesRepository.AllGames.FirstOrDefault(x => x.Id == ns.Game.Id);
                     if(osg == null)
                         continue;
                     var os = osg.GetSet(ns.Id);

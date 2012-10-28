@@ -376,6 +376,7 @@ namespace Octgn.Data
 
         public void DeleteSet(Set set)
         {
+            if (set == null) return;
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText = "DELETE FROM [sets] WHERE [id]=@id;";

@@ -298,7 +298,7 @@ namespace Octgn.Windows
                                                 this.Title = (Room.IsGroupChat)
                                                                  ? Room.GroupUser.User.User
                                                                  : "Chat with: "
-                                                                   + Room.Users.SingleOrDefault(x => x.User.Bare != Program.LobbyClient.Me.User.Bare).User.User;
+                                                                   + Room.Users.FirstOrDefault(x => x.User.Bare != Program.LobbyClient.Me.User.Bare).User.User;
                                                                  listBox1.Items.Clear();
                                              	var ulist = from u in Room.Users orderby u.User.User select u;
                                                  foreach (var u in ulist)
@@ -328,7 +328,7 @@ namespace Octgn.Windows
             this.Title = (Room.IsGroupChat)
                              ? Room.GroupUser.User.User
                              : "Chat with: "
-                               + Room.Users.SingleOrDefault(x => x.User.Bare != Program.LobbyClient.Me.User.Bare).User.User;
+                               + Room.Users.FirstOrDefault(x => x.User.Bare != Program.LobbyClient.Me.User.Bare).User.User;
             ResetUserList();
         }
 

@@ -72,7 +72,7 @@ namespace Skylabs.Lobby
         public void SendMessage(string message)
         {
             NewUser to;
-            to = IsGroupChat ? GroupUser : Users.SingleOrDefault(x => x.User.Bare != _client.Me.User.Bare);
+            to = IsGroupChat ? GroupUser : Users.FirstOrDefault(x => x.User.Bare != _client.Me.User.Bare);
             if(to == null || String.IsNullOrWhiteSpace(message)) return;
 
             if(message[0] == '/')

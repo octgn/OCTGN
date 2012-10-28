@@ -176,13 +176,13 @@ namespace Skylabs.Lobby
             {
                 if (iq.Vcard != null)
                 {
-                    var f = Friends.AsParallel().SingleOrDefault(x => x.User.Bare == iq.From.Bare);
+                    var f = Friends.AsParallel().FirstOrDefault(x => x.User.Bare == iq.From.Bare);
                     if(f!= null)
                     {
                     	var email = DatabaseHandler.GetUser(f.User.Bare);
 						if (String.IsNullOrWhiteSpace(email))
 						{
-							var s = iq.Vcard.GetEmailAddresses().SingleOrDefault(x => !String.IsNullOrWhiteSpace(x.UserId));
+                            var s = iq.Vcard.GetEmailAddresses().FirstOrDefault(x => !String.IsNullOrWhiteSpace(x.UserId));
 							if (s != null)
 							{
 								f.Email = s.UserId;

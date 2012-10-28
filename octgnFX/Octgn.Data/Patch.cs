@@ -120,7 +120,7 @@ namespace Octgn.Data
                 if (set.Version > patchDoc.Root.Attr<Version>("maxVersion")) return;
 
                 if (installed)
-                    _game.DeleteSet(_game.Sets.Single(s => s.PackageName == localFilename));
+                    _game.DeleteSet(_game.Sets.FirstOrDefault(s => s.PackageName == localFilename));
 
                 // Process the set 
                 if (patchDoc.Root != null)

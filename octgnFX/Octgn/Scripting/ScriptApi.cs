@@ -225,7 +225,7 @@ namespace Octgn.Scripting
             property = property.ToLower();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
             if (!c.Type.Model.Properties.Keys.Select(x => x.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
-            object ret = c.Type.Model.Properties.Single(x => x.Key.ToLower().Equals(property)).Value;
+            object ret = c.Type.Model.Properties.FirstOrDefault(x => x.Key.ToLower().Equals(property)).Value;
             return (ret);
         }
 

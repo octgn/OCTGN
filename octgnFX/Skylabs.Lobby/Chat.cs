@@ -103,7 +103,7 @@ namespace Skylabs.Lobby
         {
             if(group)
             {
-                var ret = Rooms.SingleOrDefault(x => x.IsGroupChat && x.GroupUser.Equals(otherUser) );
+                var ret = Rooms.FirstOrDefault(x => x.IsGroupChat && x.GroupUser.Equals(otherUser) );
                 if(ret == null)
                 {
                     ret = new NewChatRoom(NextRid , _client , otherUser);
@@ -114,7 +114,7 @@ namespace Skylabs.Lobby
             }
             else
             {
-                var ret = Rooms.SingleOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat);
+                var ret = Rooms.FirstOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat);
                 if(ret == null)
                 {
                     ret = new NewChatRoom(NextRid,_client,otherUser);

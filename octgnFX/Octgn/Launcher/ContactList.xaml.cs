@@ -72,7 +72,7 @@ namespace Octgn.Launcher
             var fi = sender as GroupChatListItem;
             if (fi == null) return;
             var room = Program.LobbyClient.Chatting.GetRoom(fi.ThisRoom.GroupUser,true);
-            var cw = Program.ChatWindows.SingleOrDefault(x => x.Id == room.RID);
+            var cw = Program.ChatWindows.FirstOrDefault(x => x.Id == room.RID);
             if(cw == null)
             {
                 cw = new Windows.ChatWindow(room);
@@ -88,7 +88,7 @@ namespace Octgn.Launcher
             var fi = sender as FriendListItem;
             if (fi == null) return;
             var room = Program.LobbyClient.Chatting.GetRoom(fi.ThisUser);
-            var cw = Program.ChatWindows.SingleOrDefault(x => x.Id == room.RID);
+            var cw = Program.ChatWindows.FirstOrDefault(x => x.Id == room.RID);
             if(cw == null)
             {
                 cw = new Windows.ChatWindow(room);
