@@ -1,3 +1,11 @@
+#3.0.1.22
++ Removed twitter feed and replaced with an xml file on the website.
++ Fixed a hosting bug.
++ Removed XML protocol from OCTGN
++ Quick fix for settings not saving.
++ Increased the login timeout for people with a bad connection
++ Can launch and connect to StandAloneServer using just the command line.
+
 #3.0.1.21
 + Disabled sandboxing of python scripts.
  
