@@ -60,6 +60,14 @@ namespace Octgn.Data
             catch(Exception e)
             {
                 Trace.WriteLine("[SimpleConfig]ReadValue Error: " + e.Message);
+                try
+                {
+                    File.Delete(GetPath());
+                }
+                catch (Exception)
+                {
+                    Trace.WriteLine("[SimpleConfig]ReadValue Error: Couldn't delete the corrupt config file.");
+                }
             }
             return null;
         }
