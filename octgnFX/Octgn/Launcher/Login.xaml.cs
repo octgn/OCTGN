@@ -2,30 +2,21 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
-using System.Xml;
-using LinqToTwitter;
-using Octgn.Controls;
+
 using Octgn.DeckBuilder;
 using Octgn.Extentions;
-using Octgn.Networking;
+
 using Skylabs.Lobby;
 using Octgn.Definitions;
 using Skylabs.Lobby.Threading;
@@ -39,6 +30,11 @@ using Timer = System.Threading.Timer;
 
 namespace Octgn.Launcher
 {
+    using System.Xml;
+
+    using Client = Skylabs.Lobby.Client;
+    using Game = Octgn.Data.Game;
+
     /// <summary>
     ///   Interaction logic for Login.xaml
     /// </summary>
@@ -74,29 +70,42 @@ namespace Octgn.Launcher
         #region News Feed
             private void GetTwitterStuff()
             {
-
                 try
                 {
-                    LinqToTwitter.TwitterContext tc = new TwitterContext();
+                    using (var wc = new WebClient())
+                    {
+                        var str = wc.DownloadString("http://www.octgn.net/news.xml");
+                        if (string.IsNullOrWhiteSpace(str))
+                        {
+                            throw new Exception("Null news feed.");
+                        }
 
-                    var tweets =
-                        (from tweet in tc.Status
-                         where tweet.Type == StatusType.User
-                               && tweet.ScreenName == "octgn_official"
-                               && tweet.Count == 5
-                         select tweet).ToList();
-                    Dispatcher.BeginInvoke(new Action(() => ShowTwitterStuff(tweets)));
+                        var doc = System.Xml.Linq.XDocument.Parse(str);
+                        var nitems = doc.Root.Elements("item");
+                        var feeditems = new List<NewsFeedItem>();
+                        foreach (var f in nitems)
+                        {
+                            var nf = new NewsFeedItem { Message = (string)f };
+                            var dt = f.Attribute("date");
+                            if(dt == null) continue;
+                            DateTime dto;
+                            if(!DateTime.TryParse(dt.Value,out dto)) 
+                                continue;
+                            nf.Time = dto;
+                            feeditems.Add(nf);
+                        }
+
+                        Dispatcher.BeginInvoke(
+                            new Action(
+                                () => this.ShowTwitterStuff(feeditems.OrderByDescending(x => x.Time).Take(5).ToList())));
+                    }
                 }
-                catch (TwitterQueryException)
-                {
-                    Dispatcher.Invoke(new Action(()=>textBlock5.Text="Could not retrieve news feed."));
-                }         
                 catch(Exception)
                 {
                     Dispatcher.Invoke(new Action(() => textBlock5.Text = "Could not retrieve news feed."));
                 }
             }
-            private void ShowTwitterStuff(List<Status> tweets )
+            private void ShowTwitterStuff(List<NewsFeedItem> tweets )
             {
                 textBlock5.HorizontalAlignment = HorizontalAlignment.Stretch;
                 textBlock5.Inlines.Clear();
@@ -104,13 +113,13 @@ namespace Octgn.Launcher
                 foreach( var tweet in tweets)
                 {
                     Inline dtime =
-                        new Run(tweet.CreatedAt.ToShortDateString() + "  "
-                                + tweet.CreatedAt.ToShortTimeString());
+                        new Run(tweet.Time.ToShortDateString() + "  "
+                                + tweet.Time.ToShortTimeString());
                     dtime.Foreground =
                         new SolidColorBrush(Colors.Khaki);
                     textBlock5.Inlines.Add(dtime);
                     textBlock5.Inlines.Add("\n");
-                    var inlines = AddTweetText(tweet.Text).Inlines.ToArray();
+                    var inlines = AddTweetText(tweet.Message).Inlines.ToArray();
                     foreach(var i in inlines)
                         textBlock5.Inlines.Add(i);     
                     textBlock5.Inlines.Add("\n\n");
@@ -130,7 +139,7 @@ namespace Octgn.Launcher
                 }
                 return ret;
             }
-            public Inline StringToRun(String s, Brush b)
+            public Inline StringToRun(string s, Brush b)
             {
                 Inline ret = null;
                 const string strUrlRegex =
@@ -207,7 +216,7 @@ namespace Octgn.Launcher
                     _animationTimer.Stop();
             }
 
-            void LobbyClientOnLoginComplete(object sender, Skylabs.Lobby.Client.LoginResults results)
+            void LobbyClientOnLoginComplete(object sender, Client.LoginResults results)
             {
                 
                 switch (results)
@@ -253,7 +262,7 @@ namespace Octgn.Launcher
                 Dispatcher.Invoke(new Action(() => lblLoginStatus.Content = message));
             }
 
-            private void LoginFinished(Skylabs.Lobby.Client.LoginResult success, DateTime banEnd, string message)
+            private void LoginFinished(Client.LoginResult success, DateTime banEnd, string message)
             {
                 if (_inLoginDone) return;
                 _inLoginDone = true;
@@ -339,10 +348,10 @@ namespace Octgn.Launcher
                 }
 
                 Program.IsHost = true;
-                Data.Game theGame =
+                Game theGame =
                     Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
                 if (theGame == null) return;
-                Program.Game = new Game(GameDef.FromO8G(theGame.FullPath),true);
+                Program.Game = new Octgn.Game(GameDef.FromO8G(theGame.FullPath),true);
 
                 var ad = new IPAddress[1];
                 IPAddress ip = IPAddress.Parse("127.0.0.1");
@@ -350,7 +359,7 @@ namespace Octgn.Launcher
                 if (ad.Length <= 0) return;
                 try
                 {
-                    Program.Client = new Client(ip, hostport);
+                    Program.Client = new Networking.Client(ip, hostport);
                     Program.Client.Connect();
                     Dispatcher.Invoke(new Action(() => Program.LauncherWindow.NavigationService.Navigate(new StartGame(true){Width = 400})));
                 }
@@ -374,14 +383,14 @@ namespace Octgn.Launcher
                     return;
                 }
                 Program.IsHost = false;
-                Data.Game theGame =
+                Game theGame =
                     Program.GamesRepository.Games.FirstOrDefault(g => g.Id == hg.Id);
                 if (theGame == null)
                 {
                     Program.LauncherWindow.Navigate(new Login());
                     return;
                 }
-                Program.Game = new Game(GameDef.FromO8G(theGame.FullPath),true);
+                Program.Game = new Octgn.Game(GameDef.FromO8G(theGame.FullPath),true);
                 Program.LauncherWindow.Navigate(new ConnectLocalGame());
             }
 
@@ -468,7 +477,7 @@ namespace Octgn.Launcher
 
             private void menuCD_Click(object sender, RoutedEventArgs e)
             {
-                System.Windows.Forms.FolderBrowserDialog pf = new FolderBrowserDialog();
+                FolderBrowserDialog pf = new FolderBrowserDialog();
                 pf.SelectedPath = GamesRepository.BasePath;
                 var dr = pf.ShowDialog();
                 if(dr == DialogResult.OK)
@@ -495,7 +504,11 @@ namespace Octgn.Launcher
             {
                 Prefs.InstallOnBoot = menuInstallOnBoot.IsChecked;
             }
-
+        internal struct NewsFeedItem
+        {
+            public DateTime Time { get; set; }
+            public string Message { get; set; }
+        }
     }
 
 }
