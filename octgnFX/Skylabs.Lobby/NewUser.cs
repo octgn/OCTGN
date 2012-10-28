@@ -90,18 +90,24 @@ namespace Skylabs.Lobby
         {
             string rid1 = null;
             string rid2 = null;
-            try
+
+            // null must be on the left side of a, or we get a stack overflow
+            if (null != a as object && a.User != null && a.User.Bare != null)
             {
                 rid1 = a.User.Bare;
             }
-            catch { }
-            try
+
+            // null must be on the left side of b, or we get a stack overflow.
+            if (null != b as object && b.User != null && b.User.Bare != null)
             {
                 rid2 = b.User.Bare;
             }
-            catch { }
 
-            if (rid1 == null && rid2 == null) return true;
+            if (rid1 == null && rid2 == null)
+            {
+                return true;
+            }
+
             return rid1 == rid2;
         }
         public static bool operator !=(NewUser a , NewUser b) { return !(a == b); }
