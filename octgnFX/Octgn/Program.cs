@@ -173,7 +173,7 @@ namespace Octgn
             while (match.Success)
             {
                 string token = match.Groups[1].Value;
-                finalText = finalText.Replace(match.Groups[0].Value, "{" + i + "}");
+                finalText = finalText.Replace(match.Groups[0].Value, "##$$%%^^LEFTBRACKET^^%%$$##" + i + "##$$%%^^RIGHTBRACKET^^%%$$##");
                 i++;
                 object tokenValue = token;
                 switch (token)
@@ -197,6 +197,9 @@ namespace Octgn
                 match = match.NextMatch();
             }
             args.Add(player);
+            finalText = finalText.Replace("{", "").Replace("}", "");
+            finalText = finalText.Replace("##$$%%^^LEFTBRACKET^^%%$$##", "{").Replace(
+                "##$$%%^^RIGHTBRACKET^^%%$$##", "}");
             Trace.TraceEvent(TraceEventType.Information,
                              EventIds.Event | EventIds.PlayerFlag(player) | EventIds.Explicit, finalText, args.ToArray());
         }
