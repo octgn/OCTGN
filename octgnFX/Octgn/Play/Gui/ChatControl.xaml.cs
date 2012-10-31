@@ -11,6 +11,10 @@ using Octgn.Data;
 
 namespace Octgn.Play.Gui
 {
+    using System.Windows.Media.Animation;
+    using System.Windows.Media.Media3D;
+    using System.Windows.Threading;
+
     partial class ChatControl
     {
         public ChatControl()
@@ -134,7 +138,7 @@ namespace Octgn.Play.Gui
                 _ctrl.output.ScrollToEnd();
             }
             else
-                InsertLine(FormatInline(MergeArgs(format, args), eventType, id, args));
+                InsertLine(FormatInline(_ctrl,MergeArgs(format, args), eventType, id, args));
         }
 
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
@@ -147,7 +151,7 @@ namespace Octgn.Play.Gui
                 ((id & EventIds.Explicit) == 0))
                 return;
 
-            InsertLine(FormatMsg(message, eventType, id));
+            InsertLine(FormatMsg(_ctrl,message, eventType, id));
         }
 
         private static bool IsMuted()
@@ -157,14 +161,14 @@ namespace Octgn.Play.Gui
 
         private void InsertLine(Inline message)
         {
-            var p = (Paragraph) _ctrl.output.Document.Blocks.LastBlock;
+            var p = (Paragraph)this._ctrl.output.Document.Blocks.LastBlock;
             if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
             p.Inlines.Add(message);
             Program.LastChatTrace = message;
             _ctrl.output.ScrollToEnd();
         }
 
-        private static Inline FormatInline(Inline inline, TraceEventType eventType, int id, Object[] args = null)
+        private static Inline FormatInline(ChatControl control, Inline inline, TraceEventType eventType, int id, Object[] args = null)
         {
             switch (eventType)
             {
@@ -191,16 +195,38 @@ namespace Octgn.Play.Gui
                             p = args[i] as Player;
                         }
                         inline.Foreground = p != null ? new SolidColorBrush(p.Color) : Brushes.Red;
+
+                        if (p != null && Player.LocalPlayer.Id != p.Id)
+                        {
+                            var theinline = inline;
+                            theinline.Loaded += (sender, eventArgs) =>
+                                {
+                                    try
+                                    {
+                                        var curcolor = (theinline.Foreground as SolidColorBrush).Color;
+                                        var dbAscending = new ColorAnimation(curcolor, Colors.LawnGreen, new Duration(TimeSpan.FromSeconds(1)))
+                                            { RepeatBehavior = new RepeatBehavior(2), AutoReverse = true };
+                                        var storyboard = new Storyboard();
+                                        Storyboard.SetTarget(dbAscending, theinline);
+                                        Storyboard.SetTargetProperty(dbAscending, new PropertyPath("Foreground.Color"));
+                                        storyboard.Children.Add(dbAscending);
+                                        storyboard.Begin(control);
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+                                };
+                        }
                     }
                     break;
             }
             return inline;
         }
 
-        private static Inline FormatMsg(string text, TraceEventType eventType, int id)
+        private static Inline FormatMsg(ChatControl control,string text, TraceEventType eventType, int id)
         {
             var result = new Run(text);
-            return FormatInline(result, eventType, id);
+            return FormatInline(control,result, eventType, id);
         }
 
         private static Inline MergeArgs(string format, IList<object> args, int startAt = 0)
