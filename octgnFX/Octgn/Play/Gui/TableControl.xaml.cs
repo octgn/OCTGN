@@ -304,6 +304,15 @@ namespace Octgn.Play.Gui
             e.Handled = true;
         }
 
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+            if (e.MiddleButton == MouseButtonState.Pressed && _dragOperation == null)
+            {
+                _dragOperation = new Pan(this);
+            }
+        }
+
         protected override void OnMouseMove(MouseEventArgs e)
         {
             if (_dragOperation != null)
@@ -316,6 +325,7 @@ namespace Octgn.Play.Gui
             switch (e.ChangedButton)
             {
                 case MouseButton.Left:
+                case MouseButton.Middle:
                     if (_dragOperation != null)
                     {
                         _dragOperation.EndDrag();
