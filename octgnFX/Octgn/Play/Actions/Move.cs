@@ -43,6 +43,11 @@ namespace Octgn.Play.Actions
         {
             if (Doing != null) Doing(this, EventArgs.Empty);
 
+            if (Card == null || Card.Group == null || To == null)
+            {
+                return;
+            }
+
             base.Do();
 #if(DEBUG)
             Debug.WriteLine("Moving " + Card.Name + " from " + From + " to " + To);
