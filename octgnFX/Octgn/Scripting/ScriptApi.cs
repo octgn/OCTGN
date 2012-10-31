@@ -482,6 +482,11 @@ namespace Octgn.Scripting
 
         #region Special APIs
 
+        public string GetGameName()
+        {
+            return Program.CurrentOnlineGameName;
+        }
+
         public List<int> CreateOnTable(string modelId, int x, int y, bool persist, int quantity)
         {
             var result = new List<int>();

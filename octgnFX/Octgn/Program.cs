@@ -33,6 +33,8 @@ namespace Octgn
         public static List<ChatWindow> ChatWindows;
 
         public static Game Game;
+
+        public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository;

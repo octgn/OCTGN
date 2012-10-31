@@ -69,6 +69,7 @@ namespace Octgn.Launcher
             }
             if (_beginHost) return;
             Prefs.LastRoomName = textBox1.Text;
+            Program.CurrentOnlineGameName = textBox1.Text;
             _startGameTimer = new Timer((object a)=> EndHostGame(-1) ,null,10000,Timeout.Infinite);
             progressBar1.Visibility = Visibility.Visible;
             button1.IsEnabled = false;

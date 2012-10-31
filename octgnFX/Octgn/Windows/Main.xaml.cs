@@ -569,7 +569,7 @@ namespace Octgn.Windows
             _joiningGame = true;
             Program.IsHost = false;
             Program.Game = new Game(GameDef.FromO8G(theGame.FullPath));
-
+            Program.CurrentOnlineGameName = hg.Name;
 			var ad = Dns.GetHostAddresses(Skylabs.Lobby.Client.Host);
             IPAddress ip = ad[0];
 
