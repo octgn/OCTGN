@@ -87,17 +87,19 @@ namespace Octgn
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var ex = (Exception) e.ExceptionObject;
+            var ex = (Exception)e.ExceptionObject;
             if (!Debugger.IsAttached)
             {
                 var wnd = new Windows.ErrorWindow(ex);
                 wnd.ShowDialog();
+                ErrorReporter.SumbitException(ex);
             }
             else
             {
                 if (e.IsTerminating)
                     Debugger.Break();
             }
+
             if (!e.IsTerminating)
                 Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, ex.ToString());
         }
