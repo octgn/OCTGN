@@ -428,29 +428,53 @@ namespace Octgn.Play.Gui
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseLeftButtonDown(e);
+            if (Card == null)
+            {
+                return;
+            }
 
             // Clear or modify selection
             if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
             {
+                if (Program.Game == null || Program.Game.Table == null)
+                {
+                    return;
+                }
+
                 // Add/Remove from selection (currently only on table and hand)
                 if (Card.Group == Program.Game.Table || Card.Group is Hand)
                 {
-                    if (Card.Selected) Selection.Remove(Card);
-                    else if (Card.Controller == Player.LocalPlayer) Selection.Add(Card);
+                    if (Card.Selected)
+                    {
+                        Selection.Remove(Card);
+                    }
+                    else if (Card.Controller == Player.LocalPlayer)
+                    {
+                        Selection.Add(Card);
+                    }
                 }
+
                 e.Handled = true;
             }
             else
             {
-                if (!Card.Selected) Selection.Clear();
+                if (!Card.Selected)
+                {
+                    Selection.Clear();
+                }
             }
 
             // Targetting is always allowed
             if (Keyboard.Modifiers == ModifierKeys.Shift && img.IsMouseDirectlyOver)
+            {
                 return;
+            }
+
             // otherwise check controlship
             if (!Card.TryToManipulate())
+            {
                 e.Handled = true;
+            }
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
