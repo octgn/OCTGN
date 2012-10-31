@@ -174,8 +174,8 @@ namespace Octgn.Networking
                 // Quits if the client is already disconnected
                 if (_disposed) return;
                 // Disconnect
-                Disconnect();
             }
+            Disconnect();
 
             if (Program.Dispatcher != null)
                 Program.Dispatcher.Invoke(new Action<string>(Program.TraceWarning),
