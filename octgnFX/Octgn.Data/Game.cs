@@ -14,6 +14,8 @@ using System.Text.RegularExpressions;
 
 namespace Octgn.Data
 {
+    using System.Globalization;
+
     public class Game
     {
         public GamesRepository Repository;
@@ -118,6 +120,37 @@ namespace Octgn.Data
                                             Version = new Version((string) dr["version"]),
                                             PackageName = (string) dr["package"]
                                         };
+                            return s;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public Set GetSetByRealId(long id)
+        {
+            using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
+            {
+                com.CommandText = "SElECT id, name, game_version, version, package FROM [sets] WHERE [real_id]=@id;";
+
+                com.Parameters.AddWithValue("@id", id.ToString(CultureInfo.InvariantCulture));
+                using (SQLiteDataReader dr = com.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        var did = dr["id"] as string;
+                        if (did != null)
+                        {
+                            var s = new Set
+                            {
+                                Id = Guid.Parse(did),
+                                Name = (string)dr["name"],
+                                Game = this,
+                                GameVersion = new Version((string)dr["game_version"]),
+                                Version = new Version((string)dr["version"]),
+                                PackageName = (string)dr["package"]
+                            };
                             return s;
                         }
                     }
@@ -251,20 +284,24 @@ namespace Octgn.Data
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
-                    "SElECT id, xml, (SELECT id FROM sets WHERE real_id=packs.[set_real_id]) as set_id FROM [packs] WHERE [id]=@id;";
+                    "SElECT id, xml, set_real_id FROM [packs] WHERE [id]=@id;";
 
                 com.Parameters.AddWithValue("@id", id.ToString());
                 using (SQLiteDataReader dr = com.ExecuteReader())
                 {
                     if (dr.Read())
                     {
-                        var setid = dr["set_id"] as string;
-                        if (setid != null)
+                        var drinfo = dr["set_real_id"];
+
+                        var setid = drinfo is long ? (long)drinfo : -1;
+                        
+                        if (setid != -1)
                         {
-                            Set set = GetSet(Guid.Parse(setid));
+                            Set set = GetSetByRealId(setid);
                             var xml = dr["xml"] as string;
                             return new Pack(set, xml);
                         }
+                        var t = drinfo.GetType();
                     }
                 }
             }

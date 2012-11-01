@@ -152,15 +152,16 @@ Template="{StaticResource ExpanderButton}" />
       <ColumnDefinition Width="2*" />
     </Grid.ColumnDefinitions>
 
-    <TabControl Margin="4">
+    <TabControl x:Name="TabControlMain" Margin="4">
       <TabItem HeaderStringFormat="Card pool ({0})"
                Header="{Binding CardPool.Count, ElementName=This, FallbackValue=0}">
         <Grid>
-          <TextBlock Text="Sort:" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200"
-                     Height="20" TextAlignment="Right" Margin="0,2,0,0" />
+                    <ProgressBar x:Name="ProgressBarLoading" Visibility="Hidden" Width="200" Height="20" Margin="0,2,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    <TextBlock Text="Sort:" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Left" Width="31"
+                     Height="20" TextAlignment="Right" Margin="205,2,0,0" RenderTransformOrigin="0.884,0.614" />
           <ComboBox x:Name="sortBox"
                     ItemsSource="{Binding AllProperties, Source={x:Static octgn:Database.OpenedGame}, Mode=OneTime}"
-                    DisplayMemberPath="Name" SelectionChanged="SortChanged" VerticalAlignment="Top" Margin="204,-2,76.6,0" Height="24" />
+                    DisplayMemberPath="Name" SelectionChanged="SortChanged" VerticalAlignment="Top" Margin="241,0,0,0" Height="24" />
           <Border Style="{StaticResource ControlBorder}" Padding="0" Margin="0,26,0,0" HorizontalAlignment="Left"
                   Width="200">
             <ScrollViewer>

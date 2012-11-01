@@ -17,6 +17,8 @@ using Octgn.Utils;
 
 namespace Octgn.Play.Dialogs
 {
+    using System.Threading.Tasks;
+
     public partial class PickCardsDialog
     {
         public PickCardsDialog()
@@ -45,25 +47,49 @@ namespace Octgn.Play.Dialogs
 
         public void OpenPacks(IEnumerable<Guid> packs)
         {
-            StopListenningForFilterValueChanges();
+            new Task(
+                () =>
+                    {
+                        Dispatcher.Invoke(new Action(() =>
+                            {
+                                TabControlMain.IsEnabled = false;
+                                ProgressBarLoading.Visibility = Visibility.Visible;
+                                ProgressBarLoading.Maximum = packs.Count();
+                            }));
+                        this.StopListenningForFilterValueChanges();
 
-            foreach (Pack pack in packs.Select(Database.GetPackById))
-            {
-                if (pack == null)
-                {
-                    Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
-                    continue;
-                }
-                Pack.PackContent content = pack.CrackOpen();
-                foreach (CardModel c in content.LimitedCards)
-                    CardPool.Add(c);
-                foreach (CardModel c in content.UnlimitedCards)
-                    UnlimitedPool.Add(c);
-            }
+                        foreach (Pack pack in packs.Select(Database.GetPackById))
+                        {
+                            if (pack == null)
+                            {
+                                Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
+                                continue;
+                            }
 
-            UpdateFilters();
+                            Pack.PackContent content = pack.CrackOpen();
+                            foreach (CardModel c in content.LimitedCards)
+                            {
+                                Dispatcher.Invoke(new Action(() => { this.CardPool.Add(c); }));
+                            }
 
-            ListenForFilterValueChanges();
+                            foreach (CardModel c in content.UnlimitedCards)
+                            {
+                                Dispatcher.Invoke(new Action(() => { this.UnlimitedPool.Add(c); }));
+                            }
+
+                            Dispatcher.Invoke(new Action(() => { ProgressBarLoading.Value += 1; }));
+                        }
+
+                        Dispatcher.Invoke(
+                            new Action(() =>
+                                {
+                                    this.UpdateFilters();
+
+                                    this.ListenForFilterValueChanges();
+                                    ProgressBarLoading.Visibility = Visibility.Hidden;
+                                    TabControlMain.IsEnabled = true;
+                                }));
+                    }).Start();
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)

@@ -11,6 +11,8 @@ using System.IO;
 
 namespace Octgn.Networking
 {
+    using System.Threading.Tasks;
+
     internal sealed class Handler
     {
         private readonly BinaryParser _binParser;
@@ -907,9 +909,8 @@ namespace Octgn.Networking
         {
             Program.TracePlayerEvent(player, "{0} starts a limited game.", player);
             var wnd = new Play.Dialogs.PickCardsDialog();
-            wnd.OpenPacks(packs);
-            //fix MAINWINDOW bug
             Program.PlayWindow.ShowBackstage(wnd);
+            wnd.OpenPacks(packs);
         }
 
         public void CancelLimited(Player player)

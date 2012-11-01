@@ -534,13 +534,17 @@ namespace Octgn.Play
 
         internal void ShowBackstage(UIElement ui)
         {
-            table.Visibility = Visibility.Collapsed;
-            wndManager.Visibility = Visibility.Collapsed;
-            backstage.Child = ui;
-            backstage.Visibility = Visibility.Visible;
-            if (!(ui is PickCardsDialog)) return;
-            limitedTab.Visibility = Visibility.Visible;
-            ribbon.SelectedItem = limitedTab;
+            Dispatcher.Invoke(new Action(() =>
+                {
+                    this.table.Visibility = Visibility.Collapsed;
+                    this.wndManager.Visibility = Visibility.Collapsed
+                        ;
+                    this.backstage.Child = ui;
+                    this.backstage.Visibility = Visibility.Visible;
+                    if (!(ui is PickCardsDialog)) return;
+                    this.limitedTab.Visibility = Visibility.Visible;
+                    this.ribbon.SelectedItem = this.limitedTab;
+                }));
         }
 
         public static string txt = "rul";
