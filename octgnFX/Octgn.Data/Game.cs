@@ -221,9 +221,10 @@ namespace Octgn.Data
             using (SQLiteCommand com = GamesRepository.DatabaseConnection.CreateCommand())
             {
                 com.CommandText =
-                    "SElECT id, name, image, alternate, dependent, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id;";
+                    "SElECT id, name, image, alternate, dependent, (SELECT id FROM sets WHERE real_id=cards.[set_real_id]) as set_id FROM [cards] WHERE [id]=@id AND [game_id]=@gid;";
 
                 com.Parameters.AddWithValue("@id", id.ToString());
+                com.Parameters.AddWithValue("@gid", this.Id.ToString());
                 using (SQLiteDataReader dataReader = com.ExecuteReader())
                 {
                     if (dataReader.Read())
