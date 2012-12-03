@@ -549,9 +549,14 @@ namespace Octgn.Scripting
             return Program.GameSettings.UseTwoSidedTable;
         }
 
+        //status code initial value set to -1
+        //You should never get that value.
+        //It should be 200 for succes
+        //204 for succes but empty response
+        //any other return code is an error
         public Tuple<String, int> Web_Read(string url)
         {
-            int statusCode = 200;
+            int statusCode = -1;
             string result = "";
             StreamReader reader = null;
 
@@ -572,6 +577,18 @@ namespace Octgn.Scripting
                     reader = new StreamReader(grs);
                     result = reader.ReadToEnd();
                 }
+                //if the response is empty it will officially return a 204 status code.
+                //This is according to the http specification.
+                if (result.Length < 1)
+                {
+                    result = "error";
+                    statusCode = 204;
+                }
+                else
+                {
+                    //response code 200: HTTP OK request was made succesfully.
+                    statusCode = 200;
+                }
             }
             catch (WebException ex)
             {
@@ -579,21 +596,26 @@ namespace Octgn.Scripting
                 if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null)
                 {
                     var resp = (HttpWebResponse) ex.Response;
-                    switch (resp.StatusCode)
-                    {
-                        case HttpStatusCode.NotFound:
-                            result = "eror";
-                            statusCode = 404;
-                            break;
-                        case HttpStatusCode.Forbidden:
-                            result = "error";
-                            statusCode = 403;
-                            break;
-                        case HttpStatusCode.InternalServerError:
-                            result = "error";
-                            statusCode = 500;
-                            break;
-                    }
+                    //Will parse all .net known http status codes.
+                    int.TryParse(resp.StatusCode.ToString(), out statusCode);
+                    result = "error";
+
+                    //this section commented out for testing. Can be removed if solution is satisfactory.
+                    //switch (resp.StatusCode)
+                    //{
+                    //    case HttpStatusCode.NotFound:
+                    //        result = "eror";
+                    //        statusCode = 404;
+                    //        break;
+                    //    case HttpStatusCode.Forbidden:
+                    //        result = "error";
+                    //        statusCode = 403;
+                    //        break;
+                    //    case HttpStatusCode.InternalServerError:
+                    //        result = "error";
+                    //        statusCode = 500;
+                    //        break;
+                    //}
                 }
             }
             catch (Exception e)
