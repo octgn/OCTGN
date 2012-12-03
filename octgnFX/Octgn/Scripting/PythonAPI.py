@@ -26,6 +26,10 @@ def webRead(url):
   apiResult = _api.Web_Read(url)
   return (apiResult.Item1, apiResult.Item2)
 
+def webRead(url, timeout):
+	apiResult = _api.Web_Read(url, timeout)
+	return (apiResult.Item1, apiResult.Item2)
+
 def currentGameName():
   return _api.GetGameName()
 
