@@ -1,3 +1,6 @@
+#3.0.1.24
++ Fixed issue with passwords with special characters not working
+
 #3.0.1.23
 + Added password reset button
 + New login mechanism
