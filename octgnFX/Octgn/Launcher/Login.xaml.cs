@@ -69,6 +69,21 @@ namespace Octgn.Launcher
             this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start("http://www.octgn.info/register.php");
             this.labelForgot.MouseLeftButtonUp +=
                 (sender, args) => Process.Start("http://www.octgn.info/passwordreset.php");
+            this.labelResend.MouseLeftButtonUp += (sender, args) =>
+                {
+                    var url = "http://www.octgn.info/api/user/resendemailverify.php?username="
+                              + HttpUtility.UrlEncode(textBox1.Text);
+                    using (var wc = new WebClient())
+                    {
+                        try
+                        {
+                            wc.DownloadStringAsync(new Uri(url));
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                };
 
             LazyAsync.Invoke(GetTwitterStuff);
         }
@@ -260,9 +275,9 @@ namespace Octgn.Launcher
                             {
                                 try
                                 {
-                                    var ustring = "http://www.octgn.net/api/user/login.php?username=" + username
-                                                  + "&password=" + password;
-                                    if (email != null) ustring += "&email=" + email;
+                                    var ustring = "http://www.octgn.net/api/user/login.php?username=" + HttpUtility.UrlEncode(username)
+                                                  + "&password=" + HttpUtility.UrlEncode(password);
+                                    if (email != null) ustring += "&email=" + HttpUtility.UrlEncode(email);
                                     var res = wc.DownloadString(new Uri(ustring));
                                     res = res.Trim();
                                     switch (res)

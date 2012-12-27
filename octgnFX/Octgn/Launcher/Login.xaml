@@ -252,6 +252,7 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
                 </Grid>
                 <Label x:Name="labelRegister" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Register</Label>
                 <Label x:Name="labelForgot" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Forgot your password?</Label>
+                <Label x:Name="labelResend" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Resend email verification code(Enter your username above)</Label>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="180*" />
