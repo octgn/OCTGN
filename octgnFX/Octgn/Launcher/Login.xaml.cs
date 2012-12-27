@@ -30,6 +30,7 @@ using Timer = System.Threading.Timer;
 
 namespace Octgn.Launcher
 {
+    using System.Web;
     using System.Xml;
 
     using Client = Skylabs.Lobby.Client;
@@ -64,6 +65,11 @@ namespace Octgn.Launcher
             textBox1.Text = Prefs.Username;
             Program.LobbyClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state);
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
+
+            this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start("http://www.octgn.info/register.php");
+            this.labelForgot.MouseLeftButtonUp +=
+                (sender, args) => Process.Start("http://www.octgn.info/passwordreset.php");
+
             LazyAsync.Invoke(GetTwitterStuff);
         }
 
@@ -241,19 +247,79 @@ namespace Octgn.Launcher
             private void DoLogin()
             {
                 if (_isLoggingIn) return;
+                _isLoggingIn = true;
+                this.StartSpinning();
+                bError.Visibility = Visibility.Collapsed;
+                var username = textBox1.Text;
+                var password = passwordBox1.Password;
+                var email = textBoxEmail.Visibility == Visibility.Visible ? textBoxEmail.Text : null;
+                new Action(
+                    () =>
+                        {
+                            using (var wc = new WebClient())
+                            {
+                                try
+                                {
+                                    var ustring = "http://www.octgn.net/api/user/login.php?username=" + username
+                                                  + "&password=" + password;
+                                    if (email != null) ustring += "&email=" + email;
+                                    var res = wc.DownloadString(new Uri(ustring));
+                                    res = res.Trim();
+                                    switch (res)
+                                    {
+                                        case "ok":
+                                            {
+                                                this.DoLogin1(username,password);
+                                                break;
+                                            }
+                                        case "EmailUnverifiedException":
+                                            {
+                                                //TODO Needs a way to resend e-mail and stuff
+                                                this.LoginFinished(Client.LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail.");
+                                                break;
+                                            }
+                                        case "UnknownUsernameException":
+                                            {
+                                                this.LoginFinished(Client.LoginResult.Failure,DateTime.Now,"The username you entered doesn't exist.");
+                                                break;
+                                            }
+                                        case "PasswordDifferentException":
+                                            {
+                                                this.LoginFinished(Client.LoginResult.Failure,DateTime.Now,"The password you entered is incorrect.");
+                                                break;
+                                            }
+                                        case "NoEmailException":
+                                            {
+                                                this.LoginFinished(Client.LoginResult.Failure,DateTime.Now,"Your account does not have an e-mail associated with it. Please enter one above.",true);
+                                                break;
+                                            }
+                                        default:
+                                            {
+                                                throw new Exception();
+                                            }
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    this.LoginFinished(Client.LoginResult.Failure, DateTime.Now,"Please try again later.");
+                                }
+
+                            }
+                        }).BeginInvoke(null,null);
+            }
+
+            private void DoLogin1(string username, string password)
+            {
                 _loginTimer =
                     new Timer(
                         o =>
                         {
                             Program.LobbyClient.Stop();
-                            LoginFinished(Skylabs.Lobby.Client.LoginResult.Failure , DateTime.Now ,
-                                          "Please try again.");
+                            LoginFinished(Client.LoginResult.Failure , DateTime.Now ,
+                                          "Please try again later.");
                         } ,
                         null , Prefs.LoginTimeout , System.Threading.Timeout.Infinite);
-                _isLoggingIn = true;
-                StartSpinning();
-                bError.Visibility = Visibility.Hidden;
-                Program.LobbyClient.BeginLogin(textBox1.Text,passwordBox1.Password);
+                Program.LobbyClient.BeginLogin(username, password);
             }
 
 
@@ -262,7 +328,7 @@ namespace Octgn.Launcher
                 Dispatcher.Invoke(new Action(() => lblLoginStatus.Content = message));
             }
 
-            private void LoginFinished(Client.LoginResult success, DateTime banEnd, string message)
+            private void LoginFinished(Client.LoginResult success, DateTime banEnd, string message, bool showEmail =false)
             {
                 if (_inLoginDone) return;
                 _inLoginDone = true;
@@ -298,6 +364,17 @@ namespace Octgn.Launcher
                                                         case Skylabs.Lobby.Client.LoginResult.Failure:
                                                             DoErrorMessage("Login Failed: " + message);
                                                             break;
+                                                    }
+                                                    if (showEmail)
+                                                    {
+                                                        textBoxEmail.Text = "";
+                                                        textBoxEmail.Visibility = Visibility.Visible;
+                                                        labelEmail.Visibility = Visibility.Visible;
+                                                    }
+                                                    else
+                                                    {
+                                                        textBoxEmail.Visibility = Visibility.Collapsed;
+                                                        labelEmail.Visibility = Visibility.Collapsed;
                                                     }
                                                     _inLoginDone = false;
                                                 }), new object[] {});
@@ -442,7 +519,7 @@ namespace Octgn.Launcher
             }
             private void TextBox1TextChanged(object sender, TextChangedEventArgs e){bError.Visibility = Visibility.Hidden;}
             private void PasswordBox1PasswordChanged(object sender, RoutedEventArgs e){bError.Visibility = Visibility.Hidden;}
-            private void btnRegister_Click(object sender, RoutedEventArgs e){Program.LauncherWindow.Navigate(new Register());}
+
             private void TextBox1KeyUp(object sender, KeyEventArgs e)
             {
                 cbSavePassword.IsChecked = false;
