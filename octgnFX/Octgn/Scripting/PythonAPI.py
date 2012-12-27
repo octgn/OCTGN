@@ -22,13 +22,9 @@ def whisper(message):
 def rnd(min, max):
   return _api.Random(min, max)
 
-def webRead(url):
-  apiResult = _api.Web_Read(url)
+def webRead(url, timeout=0):
+  apiResult = _api.Web_Read(url, timeout)
   return (apiResult.Item1, apiResult.Item2)
-
-def webRead(url, timeout):
-	apiResult = _api.Web_Read(url, timeout)
-	return (apiResult.Item1, apiResult.Item2)
 
 def currentGameName():
   return _api.GetGameName()
