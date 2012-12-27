@@ -1,3 +1,6 @@
+#3.0.1.25
++ Fixed webRead bug.
+
 #3.0.1.24
 + Fixed issue with passwords with special characters not working
 
@@ -5,6 +8,15 @@
 + Added password reset button
 + New login mechanism
 + New registration mechanism
++ Added error submitting
++ Fixed potential deadlock
++ Middle mouse button to pan
++ Added currentGameName() to get current hosted game name
++ { and } in askInteger don't crash anymore
++ Fixed temp cards moving crashing octgn
++ Whispering other players now more distinguishable
++ Sealed deck editor UI update
++ Games can now only grab cards from there own games
 
 #3.0.1.22
 + Removed twitter feed and replaced with an xml file on the website.
