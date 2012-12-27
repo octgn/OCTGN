@@ -1,3 +1,8 @@
+#3.0.1.23
++ Added password reset button
++ New login mechanism
++ New registration mechanism
+
 #3.0.1.22
 + Removed twitter feed and replaced with an xml file on the website.
 + Fixed a hosting bug.
