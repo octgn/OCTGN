@@ -594,8 +594,12 @@ namespace Octgn.Scripting
             catch (WebException ex)
             {
                 var resp = (HttpWebResponse)ex.Response;
-                //Will parse all .net known http status codes.
-                int.TryParse(resp.StatusCode.ToString(), out statusCode);
+                if (resp == null) statusCode = 500;
+                else
+                {
+                    //Will parse all .net known http status codes.
+                    int.TryParse(resp.StatusCode.ToString(), out statusCode);
+                }
                 result = "error";
             }
             catch (Exception e)
