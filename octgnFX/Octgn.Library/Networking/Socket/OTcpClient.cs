@@ -12,30 +12,49 @@ namespace Octgn.Library.Networking.Socket
 
     public class OTcpClient
     {
-        public event Action<EventArgs,OTcpClient> ClientClosed;
+        public event Action<EventArgs,OTcpClient> Closed;
 
         private readonly ILog log = LogManager.GetLogger(typeof(OTcpClient));
 
-        public EndPoint EndPoint { get
-        {
-            return Client.Client.RemoteEndPoint;
-        } }
+        public EndPoint EndPoint { get{return Client.Client.RemoteEndPoint;} }
 
         protected TcpClient Client { get; private set; }
 
-        public OTcpClient(TcpClient client)
+        public OTcpClient(TcpClient client, OTcpListener listener)
         {
             this.log.InfoFormat("Created from TcpClient {0}",client.Client.RemoteEndPoint);
             Client = client;
+            listener.Stopping += ListenerOnStopping;
         }
 
-        #region Event Invocators
-        protected void OnClientClosed(OTcpClient client)
+        public void Close()
         {
-            var handler = this.ClientClosed;
+            try
+            {
+                Client.Close();
+            }
+            catch (Exception e)
+            {
+                log.Error("Close failure",e);
+            }
+            this.OnClosed();
+        }
+
+        #region Callbacks
+        private void ListenerOnStopping(EventArgs eventArgs, OTcpListener oTcpListener)
+        {
+            log.Info("Listener stopping, stopping client.");
+            this.Close();
+        }
+        #endregion
+
+        #region Event Invocators
+        private void OnClosed()
+        {
+            var handler = this.Closed;
             if (handler != null)
             {
-                handler(EventArgs.Empty, client);
+                handler(EventArgs.Empty, this);
             }
         }
         #endregion
