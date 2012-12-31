@@ -410,6 +410,7 @@ namespace Octgn.Play.Gui
 
             if (_isDragging) return;
             _isOverCount = false;
+            if (Card == null) return;
             if (!Card.Selected) Selection.Clear();
             _mousePt = e.GetPosition(this);
             Window window = Window.GetWindow(this);
@@ -835,7 +836,8 @@ namespace Octgn.Play.Gui
             e.Handled = true;
             if (Mouse.Captured != null) return; // don't open during drag and drop operations
             base.OnContextMenuOpening(e);
-            GroupControl.ShowContextMenu(Card);
+            if(GroupControl != null)
+                GroupControl.ShowContextMenu(Card);
         }
 
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
@@ -877,7 +879,8 @@ namespace Octgn.Play.Gui
                 case Key.P:
                     if (e.KeyboardDevice.Modifiers.HasFlag(ModifierKeys.Control) && !Card.FaceUp)
                     {
-                        Card.Peek();
+                        if(Card != null)
+                            Card.Peek();
                         break;
                     }
                     goto default;

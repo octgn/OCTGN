@@ -570,7 +570,27 @@ namespace Octgn.Windows
             Program.IsHost = false;
             Program.Game = new Game(GameDef.FromO8G(theGame.FullPath));
             Program.CurrentOnlineGameName = hg.Name;
-			var ad = Dns.GetHostAddresses(Skylabs.Lobby.Client.Host);
+            IPAddress[] ad = null;
+            for (int i = 0; i < 3; i++)
+            {
+                try
+                {
+                    ad = Dns.GetHostAddresses(Skylabs.Lobby.Client.Host);
+                    Thread.Sleep(1000 * (i+1));
+                }
+                catch
+                {
+                    
+                }
+            }
+            if (ad == null)
+            {
+                MessageBox.Show(
+                    "There was a problem with your DNS. Please try again.",
+                    "OCTGN Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
             IPAddress ip = ad[0];
 
             if (ad.Length <= 0) return;

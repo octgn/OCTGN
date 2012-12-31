@@ -696,7 +696,8 @@ namespace Octgn.Networking
                     continue;
                 }
                 // Check if the slot is free, otherwise choose the first free one
-                if (group[i].Type != null) i = group.FindNextFreeSlot(i);
+                if (i >= group.Count || group[i].Type != null) i = group.FindNextFreeSlot(i);
+                if (i >= group.Count) continue;
                 // Set the type
                 group[i].Type = ci;
                 group[i].SetVisibility(ci.Visible ? GroupVisibility.Everybody : GroupVisibility.Nobody, null);
@@ -775,7 +776,8 @@ namespace Octgn.Networking
             }
             if (cards.Count > 0)
                 Program.Client.Rpc.Unalias(cards.ToArray(), types.ToArray());
-            if (g != null && !g.PreparingShuffle)
+            if (g == null) return;
+            if (!g.PreparingShuffle)
             { Program.TraceWarning("[Unalias] Cards revealed are not in a group prepared for shuffle."); return; }
             // If all cards are now revealed, one can proceed to shuffling
             if (!g.WantToShuffle) return;

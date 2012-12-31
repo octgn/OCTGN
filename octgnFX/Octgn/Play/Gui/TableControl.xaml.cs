@@ -178,8 +178,10 @@ namespace Octgn.Play.Gui
                             (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas))
                                ? mouseY - cardDef.Height + e.MouseOffset.Y
                                : mouseY - e.MouseOffset.Y;
+            if (baseCard == null) return;
             foreach (CardDragAdorner adorner in e.Adorners)
             {
+                if (adorner == null || adorner.SourceCard == null || adorner.SourceCard.Card == null) continue;
                 double y = baseY + adorner.SourceCard.Card.Y - baseCard.Y;
                 adorner.OnHoverRequestInverted = IsInInvertedZone(y) ^ Player.LocalPlayer.InvertedTable;
             }

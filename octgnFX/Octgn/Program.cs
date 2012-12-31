@@ -105,7 +105,8 @@ namespace Octgn
                 Client.Disconnect();
                 Client = null;
             }
-            Game.End();
+            if(Game != null)
+                Game.End();
             Game = null;
             Dispatcher = null;
             Database.Close();

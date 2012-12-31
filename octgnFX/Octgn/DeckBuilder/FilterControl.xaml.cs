@@ -50,6 +50,7 @@ namespace Octgn.DeckBuilder
 
         public string GetSqlCondition()
         {
+            if (comparisonList.SelectedItem == null) return "";
             if (_property is SetPropertyDef)
                 return "set_id = '" + ((Set) comparisonList.SelectedItem).Id.ToString("D") + "'";
             return ((SqlComparison) comparisonList.SelectedItem).GetSql(_property.Name, comparisonText.Text);

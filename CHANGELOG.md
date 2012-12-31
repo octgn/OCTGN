@@ -1,3 +1,8 @@
+#3.0.1.26
++ Fixed 10 crash scenarios
++ Fixed a problem with the updater
++ Fixed webRead no response before timeout error.
+
 #3.0.1.25
 + Fixed webRead bug.
 

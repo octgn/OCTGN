@@ -31,17 +31,28 @@ namespace Octgn.Updater.Tasks
                 return;
             }
             context.FireLog("Update exists. Unpacking.");
-            using (var zip = ZipFile.Read(octgnUpdatePath))
+            try
             {
-                foreach( var p in zip )
+                if (!ZipFile.CheckZip(octgnUpdatePath))
                 {
-                    var unPath = Path.Combine(octgnInstallPath.FullName, p.FileName);
-                    context.FireLog("Extracting[{0}]: {1}",p.FileName,unPath);
-                    p.Extract(octgnInstallPath.FullName,ExtractExistingFileAction.OverwriteSilently);
+                    context.FireLog("Update file is corrupt. Quitting.");
+                    throw new Exception("Update file is corrupt.");
+                }
+                using (var zip = ZipFile.Read(octgnUpdatePath))
+                {
+                    foreach (var p in zip)
+                    {
+                        var unPath = Path.Combine(octgnInstallPath.FullName, p.FileName);
+                        context.FireLog("Extracting[{0}]: {1}", p.FileName, unPath);
+                        p.Extract(octgnInstallPath.FullName, ExtractExistingFileAction.OverwriteSilently);
+                    }
                 }
             }
-            context.FireLog("Deleting update file.");
-            context.FileSystem.File.Delete(octgnUpdatePath);
+            finally
+            {
+                context.FireLog("Deleting update file.");
+                context.FileSystem.File.Delete(octgnUpdatePath);
+            }
         }
     }
 }
