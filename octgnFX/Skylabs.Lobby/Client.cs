@@ -357,7 +357,10 @@ namespace Skylabs.Lobby
             if(OnDataRecieved != null)
                 OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
             if (Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.User.Bare == "lobby@conference." + Host) == 0)
-				Xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + Host));
+            {
+                Xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + Host));
+                Xmpp.RequestRoster();
+            }
         }
 
         private void XmppOnOnRosterItem(object sender, RosterItem item)

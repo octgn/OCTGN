@@ -2,6 +2,7 @@
 + Fixed 10 crash scenarios
 + Fixed a problem with the updater
 + Fixed webRead no response before timeout error.
++ Fixed https://github.com/kellyelton/OCTGN/issues/508 (Lobby chat missing on first start)
 
 #3.0.1.25
 + Fixed webRead bug.
