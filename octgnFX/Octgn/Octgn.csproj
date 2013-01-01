@@ -242,6 +242,10 @@
     </Compile>
     <Compile Include="Play\DefaultMarkerModel.cs" />
     <Compile Include="Play\DragAdorner.cs" />
+    <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
+    <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
+    <Compile Include="Plugin\IPlugin.cs" />
+    <Compile Include="Plugin\IPluginMenuItem.cs" />
     <Compile Include="Utils\CacheTraceListener.cs" />
     <Compile Include="Utils\Cryptor.cs" />
     <Compile Include="Database.cs" />
