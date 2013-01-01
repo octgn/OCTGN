@@ -28,9 +28,12 @@ namespace Octgn.Launcher
             if (Program.IsHost)
             {
                 descriptionLabel.Text =
-                    "The following players have joined your game.\nClick 'Start' when everyone has joined. No one will be able to join once the game has started.";
+                    "The following players have joined your game.\n\nClick 'Start' when everyone has joined. No one will be able to join once the game has started.";
                 if (isLocal)
-                    descriptionLabel.Text += "\nHosting on port: " + Program.Client.Port;
+                {
+                    descriptionLabel.Text += "\n\nHosting on port: " + Program.Client.Port;
+                    descriptionLabel.Text += "\nExternal IP: " + GetExternalIp().ToString();
+                }
             }
             else
             {
@@ -66,6 +69,25 @@ namespace Octgn.Launcher
                                 Program.GameSettings.PropertyChanged -= SettingsChanged;
                                 Program.ServerError -= HandshakeError;
                             };
+        }
+
+        private static System.Net.IPAddress GetExternalIp()
+        {
+            string whatIsMyIp = "http://automation.whatismyip.com/n09230945.asp";
+            System.Net.WebClient wc = new System.Net.WebClient();
+            System.Text.UTF8Encoding utf8 = new System.Text.UTF8Encoding();
+            string requestHtml = "";
+            try
+            {
+                requestHtml = utf8.GetString(wc.DownloadData(whatIsMyIp));
+            }
+            catch (System.Net.WebException we)
+            {
+                MessageBox.Show(we.Message);
+            }
+
+            System.Net.IPAddress externalIp = System.Net.IPAddress.Parse(requestHtml);
+            return externalIp;
         }
 
         private void PlayerOnOnLocalPlayerWelcomed()
