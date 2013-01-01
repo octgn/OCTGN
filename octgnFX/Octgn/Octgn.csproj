@@ -242,10 +242,6 @@
     </Compile>
     <Compile Include="Play\DefaultMarkerModel.cs" />
     <Compile Include="Play\DragAdorner.cs" />
-    <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
-    <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
-    <Compile Include="Plugin\IPlugin.cs" />
-    <Compile Include="Plugin\IPluginMenuItem.cs" />
     <Compile Include="Utils\CacheTraceListener.cs" />
     <Compile Include="Utils\Cryptor.cs" />
     <Compile Include="Database.cs" />
@@ -972,6 +968,10 @@
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
       <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
       <Name>Octgn.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
+      <Name>Octgn.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>

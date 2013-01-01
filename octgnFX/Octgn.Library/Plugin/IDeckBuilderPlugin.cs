@@ -1,4 +1,4 @@
-﻿namespace Octgn.Plugin
+﻿namespace Octgn.Library.Plugin
 {
     using System.Collections.Generic;
 
@@ -7,7 +7,7 @@
     /// <summary>
     /// Base interface for creating a Deck Builder plugin for OCTGN.
     /// </summary>
-    public interface IDeckBuilderPlugin
+    public interface IDeckBuilderPlugin: IPlugin
     {
         /// <summary>
         /// Menu items to add for the plugin.

@@ -1,4 +1,4 @@
-﻿namespace Octgn.Plugin
+﻿namespace Octgn.Library.Plugin
 {
     using Octgn.Data;
 
@@ -20,7 +20,7 @@
         /// Get the loaded game in the Deck Editor
         /// </summary>
         /// <param name="game"></param>
-        void GetLoadedGame(Game game);
+        Game GetLoadedGame();
         /// <summary>
         /// Load a deck into the Deck Editor
         /// </summary>

@@ -1,4 +1,4 @@
-﻿namespace Octgn.Plugin
+﻿namespace Octgn.Library.Plugin
 {
     using System;
 
@@ -11,9 +11,10 @@
         /// Name to display for the menu item.
         /// </summary>
         string Name { get; }
+
         /// <summary>
         /// Fired when this menu item is clicked.
         /// </summary>
-        Action<IDeckBuilderPluginController> OnClick { get; }
+        void OnClick(IDeckBuilderPluginController controller);
     }
 }

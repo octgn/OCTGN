@@ -36,6 +36,9 @@
         <Separator />
         <MenuItem Header="Close" Click="CloseClicked" />
       </MenuItem>
+        <MenuItem Header="Plugins" x:Name="MenuPlugins">
+            
+        </MenuItem>
     </Menu>
         
         <Image Margin="4,4,2,2" Grid.Row="1" x:Name="cardImage" MouseDown="cardImage_MouseDown" />

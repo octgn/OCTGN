@@ -1,4 +1,4 @@
-﻿namespace Octgn.Plugin
+﻿namespace Octgn.Library.Plugin
 {
     using System;
 
@@ -7,6 +7,10 @@
     /// </summary>
     public interface IPlugin
     {
+        /// <summary>
+        /// Plugin ID
+        /// </summary>
+        Guid Id { get; }
         /// <summary>
         /// Name of the plugin
         /// </summary>

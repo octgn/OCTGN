@@ -16,7 +16,14 @@ using Octgn.Data;
 
 namespace Octgn.DeckBuilder
 {
-    public partial class DeckBuilderWindow : INotifyPropertyChanged
+    using System.Diagnostics;
+
+    using Octgn.Library.Plugin;
+    using Octgn.Windows;
+
+    using Game = Octgn.Data.Game;
+
+    public partial class DeckBuilderWindow : INotifyPropertyChanged,IDeckBuilderPluginController
     {
         private Deck _deck;
         private string _deckFilename;
@@ -41,6 +48,37 @@ namespace Octgn.DeckBuilder
             newSubMenu.ItemsSource = Program.GamesRepository.Games;
             loadSubMenu.ItemsSource = Program.GamesRepository.Games;
             Title = "Octgn Deck Editor  version " + oversion;
+
+            var deplugins = PluginManager.GetPlugins<IDeckBuilderPlugin>();
+            foreach (var p in deplugins)
+            {
+                try
+                {
+                    p.OnLoad(Program.GamesRepository);
+                    foreach (var m in p.MenuItems)
+                    {
+                        var mi = new MenuItem() { Header = m.Name };
+                        var m1 = m;
+                        mi.Click += (sender, args) =>
+                            {
+                                try
+                                {
+                                    m1.OnClick(this);
+                                }
+                                catch (Exception e)
+                                {
+                                    new ErrorWindow(e).Show();
+                                }
+                            };
+                        MenuPlugins.Items.Add(mi);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(e.Message);
+                }
+                
+            }
         }
 
         #region Search tabs
@@ -508,6 +546,31 @@ namespace Octgn.DeckBuilder
                 cardImage.Source = bim;
             }
         }
+
+        #region IDeckBuilderPluginController
+        public GamesRepository Games
+        {
+            get
+            {
+                return Program.GamesRepository;
+            }
+        }
+
+        public void SetLoadedGame(Game game)
+        {
+            Game = game;
+        }
+
+        public Game GetLoadedGame()
+        {
+            return Game;
+        }
+
+        public void LoadDeck(Deck deck)
+        {
+            Deck = deck;
+        }
+        #endregion 
     }
 
     public class ActiveSectionConverter : IMultiValueConverter
