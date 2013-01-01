@@ -16,12 +16,15 @@ namespace Octgn.Library
         public static string BasePath {get;private set;}
         public static string PluginPath { get; private set; }
 
+        public static string DatabasePath { get; set; }
+
         static Paths()
         {
             if(FS == null)
                 FS = new FileSystem();
             BasePath = FS.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\";
             PluginPath = FS.Path.Combine(SimpleConfig.DataDirectory, "Plugins");
+            DatabasePath = FS.Path.Combine(SimpleConfig.DataDirectory, "Database2");
         }
     }
 }

@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataConfig.cs" />
     <Compile Include="Networking\Socket\OTcpClient.cs" />
     <Compile Include="Networking\Socket\OTcpListener.cs" />
     <Compile Include="Paths.cs" />

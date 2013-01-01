@@ -23,6 +23,8 @@ using RE = System.Text.RegularExpressions;
 
 namespace Octgn
 {
+    using Octgn.Library;
+
     public static class Program
     {
         public static Windows.DWindow DebugWindow;
@@ -62,6 +64,9 @@ namespace Octgn
 
         static Program()
         {
+            var dbConf = new DataConfig();
+            var repo = GameRepository.GetRepo();
+
             var pList = Process.GetProcessesByName("OCTGN");
             if(pList != null && pList.Length > 0 && pList.Any(x=>x.Id != Process.GetCurrentProcess().Id))
             {
