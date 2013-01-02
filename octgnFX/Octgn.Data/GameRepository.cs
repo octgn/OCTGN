@@ -4,6 +4,8 @@
     using System.IO.Abstractions;
     using System.Linq;
 
+    using Octgn.Data.Database;
+
     /// <summary>
     /// Provides access to all the game, set, cards etc.
     /// </summary>
@@ -22,41 +24,18 @@
 
         internal IFileSystem FS { get; set; }
 
-        public IQueryable<Game> Games
+        public IQueryable<Database.Entities.Game> Games
         {
             get
             {
-                return null;
+                    return DatabaseSession.GetSession().CreateCriteria<Database.Entities.Game>().Future<Database.Entities.Game>().AsQueryable();
             }
         } 
 
         public GameRepository()
         {
-            //if(FS == null)
-            //    FS = new FileSystem();
-            //if (database != null)
-            //    return;
-            //var dbConfigType =
-            //    (from t in AppDomain.CurrentDomain.GetAssemblies().SelectMany(x=>x.GetTypes())
-            //     where t.GetInterfaces().Any(x=>x == typeof(IDatabaseConfig))
-            //     select t).FirstOrDefault();
-            //if(dbConfigType == null)
-            //    throw new Exception("Database config class missing.");
-
-            //var dbConfig = (IDatabaseConfig)Activator.CreateInstance(dbConfigType);
-
-            //database = new EmbeddableDocumentStore()
-            //               {
-            //                   DataDirectory = dbConfig.DataPath, 
-            //                   UseEmbeddedHttpServer = true
-            //               };
-            //NonAdminHttp.EnsureCanListenToWhenInNonAdminContext(database.Configuration.Port);
-            //if (!FS.Directory.Exists(dbConfig.DataPath)) FS.Directory.CreateDirectory(dbConfig.DataPath);
-            //database.Initialize();
-
-            //DocumentStore s = new DocumentStore() { Url = "http://localhost:" + database.Configuration.Port.ToString() };
-            //s.Initialize();
-
+            if (FS == null)
+                FS = new FileSystem();
         }
     }
 }

@@ -24,7 +24,8 @@ namespace Octgn.Library
                 FS = new FileSystem();
             BasePath = FS.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\";
             PluginPath = FS.Path.Combine(SimpleConfig.DataDirectory, "Plugins");
-            DatabasePath = FS.Path.Combine(SimpleConfig.DataDirectory, "Database2");
+            DatabasePath = FS.Path.Combine(SimpleConfig.DataDirectory, "Database");
+            DatabasePath = FS.Path.Combine(DatabasePath, "master.db3");
         }
     }
 }

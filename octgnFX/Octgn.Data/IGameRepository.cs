@@ -10,6 +10,6 @@
         /// <summary>
         /// List of installed games.
         /// </summary>
-        IQueryable<Game> Games { get; }
+        IQueryable<Database.Entities.Game> Games { get; }
     }
 }

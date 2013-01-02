@@ -43,7 +43,7 @@ namespace Octgn
         internal static Client Client;
 
         internal static bool IsGameRunning;
-        internal static readonly string BasePath;
+        internal static readonly string BasePath = Octgn.Library.Paths.BasePath;
         internal static readonly string GamesPath;
         internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
@@ -64,6 +64,18 @@ namespace Octgn
 
         static Program()
         {
+            //var l = GameRepository.GetRepo().Games.ToList();
+            //foreach (var a in l)
+            //{
+            //    if (a.Name == "Magic: the Gathering")
+            //    {
+            //        MessageBox.Show("Starting query all");
+            //        var sets = a.Sets.ToList();
+            //        var cards = sets.SelectMany(x => x.Cards).ToArray();
+            //        var c = cards.FirstOrDefault();
+            //        MessageBox.Show("Finished Query All: " + c.Name);
+            //    }
+            //}
             var pList = Process.GetProcessesByName("OCTGN");
             if(pList != null && pList.Length > 0 && pList.Any(x=>x.Id != Process.GetCurrentProcess().Id))
             {
@@ -84,7 +96,7 @@ namespace Octgn
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
-            BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
+            //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
             LauncherWindow = new LauncherWindow();
             Application.Current.MainWindow = LauncherWindow;
