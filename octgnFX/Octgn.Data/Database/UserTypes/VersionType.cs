@@ -54,7 +54,7 @@
         {
             get
             {
-                return new SqlType[] { SqlTypeFactory.GetString(40) };
+                return new SqlType[] { new NHibernate.SqlTypes.StringSqlType() };
             }
         }
 

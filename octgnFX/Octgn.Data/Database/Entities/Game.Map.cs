@@ -25,8 +25,7 @@
             this.Map(x => x.Shared_Deck_Sections).Nullable();
             this.Map(x => x.File_Hash).Nullable();
             HasMany(x => x.Sets)
-                .Inverse()
-                .Cascade.All();
+                .KeyColumn("game_real_id");
         }
     }
 }

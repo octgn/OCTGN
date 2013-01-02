@@ -64,6 +64,7 @@ namespace Octgn
 
         static Program()
         {
+            //TODO FIGURE THIS SHIT OUT!!!
             //var l = GameRepository.GetRepo().Games.ToList();
             //foreach (var a in l)
             //{
@@ -71,6 +72,7 @@ namespace Octgn
             //    {
             //        MessageBox.Show("Starting query all");
             //        var sets = a.Sets.ToList();
+                    
             //        var cards = sets.SelectMany(x => x.Cards).ToArray();
             //        var c = cards.FirstOrDefault();
             //        MessageBox.Show("Finished Query All: " + c.Name);
