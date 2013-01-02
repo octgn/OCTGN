@@ -64,9 +64,6 @@ namespace Octgn
 
         static Program()
         {
-            var dbConf = new DataConfig();
-            var repo = GameRepository.GetRepo();
-
             var pList = Process.GetProcessesByName("OCTGN");
             if(pList != null && pList.Length > 0 && pList.Any(x=>x.Id != Process.GetCurrentProcess().Id))
             {
