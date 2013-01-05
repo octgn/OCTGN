@@ -48,7 +48,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Updater", "octgnFX\Oc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Library", "octgnFX\Octgn.Library\Octgn.Library.csproj", "{AF4B3885-F178-4C6B-99C9-9EB178FEC994}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.DeckBuilderPluginExample", "Octgn.DeckBuilderPluginExample\Octgn.DeckBuilderPluginExample.csproj", "{D1F5848B-84D9-4EE5-8969-E62B054DAA4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.DeckBuilderPluginExample", "octgnFX\Octgn.DeckBuilderPluginExample\Octgn.DeckBuilderPluginExample.csproj", "{D1F5848B-84D9-4EE5-8969-E62B054DAA4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
