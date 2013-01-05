@@ -1,3 +1,8 @@
+#3.0.1.27
++ Localized and changed chat server endpoints
++ Added v1 of Deck Builder Plugin System
++ Offline games now can see their external IP
+
 #3.0.1.26
 + Fixed 10 crash scenarios
 + Fixed a problem with the updater

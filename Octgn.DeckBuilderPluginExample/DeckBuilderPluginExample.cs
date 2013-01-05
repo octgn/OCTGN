@@ -59,8 +59,8 @@
         {
             get
             {
-                // Don't allow this plugin to be used in any version less than 3.0.1.26
-                return Version.Parse("3.0.1.26");
+                // Don't allow this plugin to be used in any version less than 3.0.1.27
+                return Version.Parse("3.0.1.27");
             }
         }
     }
