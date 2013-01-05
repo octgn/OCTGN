@@ -88,13 +88,15 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
+            //TODO This path doesn't exist.
             if (!PartExists("http://schemas.octgn.org/game/rules"))
             {
                 Rules.Visibility = Visibility.Hidden;
                 Help.Visibility = Visibility.Hidden;
             }
-            if (PartExists("http://schemas.octgn.info/game/font")) 
-                ExtractFont("http://schemas.octgn.info/game/font");
+            // TODO These paths don't exist.
+            if (PartExists("http://schemas.octgn.org/game/font")) 
+                ExtractFont("http://schemas.octgn.org/game/font");
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
@@ -522,7 +524,7 @@ namespace Octgn.Play
             e.Handled = true;
             //var wnd = new AboutWindow() { Owner = this };
             //wnd.ShowDialog();
-            Process.Start("http://www.octgn.info");
+            Process.Start(Program.WebsitePath);
         }
 
         private void ConsoleClicked(object sender, RoutedEventArgs e)

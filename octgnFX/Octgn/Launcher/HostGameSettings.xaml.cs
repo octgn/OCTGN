@@ -100,7 +100,7 @@ namespace Octgn.Launcher
             Program.Game = new Game(GameDef.FromO8G(_game.FullPath));
             Program.IsHost = true;
 
-			var ad = Dns.GetHostAddresses(Skylabs.Lobby.Client.Host);
+            var ad = Dns.GetHostAddresses(Program.GameServerPath);
             IPAddress ip = ad[0];
 
             if (ad.Length <= 0) return;

@@ -14,7 +14,6 @@ namespace Skylabs.LobbyServer
 {
     public static class Program
     {
-        public static Dictionary<string, string> Settings;
         private static readonly Thread RunThread = new Thread(Runner);
         private static bool _running = true;
         private static DateTime _startTime;
@@ -23,8 +22,6 @@ namespace Skylabs.LobbyServer
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
             Trace.WriteLine(String.Format("[LobbyServer]: V{0}\nStart Time: {1} {2}", Assembly.GetExecutingAssembly().GetName().Version,DateTime.Now.ToShortDateString(),DateTime.Now.ToShortTimeString()));
-            if (!LoadSettings())
-                return;
             //Console.WriteLine(String.Format("[LobbyServer] V{0}",Assembly.GetExecutingAssembly().GetName().Version.ToString()));
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomainProcessExit;
@@ -67,35 +64,6 @@ namespace Skylabs.LobbyServer
                 
             }
         }
-        private static bool LoadSettings()
-        {
-            Settings = new Dictionary<string, string>();
-#if(DEBUG)
-            const string sname = "serversettingsdebug.ini";
-#else
-            const string sname = "serversettings.ini";
-#endif
-            if (!File.Exists(sname))
-            {
-                Console.WriteLine("Can't find settings file.");
-                return false;
-            }
-            foreach (
-                string[] parts in
-                    File.ReadLines(sname).Select(l => l.Trim()).Where(s => s[0] != '#').Select(
-                        s => s.Split(new[] {':'}, StringSplitOptions.RemoveEmptyEntries)).Where(
-                            parts => parts.Length == 2))
-            {
-                parts[0] = parts[0].Trim();
-                parts[1] = parts[1].Trim();
-                if (Settings.ContainsKey(parts[0]))
-                    Settings[parts[0]] = parts[1];
-                else
-                    Settings.Add(parts[0], parts[1]);
-            }
-            return true;
-        }
-
         public static void KillServerInTime(int minutes)
         {
             if (minutes == 0)

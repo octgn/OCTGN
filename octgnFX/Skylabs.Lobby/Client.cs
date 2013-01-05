@@ -64,11 +64,7 @@ namespace Skylabs.Lobby
         public int CurrentHostedGamePort { get; set; }
         public bool DisconnectedBecauseConnectionReplaced { get; set; }
 
-#if(!DEBUG)
-    	public const string Host = "server.octgn.info";
-#else
-		public const string Host = "server.octgn.info";
-#endif
+    	public string Host;
 
         public UserStatus Status
         {
@@ -82,8 +78,9 @@ namespace Skylabs.Lobby
         }
 
         
-        public Client()
+        public Client(string host)
         {
+            Host = host;
             RebuildXmpp();
         }
 
@@ -599,7 +596,7 @@ namespace Skylabs.Lobby
         {
             username = username.ToLower();
             if (username == Me.User.User.ToLower()) return;
-            Jid j = new Jid(username + "@" + Client.Host);
+            Jid j = new Jid(username + "@" + Host);
 
             Xmpp.RosterManager.AddRosterItem(j);
             

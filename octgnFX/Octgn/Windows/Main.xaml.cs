@@ -575,7 +575,7 @@ namespace Octgn.Windows
             {
                 try
                 {
-                    ad = Dns.GetHostAddresses(Skylabs.Lobby.Client.Host);
+                    ad = Dns.GetHostAddresses(Program.GameServerPath);
                     Thread.Sleep(1000 * (i+1));
                 }
                 catch

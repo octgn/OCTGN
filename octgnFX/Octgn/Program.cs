@@ -23,6 +23,8 @@ using RE = System.Text.RegularExpressions;
 
 namespace Octgn
 {
+    using System.Configuration;
+
     using Octgn.Library;
 
     public static class Program
@@ -41,6 +43,10 @@ namespace Octgn
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository;
         internal static Client Client;
+
+        internal readonly static string WebsitePath;
+        internal readonly static string ChatServerPath;
+        internal readonly static string GameServerPath;
 
         internal static bool IsGameRunning;
         internal static readonly string BasePath = Octgn.Library.Paths.BasePath;
@@ -64,6 +70,9 @@ namespace Octgn
 
         static Program()
         {
+            WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
+            ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
+            GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
             //TODO FIGURE THIS SHIT OUT!!!
             //var l = GameRepository.GetRepo().Games.ToList();
             //foreach (var a in l)
@@ -94,7 +103,7 @@ namespace Octgn
 
 
 
-            LobbyClient = new Skylabs.Lobby.Client();
+            LobbyClient = new Skylabs.Lobby.Client(ChatServerPath);
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);

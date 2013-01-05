@@ -46,7 +46,7 @@
             this.label1.Size = new System.Drawing.Size(416, 49);
             this.label1.TabIndex = 0;
             this.label1.Text = "We\'re sorry but the Octgn update failed. If you keep experiencing a problem, plea" +
-    "se report the following error on our website http://www.octgn.info";
+    "se report the following error on our website " + Updater.ServerPath;
             // 
             // textBox1
             // 
