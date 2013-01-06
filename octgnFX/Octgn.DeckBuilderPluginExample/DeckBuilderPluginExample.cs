@@ -60,7 +60,7 @@
             get
             {
                 // Don't allow this plugin to be used in any version less than 3.0.1.27
-                return Version.Parse("3.0.1.27");
+                return Version.Parse("3.0.1.28");
             }
         }
     }
@@ -81,6 +81,10 @@
         /// <param name="con"></param>
         public void OnClick(IDeckBuilderPluginController con)
         {
+            var curDeck = con.GetLoadedDeck();
+
+            MessageBox.Show(String.Format("{0}",curDeck.CardCount));
+
             // Find the first game with cards in it.
             var game = con.Games.Games.FirstOrDefault(x => x.SelectCards(null).Rows.Count > 0);
             if (game == null)
