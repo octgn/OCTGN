@@ -26,5 +26,10 @@
         /// </summary>
         /// <param name="deck"></param>
         void LoadDeck(Deck deck);
+        /// <summary>
+        /// Gets the deck currently being edited.
+        /// </summary>
+        /// <returns></returns>
+        Deck GetLoadedDeck();
     }
 }

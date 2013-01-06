@@ -58,5 +58,10 @@ namespace Octgn.DeckBuilderPluginExample
         {
             LoadedDeck = deck;
         }
+
+        public Deck GetLoadedDeck()
+        {
+            return LoadedDeck;
+        }
     }
 }

@@ -570,6 +570,12 @@ namespace Octgn.DeckBuilder
         {
             Deck = deck;
         }
+
+        public Deck GetLoadedDeck()
+        {
+            return Deck;
+        }
+
         #endregion 
     }
 
