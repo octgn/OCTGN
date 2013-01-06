@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>Octgn.Library</id>
+        <version>3.0.1.28</version>
+        <title>Octgn Library</title>
+        <authors>Kelly Elton</authors>
+        <owners />
+        <projectUrl>http://www.octgn.net</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Library for interacting with OCTGN</description>
+        <language>en-US</language>
+        <tags>OCTGN</tags>
+        <dependencies>
+            <group targetFramework=".NETFramework4.0">
+                <dependency id="System.Data.SQLite" version="1.0.83.0" />
+                <dependency id="System.IO.Abstractions" version="1.4.0.40" />
+                <dependency id="NUnit" version="2.6.2" />
+            </group>
+        </dependencies>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.0" />
+            <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.0" />
+            <frameworkAssembly assemblyName="System.Xml" targetFramework=".NETFramework4.0" />
+            <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework=".NETFramework4.0" />
+            <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
+        </frameworkAssemblies>
+    </metadata>
+    <files>
+        <file src="..\octgnFX\Octgn.Library\bin\Release\Octgn.Data.dll" target="lib\net40\Octgn.Data.dll" />
+        <file src="..\octgnFX\Octgn.Library\bin\Release\Octgn.Data.pdb" target="lib\net40\Octgn.Data.pdb" />
+        <file src="..\octgnFX\Octgn.Library\bin\Release\Octgn.Library.dll" target="lib\net40\Octgn.Library.dll" />
+        <file src="..\octgnFX\Octgn.Library\bin\Release\Octgn.Library.pdb" target="lib\net40\Octgn.Library.pdb" />
+    </files>
+</package>
