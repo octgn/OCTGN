@@ -32,21 +32,21 @@ namespace Octgn.Launcher
 
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataRecieved;
         }
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.OnDataReceived -= LobbyClientOnOnDataRecieved;
             if(_startGameTimer != null)
                 _startGameTimer.Dispose();
 
         }
 
 
-        private void LobbyClientOnOnDataRecieved(object sender , Skylabs.Lobby.Client.DataRecType type , object data)
+        private void LobbyClientOnOnDataRecieved(object sender , Skylabs.Lobby.DataRecType type , object data)
         {
-            if (type == Skylabs.Lobby.Client.DataRecType.HostedGameReady)
+            if (type == Skylabs.Lobby.DataRecType.HostedGameReady)
             {
                 var port = data as Int32?;
                 if (port != null)

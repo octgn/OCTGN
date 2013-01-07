@@ -210,6 +210,17 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ChatBar.cs" />
+    <Compile Include="Controls\ChatBarItem.cs" />
+    <Compile Include="Controls\ChatControl.xaml.cs">
+      <DependentUpon>ChatControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ChatTableRow.xaml.cs">
+      <DependentUpon>ChatTableRow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ChatUserListItem.xaml.cs">
+      <DependentUpon>ChatUserListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ChildWindow.cs" />
     <Compile Include="Controls\ChildWindowManager.cs" />
     <Compile Include="Controls\CircularProgressBar.xaml.cs">
@@ -233,9 +244,11 @@
     <Compile Include="Controls\GameListItem.xaml.cs">
       <DependentUpon>GameListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LobbyChat.cs" />
     <Compile Include="Controls\NotificationListItem.xaml.cs">
       <DependentUpon>NotificationListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OctgnChrome.cs" />
     <Compile Include="Controls\PopupWindowMessage.xaml.cs">
       <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
     </Compile>
@@ -243,6 +256,7 @@
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
     <Compile Include="ErrorReporter.cs" />
     <Compile Include="Extentions\BitmapImageExtensions.cs" />
+    <Compile Include="Extentions\ControlExtensions.cs" />
     <Compile Include="Networking\IServerCalls.cs">
       <DependentUpon>IServerCalls.tt</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -624,6 +638,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\ChatControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\ChatTableRow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\ChatUserListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\CircularProgressBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

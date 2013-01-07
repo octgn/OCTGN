@@ -116,7 +116,7 @@ namespace Octgn
 
         static void Chatting_OnCreateRoom(object sender, NewChatRoom room)
         {
-            if (ChatWindows.All(x => x.Room.RID != room.RID))
+            if (ChatWindows.All(x => x.Room.Rid != room.Rid))
             {
                 if(MainWindow != null) MainWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
                 else if(LauncherWindow != null) LauncherWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));

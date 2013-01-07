@@ -74,13 +74,13 @@ namespace Octgn.Windows
                     break;
             }
         }
-        private void LobbyClientOnOnStateChanged(object sender , string state)
+        private void LobbyClientOnOnStateChanged(object sender, XmppConnectionState state)
         {
-            Enum.TryParse(state , true , out cState);
+            cState = state;
             Dispatcher.Invoke(new Action(() =>
-                                         {
-                                             textBlock1.Text =  state;
-                                         }));
+            {
+                textBlock1.Text = state.ToString();
+            }));
         }
 
         private void LobbyClientOnOnDisconnect(object sender , EventArgs eventArgs)
@@ -88,15 +88,15 @@ namespace Octgn.Windows
             //Program.LobbyClient.BeginReconnect();
         }
 
-        private void LobbyClientOnOnLoginComplete(object sender , Client.LoginResults results)
+        private void LobbyClientOnOnLoginComplete(object sender ,LoginResults results)
         {
             switch (results)
             {
-                case Client.LoginResults.Success:
+                case LoginResults.Success:
                     Canceled = false;
                     ReconnectTimer.Dispose();
                     break;
-                case Client.LoginResults.Failure:
+                case LoginResults.Failure:
                     Canceled = true;
                     ReconnectTimer.Dispose();
                     break;
@@ -105,12 +105,12 @@ namespace Octgn.Windows
             { 
                 switch(results)
                 {
-                    case Client.LoginResults.Success:
+                    case LoginResults.Success:
                         if (Program.LobbyClient.DisconnectedBecauseConnectionReplaced) Canceled = false;
                         Connected = true;
                         this.Close();
                         break;
-                    case Client.LoginResults.Failure:
+                    case LoginResults.Failure:
                         this.Close();
                         break;
                 }

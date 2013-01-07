@@ -6,7 +6,7 @@ using agsXMPP.Xml.Dom;
 using agsXMPP.protocol.component;
 
 namespace Skylabs.Lobby
-{        
+{
     [Serializable]
     public enum EHostedGame
     {
@@ -14,11 +14,12 @@ namespace Skylabs.Lobby
         GameInProgress,
         StoppedHosting
     };
-    public class HostedGameData :Element
+    public class HostedGameData : Element
     {
-        public HostedGameData() : base("gameitem","gameitem","octgn:gameitem")
+        public HostedGameData()
+            : base("gameitem", "gameitem", "octgn:gameitem")
         {
-            
+
         }
 
         public HostedGameData(Guid gameguid, Version gameversion, int port, string name, NewUser huser,
@@ -37,11 +38,11 @@ namespace Skylabs.Lobby
         public HostedGameData(SocketMessage sm)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
-            GameGuid = (Guid) sm["guid"];
-            GameVersion = (Version) sm["version"];
-            Port = (int) sm["port"];
-            Name = (string) sm["name"];
-            UserHosting = ((NewUser) sm["hoster"]);
+            GameGuid = (Guid)sm["guid"];
+            GameVersion = (Version)sm["version"];
+            Port = (int)sm["port"];
+            Name = (string)sm["name"];
+            UserHosting = ((NewUser)sm["hoster"]);
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
         }
@@ -51,58 +52,58 @@ namespace Skylabs.Lobby
             get
             {
                 Guid ret = Guid.Empty;
-                Guid.TryParse(GetTag("guid"),out ret);
+                Guid.TryParse(GetTag("guid"), out ret);
                 return ret;
-            } 
-            set{SetTag("guid",value.ToString());}
+            }
+            set { SetTag("guid", value.ToString()); }
         }
         public Version GameVersion
         {
             get
             {
-                Version v = new Version(0,0);
-                Version.TryParse(GetTag("version") , out v);
+                Version v = new Version(0, 0);
+                Version.TryParse(GetTag("version"), out v);
                 return v;
-            } 
+            }
             set
             {
-                SetTag("version",value.ToString());
+                SetTag("version", value.ToString());
             }
         }
         public int Port
         {
             get { return GetTagInt("port"); }
-            set{SetTag("port",value);}
+            set { SetTag("port", value); }
         }
         public String Name
         {
             get { return GetTag("name"); }
-            set{SetTag("name",value);}
+            set { SetTag("name", value); }
         }
         public NewUser UserHosting
         {
             get { return new NewUser(GetTagJid("userhosting")); }
-            set{SetTag("userhosting",value.User.Bare);}
+            set { SetTag("userhosting", value.FullUserName); }
         }
         public EHostedGame GameStatus
         {
             get
             {
                 EHostedGame ret = EHostedGame.StoppedHosting;
-                Enum.TryParse(GetTag("gamestatus") , out ret);
+                Enum.TryParse(GetTag("gamestatus"), out ret);
                 return ret;
             }
-            set{SetTag("gamestatus",value.ToString());}
+            set { SetTag("gamestatus", value.ToString()); }
         }
         public DateTime TimeStarted
         {
             get
             {
                 DateTime ret = DateTime.Now;
-                DateTime.TryParse(GetTag("timestarted") , out ret);
+                DateTime.TryParse(GetTag("timestarted"), out ret);
                 return ret;
             }
-            set{SetTag("timestarted",value.ToString());}
+            set { SetTag("timestarted", value.ToString()); }
         }
     }
 }

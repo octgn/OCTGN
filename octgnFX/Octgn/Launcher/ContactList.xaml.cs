@@ -17,7 +17,7 @@ namespace Octgn.Launcher
         public ContactList()
         {
             InitializeComponent();
-            Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataRecieved;
             Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
         }
 
@@ -26,9 +26,9 @@ namespace Octgn.Launcher
             LazyAsync.Invoke(RefreshList);
         }
 
-        private void LobbyClientOnOnDataRecieved(object sender, Client.DataRecType type, object data)
+        private void LobbyClientOnOnDataRecieved(object sender,DataRecType type, object data)
         {
-            if (type == Client.DataRecType.FriendList)
+            if (type ==DataRecType.FriendList)
             {
                 RefreshList();
             }
@@ -72,7 +72,7 @@ namespace Octgn.Launcher
             var fi = sender as GroupChatListItem;
             if (fi == null) return;
             var room = Program.LobbyClient.Chatting.GetRoom(fi.ThisRoom.GroupUser,true);
-            var cw = Program.ChatWindows.FirstOrDefault(x => x.Id == room.RID);
+            var cw = Program.ChatWindows.FirstOrDefault(x => x.Id == room.Rid);
             if(cw == null)
             {
                 cw = new Windows.ChatWindow(room);
@@ -88,7 +88,7 @@ namespace Octgn.Launcher
             var fi = sender as FriendListItem;
             if (fi == null) return;
             var room = Program.LobbyClient.Chatting.GetRoom(fi.ThisUser);
-            var cw = Program.ChatWindows.FirstOrDefault(x => x.Id == room.RID);
+            var cw = Program.ChatWindows.FirstOrDefault(x => x.Id == room.Rid);
             if(cw == null)
             {
                 cw = new Windows.ChatWindow(room);
@@ -105,7 +105,7 @@ namespace Octgn.Launcher
 
         private void PageUnloaded(object sender, RoutedEventArgs e)
         {
-            Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.OnDataReceived -= LobbyClientOnOnDataRecieved;
         }
     }
 }

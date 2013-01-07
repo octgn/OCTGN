@@ -102,6 +102,7 @@
   <ItemGroup>
     <Compile Include="Chat.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="FriendRequestNotification.cs" />
     <Compile Include="HostedGame.cs" />
     <Compile Include="HostedGameData.cs" />

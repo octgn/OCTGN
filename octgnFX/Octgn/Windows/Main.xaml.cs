@@ -79,7 +79,7 @@ namespace Octgn.Windows
             InputBindings.Add(ib);
             //Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
             Program.LobbyClient.OnFriendRequest += LobbyClientOnOnFriendRequest;
-            Program.LobbyClient.OnDataRecieved += LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataRecieved;
             Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
             tbUsername.Text = Program.LobbyClient.Username;
             tbStatus.Text = Program.LobbyClient.CustomStatus;
@@ -135,23 +135,23 @@ namespace Octgn.Windows
             }
         }
 
-        private void LobbyClientOnOnDataRecieved(object sender, Skylabs.Lobby.Client.DataRecType type, object data)
+        private void LobbyClientOnOnDataRecieved(object sender, Skylabs.Lobby.DataRecType type, object data)
         {
             Dispatcher.BeginInvoke(new Action(()=>
             {
                 switch(type)
                 {
-                    case Skylabs.Lobby.Client.DataRecType.FriendList:
+                    case Skylabs.Lobby.DataRecType.FriendList:
                         break;
-                    case Skylabs.Lobby.Client.DataRecType.MyInfo:
+                    case Skylabs.Lobby.DataRecType.MyInfo:
                         break;
-                    case Skylabs.Lobby.Client.DataRecType.GameList:
+                    case Skylabs.Lobby.DataRecType.GameList:
                         break;
-                    case Skylabs.Lobby.Client.DataRecType.HostedGameReady:
+                    case Skylabs.Lobby.DataRecType.HostedGameReady:
                         break;
-                    case Skylabs.Lobby.Client.DataRecType.GamesNeedRefresh:
+                    case Skylabs.Lobby.DataRecType.GamesNeedRefresh:
                         break;
-                    case Skylabs.Lobby.Client.DataRecType.Announcement:
+                    case Skylabs.Lobby.DataRecType.Announcement:
                         var d = data as Dictionary<String , String>;
                         if(d != null)
                             MessageBox.Show(d["Message"] , d["Subject"] , MessageBoxButton.OK , MessageBoxImage.Exclamation);
@@ -179,7 +179,7 @@ namespace Octgn.Windows
                         rgStatus.LargeImageSource = bOfflineStatus.LargeImageSource;
                         break;
                 }
-                Prefs.Nickname = Program.LobbyClient.Me.User.User;
+                Prefs.Nickname = Program.LobbyClient.Me.UserName;
             }
             ));
         }
@@ -424,7 +424,7 @@ namespace Octgn.Windows
                 Application.Current.MainWindow = Program.MainWindow;                
             }
             Program.MainWindow.Close();
-            Program.LobbyClient.OnDataRecieved -= LobbyClientOnOnDataRecieved;
+            Program.LobbyClient.OnDataReceived -= LobbyClientOnOnDataRecieved;
             Program.LobbyClient.OnFriendRequest -= LobbyClientOnOnFriendRequest;
             Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
             Program.LobbyClient.Stop();

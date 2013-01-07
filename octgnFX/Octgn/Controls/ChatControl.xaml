@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="Octgn.Controls.ChatControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" Height="397" Width="845" Focusable="True" >
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="2"/>
+            <ColumnDefinition Width="162"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" Grid.RowSpan="2" Width="2" ResizeBehavior="PreviousAndNext"/>
+        <Grid Grid.Column="2" Grid.RowSpan="2" Background="#FF333333">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="16*"/>
+                <ColumnDefinition Width="100*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="100*"/>
+            </Grid.RowDefinitions>
+            
+            <ListBox x:Name="UserList" Grid.Row="1" Grid.ColumnSpan="2">
+            </ListBox>
+            <Image Source="../Resources/search.png" Width="16" Height="16"/>
+            <TextBox x:Name="UserFilter"  TextWrapping="NoWrap" Text="" VerticalContentAlignment="Center" Grid.Column="2" TextChanged="UserFilterTextChanged" >
+            </TextBox>
+        </Grid>
+        <TextBox x:Name="ChatInput" Grid.Row="1" TextWrapping="Wrap" VerticalContentAlignment="Center" PreviewKeyUp="ChatInputPreviewKeyUp" PreviewKeyDown="ChatInputPreviewKeyDown"/>
+        <RichTextBox x:Name="Chat" VerticalScrollBarVisibility="Auto" IsReadOnly="True" IsDocumentEnabled="True">
+            <FlowDocument>
+                <Table CellSpacing="0">
+                    <Table.Columns>
+                        <TableColumn Width="55"/>
+                        <TableColumn Width="100*"/>
+                    </Table.Columns>
+
+                    <TableRowGroup x:Name="ChatRowGroup">
+                    </TableRowGroup>
+                </Table>
+            </FlowDocument>
+        </RichTextBox>
+
+    </Grid>
+</UserControl>
