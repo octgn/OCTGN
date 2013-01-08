@@ -48,6 +48,8 @@ namespace Octgn
         internal readonly static string ChatServerPath;
         internal readonly static string GameServerPath;
 
+        internal static readonly bool UseNewChrome;
+
         internal static bool IsGameRunning;
         internal static readonly string BasePath = Octgn.Library.Paths.BasePath;
         internal static readonly string GamesPath;
@@ -73,20 +75,8 @@ namespace Octgn
             WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
-            //TODO FIGURE THIS SHIT OUT!!!
-            //var l = GameRepository.GetRepo().Games.ToList();
-            //foreach (var a in l)
-            //{
-            //    if (a.Name == "Magic: the Gathering")
-            //    {
-            //        MessageBox.Show("Starting query all");
-            //        var sets = a.Sets.ToList();
-                    
-            //        var cards = sets.SelectMany(x => x.Cards).ToArray();
-            //        var c = cards.FirstOrDefault();
-            //        MessageBox.Show("Finished Query All: " + c.Name);
-            //    }
-            //}
+            bool.TryParse(ConfigurationManager.AppSettings["UseNewChrome"],out UseNewChrome);
+
             var pList = Process.GetProcessesByName("OCTGN");
             if(pList != null && pList.Length > 0 && pList.Any(x=>x.Id != Process.GetCurrentProcess().Id))
             {
