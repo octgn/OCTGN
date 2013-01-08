@@ -302,6 +302,8 @@ namespace Octgn.Play
         private void Open(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
+            // Make sure that Prefs.LastFolder exists
+            if (!Directory.Exists(Prefs.LastFolder)) Prefs.LastFolder = Prefs.DataDirectory;
             // Show the dialog to choose the file
             var ofd = new OpenFileDialog
                           {
