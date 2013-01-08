@@ -486,20 +486,15 @@ namespace Skylabs.Lobby
 
             if (message[0] == '/')
             {
-                message = message.Substring(1);
-                var mend = message.IndexOf(' ');
-                var command = message.Substring(0, mend).ToLower();
-                var mess = string.Empty;
-                if (message.Length > command.Length + 1)
-                {
-                    mess = message.Substring(mend + 1);
-                }
+                var userCommand = message.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var args = userCommand.Skip(1).ToArray();
+                var command = userCommand.Length > 0 ? userCommand[0] : string.Empty;
 
                 switch (command)
                 {
                     case "topic":
                         {
-                            this.SetTopic(mess);
+                            this.SetTopic(String.Join(" ", args));
                             break;
                         }
 
@@ -507,7 +502,7 @@ namespace Skylabs.Lobby
                         {
                             NewChatRoom r =
                                 this.client.Chatting.GetRoom(
-                                    new NewUser(new Jid(mess, this.client.Host, this.client.Me.JidUser.Resource)));
+                                    new NewUser(new Jid(String.Join(" ", args), this.client.Host, this.client.Me.JidUser.Resource)));
                             break;
                         }
                 }
