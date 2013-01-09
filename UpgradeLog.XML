@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="OCTGN">
+</Property><Property Name="Solution File" Value="C:\OCTGN\OCTGN.sln">
+</Property><Property Name="Date" Value="Tuesday, January 01, 2013">
+</Property><Property Name="Time" Value="11:01 AM">
+</Property></Properties><Event ErrorLevel="0" Project="Octgn" Source="octgnFX\Octgn\Octgn.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn" Source="octgnFX\Octgn\Octgn.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Data" Source="octgnFX\Octgn.Data\Octgn.Data.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Data" Source="octgnFX\Octgn.Data\Octgn.Data.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Server" Source="octgnFX\Octgn.Server\Octgn.Server.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Server" Source="octgnFX\Octgn.Server\Octgn.Server.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Skylabs.Lobby" Source="octgnFX\Skylabs.Lobby\Skylabs.Lobby.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Skylabs.Lobby" Source="octgnFX\Skylabs.Lobby\Skylabs.Lobby.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.StandAloneServer" Source="octgnFX\Octgn.StandAloneServer\Octgn.StandAloneServer.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.StandAloneServer" Source="octgnFX\Octgn.StandAloneServer\Octgn.StandAloneServer.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Skylabs.LobbyServer" Source="octgnFX\Octgn.LobbyServer\Skylabs.LobbyServer.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Skylabs.LobbyServer" Source="octgnFX\Octgn.LobbyServer\Skylabs.LobbyServer.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Test" Source="octgnFX\Octgn.Test\Octgn.Test.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Test" Source="octgnFX\Octgn.Test\Octgn.Test.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.ReleasePusher" Source="octgnFX\Octgn.ReleasePusher\Octgn.ReleasePusher.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.ReleasePusher" Source="octgnFX\Octgn.ReleasePusher\Octgn.ReleasePusher.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Updater" Source="octgnFX\Octgn.Updater\Octgn.Updater.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Updater" Source="octgnFX\Octgn.Updater\Octgn.Updater.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="Octgn.Library" Source="octgnFX\Octgn.Library\Octgn.Library.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Octgn.Library" Source="octgnFX\Octgn.Library\Octgn.Library.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="" Source="OCTGN.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="OCTGN.sln" Description="Converted">
+</Event></UpgradeLog>
