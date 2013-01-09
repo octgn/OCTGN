@@ -83,7 +83,7 @@ namespace Octgn.Launcher
             }
             catch (System.Net.WebException we)
             {
-                MessageBox.Show(we.Message);
+                requestHtml = "127.0.0.1";
             }
 
             System.Net.IPAddress externalIp = System.Net.IPAddress.Parse(requestHtml);
