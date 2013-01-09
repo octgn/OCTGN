@@ -63,15 +63,16 @@ namespace Octgn.Launcher
                 cbSavePassword.IsChecked = true;
             }
             textBox1.Text = Prefs.Username;
-            Program.LobbyClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state);
+            //TODO ToString for state may be wrong.
+            Program.LobbyClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state.ToString());
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
 
-            this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start("http://www.octgn.info/register.php");
+            this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start(Program.WebsitePath + "register.php");
             this.labelForgot.MouseLeftButtonUp +=
-                (sender, args) => Process.Start("http://www.octgn.info/passwordreset.php");
+                (sender, args) => Process.Start(Program.WebsitePath + "passwordreset.php");
             this.labelResend.MouseLeftButtonUp += (sender, args) =>
                 {
-                    var url = "http://www.octgn.info/api/user/resendemailverify.php?username="
+                    var url = Program.WebsitePath + "api/user/resendemailverify.php?username="
                               + HttpUtility.UrlEncode(textBox1.Text);
                     using (var wc = new WebClient())
                     {
@@ -95,7 +96,7 @@ namespace Octgn.Launcher
                 {
                     using (var wc = new WebClient())
                     {
-                        var str = wc.DownloadString("http://www.octgn.net/news.xml");
+                        var str = wc.DownloadString(Program.WebsitePath + "news.xml");
                         if (string.IsNullOrWhiteSpace(str))
                         {
                             throw new Exception("Null news feed.");
@@ -237,23 +238,23 @@ namespace Octgn.Launcher
                     _animationTimer.Stop();
             }
 
-            void LobbyClientOnLoginComplete(object sender, Client.LoginResults results)
+            void LobbyClientOnLoginComplete(object sender, LoginResults results)
             {
                 
                 switch (results)
                 {
-                    case Skylabs.Lobby.Client.LoginResults.ConnectionError:
+                    case LoginResults.ConnectionError:
                         UpdateLoginStatus("");
                         _isLoggingIn = false;
                         DoErrorMessage("Could not connect to the server.");
                         StopSpinning();    
 
                         break;
-                    case Skylabs.Lobby.Client.LoginResults.Success:
-                        LoginFinished(Skylabs.Lobby.Client.LoginResult.Success, DateTime.Now,"");
+                    case LoginResults.Success:
+                        LoginFinished(LoginResult.Success, DateTime.Now,"");
                         break;
-                    case Skylabs.Lobby.Client.LoginResults.Failure:
-                        LoginFinished(Skylabs.Lobby.Client.LoginResult.Failure, DateTime.Now,"Username/Password Incorrect.");
+                    case LoginResults.Failure:
+                        LoginFinished(LoginResult.Failure, DateTime.Now,"Username/Password Incorrect.");
                         break;
                 }
                 _isLoggingIn = false;
@@ -275,7 +276,7 @@ namespace Octgn.Launcher
                             {
                                 try
                                 {
-                                    var ustring = "http://www.octgn.net/api/user/login.php?username=" + HttpUtility.UrlEncode(username)
+                                    var ustring = Program.WebsitePath + "api/user/login.php?username=" + HttpUtility.UrlEncode(username)
                                                   + "&password=" + HttpUtility.UrlEncode(password);
                                     if (email != null) ustring += "&email=" + HttpUtility.UrlEncode(email);
                                     var res = wc.DownloadString(new Uri(ustring));
@@ -290,22 +291,22 @@ namespace Octgn.Launcher
                                         case "EmailUnverifiedException":
                                             {
                                                 //TODO Needs a way to resend e-mail and stuff
-                                                this.LoginFinished(Client.LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail.");
+                                                this.LoginFinished(LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail.");
                                                 break;
                                             }
                                         case "UnknownUsernameException":
                                             {
-                                                this.LoginFinished(Client.LoginResult.Failure,DateTime.Now,"The username you entered doesn't exist.");
+                                                this.LoginFinished(LoginResult.Failure,DateTime.Now,"The username you entered doesn't exist.");
                                                 break;
                                             }
                                         case "PasswordDifferentException":
                                             {
-                                                this.LoginFinished(Client.LoginResult.Failure,DateTime.Now,"The password you entered is incorrect.");
+                                                this.LoginFinished(LoginResult.Failure,DateTime.Now,"The password you entered is incorrect.");
                                                 break;
                                             }
                                         case "NoEmailException":
                                             {
-                                                this.LoginFinished(Client.LoginResult.Failure,DateTime.Now,"Your account does not have an e-mail associated with it. Please enter one above.",true);
+                                                this.LoginFinished(LoginResult.Failure,DateTime.Now,"Your account does not have an e-mail associated with it. Please enter one above.",true);
                                                 break;
                                             }
                                         default:
@@ -316,7 +317,7 @@ namespace Octgn.Launcher
                                 }
                                 catch (Exception)
                                 {
-                                    this.LoginFinished(Client.LoginResult.Failure, DateTime.Now,"Please try again later.");
+                                    this.LoginFinished(LoginResult.Failure, DateTime.Now,"Please try again later.");
                                 }
 
                             }
@@ -330,7 +331,7 @@ namespace Octgn.Launcher
                         o =>
                         {
                             Program.LobbyClient.Stop();
-                            LoginFinished(Client.LoginResult.Failure , DateTime.Now ,
+                            LoginFinished(LoginResult.Failure , DateTime.Now ,
                                           "Please try again later.");
                         } ,
                         null , Prefs.LoginTimeout , System.Threading.Timeout.Infinite);
@@ -343,7 +344,7 @@ namespace Octgn.Launcher
                 Dispatcher.Invoke(new Action(() => lblLoginStatus.Content = message));
             }
 
-            private void LoginFinished(Client.LoginResult success, DateTime banEnd, string message, bool showEmail =false)
+            private void LoginFinished(LoginResult success, DateTime banEnd, string message, bool showEmail =false)
             {
                 if (_inLoginDone) return;
                 _inLoginDone = true;
@@ -360,7 +361,7 @@ namespace Octgn.Launcher
                                                     StopSpinning();
                                                     switch (success)
                                                     {
-                                                        case Skylabs.Lobby.Client.LoginResult.Success:
+                                                        case Skylabs.Lobby.LoginResult.Success:
                                                             Prefs.Password = cbSavePassword.IsChecked == true
                                                                                  ? passwordBox1.Password.Encrypt()
                                                                                  : "";
@@ -371,12 +372,12 @@ namespace Octgn.Launcher
                                                             Application.Current.MainWindow = Program.MainWindow;
                                                             Program.LauncherWindow.Close();
                                                             break;
-                                                        case Skylabs.Lobby.Client.LoginResult.Banned:
+                                                        case Skylabs.Lobby.LoginResult.Banned:
                                                             DoErrorMessage("You have been banned until " +
                                                                            banEnd.ToShortTimeString() + " on " +
                                                                            banEnd.ToShortDateString());
                                                             break;
-                                                        case Skylabs.Lobby.Client.LoginResult.Failure:
+                                                        case Skylabs.Lobby.LoginResult.Failure:
                                                             DoErrorMessage("Login Failed: " + message);
                                                             break;
                                                     }

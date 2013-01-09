@@ -3,7 +3,7 @@ OCTGN 3.0
 This is the new home for the OCTGN open source project.
 
 * Need general help? 
-  * Check out the forum -> http://www.octgn.info/help
+  * Check out the forum -> http://www.octgn.net/help
   * Join our open IRC chat: irc.freenode.net | #octgn
     * Web Client -> http://webchat.freenode.net/?channels=octgn
     * IRC client -> irc://irc.freenode.net/#octgn
@@ -20,5 +20,4 @@ Useful Links
 =================================================
 These are just related links
 
-* Download Site: http://octgn.info/
-* Octgn 2: http://www.octgn.net/
+* Download Site: http://www.octgn.net/

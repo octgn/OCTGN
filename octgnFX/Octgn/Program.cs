@@ -23,6 +23,10 @@ using RE = System.Text.RegularExpressions;
 
 namespace Octgn
 {
+    using System.Configuration;
+
+    using Octgn.Library;
+
     public static class Program
     {
         public static Windows.DWindow DebugWindow;
@@ -40,8 +44,12 @@ namespace Octgn
         public static GamesRepository GamesRepository;
         internal static Client Client;
 
+        internal readonly static string WebsitePath;
+        internal readonly static string ChatServerPath;
+        internal readonly static string GameServerPath;
+
         internal static bool IsGameRunning;
-        internal static readonly string BasePath;
+        internal static readonly string BasePath = Octgn.Library.Paths.BasePath;
         internal static readonly string GamesPath;
         internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
@@ -62,6 +70,23 @@ namespace Octgn
 
         static Program()
         {
+            WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
+            ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
+            GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
+            //TODO FIGURE THIS SHIT OUT!!!
+            //var l = GameRepository.GetRepo().Games.ToList();
+            //foreach (var a in l)
+            //{
+            //    if (a.Name == "Magic: the Gathering")
+            //    {
+            //        MessageBox.Show("Starting query all");
+            //        var sets = a.Sets.ToList();
+                    
+            //        var cards = sets.SelectMany(x => x.Cards).ToArray();
+            //        var c = cards.FirstOrDefault();
+            //        MessageBox.Show("Finished Query All: " + c.Name);
+            //    }
+            //}
             var pList = Process.GetProcessesByName("OCTGN");
             if(pList != null && pList.Length > 0 && pList.Any(x=>x.Id != Process.GetCurrentProcess().Id))
             {
@@ -78,11 +103,11 @@ namespace Octgn
 
 
 
-            LobbyClient = new Skylabs.Lobby.Client();
+            LobbyClient = new Skylabs.Lobby.Client(ChatServerPath);
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
-            BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
+            //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
             LauncherWindow = new LauncherWindow();
             Application.Current.MainWindow = LauncherWindow;
@@ -91,7 +116,7 @@ namespace Octgn
 
         static void Chatting_OnCreateRoom(object sender, NewChatRoom room)
         {
-            if (ChatWindows.All(x => x.Room.RID != room.RID))
+            if (ChatWindows.All(x => x.Room.Rid != room.Rid))
             {
                 if(MainWindow != null) MainWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
                 else if(LauncherWindow != null) LauncherWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));

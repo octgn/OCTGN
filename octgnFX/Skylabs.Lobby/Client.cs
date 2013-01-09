@@ -1,159 +1,429 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using Octgn.Data;
-using agsXMPP;
-using agsXMPP.Factory;
-//using agsXMPP.Net;
-using agsXMPP.Xml.Dom;
-using agsXMPP.net;
-using agsXMPP.protocol;
-using agsXMPP.protocol.client;
-using agsXMPP.protocol.iq.agent;
-using agsXMPP.protocol.iq.register;
-using agsXMPP.protocol.iq.roster;
-using agsXMPP.protocol.iq.vcard;
-using agsXMPP.protocol.x.muc;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Client.cs" company="OCTGN">
+//   GNU Stuff
+// </copyright>
+// <summary>
+//   The Lobby Client.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Skylabs.Lobby
 {
-    public class Client
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
+    using System.Linq;
+    using System.Net.Sockets;
+
+    using agsXMPP;
+    using agsXMPP.Factory;
+    using agsXMPP.net;
+    using agsXMPP.protocol;
+    using agsXMPP.protocol.client;
+    using agsXMPP.protocol.iq.agent;
+    using agsXMPP.protocol.iq.roster;
+    using agsXMPP.protocol.iq.vcard;
+    using agsXMPP.protocol.x.muc;
+    using agsXMPP.Xml.Dom;
+
+    using Octgn.Data;
+
+    using Error = agsXMPP.protocol.Error;
+
+
+    #region Delegates
+
+    /// <summary>
+    /// The delegate register complete.
+    /// </summary>
+    /// <param name="sender">
+    /// The sender.
+    /// </param>
+    /// <param name="results">
+    /// The results.
+    /// </param>
+    public delegate void ClientRegisterComplete(object sender, RegisterResults results);
+
+    /// <summary>
+    /// The delegate state changed.
+    /// </summary>
+    /// <param name="sender">
+    /// The sender.
+    /// </param>
+    /// <param name="state">
+    /// The state.
+    /// </param>
+    public delegate void ClientStateChanged(object sender, XmppConnectionState state);
+
+    /// <summary>
+    /// The delegate friend request.
+    /// </summary>
+    /// <param name="sender">
+    /// The sender.
+    /// </param>
+    /// <param name="user">
+    /// The user.
+    /// </param>
+    public delegate void ClientFriendRequest(object sender, Jid user);
+
+    /// <summary>
+    /// The delegate login complete.
+    /// </summary>
+    /// <param name="sender">
+    /// The sender.
+    /// </param>
+    /// <param name="results">
+    /// The results.
+    /// </param>
+    public delegate void ClientLoginComplete(object sender, LoginResults results);
+
+    /// <summary>
+    /// The delegate data received.
+    /// </summary>
+    /// <param name="sender">
+    /// The sender.
+    /// </param>
+    /// <param name="type">
+    /// The type.
+    /// </param>
+    /// <param name="data">
+    /// The data.
+    /// </param>
+    public delegate void ClientDataRecieved(object sender, DataRecType type, object data);
+
+    #endregion
+
+    public class Client 
     {
-        #region Enums
-            public enum RegisterResults{ConnectionError,Success,UsernameTaken,UsernameInvalid,PasswordFailure}
-            public enum LoginResults{ConnectionError,Success,Failure}
-            public enum DataRecType{FriendList,MyInfo,GameList,HostedGameReady,GamesNeedRefresh,Announcement}
-            public enum LoginResult{Success,Failure,Banned,WaitingForResponse};
-            public enum LobbyMessageType { Standard, Error, Topic };
-        #endregion
-        #region Delegates
-            public delegate void dRegisterComplete(object sender, RegisterResults results);
-            public delegate void dStateChanged(object sender, string state);
-            public delegate void dFriendRequest(object sender, Jid user);
-            public delegate void dLoginComplete(object sender, LoginResults results);
-            public delegate void dDataRecieved(object sender, DataRecType type, object data);
-        #endregion
         #region Events
-            public event dRegisterComplete OnRegisterComplete;
-            public event dLoginComplete OnLoginComplete;
-            public event dStateChanged OnStateChanged;
-            public event dFriendRequest OnFriendRequest;
-            public event dDataRecieved OnDataRecieved;
-            public event EventHandler OnDisconnect;
+
+        /// <summary>
+        /// The on register complete.
+        /// </summary>
+        public event ClientRegisterComplete OnRegisterComplete;
+
+        /// <summary>
+        /// The on login complete.
+        /// </summary>
+        public event ClientLoginComplete OnLoginComplete;
+
+        /// <summary>
+        /// The on state changed.
+        /// </summary>
+        public event ClientStateChanged OnStateChanged;
+
+        /// <summary>
+        /// The on friend request.
+        /// </summary>
+        public event ClientFriendRequest OnFriendRequest;
+
+        /// <summary>
+        /// The on data received.
+        /// </summary>
+        public event ClientDataRecieved OnDataReceived;
+
+        /// <summary>
+        /// The on disconnect.
+        /// </summary>
+        public event EventHandler OnDisconnect;
+
         #endregion
         #region PrivateAccessors
-            private XmppClientConnection Xmpp;
-            private int _noteId = 0;
-            private Presence myPresence;
-            private List<HostedGameData> _games;
-            private string _email;
+
+        /// <summary>
+        /// The this.xmpp.
+        /// </summary>
+        private XmppClientConnection xmpp;
+
+        /// <summary>
+        /// The note id.
+        /// </summary>
+        private int noteId;
+
+        /// <summary>
+        /// The my presence.
+        /// </summary>
+        private Presence myPresence;
+
+        /// <summary>
+        /// The games.
+        /// </summary>
+        private List<HostedGameData> games;
+
+        /// <summary>
+        /// The email.
+        /// </summary>
+        private string email;
+
+        /// <summary>
+        /// Logging In
+        /// </summary>
+        private bool loggingIng;
+
         #endregion
 
+        /// <summary>
+        /// Gets or sets the notifications.
+        /// </summary>
         public List<Notification> Notifications { get; set; }
+
+        /// <summary>
+        /// Gets or sets the friends.
+        /// </summary>
         public List<NewUser> Friends { get; set; }
-        //public List<NewUser> GroupChats { get; set; }
+
+        /// <summary>
+        /// Gets the username.
+        /// </summary>
         public string Username { get; private set; }
+
+        /// <summary>
+        /// Gets the password.
+        /// </summary>
         public string Password { get; private set; }
-        public string CustomStatus { get { return Xmpp.Status; }set{SetCustomStatus(value);} }
+
+        /// <summary>
+        /// Gets or sets the custom status.
+        /// </summary>
+        public string CustomStatus
+        {
+            get
+            {
+                return this.xmpp.Status;
+            }
+
+            set
+            {
+                this.SetCustomStatus(value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the MUC manager.
+        /// </summary>
         public MucManager MucManager { get; set; }
-        public RosterManager RosterManager { get { return Xmpp.RosterManager; } }
+
+        /// <summary>
+        /// Gets the roster manager.
+        /// </summary>
+        public RosterManager RosterManager
+        {
+            get
+            {
+                return this.xmpp.RosterManager;
+            }
+        }
+
+        /// <summary>
+        /// Gets the me.
+        /// </summary>
         public NewUser Me { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the chatting.
+        /// </summary>
         public Chat Chatting { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current hosted game port.
+        /// </summary>
         public int CurrentHostedGamePort { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether disconnected because connection replaced.
+        /// </summary>
         public bool DisconnectedBecauseConnectionReplaced { get; set; }
 
-#if(!DEBUG)
-    	public const string Host = "server.octgn.info";
-#else
-		public const string Host = "server.octgn.info";
-#endif
+        /// <summary>
+        /// The host.
+        /// </summary>
+    	public string Host;
 
+        /// <summary>
+        /// Gets or sets the status.
+        /// </summary>
         public UserStatus Status
         {
             get
             {
-				var s = NewUser.PresenceToStatus(myPresence);
-				if(s == UserStatus.Unknown) s = Me.Status;
-            	return s;
-            }
-            set { SetStatus(value); }
-        }
+                var s = NewUser.PresenceToStatus(this.myPresence);
+                if (s == UserStatus.Unknown)
+                {
+                    s = this.Me.Status;
+                }
 
+                return s;
+            }
+
+            set
+            {
+                this.SetStatus(value);
+            }
+        }
         
-        public Client()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Client"/> class.
+        /// </summary>
+        /// <param name="host">Chat host to connect to</param>
+        public Client(string host)
         {
-            RebuildXmpp();
+            Host = host;
+            this.RebuildXmpp();
         }
 
         private void RebuildXmpp()
         {
-            if(Xmpp != null)
+            if (this.xmpp != null)
             {
-                Xmpp.OnXmppConnectionStateChanged -= XmppOnOnXmppConnectionStateChanged;
-                Xmpp.Close();
-                Xmpp = null;
+                this.xmpp.OnXmppConnectionStateChanged -= this.XmppOnOnXmppConnectionStateChanged;
+                this.xmpp.Close();
+                this.xmpp = null;
             }
-            DisconnectedBecauseConnectionReplaced = false;
-            Xmpp = new XmppClientConnection(Host);
-            Xmpp.OnRegistered += XmppOnOnRegistered;
-            Xmpp.OnRegisterError += XmppOnOnRegisterError;
-            Xmpp.OnXmppConnectionStateChanged += XmppOnOnXmppConnectionStateChanged;
-            Xmpp.OnLogin += XmppOnOnLogin;
-            Xmpp.OnAuthError += XmppOnOnAuthError;
-            Xmpp.OnRosterItem += XmppOnOnRosterItem;
-            Xmpp.OnRosterEnd += XmppOnOnRosterEnd;
-            Xmpp.OnRosterStart += XmppOnOnRosterStart;
-            Xmpp.OnMessage += XmppOnOnMessage;
-            Xmpp.OnPresence += XmppOnOnPresence;
-            Xmpp.OnAgentItem += XmppOnOnAgentItem;
-            Xmpp.OnIq += XmppOnOnIq;
-            Xmpp.OnReadXml += XmppOnOnReadXml;
-            Xmpp.OnClose += XmppOnOnClose;
-            Xmpp.OnWriteXml += XmppOnOnWriteXml;
-            Xmpp.OnError += XmppOnOnError;
-            Xmpp.OnSocketError += XmppOnOnSocketError;
-            Xmpp.OnStreamError += XmppOnOnStreamError;
-            Notifications = new List<Notification>();
-            Friends = new List<NewUser>();
-            //GroupChats = new List<NewUser>();
-            myPresence = new Presence();
-            Chatting = new Chat(this, Xmpp);
-            CurrentHostedGamePort = -1;
-            _games = new List<HostedGameData>();
-            agsXMPP.Factory.ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
+
+            this.DisconnectedBecauseConnectionReplaced = false;
+            this.xmpp = new XmppClientConnection(Host);
+            this.xmpp.OnRegistered += this.XmppOnOnRegistered;
+            this.xmpp.OnRegisterError += this.XmppOnOnRegisterError;
+            this.xmpp.OnXmppConnectionStateChanged += this.XmppOnOnXmppConnectionStateChanged;
+            this.xmpp.OnLogin += this.XmppOnOnLogin;
+            this.xmpp.OnAuthError += this.XmppOnOnAuthError;
+            this.xmpp.OnRosterItem += this.XmppOnOnRosterItem;
+            this.xmpp.OnRosterEnd += this.XmppOnOnRosterEnd;
+            this.xmpp.OnRosterStart += this.XmppOnOnRosterStart;
+            this.xmpp.OnMessage += this.XmppOnOnMessage;
+            this.xmpp.OnPresence += this.XmppOnPresence;
+            this.xmpp.OnAgentItem += this.XmppOnOnAgentItem;
+            this.xmpp.OnIq += this.XmppOnOnIq;
+            this.xmpp.OnReadXml += this.XmppOnOnReadXml;
+            this.xmpp.OnClose += this.XmppOnOnClose;
+            this.xmpp.OnWriteXml += this.XmppOnOnWriteXml;
+            this.xmpp.OnError += this.XmppOnOnError;
+            this.xmpp.OnSocketError += this.XmppOnOnSocketError;
+            this.xmpp.OnStreamError += this.XmppOnOnStreamError;
+            this.xmpp.OnReadSocketData += this.XmppOnOnReadSocketData;
+            this.Notifications = new List<Notification>();
+            this.Friends = new List<NewUser>();
+
+            this.myPresence = new Presence();
+            this.Chatting = new Chat(this, this.xmpp);
+            this.CurrentHostedGamePort = -1;
+            this.games = new List<HostedGameData>();
+            ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
         }
 
         #region XMPP
 
+        /// <summary>
+        /// The xmpp on on read socket data.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="data">
+        /// The data.
+        /// </param>
+        /// <param name="count">
+        /// The count.
+        /// </param>
+        private void XmppOnOnReadSocketData(object sender, byte[] data, int count)
+        {
+        }
 
+        /// <summary>
+        /// The xmpp on on stream error.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="element">
+        /// The element.
+        /// </param>
         private void XmppOnOnStreamError(object sender, Element element)
         {
-            var st = element as agsXMPP.protocol.Error;
-            if(st != null && st.Condition == StreamErrorCondition.Conflict)
-                DisconnectedBecauseConnectionReplaced = true;
-            
-            var textTag = element.GetTag("text");
-            if (!String.IsNullOrWhiteSpace(textTag) && textTag.Trim().ToLower() == "replaced by new connection") DisconnectedBecauseConnectionReplaced = true;
+            var st = element as Error;
+            if (st != null && st.Condition == StreamErrorCondition.Conflict)
+            {
+                this.DisconnectedBecauseConnectionReplaced = true;
+            }
+
+            string textTag = element.GetTag("text");
+            if (!string.IsNullOrWhiteSpace(textTag) && textTag.Trim().ToLower() == "replaced by new connection")
+            {
+                this.DisconnectedBecauseConnectionReplaced = true;
+            }
+
             Trace.WriteLine("[Xmpp]StreamError: " + element);
         }
 
+        /// <summary>
+        /// The xmpp on on socket error.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="exception">
+        /// The exception.
+        /// </param>
         private void XmppOnOnSocketError(object sender, Exception exception)
         {
-            Trace.WriteLine("[Xmpp]SocketError: " + exception.Message);
+            var se = exception as SocketException;
+            if (se != null)
+            {
+                if (this.loggingIng)
+                {
+                    this.FireLoginComplete(
+                        se.ErrorCode == 10013 ? LoginResults.FirewallError : LoginResults.ConnectionError);
+                }
+            }
+            else if (exception is ConnectTimeoutException)
+            {
+                if (this.loggingIng)
+                {
+                    this.FireLoginComplete(LoginResults.ConnectionError);
+                }
+            }
+            else
+            {
+                Trace.WriteLine("[Xmpp]SocketError: " + exception.Message);
+            }
         }
 
+        /// <summary>
+        /// The xmpp on on error.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="exception">
+        /// The exception.
+        /// </param>
         private void XmppOnOnError(object sender, Exception exception)
         {
             Trace.WriteLine("[Xmpp]Error: " + exception.Message);
         }
 
+        /// <summary>
+        /// The xmpp on on close.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
         private void XmppOnOnClose(object sender)
         {
             Trace.WriteLine("[Xmpp]Closed");
         }
 
+        /// <summary>
+        /// The xmpp on on write xml.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="xml">
+        /// The xml.
+        /// </param>
         private void XmppOnOnWriteXml(object sender, string xml)
         {
 #if(DEBUG)
@@ -161,98 +431,134 @@ namespace Skylabs.Lobby
 #endif
         }
 
-        private void XmppOnOnReadXml(object sender , string xml)
+        /// <summary>
+        /// The xmpp on on read xml.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="xml">
+        /// The xml.
+        /// </param>
+        private void XmppOnOnReadXml(object sender, string xml)
         {
 #if(DEBUG)
             Trace.WriteLine("[Xmpp]in: " + xml);
 #endif
         }
 
+        /// <summary>
+        /// The xmpp on on iq.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="iq">
+        /// The iq.
+        /// </param>
         private void XmppOnOnIq(object sender, IQ iq)
         {
             if(iq.Error != null && iq.Error.Code == ErrorCode.NotAllowed)
                 if(OnLoginComplete != null)OnLoginComplete.Invoke(this,LoginResults.Failure);
-            if(iq.Type == IqType.result)
+            if (iq.Type == IqType.result)
             {
                 if (iq.Vcard != null)
                 {
-                    var f = Friends.AsParallel().FirstOrDefault(x => x.User.Bare == iq.From.Bare);
-                    if(f!= null)
+                    var f = this.Friends.AsParallel().FirstOrDefault(x => x.FullUserName == iq.From.Bare);
+                    if (f != null)
                     {
-                    	var email = DatabaseHandler.GetUser(f.User.Bare);
-						if (String.IsNullOrWhiteSpace(email))
-						{
-                            var s = iq.Vcard.GetEmailAddresses().FirstOrDefault(x => !String.IsNullOrWhiteSpace(x.UserId));
-							if (s != null)
-							{
-								f.Email = s.UserId;
-								DatabaseHandler.AddUser(f.User.Bare,f.Email);
-							}
-						}
-						else f.Email = email;
+                        var email = DatabaseHandler.GetUser(f.FullUserName);
+                        if (string.IsNullOrWhiteSpace(email))
+                        {
+                            var s =
+                                iq.Vcard.GetEmailAddresses().FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.UserId));
+                            if (s != null)
+                            {
+                                f.Email = s.UserId;
+                                DatabaseHandler.AddUser(f.FullUserName, f.Email);
+                            }
+                        }
+                        else
+                        {
+                            f.Email = email;
+                        }
                     }
 
-                    if(OnDataRecieved != null)
-                        OnDataRecieved.Invoke(this,DataRecType.FriendList, Friends);
+                    if (this.OnDataReceived != null)
+                    {
+                        this.OnDataReceived.Invoke(this, DataRecType.FriendList, this.Friends);
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// The xmpp on on agent item.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="agent">
+        /// The agent.
+        /// </param>
         private void XmppOnOnAgentItem(object sender, Agent agent)
         {
-
         }
 
-        private void XmppOnOnPresence(object sender, Presence pres)
+        /// <summary>
+        /// The xmpp on presence.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="pres">
+        /// The pres.
+        /// </param>
+        private void XmppOnPresence(object sender, Presence pres)
         {
-			//if (pres.From.User != "lobby") Debugger.Break();
-            if (pres.From.User == Xmpp.MyJID.User)
+            // Most of this if block handles the status if logged in somewhere else as well.
+            if (pres.From.User == this.xmpp.MyJID.User)
             {
-				if (pres.Type == PresenceType.subscribe)
-				{
-					Xmpp.PresenceManager.ApproveSubscriptionRequest(pres.From);
-				}
-				else
-				{
-					myPresence = pres;
-					myPresence.Type = PresenceType.available;
-					if(pres.Show != ShowType.NONE)
-						myPresence.Show = pres.Show;
-					Xmpp.Status = myPresence.Status ?? Xmpp.Status;
-					if(OnDataRecieved != null) OnDataRecieved.Invoke(this , DataRecType.MyInfo , pres);
-					
-				}
-				return;
-            }
-            switch(pres.Type)
-            {
-                case PresenceType.available:
-                    if (pres.From.Server == "conference." + Host)
-                    {
-                        var rm = Chatting.GetRoom(new NewUser(pres.From), true);
-                        rm.AddUser(new NewUser(pres.MucUser.Item.Jid),false);
-                    }
-                break;
-                case PresenceType.unavailable:
+                if (pres.Type == PresenceType.subscribe)
                 {
-                    if (pres.From.Server == "conference." + Host)
-                    {
-                        if (pres.MucUser.Item.Jid == null) break;
-                        if (pres.MucUser.Item.Jid.Bare == Me.User.Bare) break;
-                        var rm = Chatting.GetRoom(new NewUser(pres.From),true);
-                        rm.UserLeft(new NewUser(pres.MucUser.Item.Jid));
-                    }
-                    break;
+                    this.xmpp.PresenceManager.ApproveSubscriptionRequest(pres.From);
                 }
-                case PresenceType.subscribe:
-                    if (!Friends.Contains(new NewUser(pres.From.Bare)))
+                else
+                {
+                    this.myPresence = pres;
+                    this.myPresence.Type = PresenceType.available;
+                    if (pres.Show != ShowType.NONE)
                     {
-                        Notifications.Add(new FriendRequestNotification(pres.From.Bare , this , _noteId));
-                        _noteId++;
-                        if(OnFriendRequest != null) OnFriendRequest.Invoke(this , pres.From.Bare);
+                        this.myPresence.Show = pres.Show;
+                    }
+
+                    this.xmpp.Status = this.myPresence.Status ?? this.xmpp.Status;
+                    if (this.OnDataReceived != null)
+                    {
+                        this.OnDataReceived.Invoke(this, DataRecType.MyInfo, pres);
+                    }
+                }
+
+                return;
+            }
+
+            switch (pres.Type)
+            {
+                case PresenceType.subscribe:
+                    if (!this.Friends.Contains(new NewUser(pres.From.Bare)))
+                    {
+                        this.Notifications.Add(new FriendRequestNotification(pres.From.Bare, this, this.noteId));
+                        this.noteId++;
+                        if (this.OnFriendRequest != null)
+                        {
+                            this.OnFriendRequest.Invoke(this, pres.From.Bare);
+                        }
                     }
                     else
-                        AcceptFriendship(pres.From.Bare);
+                    {
+                        this.AcceptFriendship(pres.From.Bare);
+                    }
+
                     break;
                 case PresenceType.subscribed:
                     break;
@@ -265,368 +571,634 @@ namespace Skylabs.Lobby
                 case PresenceType.probe:
                     break;
             }
-            for(int i=0;i<Friends.Count;i++)
+
+            foreach (var t in this.Friends.Where(t => t.UserName == pres.From.User))
             {
-                if(Friends[i].User.User == pres.From.User)
-                {
-                    Friends[i].CustomStatus = pres.Status ?? "";
-                    Friends[i].SetStatus(pres);
-                    break;
-                }
+                t.CustomStatus = pres.Status ?? string.Empty;
+                t.SetStatus(pres);
+                break;
             }
-            XmppOnOnRosterEnd(this);
+
+            this.XmppOnOnRosterEnd(this);
         }
 
+        /// <summary>
+        /// The xmpp on on message.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="msg">
+        /// The msg.
+        /// </param>
         private void XmppOnOnMessage(object sender, Message msg)
         {
-            if(msg.Type == MessageType.normal)
+            if (msg.Type == MessageType.normal)
             {
                 if (msg.Subject == "gameready")
                 {
-                    var port = -1;
-                    if(Int32.TryParse(msg.Body , out port) && port != -1)
+                    int port = -1;
+                    if (int.TryParse(msg.Body, out port) && port != -1)
                     {
-                        if(OnDataRecieved != null)
-                            OnDataRecieved.Invoke(this , DataRecType.HostedGameReady , port);
-                        CurrentHostedGamePort = port;
+                        if (this.OnDataReceived != null)
+                        {
+                            this.OnDataReceived.Invoke(this, DataRecType.HostedGameReady, port);
+                        }
+
+                        this.CurrentHostedGamePort = port;
                     }
                 }
-                else if(msg.Subject == "gamelist")
+                else if (msg.Subject == "gamelist")
                 {
                     var list = new List<HostedGameData>();
-                    foreach( var a in msg.ChildNodes)
+                    foreach (object a in msg.ChildNodes)
                     {
                         var gi = a as HostedGameData;
-                        if(gi != null)
+                        if (gi != null)
+                        {
                             list.Add(gi);
+                        }
+
                         var el = a as Element;
                         gi = el as HostedGameData;
-                        if (el == null) continue;
+                        if (el == null)
+                        {
+                            continue;
+                        }
                     }
-                    _games = list;
-                    if(OnDataRecieved != null)
-                        OnDataRecieved.Invoke(this,DataRecType.GameList, list);
+
+                    this.games = list;
+                    if (this.OnDataReceived != null)
+                    {
+                        this.OnDataReceived.Invoke(this, DataRecType.GameList, list);
+                    }
                 }
-                else if(msg.Subject == "refresh")
+                else if (msg.Subject == "refresh")
                 {
-                    if(OnDataRecieved!=null)
-                        OnDataRecieved.Invoke(this,DataRecType.GamesNeedRefresh,null);
+                    if (this.OnDataReceived != null)
+                    {
+                        this.OnDataReceived.Invoke(this, DataRecType.GamesNeedRefresh, null);
+                    }
                 }
-                else if(msg.From.Bare.ToLower() == Xmpp.MyJID.Server.ToLower())
+                else if (msg.From.Bare.ToLower() == this.xmpp.MyJID.Server.ToLower())
                 {
-                    if (msg.Subject == null) msg.Subject = "";
-                    if (msg.Body == null) msg.Body = "";
-                    var d = new Dictionary<string , string>();
+                    if (msg.Subject == null)
+                    {
+                        msg.Subject = string.Empty;
+                    }
+
+                    if (msg.Body == null)
+                    {
+                        msg.Body = string.Empty;
+                    }
+
+                    var d = new Dictionary<string, string>();
                     d["Message"] = msg.Body;
                     d["Subject"] = msg.Subject;
-                    if(OnDataRecieved != null)
-                        OnDataRecieved.Invoke(this,DataRecType.Announcement, d);
+                    if (this.OnDataReceived != null)
+                    {
+                        this.OnDataReceived.Invoke(this, DataRecType.Announcement, d);
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// The xmpp on on roster start.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
         private void XmppOnOnRosterStart(object sender)
         {
-            Friends.Clear();
+            this.Friends.Clear();
         }
 
+        /// <summary>
+        /// The xmpp on on roster end.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
         private void XmppOnOnRosterEnd(object sender)
         {
-            foreach(var n in Friends)
+            foreach (var n in this.Friends)
             {
-            	var email = DatabaseHandler.GetUser(n.User.Bare);
-				if (String.IsNullOrWhiteSpace(email))
-				{
-					/*
-					var viq = new VcardIq
-					{
-						Type = IqType.get ,
-						To = n.User.Bare
-					};
-					viq.From = Me.User.Bare;
-					viq.Vcard.JabberId = n.User.Bare;
-					viq.GenerateId();
-					Xmpp.Send(viq);
-					 */
-				}
-				else
-				{
-					n.Email = email;
-				}
+                var email = DatabaseHandler.GetUser(n.FullUserName);
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    /*
+                    var viq = new VcardIq
+                    {
+                        Type = IqType.get ,
+                        To = n.User.Bare
+                    };
+                    viq.From = Me.User.Bare;
+                    viq.Vcard.JabberId = n.User.Bare;
+                    viq.GenerateId();
+                    Xmpp.Send(viq);
+                     */
+                }
+                else
+                {
+                    n.Email = email;
+                }
             }
-            if(OnDataRecieved != null)
-                OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
-            if (Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.User.Bare == "lobby@conference." + Host) == 0)
+
+            if (this.OnDataReceived != null)
             {
-                Xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + Host));
-                Xmpp.RequestRoster();
+                this.OnDataReceived.Invoke(this, DataRecType.FriendList, this.Friends);
+            }
+
+            if (this.Chatting.Rooms.Count(x => x.IsGroupChat && x.GroupUser.FullUserName == "lobby@conference." + Host)
+                == 0)
+            {
+                this.xmpp.RosterManager.AddRosterItem(new Jid("lobby@conference." + Host));
+                this.xmpp.RequestRoster();
             }
         }
 
+        /// <summary>
+        /// The xmpp on on roster item.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="item">
+        /// The item.
+        /// </param>
         private void XmppOnOnRosterItem(object sender, RosterItem item)
         {
-            //Friends.Add(item.);
-            switch(item.Subscription)
+            // Friends.Add(item.);
+            switch (item.Subscription)
             {
                 case SubscriptionType.none:
-					if (item.Jid.Server == "conference." + Host)
+                    if (item.Jid.Server == "conference." + Host)
                     {
-                        Chatting.GetRoom(new NewUser(item.Jid),true);
+                        this.Chatting.GetRoom(new NewUser(item.Jid), true);
                     }
+
                     break;
                 case SubscriptionType.to:
-					if (item.Jid.User == Me.User.User) break;
-                    if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
-                        Friends.Add(new NewUser(item.Jid));
+                    if (item.Jid.User == this.Me.UserName)
+                    {
+                        break;
+                    }
+
+                    if (this.Friends.Count(x => x.UserName == item.Jid.User) == 0)
+                    {
+                        this.Friends.Add(new NewUser(item.Jid));
+                    }
+
                     break;
                 case SubscriptionType.from:
-					if (item.Jid.User == Me.User.User) break;
-                    if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
-                    Friends.Add(new NewUser(item.Jid));
+                    if (item.Jid.User == this.Me.UserName)
+                    {
+                        break;
+                    }
+
+                    if (this.Friends.Count(x => x.UserName == item.Jid.User) == 0)
+                    {
+                        this.Friends.Add(new NewUser(item.Jid));
+                    }
+
                     break;
                 case SubscriptionType.both:
-					if (item.Jid.User == Me.User.User) break;
-                    if(Friends.Count(x=>x.User.User == item.Jid.User) == 0)
-                    Friends.Add(new NewUser(item.Jid));
+                    if (item.Jid.User == this.Me.UserName)
+                    {
+                        break;
+                    }
+
+                    if (this.Friends.Count(x => x.UserName == item.Jid.User) == 0)
+                    {
+                        this.Friends.Add(new NewUser(item.Jid));
+                    }
+
                     break;
                 case SubscriptionType.remove:
-                    if (Friends.Contains(new NewUser(item.Jid)))
-                        Friends.Remove(new NewUser(item.Jid));
+                    if (this.Friends.Contains(new NewUser(item.Jid)))
+                    {
+                        this.Friends.Remove(new NewUser(item.Jid));
+                    }
+
                     break;
             }
         }
 
+        /// <summary>
+        /// The xmpp on on auth error.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="element">
+        /// The element.
+        /// </param>
         private void XmppOnOnAuthError(object sender, Element element)
         {
-            if(OnLoginComplete != null)
-                OnLoginComplete.Invoke(this,LoginResults.Failure);
+            this.FireLoginComplete(LoginResults.AuthError);
             Trace.WriteLine("[XMPP]AuthError: Closing...");
-            Xmpp.Close();
+            this.xmpp.Close();
         }
 
+        /// <summary>
+        /// The xmpp on on login.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
         private void XmppOnOnLogin(object sender)
         {
-            myPresence.Type = PresenceType.available;
-        	myPresence.Show = ShowType.chat;
-            MucManager = new MucManager(Xmpp);
-			Jid room = new Jid("lobby@conference." + Host);
-            MucManager.AcceptDefaultConfiguration(room);
-            //MucManager.JoinRoom(room,Username,Password,false);
-            Me = new NewUser(Xmpp.MyJID);
-			Me.SetStatus(UserStatus.Online);
-			Xmpp.PresenceManager.Subscribe(Xmpp.MyJID);
-            if(OnLoginComplete != null)
-                OnLoginComplete.Invoke(this,LoginResults.Success);
+            this.myPresence.Type = PresenceType.available;
+            this.myPresence.Show = ShowType.chat;
+            this.MucManager = new MucManager(this.xmpp);
+            var room = new Jid("lobby@conference." + Host);
+            this.MucManager.AcceptDefaultConfiguration(room);
+            //TODO Enable this with new UI
+            //this.MucManager.JoinRoom(room, this.Username, this.Password, false);
+            this.Me = new NewUser(this.xmpp.MyJID);
+            this.Me.SetStatus(UserStatus.Online);
+            this.xmpp.PresenceManager.Subscribe(this.xmpp.MyJID);
+            this.FireLoginComplete(LoginResults.Success);
         }
 
+        /// <summary>
+        /// The xmpp on on xmpp connection state changed.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="state">
+        /// The state.
+        /// </param>
         private void XmppOnOnXmppConnectionStateChanged(object sender, XmppConnectionState state)
         {
             Trace.WriteLine("[Xmpp]State: " + state.ToString());
-            if (OnStateChanged != null)
-                OnStateChanged.Invoke(this, state.ToString());
-            if(state == XmppConnectionState.Disconnected)
-                if(OnDisconnect != null)OnDisconnect.Invoke(this,null);
+            if (this.OnStateChanged != null)
+            {
+                this.OnStateChanged.Invoke(this, state);
+            }
+
+            if (state == XmppConnectionState.Disconnected)
+            {
+                if (this.OnDisconnect != null)
+                {
+                    this.OnDisconnect.Invoke(this, null);
+                }
+            }
         }
 
+        /// <summary>
+        /// The xmpp on on register error.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="element">
+        /// The element.
+        /// </param>
         private void XmppOnOnRegisterError(object sender, Element element)
         {
             OnRegisterComplete.Invoke(this,RegisterResults.UsernameTaken);
-            Trace.WriteLine("[Xmpp]Register Error...Closing...");
-            Xmpp.Close();
+            Trace.WriteLine("[this.xmpp]Register Error...Closing...");
+            this.xmpp.Close();
         }
 
+        /// <summary>
+        /// The xmpp on on registered.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
         private void XmppOnOnRegistered(object sender)
         {
-			Vcard v = new Vcard();
-			Email e = new Email
-			{
-				UserId = _email,
-				Type = EmailType.INTERNET,
-				Value = _email
-			};
-			v.AddChild(e);
-			v.JabberId = new Jid(this.Username + "@" + Host);
-			VcardIq vc = new VcardIq(IqType.set, v);
-			vc.To = Host;
-			vc.GenerateId();
-			Xmpp.Send(vc);
-            if(OnRegisterComplete != null)
-                OnRegisterComplete.Invoke(this,RegisterResults.Success);
+            this.myPresence.Type = PresenceType.available;
+            this.myPresence.Show = ShowType.chat;
+            this.MucManager = new MucManager(this.xmpp);
+            var room = new Jid("lobby@conference." + Host);
+            this.MucManager.AcceptDefaultConfiguration(room);
+
+            // MucManager.JoinRoom(room,Username,Password,false);
+            this.Me = new NewUser(this.xmpp.MyJID);
+            this.Me.SetStatus(UserStatus.Online);
+            this.xmpp.PresenceManager.Subscribe(this.xmpp.MyJID);
+
+            var v = new Vcard();
+            var e = new Email { UserId = this.email, Type = EmailType.INTERNET, Value = this.email };
+            v.AddChild(e);
+            v.JabberId = new Jid(this.Username + "@" + Host);
+            var vc = new VcardIq(IqType.set, v);
+            vc.To = Host;
+            vc.GenerateId();
+            this.xmpp.Send(vc);
+            if (this.OnRegisterComplete != null)
+            {
+                this.OnRegisterComplete.Invoke(this, RegisterResults.Success);
+            }
         }
 
-        #endregion 
-
+        /// <summary>
+        /// The send.
+        /// </summary>
+        /// <param name="e">
+        /// The e.
+        /// </param>
         public void Send(Element e)
         {
-            Xmpp.Send(e);
+            this.xmpp.Send(e);
         }
-        
+
+        /// <summary>
+        /// The send.
+        /// </summary>
+        /// <param name="s">
+        /// The s.
+        /// </param>
         public void Send(string s)
         {
-            Xmpp.Send(s);
+            this.xmpp.Send(s);
         }
-        
+
+        #endregion
+
+        #region Event Callers
+
+        /// <summary>
+        /// The fire login complete.
+        /// </summary>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        private void FireLoginComplete(LoginResults result)
+        {
+            if (this.OnLoginComplete != null)
+            {
+                this.OnLoginComplete.Invoke(this, result);
+            }
+        }
+
+        #endregion
+
+        #region Login Register
+
+        /// <summary>
+        /// The begin login.
+        /// </summary>
+        /// <param name="username">
+        /// The username.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
         public void BeginLogin(string username, string password)
         {
-            if (Xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
+            if (this.xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
             {
-                Username = username;
-                Password = password;
-                Xmpp.RegisterAccount = false;
-                Xmpp.AutoAgents = true;
-                Xmpp.AutoPresence = true;
-                Xmpp.AutoRoster = true;
-                Xmpp.Username = username;
-                Xmpp.Password = password;
-                Xmpp.Priority = 1;
-                Xmpp.SocketConnectionType = SocketConnectionType.Direct;
-                Xmpp.UseSSL = false;
-                Xmpp.Open();
+                this.Username = username;
+                this.Password = password;
+                this.xmpp.RegisterAccount = false;
+                this.xmpp.AutoAgents = true;
+                this.xmpp.AutoPresence = true;
+                this.xmpp.AutoRoster = true;
+                this.xmpp.Username = username;
+                this.xmpp.Password = password;
+                this.xmpp.Priority = 1;
+                this.xmpp.SocketConnectionType = SocketConnectionType.Direct;
+                this.xmpp.UseSSL = false;
+                this.loggingIng = true;
+                this.xmpp.Open();
             }
         }
 
+        /// <summary>
+        /// The begin register.
+        /// </summary>
+        /// <param name="username">
+        /// The username.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        /// <param name="email">
+        /// The email.
+        /// </param>
         public void BeginRegister(string username, string password, string email)
         {
-            if (Xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
+            if (this.xmpp.XmppConnectionState == XmppConnectionState.Disconnected)
             {
-                Username = username;
-                Password = password;
-                Xmpp.RegisterAccount = true;
-                Xmpp.Username = username;
-                Xmpp.Password = password;
-                _email = email;
-                Xmpp.Open();
+                this.Username = username;
+                this.Password = password;
+                this.xmpp.RegisterAccount = true;
+                this.xmpp.Username = username;
+                this.xmpp.Password = password;
+                this.email = email;
+                this.xmpp.Open();
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// The begin host game.
+        /// </summary>
+        /// <param name="game">
+        /// The game.
+        /// </param>
+        /// <param name="gamename">
+        /// The gamename.
+        /// </param>
         public void BeginHostGame(Game game, string gamename)
         {
-            var data = String.Format("{0},:,{1},:,{2}",game.Id.ToString(),game.Version.ToString(),gamename);
-			var m = new Message(new Jid("gameserv@" + Host), Me.User, MessageType.normal, data, "hostgame");
+            string data = string.Format("{0},:,{1},:,{2}", game.Id.ToString(), game.Version, gamename);
+            var m = new Message(new Jid("gameserv@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
             m.GenerateId();
-            Xmpp.Send(m);
+            this.xmpp.Send(m);
         }
 
-        public void BeginGetGameList() 
+        /// <summary>
+        /// The begin get game list.
+        /// </summary>
+        public void BeginGetGameList()
         {
-			var m = new Message(new Jid("gameserv@" + Host), MessageType.normal, "", "gamelist");
+            var m = new Message(new Jid("gameserv@" + Host), MessageType.normal, string.Empty, "gamelist");
             m.GenerateId();
-            Xmpp.Send(m);
+            this.xmpp.Send(m);
         }
 
+        /// <summary>
+        /// The begin reconnect.
+        /// </summary>
         public void BeginReconnect()
         {
-            //Xmpp.Close();
-            RebuildXmpp();
-            BeginLogin(Username,Password);
-            /*
-            switch(Xmpp.XmppConnectionState)
-            {
-                case XmppConnectionState.Disconnected:
-                    myPresence.Type = PresenceType.available;
-                    Xmpp.Open();
-                    Trace.WriteLine("[Xmpp]Reconnect: Opening");
-                    break;
-                default:
-                    Trace.WriteLine("[Xmpp]Reconnect: Closing");
-                    Xmpp.Close();
-                    Xmpp.SocketDisconnect();
-                    Xmpp.ClientSocket.Disconnect();
-                    break;
-            }*/
+            this.RebuildXmpp();
+            this.BeginLogin(this.Username, this.Password);
         }
 
+        /// <summary>
+        /// The accept friendship.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
         public void AcceptFriendship(Jid user)
         {
-            Xmpp.PresenceManager.ApproveSubscriptionRequest(user);
-            Xmpp.PresenceManager.Subscribe(user);
-            Xmpp.SendMyPresence();
-            if(OnDataRecieved != null)
-                OnDataRecieved.Invoke(this,DataRecType.FriendList,Friends);
-            //Xmpp.RequestRoster();
+            this.xmpp.PresenceManager.ApproveSubscriptionRequest(user);
+            this.xmpp.PresenceManager.Subscribe(user);
+            this.xmpp.SendMyPresence();
+            if (this.OnDataReceived != null)
+            {
+                this.OnDataReceived.Invoke(this, DataRecType.FriendList, this.Friends);
+            }
+
+            // Xmpp.RequestRoster();
         }
         
+        /// <summary>
+        /// The decline friendship.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
         public void DeclineFriendship(Jid user)
         {
-            Xmpp.PresenceManager.RefuseSubscriptionRequest(user);
+            this.xmpp.PresenceManager.RefuseSubscriptionRequest(user);
         }
         
+        /// <summary>
+        /// The get notification list.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Notification[]"/>.
+        /// </returns>
         public Notification[] GetNotificationList()
         {
-            return Notifications.ToArray();
+            return this.Notifications.ToArray();
         }
         
+        /// <summary>
+        /// The set custom status.
+        /// </summary>
+        /// <param name="status">
+        /// The status.
+        /// </param>
         public void SetCustomStatus(string status)
         {
-            Xmpp.Status = status;
-            Xmpp.SendMyPresence();
+            this.xmpp.Status = status;
+            this.xmpp.SendMyPresence();
         }
         
+        /// <summary>
+        /// The set status.
+        /// </summary>
+        /// <param name="status">
+        /// The status.
+        /// </param>
         public void SetStatus(UserStatus status)
         {
             Presence p;
             switch (status)
             {
                 case UserStatus.Online:
-                    p = new Presence(ShowType.NONE, Xmpp.Status);
+                    p = new Presence(ShowType.NONE, this.xmpp.Status);
                     p.Type = PresenceType.available;
-                    Xmpp.Send(p);
-					Xmpp.SendMyPresence();
+                    this.xmpp.Send(p);
+                    this.xmpp.SendMyPresence();
                     break;
                 case UserStatus.Away:
-                    p = new Presence(ShowType.away, Xmpp.Status);
+                    p = new Presence(ShowType.away, this.xmpp.Status);
                     p.Type = PresenceType.available;
-                    Xmpp.Send(p);
-					Xmpp.SendMyPresence();
+                    this.xmpp.Send(p);
+                    this.xmpp.SendMyPresence();
                     break;
                 case UserStatus.DoNotDisturb:
-                    p = new Presence(ShowType.dnd, Xmpp.Status);
+                    p = new Presence(ShowType.dnd, this.xmpp.Status);
                     p.Type = PresenceType.available;
-                    Xmpp.Send(p);
-					Xmpp.SendMyPresence();
+                    this.xmpp.Send(p);
+                    this.xmpp.SendMyPresence();
                     break;
-                case UserStatus.Invisible:                    
-                    p = new Presence(ShowType.NONE, Xmpp.Status);
+                case UserStatus.Invisible:
+                    p = new Presence(ShowType.NONE, this.xmpp.Status);
                     p.Type = PresenceType.invisible;
-                    Xmpp.Send(p);
-					Xmpp.SendMyPresence();
+                    this.xmpp.Send(p);
+                    this.xmpp.SendMyPresence();
                     break;
             }
-            Me.SetStatus(status);
+
+            this.Me.SetStatus(status);
         }
         
+        /// <summary>
+        /// The send friend request.
+        /// </summary>
+        /// <param name="username">
+        /// The username.
+        /// </param>
         public void SendFriendRequest(string username)
         {
             username = username.ToLower();
-            if (username == Me.User.User.ToLower()) return;
-            Jid j = new Jid(username + "@" + Client.Host);
+            if (username == this.Me.UserName.ToLowerInvariant())
+            {
+                return;
+            }
 
-            Xmpp.RosterManager.AddRosterItem(j);
-            
-            Xmpp.PresenceManager.Subscribe(j);
+            var j = new Jid(username + "@" + Host);
+
+            this.xmpp.RosterManager.AddRosterItem(j);
+
+            this.xmpp.PresenceManager.Subscribe(j);
         }
         
+        /// <summary>
+        /// The remove friend.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
         public void RemoveFriend(NewUser user)
         {
-            Xmpp.PresenceManager.Unsubscribe(user.User);
-            RosterManager.RemoveRosterItem(user.User);
-            Friends.Remove(user);
-            OnDataRecieved.Invoke(this,DataRecType.FriendList, this);
+            this.xmpp.PresenceManager.Unsubscribe(user.JidUser);
+            this.RosterManager.RemoveRosterItem(user.JidUser);
+            this.Friends.Remove(user);
+            this.OnDataReceived.Invoke(this, DataRecType.FriendList, this);
         }
         
-        public HostedGameData[] GetHostedGames() { return _games.ToArray(); }
+        /// <summary>
+        /// The get hosted games.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="HostedGameData"/>.
+        /// </returns>
+        public HostedGameData[] GetHostedGames()
+        {
+            return this.games.ToArray();
+        }
         
+        /// <summary>
+        /// The hosted game started.
+        /// </summary>
         public void HostedGameStarted()
         {
-			var m = new Message("gameserv@" + Host, MessageType.normal, CurrentHostedGamePort.ToString(),
-                                "gamestarted");
-            Xmpp.Send(m);
+            var m = new Message(
+                "gameserv@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
+            this.xmpp.Send(m);
         }
         
+        /// <summary>
+        /// The log out.
+        /// </summary>
+        public void LogOut()
+        {
+            Trace.WriteLine("[Lobby]Log out called.");
+            this.Stop();
+        }
+
+        /// <summary>
+        /// The stop.
+        /// </summary>
         public void Stop()
         {
             Trace.WriteLine("[Lobby]Stop Called.");
-            RebuildXmpp();
+            this.RebuildXmpp();
         }
     }
 }

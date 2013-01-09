@@ -30,7 +30,20 @@ namespace Octgn.Windows
 
         private void CloseClicked(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
+            try
+            {
+                try
+                {
+                    DialogResult = true;
+                }
+                catch
+                {
+                }
+                this.Close();
+            }
+            catch
+            {
+            }
         }
     }
 }

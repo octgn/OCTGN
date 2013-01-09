@@ -12,17 +12,21 @@ using Octgn.Updater.Runners;
 
 namespace Octgn.Updater
 {
-    static class Updater
+    using System.Configuration;
+
+    internal static class Updater
     {
         public static List<string> LogList { get; set; }
         public static UpdateRunner Runner { get; set; }
+        public static string ServerPath { get; set; }
             /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main()
-        {
+            {
+                ServerPath = ConfigurationManager.AppSettings["ServerPath"]; 
             Application.ThreadException += ApplicationOnThreadException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);

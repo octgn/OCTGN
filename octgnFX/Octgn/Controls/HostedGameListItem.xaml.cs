@@ -46,7 +46,7 @@ namespace Octgn.Controls
             set
             {
                 _hostedGame = value;
-                SetValue(UserNameProperty, _hostedGame.UserHosting.User.User);
+                SetValue(UserNameProperty, _hostedGame.UserHosting.UserName);
                 int r = (int)((DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes);
                 r = r < 0 ? 0 : r;
                 SetValue(GameLengthProperty,

@@ -25,7 +25,7 @@ namespace Octgn.Windows
         private Boolean _justScrolledToBottom;
         private bool _realClose;
         public NewChatRoom Room;
-        public long Id { get { return Room.RID; } }
+        public long Id { get { return Room.Rid; } }
         public bool IsLobbyChat { get; private set; }
 
         private Brush _bBackColor = Brushes.White;
@@ -45,9 +45,9 @@ namespace Octgn.Windows
             cm.Items.Add(mi);
             listBox1.ContextMenu = cm;
             richTextBox1.Document.LineHeight = 2;
-            Room.OnMessageRecieved += RoomOnOnMessageRecieved;
+            Room.OnMessageReceived += RoomOnOnMessageRecieved;
             Room.OnUserListChange += RoomOnOnUserListChange;
-            IsLobbyChat = (room.GroupUser != null && room.GroupUser.User.User == "lobby");
+            IsLobbyChat = (room.GroupUser != null && room.GroupUser.UserName == "lobby");
             if (!room.IsGroupChat ) miLeaveChat.IsEnabled = false;
             ResetUserList();
         }
@@ -58,26 +58,26 @@ namespace Octgn.Windows
 
         }
 
-        private void RoomOnOnMessageRecieved(object sender , NewUser from , string message, DateTime rTime, Client.LobbyMessageType mType)
+        private void RoomOnOnMessageRecieved(object sender , NewUser from , string message, DateTime rTime,LobbyMessageType mType)
         {
             Dispatcher.Invoke(new Action(()=>
                 {
                     switch(mType)
                     {
-                        case Client.LobbyMessageType.Standard:
+                        case LobbyMessageType.Standard:
                         {
                             Brush b = _bOtherColor;
 
                             if (from.Equals(Program.LobbyClient.Me)) b = _bMeColor;
-                            Run r = GetUserRun(from.User.User,
-                                               "[" + from.User.User + "] : ", rTime);
+                            Run r = GetUserRun(from.UserName,
+                                               "[" + from.UserName + "] : ", rTime);
                             r.Foreground = b;
                             AddChatText(r, message);
                             if (this.Visibility != Visibility.Visible
                                && Program.LobbyClient.Me.Status != UserStatus.DoNotDisturb && !IsLobbyChat) Show();
                             break;
                         }
-                        case Client.LobbyMessageType.Topic:
+                        case LobbyMessageType.Topic:
                         {
                             Run r = new Run("");
                             r.Foreground = _bTopicColor;
@@ -85,7 +85,7 @@ namespace Octgn.Windows
                             AddChatText(r, message, _bTopicColor, _bTopicBackColor);
                             break;
                         }
-                        case Client.LobbyMessageType.Error:
+                        case LobbyMessageType.Error:
                         {
                             Run r = new Run("");
                             r.Foreground = _bErrorColor;
@@ -228,7 +228,7 @@ namespace Octgn.Windows
                 else
                 {
                     Boolean fUser = false;
-                    if (listBox1.Items.Cast<NewUser>().Any(u => u.User.User == s))
+                    if (listBox1.Items.Cast<NewUser>().Any(u => u.UserName == s))
                     {
                         b = Brushes.LightGreen;
                         ret = new Bold(r) {ToolTip = "Click to whisper"};
@@ -280,9 +280,9 @@ namespace Octgn.Windows
             r.MouseLeave += delegate { r.Background = Brushes.White; };
             r.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler
                 (delegate{
-                    if (user == Program.LobbyClient.Me.User.User) return;
-                    var room = Program.LobbyClient.Chatting.GetRoom(new NewUser(new Jid(user + "@" + Skylabs.Lobby.Client.Host)));
-                    var cw = Program.ChatWindows.SingleOrDefault(x => x.Room.RID == room.RID);
+                    if (user == Program.LobbyClient.Me.UserName) return;
+                    var room = Program.LobbyClient.Chatting.GetRoom(new NewUser(new Jid(user + "@" + Program.ChatServerPath)));
+                    var cw = Program.ChatWindows.SingleOrDefault(x => x.Room.Rid == room.Rid);
                     if(cw != null)
                         cw.Show();
 
@@ -296,11 +296,11 @@ namespace Octgn.Windows
                                              {
 
                                                 this.Title = (Room.IsGroupChat)
-                                                                 ? Room.GroupUser.User.User
+                                                                 ? Room.GroupUser.UserName
                                                                  : "Chat with: "
-                                                                   + Room.Users.FirstOrDefault(x => x.User.Bare != Program.LobbyClient.Me.User.Bare).User.User;
+                                                                   + Room.Users.FirstOrDefault(x => x.FullUserName != Program.LobbyClient.Me.FullUserName).UserName;
                                                                  listBox1.Items.Clear();
-                                             	var ulist = from u in Room.Users orderby u.User.User select u;
+                                             	var ulist = from u in Room.Users orderby u.UserName select u;
                                                  foreach (var u in ulist)
                                                  {
                                                      listBox1.Items.Add(u);
@@ -313,7 +313,7 @@ namespace Octgn.Windows
             var s = e.Data.GetData(typeof (String)) as String;
             if (s == null) return;
             Room.AddUser(new NewUser(new Jid(s)));
-            if (Room.IsGroupChat && Room.GroupUser.User.User != "lobby")
+            if (Room.IsGroupChat && Room.GroupUser.UserName != "lobby")
             {
                 miLeaveChat.IsEnabled = true;
                 var cl = Program.MainWindow.frame1.Content as ContactList;
@@ -326,9 +326,9 @@ namespace Octgn.Windows
         {
 
             this.Title = (Room.IsGroupChat)
-                             ? Room.GroupUser.User.User
+                             ? Room.GroupUser.UserName
                              : "Chat with: "
-                               + Room.Users.FirstOrDefault(x => x.User.Bare != Program.LobbyClient.Me.User.Bare).User.User;
+                               + Room.Users.FirstOrDefault(x => x.FullUserName != Program.LobbyClient.Me.FullUserName).UserName;
             ResetUserList();
         }
 
@@ -336,7 +336,7 @@ namespace Octgn.Windows
         {
             Program.ChatWindows.RemoveAll(r => r.Id == Id);
             var cl = Program.MainWindow.frame1.Content as ContactList;
-            Room.OnMessageRecieved -= RoomOnOnMessageRecieved;
+            Room.OnMessageReceived -= RoomOnOnMessageRecieved;
             Room.OnUserListChange -= RoomOnOnUserListChange;
             Room.LeaveRoom();
             if (cl != null)
@@ -349,7 +349,7 @@ namespace Octgn.Windows
             if (textBox1.Text.Trim().Length <= 0) return;
             Room.SendMessage(textBox1.Text);
             if(!Room.IsGroupChat && textBox1.Text[0] != '/')
-                RoomOnOnMessageRecieved(this,Program.LobbyClient.Me,textBox1.Text,DateTime.Now,Client.LobbyMessageType.Standard);
+                RoomOnOnMessageRecieved(this,Program.LobbyClient.Me,textBox1.Text,DateTime.Now,LobbyMessageType.Standard);
             //Program.LobbyClient.Chatting.SendChatMessage(Id, textBox1.Text);
             textBox1.Text = "";
         }
@@ -385,7 +385,7 @@ namespace Octgn.Windows
         {
             var u = listBox1.SelectedItem as NewUser;
             if (u != null)
-                Program.LobbyClient.SendFriendRequest(u.User.User);
+                Program.LobbyClient.SendFriendRequest(u.UserName);
         }
     }
 }

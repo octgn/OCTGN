@@ -11,15 +11,26 @@ using agsXMPP.protocol.x.muc;
 
 namespace Skylabs.LobbyServer
 {
+    using System.Configuration;
+
     public static class GameBot
     {
         private static XmppClientConnection Xmpp { get; set; }
         private static ThreadSafeList<Jid> _userList { get; set; }
+
+        private static string ServerPath = "";
+        private static string XmppUsername = "";
+        private static string XmppPassword = "";
+
         public static ObjectHandler OnCheckRecieved { get; set; }
+
         public static void Init() 
         {  }
-        static GameBot() 
+        static GameBot()
         {
+            ServerPath = ConfigurationManager.AppSettings["ServerPath"];
+            XmppUsername = ConfigurationManager.AppSettings["XmppUsername"];
+            XmppPassword = ConfigurationManager.AppSettings["XmppPassword"];
             RemakeXmpp();
         }
         public static void RemakeXmpp()
@@ -30,7 +41,7 @@ namespace Skylabs.LobbyServer
                 Xmpp.Close();
                 Xmpp = null;
             }
-            Xmpp = new XmppClientConnection("server.octgn.info");
+            Xmpp = new XmppClientConnection(ServerPath);
             //#else
             //            Xmpp = new XmppClientConnection();
             //            Xmpp.ConnectServer = "127.0.0.1";
@@ -41,8 +52,8 @@ namespace Skylabs.LobbyServer
             Xmpp.AutoAgents = true;
             Xmpp.AutoPresence = true;
             Xmpp.AutoRoster = true;
-            Xmpp.Username = "gameserv";
-            Xmpp.Password = "12345";//Don't commit real password
+            Xmpp.Username = XmppUsername;
+            Xmpp.Password = XmppPassword;//Don't commit real password
             Xmpp.Priority = 1;
             Xmpp.OnLogin += XmppOnOnLogin;
             Xmpp.OnMessage += XmppOnOnMessage;
@@ -89,7 +100,7 @@ namespace Skylabs.LobbyServer
             switch (pres.Type)
             {
                 case PresenceType.available:
-                    if (pres.From.Server == "conference.server.octgn.info")
+                    if (pres.From.Server == "conference." + ServerPath)
                     {
                         //if (!_userList.Contains(pres.MucUser.Item.Jid) && pres.MucUser.Item.Jid != Xmpp.MyJID)
                             //_userList.Add(pres.MucUser.Item.Jid);
@@ -97,7 +108,7 @@ namespace Skylabs.LobbyServer
                     break;
                 case PresenceType.unavailable:
                 {
-                    if (pres.From.Server == "conference.server.octgn.info")
+                    if (pres.From.Server == "conference." + ServerPath)
                     {
                         //_userList.Remove(pres.MucUser.Item.Jid);
                     }
@@ -155,7 +166,7 @@ namespace Skylabs.LobbyServer
                             m.GenerateId();
                             Xmpp.Send(m);
                             var gameMessage = String.Format(" {0} is hosting a game called '{1}'" ,msg.From.User,gameName);
-                            m = new Message(new Jid("lobby@conference.server.octgn.info"), msg.To, MessageType.groupchat, gameMessage);
+                            m = new Message(new Jid("lobby@conference." + ServerPath), msg.To, MessageType.groupchat, gameMessage);
                             //Xmpp.Send(m);
                             //RefreshLists();
                         }
@@ -219,7 +230,7 @@ namespace Skylabs.LobbyServer
         {
             Trace.WriteLine("[Bot]Login:" );
             //var muc = new MucManager(Xmpp);
-            //Jid room = new Jid("lobby@conference.server.octgn.info");
+            //Jid room = new Jid("lobby@conference.HOST");
             //muc.AcceptDefaultConfiguration(room);
             //muc.JoinRoom(room, Xmpp.Username, Xmpp.Password, false);
         }

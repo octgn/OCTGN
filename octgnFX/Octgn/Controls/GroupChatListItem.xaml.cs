@@ -51,9 +51,9 @@ namespace Octgn.Controls
             {
                 if (value != null)
                 {
-                    _chatRoomId = value.RID;
+                    _chatRoomId = value.Rid;
                     image1.Opacity = 1;
-                    SetValue(UsernameProperty , value.GroupUser.User.User);
+                    SetValue(UsernameProperty , value.GroupUser.UserName);
                 }
                 else
                 {
@@ -77,8 +77,8 @@ namespace Octgn.Controls
 
         private void Image1MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (_chatRoom.GroupUser.User.User == "lobby") return;
-            ChatWindow firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.RID);
+            if (_chatRoom.GroupUser.UserName == "lobby") return;
+            ChatWindow firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.Rid);
             if (firstOrDefault != null)
                 firstOrDefault.CloseChatWindow();
             _isRemoving = true;

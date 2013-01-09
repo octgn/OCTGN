@@ -50,7 +50,7 @@ namespace Octgn.Launcher
             Program.LobbyClient.BeginRegister(tbUsername.Text,tbPass1.Password,tbEmail.Text);
         }
 
-        private void LobbyClientOnOnRegisterComplete(object sender, Client.RegisterResults results)
+        private void LobbyClientOnOnRegisterComplete(object sender,RegisterResults results)
         {
             Program.LobbyClient.OnRegisterComplete -= LobbyClientOnOnRegisterComplete;
             Dispatcher.Invoke(new Action(()=>
@@ -58,10 +58,10 @@ namespace Octgn.Launcher
                     progressBar1.Visibility = Visibility.Hidden;
                     switch(results)
                     {
-                        case Client.RegisterResults.ConnectionError:
+                        case RegisterResults.ConnectionError:
                             lblErrors.Content = "There was a connection error. Please try again.";
                             break;
-                        case Client.RegisterResults.Success:
+                        case RegisterResults.Success:
                             MessageBox.Show("Registration Success!", "Octgn", MessageBoxButton.OK,
                                             MessageBoxImage.Information);
                             var l = new Login();
@@ -69,13 +69,13 @@ namespace Octgn.Launcher
                             l.passwordBox1.Password = Program.LobbyClient.Password;
                             Program.LauncherWindow.Navigate(l);
                             break;
-                        case Client.RegisterResults.UsernameTaken:
+                        case RegisterResults.UsernameTaken:
                             lblErrors.Content = "That username is already taken.";
                             break;
-                        case Client.RegisterResults.UsernameInvalid:
+                        case RegisterResults.UsernameInvalid:
                             lblErrors.Content = "That username is invalid.";
                             break;
-                        case Client.RegisterResults.PasswordFailure:
+                        case RegisterResults.PasswordFailure:
                             lblErrors.Content = "That password is invalid.";
                             break;
                     }

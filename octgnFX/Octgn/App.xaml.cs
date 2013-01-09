@@ -31,8 +31,10 @@ namespace Octgn
             base.OnStartup(e);
 #if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+#else
+
+            AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
 #endif
-            //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
             Program.GamesRepository = new GamesRepository();
 
             if (Program.GamesRepository.MissingFiles.Any())
@@ -81,7 +83,9 @@ namespace Octgn
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
-            Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, e.Exception.ToString());
+            //if (e.Exception.Message.Contains("agsXMPP.Xml.xpnet.PartialTokenException"))
+            //    System.Diagnostics.Debugger.Break();
+            //Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, e.Exception.ToString());
 #endif
         }
 

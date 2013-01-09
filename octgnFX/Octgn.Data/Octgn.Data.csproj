@@ -99,14 +99,21 @@
       <HintPath>..\Octgn\packages\SharpSerializer.2.18\lib\net20\Polenter.SharpSerializer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\..\packages\System.Data.SQLite.1.0.81.1\lib\net40\System.Data.SQLite.dll</HintPath>
+    <Reference Include="System.Data.SQLite, Version=1.0.83.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\System.Data.SQLite.1.0.83.0\lib\net40\System.Data.SQLite.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.SQLite.Linq">
-      <HintPath>..\..\packages\System.Data.SQLite.1.0.81.1\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.83.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\System.Data.SQLite.1.0.83.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Abstractions, Version=1.4.0.40, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\System.IO.Abstractions.1.4.0.40\lib\net35\System.IO.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -127,6 +134,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="GamesRepository.cs" />
+    <Compile Include="IDatabaseConfig.cs" />
     <Compile Include="MarkerModel.cs" />
     <Compile Include="Pack.cs" />
     <Compile Include="Patch.cs" />

@@ -66,7 +66,7 @@ namespace Octgn.Controls
                     guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt=";
                 }
                 SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);                    
-                SetValue(UsernameProperty, value.User.User);
+                SetValue(UsernameProperty, value.UserName);
                 switch (value.Status)
                 {
                     case UserStatus.Away:
@@ -129,7 +129,7 @@ namespace Octgn.Controls
             IsDragging = true;
             CreateDragDropWindow(this);
             //DataObject data = new DataObject(System.Windows.DataFormats.Text.ToString(), "abcd");
-            var data = new DataObject(DataFormats.Text, _mUser.User.Bare);
+            var data = new DataObject(DataFormats.Text, _mUser.FullUserName);
             //DataObject data = new DataObject(this.m_User);
             _dragdropWindow.Show();
             DragDropEffects de = DragDrop.DoDragDrop(this, data, DragDropEffects.Move);

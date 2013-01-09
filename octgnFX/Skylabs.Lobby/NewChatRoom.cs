@@ -1,130 +1,424 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using agsXMPP;
-using agsXMPP.Collections;
-using agsXMPP.Xml.Dom;
-using agsXMPP.protocol.client;
-using agsXMPP.protocol.component;
-using agsXMPP.protocol.extensions.chatstates;
-using agsXMPP.protocol.x;
-using agsXMPP.protocol.x.muc;
-using Message = agsXMPP.protocol.client.Message;
-using Presence = agsXMPP.protocol.client.Presence;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NewChatRoom.cs" company="OCTGN">
+//   GNU Stuff
+// </copyright>
+// <summary>
+//   The new chat room.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Skylabs.Lobby
 {
-    public class NewChatRoom: IDisposable,IEquatable<NewChatRoom>,IEqualityComparer
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using agsXMPP;
+    using agsXMPP.protocol.client;
+    using agsXMPP.protocol.extensions.chatstates;
+    using agsXMPP.protocol.x;
+
+    /// <summary>
+    /// The new chat room.
+    /// </summary>
+    public class NewChatRoom : IDisposable, IEquatable<NewChatRoom>, IEqualityComparer
     {
-        public delegate void dMessageReceived(object sender , NewUser from, string message, DateTime rTime,Client.LobbyMessageType mType = Client.LobbyMessageType.Standard);
+        #region Fields
 
-        public delegate void dUserListChange(object sender,List<NewUser> users );
+        /// <summary>
+        /// The client.
+        /// </summary>
+        private readonly Client client;
 
-        public event dMessageReceived OnMessageRecieved;
-        public event dUserListChange OnUserListChange;
+        #endregion
 
-        public bool IsGroupChat { get; private set; }
-        public long RID { get; private set; }
-        public List<NewUser> Users { get; set; }
-        public NewUser GroupUser { get; private set; }
-        private Client _client;
-        public NewChatRoom(long rid, Client c,NewUser user)
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NewChatRoom"/> class.
+        /// </summary>
+        /// <param name="rid">
+        /// The rid.
+        /// </param>
+        /// <param name="c">
+        /// The c.
+        /// </param>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        internal NewChatRoom(long rid, Client c, NewUser user)
         {
-            RID = rid;
-            Users = new List<NewUser>();
-            _client = c;
-			if (user.User.Server == "conference." + Skylabs.Lobby.Client.Host)
+            this.Rid = rid;
+            this.Users = new List<NewUser>();
+            this.AdminList = new List<NewUser>();
+            this.OwnerList = new List<NewUser>();
+            this.ModeratorList = new List<NewUser>();
+            this.VoiceList = new List<NewUser>();
+            this.client = c;
+            if (user.Server == "conference." + this.client.Host)
             {
-                IsGroupChat = true;
-                GroupUser = new NewUser(new Jid(user.User.Bare));
-                _client.MucManager.JoinRoom(GroupUser.User,_client.Me.User.User);
+                this.IsGroupChat = true;
+                this.GroupUser = new NewUser(new Jid(user.FullUserName));
+                this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
+                this.client.MucManager.RequestModeratorList(this.GroupUser.JidUser);
+                this.client.MucManager.RequestAdminList(this.GroupUser.JidUser);
+                this.client.MucManager.RequestOwnerList(this.GroupUser.JidUser);
+                this.client.MucManager.RequestVoiceList(this.GroupUser.JidUser);
             }
             else
-                AddUser(user);
-            AddUser(_client.Me);
-        }
-        public void UserLeft(NewUser user)
-        {
-            Users.Remove(user);
-            if(OnUserListChange != null) OnUserListChange.Invoke(this , Users);
-        }
-
-        private void MessageCallBack(object sender , Message msg , object data)
-        {
-            //Debug.WriteLine("mcall:" + msg);
-        }
-
-        public void SetTopic(string topic) 
-        {
-            if (!IsGroupChat || GroupUser == null)return;
-            var m = new Message(GroupUser.User.Bare , MessageType.groupchat , "" , topic);
-            m.GenerateId();
-            m.XEvent = new Event();
-            m.XEvent.Delivered = true;
-            m.XEvent.Displayed = true;
-            _client.Send(m);
-        }
-
-        public void SendMessage(string message)
-        {
-            NewUser to;
-            to = IsGroupChat ? GroupUser : Users.FirstOrDefault(x => x.User.Bare != _client.Me.User.Bare);
-            if(to == null || String.IsNullOrWhiteSpace(message)) return;
-
-            if(message[0] == '/')
             {
-                message = message.Substring(1);
-                var mend = message.IndexOf(' ');
-                var command = message.Substring(0 , mend).ToLower();
-                var mess = "";
-                if(message.Length > command.Length+1)
-                    mess = message.Substring(mend + 1);
-                switch(command)
+                this.AddUser(user);
+            }
+
+            this.AddUser(this.client.Me);
+        }
+
+        #endregion
+
+        #region Delegates
+
+        /// <summary>
+        /// The d message received.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="from">
+        /// The from.
+        /// </param>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <param name="rTime">
+        /// The r time.
+        /// </param>
+        /// <param name="mType">
+        /// The m type.
+        /// </param>
+        public delegate void DMessageReceived(
+            object sender,
+            NewUser from,
+            string message,
+            DateTime rTime,
+            LobbyMessageType mType = LobbyMessageType.Standard);
+
+        /// <summary>
+        /// The d user list change.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="users">
+        /// The users.
+        /// </param>
+        public delegate void DUserListChange(object sender, List<NewUser> users);
+
+        #endregion
+
+        #region Public Events
+
+        /// <summary>
+        /// The on message received.
+        /// </summary>
+        public event DMessageReceived OnMessageReceived;
+
+        /// <summary>
+        /// The on user list change.
+        /// </summary>
+        public event DUserListChange OnUserListChange;
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the admin list.
+        /// </summary>
+        public List<NewUser> AdminList { get; set; }
+
+        /// <summary>
+        /// Gets the group user.
+        /// </summary>
+        public NewUser GroupUser { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether is group chat.
+        /// </summary>
+        public bool IsGroupChat { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the moderator list.
+        /// </summary>
+        public List<NewUser> ModeratorList { get; set; }
+
+        /// <summary>
+        /// Gets or sets the owner list.
+        /// </summary>
+        public List<NewUser> OwnerList { get; set; }
+
+        /// <summary>
+        /// Gets the rid.
+        /// </summary>
+        public long Rid { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the users.
+        /// </summary>
+        public List<NewUser> Users { get; set; }
+
+        /// <summary>
+        /// Gets or sets the voice list.
+        /// </summary>
+        public List<NewUser> VoiceList { get; set; }
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The ==.
+        /// </summary>
+        /// <param name="a">
+        /// The a.
+        /// </param>
+        /// <param name="b">
+        /// The b.
+        /// </param>
+        /// <returns>
+        /// True if rooms are equal, False if they are not.
+        /// </returns>
+        public static bool operator ==(NewChatRoom a, NewChatRoom b)
+        {
+            long rid1 = -1;
+            long rid2 = -1;
+            if ((object.Equals(a, null) && !object.Equals(b, null))
+                || (object.Equals(b, null) && !object.Equals(a, null)))
+            {
+                return false;
+            }
+
+            if (!object.Equals(a, null))
+            {
+                rid1 = a.Rid;
+            }
+
+            if (!object.Equals(b, null))
+            {
+                rid2 = b.Rid;
+            }
+
+            if (rid1 == -1 && rid2 == -1)
+            {
+                return true;
+            }
+
+            return rid1 == rid2;
+        }
+
+        /// <summary>
+        /// The !=.
+        /// </summary>
+        /// <param name="a">
+        /// The a.
+        /// </param>
+        /// <param name="b">
+        /// The b.
+        /// </param>
+        /// <returns>
+        /// True if rooms are not equal, False otherwise.
+        /// </returns>
+        public static bool operator !=(NewChatRoom a, NewChatRoom b)
+        {
+            return !(a == b);
+        }
+
+        /// <summary>
+        /// The add user.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="inviteUser">
+        /// The invite user.
+        /// </param>
+        public void AddUser(NewUser user, bool inviteUser = true)
+        {
+            if (!this.Users.Contains(user))
+            {
+                this.Users.Add(user);
+            }
+
+            if (this.Users.Count > 2 || this.IsGroupChat)
+            {
+                if (!this.IsGroupChat)
                 {
-                    case "topic":
+                    this.IsGroupChat = true;
+                    string rname = Randomness.RandomRoomName();
+                    this.GroupUser = new NewUser(rname + "@conference." + this.client.Host);
+
+                    this.client.MucManager.JoinRoom(this.GroupUser.JidUser, this.client.Me.UserName);
+                    this.client.RosterManager.AddRosterItem(this.GroupUser.JidUser, this.GroupUser.UserName);
+                }
+
+                if (inviteUser)
+                {
+                    foreach (var u in this.Users)
                     {
-                        SetTopic(mess);
-                        break;
+                        if (u != this.client.Me)
+                        {
+                            this.client.MucManager.Invite(u.JidUser, this.GroupUser.JidUser);
+                        }
                     }
                 }
             }
-            else
+            this.FireUpdateList();
+        }
+
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        public void Dispose()
+        {
+        }
+
+        /// <summary>
+        /// The equals.
+        /// </summary>
+        /// <param name="other">
+        /// The other.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool Equals(NewChatRoom other)
+        {
+            return other.Rid == this.Rid;
+        }
+
+        /// <summary>
+        /// The equals.
+        /// </summary>
+        /// <param name="o">
+        /// The o.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public override bool Equals(object o)
+        {
+            return this.GetHashCode() == o.GetHashCode();
+        }
+
+        /// <summary>
+        /// The equals.
+        /// </summary>
+        /// <param name="x">
+        /// The x.
+        /// </param>
+        /// <param name="y">
+        /// The y.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public new bool Equals(object x, object y)
+        {
+            return x.GetHashCode() == y.GetHashCode();
+        }
+
+        /// <summary>
+        /// The get hash code.
+        /// </summary>
+        /// <param name="obj">
+        /// The object.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public int GetHashCode(object obj)
+        {
+            return obj.GetHashCode();
+        }
+
+        /// <summary>
+        /// The get hash code.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return (int)this.Rid;
+        }
+
+        /// <summary>
+        /// The leave room.
+        /// </summary>
+        public void LeaveRoom()
+        {
+            if (this.IsGroupChat && this.GroupUser.JidUser != "lobby")
             {
-                var j = new Jid(to.User);
-                var m = new Message(j, (IsGroupChat) ? MessageType.groupchat : MessageType.chat, message);
-                m.GenerateId();
-                m.XEvent = new Event();
-                m.XEvent.Delivered = true;
-                m.XEvent.Displayed = true;
-                _client.Send(m);
+                this.client.MucManager.LeaveRoom(this.GroupUser.UserName, this.client.Me.UserName);
+                this.client.RosterManager.RemoveRosterItem(this.GroupUser.FullUserName);
+                this.client.Chatting.RemoveRoom(this);
+            }
+        }
+
+        /// <summary>
+        /// The make group chat.
+        /// </summary>
+        /// <param name="gcu">
+        /// The group user
+        /// </param>
+        public void MakeGroupChat(NewUser gcu)
+        {
+            this.IsGroupChat = true;
+            this.GroupUser = gcu;
+        }
+
+        /// <summary>
+        /// The on message.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="msg">
+        /// The message.
+        /// </param>
+        public void OnMessage(object sender, Message msg)
+        {
+            var remoteTime = DateTime.Now;
+            if (msg.XDelay != null)
+            {
+                remoteTime = msg.XDelay.Stamp.ToLocalTime();
             }
 
-        }
-        public  void OnMessage(object sender , Message msg) 
-        {
-            var rTime = DateTime.Now;
-            if (msg.XDelay != null && msg.XDelay.Stamp != null) rTime = msg.XDelay.Stamp.ToLocalTime();
-            switch(msg.Type)
+            switch (msg.Type)
             {
                 case MessageType.normal:
                     break;
                 case MessageType.error:
-                    if(msg.Error != null && !String.IsNullOrWhiteSpace(msg.Error.ErrorText))
-                        OnMessageRecieved.Invoke(this,new NewUser(msg.From),msg.Error.ErrorText,DateTime.Now,Client.LobbyMessageType.Error );
+                    if (msg.Error != null && !string.IsNullOrWhiteSpace(msg.Error.ErrorText))
+                    {
+                        this.OnMessageReceived.Invoke(
+                            this, new NewUser(msg.From), msg.Error.ErrorText, DateTime.Now, LobbyMessageType.Error);
+                    }
+
                     break;
                 case MessageType.chat:
-                    switch(msg.Chatstate)
+                    switch (msg.Chatstate)
                     {
                         case Chatstate.None:
-                            if(!IsGroupChat && !String.IsNullOrWhiteSpace(msg.Body) && OnMessageRecieved != null && Users.Contains(new NewUser(msg.From.Bare)))
-                                OnMessageRecieved.Invoke(this,new NewUser(msg.From.Bare),msg.Body,rTime );
+                            if (!this.IsGroupChat && !string.IsNullOrWhiteSpace(msg.Body)
+                                && this.OnMessageReceived != null && this.Users.Contains(new NewUser(msg.From.Bare)))
+                            {
+                                this.OnMessageReceived.Invoke(this, new NewUser(msg.From.Bare), msg.Body, remoteTime);
+                            }
+
                             break;
                         case Chatstate.active:
-                            
+
                             break;
                         case Chatstate.inactive:
                             break;
@@ -134,109 +428,142 @@ namespace Skylabs.Lobby
                             break;
                         case Chatstate.paused:
                             break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
                     }
+
                     break;
                 case MessageType.groupchat:
-                    if(IsGroupChat && msg.Chatstate == Chatstate.None)
+                    if (this.IsGroupChat && msg.Chatstate == Chatstate.None)
                     {
-                        if(msg.From.Bare == GroupUser.User.Bare)
+                        if (msg.From.Bare == this.GroupUser.FullUserName)
                         {
-                            if(!String.IsNullOrWhiteSpace(msg.Subject))
+                            if (!string.IsNullOrWhiteSpace(msg.Subject))
                             {
-                                if (OnMessageRecieved != null)
-                                    OnMessageRecieved.Invoke(this,
-                                                             new NewUser(
-																 new Jid(msg.From.Resource + "@" + Skylabs.Lobby.Client.Host)),
-                                                             msg.Subject, rTime,Client.LobbyMessageType.Topic);                                
+                                if (this.OnMessageReceived != null)
+                                {
+                                    this.OnMessageReceived.Invoke(
+                                        this,
+                                        new NewUser(new Jid(msg.From.Resource + "@" + this.client.Host)),
+                                        msg.Subject,
+                                        remoteTime,
+                                        LobbyMessageType.Topic);
+                                }
                             }
-                            else if (!String.IsNullOrWhiteSpace(msg.Body))
+                            else if (!string.IsNullOrWhiteSpace(msg.Body))
                             {
-                                if(OnMessageRecieved != null)
-                                    OnMessageRecieved.Invoke(this ,
-                                                             new NewUser(
-																 new Jid(msg.From.Resource + "@" + Skylabs.Lobby.Client.Host)),
-                                                             msg.Body , rTime);
+                                if (this.OnMessageReceived != null)
+                                {
+                                    this.OnMessageReceived.Invoke(
+                                        this,
+                                        new NewUser(new Jid(msg.From.Resource + "@" + this.client.Host)),
+                                        msg.Body,
+                                        remoteTime);
+                                }
                             }
                         }
                     }
+
                     break;
                 case MessageType.headline:
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
-        public void MakeGroupChat(NewUser gcu) 
-        { 
-            IsGroupChat = true;
-            GroupUser = gcu;
-        }
-        public void AddUser(NewUser user, bool InviteUser = true)
+
+        /// <summary>
+        /// The send message.
+        /// </summary>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        public void SendMessage(string message)
         {
-            if(!Users.Contains(user)) Users.Add(user);
-            if (Users.Count > 2 || IsGroupChat)
+            var to = this.IsGroupChat
+                             ? this.GroupUser
+                             : this.Users.FirstOrDefault(x => x.FullUserName != this.client.Me.FullUserName);
+            if (to == null || string.IsNullOrWhiteSpace(message))
             {
-                if (!IsGroupChat)
+                return;
+            }
+
+            if (message[0] == '/')
+            {
+                var userCommand = message.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var args = userCommand.Skip(1).ToArray();
+                var command = userCommand.Length > 0 ? userCommand[0] : string.Empty;
+
+                switch (command)
                 {
-                    IsGroupChat = true;
-                    var rname = Randomness.RandomRoomName();
-					GroupUser = new NewUser(rname + "@conference." + Skylabs.Lobby.Client.Host);
+                    case "topic":
+                        {
+                            this.SetTopic(String.Join(" ", args));
+                            break;
+                        }
 
-                    _client.MucManager.JoinRoom(GroupUser.User , _client.Me.User.User);
-                    _client.RosterManager.AddRosterItem(GroupUser.User,GroupUser.User.User);
-                    
+                    case "msg":
+                        {
+                            NewChatRoom r =
+                                this.client.Chatting.GetRoom(
+                                    new NewUser(new Jid(String.Join(" ", args), this.client.Host, this.client.Me.JidUser.Resource)));
+                            break;
+                        }
                 }
-                if(InviteUser)
-                    foreach(var u in Users) if(u != _client.Me) _client.MucManager.Invite(u.User , GroupUser.User);
-                
             }
-
-            if(OnUserListChange != null) OnUserListChange.Invoke(this,Users);
-            
-
+            else
+            {
+                var j = new Jid(to.JidUser);
+                var m = new Message(j, this.IsGroupChat ? MessageType.groupchat : MessageType.chat, message);
+                m.GenerateId();
+                m.XEvent = new Event { Delivered = true, Displayed = true };
+                this.client.Send(m);
+                if (!this.IsGroupChat)
+                {
+                    m.From = this.client.Me.JidUser;
+                    this.OnMessage(this, m);
+                }
+            }
         }
-        public void LeaveRoom()
+
+        /// <summary>
+        /// The set topic.
+        /// </summary>
+        /// <param name="topic">
+        /// The topic.
+        /// </param>
+        public void SetTopic(string topic)
         {
-            if(IsGroupChat && GroupUser.User != "lobby")
+            if (!this.IsGroupChat || this.GroupUser == null)
             {
-                _client.MucManager.LeaveRoom(GroupUser.User.Bare,_client.Me.User.User);
-                _client.RosterManager.RemoveRosterItem(GroupUser.User.Bare);
-                _client.Chatting.RemoveRoom(this);
+                return;
             }
-        }
-        public void Dispose() { 
 
+            var m = new Message(this.GroupUser.FullUserName, MessageType.groupchat, string.Empty, topic);
+            m.GenerateId();
+            m.XEvent = new Event { Delivered = true, Displayed = true };
+            this.client.Send(m);
         }
-        public bool Equals(NewChatRoom other) { return other.RID == RID; }
-        public override bool Equals(Object o) { return this.GetHashCode() == o.GetHashCode(); }
-        public static bool operator==(NewChatRoom a, NewChatRoom b)
+
+        /// <summary>
+        /// The user left.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        public void UserLeft(NewUser user)
         {
-            long rid1 = -1;
-            long rid2 = -1;
-            if ((object.Equals(a, null) && !object.Equals(b, null)) || (object.Equals(b, null) && !object.Equals(a, null))) return false;
-
-            if (!object.Equals(a, null)) rid1 = a.RID;
-            if (!object.Equals(b, null)) rid2 = b.RID;
-            /*
-            try
-            {
-                rid1 = a.RID;
-            }
-            catch{}
-            try
-            {
-                rid2 = b.RID;
-            }
-            catch {}
-            */
-            if (rid1 == -1 && rid2 == -1) return true;
-            return rid1 == rid2;
+            this.Users.Remove(user);
+            this.FireUpdateList();
         }
-        public static bool operator !=(NewChatRoom a , NewChatRoom b) { return !(a == b); }
-        public new bool Equals(object x , object y) { return x.GetHashCode() == y.GetHashCode(); }
-        public int GetHashCode(object obj) { return obj.GetHashCode(); }
-        public override int GetHashCode() { return (int)this.RID; }
+
+        /// <summary>
+        /// The fire update list.
+        /// </summary>
+        private void FireUpdateList()
+        {
+            if (this.OnUserListChange != null)
+            {
+                this.OnUserListChange.Invoke(this, this.Users);
+            }
+        }
+
+        #endregion
     }
 }

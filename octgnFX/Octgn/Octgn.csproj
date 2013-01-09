@@ -171,10 +171,18 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.83.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\System.Data.SQLite.1.0.83.0\lib\net40\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq">
+      <HintPath>..\..\packages\System.Data.SQLite.1.0.83.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
@@ -202,6 +210,17 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ChatBar.cs" />
+    <Compile Include="Controls\ChatBarItem.cs" />
+    <Compile Include="Controls\ChatControl.xaml.cs">
+      <DependentUpon>ChatControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ChatTableRow.xaml.cs">
+      <DependentUpon>ChatTableRow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ChatUserListItem.xaml.cs">
+      <DependentUpon>ChatUserListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ChildWindow.cs" />
     <Compile Include="Controls\ChildWindowManager.cs" />
     <Compile Include="Controls\CircularProgressBar.xaml.cs">
@@ -225,9 +244,11 @@
     <Compile Include="Controls\GameListItem.xaml.cs">
       <DependentUpon>GameListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LobbyChat.cs" />
     <Compile Include="Controls\NotificationListItem.xaml.cs">
       <DependentUpon>NotificationListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OctgnChrome.cs" />
     <Compile Include="Controls\PopupWindowMessage.xaml.cs">
       <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
     </Compile>
@@ -235,6 +256,7 @@
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
     <Compile Include="ErrorReporter.cs" />
     <Compile Include="Extentions\BitmapImageExtensions.cs" />
+    <Compile Include="Extentions\ControlExtensions.cs" />
     <Compile Include="Networking\IServerCalls.cs">
       <DependentUpon>IServerCalls.tt</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -498,6 +520,12 @@
     <Compile Include="Windows\UrlSets.xaml.cs">
       <DependentUpon>UrlSets.xaml</DependentUpon>
     </Compile>
+    <Content Include="x64\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\SQLite.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <EmbeddedResource Include="Launcher\Game.xsd">
       <SubType>
@@ -597,20 +625,12 @@
     </Resource>
     <None Include="app.config">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Networking\BinaryParser.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryParser.cs</LastGenOutput>
     </None>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -618,6 +638,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\ChatControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\ChatTableRow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\ChatUserListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\CircularProgressBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -968,6 +1000,10 @@
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
       <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
       <Name>Octgn.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
+      <Name>Octgn.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>

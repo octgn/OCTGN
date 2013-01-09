@@ -34,7 +34,7 @@ namespace Octgn.Updater
         {
 
 
-            var postURI = new Uri("http://www.octgn.info/errorreport.php");
+            var postURI = new Uri(Updater.ServerPath + "errorreport.php");
             string postDataTemplate = @"name=updater&assembly=%%assembly%%&version=%%version%%&error=%%error%%";
 
             string errorData = textBox1.Text;
@@ -81,7 +81,7 @@ namespace Octgn.Updater
             {
                 var res = MessageBox.Show("There was an error uploading this bug request. Do you want to chat with someone for help?", "Submit Error", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
                 if (res == DialogResult.Yes)
-                    Process.Start("http://www.octgn.info/");
+                    Process.Start(Updater.ServerPath);
             }
 
             return webpageContent;
