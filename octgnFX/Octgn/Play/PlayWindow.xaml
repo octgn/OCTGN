@@ -96,13 +96,14 @@
 
     <Grid Grid.Row="2" Background="{StaticResource WindowBackgroundBrush}">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="300" />
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
+            <GridSplitter Width="3" DragIncrement="1" Tag="{Binding BindsDirectlyToSource=True}" />
 
-      <Border Style="{StaticResource Panel}" Margin="2" Padding="5"
+                <Border Style="{StaticResource Panel}" Margin="2" Padding="5"
               MaxHeight="{Binding ElementName=playerTabs, Path=ActualHeight}">
-        <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" Width="300" DisplayKeyboardShortcut="True" />
+        <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" />
       </Border>
 
       <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1" MinHeight="100"
