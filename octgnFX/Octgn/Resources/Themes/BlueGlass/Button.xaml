@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <Style TargetType="Button" x:Key="{x:Type Button}">
+  <!--<Style TargetType="Button" x:Key="{x:Type Button}">
     <Setter Property="Foreground" Value="White" />
     <Setter Property="FontSize" Value="16" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -119,7 +119,7 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
-  </Style>
+  </Style>-->
 
   <Style x:Key="PlayButton" TargetType="{x:Type ToggleButton}">
     <Setter Property="Template">

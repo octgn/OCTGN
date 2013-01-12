@@ -309,20 +309,20 @@ namespace Octgn.Controls
             this.MainBorder.BorderBrush = new LinearGradientBrush(Color.FromArgb(150, 30, 30, 30), Color.FromArgb(150, 200, 200, 200), 45);
             this.MainBorder.BorderThickness = new Thickness(2);
 
-            //this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
+            this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
 
-            var bimage = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/testbackground.jpg"));
+            //var bimage = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/testbackground.jpg"));
 
-            this.MainBorder.Background = new ImageBrush(bimage)
-                {
-                    Stretch = Stretch.Fill
+            //this.MainBorder.Background = new ImageBrush(bimage)
+            //    {
+            //        Stretch = Stretch.Fill
 
-                    // Below for tiled image.
-                    // Stretch = Stretch.None,
-                    // TileMode = TileMode.Tile,
-                    // ViewportUnits = BrushMappingMode.Absolute,
-                    // Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight)
-                };
+            //        // Below for tiled image.
+            //        // Stretch = Stretch.None,
+            //        // TileMode = TileMode.Tile,
+            //        // ViewportUnits = BrushMappingMode.Absolute,
+            //        // Viewport = new Rect(0, 0, bimage.PixelWidth, bimage.PixelHeight)
+            //    };
             base.Content = this.MainBorder;
 
             this.MakeDrag();

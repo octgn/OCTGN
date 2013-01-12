@@ -1,6 +1,6 @@
 <Window x:Class="Octgn.Windows.MessageWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Octgn" Width="500" SizeToContent="Height"
-        Style="{StaticResource DialogWindow}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Style="{StaticResource Window}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         x:Name="Me">
   <Grid Margin="4">
     <Grid.RowDefinitions>

@@ -26,11 +26,13 @@ namespace Octgn
     using System.Configuration;
 
     using Octgn.Library;
+    using Octgn.Windows;
 
     public static class Program
     {
         public static Windows.DWindow DebugWindow;
         public static Main MainWindow;
+        public static Windows.MainNew MainWindowNew;
         public static LauncherWindow LauncherWindow;
         public static DeckBuilderWindow DeckEditor;
         public static PlayWindow PlayWindow;
@@ -99,8 +101,16 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
-            LauncherWindow = new LauncherWindow();
-            Application.Current.MainWindow = LauncherWindow;
+            if (UseNewChrome)
+            {
+                MainWindowNew = new MainNew();
+                Application.Current.MainWindow = MainWindowNew;
+            }
+            else
+            {
+                LauncherWindow = new LauncherWindow();
+                Application.Current.MainWindow = LauncherWindow;
+            }
             LobbyClient.Chatting.OnCreateRoom += Chatting_OnCreateRoom;
         }
 
