@@ -1,8 +1,13 @@
-<Page x:Class="Octgn.Windows.AboutWindow"
+<Controls:OctgnChrome x:Class="Octgn.Windows.AboutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="About The Dev Team" Height="294" Width="595">
-    <Grid Width="596" Height="295">                
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Controls="clr-namespace:Octgn.Controls"
+                 Title="About The Dev Team" CanResize="False" MinMaxButtonVisibility="Hidden"
+                 WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icons/About.png" SizeToContent="WidthAndHeight">
+    <Grid Width="596" Height="325" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="299*"/>
+            <ColumnDefinition Width="297*"/>
+        </Grid.ColumnDefinitions>
         <Border BorderBrush="Silver" BorderThickness="1" Height="276" HorizontalAlignment="Left" Name="border1" VerticalAlignment="Top" 
                 Width="275" Margin="10,10,0,0" CornerRadius="10">
             <Border.Background>
@@ -13,56 +18,85 @@
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
-        <Border BorderBrush="Silver" BorderThickness="1" Height="247" HorizontalAlignment="Left" Margin="304,10,0,0" Name="border2" VerticalAlignment="Top" 
-                Width="280" CornerRadius="10">
-        <Border.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
-                <GradientStop Color="White" Offset="0" />
-                <GradientStop Color="White" Offset="1" />
-                <GradientStop Color="#FFEBEBEB" Offset="0.5" />
-            </LinearGradientBrush>
-        </Border.Background>
-        </Border>        
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,11,5">
-            <Button Content="Back" Height="23" HorizontalAlignment="Left" Margin="399,251,0,0" Name="btnBack" VerticalAlignment="Top" 
-                    Width="75" Click="btnBack_Click" />            
-            <Image Height="80" HorizontalAlignment="Left" Margin="6,6,0,0" MouseEnter="imgDrilus_MouseEnter" MouseLeave="imgDrilus_MouseLeave" 
+        <Border BorderBrush="Silver" BorderThickness="1" Height="276" HorizontalAlignment="Left" Margin="5,10,0,0" Name="border2" VerticalAlignment="Top" 
+                Width="280" CornerRadius="10" Grid.Column="1">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
+                    <GradientStop Color="White" Offset="0" />
+                    <GradientStop Color="White" Offset="1" />
+                    <GradientStop Color="#FFEBEBEB" Offset="0.5" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="12,12,11,5" Grid.ColumnSpan="2" x:Name="MainGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="283*"/>
+                <ColumnDefinition Width="290*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="257*"/>
+                <RowDefinition Height="21*"/>
+            </Grid.RowDefinitions>
+            <Image Height="80" HorizontalAlignment="Left" Margin="6,6,0,0" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" 
                    Name="imgDrilus" Opacity="0.25" Source="/OCTGN;component/Images/Avatar9_80.jpg" Stretch="Fill" VerticalAlignment="Top" Width="80" />
             <Label Content="drilus" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="6,85,0,0" Name="lblDrilus" 
-                   VerticalAlignment="Top" Width="79" />
+                   VerticalAlignment="Top" Width="79" Foreground="Black" />
             <Image Height="80" HorizontalAlignment="Left" Margin="49,152,0,0" Name="imgRalig98" Stretch="Fill" VerticalAlignment="Top" Width="80" 
-                   Opacity="0.25" Source="/OCTGN;component/Images/ralig.png" MouseEnter="imgRalig98_MouseEnter" MouseLeave="imgRalig98_MouseLeave" />
+                   Opacity="0.25" Source="/OCTGN;component/Images/ralig.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Label Content="ralig98" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="49,231,0,0" Name="lblRalig98" 
-                   VerticalAlignment="Top" Width="79" />
+                   VerticalAlignment="Top" Width="79" Grid.RowSpan="2" Foreground="Black" />
             <Image Height="80" HorizontalAlignment="Left" Margin="91,6,0,0" Name="imgGravecorp" Stretch="Fill" VerticalAlignment="Top" Width="80" 
-                   Opacity="0.25" Source="/OCTGN;component/Images/GravecorpAvatar.jpg" MouseEnter="imgGravecorp_MouseEnter" MouseLeave="imgGravecorp_MouseLeave" />
+                   Opacity="0.25" Source="/OCTGN;component/Images/GravecorpAvatar.jpg" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Image Height="80" HorizontalAlignment="Left" Margin="177,6,0,0" Name="imgD0c" Stretch="Fill" VerticalAlignment="Top" Width="80" 
-                   Opacity="0.25" Source="/OCTGN;component/Images/d0c.jpeg" MouseEnter="imgD0c_MouseEnter" MouseLeave="imgD0c_MouseLeave" />
+                   Opacity="0.25" Source="/OCTGN;component/Images/d0c.jpeg" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Label Content="gravecorp" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="91,85,0,0" Name="lblGraveCorp" 
-                   VerticalAlignment="Top" Width="79" />
+                   VerticalAlignment="Top" Width="79" Foreground="Black" />
             <Label Content="d0c" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="177,85,0,0" Name="lblD0c" 
-                   VerticalAlignment="Top" Width="79" />
-            <Image Height="80" HorizontalAlignment="Left" Margin="134,0,0,46" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Images/smith_user.png" MouseEnter="imgOther_MouseEnter" MouseLeave="imgOther_MouseLeave" />
+                   VerticalAlignment="Top" Width="79" Foreground="Black" />
+            <Image Height="80" HorizontalAlignment="Left" Margin="134,0,0,53" Name="imgOther" Stretch="Fill" VerticalAlignment="Bottom" Width="80" Opacity="0.25" Source="/OCTGN;component/Images/smith_user.png" MouseEnter="imgMouseEnter" MouseLeave="imgMouseLeave" />
             <Label Content="others" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="134,231,0,0" Name="lblOthers" 
-                   VerticalAlignment="Top" Width="79" />
-            <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textAbout" 
-                   Text="OCTGN &quot;Online Card and Tabletop Gaming Network&quot; was originally developed by jods &quot;Joel Dumas&quot;. &#13;&#13;This program allows anyone to create a game file for use in OCTGN. A game file is typically a TCG (Trading Card Game).&#13;&#13;Feel free to submit any ideas or bugs you may have. We look forward to hearing from you. Enjoy the games!" 
-                   VerticalAlignment="Top" Width="240" Opacity="1" TextWrapping="Wrap" Padding="5" FontSize="12" />
-            <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textDrilus" 
+                   VerticalAlignment="Top" Width="79" Grid.RowSpan="2" Foreground="Black" />
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textAbout" 
+                   VerticalAlignment="Top" Width="240" Opacity="1" TextWrapping="Wrap" Padding="5" FontSize="12" Grid.Column="1" >
+                OCTGN &quot;Online Card and Tabletop Gaming Network&quot; was originally developed by jods &quot;Joel Dumas&quot;. <LineBreak/><LineBreak/>
+                This program allows anyone to create a game file for use in OCTGN. A game file is typically a TCG (Trading Card Game).<LineBreak/><LineBreak/>
+                Feel free to submit any ideas or bugs you may have. We look forward to hearing from you. Enjoy the games!<LineBreak/><LineBreak/>
+                <Hyperlink NavigateUri="http://www.octgn.net" RequestNavigate="Hyperlink_RequestNavigate">
+                    http://www.octgn.net
+                </Hyperlink>
+                <LineBreak/>
+                <Hyperlink NavigateUri="https://github.com/kellyelton/OCTGN" RequestNavigate="Hyperlink_RequestNavigate">
+                    Source(GitHub)
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textDrilus" 
                    Text="Kent Jones is a part time programmer experienced in Delphi and C#.&#13;&#13;His first card game was Star Trek and he's been a TCG enthusiast ever since.&#13;&#13;^.^" 
-                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" />
-            <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textRalig98" 
+                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1" />
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textRalig98" 
                    Text="Chris Martin. Not much is known about him.&#13;&#13;He likes to spout random movie quotes that make no sense in context. For example, &quot;One morning I shot an elephant in my pajamas. How he got in my pajamas, I don't know.&quot;"
-                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" />
-            <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textGravecorp" 
+                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1" />
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" x:Name="textGravecorp" 
                    Text="Gravecorp (Uri)&#13;&#13;Can program in almost any programming language by abusing his code monkey army!&#13;&#13;KkNvdmVycyB1cCogU3RvcCBkZWNyeXB0aW5nIG1lIHdpdGggeW91ciBleWVzISEh" 
-                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" />
-            <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textOther" 
+                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1" />
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" Name="textOther" 
                    Text="brine: Thanks for all the python help!&#13;&#13;MagnusVortex:Thanks for some cool ideas. =]&#13;&#13;Robertmeta (Robert Melton):Wow. Thanks for the amazing amount of code and time you contributed. Check out his fork @ https://github.com/robertmeta/open-octgn ." 
-                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" />
-            <TextBlock Height="220" HorizontalAlignment="Left" Margin="311,12,0,0" Name="textD0c" 
-                   Text="Kelly Elton&#13;&#13;Team lead and full time software contractor. He wants to buy a desk, but can't justify shelling out the cash when he has a perfectly good table.&#13;&#13;Famous Quote:&#34;DAMN YOU KENT JONES!&#34;&#13;&#13;http://www.skylabsonline.com&#13;http://www.kellyelton.com" 
-                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" />
+                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1" />
+            <TextBlock Height="240" HorizontalAlignment="Left" Margin="28,12,0,0" Name="textD0c" 
+                   VerticalAlignment="Top" Width="240" Opacity="0" TextWrapping="Wrap" FontSize="12" Grid.Column="1">
+                Kelly Elton<LineBreak/><LineBreak/>
+                Team lead and software contractor. <LineBreak/>
+                He wants to buy a desk, but can't justify shelling out the cash when he has a perfectly good table.
+                <LineBreak/><LineBreak/>
+                Famous Quote:&#34;DAMN YOU KENT JONES!&#34;<LineBreak/><LineBreak/>
+                <Hyperlink NavigateUri="http://www.skylabsonline.com" RequestNavigate="Hyperlink_RequestNavigate">http://www.skylabsonline.com</Hyperlink><LineBreak/>
+                <Hyperlink NavigateUri="http://www.kellyelton.com" RequestNavigate="Hyperlink_RequestNavigate">http://www.kellyelton.com</Hyperlink>
+            </TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
+                <Hyperlink NavigateUri="https://github.com/kellyelton/OCTGN/network/members" RequestNavigate="Hyperlink_RequestNavigate">
+                    Contributers    
+                </Hyperlink>
+
+            </TextBlock>
         </Grid>
     </Grid>
-</Page>
+</Controls:OctgnChrome>

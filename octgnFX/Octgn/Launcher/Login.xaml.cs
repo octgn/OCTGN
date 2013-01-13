@@ -523,7 +523,7 @@ namespace Octgn.Launcher
             }
             private void menuAboutUs_Click(object sender, RoutedEventArgs e)
             {
-                Program.LauncherWindow.Navigate(new Windows.AboutWindow());
+                new Windows.AboutWindow().ShowDialog();
             }
             private void menuHelp_Click(object sender, RoutedEventArgs e)
             {

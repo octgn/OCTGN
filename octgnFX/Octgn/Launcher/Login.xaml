@@ -47,10 +47,10 @@
 
   <Grid>
     <Grid.RowDefinitions>
-      <RowDefinition Height="20" />
+      <RowDefinition Height="30" />
       <RowDefinition Height="100*" />
     </Grid.RowDefinitions>
-    <Menu Grid.Row="0" Height="23" HorizontalAlignment="Stretch" Name="menu1" VerticalAlignment="Top">
+    <Menu Grid.Row="0" Height="30" HorizontalAlignment="Stretch" Name="menu1" VerticalAlignment="Top">
         <MenuItem Name="menuOctgn" Header="Octgn">
             <MenuItem Name="menuDeckEditor" Header="Deck Editor" Click="MenuDeckEditorClick" />
             <MenuItem Header="Offline Play">

@@ -302,14 +302,11 @@ namespace Octgn.Play
         private void Open(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-
-            // Check that Prefs.LastFolder exists before calling it
-            if (!Directory.Exists(Prefs.LastFolder))
-            {
-                Prefs.LastFolder = Prefs.DataDirectory;
-            }
-
+ 
+            // Make sure that Prefs.LastFolder exists
+            if (!Directory.Exists(Prefs.LastFolder)) Prefs.LastFolder = Prefs.DataDirectory;
             // Show the dialog to choose the file
+
             var ofd = new OpenFileDialog
                           {
                               Filter = "Octgn deck files (*.o8d) | *.o8d",

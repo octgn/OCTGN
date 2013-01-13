@@ -52,24 +52,32 @@ namespace Octgn
                 ShutdownMode = oldShutdown;
             }
 
-#if(DEBUG)
-            Program.LauncherWindow.Show();
-            Program.ChatWindows = new List<ChatWindow>();
-#else
+//#if(DEBUG)
+//            Program.LauncherWindow.Show();
+//            Program.ChatWindows = new List<ChatWindow>();
+//#else
             var uc = new UpdateChecker();
             uc.ShowDialog();
             if (!uc.IsClosingDown)
             {
-                Program.LauncherWindow.Show();
-                Program.ChatWindows = new List<ChatWindow>();
+                if (Program.UseNewChrome) Program.MainWindowNew.Show();
+                else
+                {
+                    Program.LauncherWindow.Show();
+                    Program.ChatWindows = new List<ChatWindow>();
+                }
             }
             else
             {
+                if (Program.UseNewChrome) Program.MainWindowNew.Close();
+                else
+                {
+                    Program.LauncherWindow.Close();
+                }
                 Current.MainWindow = null;
-                Program.LauncherWindow.Close();
                 Program.Exit();
             }
-#endif
+//#endif
 
             if (e.Args.Any())
             {

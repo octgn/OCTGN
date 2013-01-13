@@ -1,6 +1,6 @@
 <Window x:Class="Octgn.Windows.PatchDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Patch sets" Height="372" Width="471"
-        Style="{StaticResource DialogWindow}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Style="{StaticResource Window}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         x:Name="Me">
   <Grid Margin="4">
     <Grid.RowDefinitions>

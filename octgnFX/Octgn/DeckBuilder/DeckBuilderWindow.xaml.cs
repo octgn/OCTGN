@@ -47,7 +47,7 @@ namespace Octgn.DeckBuilder
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             newSubMenu.ItemsSource = Program.GamesRepository.Games;
             loadSubMenu.ItemsSource = Program.GamesRepository.Games;
-            Title = "Octgn Deck Editor  version " + oversion;
+            //Title = "Octgn Deck Editor  version " + oversion;
 
             var deplugins = PluginManager.GetPlugins<IDeckBuilderPlugin>();
             foreach (var p in deplugins)

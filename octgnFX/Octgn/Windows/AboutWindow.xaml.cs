@@ -7,138 +7,111 @@ using Octgn.Launcher;
 
 namespace Octgn.Windows
 {
+    using System.Diagnostics;
+    using System.Windows.Navigation;
+
+    using Octgn.Controls;
+
     /// <summary>
     /// Interaction logic for AboutWindow.xaml
     /// </summary>
-    public partial class AboutWindow : Page
+    public partial class AboutWindow : OctgnChrome
     {
+        private Image currentImage = null;
+
         public AboutWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            imgDrilus.MouseUp += PictureMouseUp;
+            imgD0c.MouseUp += PictureMouseUp;
+            imgGravecorp.MouseUp += PictureMouseUp;
+            imgOther.MouseUp += PictureMouseUp;
+            imgRalig98.MouseUp += PictureMouseUp;
         }
 
-        private void btnBack_Click(object sender, RoutedEventArgs e)
+        private void PictureMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            Program.LauncherWindow.Navigate(new Login());
-        } 
+            if (currentImage == null)
+            {
+                currentImage = sender as Image;
+            }
+            else if (currentImage == sender)
+            {
+                HideImage(currentImage);
+                currentImage = null;
+            }
+            else
+            {
+                HideImage(currentImage);
+                ShowImage(sender as Image);
+                currentImage = sender as Image;
+            }
+        }
+
+        private void ShowImage(Image i)
+        {
+            foreach (var c in this.MainGrid.Children)
+            {
+                var tb = c as TextBlock;
+                if (tb != null)
+                {
+                    if (tb.Name == i.Name.Replace("img", "text"))
+                    {
+                        DoubleAnimation animation = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
+                        i.BeginAnimation(OpacityProperty, animation);
+
+                        DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
+                        textAbout.BeginAnimation(OpacityProperty, hide);
+                        tb.BeginAnimation(OpacityProperty, animation);
+                        return;
+                    }
+                }
+            }
+
+        }
+        private void HideImage(Image i)
+        {
+            foreach (var c in this.MainGrid.Children)
+            {
+                var tb = c as TextBlock;
+                if (tb != null)
+                {
+                    if (tb.Name == i.Name.Replace("img", "text"))
+                    {
+                        DoubleAnimation animation = new DoubleAnimation(0.25, TimeSpan.FromSeconds(0.5));
+                        i.BeginAnimation(OpacityProperty, animation);
+
+                        DoubleAnimation show = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
+                        textAbout.BeginAnimation(OpacityProperty, show);
+                        DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
+                        tb.BeginAnimation(OpacityProperty, hide);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void imgMouseEnter(object sender, MouseEventArgs e)
+        {
+            if (currentImage != null) return;
+            var s = sender as Image;
+            ShowImage(s);
+        }
+
+        private void imgMouseLeave(object sender, MouseEventArgs e)
+        {
+            if (currentImage != null) return;
+            var s = sender as Image;
+            HideImage(s);
+        }
 
         #region Users
 
-        private void imgDrilus_MouseEnter(object sender, MouseEventArgs e)
+        #endregion
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));            
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, hide);
-            textDrilus.BeginAnimation(OpacityProperty, animation);
-        }
-
-        private void imgDrilus_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(0.25, TimeSpan.FromSeconds(0.5));
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation show = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, show);
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textDrilus.BeginAnimation(OpacityProperty, hide);
-        }               
-
-        private void imgRalig98_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, hide);
-            textRalig98.BeginAnimation(OpacityProperty, animation);
-        }
-
-        private void imgRalig98_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(0.25, TimeSpan.FromSeconds(0.5));
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation show = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, show);
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textRalig98.BeginAnimation(OpacityProperty, hide);
-        }
-
-        private void imgGravecorp_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, hide);
-            textGravecorp.BeginAnimation(OpacityProperty, animation);
-        }
-
-        private void imgGravecorp_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(0.25, TimeSpan.FromSeconds(0.5));
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation show = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, show);
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textGravecorp.BeginAnimation(OpacityProperty, hide);
-        }
-
-        private void imgD0c_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, hide);
-            textD0c.BeginAnimation(OpacityProperty, animation);
-        }
-
-        private void imgD0c_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(0.25, TimeSpan.FromSeconds(0.5));
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation show = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, show);
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textD0c.BeginAnimation(OpacityProperty, hide);
-        }
-
-        private void imgOther_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, hide);
-            textOther.BeginAnimation(OpacityProperty, animation);
-        }
-
-        private void imgOther_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Image image = (Image)sender;
-            DoubleAnimation animation = new DoubleAnimation(0.25, TimeSpan.FromSeconds(0.5));
-            image.BeginAnimation(OpacityProperty, animation);
-
-            DoubleAnimation show = new DoubleAnimation(1, TimeSpan.FromSeconds(0.5));
-            textAbout.BeginAnimation(OpacityProperty, show);
-            DoubleAnimation hide = new DoubleAnimation(0, TimeSpan.FromSeconds(0.5));
-            textOther.BeginAnimation(OpacityProperty, hide);
-        }
-
-        #endregion                                
+            Process.Start(e.Uri.ToString());
+        }       
     }
 }
