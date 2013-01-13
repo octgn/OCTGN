@@ -527,6 +527,9 @@
     <Resource Include="Resources\minmax.png" />
     <Resource Include="Resources\closewindow.png" />
     <Resource Include="Resources\search.png" />
+    <Resource Include="Resources\admin.png" />
+    <Resource Include="Resources\moderator.png" />
+    <Resource Include="Resources\owner.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

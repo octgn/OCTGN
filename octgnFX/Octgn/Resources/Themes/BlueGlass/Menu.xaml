@@ -6,8 +6,8 @@
       <Setter.Value>
         <ControlTemplate>
           <Grid Background="{TemplateBinding Control.Background}">
-            <TextBlock Text="{TemplateBinding MenuItem.Header}" Margin="4" FontWeight="Bold" Foreground="Black" />
-            <Rectangle Stroke="#bbb" VerticalAlignment="Bottom" Height="1" />
+            <TextBlock Text="{TemplateBinding MenuItem.Header}" Margin="4" FontWeight="Bold" Foreground="WhiteSmoke" />
+            <Rectangle Stroke="#bbbbbb" VerticalAlignment="Bottom" Height="1" />
           </Grid>
         </ControlTemplate>
       </Setter.Value>
