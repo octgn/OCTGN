@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace Octgn.ReleasePusher
 {
     public class Pusher
     {
+        private static readonly log4net.ILog Log = log4net.LogManager.GetLogger (MethodBase.GetCurrentMethod().DeclaringType);
         public static void Main(string[] args)
         {
             var ver = GetVersion();
