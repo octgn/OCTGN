@@ -6,6 +6,7 @@ using Octgn.Controls;
 using Skylabs.Lobby;
 using Skylabs.Lobby.Threading;
 using agsXMPP;
+using System.Collections;
 
 namespace Octgn.Launcher
 {
@@ -39,7 +40,7 @@ namespace Octgn.Launcher
             Dispatcher.Invoke(new Action(() =>
                                              {
                 stackPanel1.Children.Clear();
-                NewUser[] flist = Program.LobbyClient.Friends.ToArray();
+                NewUser[] flist = Program.LobbyClient.Friends.OrderByDescending(x => x.Status == UserStatus.Online).ThenBy(x => x.UserName).ToArray();
                 foreach (FriendListItem f in flist.Select(u => new FriendListItem
                                                                 {
                                                                     ThisUser = u,
