@@ -25,9 +25,9 @@
 
       </Border>
       <TextBlock Text="{Binding ElementName=flistitem, Path=UserName}" Grid.Column="2" HorizontalAlignment="Left"
-                 Foreground="Black" Name="tbUsername" VerticalAlignment="Bottom" Grid.ColumnSpan="1" Margin="2" />
+                 Foreground="{StaticResource TextBrush}" Name="tbUsername" VerticalAlignment="Bottom" Grid.ColumnSpan="1" Margin="2" />
       <TextBlock Text="{Binding ElementName=flistitem, Path=CustomStatus}" Grid.Column="2" Grid.Row="1"
-                 HorizontalAlignment="Left" Name="tbStatus" VerticalAlignment="Top" Foreground="Silver" Margin="2" />
+                 HorizontalAlignment="Left" Name="tbStatus" VerticalAlignment="Top" Foreground="{StaticResource TextBrush}" Margin="2" />
       <Image Grid.Column="3" Height="16" HorizontalAlignment="Center" Name="image1" Stretch="Fill"
              VerticalAlignment="Top" Width="16" Source="/Octgn;component/Resources/cross.png" ImageFailed="image1_ImageFailed" MouseUp="image1_MouseUp" />
       <Image Source="{Binding ElementName=flistitem, Path=StatusPicture}" Grid.Column="1" Height="32" Name="image2"
@@ -74,9 +74,9 @@
                       Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" />
       <ColorAnimation To="Transparent" From="#FF72BAFF" Storyboard.TargetName="LIBorder"
                       Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)" />
-      <ColorAnimation To="Black" From="White" Storyboard.TargetName="tbUsername"
+            <ColorAnimation To="{StaticResource WhiteColor}" From="White" Storyboard.TargetName="tbUsername"
                       Storyboard.TargetProperty="Foreground.Color" />
-      <ColorAnimation To="Silver" From="White" Storyboard.TargetName="tbStatus"
+            <ColorAnimation To="{StaticResource WhiteColor}" From="White" Storyboard.TargetName="tbStatus"
                       Storyboard.TargetProperty="Foreground.Color" />
       <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="CornerRadius">
         <ObjectAnimationUsingKeyFrames.KeyFrames>

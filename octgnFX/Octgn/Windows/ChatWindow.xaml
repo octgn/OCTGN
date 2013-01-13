@@ -8,7 +8,7 @@
       <ColumnDefinition Width="158" />
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
-      <RowDefinition Height="23" />
+      <RowDefinition Height="30" />
       <RowDefinition Height="100*" />
       <RowDefinition Height="26" />
     </Grid.RowDefinitions>
@@ -17,7 +17,7 @@
              MouseRightButtonUp="ListBox1MouseRightButtonUp" />
     <RichTextBox Name="richTextBox1" Drop="WindowDrop" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
                  Grid.Row="1" IsDocumentEnabled="True" />
-    <Menu Grid.Row="0" Height="23" Name="menu1" Grid.ColumnSpan="2">
+    <Menu Grid.Row="0" Height="30" Name="menu1" Grid.ColumnSpan="2">
       <MenuItem Header="_File">
         <MenuItem Header="_Leave Chat" Name="miLeaveChat" Click="MiLeaveChatClick" />
       </MenuItem>

@@ -28,11 +28,11 @@ namespace Octgn.Windows
         public long Id { get { return Room.Rid; } }
         public bool IsLobbyChat { get; private set; }
 
-        private Brush _bBackColor = Brushes.White;
-        private Brush _bMeColor = Brushes.Blue;
-        private Brush _bOtherColor = Brushes.Black;
-        private Brush _bTopicColor = Brushes.Green;
-        private Brush _bTopicBackColor = Brushes.White;
+        private Brush _bBackColor = Brushes.Transparent;
+        private Brush _bMeColor = Brushes.CornflowerBlue;
+        private Brush _bOtherColor = Brushes.WhiteSmoke;
+        private Brush _bTopicColor = Brushes.LimeGreen;
+        private Brush _bTopicBackColor = Brushes.Transparent;
         private Brush _bErrorColor = Brushes.Red;
 
         public ChatWindow(NewChatRoom room)

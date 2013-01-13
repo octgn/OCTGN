@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">
 
-  <Style TargetType="{x:Type CheckBox}">
+  <!--<Style TargetType="{x:Type CheckBox}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type CheckBox}">
@@ -52,7 +52,7 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
-  </Style>
+  </Style>-->
 
   <Style x:Key="ComboBoxReadonlyToggleButton" TargetType="{x:Type ToggleButton}">
     <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -84,7 +84,7 @@
     </Setter>
   </Style>
 
-  <Style TargetType="{x:Type ComboBox}">
+  <!--<Style TargetType="{x:Type ComboBox}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ComboBox}">
@@ -128,7 +128,7 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
         </ControlTemplate>
       </Setter.Value>
     </Setter>
-  </Style>
+  </Style>-->
   <Style TargetType="{x:Type TextBox}" x:Key="LabelBoxUnSelected">
     <Setter Property="Template">
       <Setter.Value>
@@ -151,7 +151,7 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
       </Style>
     </Style.Resources>
   </Style>
-  <Style TargetType="{x:Type TextBox}" x:Key="{x:Type TextBox}">
+  <!--<Style TargetType="{x:Type TextBox}" x:Key="{x:Type TextBox}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate>
@@ -176,13 +176,12 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
       </Setter.Value>
     </Setter>
     <Style.Resources>
-      <!-- HACK: see TextBlock below -->
       <Style TargetType="TextBlock">
         <Setter Property="Effect" Value="{x:Null}" />
       </Style>
     </Style.Resources>
-  </Style>
-  <Style TargetType="{x:Type PasswordBox}">
+  </Style>-->
+  <!--<Style TargetType="{x:Type PasswordBox}">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate>
@@ -207,11 +206,10 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
       </Setter.Value>
     </Setter>
     <Style.Resources>
-      <!-- HACK: see TextBlock below -->
       <Style TargetType="TextBlock">
         <Setter Property="Effect" Value="{x:Null}" />
       </Style>
     </Style.Resources>
-  </Style>
+  </Style>-->
 
 </ResourceDictionary>

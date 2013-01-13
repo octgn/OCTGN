@@ -255,17 +255,17 @@ StrokeLineJoin="Round" StrokeThickness="0.32" VerticalAlignment="Stretch" Width=
                 <Label x:Name="labelResend" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Resend email verification code(Enter your username above)</Label>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180*" />
-                        <ColumnDefinition Width="198*" />
+                        <ColumnDefinition Width="70*" />
+                        <ColumnDefinition Width="30*" />
                     </Grid.ColumnDefinitions>
-                    <Label Height="28" Name="lblLoginStatus" Foreground="Yellow" HorizontalContentAlignment="Right" Grid.Column="1" />
-                    <Border Style="{StaticResource Panel}" BorderBrush="Silver" BorderThickness="1" Name="bError" Visibility="Collapsed" Grid.Column="0" Grid.ColumnSpan="2" Padding="5">
+                    <Label Height="28" Name="lblLoginStatus" Foreground="Yellow" HorizontalContentAlignment="Right" Grid.Column="1" VerticalContentAlignment="Center"/>
+                    <Border Style="{StaticResource Panel}" BorderBrush="Silver" BorderThickness="1" Name="bError" Visibility="Collapsed" Grid.Column="0" Grid.ColumnSpan="1" Padding="5">
                         <Grid Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Stretch" Name="grid1" VerticalAlignment="Stretch">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="24" />
                                 <RowDefinition Height="100*" />
                             </Grid.RowDefinitions>
-                            <TextBlock Style="{x:Null}" Name="lError" Text=" Your account does not have an e-mail associated with it. Click here to fix it." HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            <TextBlock Style="{x:Null}" Name="lError" Text=" Your account doddddddddddddes not have an e-mail associated with it. Click here to fix it." HorizontalAlignment="Center" VerticalAlignment="Center" 
                                        FontWeight="Bold" Foreground="Red" Grid.Row="0" FontSize="10" TextWrapping="Wrap"></TextBlock>
                         </Grid>
                     </Border>

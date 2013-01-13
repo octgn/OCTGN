@@ -15,7 +15,7 @@
       <Image Source="{Binding ElementName=flistitem, Path=Picture}" Height="32" HorizontalAlignment="Left"
              Name="image1" Stretch="Fill" VerticalAlignment="Center" Width="32" />
       <TextBlock Text="{Binding ElementName=flistitem, Path=Message}" Grid.Column="1" HorizontalAlignment="Stretch"
-                 Foreground="Black" Name="tbUsername" VerticalAlignment="Center" Margin="2" />
+                 Foreground="{StaticResource TextBrush}" Name="tbUsername" VerticalAlignment="Center" Margin="2" />
       <Image Grid.Column="2" Height="16" HorizontalAlignment="Center" Name="imgDismiss" Stretch="Fill"
              VerticalAlignment="Top" Width="16" Source="/Octgn;component/Resources/cross.png" MouseUp="ImgDismissMouseUp" />
     </Grid>
@@ -33,9 +33,9 @@
                       Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" />
       <ColorAnimation From="Transparent" To="#FF72BAFF" Storyboard.TargetName="LIBorder"
                       Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)" />
-      <ColorAnimation From="Black" To="White" Storyboard.TargetName="tbUsername"
+            <ColorAnimation From="{StaticResource WhiteColor}" To="{StaticResource WhiteColor}" Storyboard.TargetName="tbUsername"
                       Storyboard.TargetProperty="Foreground.Color" />
-      <ColorAnimation From="Silver" To="White" Storyboard.TargetName="tbStatus"
+            <ColorAnimation From="{StaticResource WhiteColor}" To="{StaticResource WhiteColor}" Storyboard.TargetName="tbStatus"
                       Storyboard.TargetProperty="Foreground.Color" />
       <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LIBorder" Storyboard.TargetProperty="CornerRadius">
         <ObjectAnimationUsingKeyFrames.KeyFrames>
@@ -60,9 +60,9 @@
                       Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" />
       <ColorAnimation To="Transparent" From="#FF72BAFF" Storyboard.TargetName="LIBorder"
                       Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)" />
-      <ColorAnimation To="Black" From="White" Storyboard.TargetName="tbUsername"
+            <ColorAnimation To="{StaticResource WhiteColor}" From="{StaticResource WhiteColor}" Storyboard.TargetName="tbUsername"
                       Storyboard.TargetProperty="Foreground.Color" />
-      <ColorAnimation To="Silver" From="White" Storyboard.TargetName="tbStatus"
+            <ColorAnimation To="{StaticResource WhiteColor}" From="{StaticResource WhiteColor}" Storyboard.TargetName="tbStatus"
                       Storyboard.TargetProperty="Foreground.Color" />
     </Storyboard>
   </UserControl.Resources>

@@ -11,7 +11,7 @@
         <ResourceDictionary Source="/Resources/Themes/Target.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/Window.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/Panel.xaml" />
-        <!--<ResourceDictionary Source="/Resources/Themes/BlueGlass/CommonControls.xaml" />-->
+        <ResourceDictionary Source="/Resources/Themes/BlueGlass/CommonControls.xaml" />
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/Button.xaml" />
         <!--<ResourceDictionary Source="/Resources/Themes/BlueGlass/ProgressBar.xaml" />-->
         <ResourceDictionary Source="/Resources/Themes/BlueGlass/ScrollBar.xaml" />

@@ -8,14 +8,7 @@
             <RowDefinition Height="100*" />
             <RowDefinition Height="0" x:Name="Row2"/>
         </Grid.RowDefinitions>
-        <ScrollViewer VerticalAlignment="Stretch" >
-        <ScrollViewer.Background>
-          <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
-            <GradientStop Color="White" Offset="0" />
-            <GradientStop Color="White" Offset="1" />
-            <GradientStop Color="#FFEBEBEB" Offset="0.5" />
-          </LinearGradientBrush>
-        </ScrollViewer.Background>
+        <ScrollViewer VerticalAlignment="Stretch" Style="{StaticResource ScrollPanel}">
         <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Top"></StackPanel>
       </ScrollViewer>
       <Button Content="Cancel" Grid.Row="2" Height="25" HorizontalAlignment="Left" Name="btnCancel" VerticalAlignment="Top" Width="75" />
