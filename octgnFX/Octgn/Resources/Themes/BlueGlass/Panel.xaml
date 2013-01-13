@@ -54,6 +54,10 @@
 
   <SolidColorBrush x:Key="ColoredGlyphBrush" Color="#FF326EDE" />
 
+  <Style TargetType="{x:Type Frame}">
+        <Setter Property="Background" Value="#FF000000"></Setter>
+  </Style>
+    
   <Style TargetType="TextBlock" x:Key="HintText">
     <Setter Property="Foreground" Value="#619AEF" />
     <Setter Property="FontStyle" Value="Italic" />
@@ -124,7 +128,7 @@
     <Setter Property="CornerRadius" Value="10" />
     <Setter Property="BorderThickness" Value="1" />
     <Style.Resources>
-      <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+      <!--<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="Template">
           <Setter.Value>
             <ControlTemplate>
@@ -136,12 +140,42 @@
           </Setter.Value>
         </Setter>
         <Style.Resources>
-          <!-- HACK: see TextBlock below -->
           <Style TargetType="TextBlock">
             <Setter Property="Effect" Value="{x:Null}" />
           </Style>
         </Style.Resources>
       </Style>
+        -->
+      <Style TargetType="ListBox" BasedOn="{StaticResource PanelListBox}" />
+
+      <Style TargetType="TextBlock" BasedOn="{StaticResource PanelText}" />
+      <Style TargetType="Hyperlink" BasedOn="{StaticResource PanelHyperlink}" />
+       
+    </Style.Resources>
+  </Style>
+
+  <Style TargetType="ScrollViewer" x:Key="ScrollPanel">
+    <Setter Property="Background" Value="{StaticResource GlassPanelBrush}" />
+    <Setter Property="BorderBrush" Value="{StaticResource GlassPanelBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Style.Resources>
+      <!--<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate>
+              <Border BorderThickness="1" CornerRadius="2" Padding="2" SnapsToDevicePixels="True"
+                      BorderBrush="{StaticResource ControlBorderBrush}" Background="{StaticResource ControlFillBrush}">
+                <ScrollViewer SnapsToDevicePixels="True" x:Name="PART_ContentHost" />
+              </Border>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+        <Style.Resources>
+          <Style TargetType="TextBlock">
+            <Setter Property="Effect" Value="{x:Null}" />
+          </Style>
+        </Style.Resources>
+      </Style>-->
 
       <Style TargetType="ListBox" BasedOn="{StaticResource PanelListBox}" />
 
@@ -151,7 +185,7 @@
 
     </Style.Resources>
   </Style>
-
+    
   <Style TargetType="Border" x:Key="ControlBorder">
     <Setter Property="Background" Value="{StaticResource ControlFillBrush}" />
     <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}" />
@@ -161,7 +195,7 @@
     <Setter Property="SnapsToDevicePixels" Value="True" />
   </Style>
 
-  <Style TargetType="ListBox">
+  <!--<Style TargetType="ListBox">
     <Style.Resources>
       <Style TargetType="TextBlock">
         <Setter Property="Effect" Value="{x:Null}" />
@@ -178,5 +212,5 @@
         </ControlTemplate>
       </Setter.Value>
     </Setter>
-  </Style>
+  </Style>-->
 </ResourceDictionary>

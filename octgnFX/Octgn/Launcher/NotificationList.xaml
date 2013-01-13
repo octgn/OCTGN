@@ -3,14 +3,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
       Title="NotificationList" Loaded="PageLoaded" Unloaded="PageUnloaded">
-  <ScrollViewer VerticalAlignment="Stretch">
-    <ScrollViewer.Background>
-      <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
-        <GradientStop Color="White" Offset="0" />
-        <GradientStop Color="White" Offset="1" />
-        <GradientStop Color="#FFEBEBEB" Offset="0.5" />
-      </LinearGradientBrush>
-    </ScrollViewer.Background>
+  <ScrollViewer VerticalAlignment="Stretch" Style="{StaticResource ScrollPanel}">
     <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Top"></StackPanel>
   </ScrollViewer>
 </Page>

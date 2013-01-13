@@ -11,14 +11,7 @@
       <GradientStop Color="#FFEBEBEB" Offset="0.5" />
     </LinearGradientBrush>
   </Page.Background>
-  <Border BorderBrush="Silver" BorderThickness="1" Height="100" Name="border1" Width="232" CornerRadius="10">
-    <Border.Background>
-      <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
-        <GradientStop Color="White" Offset="0" />
-        <GradientStop Color="White" Offset="1" />
-        <GradientStop Color="#FFEBEBEB" Offset="0.5" />
-      </LinearGradientBrush>
-    </Border.Background>
+  <Border Style="{StaticResource Panel}" Height="100" Name="border1" Width="232">
     <Grid Height="100" Name="grid1" Width="200">
       <Grid.RowDefinitions>
         <RowDefinition Height="24" />

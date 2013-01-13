@@ -308,9 +308,6 @@
     <Compile Include="Launcher\NotificationList.xaml.cs">
       <DependentUpon>NotificationList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\Register.xaml.cs">
-      <DependentUpon>Register.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Launcher\SetList.xaml.cs">
       <DependentUpon>SetList.xaml</DependentUpon>
     </Compile>
@@ -529,6 +526,7 @@
     <Resource Include="Resources\minimize.png" />
     <Resource Include="Resources\minmax.png" />
     <Resource Include="Resources\closewindow.png" />
+    <Resource Include="Resources\search.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -736,10 +734,6 @@
     <Page Include="Launcher\NotificationList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Launcher\Register.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Launcher\SetList.xaml">
       <Generator>MSBuild:Compile</Generator>

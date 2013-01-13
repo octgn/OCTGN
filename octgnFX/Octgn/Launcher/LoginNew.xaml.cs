@@ -440,7 +440,7 @@ namespace Octgn.Launcher
         {
             if (NavigationService != null)
             {
-                NavigationService.Navigate(new Register());
+                Process.Start(Program.WebsitePath + "register.php");
             }
         }
 

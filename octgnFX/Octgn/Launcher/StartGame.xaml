@@ -13,14 +13,7 @@
       <RowDefinition Height="50px" />
     </Grid.RowDefinitions>
 
-    <Border BorderBrush="Silver" BorderThickness="1" Name="border1" CornerRadius="10" Padding="5" Margin="10">
-      <Border.Background>
-        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
-          <GradientStop Color="White" Offset="0" />
-          <GradientStop Color="White" Offset="1" />
-          <GradientStop Color="#FFEBEBEB" Offset="0.5" />
-        </LinearGradientBrush>
-      </Border.Background>
+    <Border Style="{StaticResource Panel}" Name="border1" Padding="5" Margin="10">
       <Grid>
         <Grid.RowDefinitions>
           <RowDefinition Height="Auto" />

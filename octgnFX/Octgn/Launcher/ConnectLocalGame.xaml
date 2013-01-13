@@ -19,14 +19,7 @@
             <RowDefinition Height="100*" />
             <RowDefinition Height="44" />
         </Grid.RowDefinitions>
-        <Border BorderBrush="Silver" BorderThickness="1" HorizontalAlignment="Stretch" Name="border1" VerticalAlignment="Stretch" Margin="10" CornerRadius="10" Grid.ColumnSpan="3">
-            <Border.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
-                <GradientStop Color="White" Offset="0" />
-                <GradientStop Color="White" Offset="1" />
-                <GradientStop Color="#FFEBEBEB" Offset="0.5" />
-            </LinearGradientBrush>
-            </Border.Background>
+        <Border Style="{StaticResource Panel}" HorizontalAlignment="Stretch" Name="border1" VerticalAlignment="Stretch" Margin="10" Grid.ColumnSpan="3">
             <StackPanel Name="stackPanel1" Grid.ColumnSpan="3" Margin="5">
                 <Label Content="IP Address/Host Name" Height="28" Name="label1" />
                 <TextBox Height="23" Name="tbHost" BorderBrush="#FF0A0A0A" />
