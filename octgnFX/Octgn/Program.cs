@@ -110,8 +110,8 @@ namespace Octgn
             {
                 LauncherWindow = new LauncherWindow();
                 Application.Current.MainWindow = LauncherWindow;
+                LobbyClient.Chatting.OnCreateRoom += Chatting_OnCreateRoom;
             }
-            LobbyClient.Chatting.OnCreateRoom += Chatting_OnCreateRoom;
         }
 
         static void Chatting_OnCreateRoom(object sender, NewChatRoom room)
