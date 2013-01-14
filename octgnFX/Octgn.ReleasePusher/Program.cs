@@ -6,11 +6,21 @@ using System.Reflection;
 
 namespace Octgn.ReleasePusher
 {
+    using Octgn.ReleasePusher.Tasking;
+    using Octgn.ReleasePusher.Tasking.Tasks;
+
     public class Pusher
     {
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger (MethodBase.GetCurrentMethod().DeclaringType);
-        public static void Main(string[] args)
+        internal static TaskManager TaskManager { get; set; }
+        public static int Main(string[] args)
         {
+            TaskManager = SetupTaskManager();
+
+            TaskManager.Run();
+            PauseForKey();
+            return 0;
+
             var ver = GetVersion();
 
             if(args.Length == 1 && args[0].ToLowerInvariant() == "createinstaller")
@@ -22,7 +32,7 @@ namespace Octgn.ReleasePusher
                 installTemplate = installTemplate.Replace("{{version}}", ver.ToString());
                 UpdateStatus("Saving {0}",templateOutPath);
                 File.WriteAllText(templateOutPath,installTemplate);
-                return;
+                return 1;
             }
 
             UpdateStatus("Reading {0}",Settings.Default.OldVersionFile);
@@ -32,7 +42,7 @@ namespace Octgn.ReleasePusher
             {
                 UpdateStatus("Current version is not greater than the old one. {0} - {1}",ver,oldVer);
                 PauseForKey();
-                return;
+                return 1;
             }
 
             var bnum = Environment.GetEnvironmentVariable("CCNetNumericLabel");
@@ -68,6 +78,25 @@ namespace Octgn.ReleasePusher
             UpdateStatus("Done.");
 
         }
+
+        internal static TaskManager SetupTaskManager()
+        {
+            var taskManager = new TaskManager();
+            taskManager.AddTask(new GetVersion());
+
+            // Get working directory
+            var workingDirectory = Assembly.GetAssembly(typeof(Pusher)).Location;
+            workingDirectory = new DirectoryInfo(workingDirectory).Parent.Parent.Parent.Parent.Parent.FullName;
+            taskManager.TaskContext.Data["WorkingDirectory"] = workingDirectory;
+
+            // Get CurrentVersion.txt relative path
+            var curVerRelPath = Path.Combine("octgnFX", "Octgn");
+            curVerRelPath = Path.Combine(curVerRelPath, "CurrentVersion.txt");
+            taskManager.TaskContext.Data["CurrentVersionFileRelativePath"] = curVerRelPath;
+
+            return taskManager;
+        }
+
         private static void PauseForKey()
         {
 #if(DEBUG)
@@ -91,14 +120,15 @@ namespace Octgn.ReleasePusher
         }
         private static Version GetVersion()
         {
-            UpdateStatus("Getting Current Version.");
-            var vstream = Assembly.GetAssembly(typeof (Program)).GetManifestResourceStream("Octgn.CurrentVersion.txt");
-            var versionString = "";
-            using(var sr = new StreamReader(vstream))
-            {
-                versionString = sr.ReadToEnd().Trim();
-            }
-            return Version.Parse(versionString);
+            //UpdateStatus("Getting Current Version.");
+            //var vstream = Assembly.GetAssembly(typeof (Program)).GetManifestResourceStream("Octgn.CurrentVersion.txt");
+            //var versionString = "";
+            //using(var sr = new StreamReader(vstream))
+            //{
+            //    versionString = sr.ReadToEnd().Trim();
+            //}
+            //return Version.Parse(versionString);
+            return null;
         }
         private static void UpdateStatus(string message, params object[] args)
         {

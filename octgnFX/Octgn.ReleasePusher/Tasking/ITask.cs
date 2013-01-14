@@ -1,4 +1,4 @@
-﻿namespace Octgn.ReleasePusher
+﻿namespace Octgn.ReleasePusher.Tasking
 {
     public interface ITask
     {
