@@ -351,6 +351,17 @@ namespace Octgn.Scripting
                                });
         }
 
+        public void CardTargetArrow(int id, int targetId, bool active)
+        {
+            Card c = Card.Find(id);
+            Card target = Card.Find(targetId);
+            _engine.Invoke(() =>
+            {
+                if (active) c.Target(target);
+                else c.Untarget();
+            });
+        }
+
         public int CardTargeted(int id)
         {
             Card c = Card.Find(id);
