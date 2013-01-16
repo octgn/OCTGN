@@ -6,6 +6,8 @@ using System.Reflection;
 
 namespace Octgn.ReleasePusher
 {
+    using System.Configuration;
+
     using Octgn.ReleasePusher.Tasking;
     using Octgn.ReleasePusher.Tasking.Tasks;
 
@@ -94,6 +96,14 @@ namespace Octgn.ReleasePusher
             var curVerRelPath = Path.Combine("octgnFX", "Octgn");
             curVerRelPath = Path.Combine(curVerRelPath, "CurrentVersion.txt");
             taskManager.TaskContext.Data["CurrentVersionFileRelativePath"] = curVerRelPath;
+
+
+            // Load all of our app.config settings into the data section.
+            for (var i = 0; i < ConfigurationManager.AppSettings.Count;i++ )
+            {
+                taskManager.TaskContext.Data[ConfigurationManager.AppSettings.AllKeys[i]] =
+                    ConfigurationManager.AppSettings[i];
+            }
 
             return taskManager;
         }
