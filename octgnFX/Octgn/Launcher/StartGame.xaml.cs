@@ -73,20 +73,23 @@ namespace Octgn.Launcher
 
         private static System.Net.IPAddress GetExternalIp()
         {
-            string whatIsMyIp = "http://automation.whatismyip.com/n09230945.asp";
+            string dyndns = "http://checkip.dyndns.org";
             System.Net.WebClient wc = new System.Net.WebClient();
             System.Text.UTF8Encoding utf8 = new System.Text.UTF8Encoding();
             string requestHtml = "";
+            string ipAddress = "";
             try
             {
-                requestHtml = utf8.GetString(wc.DownloadData(whatIsMyIp));
+                requestHtml = utf8.GetString(wc.DownloadData(dyndns));
+                string[] fullStr = requestHtml.Split(':');
+                ipAddress = fullStr[1].Remove(fullStr[1].IndexOf('<')).Trim();
             }
             catch (System.Net.WebException we)
             {
                 requestHtml = "127.0.0.1";
             }
 
-            System.Net.IPAddress externalIp = System.Net.IPAddress.Parse(requestHtml);
+            System.Net.IPAddress externalIp = System.Net.IPAddress.Parse(ipAddress);
             return externalIp;
         }
 
