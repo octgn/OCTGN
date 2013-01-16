@@ -149,6 +149,7 @@ class Card(object):
   def getIndex(self): return _api.CardGetIndex(self._id)
   def select(self): _api.CardSelect(self._id)
   def target(self, active = True): _api.CardTarget(self._id, active)
+  def arrow(self, targetCard, active = True): _api.CardTargetArrow(self._id, targetCard._id, active)
   @property
   def targetedBy(self):
     playerId = _api.CardTargeted(self._id)

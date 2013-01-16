@@ -46,6 +46,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -179,7 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
-      <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
+      <Project>{6c6e53ba-e75b-4e93-98ca-3c39ed908b2c}</Project>
       <Name>Octgn.Data</Name>
     </ProjectReference>
   </ItemGroup>

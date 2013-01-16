@@ -83,7 +83,8 @@
         {
             var curDeck = con.GetLoadedDeck();
 
-            MessageBox.Show(String.Format("{0}",curDeck.CardCount));
+            if(curDeck != null)
+                MessageBox.Show(String.Format("{0}",curDeck.CardCount));
 
             // Find the first game with cards in it.
             var game = con.Games.Games.FirstOrDefault(x => x.SelectCards(null).Rows.Count > 0);
