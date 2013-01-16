@@ -22,8 +22,9 @@
             Assert.False(string.IsNullOrWhiteSpace(taskManager.TaskContext.Data["WorkingDirectory"] as string));
             Assert.False(string.IsNullOrWhiteSpace(taskManager.TaskContext.Data["CurrentVersionFileRelativePath"] as string));
 
-            Assert.AreEqual(1,taskManager.Tasks.Count);
+            Assert.AreEqual(2,taskManager.Tasks.Count);
             Assert.True(taskManager.Tasks.OfType<GetVersion>().Any());
+            Assert.True(taskManager.Tasks.OfType<IncrementVersionNumberTask>().Any());
         }
     }
 }

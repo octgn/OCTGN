@@ -83,6 +83,7 @@ namespace Octgn.ReleasePusher
         {
             var taskManager = new TaskManager();
             taskManager.AddTask(new GetVersion());
+            taskManager.AddTask(new IncrementVersionNumberTask());
 
             // Get working directory
             var workingDirectory = Assembly.GetAssembly(typeof(Pusher)).Location;
