@@ -4,7 +4,7 @@
 !include "GetVC.nsh"
 
 Name "OCTGN 3.0.1.27"
-OutFile "artifacts\OCTGN-Setup-3.0.1.27.exe"
+OutFile "OCTGN-Setup-3.0.1.27.exe"
 ShowInstDetails show
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
