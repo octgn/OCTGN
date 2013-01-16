@@ -30,6 +30,8 @@
         {
             // Should we ignore this?
             if (filesToIgnore.Contains(file.Name)) return;
+            if (file.Extension.ToLower() == ".exe" || file.Extension.ToLower() == "*.dll") return;
+
 
             // Read the whole file.
             context.Log.InfoFormat("Reading file {0}",file.FullName);
