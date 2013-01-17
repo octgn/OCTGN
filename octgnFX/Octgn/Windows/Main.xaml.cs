@@ -56,9 +56,16 @@ namespace Octgn.Windows
         private NavigatingCancelEventArgs _navArgs;
         private Brush _originalBorderBrush;
         private bool _joiningGame = false;
+        private System.Threading.Timer ReconnectTimer;
+
+        private object ReconnectTimerLock = new object();
+        private bool Connected;
+        private agsXMPP.XmppConnectionState cState;
 
         public Main()
         {
+            Connected = true;
+            ReconnectTimer = new System.Threading.Timer(ReconnectTimerTick, null, 0, 10000);
             Initialized += MainInitialized;
             InitializeComponent();
             frame1.NavigationService.LoadCompleted += delegate(object sender, NavigationEventArgs args)
@@ -78,9 +85,11 @@ namespace Octgn.Windows
             var ib = new InputBinding(DebugWindowCommand, kg);
             InputBindings.Add(ib);
             //Program.LobbyClient.OnFriendRequest += lobbyClient_OnFriendRequest;
+            Program.LobbyClient.OnLoginComplete += LobbyClientOnOnLoginComplete;
             Program.LobbyClient.OnFriendRequest += LobbyClientOnOnFriendRequest;
             Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataRecieved;
             Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
+            Program.LobbyClient.OnStateChanged += LobbyClientOnOnStateChanged;
             tbUsername.Text = Program.LobbyClient.Username;
             tbStatus.Text = Program.LobbyClient.CustomStatus;
             _originalBorderBrush = NotificationTab.Background;
@@ -105,32 +114,53 @@ namespace Octgn.Windows
             tbStatus.ForceCursor = true;
         }
 
+        private void LobbyClientOnOnStateChanged(object sender, XmppConnectionState state)
+        {
+            cState = state;
+            Dispatcher.Invoke(new Action(() =>
+            {
+                tbConnect.Content = state.ToString();
+            }));
+        }
+
+        private void LobbyClientOnOnLoginComplete(object sender, LoginResults results)
+        {
+            Dispatcher.Invoke(new Action(() =>
+            {
+                switch (results)
+                {
+                    case LoginResults.Success:
+                        Connected = true;
+                        ConnectBox.Visibility = Visibility.Collapsed;
+                        break;
+                    case LoginResults.Failure:
+                        MessageBox.Show(
+                            "Reconnect failed. Logging out.", "OCTGN", MessageBoxButton.OK, MessageBoxImage.Error);
+                        this.CloseDownShop(false);
+                        break;
+                }
+            }));
+        }
+
         private void LobbyClientOnOnDisconnect(object sender , EventArgs eventArgs)
         {
-
-            Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
+            Connected = false;
             if(!Program.LobbyClient.DisconnectedBecauseConnectionReplaced)
             {
                 Dispatcher.BeginInvoke(new Action(() =>
-                {
-
-                    var win = ReconnectingWindow.Reconnect();
-                    if(win.Canceled)
                     {
-                        CloseDownShop(false);
-                        return;
-                    }
-                    Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
-                }));
+                        tbConnect.Content = "Reconnecting";
+                    ConnectBox.Visibility = Visibility.Visible;
+                    }));
             }
             else
             {
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
+                    Program.LobbyClient.OnDisconnect -= LobbyClientOnOnDisconnect;
 
                     CloseDownShop(false);
                     MessageBox.Show("You have been logged out because you signed in somewhere else.");
-                    Program.LobbyClient.OnDisconnect += LobbyClientOnOnDisconnect;
                 }));                
             }
         }
@@ -193,6 +223,23 @@ namespace Octgn.Windows
                     Resources["AlertHeaderColor"] as Style;
                 NotificationTab.InvalidateVisual();
             }));
+        }
+
+        private void ReconnectTimerTick(object o)
+        {
+            if (Connected) return;
+            switch (cState)
+            {
+                case XmppConnectionState.Disconnected:
+                    Program.LobbyClient.BeginReconnect();
+                    break;
+                case XmppConnectionState.Connecting:
+                    Program.LobbyClient.BeginReconnect();
+                    break;
+                case XmppConnectionState.Connected:
+                    Program.LobbyClient.BeginReconnect();
+                    break;
+            }
         }
 
         public void RefreshGameFilter(bool ForceRefresh = false)
