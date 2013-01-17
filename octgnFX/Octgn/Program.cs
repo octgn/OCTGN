@@ -49,6 +49,7 @@ namespace Octgn
         internal readonly static string WebsitePath;
         internal readonly static string ChatServerPath;
         internal readonly static string GameServerPath;
+        internal static readonly string UpdateInfoPath;
 
         internal static readonly bool UseNewChrome;
 
@@ -77,6 +78,7 @@ namespace Octgn
             WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
+            UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
             bool.TryParse(ConfigurationManager.AppSettings["UseNewChrome"],out UseNewChrome);
 
             var pList = Process.GetProcessesByName("OCTGN");
