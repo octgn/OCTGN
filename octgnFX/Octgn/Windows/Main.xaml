@@ -18,6 +18,7 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
+      <RowDefinition Height="25"></RowDefinition>
     </Grid.RowDefinitions>
 
     <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="RibbonSelectionChanged">
@@ -120,5 +121,11 @@
     </ribbon:Ribbon>
     <Frame Grid.Row="1" HorizontalAlignment="Stretch" Name="frame1" VerticalAlignment="Stretch"
            Navigating="FrameNavigating" NavigationUIVisibility="Hidden" />
+        <StackPanel Grid.ColumnSpan="3" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="#FF4B4B4B">
+            <StackPanel x:Name="ConnectBox" Orientation="Horizontal" Visibility="Collapsed" Margin="10,0,10,0">
+                <ProgressBar IsIndeterminate="True" Margin="0,7,0,7" Width="70"/>
+                <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
+            </StackPanel>
+        </StackPanel>
   </Grid>
 </ribbon:RibbonWindow>

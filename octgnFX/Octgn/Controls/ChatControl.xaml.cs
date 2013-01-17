@@ -70,6 +70,7 @@ namespace Octgn.Controls
         {
             this.InitializeComponent();
             this.messageCache = new List<string>();
+            this.UserList.Items.Add(new Label(){Content = "Loading Users..."});
             if (this.IsInDesignMode())
             {
                 return;
@@ -96,7 +97,6 @@ namespace Octgn.Controls
         public void SetRoom(NewChatRoom theRoom)
         {
             this.room = theRoom;
-            this.InvokeResetUserList();
             this.room.OnUserListChange += this.RoomOnUserListChange;
             this.room.OnMessageReceived += this.RoomOnMessageReceived;
             this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 5000, 1000);
@@ -236,6 +236,7 @@ namespace Octgn.Controls
         private void RoomOnUserListChange(object sender, List<NewUser> newusers)
         {
             this.needsRefresh = true;
+            this.userRefreshTimer.Change(500, 1000);
         }
 
         /// <summary>

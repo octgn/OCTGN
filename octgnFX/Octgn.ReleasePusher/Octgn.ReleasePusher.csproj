@@ -91,6 +91,7 @@
       <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Abstractions, Version=1.4.0.40, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -108,26 +109,21 @@
     <Compile Include="Tasking\ITaskContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Tasking\TaskContext.cs" />
     <Compile Include="Tasking\TaskContextTest.cs" />
     <Compile Include="Tasking\TaskManager.cs" />
     <Compile Include="Tasking\Tasks\GetVersion.cs" />
+    <Compile Include="Tasking\Tasks\IncrementVersionNumbersInFiles.cs" />
+    <Compile Include="Tasking\Tasks\IncrementVersionNumberTask.cs" />
     <Compile Include="Test\EntryPoint.cs" />
     <Compile Include="Test\TaskManagerTest.cs" />
     <Compile Include="Test\Tasks\GetVersionTest.cs" />
+    <Compile Include="Test\Tasks\IncrementVersionNumbersInFilesTest.cs" />
+    <Compile Include="Test\Tasks\IncrementVersionNumberTaskTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
