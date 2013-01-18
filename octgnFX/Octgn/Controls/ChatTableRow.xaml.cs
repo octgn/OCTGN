@@ -157,6 +157,7 @@ namespace Octgn.Controls
                     {
                         var uri = new System.Uri(s);
                         var hl = new Hyperlink(new Run(s)) { NavigateUri = uri };
+                        hl.Foreground = Brushes.LightGreen;
                         hl.RequestNavigate += this.RequestNavigate;
                         MessageParagraph.Inlines.Add(hl);
                     }
@@ -166,7 +167,8 @@ namespace Octgn.Controls
                         {
                             var uri = new System.Uri("http://" + s);
                             var hl = new Hyperlink(new Run(s)) { NavigateUri = uri };
-                            hl.RequestNavigate += this.RequestNavigate;
+                            hl.Foreground = Brushes.LightGreen;
+                            hl.RequestNavigate += this.RequestNavigate;                        
                             MessageParagraph.Inlines.Add(hl);
                         }
                         catch (Exception)
