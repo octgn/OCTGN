@@ -99,7 +99,7 @@
         <ColumnDefinition Width="300" />
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
-            <GridSplitter Width="3" DragIncrement="1" Tag="{Binding BindsDirectlyToSource=True}" />
+            <GridSplitter Width="5" DragIncrement="1" Tag="{Binding BindsDirectlyToSource=True}" Opacity="0" />
 
                 <Border Style="{StaticResource Panel}" Margin="2" Padding="5"
               MaxHeight="{Binding ElementName=playerTabs, Path=ActualHeight}">
