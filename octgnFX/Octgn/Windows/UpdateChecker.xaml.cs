@@ -323,6 +323,9 @@ namespace Octgn.Windows
 											 {
 												 IsClosingDown = true;
 
+											     var downloadUri = new Uri(_updateURL);
+                                                 string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
+
 												 UpdateStatus("Downloading new version.");
 												 var c = new WebClient();
 												 progressBar1.Maximum = 100;
@@ -333,7 +336,7 @@ namespace Octgn.Windows
 													 if (!args.Cancelled)
 													 {
 
-														 LazyAsync.Invoke(()=> Process.Start(Path.Combine(Directory.GetCurrentDirectory(),"Updater","Octgn.Updater.exe")));
+														 LazyAsync.Invoke(()=> Process.Start(Path.Combine(Directory.GetCurrentDirectory(),filename)));
 													 }
 													 else
 													 {
@@ -346,7 +349,7 @@ namespace Octgn.Windows
 												 {
 													 progressBar1.Value = args.ProgressPercentage;
 												 };
-												 c.DownloadFileAsync(new Uri(_updateURL), Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"OCTGN","update.zip"));
+												 c.DownloadFileAsync(downloadUri, Path.Combine(Directory.GetCurrentDirectory(),filename));
 											 }
 											 else Close();
             }));
@@ -462,12 +465,15 @@ namespace Octgn.Windows
                                         values[0] = reader.Value;
                                     break;
                                 case "updatepath":
-                                    if (reader.Read())
-                                        values[1] = Program.WebsitePath + reader.Value;
+                                    //if (reader.Read())
+                                        //values[1] = Program.WebsitePath + reader.Value;
                                     break;
                                 case "installpath":
                                     if (reader.Read())
+                                    {
                                         values[2] = Program.WebsitePath + reader.Value;
+                                        values[1] = Program.WebsitePath + reader.Value;
+                                    }
                                     break;
 
                             }
