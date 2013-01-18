@@ -254,6 +254,7 @@
     </Compile>
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
+    <Compile Include="Definitions\FontDef.cs" />
     <Compile Include="ErrorReporter.cs" />
     <Compile Include="Extentions\BitmapImageExtensions.cs" />
     <Compile Include="Extentions\ControlExtensions.cs" />
