@@ -50,6 +50,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Library", "octgnFX\Oc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.DeckBuilderPluginExample", "octgnFX\Octgn.DeckBuilderPluginExample\Octgn.DeckBuilderPluginExample.csproj", "{D1F5848B-84D9-4EE5-8969-E62B054DAA4A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{565B7135-3F8D-418C-BA60-F81266EDF34E}"
+	ProjectSection(SolutionItems) = preProject
+		deploy\currentversion.txt = deploy\currentversion.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug x86|Any CPU = Debug x86|Any CPU
