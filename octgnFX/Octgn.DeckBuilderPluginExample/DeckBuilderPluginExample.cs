@@ -1,4 +1,4 @@
-﻿namespace Octgn.DeckBuilderPluginExample
+namespace Octgn.DeckBuilderPluginExample
 {
     using System;
     using System.Collections.Generic;
@@ -59,7 +59,7 @@
         {
             get
             {
-                // Don't allow this plugin to be used in any version less than 3.0.1.27
+                // Don't allow this plugin to be used in any version less than 3.0.1.28
                 return Version.Parse("3.0.1.28");
             }
         }

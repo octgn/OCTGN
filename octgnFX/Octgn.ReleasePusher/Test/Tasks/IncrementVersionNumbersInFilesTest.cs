@@ -139,6 +139,8 @@
             var passFile = A.Fake<FileInfoBase>();
             var nonpassFile = A.Fake<FileInfoBase>();
 
+            context.Data["WorkingDirectory"] = "c:\\asdf\\";
+
             A.CallTo(() => passFile.FullName).Returns(@"c:\face\brains\tits.txt");
             A.CallTo(() => nonpassFile.FullName).Returns(@"c:\face\brains\ignore2.txt");
             A.CallTo(() => passFile.Name).Returns(@"tits.txt");

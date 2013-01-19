@@ -20,6 +20,7 @@
 
             context.Log.InfoFormat("Setting CurrentVersion: {0}",currentVersion);
             context.Data["CurrentVersion"] = currentVersion;
+
         }
 
         public virtual Version ParseVersion(string versionText)
