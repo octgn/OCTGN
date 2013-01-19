@@ -21,6 +21,8 @@
             context.Log.InfoFormat("Setting CurrentVersion: {0}",currentVersion);
             context.Data["CurrentVersion"] = currentVersion;
             Environment.SetEnvironmentVariable("octgnnewversion",currentVersion.ToString(),EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable("octgnnewversion",currentVersion.ToString(),EnvironmentVariableTarget.Machine);
+            Environment.SetEnvironmentVariable("octgnnewversion",currentVersion.ToString(),EnvironmentVariableTarget.Process);
         }
 
         public virtual Version ParseVersion(string versionText)
