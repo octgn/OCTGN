@@ -1,3 +1,6 @@
+#3.0.1.29
++ Dummy change to fix updater.
+
 #3.0.1.28
 + Friendslist is now sorted by online and offline and then alphabetically
 + Reworked how fonts are loaded from game definitions. Developers see [here](https://github.com/kellyelton/OCTGN/pull/621)
