@@ -19,7 +19,7 @@ namespace Skylabs.Lobby
 
     using agsXMPP;
     using agsXMPP.Factory;
-    using agsXMPP.net;
+    using agsXMPP.Net;
     using agsXMPP.protocol;
     using agsXMPP.protocol.client;
     using agsXMPP.protocol.iq.agent;
@@ -95,7 +95,7 @@ namespace Skylabs.Lobby
 
     #endregion
 
-    public class Client 
+    public class Client
     {
         #region Events
 
@@ -239,7 +239,7 @@ namespace Skylabs.Lobby
         /// <summary>
         /// The host.
         /// </summary>
-    	public string Host;
+        public string Host;
 
         /// <summary>
         /// Gets or sets the status.
@@ -262,7 +262,7 @@ namespace Skylabs.Lobby
                 this.SetStatus(value);
             }
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Client"/> class.
         /// </summary>
@@ -277,40 +277,46 @@ namespace Skylabs.Lobby
         {
             if (this.xmpp != null)
             {
-                this.xmpp.OnXmppConnectionStateChanged -= this.XmppOnOnXmppConnectionStateChanged;
+                //    this.xmpp.OnXmppConnectionStateChanged -= this.XmppOnOnXmppConnectionStateChanged;
                 this.xmpp.Close();
-                this.xmpp = null;
+                //    this.xmpp = null;
             }
 
             this.DisconnectedBecauseConnectionReplaced = false;
-            this.xmpp = new XmppClientConnection(Host);
-            this.xmpp.OnRegistered += this.XmppOnOnRegistered;
-            this.xmpp.OnRegisterError += this.XmppOnOnRegisterError;
-            this.xmpp.OnXmppConnectionStateChanged += this.XmppOnOnXmppConnectionStateChanged;
-            this.xmpp.OnLogin += this.XmppOnOnLogin;
-            this.xmpp.OnAuthError += this.XmppOnOnAuthError;
-            this.xmpp.OnRosterItem += this.XmppOnOnRosterItem;
-            this.xmpp.OnRosterEnd += this.XmppOnOnRosterEnd;
-            this.xmpp.OnRosterStart += this.XmppOnOnRosterStart;
-            this.xmpp.OnMessage += this.XmppOnOnMessage;
-            this.xmpp.OnPresence += this.XmppOnPresence;
-            this.xmpp.OnAgentItem += this.XmppOnOnAgentItem;
-            this.xmpp.OnIq += this.XmppOnOnIq;
-            this.xmpp.OnReadXml += this.XmppOnOnReadXml;
-            this.xmpp.OnClose += this.XmppOnOnClose;
-            this.xmpp.OnWriteXml += this.XmppOnOnWriteXml;
-            this.xmpp.OnError += this.XmppOnOnError;
-            this.xmpp.OnSocketError += this.XmppOnOnSocketError;
-            this.xmpp.OnStreamError += this.XmppOnOnStreamError;
-            this.xmpp.OnReadSocketData += this.XmppOnOnReadSocketData;
-            this.Notifications = new List<Notification>();
-            this.Friends = new List<NewUser>();
+            if (this.xmpp == null)
+            {
+                this.xmpp = new XmppClientConnection(Host);
+                this.Chatting = new Chat(this, this.xmpp);
+                ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
+                this.Notifications = new List<Notification>();
+                this.Friends = new List<NewUser>();
+            }
+            else
+            {
+                this.xmpp.OnRegistered += this.XmppOnOnRegistered;
+                this.xmpp.OnRegisterError += this.XmppOnOnRegisterError;
+                this.xmpp.OnXmppConnectionStateChanged += this.XmppOnOnXmppConnectionStateChanged;
+                this.xmpp.OnLogin += this.XmppOnOnLogin;
+                this.xmpp.OnAuthError += this.XmppOnOnAuthError;
+                this.xmpp.OnRosterItem += this.XmppOnOnRosterItem;
+                this.xmpp.OnRosterEnd += this.XmppOnOnRosterEnd;
+                this.xmpp.OnRosterStart += this.XmppOnOnRosterStart;
+                this.xmpp.OnMessage += this.XmppOnOnMessage;
+                this.xmpp.OnPresence += this.XmppOnPresence;
+                this.xmpp.OnAgentItem += this.XmppOnOnAgentItem;
+                this.xmpp.OnIq += this.XmppOnOnIq;
+                this.xmpp.OnReadXml += this.XmppOnOnReadXml;
+                this.xmpp.OnClose += this.XmppOnOnClose;
+                this.xmpp.OnWriteXml += this.XmppOnOnWriteXml;
+                this.xmpp.OnError += this.XmppOnOnError;
+                this.xmpp.OnSocketError += this.XmppOnOnSocketError;
+                this.xmpp.OnStreamError += this.XmppOnOnStreamError;
+                this.xmpp.OnReadSocketData += this.XmppOnOnReadSocketData;
+            }
 
             this.myPresence = new Presence();
-            this.Chatting = new Chat(this, this.xmpp);
             this.CurrentHostedGamePort = -1;
             this.games = new List<HostedGameData>();
-            ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
         }
 
         #region XMPP
@@ -443,7 +449,7 @@ namespace Skylabs.Lobby
         private void XmppOnOnReadXml(object sender, string xml)
         {
 #if(DEBUG)
-            Trace.WriteLine("[Xmpp]in: " + xml);
+            //Trace.WriteLine("[Xmpp]in: " + xml);
 #endif
         }
 
@@ -458,8 +464,8 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnIq(object sender, IQ iq)
         {
-            if(iq.Error != null && iq.Error.Code == ErrorCode.NotAllowed)
-                if(OnLoginComplete != null)OnLoginComplete.Invoke(this,LoginResults.Failure);
+            if (iq.Error != null && iq.Error.Code == ErrorCode.NotAllowed)
+                if (OnLoginComplete != null) OnLoginComplete.Invoke(this, LoginResults.Failure);
             if (iq.Type == IqType.result)
             {
                 if (iq.Vcard != null)
@@ -859,7 +865,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnRegisterError(object sender, Element element)
         {
-            OnRegisterComplete.Invoke(this,RegisterResults.UsernameTaken);
+            OnRegisterComplete.Invoke(this, RegisterResults.UsernameTaken);
             Trace.WriteLine("[this.xmpp]Register Error...Closing...");
             this.xmpp.Close();
         }
@@ -1052,7 +1058,7 @@ namespace Skylabs.Lobby
 
             // Xmpp.RequestRoster();
         }
-        
+
         /// <summary>
         /// The decline friendship.
         /// </summary>
@@ -1063,7 +1069,7 @@ namespace Skylabs.Lobby
         {
             this.xmpp.PresenceManager.RefuseSubscriptionRequest(user);
         }
-        
+
         /// <summary>
         /// The get notification list.
         /// </summary>
@@ -1074,7 +1080,7 @@ namespace Skylabs.Lobby
         {
             return this.Notifications.ToArray();
         }
-        
+
         /// <summary>
         /// The set custom status.
         /// </summary>
@@ -1086,7 +1092,7 @@ namespace Skylabs.Lobby
             this.xmpp.Status = status;
             this.xmpp.SendMyPresence();
         }
-        
+
         /// <summary>
         /// The set status.
         /// </summary>
@@ -1126,7 +1132,7 @@ namespace Skylabs.Lobby
 
             this.Me.SetStatus(status);
         }
-        
+
         /// <summary>
         /// The send friend request.
         /// </summary>
@@ -1147,7 +1153,7 @@ namespace Skylabs.Lobby
 
             this.xmpp.PresenceManager.Subscribe(j);
         }
-        
+
         /// <summary>
         /// The remove friend.
         /// </summary>
@@ -1161,7 +1167,7 @@ namespace Skylabs.Lobby
             this.Friends.Remove(user);
             this.OnDataReceived.Invoke(this, DataRecType.FriendList, this);
         }
-        
+
         /// <summary>
         /// The get hosted games.
         /// </summary>
@@ -1172,7 +1178,7 @@ namespace Skylabs.Lobby
         {
             return this.games.ToArray();
         }
-        
+
         /// <summary>
         /// The hosted game started.
         /// </summary>
@@ -1182,7 +1188,7 @@ namespace Skylabs.Lobby
                 "gameserv@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
             this.xmpp.Send(m);
         }
-        
+
         /// <summary>
         /// The log out.
         /// </summary>

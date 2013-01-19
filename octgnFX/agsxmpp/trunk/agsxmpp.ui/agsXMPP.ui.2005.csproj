@@ -1,0 +1,255 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{93F68E40-C0FC-4B7F-8331-8EEB95A5E3DF}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>agsXMPP.ui</AssemblyName>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>agsXMPP.ui</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\2005\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\2005\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="roster\IRosterControl.cs" />
+    <Compile Include="roster\PresenceData.cs" />
+    <Compile Include="roster\RosterControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="roster\RosterControl.Designer.cs">
+      <DependentUpon>RosterControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="roster\RosterData.cs" />
+    <Compile Include="roster\RosterNode.cs" />
+    <Compile Include="roster\RosterNodeType.cs" />
+    <Compile Include="roster\Tooltip.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="roster\Tooltip.Designer.cs">
+      <DependentUpon>Tooltip.cs</DependentUpon>
+    </Compile>
+    <Compile Include="roster\TreeViewComparer.cs" />
+    <Compile Include="xdata\Base\XDataFieldControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataCheckBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataHidden.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataJidMulti.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataJidSingle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataListItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataListMulti.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataListSingle.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="xdata\XDataTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="roster\RosterControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RosterControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\Base\XDataFieldControl.resx">
+      <DependentUpon>XDataFieldControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\XDataCheckBox.resx">
+      <DependentUpon>XDataCheckBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\XDataControl.resx">
+      <DependentUpon>XDataControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\XDataHidden.resx">
+      <DependentUpon>XDataHidden.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\XDataJidMulti.resx">
+      <DependentUpon>XDataJidMulti.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\XDataJidSingle.resx">
+      <DependentUpon>XDataJidSingle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\XDataLabel.resx">
+      <DependentUpon>XDataLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\XDataListMulti.resx">
+      <DependentUpon>XDataListMulti.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\XDataListSingle.resx">
+      <DependentUpon>XDataListSingle.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="xdata\XDataTextBox.resx">
+      <DependentUpon>XDataTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\away.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\dnd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\ffc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\offline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\online.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\xa.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\expand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\collapse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\arrow_down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="graphics\arrow_up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="roster\RosterControl.bmp" />
+    <EmbeddedResource Include="roster\Tooltip.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>Tooltip.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="key.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\agsxmpp\agsXMPP2005.csproj">
+      <Project>{DC39021C-FA24-4E34-AB4A-3260BB5314AF}</Project>
+      <Name>agsXMPP2005</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
