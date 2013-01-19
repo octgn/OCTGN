@@ -141,7 +141,7 @@ Style="{StaticResource ComboBoxReadonlyToggleButton}" />
       </Setter.Value>
     </Setter>
     <Setter Property="Focusable" Value="False" />
-    <Setter Property="Foreground" Value="Black" />
+    <Setter Property="Foreground" Value="White" />
     <Setter Property="BorderBrush" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
     <Style.Resources>
