@@ -8,7 +8,7 @@
         {
             var batTemplate =
 @"git commit -am ""Auto generated commit for version %v""
-git tag -a %v
+git tag -a %v -m ""Auto generated commit for version %v""
 git push --tags origin";
             var file = context.Data["WorkingDirectory"] as string;
             file = context.FileSystem.Path.Combine(file, "push.bat");
