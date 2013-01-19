@@ -2,18 +2,33 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary" Title="Octgn"
                      x:Name="Window" Width="416" Height="589" Icon="/Octgn;component/Resources/icon.ico" MinWidth="368"
-                     Closing="WindowClosing" Foreground="#FFF0F0F0" WindowStyle="ThreeDBorderWindow" >
-  <ribbon:RibbonWindow.Resources>
-    <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
-      <Setter Property="Background" Value="Red" />
-      <Setter Property="Foreground" Value="White" />
-      <Setter Property="FontWeight" Value="Bold" />
-    </Style>
-    <Style TargetType="ribbon:RibbonTabHeader" x:Key="NormalHeaderColor" x:Name="NormalHeaderColor">
-      <Setter Property="Foreground" Value="Black" />
-      <Setter Property="FontWeight" Value="Normal" />
-    </Style>
-  </ribbon:RibbonWindow.Resources>
+                     Closing="WindowClosing" Foreground="#FFF0F0F0" WindowStyle="ThreeDBorderWindow" BorderBrush="Black" >
+    <ribbon:RibbonWindow.Resources>
+        <Style TargetType="ribbon:RibbonGroup">
+            <Setter Property="Foreground" Value="White"></Setter>
+        </Style>
+        <Style TargetType="ribbon:RibbonTabHeader">
+            <Setter Property="Background" >
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF4D4D4D" Offset="0"/>
+                        <GradientStop Color="#FF575757" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
+            <Setter Property="Background" Value="Red" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style TargetType="ribbon:RibbonTabHeader" x:Key="NormalHeaderColor" x:Name="NormalHeaderColor">
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontWeight" Value="Normal" />
+        </Style>
+    </ribbon:RibbonWindow.Resources>
     <ribbon:RibbonWindow.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="Black" Offset="0"/>
@@ -21,14 +36,15 @@
             <GradientStop Color="#FF040404" Offset="1"/>
         </LinearGradientBrush>
     </ribbon:RibbonWindow.Background>
-    <Grid x:Name="LayoutRoot">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="25"></RowDefinition>
-    </Grid.RowDefinitions>
+    <Grid x:Name="LayoutRoot" Background="Black">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="25"></RowDefinition>
+        </Grid.RowDefinitions>
 
-    <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="RibbonSelectionChanged" Background="Black" BorderBrush="#FF8F8F8F" CheckedBorderBrush="#FFD6D6D6" FocusedBorderBrush="#FFC1C1C1" Foreground="Gainsboro" MouseOverBorderBrush="Red" PressedBorderBrush="White">
+        <Border Background="Black">
+        <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="RibbonSelectionChanged" Background="Black" BorderBrush="#FF8F8F8F" CheckedBorderBrush="#FFD6D6D6" FocusedBorderBrush="#FFC1C1C1" Foreground="Gainsboro" MouseOverBorderBrush="Red" PressedBorderBrush="White">
             <ribbon:Ribbon.PressedBackground>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                     <GradientStop Color="#FFC7C7C7" Offset="0"/>
@@ -62,80 +78,80 @@
                 </LinearGradientBrush>
             </ribbon:Ribbon.CheckedBackground>
             <ribbon:Ribbon.ApplicationMenu>
-        <ribbon:RibbonApplicationMenu IsMainMenu="True" x:Name="MainMenu" Background="Black" BorderBrush="{x:Null}" CanAddToQuickAccessToolBarDirectly="True" Foreground="White" SmallImageSource="../Resources/FileIcons/Game.ico">
-          <ribbon:RibbonApplicationMenuItem x:Name="Help" Header="Help" Click="Help_Click" Foreground="#FF2B2B2B"/>
+                <ribbon:RibbonApplicationMenu IsMainMenu="True" x:Name="MainMenu" Background="Black" BorderBrush="{x:Null}" CanAddToQuickAccessToolBarDirectly="True" Foreground="White" SmallImageSource="../Resources/FileIcons/Game.ico">
+                    <ribbon:RibbonApplicationMenuItem x:Name="Help" Header="Help" Click="Help_Click" Foreground="#FF2B2B2B"/>
                     <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOffClick" Foreground="#FF2B2B2B"></ribbon:RibbonApplicationMenuItem>
                     <ribbon:RibbonApplicationMenuItem x:Name="Quit" Header="Quit" Click="QuitClick" Foreground="#FF2B2B2B"></ribbon:RibbonApplicationMenuItem>
-        </ribbon:RibbonApplicationMenu>
-      </ribbon:Ribbon.ApplicationMenu>
-      <ribbon:Ribbon.QuickAccessToolBar>
-        <ribbon:RibbonQuickAccessToolBar></ribbon:RibbonQuickAccessToolBar>
-      </ribbon:Ribbon.QuickAccessToolBar>
-      <ribbon:RibbonTab Header="Lobby">
-        <ribbon:RibbonGroup>
-          <ribbon:RibbonButton x:Name="bAddFriend" Label="Add A Friend"
+                </ribbon:RibbonApplicationMenu>
+            </ribbon:Ribbon.ApplicationMenu>
+            <ribbon:Ribbon.QuickAccessToolBar>
+                <ribbon:RibbonQuickAccessToolBar></ribbon:RibbonQuickAccessToolBar>
+            </ribbon:Ribbon.QuickAccessToolBar>
+            <ribbon:RibbonTab Header="Lobby" Foreground="White">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton x:Name="bAddFriend" Label="Add A Friend"
                                LargeImageSource="/Resources/Icons/user_add.png" Click="BAddFriendClick" />
-        </ribbon:RibbonGroup>
-        <ribbon:RibbonGroup x:Name="rgStatus" Header="Status" LargeImageSource="/Resources/statusOnline.png">
-          <ribbon:RibbonGroup.GroupSizeDefinitions>
-            <ribbon:RibbonGroupSizeDefinitionBaseCollection>
-              <ribbon:RibbonGroupSizeDefinition IsCollapsed="True" />
-            </ribbon:RibbonGroupSizeDefinitionBaseCollection>
-          </ribbon:RibbonGroup.GroupSizeDefinitions>
-          <ribbon:RibbonRadioButton x:Name="bOnlineStatus" Label="Online"
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup x:Name="rgStatus" Header="Status" LargeImageSource="/Resources/statusOnline.png">
+                    <ribbon:RibbonGroup.GroupSizeDefinitions>
+                        <ribbon:RibbonGroupSizeDefinitionBaseCollection>
+                            <ribbon:RibbonGroupSizeDefinition IsCollapsed="True" />
+                        </ribbon:RibbonGroupSizeDefinitionBaseCollection>
+                    </ribbon:RibbonGroup.GroupSizeDefinitions>
+                    <ribbon:RibbonRadioButton x:Name="bOnlineStatus" Label="Online"
                                     LargeImageSource="/Resources/statusOnline.png" Click="BOnlineStatusClick" />
-          <ribbon:RibbonRadioButton x:Name="bAwayStatus" Label="Away" LargeImageSource="/Resources/statusAway.png"
+                    <ribbon:RibbonRadioButton x:Name="bAwayStatus" Label="Away" LargeImageSource="/Resources/statusAway.png"
                                     Click="BAwayStatusClick" />
-          <ribbon:RibbonRadioButton x:Name="bBusyStatus" Label="Busy" LargeImageSource="/Resources/statusDND.png"
+                    <ribbon:RibbonRadioButton x:Name="bBusyStatus" Label="Busy" LargeImageSource="/Resources/statusDND.png"
                                     Click="BBusyStatusClick" />
-          <ribbon:RibbonRadioButton x:Name="bOfflineStatus" Label="Offline"
+                    <ribbon:RibbonRadioButton x:Name="bOfflineStatus" Label="Offline"
                                     LargeImageSource="/Resources/statusOffline.png" Click="BOfflineStatusClick" />
-        </ribbon:RibbonGroup>
-        <ribbon:RibbonGroup>
-          <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
-            <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbUsername" Width="200"
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
+                        <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbUsername" Width="200"
                      Text="My Username" FontWeight="Bold" FontSize="16" MouseUp="TbUsernameMouseUp" LostFocus="TbUsernameLostFocus"
                      KeyUp="TbUsernameKeyUp" LostKeyboardFocus="TbUsernameLostKeyboardFocus" />
-          </ribbon:RibbonControlGroup>
-          <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
-            <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbStatus" Width="200"
+                    </ribbon:RibbonControlGroup>
+                    <ribbon:RibbonControlGroup BorderBrush="Transparent" BorderThickness="0">
+                        <TextBox Style="{StaticResource ResourceKey=LabelBoxUnSelected}" x:Name="tbStatus" Width="200"
                      Text="My Username" KeyUp="TbStatusKeyUp" LostFocus="TbStatusLostFocus" MouseUp="TbStatusMouseUp"
                      TextChanged="TbStatusTextChanged" LostKeyboardFocus="TbStatusLostKeyboardFocus" />
-          </ribbon:RibbonControlGroup>
-        </ribbon:RibbonGroup>
+                    </ribbon:RibbonControlGroup>
+                </ribbon:RibbonGroup>
 
-      </ribbon:RibbonTab>
-      <ribbon:RibbonTab Header="Host/Join" Foreground="Black">
-        <ribbon:RibbonGroup>
-          <ribbon:RibbonButton x:Name="bHost" Label="Host" LargeImageSource="/Resources/Icons/user_add.png"
+            </ribbon:RibbonTab>
+            <ribbon:RibbonTab Header="Host/Join">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton x:Name="bHost" Label="Host" LargeImageSource="/Resources/Icons/user_add.png"
                                Click="BHostClick" />
-          <ribbon:RibbonButton x:Name="bJoin" Label="Join" LargeImageSource="/Resources/Icons/user_add.png"
+                    <ribbon:RibbonButton x:Name="bJoin" Label="Join" LargeImageSource="/Resources/Icons/user_add.png"
                                Click="BJoinClick" />
-        </ribbon:RibbonGroup>
-        <ribbon:RibbonGroup x:Name="bFilterGames" Header="Filter Games" LargeImageSource="/Resources/Icons/FilterGames.png">
-           <ribbon:RibbonGroup.GroupSizeDefinitions>
-              <ribbon:RibbonGroupSizeDefinitionBaseCollection>
-                 <ribbon:RibbonGroupSizeDefinition IsCollapsed="True" />
-              </ribbon:RibbonGroupSizeDefinitionBaseCollection>
-           </ribbon:RibbonGroup.GroupSizeDefinitions>
-         </ribbon:RibbonGroup>
-      </ribbon:RibbonTab>
-      <ribbon:RibbonTab Header="Games">
-        <ribbon:RibbonGroup>
-          <ribbon:RibbonButton Label="Select Game" LargeImageSource="/Resources/Icons/bullet_arrow_down.png"
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup x:Name="bFilterGames" Header="Filter Games" LargeImageSource="/Resources/Icons/FilterGames.png">
+                    <ribbon:RibbonGroup.GroupSizeDefinitions>
+                        <ribbon:RibbonGroupSizeDefinitionBaseCollection>
+                            <ribbon:RibbonGroupSizeDefinition IsCollapsed="True" />
+                        </ribbon:RibbonGroupSizeDefinitionBaseCollection>
+                    </ribbon:RibbonGroup.GroupSizeDefinitions>
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+            <ribbon:RibbonTab Header="Games">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton Label="Select Game" LargeImageSource="/Resources/Icons/bullet_arrow_down.png"
                                Click="RibbonButtonClick1" SmallImageSource="/Octgn;component/Resources/Icons/bullet_arrow_down_small.png" />
-          <ribbon:RibbonButton x:Name="bDeckEditor" Label="Deck Editor"
+                    <ribbon:RibbonButton x:Name="bDeckEditor" Label="Deck Editor"
                                LargeImageSource="/Resources/Icons/page_edit.png" Click="BDeckEditorClick"
                                SmallImageSource="/Octgn;component/Resources/Icons/page_edit_small.png" />
-        </ribbon:RibbonGroup>
-        <ribbon:RibbonGroup>
-          <ribbon:RibbonButton Label="Install Game" LargeImageSource="/Resources/Icons/ruby_Add.png"
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton Label="Install Game" LargeImageSource="/Resources/Icons/ruby_Add.png"
                                Click="RibbonButtonClick" SmallImageSource="/Octgn;component/Resources/Icons/ruby_add_small.png" />
-          <ribbon:RibbonButton Label="Remove Game" LargeImageSource="/Resources/Icons/ruby_delete.png"
+                    <ribbon:RibbonButton Label="Remove Game" LargeImageSource="/Resources/Icons/ruby_delete.png"
                                Click="RibbonButtonClick3" SmallImageSource="/Octgn;component/Resources/Icons/ruby_delete_small.png" />
-        </ribbon:RibbonGroup>
-        <ribbon:RibbonGroup>
-          <ribbon:RibbonButton x:Name="bInstallSets" Label="Install Sets"
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonButton x:Name="bInstallSets" Label="Install Sets"
                                LargeImageSource="/Resources/Icons/image_add.png" Click="BInstallSetsClick"
                                SmallImageSource="/Octgn;component/Resources/Icons/image_add_small.png" />
                     <ribbon:RibbonButton x:Name="bXmlSets" Label="Add autoupdated sets"
@@ -143,22 +159,23 @@
                     <ribbon:RibbonButton x:Name="bRemoveSets" Label="Remove Sets"
                                LargeImageSource="/Resources/Icons/image_delete.png" Click="RibbonButtonClick2"
                                SmallImageSource="/Octgn;component/Resources/Icons/image_delete_small.png" />
-          <ribbon:RibbonButton x:Name="bPatchSets" Label="Patch All Sets"
+                    <ribbon:RibbonButton x:Name="bPatchSets" Label="Patch All Sets"
                                LargeImageSource="/Resources/Icons/image_link.png" Click="BPatchSetsClick"
                                SmallImageSource="/Octgn;component/Resources/Icons/image_link_small.png" />
-        </ribbon:RibbonGroup>
-      </ribbon:RibbonTab>
-      <ribbon:RibbonTab Header="Options" Foreground="Black">
-        <ribbon:RibbonGroup>
-          <ribbon:RibbonCheckBox x:Name="bHideLoginNotifications" Label="Hide user login notifications"
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+            <ribbon:RibbonTab Header="Options" Foreground="Black">
+                <ribbon:RibbonGroup>
+                    <ribbon:RibbonCheckBox x:Name="bHideLoginNotifications" Label="Hide user login notifications"
                                  IsChecked="{Binding ElementName=Window, Path=IsHideLoginNotificationsChecked}" Checked="BHideLoginNotificationsChecked"
                                  Unchecked="BHideLoginNotificationsUnchecked" />
-          <ribbon:RibbonCheckBox x:Name="bHideBoard" Label="Hide game board" Checked="bHideBoard_Checked" Unchecked="bHideBoard_Unchecked" />
+                    <ribbon:RibbonCheckBox x:Name="bHideBoard" Label="Hide game board" Checked="bHideBoard_Checked" Unchecked="bHideBoard_Unchecked" />
                 </ribbon:RibbonGroup>
-      </ribbon:RibbonTab>
-      <ribbon:RibbonTab Header="Alerts" x:Name="NotificationTab"></ribbon:RibbonTab>
-    </ribbon:Ribbon>
-    <Frame Grid.Row="1" HorizontalAlignment="Stretch" Name="frame1" VerticalAlignment="Stretch"
+            </ribbon:RibbonTab>
+            <ribbon:RibbonTab Header="Alerts" x:Name="NotificationTab"></ribbon:RibbonTab>
+        </ribbon:Ribbon>
+        </Border>
+        <Frame Grid.Row="1" HorizontalAlignment="Stretch" Name="frame1" VerticalAlignment="Stretch"
            Navigating="FrameNavigating" NavigationUIVisibility="Hidden" />
         <StackPanel Grid.ColumnSpan="3" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="#FF4B4B4B">
             <StackPanel x:Name="ConnectBox" Orientation="Horizontal" Visibility="Collapsed" Margin="10,0,10,0">
@@ -166,5 +183,5 @@
                 <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
             </StackPanel>
         </StackPanel>
-  </Grid>
+    </Grid>
 </ribbon:RibbonWindow>
