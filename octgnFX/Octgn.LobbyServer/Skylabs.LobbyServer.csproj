@@ -115,9 +115,6 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="agsXMPP">
-      <HintPath>..\Octgn\packages\agsXMPP.1.1.1.0\lib\agsXMPP.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -160,6 +157,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\agsxmpp\trunk\agsxmpp\agsXMPP2010.csproj">
+      <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
+      <Name>agsXMPP2010</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
       <Name>Skylabs.Lobby</Name>

@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Library", "octgnFX\Oc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.DeckBuilderPluginExample", "octgnFX\Octgn.DeckBuilderPluginExample\Octgn.DeckBuilderPluginExample.csproj", "{D1F5848B-84D9-4EE5-8969-E62B054DAA4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "agsXMPP2010", "octgnFX\agsxmpp\trunk\agsxmpp\agsXMPP2010.csproj", "{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug x86|Any CPU = Debug x86|Any CPU
@@ -123,6 +125,12 @@ Global
 		{D1F5848B-84D9-4EE5-8969-E62B054DAA4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1F5848B-84D9-4EE5-8969-E62B054DAA4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1F5848B-84D9-4EE5-8969-E62B054DAA4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}.Debug x86|Any CPU.ActiveCfg = Debug|Any CPU
+		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}.Debug x86|Any CPU.Build.0 = Debug|Any CPU
+		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -19,7 +19,7 @@ namespace Skylabs.Lobby
 
     using agsXMPP;
     using agsXMPP.Factory;
-    using agsXMPP.net;
+    using agsXMPP.Net;
     using agsXMPP.protocol;
     using agsXMPP.protocol.client;
     using agsXMPP.protocol.iq.agent;
@@ -443,7 +443,7 @@ namespace Skylabs.Lobby
         private void XmppOnOnReadXml(object sender, string xml)
         {
 #if(DEBUG)
-            Trace.WriteLine("[Xmpp]in: " + xml);
+            //Trace.WriteLine("[Xmpp]in: " + xml);
 #endif
         }
 

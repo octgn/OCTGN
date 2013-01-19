@@ -1,0 +1,780 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{91EA0D0B-D3BA-497F-AFEB-2CAD59DEBA0E}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>agsXMPP</AssemblyName>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>agsXMPP</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SignAssembly>true</SignAssembly>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Net35\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG;SSL;STRINGPREP</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Net2\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;SSL;STRINGPREP</DefineConstants>
+    <DocumentationFile>bin\NET2\Release\agsXMPP.xml</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Exceptions\JidException.cs" />
+    <Compile Include="Idn\CombiningClass.cs" />
+    <Compile Include="Idn\Composition.cs" />
+    <Compile Include="Idn\DecompositionKeys.cs" />
+    <Compile Include="Idn\DecompositionMappings.cs" />
+    <Compile Include="Idn\IDNA.cs" />
+    <Compile Include="Idn\IDNAException.cs" />
+    <Compile Include="Idn\NFKC.cs" />
+    <Compile Include="Idn\Punycode.cs" />
+    <Compile Include="Idn\PunycodeException.cs" />
+    <Compile Include="Idn\RFC3454.cs" />
+    <Compile Include="Idn\Stringprep.cs" />
+    <Compile Include="Idn\StringprepException.cs" />
+    <Compile Include="Net\BoshClientSocket.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections\BareJidComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections\FullJidComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Exceptions\RegisterException.cs" />
+    <Compile Include="Exceptions\XmlRpcException.cs" />
+    <Compile Include="Factory\ElementType.cs" />
+    <Compile Include="IO\Compression\Checksums\Adler32.cs" />
+    <Compile Include="IO\Compression\Checksums\IChecksum.cs" />
+    <Compile Include="IO\Compression\DeflaterConstants.cs" />
+    <Compile Include="IO\Compression\DeflaterEngine.cs" />
+    <Compile Include="IO\Compression\DeflaterHuffman.cs" />
+    <Compile Include="IO\Compression\DeflaterPending.cs" />
+    <Compile Include="IO\Compression\InflaterDynHeader.cs" />
+    <Compile Include="IO\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="IO\Compression\PendingBuffer.cs" />
+    <Compile Include="IO\Compression\SharpZipBaseException.cs" />
+    <Compile Include="IO\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="Factory\ElementFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Factory\SaslFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Id.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IO\Compression\Deflater.cs" />
+    <Compile Include="IO\Compression\Inflater.cs" />
+    <Compile Include="IO\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="IqGrabber.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Jid.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MessageGrabber.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\Base\DirectionalElement.cs" />
+    <Compile Include="protocol\Base\Stanza.cs" />
+    <Compile Include="protocol\client\Handler.cs" />
+    <Compile Include="protocol\client\ShowType.cs" />
+    <Compile Include="protocol\component\Error.cs" />
+    <Compile Include="protocol\component\Handler.cs" />
+    <Compile Include="protocol\component\IQ.cs" />
+    <Compile Include="protocol\component\Message.cs" />
+    <Compile Include="protocol\component\Presence.cs" />
+    <Compile Include="protocol\extensions\amp\Action.cs" />
+    <Compile Include="protocol\extensions\amp\Amp.cs" />
+    <Compile Include="protocol\extensions\amp\Condition.cs" />
+    <Compile Include="protocol\extensions\amp\Rule.cs" />
+    <Compile Include="protocol\extensions\bookmarks\BookmarkManager.cs" />
+    <Compile Include="protocol\extensions\bookmarks\Conference.cs" />
+    <Compile Include="protocol\extensions\bookmarks\RosterNote.cs" />
+    <Compile Include="protocol\extensions\bookmarks\RosterNotes.cs" />
+    <Compile Include="protocol\extensions\bookmarks\Storage.cs" />
+    <Compile Include="protocol\extensions\bookmarks\StorageIq.cs" />
+    <Compile Include="protocol\extensions\bookmarks\Url.cs" />
+    <Compile Include="protocol\extensions\bosh\BoshType.cs" />
+    <Compile Include="protocol\extensions\bytestreams\Activate.cs" />
+    <Compile Include="protocol\extensions\bytestreams\ByteStream.cs" />
+    <Compile Include="protocol\extensions\bytestreams\ByteStreamIq.cs" />
+    <Compile Include="protocol\extensions\bytestreams\Mode.cs" />
+    <Compile Include="protocol\extensions\bytestreams\StreamHost.cs" />
+    <Compile Include="protocol\extensions\bytestreams\StreamHostUsed.cs" />
+    <Compile Include="protocol\extensions\bytestreams\UdpSuccess.cs" />
+    <Compile Include="protocol\extensions\caps\Capabilities.cs" />
+    <Compile Include="protocol\extensions\html\Body.cs" />
+    <Compile Include="protocol\extensions\bosh\Body.cs" />
+    <Compile Include="protocol\extensions\ibb\Base.cs" />
+    <Compile Include="protocol\extensions\ibb\Close.cs" />
+    <Compile Include="protocol\extensions\ibb\Data.cs" />
+    <Compile Include="protocol\extensions\ibb\Open.cs" />
+    <Compile Include="protocol\extensions\msgreceipts\Received.cs" />
+    <Compile Include="protocol\extensions\msgreceipts\Request.cs" />
+    <Compile Include="protocol\extensions\nickname\Nickname.cs" />
+    <Compile Include="protocol\extensions\ping\Ping.cs" />
+    <Compile Include="protocol\extensions\ping\PingIq.cs" />
+    <Compile Include="protocol\extensions\si\SIIq.cs" />
+    <Compile Include="protocol\iq\agent\Agent.cs" />
+    <Compile Include="protocol\iq\agent\Agents.cs" />
+    <Compile Include="protocol\iq\agent\AgentsIq.cs" />
+    <Compile Include="protocol\iq\browse\Browse.cs" />
+    <Compile Include="protocol\iq\browse\BrowseIq.cs" />
+    <Compile Include="protocol\iq\browse\BrowseItem.cs" />
+    <Compile Include="protocol\iq\browse\Service.cs" />
+    <Compile Include="protocol\iq\disco\DiscoManager.cs" />
+    <Compile Include="protocol\iq\register\RegisterEventArgs.cs" />
+    <Compile Include="protocol\iq\rpc\RpcHelper.cs" />
+    <Compile Include="protocol\sasl\FailureCondition.cs" />
+    <Compile Include="protocol\server\Presence.cs" />
+    <Compile Include="protocol\time\Time.cs" />
+    <Compile Include="protocol\x\muc\Actor.cs" />
+    <Compile Include="protocol\x\muc\MucManager.cs" />
+    <Compile Include="Net\BaseSocket.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Net\ClientSocket.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Net\Dns\Enums.cs" />
+    <Compile Include="Net\Dns\InvalidResponseException.cs" />
+    <Compile Include="Net\Dns\IPConfigurationInformation.cs" />
+    <Compile Include="Net\Dns\NoResponseException.cs" />
+    <Compile Include="Net\Dns\Pointer.cs" />
+    <Compile Include="Net\Dns\Question.cs" />
+    <Compile Include="Net\Dns\RecordBase.cs" />
+    <Compile Include="Net\Dns\Request.cs" />
+    <Compile Include="Net\Dns\Resolver.cs" />
+    <Compile Include="Net\Dns\ResourceRecord.cs" />
+    <Compile Include="Net\Dns\Response.cs" />
+    <Compile Include="Net\Dns\SRVRecord.cs" />
+    <Compile Include="Net\PollClientSocket.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Net\PollingSocketException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Net\SocketConnectionType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PacketGrabber.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PresenceGrabber.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\client\PresenceManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\privacy\PrivacyManager.cs" />
+    <Compile Include="protocol\Base\Avatar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\Base\Group.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\Base\Item.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\Base\RosterItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\Base\Stream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\client\Error.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\client\IQ.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\client\Message.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\client\MessageType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\client\Presence.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\client\PresenceType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\Stream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\component\Handshake.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\component\Log.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\component\Route.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\extensions\chatstates\Active.cs" />
+    <Compile Include="protocol\extensions\chatstates\Chatstate.cs" />
+    <Compile Include="protocol\extensions\chatstates\Composing.cs" />
+    <Compile Include="protocol\extensions\chatstates\Gone.cs" />
+    <Compile Include="protocol\extensions\chatstates\Inactive.cs" />
+    <Compile Include="protocol\extensions\chatstates\Paused.cs" />
+    <Compile Include="protocol\extensions\commands\Action.cs" />
+    <Compile Include="protocol\extensions\commands\Actions.cs" />
+    <Compile Include="protocol\extensions\commands\Command.cs" />
+    <Compile Include="protocol\extensions\commands\Note.cs" />
+    <Compile Include="protocol\extensions\commands\NoteType.cs" />
+    <Compile Include="protocol\extensions\commands\Status.cs" />
+    <Compile Include="protocol\extensions\compression\Compress.cs" />
+    <Compile Include="protocol\extensions\compression\Compressed.cs" />
+    <Compile Include="protocol\extensions\geoloc\GeoLoc.cs" />
+    <Compile Include="protocol\extensions\geoloc\GeoLocIq.cs" />
+    <Compile Include="protocol\extensions\pubsub\Access.cs" />
+    <Compile Include="protocol\extensions\pubsub\Affiliation.cs" />
+    <Compile Include="protocol\extensions\pubsub\AffiliationType.cs" />
+    <Compile Include="protocol\extensions\pubsub\Affiliations.cs" />
+    <Compile Include="protocol\extensions\pubsub\Configure.cs" />
+    <Compile Include="protocol\extensions\pubsub\Create.cs" />
+    <Compile Include="protocol\extensions\pubsub\event\Delete.cs" />
+    <Compile Include="protocol\extensions\pubsub\event\Item.cs" />
+    <Compile Include="protocol\extensions\pubsub\event\Items.cs" />
+    <Compile Include="protocol\extensions\pubsub\event\Purge.cs" />
+    <Compile Include="protocol\extensions\pubsub\Items.cs" />
+    <Compile Include="protocol\extensions\pubsub\Options.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\Affiliate.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\Affiliates.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\Delete.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\Pending.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\PubSub.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\PubSubIq.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\Purge.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\Subscriber.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\Subscribers.cs" />
+    <Compile Include="protocol\extensions\pubsub\SubscribeOptions.cs" />
+    <Compile Include="protocol\extensions\pubsub\Subscription.cs" />
+    <Compile Include="protocol\extensions\pubsub\event\Event.cs" />
+    <Compile Include="protocol\extensions\pubsub\Item.cs" />
+    <Compile Include="protocol\extensions\pubsub\owner\Configure.cs" />
+    <Compile Include="protocol\extensions\pubsub\Publish.cs" />
+    <Compile Include="protocol\extensions\pubsub\PubSubAction.cs" />
+    <Compile Include="protocol\extensions\pubsub\PubSub.cs" />
+    <Compile Include="protocol\extensions\pubsub\PubSubIq.cs" />
+    <Compile Include="protocol\extensions\pubsub\PubSubManager.cs" />
+    <Compile Include="protocol\extensions\pubsub\Retract.cs" />
+    <Compile Include="protocol\extensions\pubsub\Subscribe.cs" />
+    <Compile Include="protocol\extensions\pubsub\Subscriptions.cs" />
+    <Compile Include="protocol\extensions\pubsub\SubscriptionState.cs" />
+    <Compile Include="protocol\extensions\pubsub\Type.cs" />
+    <Compile Include="protocol\extensions\pubsub\Unsubscribe.cs" />
+    <Compile Include="protocol\iq\privacy\Action.cs" />
+    <Compile Include="protocol\iq\privacy\Active.cs" />
+    <Compile Include="protocol\iq\privacy\Stanza.cs" />
+    <Compile Include="protocol\iq\privacy\Default.cs" />
+    <Compile Include="protocol\iq\privacy\Item.cs" />
+    <Compile Include="protocol\iq\privacy\List.cs" />
+    <Compile Include="protocol\iq\privacy\Privacy.cs" />
+    <Compile Include="protocol\iq\privacy\PrivacyIq.cs" />
+    <Compile Include="protocol\iq\privacy\Type.cs" />
+    <Compile Include="protocol\iq\rpc\MethodCall.cs" />
+    <Compile Include="protocol\iq\rpc\MethodResponse.cs" />
+    <Compile Include="protocol\iq\rpc\Rpc.cs" />
+    <Compile Include="protocol\iq\rpc\RpcIq.cs" />
+    <Compile Include="protocol\stream\feature\compression\Compression.cs" />
+    <Compile Include="protocol\extensions\compression\CompressionMethod.cs" />
+    <Compile Include="protocol\extensions\compression\Failure.cs" />
+    <Compile Include="protocol\extensions\html\Html.cs" />
+    <Compile Include="protocol\extensions\jivesoftware\phone\PhoneAction.cs" />
+    <Compile Include="protocol\extensions\jivesoftware\phone\ActionType.cs" />
+    <Compile Include="protocol\extensions\jivesoftware\phone\PhoneEvent.cs" />
+    <Compile Include="protocol\extensions\jivesoftware\phone\PhoneStatusType.cs" />
+    <Compile Include="protocol\extensions\jivesoftware\phone\PhoneStatus.cs" />
+    <Compile Include="protocol\stream\feature\compression\Method.cs" />
+    <Compile Include="protocol\x\data\FieldContainer.cs" />
+    <Compile Include="protocol\x\data\Item.cs" />
+    <Compile Include="protocol\x\data\Reported.cs" />
+    <Compile Include="protocol\x\Event.cs" />
+    <Compile Include="protocol\extensions\featureneg\FeatureNeg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\extensions\featureneg\FeatureNegIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\extensions\filetransfer\File.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\extensions\filetransfer\Range.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\extensions\primary\Primary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\extensions\shim\Header.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\extensions\shim\Headers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\extensions\si\SI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\auth\Auth.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\auth\AuthIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\avatar\Avatar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\avatar\AvatarIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\disco\DiscoFeature.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\disco\DiscoIdentity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\disco\DiscoInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\disco\DiscoInfoIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\disco\DiscoItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\disco\DiscoItems.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\disco\DiscoItemsIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\last\Last.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\last\LastIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\oob\Oob.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\oob\OobIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\private\Private.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\private\PrivateIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\register\Register.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\register\RegisterIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\roster\Delimiter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\roster\Roster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\roster\RosterIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\roster\RosterItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\search\Search.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\search\SearchIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\search\SearchItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\time\Time.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\time\TimeIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\vcard\Address.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\vcard\Email.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\vcard\Name.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\vcard\Organization.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\vcard\Photo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\vcard\Telephone.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\vcard\Vcard.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\vcard\VcardIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\version\Version.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\version\VersionIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\sasl\Abort.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\sasl\Auth.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\sasl\Challenge.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\sasl\Failure.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\sasl\Mechanism.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\sasl\Mechanisms.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\sasl\Response.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\sasl\Success.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\storage\Avatar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\storage\AvatarIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\bind\Bind.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\bind\BindIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\Error.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\stream\Features.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\stream\feature\Register.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\session\Session.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\session\SessionIq.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\tls\Failure.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\tls\Proceed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\tls\StartTls.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\Avatar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\Conference.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\data\Data.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\data\Field.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\data\FieldTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\data\Option.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\data\Value.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\Delay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\muc\owner\Destroy.cs" />
+    <Compile Include="protocol\x\muc\iq\admin\Admin.cs" />
+    <Compile Include="protocol\x\muc\iq\admin\AdminIq.cs" />
+    <Compile Include="protocol\x\muc\iq\admin\Item.cs" />
+    <Compile Include="protocol\x\muc\Affiliation.cs" />
+    <Compile Include="protocol\x\muc\Decline.cs" />
+    <Compile Include="protocol\x\muc\History.cs" />
+    <Compile Include="protocol\x\muc\Invitation.cs" />
+    <Compile Include="protocol\x\muc\Invite.cs" />
+    <Compile Include="protocol\x\muc\iq\owner\Owner.cs" />
+    <Compile Include="protocol\x\muc\iq\owner\OwnerIq.cs" />
+    <Compile Include="protocol\x\muc\Item.cs" />
+    <Compile Include="protocol\x\muc\Muc.cs" />
+    <Compile Include="protocol\x\muc\Status.cs" />
+    <Compile Include="protocol\x\muc\StatusCode.cs" />
+    <Compile Include="protocol\x\muc\User.cs" />
+    <Compile Include="protocol\x\muc\Role.cs" />
+    <Compile Include="protocol\x\muc\user\Destroy.cs" />
+    <Compile Include="protocol\x\rosterx\RosterItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\x\rosterx\RosterX.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\roster\RosterManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="protocol\iq\privacy\RuleManager.cs" />
+    <Compile Include="protocol\x\vcard_update\VcardUpdate.cs" />
+    <Compile Include="Sasl\ExtendedData.cs" />
+    <Compile Include="Sasl\Facebook\FacebookExtendedData.cs" />
+    <Compile Include="Sasl\Facebook\FacebookMechanism.cs" />
+    <Compile Include="Sasl\Gssapi\GssapiMechanism.cs" />
+    <Compile Include="Sasl\Gssapi\SSPIHelper.cs" />
+    <Compile Include="Sasl\SaslEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sasl\SaslHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sasl\Anonymous\AnonymousMechanism.cs" />
+    <Compile Include="Sasl\DigestMD5\DigestMD5Mechanism.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sasl\DigestMD5\Step1.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sasl\DigestMD5\Step2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sasl\Mechanism.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sasl\Plain\PlainMechanism.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Sasl\Scram\ScramSha1Mechanism.cs" />
+    <Compile Include="Sasl\XGoogleToken\XGoogleTokenMechanism.cs" />
+    <Compile Include="Uri.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Date.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Enum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Hash.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Runtime.cs" />
+    <Compile Include="Xml\Dom\CData.cs" />
+    <Compile Include="Xml\Dom\Comment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Dom\Document.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Dom\DomLoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Dom\Element.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Dom\ElementList.cs" />
+    <Compile Include="Xml\Dom\Node.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Dom\NodeList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Dom\Text.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IO\StringWriterWithEncoding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\StreamParser.cs" />
+    <Compile Include="Xml\Xpnet\BufferAggregate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Xpnet\ContentToken.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Xpnet\Encoding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Xpnet\Exceptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Xpnet\NamespaceStack.cs" />
+    <Compile Include="Xml\Xpnet\Position.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Xpnet\Token.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Xml\Xpnet\UTF8Encoding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XmppClientConnection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XmppClientConnectionState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XmppComponentConnection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="XmppConnection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="changelog.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="key.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

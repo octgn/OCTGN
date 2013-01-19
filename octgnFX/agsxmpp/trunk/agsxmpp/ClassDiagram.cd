@@ -1,0 +1,1367 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="agsXMPP.Collections.BareJidComparer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="245" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Collections\BareJidComparer.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="agsXMPP.Collections.FullJidComparer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="246.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Collections\FullJidComparer.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="agsXMPP.Factory.ElementFactory" Collapsed="true">
+    <Position X="250.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Factory\ElementFactory.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAACAIAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Factory.ElementType" Collapsed="true">
+    <Position X="252" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Factory\ElementFactory.cs</FileName>
+      <HashCode>AAAEAAAAAAAAAAAEAAAAAAAAAAAAIAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Factory.SaslFactory" Collapsed="true">
+    <Position X="248.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Factory\SaslFactory.cs</FileName>
+      <HashCode>AAAAAAAAAAACAAAAEAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Id" Collapsed="true">
+    <Position X="250.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Id.cs</FileName>
+      <HashCode>AAAAAAAAAAAABBAAAAQAAAACAAAAAAQAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.IqGrabber">
+    <Position X="0.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>IqGrabber.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABABAAAAAAAAAAAAAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Class Name="agsXMPP.IqGrabber.TrackerData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>IqGrabber.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+  </Class>
+  <Class Name="agsXMPP.Jid" Collapsed="true">
+    <Position X="252" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Jid.cs</FileName>
+      <HashCode>EAAhAAAAIAAAAAAEgAAAAAAAAAAAAAAAAAYEAgAAQAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.MessageGrabber">
+    <Position X="3" Y="3" Width="2" />
+    <TypeIdentifier>
+      <FileName>MessageGrabber.cs</FileName>
+      <HashCode>AAIAAAAABAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Class Name="agsXMPP.MessageGrabber.TrackerData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>MessageGrabber.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+  </Class>
+  <Class Name="agsXMPP.PacketGrabber">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>PacketGrabber.cs</FileName>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.PresenceGrabber">
+    <Position X="5.75" Y="3" Width="2" />
+    <TypeIdentifier>
+      <FileName>PresenceGrabber.cs</FileName>
+      <HashCode>AAIAAAAAAAAAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Class Name="agsXMPP.PresenceGrabber.TrackerData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>PresenceGrabber.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+  </Class>
+  <Class Name="agsXMPP.PresenceManager" Collapsed="true">
+    <Position X="252" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>PresenceManager.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAYQAAAAAAIAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.RosterManager" Collapsed="true">
+    <Position X="245" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>RosterManager.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAEAAoAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.SaslEventArgs" Collapsed="true">
+    <Position X="246.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>SaslEventArgs.cs</FileName>
+      <HashCode>AAAAAAgAAAAAEACAAAAAAAgAAAAAAAAAAAAAACAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.SaslHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="250.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>SaslHandler.cs</FileName>
+      <HashCode>AAMAAAAAACAAAACAAAAkCAAAAAAAAAAAFAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="agsXMPP.StreamParser" Collapsed="true">
+    <Position X="252" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>StreamParser.cs</FileName>
+      <HashCode>AAIAhACAEAAABAABAAAAAAgAgAAIAwAoCAABAACASAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Uri" Collapsed="true">
+    <Position X="248.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Uri.cs</FileName>
+      <HashCode>gIAECDVIAAAkAAQAAgVEMQIKAEfIgABAAQACQUBAgAQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.XmppClientConnection">
+    <Position X="16.5" Y="26.25" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>XmppClientConnection.cs</FileName>
+      <HashCode>WHAQQgIWPyyapsIWBZAWB0RYwSUVCQoTHAeU1AAMCAA=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Delegate Name="agsXMPP.XmppClientConnection.RosterHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XmppClientConnection.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="agsXMPP.XmppClientConnection.AgentHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XmppClientConnection.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="agsXMPP.XmppClientConnection.MessageHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XmppClientConnection.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="agsXMPP.XmppClientConnection.PresenceHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XmppClientConnection.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+  </Class>
+  <Class Name="agsXMPP.XmppComponentConnection">
+    <Position X="12.75" Y="26.25" Width="3" />
+    <TypeIdentifier>
+      <FileName>XmppComponentConnection.cs</FileName>
+      <HashCode>CAAAAAACCAiAIgAAAAAQAxQQQCASAAACAAIQAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Delegate Name="agsXMPP.XmppComponentConnection.RouteHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XmppComponentConnection.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+  </Class>
+  <Class Name="agsXMPP.XmppConnection">
+    <Position X="14.75" Y="17.5" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>XmppConnection.cs</FileName>
+      <HashCode>AIAAYAACFBBJIgAQRMAQQAQQDAAAAKBAQEIFApCAQAM=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Delegate Name="agsXMPP.XmppConnection.XmppConnectionStateHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XmppConnection.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+  </Class>
+  <Class Name="agsXMPP.net.BaseSocket">
+    <Position X="7.75" Y="12.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>net\BaseSocket.cs</FileName>
+      <HashCode>BIRAAAAAAACQQAAAIEAiAIABCAAEAEACAAAACAIQBAg=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Delegate Name="agsXMPP.net.BaseSocket.OnSocketDataHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>net\BaseSocket.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+  </Class>
+  <Class Name="agsXMPP.net.ClientSocket">
+    <Position X="6.5" Y="18.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>net\ClientSocket.cs</FileName>
+      <HashCode>FARQAgAACDAhSBACAECAAIgBBDAAAAQQAIGA4AgAQEA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.net.PollClientSocket">
+    <Position X="9" Y="18.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>net\PollClientSocket.cs</FileName>
+      <HashCode>AAQAEAAACAAKQAEAAMAAAIAAACAQCAACEAQGJAAAEAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.net.PollSocketException" Collapsed="true">
+    <Position X="248.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>net\PollingSocketException.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.Base.Avatar">
+    <Position X="87.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\Base\Avatar.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.Base.Group">
+    <Position X="108.25" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\Base\Group.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.Base.Item">
+    <Position X="125.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\Base\Item.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.Base.RosterItem">
+    <Position X="126.5" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\Base\RosterItem.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAEAAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.Base.Stream">
+    <Position X="228.75" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\Base\Stream.cs</FileName>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.Base.XmppPacket">
+    <Position X="198.25" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\Base\XmppPacket.cs</FileName>
+      <HashCode>AgACAAAAAAAAAQAAAAAAAAAAQAAIAAAAAAAAAAAABAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.client.Error">
+    <Position X="41.25" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\client\Error.cs</FileName>
+      <HashCode>AAAAAAAAAACAAAAAAAAgAAAAAAAAAAAAAQAAIAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.client.IQ">
+    <Position X="194.5" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\client\IQ.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.client.Message">
+    <Position X="222.25" Y="17.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\client\Message.cs</FileName>
+      <HashCode>AAAAAAAAAQAAAAAAAIABAAAAAAAABAAAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.client.Presence">
+    <Position X="225" Y="17.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\client\Presence.cs</FileName>
+      <HashCode>AQAAAACEAAAAAAAEAAAAAAAAAAAEAAAAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.client.Stream">
+    <Position X="230" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\client\Stream.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.component.accept.Handshake">
+    <Position X="232.25" Y="17.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\component\accept\Handshake.cs</FileName>
+      <HashCode>AAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.component.accept.Log">
+    <Position X="164.25" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\component\accept\Log.cs</FileName>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.component.accept.Route">
+    <Position X="166.5" Y="17.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\component\accept\Route.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.extensions.featureneg.FeatureNeg">
+    <Position X="43.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\extensions\featureneg\FeatureNeg.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.extensions.featureneg.FeatureNegIq">
+    <Position X="185" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\extensions\featureneg\FeatureNegIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.extensions.filetransfer.File">
+    <Position X="57.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\extensions\filetransfer\File.cs</FileName>
+      <HashCode>AAAAAAAAAAIgiAAAAAAAAAQAAAAAAAABAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.extensions.filetransfer.Range">
+    <Position X="69.5" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\extensions\filetransfer\Range.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAgAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.extensions.primary.Primary">
+    <Position X="77" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\extensions\primary\Primary.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.extensions.shim.Header">
+    <Position X="90.75" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\extensions\shim\Header.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.extensions.shim.Headers">
+    <Position X="110.75" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\extensions\shim\Headers.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.extensions.si.SI">
+    <Position X="130.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\extensions\si\SI.cs</FileName>
+      <HashCode>AAACAAAAAAAAAAQAAAAAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.agent.Agent">
+    <Position X="142.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\agent\Agent.cs</FileName>
+      <HashCode>AAAAAAAAAAAgACAAAAgAAAQAAAAAwAAAAAAAAQQAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.agent.Agents">
+    <Position X="152" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\agent\Agents.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.agent.AgentsIq">
+    <Position X="219.5" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\agent\AgentsIq.cs</FileName>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.auth.Auth">
+    <Position X="19.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\auth\Auth.cs</FileName>
+      <HashCode>AAAAAAABIAAAAAAAAQAAAEAAAAAAAAECAgAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.auth.AuthIq">
+    <Position X="171.75" Y="20" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\auth\AuthIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.avatar.Avatar">
+    <Position X="86.25" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\avatar\Avatar.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.avatar.AvatarIq">
+    <Position X="177" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\avatar\AvatarIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.browse.Browse">
+    <Position X="51" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\browse\Browse.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAgAAAQAAAAAACQA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.browse.BrowseIq">
+    <Position X="193" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\browse\BrowseIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.browse.BrowseItem">
+    <Position X="122.75" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\browse\BrowseItem.cs</FileName>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAACQA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.browse.Service">
+    <Position X="79.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\browse\Service.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAACAgAAAQAAAAAAgAAAQAAAAAAAQA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.disco.DiscoFeature">
+    <Position X="93.25" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\disco\DiscoFeature.cs</FileName>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.disco.DiscoIdentity">
+    <Position X="113.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\disco\DiscoIdentity.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAAACAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.disco.DiscoInfo">
+    <Position X="132.75" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\disco\DiscoInfo.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAIAAAAABAAAAAAEAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.disco.DiscoInfoIq">
+    <Position X="214.25" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\disco\DiscoInfoIq.cs</FileName>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.disco.DiscoItem">
+    <Position X="235" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\disco\DiscoItem.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAQAAAAAAAAAAAAAAAEAAAQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.disco.DiscoItems">
+    <Position X="169" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\disco\DiscoItems.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAEAAgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.disco.DiscoItemsIq">
+    <Position X="174.25" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\disco\DiscoItemsIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.last.Last">
+    <Position X="31.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\last\Last.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.last.LastIq">
+    <Position X="179.75" Y="20" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\last\LastIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.oob.Oob">
+    <Position X="53.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\oob\Oob.cs</FileName>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.oob.OobIq">
+    <Position X="195.75" Y="20" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\oob\OobIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.private.Private">
+    <Position X="72" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\private\Private.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.private.PrivateIq">
+    <Position X="206" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\private\PrivateIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAQAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.register.Register">
+    <Position X="96" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\register\Register.cs</FileName>
+      <HashCode>AAAAAAAAACAAAAAAAQAAAAQAAAAIAAACAAAAAAAAAEA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.register.RegisterIq">
+    <Position X="208.75" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\register\RegisterIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.roster.Delimiter">
+    <Position X="135.5" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\roster\Delimiter.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.roster.Roster">
+    <Position X="145" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\roster\Roster.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.roster.RosterIq">
+    <Position X="217" Y="20" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\roster\RosterIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.roster.RosterItem">
+    <Position X="125" Y="19.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\roster\RosterItem.cs</FileName>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.search.Search">
+    <Position X="33.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\search\Search.cs</FileName>
+      <HashCode>AAABAEAAACAAAAAIAAAAAAAAAAAIAgAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.search.SearchIq">
+    <Position X="182.25" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\search\SearchIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.search.SearchItem">
+    <Position X="55.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\search\SearchItem.cs</FileName>
+      <HashCode>AAABAEAAACAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.time.Time">
+    <Position X="60" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\time\Time.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAgAAAAAAAAAAAAQAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.time.TimeIq">
+    <Position X="198.25" Y="20" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\time\TimeIq.cs</FileName>
+      <HashCode>ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.vcard.Address">
+    <Position X="98.5" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Address.cs</FileName>
+      <HashCode>AAAAAAAAgAAAAAAAIAIAEAAAgAIAAAAAAAIAAAAEAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.vcard.Email">
+    <Position X="138" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Email.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAgAAAAAAAAAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.vcard.Name">
+    <Position X="147.25" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Name.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAQAAAABAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.vcard.Organization">
+    <Position X="154.25" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Organization.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.vcard.Photo">
+    <Position X="237.25" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Photo.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAABAAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.vcard.Telephone">
+    <Position X="35.75" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Telephone.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.vcard.Vcard">
+    <Position X="46" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Vcard.cs</FileName>
+      <HashCode>AAIBIEAAAAAgAGCAGAAAAAwAAAAIAAACmAUAABAAIAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.vcard.VcardIq">
+    <Position X="187.75" Y="20" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\VcardIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.version.Version">
+    <Position X="62.25" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\version\Version.cs</FileName>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAQAAAAAAQAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.iq.version.VersionIq">
+    <Position X="200.75" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\version\VersionIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.sasl.Abort">
+    <Position X="81.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\sasl\Abort.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.sasl.Auth">
+    <Position X="101" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\sasl\Auth.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.sasl.Challenge">
+    <Position X="115.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\sasl\Challenge.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.sasl.Failure">
+    <Position X="140.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\sasl\Failure.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.sasl.Mechanism">
+    <Position X="157" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\sasl\Mechanism.cs</FileName>
+      <HashCode>AAAAACAAAAAAAAAAAIAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.sasl.Mechanisms">
+    <Position X="240" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\sasl\Mechanisms.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAIAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.sasl.Response">
+    <Position X="21.75" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\sasl\Response.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.sasl.Success">
+    <Position X="26.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\sasl\Success.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.server.Stream">
+    <Position X="227.75" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\server\Stream.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.storage.Avatar">
+    <Position X="88.5" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\storage\Avatar.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.storage.AvatarIq">
+    <Position X="190.25" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\storage\AvatarIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAgAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.stream.Bind">
+    <Position X="64.5" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\stream\Bind.cs</FileName>
+      <HashCode>AAAAAAAAIAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.stream.BindIq">
+    <Position X="203.5" Y="20" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\stream\BindIq.cs</FileName>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.stream.Error">
+    <Position X="83.75" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\stream\Error.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.stream.Features">
+    <Position X="103.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\stream\Features.cs</FileName>
+      <HashCode>BABAoCAAAAAAEAAAAAAAAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.stream.Session">
+    <Position X="118" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\stream\Session.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.stream.SessionIq">
+    <Position X="211.5" Y="20" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\stream\SessionIq.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.stream.features.Register">
+    <Position X="149.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\stream\features\Register.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.tls.Failure">
+    <Position X="159.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\tls\Failure.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.tls.Proceed">
+    <Position X="242.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\tls\Proceed.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.tls.StartTls">
+    <Position X="24.5" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\tls\StartTls.cs</FileName>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.x.Avatar">
+    <Position X="29" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\x\Avatar.cs</FileName>
+      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.x.Conference">
+    <Position X="38.5" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\x\Conference.cs</FileName>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.x.Delay">
+    <Position X="48.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\x\Delay.cs</FileName>
+      <HashCode>AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.x.data.Data">
+    <Position X="67" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\x\data\Data.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAgAAIAgAAAQAAAAAAIAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.x.data.Field">
+    <Position X="74.25" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\x\data\Field.cs</FileName>
+      <HashCode>AIAAAAAAMACgAgAAAUAAAAAhBAgAAAAAAQAAAAAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.x.data.Option">
+    <Position X="105.75" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\x\data\Option.cs</FileName>
+      <HashCode>AAAAAAAAMAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.x.data.Value">
+    <Position X="120.25" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>protocol\x\data\Value.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.x.rosterx.RosterItem">
+    <Position X="127.75" Y="19.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>protocol\x\rosterx\RosterItem.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.protocol.x.rosterx.RosterX">
+    <Position X="162" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\x\rosterx\RosterX.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.sasl.DigestMD5.DigestMD5Mechanism">
+    <Position X="2.75" Y="14" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>sasl\DigestMD5\DigestMD5Mechanism.cs</FileName>
+      <HashCode>AAAgAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.sasl.DigestMD5.Step1">
+    <Position X="2.75" Y="16.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>sasl\DigestMD5\Step1.cs</FileName>
+      <HashCode>gAQgAIAAAAgAQAAAAAIAAAAAAABQIAAAAAAAAAQACBQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.sasl.DigestMD5.Step2">
+    <Position X="2.75" Y="21.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>sasl\DigestMD5\Step2.cs</FileName>
+      <HashCode>QAAAAAAIQQBAQAAEEAAABAAAAiAAAAgAAUAAAAAAgAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.sasl.Mechanism">
+    <Position X="1.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>sasl\Mechanism.cs</FileName>
+      <HashCode>AAAgAAAAAAAAAAAAAQAABQAAAAAAAAACAAACAgAAQAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.sasl.Plain.PlainMechanism">
+    <Position X="0.5" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>sasl\Plain\PlainMechanism.cs</FileName>
+      <HashCode>AAAgAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAACIAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.util.Time" Collapsed="true">
+    <Position X="246.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>util\Date.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAACAAAAAAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.util.Enum" Collapsed="true">
+    <Position X="245" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>util\Enum.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.util.Hash" Collapsed="true">
+    <Position X="248.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>util\Hash.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAAAAAACAAAAAAAACAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.Dom.Comment">
+    <Position X="14.5" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>Xml\Dom\Comment.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.Dom.Document">
+    <Position X="17.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\Dom\Document.cs</FileName>
+      <HashCode>IAAAAIAAAAAgAAAAAAAAAIAIgAAABAAAAAAAAABABAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.Dom.DomLoader" Collapsed="true">
+    <Position X="248.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\Dom\DomLoader.cs</FileName>
+      <HashCode>AAAACAAAAEAAAAAAAAAIAAAAAAAAAAAAAAABgAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.Dom.Element">
+    <Position X="130.5" Y="5.5" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>Xml\Dom\Element.cs</FileName>
+      <HashCode>MgAAAAAggmFCABEAAIQMAYAWAgaAGAIAAKAgACAACSA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.Dom.Node">
+    <Position X="127" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>Xml\Dom\Node.cs</FileName>
+      <HashCode>gAEAQCAAEBAAEAAkgAAARAAAAAQAIAAAAAGgAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.Dom.NodeList" Collapsed="true">
+    <Position X="245" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\Dom\NodeList.cs</FileName>
+      <HashCode>AAIAAAAAAAAAAAAAAAAABCAEAAAAAAAAAAAAAADAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.Dom.Text">
+    <Position X="12" Y="5.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Xml\Dom\Text.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.BufferAggregate" Collapsed="true">
+    <Position X="246.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\BufferAggregate.cs</FileName>
+      <HashCode>AAQAAAAAAAAAAAAEAAEAAAAAEAAAAAAAAAAAAAFAQAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.ContentToken">
+    <Position X="20.5" Y="3.5" Width="2" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\ContentToken.cs</FileName>
+      <HashCode>AAAgCAAAAAAABQAAAABA0AAQACAAABAICABAIgAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.Encoding">
+    <Position X="20.5" Y="17.5" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Encoding.cs</FileName>
+      <HashCode>EZWCkgFaBdKJpMX5gUNpkBIYWARQBABXGghHYAAhSKA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.TokenException">
+    <Position X="6.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Exceptions.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.EmptyTokenException">
+    <Position X="1" Y="9.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Exceptions.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.EndOfPrologException">
+    <Position X="3.5" Y="9.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Exceptions.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.ExtensibleTokenException">
+    <Position X="6" Y="9.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Exceptions.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.InvalidTokenException">
+    <Position X="8.75" Y="9.25" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Exceptions.cs</FileName>
+      <HashCode>AACAAAgAAAAAAAAAAAAAAAAKAAABAAAAAQAAAAAAgAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.PartialCharException">
+    <Position X="12" Y="10.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Exceptions.cs</FileName>
+      <HashCode>AAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.PartialTokenException">
+    <Position X="12" Y="9.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Exceptions.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.NS" Collapsed="true">
+    <Position X="246.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\NS.cs</FileName>
+      <HashCode>AAAAAAAAAECAAAAEAAAAAAQAAAAAAAAAAAAAAABABgA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.Position" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="250.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Position.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAADAAAAAAAAAAAAAAABBA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.Token">
+    <Position X="20.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Token.cs</FileName>
+      <HashCode>AAACBAAAAgEAAAAACAAAAAAAAAAAAAAACAAAAQAAAAQ=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.Xml.xpnet.UTF8Encoding">
+    <Position X="20.5" Y="35.5" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\UTF8Encoding.cs</FileName>
+      <HashCode>EAAAAAAAAAAIgAAAAAAoBAAACABAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="agsXMPP.IO.Compression.Deflater" Collapsed="true">
+    <Position X="8" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>IO\Compression\Deflater.cs</FileName>
+      <HashCode>AQIYAAIAYAAFTiAQAABQAAEBAAECAAAEBoQQBAQYQKg=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="agsXMPP.XmppConnectionState" Collapsed="true">
+    <Position X="250.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>XmppClientConnectionState.cs</FileName>
+      <HashCode>AABAQAAAAQgAQAACAAAAAAABAAAACAAAAAAAAiAAACA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.net.SocketConnectionType" Collapsed="true">
+    <Position X="248.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>net\SocketConnectionType.cs</FileName>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.client.ErrorCondition" Collapsed="true">
+    <Position X="246.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\client\Error.cs</FileName>
+      <HashCode>KAABAGAIAAAGAAAgAAQAgAAQAIEAACQAAAAEAgAgAAI=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.client.ErrorType" Collapsed="true">
+    <Position X="248.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\client\Error.cs</FileName>
+      <HashCode>AABAAAABACAAAAAAAAAAAAAAAAAAAAAEEAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.client.ErrorCode" Collapsed="true">
+    <Position X="245" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\client\Error.cs</FileName>
+      <HashCode>CEEBAAAIAAAEAAAgIAUAAAAAAIEAAAAEAAAEAgAEAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.client.IqType" Collapsed="true">
+    <Position X="252" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\client\IQ.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAABAUAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.client.MessageType" Collapsed="true">
+    <Position X="248.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\client\MessageType.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAgAAEAAAgAAAAAAAAAAAAIAAAQAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.client.PresenceType" Collapsed="true">
+    <Position X="252" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\client\PresenceType.cs</FileName>
+      <HashCode>AIAAAAAAAAAAEAAACEEAAAIAAABAAAAAAAAgAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.client.ShowType" Collapsed="true">
+    <Position X="246.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\client\ShowType.cs</FileName>
+      <HashCode>AACAAAABAgAAAAAAAQAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.component.accept.LogType" Collapsed="true">
+    <Position X="245" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\component\accept\Log.cs</FileName>
+      <HashCode>AAAAgAAAAAAAAAAAAQCAAAAAAAAAgAAAQAABAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.component.accept.RouteType" Collapsed="true">
+    <Position X="245" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\component\accept\Route.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.iq.disco.DiscoAction" Collapsed="true">
+    <Position X="250.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\disco\DiscoItem.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAEAQAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.iq.roster.AskType" Collapsed="true">
+    <Position X="248.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\roster\RosterItem.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAIAAABAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.iq.roster.SubscriptionType" Collapsed="true">
+    <Position X="250.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\roster\RosterItem.cs</FileName>
+      <HashCode>AQAAAAIAAAAAAAAEAAAAAAoAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.iq.vcard.AddressLocation" Collapsed="true">
+    <Position X="246.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Address.cs</FileName>
+      <HashCode>AAAABAAAAAAAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.iq.vcard.EmailType" Collapsed="true">
+    <Position X="252" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Email.cs</FileName>
+      <HashCode>AAAARAAAAAAAAAAAAQAAAAAAAAAAAAAAAAgAAAAACAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.iq.vcard.TelephoneLocation" Collapsed="true">
+    <Position X="252" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Telephone.cs</FileName>
+      <HashCode>AAAABAAAAAAAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.iq.vcard.TelephoneType" Collapsed="true">
+    <Position X="245" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\iq\vcard\Telephone.cs</FileName>
+      <HashCode>AAAAACACAQAAJAAAAQAEAAAAAAAAAAEEAAAAACQAQAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.sasl.MechanismType" Collapsed="true">
+    <Position X="246.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\sasl\Mechanism.cs</FileName>
+      <HashCode>AgAAAAIACAgSAAAAAQCAAAAACBABAgBAAACggSCBAoI=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.x.data.XDataFormType" Collapsed="true">
+    <Position X="248.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\x\data\Data.cs</FileName>
+      <HashCode>AQBAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.x.data.FieldType" Collapsed="true">
+    <Position X="250.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\x\data\FieldTypes.cs</FileName>
+      <HashCode>AAAAAAAAAQAAAAAAAAEAACAAAAAQAAAAEAAIAAFEABA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.protocol.x.rosterx.Action" Collapsed="true">
+    <Position X="245" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>protocol\x\rosterx\RosterItem.cs</FileName>
+      <HashCode>AAAAAAAAACAAAAAEAQAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.Xml.Dom.NodeType" Collapsed="true">
+    <Position X="250.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\Dom\Node.cs</FileName>
+      <HashCode>AAAAAAAEQAAAAAAAAAgAAAAAAAAAQAACAAAACAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="agsXMPP.Xml.xpnet.TOK" Collapsed="true">
+    <Position X="246.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Xml\xpnet\Encoding.cs</FileName>
+      <HashCode>AARCAi6IACErBAIAABAEAgAAgAAICAAQBBACAHKggUA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="agsXMPP.IqCB" Collapsed="true">
+    <Position X="246.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>IqGrabber.cs</FileName>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="agsXMPP.MessageCB" Collapsed="true">
+    <Position X="248.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>MessageGrabber.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAAABAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="agsXMPP.PresenceCB" Collapsed="true">
+    <Position X="245" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>PresenceGrabber.cs</FileName>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="agsXMPP.SaslEventHandler" Collapsed="true">
+    <Position X="246.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>SaslEventArgs.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="agsXMPP.StreamError" Collapsed="true">
+    <Position X="248.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>StreamParser.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAACAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="agsXMPP.StreamHandler" Collapsed="true">
+    <Position X="250.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>StreamParser.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="agsXMPP.ObjectHandler" Collapsed="true">
+    <Position X="250.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>XmppClientConnection.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="agsXMPP.ErrorHandler" Collapsed="true">
+    <Position X="245" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>XmppClientConnection.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAACAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="agsXMPP.OnXmppErrorHandler" Collapsed="true">
+    <Position X="252" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>XmppClientConnection.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+  <Delegate Name="agsXMPP.XmlHandler" Collapsed="true">
+    <Position X="252" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>XmppConnection.cs</FileName>
+      <HashCode>AAAAAAAAAAAAABAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Delegate>
+</ClassDiagram>

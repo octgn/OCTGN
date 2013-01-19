@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "agsXMPP.ui.2003", "agsXMPP.ui.2003.csproj", "{93F68E40-C0FC-4B7F-8331-8EEB95A5E3DF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{93F68E40-C0FC-4B7F-8331-8EEB95A5E3DF}.Debug.ActiveCfg = Debug|.NET
+		{93F68E40-C0FC-4B7F-8331-8EEB95A5E3DF}.Debug.Build.0 = Debug|.NET
+		{93F68E40-C0FC-4B7F-8331-8EEB95A5E3DF}.Release.ActiveCfg = Release|.NET
+		{93F68E40-C0FC-4B7F-8331-8EEB95A5E3DF}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
