@@ -24,10 +24,11 @@
             Assert.False(string.IsNullOrWhiteSpace(taskManager.TaskContext.Data["CurrentVersionFileRelativePath"] as string));
             Assert.False(string.IsNullOrWhiteSpace(taskManager.TaskContext.Data["ReplaceVersionIgnoreFile"] as string));
 
-            Assert.AreEqual(3,taskManager.Tasks.Count);
+            Assert.AreEqual(4,taskManager.Tasks.Count);
             Assert.True(taskManager.Tasks.OfType<GetVersion>().Any());
             Assert.True(taskManager.Tasks.OfType<IncrementVersionNumberTask>().Any());
             Assert.True(taskManager.Tasks.OfType<IncrementVersionNumbersInFiles>().Any());
+            Assert.True(taskManager.Tasks.OfType<CreatePushBatFile>().Any());
         }
     }
 }

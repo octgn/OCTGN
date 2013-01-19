@@ -112,6 +112,7 @@
     <Compile Include="Tasking\TaskContext.cs" />
     <Compile Include="Tasking\TaskContextTest.cs" />
     <Compile Include="Tasking\TaskManager.cs" />
+    <Compile Include="Tasking\Tasks\CreatePushBatFile.cs" />
     <Compile Include="Tasking\Tasks\GetVersion.cs" />
     <Compile Include="Tasking\Tasks\IncrementVersionNumbersInFiles.cs" />
     <Compile Include="Tasking\Tasks\IncrementVersionNumberTask.cs" />
