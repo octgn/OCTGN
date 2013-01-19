@@ -1,3 +1,7 @@
+#3.0.1.28
++ Friendslist is now sorted by online and offline and then alphabetically
++ Reworked how fonts are loaded from game definitions. Developers see [here](https://github.com/kellyelton/OCTGN/pull/621)
+
 #3.0.1.27
 + Localized and changed chat server endpoints
 + Added v1 of Deck Builder Plugin System
