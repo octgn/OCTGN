@@ -157,15 +157,9 @@
     <Reference Include="Microsoft.Scripting.Metadata">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Windows.Shell">
-      <HintPath>..\..\packages\Microsoft.Windows.Shell.3.0.1.0\lib\net40\Microsoft.Windows.Shell.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="PresentationFramework.Aero" />
-    <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\RibbonControlsLibrary.dll</HintPath>
-    </Reference>
+    <Reference Include="RibbonControlsLibrary, Version=4.0.0.11019, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
