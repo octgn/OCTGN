@@ -28,6 +28,8 @@ using System.Collections.Generic;
 
 namespace Octgn.Play
 {
+    using Microsoft.Windows.Controls.Ribbon;
+
     public partial class PlayWindow
     {
         private bool _isLocal;
@@ -600,6 +602,21 @@ namespace Octgn.Play
         }
 
         #endregion
+
+        private void RibbonSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var tab = ribbon.SelectedItem as RibbonTab;
+            if (tab == null) return;
+            tab.HeaderStyle = Resources["SelectedHeaderColor"] as Style;
+            foreach (var t in ribbon.Items.OfType<RibbonTab>())
+            {
+                if (!(Equals(t, tab)))
+                {
+                    t.HeaderStyle = Resources["NormalHeaderColor"] as Style;
+                }
+
+            }
+        }
     }
 
     internal class CanPlayConverter : IMultiValueConverter
