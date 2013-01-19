@@ -72,7 +72,7 @@ namespace Octgn.Windows
                                                       { this.frame1.NavigationService.RemoveBackEntry(); };
             //Set title with version info.
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            Title = "Octgn  version " + version;
+            Title = "Octgn";
 
             frame1.Navigate(new ContactList());
             DebugWindowCommand.InputGestures.Add(new KeyGesture(Key.D, ModifierKeys.Control));
@@ -373,6 +373,15 @@ namespace Octgn.Windows
         {
             var tab = Ribbon.SelectedItem as RibbonTab;
             if (tab == null) return;
+            tab.HeaderStyle = Resources["SelectedHeaderColor"] as Style;
+            foreach (var t in Ribbon.Items.OfType<RibbonTab>())
+            {
+                if (!(Equals(t, tab)))
+                {
+                    t.HeaderStyle = Resources["NormalHeaderColor"] as Style;
+                }
+
+            }
             switch ((String) tab.Header)
             {
                 case "Lobby":
@@ -388,7 +397,6 @@ namespace Octgn.Windows
                     break;
                 case "Alerts":
                     frame1.Navigate(new NotificationList());
-                    NotificationTab.HeaderStyle = Resources["NormalHeaderColor"] as Style;
                     NotificationTab.InvalidateVisual();
                     break;
             }
