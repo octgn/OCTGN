@@ -1,6 +1,16 @@
 #3.0.1.28
 + Friendslist is now sorted by online and offline and then alphabetically
 + Reworked how fonts are loaded from game definitions. Developers see [here](https://github.com/kellyelton/OCTGN/pull/621)
++ UI Changes
++ Made reconnecting not be a popup window anymore
++ Changed updating back to installer
++ New chat
++ Fixed offline games
++ fixed deck loading bug
++ In game chat window is now resizable
++ Fixed chat command crash
++ Created basic plugin system for the deck editor(octgn.library on nuget)
++ python: can now draw arrows
 
 #3.0.1.27
 + Localized and changed chat server endpoints
