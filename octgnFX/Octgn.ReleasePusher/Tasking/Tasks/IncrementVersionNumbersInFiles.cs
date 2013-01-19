@@ -31,7 +31,7 @@
             // Should we ignore this?
             if (filesToIgnore.Contains(file.Name)) return;
             if (file.Extension.ToLower() == ".exe" || file.Extension.ToLower() == "*.dll") return;
-            var rel = file.FullName.Replace(context.Data["WorkingDirectory"] as string, "").TrimStart('/','\\');
+            var rel = file.FullName.Replace(context.Data["WorkingDirectory"] as string, "").TrimStart('/', '\\');
             if (rel.StartsWith(".git") || file.FullName.Contains("packages")) return;
 
             // Read the whole file.
