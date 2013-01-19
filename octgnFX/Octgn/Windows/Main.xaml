@@ -2,7 +2,7 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary" Title="Octgn"
                      x:Name="Window" Width="416" Height="589" Icon="/Octgn;component/Resources/icon.ico" MinWidth="368"
-                     Closing="WindowClosing">
+                     Closing="WindowClosing" Foreground="#FFF0F0F0" WindowStyle="ThreeDBorderWindow" >
   <ribbon:RibbonWindow.Resources>
     <Style TargetType="ribbon:RibbonTabHeader" x:Key="AlertHeaderColor" x:Name="AlertHeaderColor">
       <Setter Property="Background" Value="Red" />
@@ -14,19 +14,58 @@
       <Setter Property="FontWeight" Value="Normal" />
     </Style>
   </ribbon:RibbonWindow.Resources>
-  <Grid x:Name="LayoutRoot">
+    <ribbon:RibbonWindow.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="Black" Offset="0"/>
+            <GradientStop Color="#FF464646" Offset="0.344"/>
+            <GradientStop Color="#FF040404" Offset="1"/>
+        </LinearGradientBrush>
+    </ribbon:RibbonWindow.Background>
+    <Grid x:Name="LayoutRoot">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
       <RowDefinition Height="25"></RowDefinition>
     </Grid.RowDefinitions>
 
-    <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="RibbonSelectionChanged">
-      <ribbon:Ribbon.ApplicationMenu>
-        <ribbon:RibbonApplicationMenu IsMainMenu="True" x:Name="MainMenu">
-          <ribbon:RibbonApplicationMenuItem x:Name="Help" Header="Help" Click="Help_Click"></ribbon:RibbonApplicationMenuItem>
-          <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOffClick"></ribbon:RibbonApplicationMenuItem>
-          <ribbon:RibbonApplicationMenuItem x:Name="Quit" Header="Quit" Click="QuitClick"></ribbon:RibbonApplicationMenuItem>
+    <ribbon:Ribbon x:Name="Ribbon" SelectionChanged="RibbonSelectionChanged" Background="Black" BorderBrush="#FF8F8F8F" CheckedBorderBrush="#FFD6D6D6" FocusedBorderBrush="#FFC1C1C1" Foreground="Gainsboro" MouseOverBorderBrush="Red" PressedBorderBrush="White">
+            <ribbon:Ribbon.PressedBackground>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FFC7C7C7" Offset="0"/>
+                    <GradientStop Color="#FFDEDEDE" Offset="0.18"/>
+                    <GradientStop Color="#FFC9C9C9" Offset="0.39"/>
+                    <GradientStop Color="#FFACACAC" Offset="1"/>
+                </LinearGradientBrush>
+            </ribbon:Ribbon.PressedBackground>
+            <ribbon:Ribbon.MouseOverBackground>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FFC7C7C7" Offset="0"/>
+                    <GradientStop Color="#FFDEDEDE" Offset="0.18"/>
+                    <GradientStop Color="#FFC9C9C9" Offset="0.39"/>
+                    <GradientStop Color="#FFACACAC" Offset="1"/>
+                </LinearGradientBrush>
+            </ribbon:Ribbon.MouseOverBackground>
+            <ribbon:Ribbon.FocusedBackground>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FFC7C7C7" Offset="0"/>
+                    <GradientStop Color="#FFDEDEDE" Offset="0.18"/>
+                    <GradientStop Color="#FFC9C9C9" Offset="0.39"/>
+                    <GradientStop Color="#FFACACAC" Offset="1"/>
+                </LinearGradientBrush>
+            </ribbon:Ribbon.FocusedBackground>
+            <ribbon:Ribbon.CheckedBackground>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FFC7C7C7" Offset="0"/>
+                    <GradientStop Color="#FFDEDEDE" Offset="0.18"/>
+                    <GradientStop Color="#FFC9C9C9" Offset="0.39"/>
+                    <GradientStop Color="#FFACACAC" Offset="1"/>
+                </LinearGradientBrush>
+            </ribbon:Ribbon.CheckedBackground>
+            <ribbon:Ribbon.ApplicationMenu>
+        <ribbon:RibbonApplicationMenu IsMainMenu="True" x:Name="MainMenu" Background="Black" BorderBrush="{x:Null}" CanAddToQuickAccessToolBarDirectly="True" Foreground="White" SmallImageSource="../Resources/FileIcons/Game.ico">
+          <ribbon:RibbonApplicationMenuItem x:Name="Help" Header="Help" Click="Help_Click" Foreground="#FF2B2B2B"/>
+                    <ribbon:RibbonApplicationMenuItem x:Name="LogOff" Header="Log Off" Click="LogOffClick" Foreground="#FF2B2B2B"></ribbon:RibbonApplicationMenuItem>
+                    <ribbon:RibbonApplicationMenuItem x:Name="Quit" Header="Quit" Click="QuitClick" Foreground="#FF2B2B2B"></ribbon:RibbonApplicationMenuItem>
         </ribbon:RibbonApplicationMenu>
       </ribbon:Ribbon.ApplicationMenu>
       <ribbon:Ribbon.QuickAccessToolBar>

@@ -290,9 +290,6 @@ namespace Skylabs.Lobby
                 ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
                 this.Notifications = new List<Notification>();
                 this.Friends = new List<NewUser>();
-            }
-            else
-            {
                 this.xmpp.OnRegistered += this.XmppOnOnRegistered;
                 this.xmpp.OnRegisterError += this.XmppOnOnRegisterError;
                 this.xmpp.OnXmppConnectionStateChanged += this.XmppOnOnXmppConnectionStateChanged;
