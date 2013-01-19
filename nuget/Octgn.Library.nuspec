@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>Octgn.Library</id>
-        <version>3.0.1.28</version>
+        <version>3.0.1.29</version>
         <title>Octgn Library</title>
         <authors>Kelly Elton</authors>
         <owners />
