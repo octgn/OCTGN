@@ -33,6 +33,7 @@ namespace Octgn.Definitions
         public List<ScriptDef> Scripts { get; private set; }
         public List<VariableDef> Variables { get; private set; }
         public List<GlobalVariableDef> GlobalVariables { get; private set; }
+        public List<FontDef> Fonts { get; private set; }
 
         internal string FileName { get; set; }
 
@@ -143,6 +144,11 @@ namespace Octgn.Definitions
                                         MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
                         return false;
 
+                if (Fonts.Count > 0)
+                {
+                    InstallFonts();
+                }
+
                 var gameData = new Data.Game
                                    {
                                        Id = game.Id,
@@ -193,7 +199,8 @@ namespace Octgn.Definitions
                            GlobalDefinition = SharedDef.LoadFromXml(xml.Child("shared"), part),
                            GlobalVariables = GlobalVariableDef.LoadAllFromXml(xml.Child("globalvariables")),
                            Variables = VariableDef.LoadAllFromXml(xml.Child("variables")),
-                           Scripts = ScriptDef.LoadAllFromXml(xml.Child("scripts"), part)
+                           Scripts = ScriptDef.LoadAllFromXml(xml.Child("scripts"), part),
+                           Fonts = FontDef.LoadAllFromXml(xml.Child("fonts"), part)
                        };
         }
 
@@ -224,6 +231,44 @@ namespace Octgn.Definitions
                     result.FileName = filename;
                     reader.Close();
                     return result;
+                }
+            }
+        }
+
+        public void InstallFonts()
+        {
+            var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
+            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
+            using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                foreach (FontDef font in Fonts)
+                {
+                    PackagePart fontPart = package.GetPart(new Uri(font.FileName, UriKind.Relative));
+                    string fontFileName = font.FileName.TrimStart('/');
+                    string targetDir = Path.Combine(SimpleConfig.DataDirectory, "Games", Id.ToString(), fontFileName);
+                    ExtractPart(fontPart, targetDir);
+                }
+            }
+        }
+
+        private void ExtractPart(PackagePart packagePart, string targetDirectory)
+        {
+            string stringPart = packagePart.Uri.ToString().TrimStart('/');
+            Uri partUri = new Uri(stringPart, UriKind.Relative);
+            Uri uriFullFilePath = new Uri(new Uri(targetDirectory, UriKind.Absolute), partUri);
+
+            // Create the necessary directories based on the full part path
+            if (!Directory.Exists(Path.GetDirectoryName(uriFullFilePath.LocalPath)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(uriFullFilePath.LocalPath));
+            }
+
+            if (!File.Exists(uriFullFilePath.LocalPath))
+            {
+                // Write the file from the part’s content stream.
+                using (FileStream fileStream = File.Create(uriFullFilePath.LocalPath))
+                {
+                    packagePart.GetStream().CopyTo(fileStream);
                 }
             }
         }

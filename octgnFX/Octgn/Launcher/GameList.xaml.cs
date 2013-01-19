@@ -136,6 +136,11 @@ namespace Octgn.Launcher
                                         MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
                         return;
 
+                if (game.Fonts.Count > 0)
+                {
+                    game.InstallFonts();
+                }
+
                 var gameData = new Data.Game
                                    {
                                        Id = game.Id,
