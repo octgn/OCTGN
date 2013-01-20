@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" Height="397" Width="845" Focusable="True" >
+             mc:Ignorable="d" Height="397" Width="845" Focusable="True" x:Name="thisControl" >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
@@ -24,8 +24,8 @@
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="100*"/>
             </Grid.RowDefinitions>
-            
-            <ListBox x:Name="UserList" Grid.Row="1" Grid.ColumnSpan="2">
+
+            <ListBox x:Name="UserList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding UserListItems,ElementName=thisControl}">
             </ListBox>
             <Image Source="../Resources/search.png" Width="16" Height="16"/>
             <TextBox x:Name="UserFilter"  TextWrapping="NoWrap" Text="" VerticalContentAlignment="Center" Grid.Column="2" TextChanged="UserFilterTextChanged" >
