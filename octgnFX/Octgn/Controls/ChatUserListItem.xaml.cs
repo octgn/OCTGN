@@ -19,7 +19,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for ChatUserListItem.xaml
     /// </summary>
-    public partial class ChatUserListItem : UserControl
+    public partial class ChatUserListItem : UserControl,IComparable<ChatUserListItem>,IEquatable<ChatUserListItem>,IEqualityComparer<ChatUserListItem>
     {
         public NewUser User
         {
@@ -91,6 +91,71 @@ namespace Octgn.Controls
             IsAdmin = false;
             IsMod = false;
             IsOwner = false;
+        }
+
+        public ChatUserListItem(NewChatRoom room, NewUser user)
+        {
+            InitializeComponent();
+            IsAdmin = room.AdminList.Any(x => x == user);
+            IsMod = room.ModeratorList.Any(x => x == user);
+            IsOwner = room.OwnerList.Any(x => x == user);
+            User = user;
+        }
+
+        public int CompareTo(ChatUserListItem other)
+        {
+            if (this.IsOwner)
+            {
+                if (other.IsOwner) return this.User.UserName.CompareTo(other.User.UserName);
+                return -1;
+            }
+            if (this.IsAdmin)
+            {
+                if (other.IsOwner) return 1;
+                if (other.IsAdmin) return this.User.UserName.CompareTo(other.User.UserName);
+                return -1;
+            }
+            if (this.IsMod)
+            {
+                if (this.IsOwner) return 1;
+                if (this.IsAdmin) return 1;
+                if (this.IsMod) return this.User.UserName.CompareTo(other.User.UserName);
+                return -1;
+            }
+            if (other.IsOwner)
+            {
+                if (this.IsOwner) return other.User.UserName.CompareTo(this.User.UserName);
+                return 1;
+            }
+            if (other.IsAdmin)
+            {
+                if (this.IsOwner) return -1;
+                if (this.IsAdmin) return other.User.UserName.CompareTo(this.User.UserName);
+                return 1;
+            }
+            if (other.IsMod)
+            {
+                if (this.IsOwner) return -1;
+                if (this.IsAdmin) return -1;
+                if (this.IsMod) return other.User.UserName.CompareTo(this.User.UserName);
+                return 1;
+            }
+            return this.User.UserName.CompareTo(other.User.UserName);
+        }
+
+        public bool Equals(ChatUserListItem other)
+        {
+            return other.User == User;
+        }
+
+        public bool Equals(ChatUserListItem x, ChatUserListItem y)
+        {
+            return x.User.Equals(y.User);
+        }
+
+        public int GetHashCode(ChatUserListItem obj)
+        {
+            return obj.User.GetHashCode();
         }
     }
 }

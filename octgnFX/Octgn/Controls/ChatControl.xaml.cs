@@ -11,6 +11,8 @@ namespace Octgn.Controls
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Linq;
     using System.Threading;
     using System.Windows;
@@ -20,6 +22,7 @@ namespace Octgn.Controls
     using System.Windows.Media;
 
     using Octgn.Extentions;
+    using Octgn.Library.Utils;
 
     using Skylabs.Lobby;
 
@@ -63,14 +66,17 @@ namespace Octgn.Controls
         /// </summary>
         private bool justScrolledToBottom;
 
+        public SortableObservableCollection<ChatUserListItem> UserListItems { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatControl"/> class.
         /// </summary>
         public ChatControl()
         {
+            this.UserListItems = new SortableObservableCollection<ChatUserListItem>();
             this.InitializeComponent();
             this.messageCache = new List<string>();
-            this.UserList.Items.Add(new Label(){Content = "Loading Users..."});
+            this.DataContext = UserListItems;
             if (this.IsInDesignMode())
             {
                 return;
@@ -148,80 +154,78 @@ namespace Octgn.Controls
             Dispatcher.Invoke(
                 new Action(
                     () =>
+                    {
+                        var rtbatbottom = false;
+
+                        // bool firstAutoScroll = true; // never used 
+                        Chat.ScrollToVerticalOffset(Chat.VerticalOffset);
+
+                        // check to see if the richtextbox is scrolled to the bottom.
+                        var dVer = Chat.VerticalOffset;
+
+                        // get the vertical size of the scrollable content area
+                        var dViewport = Chat.ViewportHeight;
+
+                        // get the vertical size of the visible content area
+                        var dExtent = Chat.ExtentHeight;
+
+                        if (Math.Abs(dVer - 0) < double.Epsilon && dViewport < dExtent)
                         {
-                            var rtbatbottom = false;
+                            rtbatbottom = true;
+                        }
 
-                            // bool firstAutoScroll = true; // never used 
-                            Chat.ScrollToVerticalOffset(Chat.VerticalOffset);
-
-                            // check to see if the richtextbox is scrolled to the bottom.
-                            var dVer = Chat.VerticalOffset;
-
-                            // get the vertical size of the scrollable content area
-                            var dViewport = Chat.ViewportHeight;
-
-                            // get the vertical size of the visible content area
-                            var dExtent = Chat.ExtentHeight;
-
-                            if (Math.Abs(dVer - 0) < double.Epsilon && dViewport < dExtent)
+                        if (Math.Abs(dVer - 0) > double.Epsilon)
+                        {
+                            if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
                             {
                                 rtbatbottom = true;
+                                justScrolledToBottom = false;
                             }
-
-                            if (Math.Abs(dVer - 0) > double.Epsilon)
+                            else
                             {
-                                if (Math.Abs(dVer + dViewport - dExtent) < double.Epsilon)
+                                if (!justScrolledToBottom)
                                 {
-                                    rtbatbottom = true;
-                                    justScrolledToBottom = false;
-                                }
-                                else
-                                {
-                                    if (!justScrolledToBottom)
-                                    {
-                                        var tr = new TableRow();
-                                        var tc = new TableCell()
-                                            { BorderThickness = new Thickness(0,1,0,1), BorderBrush = Brushes.Gainsboro, ColumnSpan = 3 };
-                                        tr.Cells.Add(tc);
-                                        ChatRowGroup.Rows.Add(tr);
-                                        justScrolledToBottom = true;
-                                    }
+                                    var tr = new TableRow();
+                                    var tc = new TableCell() { BorderThickness = new Thickness(0, 1, 0, 1), BorderBrush = Brushes.Gainsboro, ColumnSpan = 3 };
+                                    tr.Cells.Add(tc);
+                                    ChatRowGroup.Rows.Add(tr);
+                                    justScrolledToBottom = true;
                                 }
                             }
+                        }
 
-                            var ctr = new ChatTableRow
-                                { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
+                        var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
 
-                            ctr.MouseEnter += (o, args) =>
+                        ctr.MouseEnter += (o, args) =>
+                        {
+                            foreach (var r in ChatRowGroup.Rows)
                             {
-                                foreach (var r in ChatRowGroup.Rows)
+                                var rr = r as ChatTableRow;
+                                if (rr == null)
                                 {
-                                    var rr = r as ChatTableRow;
-                                    if (rr == null)
-                                    {
-                                        continue;
-                                    }
+                                    continue;
+                                }
 
-                                    if (rr.User.UserName
-                                        == theFrom.UserName)
-                                    {
-                                        r.Background = Brushes.DimGray;
-                                    }
-                                }
-                            };
-                            ctr.MouseLeave += (o, args) =>
-                            {
-                                foreach (var r in ChatRowGroup.Rows)
+                                if (rr.User.UserName
+                                    == theFrom.UserName)
                                 {
-                                    r.Background = null;
+                                    r.Background = Brushes.DimGray;
                                 }
-                            };
-                            ChatRowGroup.Rows.Add(ctr);
-                            if (rtbatbottom)
-                            {
-                                Chat.ScrollToEnd();
                             }
-                        }));
+                        };
+                        ctr.MouseLeave += (o, args) =>
+                        {
+                            foreach (var r in ChatRowGroup.Rows)
+                            {
+                                r.Background = null;
+                            }
+                        };
+                        ChatRowGroup.Rows.Add(ctr);
+                        if (rtbatbottom)
+                        {
+                            Chat.ScrollToEnd();
+                        }
+                    }));
         }
 
         /// <summary>
@@ -244,53 +248,40 @@ namespace Octgn.Controls
         /// </summary>
         private void InvokeResetUserList()
         {
-            Dispatcher.BeginInvoke(new Action(this.ResetUserList));
+            if (this.room == null) return;
+
+            var filterText = "";
+            Dispatcher.Invoke(new Func<string>(() => filterText = this.UserFilter.Text.ToLower()));
+
+            var roomUserList = this.room.Users
+                .Where(x => x.UserName.ToLower().Contains(filterText)).ToArray();
+            //foreach (var missingUser in roomUserList.Except(this.UserListItems.Select(x => x.User)).ToList())
+            //{
+            //    this.UserListItems.Add(missingUser);
+            //}
+
+            //foreach (var offlineUser in this.UserListItems.Select(x => x.User).Except(roomUserList).ToList())
+            //{
+            //    this.UserListItems.Remove(offlineUser);
+            //}
+
+            Dispatcher.BeginInvoke(
+                new Action(
+                    () => this.ResetUserList(
+                        roomUserList.Except(this.UserListItems.Select(x => x.User)).ToArray(),
+                        this.UserListItems.Select(x => x.User).Except(roomUserList).ToArray()
+                         ))
+                );
         }
 
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.
         /// </summary>
-        private void ResetUserList()
+        private void ResetUserList(IEnumerable<NewUser> usersToAdd, IEnumerable<NewUser> usersToRemove)
         {
-            if (this.room == null)
-            {
-                return;
-            }
-
-            var us =
-                this.room.Users.ToArray().Where(x => x.UserName.ToLower().Contains(UserFilter.Text.ToLower())).OrderBy(
-                    x => x.UserName);
-            UserList.Items.Clear();
-            var userListItemList = new List<ChatUserListItem>();
-            foreach (var u in us)
-            {
-                var ci = new ChatUserListItem();
-                if (this.room.AdminList.Any(x => x.UserName == u.UserName))
-                {
-                    ci.IsAdmin = true;
-                }
-
-                if (this.room.ModeratorList.Any(x => x.UserName == u.UserName))
-                {
-                    ci.IsMod = true;
-                }
-
-                if (this.room.OwnerList.Any(x => x.UserName == u.UserName))
-                {
-                    ci.IsOwner = true;
-                }
-
-                ci.User = u;
-                userListItemList.Add(ci);
-            }
-
-            foreach (
-                var u in
-                    userListItemList.OrderByDescending(x => x.IsOwner).ThenByDescending(x => x.IsAdmin).ThenByDescending(x => x.IsMod))
-            {
-                UserList.Items.Add(u);
-            }
-
+            foreach (var u in usersToAdd) UserListItems.Add(new ChatUserListItem(this.room, u));
+            foreach (var u in usersToRemove) UserListItems.Remove(new ChatUserListItem(this.room,u));
+            UserListItems.Sort();
             this.needsRefresh = false;
         }
 
@@ -305,7 +296,7 @@ namespace Octgn.Controls
         /// </param>
         private void UserFilterTextChanged(object sender, TextChangedEventArgs e)
         {
-            this.ResetUserList();
+            this.InvokeResetUserList();
         }
 
         /// <summary>
