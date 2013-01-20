@@ -1846,6 +1846,11 @@
                             <Border Grid.Column="1" VerticalAlignment="Center">
                                 <ContentPresenter Grid.Column="1" x:Name="HeaderHost" RecognizesAccessKey="True" ContentSource="Header" Margin="2,1,2,1"/>
                             </Border>
+                            <Border Grid.Column="2" VerticalAlignment="Center">
+                                <TextBlock x:Name="InputGestureText" Text="{TemplateBinding InputGestureText}" Foreground="{StaticResource TextBrush}" Opacity=".5"
+                                    Margin="5,2,0,2" DockPanel.Dock="Right" FontSize="9"/>
+                            </Border>
+                            
                             <Grid Grid.Column="3" Margin="4,0,6,0" x:Name="ArrowPanel" VerticalAlignment="Center">
                                 <Path x:Name="ArrowPanelPath" VerticalAlignment="Center" Fill="{TemplateBinding Foreground}" Data="M0,0 L0,8 L4,4 z" />
                             </Grid>
