@@ -1,3 +1,10 @@
+#3.0.1.31
++ Fixed game menus(missing shortcut keys and scrolling)
++ Shrunk down menu spacing
+
+#3.0.1.30
++ Performance gain in lobby.
+
 #3.0.1.29
 + Dummy change to fix updater.
 
