@@ -34,6 +34,8 @@ namespace Skylabs.Lobby
             StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
                                                 Port.ToString(CultureInfo.InvariantCulture);
 #if(DEBUG || TestServer)
+            StandAloneApp.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(),@"..\..\..\Octgn.StandAloneServer\bin\Debug\Octgn.StandAloneServer.exe");
+            StandAloneApp.StartInfo.FileName = Path.GetFullPath(StandAloneApp.StartInfo.FileName);
 #else
             if(!LocalGame)
             {
