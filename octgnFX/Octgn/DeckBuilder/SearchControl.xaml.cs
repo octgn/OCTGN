@@ -180,6 +180,57 @@ namespace Octgn.DeckBuilder
                 _CurrentView.Table.ImportRow(row);
             }
         }
+        private Point startPoint = new Point();
+        private DataGridRow SearchCard = new DataGridRow();
+        private bool validClick = false;
+        private void SearchCardMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            startPoint = e.GetPosition(null);
+            validClick = true;
+        }
+        private void SearchMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!validClick) return;
+            Point mousePos = e.GetPosition(null);
+            Vector diff = startPoint - mousePos;
+            if (MouseButtonState.Pressed.Equals(e.LeftButton) &&
+               (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
+            {
+                var row = (DataRowView)resultsGrid.SelectedItem;
+                if (row == null) return;
+                if (CardAdded == null) return;
+                var rowid = row["id"] as string;
+                if (rowid != null)
+                {
+                    Deck.Element getCard = new Deck.Element { Card = Game.GetCardById(Guid.Parse(rowid)), Quantity = 1 };
+                    DataObject dragCard = new DataObject("Card", getCard);
+                    DragDrop.DoDragDrop(SearchCard, dragCard, DragDropEffects.Copy);
+                }
+                e.Handled = true;
+            }
+            else
+            {
+                validClick = false;
+            }
+        }
+        private void SearchDragEnter(object sender, DragEventArgs e)
+        {
+                e.Effects = DragDropEffects.None;
+        }
+        private static T FindRow<T>(DependencyObject Current)
+            where T : DependencyObject
+        {
+            do
+            {
+                if (Current is T)
+                {
+                    return (T)Current;
+                }
+                Current = System.Windows.Media.VisualTreeHelper.GetParent(Current);
+            }
+            while (Current != null);
+            return null;
+        }
 
     }
 
