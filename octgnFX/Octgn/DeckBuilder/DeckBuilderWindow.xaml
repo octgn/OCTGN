@@ -53,7 +53,7 @@
           <!--This ItemControl should have its bindings changeble according to the user's desires (V)_V-->
                     <ItemsControl.ItemTemplate>
             <DataTemplate>
-              <Expander IsExpanded="True" GotFocus="SetActiveSection">
+              <Expander IsExpanded="True" GotFocus="SetActiveSection" AllowDrop="True" Drop="DeckDrop" DragEnter="DeckDragEnter">
                 <Expander.Header>
                   <TextBlock>
                     <TextBlock.Text>
@@ -73,7 +73,8 @@
                 <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
                           CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
                           VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
-                          Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd">
+                          Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" 
+                          PreviewMouseLeftButtonDown="DeckCardMouseDown" PreviewMouseMove="DeckMouseMove" AllowDrop="True" Name="dgDeck">
                   <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Card.Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
                     <DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
