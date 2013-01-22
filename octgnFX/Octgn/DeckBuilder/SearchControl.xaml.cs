@@ -185,32 +185,38 @@ namespace Octgn.DeckBuilder
         private bool validClick = false;
         private void SearchCardMouseDown(object sender, MouseButtonEventArgs e)
         {
-            startPoint = e.GetPosition(null);
-            validClick = true;
+            DataGridCell test = FindRow<DataGridCell>((DependencyObject)e.OriginalSource);
+            if (!(test == null))
+            {
+                startPoint = e.GetPosition(null);
+                validClick = true;
+            }
+            else
+            {
+                validClick = false;
+            }
         }
         private void SearchMouseMove(object sender, MouseEventArgs e)
         {
             if (!validClick) return;
             Point mousePos = e.GetPosition(null);
             Vector diff = startPoint - mousePos;
-            if (MouseButtonState.Pressed.Equals(e.LeftButton) &&
-               (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
+            if (MouseButtonState.Pressed.Equals(e.LeftButton))
             {
-                var row = (DataRowView)resultsGrid.SelectedItem;
-                if (row == null) return;
-                if (CardAdded == null) return;
-                var rowid = row["id"] as string;
-                if (rowid != null)
+               if(Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
                 {
-                    Deck.Element getCard = new Deck.Element { Card = Game.GetCardById(Guid.Parse(rowid)), Quantity = 1 };
-                    DataObject dragCard = new DataObject("Card", getCard);
-                    DragDrop.DoDragDrop(SearchCard, dragCard, DragDropEffects.Copy);
+                    var row = (DataRowView)resultsGrid.SelectedItem;
+                    if (row == null) return;
+                    if (CardAdded == null) return;
+                    var rowid = row["id"] as string;
+                    if (rowid != null)
+                    {
+                        Deck.Element getCard = new Deck.Element { Card = Game.GetCardById(Guid.Parse(rowid)), Quantity = 1 };
+                        DataObject dragCard = new DataObject("Card", getCard);
+                        DragDrop.DoDragDrop(SearchCard, dragCard, DragDropEffects.Copy);
+                    }
+                    e.Handled = true;
                 }
-                e.Handled = true;
-            }
-            else
-            {
-                validClick = false;
             }
         }
         private void SearchDragEnter(object sender, DragEventArgs e)
