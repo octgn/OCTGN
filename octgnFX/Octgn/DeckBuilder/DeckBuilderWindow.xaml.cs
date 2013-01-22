@@ -546,7 +546,104 @@ namespace Octgn.DeckBuilder
                 cardImage.Source = bim;
             }
         }
+        private Point startPoint = new Point();
+        private int cardIndex;
+        private DataGridRow DeckCard;
+        private bool validClick = false;
+        private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            startPoint = e.GetPosition(null);
+            try
+            {
+                DeckCard = FindRow<DataGridRow>((DependencyObject)e.OriginalSource);
+                cardIndex = DeckCard.GetIndex();
+                validClick = true;
+            }
+            catch
+            {
+                validClick = false;
+            }
 
+        }
+        private void DeckMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!validClick) return;
+            Point mousePos = e.GetPosition(null);
+            Vector diff = startPoint - mousePos;
+            if (MouseButtonState.Pressed.Equals(e.LeftButton) && 
+               (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
+            {
+                Deck.Element getCard = ActiveSection.Cards.ElementAt(cardIndex);
+                DataObject dragCard = new DataObject("Card", getCard);
+                if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift)
+                {
+                    DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.All);
+                }
+                else
+                {
+                    DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.Copy);
+                    RemoveResultCard(null, new SearchCardIdEventArgs {CardId = getCard.Card.Id});
+                }
+                e.Handled = true;
+            }
+        }
+        private void DeckDragEnter(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent("Card"))
+            {
+                e.Effects = DragDropEffects.None;
+            }
+        }
+        private void DeckDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent("Card"))
+            {
+                _unsaved = true;
+                Deck.Element dragCard = e.Data.GetData("Card") as Deck.Element;
+                Deck.Section dropSection = (Deck.Section)((FrameworkElement)sender).DataContext;
+                Deck.Element element = dropSection.Cards.FirstOrDefault(c => c.Card.Id == dragCard.Card.Id);
+
+                    if (e.Effects == DragDropEffects.Copy)
+                    {
+                        if (element != null)
+                        {
+                            element.Quantity += 1;
+                        }
+                        else
+                        {
+                            dropSection.Cards.Add(new Deck.Element { Card = Game.GetCardById(dragCard.Card.Id), Quantity = 1 });
+                        }
+                    }
+                    else
+                    {
+                        if (element != null)
+                        {
+                            element.Quantity = (byte)(element.Quantity + dragCard.Quantity);
+                        }
+                        else
+                        {
+                            dropSection.Cards.Add(new Deck.Element { Card = Game.GetCardById(dragCard.Card.Id), Quantity = dragCard.Quantity });
+                        }
+                        ActiveSection.Cards.RemoveAt(cardIndex);
+                    }
+            }
+            e.Handled = true;
+            validClick = false;
+        }
+        private static T FindRow<T>(DependencyObject Current)
+            where T : DependencyObject
+        {
+            do
+            {
+                if (Current is T)
+                {
+                    return (T)Current;
+                }
+                Current = System.Windows.Media.VisualTreeHelper.GetParent(Current);
+            }
+            while (Current != null);
+            return null;
+        }
         #region IDeckBuilderPluginController
         public GamesRepository Games
         {

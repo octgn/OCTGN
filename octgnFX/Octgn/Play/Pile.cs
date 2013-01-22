@@ -98,7 +98,7 @@ namespace Octgn.Play
             var rnd = new Random();
             for (int i = cards.Count - 1; i >= 0; i--)
             {
-                int r = rnd.Next(i);
+                int r = rnd.Next(i + 1);
                 cardIds[i] = cis[r].Id;
                 cardAliases[i] = cis[r].Visible ? ulong.MaxValue : Crypto.ModExp(cis[r].Key);
                 cis[r] = cis[i];
@@ -115,7 +115,7 @@ namespace Octgn.Play
             var rnd = new Random();
             for (int i = cards.Count - 1; i >= 0; i--)
             {
-                int r = rnd.Next(i);
+                int r = rnd.Next(i + 1);
                 Card temp = cards[r];
                 cards[r] = cards[i];
                 cards[i] = temp;
