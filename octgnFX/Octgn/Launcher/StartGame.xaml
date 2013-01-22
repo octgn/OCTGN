@@ -127,7 +127,7 @@ Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParamet
           </ItemsControl>
         </Border>
 
-        <gui:ChatControl Grid.Row="2" Grid.Column="1" Margin="8,8,16,8" />
+        <gui:ChatControl x:Name="chatControl" Grid.Row="2" Grid.Column="1" Margin="8,8,16,8" />
       </Grid>
     </Border>
 
