@@ -1,3 +1,7 @@
+#3.0.1.32
++ Deck editor, most things are draggable(use shift key for some stuff)
++ Fixed random bug with the shuffling
+
 #3.0.1.31
 + Fixed game menus(missing shortcut keys and scrolling)
 + Shrunk down menu spacing
