@@ -69,7 +69,8 @@
               HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray" HeadersVisibility="Column"
               SelectionUnit="FullRow" IsReadOnly="True" AlternatingRowBackground="#ffffc7"
               VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"
-              SelectionChanged="ResultCardSelected" Keyboard.PreviewKeyDown="ResultKeyDownHandler" SelectionMode="Extended">
+              SelectionChanged="ResultCardSelected" Keyboard.PreviewKeyDown="ResultKeyDownHandler" SelectionMode="Extended"
+              PreviewMouseLeftButtonDown="SearchCardMouseDown" AllowDrop="False" PreviewMouseMove="SearchMouseMove">
       <DataGrid.RowStyle>
         <Style>
           <EventSetter Event="DataGridRow.MouseDoubleClick" Handler="ResultDoubleClick" />

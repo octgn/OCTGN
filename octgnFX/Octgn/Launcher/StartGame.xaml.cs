@@ -8,6 +8,10 @@ using Octgn.Play;
 
 namespace Octgn.Launcher
 {
+    using System.Threading.Tasks;
+    using System.Windows.Documents;
+    using System.Windows.Media;
+
     public partial class StartGame
     {
         private bool _startingGame;
@@ -17,14 +21,14 @@ namespace Octgn.Launcher
             InitializeComponent();
             Player.OnLocalPlayerWelcomed += PlayerOnOnLocalPlayerWelcomed;
             _isLocal = isLocal;
-            if(!isLocal)
+            if (!isLocal)
             {
                 this.HorizontalAlignment = HorizontalAlignment.Stretch;
                 this.VerticalAlignment = VerticalAlignment.Stretch;
                 this.Width = Double.NaN;
                 this.Height = Double.NaN;
             }
-            
+
             if (Program.IsHost)
             {
                 descriptionLabel.Text =
@@ -32,7 +36,7 @@ namespace Octgn.Launcher
                 if (isLocal)
                 {
                     descriptionLabel.Text += "\n\nHosting on port: " + Program.Client.Port;
-                    descriptionLabel.Text += "\nExternal IP: " + GetExternalIp().ToString();
+                    GetIps();
                 }
             }
             else
@@ -54,8 +58,8 @@ namespace Octgn.Launcher
                               // Otherwise, messages notifying a disconnection may be lost
                               try
                               {
-                                  if(Program.Game != null)
-                                    Dispatcher.BeginInvoke(new Action(Program.Game.Begin));
+                                  if (Program.Game != null)
+                                      Dispatcher.BeginInvoke(new Action(Program.Game.Begin));
                               }
                               catch (Exception)
                               {
@@ -71,34 +75,75 @@ namespace Octgn.Launcher
                             };
         }
 
-        private static System.Net.IPAddress GetExternalIp()
+        private void GetIps()
         {
-            string dyndns = "http://checkip.dyndns.org";
-            System.Net.WebClient wc = new System.Net.WebClient();
-            System.Text.UTF8Encoding utf8 = new System.Text.UTF8Encoding();
-            string requestHtml = "";
-            string ipAddress = "";
+            var task = new Task(GetLocalIps);
+            task.ContinueWith(GetExternalIp);
+            task.Start();
+        }
+
+        private void GetLocalIps()
+        {
             try
             {
-                requestHtml = utf8.GetString(wc.DownloadData(dyndns));
-                string[] fullStr = requestHtml.Split(':');
-                ipAddress = fullStr[1].Remove(fullStr[1].IndexOf('<')).Trim();
+                var addr = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList;
+                    this.Dispatcher.Invoke(
+                        new Action(
+                            () =>
+                                {
+                                    var paragraph = new Paragraph(new Run("--Local Ip's--")){Foreground = Brushes.Brown};
+                                    foreach (var a in addr)
+                                    {
+                                        paragraph.Inlines.Add(new LineBreak());
+                                        paragraph.Inlines.Add(new Run(a.ToString()));
+                                    }
+                                    this.chatControl.output.Document.Blocks.Add(paragraph);
+                                    this.chatControl.output.ScrollToEnd();
+                                }));
             }
-            catch (System.Net.WebException we)
+            catch (Exception)
             {
-                requestHtml = "127.0.0.1";
-            }
 
-            System.Net.IPAddress externalIp = System.Net.IPAddress.Parse(ipAddress);
-            return externalIp;
+            }
+        }
+
+        private void GetExternalIp(Task task)
+        {
+            try
+            {
+                const string Dyndns = "http://checkip.dyndns.org";
+                var wc = new System.Net.WebClient();
+                var utf8 = new System.Text.UTF8Encoding();
+                var requestHtml = "";
+                var ipAddress = "";
+                requestHtml = utf8.GetString(wc.DownloadData(Dyndns));
+                var fullStr = requestHtml.Split(':');
+                ipAddress = fullStr[1].Remove(fullStr[1].IndexOf('<')).Trim();
+                var externalIp = System.Net.IPAddress.Parse(ipAddress);
+                this.Dispatcher.Invoke(
+                    new Action(
+                        () =>
+                        {
+                            var paragraph = new Paragraph(new Run("--Remote Ip--")) { Foreground = Brushes.Brown };
+                            paragraph.Inlines.Add(new LineBreak());
+                            paragraph.Inlines.Add(new Run(externalIp.ToString()));
+                            this.chatControl.output.Document.Blocks.Add(paragraph);
+                            this.chatControl.output.ScrollToEnd();
+                        }));
+
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         private void PlayerOnOnLocalPlayerWelcomed()
         {
             if (Player.LocalPlayer.Id == 255) return;
-            if(Player.LocalPlayer.Id == 1)
+            if (Player.LocalPlayer.Id == 1)
             {
-                Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible;}));
+                Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
             }
         }
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)

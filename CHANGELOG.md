@@ -1,3 +1,8 @@
+#3.0.1.32
++ Deck editor, most things are draggable(use shift key for some stuff)
++ Shuffling improvement
++ Offline hosting works with no internet connection again.
+
 #3.0.1.31
 + Fixed game menus(missing shortcut keys and scrolling)
 + Shrunk down menu spacing
