@@ -222,6 +222,9 @@
     <Compile Include="Controls\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GameManagement.xaml.cs">
+      <DependentUpon>GameManagement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\GroupChatListItem.xaml.cs">
       <DependentUpon>GroupChatListItem.xaml</DependentUpon>
     </Compile>
@@ -247,6 +250,9 @@
     <Compile Include="Controls\OctgnChrome.cs" />
     <Compile Include="Controls\PopupWindowMessage.xaml.cs">
       <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SetList.xaml.cs">
+      <DependentUpon>SetList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
@@ -314,7 +320,7 @@
     <Compile Include="Launcher\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Launcher\GameSelector.xaml.cs">
+    <Compile Include="Controls\GameSelector.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>GameSelector.xaml</DependentUpon>
     </Compile>
@@ -666,6 +672,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\GameManagement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\GroupChatListItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -695,6 +705,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PopupWindowMessage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SetList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -752,7 +766,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Launcher\GameSelector.xaml">
+    <Page Include="Controls\GameSelector.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

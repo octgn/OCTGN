@@ -54,7 +54,7 @@ namespace Octgn.Windows
                     InstallSetsFromFolders();
                 }
                 VerifyAllDefs();
-                CheckForUpdates();
+                //CheckForUpdates();
                 CheckForXmlSetUpdates();
                 UpdateCheckDone();
             });

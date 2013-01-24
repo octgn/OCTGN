@@ -2,16 +2,17 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:Controls="clr-namespace:Octgn.Controls"
+        xmlns:Launcher="clr-namespace:Octgn.Launcher"
         x:Class="Octgn.Windows.MainNew"
         Title="OCTGN"
-        Height="599.58" Width="1102.138" WindowStyle="None" 
-        MinWidth="800" MinHeight="600" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
+        Height="600" Width="1100" WindowStyle="None" 
+        MinHeight="600" MinWidth="1100" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="100*" MinWidth="840"/>
             <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="247"/>
+            <ColumnDefinition Width="247" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -21,21 +22,19 @@
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
         <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Bottom" Background="Transparent"
-                    HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}">
-        </Controls:ChatBar>
+                    HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
         <TabControl x:Name="TabControlMain" Grid.Row="1" >
             <TabItem x:Name="TabMain" Header="OCTGN">
-                <Frame Source="../Launcher/LoginNew.xaml" NavigationUIVisibility="Hidden">
-                </Frame>
+                <Frame Source="../Launcher/LoginNew.xaml" NavigationUIVisibility="Hidden"/>
             </TabItem>
             <TabItem x:Name="TabCommunityChat" Header="Community Chat">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
             </TabItem>
-            <TabItem x:Name="TabCustomGames" Header="Custom Games">
+            <TabItem x:Name="TabCustomGames" Header="Custom Games"/>
+            <TabItem Header="Matchmaking(Comming Soon)" IsEnabled="false"/>
+            <TabItem Header="Game Management" IsEnabled="true">
+                <Controls:GameManagement Margin="5,5,5,5"></Controls:GameManagement>
             </TabItem>
-            <TabItem Header="Matchmaking(Comming Soon)" IsEnabled="false">
-            </TabItem>
-            <TabItem Header="Game Management" IsEnabled="true"></TabItem>
         </TabControl>
         <GridSplitter Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="PreviousAndNext" Background="Black" Margin="0,25,0,0"/>
         <Menu Grid.ColumnSpan="3" Grid.Row="0">
