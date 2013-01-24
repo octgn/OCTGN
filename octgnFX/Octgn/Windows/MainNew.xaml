@@ -30,7 +30,11 @@
             <TabItem x:Name="TabCommunityChat" Header="Community Chat">
                 <Controls:LobbyChat Width="Auto" Height="Auto" x:Name="LobbyChat"/>
             </TabItem>
-            <TabItem x:Name="TabCustomGames" Header="Custom Games"/>
+            <TabItem x:Name="TabCustomGames" Header="Custom Games">
+                <Border Padding="5,5,5,5">
+                    <Controls:CustomGames></Controls:CustomGames>
+                </Border>
+            </TabItem>
             <TabItem Header="Matchmaking(Comming Soon)" IsEnabled="false"/>
             <TabItem Header="Game Management" IsEnabled="true">
                 <Controls:GameManagement Margin="5,5,5,5"></Controls:GameManagement>
