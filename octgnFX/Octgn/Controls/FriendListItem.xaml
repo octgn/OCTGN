@@ -3,8 +3,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" Focusable="True" Height="70"
              FocusManager.IsFocusScope="False" MouseDown="UserControlMouseDown" x:Name="flistitem" MinWidth="300"
-             MouseUp="FlistitemMouseUp" PreviewMouseLeftButtonDown="FlistitemPreviewMouseLeftButtonDown"
-             PreviewMouseMove="FlistitemPreviewMouseMove" IsEnabled="True">
+             MouseUp="FlistitemMouseUp" 
+             IsEnabled="True">
   <Border x:Name="LIBorder" BorderThickness="0" Padding="3" BorderBrush="Transparent"
           Background="{DynamicResource ListItemBackground}">
     <Grid>

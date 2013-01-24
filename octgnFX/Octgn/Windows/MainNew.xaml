@@ -4,7 +4,9 @@
                  xmlns:Controls="clr-namespace:Octgn.Controls"
         x:Class="Octgn.Windows.MainNew"
         Title="OCTGN"
-        Height="599.58" Width="1102.138" WindowStyle="None" MinWidth="800" MinHeight="600" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico">
+        Height="599.58" Width="1102.138" WindowStyle="None" 
+        MinWidth="800" MinHeight="600" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
+    >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
@@ -52,5 +54,8 @@
                 <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
             </StackPanel>
         </StackPanel>
+        <Border Margin="0,20,0,0" Style="{StaticResource Panel}" Grid.Column="3" Grid.Row="1">
+            <Controls:ContactList/>
+        </Border>
     </Grid>
 </Controls:OctgnChrome>
