@@ -7,6 +7,7 @@ using System.Reflection;
 namespace Octgn.ReleasePusher
 {
     using System.Configuration;
+    using System.Linq;
 
     using Octgn.ReleasePusher.Tasking;
     using Octgn.ReleasePusher.Tasking.Tasks;
@@ -21,7 +22,14 @@ namespace Octgn.ReleasePusher
             if (args[0].ToLower() == "setup")
             {
                 Log.Info("Doing setup tasks");
-                TaskManager = SetupTaskManager();
+
+                var mode = args.FirstOrDefault(x => x.ToLower().StartsWith("/m"));
+                if(string.IsNullOrWhiteSpace(mode))
+                    throw new ArgumentException("/mTEST or /mRELEASE needs to be specified.");
+
+                Log.InfoFormat("Doing release for {0} mode",mode);
+
+                TaskManager = SetupTaskManager(mode);
 
                 TaskManager.Run();
                 PauseForKey();
@@ -32,7 +40,7 @@ namespace Octgn.ReleasePusher
 
         }
 
-        internal static TaskManager SetupTaskManager()
+        internal static TaskManager SetupTaskManager(string mode)
         {
             var taskManager = new TaskManager();
             taskManager.AddTask(new GetVersion());
@@ -57,6 +65,8 @@ namespace Octgn.ReleasePusher
                 taskManager.TaskContext.Data[ConfigurationManager.AppSettings.AllKeys[i]] =
                     ConfigurationManager.AppSettings[i];
             }
+
+            taskManager.TaskContext.Data["Mode"] = mode;
 
             return taskManager;
         }
