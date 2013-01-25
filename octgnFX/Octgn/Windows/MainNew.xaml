@@ -5,8 +5,8 @@
         xmlns:Launcher="clr-namespace:Octgn.Launcher"
         x:Class="Octgn.Windows.MainNew"
         Title="OCTGN"
-        Height="600" Width="1100" WindowStyle="None" 
-        MinHeight="600" MinWidth="1100" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
+        Height="600" Width="1125" WindowStyle="None" 
+        MinHeight="600" MinWidth="1125" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
