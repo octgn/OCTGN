@@ -49,7 +49,7 @@ namespace Octgn.Controls
 			Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
 			Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
 			Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
-			timer = new Timer(8000);
+			timer = new Timer(10000);
 			timer.Start();
 			timer.Elapsed += timer_Elapsed;
 		}
