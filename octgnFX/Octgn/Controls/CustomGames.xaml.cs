@@ -18,19 +18,25 @@ using Skylabs.Lobby;
 
 namespace Octgn.Controls
 {
-	/// <summary>
+    using System.Collections.ObjectModel;
+
+    using Microsoft.Scripting.Utils;
+
+    /// <summary>
 	/// Interaction logic for CustomGames.xaml
 	/// </summary>
 	public partial class CustomGames : UserControl
 	{
-		public static DependencyProperty HostedGameListProperty = DependencyProperty.Register(
-	"HostedGameList", typeof(List<HostedGameViewModel>), typeof(CustomGames));
+    //    public static DependencyProperty HostedGameListProperty = DependencyProperty.Register(
+    //"HostedGameList", typeof(List<HostedGameViewModel>), typeof(CustomGames));
 
-		public List<HostedGameViewModel> HostedGameList
-		{
-			get { return GetValue(HostedGameListProperty) as List<HostedGameViewModel>; }
-			set{SetValue(HostedGameListProperty, value);}
-		}
+    //    public List<HostedGameViewModel> HostedGameList
+    //    {
+    //        get { return GetValue(HostedGameListProperty) as List<HostedGameViewModel>; }
+    //        set{SetValue(HostedGameListProperty, value);}
+    //    }
+
+        public ObservableCollection<HostedGameViewModel> HostedGameList { get; set; }
 
 		private Timer timer;
 		private bool isConnected;
@@ -39,7 +45,7 @@ namespace Octgn.Controls
 		public CustomGames()
 		{
 			InitializeComponent();
-			HostedGameList = new List<HostedGameViewModel>();
+            HostedGameList = new ObservableCollection<HostedGameViewModel>();
 			Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
 			Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
 			Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
@@ -81,12 +87,11 @@ namespace Octgn.Controls
 		{
 			Trace.WriteLine("Refreshing list...");
 			var list = Program.LobbyClient.GetHostedGames().Select(x=>new HostedGameViewModel(x)).ToList();
-
 			Dispatcher.Invoke(new Action(() =>
 			{
-				var removeList = HostedGameList.Where(i => list.All(x => x.Port != i.Port)).ToList();
-				HostedGameList.RemoveAll(removeList.Contains);
-				var addList = list.Where(i => HostedGameList.All(x => x.Port != i.Port)).ToList();
+				var removeList = HostedGameList.Where(i => !list.Any(x => x.Port == i.Port)).ToList();
+                removeList.ForEach(x=>HostedGameList.Remove(x));
+				var addList = list.Where(i => !HostedGameList.Any(x => x.Port == i.Port)).ToList();
 				HostedGameList.AddRange(addList);
 			}));
 		}
@@ -104,15 +109,16 @@ namespace Octgn.Controls
 		public HostedGameViewModel(HostedGameData data)
 		{
 			var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == data.GameGuid);
-			if (game == null) return;
-			GameId = game.Id;
-			GameName = game.Name;
+			GameId = data.GameGuid;
 			GameVersion = data.GameVersion;
 			Name = data.Name;
 			User = data.UserHosting;
 			Port = data.Port;
 			Status = data.GameStatus;
 			StartTime = data.TimeStarted;
+		    GameName = "{Unknown Game}";
+			if (game == null) return;
+			GameName = game.Name;
 		}
 	}
 }
