@@ -219,6 +219,9 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>..\..\packages\WpfAnimatedGif.1.4.0-beta1\lib\net\WpfAnimatedGif.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -242,6 +245,9 @@
     </Compile>
     <Compile Include="Controls\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ControlSlider.xaml.cs">
+      <DependentUpon>ControlSlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CustomGames.xaml.cs">
       <DependentUpon>CustomGames.xaml</DependentUpon>
@@ -267,6 +273,7 @@
     <Compile Include="Controls\GameListItem.xaml.cs">
       <DependentUpon>GameListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\HostedGameViewModel.cs" />
     <Compile Include="Controls\LobbyChat.cs" />
     <Compile Include="Controls\NotificationListItem.xaml.cs">
       <DependentUpon>NotificationListItem.xaml</DependentUpon>
@@ -275,9 +282,13 @@
     <Compile Include="Controls\PopupWindowMessage.xaml.cs">
       <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PreGameLobby.xaml.cs">
+      <DependentUpon>PreGameLobby.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SetList.xaml.cs">
       <DependentUpon>SetList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SliderPage.cs" />
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
     <Compile Include="Definitions\FontDef.cs" />
@@ -559,6 +570,8 @@
     <Resource Include="Resources\moderator.png" />
     <Resource Include="Resources\owner.png" />
     <Resource Include="Resources\usernoimage.png" />
+    <Resource Include="Resources\back-button.png" />
+    <Resource Include="Resources\loading.gif" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -697,6 +710,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\ControlSlider.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\CustomGames.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -734,6 +751,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PopupWindowMessage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PreGameLobby.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
