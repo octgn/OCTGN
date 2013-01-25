@@ -91,7 +91,7 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Test|AnyCPU' ">
-    <OutputPath>bin\Release-Test\</OutputPath>
+    <OutputPath>bin\Release_Test\</OutputPath>
     <DefineConstants>TRACE;SSL;STRINGPREP</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <DocumentationFile>bin\NET2\Release\agsXMPP.xml</DocumentationFile>
