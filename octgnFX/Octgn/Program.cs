@@ -78,7 +78,11 @@ namespace Octgn
             WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
+#if(Release_Test)
+            UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPathTest"];
+#else
             UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
+#endif
             bool.TryParse(ConfigurationManager.AppSettings["UseNewChrome"],out UseNewChrome);
 
             var pList = Process.GetProcessesByName("OCTGN");
