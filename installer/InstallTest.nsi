@@ -69,8 +69,8 @@ SectionEnd
 Section "Start Menu Shortcuts"
   ; Entry for Start Menu shortcuts. Optional
   CreateDirectory "$SMPROGRAMS\OCTGN-Test"  
-  CreateShortCut "$SMPROGRAMS\OCTGN\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\OCTGN\OCTGN.lnk" "$INSTDIR\OCTGN.exe" "" "$INSTDIR\OCTGN.exe" 0
+  CreateShortCut "$SMPROGRAMS\OCTGN-Test\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\OCTGN-Test\OCTGN-Test.lnk" "$INSTDIR\OCTGN.exe" "" "$INSTDIR\OCTGN.exe" 0
 SectionEnd
 
 Section ""
