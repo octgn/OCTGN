@@ -27,11 +27,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Root", "Root", "{0C909858-E
 		ss.txt = ss.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{FC40019F-21A4-4208-B875-AC325657E949}"
-	ProjectSection(SolutionItems) = preProject
-		build\build.xml.config = build\build.xml.config
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "installer", "installer", "{8FE32867-B27F-42E7-B101-EB092A63ECB2}"
 	ProjectSection(SolutionItems) = preProject
 		installer\DotNetVer.nsh = installer\DotNetVer.nsh
