@@ -26,7 +26,7 @@ namespace Octgn.ReleasePusher
                 var mode = args.FirstOrDefault(x => x.ToLower().StartsWith("/m"));
                 if(string.IsNullOrWhiteSpace(mode))
                     throw new ArgumentException("/mTEST or /mRELEASE needs to be specified.");
-
+                mode = mode.Substring(2);
                 Log.InfoFormat("Doing release for {0} mode",mode);
 
                 TaskManager = SetupTaskManager(mode);
