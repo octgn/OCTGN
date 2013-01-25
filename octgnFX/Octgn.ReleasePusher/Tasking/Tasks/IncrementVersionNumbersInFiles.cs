@@ -33,6 +33,7 @@
             if (file.Extension.ToLower() == ".exe" || file.Extension.ToLower() == "*.dll") return;
             var rel = file.FullName.Replace(context.Data["WorkingDirectory"] as string, "").TrimStart('/', '\\');
             if (rel.StartsWith(".git") || file.FullName.Contains("packages")) return;
+            if ((context.Data["Mode"] as string).ToLower() == "test") if (rel == "deploy\\currentversion.txt") return;
 
             // Read the whole file.
             context.Log.InfoFormat("Reading file {0}",file.FullName);

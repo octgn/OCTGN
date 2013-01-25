@@ -43,7 +43,7 @@ namespace Octgn
         public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
-        public static GamesRepository GamesRepository;
+        public static GamesRepository GamesRepository = new GamesRepository();
         internal static Client Client;
 
         internal readonly static string WebsitePath;
@@ -78,7 +78,11 @@ namespace Octgn
             WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
+#if(Release_Test)
+            UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPathTest"];
+#else
             UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
+#endif
             bool.TryParse(ConfigurationManager.AppSettings["UseNewChrome"],out UseNewChrome);
 
             var pList = Process.GetProcessesByName("OCTGN");
