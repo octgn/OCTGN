@@ -3,20 +3,20 @@
 !include "GetDotNet.nsh"
 !include "GetVC.nsh"
 
-Name "OCTGN 3.0.1.33"
-OutFile "OCTGN-Test-Setup-3.0.1.33.exe"
+Name "OCTGN 3.0.1.34"
+OutFile "OCTGN-Test-Setup-3.0.1.34.exe"
 ShowInstDetails show
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ; Version Information
-VIProductVersion "3.0.1.33"
+VIProductVersion "3.0.1.34"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "OCTGN - Test"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A tabletop engine"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "OCTGN release 3"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.0.1.33"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.0.1.34"
 
 ; Make plugin directory same as script
 !addplugindir .
