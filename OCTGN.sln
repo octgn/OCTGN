@@ -37,7 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "installer", "installer", "{
 		installer\DotNetVer.nsh = installer\DotNetVer.nsh
 		installer\GetDotNet.nsh = installer\GetDotNet.nsh
 		installer\GetVC.nsh = installer\GetVC.nsh
-		installer\InstallTemplate.nsi = installer\InstallTemplate.nsi
+		installer\Install.nsi = installer\Install.nsi
+		installer\InstallTest.nsi = installer\InstallTest.nsi
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Test", "octgnFX\Octgn.Test\Octgn.Test.csproj", "{2E28A69C-7169-4880-ADCC-29322F6D5E9E}"
