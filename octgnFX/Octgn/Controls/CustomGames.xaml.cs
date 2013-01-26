@@ -36,6 +36,7 @@ namespace Octgn.Controls
             "IsJoinableGameSelected", typeof(bool), typeof(CustomGameList));
 
         public ObservableCollection<HostedGameViewModel> HostedGameList { get; set; }
+        public ObservableCollection<DataGameViewModel> Games { get; set; }
 
         public bool IsJoinableGameSelected
         {
@@ -61,13 +62,27 @@ namespace Octgn.Controls
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
 
-            this.Loaded += delegate { this.BorderHostGame.Visibility = Visibility.Hidden; };
+            BorderHostGame.Visibility = Visibility.Hidden;
+
+            this.RefreshInstalledGameList();
 
             this.PreviewKeyUp += OnPreviewKeyUp;
+
+            BorderHostGame.IsVisibleChanged += (sender, args) => this.RefreshInstalledGameList();
 
             timer = new Timer(10000);
             timer.Start();
             timer.Elapsed += timer_Elapsed;
+        }
+
+        void RefreshInstalledGameList()
+        {
+            if(Games == null)
+                Games = new ObservableCollection<DataGameViewModel>();
+            var list = Program.GamesRepository.Games.Select(x => new DataGameViewModel(x)).ToList();
+            Games.Clear();
+            foreach(var l in list)
+                Games.Add(l);
         }
 
         private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)

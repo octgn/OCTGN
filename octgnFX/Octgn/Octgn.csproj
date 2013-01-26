@@ -255,12 +255,6 @@
     <Compile Include="Controls\GameManagement.xaml.cs">
       <DependentUpon>GameManagement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GameSelector2.xaml.cs">
-      <DependentUpon>GameSelector2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\GameSelectorGame.xaml.cs">
-      <DependentUpon>GameSelectorGame.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\GroupChatListItem.xaml.cs">
       <DependentUpon>GroupChatListItem.xaml</DependentUpon>
     </Compile>
@@ -279,7 +273,6 @@
     <Compile Include="Controls\GameListItem.xaml.cs">
       <DependentUpon>GameListItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\KineticBehaviour.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
     <Compile Include="Controls\LobbyChat.cs" />
@@ -727,14 +720,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\GameManagement.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\GameSelector2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\GameSelectorGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
