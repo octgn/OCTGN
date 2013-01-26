@@ -20,105 +20,176 @@ namespace Octgn.Controls
 {
     using System.Collections.ObjectModel;
 
+    using DriveSync;
+
     using Microsoft.Scripting.Utils;
 
-    /// <summary>
-	/// Interaction logic for CustomGames.xaml
-	/// </summary>
-	public partial class CustomGames : UserControl
-	{
-    //    public static DependencyProperty HostedGameListProperty = DependencyProperty.Register(
-    //"HostedGameList", typeof(List<HostedGameViewModel>), typeof(CustomGames));
+    using Octgn.Launcher;
+    using Octgn.ViewModels;
 
-    //    public List<HostedGameViewModel> HostedGameList
-    //    {
-    //        get { return GetValue(HostedGameListProperty) as List<HostedGameViewModel>; }
-    //        set{SetValue(HostedGameListProperty, value);}
-    //    }
+    /// <summary>
+    /// Interaction logic for CustomGames.xaml
+    /// </summary>
+    public partial class CustomGameList : SliderPage
+    {
+        public static DependencyProperty IsJoinableGameSelectedProperty = DependencyProperty.Register(
+            "IsJoinableGameSelected", typeof(bool), typeof(CustomGameList));
 
         public ObservableCollection<HostedGameViewModel> HostedGameList { get; set; }
+        public ObservableCollection<DataGameViewModel> Games { get; set; }
 
-		private Timer timer;
-		private bool isConnected;
-		private bool waitingForGames;
+        public bool IsJoinableGameSelected
+        {
+            get
+            {
+                return (bool)this.GetValue(IsJoinableGameSelectedProperty);
+            }
+            private set
+            {
+                SetValue(IsJoinableGameSelectedProperty,value);
+            }
+        }
 
-		public CustomGames()
-		{
-			InitializeComponent();
+        private Timer timer;
+        private bool isConnected;
+        private bool waitingForGames;
+
+        public CustomGameList()
+        {
+            InitializeComponent();
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
-			Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
-			Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
-			Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
-			timer = new Timer(8000);
-			timer.Start();
-			timer.Elapsed += timer_Elapsed;
-		}
+            Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
+            Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
+            Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
 
-		void LobbyClient_OnDisconnect(object sender, EventArgs e)
-		{
-			isConnected = false;
-		}
+            BorderHostGame.Visibility = Visibility.Hidden;
 
-		void LobbyClient_OnLoginComplete(object sender, LoginResults results)
-		{
-			isConnected = true;
-		}
+            this.RefreshInstalledGameList();
 
-		void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
-		{
-			if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
-			{
-				Trace.WriteLine("Games Received");
-				RefreshGameList();
-				waitingForGames = false;
-			}
-		}
+            this.PreviewKeyUp += OnPreviewKeyUp;
 
-		void timer_Elapsed(object sender, ElapsedEventArgs e)
-		{
-			Trace.WriteLine("Timer ticks");
-			if (!isConnected || waitingForGames) return;
-			Trace.WriteLine("Begin refresh games.");
-			waitingForGames = true;
-			Program.LobbyClient.BeginGetGameList();
-		}
+            BorderHostGame.IsVisibleChanged += (sender, args) => this.RefreshInstalledGameList();
 
-		void RefreshGameList()
-		{
-			Trace.WriteLine("Refreshing list...");
-			var list = Program.LobbyClient.GetHostedGames().Select(x=>new HostedGameViewModel(x)).ToList();
-			Dispatcher.Invoke(new Action(() =>
-			{
-				var removeList = HostedGameList.Where(i => !list.Any(x => x.Port == i.Port)).ToList();
-                removeList.ForEach(x=>HostedGameList.Remove(x));
-				var addList = list.Where(i => !HostedGameList.Any(x => x.Port == i.Port)).ToList();
-				HostedGameList.AddRange(addList);
-			}));
-		}
-	}
-	public class HostedGameViewModel
-	{
-		public Guid GameId { get; set; }
-		public string GameName { get; set; }
-		public Version GameVersion { get; set; }
-		public string Name { get; set; }
-		public NewUser User { get; set; }
-		public int Port { get; set; }
-		public Skylabs.Lobby.EHostedGame Status { get; set; }
-		public DateTime StartTime { get; set; }
-		public HostedGameViewModel(HostedGameData data)
-		{
-			var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == data.GameGuid);
-			GameId = data.GameGuid;
-			GameVersion = data.GameVersion;
-			Name = data.Name;
-			User = data.UserHosting;
-			Port = data.Port;
-			Status = data.GameStatus;
-			StartTime = data.TimeStarted;
-		    GameName = "{Unknown Game}";
-			if (game == null) return;
-			GameName = game.Name;
-		}
-	}
+            timer = new Timer(10000);
+            timer.Start();
+            timer.Elapsed += timer_Elapsed;
+        }
+
+        void RefreshInstalledGameList()
+        {
+            if(Games == null)
+                Games = new ObservableCollection<DataGameViewModel>();
+            var list = Program.GamesRepository.Games.Select(x => new DataGameViewModel(x)).ToList();
+            Games.Clear();
+            foreach(var l in list)
+                Games.Add(l);
+        }
+
+        private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
+        {
+            if (keyEventArgs.Key == Key.Escape)
+            {
+                this.HideHostGameDialog();
+            }
+            else if (keyEventArgs.Key == Key.H)
+            {
+                this.ToggleHostGameDialog();
+            }
+        }
+
+        void LobbyClient_OnDisconnect(object sender, EventArgs e)
+        {
+            isConnected = false;
+        }
+
+        void LobbyClient_OnLoginComplete(object sender, LoginResults results)
+        {
+            isConnected = true;
+        }
+
+        void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
+        {
+            if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
+            {
+                Trace.WriteLine("Games Received");
+                RefreshGameList();
+                waitingForGames = false;
+            }
+        }
+
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Trace.WriteLine("Timer ticks");
+            if (!isConnected || waitingForGames) return;
+            Trace.WriteLine("Begin refresh games.");
+            waitingForGames = true;
+            Program.LobbyClient.BeginGetGameList();
+        }
+
+        void RefreshGameList()
+        {
+            Trace.WriteLine("Refreshing list...");
+            var list = Program.LobbyClient.GetHostedGames().Select(x => new HostedGameViewModel(x)).ToList();
+            Dispatcher.Invoke(new Action(() =>
+            {
+                var removeList = HostedGameList.Where(i => !list.Any(x => x.Port == i.Port)).ToList();
+                removeList.ForEach(x => HostedGameList.Remove(x));
+                var addList = list.Where(i => !HostedGameList.Any(x => x.Port == i.Port)).ToList();
+                HostedGameList.AddRange(addList);
+                foreach(var g in HostedGameList)
+                    g.Update();
+            }));
+        }
+
+        private void ListViewGameListSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var game = ListViewGameList.SelectedItem as HostedGameViewModel;
+            this.IsJoinableGameSelected = game != null && game.CanPlay;
+        }
+
+        private void ButtonHostClick(object sender, RoutedEventArgs e)
+        {
+            this.ShowHostGameDialog();
+        }
+
+        private void ButtonJoinClick(object sender, RoutedEventArgs e)
+        {
+            this.NavigateForward();
+        }
+
+        private void ButtonCancelClick(object sender, RoutedEventArgs e)
+        {
+            this.HideHostGameDialog();
+        }
+
+        private void ButtonHostGameStartClick(object sender, RoutedEventArgs e)
+        {
+            this.HideHostGameDialog();
+            this.NavigateForward();
+        }
+
+        private void ShowHostGameDialog()
+        {
+            BorderHostGame.Visibility = Visibility.Visible;
+            BorderButtons.IsEnabled = false;
+        }
+
+        private void HideHostGameDialog()
+        {
+            BorderHostGame.Visibility = Visibility.Hidden;
+            BorderButtons.IsEnabled = true;
+        }
+
+        private void ToggleHostGameDialog()
+        {
+            if (BorderHostGame.Visibility == Visibility.Visible)
+            {
+                this.HideHostGameDialog();
+            }
+            else
+            {
+                this.ShowHostGameDialog();
+            }
+        }
+    }
 }
