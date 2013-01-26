@@ -7,11 +7,24 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="497*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <ListView MouseDoubleClick="GameList_OnMouseDoubleClick" ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}" IsSynchronizedWithCurrentItem="True" utils:GridViewSort.AutoSort="True">
+        <Border Style="{StaticResource Panel}" Padding="5,5,5,5">
+            <StackPanel Orientation="Horizontal">
+                <Button Click="ButtonHostClick" Content="Host" Padding="10,0,10,0" Margin="5,0,5,0"></Button>
+                <Button Click="ButtonJoinClick" Content="Join" Padding="10,0,10,0" Margin="5,0,5,0"
+                        IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}">
+                </Button>
+            </StackPanel>
+        </Border>
+        <ListView x:Name="ListViewGameList" Grid.Row="2" SelectionChanged="ListViewGameListSelectionChanged" ItemsSource="{Binding HostedGameList, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}" IsSynchronizedWithCurrentItem="True" utils:GridViewSort.AutoSort="True" Grid.RowSpan="3">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Game" 

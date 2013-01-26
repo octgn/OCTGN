@@ -32,7 +32,22 @@ namespace Octgn.Controls
     /// </summary>
     public partial class CustomGameList : SliderPage
     {
+        public static DependencyProperty IsJoinableGameSelectedProperty = DependencyProperty.Register(
+            "IsJoinableGameSelected", typeof(bool), typeof(CustomGameList));
+
         public ObservableCollection<HostedGameViewModel> HostedGameList { get; set; }
+
+        public bool IsJoinableGameSelected
+        {
+            get
+            {
+                return (bool)this.GetValue(IsJoinableGameSelectedProperty);
+            }
+            private set
+            {
+                SetValue(IsJoinableGameSelectedProperty,value);
+            }
+        }
 
         private Timer timer;
         private bool isConnected;
@@ -98,6 +113,22 @@ namespace Octgn.Controls
         private void GameList_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             this.NavigateForward();
+        }
+
+        private void ListViewGameListSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var game = ListViewGameList.SelectedItem as HostedGameViewModel;
+            this.IsJoinableGameSelected = game != null && game.CanPlay;
+        }
+
+        private void ButtonHostClick(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void ButtonJoinClick(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }
