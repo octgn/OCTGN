@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:controls="clr-namespace:Octgn.Controls"
              xmlns:utils="clr-namespace:Octgn.Utils" xmlns:driveSync="clr-namespace:DriveSync"
-             mc:Ignorable="d" 
+                      xmlns:launcher="clr-namespace:Octgn.Launcher"
+                      mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -16,10 +17,41 @@
             <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Border Style="{StaticResource Panel}" Padding="5,5,5,5">
+        <Border x:Name="BorderHostGame" Visibility="Visible" Grid.RowSpan="3" Grid.ColumnSpan="2" Padding="10,10,10,10" Style="{StaticResource Panel}" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="5">
+            <Grid>
+                <Grid.RowDefinitions >
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"></ColumnDefinition>
+                    <ColumnDefinition Width="50*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.ColumnSpan="2" FontSize="15" HorizontalAlignment="Center">Host A Game</Label>
+                <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Local Game" FlowDirection="RightToLeft" HorizontalAlignment="Left"/>
+                <Label Grid.Row="4" Grid.Column="0">Game Name</Label>
+                <TextBox Grid.Row="4" Grid.Column="1" x:Name="TextBoxGameName"/>
+                <Label Grid.Row="6" Grid.Column="0">Password</Label>
+                <PasswordBox Grid.Row="6" Grid.Column="1" x:Name="PasswordGame"></PasswordBox>
+                <Label Grid.Row="8" Grid.Column="0">Game</Label>
+                <controls:GameSelector2 Grid.Row="8" Grid.Column="1" x:Name="GameSelector" Width="250" Height="100"></controls:GameSelector2>
+                <Button Grid.Row="10" Grid.Column="0" Width="50" HorizontalAlignment="Left" Click="ButtonCancelClick" Content="Cancel"></Button>
+                <Button Grid.Row="10" Grid.Column="1" Width="50" HorizontalAlignment="Right" Click="ButtonHostGameStartClick" Content="Start"></Button>
+            </Grid>
+        </Border>
+        <Border Padding="0,5,0,5">
             <StackPanel Orientation="Horizontal">
-                <Button Click="ButtonHostClick" Content="Host" Padding="10,0,10,0" Margin="5,0,5,0"></Button>
-                <Button Click="ButtonJoinClick" Content="Join" Padding="10,0,10,0" Margin="5,0,5,0"
+                <Button Click="ButtonHostClick" Content="Host" Padding="10,0,10,0" Margin="0,0,5,0"></Button>
+                <Button Click="ButtonJoinClick" Content="Join" Padding="10,0,10,0" Margin="0,0,5,0"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}">
                 </Button>
             </StackPanel>

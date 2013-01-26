@@ -61,9 +61,22 @@ namespace Octgn.Controls
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
 
+            this.Loaded += delegate { this.BorderHostGame.Visibility = Visibility.Hidden; };
+
+            this.PreviewKeyUp += OnPreviewKeyUp;
+
             timer = new Timer(10000);
             timer.Start();
             timer.Elapsed += timer_Elapsed;
+        }
+
+        private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
+        {
+            if (keyEventArgs.Key == Key.Escape)
+            {
+                if(BorderHostGame.Visibility != Visibility.Hidden)
+                    BorderHostGame.Visibility = Visibility.Hidden;
+            }
         }
 
         void LobbyClient_OnDisconnect(object sender, EventArgs e)
@@ -123,12 +136,23 @@ namespace Octgn.Controls
 
         private void ButtonHostClick(object sender, RoutedEventArgs e)
         {
-            
+            BorderHostGame.Visibility = Visibility.Visible;
         }
 
         private void ButtonJoinClick(object sender, RoutedEventArgs e)
         {
             
+        }
+
+        private void ButtonCancelClick(object sender, RoutedEventArgs e)
+        {
+            BorderHostGame.Visibility = Visibility.Hidden;
+        }
+
+        private void ButtonHostGameStartClick(object sender, RoutedEventArgs e)
+        {
+            BorderHostGame.Visibility = Visibility.Hidden;
+            this.NavigateForward();
         }
     }
 }
