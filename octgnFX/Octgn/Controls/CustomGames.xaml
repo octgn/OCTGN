@@ -18,6 +18,18 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Border x:Name="BorderHostGame" Width="300" Visibility="Visible" Grid.RowSpan="3" Grid.ColumnSpan="2" Padding="10,10,10,10" Style="{StaticResource Panel}" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="5">
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
+                    <LinearGradientBrush.Transform>
+                        <RotateTransform Angle="-22" CenterY="0.5" CenterX="0.5"/>
+                    </LinearGradientBrush.Transform>
+                    <GradientStop Color="#FF333333" Offset="0.558"/>
+                    <GradientStop Color="#FF555555" Offset="1"/>
+                    <GradientStop Color="#FF777777" Offset="0"/>
+                    <GradientStop Color="#FF555555" Offset="0.154"/>
+                    <GradientStop Color="#FF333333" Offset="0.351"/>
+                </LinearGradientBrush>
+            </Border.Background>
             <Grid>
                 <Grid.RowDefinitions >
                     <RowDefinition Height="Auto"/>
@@ -29,7 +41,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="6"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="30"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -48,7 +60,7 @@
                 <Button Grid.Row="10" Grid.Column="1" Width="50" HorizontalAlignment="Right" Click="ButtonHostGameStartClick" Content="Start"></Button>
             </Grid>
         </Border>
-        <Border Padding="0,5,0,5">
+        <Border x:Name="BorderButtons" Padding="0,5,0,5">
             <StackPanel Orientation="Horizontal">
                 <Button Click="ButtonHostClick" Content="Host" Padding="10,0,10,0" Margin="0,0,5,0"></Button>
                 <Button Click="ButtonJoinClick" Content="Join" Padding="10,0,10,0" Margin="0,0,5,0"

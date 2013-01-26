@@ -89,8 +89,11 @@ namespace Octgn.Controls
         {
             if (keyEventArgs.Key == Key.Escape)
             {
-                if(BorderHostGame.Visibility != Visibility.Hidden)
-                    BorderHostGame.Visibility = Visibility.Hidden;
+                this.HideHostGameDialog();
+            }
+            else if (keyEventArgs.Key == Key.H)
+            {
+                this.ToggleHostGameDialog();
             }
         }
 
@@ -138,11 +141,6 @@ namespace Octgn.Controls
             }));
         }
 
-        private void GameList_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            this.NavigateForward();
-        }
-
         private void ListViewGameListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var game = ListViewGameList.SelectedItem as HostedGameViewModel;
@@ -151,23 +149,47 @@ namespace Octgn.Controls
 
         private void ButtonHostClick(object sender, RoutedEventArgs e)
         {
-            BorderHostGame.Visibility = Visibility.Visible;
+            this.ShowHostGameDialog();
         }
 
         private void ButtonJoinClick(object sender, RoutedEventArgs e)
         {
-            
+            this.NavigateForward();
         }
 
         private void ButtonCancelClick(object sender, RoutedEventArgs e)
         {
-            BorderHostGame.Visibility = Visibility.Hidden;
+            this.HideHostGameDialog();
         }
 
         private void ButtonHostGameStartClick(object sender, RoutedEventArgs e)
         {
-            BorderHostGame.Visibility = Visibility.Hidden;
+            this.HideHostGameDialog();
             this.NavigateForward();
+        }
+
+        private void ShowHostGameDialog()
+        {
+            BorderHostGame.Visibility = Visibility.Visible;
+            BorderButtons.IsEnabled = false;
+        }
+
+        private void HideHostGameDialog()
+        {
+            BorderHostGame.Visibility = Visibility.Hidden;
+            BorderButtons.IsEnabled = true;
+        }
+
+        private void ToggleHostGameDialog()
+        {
+            if (BorderHostGame.Visibility == Visibility.Visible)
+            {
+                this.HideHostGameDialog();
+            }
+            else
+            {
+                this.ShowHostGameDialog();
+            }
         }
     }
 }
