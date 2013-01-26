@@ -10,6 +10,13 @@ Get Involved!
 
 Your own awesome changes
 -------------------------------------------------
+* Install Chocolatey (http://chocolatey.org/)
+* Install .Net 4.0 (http://www.microsoft.com/en-us/download/details.aspx?id=17718)
+* Open a command prompt and type: cinst OctgnDevPackage-Express
+* You're good to go
+
+Or the manual way.
+
 * Get Visual Studio Express C# (http://www.microsoft.com/visualstudio/en-us/products/2010-editions/visual-csharp-express)
 * Download the Microsoft Ribbon Control (http://www.microsoft.com/en-us/download/details.aspx?id=11877)
 * Open the main project file under **OCTGN/octgnFX/Octgn/OCTGN.sln** with Visual Studio Express C#
