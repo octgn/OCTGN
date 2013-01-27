@@ -14,6 +14,8 @@ namespace Octgn.Windows
     using System.Windows;
     using System.Windows.Input;
 
+    using Octgn.DeckBuilder;
+
     using agsXMPP;
 
     using Octgn.Controls;
@@ -204,6 +206,15 @@ namespace Octgn.Windows
         private void MenuExitClick(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void MenuDeckEditorClick(object sender, RoutedEventArgs e)
+        {
+            if (Program.DeckEditor == null)
+            {
+                Program.DeckEditor = new DeckBuilderWindow();
+                Program.DeckEditor.Show();
+            }
         }
     }
 }
