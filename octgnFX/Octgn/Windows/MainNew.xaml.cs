@@ -157,8 +157,6 @@ namespace Octgn.Windows
                     () =>
                         {
                             TabCommunityChat.IsEnabled = false;
-                            TabCustomGames.IsEnabled = false;
-
                             TabMain.Focus();
                         }));
         }
@@ -173,7 +171,6 @@ namespace Octgn.Windows
                     () =>
                         {
                             TabCommunityChat.IsEnabled = true;
-                            TabCustomGames.IsEnabled = true;
                         }));
         }
 
