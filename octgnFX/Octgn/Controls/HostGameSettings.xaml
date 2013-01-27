@@ -39,7 +39,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.ColumnSpan="2" FontSize="15" HorizontalAlignment="Center">Host A Game</Label>
             <Label Grid.Row="1" Grid.ColumnSpan="2" Foreground="Firebrick" Margin="0,10,0,10" Content="{Binding Error, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}"/>
-            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="CheckBoxIsLocalGame" Content="Local Game" FlowDirection="RightToLeft" HorizontalAlignment="Left" IsEnabled="{Binding LocalGameCheckboxEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:HostGameSettings}}}">
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="CheckBoxIsLocalGame" Content="Self Hosted Game" FlowDirection="RightToLeft" HorizontalAlignment="Left">
             </CheckBox>
             <Label Grid.Row="4" Grid.Column="0">Game Name</Label>
             <Grid Grid.Row="4" Grid.Column="1">

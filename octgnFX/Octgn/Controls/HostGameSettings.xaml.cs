@@ -32,21 +32,11 @@
         public static DependencyProperty ErrorProperty = DependencyProperty.Register(
             "Error", typeof(String), typeof(HostGameSettings));
 
-        public static DependencyProperty LocalGameCheckboxEnabledProperty = DependencyProperty.Register(
-            "LocalGameCheckboxEnabled", typeof(bool),typeof(HostGameSettings));
-
         public bool HasErrors { get; private set; }
         public string Error
         {
             get { return this.GetValue(ErrorProperty) as String; }
             private set { this.SetValue(ErrorProperty, value); }
-        }
-        public bool LocalGameCheckboxEnabled
-        {
-            get
-            {
-                return Program.LobbyClient.IsConnected;
-            }
         }
 
         public bool IsLocalGame { get; private set; }
@@ -64,8 +54,30 @@
             InitializeComponent();
             Games = new ObservableCollection<DataGameViewModel>();
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
+            Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
+            Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
             TextBoxGameName.Text = Prefs.LastRoomName;
             CheckBoxIsLocalGame.IsChecked = !Program.LobbyClient.IsConnected;
+            CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
+        }
+
+        private void LobbyClientOnDisconnect(object sender, EventArgs e)
+        {
+            Dispatcher.Invoke(new Action(() =>
+                { 
+                    CheckBoxIsLocalGame.IsChecked = true;
+                    CheckBoxIsLocalGame.IsEnabled = false;
+                }));
+        }
+
+        private void LobbyClientOnLoginComplete(object sender, LoginResults results)
+        {
+            Dispatcher.Invoke(new Action(() =>
+                { 
+                    CheckBoxIsLocalGame.IsChecked = false;
+                    CheckBoxIsLocalGame.IsEnabled = true;
+                }));
+            
         }
 
         void RefreshInstalledGameList()
