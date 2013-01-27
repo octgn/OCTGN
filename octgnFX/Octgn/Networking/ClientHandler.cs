@@ -48,13 +48,18 @@ namespace Octgn.Networking
 
         public void Start()
         {
-            if (!Program.Game.IsLocal)
-                Program.MainWindow.StartGame();
+            if (!Program.UseNewChrome)
+            {
+                if (!Program.Game.IsLocal) Program.MainWindow.StartGame();
+                else
+                {
+                    var sg = Program.LauncherWindow.Content as StartGame;
+                    if (sg != null) sg.Start();
+                }
+            }
             else
             {
-                var sg = Program.LauncherWindow.Content as StartGame;
-                if(sg != null)
-                    sg.Start();
+                Program.StartGame();
             }
         }
 

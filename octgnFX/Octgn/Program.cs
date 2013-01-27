@@ -30,6 +30,7 @@ namespace Octgn
         public static DeckBuilderWindow DeckEditor;
         public static PlayWindow PlayWindow;
         public static List<ChatWindow> ChatWindows;
+        public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
 
         public static Game Game;
 
@@ -121,7 +122,26 @@ namespace Octgn
                 else if(LauncherWindow != null) LauncherWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
             }
         }
+        internal static void StartGame()
+        {
+            // Reset the InvertedTable flags if they were set and they are not used
+            if (!Program.GameSettings.UseTwoSidedTable)
+                foreach (Player player in Player.AllExceptGlobal)
+                    player.InvertedTable = false;
 
+            // At start the global items belong to the player with the lowest id
+            if (Player.GlobalPlayer != null)
+            {
+                Player host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
+                foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
+                    group.Controller = host;
+            }
+
+            if (Program.PlayWindow != null) return;
+            Program.Client.Rpc.Start();
+            Program.PlayWindow = new PlayWindow(Program.Game.IsLocal);
+            Program.PlayWindow.Show();
+        }
         public static void StopGame()
         {
             if (Client != null)

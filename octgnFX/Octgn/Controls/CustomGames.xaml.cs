@@ -13,11 +13,10 @@ namespace Octgn.Controls
     using System.Collections.ObjectModel;
     using System.Windows.Forms;
 
-    using DriveSync;
-
     using Microsoft.Scripting.Utils;
 
     using Octgn.ViewModels;
+    using Octgn.Windows;
 
     using KeyEventArgs = System.Windows.Input.KeyEventArgs;
     using Timer = System.Timers.Timer;
@@ -25,7 +24,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for CustomGames.xaml
     /// </summary>
-    public partial class CustomGameList : SliderPage
+    public partial class CustomGameList
     {
         public static DependencyProperty IsJoinableGameSelectedProperty = DependencyProperty.Register(
             "IsJoinableGameSelected", typeof(bool), typeof(CustomGameList));
@@ -135,10 +134,11 @@ namespace Octgn.Controls
             {
                 if (hostGameDialog.SuccessfulHost)
                 {
-                    if(Slider.Pages.Count > 1)
-                        Slider.Pages.RemoveRange(1,Slider.Pages.Count - 1);
-                    Slider.AddPage(new PreGameLobby(hostGameDialog.IsLocalGame));
-                    this.NavigateForward();
+                    if (Program.PreGameLobbyWindow == null)
+                    {
+                        Program.PreGameLobbyWindow = new PreGameLobbyWindow();
+                        Program.PreGameLobbyWindow.Setup();
+                    }
                 }
             }
         }
@@ -177,7 +177,7 @@ namespace Octgn.Controls
 
         private void ButtonJoinClick(object sender, RoutedEventArgs e)
         {
-            this.NavigateForward();
+            //this.NavigateForward();
         }
 
         #endregion
