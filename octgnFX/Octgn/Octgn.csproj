@@ -273,6 +273,9 @@
     <Compile Include="Controls\GameListItem.xaml.cs">
       <DependentUpon>GameListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\HostGameSettings.xaml.cs">
+      <DependentUpon>HostGameSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
     <Compile Include="Controls\LobbyChat.cs" />
@@ -573,6 +576,7 @@
     <Resource Include="Resources\usernoimage.png" />
     <Resource Include="Resources\back-button.png" />
     <Resource Include="Resources\loading.gif" />
+    <Resource Include="Resources\randomname.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -744,6 +748,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\GameListItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\HostGameSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
