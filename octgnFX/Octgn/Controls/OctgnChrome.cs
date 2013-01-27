@@ -524,7 +524,10 @@ namespace Octgn.Controls
             {
                 return;
             }
-            
+
+            if (mouseButtonEventArgs.LeftButton != MouseButtonState.Pressed) return;
+            if (mouseButtonEventArgs.MiddleButton == MouseButtonState.Pressed || mouseButtonEventArgs.RightButton == MouseButtonState.Pressed) return;
+
             var s = sender as Rectangle;
             if (s == null)
             {
@@ -570,6 +573,8 @@ namespace Octgn.Controls
         /// </param>
         private void BorderMouseDown1(object sender, MouseButtonEventArgs e)
         {
+            if (e.LeftButton != MouseButtonState.Pressed) return;
+            if (e.MiddleButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed) return;
             this.DragMove();
         }
     }
