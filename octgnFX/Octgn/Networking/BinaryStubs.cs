@@ -1124,6 +1124,7 @@ namespace Octgn.Networking
 			stream.Seek(4, SeekOrigin.Begin);
 			BinaryWriter writer = new BinaryWriter(stream);
 
+		    if (Program.Client == null) return;
       if (Program.Client.Muted != 0)
           writer.Write(Program.Client.Muted);
       else
