@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.Linq;
     using System.Net;
     using System.Windows;
@@ -31,10 +32,21 @@
         public static DependencyProperty ErrorProperty = DependencyProperty.Register(
             "Error", typeof(String), typeof(HostGameSettings));
 
+        public static DependencyProperty LocalGameCheckboxEnabledProperty = DependencyProperty.Register(
+            "LocalGameCheckboxEnabled", typeof(bool),typeof(HostGameSettings));
+
         public bool HasErrors { get; private set; }
-        public string Error{
-            get{return this.GetValue(ErrorProperty) as String;}
+        public string Error
+        {
+            get { return this.GetValue(ErrorProperty) as String; }
             private set { this.SetValue(ErrorProperty, value); }
+        }
+        public bool LocalGameCheckboxEnabled
+        {
+            get
+            {
+                return Program.LobbyClient.IsConnected;
+            }
         }
 
         public bool IsLocalGame { get; private set; }
@@ -53,6 +65,7 @@
             Games = new ObservableCollection<DataGameViewModel>();
             Program.LobbyClient.OnDataReceived += LobbyClientOnDataReceviedCaller;
             TextBoxGameName.Text = Prefs.LastRoomName;
+            CheckBoxIsLocalGame.IsChecked = !Program.LobbyClient.IsConnected;
         }
 
         void RefreshInstalledGameList()
@@ -114,9 +127,7 @@
             {
                 this.SetError("Error: {0}" + e.Message);
             }
-            this.EndWait();
-            if(SuccessfulHost)
-                this.Close(DialogResult.OK);
+
         }
         #endregion
 
@@ -140,7 +151,7 @@
             IsLocalGame = CheckBoxIsLocalGame.IsChecked ?? false;
             Gamename = TextBoxGameName.Text;
             Password = PasswordGame.Password;
-            if(ComboBoxGame.SelectedIndex != -1)
+            if (ComboBoxGame.SelectedIndex != -1)
                 Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository);
             Placeholder.Child = null;
             this.FireOnClose(this, result);
@@ -158,6 +169,46 @@
             ProgressBar.Visibility = Visibility.Hidden;
         }
 
+        void StartLocalGame(Data.Game game, string name, string password)
+        {
+            var hostport = 5000;
+            while (!Networking.IsPortAvailable(hostport)) hostport++;
+            var hs = new HostedGame(hostport, game.Id, game.Version, name, "", null, true);
+            if (!hs.StartProcess())
+            {
+                this.SetError("Cannot start local game");
+                return;
+            }
+
+            Program.LobbyClient.CurrentHostedGamePort = hostport;
+            Program.GameSettings.UseTwoSidedTable = true;
+            Program.Game = new Game(GameDef.FromO8G(game.FullPath), true);
+            Program.IsHost = true;
+
+            var ip = IPAddress.Parse("127.0.0.1");
+
+            try
+            {
+                Program.Client = new Client(ip, hostport);
+                Program.Client.Connect();
+                SuccessfulHost = true;
+                this.SetError();
+                //Dispatcher.Invoke(new Action(() => Program.LauncherWindow.NavigationService.Navigate(new StartGame(true) { Width = 400 })));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                //if (Debugger.IsAttached) Debugger.Break();
+                this.SetError("Cannot start local game");
+            }
+        }
+
+        void StartOnlineGame(Data.Game game, string name, string password)
+        {
+            Program.CurrentOnlineGameName = TextBoxGameName.Text;
+            Program.LobbyClient.BeginHostGame(game, name);
+        }
+
         #endregion
 
         #region UI Events
@@ -171,8 +222,13 @@
             this.ValidateFields();
             if (this.HasErrors) return;
             this.StartWait();
-            Program.CurrentOnlineGameName = TextBoxGameName.Text;
-            Program.LobbyClient.BeginHostGame((ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository),TextBoxGameName.Text);
+            if ((CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false))
+                this.StartOnlineGame((ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository), TextBoxGameName.Text, PasswordGame.Password);
+            else
+                this.StartLocalGame((ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository), TextBoxGameName.Text, PasswordGame.Password);
+            this.EndWait();
+            if (SuccessfulHost)
+                this.Close(DialogResult.OK);
         }
 
         private void ButtonRandomizeGameNameClick(object sender, RoutedEventArgs e)

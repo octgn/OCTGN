@@ -236,6 +236,8 @@ namespace Skylabs.Lobby
         /// </summary>
         public bool DisconnectedBecauseConnectionReplaced { get; set; }
 
+        public bool IsConnected { get; private set; }
+
         /// <summary>
         /// The host.
         /// </summary>
@@ -310,7 +312,7 @@ namespace Skylabs.Lobby
                 this.xmpp.OnStreamError += this.XmppOnOnStreamError;
                 this.xmpp.OnReadSocketData += this.XmppOnOnReadSocketData;
             }
-
+            this.IsConnected = false;
             this.myPresence = new Presence();
             this.CurrentHostedGamePort = -1;
             this.games = new List<HostedGameData>();
@@ -349,6 +351,7 @@ namespace Skylabs.Lobby
             if (st != null && st.Condition == StreamErrorCondition.Conflict)
             {
                 this.DisconnectedBecauseConnectionReplaced = true;
+                this.IsConnected = false;
             }
 
             string textTag = element.GetTag("text");
@@ -416,6 +419,7 @@ namespace Skylabs.Lobby
         private void XmppOnOnClose(object sender)
         {
             Trace.WriteLine("[Xmpp]Closed");
+            IsConnected = false;
         }
 
         /// <summary>
@@ -801,6 +805,7 @@ namespace Skylabs.Lobby
         {
             this.FireLoginComplete(LoginResults.AuthError);
             Trace.WriteLine("[XMPP]AuthError: Closing...");
+            this.IsConnected = false;
             this.xmpp.Close();
         }
 
@@ -822,6 +827,7 @@ namespace Skylabs.Lobby
             this.Me = new NewUser(this.xmpp.MyJID);
             this.Me.SetStatus(UserStatus.Online);
             this.xmpp.PresenceManager.Subscribe(this.xmpp.MyJID);
+            IsConnected = true;
             this.FireLoginComplete(LoginResults.Success);
         }
 
