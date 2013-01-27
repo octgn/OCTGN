@@ -11,6 +11,7 @@
         public PreGameLobbyWindow()
         {
             InitializeComponent();
+            Program.PreGameLobbyWindow = this;
             this.CloseButtonVisibility = Visibility.Hidden;
             this.Closed += (sender, args) => Program.PreGameLobbyWindow = null;
         }
