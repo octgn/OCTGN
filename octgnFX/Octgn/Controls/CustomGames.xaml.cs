@@ -1,31 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Octgn.Utils;
+
 using Skylabs.Lobby;
 
 namespace Octgn.Controls
 {
     using System.Collections.ObjectModel;
+    using System.Windows.Forms;
 
     using DriveSync;
 
     using Microsoft.Scripting.Utils;
 
-    using Octgn.Launcher;
     using Octgn.ViewModels;
+
+    using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+    using Timer = System.Timers.Timer;
 
     /// <summary>
     /// Interaction logic for CustomGames.xaml
@@ -36,7 +31,6 @@ namespace Octgn.Controls
             "IsJoinableGameSelected", typeof(bool), typeof(CustomGameList));
 
         public ObservableCollection<HostedGameViewModel> HostedGameList { get; set; }
-        public ObservableCollection<DataGameViewModel> Games { get; set; }
 
         public bool IsJoinableGameSelected
         {
@@ -50,9 +44,10 @@ namespace Octgn.Controls
             }
         }
 
-        private Timer timer;
+        private readonly Timer timer;
         private bool isConnected;
         private bool waitingForGames;
+        private HostGameSettings hostGameDialog;
 
         public CustomGameList()
         {
@@ -62,68 +57,11 @@ namespace Octgn.Controls
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
 
-            BorderHostGame.Visibility = Visibility.Hidden;
-
-            this.RefreshInstalledGameList();
-
             this.PreviewKeyUp += OnPreviewKeyUp;
-
-            BorderHostGame.IsVisibleChanged += (sender, args) => this.RefreshInstalledGameList();
 
             timer = new Timer(10000);
             timer.Start();
-            timer.Elapsed += timer_Elapsed;
-        }
-
-        void RefreshInstalledGameList()
-        {
-            if(Games == null)
-                Games = new ObservableCollection<DataGameViewModel>();
-            var list = Program.GamesRepository.Games.Select(x => new DataGameViewModel(x)).ToList();
-            Games.Clear();
-            foreach(var l in list)
-                Games.Add(l);
-        }
-
-        private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
-        {
-            if (keyEventArgs.Key == Key.Escape)
-            {
-                this.HideHostGameDialog();
-            }
-            else if (keyEventArgs.Key == Key.H)
-            {
-                this.ToggleHostGameDialog();
-            }
-        }
-
-        void LobbyClient_OnDisconnect(object sender, EventArgs e)
-        {
-            isConnected = false;
-        }
-
-        void LobbyClient_OnLoginComplete(object sender, LoginResults results)
-        {
-            isConnected = true;
-        }
-
-        void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
-        {
-            if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
-            {
-                Trace.WriteLine("Games Received");
-                RefreshGameList();
-                waitingForGames = false;
-            }
-        }
-
-        void timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            Trace.WriteLine("Timer ticks");
-            if (!isConnected || waitingForGames) return;
-            Trace.WriteLine("Begin refresh games.");
-            waitingForGames = true;
-            Program.LobbyClient.BeginGetGameList();
+            timer.Elapsed += this.TimerElapsed;
         }
 
         void RefreshGameList()
@@ -141,10 +79,95 @@ namespace Octgn.Controls
             }));
         }
 
+        private void ShowHostGameDialog()
+        {
+            hostGameDialog = new HostGameSettings();
+            hostGameDialog.Show(DialogPlaceHolder);
+            hostGameDialog.OnClose += HostGameSettingsDialogOnClose;
+            BorderButtons.IsEnabled = false;
+        }
+
+        private void HideHostGameDialog()
+        {
+            hostGameDialog.Close();
+        }
+
+        private void ToggleHostGameDialog()
+        {
+            if (hostGameDialog != null)
+            {
+                this.HideHostGameDialog();
+            }
+            else
+            {
+                this.ShowHostGameDialog();
+            }
+        }
+
+        #region LobbyEvents
+        void LobbyClient_OnDisconnect(object sender, EventArgs e)
+        {
+            isConnected = false;
+        }
+
+        void LobbyClient_OnLoginComplete(object sender, LoginResults results)
+        {
+            isConnected = true;
+        }
+
+        void LobbyClient_OnDataReceived(object sender, DataRecType type, object data) 
+        {
+            if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
+            {
+                Trace.WriteLine("Games Received");
+                RefreshGameList();
+                waitingForGames = false;
+            }
+        }
+        #endregion
+
+        #region UI Events
+
+        private void HostGameSettingsDialogOnClose(object o, DialogResult dialogResult)
+        {
+            BorderButtons.IsEnabled = true;
+            if (dialogResult == DialogResult.OK)
+            {
+                if (hostGameDialog.SuccessfulHost)
+                {
+                    if(Slider.Pages.Count > 1)
+                        Slider.Pages.RemoveRange(1,Slider.Pages.Count - 1);
+                    Slider.AddPage(new PreGameLobby(hostGameDialog.IsLocalGame));
+                    this.NavigateForward();
+                }
+            }
+        }
+
+        void TimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            Trace.WriteLine("Timer ticks");
+            if (!isConnected || waitingForGames) return;
+            Trace.WriteLine("Begin refresh games.");
+            waitingForGames = true;
+            Program.LobbyClient.BeginGetGameList();
+        }
+
         private void ListViewGameListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var game = ListViewGameList.SelectedItem as HostedGameViewModel;
             this.IsJoinableGameSelected = game != null && game.CanPlay;
+        }
+
+        private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
+        {
+            if (keyEventArgs.Key == Key.Escape)
+            {
+                this.HideHostGameDialog();
+            }
+            else if (keyEventArgs.Key == Key.H)
+            {
+                this.ToggleHostGameDialog();
+            }
         }
 
         private void ButtonHostClick(object sender, RoutedEventArgs e)
@@ -157,39 +180,7 @@ namespace Octgn.Controls
             this.NavigateForward();
         }
 
-        private void ButtonCancelClick(object sender, RoutedEventArgs e)
-        {
-            this.HideHostGameDialog();
-        }
+        #endregion
 
-        private void ButtonHostGameStartClick(object sender, RoutedEventArgs e)
-        {
-            this.HideHostGameDialog();
-            this.NavigateForward();
-        }
-
-        private void ShowHostGameDialog()
-        {
-            BorderHostGame.Visibility = Visibility.Visible;
-            BorderButtons.IsEnabled = false;
-        }
-
-        private void HideHostGameDialog()
-        {
-            BorderHostGame.Visibility = Visibility.Hidden;
-            BorderButtons.IsEnabled = true;
-        }
-
-        private void ToggleHostGameDialog()
-        {
-            if (BorderHostGame.Visibility == Visibility.Visible)
-            {
-                this.HideHostGameDialog();
-            }
-            else
-            {
-                this.ShowHostGameDialog();
-            }
-        }
     }
 }

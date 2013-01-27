@@ -3,6 +3,7 @@
     using System;
     using System.ComponentModel;
     using System.Drawing;
+    using System.Linq;
     using System.Windows.Media.Imaging;
 
     public class DataGameViewModel : INotifyPropertyChanged
@@ -16,6 +17,7 @@
         public string Name { get; private set; }
         public Version Version { get; private set; }
         public Uri CardBackUri { get; private set; }
+        public string FullPath { get; private set; }
         public BitmapImage CardBack { get
         {
             if (cardBack == null)
@@ -45,7 +47,13 @@
             Name = game.Name;
             Version = game.Version;
             CardBackUri = game.GetCardBackUri();
+            FullPath = game.FullPath;
             IsSelected = false;
+        }
+
+        public Data.Game GetGame(Data.GamesRepository repo)
+        {
+            return repo.AllGames.FirstOrDefault(x => x.Id == Id);
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

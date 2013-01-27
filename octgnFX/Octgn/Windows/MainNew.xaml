@@ -35,7 +35,6 @@
                     <driveSync:ControlSlider> 
                         <driveSync:ControlSlider.Pages>
                             <Controls:CustomGameList></Controls:CustomGameList>
-                            <Controls:PreGameLobby></Controls:PreGameLobby>
                         </driveSync:ControlSlider.Pages>
                     </driveSync:ControlSlider>
                 </Border>

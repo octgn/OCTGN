@@ -364,5 +364,12 @@ namespace DriveSync
 
             this.Content.Child = this.Pages[0];
         }
+
+        public void AddPage(SliderPage page)
+        {
+            page.Slider = this;
+            page.RenderTransform = new TranslateTransform();
+            this.Pages.Add(page);
+        }
     }
 }
