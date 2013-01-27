@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -10,22 +8,17 @@ using System.Windows.Documents;
 using System.Windows.Threading;
 using Octgn.Data;
 using Octgn.DeckBuilder;
-using Octgn.Launcher;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Utils;
 using Skylabs.Lobby;
-using ChatWindow = Octgn.Windows.ChatWindow;
+
 using Client = Octgn.Networking.Client;
-using LauncherWindow = Octgn.Windows.LauncherWindow;
-using Main = Octgn.Windows.Main;
-using RE = System.Text.RegularExpressions;
 
 namespace Octgn
 {
     using System.Configuration;
 
-    using Octgn.Library;
     using Octgn.Windows;
 
     public static class Program
