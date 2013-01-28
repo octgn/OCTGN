@@ -54,6 +54,7 @@ namespace Octgn.Play.Dialogs
                             {
                                 TabControlMain.IsEnabled = false;
                                 ProgressBarLoading.Visibility = Visibility.Visible;
+                                ProgressBarLoading.IsIndeterminate = true;
                                 ProgressBarLoading.Maximum = packs.Count();
                             }));
                         this.StopListenningForFilterValueChanges();
@@ -77,7 +78,11 @@ namespace Octgn.Play.Dialogs
                                 Dispatcher.Invoke(new Action(() => { this.UnlimitedPool.Add(c); }));
                             }
 
-                            Dispatcher.Invoke(new Action(() => { ProgressBarLoading.Value += 1; }));
+                            Dispatcher.Invoke(new Action(() =>
+                                {
+                                    ProgressBarLoading.IsIndeterminate = false;
+                                    ProgressBarLoading.Value += 1;
+                                }));
                         }
 
                         Dispatcher.Invoke(

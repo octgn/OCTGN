@@ -13,6 +13,7 @@ namespace Skylabs.Lobby
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
 
     using agsXMPP;
     using agsXMPP.protocol.client;
@@ -492,6 +493,42 @@ namespace Skylabs.Lobby
 
                 switch (command)
                 {
+                    case "?":
+                        {
+                            var helpMessage = new StringBuilder();
+                            helpMessage.AppendLine("--Commands--");
+                            helpMessage.AppendLine("/?                : This help");
+                            helpMessage.AppendLine(
+                                "/topic            : Set the topic of the room if you have the proper credentials");
+                            helpMessage.AppendLine("/msg {username}   : Starts a chat with a specific user");
+                            helpMessage.AppendLine("/friend {username}: Add a friend, or multiple friends");
+                            helpMessage.AppendLine("/removefriend {username}: Remove a friend, or multiple friends");
+                            helpMessage.AppendLine("/invite {username}: Invite user, or multiple users, to a chat room");
+                            Message mess = null;
+                            if (IsGroupChat)
+                            {
+                                foreach (var l in helpMessage.ToString()
+                                                   .Split(new[] { Environment.NewLine }, StringSplitOptions.None))
+                                {
+                                    mess = new Message(this.client.Me.JidUser, MessageType.groupchat, l);
+                                    mess.From = this.GroupUser.JidUser;
+                                    mess.Chatstate = Chatstate.None;
+                                    this.OnMessage(this,mess);
+                                }
+                            }
+                            else
+                            {
+                                foreach (var l in helpMessage.ToString()
+                                                   .Split(new[] { Environment.NewLine }, StringSplitOptions.None))
+                                {
+                                    mess = new Message(this.client.Me.JidUser, MessageType.chat, l);
+                                    mess.From = "SYSTEM" + "@" + this.client.Host;
+                                    mess.Chatstate = Chatstate.None;
+                                    this.OnMessage(this,mess);
+                                }
+                            }
+                            break;
+                        }
                     case "topic":
                         {
                             this.SetTopic(String.Join(" ", args));
@@ -502,7 +539,61 @@ namespace Skylabs.Lobby
                         {
                             NewChatRoom r =
                                 this.client.Chatting.GetRoom(
-                                    new NewUser(new Jid(String.Join(" ", args), this.client.Host, this.client.Me.JidUser.Resource)));
+                                    new NewUser(new Jid(String.Join(" ", args), this.client.Host, "")));
+                            break;
+                        }
+                    case "friend":
+                        {
+                            foreach(var a in args)
+                                this.client.SendFriendRequest( a);
+                            break;
+                        }
+                    case "removefriend":
+                        {
+                            foreach(var a in args)
+                                this.client.RemoveFriend(new NewUser(new Jid(a,this.client.Host,"")));
+                            break;
+                        }
+                    case "invite":
+                        {
+                            foreach(var a in args)
+                                this.AddUser(new NewUser(new Jid(a,this.client.Host,"")));
+                            break;
+                        }
+                    default:
+                        {
+                            var helpMessage = new StringBuilder();
+                            helpMessage.AppendLine("--Commands--");
+                            helpMessage.AppendLine("/?                : This help");
+                            helpMessage.AppendLine(
+                                "/topic            : Set the topic of the room if you have the proper credentials");
+                            helpMessage.AppendLine("/msg {username}   : Starts a chat with a specific user");
+                            helpMessage.AppendLine("/friend {username}: Add a friend, or multiple friends");
+                            helpMessage.AppendLine("/removefriend {username}: Remove a friend, or multiple friends");
+                            helpMessage.AppendLine("/invite {username}: Invite user, or multiple users, to a chat room");
+                            Message mess = null;
+                            if (IsGroupChat)
+                            {
+                                foreach (var l in helpMessage.ToString()
+                                                   .Split(new[] { Environment.NewLine }, StringSplitOptions.None))
+                                {
+                                    mess = new Message(this.client.Me.JidUser, MessageType.groupchat, l);
+                                    mess.From = this.GroupUser.JidUser;
+                                    mess.Chatstate = Chatstate.None;
+                                    this.OnMessage(this, mess);
+                                }
+                            }
+                            else
+                            {
+                                foreach (var l in helpMessage.ToString()
+                                                   .Split(new[] { Environment.NewLine }, StringSplitOptions.None))
+                                {
+                                    mess = new Message(this.client.Me.JidUser, MessageType.chat, l);
+                                    mess.From = "SYSTEM" + "@" + this.client.Host;
+                                    mess.Chatstate = Chatstate.None;
+                                    this.OnMessage(this, mess);
+                                }
+                            }
                             break;
                         }
                 }

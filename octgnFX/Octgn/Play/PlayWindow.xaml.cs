@@ -54,7 +54,11 @@ namespace Octgn.Play
 
         #endregion
 
+
+        private Storyboard _fadeIn, _fadeOut;
+        private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
         public PlayWindow(bool islocal = false)
+            : base()
         {
             InitializeComponent();
             _isLocal = islocal;
@@ -62,14 +66,17 @@ namespace Octgn.Play
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
             Title = "Octgn  version : " + oversion + " : " + Program.Game.Definition.Name;
             Program.Game.ComposeParts(this);            
+            this.Loaded += OnLoaded;
         }
 
-        private Storyboard _fadeIn, _fadeOut;
-        private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
-
-        protected override void OnInitialized(EventArgs e)
+        private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
         {
-            base.OnInitialized(e);
+            
+        //}
+
+        //protected override void OnInitialized(EventArgs e)
+        //{
+        //    base.OnInitialized(e);
             Program.Dispatcher = Dispatcher;
             DataContext = Program.Game;
 
@@ -275,7 +282,7 @@ namespace Octgn.Play
             base.OnClosed(e);
             Program.PlayWindow = null;
             Program.StopGame();            
-            if(_isLocal)
+            if(_isLocal && !Program.UseNewChrome)
                 Program.LauncherWindow.Visibility = Visibility.Visible;
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
         }
@@ -329,7 +336,7 @@ namespace Octgn.Play
             if (IsFullScreen)
             {
                 Topmost = false;
-                WindowStyle = WindowStyle.SingleBorderWindow;
+                WindowStyle = WindowStyle.None;
                 WindowState = WindowState.Normal;
                 menuRow.Height = GridLength.Auto;
             }

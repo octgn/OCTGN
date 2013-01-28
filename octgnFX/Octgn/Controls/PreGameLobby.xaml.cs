@@ -9,8 +9,7 @@ namespace Octgn.Controls
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Threading.Tasks;
-
-    using DriveSync;
+    using System.Windows.Controls;
 
     using Octgn.Networking;
     using Octgn.Play;
@@ -18,10 +17,22 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for PreGameLobby.xaml
     /// </summary>
-    public partial class PreGameLobby :SliderPage
+    public partial class PreGameLobby: UserControl 
     {
+        public event Action<object> OnClose;
+
+        protected virtual void FireOnClose(object obj)
+        {
+            var handler = this.OnClose;
+            if (handler != null)
+            {
+                handler(obj);
+            }
+        }
+
         private bool _startingGame;
         private readonly bool _isLocal;
+
         public PreGameLobby(bool isLocal = false)
         {
             InitializeComponent();
@@ -78,6 +89,8 @@ namespace Octgn.Controls
                     Program.StopGame();
                 Program.GameSettings.PropertyChanged -= SettingsChanged;
                 Program.ServerError -= HandshakeError;
+                Player.OnLocalPlayerWelcomed -= PlayerOnOnLocalPlayerWelcomed;
+                OnClose = null;
             };
         }
 
@@ -151,6 +164,7 @@ namespace Octgn.Controls
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
             }
+            _startingGame = true;
         }
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -162,30 +176,13 @@ namespace Octgn.Controls
 
         internal void Start()
         {
-            _startingGame = true;
-            // Reset the InvertedTable flags if they were set and they are not used
-            if (!Program.GameSettings.UseTwoSidedTable)
-                foreach (Player player in Player.AllExceptGlobal)
-                    player.InvertedTable = false;
-
-            // At start the global items belong to the player with the lowest id
-            if (Player.GlobalPlayer != null)
-            {
-                Player host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
-                foreach (Group group in Player.GlobalPlayer.Groups)
-                    group.Controller = host;
-            }
-
-            if (Program.PlayWindow != null) return;
-            Program.Client.Rpc.Start();
-            Program.PlayWindow = new PlayWindow(_isLocal);
-            Program.PlayWindow.Show();
+            Program.StartGame();
             Back();
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            if (_startingGame) return;
+            this.IsEnabled = false;
             _startingGame = true;
             Program.LobbyClient.HostedGameStarted();
             e.Handled = true;
@@ -194,15 +191,14 @@ namespace Octgn.Controls
 
         private void CancelClicked(object sender, RoutedEventArgs e)
         {
+            _startingGame = false;
             e.Handled = true;
-            Program.StopGame();
             Back();
-            Slider.Pages.Remove(this);
         }
 
         private void Back()
         {
-            this.NavigateBack();
+            this.FireOnClose(this);
         }
 
         private void HandshakeError(object sender, ServerErrorEventArgs e)

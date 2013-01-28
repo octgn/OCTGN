@@ -358,9 +358,11 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
-            cardImage.Source = null;
+            if(cardImage != null)
+                cardImage.Source = null;
             cardImage = null;
             Game = null; // Close DB if required
+            Program.DeckEditor = null;
         }
 
         private void CardSelected(object sender, SearchCardImageEventArgs e)

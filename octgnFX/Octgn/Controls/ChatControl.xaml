@@ -41,6 +41,10 @@
                     </Table.Columns>
 
                     <TableRowGroup x:Name="ChatRowGroup">
+                        <TableRow>
+                            <TableCell><Paragraph Foreground="#FFF6FF98">-------></Paragraph></TableCell>
+                            <TableCell><Paragraph Foreground="#FFF6FF98">Type /? for a list of commands</Paragraph></TableCell>
+                        </TableRow>
                     </TableRowGroup>
                 </Table>
             </FlowDocument>

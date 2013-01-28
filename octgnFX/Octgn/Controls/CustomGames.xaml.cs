@@ -11,13 +11,17 @@ using Skylabs.Lobby;
 namespace Octgn.Controls
 {
     using System.Collections.ObjectModel;
+    using System.Net;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
-
-    using DriveSync;
 
     using Microsoft.Scripting.Utils;
 
+    using Octgn.Definitions;
+    using Octgn.Library.Exceptions;
+    using Octgn.Networking;
     using Octgn.ViewModels;
+    using Octgn.Windows;
 
     using KeyEventArgs = System.Windows.Input.KeyEventArgs;
     using Timer = System.Timers.Timer;
@@ -25,7 +29,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for CustomGames.xaml
     /// </summary>
-    public partial class CustomGameList : SliderPage
+    public partial class CustomGameList
     {
         public static DependencyProperty IsJoinableGameSelectedProperty = DependencyProperty.Register(
             "IsJoinableGameSelected", typeof(bool), typeof(CustomGameList));
@@ -48,6 +52,7 @@ namespace Octgn.Controls
         private bool isConnected;
         private bool waitingForGames;
         private HostGameSettings hostGameDialog;
+        private ConnectOfflineGame connectOfflineGameDialog;
 
         public CustomGameList()
         {
@@ -56,8 +61,6 @@ namespace Octgn.Controls
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
             Program.LobbyClient.OnDataReceived += LobbyClient_OnDataReceived;
-
-            this.PreviewKeyUp += OnPreviewKeyUp;
 
             timer = new Timer(10000);
             timer.Start();
@@ -92,16 +95,59 @@ namespace Octgn.Controls
             hostGameDialog.Close();
         }
 
-        private void ToggleHostGameDialog()
+        private void ShowJoinOfflineGameDialog()
         {
-            if (hostGameDialog != null)
+            connectOfflineGameDialog = new ConnectOfflineGame();
+            connectOfflineGameDialog.Show(DialogPlaceHolder);
+            connectOfflineGameDialog.OnClose += ConnectOfflineGameDialogOnClose;
+            BorderButtons.IsEnabled = false;
+        }
+
+        private void HideJoinOfflineGameDialog()
+        {
+            connectOfflineGameDialog.Close();
+        }
+
+        private void StartJoinGame(HostedGameViewModel hostedGame, Data.Game game)
+        {
+            Program.IsHost = false;
+            Program.Game = new Game(GameDef.FromO8G(game.FullPath));
+            Program.CurrentOnlineGameName = hostedGame.Name;
+            IPAddress hostAddress =  Dns.GetHostAddresses(Program.GameServerPath).FirstOrDefault();
+            if(hostAddress == null)
+                throw new UserMessageException("There was a problem with your DNS. Please try again.");
+
+            try
             {
-                this.HideHostGameDialog();
+                Program.Client = new Client(hostAddress,hostedGame.Port);
+                Program.Client.Connect();
             }
-            else
+            catch (Exception)
             {
-                this.ShowHostGameDialog();
+                throw new UserMessageException("Could not connect. Please try again.");
             }
+            
+        }
+
+        private void FinishJoinGame(Task task)
+        {
+            BorderButtons.IsEnabled = true;
+            if (task.IsFaulted)
+            {
+                var error = "Unknown Error: Please try again";
+                if (task.Exception != null)
+                {
+                    var umException = task.Exception.InnerExceptions.OfType<UserMessageException>().FirstOrDefault();
+                    if (umException != null)
+                    {
+                        error = umException.Message;
+                    }
+                }
+                MessageBox.Show(error, "OCTGN", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            Program.PreGameLobbyWindow = new PreGameLobbyWindow();
+            Program.PreGameLobbyWindow.Setup(false);
         }
 
         #region LobbyEvents
@@ -135,10 +181,30 @@ namespace Octgn.Controls
             {
                 if (hostGameDialog.SuccessfulHost)
                 {
-                    if(Slider.Pages.Count > 1)
-                        Slider.Pages.RemoveRange(1,Slider.Pages.Count - 1);
-                    Slider.AddPage(new PreGameLobby(hostGameDialog.IsLocalGame));
-                    this.NavigateForward();
+                    if (Program.PreGameLobbyWindow == null)
+                    {
+                        Program.PreGameLobbyWindow = new PreGameLobbyWindow();
+                        Program.PreGameLobbyWindow.Setup(hostGameDialog.IsLocalGame);
+                    }
+                }
+            }
+        }
+
+        private void ConnectOfflineGameDialogOnClose(object o, DialogResult dialogResult)
+        {
+            BorderButtons.IsEnabled = true;
+            if (dialogResult == DialogResult.OK)
+            {
+                if (connectOfflineGameDialog.Successful)
+                {
+                    if (Program.PreGameLobbyWindow == null)
+                    {
+                        Program.IsHost = false;
+                        Program.Game = new Octgn.Game(GameDef.FromO8G(connectOfflineGameDialog.Game.FullPath), true);
+
+                        Program.PreGameLobbyWindow = new PreGameLobbyWindow();
+                        Program.PreGameLobbyWindow.Setup(true);
+                    }
                 }
             }
         }
@@ -158,29 +224,56 @@ namespace Octgn.Controls
             this.IsJoinableGameSelected = game != null && game.CanPlay;
         }
 
-        private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
-        {
-            if (keyEventArgs.Key == Key.Escape)
-            {
-                this.HideHostGameDialog();
-            }
-            else if (keyEventArgs.Key == Key.H)
-            {
-                this.ToggleHostGameDialog();
-            }
-        }
-
         private void ButtonHostClick(object sender, RoutedEventArgs e)
         {
+            if (Program.PreGameLobbyWindow != null || Program.PlayWindow != null)
+            {
+                MessageBox.Show(
+                    "You are currently in a game or game lobby. Please leave before you host a new game.",
+                    "OCTGN",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
             this.ShowHostGameDialog();
         }
 
         private void ButtonJoinClick(object sender, RoutedEventArgs e)
         {
-            this.NavigateForward();
+            if (Program.PreGameLobbyWindow != null || Program.PlayWindow != null)
+            {
+                MessageBox.Show(
+                    "You are currently in a game or game lobby. Please leave before you join game.",
+                    "OCTGN",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+            var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
+            if (hostedgame == null) return;
+            var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == hostedgame.GameId);
+            var task = new Task(() => this.StartJoinGame(hostedgame,game));
+            task.ContinueWith((t) =>{ this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t)));});
+            BorderButtons.IsEnabled = false;
+            task.Start();
+
+            //this.NavigateForward();
+        }
+
+        private void ButtonJoinOfflineGame(object sender, RoutedEventArgs e)
+        {
+            if (Program.PreGameLobbyWindow != null || Program.PlayWindow != null)
+            {
+                MessageBox.Show(
+                    "You are currently in a game or game lobby. Please leave before you join game.",
+                    "OCTGN",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+            ShowJoinOfflineGameDialog();
         }
 
         #endregion
-
     }
 }

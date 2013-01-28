@@ -162,6 +162,16 @@ namespace Octgn.Scripting
             }
         }
 
+        public bool IsTableBackgroundFlipped()
+        {
+            return Program.Game.IsTableBackgroundFlipped;
+        }
+
+        public void SetTableBackgroundFlipped(bool isFlipped)
+        {
+            Program.Client.Rpc.IsTableBackgroundFlipped(isFlipped);
+        }
+
         #endregion Group API
 
         #region Cards API

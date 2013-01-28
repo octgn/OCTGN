@@ -1,15 +1,14 @@
-﻿<driveSync:SliderPage x:Class="Octgn.Controls.PreGameLobby"
+﻿<UserControl x:Class="Octgn.Controls.PreGameLobby"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:gui="clr-namespace:Octgn.Play.Gui"
              xmlns:o="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play"
-                                   xmlns:driveSync="clr-namespace:DriveSync"
-                                   mc:Ignorable="d" 
+             mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <driveSync:SliderPage.Resources>
+    <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    </driveSync:SliderPage.Resources>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -141,4 +140,4 @@ Color="{Binding Path=Color,Converter={StaticResource Luminance},ConverterParamet
         </StackPanel>
     </Grid>
 
-</driveSync:SliderPage>
+</UserControl>
