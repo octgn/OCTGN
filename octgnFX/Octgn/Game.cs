@@ -53,17 +53,17 @@ namespace Octgn
 
             if(IsLocal)
             {
-                var i = new InputDlg("Choose a nickname", "Choose a nickname",
-                                     "User" + new Random().Next().ToString(CultureInfo.InvariantCulture));
+                nick = Prefs.Nickname;
+                if (string.IsNullOrWhiteSpace(nick)) nick = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
+                var i = new InputDlg("Choose a nickname", "Choose a nickname", nick);
                 var ret = i.GetString();
-                if (ret == "")
-                    ret = "User" + new Random().Next().ToString(CultureInfo.InvariantCulture);
+                if (ret == "") ret = nick;
                 nick = ret;
             }
             else
             {
                 if (Program.LobbyClient == null || Program.LobbyClient.Me == null)
-                    nick = "User" + new Random().Next().ToString(CultureInfo.InvariantCulture);
+                    nick = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
                 else
                     nick = Program.LobbyClient.Me.UserName;
             }
@@ -129,6 +129,20 @@ namespace Octgn
 
         public Dictionary<string, int> Variables { get; private set; }
         public Dictionary<string, string> GlobalVariables { get; private set; }
+
+        public bool IsTableBackgroundFlipped
+        {
+            get
+            {
+                return isTableBackgroundFlipped;
+            }
+            set
+            {
+                isTableBackgroundFlipped = value;
+                this.OnPropertyChanged("IsTableBackgroundFlipped");
+            }
+        }
+
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
         #region INotifyPropertyChanged Members
@@ -389,6 +403,8 @@ namespace Octgn
 
         private static readonly AssemblyCatalog Catalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
         private readonly CompositionContainer _container = new CompositionContainer(Catalog);
+
+        private bool isTableBackgroundFlipped;
 
         public void ComposeParts(params object[] attributedParts)
         {

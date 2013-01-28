@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <Style x:Key="ScrollBarUpButton" TargetType="RepeatButton">
+  <!--<Style x:Key="ScrollBarUpButton" TargetType="RepeatButton">
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="RepeatButton">
@@ -95,6 +95,6 @@
         <Setter Property="Opacity" Value="0.3" />
       </Trigger>
     </Style.Triggers>
-  </Style>
+  </Style>-->
 
 </ResourceDictionary>

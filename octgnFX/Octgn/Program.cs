@@ -136,11 +136,12 @@ namespace Octgn
                 foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
                     group.Controller = host;
             }
-
             if (Program.PlayWindow != null) return;
             Program.Client.Rpc.Start();
             Program.PlayWindow = new PlayWindow(Program.Game.IsLocal);
             Program.PlayWindow.Show();
+            if(Program.PreGameLobbyWindow != null)
+                Program.PreGameLobbyWindow.Close();
         }
         public static void StopGame()
         {

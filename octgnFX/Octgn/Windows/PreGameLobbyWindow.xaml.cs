@@ -11,22 +11,20 @@
         public PreGameLobbyWindow()
         {
             InitializeComponent();
+            Program.PreGameLobbyWindow = this;
             this.CloseButtonVisibility = Visibility.Hidden;
             this.Closed += (sender, args) => Program.PreGameLobbyWindow = null;
         }
 
-        public void Setup()
+        public void Setup(bool isLocalGame)
         {
             if(this.Visibility != Visibility.Visible)
                 this.Show();
             this.Content = null;
             this.lobby = null;
-            if (Program.Game != null)
-            {
-                lobby = new PreGameLobby(Program.Game.IsLocal);
-                lobby.OnClose += PreGameLobbyOnOnClose;
-                this.Content = lobby;
-            }
+            lobby = new PreGameLobby(isLocalGame);
+            lobby.OnClose += PreGameLobbyOnOnClose;
+            this.Content = lobby;
         }
 
         private void PreGameLobbyOnOnClose(object o)

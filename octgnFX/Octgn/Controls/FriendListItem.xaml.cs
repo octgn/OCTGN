@@ -24,12 +24,35 @@ namespace Octgn.Controls
         public static DependencyProperty StatusPictureProperty = DependencyProperty.Register(
             "StatusPicture", typeof (ImageSource), typeof (FriendListItem));
 
+        public string UserName
+        {
+            get
+            {
+                return this.GetValue(UsernameProperty) as string;
+            }
+        }
+
+        public string CustomStatus
+        {
+            get
+            {
+                return this.GetValue(CustomStatusProperty) as string;
+            }
+        }
+
+        public ImageSource StatusPicture
+        {
+            get
+            {
+                return this.GetValue(StatusPictureProperty) as ImageSource;
+            }
+        }
+
         private NewUser _mUser = new NewUser(new Jid(""));
 
         public FriendListItem()
         {
             InitializeComponent();
-            ThisUser = new NewUser(new Jid(""));
         }
 
         public NewUser ThisUser

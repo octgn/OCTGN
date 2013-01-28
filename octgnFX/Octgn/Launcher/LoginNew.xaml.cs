@@ -16,9 +16,11 @@ namespace Octgn.Launcher
     using System.Linq;
     using System.Net;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Documents;
+    using System.Windows.Forms;
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Navigation;
@@ -51,6 +53,8 @@ namespace Octgn.Launcher
         /// </summary>
         private bool inLoginDone;
 
+        private Timer reloadNewsTimer;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Login"/> class.
         /// </summary>
@@ -69,6 +73,15 @@ namespace Octgn.Launcher
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnLoginComplete;
             Program.LobbyClient.OnStateChanged += this.LobbyClient_OnStateChanged;
             LazyAsync.Invoke(this.GetTwitterStuff);
+            reloadNewsTimer = new Timer();
+            reloadNewsTimer.Interval = 1000 * 60 * 5;
+            reloadNewsTimer.Start();
+            reloadNewsTimer.Tick += ReloadNewsTimerOnTick;
+        }
+
+        private void ReloadNewsTimerOnTick(object sender, EventArgs eventArgs)
+        {
+            new Task(this.GetTwitterStuff).Start();
         }
 
         #region News Feed

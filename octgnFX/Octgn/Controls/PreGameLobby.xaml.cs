@@ -164,6 +164,7 @@ namespace Octgn.Controls
             {
                 Dispatcher.BeginInvoke(new Action(() => { startBtn.Visibility = Visibility.Visible; }));
             }
+            _startingGame = true;
         }
         private void SettingsChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -175,14 +176,13 @@ namespace Octgn.Controls
 
         internal void Start()
         {
-            _startingGame = true;
             Program.StartGame();
             Back();
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            if (_startingGame) return;
+            this.IsEnabled = false;
             _startingGame = true;
             Program.LobbyClient.HostedGameStarted();
             e.Handled = true;
@@ -191,8 +191,8 @@ namespace Octgn.Controls
 
         private void CancelClicked(object sender, RoutedEventArgs e)
         {
+            _startingGame = false;
             e.Handled = true;
-            Program.StopGame();
             Back();
         }
 

@@ -11,16 +11,23 @@ namespace Octgn.Controls
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
+    using System.Windows.Forms;
     using System.Windows.Input;
     using System.Windows.Interop;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using System.Windows.Shapes;
     using Octgn.Extentions;
+
+    using Binding = System.Windows.Data.Binding;
+    using Cursors = System.Windows.Input.Cursors;
+    using HorizontalAlignment = System.Windows.HorizontalAlignment;
+    using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
     /// <summary>
     /// Interaction logic for OctgnChrome.xaml
@@ -413,6 +420,34 @@ namespace Octgn.Controls
             this.WindowCloseButton.Child = new Image() { Stretch = Stretch.None, Source = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/closewindow.png")) };
             this.WcGrid.Children.Add(this.WindowCloseButton);
             Grid.SetColumn(this.WindowCloseButton, 2);
+
+            this.Loaded += OnLoaded;
+            this.LocationChanged += OnLocationChanged;
+
+        }
+
+        private void OnLocationChanged(object sender, EventArgs eventArgs)
+        {
+            var myRec = new System.Drawing.Rectangle((int)this.Left + 50, (int)this.Top + 50, (int)this.Width - 50, (int)this.Height - 50);
+            var screens = Screen.AllScreens;
+            if (!screens.Any(x => x.Bounds.IntersectsWith(myRec)))
+            {
+                var bounds = Screen.PrimaryScreen.Bounds;
+                this.Left = ((bounds.Right - bounds.Left) / 2) + (Width / 2);
+                this.Top = ((bounds.Bottom - bounds.Top) / 2) + (Height / 2);
+            }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var myRec = new System.Drawing.Rectangle((int)this.Left + 50, (int)this.Top + 50, (int)this.Width - 50, (int)this.Height - 50);
+            var screens = Screen.AllScreens;
+            if (!screens.Any(x => x.Bounds.IntersectsWith(myRec)))
+            {
+                var bounds = Screen.PrimaryScreen.Bounds;
+                this.Left = ((bounds.Right - bounds.Left) / 2) + (Width / 2);
+                this.Top = ((bounds.Bottom - bounds.Top) / 2) + (Height / 2);
+            }
         }
 
         /// <summary>
@@ -524,7 +559,10 @@ namespace Octgn.Controls
             {
                 return;
             }
-            
+
+            if (mouseButtonEventArgs.LeftButton != MouseButtonState.Pressed) return;
+            if (mouseButtonEventArgs.MiddleButton == MouseButtonState.Pressed || mouseButtonEventArgs.RightButton == MouseButtonState.Pressed) return;
+
             var s = sender as Rectangle;
             if (s == null)
             {
@@ -570,6 +608,8 @@ namespace Octgn.Controls
         /// </param>
         private void BorderMouseDown1(object sender, MouseButtonEventArgs e)
         {
+            if (e.LeftButton != MouseButtonState.Pressed) return;
+            if (e.MiddleButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed) return;
             this.DragMove();
         }
     }

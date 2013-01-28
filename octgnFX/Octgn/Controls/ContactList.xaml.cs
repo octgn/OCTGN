@@ -16,7 +16,9 @@ using Skylabs.Lobby.Threading;
 
 namespace Octgn.Controls
 {
-	/// <summary>
+    using agsXMPP;
+
+    /// <summary>
 	/// Interaction logic for ContactList.xaml
 	/// </summary>
 	public partial class ContactList : UserControl
