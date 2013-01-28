@@ -4,5 +4,5 @@
         Title="PreGame Lobby" MinHeight="600" MinWidth="600" 
         Width="600"
         Height="600"
-        Icon="pack://application:,,,/OCTGN;component/Resources/pregamelobbyicon.png">
+        WindowIcon="pack://application:,,,/OCTGN;component/Resources/pregamelobbyicon.png">
 </controls:OctgnChrome>

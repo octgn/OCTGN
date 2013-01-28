@@ -1,12 +1,12 @@
-﻿<Window x:Class="Octgn.Play.PlayWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ctrl:OctgnChrome x:Class="Octgn.Play.PlayWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ms="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
         xmlns:octgn="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play" xmlns:gui="clr-namespace:Octgn.Play.Gui"
-        xmlns:ctrl="clr-namespace:Octgn.Controls" x:Name="self" Title="Octgn" Icon="pack://application:,,,/Resources/Icon.ico"
+        xmlns:ctrl="clr-namespace:Octgn.Controls" x:Name="self" Title="Octgn" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
         Height="800" Width="900" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True"
         RenderOptions.BitmapScalingMode="Fant">
 
-    <Window.Resources>
+    <ctrl:OctgnChrome.Resources>
         <Style TargetType="ms:RibbonGroup">
             <Setter Property="Foreground" Value="White"></Setter>
         </Style>
@@ -31,16 +31,16 @@
         <play:CanPlayConverter x:Key="CanPlay" />
 
         <play:ScaleConverter x:Key="Scale" />
-    </Window.Resources>
+    </ctrl:OctgnChrome.Resources>
 
-    <Window.CommandBindings>
+    <ctrl:OctgnChrome.CommandBindings>
         <CommandBinding Command="gui:Commands.Quit" Executed="Close" />
         <CommandBinding Command="gui:Commands.LoadDeck" Executed="Open" />
         <CommandBinding Command="gui:Commands.LimitedGame" Executed="LimitedGame" />
         <CommandBinding Command="gui:Commands.FullScreen" Executed="ToggleFullScreen" />
         <CommandBinding Command="gui:Commands.ResetGame" Executed="ResetGame" />
         <CommandBinding Command="gui:Commands.Chat" Executed="ActivateChat" />
-    </Window.CommandBindings>
+    </ctrl:OctgnChrome.CommandBindings>
 
     <Grid x:Name="clientArea">
         <Grid.ColumnDefinitions>
@@ -159,4 +159,4 @@
         </Decorator>
 
     </Grid>
-</Window>
+</ctrl:OctgnChrome>
