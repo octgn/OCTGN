@@ -11,11 +11,15 @@ using Skylabs.Lobby;
 namespace Octgn.Controls
 {
     using System.Collections.ObjectModel;
+    using System.Net;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
 
     using Microsoft.Scripting.Utils;
 
     using Octgn.Definitions;
+    using Octgn.Library.Exceptions;
+    using Octgn.Networking;
     using Octgn.ViewModels;
     using Octgn.Windows;
 
@@ -102,6 +106,48 @@ namespace Octgn.Controls
         private void HideJoinOfflineGameDialog()
         {
             connectOfflineGameDialog.Close();
+        }
+
+        private void StartJoinGame(HostedGameViewModel hostedGame, Data.Game game)
+        {
+            Program.IsHost = false;
+            Program.Game = new Game(GameDef.FromO8G(game.FullPath));
+            Program.CurrentOnlineGameName = hostedGame.Name;
+            IPAddress hostAddress =  Dns.GetHostAddresses(Program.GameServerPath).FirstOrDefault();
+            if(hostAddress == null)
+                throw new UserMessageException("There was a problem with your DNS. Please try again.");
+
+            try
+            {
+                Program.Client = new Client(hostAddress,hostedGame.Port);
+                Program.Client.Connect();
+            }
+            catch (Exception)
+            {
+                throw new UserMessageException("Could not connect. Please try again.");
+            }
+            
+        }
+
+        private void FinishJoinGame(Task task)
+        {
+            BorderButtons.IsEnabled = true;
+            if (task.IsFaulted)
+            {
+                var error = "Unknown Error: Please try again";
+                if (task.Exception != null)
+                {
+                    var umException = task.Exception.InnerExceptions.OfType<UserMessageException>().FirstOrDefault();
+                    if (umException != null)
+                    {
+                        error = umException.Message;
+                    }
+                }
+                MessageBox.Show(error, "OCTGN", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            Program.PreGameLobbyWindow = new PreGameLobbyWindow();
+            Program.PreGameLobbyWindow.Setup(false);
         }
 
         #region LobbyEvents
@@ -203,6 +249,14 @@ namespace Octgn.Controls
                     MessageBoxIcon.Error);
                 return;
             }
+            var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
+            if (hostedgame == null) return;
+            var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == hostedgame.GameId);
+            var task = new Task(() => this.StartJoinGame(hostedgame,game));
+            task.ContinueWith((t) =>{ this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t)));});
+            BorderButtons.IsEnabled = false;
+            task.Start();
+
             //this.NavigateForward();
         }
 
