@@ -1,3 +1,17 @@
+#3.0.2.38
++ **New Layout**
++ Fix issue with OCTGN window being offscreen
++ Converted most colors(I think)
++ Converted Table window to new style
++ Autorefresh news list
++ Changed contact list(for better or worse)
++ /commands for most user based things
++ Improved offline playability with this new layout
++ Better offline nickname picker
++ Fixed window dragging error(right click)
++ Fixed some race conditions
++ Improved deck editor drag drop
+
 #3.0.1.32
 + Deck editor, most things are draggable(use shift key for some stuff)
 + Shuffling improvement
