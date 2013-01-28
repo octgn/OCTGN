@@ -4,14 +4,14 @@
                  xmlns:Controls="clr-namespace:Octgn.Controls"
         x:Class="Octgn.Windows.MainNew"
         Title="OCTGN"
-        Height="600" Width="1125" WindowStyle="None" 
-        MinHeight="600" MinWidth="1125" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
+        Height="600" Width="1024" WindowStyle="None" 
+        MinHeight="600" MinWidth="1024" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*" MinWidth="840"/>
             <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="247" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -39,7 +39,7 @@
                 <Controls:GameManagement Margin="5,5,5,5"></Controls:GameManagement>
             </TabItem>
         </TabControl>
-        <GridSplitter Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="PreviousAndNext" Background="Black" Margin="0,25,0,0"/>
+        <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
         <Menu Grid.ColumnSpan="3" Grid.Row="0">
             <MenuItem Header="_File">
                 <MenuItem x:Name="menuLogOff" Header="_Log Off" HorizontalAlignment="Left" Width="137"/>
@@ -57,8 +57,8 @@
                 <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
             </StackPanel>
         </StackPanel>
-        <Border Margin="0,20,0,0" Style="{StaticResource Panel}" Grid.Column="3" Grid.Row="1">
-            <Controls:ContactList/>
+        <Border Margin="0,20,0,0" Style="{StaticResource Panel}" Grid.Column="3" Grid.Row="1" ClipToBounds="True">
+            <Controls:ContactList x:Name="ContactList"/>
         </Border>
     </Grid>
 </Controls:OctgnChrome>

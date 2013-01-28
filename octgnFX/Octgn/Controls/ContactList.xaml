@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <ScrollViewer Padding="10,10,10,10" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" >
+    <ScrollViewer Margin="5,5,5,5" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Stretch" HorizontalScrollBarVisibility="Auto" >
         <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Top" Background="Transparent"></StackPanel>
     </ScrollViewer>
 </UserControl>
