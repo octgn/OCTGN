@@ -53,7 +53,7 @@ namespace Octgn
 
             if(IsLocal)
             {
-                var nick = Prefs.Nickname;
+                nick = Prefs.Nickname;
                 if (string.IsNullOrWhiteSpace(nick)) nick = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
                 var i = new InputDlg("Choose a nickname", "Choose a nickname", nick);
                 var ret = i.GetString();
