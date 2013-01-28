@@ -1,3 +1,8 @@
+#3.0.2.39
++ Added isTableBackgroundFlipped() and setTableBackgroundFlipped(flipped) to python api https://github.com/kellyelton/OCTGN/issues/540
++ Can now save a limited deck during play https://github.com/kellyelton/OCTGN/issues/559
++ Fixed deck editor crash https://github.com/kellyelton/OCTGN/issues/577
+
 #3.0.2.38
 + **New Layout**
 + Fix issue with OCTGN window being offscreen
