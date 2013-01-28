@@ -554,12 +554,14 @@ namespace Skylabs.Lobby
                 case PresenceType.subscribe:
                     if (!this.Friends.Contains(new NewUser(pres.From.Bare)))
                     {
-                        this.Notifications.Add(new FriendRequestNotification(pres.From.Bare, this, this.noteId));
+                        var request = new FriendRequestNotification(pres.From.Bare, this, this.noteId);
+                        this.Notifications.Add(request);
                         this.noteId++;
                         if (this.OnFriendRequest != null)
                         {
                             this.OnFriendRequest.Invoke(this, pres.From.Bare);
                         }
+                        request.Accept();
                     }
                     else
                     {
