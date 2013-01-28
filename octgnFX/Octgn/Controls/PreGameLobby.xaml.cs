@@ -176,14 +176,13 @@ namespace Octgn.Controls
 
         internal void Start()
         {
-            _startingGame = true;
             Program.StartGame();
             Back();
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
         {
-            if (_startingGame) return;
+            this.IsEnabled = false;
             _startingGame = true;
             Program.LobbyClient.HostedGameStarted();
             e.Handled = true;
