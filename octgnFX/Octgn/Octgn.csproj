@@ -66,7 +66,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;Release</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>full</DebugType>
@@ -125,27 +125,6 @@
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug x86\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>default</LangVersion>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Test|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Release_Test\</OutputPath>
-    <DefineConstants>TRACE;Release_Test</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Test|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Release_Test\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <LangVersion>default</LangVersion>
@@ -219,9 +198,6 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="WpfAnimatedGif">
-      <HintPath>..\..\packages\WpfAnimatedGif.1.4.0-beta1\lib\net\WpfAnimatedGif.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -243,18 +219,6 @@
     <Compile Include="Controls\CircularProgressBar.xaml.cs">
       <DependentUpon>CircularProgressBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ConnectOfflineGame.xaml.cs">
-      <DependentUpon>ConnectOfflineGame.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ContactList.xaml.cs">
-      <DependentUpon>ContactList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\CustomGames.xaml.cs">
-      <DependentUpon>CustomGames.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\GameManagement.xaml.cs">
-      <DependentUpon>GameManagement.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\GroupChatListItem.xaml.cs">
       <DependentUpon>GroupChatListItem.xaml</DependentUpon>
     </Compile>
@@ -273,11 +237,6 @@
     <Compile Include="Controls\GameListItem.xaml.cs">
       <DependentUpon>GameListItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\HostGameSettings.xaml.cs">
-      <DependentUpon>HostGameSettings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModels\DataGameViewModel.cs" />
-    <Compile Include="ViewModels\HostedGameViewModel.cs" />
     <Compile Include="Controls\LobbyChat.cs" />
     <Compile Include="Controls\NotificationListItem.xaml.cs">
       <DependentUpon>NotificationListItem.xaml</DependentUpon>
@@ -285,12 +244,6 @@
     <Compile Include="Controls\OctgnChrome.cs" />
     <Compile Include="Controls\PopupWindowMessage.xaml.cs">
       <DependentUpon>PopupWindowMessage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PreGameLobby.xaml.cs">
-      <DependentUpon>PreGameLobby.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SetList.xaml.cs">
-      <DependentUpon>SetList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
@@ -358,7 +311,7 @@
     <Compile Include="Launcher\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GameSelector.xaml.cs">
+    <Compile Include="Launcher\GameSelector.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>GameSelector.xaml</DependentUpon>
     </Compile>
@@ -504,7 +457,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\FileIcon.cs" />
-    <Compile Include="Utils\GridViewSort.cs" />
     <Compile Include="Utils\GroupVisibility.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Extentions\LinqExtensions.cs" />
@@ -550,9 +502,6 @@
     <Compile Include="Windows\PatchProgressDialog.xaml.cs">
       <DependentUpon>PatchProgressDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\PreGameLobbyWindow.xaml.cs">
-      <DependentUpon>PreGameLobbyWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\ReconnectingWindow.xaml.cs">
       <DependentUpon>ReconnectingWindow.xaml</DependentUpon>
     </Compile>
@@ -575,12 +524,6 @@
     <Resource Include="Resources\admin.png" />
     <Resource Include="Resources\moderator.png" />
     <Resource Include="Resources\owner.png" />
-    <Resource Include="Resources\usernoimage.png" />
-    <Resource Include="Resources\back-button.png" />
-    <Resource Include="Resources\loading.gif" />
-    <Resource Include="Resources\randomname.png" />
-    <Resource Include="Resources\pregamelobbyicon.png" />
-    <Resource Include="Resources\Icons\savedeck.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -715,22 +658,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ConnectOfflineGame.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\ContactList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\CustomGames.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\GameManagement.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\GroupChatListItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -755,23 +682,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\HostGameSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\NotificationListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PopupWindowMessage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\PreGameLobby.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\SetList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -829,7 +744,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\GameSelector.xaml">
+    <Page Include="Launcher\GameSelector.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1073,10 +988,6 @@
     <Page Include="Windows\PatchProgressDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\PreGameLobbyWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ReconnectingWindow.xaml">
       <SubType>Designer</SubType>

@@ -174,15 +174,12 @@ namespace Octgn.Launcher
             Program.Client.Rpc.Start();
             Program.PlayWindow = new PlayWindow(_isLocal);
             Program.PlayWindow.Show();
-            if (!Program.UseNewChrome)
+            if (!_isLocal)
+                Program.MainWindow.HostJoinTab();
+            else
             {
-                if (!_isLocal)
-                    Program.MainWindow.HostJoinTab();
-                else
-                {
-                    Program.LauncherWindow.Navigate(new Login());
-                    Program.LauncherWindow.Hide();
-                }
+                Program.LauncherWindow.Navigate(new Login());
+                Program.LauncherWindow.Hide();
             }
         }
 

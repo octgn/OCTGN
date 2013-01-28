@@ -27,37 +27,32 @@
                                    { "ReplaceVersionIgnoreFile", "" },
                                    { "WorkingDirectory",""},
                                    {"CurrentVersion",new Version("3.0.0.0")},
-                                   {"NewVersion", new Version("3.0.0.1")},
-                                   {"Mode", "test"}
+                                   {"NewVersion", new Version("3.0.0.1")}
                                };
             var badData1 = new Dictionary<string, object>
                                {
                                    { "WorkingDirectory",""},
                                    {"CurrentVersion",new Version("3.0.0.0")},
-                                   {"NewVersion", new Version("3.0.0.1")},
-                                   {"Mode", "test"}
+                                   {"NewVersion", new Version("3.0.0.1")}
                                };
 
             var badData2 = new Dictionary<string, object>
                                {
                                    { "ReplaceVersionIgnoreFile", "" },
                                    {"CurrentVersion",new Version("3.0.0.0")},
-                                   {"NewVersion", new Version("3.0.0.1")},
-                                   {"Mode", "test"}
+                                   {"NewVersion", new Version("3.0.0.1")}
                                };
             var badData3 = new Dictionary<string, object>
                                {
                                    { "ReplaceVersionIgnoreFile", "" },
                                    { "WorkingDirectory",""},
-                                   {"NewVersion", new Version("3.0.0.1")},
-                                   {"Mode", "test"}
+                                   {"NewVersion", new Version("3.0.0.1")}
                                };
             var badData4 = new Dictionary<string, object>
                                {
                                    { "ReplaceVersionIgnoreFile", "" },
                                    { "WorkingDirectory",""},
                                    {"CurrentVersion",new Version("3.0.0.0")},
-                                   {"Mode","test"}
                                };
             var goodContext = A.Fake<ITaskContext>(x=>x.Wrapping(new TaskContext(A.Fake<ILog>(),fileSystem,goodData)));
             var badContext1 = A.Fake<ITaskContext>(x=>x.Wrapping(new TaskContext(A.Fake<ILog>(),fileSystem,badData1)));
@@ -145,7 +140,6 @@
             var nonpassFile = A.Fake<FileInfoBase>();
 
             context.Data["WorkingDirectory"] = "c:\\asdf\\";
-            context.Data["Mode"] = "test";
 
             A.CallTo(() => passFile.FullName).Returns(@"c:\face\brains\tits.txt");
             A.CallTo(() => nonpassFile.FullName).Returns(@"c:\face\brains\ignore2.txt");

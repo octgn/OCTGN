@@ -556,11 +556,6 @@ namespace Octgn.Server
             _broadcaster.CancelLimited(_clients[_sender].Id);
         }
 
-        public void IsTableBackgroundFlipped(bool isFlipped)
-        {
-            _broadcaster.IsTableBackgroundFlipped(isFlipped);
-        }
-
         #endregion IRemoteCalls interface
 
         // This class contains high-level infos about connected clients

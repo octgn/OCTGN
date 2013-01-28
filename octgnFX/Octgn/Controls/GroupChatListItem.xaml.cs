@@ -40,6 +40,10 @@ namespace Octgn.Controls
             ThisRoom = null;
         }
 
+        public bool IsDragging { get; set; }
+
+        public FrameworkElement DragScope { get; set; }
+
         public NewChatRoom ThisRoom
         {
             get { return _chatRoom; }
@@ -74,7 +78,9 @@ namespace Octgn.Controls
         private void Image1MouseUp(object sender, MouseButtonEventArgs e)
         {
             if (_chatRoom.GroupUser.UserName == "lobby") return;
-			_chatRoom.LeaveRoom();
+            ChatWindow firstOrDefault = Program.ChatWindows.FirstOrDefault(cw => cw.Id == ThisRoom.Rid);
+            if (firstOrDefault != null)
+                firstOrDefault.CloseChatWindow();
             _isRemoving = true;
         }
     }

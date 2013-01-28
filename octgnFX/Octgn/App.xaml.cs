@@ -35,7 +35,7 @@ namespace Octgn
 
             AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
 #endif
-			//Program.GamesRepository = new GamesRepository();
+            Program.GamesRepository = new GamesRepository();
 
             if (Program.GamesRepository.MissingFiles.Any())
             {

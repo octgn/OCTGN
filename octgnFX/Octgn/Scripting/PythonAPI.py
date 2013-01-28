@@ -54,12 +54,6 @@ def getGlobalVariable(gname):
 def setGlobalVariable(gname,gvalue): 
   _api.SetGlobalVariable(gname,gvalue)
 
-def isTableBackgroundFlipped():
-  return _api.IsTableBackgroundFlipped()
-
-def setTableBackgroundFlipped(flipped):
-  _api.SetTableBackgroundFlipped(flipped)
-
 class Markers(object):
   def __init__(self, card):
     self._cardId = card._id
