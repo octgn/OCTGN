@@ -580,6 +580,7 @@
     <Resource Include="Resources\loading.gif" />
     <Resource Include="Resources\randomname.png" />
     <Resource Include="Resources\pregamelobbyicon.png" />
+    <Resource Include="Resources\Icons\savedeck.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

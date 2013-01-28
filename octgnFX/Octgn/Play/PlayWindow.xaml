@@ -37,6 +37,7 @@
         <CommandBinding Command="gui:Commands.Quit" Executed="Close" />
         <CommandBinding Command="gui:Commands.LoadDeck" Executed="Open" />
         <CommandBinding Command="gui:Commands.LimitedGame" Executed="LimitedGame" />
+        <CommandBinding Command="gui:Commands.SaveDeck" Executed="LimitedSaveClicked"/>
         <CommandBinding Command="gui:Commands.FullScreen" Executed="ToggleFullScreen" />
         <CommandBinding Command="gui:Commands.ResetGame" Executed="ResetGame" />
         <CommandBinding Command="gui:Commands.Chat" Executed="ActivateChat" />
@@ -70,6 +71,8 @@
                            Command="gui:Commands.LoadDeck" />
                     <ms:RibbonButton Label="Limited game" LargeImageSource="/Resources/Icons/LoadLimited.png"
                            Command="gui:Commands.LimitedGame" />
+                    <ms:RibbonButton Label="Save Deck" LargeImageSource="/Resources/Icons/savedeck.png"
+                           Command="gui:Commands.SaveDeck"></ms:RibbonButton>
                 </ms:RibbonGroup>
                 <ms:RibbonGroup Header="View">
                     <ms:RibbonToggleButton Label="Full screen" LargeImageSource="/Resources/Icons/FullScreen.png"
