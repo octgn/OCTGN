@@ -129,6 +129,20 @@ namespace Octgn
 
         public Dictionary<string, int> Variables { get; private set; }
         public Dictionary<string, string> GlobalVariables { get; private set; }
+
+        public bool IsTableBackgroundFlipped
+        {
+            get
+            {
+                return isTableBackgroundFlipped;
+            }
+            set
+            {
+                isTableBackgroundFlipped = value;
+                this.OnPropertyChanged("IsTableBackgroundFlipped");
+            }
+        }
+
         public bool CardsRevertToOriginalOnGroupChange = false;//As opposed to staying SwitchedWithAlternate
 
         #region INotifyPropertyChanged Members
@@ -389,6 +403,8 @@ namespace Octgn
 
         private static readonly AssemblyCatalog Catalog = new AssemblyCatalog(Assembly.GetExecutingAssembly());
         private readonly CompositionContainer _container = new CompositionContainer(Catalog);
+
+        private bool isTableBackgroundFlipped;
 
         public void ComposeParts(params object[] attributedParts)
         {

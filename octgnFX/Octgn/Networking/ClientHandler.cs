@@ -940,6 +940,12 @@ namespace Octgn.Networking
             else
                 Program.Game.GlobalVariables.Add(name, value);
         }
+
+        public void IsTableBackgroundFlipped(bool isFlipped)
+        {
+            Program.Game.IsTableBackgroundFlipped = isFlipped;
+        }
+
         public void Ping()
         {
             

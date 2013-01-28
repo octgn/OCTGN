@@ -397,6 +397,12 @@ namespace Octgn.Server
       Send();
     }
 
+    public void IsTableBackgroundFlipped(bool isFlipped)
+    {
+      bin.IsTableBackgroundFlipped(isFlipped);
+      Send();
+    }
+
     public void Ping()
     {
       bin.Ping();

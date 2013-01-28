@@ -61,6 +61,16 @@ namespace Octgn.Play.Gui
                                 CreateCard.Done -= CardCreated;
                             };
             Loaded += delegate { CenterView(); };
+            Program.Game.PropertyChanged += GameOnPropertyChanged;
+        }
+
+        private void GameOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (propertyChangedEventArgs.PropertyName == "IsTableBackgroundFlipped")
+            {
+                GroupDef tableDef = Program.Game.Definition.TableDefinition;
+                this.SetBackground(tableDef);
+            }
         }
 
         protected Size CardSize
@@ -107,6 +117,7 @@ namespace Octgn.Play.Gui
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
             bim.UriSource = new Uri(tableDef.Background);
+            if(Program.Game.IsTableBackgroundFlipped)bim.Rotation = Rotation.Rotate180;
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);
