@@ -130,7 +130,7 @@
 
                     Program.Client = new Client(hostAddress, (int)port);
                     Program.Client.Connect();
-                    Prefs.LastRoomName = TextBoxGameName.Name;
+                    Prefs.LastRoomName = TextBoxGameName.Text;
                     SuccessfulHost = true;
                 }
 
