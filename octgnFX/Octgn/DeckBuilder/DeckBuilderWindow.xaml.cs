@@ -358,9 +358,11 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
-            cardImage.Source = null;
+            if(cardImage != null)
+                cardImage.Source = null;
             cardImage = null;
             Game = null; // Close DB if required
+            Program.DeckEditor = null;
         }
 
         private void CardSelected(object sender, SearchCardImageEventArgs e)
@@ -563,7 +565,6 @@ namespace Octgn.DeckBuilder
             {
                 validClick = false;
             }
-
         }
         private void DeckMouseMove(object sender, MouseEventArgs e)
         {
@@ -577,7 +578,9 @@ namespace Octgn.DeckBuilder
                 DataObject dragCard = new DataObject("Card", getCard);
                 if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift)
                 {
+                    ActiveSection.Cards.RemoveAt(cardIndex);
                     DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.All);
+
                 }
                 else
                 {
@@ -602,7 +605,6 @@ namespace Octgn.DeckBuilder
                 Deck.Element dragCard = e.Data.GetData("Card") as Deck.Element;
                 Deck.Section dropSection = (Deck.Section)((FrameworkElement)sender).DataContext;
                 Deck.Element element = dropSection.Cards.FirstOrDefault(c => c.Card.Id == dragCard.Card.Id);
-
                     if (e.Effects == DragDropEffects.Copy)
                     {
                         if (element != null)
@@ -624,7 +626,6 @@ namespace Octgn.DeckBuilder
                         {
                             dropSection.Cards.Add(new Deck.Element { Card = Game.GetCardById(dragCard.Card.Id), Quantity = dragCard.Quantity });
                         }
-                        ActiveSection.Cards.RemoveAt(cardIndex);
                     }
             }
             e.Handled = true;

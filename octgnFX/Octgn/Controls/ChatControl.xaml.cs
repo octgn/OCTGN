@@ -253,7 +253,7 @@ namespace Octgn.Controls
             var filterText = "";
             Dispatcher.Invoke(new Func<string>(() => filterText = this.UserFilter.Text.ToLower()));
 
-            var roomUserList = this.room.Users
+            var roomUserList = this.room.Users.ToArray()
                 .Where(x => x.UserName.ToLower().Contains(filterText)).ToArray();
             //foreach (var missingUser in roomUserList.Except(this.UserListItems.Select(x => x.User)).ToList())
             //{

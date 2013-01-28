@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="Octgn.Controls.GameManagement"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:controls="clr-namespace:Octgn.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="302"/>
+            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition Width="100*"/>
+        </Grid.ColumnDefinitions>
+        <Border Background="#FF333333" Padding="5,5,5,5" CornerRadius="10">
+            <ScrollViewer VerticalAlignment="Stretch">
+                <StackPanel HorizontalAlignment="Stretch" Name="stackPanel1" VerticalAlignment="Top"></StackPanel>
+            </ScrollViewer>
+        </Border>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="100*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="#FF333333" Padding="20,5,18,5" CornerRadius="10" HorizontalAlignment="Left">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="100*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label VerticalAlignment="Center" HorizontalAlignment="Center">Game Options</Label>
+                    <Label VerticalAlignment="Center" Margin="140,0,0,0" Grid.Column="1">Set Options</Label>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1">
+                        <Button x:Name="ButtonInstallGame" Content="Install" Padding="10,0,10,0"></Button>
+                        <Button x:Name="ButtonUninstallGame" Content="Uninstall" Padding="10,0,10,0" IsEnabled="False"></Button>
+                    </StackPanel>
+                    <StackPanel x:Name="StackPanelSetButtons" Margin="30,0,0,0" HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="1" Grid.Column="1" IsEnabled="False">
+                        <Button x:Name="ButtonInstallSet" Content="Install" Padding="10,0,10,0"></Button>
+                        <Button x:Name="ButtonUninstallSet" Content="Uninstall" Padding="10,0,10,0"></Button>
+                        <Button x:Name="ButtonPatchSet" Content="Patch All" Padding="10,0,10,0"></Button>
+                        <Button x:Name="ButtonAddAutoUpdateSet" Content="Add AutoUpdated" Padding="10,0,10,0"></Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Border x:Name="BorderGameImage" Grid.Row="2" CornerRadius="10" Background="#FF333333">
+                <controls:SetList x:Name="SetList"></controls:SetList>
+            </Border>
+            <ProgressBar x:Name="ProgressBar" Grid.Row="3" Height="25" Visibility="Collapsed"></ProgressBar>
+        </Grid>
+    </Grid>
+</UserControl>

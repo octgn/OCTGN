@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -10,22 +8,17 @@ using System.Windows.Documents;
 using System.Windows.Threading;
 using Octgn.Data;
 using Octgn.DeckBuilder;
-using Octgn.Launcher;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Utils;
 using Skylabs.Lobby;
-using ChatWindow = Octgn.Windows.ChatWindow;
+
 using Client = Octgn.Networking.Client;
-using LauncherWindow = Octgn.Windows.LauncherWindow;
-using Main = Octgn.Windows.Main;
-using RE = System.Text.RegularExpressions;
 
 namespace Octgn
 {
     using System.Configuration;
 
-    using Octgn.Library;
     using Octgn.Windows;
 
     public static class Program
@@ -37,13 +30,14 @@ namespace Octgn
         public static DeckBuilderWindow DeckEditor;
         public static PlayWindow PlayWindow;
         public static List<ChatWindow> ChatWindows;
+        public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
 
         public static Game Game;
 
         public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
-        public static GamesRepository GamesRepository;
+        public static GamesRepository GamesRepository = new GamesRepository();
         internal static Client Client;
 
         internal readonly static string WebsitePath;
@@ -78,7 +72,11 @@ namespace Octgn
             WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
+#if(Release_Test)
+            UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPathTest"];
+#else
             UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
+#endif
             bool.TryParse(ConfigurationManager.AppSettings["UseNewChrome"],out UseNewChrome);
 
             var pList = Process.GetProcessesByName("OCTGN");
@@ -124,7 +122,27 @@ namespace Octgn
                 else if(LauncherWindow != null) LauncherWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
             }
         }
+        internal static void StartGame()
+        {
+            // Reset the InvertedTable flags if they were set and they are not used
+            if (!Program.GameSettings.UseTwoSidedTable)
+                foreach (Player player in Player.AllExceptGlobal)
+                    player.InvertedTable = false;
 
+            // At start the global items belong to the player with the lowest id
+            if (Player.GlobalPlayer != null)
+            {
+                Player host = Player.AllExceptGlobal.OrderBy(p => p.Id).First();
+                foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
+                    group.Controller = host;
+            }
+            if (Program.PlayWindow != null) return;
+            Program.Client.Rpc.Start();
+            Program.PlayWindow = new PlayWindow(Program.Game.IsLocal);
+            Program.PlayWindow.Show();
+            if(Program.PreGameLobbyWindow != null)
+                Program.PreGameLobbyWindow.Close();
+        }
         public static void StopGame()
         {
             if (Client != null)
