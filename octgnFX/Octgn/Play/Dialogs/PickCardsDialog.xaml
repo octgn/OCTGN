@@ -1,7 +1,7 @@
 ﻿<UserControl x:Class="Octgn.Play.Dialogs.PickCardsDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ctrl="clr-namespace:Octgn.Controls"
-             xmlns:octgn="clr-namespace:Octgn" xmlns:local="clr-namespace:Octgn.Play.Dialogs" x:Name="This" Background="#FF195B8F"
+             xmlns:octgn="clr-namespace:Octgn" xmlns:local="clr-namespace:Octgn.Play.Dialogs" x:Name="This" Background="{StaticResource ControlBackgroundBrush}"
              mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="477" d:DesignWidth="801">
   <UserControl.Resources>
@@ -158,8 +158,8 @@ Template="{StaticResource ExpanderButton}" />
         <Grid>
                     <ProgressBar x:Name="ProgressBarLoading" Visibility="Hidden" Width="200" Height="20" Margin="0,2,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
                     <TextBlock Text="Sort:" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Left" Width="31"
-                     Height="20" TextAlignment="Right" Margin="205,2,0,0" RenderTransformOrigin="0.884,0.614" />
-          <ComboBox x:Name="sortBox"
+                     Height="20" TextAlignment="Right" Margin="205,2,0,0" RenderTransformOrigin="0.884,0.614" Foreground="White"/>
+                    <ComboBox x:Name="sortBox"
                     ItemsSource="{Binding AllProperties, Source={x:Static octgn:Database.OpenedGame}, Mode=OneTime}"
                     DisplayMemberPath="Name" SelectionChanged="SortChanged" VerticalAlignment="Top" Margin="241,0,0,0" Height="24" />
           <Border Style="{StaticResource ControlBorder}" Padding="0" Margin="0,26,0,0" HorizontalAlignment="Left"
