@@ -490,13 +490,13 @@ namespace Octgn.Server
 				}
 				case 91:
 				{
-					bool arg0 = reader.ReadBoolean();
-					handler.IsTableBackgroundFlipped(arg0);
+					handler.Ping();
 					break;
 				}
 				case 92:
 				{
-					handler.Ping();
+					bool arg0 = reader.ReadBoolean();
+					handler.IsTableBackgroundFlipped(arg0);
 					break;
 				}
 				default:

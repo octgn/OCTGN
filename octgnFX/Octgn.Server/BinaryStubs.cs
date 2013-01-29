@@ -1008,21 +1008,6 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void IsTableBackgroundFlipped(bool isFlipped)
-    {
-			MemoryStream stream = new MemoryStream(512);
-			stream.Seek(4, SeekOrigin.Begin);
-			BinaryWriter writer = new BinaryWriter(stream);
-
-      writer.Write(handler.muted);
-			writer.Write((byte)91);
-			writer.Write(isFlipped);
-			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
-			writer.Write((int)stream.Length);
-			writer.Close();
-			Send(stream.ToArray());
-		}
-
     public void Ping()
     {
 			MemoryStream stream = new MemoryStream(512);
@@ -1030,7 +1015,22 @@ namespace Octgn.Server
 			BinaryWriter writer = new BinaryWriter(stream);
 
       writer.Write(handler.muted);
+			writer.Write((byte)91);
+			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
+			writer.Write((int)stream.Length);
+			writer.Close();
+			Send(stream.ToArray());
+		}
+
+    public void IsTableBackgroundFlipped(bool isFlipped)
+    {
+			MemoryStream stream = new MemoryStream(512);
+			stream.Seek(4, SeekOrigin.Begin);
+			BinaryWriter writer = new BinaryWriter(stream);
+
+      writer.Write(handler.muted);
 			writer.Write((byte)92);
+			writer.Write(isFlipped);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
