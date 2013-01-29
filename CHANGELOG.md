@@ -1,3 +1,6 @@
+#3.0.2.42
++ Performance tuning
+
 #3.0.2.41
 + Added options dialog
 + Added light chat option
