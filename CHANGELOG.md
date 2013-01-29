@@ -1,3 +1,10 @@
+#3.0.2.41
++ Added options dialog
++ Added light chat option
+
+#3.0.2.40
++ Fixed game hosting and joining.
+
 #3.0.2.39
 + Added isTableBackgroundFlipped() and setTableBackgroundFlipped(flipped) to python api https://github.com/kellyelton/OCTGN/issues/540
 + Can now save a limited deck during play https://github.com/kellyelton/OCTGN/issues/559
