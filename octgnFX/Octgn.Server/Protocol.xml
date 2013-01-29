@@ -437,8 +437,8 @@
   <msg name="SwitchWithAlternate" server="true" client="true">
     <param name="card" type="Card"/>
   </msg>
+  <msg name="Ping" server="true" client="true"></msg>
   <msg name="IsTableBackgroundFlipped" server="true" client="true">
     <param name="isFlipped" type="bool"/>
   </msg>
-  <msg name="Ping" server="true" client="true"></msg>
 </protocol>
