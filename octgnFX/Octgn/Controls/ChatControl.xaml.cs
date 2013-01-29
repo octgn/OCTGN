@@ -68,6 +68,8 @@ namespace Octgn.Controls
 
         public SortableObservableCollection<ChatUserListItem> UserListItems { get; set; }
 
+
+        protected Brush HoverBackBrush { get; set; }
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatControl"/> class.
         /// </summary>
@@ -77,10 +79,46 @@ namespace Octgn.Controls
             this.InitializeComponent();
             this.messageCache = new List<string>();
             this.DataContext = UserListItems;
+
             if (this.IsInDesignMode())
             {
                 return;
             }
+            this.Loaded += (sender, args) =>
+                { 
+                    Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
+                    ProgramOnOnOptionsChanged();
+                };
+            this.Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
+            Unloaded -= this.OnUnloaded;
+        }
+
+        private void ProgramOnOnOptionsChanged()
+        {
+            Dispatcher.Invoke(new Action(() =>
+                {
+                    SolidColorBrush backr = null;
+                    SolidColorBrush fontr = null;
+                    if (Prefs.UseLightChat)
+                    {
+                        backr = this.FindResource("LightChatBackBrush") as SolidColorBrush;
+                        fontr = this.FindResource("LightChatFontBrush") as SolidColorBrush;
+                    }
+                    else
+                    {
+                        backr = this.FindResource("DarkChatBackBrush") as SolidColorBrush;
+                        fontr = this.FindResource("DarkChatFontBrush") as SolidColorBrush;
+                    }
+                    Chat.Background = backr;
+                    Chat.Foreground = fontr;
+                    this.HoverBackBrush = Prefs.UseLightChat ? Brushes.AliceBlue : Brushes.DimGray;
+                    this.InvalidateVisual();
+                }));
         }
 
         /// <summary>
@@ -209,7 +247,7 @@ namespace Octgn.Controls
                                 if (rr.User.UserName
                                     == theFrom.UserName)
                                 {
-                                    r.Background = Brushes.DimGray;
+                                    r.Background = this.HoverBackBrush;
                                 }
                             }
                         };

@@ -195,5 +195,20 @@ namespace Octgn
                 SimpleConfig.WriteValue("LoginTimeout",value.ToString(CultureInfo.InvariantCulture));
             }
         }
+
+        public static bool UseLightChat
+        {
+            get
+            {
+                var val = SimpleConfig.ReadValue("LightChat", "false");
+                var valout = false;
+                bool.TryParse(val, out valout);
+                return valout;
+            }
+            set
+            {
+                SimpleConfig.WriteValue("LightChat",value.ToString());
+            }
+        }
     }
 }

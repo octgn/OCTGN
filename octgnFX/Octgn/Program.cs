@@ -39,6 +39,7 @@ namespace Octgn
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository = new GamesRepository();
         internal static Client Client;
+        public static event Action OnOptionsChanged;
 
         internal readonly static string WebsitePath;
         internal readonly static string ChatServerPath;
@@ -112,6 +113,12 @@ namespace Octgn
                 Application.Current.MainWindow = LauncherWindow;
                 LobbyClient.Chatting.OnCreateRoom += Chatting_OnCreateRoom;
             }
+        }
+
+        internal static void FireOptionsChanged()
+        {
+            if(OnOptionsChanged != null)
+                OnOptionsChanged.Invoke();
         }
 
         static void Chatting_OnCreateRoom(object sender, NewChatRoom room)

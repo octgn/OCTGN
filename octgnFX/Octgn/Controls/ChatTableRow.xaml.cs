@@ -12,6 +12,7 @@ namespace Octgn.Controls
     using System;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using System.Windows;
     using System.Windows.Documents;
@@ -44,6 +45,9 @@ namespace Octgn.Controls
         /// </summary>
         private DateTime messageDate;
 
+        private Brush UrlBrush { get; set; }
+
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatTableRow"/> class.
@@ -54,6 +58,40 @@ namespace Octgn.Controls
             this.User = new NewUser(new Jid("NoUser", "server.octgn.info", "agsxmpp"));
             this.MessageDate = DateTime.Now;
             this.Message = "TestMessage";
+            this.Unloaded += OnUnloaded;
+            this.Loaded += (sender, args) =>
+                {
+                    Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
+                    this.ProgramOnOnOptionsChanged();
+                };
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
+            this.Unloaded -= this.OnUnloaded;
+        }
+
+        private void ProgramOnOnOptionsChanged()
+        {
+            Dispatcher.Invoke(new Action(() => {
+                if (Prefs.UseLightChat)
+                {
+                    var res = this.FindResource("LightUserColor") as SolidColorBrush;
+                    UrlBrush = Brushes.Green;
+                    UsernameParagraph.Foreground = res;
+                }
+                else
+                {
+                    var res = this.FindResource("DarkUserColor") as SolidColorBrush;
+                    UrlBrush = Brushes.LightGreen;
+                    UsernameParagraph.Foreground = res;
+                }
+                foreach (var hl in MessageParagraph.Inlines.OfType<Hyperlink>())
+                {
+                    hl.Foreground = UrlBrush;
+                }
+            }));
         }
 
         /// <summary>
@@ -157,7 +195,7 @@ namespace Octgn.Controls
                     {
                         var uri = new System.Uri(s);
                         var hl = new Hyperlink(new Run(s)) { NavigateUri = uri };
-                        hl.Foreground = Brushes.LightGreen;
+                        hl.Foreground = UrlBrush;
                         hl.RequestNavigate += this.RequestNavigate;
                         MessageParagraph.Inlines.Add(hl);
                     }
@@ -167,7 +205,7 @@ namespace Octgn.Controls
                         {
                             var uri = new System.Uri("http://" + s);
                             var hl = new Hyperlink(new Run(s)) { NavigateUri = uri };
-                            hl.Foreground = Brushes.LightGreen;
+                            hl.Foreground = UrlBrush;
                             hl.RequestNavigate += this.RequestNavigate;                        
                             MessageParagraph.Inlines.Add(hl);
                         }

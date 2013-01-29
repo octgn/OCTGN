@@ -544,6 +544,9 @@
     <Compile Include="Windows\MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Options.xaml.cs">
+      <DependentUpon>Options.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\PatchDialog.xaml.cs">
       <DependentUpon>PatchDialog.xaml</DependentUpon>
     </Compile>
@@ -581,6 +584,7 @@
     <Resource Include="Resources\randomname.png" />
     <Resource Include="Resources\pregamelobbyicon.png" />
     <Resource Include="Resources\Icons\savedeck.png" />
+    <Resource Include="Resources\Icons\setting_tools.png" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1065,6 +1069,10 @@
     <Page Include="Windows\MessageWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Options.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\PatchDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
