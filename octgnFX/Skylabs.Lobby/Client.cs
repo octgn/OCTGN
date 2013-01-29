@@ -471,25 +471,25 @@ namespace Skylabs.Lobby
             {
                 if (iq.Vcard != null)
                 {
-                    var f = this.Friends.AsParallel().FirstOrDefault(x => x.FullUserName == iq.From.Bare);
-                    if (f != null)
-                    {
-                        var email = DatabaseHandler.GetUser(f.FullUserName);
-                        if (string.IsNullOrWhiteSpace(email))
-                        {
-                            var s =
-                                iq.Vcard.GetEmailAddresses().FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.UserId));
-                            if (s != null)
-                            {
-                                f.Email = s.UserId;
-                                DatabaseHandler.AddUser(f.FullUserName, f.Email);
-                            }
-                        }
-                        else
-                        {
-                            f.Email = email;
-                        }
-                    }
+                    //var f = this.Friends.AsParallel().FirstOrDefault(x => x.FullUserName == iq.From.Bare);
+                    //if (f != null)
+                    //{
+                    //    var email = DatabaseHandler.GetUser(f.FullUserName);
+                    //    if (string.IsNullOrWhiteSpace(email))
+                    //    {
+                    //        var s =
+                    //            iq.Vcard.GetEmailAddresses().FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.UserId));
+                    //        if (s != null)
+                    //        {
+                    //            f.Email = s.UserId;
+                    //            DatabaseHandler.AddUser(f.FullUserName, f.Email);
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        f.Email = email;
+                    //    }
+                    //}
 
                     if (this.OnDataReceived != null)
                     {

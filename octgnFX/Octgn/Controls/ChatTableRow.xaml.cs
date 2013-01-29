@@ -64,6 +64,7 @@ namespace Octgn.Controls
                     Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
                     this.ProgramOnOnOptionsChanged();
                 };
+            this.UsernameParagraph.Inlines.Add(new Run());
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -77,13 +78,13 @@ namespace Octgn.Controls
             Dispatcher.Invoke(new Action(() => {
                 if (Prefs.UseLightChat)
                 {
-                    var res = this.FindResource("LightUserColor") as SolidColorBrush;
+                    var res = this.Resources["LightUserColor"] as SolidColorBrush;
                     UrlBrush = Brushes.Green;
                     UsernameParagraph.Foreground = res;
                 }
                 else
                 {
-                    var res = this.FindResource("DarkUserColor") as SolidColorBrush;
+                    var res = this.Resources["DarkUserColor"] as SolidColorBrush;
                     UrlBrush = Brushes.LightGreen;
                     UsernameParagraph.Foreground = res;
                 }
@@ -109,8 +110,7 @@ namespace Octgn.Controls
                 this.user = value;
                 Dispatcher.BeginInvoke(new Action(() =>
                                                       {
-                                                          UsernameParagraph.Inlines.Clear();
-                                                          UsernameParagraph.Inlines.Add(new Run(this.user.UserName));
+                                                          (UsernameParagraph.Inlines.FirstInline as Run).Text = this.user.UserName;
                                                           UsernameColumn.Width = new GridLength(GetUsernameWidth());
                                                       }));
             }

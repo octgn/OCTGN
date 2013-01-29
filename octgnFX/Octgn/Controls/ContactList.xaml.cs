@@ -45,10 +45,10 @@ namespace Octgn.Controls
 
         public void RefreshList()
         {
+            NewUser[] flist = Program.LobbyClient.Friends.OrderByDescending(x => x.Status == UserStatus.Online).ThenBy(x => x.UserName).ToArray();
             Dispatcher.Invoke(new Action(() =>
                                              {
                 stackPanel1.Children.Clear();
-                NewUser[] flist = Program.LobbyClient.Friends.OrderByDescending(x => x.Status == UserStatus.Online).ThenBy(x => x.UserName).ToArray();
                 foreach (FriendListItem f in flist.Select(u => new FriendListItem
                                                                 {
                                                                     ThisUser = u,
