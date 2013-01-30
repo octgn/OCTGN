@@ -18,6 +18,8 @@ using Client = Octgn.Networking.Client;
 namespace Octgn
 {
     using System.Configuration;
+    using System.Windows.Interop;
+    using System.Windows.Media;
 
     using Octgn.Windows;
 
@@ -46,6 +48,8 @@ namespace Octgn
         internal readonly static string GameServerPath;
         internal static readonly string UpdateInfoPath;
 
+        internal static readonly bool UseTransparentWindows;
+
         internal static readonly bool UseNewChrome;
 
         internal static bool IsGameRunning;
@@ -70,6 +74,16 @@ namespace Octgn
 
         static Program()
         {
+
+            try
+            {
+                RenderOptions.ProcessRenderMode = Prefs.UseHardwareRendering ? RenderMode.Default : RenderMode.SoftwareOnly;
+            }
+            catch (Exception)
+            {
+                // if the system gets mad, best to leave it alone.
+            }
+            UseTransparentWindows = Prefs.UseWindowTransparency;
             WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];

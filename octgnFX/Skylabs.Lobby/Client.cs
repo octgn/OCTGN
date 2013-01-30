@@ -580,12 +580,14 @@ namespace Skylabs.Lobby
                 case PresenceType.probe:
                     break;
             }
-
-            foreach (var t in this.Friends.Where(t => t.UserName == pres.From.User))
+            var presFromUser = pres.From.User;
+            var friendToSet = this.Friends.FirstOrDefault(x => x.UserName == presFromUser);
+            if (friendToSet != null)
             {
-                t.CustomStatus = pres.Status ?? string.Empty;
-                t.SetStatus(pres);
-                break;
+                friendToSet.CustomStatus = pres.Status ?? string.Empty;
+                friendToSet.SetStatus(pres);
+                this.Friends.Remove(friendToSet);
+                this.Friends.Add(friendToSet);
             }
 
             this.XmppOnOnRosterEnd(this);
@@ -691,28 +693,28 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnRosterEnd(object sender)
         {
-            foreach (var n in this.Friends)
-            {
-                var email = DatabaseHandler.GetUser(n.FullUserName);
-                if (string.IsNullOrWhiteSpace(email))
-                {
-                    /*
-                    var viq = new VcardIq
-                    {
-                        Type = IqType.get ,
-                        To = n.User.Bare
-                    };
-                    viq.From = Me.User.Bare;
-                    viq.Vcard.JabberId = n.User.Bare;
-                    viq.GenerateId();
-                    Xmpp.Send(viq);
-                     */
-                }
-                else
-                {
-                    n.Email = email;
-                }
-            }
+            //foreach (var n in this.Friends)
+            //{
+            //    var email = DatabaseHandler.GetUser(n.FullUserName);
+            //    if (string.IsNullOrWhiteSpace(email))
+            //    {
+            //        /*
+            //        var viq = new VcardIq
+            //        {
+            //            Type = IqType.get ,
+            //            To = n.User.Bare
+            //        };
+            //        viq.From = Me.User.Bare;
+            //        viq.Vcard.JabberId = n.User.Bare;
+            //        viq.GenerateId();
+            //        Xmpp.Send(viq);
+            //         */
+            //    }
+            //    else
+            //    {
+            //        n.Email = email;
+            //    }
+            //}
 
             if (this.OnDataReceived != null)
             {

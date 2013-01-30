@@ -5,6 +5,8 @@ using System.Windows;
 using Octgn.Data;
 namespace Octgn
 {
+    using System.Windows.Controls;
+
     public static class Prefs
     {
         private static string _hideLoginNotifications;
@@ -208,6 +210,36 @@ namespace Octgn
             set
             {
                 SimpleConfig.WriteValue("LightChat",value.ToString());
+            }
+        }
+
+        public static bool UseHardwareRendering
+        {
+            get
+            {
+                var val = SimpleConfig.ReadValue("UseHardwareRendering", "false");
+                var valout = false;
+                bool.TryParse(val, out valout);
+                return valout;
+            }
+            set
+            {
+                SimpleConfig.WriteValue("UseHardwareRendering", value.ToString());
+            }
+        }
+
+        public static bool UseWindowTransparency
+        {
+            get
+            {
+                var val = SimpleConfig.ReadValue("UseWindowTransparency", "false");
+                var valout = false;
+                bool.TryParse(val, out valout);
+                return valout;
+            }
+            set
+            {
+                SimpleConfig.WriteValue("UseWindowTransparency", value.ToString());
             }
         }
     }

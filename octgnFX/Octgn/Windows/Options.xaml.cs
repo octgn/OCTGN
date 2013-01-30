@@ -17,6 +17,8 @@
             TextBoxDataDirectory.Text = Prefs.DataDirectory;
             CheckBoxInstallOnBoot.IsChecked = Prefs.InstallOnBoot;
             CheckBoxLightChat.IsChecked = Prefs.UseLightChat;
+            CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
+            CheckBoxUseWindowTransparency.IsChecked = Prefs.UseWindowTransparency;
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
             this.CanResize = false;
@@ -39,7 +41,7 @@
                 }));
         }
 
-        void ValidateFields(ref string dataDirectory, bool installOnBoot, bool useLightChat)
+        void ValidateFields(ref string dataDirectory, bool installOnBoot, bool useLightChat, bool useHardwareRendering, bool useTransparentWindows)
         {
             try
             {
@@ -60,17 +62,22 @@
             var dataDirectory = TextBoxDataDirectory.Text;
             var installOnBoot = CheckBoxInstallOnBoot.IsChecked ?? false;
             var useLightChat = CheckBoxLightChat.IsChecked ?? false;
-            var task = new Task(()=>this.SaveSettingsTask(ref dataDirectory,installOnBoot,useLightChat));
+            var useHardwareRendering = CheckBoxUseHardwareRendering.IsChecked ?? false;
+            var useTransparentWindows = CheckBoxUseWindowTransparency.IsChecked ?? false;
+            var task = new Task(() => this.SaveSettingsTask(ref dataDirectory, installOnBoot, useLightChat, useHardwareRendering, useTransparentWindows));
             task.ContinueWith((t) => { Dispatcher.Invoke(new Action(() => this.SaveSettingsComplete(t))); });
             task.Start();
         }
 
-        void SaveSettingsTask(ref string dataDirectory, bool installOnBoot, bool useLightChat)
+        void SaveSettingsTask(ref string dataDirectory, bool installOnBoot, bool useLightChat, bool useHardwareRendering, bool useTransparentWindows)
         {
-            this.ValidateFields(ref dataDirectory,installOnBoot,useLightChat);
+            this.ValidateFields(
+                ref dataDirectory, installOnBoot, useLightChat, useHardwareRendering, useTransparentWindows);
             Prefs.DataDirectory = dataDirectory;
             Prefs.InstallOnBoot = installOnBoot;
             Prefs.UseLightChat = useLightChat;
+            Prefs.UseHardwareRendering = useHardwareRendering;
+            Prefs.UseWindowTransparency = useTransparentWindows;
         }
 
         void SaveSettingsComplete(Task task)
