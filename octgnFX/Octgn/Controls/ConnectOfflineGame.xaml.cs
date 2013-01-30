@@ -44,6 +44,7 @@
         public ConnectOfflineGame()
         {
             InitializeComponent();
+            Program.Dispatcher = Program.MainWindowNew.Dispatcher;
             Games = new ObservableCollection<DataGameViewModel>();
         }
 
