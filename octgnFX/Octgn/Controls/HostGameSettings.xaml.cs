@@ -231,9 +231,9 @@
             this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository);
             this.Gamename = TextBoxGameName.Text;
             this.Password = PasswordGame.Password;
-            var isLocalGame = !(CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false);
+            var isLocalGame = (CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false) == false;
             Task task = null;
-            task = isLocalGame ? new Task(() => this.StartOnlineGame(Game, Gamename, Password)) : new Task(() => this.StartLocalGame(Game, Gamename, Password));
+            task = isLocalGame ? new Task(() => this.StartLocalGame(Game, Gamename, Password)) : new Task(() => this.StartOnlineGame(Game, Gamename, Password));
 
             task.ContinueWith((continueTask) =>
                 {

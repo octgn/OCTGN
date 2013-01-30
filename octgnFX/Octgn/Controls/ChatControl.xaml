@@ -4,6 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" Height="397" Width="845" Focusable="True" x:Name="thisControl" >
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="DarkChatBackBrush" Color="#FF333333"></SolidColorBrush>
+        <SolidColorBrush x:Key="LightChatBackBrush" Color="#FFF9F9F9"></SolidColorBrush>
+
+        <SolidColorBrush x:Key="DarkChatFontBrush" Color="#FFF9F9F9"></SolidColorBrush>
+        <SolidColorBrush x:Key="LightChatFontBrush" Color="#FF333333"></SolidColorBrush>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
@@ -32,7 +39,9 @@
             </TextBox>
         </Grid>
         <TextBox x:Name="ChatInput" Grid.Row="1" TextWrapping="Wrap" VerticalContentAlignment="Center" PreviewKeyUp="ChatInputPreviewKeyUp" PreviewKeyDown="ChatInputPreviewKeyDown"/>
-        <RichTextBox x:Name="Chat" VerticalScrollBarVisibility="Auto" IsReadOnly="True" IsDocumentEnabled="True">
+        <RichTextBox x:Name="Chat" VerticalScrollBarVisibility="Auto" 
+                     IsReadOnly="True" IsDocumentEnabled="True" Background="{StaticResource DarkChatBackBrush}"
+                     Foreground="{StaticResource DarkChatFontBrush}">
             <FlowDocument>
                 <Table CellSpacing="0">
                     <Table.Columns>
@@ -42,8 +51,9 @@
 
                     <TableRowGroup x:Name="ChatRowGroup">
                         <TableRow>
-                            <TableCell><Paragraph Foreground="#FFF6FF98">-------></Paragraph></TableCell>
-                            <TableCell><Paragraph Foreground="#FFF6FF98">Type /? for a list of commands</Paragraph></TableCell>
+                            <TableCell><Paragraph Foreground="#FFE66E09">-------></Paragraph></TableCell>
+                            <TableCell>
+                                <Paragraph Foreground="#FFE66E09">Type /? for a list of commands</Paragraph></TableCell>
                         </TableRow>
                     </TableRowGroup>
                 </Table>

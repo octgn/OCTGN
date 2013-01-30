@@ -18,6 +18,8 @@ using Client = Octgn.Networking.Client;
 namespace Octgn
 {
     using System.Configuration;
+    using System.Windows.Interop;
+    using System.Windows.Media;
 
     using Octgn.Windows;
 
@@ -39,11 +41,14 @@ namespace Octgn
         public static GameSettings GameSettings = new GameSettings();
         public static GamesRepository GamesRepository = new GamesRepository();
         internal static Client Client;
+        public static event Action OnOptionsChanged;
 
         internal readonly static string WebsitePath;
         internal readonly static string ChatServerPath;
         internal readonly static string GameServerPath;
         internal static readonly string UpdateInfoPath;
+
+        internal static readonly bool UseTransparentWindows;
 
         internal static readonly bool UseNewChrome;
 
@@ -69,6 +74,16 @@ namespace Octgn
 
         static Program()
         {
+
+            try
+            {
+                RenderOptions.ProcessRenderMode = Prefs.UseHardwareRendering ? RenderMode.Default : RenderMode.SoftwareOnly;
+            }
+            catch (Exception)
+            {
+                // if the system gets mad, best to leave it alone.
+            }
+            UseTransparentWindows = Prefs.UseWindowTransparency;
             WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
@@ -112,6 +127,12 @@ namespace Octgn
                 Application.Current.MainWindow = LauncherWindow;
                 LobbyClient.Chatting.OnCreateRoom += Chatting_OnCreateRoom;
             }
+        }
+
+        internal static void FireOptionsChanged()
+        {
+            if(OnOptionsChanged != null)
+                OnOptionsChanged.Invoke();
         }
 
         static void Chatting_OnCreateRoom(object sender, NewChatRoom room)

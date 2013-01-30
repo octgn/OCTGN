@@ -16,8 +16,9 @@
             this.Closed += (sender, args) => Program.PreGameLobbyWindow = null;
         }
 
-        public void Setup(bool isLocalGame)
+        public void Setup(bool isLocalGame, Window owner)
         {
+            this.Owner = owner;
             if(this.Visibility != Visibility.Visible)
                 this.Show();
             this.Content = null;
