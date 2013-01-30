@@ -311,19 +311,23 @@ namespace Octgn.Controls
             this.CanResize = true;
             this.MainBorder = new Border();
 
-            if (Program.UseTransparentWindows)
+            if (!this.IsInDesignMode())
             {
-                this.AllowsTransparency = true;
-                base.Background = Brushes.Transparent;
-                this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
-                this.MainBorder.BorderThickness = new Thickness(2);
-                this.MainBorder.CornerRadius = new CornerRadius(5);
-                this.MainBorder.BorderBrush = new LinearGradientBrush(Color.FromArgb(150, 30, 30, 30), Color.FromArgb(150, 200, 200, 200), 45);
-            }
-            else
-            {
-                this.AllowsTransparency = false;
-                base.Background = Brushes.DimGray;
+                if (Program.UseTransparentWindows)
+                {
+                    this.AllowsTransparency = true;
+                    base.Background = Brushes.Transparent;
+                    this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
+                    this.MainBorder.BorderThickness = new Thickness(2);
+                    this.MainBorder.CornerRadius = new CornerRadius(5);
+                    this.MainBorder.BorderBrush = new LinearGradientBrush(
+                        Color.FromArgb(150, 30, 30, 30), Color.FromArgb(150, 200, 200, 200), 45);
+                }
+                else
+                {
+                    this.AllowsTransparency = false;
+                    base.Background = Brushes.DimGray;
+                }
             }
 
             //var bimage = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/testbackground.jpg"));
