@@ -1,3 +1,10 @@
+#3.0.3.43
++ More performance tuning
++ Added some performance options to the options menu
++ Performance options start on the lowest settings
++ Fixed offline play bug
++ Fixed Pre Game Lobby popping up behind main window.
+
 #3.0.2.42
 + Performance tuning
 
