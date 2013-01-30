@@ -4,6 +4,7 @@
 + Performance options start on the lowest settings
 + Fixed offline play bug
 + Fixed Pre Game Lobby popping up behind main window.
++ Fixed Ctrl+S Shortcut in game
 
 #3.0.2.42
 + Performance tuning
