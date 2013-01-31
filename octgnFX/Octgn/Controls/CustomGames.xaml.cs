@@ -147,7 +147,7 @@ namespace Octgn.Controls
                 return;
             }
             Program.PreGameLobbyWindow = new PreGameLobbyWindow();
-            Program.PreGameLobbyWindow.Setup(false);
+            Program.PreGameLobbyWindow.Setup(false,Program.MainWindowNew);
         }
 
         #region LobbyEvents
@@ -184,7 +184,7 @@ namespace Octgn.Controls
                     if (Program.PreGameLobbyWindow == null)
                     {
                         Program.PreGameLobbyWindow = new PreGameLobbyWindow();
-                        Program.PreGameLobbyWindow.Setup(hostGameDialog.IsLocalGame);
+                        Program.PreGameLobbyWindow.Setup(hostGameDialog.IsLocalGame,Program.MainWindowNew);
                     }
                 }
             }
@@ -203,7 +203,7 @@ namespace Octgn.Controls
                         Program.Game = new Octgn.Game(GameDef.FromO8G(connectOfflineGameDialog.Game.FullPath), true);
 
                         Program.PreGameLobbyWindow = new PreGameLobbyWindow();
-                        Program.PreGameLobbyWindow.Setup(true);
+                        Program.PreGameLobbyWindow.Setup(true,Program.MainWindowNew);
                     }
                 }
             }

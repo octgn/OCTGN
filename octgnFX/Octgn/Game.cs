@@ -55,10 +55,14 @@ namespace Octgn
             {
                 nick = Prefs.Nickname;
                 if (string.IsNullOrWhiteSpace(nick)) nick = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
-                var i = new InputDlg("Choose a nickname", "Choose a nickname", nick);
-                var ret = i.GetString();
-                if (ret == "") ret = nick;
-                nick = ret;
+                var retNick = nick;
+                Program.Dispatcher.Invoke(new Action(() =>
+                    {
+                        var i = new InputDlg("Choose a nickname", "Choose a nickname", nick);
+                        retNick = i.GetString();
+                    }));
+                if (retNick == "") retNick = nick;
+                nick = retNick;
             }
             else
             {

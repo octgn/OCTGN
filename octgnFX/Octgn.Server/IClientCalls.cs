@@ -65,7 +65,7 @@ namespace Octgn.Server
 		void PlayerSetGlobalVariable(byte player, string name, string val);
 		void SetGlobalVariable(string name, string val);
 		void SwitchWithAlternate(int card);
-		void IsTableBackgroundFlipped(bool isFlipped);
 		void Ping();
+		void IsTableBackgroundFlipped(bool isFlipped);
 	}
 }

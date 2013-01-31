@@ -5,11 +5,14 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Net;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Forms;
 
     using Octgn.Definitions;
+    using Octgn.Library.Exceptions;
     using Octgn.ViewModels;
 
     using Skylabs.Lobby;
@@ -109,10 +112,11 @@
         #region LobbyEvents
         private void LobbyClientOnDataReceviedCaller(object sender, DataRecType type, object data)
         {
-            Dispatcher.Invoke(new Action(() => this.LobbyClientOnOnDataReceived(sender, type, data)));
-        }
-        private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
-        {
+        //    Dispatcher.Invoke(new Action(() => this.LobbyClientOnOnDataReceived(sender, type, data)));
+            
+        //}
+        //private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
+        //{
             try
             {
                 if (type == DataRecType.HostedGameReady)
@@ -120,7 +124,7 @@
                     var port = data as Int32?;
                     if (port == null)
                         throw new Exception("Could not start game.");
-                    var game = this.ComboBoxGame.SelectedItem as DataGameViewModel;
+                    var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)port;
                     Program.GameSettings.UseTwoSidedTable = true;
                     Program.Game = new Game(GameDef.FromO8G(game.FullPath));
@@ -130,14 +134,15 @@
 
                     Program.Client = new Client(hostAddress, (int)port);
                     Program.Client.Connect();
-                    Prefs.LastRoomName = TextBoxGameName.Text;
+                    Prefs.LastRoomName = this.Gamename;
                     SuccessfulHost = true;
                 }
 
             }
             catch (Exception e)
             {
-                this.SetError("Error: {0}" + e.Message);
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
             }
 
         }
@@ -188,8 +193,7 @@
             var hs = new HostedGame(hostport, game.Id, game.Version, name, "", null, true);
             if (!hs.StartProcess())
             {
-                this.SetError("Cannot start local game");
-                return;
+                throw new UserMessageException("Cannot start local game. You may be missing a file.");
             }
 
             Program.LobbyClient.CurrentHostedGamePort = hostport;
@@ -199,25 +203,14 @@
 
             var ip = IPAddress.Parse("127.0.0.1");
 
-            try
-            {
-                Program.Client = new Client(ip, hostport);
-                Program.Client.Connect();
-                SuccessfulHost = true;
-                this.SetError();
-                //Dispatcher.Invoke(new Action(() => Program.LauncherWindow.NavigationService.Navigate(new StartGame(true) { Width = 400 })));
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-                //if (Debugger.IsAttached) Debugger.Break();
-                this.SetError("Cannot start local game");
-            }
+            Program.Client = new Client(ip, hostport);
+            Program.Client.Connect();
+            SuccessfulHost = true;
         }
 
         void StartOnlineGame(Data.Game game, string name, string password)
         {
-            Program.CurrentOnlineGameName = TextBoxGameName.Text;
+            Program.CurrentOnlineGameName = name;
             Program.LobbyClient.BeginHostGame(game, name);
         }
 
@@ -232,15 +225,43 @@
         private void ButtonHostGameStartClick(object sender, RoutedEventArgs e)
         {
             this.ValidateFields();
+            Program.Dispatcher = this.Dispatcher;
             if (this.HasErrors) return;
             this.StartWait();
-            if ((CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false))
-                this.StartOnlineGame((ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository), TextBoxGameName.Text, PasswordGame.Password);
-            else
-                this.StartLocalGame((ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository), TextBoxGameName.Text, PasswordGame.Password);
-            this.EndWait();
-            if (SuccessfulHost)
-                this.Close(DialogResult.OK);
+            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository);
+            this.Gamename = TextBoxGameName.Text;
+            this.Password = PasswordGame.Password;
+            var isLocalGame = (CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false) == false;
+            Task task = null;
+            task = isLocalGame ? new Task(() => this.StartLocalGame(Game, Gamename, Password)) : new Task(() => this.StartOnlineGame(Game, Gamename, Password));
+
+            task.ContinueWith((continueTask) =>
+                {
+                    var error = "";
+                    if (continueTask.IsFaulted)
+                    {
+                        error = "There was a problem, please try again.";
+                        SuccessfulHost = false;
+                    }
+                    else
+                    {
+                        var i = 0;
+                        while (!SuccessfulHost || i < 10)
+                        {
+                            Thread.Sleep(1000);
+                            i++;
+                        }
+                    }
+                    Dispatcher.Invoke(new Action(() =>
+                        {
+                            if(!string.IsNullOrWhiteSpace(error))
+                                this.SetError(error);
+                            this.EndWait();
+                            if(SuccessfulHost)
+                                this.Close(DialogResult.OK);
+                        }));
+                });
+            task.Start();
         }
 
         private void ButtonRandomizeGameNameClick(object sender, RoutedEventArgs e)

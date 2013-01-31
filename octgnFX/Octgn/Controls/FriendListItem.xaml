@@ -6,8 +6,29 @@
              FocusManager.IsFocusScope="False" MouseDown="UserControlMouseDown"
              MouseUp="FlistitemMouseUp" 
              IsEnabled="True">
-    <Border x:Name="LIBorder" BorderThickness="0" Padding="3" BorderBrush="Transparent"
-          Background="{DynamicResource ListItemBackground}">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="ListItemBackground" Color="Transparent"></SolidColorBrush>
+        <LinearGradientBrush x:Key="ListItemBackgroundSelected" EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#AA1e5799" Offset="0" />
+            <GradientStop Color="#AA2989d8" Offset="0.5" />
+            <GradientStop Color="#AA207cca" Offset="0.51"/>
+            <GradientStop Color="#AA7db9e8" Offset="1" />
+        </LinearGradientBrush>
+    </UserControl.Resources>
+    <Border x:Name="LIBorder" BorderThickness="0" Padding="3" BorderBrush="Transparent">
+        <Border.Style>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="Background" Value="{StaticResource ListItemBackground}"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Selected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:FriendListItem}}}" Value="True">
+                        <Setter Property="Background" Value="{StaticResource ListItemBackgroundSelected}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Selected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:FriendListItem}}}" Value="False">
+                        <Setter Property="Background" Value="{StaticResource ListItemBackground}"/>
+                    </DataTrigger >
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -23,54 +44,9 @@
                        Text="{Binding UserName, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:FriendListItem}}}"/>
             <TextBlock Text="{Binding CustomStatus, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:FriendListItem}}}" Grid.Column="2" Grid.Row="1"
                  HorizontalAlignment="Left" Name="tbStatus" VerticalAlignment="Top" Foreground="{StaticResource TextBrush}" Margin="2" />
-            <Image Visibility="Collapsed" Grid.Column="3" Height="16" HorizontalAlignment="Center" Name="image1" Stretch="Fill"
-             VerticalAlignment="Top" Width="16" Source="/Octgn;component/Resources/cross.png" ImageFailed="image1_ImageFailed" MouseUp="image1_MouseUp" />
             <Image Source="{Binding StatusPicture, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:FriendListItem}}}" Grid.Column="1" Height="16" Name="image2"
              Stretch="Fill" Width="16" />
         </Grid>
     </Border>
-    <UserControl.Resources>
-        <LinearGradientBrush x:Key="ListItemBackground" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="Transparent" Offset="0" />
-            <GradientStop Color="Transparent" Offset="0.5" />
-            <GradientStop Color="Transparent" Offset="0.51"/>
-            <GradientStop Color="Transparent" Offset="1" />
-        </LinearGradientBrush>
-        <Storyboard x:Key="OnFocus" SpeedRatio="2" Duration="00:00:01">
-            <ColorAnimation From="Transparent" To="#AA1e5799" Storyboard.TargetName="LIBorder"
-                      Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" />
-            <ColorAnimation From="Transparent" To="#AA2989d8" Storyboard.TargetName="LIBorder"
-                      Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" />
-            <ColorAnimation From="Transparent" To="#AA207cca" Storyboard.TargetName="LIBorder"
-                      Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)" />
-            <ColorAnimation From="Transparent" To="#AA7db9e8" Storyboard.TargetName="LIBorder"
-                      Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[3].(GradientStop.Color)" />
-            <ColorAnimation From="Black" To="White" Storyboard.TargetName="tbUsername"
-                      Storyboard.TargetProperty="Foreground.Color" />
-            <ColorAnimation From="Silver" To="White" Storyboard.TargetName="tbStatus"
-                      Storyboard.TargetProperty="Foreground.Color" />
-        </Storyboard>
-        <Storyboard x:Key="LoseFocus" SpeedRatio="2" Duration="00:00:01">
-            <ColorAnimation To="Transparent" From="#AA1e5799" Storyboard.TargetName="LIBorder"
-                      Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" />
-            <ColorAnimation To="Transparent" From="#AA2989d8" Storyboard.TargetName="LIBorder"
-                      Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" />
-            <ColorAnimation To="Transparent" From="#AA207cca" Storyboard.TargetName="LIBorder"
-                      Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[2].(GradientStop.Color)" />
-            <ColorAnimation To="Transparent" From="#AA7db9e8" Storyboard.TargetName="LIBorder"
-                      Storyboard.TargetProperty="(Border.Background).(GradientBrush.GradientStops)[3].(GradientStop.Color)" />
-            <ColorAnimation To="{StaticResource WhiteColor}" From="White" Storyboard.TargetName="tbUsername"
-                      Storyboard.TargetProperty="Foreground.Color" />
-            <ColorAnimation To="{StaticResource WhiteColor}" From="White" Storyboard.TargetName="tbStatus"
-                      Storyboard.TargetProperty="Foreground.Color" />
-        </Storyboard>
-    </UserControl.Resources>
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="GotFocus">
-            <BeginStoryboard Storyboard="{StaticResource OnFocus}" />
-        </EventTrigger>
-        <EventTrigger RoutedEvent="LostFocus">
-            <BeginStoryboard Storyboard="{StaticResource LoseFocus}" />
-        </EventTrigger>
-    </UserControl.Triggers>
+
 </UserControl>

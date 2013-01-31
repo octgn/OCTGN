@@ -7,22 +7,27 @@ using agsXMPP;
 
 namespace Octgn.Controls
 {
+    using System.ComponentModel;
+
     /// <summary>
     ///   Interaction logic for FriendListItem.xaml
     /// </summary>
-    public partial class FriendListItem
+    public partial class FriendListItem : INotifyPropertyChanged 
     {
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
-            "UserName", typeof (string), typeof (FriendListItem));
+            "UserName", typeof(string), typeof(FriendListItem));
 
         public static DependencyProperty CustomStatusProperty = DependencyProperty.Register(
-            "CustomStatus", typeof (string), typeof (FriendListItem));
+            "CustomStatus", typeof(string), typeof(FriendListItem));
 
         public static DependencyProperty PictureProperty = DependencyProperty.Register(
-            "Picture", typeof (ImageSource), typeof (FriendListItem));
+            "Picture", typeof(ImageSource), typeof(FriendListItem));
 
         public static DependencyProperty StatusPictureProperty = DependencyProperty.Register(
-            "StatusPicture", typeof (ImageSource), typeof (FriendListItem));
+            "StatusPicture", typeof(ImageSource), typeof(FriendListItem));
+
+        public static DependencyProperty SelectedProperty = DependencyProperty.Register(
+            "Selected", typeof(bool), typeof(FriendListItem));
 
         public string UserName
         {
@@ -48,11 +53,41 @@ namespace Octgn.Controls
             }
         }
 
-        private NewUser _mUser = new NewUser(new Jid(""));
+        public bool Selected
+        {
+            get
+            {
+                return (bool)this.GetValue(SelectedProperty);
+            }
+            set
+            {
+                this.SetValue(SelectedProperty, value);
+                OnPropertyChanged("Selected");
+            }
+        }
+
+        private NewUser _mUser = null;
 
         public FriendListItem()
         {
             InitializeComponent();
+            this.GotFocus += OnGotFocus;
+            this.LostFocus += OnLostFocus;
+            this.Unloaded += (sender, args) =>
+                {
+                    this.GotFocus -= this.OnGotFocus;
+                    this.LostFocus -= this.OnLostFocus;
+                };
+        }
+
+        private void OnLostFocus(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Selected = false;
+        }
+
+        private void OnGotFocus(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Selected = true;
         }
 
         public NewUser ThisUser
@@ -62,17 +97,7 @@ namespace Octgn.Controls
             {
                 _mUser = value;
                 SetValue(CustomStatusProperty, value.CustomStatus);
-                string guri = "";
-                if(String.IsNullOrWhiteSpace(_mUser.Email))
-                {
-                    guri = @"pack://application:,,,/Octgn;component/Resources/usernoimage.png";
-                }
-                else
-                {
-                    string h = ValueConverters.HashEmailAddress(_mUser.Email);
-                    guri = "http://www.gravatar.com/avatar/" + h + "?s=64&r=x&salt=";
-                }
-                SetValue(PictureProperty, new ImageSourceConverter().ConvertFromString(guri) as ImageSource);                    
+                string guri = @"pack://application:,,,/Octgn;component/Resources/usernoimage.png";
                 SetValue(UsernameProperty, value.UserName);
                 switch (value.Status)
                 {
@@ -111,6 +136,17 @@ namespace Octgn.Controls
         {
 
             Program.LobbyClient.RemoveFriend(ThisUser);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

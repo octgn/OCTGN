@@ -213,5 +213,11 @@ namespace Octgn.Windows
                 Program.DeckEditor.Show();
             }
         }
+
+        private void MenuOptionsClick(object sender, RoutedEventArgs e)
+        {
+            var options = new Options();
+            options.ShowDialog();
+        }
     }
 }

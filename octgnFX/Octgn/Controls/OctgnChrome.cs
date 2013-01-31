@@ -306,17 +306,29 @@ namespace Octgn.Controls
         /// </summary>
         public OctgnChrome()
         {
-            this.AllowsTransparency = true;
             this.WindowStyle = WindowStyle.None;
             this.ResizeMode = ResizeMode.CanResize;
-            base.Background = Brushes.Transparent;
             this.CanResize = true;
             this.MainBorder = new Border();
-            this.MainBorder.CornerRadius = new CornerRadius(5);
-            this.MainBorder.BorderBrush = new LinearGradientBrush(Color.FromArgb(150, 30, 30, 30), Color.FromArgb(150, 200, 200, 200), 45);
-            this.MainBorder.BorderThickness = new Thickness(2);
 
-            this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
+            if (!this.IsInDesignMode())
+            {
+                if (Program.UseTransparentWindows)
+                {
+                    this.AllowsTransparency = true;
+                    base.Background = Brushes.Transparent;
+                    this.MainBorder.SetResourceReference(Border.BackgroundProperty, "ControlBackgroundBrush");
+                    this.MainBorder.BorderThickness = new Thickness(2);
+                    this.MainBorder.CornerRadius = new CornerRadius(5);
+                    this.MainBorder.BorderBrush = new LinearGradientBrush(
+                        Color.FromArgb(150, 30, 30, 30), Color.FromArgb(150, 200, 200, 200), 45);
+                }
+                else
+                {
+                    this.AllowsTransparency = false;
+                    base.Background = Brushes.DimGray;
+                }
+            }
 
             //var bimage = new BitmapImage(new Uri("pack://application:,,,/OCTGN;component/Resources/testbackground.jpg"));
 
