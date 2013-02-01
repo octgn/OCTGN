@@ -38,6 +38,9 @@
             <TabItem Header="Game Management" IsEnabled="true">
                 <Controls:GameManagement Margin="5,5,5,5"></Controls:GameManagement>
             </TabItem>
+            <TabItem Header="Plugin Management" IsEnabled="false">
+                
+            </TabItem>
         </TabControl>
         <GridSplitter Visibility="Collapsed" Width="5" Grid.Row="1" Grid.Column="1" ResizeBehavior="CurrentAndNext" Background="Black" Margin="0,25,0,0"/>
         <Menu Grid.ColumnSpan="3" Grid.Row="0">

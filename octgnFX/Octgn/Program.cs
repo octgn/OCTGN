@@ -47,10 +47,11 @@ namespace Octgn
         internal readonly static string ChatServerPath;
         internal readonly static string GameServerPath;
         internal static readonly string UpdateInfoPath;
+        internal static readonly string GameFeed;
 
         internal static readonly bool UseTransparentWindows;
-
         internal static readonly bool UseNewChrome;
+        internal static readonly bool UseGamePackageManagement;
 
         internal static bool IsGameRunning;
         internal static readonly string BasePath = Octgn.Library.Paths.BasePath;
@@ -87,6 +88,8 @@ namespace Octgn
             WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
+            GameFeed = ConfigurationManager.AppSettings["GameFeed"];
+            UseGamePackageManagement = bool.Parse(ConfigurationManager.AppSettings["UseGamePackageManagement"]);
 #if(Release_Test)
             UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPathTest"];
 #else
