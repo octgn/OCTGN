@@ -367,6 +367,17 @@ namespace Octgn.Scripting
                                });
         }
 
+        public void CardPeek(int id)
+        {
+            Card c = Card.Find(id);
+            _engine.Invoke(() =>
+            {
+                c.Peek();
+            });
+        }
+
+
+
         public void CardTargetArrow(int id, int targetId, bool active)
         {
             Card c = Card.Find(id);
