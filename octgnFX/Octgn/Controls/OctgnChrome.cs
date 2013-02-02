@@ -217,6 +217,29 @@ namespace Octgn.Controls
             set { this.WindowCloseButton.Visibility = value; }
         }
 
+        public Visibility TitleBarVisibility
+        {
+            get
+            {
+                return this.TitleRow.Height.Value > 0 ? Visibility.Visible : Visibility.Collapsed;
+            }
+            set
+            {
+                switch (value)
+                {
+                    case Visibility.Visible:
+                        this.TitleRow.Height = new GridLength(35);
+                        break;
+                    case Visibility.Hidden:
+                        this.TitleRow.Height =new GridLength(0);
+                        break;
+                    case Visibility.Collapsed:
+                        this.TitleRow.Height = new GridLength(0);
+                        break;
+                }
+            }
+        }
+
         /// <summary>
         /// Gets or sets a value indicating whether this window can resize.
         /// </summary>
@@ -275,6 +298,11 @@ namespace Octgn.Controls
         /// Gets or sets the content area.
         /// </summary>
         private Border ContentArea { get; set; }
+
+        /// <summary>
+        /// The title bar row
+        /// </summary>
+        private RowDefinition TitleRow { get; set; }
 
         /// <summary>
         /// The window control hover brush.
@@ -348,7 +376,8 @@ namespace Octgn.Controls
 
 
             this.MainGrid = new Grid();
-            this.MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(35) });
+            this.TitleRow = new RowDefinition { Height = new GridLength(35) };
+            this.MainGrid.RowDefinitions.Add(this.TitleRow);
             this.MainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(100, GridUnitType.Star) });
             this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
             this.MainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100, GridUnitType.Star) });
