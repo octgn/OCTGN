@@ -1,25 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Data.Odbc;
-using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
 using System.Security;
 using System.Security.Permissions;
-using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Xaml.Permissions;
+
 using IronPython.Hosting;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
@@ -67,6 +59,7 @@ namespace Octgn.Scripting
                     Program.Game.Definition.Scripts.Select(
                         s => _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
             {
+                src.Engine.SetSearchPaths(new List<string>{Program.Game.Definition.BasePath});
                 src.Execute(ActionsScope);
             }
         }
