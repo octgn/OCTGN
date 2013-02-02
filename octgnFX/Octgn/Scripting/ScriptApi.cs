@@ -66,6 +66,12 @@ namespace Octgn.Scripting
             return (Program.Game.TurnPlayer.Id == id);
         }
 
+        public void setActivePlayer(int id)
+        {
+            if (Program.Game.TurnPlayer == null || Program.Game.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.NextTurn(Player.Find((byte) id));
+        }
+
         public List<KeyValuePair<int, string>> PlayerCounters(int id)
         {
             return Player.Find((byte) id)
