@@ -59,7 +59,8 @@ namespace Octgn.Scripting
                     Program.Game.Definition.Scripts.Select(
                         s => _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
             {
-                src.Engine.SetSearchPaths(new List<string>{Program.Game.Definition.BasePath});
+                var workingDirectory = Path.Combine(Prefs.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
+                src.Engine.SetSearchPaths(new List<string>{workingDirectory});
                 src.Execute(ActionsScope);
             }
         }
