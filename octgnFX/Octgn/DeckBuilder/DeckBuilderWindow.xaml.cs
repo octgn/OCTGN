@@ -584,8 +584,8 @@ namespace Octgn.DeckBuilder
                 }
                 else
                 {
+                    RemoveResultCard(null, new SearchCardIdEventArgs { CardId = getCard.Card.Id });
                     DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.Copy);
-                    RemoveResultCard(null, new SearchCardIdEventArgs {CardId = getCard.Card.Id});
                 }
                 e.Handled = true;
             }

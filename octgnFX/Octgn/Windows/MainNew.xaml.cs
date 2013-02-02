@@ -15,6 +15,7 @@ namespace Octgn.Windows
     using System.Windows.Input;
 
     using Octgn.DeckBuilder;
+    using Octgn.GameManagement;
 
     using agsXMPP;
 
@@ -38,6 +39,7 @@ namespace Octgn.Windows
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
+            new GameFeedManager().CheckForUpdates();
         }
 
         /// <summary>
