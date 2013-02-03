@@ -118,6 +118,7 @@ class Card(object):
   def owner(self): return Player(_api.CardOwner(self._id))
   @property
   def controller(self): return Player(_api.CardController(self._id))
+  def setController(self, player): _api.SetController(self._id, player._id)
   @property
   def group(self): return eval(_api.GroupCtor(_api.CardGroup(self._id)))
   @property
@@ -154,6 +155,7 @@ class Card(object):
   @property
   def getIndex(self): return _api.CardGetIndex(self._id)
   def select(self): _api.CardSelect(self._id)
+  def peek(self): _api.CardPeek(self._id)
   def target(self, active = True): _api.CardTarget(self._id, active)
   def arrow(self, targetCard, active = True): _api.CardTargetArrow(self._id, targetCard._id, active)
   @property
@@ -279,6 +281,7 @@ class Player(object):
   def __format__(self, format_spec): return self.name
   @property
   def isActivePlayer(self): return _api.IsActivePlayer(self._id)
+  def setActivePlayer(self): _api.setActivePlayer(self._id)
   @property
   def name(self): return _api.PlayerName(self._id)
   @property
