@@ -66,6 +66,12 @@ namespace Octgn.Scripting
             return (Program.Game.TurnPlayer.Id == id);
         }
 
+        public void setActivePlayer(int id)
+        {
+            if (Program.Game.TurnPlayer == null || Program.Game.TurnPlayer == Player.LocalPlayer)
+                Program.Client.Rpc.NextTurn(Player.Find((byte) id));
+        }
+
         public List<KeyValuePair<int, string>> PlayerCounters(int id)
         {
             return Player.Find((byte) id)
@@ -249,6 +255,24 @@ namespace Octgn.Scripting
             return Card.Find(id).Controller.Id;
         }
 
+        public void SetController(int id, int player)
+        {
+            Card c = Card.Find(id);
+            Player p = Player.Find((byte) player);
+            Player controller = c.Controller;
+
+            if (p == Player.LocalPlayer)
+            {
+                if (c.Controller == Player.LocalPlayer) return;
+                _engine.Invoke(() => c.TakeControl());
+            }
+            else
+            {
+                if (c.Controller != Player.LocalPlayer) return;
+                _engine.Invoke(() => c.PassControlTo(p));
+            }
+        }
+
         public int CardGroup(int id)
         {
             return Card.Find(id).Group.Id;
@@ -360,6 +384,17 @@ namespace Octgn.Scripting
                                    else c.Untarget();
                                });
         }
+
+        public void CardPeek(int id)
+        {
+            Card c = Card.Find(id);
+            _engine.Invoke(() =>
+            {
+                c.Peek();
+            });
+        }
+
+
 
         public void CardTargetArrow(int id, int targetId, bool active)
         {
