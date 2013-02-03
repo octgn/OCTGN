@@ -255,6 +255,24 @@ namespace Octgn.Scripting
             return Card.Find(id).Controller.Id;
         }
 
+        public void SetController(int id, int player)
+        {
+            Card c = Card.Find(id);
+            Player p = Player.Find((byte) player);
+            Player controller = c.Controller;
+
+            if (p == Player.LocalPlayer)
+            {
+                if (c.Controller == Player.LocalPlayer) return;
+                _engine.Invoke(() => c.TakeControl());
+            }
+            else
+            {
+                if (c.Controller != Player.LocalPlayer) return;
+                _engine.Invoke(() => c.PassControlTo(p));
+            }
+        }
+
         public int CardGroup(int id)
         {
             return Card.Find(id).Group.Id;

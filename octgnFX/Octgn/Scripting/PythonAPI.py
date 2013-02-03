@@ -118,6 +118,7 @@ class Card(object):
   def owner(self): return Player(_api.CardOwner(self._id))
   @property
   def controller(self): return Player(_api.CardController(self._id))
+  def setController(self, player): _api.SetController(self._id, player._id)
   @property
   def group(self): return eval(_api.GroupCtor(_api.CardGroup(self._id)))
   @property
