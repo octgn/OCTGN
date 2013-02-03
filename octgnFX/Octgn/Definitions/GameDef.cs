@@ -166,6 +166,15 @@ namespace Octgn.Definitions
                                        Repository = Program.GamesRepository,
                                        FileHash = game.FileHash
                                    };
+                var rootDir = Path.Combine(Prefs.DataDirectory, "Games", game.Id.ToString()) + "\\";
+                using (Package package = Package.Open(copyto, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    foreach (var p in package.GetParts())
+                    {
+                        this.ExtractPart(p,rootDir);
+                    }
+                }
+
                 Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
                 return true;
             }

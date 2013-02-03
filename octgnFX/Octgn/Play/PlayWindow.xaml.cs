@@ -339,6 +339,7 @@ namespace Octgn.Play
                 WindowStyle = WindowStyle.None;
                 WindowState = WindowState.Normal;
                 menuRow.Height = GridLength.Auto;
+                this.TitleBarVisibility = Visibility.Visible;
             }
             else
             {
@@ -346,6 +347,7 @@ namespace Octgn.Play
                 WindowStyle = WindowStyle.None;
                 WindowState = WindowState.Maximized;
                 menuRow.Height = new GridLength(2);
+                this.TitleBarVisibility = Visibility.Collapsed;
             }
             IsFullScreen = !IsFullScreen;
         }
