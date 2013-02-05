@@ -1,7 +1,7 @@
 <info>
   <release>
-    <version>3.0.4.43</version>
-    <installPath>download/OCTGN-Setup-3.0.4.43.exe</installPath>
+    <version>3.0.5.47</version>
+    <installPath>download/OCTGN-Setup-3.0.5.47.exe</installPath>
     <updatePath>download/update.zip</updatePath>
   </release>
 </info>
