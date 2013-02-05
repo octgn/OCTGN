@@ -1,3 +1,11 @@
+#3.0.5.47
++ Added missing login links for registration and password recovery etc.
++ Fixed Custom Games resizing issue
++ Removes title bar on fullscreen game
++ Added card.setController(player) api
++ Added card.peek() api
++ Added setActivePlayer() api
+
 #3.0.3.43
 + More performance tuning
 + Added some performance options to the options menu
