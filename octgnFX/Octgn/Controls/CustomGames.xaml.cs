@@ -13,6 +13,7 @@ namespace Octgn.Controls
     using System.Collections.ObjectModel;
     using System.Net;
     using System.Threading.Tasks;
+    using System.Windows.Controls.Primitives;
     using System.Windows.Forms;
 
     using Microsoft.Scripting.Utils;
@@ -57,6 +58,7 @@ namespace Octgn.Controls
         public CustomGameList()
         {
             InitializeComponent();
+            ListViewGameList.AddHandler(Thumb.DragDeltaEvent, new DragDeltaEventHandler(ListViewGameList_OnDragDelta), true);
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
@@ -275,5 +277,15 @@ namespace Octgn.Controls
         }
 
         #endregion
+
+        private void ListViewGameList_OnDragDelta(object sender, DragDeltaEventArgs e)
+        {
+            var senderAsThumb = e.OriginalSource as Thumb;
+            var header = senderAsThumb.TemplatedParent as GridViewColumnHeader;
+            if (header.Column.ActualWidth < 20)
+                header.Column.Width = 20;
+            //if (header.Column.ActualWidth > 100)
+            //    header.Column.Width = 100;
+        }
     }
 }
