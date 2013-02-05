@@ -5,72 +5,95 @@
       Height="300" Width="Auto"
       HorizontalAlignment="Center">
     <Border Background="#33FFFFFF" BorderBrush="#ccFFFFFF" CornerRadius="5">
-        <Grid>
-            <Grid x:Name="MainGrid" Margin="10">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="365" />
-              </Grid.ColumnDefinitions>
-              <Line x:Name="lineSplit" Grid.Row="0" StrokeThickness="4" HorizontalAlignment="Center" X1="1" X2="1" Y1="1" Y2="300"  Width="4" Grid.Column="1" VerticalAlignment="Center">
+        <Grid x:Name="MainGrid" Margin="10" Grid.Row="1" Background="{x:Null}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="378*" />
+                <ColumnDefinition Width="375*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0" />
+                <RowDefinition Height="0" />
+                <RowDefinition Height="44" />
+                <RowDefinition Height="100*" />
+            </Grid.RowDefinitions>
+            <Line Grid.Row="2" StrokeThickness="4" HorizontalAlignment="Center" X1="1" X2="1" Y1="1" Y2="217" Margin="8,0,363,0" Grid.RowSpan="2" Width="4" Grid.Column="1">
                 <Line.Stroke>
-                  <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
-                    <RadialGradientBrush.GradientStops>
-                      <GradientStop Color="White" Offset="0" />
-                      <GradientStop Color="Transparent" Offset="0.9" />
-                    </RadialGradientBrush.GradientStops>
-                  </RadialGradientBrush>
+                    <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                        <RadialGradientBrush.GradientStops>
+                            <GradientStop Color="White" Offset="0" />
+                            <GradientStop Color="Transparent" Offset="0.9" />
+                        </RadialGradientBrush.GradientStops>
+                    </RadialGradientBrush>
                 </Line.Stroke>
-              </Line>
-                <StackPanel x:Name="spLogin" VerticalAlignment="Center" Height="234" Width="315" Margin="0,46,0,0">
-                    <Label Content="Username(no e-mails)" Height="26" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top"
-                       Width="223" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10,0" />
-                    <TextBox Height="23" HorizontalAlignment="Stretch" Name="textBox1" VerticalAlignment="Top"
-                         TextChanged="TextBox1TextChanged" Margin="10,0" KeyUp="TextBox1KeyUp" />
-                    <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White" Height="28"
-                       HorizontalAlignment="Left" Name="label2" VerticalAlignment="Top" Width="119" Grid.Row="2" Margin="10,0" />
-                    <PasswordBox Height="23" Name="passwordBox1" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                             PasswordChanged="PasswordBox1PasswordChanged" Margin="10,0" KeyUp="PasswordBox1KeyUp" />
-                        <CheckBox x:Name="cbSavePassword" Content="Save Password" Foreground="White" FontWeight="Bold" FontSize="14"
-                            HorizontalAlignment="Left" Margin="10,0,0,0" />
-                    <Grid Margin="10,5,10,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50*"/>
-                            <ColumnDefinition Width="50*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Content="Sign In" Height="37" Name="button1" Width="103" Click="Button1Click" 
-                          HorizontalAlignment="Left" Grid.Column="0" />
-                        <Button Content="Register" Height="37" HorizontalAlignment="Right" Grid.Column="1" Name="btnRegister" VerticalAlignment="Top" Width="101" Click="BtnRegisterClick" />
-                    </Grid>
-                        <Border  BorderBrush="Silver" BorderThickness="0,1,0,0" Grid.Column="0" Margin="10,5,10,0">
-                            <TextBlock Style="{x:Null}" x:Name="lError" d:Text="TextBlock" TextWrapping="Wrap" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" Foreground="Red" Grid.Row="0" FontSize="12"/>
-                        </Border>
-                </StackPanel>
+            </Line>
+            <Border BorderBrush="Silver" BorderThickness="1" Height="32" HorizontalAlignment="Left" Margin="10,7,0,0"
+              Name="border2" Style="{StaticResource Panel}" VerticalAlignment="Top" Visibility="Visible" Width="223" Grid.Row="2">
+                <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock1"
+                   Text="Signin/Register" VerticalAlignment="Stretch" FontSize="20" />
+            </Border>
+            <StackPanel x:Name="spleft" Grid.Row="3">
+                <Label Content="Username(no e-mails)" Height="26" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top"
+                    Width="223" Foreground="White" FontWeight="Bold" FontSize="14" Margin="10,0" />
+                <TextBox Height="23" HorizontalAlignment="Stretch" Name="textBox1" VerticalAlignment="Top"
+                    TextChanged="TextBox1TextChanged" Margin="10,0" KeyUp="TextBox1KeyUp" />
+                <Label Content="Password" FontSize="14" FontWeight="Bold" Foreground="White" Height="28"
+        	        HorizontalAlignment="Left" x:Name="label2" VerticalAlignment="Top" Width="119" Margin="10,0,0,0" />
+                <PasswordBox Height="23" Name="passwordBox1" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                     PasswordChanged="PasswordBox1PasswordChanged" Margin="10,0" KeyUp="PasswordBox1KeyUp" />
+                <Label Content="Email" FontSize="14" FontWeight="Bold" Foreground="White" Height="28"
+                    HorizontalAlignment="Left" Name="labelEmail" VerticalAlignment="Top" Width="119" Grid.Row="2" Margin="10,0" Visibility="Collapsed"/>
+                <TextBox Height="23" HorizontalAlignment="Stretch" Name="textBoxEmail" VerticalAlignment="Top"
+                    TextChanged="TextBox1TextChanged" Margin="10,0" KeyUp="TextBox1KeyUp" Visibility="Collapsed"/>
+                <Grid>
+                    <Button Content="Sign In" Height="37" Name="button1" Width="125" Click="Button1Click" Margin="0,10,10,10"
+                        HorizontalAlignment="Right" IsEnabled="True" RenderTransformOrigin="1.767,0.405" />
+                    <CheckBox x:Name="cbSavePassword" Content="Save Password" Foreground="White" FontWeight="Bold" FontSize="14"
+                        HorizontalAlignment="Left" Margin="10,0" />
+                </Grid>
+                <Label x:Name="labelRegister" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Register</Label>
+                <Label x:Name="labelForgot" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Forgot your password?</Label>
+                <Label x:Name="labelResend" HorizontalAlignment="Right" Foreground="White" Cursor="Hand">Resend email verification code(Enter your username above)</Label>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70*" />
+                        <ColumnDefinition Width="30*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Height="28" Name="lblLoginStatus" Foreground="Yellow" HorizontalContentAlignment="Right" Grid.Column="1" VerticalContentAlignment="Center"/>
+                    <Border Style="{StaticResource Panel}" BorderBrush="Silver" BorderThickness="1" Name="bError" Visibility="Collapsed" Grid.Column="0" Grid.ColumnSpan="1" Padding="5">
+                        <Grid Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Stretch" Name="grid1" VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="24" />
+                                <RowDefinition Height="100*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Style="{x:Null}" Name="lError" Text=" Your account doddddddddddddes not have an e-mail associated with it. Click here to fix it." HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                       FontWeight="Bold" Foreground="Red" Grid.Row="0" FontSize="10" TextWrapping="Wrap"></TextBlock>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </StackPanel>
 
-                <Border BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="18,0,10,6" Name="border3"
-                    Visibility="Visible" Width="337" Grid.Row="2" Grid.Column="2" Height="260"
-                    Padding="5" >
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" ClipToBounds="True">
-                            <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock5"
-                                VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" Text="Loading Headlines">
-                            </TextBlock>
-                        </ScrollViewer>
-                    
+            <Border BorderThickness="1"  HorizontalAlignment="Center" Margin="18,0,10,0" Name="border3"
+            Style="{StaticResource Panel}" VerticalAlignment="Stretch" Visibility="Visible" Width="347" Grid.Row="2" Grid.Column="1"
+            Padding="5" Grid.RowSpan="2">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" ClipToBounds="True">
+                    <TextBlock FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Name="textBlock5"
+                        VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" Text="Loading Headlines">
+                    </TextBlock>
+                </ScrollViewer>
+
                 <Border.Background>
-                  <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#EE444444" Offset="1" />
-                    <GradientStop Color="#EEaaaaaa" Offset="0" />
-                  </LinearGradientBrush>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#3BC4C4C4" Offset="1" />
+                        <GradientStop Color="#4DFFFFFF" Offset="0" />
+                    </LinearGradientBrush>
                 </Border.Background>
                 <Border.BorderBrush>
-                  <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="#FFA4A4A4" Offset="0" />
-                    <GradientStop Color="Transparent" Offset="1" />
-                  </LinearGradientBrush>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFA4A4A4" Offset="0" />
+                        <GradientStop Color="Transparent" Offset="1" />
+                    </LinearGradientBrush>
                 </Border.BorderBrush>
-              </Border>
-
-            </Grid>
+            </Border>
 
         </Grid>
     </Border>
