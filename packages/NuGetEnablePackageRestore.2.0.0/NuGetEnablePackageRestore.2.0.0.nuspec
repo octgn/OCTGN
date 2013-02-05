@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>NuGetEnablePackageRestore</id>
+    <version>2.0.0</version>
+    <title>NuGet Enable Package Restore (For Real)</title>
+    <authors>Rob Reynolds</authors>
+    <owners>Rob Reynolds</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Enable Package Restore - If you're like me and you enabled package restore and found it was broken on any given build server, you need to install this to fix package restore to the way it should work.</description>
+    <summary>NuGet Enable Package Restore - Fix that broken enable package restore</summary>
+    <tags>nuget enable package restore fix enablepackagerestore</tags>
+    <references />
+  </metadata>
+</package>
