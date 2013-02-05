@@ -65,6 +65,7 @@ namespace Octgn.Launcher
             //TODO ToString for state may be wrong.
             Program.LobbyClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state.ToString());
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
+	        Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
 
             this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start(Program.WebsitePath + "register.php");
             this.labelForgot.MouseLeftButtonUp +=
@@ -218,9 +219,12 @@ namespace Octgn.Launcher
         #endregion
 
         #region LoginStuff
+			void LobbyClientOnDisconnect(object o, EventArgs args)
+			{
+				Dispatcher.BeginInvoke(new Action(() => spleft.IsEnabled = true));
+			}
             void LobbyClientOnLoginComplete(object sender, LoginResults results)
             {
-                
                 switch (results)
                 {
                     case LoginResults.ConnectionError:
@@ -241,6 +245,8 @@ namespace Octgn.Launcher
             private void DoLogin()
             {
                 if (_isLoggingIn) return;
+	            spleft.IsEnabled = false;
+
                 _isLoggingIn = true;
                 bError.Visibility = Visibility.Collapsed;
                 var username = textBox1.Text;
@@ -344,11 +350,13 @@ namespace Octgn.Launcher
                                                             Prefs.Nickname = textBox1.Text;
                                                             break;
                                                         case Skylabs.Lobby.LoginResult.Banned:
+		                                                    spleft.IsEnabled = true;
                                                             DoErrorMessage("You have been banned until " +
                                                                            banEnd.ToShortTimeString() + " on " +
                                                                            banEnd.ToShortDateString());
                                                             break;
                                                         case Skylabs.Lobby.LoginResult.Failure:
+															spleft.IsEnabled = true;
                                                             DoErrorMessage("Login Failed: " + message);
                                                             break;
                                                     }
@@ -473,24 +481,6 @@ namespace Octgn.Launcher
 
         #region UI Events
             private void Button1Click(object sender, RoutedEventArgs e) { DoLogin(); }
-            private void MenuDeckEditorClick(object sender, RoutedEventArgs e)
-            {
-                if (Program.GamesRepository.Games.Count == 0)
-                {
-                    System.Windows.MessageBox.Show("You have no game installed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                if (Program.DeckEditor == null)
-                {
-                    Program.DeckEditor = new DeckBuilderWindow();
-                    Program.DeckEditor.Show();
-                }
-                else if (Program.DeckEditor.IsVisible == false)
-                {
-                    Program.DeckEditor = new DeckBuilderWindow();
-                    Program.DeckEditor.Show();
-                }
-            }
             private void TextBox1TextChanged(object sender, TextChangedEventArgs e){bError.Visibility = Visibility.Hidden;}
             private void PasswordBox1PasswordChanged(object sender, RoutedEventArgs e){bError.Visibility = Visibility.Hidden;}
 

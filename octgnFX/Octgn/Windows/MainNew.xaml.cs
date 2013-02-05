@@ -221,5 +221,10 @@ namespace Octgn.Windows
             var options = new Options();
             options.ShowDialog();
         }
+
+	    private void MenuLogOffClick(object sender, RoutedEventArgs e)
+	    {
+		    Program.LobbyClient.LogOut();
+	    }
     }
 }
