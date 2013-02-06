@@ -543,6 +543,11 @@ namespace Octgn.Scripting
             return Program.CurrentOnlineGameName;
         }
 
+        public int TurnNumber()
+        {
+            return (int)Program.Game.TurnNumber;
+        }
+
         public List<int> CreateOnTable(string modelId, int x, int y, bool persist, int quantity)
         {
             var result = new List<int>();

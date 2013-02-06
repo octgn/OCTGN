@@ -29,6 +29,9 @@ def webRead(url, timeout=0):
 def currentGameName():
   return _api.GetGameName()
 
+def turnNumber():
+  return _api.TurnNumber()
+
 def openUrl(url):
   return _api.Open_URL(url)
 
