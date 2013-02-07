@@ -22,7 +22,7 @@ namespace Skylabs.Lobby
 
         }
 
-        public HostedGameData(Guid gameguid, Version gameversion, int port, string name, NewUser huser,
+        public HostedGameData(Guid gameguid, Version gameversion, int port, string name, User huser,
                           DateTime startTime)
             : base("gameitem", "gameitem", "octgn:gameitem")
         {
@@ -42,7 +42,7 @@ namespace Skylabs.Lobby
             GameVersion = (Version)sm["version"];
             Port = (int)sm["port"];
             Name = (string)sm["name"];
-            UserHosting = ((NewUser)sm["hoster"]);
+            UserHosting = ((User)sm["hoster"]);
             GameStatus = EHostedGame.StartedHosting;
             TimeStarted = new DateTime(DateTime.Now.ToUniversalTime().Ticks);
         }
@@ -80,9 +80,9 @@ namespace Skylabs.Lobby
             get { return GetTag("name"); }
             set { SetTag("name", value); }
         }
-        public NewUser UserHosting
+        public User UserHosting
         {
-            get { return new NewUser(GetTagJid("userhosting")); }
+            get { return new User(GetTagJid("userhosting")); }
             set { SetTag("userhosting", value.FullUserName); }
         }
         public EHostedGame GameStatus

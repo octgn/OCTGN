@@ -21,7 +21,7 @@ namespace Octgn.Controls
     /// </summary>
     public partial class ChatUserListItem : UserControl,IComparable<ChatUserListItem>,IEquatable<ChatUserListItem>,IEqualityComparer<ChatUserListItem>
     {
-        public NewUser User
+        public User User
         {
             get { return _user; }
             set { 
@@ -80,20 +80,20 @@ namespace Octgn.Controls
             }
         }
 
-        private NewUser _user;
+        private User _user;
         private bool _isAdmin;
         private bool _isMod;
         private bool _isOwner;
         public ChatUserListItem()
         {
             InitializeComponent();
-            User = new NewUser(new Jid("noone@server.octgn.info"));
+            User = new User(new Jid("noone@server.octgn.info"));
             IsAdmin = false;
             IsMod = false;
             IsOwner = false;
         }
 
-        public ChatUserListItem(NewChatRoom room, NewUser user)
+        public ChatUserListItem(ChatRoom room, User user)
         {
             InitializeComponent();
             IsAdmin = room.AdminList.Any(x => x == user);

@@ -172,7 +172,7 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets or sets the friends.
         /// </summary>
-        public List<NewUser> Friends { get; set; }
+        public List<User> Friends { get; set; }
 
         /// <summary>
         /// Gets the username.
@@ -219,7 +219,7 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets the me.
         /// </summary>
-        public NewUser Me { get; private set; }
+        public User Me { get; private set; }
 
         /// <summary>
         /// Gets or sets the chatting.
@@ -250,7 +250,7 @@ namespace Skylabs.Lobby
         {
             get
             {
-                var s = NewUser.PresenceToStatus(this.myPresence);
+                var s = User.PresenceToStatus(this.myPresence);
                 if (s == UserStatus.Unknown)
                 {
                     s = this.Me.Status;
@@ -291,7 +291,7 @@ namespace Skylabs.Lobby
                 this.Chatting = new Chat(this, this.xmpp);
                 ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
                 this.Notifications = new List<Notification>();
-                this.Friends = new List<NewUser>();
+                this.Friends = new List<User>();
                 this.xmpp.OnRegistered += this.XmppOnOnRegistered;
                 this.xmpp.OnRegisterError += this.XmppOnOnRegisterError;
                 this.xmpp.OnXmppConnectionStateChanged += this.XmppOnOnXmppConnectionStateChanged;
@@ -552,7 +552,7 @@ namespace Skylabs.Lobby
             switch (pres.Type)
             {
                 case PresenceType.subscribe:
-                    if (!this.Friends.Contains(new NewUser(pres.From.Bare)))
+                    if (!this.Friends.Contains(new User(pres.From.Bare)))
                     {
                         var request = new FriendRequestNotification(pres.From.Bare, this, this.noteId);
                         this.Notifications.Add(request);
@@ -746,7 +746,7 @@ namespace Skylabs.Lobby
                 case SubscriptionType.none:
                     if (item.Jid.Server == "conference." + Host)
                     {
-                        this.Chatting.GetRoom(new NewUser(item.Jid), true);
+                        this.Chatting.GetRoom(new User(item.Jid), true);
                     }
 
                     break;
@@ -758,7 +758,7 @@ namespace Skylabs.Lobby
 
                     if (this.Friends.Count(x => x.UserName == item.Jid.User) == 0)
                     {
-                        this.Friends.Add(new NewUser(item.Jid));
+                        this.Friends.Add(new User(item.Jid));
                     }
 
                     break;
@@ -770,7 +770,7 @@ namespace Skylabs.Lobby
 
                     if (this.Friends.Count(x => x.UserName == item.Jid.User) == 0)
                     {
-                        this.Friends.Add(new NewUser(item.Jid));
+                        this.Friends.Add(new User(item.Jid));
                     }
 
                     break;
@@ -782,14 +782,14 @@ namespace Skylabs.Lobby
 
                     if (this.Friends.Count(x => x.UserName == item.Jid.User) == 0)
                     {
-                        this.Friends.Add(new NewUser(item.Jid));
+                        this.Friends.Add(new User(item.Jid));
                     }
 
                     break;
                 case SubscriptionType.remove:
-                    if (this.Friends.Contains(new NewUser(item.Jid)))
+                    if (this.Friends.Contains(new User(item.Jid)))
                     {
-                        this.Friends.Remove(new NewUser(item.Jid));
+                        this.Friends.Remove(new User(item.Jid));
                     }
 
                     break;
@@ -828,7 +828,7 @@ namespace Skylabs.Lobby
             this.MucManager.AcceptDefaultConfiguration(room);
             //TODO Enable this with new UI
             //this.MucManager.JoinRoom(room, this.Username, this.Password, false);
-            this.Me = new NewUser(this.xmpp.MyJID);
+            this.Me = new User(this.xmpp.MyJID);
             this.Me.SetStatus(UserStatus.Online);
             this.xmpp.PresenceManager.Subscribe(this.xmpp.MyJID);
             IsConnected = true;
@@ -892,7 +892,7 @@ namespace Skylabs.Lobby
             this.MucManager.AcceptDefaultConfiguration(room);
 
             // MucManager.JoinRoom(room,Username,Password,false);
-            this.Me = new NewUser(this.xmpp.MyJID);
+            this.Me = new User(this.xmpp.MyJID);
             this.Me.SetStatus(UserStatus.Online);
             this.xmpp.PresenceManager.Subscribe(this.xmpp.MyJID);
 
@@ -1167,7 +1167,7 @@ namespace Skylabs.Lobby
         /// <param name="user">
         /// The user.
         /// </param>
-        public void RemoveFriend(NewUser user)
+        public void RemoveFriend(User user)
         {
             this.xmpp.PresenceManager.Unsubscribe(user.JidUser);
             this.RosterManager.RemoveRosterItem(user.JidUser);

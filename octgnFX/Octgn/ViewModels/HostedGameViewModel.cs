@@ -16,7 +16,7 @@
 
         private string name;
 
-        private NewUser user;
+        private User user;
 
         private int port;
 
@@ -90,7 +90,7 @@
             }
         }
 
-        public NewUser User
+        public User User
         {
             get
             {

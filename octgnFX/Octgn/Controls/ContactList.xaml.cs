@@ -30,7 +30,7 @@ namespace Octgn.Controls
             Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
 		}
         
-		private void ChattingOnOnCreateRoom(object sender , NewChatRoom room)
+		private void ChattingOnOnCreateRoom(object sender , ChatRoom room)
         {
             LazyAsync.Invoke(RefreshList);
         }
@@ -45,7 +45,7 @@ namespace Octgn.Controls
 
         public void RefreshList()
         {
-            NewUser[] flist = Program.LobbyClient.Friends.OrderByDescending(x => x.Status == UserStatus.Online).ThenBy(x => x.UserName).ToArray();
+            User[] flist = Program.LobbyClient.Friends.OrderByDescending(x => x.Status == UserStatus.Online).ThenBy(x => x.UserName).ToArray();
             Dispatcher.Invoke(new Action(() =>
                                              {
                 stackPanel1.Children.Clear();

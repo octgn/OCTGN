@@ -33,7 +33,7 @@ namespace Octgn.Controls
         /// <param name="createdroom">
         /// The created room.
         /// </param>
-        private void Chatting_OnCreateRoom(object sender, NewChatRoom createdroom)
+        private void Chatting_OnCreateRoom(object sender, ChatRoom createdroom)
         {
             if (createdroom.GroupUser == null || createdroom.GroupUser.UserName != "lobby" || this.Room != null)
             {

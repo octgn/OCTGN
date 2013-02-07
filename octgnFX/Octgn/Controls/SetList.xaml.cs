@@ -51,7 +51,7 @@ namespace Octgn.Controls
 		{
 			if (SelectedGame == null)
 				return;
-			var wnd = new Windows.ChangeSetsProgressDialog("Removing Sets...") { Owner = Program.MainWindow };
+			var wnd = new Windows.ChangeSetsProgressDialog("Removing Sets...") { Owner = Program.MainWindowNew};
 			System.Collections.IList items = lbSetList.SelectedItems;
 			ThreadPool.QueueUserWorkItem(_ =>
 			{
@@ -100,7 +100,7 @@ namespace Octgn.Controls
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 
-			var wnd = new Windows.ChangeSetsProgressDialog("Installing Sets...") { Owner = Program.MainWindow };
+			var wnd = new Windows.ChangeSetsProgressDialog("Installing Sets...") { Owner = Program.MainWindowNew };
 			ThreadPool.QueueUserWorkItem(_ =>
 			{
 				int current = 0, max = ofd.FileNames.Length;
@@ -140,7 +140,7 @@ namespace Octgn.Controls
 		{
 			if (SelectedGame == null)
 				return;
-			new Windows.PatchDialog { Owner = Program.MainWindow }.ShowDialog();
+			new Windows.PatchDialog { Owner = Program.MainWindowNew }.ShowDialog();
 			RefreshList();
 		}
 

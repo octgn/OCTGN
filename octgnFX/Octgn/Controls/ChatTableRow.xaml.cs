@@ -33,7 +33,7 @@ namespace Octgn.Controls
         /// <summary>
         /// The user.
         /// </summary>
-        private NewUser user;
+        private User user;
 
         /// <summary>
         /// The message.
@@ -55,7 +55,7 @@ namespace Octgn.Controls
         public ChatTableRow()
         {
             this.InitializeComponent();
-            this.User = new NewUser(new Jid("NoUser", "server.octgn.info", "agsxmpp"));
+            this.User = new User(new Jid("NoUser", "server.octgn.info", "agsxmpp"));
             this.MessageDate = DateTime.Now;
             this.Message = "TestMessage";
             this.Unloaded += OnUnloaded;
@@ -98,7 +98,7 @@ namespace Octgn.Controls
         /// <summary>
         /// Gets or sets the user
         /// </summary>
-        public NewUser User
+        public User User
         {
             get
             {

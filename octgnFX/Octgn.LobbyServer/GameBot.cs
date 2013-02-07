@@ -160,7 +160,7 @@ namespace Skylabs.LobbyServer
                         var gameName = data[2];
                         if(Guid.TryParse(data[0] , out guid) && Version.TryParse(data[1] , out ver))
                         {
-                            var port = Gaming.HostGame(guid , ver , gameName , "" , new NewUser(msg.From));
+                            var port = Gaming.HostGame(guid , ver , gameName , "" , new Lobby.User(msg.From));
                             if (port == -1) return;
                             var m = new Message(msg.From , msg.To , MessageType.normal , port.ToString() , "gameready");
                             m.GenerateId();

@@ -91,7 +91,7 @@ namespace Octgn.Controls
         /// <param name="room">
         /// The room.
         /// </param>
-        private void LobbyCreateRoom(object sender, NewChatRoom room)
+        private void LobbyCreateRoom(object sender, ChatRoom room)
         {
             var r = room;
             this.Dispatcher.Invoke(new Action(() =>

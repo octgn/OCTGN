@@ -124,8 +124,8 @@
     <Compile Include="HostedGame.cs" />
     <Compile Include="HostedGameData.cs" />
     <Compile Include="Networking.cs" />
-    <Compile Include="NewChatRoom.cs" />
-    <Compile Include="NewUser.cs" />
+    <Compile Include="ChatRoom.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Randomness.cs" />

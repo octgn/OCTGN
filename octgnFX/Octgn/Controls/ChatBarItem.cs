@@ -32,7 +32,7 @@ namespace Octgn.Controls
         /// <summary>
         /// Sets the Chat Room
         /// </summary>
-        private readonly NewChatRoom room;
+        private readonly ChatRoom room;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatBarItem"/> class.
@@ -40,7 +40,7 @@ namespace Octgn.Controls
         /// <param name="chatRoom">
         /// The chat Room.
         /// </param>
-        public ChatBarItem(NewChatRoom chatRoom = null)
+        public ChatBarItem(ChatRoom chatRoom = null)
         {
             this.room = chatRoom;
             this.ConstructControl();

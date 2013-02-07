@@ -66,7 +66,7 @@ namespace Octgn.Controls
             }
         }
 
-        private NewUser _mUser = null;
+        private User _mUser = null;
 
         public FriendListItem()
         {
@@ -90,7 +90,7 @@ namespace Octgn.Controls
             Selected = true;
         }
 
-        public NewUser ThisUser
+        public User ThisUser
         {
             get { return _mUser; }
             set
