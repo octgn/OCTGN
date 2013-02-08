@@ -37,7 +37,7 @@
             var text = context.FileSystem.File.ReadAllText(file.FullName);
 
             // Return if the file contents don't contain the version number
-            if (!text.Contains(currentVersion) || !text.Contains(currentReleaseVersion)) return;
+            if (!text.Contains(currentVersion) && !text.Contains(currentReleaseVersion)) return;
             context.Log.InfoFormat("Replacing version number in file {0}",file.FullName);
 
             // Replace all occurrences of the oldVersion with the newVersion
