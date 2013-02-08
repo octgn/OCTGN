@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
+    using System.Linq;
 
     using FakeItEasy;
 
@@ -24,14 +26,6 @@
             var task = A.Fake<IncrementVersionNumbersInFiles>(x=>x.Wrapping(new IncrementVersionNumbersInFiles()));
             var goodData = new Dictionary<string, object>
                                {
-                                   { "ReplaceVersionIgnoreFile", "" },
-                                   { "WorkingDirectory",""},
-                                   {"CurrentVersion",new Version("3.0.0.0")},
-                                   {"NewVersion", new Version("3.0.0.1")},
-                                   {"Mode", "test"}
-                               };
-            var badData1 = new Dictionary<string, object>
-                               {
                                    { "WorkingDirectory",""},
                                    {"CurrentVersion",new Version("3.0.0.0")},
                                    {"NewVersion", new Version("3.0.0.1")},
@@ -40,36 +34,34 @@
 
             var badData2 = new Dictionary<string, object>
                                {
-                                   { "ReplaceVersionIgnoreFile", "" },
                                    {"CurrentVersion",new Version("3.0.0.0")},
                                    {"NewVersion", new Version("3.0.0.1")},
                                    {"Mode", "test"}
                                };
             var badData3 = new Dictionary<string, object>
                                {
-                                   { "ReplaceVersionIgnoreFile", "" },
                                    { "WorkingDirectory",""},
                                    {"NewVersion", new Version("3.0.0.1")},
                                    {"Mode", "test"}
                                };
             var badData4 = new Dictionary<string, object>
                                {
-                                   { "ReplaceVersionIgnoreFile", "" },
                                    { "WorkingDirectory",""},
                                    {"CurrentVersion",new Version("3.0.0.0")},
                                    {"Mode","test"}
                                };
             var goodContext = A.Fake<ITaskContext>(x=>x.Wrapping(new TaskContext(A.Fake<ILog>(),fileSystem,goodData)));
-            var badContext1 = A.Fake<ITaskContext>(x=>x.Wrapping(new TaskContext(A.Fake<ILog>(),fileSystem,badData1)));
             var badContext2 = A.Fake<ITaskContext>(x=>x.Wrapping(new TaskContext(A.Fake<ILog>(),fileSystem,badData2)));
             var badContext3 = A.Fake<ITaskContext>(x=>x.Wrapping(new TaskContext(A.Fake<ILog>(),fileSystem,badData3)));
             var badContext4 = A.Fake<ITaskContext>(x=>x.Wrapping(new TaskContext(A.Fake<ILog>(),fileSystem,badData4)));
 
-            var goodFiles = new[] { "asdf.txt", "face/asdf.txt", "face/brains/asdf.txt" };
+            var goodFiles = new[] { "c:\\asdf.txt", "c:\\face\\asdf.txt", "c:\\face\\brains\\asdf.txt" };
+            var badFiles = new[] { "c:\\face.txt", "c:\\face2\\asdf.txt", "c:\\face","c:\\asdf" };
 
+            A.CallTo(() => task.GetUpdateFiles(A<ITaskContext>.Ignored)).Returns(goodFiles);
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string[]>.Ignored,A<string>.Ignored, A<string>.Ignored)).DoesNothing();
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored)).DoesNothing();
 
             // Good data, grabs all files
             A.CallTo(
@@ -78,18 +70,18 @@
             Assert.DoesNotThrow(() => task.Run(this, goodContext));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string[]>.Ignored,A<string>.Ignored, A<string>.Ignored))
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
                 .MustHaveHappened(Repeated.Exactly.Times(3));
 
-            // bad data 1
+            // Inject bad files
             A.CallTo(
                 () => fileSystem.Directory.GetFiles(A<string>.Ignored, A<string>.Ignored, SearchOption.AllDirectories))
-             .Returns(goodFiles);
-            Assert.Throws<KeyNotFoundException>(() => task.Run(this, badContext1));
+             .Returns(goodFiles.Union(badFiles).ToArray());
+            Assert.DoesNotThrow(() => task.Run(this, goodContext));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string[]>.Ignored,A<string>.Ignored, A<string>.Ignored))
-                .MustHaveHappened(Repeated.Exactly.Times(3));
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                .MustHaveHappened(Repeated.Exactly.Times(6));
 
             // bad data 2
             A.CallTo(
@@ -98,8 +90,8 @@
             Assert.Throws<KeyNotFoundException>(() => task.Run(this, badContext2));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string[]>.Ignored,A<string>.Ignored, A<string>.Ignored))
-                .MustHaveHappened(Repeated.Exactly.Times(3));
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                .MustHaveHappened(Repeated.Exactly.Times(6));
 
             // bad data 3
             A.CallTo(
@@ -108,8 +100,8 @@
             Assert.Throws<KeyNotFoundException>(() => task.Run(this, badContext3));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string[]>.Ignored,A<string>.Ignored, A<string>.Ignored))
-                .MustHaveHappened(Repeated.Exactly.Times(3));
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                .MustHaveHappened(Repeated.Exactly.Times(6));
 
             // bad data 4
             A.CallTo(
@@ -118,8 +110,8 @@
             Assert.Throws<KeyNotFoundException>(() => task.Run(this, badContext4));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string[]>.Ignored,A<string>.Ignored, A<string>.Ignored))
-                .MustHaveHappened(Repeated.Exactly.Times(3));
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                .MustHaveHappened(Repeated.Exactly.Times(6));
 
 
 
@@ -129,6 +121,7 @@
         public void ProcessFile()
         {
             var fileSystem = A.Fake<IFileSystem>();
+            A.CallTo(()=>fileSystem.Path).Returns(A.Fake<PathBase>(x=>x.Wrapping(new PathWrapper())));
             var context = A.Fake<ITaskContext>(x=>x.Wrapping(new TaskContext(A.Fake<ILog>(),fileSystem)));
             var task = new IncrementVersionNumbersInFiles();
 
@@ -140,86 +133,78 @@
             const string HasVersion = "falskdjfawoeka wef\n\r\n\tlaskdjfaoweifjaw awoiefjaw" + CurrentVersion + "fjowiejf\n";
             var HasVersionResult = HasVersion.Replace(CurrentVersion,NewVersion);
 
-            var ignoreFiles = new[] { "ignore1.txt", "ignore2.txt" };
             var passFile = A.Fake<FileInfoBase>();
-            var nonpassFile = A.Fake<FileInfoBase>();
 
             context.Data["WorkingDirectory"] = "c:\\asdf\\";
             context.Data["Mode"] = "test";
 
-            A.CallTo(() => passFile.FullName).Returns(@"c:\face\brains\tits.txt");
-            A.CallTo(() => nonpassFile.FullName).Returns(@"c:\face\brains\ignore2.txt");
-            A.CallTo(() => passFile.Name).Returns(@"tits.txt");
-            A.CallTo(() => nonpassFile.Name).Returns(@"ignore2.txt");
+            A.CallTo(() => passFile.FullName).Returns(task.GetUpdateFiles(context).First());
+            var a = task.GetUpdateFiles(context).First();
+            Debug.WriteLine(a);
+            A.CallTo(() => passFile.Name).Returns(new FileInfo(task.GetUpdateFiles(context).First()).Name);
 
             var fileContents = "";
             A.CallTo(() => fileSystem.File.WriteAllText(A<string>.Ignored, A<string>.Ignored))
              .Invokes(new Action<string, string>((s, s1) => fileContents = s1));
 
-            // file allowed, has version
+            // has version
             fileContents = "";
             A.CallTo(() => fileSystem.File.ReadAllText(A<string>.Ignored)).Returns(HasVersion);
-            Assert.DoesNotThrow(()=>task.ProcessFile(context,passFile,ignoreFiles,CurrentVersion,NewVersion));
+            Assert.DoesNotThrow(()=>task.ProcessFile(context,passFile,CurrentVersion,NewVersion));
             A.CallTo(()=>fileSystem.File.WriteAllText(A<string>.Ignored, A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
             A.CallTo(()=>fileSystem.File.ReadAllText(A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
             Assert.AreEqual(HasVersionResult,fileContents);
             
-            // file allowed, no version
+            // no version
             fileContents = "";
             A.CallTo(() => fileSystem.File.ReadAllText(A<string>.Ignored)).Returns(NoVersion);
-            Assert.DoesNotThrow(() => task.ProcessFile(context, passFile, ignoreFiles, CurrentVersion, NewVersion));
-            A.CallTo(()=>fileSystem.File.WriteAllText(A<string>.Ignored, A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-            A.CallTo(()=>fileSystem.File.ReadAllText(A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Times(2));
-            Assert.AreEqual("",fileContents);
-
-            // file not allowed, has version
-            fileContents = "";
-            A.CallTo(() => fileSystem.File.ReadAllText(A<string>.Ignored)).Returns(HasVersion);
-            Assert.DoesNotThrow(() => task.ProcessFile(context, nonpassFile, ignoreFiles, CurrentVersion, NewVersion));
-            A.CallTo(()=>fileSystem.File.WriteAllText(A<string>.Ignored, A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-            A.CallTo(()=>fileSystem.File.ReadAllText(A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Times(2));
-            Assert.AreEqual("",fileContents);
-
-            // file not allowed, has no version
-            fileContents = "";
-            A.CallTo(() => fileSystem.File.ReadAllText(A<string>.Ignored)).Returns(NoVersion);
-            Assert.DoesNotThrow(() => task.ProcessFile(context, nonpassFile, ignoreFiles, CurrentVersion, NewVersion));
+            Assert.DoesNotThrow(() => task.ProcessFile(context, passFile,CurrentVersion, NewVersion));
             A.CallTo(()=>fileSystem.File.WriteAllText(A<string>.Ignored, A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
             A.CallTo(()=>fileSystem.File.ReadAllText(A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Times(2));
             Assert.AreEqual("",fileContents);
         }
 
         [Test]
-        public void GetIgnoreFiles()
+        public void GetUpdateFiles()
         {
-            var context = A.Fake<ITaskContext>();
+            var fileSystem = A.Fake<IFileSystem>();
+            A.CallTo(() => fileSystem.Path).Returns(A.Fake<PathBase>(x => x.Wrapping(new PathWrapper())));
+            var context = A.Fake<ITaskContext>(x=>x.Wrapping(new TaskContext(A.Fake<ILog>(),fileSystem)));
             var task = new IncrementVersionNumbersInFiles();
 
-            const string Good = "asdf.txt";
-            const string Good2 = "asdf.txt,abcd.txt";
-            const string Good3 = "asdf.txt,abcd.txt,   ,face.jim";
+            //A.CallTo(() => task.CreateUpdateString(A<ITaskContext>.Ignored, A<string>.Ignored)).Returns("");
+            context.Data["WorkingDirectory"] = "";
+            context.Data["Mode"] = "release";
 
-            var goodres = new []{ "asdf.txt" };
-            var goodres2 = new []{ "asdf.txt","abcd.txt" };
-            var goodres3 = new []{ "asdf.txt","abcd.txt","face.jim" };
+            // Test count
+            Assert.AreEqual(16,task.GetUpdateFiles(context).Length);
 
-            string bad = null;
-            const string Bad2 = "";
 
-            string[] res = null;
-            Assert.DoesNotThrow(() =>res = task.GetIgnoreFiles(context,Good));
-            Assert.AreEqual(goodres,res);
+            // Test modes
+            context.Data["Mode"] = "release";
+            Assert.DoesNotThrow(()=>task.GetUpdateFiles(context));
+            context.Data["Mode"] = "test";
+            Assert.DoesNotThrow(() => task.GetUpdateFiles(context));
+            context.Data["Mode"] = "a";
+            Assert.Throws<InvalidOperationException>(() => task.GetUpdateFiles(context));
 
-            Assert.DoesNotThrow(()=>res = task.GetIgnoreFiles(context,Good2));
-            Assert.AreEqual(goodres2,res);
+            string[] result = null;
 
-            Assert.DoesNotThrow(()=>res = task.GetIgnoreFiles(context,Good3));
-            Assert.AreEqual(goodres3,res);
+            // Release Mode Specific Files
+            context.Data["Mode"] = "release";
+            result = task.GetUpdateFiles(context);
+            Assert.True(result.Any(x => x.Contains("deploy\\currentversion.txt")));
+            Assert.True(result.Any(x => x.Contains("installer\\Install.nsi")));
+            Assert.False(result.Any(x => x.Contains("deploy\\currentversiontest.txt")));
+            Assert.False(result.Any(x => x.Contains("installer\\InstallTest.nsi")));
 
-            Assert.Throws<NullReferenceException>(() => res = task.GetIgnoreFiles(context, bad));
-
-            Assert.DoesNotThrow(()=> res = task.GetIgnoreFiles(context,Bad2));
-            Assert.AreEqual(new string[0],res);
+            // Release Mode Specific Files
+            context.Data["Mode"] = "test";
+            result = task.GetUpdateFiles(context);
+            Assert.True(result.Any(x => x.Contains("deploy\\currentversiontest.txt")));
+            Assert.True(result.Any(x => x.Contains("installer\\InstallTest.nsi")));
+            Assert.False(result.Any(x => x.Contains("deploy\\currentversion.txt")));
+            Assert.False(result.Any(x => x.Contains("installer\\Install.nsi")));
         }
     }
 }
