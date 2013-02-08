@@ -58,10 +58,15 @@ namespace Octgn.ReleasePusher
             curVerRelPath = Path.Combine(curVerRelPath, "CurrentVersion.txt");
             taskManager.TaskContext.Data["CurrentVersionFileRelativePath"] = curVerRelPath;
 
-            // Get CurrentVersion.txt relative path
+            // Get CurrentReleaseVersion.txt relative path
             var curRelVerRelPath = Path.Combine("octgnFX", "Octgn");
             curRelVerRelPath = Path.Combine(curRelVerRelPath, "CurrentReleaseVersion.txt");
             taskManager.TaskContext.Data["CurrentReleaseVersionFileRelativePath"] = curRelVerRelPath;
+
+            // Get CurrentReleaseVersion.txt relative path
+            var curTestVerRelPath = Path.Combine("octgnFX", "Octgn");
+            curTestVerRelPath = Path.Combine(curTestVerRelPath, "CurrentTestVersion.txt");
+            taskManager.TaskContext.Data["CurrentTestVersionFileRelativePath"] = curTestVerRelPath;
 
             // Load all of our app.config settings into the data section.
             for (var i = 0; i < ConfigurationManager.AppSettings.Count;i++ )

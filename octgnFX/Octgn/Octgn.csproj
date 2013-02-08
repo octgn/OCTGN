@@ -535,6 +535,7 @@
     <Resource Include="Resources\Icons\savedeck.png" />
     <Resource Include="Resources\Icons\setting_tools.png" />
     <Resource Include="CurrentReleaseVersion.txt" />
+    <Resource Include="CurrentTestVersion.txt" />
     <Content Include="x64\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

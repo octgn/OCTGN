@@ -6,6 +6,13 @@
     {
         public void Run(object sender, ITaskContext context)
         {
+            this.GetCurrentVersion(context);
+            this.GetCurrentReleaseVersion(context);
+            this.GetCurrentTestVersion(context);
+        }
+
+        public void GetCurrentVersion(ITaskContext context)
+        {
             context.Log.Info("Reading Data Settings");
             var rootPath = context.Data["WorkingDirectory"] as string;
             var currentVersionFileRelativePath = context.Data["CurrentVersionFileRelativePath"] as string;
@@ -20,8 +27,12 @@
 
             context.Log.InfoFormat("Setting CurrentVersion: {0}", currentVersion);
             context.Data["CurrentVersion"] = currentVersion;
+        }
 
-
+        public void GetCurrentReleaseVersion(ITaskContext context)
+        {
+            context.Log.Info("Reading Data Settings");
+            var rootPath = context.Data["WorkingDirectory"] as string;
             var currentReleaseVersionFileRelativePath = context.Data["CurrentReleaseVersionFileRelativePath"] as string;
 
             var fullReleasePath = context.FileSystem.Path.Combine(rootPath, currentReleaseVersionFileRelativePath);
@@ -32,9 +43,26 @@
             context.Log.InfoFormat("Formatting {0} into System.Version type.", releaseVersionText);
             var currentReleaseVersion = ParseVersion(releaseVersionText);
 
-            context.Log.InfoFormat("Setting CurrentReleaseVersion: {0}",currentReleaseVersion);
+            context.Log.InfoFormat("Setting CurrentReleaseVersion: {0}", currentReleaseVersion);
             context.Data["CurrentReleaseVersion"] = currentReleaseVersion;
+        }
 
+        public void GetCurrentTestVersion(ITaskContext context)
+        {
+            context.Log.Info("Reading Data Settings");
+            var rootPath = context.Data["WorkingDirectory"] as string;
+            var currentTestVersionFileRelativePath = context.Data["CurrentTestVersionFileRelativePath"] as string;
+
+            var fullTestPath = context.FileSystem.Path.Combine(rootPath, currentTestVersionFileRelativePath);
+
+            context.Log.InfoFormat("Reading {0}", fullTestPath);
+            var TestVersionText = context.FileSystem.File.ReadAllText(fullTestPath);
+
+            context.Log.InfoFormat("Formatting {0} into System.Version type.", TestVersionText);
+            var currentTestVersion = ParseVersion(TestVersionText);
+
+            context.Log.InfoFormat("Setting CurrentTestVersion: {0}", currentTestVersion);
+            context.Data["CurrentTestVersion"] = currentTestVersion;
         }
 
         public virtual Version ParseVersion(string versionText)
