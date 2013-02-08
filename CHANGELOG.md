@@ -1,3 +1,7 @@
+#3.0.6.48
++ Increased login page size
++ Added turnNumber() to python API https://github.com/kellyelton/OCTGN/commit/fbaf0ecd246b72d3a96150ebe457d47c92ab6f71
+
 #3.0.5.47
 + Added missing login links for registration and password recovery etc.
 + Fixed Custom Games resizing issue
