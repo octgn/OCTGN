@@ -12,14 +12,28 @@
 
             var fullPath = context.FileSystem.Path.Combine(rootPath, currentVersionFileRelativePath);
 
-            context.Log.InfoFormat("Reading {0}",fullPath);
+            context.Log.InfoFormat("Reading {0}", fullPath);
             var versionText = context.FileSystem.File.ReadAllText(fullPath);
 
-            context.Log.InfoFormat("Formatting {0} into System.Version type.",versionText);
+            context.Log.InfoFormat("Formatting {0} into System.Version type.", versionText);
             var currentVersion = ParseVersion(versionText);
 
-            context.Log.InfoFormat("Setting CurrentVersion: {0}",currentVersion);
+            context.Log.InfoFormat("Setting CurrentVersion: {0}", currentVersion);
             context.Data["CurrentVersion"] = currentVersion;
+
+
+            var currentReleaseVersionFileRelativePath = context.Data["CurrentReleaseVersionFileRelativePath"] as string;
+
+            var fullReleasePath = context.FileSystem.Path.Combine(rootPath, currentReleaseVersionFileRelativePath);
+
+            context.Log.InfoFormat("Reading {0}", fullReleasePath);
+            var releaseVersionText = context.FileSystem.File.ReadAllText(fullReleasePath);
+
+            context.Log.InfoFormat("Formatting {0} into System.Version type.", releaseVersionText);
+            var currentReleaseVersion = ParseVersion(releaseVersionText);
+
+            context.Log.InfoFormat("Setting CurrentReleaseVersion: {0}",currentReleaseVersion);
+            context.Data["CurrentReleaseVersion"] = currentReleaseVersion;
 
         }
 

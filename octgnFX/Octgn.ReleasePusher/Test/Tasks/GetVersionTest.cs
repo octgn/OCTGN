@@ -26,12 +26,16 @@
                                {
                                    "CurrentVersionFileRelativePath",
                                    "\\brains\\neck\\CurrentVersion.txt"
+                               },
+                               {
+                                   "CurrentReleaseVersionFileRelativePath",
+                                   "\\brains\\neck\\CurrentReleaseVersion.txt"
                                }
                            };
             var fileSystem = A.Fake<IFileSystem>();
             var log = LogManager.GetLogger(typeof(GetVersion));
 
-            // Do ideal pass
+            // Do ideal pass currentversion
             
             A.CallTo(()=>fileSystem.File.ReadAllText(A<string>.Ignored)).Returns("3.0.0.0");
             var getVersion = A.Fake<GetVersion>(x=>x.Wrapping(new GetVersion()));
@@ -44,6 +48,32 @@
             Assert.Contains("CurrentVersion",(ICollection)context.Data.Keys);
             Assert.NotNull(context.Data["CurrentVersion"] as Version);
             Assert.AreEqual(new Version("3.0.0.0"), context.Data["CurrentVersion"] as Version);
+
+            // Make sure it throws an exception if the file doesn't exist.
+            A.CallTo(() => fileSystem.File.ReadAllText(A<string>.Ignored)).Throws<System.IO.FileNotFoundException>();
+
+            Assert.Throws<System.IO.FileNotFoundException>(() => getVersion.Run(this, context));
+
+            // Make sure a bad version throws an exception
+            A.CallTo(() => fileSystem.File.ReadAllText(A<string>.Ignored)).Returns("OMG LOL NOT A VERSION");
+            A.CallTo(() => getVersion.ParseVersion(A<string>.Ignored)).CallsBaseMethod();
+            Assert.Throws<ArgumentException>(() => getVersion.Run(this, context));
+
+            // Do ideal pass currentreleaseversion
+
+            fileSystem = A.Fake<IFileSystem>();
+            log = LogManager.GetLogger(typeof(GetVersion));
+            context = new TaskContext(log, fileSystem, data);
+            getVersion = A.Fake<GetVersion>(x => x.Wrapping(new GetVersion()));
+            A.CallTo(()=>fileSystem.File.ReadAllText(A<string>.Ignored)).Returns("3.0.0.0");
+
+            A.CallTo(() => getVersion.ParseVersion(A<string>.Ignored)).Returns(new Version(3, 0, 0, 0));
+            Assert.DoesNotThrow(()=>getVersion.Run(this,context));
+            A.CallTo(() => fileSystem.Path.Combine(context.Data["WorkingDirectory"] as string, context.Data["CurrentReleaseVersionFileRelativePath"] as string)).MustHaveHappened(Repeated.Exactly.Once);
+
+            Assert.Contains("CurrentReleaseVersion",(ICollection)context.Data.Keys);
+            Assert.NotNull(context.Data["CurrentReleaseVersion"] as Version);
+            Assert.AreEqual(new Version("3.0.0.0"), context.Data["CurrentReleaseVersion"] as Version);
 
             // Make sure it throws an exception if the file doesn't exist.
             A.CallTo(() => fileSystem.File.ReadAllText(A<string>.Ignored)).Throws<System.IO.FileNotFoundException>();

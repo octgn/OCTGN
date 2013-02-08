@@ -14,6 +14,7 @@
 
             var workingDirectory = context.Data["WorkingDirectory"] as string;
             var currentVersion = (context.Data["CurrentVersion"] as Version).ToString();
+            var currentReleaseVersion = (context.Data["CurrentReleaseVersion"] as Version).ToString();
             var newVersion = (context.Data["NewVersion"] as Version).ToString();
 
             var files = context.FileSystem.Directory
@@ -23,11 +24,11 @@
 
             foreach (var f in files )
             {
-                this.ProcessFile(context,f,currentVersion,newVersion);
+                this.ProcessFile(context, f, currentVersion, currentReleaseVersion, newVersion);
             }
         }
 
-        public virtual void ProcessFile(ITaskContext context, FileInfoBase file, string currentVersion, string newVersion)
+        public virtual void ProcessFile(ITaskContext context, FileInfoBase file, string currentVersion, string currentReleaseVersion, string newVersion)
         {
             var rel = file.FullName.Replace(context.Data["WorkingDirectory"] as string, "").TrimStart('/', '\\');
 
@@ -36,11 +37,12 @@
             var text = context.FileSystem.File.ReadAllText(file.FullName);
 
             // Return if the file contents don't contain the version number
-            if (!text.Contains(currentVersion)) return;
+            if (!text.Contains(currentVersion) || !text.Contains(currentReleaseVersion)) return;
             context.Log.InfoFormat("Replacing version number in file {0}",file.FullName);
 
             // Replace all occurrences of the oldVersion with the newVersion
             text = text.Replace(currentVersion, newVersion);
+            text = text.Replace(currentReleaseVersion, newVersion);
             context.Log.InfoFormat("Writing file {0}",file.FullName);
 
             // Write the new file to the file system.
@@ -68,6 +70,7 @@
             {
                 list.Add(this.CreateUpdateString(context, "deploy\\currentversion.txt"));
                 list.Add(this.CreateUpdateString(context, "installer\\Install.nsi"));
+                list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn\\CurrentReleaseVersion.txt"));
             }
             else if ((context.Data["Mode"] as string).ToLower() == "test")
             {

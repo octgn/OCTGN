@@ -28,25 +28,36 @@
                                {
                                    { "WorkingDirectory",""},
                                    {"CurrentVersion",new Version("3.0.0.0")},
+                                   {"CurrentReleaseVersion",new Version("3.0.0.0")},
                                    {"NewVersion", new Version("3.0.0.1")},
                                    {"Mode", "test"}
                                };
 
+            var badData1 = new Dictionary<string, object>
+                               {
+                                   {"CurrentVersion",new Version("3.0.0.0")},
+                                   {"NewVersion", new Version("3.0.0.1")},
+                                   {"Mode", "test"}
+                               };
+ 
             var badData2 = new Dictionary<string, object>
                                {
                                    {"CurrentVersion",new Version("3.0.0.0")},
+                                   {"CurrentReleaseVersion",new Version("3.0.0.0")},
                                    {"NewVersion", new Version("3.0.0.1")},
                                    {"Mode", "test"}
                                };
             var badData3 = new Dictionary<string, object>
                                {
                                    { "WorkingDirectory",""},
+                                   {"CurrentReleaseVersion",new Version("3.0.0.0")},
                                    {"NewVersion", new Version("3.0.0.1")},
                                    {"Mode", "test"}
                                };
             var badData4 = new Dictionary<string, object>
                                {
                                    { "WorkingDirectory",""},
+                                   {"CurrentReleaseVersion",new Version("3.0.0.0")},
                                    {"CurrentVersion",new Version("3.0.0.0")},
                                    {"Mode","test"}
                                };
@@ -61,7 +72,7 @@
             A.CallTo(() => task.GetUpdateFiles(A<ITaskContext>.Ignored)).Returns(goodFiles);
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored)).DoesNothing();
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored)).DoesNothing();
 
             // Good data, grabs all files
             A.CallTo(
@@ -70,7 +81,7 @@
             Assert.DoesNotThrow(() => task.Run(this, goodContext));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored))
                 .MustHaveHappened(Repeated.Exactly.Times(3));
 
             // Inject bad files
@@ -80,7 +91,18 @@
             Assert.DoesNotThrow(() => task.Run(this, goodContext));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                .MustHaveHappened(Repeated.Exactly.Times(6));
+
+
+            // bad data 1
+            A.CallTo(
+                () => fileSystem.Directory.GetFiles(A<string>.Ignored, A<string>.Ignored, SearchOption.AllDirectories))
+             .Returns(goodFiles);
+            Assert.Throws<KeyNotFoundException>(() => task.Run(this, badContext2));
+            A.CallTo(
+                () =>
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored))
                 .MustHaveHappened(Repeated.Exactly.Times(6));
 
             // bad data 2
@@ -90,7 +112,7 @@
             Assert.Throws<KeyNotFoundException>(() => task.Run(this, badContext2));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored))
                 .MustHaveHappened(Repeated.Exactly.Times(6));
 
             // bad data 3
@@ -100,7 +122,7 @@
             Assert.Throws<KeyNotFoundException>(() => task.Run(this, badContext3));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored))
                 .MustHaveHappened(Repeated.Exactly.Times(6));
 
             // bad data 4
@@ -110,7 +132,7 @@
             Assert.Throws<KeyNotFoundException>(() => task.Run(this, badContext4));
             A.CallTo(
                 () =>
-                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored))
+                task.ProcessFile(A<ITaskContext>.Ignored, A<FileInfoBase>.Ignored, A<string>.Ignored, A<string>.Ignored, A<string>.Ignored))
                 .MustHaveHappened(Repeated.Exactly.Times(6));
 
 
@@ -126,6 +148,7 @@
             var task = new IncrementVersionNumbersInFiles();
 
             const string CurrentVersion = "3.0.0.0";
+            const string CurrentReleaseVersion = "3.0.0.0";
             const string NewVersion = "3.0.0.1";
 
             const string NoVersion = "asldkfjaw faowkjef awoeijf a;sodkfjaw oeifjaw\nfawo\teifj\tawoef";
@@ -150,7 +173,7 @@
             // has version
             fileContents = "";
             A.CallTo(() => fileSystem.File.ReadAllText(A<string>.Ignored)).Returns(HasVersion);
-            Assert.DoesNotThrow(()=>task.ProcessFile(context,passFile,CurrentVersion,NewVersion));
+            Assert.DoesNotThrow(() => task.ProcessFile(context, passFile, CurrentVersion, CurrentReleaseVersion,NewVersion));
             A.CallTo(()=>fileSystem.File.WriteAllText(A<string>.Ignored, A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
             A.CallTo(()=>fileSystem.File.ReadAllText(A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
             Assert.AreEqual(HasVersionResult,fileContents);
@@ -158,7 +181,7 @@
             // no version
             fileContents = "";
             A.CallTo(() => fileSystem.File.ReadAllText(A<string>.Ignored)).Returns(NoVersion);
-            Assert.DoesNotThrow(() => task.ProcessFile(context, passFile,CurrentVersion, NewVersion));
+            Assert.DoesNotThrow(() => task.ProcessFile(context, passFile,CurrentVersion,CurrentReleaseVersion, NewVersion));
             A.CallTo(()=>fileSystem.File.WriteAllText(A<string>.Ignored, A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
             A.CallTo(()=>fileSystem.File.ReadAllText(A<string>.Ignored)).MustHaveHappened(Repeated.Exactly.Times(2));
             Assert.AreEqual("",fileContents);
@@ -176,15 +199,13 @@
             context.Data["WorkingDirectory"] = "";
             context.Data["Mode"] = "release";
 
-            // Test count
-            Assert.AreEqual(16,task.GetUpdateFiles(context).Length);
-
-
             // Test modes
             context.Data["Mode"] = "release";
             Assert.DoesNotThrow(()=>task.GetUpdateFiles(context));
+            Assert.AreEqual(17,task.GetUpdateFiles(context).Length);
             context.Data["Mode"] = "test";
             Assert.DoesNotThrow(() => task.GetUpdateFiles(context));
+            Assert.AreEqual(16,task.GetUpdateFiles(context).Length);
             context.Data["Mode"] = "a";
             Assert.Throws<InvalidOperationException>(() => task.GetUpdateFiles(context));
 
@@ -195,6 +216,7 @@
             result = task.GetUpdateFiles(context);
             Assert.True(result.Any(x => x.Contains("deploy\\currentversion.txt")));
             Assert.True(result.Any(x => x.Contains("installer\\Install.nsi")));
+            Assert.True(result.Any(x => x.Contains("octgnFX\\Octgn\\CurrentReleaseVersion.txt")));
             Assert.False(result.Any(x => x.Contains("deploy\\currentversiontest.txt")));
             Assert.False(result.Any(x => x.Contains("installer\\InstallTest.nsi")));
 
@@ -205,6 +227,7 @@
             Assert.True(result.Any(x => x.Contains("installer\\InstallTest.nsi")));
             Assert.False(result.Any(x => x.Contains("deploy\\currentversion.txt")));
             Assert.False(result.Any(x => x.Contains("installer\\Install.nsi")));
+            Assert.False(result.Any(x => x.Contains("octgnFX\\Octgn\\CurrentReleaseVersion.txt")));
         }
     }
 }
