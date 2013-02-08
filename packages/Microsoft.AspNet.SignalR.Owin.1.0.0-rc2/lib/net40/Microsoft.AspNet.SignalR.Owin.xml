@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.AspNet.SignalR.Owin</name>
+    </assembly>
+    <members>
+        <member name="M:Microsoft.AspNet.SignalR.TaskAsyncHelper.Interleave``1(System.Func{``0,System.Func{System.Threading.Tasks.Task},System.Threading.Tasks.Task},System.Func{System.Threading.Tasks.Task},``0,System.Threading.Tasks.TaskCompletionSource{System.Object})">
+            <summary>
+            Passes a task returning function into another task returning function so that
+            it can decide when it starts and returns a task that completes when all are finished
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.Owin.Infrastructure.Headers">
+            <summary>
+            Helper methods for creating and consuming CallParameters.Headers and ResultParameters.Headers.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.Infrastructure.UrlDecoder">
+            <summary>
+            Helpers for decoding URI query components.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.Owin.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.Owin.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.Owin.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.Owin.Resources.Error_NoDepenendeyResolver">
+            <summary>
+              Looks up a localized string similar to A dependency resolver must be specified..
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNet.SignalR.Owin.Resources.Error_NotWebSocketRequest">
+            <summary>
+              Looks up a localized string similar to Not a valid web socket request..
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNet.SignalR.Owin.WebSocketConstants">
+            <summary>
+            Standard keys and values for use within the OWIN interfaces
+            </summary>
+        </member>
+    </members>
+</doc>
