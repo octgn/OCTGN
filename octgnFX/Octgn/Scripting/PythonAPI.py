@@ -1,4 +1,5 @@
-﻿#Rotation constants
+﻿from System.IO import Directory, Path
+#Rotation constants
 Rot0 = 0
 Rot90 = 1
 Rot180 = 2
@@ -12,6 +13,9 @@ def mute():
       _api.Mute(False)
   _api.Mute(True)
   return Muted()
+
+def wd(relativePath):
+  return Path.Combine(_wd,relativePath)
 
 def notify(message):
   _api.Notify(message)
