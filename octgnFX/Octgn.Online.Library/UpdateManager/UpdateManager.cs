@@ -1,4 +1,4 @@
-﻿namespace Octgn.Online.GameService
+﻿namespace Octgn.Online.Library.UpdateManager
 {
     using System;
     using System.Configuration;
@@ -9,12 +9,36 @@
 
     using log4net;
 
-    public static class UpdateManager
+    public class UpdateManager
     {
-        public static event EventHandler OnUpdateDetected; 
+        #region Context
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal static Timer UpdateTimer;
-        public static bool Update()
+        internal static UpdateManager Context;
+        private static readonly object Locker = new object();
+        public static UpdateManager GetContext()
+        {
+            lock(Locker)
+                return Context ?? (Context = new UpdateManager());
+        }
+
+        #endregion
+
+        public event EventHandler OnUpdateDetected; 
+        internal Timer UpdateTimer;
+        internal UpdateManagerConfig Config;
+        internal UpdateManager()
+        {
+            Log.Info("Loading config values");
+
+            var ass = Assembly.GetEntryAssembly();
+            var execonfig = ConfigurationManager.OpenExeConfiguration(ass.Location);
+            var confObj = execonfig.GetSection("UpdateManagerConfig");
+            Config = (execonfig.GetSection("UpdateManagerConfig") as UpdateManagerConfig)
+                         ?? new UpdateManagerConfig();
+            Log.Info("Setting Update Frequency: " + Config.UpdateFrequency);
+            Log.Info("Setting Update Feed: " + Config.UpdateFeed);
+        }
+        public bool Update()
         {
             Log.Info("Checking for updates");
             var factory = AppUpdateFactory.Setup(DoUpdate);
@@ -23,16 +47,16 @@
             return ret;
         }
 
-        public static void Start()
+        public void Start()
         {
             Log.Info("Starting");
-            UpdateTimer = new Timer(1000 * 60);
+            UpdateTimer = new Timer(Config.UpdateFrequency);
             UpdateTimer.Elapsed += UpdateTimerOnElapsed;
             UpdateTimer.Start();
             Log.Info("Started");
         }
 
-        public static void Stop()
+        public void Stop()
         {
             Log.Info("Stopping");
             UpdateTimer.Stop();
@@ -41,14 +65,14 @@
             Log.Info("Stopped");
         }
 
-        internal static void FireOnUpdateDetected()
+        internal void FireOnUpdateDetected()
         {
             Log.Info("Firing OnUpdateDetected");
             if(OnUpdateDetected != null)
                 OnUpdateDetected(new object(), new EventArgs());
         }
 
-        internal static void UpdateTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        internal void UpdateTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             Log.Info("Checking for update...");
             if (Update())
@@ -60,10 +84,10 @@
             Log.Info("No Update Found");
         }
 
-        internal static void DoUpdate(UpdateConfigBuilder updateConfigBuilder)
+        internal void DoUpdate(UpdateConfigBuilder updateConfigBuilder)
         {
             updateConfigBuilder = updateConfigBuilder.Update(
-                Assembly.GetExecutingAssembly().GetName().Name, ConfigurationManager.AppSettings["UpdateFeed"])
+                Config.PackageName, Config.UpdateFeed)
                                .OverwriteContentFiles();
             Log.InfoFormat("Current Version: {0}",updateConfigBuilder.CurrentAppVersion());
         }
