@@ -52,14 +52,16 @@ namespace Octgn.Scripting
 
             _api = new ScriptApi(this);
 
+            var workingDirectory = Directory.GetCurrentDirectory();
             if (Program.Game != null)
             {
-                var workingDirectory = Path.Combine(Prefs.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
+                workingDirectory = Path.Combine(Prefs.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
                 var search = _engine.GetSearchPaths();
                 search.Add(workingDirectory);
                 _engine.SetSearchPaths(search);
             }
             ActionsScope = CreateScope();
+            ActionsScope.SetVariable("_WD",workingDirectory);
             if (Program.Game == null || forTesting) return;
             foreach (
                 ScriptSource src in
