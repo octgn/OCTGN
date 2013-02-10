@@ -42,7 +42,7 @@
             var principal = new WindowsPrincipal(identity);
             if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
             {
-                Log.Info("Not running as Admin, Admin mode required. Exiting.");
+                Log.Fatal("Not running as Admin, Admin mode required. Exiting.");
                 //+ Probably don't want to uncomment the blow shitz
                 //var newP = new Process();
                 //newP.EnableRaisingEvents = true;
