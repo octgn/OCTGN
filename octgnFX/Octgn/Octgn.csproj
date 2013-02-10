@@ -520,6 +520,12 @@
     <Compile Include="Windows\UrlSets.xaml.cs">
       <DependentUpon>UrlSets.xaml</DependentUpon>
     </Compile>
+    <Content Include="Scripting\Lib\bisect.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripting\Lib\heapq.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Resources\minimize.png" />
     <Resource Include="Resources\minmax.png" />
     <Resource Include="Resources\closewindow.png" />
