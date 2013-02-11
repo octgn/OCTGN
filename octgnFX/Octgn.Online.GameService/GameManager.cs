@@ -5,8 +5,6 @@
         using Microsoft.AspNet.SignalR;
         using Microsoft.Owin.Hosting;
 
-        using Octgn.Online.GameService.Hubs;
-
         using Owin;
 
         using System.Configuration;

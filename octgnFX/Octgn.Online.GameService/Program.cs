@@ -1,11 +1,12 @@
 ﻿namespace Octgn.Online.GameService
 {
     using System;
-    using System.Diagnostics;
     using System.Reflection;
     using System.Security.Principal;
     using System.ServiceProcess;
     using System.Threading;
+
+    using Microsoft.AspNet.SignalR;
 
     using Octgn.Online.Library.UpdateManager;
 
@@ -24,6 +25,8 @@
             if (UpdateManager.GetContext().Update()) return;
             UpdateManager.GetContext().OnUpdateDetected += UpdateManagerOnOnUpdateDetected;
             UpdateManager.GetContext().Start();
+            GlobalHost.Configuration.DisconnectTimeout = new TimeSpan(0, 0, 0, 5);
+            GlobalHost.Configuration.HeartbeatInterval = new TimeSpan(0, 0, 0, 5); 
 #if(DEBUG)
 
             StartServiceCommandLine();
