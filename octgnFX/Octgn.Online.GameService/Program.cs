@@ -18,8 +18,8 @@
         internal static bool KeepRunning;
         internal static void Main()
         {
-            if (!IsAdmin()) return;
             Log.Info("Starting Octgn.Online.GameService");
+            if (!IsAdmin()) return;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             if (UpdateManager.GetContext().Update()) return;
             UpdateManager.GetContext().OnUpdateDetected += UpdateManagerOnOnUpdateDetected;

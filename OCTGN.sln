@@ -63,7 +63,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.Library", "oct
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Octgn.Online", "Octgn.Online", "{7E00BBC8-BC0C-4A2B-8309-C45CA1C7E152}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.SASManager", "octgnFX\Octgn.Online.SASManager\Octgn.Online.SASManager.csproj", "{202FCC75-6AAF-49FA-B1F0-160A835C0886}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.SASManagerService", "octgnFX\Octgn.Online.SASManager\Octgn.Online.SASManagerService.csproj", "{202FCC75-6AAF-49FA-B1F0-160A835C0886}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
