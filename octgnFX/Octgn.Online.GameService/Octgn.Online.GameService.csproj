@@ -113,6 +113,7 @@
   <ItemGroup>
     <Compile Include="Api\ApiManager.cs" />
     <Compile Include="Api\Controllers\DiagnosticsController.cs" />
+    <Compile Include="Coms\GameServiceToSASManagerService.cs" />
     <Compile Include="GameManager.cs" />
     <Compile Include="GameService.cs">
       <SubType>Component</SubType>

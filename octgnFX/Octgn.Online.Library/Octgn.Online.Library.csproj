@@ -34,6 +34,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalR\Client.cs" />
+    <Compile Include="SignalR\Coms\IGameServiceToSASManagerService.cs" />
+    <Compile Include="SignalR\Coms\ISASManagerServiceToGameService.cs" />
     <Compile Include="UpdateManager\UpdateManager.cs" />
     <Compile Include="UpdateManager\UpdateManagerConfig.cs" />
   </ItemGroup>
@@ -50,6 +52,7 @@
     <Reference Include="Microsoft.AspNet.SignalR.Client">
       <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Client.1.0.0-rc2\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>

@@ -5,6 +5,8 @@
 
     using Microsoft.AspNet.SignalR;
 
+    using Octgn.Online.GameService.Coms;
+
     using log4net;
 
     public class SasManagerHub : Hub
@@ -17,7 +19,10 @@
         public override Task OnConnected()
         {
             Log.InfoFormat("Connected {0}", this.Context.ConnectionId);
-            return base.OnConnected();
+            var mess = new GameServiceToSASManagerService(this.Clients.Caller);
+            mess.Hello("hello1", "Hello2");
+            return mess.Return;
+            //return this.Clients.Caller.FunActions(1,"hi",new ObfuscateAssemblyAttribute(false),new SasManagerHub());
         }
 
         public override Task OnDisconnected()

@@ -7,6 +7,7 @@
     using Microsoft.AspNet.SignalR.Client;
 
     using Octgn.Online.Library.SignalR;
+    using Octgn.Online.SASManagerService.Coms;
 
     using log4net;
 
@@ -27,7 +28,7 @@
         internal GameServiceClient()
         {
             Log.Info("Creating");
-            this.Setup(ConfigurationManager.AppSettings["GameServiceHost"], "SasManagerHub");
+            this.Setup <GameServiceToSASManagerService>(ConfigurationManager.AppSettings["GameServiceHost"], "SasManagerHub");
             Log.Info("Created");
         }
 
@@ -64,7 +65,7 @@
 
         protected override void ConnectionOnReceived(string s)
         {
-            Log.InfoFormat("Received: {0}",s);
+            //Log.InfoFormat("Received: {0}",s);
             
         }
 
