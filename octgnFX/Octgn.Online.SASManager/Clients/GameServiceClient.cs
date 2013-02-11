@@ -6,6 +6,7 @@
     using System.Reflection;
 
     using Microsoft.AspNet.SignalR.Client;
+    using Microsoft.AspNet.SignalR.Client.Hubs;
 
     using log4net;
 
@@ -23,13 +24,14 @@
             }
         }
         #endregion
-        internal Connection Connection;
+        internal HubConnection Connection;
         internal bool Stopped;
         internal bool Started;
         internal GameServiceClient()
         {
             Log.Info("Creating");
-            Connection = new Connection(ConfigurationManager.AppSettings["GameServiceHost"]);
+            Connection = new HubConnection(ConfigurationManager.AppSettings["GameServiceHost"],false);
+            Connection.CreateHubProxy("SasManagerHub");
             Connection.Closed += ConnectionOnClosed;
             Connection.Error += ConnectionOnError;
             Connection.Received += ConnectionOnReceived;
@@ -108,6 +110,7 @@
         private void ConnectionOnReceived(string s)
         {
             Log.InfoFormat("Received: {0}",s);
+            
         }
 
         private void ConnectionOnError(Exception exception)
