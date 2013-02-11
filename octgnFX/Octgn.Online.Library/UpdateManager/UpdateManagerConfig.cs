@@ -44,5 +44,17 @@
                 this["PackageName"] = value;
             }
         }
+        [ConfigurationProperty("Enabled",DefaultValue = true)]
+        public bool Enabled
+        {
+            get
+            {
+                return (bool)this["Enabled"];
+            }
+            set
+            {
+                this["Enabled"] = value;
+            }
+        }
     }
 }

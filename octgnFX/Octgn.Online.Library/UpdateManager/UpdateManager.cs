@@ -41,6 +41,11 @@
         public bool Update()
         {
             Log.Info("Checking for updates");
+            if (!Config.Enabled)
+            {
+                Log.Info("Update Manager Disabled via config file.");
+                return false;
+            }
             var factory = AppUpdateFactory.Setup(DoUpdate);
             var ret = factory.Execute();
             Log.Info(ret?"Update available":"Update not available");
@@ -50,6 +55,11 @@
         public void Start()
         {
             Log.Info("Starting");
+            if (!Config.Enabled)
+            {
+                Log.Info("Update Manager Disabled via config file.");
+                return;
+            }
             UpdateTimer = new Timer(Config.UpdateFrequency);
             UpdateTimer.Elapsed += UpdateTimerOnElapsed;
             UpdateTimer.Start();
@@ -59,6 +69,11 @@
         public void Stop()
         {
             Log.Info("Stopping");
+            if (!Config.Enabled)
+            {
+                Log.Info("Update Manager Disabled via config file.");
+                return;
+            }
             UpdateTimer.Stop();
             UpdateTimer.Close();
             UpdateTimer.Dispose();

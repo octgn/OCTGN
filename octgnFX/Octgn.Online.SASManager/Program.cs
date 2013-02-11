@@ -17,8 +17,20 @@
         internal static SASManagerService Service;
         internal static void Main()
         {
+            Log.Info("Starting Octgn.Online.SASManagerService");
             if (!IsAdmin()) return;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+            if (UpdateManager.GetContext().Update()) return;
+            UpdateManager.GetContext().OnUpdateDetected += UpdateManagerOnOnUpdateDetected;
+            UpdateManager.GetContext().Start();
+#if(DEBUG)
+
+            StartServiceCommandLine();
+            Console.WriteLine("==DONE==");
+            Console.ReadLine();
+#else
+            StartService();
+#endif
         }
 
         internal static void StartServiceCommandLine()
@@ -55,6 +67,12 @@
                 Service.Stop();
             UpdateManager.GetContext().Stop();
         }
+
+        private static void UpdateManagerOnOnUpdateDetected(object sender, EventArgs eventArgs)
+        {
+            Stop();
+        }
+
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = e.ExceptionObject as Exception;

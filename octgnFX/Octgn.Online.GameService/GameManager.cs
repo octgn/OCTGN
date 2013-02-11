@@ -1,45 +1,56 @@
 ﻿namespace Octgn.Online.GameService
-{
-    using System.Configuration;
-    using System.Reflection;
-
-    using log4net;
-    using Microsoft.Owin.Hosting;
-using Owin;
-
-    public class GameManager
     {
-        #region singleton
-        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static GameManager current;
-        private static readonly object Locker = new object();
-        public static GameManager GetContext()
+        using System;
+
+        using Microsoft.AspNet.SignalR;
+        using Microsoft.Owin.Hosting;
+        using Owin;
+
+        using System.Configuration;
+        using System.Reflection;
+
+        using log4net;
+        public class GameManager
         {
-            lock (Locker)
+            #region singleton
+            internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+            private static GameManager current;
+            private static readonly object Locker = new object();
+            public static GameManager GetContext()
             {
-                return current ?? (current = new GameManager());
+                lock (Locker)
+                {
+                    return current ?? (current = new GameManager());
+                }
+            }
+            #endregion
+
+            internal IDisposable Host;
+
+            public GameManager()
+            {
+                Log.Info("Creating");
+                Log.Info("Created");
+            }
+
+            public void Start()
+            {
+                Log.Info("Starting");
+                Host = WebApplication.Start<GameManager>(ConfigurationManager.AppSettings["GameManagerHost"]);
+                Log.Info("Started");
+            }
+
+            public void Stop()
+            {
+                Log.Info("Stopping");
+                if(Host!= null)
+                    Host.Dispose();
+                Log.Info("Stopped");
+            }
+
+            public void Configuration(IAppBuilder app)
+            {
+                app.MapHubs("/GameManager",new HubConfiguration());
             }
         }
-        #endregion
-
-        protected GameManager()
-        {
-            Log.Info("Creating");
-            Log.Info("Created");
-        }
-
-        public void Start()
-        {
-            Log.Info("Starting");
-            WebApplication.Start(ConfigurationManager.AppSettings["GameManagerHost"]);
-            Log.Info("Started");
-        }
-
-        public void Stop()
-        {
-            Log.Info("Stopping");
-            Log.Error("Stop mechanism not implemented");
-            Log.Info("Stopped");
-        }
     }
-}
