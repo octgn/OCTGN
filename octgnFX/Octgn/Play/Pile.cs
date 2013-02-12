@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Security.Cryptography;
 using Octgn.Definitions;
 using Octgn.Utils;
 
@@ -12,6 +13,7 @@ namespace Octgn.Play
         #region Public interface
 
         private bool _collapsed;
+        private static RNGCryptoServiceProvider rnd = new RNGCryptoServiceProvider();
 
         internal Pile(Player owner, GroupDef def)
             : base(owner, def)
@@ -77,6 +79,10 @@ namespace Octgn.Play
             HasReceivedFirstShuffledMessage = false;
             // Create aliases
             var cis = new CardIdentity[cards.Count];
+            var cardIds = new int[cards.Count];
+            var cardAliases = new ulong[cards.Count];
+            var rndbytes = new Byte[4];
+            var cardRnds = new uint[cards.Count];
             for (int i = 0; i < cards.Count; i++)
             {
                 if (cards[i].IsVisibleToAll())
@@ -93,16 +99,22 @@ namespace Octgn.Play
                 }
             }
             // Shuffle
-            var cardIds = new int[cards.Count];
-            var cardAliases = new ulong[cards.Count];
-            var rnd = new Random();
-            for (int i = cards.Count - 1; i >= 0; i--)
+            do
             {
-                int r = rnd.Next(i + 1);
-                cardIds[i] = cis[r].Id;
-                cardAliases[i] = cis[r].Visible ? ulong.MaxValue : Crypto.ModExp(cis[r].Key);
-                cis[r] = cis[i];
+                for (int i = 0; i < cards.Count; i++)
+                {
+                    rnd.GetBytes(rndbytes);
+                    cardRnds[i] = BitConverter.ToUInt32(rndbytes, 0);
+                }
+            } while (!SortShuffle(cardRnds, 0, cards.Count - 1, cis, false))
+
+            // Shuffle complete, build arrays
+            for (int i = 0; i < cards.Count; i++)
+            {
+                cardIds[i] = cis[i].Id;
+                cardAliases[i] = cis[i].Visible ? ulong.MaxValue : Crypto.ModExp(cis[i].Key);
             }
+
             // Send the request
             Program.Client.Rpc.CreateAlias(cardIds, cardAliases);
             Program.Client.Rpc.Shuffle(this, cardIds);
@@ -112,15 +124,69 @@ namespace Octgn.Play
 
         private void ShuffleAlone()
         {
-            var rnd = new Random();
-            for (int i = cards.Count - 1; i >= 0; i--)
+            var rndbytes = new Byte[4];
+            var cardRnds = new uint[cards.Count];
+            do
             {
-                int r = rnd.Next(i + 1);
-                Card temp = cards[r];
-                cards[r] = cards[i];
-                cards[i] = temp;
-            }
+                for (int i = 0; i < cards.Count; i++)
+                {
+                    rnd.GetBytes(rndbytes);
+                    cardRnds[i] = BitConverter.ToUInt32(rndbytes, 0);
+                }
+            } while (!SortShuffle(cardRnds, 0, cards.Count - 1, null, true))
             OnShuffled();
+        }
+
+        // Quick sort pile to shuffle. Return false if 2 cards were assigned equal values.
+        internal bool SortShuffle(uint[] a, int left, int right, CardIdentity[] cis, bool local)
+        {
+            int i = left;
+            int j = right;
+            unsigned int x = a[(left + right) / 2];
+            unsigned int w = 0;
+            while (i <= j)
+            {
+                while (a[i] < x)
+                {
+                    i++;
+                }
+                while (x < a[j])
+                {
+                    j--;
+                }
+                if (i <= j)
+                {
+                    if (a[i] == w || a[j] == w)
+                        return false;
+                    if (cis != null)
+                    {
+                        CardIdentity ci = cis[i];
+                        cis[i] = cis[j];
+                        cis[j] = ci;
+                    }
+                    if (local)
+                    {
+                        Card temp = cards[i];
+                        cards[i] = cards[j];
+                        cards[j] = temp;
+                    }
+
+                    w = a[i];
+                    a[i++] = a[j];
+                    a[j--] = w;
+                }
+            }
+            if (left < j)
+            {
+                if (!SortShuffle(a, left, j, cis, local))
+                    return false;
+            }
+            if (i < right)
+            {
+                if (!SortShuffle(a, i, right, cis, local))
+                    return false;
+            }
+            return true;
         }
     }
 }
