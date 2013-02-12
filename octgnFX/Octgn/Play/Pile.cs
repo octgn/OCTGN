@@ -142,8 +142,8 @@ namespace Octgn.Play
         {
             int i = left;
             int j = right;
-            unsigned int x = a[(left + right) / 2];
-            unsigned int w = 0;
+            uint x = a[(left + right) / 2];
+            uint w = 0;
             while (i <= j)
             {
                 while (a[i] < x)
