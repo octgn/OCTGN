@@ -54,7 +54,7 @@ namespace Skylabs.Lobby
         public Chat(Client c, XmppClientConnection xmpp)
         {
             this.client = c;
-            this.Rooms = new ThreadSafeList<NewChatRoom>();
+            this.Rooms = new ThreadSafeList<ChatRoom>();
             this.xmpp = xmpp;
             this.xmpp.OnMessage += this.XmppOnMessage;
             this.xmpp.OnPresence += this.XmppOnPresence;
@@ -69,7 +69,7 @@ namespace Skylabs.Lobby
         /// </summary>
         /// <param name="sender">The Sender</param>
         /// <param name="room">Created Room</param>
-        public delegate void DCreateChatRoom(object sender, NewChatRoom room);
+        public delegate void DCreateChatRoom(object sender, ChatRoom room);
 
         #endregion
 
@@ -99,7 +99,7 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets or sets the chat rooms.
         /// </summary>
-        public ThreadSafeList<NewChatRoom> Rooms { get; set; }
+        public ThreadSafeList<ChatRoom> Rooms { get; set; }
 
         #endregion
 
@@ -115,16 +115,16 @@ namespace Skylabs.Lobby
         /// Is it a group chat?
         /// </param>
         /// <returns>
-        /// The <see cref="NewChatRoom"/>.
+        /// The <see cref="ChatRoom"/>.
         /// </returns>
-        public NewChatRoom GetRoom(NewUser otherUser, bool group = false)
+        public ChatRoom GetRoom(User otherUser, bool group = false)
         {
             if (group)
             {
-                NewChatRoom ret = this.Rooms.FirstOrDefault(x => x.IsGroupChat && x.GroupUser.Equals(otherUser));
+                ChatRoom ret = this.Rooms.FirstOrDefault(x => x.IsGroupChat && x.GroupUser.Equals(otherUser));
                 if (ret == null)
                 {
-                    ret = new NewChatRoom(this.NextRid, this.client, otherUser);
+                    ret = new ChatRoom(this.NextRid, this.client, otherUser);
                     this.Rooms.Add(ret);
                     this.FireOnCreateRoom(this, ret);
                 }
@@ -133,10 +133,10 @@ namespace Skylabs.Lobby
             }
             else
             {
-                NewChatRoom ret = this.Rooms.FirstOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat);
+                ChatRoom ret = this.Rooms.FirstOrDefault(x => x.Users.Contains(otherUser) && !x.IsGroupChat);
                 if (ret == null)
                 {
-                    ret = new NewChatRoom(this.NextRid, this.client, otherUser);
+                    ret = new ChatRoom(this.NextRid, this.client, otherUser);
                     this.Rooms.Add(ret);
                     this.FireOnCreateRoom(this, ret);
                 }
@@ -151,7 +151,7 @@ namespace Skylabs.Lobby
         /// <param name="room">
         /// Room to remove
         /// </param>
-        public void RemoveRoom(NewChatRoom room)
+        public void RemoveRoom(ChatRoom room)
         {
             // TODO This piece should be replaced with an event that lives inside the chat room object.
             this.Rooms.Remove(room);
@@ -180,7 +180,7 @@ namespace Skylabs.Lobby
                         string rname = msg.From.User;
                         var m = new MucManager(this.xmpp);
                         m.JoinRoom(msg.From, msg.From.User);
-                        NewChatRoom theRoom = this.GetRoom(new NewUser(msg.From), true);
+                        ChatRoom theRoom = this.GetRoom(new User(msg.From), true);
                         this.xmpp.RosterManager.AddRosterItem(msg.From, msg.From.User);
                         this.FireOnCreateRoom(this, theRoom);
                     }
@@ -188,7 +188,7 @@ namespace Skylabs.Lobby
                     break;
                 case MessageType.error:
                     {
-                        NewChatRoom nc = this.GetRoom(new NewUser(msg.From.Bare), true);
+                        ChatRoom nc = this.GetRoom(new User(msg.From.Bare), true);
                         nc.OnMessage(this, msg);
                         break;
                     }
@@ -200,7 +200,7 @@ namespace Skylabs.Lobby
                             case Chatstate.None:
 
                                 // TODO Group chat whispers in the form of {roomname}@conference.server.octgn.info/{username} need to be handled here.
-                                NewChatRoom nc = this.GetRoom(new NewUser(msg.From.Bare));
+                                ChatRoom nc = this.GetRoom(new User(msg.From.Bare));
                                 nc.OnMessage(sender, msg);
                                 break;
                         }
@@ -210,7 +210,7 @@ namespace Skylabs.Lobby
 
                 case MessageType.groupchat:
                     {
-                        NewChatRoom nc = this.GetRoom(new NewUser(msg.From.Bare), true);
+                        ChatRoom nc = this.GetRoom(new User(msg.From.Bare), true);
                         nc.OnMessage(this, msg);
                         break;
                     }
@@ -237,8 +237,8 @@ namespace Skylabs.Lobby
                 case PresenceType.available:
                     if (pres.From.Server == "conference." + this.client.Host)
                     {
-                        var addUser = new NewUser(pres.MucUser.Item.Jid);
-                        var rm = this.GetRoom(new NewUser(pres.From), true);
+                        var addUser = new User(pres.MucUser.Item.Jid);
+                        var rm = this.GetRoom(new User(pres.From), true);
                         switch (pres.MucUser.Item.Affiliation)
                         {
                             case Affiliation.none:
@@ -268,7 +268,7 @@ namespace Skylabs.Lobby
                                 break;
                         }
 
-                        rm.AddUser(new NewUser(pres.MucUser.Item.Jid), false);
+                        rm.AddUser(new User(pres.MucUser.Item.Jid), false);
                     }
 
                     break;
@@ -286,8 +286,8 @@ namespace Skylabs.Lobby
                                 break;
                             }
 
-                            NewChatRoom rm = this.GetRoom(new NewUser(pres.From), true);
-                            rm.UserLeft(new NewUser(pres.MucUser.Item.Jid));
+                            ChatRoom rm = this.GetRoom(new User(pres.From), true);
+                            rm.UserLeft(new User(pres.MucUser.Item.Jid));
                         }
 
                         break;
@@ -304,7 +304,7 @@ namespace Skylabs.Lobby
         /// <param name="room">
         /// The room.
         /// </param>
-        private void FireOnCreateRoom(object sender, NewChatRoom room)
+        private void FireOnCreateRoom(object sender, ChatRoom room)
         {
             if (this.OnCreateRoom != null)
             {

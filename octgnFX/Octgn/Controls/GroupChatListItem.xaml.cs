@@ -1,12 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Octgn.Launcher;
+
 using Skylabs.Lobby;
-using ChatWindow = Octgn.Windows.ChatWindow;
 
 namespace Octgn.Controls
 {
@@ -32,7 +28,7 @@ namespace Octgn.Controls
 
         private long _chatRoomId;
 
-        private NewChatRoom _chatRoom;
+        private ChatRoom _chatRoom;
 
         public GroupChatListItem()
         {
@@ -40,7 +36,7 @@ namespace Octgn.Controls
             ThisRoom = null;
         }
 
-        public NewChatRoom ThisRoom
+        public ChatRoom ThisRoom
         {
             get { return _chatRoom; }
             set

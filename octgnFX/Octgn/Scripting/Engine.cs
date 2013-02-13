@@ -52,15 +52,21 @@ namespace Octgn.Scripting
 
             _api = new ScriptApi(this);
 
-            ActionsScope = CreateScope();
+            var workingDirectory = Directory.GetCurrentDirectory();
+            if (Program.Game != null)
+            {
+                workingDirectory = Path.Combine(Prefs.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
+                var search = _engine.GetSearchPaths();
+                search.Add(workingDirectory);
+                _engine.SetSearchPaths(search);
+            }
+            ActionsScope = CreateScope(workingDirectory);
             if (Program.Game == null || forTesting) return;
             foreach (
                 ScriptSource src in
                     Program.Game.Definition.Scripts.Select(
                         s => _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
             {
-                var workingDirectory = Path.Combine(Prefs.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
-                src.Engine.SetSearchPaths(new List<string>{workingDirectory});
                 src.Execute(ActionsScope);
             }
         }
@@ -90,11 +96,10 @@ namespace Octgn.Scripting
             return errors.ToArray();
         }
 
-        public ScriptScope CreateScope(bool injectApi = true)
+        public ScriptScope CreateScope(string workingDirectory)
         {
             ScriptScope scope = _engine.CreateScope();
-            if (injectApi)
-                InjectOctgnIntoScope(scope);
+            InjectOctgnIntoScope(scope, workingDirectory);
             return scope;
         }
 
@@ -274,9 +279,11 @@ namespace Octgn.Scripting
             return (T) job.invokeResult;
         }
 
-        private void InjectOctgnIntoScope(ScriptScope scope)
+        private void InjectOctgnIntoScope(ScriptScope scope, string workingDirectory)
         {
             scope.SetVariable("_api", _api);
+            scope.SetVariable("_wd", workingDirectory);
+            
             // For convenience reason, the definition of Python API objects is in a seperate file: PythonAPI.py
             _engine.Execute(Resources.CaseInsensitiveDict, scope);
             _engine.Execute(Resources.PythonAPI, scope);

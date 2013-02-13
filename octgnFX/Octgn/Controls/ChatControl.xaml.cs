@@ -39,7 +39,7 @@ namespace Octgn.Controls
         /// <summary>
         /// The chat room.
         /// </summary>
-        private NewChatRoom room;
+        private ChatRoom room;
 
         /// <summary>
         /// Is the shift key down
@@ -124,7 +124,7 @@ namespace Octgn.Controls
         /// <summary>
         /// Gets the room.
         /// </summary>
-        protected NewChatRoom Room
+        protected ChatRoom Room
         {
             get
             {
@@ -138,7 +138,7 @@ namespace Octgn.Controls
         /// <param name="theRoom">
         /// The room.
         /// </param>
-        public void SetRoom(NewChatRoom theRoom)
+        public void SetRoom(ChatRoom theRoom)
         {
             this.room = theRoom;
             this.room.OnUserListChange += this.RoomOnUserListChange;
@@ -178,7 +178,7 @@ namespace Octgn.Controls
         /// <param name="messageType">
         /// The message type.
         /// </param>
-        private void RoomOnMessageReceived(object sender, NewUser @from, string message, DateTime receiveTime, LobbyMessageType messageType)
+        private void RoomOnMessageReceived(object sender, User @from, string message, DateTime receiveTime, LobbyMessageType messageType)
         {
             var theFrom = from;
             var theMessage = message;
@@ -275,7 +275,7 @@ namespace Octgn.Controls
         /// <param name="newusers">
         /// The new list of users
         /// </param>
-        private void RoomOnUserListChange(object sender, List<NewUser> newusers)
+        private void RoomOnUserListChange(object sender, List<User> newusers)
         {
             this.needsRefresh = true;
             this.userRefreshTimer.Change(500, 1000);
@@ -315,7 +315,7 @@ namespace Octgn.Controls
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.
         /// </summary>
-        private void ResetUserList(IEnumerable<NewUser> usersToAdd, IEnumerable<NewUser> usersToRemove)
+        private void ResetUserList(IEnumerable<User> usersToAdd, IEnumerable<User> usersToRemove)
         {
             foreach (var u in usersToAdd) UserListItems.Add(new ChatUserListItem(this.room, u));
             foreach (var u in usersToRemove) UserListItems.Remove(new ChatUserListItem(this.room,u));

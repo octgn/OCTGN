@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Windows;
-using Octgn.Data;
-using Octgn.Launcher;
+
 using Octgn.Windows;
-using ChatWindow = Octgn.Windows.ChatWindow;
 
 namespace Octgn
 {
@@ -52,32 +49,18 @@ namespace Octgn
                 ShutdownMode = oldShutdown;
             }
 
-//#if(DEBUG)
-//            Program.LauncherWindow.Show();
-//            Program.ChatWindows = new List<ChatWindow>();
-//#else
             var uc = new UpdateChecker();
             uc.ShowDialog();
             if (!uc.IsClosingDown)
             {
-                if (Program.UseNewChrome) Program.MainWindowNew.Show();
-                else
-                {
-                    Program.LauncherWindow.Show();
-                    Program.ChatWindows = new List<ChatWindow>();
-                }
+                Program.MainWindowNew.Show();
             }
             else
             {
-                if (Program.UseNewChrome) Program.MainWindowNew.Close();
-                else
-                {
-                    Program.LauncherWindow.Close();
-                }
+                Program.MainWindowNew.Close();
                 Current.MainWindow = null;
                 Program.Exit();
             }
-//#endif
 
             if (e.Args.Any())
             {

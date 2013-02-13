@@ -26,12 +26,9 @@ namespace Octgn
     public static class Program
     {
         public static Windows.DWindow DebugWindow;
-        public static Main MainWindow;
-        public static Windows.MainNew MainWindowNew;
-        public static LauncherWindow LauncherWindow;
+        public static Windows.Main MainWindowNew;
         public static DeckBuilderWindow DeckEditor;
         public static PlayWindow PlayWindow;
-        public static List<ChatWindow> ChatWindows;
         public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
 
         public static Game Game;
@@ -50,7 +47,6 @@ namespace Octgn
         internal static readonly string GameFeed;
 
         internal static readonly bool UseTransparentWindows;
-        internal static readonly bool UseNewChrome;
         internal static readonly bool UseGamePackageManagement;
 
         internal static bool IsGameRunning;
@@ -95,7 +91,6 @@ namespace Octgn
 #else
             UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
 #endif
-            bool.TryParse(ConfigurationManager.AppSettings["UseNewChrome"],out UseNewChrome);
 
             var pList = Process.GetProcessesByName("OCTGN");
             if(pList != null && pList.Length > 0 && pList.Any(x=>x.Id != Process.GetCurrentProcess().Id))
@@ -119,17 +114,8 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             GamesPath = BasePath + @"Games\";
-            if (UseNewChrome)
-            {
-                MainWindowNew = new MainNew();
-                Application.Current.MainWindow = MainWindowNew;
-            }
-            else
-            {
-                LauncherWindow = new LauncherWindow();
-                Application.Current.MainWindow = LauncherWindow;
-                LobbyClient.Chatting.OnCreateRoom += Chatting_OnCreateRoom;
-            }
+            MainWindowNew = new Main();
+            Application.Current.MainWindow = MainWindowNew;
         }
 
         internal static void FireOptionsChanged()
@@ -138,14 +124,6 @@ namespace Octgn
                 OnOptionsChanged.Invoke();
         }
 
-        static void Chatting_OnCreateRoom(object sender, NewChatRoom room)
-        {
-            if (ChatWindows.All(x => x.Room.Rid != room.Rid))
-            {
-                if(MainWindow != null) MainWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
-                else if(LauncherWindow != null) LauncherWindow.Dispatcher.Invoke(new Action(() => ChatWindows.Add(new ChatWindow(room))));
-            }
-        }
         internal static void StartGame()
         {
             // Reset the InvertedTable flags if they were set and they are not used
@@ -182,22 +160,12 @@ namespace Octgn
             IsGameRunning = false;
         }
 
-        public static void SaveLocation()
-        {
-            if (_locationUpdating) return;
-            if (LauncherWindow == null || !LauncherWindow.IsLoaded) return;
-            _locationUpdating = true;
-            Prefs.LoginLocation = new Point(LauncherWindow.Left,LauncherWindow.Top);
-            _locationUpdating = false;
-        }
-
         public static void Exit()
         {
             Application.Current.MainWindow = null;
             if (LobbyClient != null)
                 LobbyClient.Stop();
 
-            SaveLocation();
             try
             {
                 if (DebugWindow != null)
@@ -209,26 +177,9 @@ namespace Octgn
                 Debug.WriteLine(e);
                 if (Debugger.IsAttached) Debugger.Break();
             }
-            if (LauncherWindow != null)
-                if (LauncherWindow.IsLoaded)
-                    LauncherWindow.Close();
-            if (MainWindow != null)
-                if (MainWindow.IsLoaded)
-                    MainWindow.Close();
             if (PlayWindow != null)
                 if (PlayWindow.IsLoaded)
                     PlayWindow.Close();
-            try
-            {
-                foreach (ChatWindow cw in ChatWindows.Where(cw => cw.IsLoaded))
-                {
-                    cw.CloseChatWindow();
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-            }
             //Apparently this can be null sometimes?
             if(Application.Current != null)
                 Application.Current.Shutdown(0);

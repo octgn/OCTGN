@@ -1,5 +1,0 @@
-<NavigationWindow x:Class="Octgn.Windows.LauncherWindow"
-                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource Window}" ShowsNavigationUI="False"
-                  Source="/Launcher/Login.xaml" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" UseLayoutRounding="True"
-                  TextOptions.TextFormattingMode="Display" Title="Octgn" Loaded="NavigationWindow_Loaded_1" LoadCompleted="NavigationWindow_LoadCompleted_1"></NavigationWindow>

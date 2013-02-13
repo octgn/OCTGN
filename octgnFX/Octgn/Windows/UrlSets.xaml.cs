@@ -31,7 +31,7 @@ namespace Octgn.Windows
 
         private void CheckXmlClick(object sender, RoutedEventArgs e)
         {
-            var wnd = new Windows.ChangeSetsProgressDialog("Testing xml...") {Owner = Program.MainWindow};
+            var wnd = new Windows.ChangeSetsProgressDialog("Testing xml...") {Owner = Program.MainWindowNew};
             String urlLink = urlBox.Text;
             bool is_ok = false;
             ThreadPool.QueueUserWorkItem(_ =>
@@ -59,7 +59,7 @@ namespace Octgn.Windows
 
         private void DownloadAndInstallClick(object sender, RoutedEventArgs e)
         {
-            var wnd = new Windows.ChangeSetsProgressDialog("Downloading and installing...") { Owner = Program.MainWindow };
+            var wnd = new Windows.ChangeSetsProgressDialog("Downloading and installing...") { Owner = Program.MainWindowNew };
             String urlLink = urlBox.Text;
             ThreadPool.QueueUserWorkItem(_ =>
             {

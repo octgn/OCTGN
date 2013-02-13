@@ -2895,10 +2895,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Border Padding="{TemplateBinding Padding}">
-                        <Rectangle HorizontalAlignment="Center" Width="0.5">
+                    <Border Padding="{TemplateBinding Padding}" Opacity=".1">
+                        <Rectangle HorizontalAlignment="Center" Width="10" Opacity=".1">
                             <Rectangle.Fill>
-                                <SolidColorBrush Color="{DynamicResource WhiteColor}" />
+                                <SolidColorBrush Color="{StaticResource TopGradientSelectColor}" />
                             </Rectangle.Fill>
                         </Rectangle>
                     </Border>
@@ -2960,7 +2960,7 @@
                             </Border>
                         </Grid>
                         <Canvas>
-                            <Thumb x:Name="PART_HeaderGripper" Style="{StaticResource GridViewColumnHeaderGripper}" Margin="0,0,7,0" Width="Auto" HorizontalAlignment="Stretch" />
+                            <Thumb x:Name="PART_HeaderGripper" Style="{StaticResource GridViewColumnHeaderGripper}" Margin="0,0,3,0" Width="Auto" HorizontalAlignment="Stretch" />
                         </Canvas>
                     </Grid>
                     <ControlTemplate.Triggers>

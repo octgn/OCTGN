@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Sidewinder.Core</id>
+    <version>1.4.0</version>
+    <title>Sidewinder.Core</title>
+    <authors>James Simmonds</authors>
+    <owners>James Simmonds</owners>
+    <licenseUrl>http://sidewinder.codeplex.com/license</licenseUrl>
+    <projectUrl>http://sidewinder.codeplex.com/</projectUrl>
+    <iconUrl>http://www.codeplex.com/Project/Download/FileDownload.aspx?ProjectName=sidewinder&amp;DownloadId=270857</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides the core functionality to deploy updates to your application via a nuget package</description>
+    <summary>Provides the core functionality to deploy updates to your application via a nuget package. This includes backing it up, checking for nuget package updates, downloading and deploying the files in them</summary>
+    <releaseNotes>v1.4 fixes issue with conflict resolution where update files where deleted even if you selected not to overwrite (deploy) them. Added auto launch of 'readme.txt' in package root</releaseNotes>
+    <tags>Sidewinder nuget update auto</tags>
+    <dependencies>
+      <dependency id="NuGet.Core" version="1.6.2" />
+      <dependency id="FluentPath" version="1.0.0" />
+      <dependency id="DotNetZip" version="1.9.1.8" />
+    </dependencies>
+    <references>
+      <reference file="Sidewinder.Core.dll" />
+    </references>
+  </metadata>
+</package>

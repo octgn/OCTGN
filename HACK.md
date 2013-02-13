@@ -14,7 +14,7 @@ Your own awesome changes
 * Install .Net 4.0 (http://www.microsoft.com/en-us/download/details.aspx?id=17718)
 * Open a command prompt and type: **cinst OctgnDevPackage-Express**
 * Fork & Clone (Links Under **Get Involved!** above)
-* Open the main project file under **OCTGN/octgnFX/Octgn/OCTGN.sln** with Visual Studio Express C#
+* Open the main project file under **OCTGN/OCTGN.sln** with Visual Studio Express C#
 * Do the greatness!
 
 Components

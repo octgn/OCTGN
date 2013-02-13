@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media;
-using Octgn.Launcher;
+
 using Octgn.Play;
 using Octgn.Play.Actions;
 using Octgn.Utils;
@@ -11,8 +11,6 @@ using System.IO;
 
 namespace Octgn.Networking
 {
-    using System.Threading.Tasks;
-
     internal sealed class Handler
     {
         private readonly BinaryParser _binParser;
@@ -48,19 +46,7 @@ namespace Octgn.Networking
 
         public void Start()
         {
-            if (!Program.UseNewChrome)
-            {
-                if (!Program.Game.IsLocal) Program.MainWindow.StartGame();
-                else
-                {
-                    var sg = Program.LauncherWindow.Content as StartGame;
-                    if (sg != null) sg.Start();
-                }
-            }
-            else
-            {
-                Program.StartGame();
-            }
+            Program.StartGame();
         }
 
         public void Settings(bool twoSidedTable)
