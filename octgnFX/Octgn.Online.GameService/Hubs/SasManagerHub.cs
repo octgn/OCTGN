@@ -26,8 +26,6 @@
 
             HubMessenger<IGameServiceToSASManagerService>.Get(this.Clients)
                 .All.Hello("hello1", "hello2");
-            //var mess = new GameServiceToSASManagerService(this.Clients.Caller);
-            //mess.Hello("hello1", "Hello2");
             return new Task(() => { });
             //return this.Clients.Caller.FunActions(1,"hi",new ObfuscateAssemblyAttribute(false),new SasManagerHub());
         }
