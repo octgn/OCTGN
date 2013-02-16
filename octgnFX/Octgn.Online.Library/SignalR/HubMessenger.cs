@@ -24,7 +24,7 @@
             get
             {
                 var p = DynamicProxy<T>.Get();
-                p.OnAll().Calls(() => this.Call(context.All));
+                p.OnAll().Calls((mi) => this.Call(context.All, mi));
                 return p.Instance;
             }
         }
@@ -32,38 +32,34 @@
         public T AllExcept(params string[] exclude)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls(()=>this.Call(context.AllExcept(exclude)));
+            p.OnAll().Calls((mi) => this.Call(context.AllExcept(exclude),mi));
             return p.Instance;
         }
 
         public T Client(string connectionId)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls(() => this.Call(context.Client(connectionId)));
+            p.OnAll().Calls((mi) => this.Call(context.Client(connectionId), mi));
             return p.Instance;
         }
 
         public T Group(string groupName, params string[] exclude)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls(() => this.Call(context.Group(groupName, exclude)));
+            p.OnAll().Calls((mi) => this.Call(context.Group(groupName, exclude), mi));
             return p.Instance;
         }
 
-        private void Call(StatefulSignalProxy p)
+        private void Call(StatefulSignalProxy p, MethodCallInfo mi)
         {
             // TODO I need to get method info a params
-            var frames = new StackTrace().GetFrames();
-            Debugger.Break();
+            p.Invoke(mi.Method.Name, mi.Args);
         }
 
-        private void Call(ClientProxy p)
+        private void Call(ClientProxy p, MethodCallInfo mi)
         {
             // TODO I need to get method info a params
-            var frames = new StackTrace().GetFrames();
-            var mi = frames[5].GetMethod();
-            //p.Invoke(mi.Name,new object[]{mi.a})
-            Debugger.Break();
+            p.Invoke(mi.Method.Name, mi.Args );
         }
     }
     public static class HubMessengerExtensionMethods

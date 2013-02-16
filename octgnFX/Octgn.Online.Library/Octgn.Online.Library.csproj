@@ -39,6 +39,7 @@
     <Compile Include="SignalR\DynamicProxy.cs" />
     <Compile Include="SignalR\DynamicProxyOnBuilder.cs" />
     <Compile Include="SignalR\HubMessenger.cs" />
+    <Compile Include="SignalR\MethodCallInfo.cs" />
     <Compile Include="SignalR\OldManHubbard.cs" />
     <Compile Include="UpdateManager\UpdateManager.cs" />
     <Compile Include="UpdateManager\UpdateManagerConfig.cs" />

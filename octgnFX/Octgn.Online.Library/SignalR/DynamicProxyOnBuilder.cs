@@ -4,9 +4,9 @@
 
     public class DynamicProxyOnBuilder
     {
-        internal Action ThisCalls = () => { };
+        internal Action<MethodCallInfo> ThisCalls = (asdf) => { };
 
-        public DynamicProxyOnBuilder Calls(Action action)
+        public DynamicProxyOnBuilder Calls(Action<MethodCallInfo> action)
         {
             ThisCalls = action;
             return this;
