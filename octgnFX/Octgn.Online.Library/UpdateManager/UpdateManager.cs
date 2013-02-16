@@ -17,6 +17,7 @@
         private static readonly object Locker = new object();
         public static UpdateManager GetContext()
         {
+            //comment
             lock(Locker)
                 return Context ?? (Context = new UpdateManager());
         }
