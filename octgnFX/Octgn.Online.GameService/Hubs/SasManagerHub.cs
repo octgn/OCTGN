@@ -5,7 +5,6 @@
 
     using Microsoft.AspNet.SignalR;
 
-    using Octgn.Online.GameService.Coms;
     using Octgn.Online.Library.SignalR;
     using Octgn.Online.Library.SignalR.Coms;
 
@@ -14,10 +13,6 @@
     public class SasManagerHub : Hub
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        public SasManagerHub()
-        {
-            
-        }
         public override Task OnConnected()
         {
             Log.InfoFormat("Connected {0}", this.Context.ConnectionId);
@@ -26,6 +21,7 @@
 
             HubMessenger<IGameServiceToSASManagerService>.Get(this.Clients)
                 .All.Hello("hello1", "hello2");
+            
             return new Task(() => { });
             //return this.Clients.Caller.FunActions(1,"hi",new ObfuscateAssemblyAttribute(false),new SasManagerHub());
         }
