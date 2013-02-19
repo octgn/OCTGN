@@ -37,12 +37,12 @@
         {
             Log.Info("Creating");
             HubProxy = this.CreateHubProxy("SasManagerHub", new GameServiceToSASManagerService());
-            base.StateChanged += this.ConnectionOnStateChanged;
-            base.Reconnecting += this.ConnectionOnReconnecting;
-            base.Reconnected += this.ConnectionOnReconnected;
-            base.Received += this.ConnectionOnReceived;
-            base.Error += this.ConnectionOnError;
-            base.Closed += this.ConnectionOnClosed;
+            this.StateChanged += this.ConnectionOnStateChanged;
+            this.Reconnecting += this.ConnectionOnReconnecting;
+            this.Reconnected += this.ConnectionOnReconnected;
+            this.Received += this.ConnectionOnReceived;
+            this.Error += this.ConnectionOnError;
+            this.Closed += this.ConnectionOnClosed;
             Log.Info("Created");
         }
 
@@ -109,12 +109,12 @@
         public void Dispose()
         {
             this.Stop();
-            base.StateChanged -= this.ConnectionOnStateChanged;
-            base.Reconnecting -= this.ConnectionOnReconnecting;
-            base.Reconnected -= this.ConnectionOnReconnected;
-            base.Received -= this.ConnectionOnReceived;
-            base.Error -= this.ConnectionOnError;
-            base.Closed -= this.ConnectionOnClosed;
+            this.StateChanged -= this.ConnectionOnStateChanged;
+            this.Reconnecting -= this.ConnectionOnReconnecting;
+            this.Reconnected -= this.ConnectionOnReconnected;
+            this.Received -= this.ConnectionOnReceived;
+            this.Error -= this.ConnectionOnError;
+            this.Closed -= this.ConnectionOnClosed;
         }
         #endregion
     }

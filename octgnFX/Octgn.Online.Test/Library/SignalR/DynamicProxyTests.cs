@@ -1,11 +1,8 @@
 ﻿namespace Octgn.Online.Test.Library.SignalR
 {
-    using System;
-
-    using FakeItEasy;
     using NUnit.Framework;
 
-    using Octgn.Online.Library.SignalR;
+    using Octgn.Online.Library.SignalR.TypeSafe;
 
     public class DynamicProxyTests
     {
@@ -14,7 +11,7 @@
         {
             var proxy = DynamicProxy<IDynamicProxyTestInterface>.Get();
             bool test = false;
-            proxy.On(x => ()=>x.Hello(default(string))).Calls((mi) =>
+            proxy.On(x => ()=>x.Hello(default(string))).Calls(mi =>
                 {
                     Assert.AreEqual("asdf",mi.Args[0]);
                     test = true;
@@ -23,7 +20,7 @@
             Assert.True(test);
 
             int i = 0;
-            proxy.OnAll().Calls((mi) => i++);
+            proxy.OnAll().Calls(mi => i++);
             proxy.Instance.Hello("a");
             proxy.Instance.Hello2();
             Assert.AreEqual(2,i);

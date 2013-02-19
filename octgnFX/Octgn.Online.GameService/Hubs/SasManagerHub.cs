@@ -5,8 +5,8 @@
 
     using Microsoft.AspNet.SignalR;
 
-    using Octgn.Online.Library.SignalR;
     using Octgn.Online.Library.SignalR.Coms;
+    using Octgn.Online.Library.SignalR.TypeSafe;
 
     using log4net;
 

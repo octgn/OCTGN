@@ -1,4 +1,4 @@
-﻿namespace Octgn.Online.Library.SignalR
+﻿namespace Octgn.Online.Library.SignalR.TypeSafe
 {
     using Microsoft.AspNet.SignalR;
     using Microsoft.AspNet.SignalR.Hubs;
@@ -25,7 +25,7 @@
             get
             {
                 var p = DynamicProxy<T>.Get();
-                p.OnAll().Calls((mi) => this.Call(context.All, mi));
+                p.OnAll().Calls(mi => this.Call(this.context.All, mi));
                 return p.Instance;
             }
         }
@@ -39,7 +39,7 @@
             get
             {
                 var p = DynamicProxy<T>.Get();
-                p.OnAll().Calls((mi) => this.Call(context.Caller, mi));
+                p.OnAll().Calls(mi => this.Call(this.context.Caller, mi));
                 return p.Instance;
             }
         }
@@ -53,7 +53,7 @@
             get
             {
                 var p = DynamicProxy<T>.Get();
-                p.OnAll().Calls((mi) => this.Call(context.Others, mi));
+                p.OnAll().Calls(mi => this.Call(this.context.Others, mi));
                 return p.Instance;
             }
         }
@@ -69,7 +69,7 @@
         public T AllExcept(params string[] exclude)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls((mi) => this.Call(context.AllExcept(exclude),mi));
+            p.OnAll().Calls(mi => this.Call(this.context.AllExcept(exclude),mi));
             return p.Instance;
         }
 
@@ -84,7 +84,7 @@
         public T Client(string connectionId)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls((mi) => this.Call(context.Client(connectionId), mi));
+            p.OnAll().Calls(mi => this.Call(this.context.Client(connectionId), mi));
             return p.Instance;
         }
 
@@ -99,7 +99,7 @@
         public T Group(string groupName, params string[] exclude)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls((mi) => this.Call(context.Group(groupName, exclude), mi));
+            p.OnAll().Calls(mi => this.Call(this.context.Group(groupName, exclude), mi));
             return p.Instance;
         }
 
@@ -114,7 +114,7 @@
         public T OthersInGroup(string groupName)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls((mi) => this.Call(context.OthersInGroup(groupName), mi));
+            p.OnAll().Calls(mi => this.Call(this.context.OthersInGroup(groupName), mi));
             return p.Instance;
         }
 

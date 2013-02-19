@@ -1,4 +1,4 @@
-﻿namespace Octgn.Online.Library.SignalR
+﻿namespace Octgn.Online.Library.SignalR.TypeSafe
 {
     using System.Reflection;
 

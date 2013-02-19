@@ -1,10 +1,7 @@
-﻿namespace Octgn.Online.Library.SignalR
+﻿namespace Octgn.Online.Library.SignalR.TypeSafe
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Dynamic;
-    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -23,8 +20,8 @@
 
         public DynamicProxy()
         {
-            ProxyCalls = new Dictionary<int, DynamicProxyOnBuilder>();
-            Instance = CreateInstance();
+            this.ProxyCalls = new Dictionary<int, DynamicProxyOnBuilder>();
+            this.Instance = this.CreateInstance();
             // Since HandleCall is called dynamically, call it once so it doesn't
             // get optimized away
             this.HandleCall(0);
@@ -32,50 +29,25 @@
 
         public DynamicProxyOnBuilder On(Expression<Func<T, Action>> expression)
         {
-            // Vodo to get the method we want.
-            //var exp = expression.Body;
-            //while (exp.NodeType != ExpressionType.Call)
-            //{
-            //    switch (exp.NodeType)
-            //    {
-            //        case ExpressionType.Call:
-            //            break;
-            //        case ExpressionType.Lambda:
-            //            var la = expression as LambdaExpression;
-            //            exp = la.Body;
-            //            break;
-            //        default:
-            //            throw new ArgumentOutOfRangeException();
-            //    }
-            //}
-            //var unaryExpression = exp as UnaryExpression;
-
-            //var methodCallExpression = unaryExpression.Operand as MethodCallExpression;
-            //var obj = methodCallExpression.Object as ConstantExpression;
             MethodCallExpression methExpression = null;
             var obj = (expression.Body is UnaryExpression ? ((UnaryExpression)expression.Body).Operand : expression.Body);
-            if (obj is MethodCallExpression) methExpression = (MethodCallExpression)obj;
+            var callExpression = obj as MethodCallExpression;
+            if (callExpression != null) methExpression = callExpression;
             else if (obj is LambdaExpression) methExpression = (obj as LambdaExpression).Body as MethodCallExpression;
-            var methodInfo = methExpression.Method;
-            return ProxyCalls[methodInfo.GetHashCode()];
+            if (methExpression != null)
+            {
+                var methodInfo = methExpression.Method;
+                return this.ProxyCalls[methodInfo.GetHashCode()];
+            }
+            throw new Exception("I'm confused...");
         }
-
-        //public DynamicProxyOnBuilder On(Expression<Func<T, Action<dynamic,dynamic>>>  expression)
-        //{
-        //    // Vodo to get the method we want.
-        //    var unaryExpression = expression.Body as UnaryExpression;
-        //    var methodCallExpression = unaryExpression.Operand as MethodCallExpression;
-        //    var obj = methodCallExpression.Object as ConstantExpression;
-        //    var methodInfo = obj.Value as MethodInfo;
-        //    return ProxyCalls[methodInfo.GetHashCode()];
-        //}
 
         public DynamicProxyOnBuilder OnAll()
         {
             var builder = new DynamicProxyOnBuilder();
             foreach (var m in typeof(T).GetMethods())
             {
-                ProxyCalls[m.GetHashCode()] = builder;
+                this.ProxyCalls[m.GetHashCode()] = builder;
             }
             return builder;
         }
@@ -83,15 +55,16 @@
         /// <summary>
         /// Don't call this...
         /// </summary>
-        /// <param name="code"></param>
+        /// <param name="code">Hash code of method</param>
+        /// <param name="args">Arguments passed to method</param>
         public void HandleCall(int code, params object[] args)
         {
             //TODO Make this internal or private somehow
-            DynamicProxyOnBuilder builder = null;
-            if (ProxyCalls.TryGetValue(code, out builder))
+            DynamicProxyOnBuilder builder;
+            if (this.ProxyCalls.TryGetValue(code, out builder))
             {
                 var methodInfo = typeof(T).GetMethods().First(x => x.GetHashCode() == code);
-                var mi = new MethodCallInfo() { Args = args, Method = methodInfo };
+                var mi = new MethodCallInfo { Args = args, Method = methodInfo };
                 builder.ThisCalls.Invoke(mi);
             }
         }
@@ -108,7 +81,7 @@
             #region blah
             typeBuilder.AddInterfaceImplementation(typeOfT);
             var proxyField = typeBuilder.DefineField("proxy", this.GetType(), FieldAttributes.Public);
-            var ctorBuilder = typeBuilder.DefineConstructor(MethodAttributes.Public,CallingConventions.HasThis,new Type[] { this.GetType() });
+            var ctorBuilder = typeBuilder.DefineConstructor(MethodAttributes.Public,CallingConventions.HasThis,new[] { this.GetType() });
             var ilGenerator = ctorBuilder.GetILGenerator();
 
             //Loads the first argument into a field.
@@ -130,7 +103,7 @@
 
                 // Add proxy call to method
                 var emptyAction = new DynamicProxyOnBuilder();
-                ProxyCalls.Add(methodInfo.GetHashCode(), emptyAction);
+                this.ProxyCalls.Add(methodInfo.GetHashCode(), emptyAction);
                 // Drop method info hash into local variable 0 
                 var hash = methodInfo.GetHashCode();
                 methodIlGen.Emit(OpCodes.Ldc_I4, hash);
@@ -144,7 +117,7 @@
                 methodIlGen.Emit(OpCodes.Ldloc_0);
 
                 // Create object array for the rest of the parameters
-                methodIlGen.Emit(OpCodes.Ldc_I4,(Int32)methodInfo.GetParameters().Length);
+                methodIlGen.Emit(OpCodes.Ldc_I4,methodInfo.GetParameters().Length);
                 methodIlGen.Emit(OpCodes.Newarr,typeof(Object));
                 methodIlGen.DeclareLocal(typeof(Object[]), false);
                 methodIlGen.Emit(OpCodes.Stloc_1);
@@ -202,7 +175,7 @@
             return
                 type.IsValueType ||
                 type.IsPrimitive ||
-                new Type[] { 
+                new[] { 
 				//typeof(String),
 				typeof(Decimal),
 				typeof(DateTime),
