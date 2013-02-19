@@ -5,18 +5,22 @@
     using System.Reflection;
 
     using Microsoft.AspNet.SignalR.Client;
+    using Microsoft.AspNet.SignalR.Client.Hubs;
 
-    using Octgn.Online.Library.SignalR;
+    using Octgn.Online.Library.SignalR.TypeSafe;
     using Octgn.Online.SASManagerService.Coms;
 
     using log4net;
 
-    public class GameServiceClient : Client
+    public class GameServiceClient : HubConnection, IDisposable
     {
         #region singleton
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static GameServiceClient current;
         private static readonly object Locker = new object();
+
+        internal bool Stopped;
+
         public static GameServiceClient GetContext()
         {
             lock (Locker)
@@ -25,16 +29,27 @@
             }
         }
         #endregion
+
+        internal IHubProxy HubProxy { get; set; }
+        
         internal GameServiceClient()
+            : base(ConfigurationManager.AppSettings["GameServiceHost"], false)
         {
             Log.Info("Creating");
-            this.Setup <GameServiceToSASManagerService>(ConfigurationManager.AppSettings["GameServiceHost"], "SasManagerHub");
+            HubProxy = this.CreateHubProxy("SasManagerHub", new GameServiceToSASManagerService());
+            base.StateChanged += this.ConnectionOnStateChanged;
+            base.Reconnecting += this.ConnectionOnReconnecting;
+            base.Reconnected += this.ConnectionOnReconnected;
+            base.Received += this.ConnectionOnReceived;
+            base.Error += this.ConnectionOnError;
+            base.Closed += this.ConnectionOnClosed;
             Log.Info("Created");
         }
 
         public new void Start()
         {
             Log.Info("Starting");
+            Stopped = false;
             base.Start();
             Log.Info("Started");
         }
@@ -42,43 +57,64 @@
         public new void Stop()
         {
             Log.Info("Stopping");
+            Stopped = true;
             base.Stop();
             Log.Info("Stopped");
         }
 
+        internal void Connect()
+        {
+            if (Stopped) return;
+            base.Start().Wait(5000);
+        }
+
         #region Connection Events
 
-        protected override void ConnectionOnStateChanged(StateChange stateChange)
+        protected void ConnectionOnStateChanged(StateChange stateChange)
         {
             Log.InfoFormat("State Changed: {0}->{1}",stateChange.OldState,stateChange.NewState);
         }
 
-        protected override void ConnectionOnReconnecting()
+        protected void ConnectionOnReconnecting()
         {
             Log.Info("Reconnecting");
         }
 
-        protected override void ConnectionOnReconnected()
+        protected void ConnectionOnReconnected()
         {
             Log.Info("Reconnected");
         }
 
-        protected override void ConnectionOnReceived(string s)
+        protected void ConnectionOnReceived(string s)
         {
             //Log.InfoFormat("Received: {0}",s);
             
         }
 
-        protected override void ConnectionOnError(Exception exception)
+        protected void ConnectionOnError(Exception exception)
         {
 #if(!DEBUG)
             Log.Error("Connection Error",exception);
 #endif
         }
 
-        protected override void ConnectionOnClosed()
+        protected void ConnectionOnClosed()
         {
             Log.InfoFormat("Closed");
+            if (!Stopped) this.Connect();
+        }
+        #endregion
+
+        #region IDisposable
+        public void Dispose()
+        {
+            this.Stop();
+            base.StateChanged -= this.ConnectionOnStateChanged;
+            base.Reconnecting -= this.ConnectionOnReconnecting;
+            base.Reconnected -= this.ConnectionOnReconnected;
+            base.Received -= this.ConnectionOnReceived;
+            base.Error -= this.ConnectionOnError;
+            base.Closed -= this.ConnectionOnClosed;
         }
         #endregion
     }
