@@ -274,6 +274,7 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Definitions\IconDef.cs" />
     <Compile Include="GameManagement\GameFeedManager.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />

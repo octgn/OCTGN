@@ -5,23 +5,24 @@
 
     using Microsoft.AspNet.SignalR;
 
-    using Octgn.Online.GameService.Coms;
+    using Octgn.Online.Library.SignalR.Coms;
+    using Octgn.Online.Library.SignalR.TypeSafe;
 
     using log4net;
 
     public class SasManagerHub : Hub
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        public SasManagerHub()
-        {
-            
-        }
         public override Task OnConnected()
         {
             Log.InfoFormat("Connected {0}", this.Context.ConnectionId);
-            var mess = new GameServiceToSASManagerService(this.Clients.Caller);
-            mess.Hello("hello1", "Hello2");
-            return mess.Return;
+
+            this.Send<IGameServiceToSASManagerService>().All.Hello("hello1","hello2");
+
+            HubMessenger<IGameServiceToSASManagerService>.Get(this.Clients)
+                .All.Hello("hello1", "hello2");
+            
+            return new Task(() => { });
             //return this.Clients.Caller.FunActions(1,"hi",new ObfuscateAssemblyAttribute(false),new SasManagerHub());
         }
 

@@ -17,6 +17,7 @@
         private static readonly object Locker = new object();
         public static UpdateManager GetContext()
         {
+            //comment
             lock(Locker)
                 return Context ?? (Context = new UpdateManager());
         }
@@ -32,7 +33,6 @@
 
             var ass = Assembly.GetEntryAssembly();
             var execonfig = ConfigurationManager.OpenExeConfiguration(ass.Location);
-            var confObj = execonfig.GetSection("UpdateManagerConfig");
             Config = (execonfig.GetSection("UpdateManagerConfig") as UpdateManagerConfig)
                          ?? new UpdateManagerConfig();
             Log.Info("Setting Update Frequency: " + Config.UpdateFrequency);

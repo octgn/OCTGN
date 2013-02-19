@@ -4,10 +4,6 @@
 
     public class UpdateManagerConfig : ConfigurationSection
     {
-        public UpdateManagerConfig()
-        {
-            
-        }
         [ConfigurationProperty("UpdateFrequency")]
         public int UpdateFrequency
         {

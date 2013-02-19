@@ -33,9 +33,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SignalR\Client.cs" />
     <Compile Include="SignalR\Coms\IGameServiceToSASManagerService.cs" />
     <Compile Include="SignalR\Coms\ISASManagerServiceToGameService.cs" />
+    <Compile Include="SignalR\TypeSafe\DynamicProxy.cs" />
+    <Compile Include="SignalR\TypeSafe\DynamicProxyOnBuilder.cs" />
+    <Compile Include="SignalR\TypeSafe\HubMessenger.cs" />
+    <Compile Include="SignalR\TypeSafe\HubProxyMessenger.cs" />
+    <Compile Include="SignalR\TypeSafe\MethodCallInfo.cs" />
+    <Compile Include="SignalR\TypeSafe\HubConnectionExtensionMethods.cs" />
     <Compile Include="UpdateManager\UpdateManager.cs" />
     <Compile Include="UpdateManager\UpdateManagerConfig.cs" />
   </ItemGroup>
@@ -51,6 +56,9 @@
     </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Client">
       <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Client.1.0.0-rc2\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core">
+      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Core.1.0.0-rc2\lib\net40\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json">

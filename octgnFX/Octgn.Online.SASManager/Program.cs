@@ -83,16 +83,12 @@
         {
             Log.Info("Check if running as admin(required)");
             var identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
+            if (identity == null || !new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator))
             {
                 Log.Fatal("Not running as Admin, Admin mode required. Exiting.");
                 return false;
             }
-            else
-            {
-                Log.Info("Running as admin, good...good");
-            }
+            Log.Info("Running as admin, good...good");
             return true;
         }
     }
