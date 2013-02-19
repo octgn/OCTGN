@@ -1,5 +1,7 @@
 ﻿namespace Octgn.Online.Library.SignalR.TypeSafe
 {
+    using System.Threading.Tasks;
+
     using Microsoft.AspNet.SignalR;
     using Microsoft.AspNet.SignalR.Hubs;
 
@@ -25,7 +27,8 @@
             get
             {
                 var p = DynamicProxy<T>.Get();
-                p.OnAll().Calls(mi => this.Call(this.context.All, mi));
+                foreach (var m in typeof(T).GetMethods())
+                    p.On(m).Calls(mi => this.Call(this.context.All, mi));
                 return p.Instance;
             }
         }
@@ -39,7 +42,8 @@
             get
             {
                 var p = DynamicProxy<T>.Get();
-                p.OnAll().Calls(mi => this.Call(this.context.Caller, mi));
+                foreach (var m in typeof(T).GetMethods())
+                    p.On(m).Calls(mi => this.Call(this.context.Caller, mi));
                 return p.Instance;
             }
         }
@@ -53,7 +57,8 @@
             get
             {
                 var p = DynamicProxy<T>.Get();
-                p.OnAll().Calls(mi => this.Call(this.context.Others, mi));
+                foreach (var m in typeof(T).GetMethods())
+                    p.On(m).Calls(mi => this.Call(this.context.Others, mi));
                 return p.Instance;
             }
         }
@@ -69,7 +74,8 @@
         public T AllExcept(params string[] exclude)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls(mi => this.Call(this.context.AllExcept(exclude),mi));
+            foreach (var m in typeof(T).GetMethods())
+                p.On(m).Calls(mi => this.Call(this.context.AllExcept(exclude), mi));
             return p.Instance;
         }
 
@@ -84,7 +90,8 @@
         public T Client(string connectionId)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls(mi => this.Call(this.context.Client(connectionId), mi));
+            foreach (var m in typeof(T).GetMethods())
+                p.On(m).Calls(mi => this.Call(this.context.Client(connectionId), mi));
             return p.Instance;
         }
 
@@ -99,7 +106,8 @@
         public T Group(string groupName, params string[] exclude)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls(mi => this.Call(this.context.Group(groupName, exclude), mi));
+            foreach (var m in typeof(T).GetMethods())
+                p.On(m).Calls(mi => this.Call(this.context.Group(groupName, exclude), mi));
             return p.Instance;
         }
 
@@ -114,18 +122,19 @@
         public T OthersInGroup(string groupName)
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls(mi => this.Call(this.context.OthersInGroup(groupName), mi));
+            foreach (var m in typeof(T).GetMethods())
+                p.On(m).Calls(mi => this.Call(this.context.OthersInGroup(groupName), mi));
             return p.Instance;
         }
 
-        private void Call(StatefulSignalProxy p, MethodCallInfo mi)
+        private Task Call(StatefulSignalProxy p, MethodCallInfo mi)
         {
-            p.Invoke(mi.Method.Name, mi.Args);
+           return p.Invoke(mi.Method.Name, mi.Args);
         }
 
-        private void Call(ClientProxy p, MethodCallInfo mi)
+        private Task Call(ClientProxy p, MethodCallInfo mi)
         {
-            p.Invoke(mi.Method.Name, mi.Args );
+            return p.Invoke(mi.Method.Name, mi.Args );
         }
     }
     public static class HubMessengerExtensionMethods

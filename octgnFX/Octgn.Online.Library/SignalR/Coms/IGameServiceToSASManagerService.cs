@@ -1,11 +1,12 @@
 ﻿namespace Octgn.Online.Library.SignalR.Coms
 {
     using System;
+    using System.Threading.Tasks;
 
     public interface IGameServiceToSASManagerService
     {
-        void StartGame(Guid id, string name, string oGameName, Guid oGameId);
+        Task StartGame(Guid id, string name, string oGameName, Guid oGameId);
 
-        void Hello(string mess1, string mess2);
+        Task Hello(string mess1, string mess2);
     }
 }

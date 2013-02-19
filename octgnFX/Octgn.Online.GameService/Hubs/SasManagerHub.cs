@@ -17,10 +17,9 @@
         {
             Log.InfoFormat("Connected {0}", this.Context.ConnectionId);
 
-            this.Send<IGameServiceToSASManagerService>().All.Hello("hello1","hello2");
+            var ta = this.Send<IGameServiceToSASManagerService>().All.Hello("hello1","hello2");
 
-            HubMessenger<IGameServiceToSASManagerService>.Get(this.Clients)
-                .All.Hello("hello1", "hello2");
+            HubMessenger<IGameServiceToSASManagerService>.Get(this.Clients).All.Hello("hello1", "hello2").ContinueWith((t) => Log.Info("Message Transfered"));
             
             return new Task(() => { });
             //return this.Clients.Caller.FunActions(1,"hi",new ObfuscateAssemblyAttribute(false),new SasManagerHub());

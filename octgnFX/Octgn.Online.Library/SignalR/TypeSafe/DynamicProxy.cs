@@ -1,7 +1,6 @@
 ﻿namespace Octgn.Online.Library.SignalR.TypeSafe
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -16,15 +15,23 @@
 
         public T Instance { get; private set; }
 
-        private Dictionary<int, DynamicProxyOnBuilder> ProxyCalls { get; set; } 
+        private DynamicProxyOnBuilderList ProxyCalls { get; set; }
 
         public DynamicProxy()
         {
-            this.ProxyCalls = new Dictionary<int, DynamicProxyOnBuilder>();
+            this.ProxyCalls = new DynamicProxyOnBuilderList();
             this.Instance = this.CreateInstance();
             // Since HandleCall is called dynamically, call it once so it doesn't
             // get optimized away
             this.HandleCall(0);
+        }
+
+        public DynamicProxyOnBuilder On(MethodInfo method)
+        {
+            var builder = new DynamicProxyOnBuilder();
+            if (method.ReturnType != typeof(void)) builder.ReturnType = method.ReturnType;
+            this.ProxyCalls.Add(method.GetHashCode(),builder);
+            return builder;
         }
 
         public DynamicProxyOnBuilder On(Expression<Func<T, Action>> expression)
@@ -37,19 +44,35 @@
             if (methExpression != null)
             {
                 var methodInfo = methExpression.Method;
-                return this.ProxyCalls[methodInfo.GetHashCode()];
+                return this.ProxyCalls.Get(methodInfo.GetHashCode());
             }
             throw new Exception("I'm confused...");
         }
 
-        public DynamicProxyOnBuilder OnAll()
+        public DynamicProxyOnBuilder On<TReturn>(Expression<Func<T, Func<TReturn>>> expression) where TReturn : class
         {
-            var builder = new DynamicProxyOnBuilder();
-            foreach (var m in typeof(T).GetMethods())
-            {
-                this.ProxyCalls[m.GetHashCode()] = builder;
-            }
-            return builder;
+            ConstantExpression methExpression = null;
+            var obj = (expression.Body is UnaryExpression ? ((UnaryExpression)expression.Body).Operand : expression.Body);
+            var callExpression = obj as MethodCallExpression;
+            if (callExpression != null) methExpression = (ConstantExpression)callExpression.Object;
+            var methodInfo = methExpression.Value as MethodInfo;
+
+            var ret = new DynamicProxyOnBuilder();
+            this.ProxyCalls.Set(methodInfo.GetHashCode(),ret);
+            return ret ;
+        }
+
+        public DynamicProxyOnBuilder On<T1,TReturn>(Expression<Func<T, Func<T1, TReturn>>> expression) where TReturn : class
+        {
+            ConstantExpression methExpression = null;
+            var obj = (expression.Body is UnaryExpression ? ((UnaryExpression)expression.Body).Operand : expression.Body);
+            var callExpression = obj as MethodCallExpression;
+            if (callExpression != null) methExpression = (ConstantExpression)callExpression.Object;
+            var methodInfo = methExpression.Value as MethodInfo;
+
+            var ret = new DynamicProxyOnBuilder();
+            this.ProxyCalls.Set(methodInfo.GetHashCode(),ret);
+            return ret ;
         }
 
         /// <summary>
@@ -57,7 +80,7 @@
         /// </summary>
         /// <param name="code">Hash code of method</param>
         /// <param name="args">Arguments passed to method</param>
-        public void HandleCall(int code, params object[] args)
+        public dynamic HandleCall(int code, params object[] args)
         {
             //TODO Make this internal or private somehow
             DynamicProxyOnBuilder builder;
@@ -65,8 +88,15 @@
             {
                 var methodInfo = typeof(T).GetMethods().First(x => x.GetHashCode() == code);
                 var mi = new MethodCallInfo { Args = args, Method = methodInfo };
-                builder.ThisCalls.Invoke(mi);
+                if (methodInfo.ReturnType != typeof(void)) 
+                    return builder.ThisCalls.DynamicInvoke(mi);
+                else
+                {
+                    builder.ThisCalls.DynamicInvoke(mi);
+                    return null;
+                }
             }
+            return null;
         }
 
         private T CreateInstance()
@@ -102,8 +132,14 @@
                 var methodIlGen = methodBuilder.GetILGenerator();
 
                 // Add proxy call to method
-                var emptyAction = new DynamicProxyOnBuilder();
-                this.ProxyCalls.Add(methodInfo.GetHashCode(), emptyAction);
+                if (methodInfo.ReturnType == typeof(void))
+                {
+                    this.ProxyCalls.Add(methodInfo.GetHashCode(), new DynamicProxyOnBuilder());
+                }
+                else
+                {
+                    this.ProxyCalls.Add(methodInfo.GetHashCode(), new DynamicProxyOnBuilder(){ReturnType = methodInfo.ReturnType});
+                }
                 // Drop method info hash into local variable 0 
                 var hash = methodInfo.GetHashCode();
                 methodIlGen.Emit(OpCodes.Ldc_I4, hash);
@@ -136,26 +172,14 @@
                 }
                 methodIlGen.Emit(OpCodes.Ldloc_1);
                 methodIlGen.Emit(OpCodes.Callvirt, this.GetType().GetMethods().First(x => x.Name == "HandleCall"));
-                methodIlGen.Emit(OpCodes.Nop);
                 if (methodInfo.ReturnType == typeof(void))
                 {
+                    methodIlGen.Emit(OpCodes.Pop);
+                    methodIlGen.Emit(OpCodes.Nop);
                     methodIlGen.Emit(OpCodes.Ret);
                 }
                 else
                 {
-                    if (methodInfo.ReturnType.IsValueType || methodInfo.ReturnType.IsEnum)
-                    {
-                        var getMethod = typeof(Activator).GetMethod("CreateInstance", new[] { typeof(Type) });
-                        var lb = methodIlGen.DeclareLocal(methodInfo.ReturnType);
-                        methodIlGen.Emit(OpCodes.Ldtoken, lb.LocalType);
-                        methodIlGen.Emit(OpCodes.Call, typeof(Type).GetMethod("GetTypeFromHandle"));
-                        methodIlGen.Emit(OpCodes.Callvirt, getMethod);
-                        methodIlGen.Emit(OpCodes.Unbox_Any, lb.LocalType);
-                    }
-                    else
-                    {
-                        methodIlGen.Emit(OpCodes.Ldnull);
-                    }
                     methodIlGen.Emit(OpCodes.Ret);
                 }
                 typeBuilder.DefineMethodOverride(methodBuilder, methodInfo);
@@ -169,6 +193,11 @@
             //assBuilder.Save("test.dll");
 #endif
             return (T)instance;
+        }
+
+        public static T1 Cast<T1>(object o)
+        {
+            return (T1)o;
         }
         public static bool IsSimpleType(Type type)
         {

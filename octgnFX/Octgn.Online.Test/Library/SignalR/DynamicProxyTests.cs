@@ -1,5 +1,8 @@
 ﻿namespace Octgn.Online.Test.Library.SignalR
 {
+    using System;
+    using System.Threading.Tasks;
+
     using NUnit.Framework;
 
     using Octgn.Online.Library.SignalR.TypeSafe;
@@ -11,19 +14,27 @@
         {
             var proxy = DynamicProxy<IDynamicProxyTestInterface>.Get();
             bool test = false;
-            proxy.On(x => ()=>x.Hello(default(string))).Calls(mi =>
+            string testString = "";
+            int i = 0;
+
+            proxy.On(x => () => x.Hello(default(string))).Calls(mi =>
                 {
-                    Assert.AreEqual("asdf",mi.Args[0]);
+                    Assert.AreEqual("asdf", mi.Args[0]);
                     test = true;
                 });
             proxy.Instance.Hello("asdf");
             Assert.True(test);
+            test = false;
 
-            int i = 0;
-            proxy.OnAll().Calls(mi => i++);
-            proxy.Instance.Hello("a");
-            proxy.Instance.Hello2();
-            Assert.AreEqual(2,i);
+            proxy.On<string, Task>(x => x.Hello3).Calls(mi => new Task(() => { test = true;
+                                                                                 testString = mi.Args[0] as string;
+            }));
+            var ret = proxy.Instance.Hello3("chicken");
+            Assert.NotNull(ret);
+            ret.Start();
+            ret.Wait();
+            Assert.True(test);
+            Assert.AreEqual("chicken",testString);
         }
     }
 
@@ -32,5 +43,7 @@
         void Hello(string a);
 
         void Hello2();
+
+        Task Hello3(string a);
     }
 }
