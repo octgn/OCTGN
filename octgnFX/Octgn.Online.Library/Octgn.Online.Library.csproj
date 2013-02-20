@@ -35,6 +35,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalR\Coms\IGameServiceToSASManagerService.cs" />
     <Compile Include="SignalR\Coms\ISASManagerServiceToGameService.cs" />
+    <Compile Include="SignalR\Coms\Models\HostedGame.cs" />
     <Compile Include="SignalR\TypeSafe\DynamicProxy.cs" />
     <Compile Include="SignalR\TypeSafe\DynamicProxyOnBuilder.cs" />
     <Compile Include="SignalR\TypeSafe\HubMessenger.cs" />
