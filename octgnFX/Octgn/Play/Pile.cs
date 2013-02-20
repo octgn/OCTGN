@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Collections.Generic;
 using Octgn.Definitions;
 using Octgn.Utils;
 
@@ -12,6 +14,7 @@ namespace Octgn.Play
         #region Public interface
 
         private bool _collapsed;
+        private static RNGCryptoServiceProvider rnd = new RNGCryptoServiceProvider();
 
         internal Pile(Player owner, GroupDef def)
             : base(owner, def)
@@ -77,6 +80,10 @@ namespace Octgn.Play
             HasReceivedFirstShuffledMessage = false;
             // Create aliases
             var cis = new CardIdentity[cards.Count];
+            var cardIds = new int[cards.Count];
+            var cardAliases = new ulong[cards.Count];
+            var rndbytes = new Byte[4];
+            var cardRnds = new uint[cards.Count];
             for (int i = 0; i < cards.Count; i++)
             {
                 if (cards[i].IsVisibleToAll())
@@ -93,16 +100,32 @@ namespace Octgn.Play
                 }
             }
             // Shuffle
-            var cardIds = new int[cards.Count];
-            var cardAliases = new ulong[cards.Count];
-            var rnd = new Random();
-            for (int i = cards.Count - 1; i >= 0; i--)
+            bool uniqueVals = true;
+            do
             {
-                int r = rnd.Next(i + 1);
-                cardIds[i] = cis[r].Id;
-                cardAliases[i] = cis[r].Visible ? ulong.MaxValue : Crypto.ModExp(cis[r].Key);
-                cis[r] = cis[i];
+                for (int i = 0; i < cards.Count; i++)
+                {
+                    rnd.GetBytes(rndbytes);
+                    cardRnds[i] = BitConverter.ToUInt32(rndbytes, 0);
+                }
+                Array.Sort(cardRnds, cis);
+                for (int i = 1; i < cards.Count; i++)
+                {
+                    if (cardRnds[i] == cardRnds[i - 1])
+                    {
+                        uniqueVals = false;
+                        break;
+                    }
+                }
+            } while (!uniqueVals);
+
+            // Shuffle complete, build arrays
+            for (int i = 0; i < cards.Count; i++)
+            {
+                cardIds[i] = cis[i].Id;
+                cardAliases[i] = cis[i].Visible ? ulong.MaxValue : Crypto.ModExp(cis[i].Key);
             }
+
             // Send the request
             Program.Client.Rpc.CreateAlias(cardIds, cardAliases);
             Program.Client.Rpc.Shuffle(this, cardIds);
@@ -112,14 +135,26 @@ namespace Octgn.Play
 
         private void ShuffleAlone()
         {
-            var rnd = new Random();
-            for (int i = cards.Count - 1; i >= 0; i--)
+            var rndbytes = new Byte[4];
+            var cardRnds = new uint[cards.Count];
+            bool uniqueVals = true;
+            do
             {
-                int r = rnd.Next(i + 1);
-                Card temp = cards[r];
-                cards[r] = cards[i];
-                cards[i] = temp;
-            }
+                for (int i = 0; i < cards.Count; i++)
+                {
+                    rnd.GetBytes(rndbytes);
+                    cardRnds[i] = BitConverter.ToUInt32(rndbytes, 0);
+                }
+                Array.Sort(cardRnds, cards.ToArray());
+                for (int i = 1; i < cards.Count; i++)
+                {
+                    if (cardRnds[i] == cardRnds[i - 1])
+                    {
+                        uniqueVals = false;
+                        break;
+                    }
+                }
+            } while (!uniqueVals);
             OnShuffled();
         }
     }
