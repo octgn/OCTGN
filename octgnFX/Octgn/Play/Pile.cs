@@ -100,9 +100,9 @@ namespace Octgn.Play
                 }
             }
             // Shuffle
+            bool uniqueVals = true;
             do
             {
-                bool uniqueVals = true;
                 for (int i = 0; i < cards.Count; i++)
                 {
                     rnd.GetBytes(rndbytes);
@@ -111,13 +111,13 @@ namespace Octgn.Play
                 Array.Sort(cardRnds, cis);
                 for (int i = 1; i < cards.Count; i++)
                 {
-                    if (cardRnds[i] == cardRnds[i-1])
+                    if (cardRnds[i] == cardRnds[i - 1])
                     {
                         uniqueVals = false;
                         break;
                     }
                 }
-            } while (!uniqueVals)
+            } while (!uniqueVals);
 
             // Shuffle complete, build arrays
             for (int i = 0; i < cards.Count; i++)
@@ -137,24 +137,24 @@ namespace Octgn.Play
         {
             var rndbytes = new Byte[4];
             var cardRnds = new uint[cards.Count];
+            bool uniqueVals = true;
             do
             {
-                bool uniqueVals = true;
                 for (int i = 0; i < cards.Count; i++)
                 {
                     rnd.GetBytes(rndbytes);
                     cardRnds[i] = BitConverter.ToUInt32(rndbytes, 0);
                 }
-                Array.Sort(cardRnds, cards);
+                Array.Sort(cardRnds, cards.ToArray());
                 for (int i = 1; i < cards.Count; i++)
                 {
-                    if (cardRnds[i] == cardRnds[i-1])
+                    if (cardRnds[i] == cardRnds[i - 1])
                     {
                         uniqueVals = false;
                         break;
                     }
                 }
-            } while (!uniqueVals)
+            } while (!uniqueVals);
             OnShuffled();
         }
     }
