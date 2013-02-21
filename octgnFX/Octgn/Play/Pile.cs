@@ -106,7 +106,7 @@ namespace Octgn.Play
                     rnd.GetBytes(rndbytes);
                     cardRnds[i] = BitConverter.ToUInt32(rndbytes, 0);
                 }
-            } while (!SortShuffle(cardRnds, 0, cards.Count - 1, cis, false))
+            } while (!SortShuffle(cardRnds, 0, cards.Count - 1, cis, false));
 
             // Shuffle complete, build arrays
             for (int i = 0; i < cards.Count; i++)
@@ -133,7 +133,7 @@ namespace Octgn.Play
                     rnd.GetBytes(rndbytes);
                     cardRnds[i] = BitConverter.ToUInt32(rndbytes, 0);
                 }
-            } while (!SortShuffle(cardRnds, 0, cards.Count - 1, null, true))
+            } while (!SortShuffle(cardRnds, 0, cards.Count - 1, null, true));
             OnShuffled();
         }
 
