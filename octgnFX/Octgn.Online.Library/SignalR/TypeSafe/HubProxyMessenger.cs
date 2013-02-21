@@ -19,7 +19,8 @@
         public T Invoke()
         {
             var p = DynamicProxy<T>.Get();
-            p.OnAll().Calls(mi => this.proxy.Invoke(mi.Method.Name, mi.Args));
+            foreach(var m in typeof(T).GetMethods())
+                p.On(m).Calls(mi => this.proxy.Invoke(mi.Method.Name, mi.Args));
             return p.Instance;
         }
     }
