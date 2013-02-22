@@ -198,6 +198,7 @@ namespace Octgn.DeckBuilder
         }
         private void SearchMouseMove(object sender, MouseEventArgs e)
         {
+            e.Handled = true;
             if (!validClick) return;
             Point mousePos = e.GetPosition(null);
             Vector diff = startPoint - mousePos;
@@ -215,7 +216,6 @@ namespace Octgn.DeckBuilder
                         DataObject dragCard = new DataObject("Card", getCard);
                         DragDrop.DoDragDrop(SearchCard, dragCard, DragDropEffects.Copy);
                     }
-                    e.Handled = true;
                 }
             }
         }
