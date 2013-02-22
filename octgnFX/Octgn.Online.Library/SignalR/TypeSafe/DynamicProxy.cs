@@ -6,6 +6,8 @@
     using System.Reflection;
     using System.Reflection.Emit;
 
+    using Octgn.Online.Library.SignalR.TypeSafe.ExtensionMethods;
+
     public class DynamicProxy<T> 
     {
         public static DynamicProxy<T> Get()
@@ -165,7 +167,7 @@
                     methodIlGen.Emit(OpCodes.Ldloc_1);// Load array onto stack
                     methodIlGen.Emit(OpCodes.Ldc_I4, currentLoc); // Load array index onto stack
                     methodIlGen.Emit(OpCodes.Ldarg, (short)currentLoc + 1); //Load array value to stack
-                    if (IsSimpleType(arg.ParameterType))
+                    if (arg.ParameterType.IsSimpleType())
                         methodIlGen.Emit(OpCodes.Box, arg.ParameterType);// Box if primitive
                     methodIlGen.Emit(OpCodes.Stelem_Ref);// Add ref to array
                     currentLoc++;
@@ -193,26 +195,6 @@
             //assBuilder.Save("test.dll");
 #endif
             return (T)instance;
-        }
-
-        public static T1 Cast<T1>(object o)
-        {
-            return (T1)o;
-        }
-        public static bool IsSimpleType(Type type)
-        {
-            return
-                type.IsValueType ||
-                type.IsPrimitive ||
-                new[] { 
-				//typeof(String),
-				typeof(Decimal),
-				typeof(DateTime),
-				typeof(DateTimeOffset),
-				typeof(TimeSpan),
-				typeof(Guid)
-			}.Contains(type) ||
-                Convert.GetTypeCode(type) != TypeCode.Object;
         }
     }
 }

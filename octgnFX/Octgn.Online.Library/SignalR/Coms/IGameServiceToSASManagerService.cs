@@ -4,11 +4,11 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    using Octgn.Online.Library.SignalR.Coms.Models;
+    using Octgn.Online.Library.Models;
 
     public interface IGameServiceToSASManagerService
     {
-        Task StartGame(Guid id, string name, string oGameName, Guid oGameId);
+        Task StartGame(HostedGameSASRequest request);
 
         Task<IEnumerable<HostedGame>> GameList();
 

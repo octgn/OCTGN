@@ -1,7 +1,9 @@
 ﻿namespace Octgn.Online.GameService.Api
 {
     using System.Configuration;
+    using System.Net.Http.Formatting;
     using System.Reflection;
+    using System.Web.Http;
     using System.Web.Http.Routing;
     using System.Web.Http.SelfHost;
 
@@ -28,7 +30,13 @@
             string hostString = "http://localhost:" + ConfigurationManager.AppSettings["ListenPort"];
             Log.Info("Host String: " + hostString);
             Config = new HttpSelfHostConfiguration(hostString);
-            Config.Routes.Add("Default",new HttpRoute("api/{controller}/{id}"));
+            Config.Routes.MapHttpRoute(
+                name: "Default",
+                routeTemplate: "api/{controller}/{action}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+            //Config.Routes.Add("Default",new HttpRoute("api/{controller}/{action}"));
+            Config.Formatters.JsonFormatter.MediaTypeMappings.Add(new QueryStringMapping("json", "true", "application/json"));
             Log.Info("Stopped");
         }
 
