@@ -9,6 +9,8 @@
         GameReady,
         GameStarted,
         GameComplete,
-        GameShutDown
+        GameShutDown,
+
+        GameShuttingDown
     }
 }

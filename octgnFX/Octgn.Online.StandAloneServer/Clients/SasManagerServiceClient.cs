@@ -6,6 +6,9 @@
 
     using Microsoft.AspNet.SignalR.Client;
     using Microsoft.AspNet.SignalR.Client.Hubs;
+
+    using Octgn.Online.Library.Enums;
+    using Octgn.Online.Library.SignalR.Coms;
     using Octgn.Online.Library.SignalR.TypeSafe;
 
     using Octgn.Online.StandAloneServer.Coms;
@@ -58,6 +61,9 @@
         {
             Log.Info("Stopping");
             Stopped = true;
+            HubProxy.Send<ISASToSASManagerService>()
+                .Invoke()
+                .HostedGameStateChanged(Program.HostedGame.Id,EnumHostedGameStatus.GameShuttingDown);
             base.Stop();
             Log.Info("Stopped");
         }
@@ -73,6 +79,20 @@
         protected void ConnectionOnStateChanged(StateChange stateChange)
         {
             Log.InfoFormat("State Changed: {0}->{1}",stateChange.OldState,stateChange.NewState);
+            switch (stateChange.NewState)
+            {
+                case ConnectionState.Connecting:
+                    break;
+                case ConnectionState.Connected:
+                       HubProxy.Send<ISASToSASManagerService>()
+                       .Invoke()
+                       .HostedGameStateChanged(Program.HostedGame.Id, EnumHostedGameStatus.Booted);
+                    break;
+                case ConnectionState.Reconnecting:
+                    break;
+                case ConnectionState.Disconnected:
+                    break;
+            }
         }
 
         protected void ConnectionOnReconnecting()
