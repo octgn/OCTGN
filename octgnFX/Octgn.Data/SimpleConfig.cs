@@ -45,10 +45,11 @@ namespace Octgn.Data
         /// </summary>
         /// <param name="valName"> The name of the value </param>
         /// <returns> A string value </returns>
-        public static string ReadValue(string valName)
+        public static string ReadValue(string valName, string def)
         {
             lock (lockObject)
             {
+                var ret = def;
                 Stream f = null;
                 try
                 {
@@ -87,18 +88,7 @@ namespace Octgn.Data
                         f = null;
                     }
                 }
-                return null;
-            }
-        }
-
-        public static string ReadValue(string valName, string d)
-        {
-            lock (lockObject)
-            {
-                string r = ReadValue(valName);
-                if (r == null)
-                    WriteValue(valName, d);
-                return r ?? d;
+                return ret;
             }
         }
 
