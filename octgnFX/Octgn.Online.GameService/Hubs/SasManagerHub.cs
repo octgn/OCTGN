@@ -7,8 +7,6 @@
     using System.Threading.Tasks;
 
     using Microsoft.AspNet.SignalR;
-    using Microsoft.AspNet.SignalR.Hubs;
-    using Microsoft.AspNet.SignalR.Infrastructure;
 
     using Octgn.Online.Library.SignalR.Coms;
     using Octgn.Online.Library.SignalR.TypeSafe;
