@@ -55,8 +55,12 @@ namespace Octgn.Data
                     if (File.Exists(GetPath()))
                     {
                         var serializer = new SharpSerializer();
-                        OpenFile(GetPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f);
-                        var config = (Hashtable)serializer.Deserialize(f);
+                        
+                        Hashtable config = new Hashtable();
+                        if (OpenFile(GetPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f))
+                        {
+                            config = (Hashtable)serializer.Deserialize(f);
+                        }
                         if (config.ContainsKey(valName))
                         {
                             return config[valName].ToString();
@@ -114,8 +118,10 @@ namespace Octgn.Data
                     var config = new Hashtable();
                     if (File.Exists(GetPath()))
                     {
-                        OpenFile(GetPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f);
-                        config = (Hashtable)serializer.Deserialize(f);
+                        if (OpenFile(GetPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f))
+                        {
+                            config = (Hashtable)serializer.Deserialize(f);
+                        }
                     }
                     else
                     {
