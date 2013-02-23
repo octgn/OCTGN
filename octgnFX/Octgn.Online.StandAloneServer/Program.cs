@@ -16,26 +16,30 @@
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         static void Main(string[] args)
         {
+#if(DEBUG)
+            Debug = true;
+#endif
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
-            Options = new OptionSet().Add("id=", "Id of the HostedGame.", x => HostedGame.Id = Guid.Parse(x))
-                                           .Add("name=", "Name of the HostedGame", x => HostedGame.Name = x)
-                                           .Add("hostusername=", "Username of user hosting the HostedGame", x => HostedGame.HostUserName = x)
-                                           .Add("gamename=", "Name of the Octgn Game", x => HostedGame.GameName = x)
-                                           .Add("gameid=", "Id of the Octgn Game", x => HostedGame.GameId = Guid.Parse(x))
-                                           .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x))
-                                           .Add("debug","Little more verbose",x=>Debug = true)
-                                           .Add(
-                                               "password=",
-                                               "Password of the HostedGame",
-                                               x =>
-                                                   {
-                                                       if (!String.IsNullOrWhiteSpace(x))
-                                                       {
-                                                           HostedGame.Password = x;
-                                                           HostedGame.HasPassword = true;
-                                                       }
-                                                   })
-                                            .Add("bind=", "Address to listen to, 0.0.0.0:12 for all on port 12", x => HostedGame.HostUri = new Uri("http://" + x));
+            Options = new OptionSet()
+                .Add("id=", "Id of the HostedGame.", x => HostedGame.Id = Guid.Parse(x))
+                .Add("name=", "Name of the HostedGame", x => HostedGame.Name = x)
+                .Add("hostusername=", "Username of user hosting the HostedGame", x => HostedGame.HostUserName = x)
+                .Add("gamename=", "Name of the Octgn Game", x => HostedGame.GameName = x)
+                .Add("gameid=", "Id of the Octgn Game", x => HostedGame.GameId = Guid.Parse(x))
+                .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x))
+                .Add("debug", "Little more verbose", x => Debug = true)
+                .Add(
+                    "password=",
+                    "Password of the HostedGame",
+                    x =>
+                    {
+                        if (!String.IsNullOrWhiteSpace(x))
+                        {
+                            HostedGame.Password = x;
+                            HostedGame.HasPassword = true;
+                        }
+                    })
+                .Add("bind=", "Address to listen to, 0.0.0.0:12 for all on port 12", x => HostedGame.HostUri = new Uri("http://" + x));
 
             try
             {
@@ -48,7 +52,7 @@
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error: {0}",e.Message);
+                Console.WriteLine("Error: {0}", e.Message);
                 Console.WriteLine();
                 Options.WriteOptionDescriptions(Console.Out);
             }
@@ -64,7 +68,7 @@
 
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
-            Log.Fatal("Unhandled Exception",unhandledExceptionEventArgs.ExceptionObject as Exception);
+            Log.Fatal("Unhandled Exception", unhandledExceptionEventArgs.ExceptionObject as Exception);
             if (Debug)
             {
                 Console.WriteLine();
