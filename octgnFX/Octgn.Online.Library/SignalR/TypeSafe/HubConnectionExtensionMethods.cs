@@ -16,7 +16,7 @@
             {
                 var method1 = method;
                 var sub = proxy.Subscribe(method1.Name);
-                sub.Data += tokens =>
+                sub.Received += tokens =>
                 {
                     var args = new List<object>();
                     var curArg = 0;

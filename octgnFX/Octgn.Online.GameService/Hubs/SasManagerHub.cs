@@ -1,5 +1,6 @@
 ﻿namespace Octgn.Online.GameService.Hubs
 {
+    using System;
     using System.Collections.Concurrent;
     using System.Linq;
     using System.Reflection;
@@ -8,13 +9,15 @@
 
     using Microsoft.AspNet.SignalR;
 
+    using Octgn.Online.Library.Enums;
     using Octgn.Online.Library.SignalR.Coms;
     using Octgn.Online.Library.SignalR.TypeSafe;
 
     using log4net;
 
-    public class SasManagerHub : Hub
+    public class SasManagerHub : Hub, ISASToSASManagerService
     {
+        #region Static
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal static ConcurrentStack<string> Connections { get; set; }
 
@@ -56,6 +59,11 @@
             Connections = new ConcurrentStack<string>();
         }
 
+        #endregion
+
+
+
+        #region ConnectionEvents
         public override Task OnConnected()
         {
             Log.InfoFormat("Connected {0}", this.Context.ConnectionId);
@@ -85,6 +93,12 @@
             Log.InfoFormat("Reconnected {0}", this.Context.ConnectionId);
             Connections.Push(this.Context.ConnectionId);
             return base.OnReconnected();
+        }
+        #endregion
+
+        public void HostedGameStateChanged(Guid id, EnumHostedGameStatus status)
+        {
+            Log.InfoFormat("Game State Changed: {0} {1}",id,status);
         }
     }
 }

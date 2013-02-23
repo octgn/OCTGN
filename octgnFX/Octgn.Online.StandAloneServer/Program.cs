@@ -1,6 +1,7 @@
 ﻿namespace Octgn.Online.StandAloneServer
 {
     using System;
+    using System.Collections.Generic;
     using System.Reflection;
     using System.ServiceProcess;
     using System.Threading;
@@ -29,8 +30,9 @@
             if (UpdateManager.GetContext().Update()) return;
             UpdateManager.GetContext().OnUpdateDetected += OnOnUpdateDetected;
             UpdateManager.GetContext().Start();
-
+#if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+#endif
             if (HandleArguments(args))
             {
                 // arguments didn't fail, so do stuff
@@ -94,6 +96,19 @@
 
         private static bool HandleArguments(string[] args)
         {
+#if(DEBUG)
+            var atemp = new List<string>();
+            atemp.Add("-id=" + Guid.NewGuid());
+            atemp.Add("-name=" + "Name");
+            atemp.Add("-hostusername=" + "test");
+            atemp.Add("-gamename=" + "cardgame");
+            atemp.Add("-gameid=" + Guid.Empty);
+            atemp.Add("-gameversion=" + new Version(1,2,3,4));
+            atemp.Add("-debug");
+            atemp.Add("-bind=" + "0.0.0.0:9999");
+            args = atemp.ToArray();
+
+#endif
             Options = new OptionSet()
                 .Add("id=", "Id of the HostedGame.", x => HostedGame.Id = Guid.Parse(x))
                 .Add("name=", "Name of the HostedGame", x => HostedGame.Name = x)
