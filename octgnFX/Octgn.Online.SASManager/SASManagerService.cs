@@ -23,6 +23,7 @@
             Log.Info("Starting");
             this.OnStart(null);
             GameServiceClient.GetContext().Start();
+            SasManager.GetContext().Start();
             Log.Info("Started");
         }
 
@@ -47,6 +48,7 @@
         {
             Log.Info("OnStop Called");
             GameServiceClient.GetContext().Stop();
+            SasManager.GetContext().Stop();
             this.FireOnServiceStop();
             Log.Info("OnStop Completed");
         }

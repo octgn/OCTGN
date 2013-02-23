@@ -15,7 +15,7 @@
 
     using log4net;
 
-    public class SasManagerHub : Hub, ISASToSASManagerService
+    public class SasManagerHub : Hub
     {
         #region Static
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -61,8 +61,6 @@
 
         #endregion
 
-
-
         #region ConnectionEvents
         public override Task OnConnected()
         {
@@ -95,10 +93,5 @@
             return base.OnReconnected();
         }
         #endregion
-
-        public void HostedGameStateChanged(Guid id, EnumHostedGameStatus status)
-        {
-            Log.InfoFormat("Game State Changed: {0} {1}",id,status);
-        }
     }
 }

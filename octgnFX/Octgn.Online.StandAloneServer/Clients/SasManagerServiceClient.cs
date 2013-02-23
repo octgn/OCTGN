@@ -3,6 +3,8 @@
     using System;
     using System.Configuration;
     using System.Reflection;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     using Microsoft.AspNet.SignalR.Client;
     using Microsoft.AspNet.SignalR.Client.Hubs;
@@ -84,9 +86,14 @@
                 case ConnectionState.Connecting:
                     break;
                 case ConnectionState.Connected:
-                       HubProxy.Send<ISASToSASManagerService>()
-                       .Invoke()
-                       .HostedGameStateChanged(Program.HostedGame.Id, EnumHostedGameStatus.Booted);
+                    var t = new Task(() =>
+                        {
+                            Thread.Sleep(1000);
+                            this.HubProxy.Send<ISASToSASManagerService>()
+                                .Invoke()
+                                .HostedGameStateChanged(Program.HostedGame.Id, EnumHostedGameStatus.Booted);
+                        });
+                    t.Start();
                     break;
                 case ConnectionState.Reconnecting:
                     break;
