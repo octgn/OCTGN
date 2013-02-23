@@ -40,6 +40,13 @@
         public Uri HostUri { get; set; }
     }
 
+    public class HostedGameSASModel : HostedGame
+    {
+        public Uri HostUri { get; set; }
+
+        public string Password { get; set; }
+    }
+
     public static class HostedGameExtensionMethods
     {
         public static HostedGameSASRequest ToHostedGameSasRequest(this HostedGameRequest request)
