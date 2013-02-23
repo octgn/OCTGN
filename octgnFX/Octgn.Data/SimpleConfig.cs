@@ -45,12 +45,14 @@ namespace Octgn.Data
         /// <returns> A string value </returns>
         public static string ReadValue(string valName)
         {
+            Stream f = null;
             try
             {
                 if (File.Exists(GetPath()))
                 {
                     var serializer = new SharpSerializer();
-                    var config = (Hashtable)serializer.Deserialize(GetPath());
+                    TryOpen(GetPath(), FileMode.OpenOrCreate, TimeSpan.FromSeconds(2), out f);
+                    var config = (Hashtable)serializer.Deserialize(f);
                     if (config.ContainsKey(valName))
                     {
                         return config[valName].ToString();
@@ -67,6 +69,15 @@ namespace Octgn.Data
                 catch (Exception)
                 {
                     Trace.WriteLine("[SimpleConfig]ReadValue Error: Couldn't delete the corrupt config file.");
+                }
+            }
+            finally
+            {
+                if (f != null)
+                {
+                    UnlockStream(f);
+                    f.Close();
+                    f = null;
                 }
             }
             return null;
@@ -87,22 +98,86 @@ namespace Octgn.Data
         /// <param name="value"> String to write for value </param>
         public static void WriteValue(string valName, string value)
         {
+            Stream f = null;
             try
             {
                 var serializer = new SharpSerializer();
                 var config = new Hashtable();
                 if (File.Exists(GetPath()))
                 {
-                    config = (Hashtable) serializer.Deserialize(GetPath());
+                    TryOpen(GetPath(), FileMode.OpenOrCreate, TimeSpan.FromSeconds(2), out f);
+                    LockStream(f);
+                    config = (Hashtable)serializer.Deserialize(f);
+                }
+                else
+                {
+                    TryOpen(GetPath(), FileMode.OpenOrCreate, TimeSpan.FromSeconds(2), out f);
+                    LockStream(f);
                 }
                 config[valName] = value;
-                serializer.Serialize(config, GetPath());                
+                serializer.Serialize(config, f);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Trace.WriteLine("[SimpleConfig]WriteValue Error: " + e.Message);
             }
+            finally
+            {
+                if (f != null)
+                {
+                    UnlockStream(f);
+                    f.Close();
+                    f = null;
+                }
+            }
 
+        }
+
+        private static void LockStream(Stream f)
+        {
+            FileStream file = (FileStream)f;
+            file.Lock(0, f.Length);
+        }
+
+        private static void UnlockStream(Stream f)
+        {
+            FileStream file = (FileStream)f;
+            file.Unlock(0, f.Length);
+        }
+
+        public static bool TryOpen(string path, FileMode fileMode, TimeSpan timeout, out Stream stream)
+        {
+            var endTime = DateTime.Now + timeout;
+            while (DateTime.Now < endTime)
+            {
+                if (TryOpen(path, fileMode, out stream))
+                    return true;
+            }
+            stream = null;
+            return false;
+        }
+
+        public static bool TryOpen(string path, FileMode fileMode, out Stream stream)
+        {
+            try
+            {
+                stream = File.Open(path, fileMode);
+                return true;
+            }
+            catch (IOException e)
+            {
+                if (!FileIsLocked(e))
+                    throw;
+
+                stream = null;
+                return false;
+            }
+        }
+
+        public static bool FileIsLocked(IOException ioException)
+        {
+            var errorCode = System.Runtime.InteropServices.Marshal.GetHRForException(ioException) & ((1 << 16) - 1);
+            return errorCode == 32 || errorCode == 33;
         }
     }
 }
