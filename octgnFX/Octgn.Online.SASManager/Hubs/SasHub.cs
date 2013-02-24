@@ -40,6 +40,7 @@
 
         public void HostedGameStateChanged(Guid id, EnumHostedGameStatus status)
         {
+            HostedGameEngine.GetById(id).SetStatus(status);
             Log.InfoFormat("Game State Changed: {0} {1}",id,status);
         }
     }

@@ -34,6 +34,7 @@
   <ItemGroup>
     <Compile Include="Enums\EnumHostedGameStatus.cs" />
     <Compile Include="Models\HostedGameState.cs" />
+    <Compile Include="Net\Tools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalR\Coms\IGameServiceToSASManagerService.cs" />
     <Compile Include="SignalR\Coms\ISASManagerServiceToGameService.cs" />

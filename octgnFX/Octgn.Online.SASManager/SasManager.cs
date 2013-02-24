@@ -7,6 +7,10 @@
     using Microsoft.AspNet.SignalR;
     using Microsoft.Owin.Hosting;
 
+    using Octgn.Online.Library.Enums;
+    using Octgn.Online.Library.Models;
+    using Octgn.Online.Library.Net;
+
     using Owin;
 
     using log4net;
@@ -30,8 +34,8 @@
 
         public SasManager()
         {
-            Log.Info("Creating");
-            Log.Info("Created");
+            Log.Debug("Creating");
+            Log.Debug("Created");
         }
 
         public void Start()
@@ -47,6 +51,17 @@
             if (Host != null)
                 Host.Dispose();
             Log.Info("Stopped");
+        }
+
+        public void StartGame(HostedGameSASRequest request)
+        {
+            var hostName = Tools.HostName;
+            var port = Tools.GetNextPort();
+            var uri = new Uri("http://" + hostName + ":" + port);
+            var model = request.ToHostedGameSasModel(uri);
+
+            var state = model.ToHostedGameState(EnumHostedGameStatus.BootRequested);
+            state.Engine().Register().LaunchProcess();
         }
 
         public void Configuration(IAppBuilder app)

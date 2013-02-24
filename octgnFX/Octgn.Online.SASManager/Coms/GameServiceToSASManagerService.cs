@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
 
     using Octgn.Online.Library.Models;
+    using Octgn.Online.Library.Net;
     using Octgn.Online.Library.SignalR.Coms;
 
     using log4net;
@@ -16,7 +17,9 @@
         public Task StartGame(HostedGameSASRequest request)
         {
             Log.InfoFormat("Start Game Request {0}",request.Id);
-            return new Task(() => { }); 
+            var ret = new Task(() => SasManager.GetContext().StartGame(request));
+            ret.Start();
+            return ret; 
         }
 
         public Task<IEnumerable<HostedGame>> GameList()

@@ -97,16 +97,19 @@
         private static bool HandleArguments(string[] args)
         {
 #if(DEBUG)
-            var atemp = new List<string>();
-            atemp.Add("-id=" + Guid.NewGuid());
-            atemp.Add("-name=" + "Name");
-            atemp.Add("-hostusername=" + "test");
-            atemp.Add("-gamename=" + "cardgame");
-            atemp.Add("-gameid=" + Guid.Empty);
-            atemp.Add("-gameversion=" + new Version(1,2,3,4));
-            atemp.Add("-debug");
-            atemp.Add("-bind=" + "0.0.0.0:9999");
-            args = atemp.ToArray();
+            if (args == null || args.Length == 0)
+            {
+                var atemp = new List<string>();
+                atemp.Add("-id=" + Guid.NewGuid());
+                atemp.Add("-name=" + "Name");
+                atemp.Add("-hostusername=" + "test");
+                atemp.Add("-gamename=" + "cardgame");
+                atemp.Add("-gameid=" + Guid.Empty);
+                atemp.Add("-gameversion=" + new Version(1, 2, 3, 4));
+                atemp.Add("-debug");
+                atemp.Add("-bind=" + "0.0.0.0:9999");
+                args = atemp.ToArray();
+            }
 
 #endif
             Options = new OptionSet()
