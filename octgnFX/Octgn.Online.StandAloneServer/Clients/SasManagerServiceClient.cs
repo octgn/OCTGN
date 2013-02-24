@@ -86,6 +86,7 @@
                 case ConnectionState.Connecting:
                     break;
                 case ConnectionState.Connected:
+                    // Created a task because if reconnecting, it seems that this message doesn't go through if it doesn't have a delay
                     var t = new Task(() =>
                         {
                             Thread.Sleep(1000);
