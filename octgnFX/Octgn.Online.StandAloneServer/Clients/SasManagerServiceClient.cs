@@ -6,12 +6,13 @@
     using System.Threading;
     using System.Threading.Tasks;
 
+    using KellyElton.SignalR.TypeSafe.ExtensionMethods;
+
     using Microsoft.AspNet.SignalR.Client;
     using Microsoft.AspNet.SignalR.Client.Hubs;
 
     using Octgn.Online.Library.Enums;
     using Octgn.Online.Library.SignalR.Coms;
-    using Octgn.Online.Library.SignalR.TypeSafe;
 
     using Octgn.Online.StandAloneServer.Coms;
 

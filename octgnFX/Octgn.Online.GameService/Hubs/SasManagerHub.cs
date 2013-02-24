@@ -1,17 +1,16 @@
 ﻿namespace Octgn.Online.GameService.Hubs
 {
-    using System;
     using System.Collections.Concurrent;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
 
+    using KellyElton.SignalR.TypeSafe;
+
     using Microsoft.AspNet.SignalR;
 
-    using Octgn.Online.Library.Enums;
     using Octgn.Online.Library.SignalR.Coms;
-    using Octgn.Online.Library.SignalR.TypeSafe;
 
     using log4net;
 

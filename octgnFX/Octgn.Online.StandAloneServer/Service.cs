@@ -4,11 +4,6 @@
     using System.Reflection;
     using System.ServiceProcess;
 
-    using Microsoft.AspNet.SignalR.Client;
-
-    using Octgn.Online.Library.Enums;
-    using Octgn.Online.Library.SignalR.Coms;
-    using Octgn.Online.Library.SignalR.TypeSafe;
     using Octgn.Online.StandAloneServer.Clients;
 
     using log4net;

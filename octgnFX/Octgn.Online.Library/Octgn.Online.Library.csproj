@@ -40,14 +40,6 @@
     <Compile Include="Models\HostedGame.cs" />
     <Compile Include="SignalR\Coms\ISASManagerServiceToSAS.cs" />
     <Compile Include="SignalR\Coms\ISASToSASManagerService.cs" />
-    <Compile Include="SignalR\TypeSafe\DynamicProxy.cs" />
-    <Compile Include="SignalR\TypeSafe\DynamicProxyOnBuilder.cs" />
-    <Compile Include="SignalR\TypeSafe\ExtensionMethods\TypeExtensionMethods.cs" />
-    <Compile Include="SignalR\TypeSafe\HubContextMessenger.cs" />
-    <Compile Include="SignalR\TypeSafe\HubMessenger.cs" />
-    <Compile Include="SignalR\TypeSafe\HubProxyMessenger.cs" />
-    <Compile Include="SignalR\TypeSafe\MethodCallInfo.cs" />
-    <Compile Include="SignalR\TypeSafe\HubConnectionExtensionMethods.cs" />
     <Compile Include="UpdateManager\UpdateManager.cs" />
     <Compile Include="UpdateManager\UpdateManagerConfig.cs" />
   </ItemGroup>
