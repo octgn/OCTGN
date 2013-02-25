@@ -7,10 +7,10 @@
         Booting,
         Booted,
         GameReady,
+        PreGame,
         GameStarted,
         GameComplete,
         GameShutDown,
-
         GameShuttingDown
     }
 }

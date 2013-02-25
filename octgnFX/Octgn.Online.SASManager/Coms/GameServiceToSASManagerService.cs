@@ -5,9 +5,8 @@
     using System.Reflection;
     using System.Threading.Tasks;
 
+    using Octgn.Online.Library.Coms;
     using Octgn.Online.Library.Models;
-    using Octgn.Online.Library.Net;
-    using Octgn.Online.Library.SignalR.Coms;
 
     using log4net;
 

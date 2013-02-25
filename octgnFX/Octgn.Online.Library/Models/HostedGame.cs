@@ -1,6 +1,8 @@
 ﻿namespace Octgn.Online.Library.Models
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     using Octgn.Online.Library.Enums;
 
@@ -20,6 +22,8 @@
 
         bool HasPassword { get; set; }
 
+        bool TwoSidedTable { get; set; }
+
     }
 
     public class HostedGame : IHostedGame
@@ -37,6 +41,8 @@
         public Version GameVersion { get; set; }
 
         public bool HasPassword { get; set; }
+
+        public bool TwoSidedTable { get; set; }
     }
 
     public class HostedGameRequest : HostedGame
@@ -73,7 +79,8 @@
                               HostUserName = request.HostUserName,
                               Id = Guid.NewGuid(),
                               Name = request.Name,
-                              Password = request.Password
+                              Password = request.Password,
+                              TwoSidedTable = request.TwoSidedTable
                           };
             return ret;
         }
@@ -91,7 +98,8 @@
                               Id = request.Id,
                               Name = request.Name,
                               Password = request.Password,
-                              HostUri = host
+                              HostUri = host,
+                              TwoSidedTable = request.TwoSidedTable
                           };
             return ret;
         }
@@ -109,7 +117,57 @@
                               Name = model.Name,
                               Password = model.Password,
                               HostUri = model.HostUri,
-                              Status = status
+                              Status = status,
+                              TwoSidedTable = model.TwoSidedTable,
+                              CurrentTurnPlayer = 0,
+                              Players = new List<HostedGamePlayer>()
+                          };
+            return ret;
+        }
+
+        /// <summary>
+        /// Gets rid of sensitive data the user doesn't need to have.
+        /// </summary>
+        /// <param name="state">Game state</param>
+        /// <returns>Censored Game State</returns>
+        public static HostedGameState ForUser(this HostedGameState state)
+        {
+            var ret = new HostedGameState
+                          {
+                              GameId = state.GameId,
+                              GameName = state.GameName,
+                              GameVersion = state.GameVersion,
+                              HasPassword = state.HasPassword,
+                              HostUserName = state.HostUserName,
+                              Id = state.Id,
+                              Name = state.Name,
+                              Password = null,
+                              HostUri = state.HostUri,
+                              Status = state.Status,
+                              TwoSidedTable = state.TwoSidedTable,
+                              CurrentTurnPlayer = state.CurrentTurnPlayer,
+                              Players = state.Players.Select(x=>x.ForUser()).ToList()
+                          };
+            return ret;
+        }
+
+        /// <summary>
+        /// Gets rid of sensitive data the user doesn't need to have.
+        /// </summary>
+        /// <param name="player">Hosted Game Player</param>
+        /// <returns>Censored Hosted Game Player</returns>
+        public static HostedGamePlayer ForUser(this HostedGamePlayer player)
+        {
+            var ret = new HostedGamePlayer
+                          {
+                              ConnectionState = player.ConnectionState,
+                              State = player.State,
+                              Id = player.Id,
+                              Name = player.Name,
+                              InvertedTable = player.InvertedTable,
+                              IsMod = player.IsMod,
+                              Key = Guid.Empty,
+                              Kicked = player.Kicked
                           };
             return ret;
         }

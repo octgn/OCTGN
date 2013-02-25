@@ -1,17 +1,13 @@
-﻿namespace Octgn.Online.SASManagerService.Hubs
+﻿namespace Octgn.Online.StandAloneServer.Hubs
 {
-    using System;
     using System.Reflection;
     using System.Threading.Tasks;
 
     using Microsoft.AspNet.SignalR;
 
-    using Octgn.Online.Library.Coms;
-    using Octgn.Online.Library.Enums;
-
     using log4net;
 
-    public class SasHub : Hub, ISASToSASManagerService
+    public class ClientHub: Hub
     {
         #region Static
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -37,11 +33,5 @@
             return base.OnReconnected();
         }
         #endregion
-
-        public void HostedGameStateChanged(Guid id, EnumHostedGameStatus status)
-        {
-            HostedGameEngine.GetById(id).SetStatus(status);
-            Log.InfoFormat("Game State Changed: {0} {1}",id,status);
-        }
     }
 }

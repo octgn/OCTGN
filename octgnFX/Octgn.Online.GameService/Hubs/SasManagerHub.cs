@@ -10,7 +10,7 @@
 
     using Microsoft.AspNet.SignalR;
 
-    using Octgn.Online.Library.SignalR.Coms;
+    using Octgn.Online.Library.Coms;
 
     using log4net;
 

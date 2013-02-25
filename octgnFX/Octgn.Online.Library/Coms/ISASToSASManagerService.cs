@@ -1,4 +1,4 @@
-﻿namespace Octgn.Online.Library.SignalR.Coms
+﻿namespace Octgn.Online.Library.Coms
 {
     using System;
 

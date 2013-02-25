@@ -11,9 +11,8 @@
     using Microsoft.AspNet.SignalR.Client;
     using Microsoft.AspNet.SignalR.Client.Hubs;
 
+    using Octgn.Online.Library.Coms;
     using Octgn.Online.Library.Enums;
-    using Octgn.Online.Library.SignalR.Coms;
-
     using Octgn.Online.StandAloneServer.Coms;
 
     using log4net;
