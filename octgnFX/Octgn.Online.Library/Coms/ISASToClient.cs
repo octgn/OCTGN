@@ -27,5 +27,9 @@
         Task SetCounterValue(HostedGameCounter counter, int value);
 
         Task LoadDeck(HostedGamePlayer player, HostedGameDeck deck);
+
+        Task CardAdded(HostedGamePlayer player, HostedGameCard card);
+
+        Task CardChanged(HostedGamePlayer player, HostedGameCard card);
     }
 }

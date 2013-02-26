@@ -25,6 +25,16 @@
 
         Task LoadDeck(string rawDeckString, HostedGameDeck deck);
 
+        //Task CreateCard(Guid[] cardId, )
+
+        Task CreateCardAt(HostedGameCard[] cards);
+
+        Task MoveCard(int inGameCardId, int group, int? position);
+
+        Task MoveCardAt(int inGameCardId, int x, int y, bool faceUp, int? position);
+
+        Task RevealCard(int inGameCardId);
+
         //Task Pick
     }
 }
