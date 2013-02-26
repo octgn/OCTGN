@@ -13,8 +13,7 @@ namespace Octgn
 
         static Prefs()
         {
-            string hln = SimpleConfig.ReadValue("Options_HideLoginNotifications");
-            _hideLoginNotifications = hln == null || hln == "false" ? "false" : "true";
+            _hideLoginNotifications = SimpleConfig.ReadValue("Options_HideLoginNotifications", "false");
         }
 
         public static bool InstallOnBoot

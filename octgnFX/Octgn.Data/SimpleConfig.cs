@@ -9,6 +9,8 @@ namespace Octgn.Data
 {
     public static class SimpleConfig
     {
+        private static object lockObject = new Object();
+
         /// <summary>
         /// Special case since it's required in Octgn.Data, and Prefs can't go there
         /// </summary>
@@ -43,41 +45,51 @@ namespace Octgn.Data
         /// </summary>
         /// <param name="valName"> The name of the value </param>
         /// <returns> A string value </returns>
-        public static string ReadValue(string valName)
+        public static string ReadValue(string valName, string def)
         {
-            try
+            lock (lockObject)
             {
-                if (File.Exists(GetPath()))
-                {
-                    var serializer = new SharpSerializer();
-                    var config = (Hashtable)serializer.Deserialize(GetPath());
-                    if (config.ContainsKey(valName))
-                    {
-                        return config[valName].ToString();
-                    }
-                }
-            }
-            catch(Exception e)
-            {
-                Trace.WriteLine("[SimpleConfig]ReadValue Error: " + e.Message);
+                var ret = def;
+                Stream f = null;
                 try
                 {
-                    File.Delete(GetPath());
+                    if (File.Exists(GetPath()))
+                    {
+                        var serializer = new SharpSerializer();
+                        
+                        Hashtable config = new Hashtable();
+                        if (OpenFile(GetPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f))
+                        {
+                            config = (Hashtable)serializer.Deserialize(f);
+                        }
+                        if (config.ContainsKey(valName))
+                        {
+                            return config[valName].ToString();
+                        }
+                    }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Trace.WriteLine("[SimpleConfig]ReadValue Error: Couldn't delete the corrupt config file.");
+                    Trace.WriteLine("[SimpleConfig]ReadValue Error: " + e.Message);
+                    try
+                    {
+                        File.Delete(GetPath());
+                    }
+                    catch (Exception)
+                    {
+                        Trace.WriteLine("[SimpleConfig]ReadValue Error: Couldn't delete the corrupt config file.");
+                    }
                 }
+                finally
+                {
+                    if (f != null)
+                    {
+                        f.Close();
+                        f = null;
+                    }
+                }
+                return ret;
             }
-            return null;
-        }
-
-        public static string ReadValue(string valName, string d)
-        {
-            string r = ReadValue(valName);
-            if(r == null)
-                WriteValue(valName,d);
-            return r ?? d;
         }
 
         /// <summary>
@@ -87,22 +99,59 @@ namespace Octgn.Data
         /// <param name="value"> String to write for value </param>
         public static void WriteValue(string valName, string value)
         {
-            try
+            lock (lockObject)
             {
-                var serializer = new SharpSerializer();
-                var config = new Hashtable();
-                if (File.Exists(GetPath()))
+                Stream f = null;
+                try
                 {
-                    config = (Hashtable) serializer.Deserialize(GetPath());
+                    var serializer = new SharpSerializer();
+                    var config = new Hashtable();
+                    if (File.Exists(GetPath()))
+                    {
+                        if (OpenFile(GetPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f))
+                        {
+                            config = (Hashtable)serializer.Deserialize(f);
+                        }
+                    }
+                    else
+                    {
+                        OpenFile(GetPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f);
+                    }
+                    config[valName] = value;
+                    serializer.Serialize(config, f);
                 }
-                config[valName] = value;
-                serializer.Serialize(config, GetPath());                
+                catch (Exception e)
+                {
+                    Trace.WriteLine("[SimpleConfig]WriteValue Error: " + e.Message);
+                }
+                finally
+                {
+                    if (f != null)
+                    {
+                        f.Close();
+                        f = null;
+                    }
+                }
             }
-            catch(Exception e)
-            {
-                Trace.WriteLine("[SimpleConfig]WriteValue Error: " + e.Message);
-            }
+        }
 
+        private static bool OpenFile(string path, FileMode fileMode, FileShare share, TimeSpan timeout, out Stream stream)
+        {
+            var endTime = DateTime.Now + timeout;
+            while (DateTime.Now < endTime)
+            {
+                try
+                {
+                    stream = File.Open(path, fileMode, FileAccess.ReadWrite, share);
+                    return true;
+                }
+                catch (IOException e)
+                {
+                    //ignore this
+                }
+            }
+            stream = null;
+            return false;
         }
     }
 }

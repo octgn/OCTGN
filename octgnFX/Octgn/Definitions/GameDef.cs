@@ -34,6 +34,7 @@ namespace Octgn.Definitions
         public List<VariableDef> Variables { get; private set; }
         public List<GlobalVariableDef> GlobalVariables { get; private set; }
         public List<FontDef> Fonts { get; private set; }
+        public List<IconDef> Icons { get; private set; }
 
         internal string FileName { get; set; }
 
@@ -209,7 +210,8 @@ namespace Octgn.Definitions
                            GlobalVariables = GlobalVariableDef.LoadAllFromXml(xml.Child("globalvariables")),
                            Variables = VariableDef.LoadAllFromXml(xml.Child("variables")),
                            Scripts = ScriptDef.LoadAllFromXml(xml.Child("scripts"), part),
-                           Fonts = FontDef.LoadAllFromXml(xml.Child("fonts"), part)
+                           Fonts = FontDef.LoadAllFromXml(xml.Child("fonts"), part),
+                           Icons = IconDef.LoadAllFromXml(xml.Child("iconreplacements"), part)
                        };
         }
 

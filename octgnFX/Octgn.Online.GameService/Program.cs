@@ -25,8 +25,7 @@
             if (UpdateManager.GetContext().Update()) return;
             UpdateManager.GetContext().OnUpdateDetected += UpdateManagerOnOnUpdateDetected;
             UpdateManager.GetContext().Start();
-            GlobalHost.Configuration.DisconnectTimeout = new TimeSpan(0, 0, 0, 5);
-            GlobalHost.Configuration.HeartbeatInterval = new TimeSpan(0, 0, 0, 5); 
+            GlobalHost.Configuration.DisconnectTimeout = new TimeSpan(0, 0, 0, 6);
 #if(DEBUG)
 
             StartServiceCommandLine();
@@ -42,8 +41,7 @@
         {
             Log.Info("Check if running as admin(required)");
             var identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
+            if (identity == null || !new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator))
             {
                 Log.Fatal("Not running as Admin, Admin mode required. Exiting.");
                 //+ Probably don't want to uncomment the blow shitz
@@ -56,10 +54,7 @@
                 //newP.WaitForExit();
                 return false;
             }
-            else
-            {
-                Log.Info("Running as admin, good...good");
-            }
+            Log.Info("Running as admin, good...good");
             return true;
         }
 
