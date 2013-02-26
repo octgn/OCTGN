@@ -37,6 +37,10 @@
     <Compile Include="Coms\ISASToClient.cs" />
     <Compile Include="Enums\EnumHostedGameStatus.cs" />
     <Compile Include="Enums\EnumPlayerState.cs" />
+    <Compile Include="Models\HostedGameCard.cs" />
+    <Compile Include="Models\HostedGameCounter.cs" />
+    <Compile Include="Models\HostedGameDeck.cs" />
+    <Compile Include="Models\HostedGameDeckSection.cs" />
     <Compile Include="Models\HostedGamePlayer.cs" />
     <Compile Include="Models\HostedGameState.cs" />
     <Compile Include="Net\Tools.cs" />

@@ -13,5 +13,19 @@
         Task GameStatusChanged(Enums.EnumHostedGameStatus status);
 
         Task PlayerStateChanged(HostedGamePlayer player);
+
+        Task Turn(HostedGamePlayer player);
+
+        Task Chat(HostedGamePlayer from, string message);
+
+        Task Notify(string message);
+
+        Task Notify(HostedGamePlayer player, string message);
+
+        Task RandomResponse(int number);
+
+        Task SetCounterValue(HostedGameCounter counter, int value);
+
+        Task LoadDeck(HostedGamePlayer player, HostedGameDeck deck);
     }
 }
