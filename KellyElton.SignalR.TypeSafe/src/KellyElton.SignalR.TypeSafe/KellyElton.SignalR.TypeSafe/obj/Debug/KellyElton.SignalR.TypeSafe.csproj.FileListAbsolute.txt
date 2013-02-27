@@ -1,0 +1,11 @@
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\obj\Debug\KellyElton.SignalR.TypeSafe.csprojResolveAssemblyReference.cache
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\bin\Debug\KellyElton.SignalR.TypeSafe.dll
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\bin\Debug\KellyElton.SignalR.TypeSafe.pdb
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\bin\Debug\Microsoft.AspNet.SignalR.Client.dll
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\bin\Debug\Microsoft.AspNet.SignalR.Core.dll
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\bin\Debug\Newtonsoft.Json.dll
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\bin\Debug\Microsoft.AspNet.SignalR.Client.xml
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\bin\Debug\Microsoft.AspNet.SignalR.Core.xml
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\bin\Debug\Newtonsoft.Json.xml
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\obj\Debug\KellyElton.SignalR.TypeSafe.dll
+F:\Programming\OCTGN\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\obj\Debug\KellyElton.SignalR.TypeSafe.pdb
