@@ -21,7 +21,7 @@
                 requestHtml = utf8.GetString(wc.DownloadData(Dyndns));
                 var fullStr = requestHtml.Split(':');
                 ipAddress = fullStr[1].Remove(fullStr[1].IndexOf('<')).Trim();
-                _hostName = ipAddress;
+                hostName = ipAddress;
 #endif
                 return hostName;
             }
