@@ -618,10 +618,10 @@ namespace Octgn.Networking
             if (card.Length < group.Count / (Player.Count - 1))
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Shuffle] Too few cards received.");
             // Do the shuffling
-            Random rnd = new Random();
+            var rnd = new CryptoRNG();
             for (int i = card.Length - 1; i >= 0; i--)
             {
-                int r = rnd.Next(i);
+                int r = rnd.Next(i + 1);
                 int tc = card[r];
                 card[r] = card[i];
                 // Create a new alias, if the card is not face up
