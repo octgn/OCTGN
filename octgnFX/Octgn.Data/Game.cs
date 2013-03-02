@@ -28,7 +28,6 @@ namespace Octgn.Data
         public int CardWidth { get; set; }
         public int CardHeight { get; set; }
         public string CardBack { get; set; }
-        public Boolean Warning { get; set; }
         public string FileHash { get; set; }
         public IEnumerable<string> DeckSections { get; set; }
         public IEnumerable<string> SharedDeckSections { get; set; }
