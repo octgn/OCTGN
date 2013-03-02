@@ -49,6 +49,7 @@
         public bool SuccessfulHost { get; private set; }
 
         private Decorator Placeholder;
+        private Guid lastHostedGameType;
 
         public ObservableCollection<DataGameViewModel> Games { get; private set; }
 
@@ -62,6 +63,7 @@
             TextBoxGameName.Text = Prefs.LastRoomName;
             CheckBoxIsLocalGame.IsChecked = !Program.LobbyClient.IsConnected;
             CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
+            lastHostedGameType = Prefs.LastHostedGameType;
         }
 
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
@@ -134,7 +136,6 @@
 
                     Program.Client = new Client(hostAddress, (int)port);
                     Program.Client.Connect();
-                    Prefs.LastRoomName = this.Gamename;
                     SuccessfulHost = true;
                 }
 
@@ -153,6 +154,16 @@
         {
             Placeholder = placeholder;
             this.RefreshInstalledGameList();
+            
+            if (lastHostedGameType != Guid.Empty)
+            {
+                var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == lastHostedGameType);
+                if (game != null)
+                {
+                    var model = Games.FirstOrDefault(x => x.Id == game.Id);
+                    if (model != null) this.ComboBoxGame.SelectedItem = model;
+                }
+            }
 
             placeholder.Child = this;
         }
@@ -235,6 +246,8 @@
             Task task = null;
             task = isLocalGame ? new Task(() => this.StartLocalGame(Game, Gamename, Password)) : new Task(() => this.StartOnlineGame(Game, Gamename, Password));
 
+            Prefs.LastRoomName = this.Gamename;
+            Prefs.LastHostedGameType = this.Game.Id;
             task.ContinueWith((continueTask) =>
                 {
                     var error = "";

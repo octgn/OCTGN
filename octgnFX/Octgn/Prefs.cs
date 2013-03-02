@@ -128,6 +128,20 @@ namespace Octgn
                 SimpleConfig.WriteValue("lastroomname",value);
             }
         }
+
+        public static Guid LastHostedGameType
+        {
+            get
+            {
+                var ret = Guid.Empty;
+                if (Guid.TryParse(SimpleConfig.ReadValue("lasthostedgametype", Guid.Empty.ToString()), out ret)) return ret;
+                return Guid.Empty;
+            }
+            set
+            {
+                SimpleConfig.WriteValue("lasthostedgametype",value.ToString());
+            }
+        }
         
         public static bool TwoSidedTable
         {
