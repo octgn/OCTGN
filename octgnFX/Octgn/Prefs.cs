@@ -216,7 +216,7 @@ namespace Octgn
         {
             get
             {
-                var val = SimpleConfig.ReadValue("UseHardwareRendering", "false");
+                var val = SimpleConfig.ReadValue("UseHardwareRendering", "true");
                 var valout = false;
                 bool.TryParse(val, out valout);
                 return valout;
