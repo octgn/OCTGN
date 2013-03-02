@@ -118,6 +118,7 @@ namespace Octgn.Data
                         OpenFile(GetPath(), FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromSeconds(2), out f);
                     }
                     config[valName] = value;
+                    f.SetLength(0);
                     serializer.Serialize(config, f);
                 }
                 catch (Exception e)
