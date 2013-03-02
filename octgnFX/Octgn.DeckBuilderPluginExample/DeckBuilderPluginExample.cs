@@ -59,8 +59,8 @@ namespace Octgn.DeckBuilderPluginExample
         {
             get
             {
-                // Don't allow this plugin to be used in any version less than 3.0.6.49
-                return Version.Parse("3.0.6.49");
+                // Don't allow this plugin to be used in any version less than 3.0.7.50
+                return Version.Parse("3.0.7.50");
             }
         }
     }

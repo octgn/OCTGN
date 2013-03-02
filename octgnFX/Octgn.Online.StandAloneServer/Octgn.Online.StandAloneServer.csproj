@@ -87,8 +87,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe.csproj">
-      <Project>{106ebb1b-6dea-41ff-af01-727939204a59}</Project>
+    <ProjectReference Include="..\..\KellyElton.SignalR.TypeSafe\src\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe\KellyElton.SignalR.TypeSafe.csproj">
+      <Project>{106EBB1B-6DEA-41FF-AF01-727939204A59}</Project>
       <Name>KellyElton.SignalR.TypeSafe</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Online.Library\Octgn.Online.Library.csproj">

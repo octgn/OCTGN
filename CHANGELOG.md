@@ -1,3 +1,8 @@
+#3.0.7.50
++ Fixed crash from Game list resize.
++ Some file locking on config file so it doesn't keep breaking.
++ Drag issue in deck fixed
+
 #3.0.6.48
 + Increased login page size
 + Added turnNumber() to python API https://github.com/kellyelton/OCTGN/commit/fbaf0ecd246b72d3a96150ebe457d47c92ab6f71

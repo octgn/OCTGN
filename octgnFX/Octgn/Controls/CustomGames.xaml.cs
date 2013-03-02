@@ -280,8 +280,11 @@ namespace Octgn.Controls
 
         private void ListViewGameList_OnDragDelta(object sender, DragDeltaEventArgs e)
         {
+            if(e == null || e.OriginalSource == null)return;
             var senderAsThumb = e.OriginalSource as Thumb;
+            if(senderAsThumb == null || senderAsThumb.TemplatedParent == null)return;
             var header = senderAsThumb.TemplatedParent as GridViewColumnHeader;
+            if(header == null)return;
             if (header.Column.ActualWidth < 20)
                 header.Column.Width = 20;
             //if (header.Column.ActualWidth > 100)
