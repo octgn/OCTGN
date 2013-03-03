@@ -229,8 +229,9 @@ namespace Octgn.Networking
             if (owner == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
             {
-                Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
-                group.AddAt(c, group.Count);
+                //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
+                //group.AddAt(c, group.Count);
+                new CreateCardInGroup(owner, id[i], type[i], null, group).Do();
             }
         }
 
