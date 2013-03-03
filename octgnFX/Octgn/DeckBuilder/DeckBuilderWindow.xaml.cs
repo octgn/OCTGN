@@ -568,6 +568,7 @@ namespace Octgn.DeckBuilder
         }
         private void DeckMouseMove(object sender, MouseEventArgs e)
         {
+            e.Handled = true;
             if (!validClick) return;
             Point mousePos = e.GetPosition(null);
             Vector diff = startPoint - mousePos;
@@ -587,7 +588,6 @@ namespace Octgn.DeckBuilder
                     RemoveResultCard(null, new SearchCardIdEventArgs { CardId = getCard.Card.Id });
                     DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.Copy);
                 }
-                e.Handled = true;
             }
         }
         private void DeckDragEnter(object sender, DragEventArgs e)

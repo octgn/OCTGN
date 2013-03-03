@@ -3,9 +3,9 @@
     using System;
     using System.Threading.Tasks;
 
-    using NUnit.Framework;
+    using KellyElton.SignalR.TypeSafe;
 
-    using Octgn.Online.Library.SignalR.TypeSafe;
+    using NUnit.Framework;
 
     public class DynamicProxyTests
     {

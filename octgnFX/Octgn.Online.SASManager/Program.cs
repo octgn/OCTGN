@@ -15,6 +15,7 @@
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal static bool KeepRunning;
         internal static SASManagerService Service;
+
         internal static void Main()
         {
             Log.Info("Starting Octgn.Online.SASManagerService");

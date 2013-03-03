@@ -4,11 +4,11 @@
     using System.Configuration;
     using System.Reflection;
 
+    using KellyElton.SignalR.TypeSafe.ExtensionMethods;
+
     using Microsoft.AspNet.SignalR.Client;
     using Microsoft.AspNet.SignalR.Client.Hubs;
 
-    using Octgn.Online.Library.SignalR.Coms;
-    using Octgn.Online.Library.SignalR.TypeSafe;
     using Octgn.Online.SASManagerService.Coms;
 
     using log4net;

@@ -2,16 +2,23 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Threading.Tasks;
 
-    using Octgn.Online.Library.SignalR.Coms;
-    using Octgn.Online.Library.SignalR.Coms.Models;
+    using Octgn.Online.Library.Coms;
+    using Octgn.Online.Library.Models;
+
+    using log4net;
 
     public class GameServiceToSASManagerService : IGameServiceToSASManagerService
     {
-        public Task StartGame(Guid id, string name, string oGameName, Guid oGameId)
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        public Task StartGame(HostedGameSASRequest request)
         {
-            return new Task(() => { });
+            Log.InfoFormat("Start Game Request {0}",request.Id);
+            var ret = new Task(() => SasManager.GetContext().StartGame(request));
+            ret.Start();
+            return ret; 
         }
 
         public Task<IEnumerable<HostedGame>> GameList()

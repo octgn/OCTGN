@@ -1,3 +1,14 @@
+#3.0.7.51[Test Build]
++ Fixed multiple lobby chat tabs appearing over time
++ Defaulted HardwareRendering to 'ON'
++ Fixed config files not saving
++ Octgn remembers last game type hosted https://github.com/kellyelton/OCTGN/issues/641
+
+#3.0.7.50
++ Fixed crash from Game list resize.
++ Some file locking on config file so it doesn't keep breaking.
++ Drag issue in deck fixed
+
 #3.0.6.48
 + Increased login page size
 + Added turnNumber() to python API https://github.com/kellyelton/OCTGN/commit/fbaf0ecd246b72d3a96150ebe457d47c92ab6f71

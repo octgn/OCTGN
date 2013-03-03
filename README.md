@@ -17,6 +17,6 @@ This is the new home for the OCTGN open source project.
 
 Useful Links
 =================================================
-These are just related links
+These are just related links.
 
 * Download Site: http://www.octgn.net/

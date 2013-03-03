@@ -182,7 +182,6 @@ namespace Skylabs.Lobby
                         m.JoinRoom(msg.From, msg.From.User);
                         ChatRoom theRoom = this.GetRoom(new User(msg.From), true);
                         this.xmpp.RosterManager.AddRosterItem(msg.From, msg.From.User);
-                        this.FireOnCreateRoom(this, theRoom);
                     }
 
                     break;

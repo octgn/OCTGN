@@ -13,8 +13,7 @@ namespace Octgn
 
         static Prefs()
         {
-            string hln = SimpleConfig.ReadValue("Options_HideLoginNotifications");
-            _hideLoginNotifications = hln == null || hln == "false" ? "false" : "true";
+            _hideLoginNotifications = SimpleConfig.ReadValue("Options_HideLoginNotifications", "false");
         }
 
         public static bool InstallOnBoot
@@ -129,6 +128,20 @@ namespace Octgn
                 SimpleConfig.WriteValue("lastroomname",value);
             }
         }
+
+        public static Guid LastHostedGameType
+        {
+            get
+            {
+                var ret = Guid.Empty;
+                if (Guid.TryParse(SimpleConfig.ReadValue("lasthostedgametype", Guid.Empty.ToString()), out ret)) return ret;
+                return Guid.Empty;
+            }
+            set
+            {
+                SimpleConfig.WriteValue("lasthostedgametype",value.ToString());
+            }
+        }
         
         public static bool TwoSidedTable
         {
@@ -217,7 +230,7 @@ namespace Octgn
         {
             get
             {
-                var val = SimpleConfig.ReadValue("UseHardwareRendering", "false");
+                var val = SimpleConfig.ReadValue("UseHardwareRendering", "true");
                 var valout = false;
                 bool.TryParse(val, out valout);
                 return valout;

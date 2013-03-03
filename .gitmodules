@@ -1,0 +1,3 @@
+[submodule "KellyElton.SignalR.TypeSafe"]
+	path = KellyElton.SignalR.TypeSafe
+	url = git@github.com:kellyelton/KellyElton.SignalR.TypeSafe.git

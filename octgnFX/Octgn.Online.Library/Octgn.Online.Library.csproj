@@ -32,16 +32,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Enums\EnumHelloResponse.cs" />
+    <Compile Include="Coms\IClientToSAS.cs" />
+    <Compile Include="Coms\ISASToClient.cs" />
+    <Compile Include="Enums\EnumHostedGameStatus.cs" />
+    <Compile Include="Enums\EnumPlayerState.cs" />
+    <Compile Include="Models\HostedGameCard.cs" />
+    <Compile Include="Models\HostedGameCounter.cs" />
+    <Compile Include="Models\HostedGameDeck.cs" />
+    <Compile Include="Models\HostedGameDeckSection.cs" />
+    <Compile Include="Models\HostedGamePlayer.cs" />
+    <Compile Include="Models\HostedGameState.cs" />
+    <Compile Include="Net\Tools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SignalR\Coms\IGameServiceToSASManagerService.cs" />
-    <Compile Include="SignalR\Coms\ISASManagerServiceToGameService.cs" />
-    <Compile Include="SignalR\Coms\Models\HostedGame.cs" />
-    <Compile Include="SignalR\TypeSafe\DynamicProxy.cs" />
-    <Compile Include="SignalR\TypeSafe\DynamicProxyOnBuilder.cs" />
-    <Compile Include="SignalR\TypeSafe\HubMessenger.cs" />
-    <Compile Include="SignalR\TypeSafe\HubProxyMessenger.cs" />
-    <Compile Include="SignalR\TypeSafe\MethodCallInfo.cs" />
-    <Compile Include="SignalR\TypeSafe\HubConnectionExtensionMethods.cs" />
+    <Compile Include="Coms\IGameServiceToSASManagerService.cs" />
+    <Compile Include="Coms\ISASManagerServiceToGameService.cs" />
+    <Compile Include="Models\HostedGame.cs" />
+    <Compile Include="Coms\ISASManagerServiceToSAS.cs" />
+    <Compile Include="Coms\ISASToSASManagerService.cs" />
     <Compile Include="UpdateManager\UpdateManager.cs" />
     <Compile Include="UpdateManager\UpdateManagerConfig.cs" />
   </ItemGroup>
@@ -55,21 +63,26 @@
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Client">
-      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Client.1.0.0-rc2\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.SignalR.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Client.1.0.1\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core">
-      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Core.1.0.0-rc2\lib\net40\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Core.1.0.1\lib\net40\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NuGet.Core">
-      <HintPath>..\..\packages\Nuget.Core.1.6.2\lib\net40\NuGet.Core.dll</HintPath>
+    <Reference Include="NuGet.Core, Version=2.3.40210.45, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Nuget.Core.2.3.0-alpha002\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Sidewinder.Core">
-      <HintPath>..\..\packages\Sidewinder.Core.1.4.0\lib\Net40\Sidewinder.Core.dll</HintPath>
+    <Reference Include="Sidewinder.Core, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Sidewinder.Core.1.5.0\lib\Net40\Sidewinder.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -77,7 +90,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Client\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

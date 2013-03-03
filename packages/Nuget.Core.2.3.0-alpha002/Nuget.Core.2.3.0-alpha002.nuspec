@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Nuget.Core</id>
+    <version>2.3.0-alpha002</version>
+    <authors>Outercurve Foundation</authors>
+    <owners>Outercurve Foundation</owners>
+    <licenseUrl>http://nuget.codeplex.com/license</licenseUrl>
+    <projectUrl>http://nuget.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>NuGet.Core is the core framework assembly for NuGet that the rest of NuGet builds upon.</description>
+    <copyright>© Outercurve Foundation. All rights reserved.</copyright>
+    <tags>nuget</tags>
+    <references>
+      <reference file="NuGet.Core.dll" />
+    </references>
+  </metadata>
+</package>
