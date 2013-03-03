@@ -6,6 +6,7 @@
     using System.ServiceProcess;
     using System.Threading;
 
+    using Octgn.Online.Library.Enums;
     using Octgn.Online.Library.Models;
     using Octgn.Online.Library.UpdateManager;
     using Octgn.StandAloneServer;
@@ -26,24 +27,19 @@
 #if(DEBUG)
             Debug = true;
             Log.Debug("Debug mode enabled.");
-#endif
+#else
             if (UpdateManager.GetContext().Update()) return;
             UpdateManager.GetContext().OnUpdateDetected += OnOnUpdateDetected;
             UpdateManager.GetContext().Start();
-#if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
 #endif
             if (HandleArguments(args))
             {
                 // arguments didn't fail, so do stuff
-#if(DEBUG)
-
-                StartServiceCommandLine();
-                Console.WriteLine("==DONE==");
-                Console.ReadLine();
-#else
-            StartService();
-#endif
+                // Setup game state engine
+                GameStateEngine.SetContext(HostedGame.ToHostedGameState(EnumHostedGameStatus.Booting));
+                if (Debug) StartServiceCommandLine();
+                else StartService();
             }
             if (Debug)
             {
@@ -155,6 +151,7 @@
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
             Log.Fatal("Unhandled Exception", unhandledExceptionEventArgs.ExceptionObject as Exception);
+            LogManager.Shutdown();
             if (Debug)
             {
                 Console.WriteLine();

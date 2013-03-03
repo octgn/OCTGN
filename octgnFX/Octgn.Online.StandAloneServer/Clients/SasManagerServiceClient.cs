@@ -17,12 +17,16 @@
 
     using log4net;
 
+    using ConnectionState = Microsoft.AspNet.SignalR.Client.ConnectionState;
+
     public class SasManagerServiceClient : HubConnection, IDisposable
     {
         #region singleton
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static SasManagerServiceClient current;
         private static readonly object Locker = new object();
+
+        public ConnectionState ConnectionState { get; internal set; }
 
         internal bool Stopped;
 
@@ -63,9 +67,14 @@
         {
             Log.Info("Stopping");
             Stopped = true;
-            HubProxy.Send<ISASToSASManagerService>()
-                .Invoke()
-                .HostedGameStateChanged(Program.HostedGame.Id,EnumHostedGameStatus.GameShuttingDown);
+            try
+            {
+                GameStateEngine.GetContext().SetStatus(EnumHostedGameStatus.GameShuttingDown);
+            }
+            catch (Exception e)
+            {
+                Log.Info(e.Message);
+            }
             base.Stop();
             Log.Info("Stopped");
         }
@@ -90,9 +99,10 @@
                     var t = new Task(() =>
                         {
                             Thread.Sleep(1000);
-                            this.HubProxy.Send<ISASToSASManagerService>()
-                                .Invoke()
-                                .HostedGameStateChanged(Program.HostedGame.Id, EnumHostedGameStatus.Booted);
+                            if(GameStateEngine.GetContext().State.Status == EnumHostedGameStatus.Booting)
+                                GameStateEngine.GetContext().SetStatus(EnumHostedGameStatus.Booted);
+                            else
+                                GameStateEngine.GetContext().SetStatus(GameStateEngine.GetContext().Game.Status);
                         });
                     t.Start();
                     break;
@@ -101,6 +111,7 @@
                 case ConnectionState.Disconnected:
                     break;
             }
+            ConnectionState = stateChange.NewState;
         }
 
         protected void ConnectionOnReconnecting()

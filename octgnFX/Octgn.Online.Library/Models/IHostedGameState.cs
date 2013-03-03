@@ -3,7 +3,22 @@
     using System;
     using System.Collections.Generic;
 
-    public class HostedGameState : IHostedGame
+    using Octgn.Online.Library.Enums;
+
+    public interface IHostedGameState : IHostedGame
+    {
+        Uri HostUri { get;}
+
+        string Password { get; }
+
+        Enums.EnumHostedGameStatus Status { get;}
+
+        List<HostedGamePlayer> Players { get; }
+
+        int CurrentTurnPlayer { get;  }
+    }
+
+    public class HostedGameState : IHostedGameState
     {
         public Guid Id { get; set; }
 
@@ -25,7 +40,7 @@
 
         public string Password { get; set; }
 
-        public Enums.EnumHostedGameStatus Status { get; set; }
+        public EnumHostedGameStatus Status { get; set; }
 
         public List<HostedGamePlayer> Players { get; set; }
 

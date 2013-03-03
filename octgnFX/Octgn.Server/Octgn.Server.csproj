@@ -154,6 +154,7 @@
       <DependentUpon>Broadcaster.tt</DependentUpon>
     </Compile>
     <Compile Include="CardOrientation.cs" />
+    <Compile Include="GameStateEngine.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="IClientCalls.cs">
       <AutoGen>True</AutoGen>
@@ -204,6 +205,10 @@
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
       <Project>{6c6e53ba-e75b-4e93-98ca-3c39ed908b2c}</Project>
       <Name>Octgn.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Online.Library\Octgn.Online.Library.csproj">
+      <Project>{73a5d9e8-eace-4ecf-b521-fc2df0abdc7b}</Project>
+      <Name>Octgn.Online.Library</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
