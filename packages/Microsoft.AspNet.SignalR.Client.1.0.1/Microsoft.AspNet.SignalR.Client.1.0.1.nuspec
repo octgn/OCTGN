@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.AspNet.SignalR.Client</id>
+    <version>1.0.1</version>
+    <title>Microsoft ASP.NET SignalR .NET Client</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/aspnet_and_web_tools_2012_2_RTW_EULA_ENU.htm</licenseUrl>
+    <projectUrl>http://www.asp.net/signalr</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>.NET client for ASP.NET SignalR.</description>
+    <releaseNotes />
+    <copyright />
+    <language>en-US</language>
+    <tags>Microsoft AspNet SignalR AspNetSignalR Client</tags>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="4.5.11" />
+    </dependencies>
+    <references>
+      <reference file="Microsoft.AspNet.SignalR.Client.dll" />
+    </references>
+  </metadata>
+</package>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>db4o-devel</id>
+    <version>8.1.184.15492</version>
+    <title>db4o (Development Release)</title>
+    <authors>db4o team</authors>
+    <owners>db4o team</owners>
+    <licenseUrl>http://www.db4o.com/about/company/legalpolicies/docl.aspx</licenseUrl>
+    <projectUrl>http://www.db4o.com/</projectUrl>
+    <iconUrl>https://nugetgallery.blob.core.windows.net/icons/db4o-devel.8.1.184.15492.jpg</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>db4o is an .NET embedded object oriented database aimed to simplify object storage / query / retrieval with minimal - if not zero - configuration.</description>
+    <summary>Open Source Object Database</summary>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>object-database db4o db4objects</tags>
+    <references>
+      <reference file="Db4objects.Db4o.Data.Services.dll" />
+      <reference file="Db4objects.Db4o.dll" />
+      <reference file="Db4objects.Db4o.Linq.dll" />
+      <reference file="Mono.Reflection.dll" />
+      <reference file="Cecil.FlowAnalysis.dll" />
+      <reference file="Mono.Cecil.dll" />
+    </references>
+  </metadata>
+</package>
