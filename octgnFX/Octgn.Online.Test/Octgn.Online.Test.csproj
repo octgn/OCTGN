@@ -37,7 +37,7 @@
       <HintPath>..\..\packages\Castle.Core.3.2.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="FakeItEasy">
-      <HintPath>..\..\packages\FakeItEasy.1.8.0\lib\NET40\FakeItEasy.dll</HintPath>
+      <HintPath>..\..\packages\FakeItEasy.1.9.0-beta01\lib\net40\FakeItEasy.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
