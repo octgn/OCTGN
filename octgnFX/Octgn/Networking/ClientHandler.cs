@@ -231,6 +231,7 @@ namespace Octgn.Networking
                 Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 group.AddAt(c, group.Count);
             }
+            Program.TracePlayerEvent(owner, "{0} added {1} cards to their {2}",owner.Name,id.Length,group.Name);
         }
 
         public void SwitchWithAlternate(Card c)
