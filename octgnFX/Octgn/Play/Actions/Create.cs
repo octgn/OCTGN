@@ -59,6 +59,7 @@ namespace Octgn.Play.Actions
             _id = id;
             _key = key;
             _model = model;
+            _group = group;
         }
 
         internal static event EventHandler Done;
