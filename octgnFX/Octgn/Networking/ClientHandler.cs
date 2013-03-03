@@ -224,6 +224,7 @@ namespace Octgn.Networking
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
                 return;
             }
+            Program.TracePlayerEvent(owner, "{0} added {1} cards to their {2}",owner.Name,id.Length,group.Name);
             // Ignore cards created by oneself
             if (owner == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
@@ -231,7 +232,6 @@ namespace Octgn.Networking
                 Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 group.AddAt(c, group.Count);
             }
-            Program.TracePlayerEvent(owner, "{0} added {1} cards to their {2}",owner.Name,id.Length,group.Name);
         }
 
         public void SwitchWithAlternate(Card c)
