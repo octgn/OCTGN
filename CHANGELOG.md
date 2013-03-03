@@ -1,3 +1,9 @@
+#3.0.8.51
++ Fixed multiple lobby chat tabs appearing over time
++ Defaulted HardwareRendering to 'ON'
++ Fixed config files not saving
++ Octgn remembers last game type hosted https://github.com/kellyelton/OCTGN/issues/641
+
 #3.0.7.51[Test Build]
 + Fixed multiple lobby chat tabs appearing over time
 + Defaulted HardwareRendering to 'ON'
