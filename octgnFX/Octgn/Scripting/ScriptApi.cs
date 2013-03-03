@@ -548,6 +548,42 @@ namespace Octgn.Scripting
             return (int)Program.Game.TurnNumber;
         }
 
+        public List<int> Create(string modelId, int groupId, int quantity)
+        {
+            var ret = new List<int>();
+
+            Guid modelGuid;
+            if (!Guid.TryParse(modelId, out modelGuid)) return ret;
+
+            var model = Database.GetCardById(modelGuid);
+            if (model == null) return ret;
+
+            var group = Group.Find(groupId);
+            if (group == null) return ret;
+
+            var ids = new int[quantity];
+            var keys = new ulong[quantity];
+
+            var def = Program.Game.Definition.CardDefinition;
+
+
+            for (int i = 0; i < quantity; ++i)
+            {
+                ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
+                int id = Program.Game.GenerateCardId();
+
+                //new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
+
+                ids[i] = id;
+                keys[i] = key;
+                //models[i] = model.Id;
+                ret.Add(id);
+            }
+
+            Program.Client.Rpc.CreateCard(ids,keys,group);
+            return ret;
+        }
+
         public List<int> CreateOnTable(string modelId, int x, int y, bool persist, int quantity)
         {
             var result = new List<int>();
@@ -597,7 +633,6 @@ namespace Octgn.Scripting
                                            x += offset;
                                            y += offset;
                                        }
-
                                        Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, true, persist);
                                    }
                                });
