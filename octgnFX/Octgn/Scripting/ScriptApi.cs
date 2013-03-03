@@ -588,6 +588,7 @@ namespace Octgn.Scripting
                         Program.Client.Rpc.CreateCard(ids, keys, group);
                     });
             return ret;
+            // Comment for a test.
         }
 
         public List<int> CreateOnTable(string modelId, int x, int y, bool persist, int quantity)
