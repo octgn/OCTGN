@@ -49,9 +49,11 @@ namespace Octgn.Play.Actions
         private readonly ulong _key;
         private readonly CardModel _model;
         private readonly Player _owner;
+        private readonly Group _group;
         internal Card Card;
 
-        public CreateCardInGroup(Player owner, int id, ulong key, CardModel model)
+
+        public CreateCardInGroup(Player owner, int id, ulong key, CardModel model, Group group)
         {
             _owner = owner;
             _id = id;
@@ -67,7 +69,7 @@ namespace Octgn.Play.Actions
 
             Card = new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _model, false);
             Card.SetFaceUp(true);
-            Program.Game.Table.AddAt(Card, Program.Game.Table.Count);
+            _group.AddAt(Card,_group.Count);
 
             if (Done != null) Done(this, EventArgs.Empty);
         }

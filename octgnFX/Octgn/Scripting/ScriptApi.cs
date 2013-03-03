@@ -581,7 +581,7 @@ namespace Octgn.Scripting
                             keys[i] = key;
                             //models[i] = model.Id;
                             ret.Add(id);
-                            new CreateCardInGroup(Player.LocalPlayer, id, key, model).Do();
+                            new CreateCardInGroup(Player.LocalPlayer, id, key, model,group).Do();
                         }
 
 
