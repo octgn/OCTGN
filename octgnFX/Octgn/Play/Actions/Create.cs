@@ -43,4 +43,33 @@ namespace Octgn.Play.Actions
             if (Done != null) Done(this, EventArgs.Empty);
         }
     }
+    public class CreateCardInGroup : ActionBase
+    {
+        private readonly int _id;
+        private readonly ulong _key;
+        private readonly CardModel _model;
+        private readonly Player _owner;
+        internal Card Card;
+
+        public CreateCardInGroup(Player owner, int id, ulong key, CardModel model)
+        {
+            _owner = owner;
+            _id = id;
+            _key = key;
+            _model = model;
+        }
+
+        internal static event EventHandler Done;
+
+        public override void Do()
+        {
+            base.Do();
+
+            Card = new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _model, false);
+            Card.SetFaceUp(true);
+            Program.Game.Table.AddAt(Card, Program.Game.Table.Count);
+
+            if (Done != null) Done(this, EventArgs.Empty);
+        }
+    }
 }

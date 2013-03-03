@@ -561,26 +561,32 @@ namespace Octgn.Scripting
             var group = Group.Find(groupId);
             if (group == null) return ret;
 
-            var ids = new int[quantity];
-            var keys = new ulong[quantity];
+            _engine.Invoke(
+                () =>
+                    {
+                        var ids = new int[quantity];
+                        var keys = new ulong[quantity];
 
-            var def = Program.Game.Definition.CardDefinition;
+                        var def = Program.Game.Definition.CardDefinition;
 
 
-            for (int i = 0; i < quantity; ++i)
-            {
-                ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                int id = Program.Game.GenerateCardId();
+                        for (int i = 0; i < quantity; ++i)
+                        {
+                            ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
+                            int id = Program.Game.GenerateCardId();
 
-                //new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
+                            //new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
 
-                ids[i] = id;
-                keys[i] = key;
-                //models[i] = model.Id;
-                ret.Add(id);
-            }
+                            ids[i] = id;
+                            keys[i] = key;
+                            //models[i] = model.Id;
+                            ret.Add(id);
+                            new CreateCardInGroup(Player.LocalPlayer, id, key, model).Do();
+                        }
 
-            Program.Client.Rpc.CreateCard(ids,keys,group);
+
+                        Program.Client.Rpc.CreateCard(ids, keys, group);
+                    });
             return ret;
         }
 
