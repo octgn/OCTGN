@@ -1,3 +1,8 @@
+#3.0.7.51[Test Build]
++ Fixed multiple lobby chat tabs appearing over time
++ Defaulted HardwareRendering to 'ON'
++ Fixed config files not saving
+
 #3.0.7.50
 + Fixed crash from Game list resize.
 + Some file locking on config file so it doesn't keep breaking.
