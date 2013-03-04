@@ -95,7 +95,7 @@ namespace Octgn.Play
             // Shuffle
             var cardIds = new int[cards.Count];
             var cardAliases = new ulong[cards.Count];
-            var rnd = new Random();
+            var rnd = new CryptoRandom();
             for (int i = cards.Count - 1; i >= 0; i--)
             {
                 int r = rnd.Next(i + 1);
@@ -112,7 +112,7 @@ namespace Octgn.Play
 
         private void ShuffleAlone()
         {
-            var rnd = new Random();
+            var rnd = new CryptoRandom();
             for (int i = cards.Count - 1; i >= 0; i--)
             {
                 int r = rnd.Next(i + 1);
