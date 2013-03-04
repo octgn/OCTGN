@@ -572,7 +572,7 @@ namespace Octgn.Scripting
 
                         for (int i = 0; i < quantity; ++i)
                         {
-                            ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
+                            ulong key = Crypto.ModExp((ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense());
                             int id = Program.Game.GenerateCardId();
 
                             //new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
