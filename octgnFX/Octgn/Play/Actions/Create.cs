@@ -68,8 +68,7 @@ namespace Octgn.Play.Actions
         {
             base.Do();
 
-            Card = new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _model, false);
-            Card.SetFaceUp(true);
+            Card = new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _model, true);
             _group.AddAt(Card,_group.Count);
 
             if (Done != null) Done(this, EventArgs.Empty);
