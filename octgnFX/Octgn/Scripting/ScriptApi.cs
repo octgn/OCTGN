@@ -575,10 +575,10 @@ namespace Octgn.Scripting
                         var keys = new ulong[quantity];
                         for (int i = 0; i < quantity; ++i)
                         {
-                            ulong key = Crypto.ModExp((ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense());
+                            ulong key = (ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense();
                             int id = Program.Game.GenerateCardId();
                             ids[i] = id;
-                            keys[i] = key;
+                            keys[i] = Crypto.ModExp(key);
                             ret.Add(id);
                             var card = new Card(Player.LocalPlayer, id, key, Program.Game.Definition.CardDefinition, model, true);
                             group.AddAt(card, group.Count);
