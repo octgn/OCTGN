@@ -224,9 +224,10 @@ namespace Octgn.Networking
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
                 return;
             }
-            var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
-
-            Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c.Name, group.Owner.Name,group.Name);
+            //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
+            var c = Card.Find(id[0]);
+            
+            Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name,group.Name);
             // Ignore cards created by oneself
             if (owner == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
