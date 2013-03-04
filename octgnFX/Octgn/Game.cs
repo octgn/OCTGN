@@ -419,7 +419,7 @@ namespace Octgn
 
         #region Nested type: GrpTmp
 
-        private struct GrpTmp : IEquatable<GrpTmp>
+        internal struct GrpTmp : IEquatable<GrpTmp>
         {
             public readonly Group Group;
             public readonly List<Player> Viewers;
