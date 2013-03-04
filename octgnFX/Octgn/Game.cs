@@ -34,6 +34,7 @@ namespace Octgn
         private bool _stopTurn;
         private Player _turnPlayer;
         private ushort _uniqueId;
+        private bool _BeginCalled;
 
         private string nick;
 
@@ -157,6 +158,8 @@ namespace Octgn
 
         public void Begin()
         {
+            if (_BeginCalled) return;
+            _BeginCalled = true;
             Database.Open(Definition, true);
             // Init fields
             _uniqueId = 1;
