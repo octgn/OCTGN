@@ -8,7 +8,7 @@
     {
         Task HelloResponse(Enums.EnumHelloResponse response);
 
-        Task GameState(HostedGameState state);
+        Task GameState(IHostedGameState state);
 
         Task GameStatusChanged(Enums.EnumHostedGameStatus status);
 

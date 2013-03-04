@@ -8,21 +8,21 @@
 
     public interface IHostedGame
     {
-        Guid Id { get; set; }
+        Guid Id { get; }
 
-        string Name { get; set; }
+        string Name { get; }
 
-        string HostUserName { get; set; }
+        string HostUserName { get; }
 
-        string GameName { get; set; }
+        string GameName { get; }
 
-        Guid GameId { get; set; }
+        Guid GameId { get; }
 
-        Version GameVersion { get; set; }
+        Version GameVersion { get; }
 
-        bool HasPassword { get; set; }
+        bool HasPassword { get; }
 
-        bool TwoSidedTable { get; set; }
+        bool TwoSidedTable { get; }
 
     }
 
@@ -104,7 +104,7 @@
             return ret;
         }
 
-        public static HostedGameState ToHostedGameState(this HostedGameSASModel model, EnumHostedGameStatus status = EnumHostedGameStatus.Unknown)
+        public static IHostedGameState ToHostedGameState(this HostedGameSASModel model, EnumHostedGameStatus status = EnumHostedGameStatus.Unknown)
         {
             var ret = new HostedGameState
                           {
@@ -130,7 +130,7 @@
         /// </summary>
         /// <param name="state">Game state</param>
         /// <returns>Censored Game State</returns>
-        public static HostedGameState ForUser(this HostedGameState state)
+        public static IHostedGameState ForUser(this IHostedGameState state)
         {
             var ret = new HostedGameState
                           {

@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LeLog4net">
+      <HintPath>..\..\packages\le_log4net.2.3.5\lib\4.0\LeLog4net.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -75,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Clients\SasManagerServiceClient.cs" />
     <Compile Include="Coms\SasManagerServiceToSas.cs" />
+    <Compile Include="GameStateEngine.cs" />
     <Compile Include="Hubs\ClientHub.cs" />
     <Compile Include="Mono.Options.Options.cs" />
     <Compile Include="Program.cs" />
@@ -84,7 +88,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +101,10 @@
     <ProjectReference Include="..\Octgn.Online.Library\Octgn.Online.Library.csproj">
       <Project>{73A5D9E8-EACE-4ECF-B521-FC2DF0ABDC7B}</Project>
       <Name>Octgn.Online.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
+      <Project>{6dd203af-5003-4af3-a982-67f10b704d4a}</Project>
+      <Name>Octgn.Server</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

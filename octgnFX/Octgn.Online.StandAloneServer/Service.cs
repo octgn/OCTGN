@@ -5,12 +5,15 @@
     using System.ServiceProcess;
 
     using Octgn.Online.StandAloneServer.Clients;
+    using Octgn.Server;
 
     using log4net;
 
     public class Service : ServiceBase
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal Server Server { get; set; }
+        internal bool StopCalled { get; set; }
         public event EventHandler OnServiceStop;
         public Service()
         {
@@ -22,6 +25,8 @@
             Log.Info("Starting");
             this.OnStart(null);
             SasManagerServiceClient.GetContext().Start();
+            Server = new Server(GameStateEngine.GetContext());
+            Server.OnStop += (sender, args) => { if (!StopCalled) this.Stop(); };
             Log.Info("Started");
         }
 
@@ -44,10 +49,13 @@
 
         protected override void OnStop()
         {
+            StopCalled = true;
             Log.Info("OnStop Called");
-            SasManagerServiceClient.GetContext().Stop();
+            //SasManagerServiceClient.GetContext().Stop();
+            Server.Stop();
             this.FireOnServiceStop();
             Log.Info("OnStop Completed");
+            LogManager.Shutdown();
         }
     }
 }

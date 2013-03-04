@@ -52,8 +52,8 @@ namespace Octgn.StandAloneServer
 
         private static void StartServer()
         {
-            Server = new Server.Server(Port, GameGuid, GameVersion);
-            Server.OnStop += Server_OnStop;
+            //Server = new Server.Server(Octgn.Server.GameStateEngine.Get().);
+            //Server.OnStop += Server_OnStop;
             Console.WriteLine("Starting server on port " + Port);
             while (_keepRunning)
             {
