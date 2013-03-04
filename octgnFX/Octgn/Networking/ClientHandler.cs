@@ -231,7 +231,8 @@ namespace Octgn.Networking
             {
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 //group.AddAt(c, group.Count);
-                new CreateCardInGroup(owner, id[i], type[i], null, group).Do();
+                var card = new Card(owner,id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
+                group.AddAt(card, group.Count);
             }
         }
 

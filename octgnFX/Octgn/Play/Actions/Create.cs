@@ -43,35 +43,35 @@ namespace Octgn.Play.Actions
             if (Done != null) Done(this, EventArgs.Empty);
         }
     }
-    public class CreateCardInGroup : ActionBase
-    {
-        private readonly int _id;
-        private readonly ulong _key;
-        private readonly CardModel _model;
-        private readonly Player _owner;
-        private readonly Group _group;
-        internal Card Card;
+    //public class CreateCardInGroup : ActionBase
+    //{
+    //    private readonly int _id;
+    //    private readonly ulong _key;
+    //    private readonly CardModel _model;
+    //    private readonly Player _owner;
+    //    private readonly Group _group;
+    //    internal Card Card;
 
 
-        public CreateCardInGroup(Player owner, int id, ulong key, CardModel model, Group group)
-        {
-            _owner = owner;
-            _id = id;
-            _key = key;
-            _model = model;
-            _group = group;
-        }
+    //    public CreateCardInGroup(Player owner, int id, ulong key, CardModel model, Group group)
+    //    {
+    //        _owner = owner;
+    //        _id = id;
+    //        _key = key;
+    //        _model = model;
+    //        _group = group;
+    //    }
 
-        internal static event EventHandler Done;
+    //    internal static event EventHandler Done;
 
-        public override void Do()
-        {
-            base.Do();
+    //    public override void Do()
+    //    {
+    //        base.Do();
 
-            Card = new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _model, true);
-            _group.AddAt(Card,_group.Count);
+    //        Card = new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _model, true);
+    //        _group.AddAt(Card,_group.Count);
 
-            if (Done != null) Done(this, EventArgs.Empty);
-        }
-    }
+    //        if (Done != null) Done(this, EventArgs.Empty);
+    //    }
+    //}
 }
