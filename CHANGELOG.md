@@ -1,3 +1,7 @@
+#3.0.9.52
++ Added ability to create cards in arbitrary groups https://github.com/kellyelton/OCTGN/issues/674 
++ Fixed bug that was causing OCTGN to crash when someone would join the pre game lobby.
+
 #3.0.8.52[Test Build]
 + Added ability to create cards in arbitrary groups https://github.com/kellyelton/OCTGN/issues/674 
 + Fixed bug that was causing OCTGN to crash when someone would join the pre game lobby.
