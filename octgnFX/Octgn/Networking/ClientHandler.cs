@@ -292,15 +292,15 @@ namespace Octgn.Networking
             else
             {
                 for (int i = 0; i < id.Length; i++)
-                    new CreateCard(owner, id[i], key[i], faceUp, faceUp ? Database.GetCardById(modelId[i]) : null, x[i], y[i], !persist).Do();
+                    new CreateCard(owner, id[i], key[i], faceUp,Database.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
             }
 
             // Display log messages
             if (modelId.All(m => m == modelId[0]))
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, Database.GetCardById(modelId[0]));
+                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer?Database.GetCardById(modelId[0]):null);
             else
                 foreach (Guid m in modelId)
-                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, Database.GetCardById(m));
+                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == Player.LocalPlayer ? Database.GetCardById(m) : null);
         }
 
         /// <summary>Create new CardIdentities, which hide aliases to other CardIdentities</summary>

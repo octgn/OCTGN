@@ -660,6 +660,10 @@ namespace Octgn.Scripting
                                            x += offset;
                                            y += offset;
                                        }
+                                       string pictureUri = model.Picture;
+                                       Dispatcher.CurrentDispatcher.BeginInvoke(
+                                           new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
+                                           DispatcherPriority.ApplicationIdle, pictureUri);
                                        Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, faceDown != true, persist);
                                    }
                                });
