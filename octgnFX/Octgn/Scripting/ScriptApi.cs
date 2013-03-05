@@ -611,61 +611,6 @@ namespace Octgn.Scripting
             // Comment for a test.
         }
 
-        public List<int> CreateOnTableFacedown(string modelId, int x, int y, bool persist, int quantity)
-        {
-            var result = new List<int>();
-
-            Guid modelGuid;
-            if (!Guid.TryParse(modelId, out modelGuid))
-                return result; // e.g. modelId may be null if the cloned card is face down.
-
-            _engine.Invoke(() =>
-            {
-                CardModel model = Database.GetCardById(modelGuid);
-                if (model == null)
-                {
-                }
-                else
-                {
-                    var ids = new int[quantity];
-                    var keys = new ulong[quantity];
-                    var models = new Guid[quantity];
-                    int[] xs = new int[quantity], ys = new int[quantity];
-
-                    CardDef def = Program.Game.Definition.CardDefinition;
-
-                    if (Player.LocalPlayer.InvertedTable)
-                    {
-                        x -= def.Width;
-                        y -= def.Height;
-                    }
-                    var offset = (int)(Math.Min(def.Width, def.Height) * 0.2);
-                    if (Program.GameSettings.UseTwoSidedTable && TableControl.IsInInvertedZone(y))
-                        offset = -offset;
-
-                    for (int i = 0; i < quantity; ++i)
-                    {
-                        ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                        int id = Program.Game.GenerateCardId();
-
-                        new CreateCard(Player.LocalPlayer, id, key, false, model, x, y, !persist).Do();
-
-                        ids[i] = id;
-                        keys[i] = key;
-                        models[i] = model.Id;
-                        xs[i] = x;
-                        ys[i] = y;
-                        result.Add(id);
-
-                        x += offset;
-                        y += offset;
-                    }
-                    Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, true, persist);
-                }
-            });
-
-            return result;
-        }
         public List<int> CreateOnTable(string modelId, int x, int y, bool persist, int quantity, bool faceDown)
         {
             var result = new List<int>();
