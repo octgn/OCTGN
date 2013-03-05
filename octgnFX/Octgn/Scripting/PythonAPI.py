@@ -223,8 +223,11 @@ class Group(NamedObject):
 class Table(Group):
   def __init__(self):
     Group.__init__(self, 0x01000000, 'Table')
-  def create(self, model, x, y, quantity = 1, persist = False):
-    ids = _api.CreateOnTable(model, x, y, persist, quantity)
+  def create(self, model, x, y, quantity = 1, persist = False, facedown = False):
+    if(facedown == False):
+      ids = _api.CreateOnTable(model, x, y, persist, quantity)
+    else:
+      ids = _api.CreateOnTableFaceDown(model,x,y,persist,quantity)
     #if ids == None or ids == []: return None
     if quantity != 1:
       return [Card(id) for id in ids]
