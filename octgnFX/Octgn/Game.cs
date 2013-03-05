@@ -34,6 +34,7 @@ namespace Octgn
         private bool _stopTurn;
         private Player _turnPlayer;
         private ushort _uniqueId;
+        private bool _BeginCalled;
 
         private string nick;
 
@@ -157,6 +158,8 @@ namespace Octgn
 
         public void Begin()
         {
+            if (_BeginCalled) return;
+            _BeginCalled = true;
             Database.Open(Definition, true);
             // Init fields
             _uniqueId = 1;
@@ -419,7 +422,7 @@ namespace Octgn
 
         #region Nested type: GrpTmp
 
-        private struct GrpTmp : IEquatable<GrpTmp>
+        internal struct GrpTmp : IEquatable<GrpTmp>
         {
             public readonly Group Group;
             public readonly List<Player> Viewers;

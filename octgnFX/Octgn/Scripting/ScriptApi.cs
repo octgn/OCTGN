@@ -18,6 +18,9 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting
 {
+    using System.Windows.Media.Imaging;
+    using System.Windows.Threading;
+
     [SecuritySafeCritical]
     public class ScriptApi : MarshalByRefObject
     {
@@ -564,34 +567,51 @@ namespace Octgn.Scripting
             _engine.Invoke(
                 () =>
                     {
+                        var gt = new Game.GrpTmp(group, group.Visibility, group.Viewers.ToList());
+                        group.SetVisibility(false, false);
+
+
                         var ids = new int[quantity];
                         var keys = new ulong[quantity];
-
-                        var def = Program.Game.Definition.CardDefinition;
-
-
                         for (int i = 0; i < quantity; ++i)
                         {
-                            ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | model.Id.Condense();
+                            ulong key = (ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense();
                             int id = Program.Game.GenerateCardId();
-
-                            //new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
-
                             ids[i] = id;
-                            keys[i] = key;
-                            //models[i] = model.Id;
+                            keys[i] = Crypto.ModExp(key);
                             ret.Add(id);
-                            new CreateCardInGroup(Player.LocalPlayer, id, key, model,group).Do();
+                            var card = new Card(Player.LocalPlayer, id, key, Program.Game.Definition.CardDefinition, model, true);
+                            group.AddAt(card, group.Count);
                         }
 
+                        string pictureUri = model.Picture;
+                        Dispatcher.CurrentDispatcher.BeginInvoke(
+                            new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
+                            DispatcherPriority.ApplicationIdle, pictureUri);
 
                         Program.Client.Rpc.CreateCard(ids, keys, group);
+
+                        switch (gt.Visibility)
+                        {
+                            case GroupVisibility.Everybody:
+                                group.SetVisibility(true, false);
+                                break;
+                            case GroupVisibility.Nobody:
+                                group.SetVisibility(false, false);
+                                break;
+                            default:
+                                foreach (Player p in gt.Viewers)
+                                {
+                                    group.AddViewer(p, false);
+                                }
+                                break;
+                        }
                     });
             return ret;
             // Comment for a test.
         }
 
-        public List<int> CreateOnTable(string modelId, int x, int y, bool persist, int quantity)
+        public List<int> CreateOnTable(string modelId, int x, int y, bool persist, int quantity, bool faceDown)
         {
             var result = new List<int>();
 
@@ -628,7 +648,7 @@ namespace Octgn.Scripting
                                            ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
                                            int id = Program.Game.GenerateCardId();
 
-                                           new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
+                                           new CreateCard(Player.LocalPlayer, id, key, faceDown != true, model, x, y, !persist).Do();
 
                                            ids[i] = id;
                                            keys[i] = key;
@@ -640,7 +660,11 @@ namespace Octgn.Scripting
                                            x += offset;
                                            y += offset;
                                        }
-                                       Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, true, persist);
+                                       string pictureUri = model.Picture;
+                                       Dispatcher.CurrentDispatcher.BeginInvoke(
+                                           new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
+                                           DispatcherPriority.ApplicationIdle, pictureUri);
+                                       Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, faceDown != true, persist);
                                    }
                                });
 

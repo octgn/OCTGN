@@ -35,42 +35,10 @@ namespace Octgn.Play.Actions
             base.Do();
 
             Card =
-                new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _faceUp ? _model : null, false)
+                new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _model, false)
                     {X = _x, Y = _y, DeleteWhenLeavesGroup = _deletesWhenLeavesGroup};
             Card.SetFaceUp(_faceUp);
             Program.Game.Table.AddAt(Card, Program.Game.Table.Count);
-
-            if (Done != null) Done(this, EventArgs.Empty);
-        }
-    }
-    public class CreateCardInGroup : ActionBase
-    {
-        private readonly int _id;
-        private readonly ulong _key;
-        private readonly CardModel _model;
-        private readonly Player _owner;
-        private readonly Group _group;
-        internal Card Card;
-
-
-        public CreateCardInGroup(Player owner, int id, ulong key, CardModel model, Group group)
-        {
-            _owner = owner;
-            _id = id;
-            _key = key;
-            _model = model;
-            _group = group;
-        }
-
-        internal static event EventHandler Done;
-
-        public override void Do()
-        {
-            base.Do();
-
-            Card = new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _model, false);
-            Card.SetFaceUp(true);
-            _group.AddAt(Card,_group.Count);
 
             if (Done != null) Done(this, EventArgs.Empty);
         }
