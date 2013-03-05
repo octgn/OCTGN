@@ -45,29 +45,36 @@
         /// Gets a list of games from a feed.
         /// </summary>
         /// <returns>List of games</returns>
-        public List<IPackage> GetGameList()
+        public List<GameFeedViewModel> GetGameList()
         {
             var repo = NuGet.PackageRepositoryFactory.Default.CreateRepository(Program.GameFeed);
             var list = repo.GetPackages().Where(x => x.IsLatestVersion).OrderByDescending(x => x.Version.Version).ToList();
             var ret = new List<GameFeedViewModel>();
             foreach (var i in list)
             {
-                var model = new GameFeedViewModel();
-                //model.Version = i.Version.Version;
-                //model.Authors = i.Authors;
-                //model.Description = i.Description;
-                //model.DownloadCount = i.DownloadCount;
-                //model.IconUrl = i.IconUrl;
-                //model.Id = i.Id;
-                //model.Owners = i.Owners;
-                //model.ProjectUrl = i.ProjectUrl;
-                //model.Published = i.Published;
-                //model.ReleaseNotes = i.ReleaseNotes;
-                //model.Summary = i.Summary;
-                //model.Tags = i.Tags;
-                //model.Title = i.Title;
+                try
+                {
+                    var model = new GameFeedViewModel();
+                    model.Version = i.Version.Version;
+                    model.Authors = i.Authors;
+                    model.Description = i.Description;
+                    model.DownloadCount = i.DownloadCount;
+                    model.IconUrl = i.IconUrl;
+                    model.Id = i.Id;
+                    model.Owners = i.Owners;
+                    model.ProjectUrl = i.ProjectUrl;
+                    model.Published = i.Published;
+                    model.ReleaseNotes = i.ReleaseNotes;
+                    model.Summary = i.Summary;
+                    model.Tags = i.Tags;
+                    model.Title = i.Title;
+                    ret.Add(model);
+                }
+                catch 
+                {
+                }
             }
-            return null;
+            return ret;
         }
     }
 }
