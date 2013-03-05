@@ -276,6 +276,7 @@
     </Compile>
     <Compile Include="Definitions\IconDef.cs" />
     <Compile Include="GameManagement\GameFeedManager.cs" />
+    <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
     <Compile Include="Controls\LobbyChat.cs" />
