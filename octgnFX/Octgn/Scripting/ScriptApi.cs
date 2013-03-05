@@ -666,7 +666,7 @@ namespace Octgn.Scripting
 
             return result;
         }
-        public List<int> CreateOnTable(string modelId, int x, int y, bool persist, int quantity)
+        public List<int> CreateOnTable(string modelId, int x, int y, bool persist, int quantity, bool faceDown)
         {
             var result = new List<int>();
 
@@ -703,7 +703,7 @@ namespace Octgn.Scripting
                                            ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
                                            int id = Program.Game.GenerateCardId();
 
-                                           new CreateCard(Player.LocalPlayer, id, key, true, model, x, y, !persist).Do();
+                                           new CreateCard(Player.LocalPlayer, id, key, faceDown != true, model, x, y, !persist).Do();
 
                                            ids[i] = id;
                                            keys[i] = key;
@@ -715,7 +715,7 @@ namespace Octgn.Scripting
                                            x += offset;
                                            y += offset;
                                        }
-                                       Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, true, persist);
+                                       Program.Client.Rpc.CreateCardAt(ids, keys, models, xs, ys, faceDown != true, persist);
                                    }
                                });
 
