@@ -274,9 +274,13 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\InstallGame.xaml.cs">
+      <DependentUpon>InstallGame.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Definitions\IconDef.cs" />
     <Compile Include="GameManagement\GameFeedManager.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
+    <Compile Include="ViewModels\GameFeedViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
     <Compile Include="Controls\LobbyChat.cs" />
     <Compile Include="Controls\OctgnChrome.cs" />
@@ -710,6 +714,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\HostGameSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\InstallGame.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
