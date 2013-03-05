@@ -77,6 +77,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KellyElton.SignalR.TypeSafe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Online.Client", "octgnFX\Octgn.Online.Client\Octgn.Online.Client.csproj", "{C6E5969B-3C0B-4A58-B725-62F722A95066}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OCTIDE", "octgnFX\OCTIDE\OCTIDE.csproj", "{57110258-09DE-4EF1-AC32-15DED1B2CD33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug x86|Any CPU = Debug x86|Any CPU
@@ -514,6 +516,26 @@ Global
 		{C6E5969B-3C0B-4A58-B725-62F722A95066}.Release|ARM.ActiveCfg = Release|Any CPU
 		{C6E5969B-3C0B-4A58-B725-62F722A95066}.Release|x64.ActiveCfg = Release|Any CPU
 		{C6E5969B-3C0B-4A58-B725-62F722A95066}.Release|x86.ActiveCfg = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug x86|Any CPU.ActiveCfg = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug x86|Any CPU.Build.0 = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug x86|ARM.ActiveCfg = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug x86|x64.ActiveCfg = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug x86|x86.ActiveCfg = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release_Test|Any CPU.ActiveCfg = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release_Test|Any CPU.Build.0 = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release_Test|ARM.ActiveCfg = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release_Test|x64.ActiveCfg = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release_Test|x86.ActiveCfg = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release|ARM.ActiveCfg = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release|x64.ActiveCfg = Release|Any CPU
+		{57110258-09DE-4EF1-AC32-15DED1B2CD33}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
