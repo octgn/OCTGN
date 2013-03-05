@@ -297,10 +297,10 @@ namespace Octgn.Networking
 
             // Display log messages
             if (modelId.All(m => m == modelId[0]))
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer?Database.GetCardById(modelId[0]):null);
+                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Database.GetCardById(modelId[0]).Name :"card");
             else
                 foreach (Guid m in modelId)
-                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == Player.LocalPlayer ? Database.GetCardById(m) : null);
+                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp? Database.GetCardById(m).Name : "card");
         }
 
         /// <summary>Create new CardIdentities, which hide aliases to other CardIdentities</summary>
