@@ -35,7 +35,7 @@ namespace Octgn.Play.Actions
             base.Do();
 
             Card =
-                new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _faceUp ? _model : null, false)
+                new Card(_owner, _id, _key, Program.Game.Definition.CardDefinition, _model, false)
                     {X = _x, Y = _y, DeleteWhenLeavesGroup = _deletesWhenLeavesGroup};
             Card.SetFaceUp(_faceUp);
             Program.Game.Table.AddAt(Card, Program.Game.Table.Count);
