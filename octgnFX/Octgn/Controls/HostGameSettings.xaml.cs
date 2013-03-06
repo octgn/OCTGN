@@ -65,6 +65,9 @@
             CheckBoxIsLocalGame.IsChecked = !Program.LobbyClient.IsConnected;
             CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             lastHostedGameType = Prefs.LastHostedGameType;
+            TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false 
+                || Program.LobbyClient.Me == null 
+                || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
         }
 
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
@@ -210,7 +213,7 @@
             {
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");
             }
-
+            Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
             Program.GameSettings.UseTwoSidedTable = true;
             Program.Game = new Game(GameDef.FromO8G(game.FullPath), Username, true);
