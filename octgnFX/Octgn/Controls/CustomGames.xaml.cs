@@ -113,7 +113,7 @@ namespace Octgn.Controls
         private void StartJoinGame(HostedGameViewModel hostedGame, Data.Game game)
         {
             Program.IsHost = false;
-            Program.Game = new Game(GameDef.FromO8G(game.FullPath));
+            Program.Game = new Game(GameDef.FromO8G(game.FullPath),Program.LobbyClient.Me.UserName);
             Program.CurrentOnlineGameName = hostedGame.Name;
             IPAddress hostAddress =  Dns.GetHostAddresses(Program.GameServerPath).FirstOrDefault();
             if(hostAddress == null)
@@ -202,7 +202,7 @@ namespace Octgn.Controls
                     if (Program.PreGameLobbyWindow == null)
                     {
                         Program.IsHost = false;
-                        Program.Game = new Octgn.Game(GameDef.FromO8G(connectOfflineGameDialog.Game.FullPath), true);
+                        Program.Game = new Octgn.Game(GameDef.FromO8G(connectOfflineGameDialog.Game.FullPath), null,true);
 
                         Program.PreGameLobbyWindow = new PreGameLobbyWindow();
                         Program.PreGameLobbyWindow.Setup(true,Program.MainWindowNew);

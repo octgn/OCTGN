@@ -7,6 +7,7 @@
 
     public interface IGameStateEngine
     {
+        bool IsLocal { get; }
         IHostedGameState Game { get; }
 
         void SetStatus(EnumHostedGameStatus status);

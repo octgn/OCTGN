@@ -6,6 +6,8 @@ using Skylabs.Lobby;
 
 namespace Skylabs.Lobby
 {
+    using System.Collections.Generic;
+
     public class HostedGame : IEquatable<HostedGame>
     {
         /// <summary>
@@ -17,7 +19,7 @@ namespace Skylabs.Lobby
         /// <param name="name"> Name of the room </param>
         /// <param name="password"> Password for the game </param>
         /// <param name="hoster"> User hosting the game </param>
-        public HostedGame(int port, Guid gameguid, Version gameversion, string name, string password, User hoster, bool localGame = false)
+        public HostedGame(int port, Guid gameguid, Version gameversion, string gameName, string name, string password, User hoster, bool localGame = false)
         {
             GameLog = "";
             GameGuid = gameguid;
@@ -29,19 +31,28 @@ namespace Skylabs.Lobby
             Port = port;
             TimeStarted = new DateTime(0);
             LocalGame = localGame;
+
+            var atemp = new List<string>();
+            atemp.Add("-id=" + Guid.NewGuid().ToString());
+            atemp.Add("-name=\"" + name + "\"");
+            atemp.Add("-hostusername=\"" + hoster.UserName + "\"");
+            atemp.Add("-gamename=\"" + gameName + "\"");
+            atemp.Add("-gameid=" + gameguid);
+            atemp.Add("-gameversion=" + gameversion);
+            atemp.Add("-bind=" + "0.0.0.0:" + port.ToString());
+            atemp.Add("-local");
+
             StandAloneApp = new Process();
-            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.StandAloneServer.exe";
-            StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
-                                                Port.ToString(CultureInfo.InvariantCulture);
+            StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
+            StandAloneApp.StartInfo.Arguments = String.Join(" ", atemp);
 #if(DEBUG || TestServer)
-            StandAloneApp.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(),@"..\..\..\Octgn.StandAloneServer\bin\Debug\Octgn.StandAloneServer.exe");
+            StandAloneApp.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(),@"..\..\..\Octgn.Online.StandAloneServer\bin\Debug\Octgn.Online.StandAloneServer.exe");
             StandAloneApp.StartInfo.FileName = Path.GetFullPath(StandAloneApp.StartInfo.FileName);
 #else
             if(!LocalGame)
             {
-                StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.StandAloneServer.exe";
-                StandAloneApp.StartInfo.Arguments = "-g=" + GameGuid + " -v=" + GameVersion + " -p=" +
-                                                    Port.ToString(CultureInfo.InvariantCulture);
+                StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";
+                StandAloneApp.StartInfo.Arguments = String.Join(" ", atemp);
             }
 
 #endif
@@ -60,6 +71,7 @@ namespace Skylabs.Lobby
         private void StandAloneAppOnOutputDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)
         {
             GameLog += dataReceivedEventArgs.Data + Environment.NewLine;
+            Debug.WriteLine(dataReceivedEventArgs.Data);
         }
 
         private void StandAloneAppOnErrorDataReceived(object sender, DataReceivedEventArgs dataReceivedEventArgs)

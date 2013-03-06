@@ -24,7 +24,8 @@
         {
             Log.Info("Starting");
             this.OnStart(null);
-            SasManagerServiceClient.GetContext().Start();
+            if(!Program.Local)
+                SasManagerServiceClient.GetContext().Start();
             Server = new Server(GameStateEngine.GetContext());
             Server.OnStop += (sender, args) => { if (!StopCalled) this.Stop(); };
             Log.Info("Started");
@@ -51,7 +52,8 @@
         {
             StopCalled = true;
             Log.Info("OnStop Called");
-            //SasManagerServiceClient.GetContext().Stop();
+            if (!Program.Local)
+                SasManagerServiceClient.GetContext().Stop();
             Server.Stop();
             this.FireOnServiceStop();
             Log.Info("OnStop Completed");

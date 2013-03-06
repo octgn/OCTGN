@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ModernUI</id>
+    <version>1.1.0.1</version>
+    <title>MetroFramework - WinForms on steroids.</title>
+    <authors>Sven Walter / Peter Sunde</authors>
+    <owners>Sven Walter / Peter Sunde</owners>
+    <licenseUrl>https://raw.github.com/viperneo/winforms-modernui/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/viperneo/winforms-modernui</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Brings the new Modern UI alias Metro UI of Windows 8 to .NET Windows Forms applications. 
+
+Supported platforms:
+
+Windows XP SP1/SP2/SP3
+Windows Vista
+Windows 7
+Windows 8</description>
+    <summary>Brings the new Modern UI alias Metro UI of Windows 8 to .NET Windows Forms applications.</summary>
+    <releaseNotes />
+    <copyright>Sven Walter / Peter Sunde</copyright>
+    <language />
+    <references>
+      <reference file="MetroFramework.dll" />
+    </references>
+  </metadata>
+</package>
