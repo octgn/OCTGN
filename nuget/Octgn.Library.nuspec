@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>Octgn.Library</id>
-        <version>3.0.9.55</version>
+        <version>3.0.10.55</version>
         <title>Octgn Library</title>
         <authors>Kelly Elton</authors>
         <owners />
