@@ -13,7 +13,7 @@ namespace OCTIDE
 
     using WeifenLuo.WinFormsUI.Docking;
 
-    public partial class MainWindow : MetroForm
+    public partial class MainWindow : Form
     {
         private GameExplorerForm GameExplorer { get; set; }
 

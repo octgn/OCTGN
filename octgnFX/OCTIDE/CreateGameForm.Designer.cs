@@ -1,5 +1,7 @@
 ﻿namespace OCTIDE
 {
+    using System.Windows.Forms;
+
     partial class CreateGameForm
     {
         /// <summary>
@@ -173,7 +175,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CreateGameForm";
-            this.Resizable = false;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.Text = "Create A Game";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -9,9 +9,7 @@ using System.Windows.Forms;
 
 namespace OCTIDE
 {
-    using MetroFramework.Forms;
-
-    public partial class CreateGameForm : MetroForm
+    public partial class CreateGameForm : Form
     {
         public CreateGameForm()
         {
