@@ -30,152 +30,101 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBoxGameName = new MetroFramework.Controls.MetroTextBox();
-            this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
-            this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
-            this.textBoxLocation = new MetroFramework.Controls.MetroTextBox();
-            this.buttonBrowse = new MetroFramework.Controls.MetroButton();
-            this.metroButton1 = new MetroFramework.Controls.MetroButton();
-            this.labelError = new System.Windows.Forms.Label();
-            this.metroButton2 = new MetroFramework.Controls.MetroButton();
+            this.label1 = new System.Windows.Forms.Label();
+            this.TextBoxGameName = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.TextBoxLocation = new System.Windows.Forms.TextBox();
+            this.ButtonBrowse = new System.Windows.Forms.Button();
+            this.LabelError = new System.Windows.Forms.Label();
+            this.ButtonCreate = new System.Windows.Forms.Button();
+            this.ButtonCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // textBoxGameName
+            // label1
             // 
-            this.textBoxGameName.CustomBackground = false;
-            this.textBoxGameName.CustomForeColor = false;
-            this.textBoxGameName.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxGameName.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxGameName.Location = new System.Drawing.Point(121, 102);
-            this.textBoxGameName.Multiline = false;
-            this.textBoxGameName.Name = "textBoxGameName";
-            this.textBoxGameName.SelectedText = "";
-            this.textBoxGameName.Size = new System.Drawing.Size(327, 23);
-            this.textBoxGameName.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxGameName.StyleManager = null;
-            this.textBoxGameName.TabIndex = 5;
-            this.textBoxGameName.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxGameName.UseStyleColors = false;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(66, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Game Name";
             // 
-            // metroLabel1
+            // TextBoxGameName
             // 
-            this.metroLabel1.AutoSize = true;
-            this.metroLabel1.CustomBackground = false;
-            this.metroLabel1.CustomForeColor = false;
-            this.metroLabel1.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel1.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel1.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel1.Location = new System.Drawing.Point(15, 102);
-            this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(84, 19);
-            this.metroLabel1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel1.StyleManager = null;
-            this.metroLabel1.TabIndex = 6;
-            this.metroLabel1.Text = "Game Name";
-            this.metroLabel1.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel1.UseStyleColors = false;
+            this.TextBoxGameName.Location = new System.Drawing.Point(84, 37);
+            this.TextBoxGameName.Name = "TextBoxGameName";
+            this.TextBoxGameName.Size = new System.Drawing.Size(316, 20);
+            this.TextBoxGameName.TabIndex = 1;
             // 
-            // metroLabel2
+            // label2
             // 
-            this.metroLabel2.AutoSize = true;
-            this.metroLabel2.CustomBackground = false;
-            this.metroLabel2.CustomForeColor = false;
-            this.metroLabel2.FontSize = MetroFramework.MetroLabelSize.Medium;
-            this.metroLabel2.FontWeight = MetroFramework.MetroLabelWeight.Light;
-            this.metroLabel2.LabelMode = MetroFramework.Controls.MetroLabelMode.Default;
-            this.metroLabel2.Location = new System.Drawing.Point(15, 140);
-            this.metroLabel2.Name = "metroLabel2";
-            this.metroLabel2.Size = new System.Drawing.Size(58, 19);
-            this.metroLabel2.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroLabel2.StyleManager = null;
-            this.metroLabel2.TabIndex = 8;
-            this.metroLabel2.Text = "Location";
-            this.metroLabel2.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroLabel2.UseStyleColors = false;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(30, 76);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(48, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Location";
             // 
-            // textBoxLocation
+            // TextBoxLocation
             // 
-            this.textBoxLocation.CustomBackground = false;
-            this.textBoxLocation.CustomForeColor = false;
-            this.textBoxLocation.FontSize = MetroFramework.MetroTextBoxSize.Small;
-            this.textBoxLocation.FontWeight = MetroFramework.MetroTextBoxWeight.Regular;
-            this.textBoxLocation.Location = new System.Drawing.Point(121, 140);
-            this.textBoxLocation.Multiline = false;
-            this.textBoxLocation.Name = "textBoxLocation";
-            this.textBoxLocation.SelectedText = "";
-            this.textBoxLocation.Size = new System.Drawing.Size(327, 23);
-            this.textBoxLocation.Style = MetroFramework.MetroColorStyle.Blue;
-            this.textBoxLocation.StyleManager = null;
-            this.textBoxLocation.TabIndex = 7;
-            this.textBoxLocation.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.textBoxLocation.UseStyleColors = false;
+            this.TextBoxLocation.Location = new System.Drawing.Point(84, 73);
+            this.TextBoxLocation.Name = "TextBoxLocation";
+            this.TextBoxLocation.Size = new System.Drawing.Size(316, 20);
+            this.TextBoxLocation.TabIndex = 3;
             // 
-            // buttonBrowse
+            // ButtonBrowse
             // 
-            this.buttonBrowse.Highlight = false;
-            this.buttonBrowse.Location = new System.Drawing.Point(466, 140);
-            this.buttonBrowse.Name = "buttonBrowse";
-            this.buttonBrowse.Size = new System.Drawing.Size(90, 23);
-            this.buttonBrowse.Style = MetroFramework.MetroColorStyle.Blue;
-            this.buttonBrowse.StyleManager = null;
-            this.buttonBrowse.TabIndex = 9;
-            this.buttonBrowse.Text = "Browse";
-            this.buttonBrowse.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
+            this.ButtonBrowse.Location = new System.Drawing.Point(422, 73);
+            this.ButtonBrowse.Name = "ButtonBrowse";
+            this.ButtonBrowse.Size = new System.Drawing.Size(75, 20);
+            this.ButtonBrowse.TabIndex = 4;
+            this.ButtonBrowse.Text = "Browse";
+            this.ButtonBrowse.UseVisualStyleBackColor = true;
             // 
-            // metroButton1
+            // LabelError
             // 
-            this.metroButton1.Highlight = false;
-            this.metroButton1.Location = new System.Drawing.Point(23, 215);
-            this.metroButton1.Name = "metroButton1";
-            this.metroButton1.Size = new System.Drawing.Size(90, 32);
-            this.metroButton1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroButton1.StyleManager = null;
-            this.metroButton1.TabIndex = 10;
-            this.metroButton1.Text = "Create";
-            this.metroButton1.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
+            this.LabelError.AutoSize = true;
+            this.LabelError.ForeColor = System.Drawing.Color.Red;
+            this.LabelError.Location = new System.Drawing.Point(81, 9);
+            this.LabelError.Name = "LabelError";
+            this.LabelError.Size = new System.Drawing.Size(0, 13);
+            this.LabelError.TabIndex = 5;
             // 
-            // labelError
+            // ButtonCreate
             // 
-            this.labelError.AutoSize = true;
-            this.labelError.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.labelError.Location = new System.Drawing.Point(39, 64);
-            this.labelError.Name = "labelError";
-            this.labelError.Size = new System.Drawing.Size(0, 13);
-            this.labelError.TabIndex = 11;
+            this.ButtonCreate.Location = new System.Drawing.Point(430, 160);
+            this.ButtonCreate.Name = "ButtonCreate";
+            this.ButtonCreate.Size = new System.Drawing.Size(75, 23);
+            this.ButtonCreate.TabIndex = 6;
+            this.ButtonCreate.Text = "Create";
+            this.ButtonCreate.UseVisualStyleBackColor = true;
             // 
-            // metroButton2
+            // ButtonCancel
             // 
-            this.metroButton2.Highlight = false;
-            this.metroButton2.Location = new System.Drawing.Point(466, 215);
-            this.metroButton2.Name = "metroButton2";
-            this.metroButton2.Size = new System.Drawing.Size(90, 32);
-            this.metroButton2.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroButton2.StyleManager = null;
-            this.metroButton2.TabIndex = 12;
-            this.metroButton2.Text = "Cancel";
-            this.metroButton2.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroButton2.Click += new System.EventHandler(this.metroButton2_Click);
+            this.ButtonCancel.Location = new System.Drawing.Point(15, 160);
+            this.ButtonCancel.Name = "ButtonCancel";
+            this.ButtonCancel.Size = new System.Drawing.Size(75, 23);
+            this.ButtonCancel.TabIndex = 7;
+            this.ButtonCancel.Text = "Cancel";
+            this.ButtonCancel.UseVisualStyleBackColor = true;
             // 
             // CreateGameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(575, 266);
-            this.Controls.Add(this.metroButton2);
-            this.Controls.Add(this.labelError);
-            this.Controls.Add(this.metroButton1);
-            this.Controls.Add(this.buttonBrowse);
-            this.Controls.Add(this.metroLabel2);
-            this.Controls.Add(this.textBoxLocation);
-            this.Controls.Add(this.metroLabel1);
-            this.Controls.Add(this.textBoxGameName);
-            this.Location = new System.Drawing.Point(0, 0);
+            this.ClientSize = new System.Drawing.Size(517, 195);
+            this.Controls.Add(this.ButtonCancel);
+            this.Controls.Add(this.ButtonCreate);
+            this.Controls.Add(this.LabelError);
+            this.Controls.Add(this.ButtonBrowse);
+            this.Controls.Add(this.TextBoxLocation);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.TextBoxGameName);
+            this.Controls.Add(this.label1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CreateGameForm";
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.Text = "Create A Game";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -184,13 +133,14 @@
 
         #endregion
 
-        private MetroFramework.Controls.MetroTextBox textBoxGameName;
-        private MetroFramework.Controls.MetroLabel metroLabel1;
-        private MetroFramework.Controls.MetroLabel metroLabel2;
-        private MetroFramework.Controls.MetroTextBox textBoxLocation;
-        private MetroFramework.Controls.MetroButton buttonBrowse;
-        private MetroFramework.Controls.MetroButton metroButton1;
-        private System.Windows.Forms.Label labelError;
-        private MetroFramework.Controls.MetroButton metroButton2;
+        private Label label1;
+        private TextBox TextBoxGameName;
+        private Label label2;
+        private TextBox TextBoxLocation;
+        private Button ButtonBrowse;
+        private Label LabelError;
+        private Button ButtonCreate;
+        private Button ButtonCancel;
+
     }
 }

@@ -15,31 +15,34 @@ namespace OCTIDE
         {
             InitializeComponent();
             this.DialogResult = DialogResult.None;
+            ButtonBrowse.Click += this.ButtonBrowseClick;
+            ButtonCreate.Click += this.ButtonCreateClick;
+            ButtonCancel.Click += this.ButtonCancelClick;
         }
 
-        private void buttonBrowse_Click(object sender, EventArgs e)
+        private void ButtonBrowseClick(object sender, EventArgs e)
         {
             var of = new System.Windows.Forms.FolderBrowserDialog();
             var result = of.ShowDialog();
             if (result != DialogResult.OK) return;
-            textBoxLocation.Text = of.SelectedPath;
+            TextBoxLocation.Text = of.SelectedPath;
         }
 
-        private void metroButton1_Click(object sender, EventArgs e)
+        private void ButtonCreateClick(object sender, EventArgs e)
         {
             try
             {
-                GameEditorState.CreateGame(textBoxLocation.Text, textBoxGameName.Text);
+                GameEditorState.CreateGame(TextBoxLocation.Text, TextBoxGameName.Text);
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (ValidationException ex)
             {
-                labelError.Text = ex.Message;
+                LabelError.Text = ex.Message;
             }
         }
 
-        private void metroButton2_Click(object sender, EventArgs e)
+        private void ButtonCancelClick(object sender, EventArgs e)
         {
             this.Close();
         }

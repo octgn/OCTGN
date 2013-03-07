@@ -9,8 +9,6 @@ using System.Windows.Forms;
 
 namespace OCTIDE
 {
-    using MetroFramework.Forms;
-
     using WeifenLuo.WinFormsUI.Docking;
 
     public partial class MainWindow : Form

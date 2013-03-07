@@ -9,11 +9,9 @@ namespace OCTIDE
     using System.Drawing;
     using System.Windows.Forms;
 
-    using MetroFramework.Forms;
-
     using WeifenLuo.WinFormsUI.Docking;
 
-    public class MetroDock : MetroForm, IDockContent
+    public class MetroDock :Form, IDockContent
     {
         private static readonly object DockStateChangedEvent = new object();
 
