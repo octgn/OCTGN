@@ -83,7 +83,8 @@
             KeepRunning = false;
             if (Service != null && stopService)
                 Service.Stop();
-            UpdateManager.GetContext().Stop();
+            // If this is uncommented, make sure it has a context for local games.
+            //UpdateManager.GetContext().Stop();
         }
 
         private static void OnOnUpdateDetected(object sender, EventArgs eventArgs)
