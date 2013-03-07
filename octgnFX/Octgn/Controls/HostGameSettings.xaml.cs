@@ -206,7 +206,7 @@
 
         void StartLocalGame(Data.Game game, string name, string password)
         {
-            var hostport = 5000;
+            var hostport = new Random().Next(5000,6000);
             while (!Networking.IsPortAvailable(hostport)) hostport++;
             var hs = new HostedGame(hostport, game.Id, game.Version, game.Name, name, Password, new User(Username + "@" + Program.ChatServerPath), true);
             if (!hs.StartProcess())
