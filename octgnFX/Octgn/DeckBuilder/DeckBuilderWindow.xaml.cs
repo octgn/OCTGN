@@ -551,29 +551,15 @@ namespace Octgn.DeckBuilder
         private Point startPoint = new Point();
         private int cardIndex;
         private DataGridRow DeckCard;
-        private bool validClick = false;
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
             startPoint = e.GetPosition(null);
-            try
-            {
-                DeckCard = FindRow<DataGridRow>((DependencyObject)e.OriginalSource);
-                cardIndex = DeckCard.GetIndex();
-                validClick = true;
-            }
-            catch
-            {
-                validClick = false;
-            }
+            DeckCard = FindRow<DataGridRow>((DependencyObject)e.OriginalSource);
+            cardIndex = DeckCard.GetIndex();
         }
-        private void DeckMouseMove(object sender, MouseEventArgs e)
+        private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
-            e.Handled = true;
-            if (!validClick) return;
-            Point mousePos = e.GetPosition(null);
-            Vector diff = startPoint - mousePos;
-            if (MouseButtonState.Pressed.Equals(e.LeftButton) && 
-               (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance))
+            if (MouseButtonState.Pressed.Equals(e.LeftButton))
             {
                 Deck.Element getCard = ActiveSection.Cards.ElementAt(cardIndex);
                 DataObject dragCard = new DataObject("Card", getCard);
@@ -581,7 +567,6 @@ namespace Octgn.DeckBuilder
                 {
                     ActiveSection.Cards.RemoveAt(cardIndex);
                     DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.All);
-
                 }
                 else
                 {
@@ -629,7 +614,6 @@ namespace Octgn.DeckBuilder
                     }
             }
             e.Handled = true;
-            validClick = false;
         }
         private static T FindRow<T>(DependencyObject Current)
             where T : DependencyObject
