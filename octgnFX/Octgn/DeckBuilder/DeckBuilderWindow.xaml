@@ -15,8 +15,8 @@
   <Window.Resources>
     <deck:ActiveSectionConverter x:Key="ActiveSectionConverter" />
   </Window.Resources>
-
-  <Grid>
+    <AdornerDecorator x:Name="ad">
+        <Grid x:Name="theGrid">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="250" />
       <ColumnDefinition Width="*" />
@@ -74,10 +74,16 @@
                           CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
                           VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
                           Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" 
-                          PreviewMouseLeftButtonDown="DeckCardMouseDown" PreviewMouseMove="DeckMouseMove" AllowDrop="True" Name="dgDeck">
-                  <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Card.Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
-                    <DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
+                          AllowDrop="True" Name="dgDeck">
+                    <DataGrid.RowStyle>
+                        <Style>
+                            <EventSetter Event="DataGridRow.MouseLeave" Handler="PickUpDeckCard" />
+                            <EventSetter Event="DataGridRow.PreviewMouseLeftButtonDown" Handler="DeckCardMouseDown" />
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                       <DataGridTextColumn Binding="{Binding Card.Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
+                       <DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
                   </DataGrid.Columns>
                 </DataGrid>
               </Expander>
@@ -102,4 +108,5 @@
     <!--TODO: Fill in Combobox with properties. On selection re-sort deck according to selected property-->
 
     </Grid>
+    </AdornerDecorator>
 </ctrl:OctgnChrome>

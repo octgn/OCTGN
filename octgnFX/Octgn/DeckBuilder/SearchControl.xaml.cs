@@ -180,42 +180,20 @@ namespace Octgn.DeckBuilder
                 _CurrentView.Table.ImportRow(row);
             }
         }
-        private Point startPoint = new Point();
         private DataGridRow SearchCard = new DataGridRow();
-        private bool validClick = false;
-        private void SearchCardMouseDown(object sender, MouseButtonEventArgs e)
+        private void PickUpCard(object sender, MouseEventArgs e)
         {
-            DataGridCell test = FindRow<DataGridCell>((DependencyObject)e.OriginalSource);
-            if (!(test == null))
-            {
-                startPoint = e.GetPosition(null);
-                validClick = true;
-            }
-            else
-            {
-                validClick = false;
-            }
-        }
-        private void SearchMouseMove(object sender, MouseEventArgs e)
-        {
-            e.Handled = true;
-            if (!validClick) return;
-            Point mousePos = e.GetPosition(null);
-            Vector diff = startPoint - mousePos;
             if (MouseButtonState.Pressed.Equals(e.LeftButton))
             {
-               if(Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                var row = (DataRowView)resultsGrid.SelectedItem;
+                if (row == null) return;
+                if (CardAdded == null) return;
+                var rowid = row["id"] as string;
+                if (rowid != null)
                 {
-                    var row = (DataRowView)resultsGrid.SelectedItem;
-                    if (row == null) return;
-                    if (CardAdded == null) return;
-                    var rowid = row["id"] as string;
-                    if (rowid != null)
-                    {
-                        Deck.Element getCard = new Deck.Element { Card = Game.GetCardById(Guid.Parse(rowid)), Quantity = 1 };
-                        DataObject dragCard = new DataObject("Card", getCard);
-                        DragDrop.DoDragDrop(SearchCard, dragCard, DragDropEffects.Copy);
-                    }
+                    Deck.Element getCard = new Deck.Element { Card = Game.GetCardById(Guid.Parse(rowid)), Quantity = 1 };
+                    DataObject dragCard = new DataObject("Card", getCard);
+                    DragDrop.DoDragDrop(SearchCard, dragCard, DragDropEffects.Copy);
                 }
             }
         }
