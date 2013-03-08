@@ -22,8 +22,6 @@
         private static GameStateEngine current;
         private static readonly object SingletonLocker = new object();
 
-        internal bool Stopped;
-
         public static GameStateEngine GetContext()
         {
             lock (SingletonLocker)
@@ -32,12 +30,12 @@
             }
         }
 
-        public static void SetContext(IHostedGameState state)
+        public static void SetContext(IHostedGameState state, bool isLocal)
         {
             lock (SingletonLocker)
             {
                 if (current == null)
-                    current = new GameStateEngine(state);
+                    current = new GameStateEngine(state, isLocal);
             }
         }
         #endregion
@@ -50,13 +48,17 @@
             }
         }
 
+
+        internal bool Stopped;
+        public bool IsLocal { get; internal set; }
         internal HostedGameState State { get; set; }
 
         private readonly object Locker = new object();
 
-        internal GameStateEngine(IHostedGameState state)
+        internal GameStateEngine(IHostedGameState state, bool isLocal)
         {
             State = (HostedGameState)state;
+            IsLocal = isLocal;
         }
 
         public void SetStatus(EnumHostedGameStatus status)
@@ -64,6 +66,8 @@
             lock (Locker)
             {
                 State.Status = status;
+                // Don't use the SasManagerServiceClient if local
+                if (IsLocal) return;
                 if(SasManagerServiceClient.GetContext().ConnectionState == ConnectionState.Connected)
                     SasManagerServiceClient.GetContext().HubProxy.Send<ISASToSASManagerService>().Invoke().HostedGameStateChanged(State.Id,status);
             }

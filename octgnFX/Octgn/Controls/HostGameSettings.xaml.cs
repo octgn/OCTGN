@@ -45,6 +45,7 @@
         public bool IsLocalGame { get; private set; }
         public string Gamename { get; private set; }
         public string Password { get; private set; }
+        public string Username { get; set; }
         public Data.Game Game { get; private set; }
         public bool SuccessfulHost { get; private set; }
 
@@ -64,6 +65,9 @@
             CheckBoxIsLocalGame.IsChecked = !Program.LobbyClient.IsConnected;
             CheckBoxIsLocalGame.IsEnabled = Program.LobbyClient.IsConnected;
             lastHostedGameType = Prefs.LastHostedGameType;
+            TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false 
+                || Program.LobbyClient.Me == null 
+                || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
         }
 
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
@@ -72,6 +76,7 @@
                 { 
                     CheckBoxIsLocalGame.IsChecked = true;
                     CheckBoxIsLocalGame.IsEnabled = false;
+                    TextBoxUserName.IsEnabled = true;
                 }));
         }
 
@@ -81,6 +86,8 @@
                 { 
                     CheckBoxIsLocalGame.IsChecked = false;
                     CheckBoxIsLocalGame.IsEnabled = true;
+                    TextBoxUserName.IsEnabled = false;
+                    TextBoxUserName.Text = Program.LobbyClient.Me.UserName;
                 }));
             
         }
@@ -129,7 +136,7 @@
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)port;
                     Program.GameSettings.UseTwoSidedTable = true;
-                    Program.Game = new Game(GameDef.FromO8G(game.FullPath));
+                    Program.Game = new Game(GameDef.FromO8G(game.FullPath),Program.LobbyClient.Me.UserName);
                     Program.IsHost = true;
 
                     var hostAddress = Dns.GetHostAddresses(Program.GameServerPath).First();
@@ -199,17 +206,17 @@
 
         void StartLocalGame(Data.Game game, string name, string password)
         {
-            var hostport = 5000;
+            var hostport = new Random().Next(5000,6000);
             while (!Networking.IsPortAvailable(hostport)) hostport++;
-            var hs = new HostedGame(hostport, game.Id, game.Version, name, "", null, true);
+            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name, name, Password, new User(Username + "@" + Program.ChatServerPath), true);
             if (!hs.StartProcess())
             {
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");
             }
-
+            Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
             Program.GameSettings.UseTwoSidedTable = true;
-            Program.Game = new Game(GameDef.FromO8G(game.FullPath), true);
+            Program.Game = new Game(GameDef.FromO8G(game.FullPath), Username, true);
             Program.IsHost = true;
 
             var ip = IPAddress.Parse("127.0.0.1");
@@ -242,6 +249,7 @@
             this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository);
             this.Gamename = TextBoxGameName.Text;
             this.Password = PasswordGame.Password;
+            this.Username = TextBoxUserName.Text;
             var isLocalGame = (CheckBoxIsLocalGame.IsChecked == null || CheckBoxIsLocalGame.IsChecked == false) == false;
             Task task = null;
             task = isLocalGame ? new Task(() => this.StartLocalGame(Game, Gamename, Password)) : new Task(() => this.StartOnlineGame(Game, Gamename, Password));
@@ -280,6 +288,11 @@
         private void ButtonRandomizeGameNameClick(object sender, RoutedEventArgs e)
         {
             TextBoxGameName.Text = Skylabs.Lobby.Randomness.GrabRandomJargonWord() + " " + Randomness.GrabRandomNounWord();
+        }
+
+        private void ButtonRandomizeUserNameClick(object sender, RoutedEventArgs e)
+        {
+            TextBoxUserName.Text = Randomness.GrabRandomJargonWord() + "-" + Randomness.GrabRandomNounWord();
         }
         #endregion
     }

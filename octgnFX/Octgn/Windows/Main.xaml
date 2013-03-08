@@ -34,11 +34,11 @@
                     <Controls:CustomGameList></Controls:CustomGameList>
                 </Border>
             </TabItem>
-            <TabItem Header="Matchmaking(Comming Soon)" IsEnabled="false"/>
-            <TabItem Header="Game Management" IsEnabled="true">
+            <TabItem Header="Matchmaking (Coming Soon)" IsEnabled="false"/>
+            <TabItem Header="Games Manager" IsEnabled="true">
                 <Controls:GameManagement Margin="5,5,5,5"></Controls:GameManagement>
             </TabItem>
-            <TabItem Header="Plugin Management" IsEnabled="false">
+            <TabItem Header="Plugins Manager" IsEnabled="false">
                 
             </TabItem>
         </TabControl>

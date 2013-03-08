@@ -40,7 +40,7 @@ namespace Octgn
 
         public bool IsLocal { get; private set; }
 
-        public Game(GameDef def, bool isLocal = false)
+        public Game(GameDef def, string nickname, bool isLocal = false)
         {
             IsLocal = isLocal;
             _definition = def;
@@ -52,7 +52,8 @@ namespace Octgn
             foreach (GlobalVariableDef varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
 
-            if(IsLocal)
+            nick = nickname;
+            while(String.IsNullOrWhiteSpace(nick))
             {
                 nick = Prefs.Nickname;
                 if (string.IsNullOrWhiteSpace(nick)) nick = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
@@ -62,15 +63,7 @@ namespace Octgn
                         var i = new InputDlg("Choose a nickname", "Choose a nickname", nick);
                         retNick = i.GetString();
                     }));
-                if (retNick == "") retNick = nick;
                 nick = retNick;
-            }
-            else
-            {
-                if (Program.LobbyClient == null || Program.LobbyClient.Me == null)
-                    nick = Skylabs.Lobby.Randomness.GrabRandomNounWord() + new Random().Next(30);
-                else
-                    nick = Program.LobbyClient.Me.UserName;
             }
         }
 

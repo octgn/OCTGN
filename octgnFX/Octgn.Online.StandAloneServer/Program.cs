@@ -18,6 +18,7 @@
         internal static HostedGameSASModel HostedGame = new HostedGameSASModel();
         internal static bool KeepRunning;
         internal static bool Debug;
+        internal static bool Local;
         internal static OptionSet Options;
         internal static Service Service;
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -28,17 +29,17 @@
             Debug = true;
             Log.Debug("Debug mode enabled.");
 #else
-            if (UpdateManager.GetContext().Update()) return;
-            UpdateManager.GetContext().OnUpdateDetected += OnOnUpdateDetected;
-            UpdateManager.GetContext().Start();
+            //if (UpdateManager.GetContext().Update()) return;
+            //UpdateManager.GetContext().OnUpdateDetected += OnOnUpdateDetected;
+            //UpdateManager.GetContext().Start();
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
 #endif
             if (HandleArguments(args))
             {
                 // arguments didn't fail, so do stuff
                 // Setup game state engine
-                GameStateEngine.SetContext(HostedGame.ToHostedGameState(EnumHostedGameStatus.Booting));
-                if (Debug) StartServiceCommandLine();
+                GameStateEngine.SetContext(HostedGame.ToHostedGameState(EnumHostedGameStatus.Booting),Local);
+                if (Debug || Local) StartServiceCommandLine();
                 else StartService();
             }
             if (Debug)
@@ -61,7 +62,7 @@
                 Console.WriteLine("Press 'q' to quit");
                 while (KeepRunning)
                 {
-                    if (Console.KeyAvailable && Console.ReadKey().Key == ConsoleKey.Q) break;
+                    if (!Local && Console.KeyAvailable && Console.ReadKey().Key == ConsoleKey.Q) break;
                     Thread.Sleep(100);
                 }
                 Stop();
@@ -82,7 +83,8 @@
             KeepRunning = false;
             if (Service != null && stopService)
                 Service.Stop();
-            UpdateManager.GetContext().Stop();
+            // If this is uncommented, make sure it has a context for local games.
+            //UpdateManager.GetContext().Stop();
         }
 
         private static void OnOnUpdateDetected(object sender, EventArgs eventArgs)
@@ -116,6 +118,7 @@
                 .Add("gameid=", "Id of the Octgn Game", x => HostedGame.GameId = Guid.Parse(x))
                 .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x))
                 .Add("debug", "Little more verbose", x => Debug = true)
+                .Add("local","Is this a local game",x=> Local = true)
                 .Add(
                     "password=",
                     "Password of the HostedGame",
