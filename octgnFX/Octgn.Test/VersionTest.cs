@@ -33,8 +33,6 @@ namespace Octgn.Test
             Assert.AreEqual(realVersion , typeof(Octgn.Data.Game).Assembly.GetName().Version);
             Debug.WriteLine("Check Version Of Octgn.Server");
             Assert.AreEqual(realVersion  ,typeof(Octgn.Server.Server).Assembly.GetName().Version);
-            Debug.WriteLine("Check Version Of Octgn.StandAloneServer");
-            Assert.AreEqual(realVersion , typeof(Octgn.StandAloneServer.Program).Assembly.GetName().Version);
             Debug.WriteLine("Check Version Of Skylabs.Lobby");
             Assert.AreEqual(realVersion , typeof(Skylabs.Lobby.Client).Assembly.GetName().Version);
             Debug.WriteLine("Check Version Of Octgn.LobbyServer");

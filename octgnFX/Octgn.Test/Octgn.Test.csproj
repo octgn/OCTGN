@@ -116,10 +116,6 @@
       <Project>{6dd203af-5003-4af3-a982-67f10b704d4a}</Project>
       <Name>Octgn.Server</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Octgn.StandAloneServer\Octgn.StandAloneServer.csproj">
-      <Project>{160eec3e-f158-4f2c-9f75-69dba056013f}</Project>
-      <Name>Octgn.StandAloneServer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Octgn\Octgn.csproj">
       <Project>{c6ade75c-5bc2-47db-9240-b99c66431ef3}</Project>
       <Name>Octgn</Name>
