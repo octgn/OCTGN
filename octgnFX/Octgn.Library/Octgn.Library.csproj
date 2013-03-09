@@ -102,6 +102,9 @@
     <Compile Include="Plugin\IPluginMenuItem.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Schemas\Game.cs">
+      <DependentUpon>Game.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Utils\RegexPatterns.cs" />
     <Compile Include="Utils\SortableObservableCollection.cs" />
   </ItemGroup>

@@ -10,10 +10,14 @@ namespace o8build
     using System.Reflection;
     using System.Xml.Linq;
     using System.Xml.Schema;
+    using System.Xml.Serialization;
 
     using Mono.Options;
 
+    using NuGet;
+
     using Octgn.Library;
+    using Octgn.Library.Exceptions;
 
     using log4net;
 
@@ -21,9 +25,8 @@ namespace o8build
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         static string BuildDirectory { get; set; }
-        static bool BuildSet { get; set; }
-        static bool BuildGame { get; set; }
         static bool GetHelp { get; set; }
+        static bool Validate { get; set; }
         static void Main(string[] args)
         {
             try
@@ -64,47 +67,63 @@ namespace o8build
 
         private static void Start()
         {
-            testXsd();
+            var gv = new GameValidator(BuildDirectory);
+            Console.WriteLine("Running tests on {0}",BuildDirectory);
+            gv.RunTests();
+            if (Validate) return;
+            Console.WriteLine("Building packages");
+            BuildPackages();
+
+            //testXsd();
         }
 
-        private static void testXsd()
+        private static void BuildPackages()
         {
-            var dp = Paths.DataDirectory;
-
-            var libAss = Assembly.GetAssembly(typeof(Paths));
-            var gamexsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("Game.xsd"));
-            if(gamexsd == null)
-                throw new Octgn.Library.Exceptions.UserMessageException("Shits fucked bro.");
-            var schemeString = "";
-            using (var sr = new StreamReader(libAss.GetManifestResourceStream(gamexsd))) schemeString = sr.ReadToEnd();
-            var schemas = new XmlSchemaSet();
-            var schema  = XmlSchema.Read(libAss.GetManifestResourceStream(gamexsd), OnValidationEventHandler);
-            schemas.Add(schema);
-
-            var gamesDir = new DirectoryInfo(Path.Combine(dp, "Games"));
-            foreach (var file in gamesDir.GetDirectories().SelectMany(x=>x.GetFiles("*.xml").Where(y=>y.Name.ToLower() != "[content_types].xml")))
+            var directory = new DirectoryInfo(BuildDirectory);
+            XmlSerializer serializer = new XmlSerializer(typeof(game));
+            var fs = File.Open(directory.GetFiles().First().FullName, FileMode.Open);
+            var game = (game)serializer.Deserialize(fs);
+            fs.Close();
+            var builder = new NuGet.PackageBuilder()
+                              {
+                                  Id = game.id,
+                                  Description = game.description,
+                                  ProjectUrl = new Uri(game.gameurl),
+                                  Version = new SemanticVersion(game.version),
+                                  Title = game.name,
+                                  IconUrl = new Uri(game.iconurl),
+                              };
+            foreach (var author in game.authors.Split(',')) builder.Authors.Add(author);
+            foreach (var tag in game.tags.Split(' ')) builder.Tags.Add(tag);
+            // files and maybe release notes
+            var allFiles = directory.GetFiles("*.*", SearchOption.AllDirectories);
+            foreach (var file in allFiles)
             {
-                XDocument doc = XDocument.Load(file.FullName);
-                string msg = "";
-                doc.Validate(schemas, (o, e) =>
-                {
-                    msg = e.Message;
-                });
-                Console.WriteLine(msg == "" ? "Document {0} is valid" : "Document {0} invalid: " + msg,file.Name);
-            }
-        }
+                var path = file.FullName;
+                var relPath = path.Replace(directory.FullName, "\\def");
+                var pf = new PhysicalPackageFile() { SourcePath = path, TargetPath = relPath };
 
-        private static void OnValidationEventHandler(object sender, ValidationEventArgs args)
-        {
-            Log.Error(args.Message,args.Exception);
+                builder.Files.Add(pf);
+            }
+            var feedPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".nupkg");
+            var olPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".o8g");
+            var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+            builder.Save(filestream);
+            filestream.Flush(true);
+            filestream.Close();
+            filestream = File.Open(olPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+            builder.Save(filestream);
+            filestream.Flush(true);
+            filestream.Close();
         }
 
         private static OptionSet GetOptions()
         {
             var ret =  new OptionSet();
             ret.Add("d|directory=", "Directory of the game/set to build", x => BuildDirectory = x);
-            ret.Add("s|set", "Build a set", x => BuildSet = true);
-            ret.Add("g|game", "Build a game", x => BuildGame = true);
+            //ret.Add("s|set", "Build a set", x => BuildSet = true);
+            //ret.Add("g|game", "Build a game", x => BuildGame = true);
+            ret.Add("v|validate", "Only validate the game, don't build the packages", x => Validate = true);
             ret.Add("?|help", "Get help cause you're a real confused guy.", x => GetHelp = true);
             return ret;
         }
@@ -123,11 +142,11 @@ namespace o8build
             if (String.IsNullOrWhiteSpace(BuildDirectory)) BuildDirectory = System.IO.Directory.GetCurrentDirectory();
             if (!Directory.Exists(BuildDirectory)) throw new UserMessageException("Directory {0} does not exist you FOOL!", BuildDirectory);
 
-            if(BuildSet && BuildGame)
-                throw new UserMessageException("Don't be dumb. You can't set -s AND -g at the same time!");
+            //if(BuildSet && BuildGame)
+            //    throw new UserMessageException("Don't be dumb. You can't set -s AND -g at the same time!");
 
-            if(BuildSet == false && BuildGame == false)
-                throw new UserMessageException("Listen. I know it's late, but you need to pick either -g or -s.");
+            //if(BuildSet == false && BuildGame == false)
+            //    throw new UserMessageException("Listen. I know it's late, but you need to pick either -g or -s.");
         }
 
         public static void UserError(string message, params object[] args)

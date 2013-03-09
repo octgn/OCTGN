@@ -353,7 +353,7 @@
       <xs:attribute name="name" type="xs:string">
         <xs:annotation>
           <xs:documentation>
-            Full name of this game. 
+            Full name of this game.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -382,6 +382,48 @@
         <xs:annotation>
           <xs:documentation>
             Whether or not cards that go through a switchWithAlternate return to their original forms on groups change.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="setsurl" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The URL where the sets for this game are located.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="gameurl" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The URL where the game is hosted.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="authors" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The authors of the game
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="description" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            A description of the game
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="tags" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Tags for the game
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="iconurl" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Game icon url.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
