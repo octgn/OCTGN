@@ -4,9 +4,11 @@ using System.Threading;
 
 namespace Octgn.StandAloneServer
 {
+    using Octgn.Server;
+
     public class Program
     {
-        public static Server.Server Server;
+        public static Server Server;
         public static int Port;
         public static Guid GameGuid;
         public static Version GameVersion;
@@ -52,8 +54,8 @@ namespace Octgn.StandAloneServer
 
         private static void StartServer()
         {
-            Server = new Server.Server(Port, GameGuid, GameVersion);
-            Server.OnStop += Server_OnStop;
+            //Server = new Server(Octgn.Server.GameStateEngine.Get().);
+            //Server.OnStop += Server_OnStop;
             Console.WriteLine("Starting server on port " + Port);
             while (_keepRunning)
             {

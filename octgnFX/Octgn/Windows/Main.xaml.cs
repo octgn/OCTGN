@@ -157,10 +157,10 @@ namespace Octgn.Windows
             this.Dispatcher.BeginInvoke(
                 new Action(
                     () =>
-                        {
-                            TabCommunityChat.IsEnabled = false;
-                            TabMain.Focus();
-                        }));
+                    {
+                        TabCommunityChat.IsEnabled = false;
+                        TabMain.Focus();
+                    }));
         }
 
         /// <summary>
@@ -171,9 +171,9 @@ namespace Octgn.Windows
             Dispatcher.BeginInvoke(
                 new Action(
                     () =>
-                        {
-                            TabCommunityChat.IsEnabled = true;
-                        }));
+                    {
+                        TabCommunityChat.IsEnabled = true;
+                    }));
         }
 
         #endregion
@@ -209,6 +209,15 @@ namespace Octgn.Windows
 
         private void MenuDeckEditorClick(object sender, RoutedEventArgs e)
         {
+            if (Program.GamesRepository.Games.Count == 0)
+            {
+                MessageBox.Show(
+                    "You need to install a game before you can use the deck editor.",
+                    "OCTGN",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
             if (Program.DeckEditor == null)
             {
                 Program.DeckEditor = new DeckBuilderWindow();
@@ -222,9 +231,9 @@ namespace Octgn.Windows
             options.ShowDialog();
         }
 
-	    private void MenuLogOffClick(object sender, RoutedEventArgs e)
-	    {
-		    Program.LobbyClient.LogOut();
-	    }
+        private void MenuLogOffClick(object sender, RoutedEventArgs e)
+        {
+            Program.LobbyClient.LogOut();
+        }
     }
 }

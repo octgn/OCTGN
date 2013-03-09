@@ -384,7 +384,7 @@ namespace Octgn.Windows
                         }
                         if (fhash.ToLower() == g.FileHash.ToLower()) continue;
 
-                        Program.Game = new Game(GameDef.FromO8G(fpath));
+                        Program.Game = new Game(GameDef.FromO8G(fpath), "TestUser");
                         Program.Game.TestBegin();
                         //IEnumerable<Player> plz = Player.All;
                         var engine = new Engine(true);
@@ -495,7 +495,7 @@ namespace Octgn.Windows
 
         public static bool CheckGameDef(GameDef game)
         {
-            Program.Game = new Game(game);
+            Program.Game = new Game(game, "TestUser");
             Program.Game.TestBegin();
             var engine = new Engine(true);
             string[] terr = engine.TestScripts(Program.Game);

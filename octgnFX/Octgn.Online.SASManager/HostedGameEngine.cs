@@ -33,9 +33,9 @@
             return new HostedGameEngine(state);
         }
         public HostedGameState State { get; internal set; }
-        public HostedGameEngine(HostedGameState state)
+        public HostedGameEngine(IHostedGameState state)
         {
-            State = state;
+            State = (HostedGameState)state;
         }
 
         public HostedGameEngine Register()
@@ -130,7 +130,7 @@
     }
     public static class HostedGameEngineExtensionMethods
     {
-        public static  HostedGameEngine Engine(this HostedGameState state)
+        public static  HostedGameEngine Engine(this IHostedGameState state)
         {
             return new HostedGameEngine(state);
         }

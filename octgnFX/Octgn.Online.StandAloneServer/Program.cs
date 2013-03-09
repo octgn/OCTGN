@@ -6,6 +6,7 @@
     using System.ServiceProcess;
     using System.Threading;
 
+    using Octgn.Online.Library.Enums;
     using Octgn.Online.Library.Models;
     using Octgn.Online.Library.UpdateManager;
     using Octgn.StandAloneServer;
@@ -17,6 +18,7 @@
         internal static HostedGameSASModel HostedGame = new HostedGameSASModel();
         internal static bool KeepRunning;
         internal static bool Debug;
+        internal static bool Local;
         internal static OptionSet Options;
         internal static Service Service;
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
@@ -26,24 +28,19 @@
 #if(DEBUG)
             Debug = true;
             Log.Debug("Debug mode enabled.");
-#endif
-            if (UpdateManager.GetContext().Update()) return;
-            UpdateManager.GetContext().OnUpdateDetected += OnOnUpdateDetected;
-            UpdateManager.GetContext().Start();
-#if(!DEBUG)
+#else
+            //if (UpdateManager.GetContext().Update()) return;
+            //UpdateManager.GetContext().OnUpdateDetected += OnOnUpdateDetected;
+            //UpdateManager.GetContext().Start();
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
 #endif
             if (HandleArguments(args))
             {
                 // arguments didn't fail, so do stuff
-#if(DEBUG)
-
-                StartServiceCommandLine();
-                Console.WriteLine("==DONE==");
-                Console.ReadLine();
-#else
-            StartService();
-#endif
+                // Setup game state engine
+                GameStateEngine.SetContext(HostedGame.ToHostedGameState(EnumHostedGameStatus.Booting),Local);
+                if (Debug || Local) StartServiceCommandLine();
+                else StartService();
             }
             if (Debug)
             {
@@ -65,7 +62,7 @@
                 Console.WriteLine("Press 'q' to quit");
                 while (KeepRunning)
                 {
-                    if (Console.KeyAvailable && Console.ReadKey().Key == ConsoleKey.Q) break;
+                    if (!Local && Console.KeyAvailable && Console.ReadKey().Key == ConsoleKey.Q) break;
                     Thread.Sleep(100);
                 }
                 Stop();
@@ -86,7 +83,8 @@
             KeepRunning = false;
             if (Service != null && stopService)
                 Service.Stop();
-            UpdateManager.GetContext().Stop();
+            // If this is uncommented, make sure it has a context for local games.
+            //UpdateManager.GetContext().Stop();
         }
 
         private static void OnOnUpdateDetected(object sender, EventArgs eventArgs)
@@ -120,6 +118,7 @@
                 .Add("gameid=", "Id of the Octgn Game", x => HostedGame.GameId = Guid.Parse(x))
                 .Add("gameversion=", "Version of the Octgn Game", x => HostedGame.GameVersion = Version.Parse(x))
                 .Add("debug", "Little more verbose", x => Debug = true)
+                .Add("local","Is this a local game",x=> Local = true)
                 .Add(
                     "password=",
                     "Password of the HostedGame",
@@ -155,6 +154,7 @@
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
             Log.Fatal("Unhandled Exception", unhandledExceptionEventArgs.ExceptionObject as Exception);
+            LogManager.Shutdown();
             if (Debug)
             {
                 Console.WriteLine();

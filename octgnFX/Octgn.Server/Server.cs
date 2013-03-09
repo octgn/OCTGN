@@ -7,9 +7,12 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Octgn.Data.Properties;
-
+using Octgn.Online.Library.Models;
 namespace Octgn.Server
 {
+    using Octgn.Online.Library;
+    using Octgn.Online.Library.Enums;
+
     public sealed class Server
     {
         #region Private fields
@@ -29,11 +32,14 @@ namespace Octgn.Server
 
         #region Public interface
 
+
+
         // Creates and starts a new server
-        public Server(int port, Guid gameId, Version gameVersion)
+        public Server(IGameStateEngine stateEngine)
         {
-            _tcp = new TcpListener(IPAddress.Any, port);
-            _handler = new Handler(gameId, gameVersion);
+            GameStateEngine.Set(stateEngine);
+            _tcp = new TcpListener(IPAddress.Any, stateEngine.Game.HostUri.Port);
+            _handler = new Handler(stateEngine.Game.GameId, stateEngine.Game.GameVersion);
             _connectionChecker = new Thread(CheckConnections);
             _connectionChecker.Start();
             Start();
@@ -55,7 +61,7 @@ namespace Octgn.Server
                 if (Debugger.IsAttached) Debugger.Break();
             }
             // Close all open connections
-            _clients.ForEach(x=>x.Disconnect());
+            _clients.ForEach(x => x.Disconnect());
             _clients.Clear();
             if (OnStop != null)
                 OnStop.Invoke(this, null);
@@ -69,13 +75,14 @@ namespace Octgn.Server
         private void Start()
         {
             // Creates a new thread for the server
-            _serverThread = new Thread(Listen) {Name = "OCTGN.net Server"};
+            _serverThread = new Thread(Listen) { Name = "OCTGN.net Server" };
             // Flag used to wait until the server is really started
             var started = new ManualResetEvent(false);
 
 
             // Start the server
             _serverThread.Start(started);
+            GameStateEngine.Get().SetStatus(EnumHostedGameStatus.GameReady);
             started.WaitOne();
         }
 
@@ -86,19 +93,19 @@ namespace Octgn.Server
                 Thread.Sleep(20000);
                 lock (_clients)
                 {
-                    if (_clients.Count == 0 )
+                    if (_clients.Count == 0)
                     {
                         Stop();
                         break;
                     }
-                    if(_hostClient == null)
+                    if (_hostClient == null)
                         _hostClient = _handler.Players.FirstOrDefault(x => x.Value.Id == 1).Key;
                     if (_hostClient == null && _handler.GameStarted == false)
                     {
                         Stop();
                         break;
                     }
-                    _clients.FindAll(x=> x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 60).ForEach(me=>me.Disconnect());
+                    _clients.FindAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 60).ForEach(me => me.Disconnect());
                     _clients.RemoveAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 60);
                 }
             }
@@ -108,7 +115,7 @@ namespace Octgn.Server
         private void Listen(object o)
         {
             // Retrieve the parameter
-            var started = (ManualResetEvent) o;
+            var started = (ManualResetEvent)o;
             // Start the server and signal it
             _tcp.Start();
             started.Set();
@@ -177,10 +184,10 @@ namespace Octgn.Server
                 {
                     //lock (this)
                     //{
-                        var ts = new TimeSpan(DateTime.Now.Ticks - _lastPing.Ticks);
-                        if (ts.TotalSeconds > 20)
-                            Disconnect("Ping timeout");
-                        if (Disposed) return;
+                    var ts = new TimeSpan(DateTime.Now.Ticks - _lastPing.Ticks);
+                    if (ts.TotalSeconds > 20)
+                        Disconnect("Ping timeout");
+                    if (Disposed) return;
                     //}
                     Thread.Sleep(1000);
                 }
@@ -264,12 +271,12 @@ namespace Octgn.Server
             internal void Disconnect(string message = "")
             {
                 // Lock the disposed field
-                    Console.WriteLine("Disconnect called for client : {0}",message);
-                    Console.WriteLine(Resource1.Connection_Disconnect_Client_Disconnected_);
-                    // Quit if this client is already disposed
-                    if (Disposed) return;
-                    // Mark as disposed
-                    Disposed = true;
+                Console.WriteLine("Disconnect called for client : {0}", message);
+                Console.WriteLine(Resource1.Connection_Disconnect_Client_Disconnected_);
+                // Quit if this client is already disposed
+                if (Disposed) return;
+                // Mark as disposed
+                Disposed = true;
                 // If it is connected, close it
                 if (Client.Connected)
                 {
@@ -288,18 +295,18 @@ namespace Octgn.Server
             }
 
             // Notify that the client was unexpectedly disconnected
-            internal void Disconnected(string message ="")
+            internal void Disconnected(string message = "")
             {
                 // Lock the disposed field
                 //lock (this)
                 //{
-                    // Quit if the client is already disposed
-                    if (Disposed) return;
-                    // Disconnect the client
-                    Disconnect();
-                    // Notify the event
-                    _server._handler.Disconnected(Client);
-                    Console.WriteLine("Disconnected: {0}",message);
+                // Quit if the client is already disposed
+                if (Disposed) return;
+                // Disconnect the client
+                Disconnect();
+                // Notify the event
+                _server._handler.Disconnected(Client);
+                Console.WriteLine("Disconnected: {0}", message);
                 //}
 
             }

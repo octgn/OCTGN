@@ -213,12 +213,18 @@ class Group(NamedObject):
     count = len(self)
     if count == 0: return None
     return self[rnd(0, count - 1)]
+  def create(self, model, quantity = 1):
+    ids = _api.Create(model, self._id, quantity)
+    if quantity != 1:
+      return [Card(id) for id in ids]
+    else:
+      return Card(ids[0]) if len(ids) == 1 else None
 
 class Table(Group):
   def __init__(self):
     Group.__init__(self, 0x01000000, 'Table')
-  def create(self, model, x, y, quantity = 1, persist = False):
-    ids = _api.CreateOnTable(model, x, y, persist, quantity)
+  def create(self, model, x, y, quantity = 1, persist = False, facedown = False):
+    ids = _api.CreateOnTable(model, x, y, persist, quantity,facedown)
     #if ids == None or ids == []: return None
     if quantity != 1:
       return [Card(id) for id in ids]

@@ -224,12 +224,18 @@ namespace Octgn.Networking
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
                 return;
             }
+            //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
+            var c = Card.Find(id[0]);
+            
+            Program.TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name,group.Name);
             // Ignore cards created by oneself
             if (owner == Player.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
             {
-                Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
-                group.AddAt(c, group.Count);
+                //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
+                //group.AddAt(c, group.Count);
+                var card = new Card(owner,id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
+                group.AddAt(card, group.Count);
             }
         }
 
@@ -286,15 +292,15 @@ namespace Octgn.Networking
             else
             {
                 for (int i = 0; i < id.Length; i++)
-                    new CreateCard(owner, id[i], key[i], faceUp, faceUp ? Database.GetCardById(modelId[i]) : null, x[i], y[i], !persist).Do();
+                    new CreateCard(owner, id[i], key[i], faceUp,Database.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
             }
 
             // Display log messages
             if (modelId.All(m => m == modelId[0]))
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, Database.GetCardById(modelId[0]));
+                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Database.GetCardById(modelId[0]).Name :"card");
             else
                 foreach (Guid m in modelId)
-                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, Database.GetCardById(m));
+                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp? Database.GetCardById(m).Name : "card");
         }
 
         /// <summary>Create new CardIdentities, which hide aliases to other CardIdentities</summary>
@@ -618,10 +624,10 @@ namespace Octgn.Networking
             if (card.Length < group.Count / (Player.Count - 1))
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[Shuffle] Too few cards received.");
             // Do the shuffling
-            Random rnd = new Random();
+            var rnd = new CryptoRandom();
             for (int i = card.Length - 1; i >= 0; i--)
             {
-                int r = rnd.Next(i);
+                int r = rnd.Next(i + 1);
                 int tc = card[r];
                 card[r] = card[i];
                 // Create a new alias, if the card is not face up

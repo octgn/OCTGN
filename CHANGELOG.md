@@ -1,3 +1,21 @@
+#3.0.10.55
++ Fixed offline gaming https://github.com/kellyelton/OCTGN/issues/679
++ Fixed deck builder crash when no games installed https://github.com/kellyelton/OCTGN/issues/680
+
+#3.0.9.52
++ Added ability to create cards in arbitrary groups https://github.com/kellyelton/OCTGN/issues/674 
++ Fixed bug that was causing OCTGN to crash when someone would join the pre game lobby.
+
+#3.0.8.52[Test Build]
++ Added ability to create cards in arbitrary groups https://github.com/kellyelton/OCTGN/issues/674 
++ Fixed bug that was causing OCTGN to crash when someone would join the pre game lobby.
+
+#3.0.8.51
++ Fixed multiple lobby chat tabs appearing over time
++ Defaulted HardwareRendering to 'ON'
++ Fixed config files not saving
++ Octgn remembers last game type hosted https://github.com/kellyelton/OCTGN/issues/641
+
 #3.0.7.51[Test Build]
 + Fixed multiple lobby chat tabs appearing over time
 + Defaulted HardwareRendering to 'ON'

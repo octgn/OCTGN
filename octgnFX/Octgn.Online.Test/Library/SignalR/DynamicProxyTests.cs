@@ -26,8 +26,11 @@
             Assert.True(test);
             test = false;
 
-            proxy.On<string, Task>(x => x.Hello3).Calls(mi => new Task(() => { test = true;
-                                                                                 testString = mi.Args[0] as string;
+            var b = proxy.On<string, Task>(x => x.Hello3);
+            Assert.NotNull(b);
+            proxy.On<string, Task>(x => x.Hello3).Calls(mi => new Task(() => { 
+                test = true;
+                testString = mi.Args[0] as string;
             }));
             var ret = proxy.Instance.Hello3("chicken");
             Assert.NotNull(ret);
@@ -35,6 +38,17 @@
             ret.Wait();
             Assert.True(test);
             Assert.AreEqual("chicken",testString);
+
+            test = false;
+            testString = "";
+            var c = proxy.On<Task>(x => x.Hello4).Calls(mi => new Task(() =>
+                { test = true;}));
+            ret = null;
+            ret = proxy.Instance.Hello3("chicken");
+            Assert.NotNull(ret);
+            ret.Start();
+            ret.Wait();
+            Assert.True(test);
         }
     }
 
@@ -45,5 +59,7 @@
         void Hello2();
 
         Task Hello3(string a);
+
+        Task Hello4();
     }
 }
