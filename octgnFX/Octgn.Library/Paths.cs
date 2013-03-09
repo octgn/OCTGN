@@ -15,7 +15,7 @@ namespace Octgn.Library
         internal static IFileSystem FS { get; set; }
         public static string BasePath {get;private set;}
         public static string PluginPath { get; private set; }
-
+        public static string DataDirectory { get; private set; }
         public static string DatabasePath { get; set; }
 
         static Paths()
@@ -26,6 +26,7 @@ namespace Octgn.Library
             PluginPath = FS.Path.Combine(SimpleConfig.DataDirectory, "Plugins");
             DatabasePath = FS.Path.Combine(SimpleConfig.DataDirectory, "Database");
             DatabasePath = FS.Path.Combine(DatabasePath, "master.db3");
+            DataDirectory = SimpleConfig.DataDirectory;
         }
     }
 }

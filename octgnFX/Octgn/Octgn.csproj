@@ -552,10 +552,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
-    <EmbeddedResource Include="Launcher\Game.xsd">
-      <SubType>
-      </SubType>
-    </EmbeddedResource>
     <None Include="Networking\BinaryStubs.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>BinaryStubs.cs</LastGenOutput>
@@ -644,10 +640,6 @@
     <Content Include="Scripting\Lib\_abcoll.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Launcher\Game.xsx">
-      <DependentUpon>Game.xsd</DependentUpon>
-      <SubType>Designer</SubType>
-    </Resource>
     <None Include="app.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

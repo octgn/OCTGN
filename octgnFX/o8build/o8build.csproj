@@ -83,6 +83,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{AF4B3885-F178-4C6B-99C9-9EB178FEC994}</Project>
+      <Name>Octgn.Library</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn\Octgn.csproj">
       <Project>{c6ade75c-5bc2-47db-9240-b99c66431ef3}</Project>
       <Name>Octgn</Name>
