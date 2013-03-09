@@ -91,10 +91,6 @@
       <Project>{AF4B3885-F178-4C6B-99C9-9EB178FEC994}</Project>
       <Name>Octgn.Library</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Octgn\Octgn.csproj">
-      <Project>{c6ade75c-5bc2-47db-9240-b99c66431ef3}</Project>
-      <Name>Octgn</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

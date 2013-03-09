@@ -15,10 +15,8 @@
     using Microsoft.Scripting;
     using Microsoft.Scripting.Hosting;
 
-    using Octgn;
     using Octgn.Library;
     using Octgn.Library.Exceptions;
-    using Octgn.Scripting;
 
     public class GameValidator
     {
@@ -52,9 +50,9 @@
         [GameValidatorAttribute]
         public void TestFileStructure()
         {
-            if(Directory.GetFiles().Length != 1)
+            if (Directory.GetFiles().Where(x => x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g").ToArray().Length != 1)
                 throw new UserMessageException("You can only have 1 file in the root of your game directory.");
-            if(Directory.GetFiles().First().Name != "definition.xml")
+            if (Directory.GetFiles().Where(x => x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g").First().Name != "definition.xml")
                 throw new UserMessageException("You must have a definition.xml in the root of your game directory.");
             if(Directory.GetDirectories().Any(x=>x.Name == "_rels"))
                 throw new UserMessageException("The _rels folder is depreciated.");

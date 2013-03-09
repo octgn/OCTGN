@@ -96,7 +96,9 @@ namespace o8build
             foreach (var author in game.authors.Split(',')) builder.Authors.Add(author);
             foreach (var tag in game.tags.Split(' ')) builder.Tags.Add(tag);
             // files and maybe release notes
-            var allFiles = directory.GetFiles("*.*", SearchOption.AllDirectories);
+            var allFiles = directory
+                .GetFiles("*.*", SearchOption.AllDirectories)
+                .Where(x=>x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g");
             foreach (var file in allFiles)
             {
                 var path = file.FullName;
