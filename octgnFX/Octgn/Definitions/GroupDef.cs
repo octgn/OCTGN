@@ -7,6 +7,8 @@ using Octgn.Utils;
 
 namespace Octgn.Definitions
 {
+    using Octgn.DataNew;
+
     public class GroupDef
     {
         public BaseActionDef[] CardActions;

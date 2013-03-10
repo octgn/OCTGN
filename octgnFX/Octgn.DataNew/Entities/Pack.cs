@@ -7,6 +7,6 @@
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<IPackItem> Definition { get; private set; }
+        public PackDefinition Definition { get; set; }
     }
 }

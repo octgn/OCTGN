@@ -19,7 +19,10 @@ using Path = System.IO.Path;
 
 namespace Octgn.Controls
 {
-	/// <summary>
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+
+    /// <summary>
 	/// Interaction logic for SetList.xaml
 	/// </summary>
 	public partial class SetList : UserControl
@@ -64,6 +67,7 @@ namespace Octgn.Controls
 					try
 					{
 						wnd.ShowMessage(string.Format("Removing '{0}' ...", s.Name));
+                        
 						SelectedGame.DeleteSet(s);
 						wnd.UpdateProgress(current, max,
 										   string.Format("'{0}' removed.", s.Name),
@@ -116,7 +120,7 @@ namespace Octgn.Controls
 							string copyto = Path.Combine(path, shortName);
 							if (setName.ToLower() != copyto.ToLower())
 								File.Copy(setName, copyto, true);
-							SelectedGame.InstallSet(copyto);
+                            SetManager.Get().InstallSet(copyto);
 						}
 						wnd.UpdateProgress(current, max,
 										   string.Format("'{0}' installed.", shortName),

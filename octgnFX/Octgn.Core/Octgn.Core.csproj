@@ -40,6 +40,7 @@
     <Compile Include="DataExtensionMethods\SetExtensionMethods.cs" />
     <Compile Include="DataManagers\CardManager.cs" />
     <Compile Include="DataManagers\GameManager.cs" />
+    <Compile Include="DataManagers\PackManager.cs" />
     <Compile Include="DataManagers\SetManager.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
@@ -73,6 +74,7 @@
       <HintPath>..\..\packages\System.IO.Abstractions.1.4.0.41\lib\net35\System.IO.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>

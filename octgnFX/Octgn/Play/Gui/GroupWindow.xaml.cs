@@ -124,7 +124,7 @@ namespace Octgn.Play.Gui
             else
             {
                 IEnumerable<string> textProperties = Program.Game.Definition.CardDefinition.Properties.Values
-                    .Where(p => p.Type == PropertyType.String && !p.IgnoreText)
+                    .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
                     .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;
                 cardsList.FilterCards = c =>

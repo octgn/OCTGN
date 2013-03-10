@@ -30,7 +30,10 @@ namespace Octgn.Play
 {
     using Microsoft.Windows.Controls.Ribbon;
 
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
     using Octgn.Library;
+    using Octgn.Library.Exceptions;
 
     public partial class PlayWindow
     {
@@ -306,8 +309,10 @@ namespace Octgn.Play
             // Try to load the file contents
             try
             {
-                Deck newDeck = Deck.Load(ofd.FileName,
-                                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
+                var game = GameManager.Get().GetById(Program.Game.Definition.Id);
+                var newDeck = game.LoadDeck(ofd.FileName);
+                //DataNew.Entities.Deck newDeck = Deck.Load(ofd.FileName,
+                //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
                 Program.Game.LoadDeck(newDeck);
             }
@@ -463,7 +468,7 @@ namespace Octgn.Play
                                                                                                           Contains(
                                                                                                               Player.
                                                                                                                   LocalPlayer)))
-                                          : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture));
+                                          : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture()));
                     ShowCardPicture(img);
                 }                
             }
@@ -474,7 +479,7 @@ namespace Octgn.Play
             if (e.CardModel == null)
                 _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
             else
-                ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture)));
+                ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture())));
         }
 
         private void ShowCardPicture(BitmapSource img)

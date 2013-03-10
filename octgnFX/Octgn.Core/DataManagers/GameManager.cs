@@ -27,6 +27,7 @@
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+        public event EventHandler GameInstalled;
         public int GameCount {
             get
             {
@@ -45,6 +46,23 @@
             {
                 return DbContext.Get().Games;
             }
+        }
+
+        public void UninstallAllGames()
+        {
+            var games = Games.ToList();
+            foreach(var g in games)
+                DbContext.Get().Remove(g);
+        }
+
+        public void InstallGame(Game game)
+        {
+            DbContext.Get().Save(game);
+        }
+
+        public void UninstallGame(Game game)
+        {
+            DbContext.Get().Remove(game);
         }
     }
 }

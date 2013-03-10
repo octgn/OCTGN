@@ -34,6 +34,7 @@
   <ItemGroup>
     <Compile Include="CardPropertyComparer.cs" />
     <Compile Include="DbContext.cs" />
+    <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\Deck.cs" />
     <Compile Include="Entities\Game.cs" />
@@ -41,9 +42,10 @@
     <Compile Include="Entities\Marker.cs" />
     <Compile Include="Entities\MultiCard.cs" />
     <Compile Include="Entities\Option.cs" />
-    <Compile Include="Entities\OptionList.cs" />
+    <Compile Include="Entities\OptionsList.cs" />
     <Compile Include="Entities\Pack.cs" />
     <Compile Include="Entities\PackContent.cs" />
+    <Compile Include="Entities\PackDefinition.cs" />
     <Compile Include="Entities\Pick.cs" />
     <Compile Include="Entities\PropertyDef.cs" />
     <Compile Include="Entities\Section.cs" />
@@ -70,6 +72,9 @@
     <Reference Include="Mono.Reflection">
       <HintPath>..\..\packages\db4o-devel.8.1.184.15492\lib\net40\Mono.Reflection.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

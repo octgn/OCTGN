@@ -19,6 +19,7 @@ using Octgn.Utils;
 namespace Octgn
 {
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Library.Exceptions;
 
     public class Game : INotifyPropertyChanged
     {

@@ -379,7 +379,7 @@ namespace Octgn.Networking
 
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count)
         {
-            Data.MarkerModel model = Program.Game.GetMarkerModel(id);
+            DataNew.Entities.Marker model = Program.Game.GetMarkerModel(id);
             DefaultMarkerModel defaultMarkerModel = model as DefaultMarkerModel;
             if (defaultMarkerModel != null)
                 (defaultMarkerModel).SetName(name);

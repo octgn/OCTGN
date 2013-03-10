@@ -8,6 +8,8 @@ using System.Xml.Linq;
 
 namespace Octgn.Data
 {
+    using Octgn.Library.Exceptions;
+
     public class Deck : INotifyPropertyChanged
     {
         private Section[] _sections;

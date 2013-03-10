@@ -19,6 +19,7 @@ using Octgn.Launcher;
 namespace Octgn.Controls
 {
     using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
 
     /// <summary>
 	/// Interaction logic for GameManagement.xaml
@@ -31,7 +32,7 @@ namespace Octgn.Controls
 		public GameManagement()
 		{
 			InitializeComponent();
-			Program.GamesRepository.GameInstalled += GamesRepositoryGameInstalled;
+			GameManager.Get().GameInstalled += GamesRepositoryGameInstalled;
 			this.Loaded += GameManagement_Loaded;
 			this.ButtonInstallGame.Click += ButtonInstallGame_Click;
 			this.ButtonUninstallGame.Click += ButtonUninstallGame_Click;
@@ -48,7 +49,7 @@ namespace Octgn.Controls
 
 		void ButtonAddAutoUpdateSet_Click(object sender, RoutedEventArgs e)
 		{
-			SetList.AddAutoUpdatedSets();
+            //SetList.AddAutoUpdatedSets();
 		}
 
 		void ButtonUninstallSet_Click(object sender, RoutedEventArgs e)
@@ -67,7 +68,7 @@ namespace Octgn.Controls
 			var msg = MessageBox.Show(string.Format("Are you sure you want to delete {0}?", SelectedGame.Name), "Confirmation", MessageBoxButton.YesNo);
 			if (msg != MessageBoxResult.Yes) return;
 			var uninstallTask = new Task(() => { 
-				Program.GamesRepository.UninstallGame(SelectedGame);
+				GameManager.Get().UninstallGame(SelectedGame);
 				ReloadGameList();
 			});
 			StartTask(uninstallTask, 0);
@@ -131,7 +132,7 @@ namespace Octgn.Controls
 			ReloadGameList();
 		}
 
-		private void GamesRepositoryGameInstalled(object sender, EventArgs e)
+		private void GamesRepositoryGameInstalled(object sender, EventArgs eventArgs)
 		{
 			ReloadGameList();
 			GamesChanged = true;
