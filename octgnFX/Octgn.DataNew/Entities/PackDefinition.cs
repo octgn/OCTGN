@@ -4,16 +4,18 @@
     using System.Linq;
     using System.Xml;
 
-    public class PackDefinition : List<IPackItem>
+    public class PackDefinition
     {
+        public List<IPackItem> Items { get; set; } 
         public PackDefinition(XmlReader reader)
         {
+            Items = new List<IPackItem>();
             while (true)
             {
                 if (reader.IsStartElement("pick"))
-                    Add(new Pick(reader));
+                    Items.Add(new Pick(reader));
                 else if (reader.IsStartElement("options"))
-                    Add(new OptionsList(reader));
+                    Items.Add(new OptionsList(reader));
                 else
                     return;
             }
@@ -22,7 +24,7 @@
         public PackContent GenerateContent(Pack pack)
         {
             var result = new PackContent();
-            foreach (PackContent defContent in this.Select(def => def.GetCards(pack)))
+            foreach (PackContent defContent in Items.Select(def => def.GetCards(pack)))
             {
                 result.Merge(defContent);
             }
