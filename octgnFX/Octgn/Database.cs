@@ -45,7 +45,7 @@ namespace Octgn
 
         public static IEnumerable<Set> GetAllSets()
         {
-            return OpenedGame.Sets;
+            return OpenedGame.Sets();
         }
 
         internal static Pack GetPackById(Guid packId)

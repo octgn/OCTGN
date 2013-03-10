@@ -22,7 +22,7 @@ namespace Octgn.DeckBuilder
             InitializeComponent();
             filtersList.ItemsSource =
                 Enumerable.Repeat<object>("First", 1).Union(
-                    Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets), 1).Union(
+                    Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets()), 1).Union(
                         game.AllProperties().Where(p => !p.Hidden)));
             GenerateColumns(game);
             //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;

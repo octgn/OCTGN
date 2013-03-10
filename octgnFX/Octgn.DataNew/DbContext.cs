@@ -44,6 +44,14 @@
             }
         }
 
+        public IEnumerable<Card> Cards
+        {
+            get
+            {
+                return this.Client.Query<Card>().AsEnumerable();
+            }
+        }
+
         public void Save(Set set)
         {
             var game = Games.FirstOrDefault(x => x.Id == set.GameId);
@@ -78,6 +86,26 @@
                 throw e;
             }
         }
+        public void Save(Card card)
+        {
+            try
+            {
+                // Need to do this so that it doesn't just duplicate the entry
+                // Stupid db40 uses longs for ids
+                var curCard = Cards.FirstOrDefault(x => x.Id == card.Id);
+                if (curCard != null)
+                {
+                    var id = this.Client.Ext().GetID(curCard);
+                    this.Client.Ext().Bind(card,id);
+                }
+                this.Client.Store(card);
+                this.Client.Commit();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
         public void Remove(Game game)
         {
@@ -92,6 +120,14 @@
             var s = Sets.FirstOrDefault(x => x.Id == set.Id);
             if (s == null) return;
             this.Client.Delete(s);
+            this.Client.Commit();
+        }
+
+        public void Remove(Card card)
+        {
+            var c = Cards.FirstOrDefault(x => x.Id == card.Id);
+            if (c == null) return;
+            this.Client.Delete(c);
             this.Client.Commit();
         }
 

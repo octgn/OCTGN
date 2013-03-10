@@ -7,6 +7,8 @@
     {
         public Guid Id { get; set; }
 
+        public Guid SetId { get; set; }
+
         public string Name { get; set; }
 
         public string ImageUri { get; set; }

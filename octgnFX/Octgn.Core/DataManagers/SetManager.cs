@@ -9,6 +9,7 @@
     using System.Xml;
     using System.Xml.Serialization;
 
+    using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.Library;
@@ -103,21 +104,21 @@
                             reader.ReadEndElement(); // </markers>
                         }
 
+                        var cardList = thisset.Cards().ToList();
                         if (reader.IsStartElement("cards"))
                         {
-                            var cardList = thisset.Cards.ToList();
                             reader.ReadStartElement(); // <cards>
                             while (reader.IsStartElement("card"))
                             {
                                 cardList.Add(CardManager.Get().FromXmlReader(reader,game,thisset,definition,package));
                             }
-                            thisset.Cards = cardList;
                             // cards are parsed through the CardModel constructor, which are then inserted individually into the database
                             reader.ReadEndElement(); // </cards>
                         }
 
                         reader.ReadEndElement();
                         DbContext.Get().Save(thisset);
+                        thisset.AddCard(cardList.ToArray());
                     }
                     string path = Path.Combine(Paths.DataDirectory, "Decks");
                     PackageRelationshipCollection decks = package.GetRelationshipsByType("http://schemas.octgn.org/set/deck");
@@ -151,8 +152,10 @@
 
         }
 
-        public void Uninstallset(Set set)
+        public void UninstallSet(Set set)
         {
+            foreach(var c in set.Cards())
+                DbContext.Get().Remove(c);
             DbContext.Get().Remove(set);
         }
 
@@ -180,7 +183,6 @@
             Version.TryParse(reader.GetAttribute("version"), out ver);
             ret.Version = ver ?? new Version(0, 0);
             reader.ReadStartElement("set");
-            ret.Cards = new List<Card>();
             ret.Markers = new List<Marker>();
             ret.Packs = new List<Pack>();
             return ret;
@@ -196,74 +198,6 @@
                 PackagePart definition = package.GetPart(defRelationship.TargetUri);
 
                 var settings = new XmlReaderSettings { ValidationType = ValidationType.Schema, IgnoreWhitespace = true };
-
-                XmlSerializer serializer = new XmlSerializer(typeof(set));
-                var set = (set)serializer.Deserialize(definition.GetStream());
-
-                var game = GameManager.Get().GetById(new Guid(set.gameId));
-
-                ret.PackageName = path;
-                ret.Name = set.name;
-                ret.Cards = set.cards.Select(
-                        card =>
-                            {
-                                var c = new Card
-                                            {
-                                                Alternate = new Guid(card.alternate),
-                                                Name = card.name,
-                                                Id = new Guid(card.id),
-                                                IsMutable = false
-                                            };
-                                c.ImageUri =definition.GetRelationship("C" + c.Id.ToString("N")).TargetUri.OriginalString;
-
-                                if (!string.IsNullOrWhiteSpace(card.dependent))
-                                {
-                                    try
-                                    {
-                                        c.Dependent = new Guid(card.dependent).ToString();
-                                    }
-                                    catch
-                                    {
-                                        try
-                                        {
-                                            c.Dependent = Boolean.Parse(card.dependent).ToString();
-                                        }
-                                        catch
-                                        {
-
-                                            throw new ArgumentException(
-                                                String.Format(
-                                                    "The value {0} is not of expected type for property Dependent. Dependent must be either true/false, or the Guid of the card to use instead.",
-                                                    c.Dependent));
-                                        }
-                                    }
-                                }
-                                c.Properties = new Dictionary<PropertyDef, object>();
-                                foreach (var p in card.property)
-                                {
-                                    var prop = game.CustomProperties.FirstOrDefault(x => x.Name == p.name);
-                                    if (prop == null)
-                                        throw new ArgumentException(string.Format("The property '{0}' is unknown", p.name));
-                                    switch (prop.Type)
-                                    {
-                                        case PropertyType.String:
-                                            c.Properties.Add(prop,p.value);
-                                            break;
-                                        case PropertyType.Integer:
-                                            c.Properties.Add(prop,Int32.Parse(p.value));
-                                            break;
-                                        case PropertyType.GUID:
-                                            c.Properties.Add(prop, Guid.Parse(p.value));
-                                            break;
-                                        case PropertyType.Char:
-                                            c.Properties.Add(prop, Char.Parse(p.value));
-                                            break;
-                                        default:
-                                            throw new ArgumentOutOfRangeException();
-                                    }
-                                }
-                                return c;
-                            });
 
                 using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(Paths),"Schemas/CardSet.xsd"))
                     //CardSet.xsd determines the "attributes" of a card (name, guid, alternate, dependent)
