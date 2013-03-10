@@ -9,12 +9,12 @@
     {
          public static void Save(this Deck deck, string path)
          {
-             //TODO DO THIS!
+             //TODO [DB MIGRATION] DO THIS!
              throw new NotImplementedException("OH GODS");
          }
         public static Deck Load(this Deck deck, string path)
         {
-             //TODO DO THIS!
+            //TODO [DB MIGRATION]  DO THIS!
              throw new NotImplementedException("OH GODS");
             return new Deck();
         }

@@ -10,7 +10,7 @@
     {
          public static PackContent CrackOpen(this Pack pack)
          {
-             //TODO Finish this!
+             //TODO [DB MIGRATION]  Finish this!
              throw new NotImplementedException("AHH FUCK");
          }
         public static string GetFullName(this Pack pack)
