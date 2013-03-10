@@ -30,7 +30,7 @@
         
         public Card GetCardById(Guid id)
         {
-            var set = GameManager.Get().Games.SelectMany(x => x.Sets).FirstOrDefault(x => x.Cards.Any(y => y.Id == id));
+            var set = SetManager.Get().Sets.FirstOrDefault(x => x.Cards.Any(y => y.Id == id));
             if (set == null) return null;
             return set.Cards.FirstOrDefault(x => x.Id == id);
         }

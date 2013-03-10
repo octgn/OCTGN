@@ -36,18 +36,47 @@
             }
         }
 
+        public IEnumerable<Set> Sets
+        {
+            get
+            {
+                return this.Client.Query<Set>().AsEnumerable();
+            }
+        }
+
         public void Save(Set set)
         {
             var game = Games.FirstOrDefault(x => x.Id == set.GameId);
             if(game == null) throw new Exception("Game doesn't exist!");
-            var templist = game.Sets.ToList();
-            templist.Add(set);
-            game.Sets = templist;
-            this.Client.Store(game);
+
+            var curSet = Sets.FirstOrDefault(x => x.Id == set.Id);
+            if (curSet != null)
+            {
+                var id = this.Client.Ext().GetID(curSet);
+                this.Client.Ext().Bind(set,id);
+            }
+            this.Client.Store(set);
+            this.Client.Commit();
         }
         public void Save(Game game)
         {
-            this.Client.Store(game);
+            try
+            {
+                // Need to do this so that it doesn't just duplicate the entry
+                // Stupid db40 uses longs for ids
+                var curGame = Games.FirstOrDefault(x => x.Id == game.Id);
+                if (curGame != null)
+                {
+                    var id = this.Client.Ext().GetID(curGame);
+                    this.Client.Ext().Bind(game,id);
+                }
+                this.Client.Store(game);
+                this.Client.Commit();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public void Remove(Game game)
@@ -55,15 +84,15 @@
             var g = Games.FirstOrDefault(x => x.Id == game.Id);
             if (g == null) return;
             this.Client.Delete(g);
+            this.Client.Commit();
         }
 
         public void Remove(Set set)
         {
-            var game = Games.FirstOrDefault(x => x.Id == set.GameId);
-            if(game == null) throw new Exception("Game doesn't exist!");
-            var templist = game.Sets.Where(s => s.Id != set.Id).ToList();
-            game.Sets = templist;
-            this.Client.Store(game);
+            var s = Sets.FirstOrDefault(x => x.Id == set.Id);
+            if (s == null) return;
+            this.Client.Delete(s);
+            this.Client.Commit();
         }
 
         internal DbContext()

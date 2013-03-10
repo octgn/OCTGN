@@ -142,7 +142,8 @@ namespace Octgn.Controls
 		{
 			Dispatcher.Invoke(new Action(() => { 
 				stackPanel1.Children.Clear();
-				foreach (GameListItem gs in GameManager.Get().Games
+			    var games = GameManager.Get().Games.ToList();
+				foreach (GameListItem gs in games
 					.OrderBy(x=>x.Name)
 					.Select(g => new GameListItem { Game = g }))
 				{
