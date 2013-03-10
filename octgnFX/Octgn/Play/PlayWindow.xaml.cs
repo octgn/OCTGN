@@ -102,7 +102,6 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
-            //TODO This path doesn't exist.
             if (!PartExists("http://schemas.octgn.org/game/rules"))
             {
                 Rules.Visibility = Visibility.Hidden;
@@ -462,6 +461,7 @@ namespace Octgn.Play
                 else
                 {
                     // TODO: Change to readable code
+                    // LOL - kellye
                     var img = e.Card != null
                                           ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
                                                                                                       e.Card.PeekingPlayers.

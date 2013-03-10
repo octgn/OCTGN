@@ -30,11 +30,12 @@ namespace Octgn.Scripting.Controls
         {
             InitializeComponent();
             // Async load the cards (to make the GUI snappier with huge DB)
+            //TODO [DB MIGRATION] Fuck card dlg
             throw new NotImplementedException("GAALSDKJFWE");
             Task.Factory.StartNew(() =>
                                       {
                                           //_allCards = Database.GetCards(where).ToList();
-                                          //TODO FIX THIS SHIT
+                                          //TODO [DB MIGRATION]  FIX THIS SHIT
                                           var game = GameManager.Get().GetById(Program.Game.Definition.Id);
                                           _allCards = game.AllCards().ToList();
                                           Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));

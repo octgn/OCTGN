@@ -825,7 +825,7 @@ namespace Skylabs.Lobby
             this.MucManager = new MucManager(this.xmpp);
             var room = new Jid("lobby@conference." + Host);
             this.MucManager.AcceptDefaultConfiguration(room);
-            //TODO Enable this with new UI
+            //TODO [NEW UI] Enable this with new UI
             //this.MucManager.JoinRoom(room, this.Username, this.Password, false);
             this.Me = new User(this.xmpp.MyJID);
             this.Me.SetStatus(UserStatus.Online);

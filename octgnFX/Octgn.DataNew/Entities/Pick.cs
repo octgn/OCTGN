@@ -20,6 +20,7 @@
         public PackContent GetCards(Pack pack)
         {
             var result = new PackContent();
+            //TODO [DB MIGRATION] blah
             throw new NotImplementedException("Holy Moly");
             //var conditions = new string[2];
             //conditions[0] = "set_id = '" + pack.Set.Id + "'";

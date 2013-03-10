@@ -143,7 +143,7 @@ namespace Octgn.DeckBuilder
                 conditions[i] = conditions[i].Replace("Card.", "");
             }
             //resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
-            // TODO REIMPLEMENT figure how to make this shit work.(line below)
+            // TODO [DB MIGRATION]  figure how to make this shit work.(line below)
             //UpdateDataGrid(Game.SelectCards(conditions).DefaultView);
             e.Handled = true;
             ((Button)sender).IsEnabled = true;

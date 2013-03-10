@@ -443,7 +443,7 @@ namespace Octgn.DeckBuilder
                 element.Quantity += 1;
             else
             {
-                //TODO Reimplement this
+                //TODO [DB MIGRATION]  Reimplement this
                 //CardModel Card = Game.GetCardById(e.CardId);
                 //if (Card.isDependent())
                 //{
@@ -476,7 +476,7 @@ namespace Octgn.DeckBuilder
             int items = grid.Items.Count - 1;
             int moveUp = grid.SelectedIndex - 1;
             int moveDown = grid.SelectedIndex + 1;
-            //TODO Reimplement whatever this is
+            //TODO [DB MIGRATION]  Reimplement whatever this is
             //if (e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) && e.KeyboardDevice.IsKeyDown(Key.Add))
             //{
             //    _unsaved = true;
@@ -654,6 +654,7 @@ namespace Octgn.DeckBuilder
             while (Current != null);
             return null;
         }
+        //TODO [DB MIGRATION] Reimplemen plugin shit.
         //#region IDeckBuilderPluginController
         //public GamesRepository Games
         //{

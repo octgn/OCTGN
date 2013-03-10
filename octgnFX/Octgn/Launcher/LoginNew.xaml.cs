@@ -273,7 +273,6 @@ namespace Octgn.Launcher
                                             }
                                         case "EmailUnverifiedException":
                                             {
-                                                //TODO Needs a way to resend e-mail and stuff
                                                 this.LoginFinished(LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail.");
                                                 break;
                                             }
@@ -415,7 +414,7 @@ namespace Octgn.Launcher
 
             private void PageLoaded(object sender, RoutedEventArgs e)
             {
-                //TODO Check for server here
+                //TODO [NEW UI] Check for server here
             }
         #endregion            
         internal struct NewsFeedItem
