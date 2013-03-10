@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Reflection;
 
+    using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
 
@@ -52,7 +53,7 @@
         {
             var games = Games.ToList();
             foreach(var g in games)
-                DbContext.Get().Remove(g);
+                UninstallGame(g);
         }
 
         public void InstallGame(Game game)
@@ -62,6 +63,8 @@
 
         public void UninstallGame(Game game)
         {
+            foreach(var s in game.Sets())
+                SetManager.Get().UninstallSet(s);
             DbContext.Get().Remove(game);
         }
     }

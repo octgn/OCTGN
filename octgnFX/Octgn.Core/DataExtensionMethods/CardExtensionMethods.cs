@@ -10,7 +10,7 @@
     {
         public static Set GetSet(this Card card)
         {
-            return SetManager.Get().Sets.FirstOrDefault(x => x.Cards.Any(z => z.Id == card.Id));
+            return SetManager.Get().Sets.FirstOrDefault(x => x.Cards().Any(z => z.Id == card.Id));
         }
         public static MultiCard ToMultiCard(this Card card, int quantity = 1)
         {
