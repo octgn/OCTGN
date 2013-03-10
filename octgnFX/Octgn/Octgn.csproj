@@ -209,6 +209,10 @@
       <HintPath>..\..\packages\System.Data.SQLite.1.0.83.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Abstractions, Version=1.4.0.41, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\System.IO.Abstractions.1.4.0.41\lib\net35\System.IO.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
