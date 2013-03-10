@@ -164,11 +164,11 @@ namespace Octgn.Definitions
                                        CardWidth = game.CardDefinition.Width,
                                        CardHeight = game.CardDefinition.Height,
                                        CardBack = game.CardDefinition.Back,
-                                       DeckSections = game.DeckDefinition.Sections.Keys,
+                                       DeckSections = game.DeckDefinition.Sections.Keys.ToList(),
                                        SharedDeckSections =
                                            game.SharedDeckDefinition == null
                                                ? null
-                                               : game.SharedDeckDefinition.Sections.Keys,
+                                               : game.SharedDeckDefinition.Sections.Keys.ToList(),
                                        FileHash = game.FileHash
                                    };
                 var rootDir = Path.Combine(Prefs.DataDirectory, "Games", game.Id.ToString()) + "\\";
@@ -180,7 +180,7 @@ namespace Octgn.Definitions
                     }
                 }
 
-                gameData.CustomProperties = game.CardDefinition.Properties.Select(x => x.Value);
+                gameData.CustomProperties = game.CardDefinition.Properties.Select(x => x.Value).ToList();
 
                 GameManager.Get().InstallGame(gameData);
                 return true;

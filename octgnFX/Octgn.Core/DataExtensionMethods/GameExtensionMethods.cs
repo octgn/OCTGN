@@ -28,6 +28,11 @@
         }
         private static IFileSystem io;
 
+        public static IEnumerable<Set> Sets(this Game game)
+        {
+            return SetManager.Get().Sets.Where(x => x.GameId == game.Id);
+        }
+
         public static Game Install(this Game game)
         {
             DbContext.Get().Save(game);
@@ -65,8 +70,8 @@
 
         public static Uri GetCardBackUri(this Game game)
         {
-            var path = IO.Path.Combine(game.GetInstallPath(), game.CardBack);
-            var ret = new Uri(path);
+            //var path = IO.Path.Combine(game.GetInstallPath(), game.CardBack);
+            var ret = new Uri(game.CardBack);
             return ret;
         }
 
@@ -79,35 +84,35 @@
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return null;
-            return g.Sets.SelectMany(x => x.Cards).FirstOrDefault(x => x.Name == name);
+            return g.Sets().SelectMany(x=> x.Cards).FirstOrDefault(x => x.Name == name);
         }
 
         public static Card GetCardById(this Game game, Guid id)
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return null;
-            return g.Sets.SelectMany(x => x.Cards).FirstOrDefault(x => x.Id == id);
+            return g.Sets().SelectMany(x => x.Cards).FirstOrDefault(x => x.Id == id);
         }
 
         public static Set GetSetById(this Game game, Guid id)
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return null;
-            return g.Sets.FirstOrDefault(x => x.Id == id);
+            return g.Sets().FirstOrDefault(x => x.Id == id);
         }
 
         public static IEnumerable<Marker> GetAllMarkers( this Game game)
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return new List<Marker>();
-            return g.Sets.SelectMany(x => x.Markers);
+            return g.Sets().SelectMany(x => x.Markers);
         }
 
         public static Pack GetPackById(this Game game, Guid id)
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return null;
-            return g.Sets.SelectMany(x => x.Packs).FirstOrDefault(x => x.Id == id);
+            return g.Sets().SelectMany(x => x.Packs).FirstOrDefault(x => x.Id == id);
         }
 
         public static IEnumerable<PropertyDef> AllProperties(this Game game)
@@ -121,7 +126,7 @@
         {
             var g = GameManager.Get().GetById(game.Id);
             if (g == null) return new List<Card>();
-            return g.Sets.SelectMany(x => x.Cards);
+            return g.Sets().SelectMany(x => x.Cards);
         }
 
         public static DataTable ToDataTable(this IEnumerable<Card> cards)

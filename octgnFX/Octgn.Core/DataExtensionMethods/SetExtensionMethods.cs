@@ -20,7 +20,7 @@
 
         public static Game GetGame(this Set set)
         {
-            return GameManager.Get().Games.FirstOrDefault(x => x.Sets.Any(y => y.Id == set.Id));
+            return GameManager.Get().Games.FirstOrDefault(x=>x.Id == set.GameId);
         }
     }
 }

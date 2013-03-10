@@ -28,6 +28,14 @@
         }
         #endregion Singleton
 
+        public IEnumerable<Set> Sets
+        {
+            get
+            {
+                return DbContext.Get().Sets;
+            }
+        } 
+
         public void InstallSet(string filename)
         {
             try
@@ -148,9 +156,9 @@
             DbContext.Get().Remove(set);
         }
 
-        public Octgn.DataNew.Entities.Set GetById(Guid id)
+        public Set GetById(Guid id)
         {
-            return GameManager.Get().Games.SelectMany(x => x.Sets).FirstOrDefault(x => x.Id == id);
+            return Sets.FirstOrDefault(x => x.Id == id);
         }
 
         public Set FromXmlReader(string packageName, XmlReader reader)
@@ -178,7 +186,7 @@
             return ret;
         }
 
-        public DataNew.Entities.Set FromFile(string path)
+        public Set FromFile(string path)
         {
             var ret = new DataNew.Entities.Set();
             using (Package package = Package.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))

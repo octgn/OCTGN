@@ -44,6 +44,7 @@ namespace Octgn.Controls
 		public void RefreshList()
 		{
 			lbSetList.Items.Clear();
+		    if (SelectedGame.Sets == null) return;
             foreach (DataNew.Entities.Set s in SelectedGame.Sets)
 			{
 				lbSetList.Items.Add(s);
