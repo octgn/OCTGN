@@ -12,8 +12,8 @@
         public Version Version { get; set; }
         public string Filename { get; internal set; }
         public string PackageName { get; set; }
-        public IEnumerable<Pack> Packs { get; internal set; }
-        public IEnumerable<Card> Cards { get; internal set; }
-        public IEnumerable<Marker> Markers { get; internal set; } 
+        public IEnumerable<Pack> Packs { get; set; }
+        public IEnumerable<Card> Cards { get; set; }
+        public IEnumerable<Marker> Markers { get; set; } 
     }
 }

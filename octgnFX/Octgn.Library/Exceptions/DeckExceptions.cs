@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Octgn.Data
+﻿namespace Octgn.Library.Exceptions
 {
+    using System;
+
     public abstract class DeckException : Exception
     {
         protected DeckException(string message)
@@ -33,8 +33,8 @@ namespace Octgn.Data
             : base(
                 string.Format("This deck was made for the game with id = '{0}', which isn't '{1}'.", actual, expected))
         {
-            ActualGameId = actual;
-            ExpectedGame = expected;
+            this.ActualGameId = actual;
+            this.ExpectedGame = expected;
         }
     }
 
@@ -61,8 +61,8 @@ namespace Octgn.Data
                 string.Format("OCTGN doesn't know this card:\r\nCard id = {0}\r\nCard name = \"{1}\"", id ?? "?",
                               name ?? "?"))
         {
-            CardId = id;
-            CardName = name;
+            this.CardId = id;
+            this.CardName = name;
         }
     }
 

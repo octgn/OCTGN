@@ -36,6 +36,36 @@
             }
         }
 
+        public void Save(Set set)
+        {
+            var game = Games.FirstOrDefault(x => x.Id == set.GameId);
+            if(game == null) throw new Exception("Game doesn't exist!");
+            var templist = game.Sets.ToList();
+            templist.Add(set);
+            game.Sets = templist;
+            this.Client.Store(game);
+        }
+        public void Save(Game game)
+        {
+            this.Client.Store(game);
+        }
+
+        public void Remove(Game game)
+        {
+            var g = Games.FirstOrDefault(x => x.Id == game.Id);
+            if (g == null) return;
+            this.Client.Delete(g);
+        }
+
+        public void Remove(Set set)
+        {
+            var game = Games.FirstOrDefault(x => x.Id == set.GameId);
+            if(game == null) throw new Exception("Game doesn't exist!");
+            var templist = game.Sets.Where(s => s.Id != set.Id).ToList();
+            game.Sets = templist;
+            this.Client.Store(game);
+        }
+
         internal DbContext()
         {
             Log.Debug("Creating DB Context");

@@ -2,6 +2,6 @@
 {
     public interface IPackItem
     {
-
+        PackContent GetCards(Pack pack);
     }
 }

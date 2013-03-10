@@ -8,6 +8,8 @@ using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using Octgn.DataNew;
+
     public class ScriptDef
     {
         public string Python { get; private set; }

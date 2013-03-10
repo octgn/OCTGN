@@ -21,6 +21,8 @@ namespace Octgn.Scripting
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
 
+    using Octgn.Core.DataExtensionMethods;
+
     [SecuritySafeCritical]
     public class ScriptApi : MarshalByRefObject
     {
@@ -243,8 +245,8 @@ namespace Octgn.Scripting
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
             property = property.ToLower();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
-            if (!c.Type.Model.Properties.Keys.Select(x => x.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
-            object ret = c.Type.Model.Properties.FirstOrDefault(x => x.Key.ToLower().Equals(property)).Value;
+            if (!c.Type.Model.Properties.Keys.Select(x => x.Name.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
+            object ret = c.Type.Model.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
             return (ret);
         }
 
@@ -584,7 +586,7 @@ namespace Octgn.Scripting
                             group.AddAt(card, group.Count);
                         }
 
-                        string pictureUri = model.Picture;
+                        string pictureUri = model.GetPicture();
                         Dispatcher.CurrentDispatcher.BeginInvoke(
                             new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                             DispatcherPriority.ApplicationIdle, pictureUri);
@@ -660,7 +662,7 @@ namespace Octgn.Scripting
                                            x += offset;
                                            y += offset;
                                        }
-                                       string pictureUri = model.Picture;
+                                       string pictureUri = model.GetPicture();
                                        Dispatcher.CurrentDispatcher.BeginInvoke(
                                            new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                                            DispatcherPriority.ApplicationIdle, pictureUri);

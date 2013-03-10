@@ -44,7 +44,7 @@ namespace Octgn.Windows
                 //UpdateUserShortcuts();
                 if (Prefs.CleanDatabase)
                 {
-                    Program.GamesRepository.RemoveAllGames();
+                    GameManager.Get().UninstallAllGames();
                     Prefs.CleanDatabase = false;
                     InstallDefsFromFolders();
                     InstallSetsFromFolders();
@@ -218,7 +218,7 @@ namespace Octgn.Windows
                     string copyto = Path.Combine(path, shortName);
                     if (fname.ToLower() != copyto.ToLower())
                         File.Copy(fname, copyto, true);
-                    SelectedGame.InstallSet(copyto);
+                    SetManager.Get().InstallSet(copyto);
                 }
                 UpdateStatus(string.Format("Set '{0}' installed.", shortName));
             }
@@ -392,7 +392,7 @@ namespace Octgn.Windows
                         Program.Game.End();
                         if (terr.Length <= 0)
                         {
-                            Program.GamesRepository.UpdateGameHash(g,fhash);
+                            g.UpdateGameHash(fhash);
                             continue;
                         }
                         _errors.AddRange(terr);
@@ -400,7 +400,7 @@ namespace Octgn.Windows
                     }
                 }
                 foreach (DataNew.Entities.Game g in g2R)
-                    Program.GamesRepository.Games.Remove(g);
+                    GameManager.Get().UninstallGame(g);
                 if (_errors.Count > 0)
                 {
                     Dispatcher.BeginInvoke(new Action(() =>

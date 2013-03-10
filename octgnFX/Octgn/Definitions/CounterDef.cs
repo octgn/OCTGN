@@ -4,6 +4,8 @@ using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using Octgn.DataNew;
+
     public class CounterDef
     {
         private string _icon;

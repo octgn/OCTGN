@@ -34,20 +34,20 @@ namespace Octgn
 #endif
 			//Program.GamesRepository = new GamesRepository();
 
-            if (Program.GamesRepository.MissingFiles.Any())
-            {
-                var sb =
-                    new StringBuilder(
-                        "Octgn cannot find the following files. The corresponding games have been disabled.\n\n");
-                foreach (string file in Program.GamesRepository.MissingFiles)
-                    sb.Append(file).Append("\n\n");
-                sb.Append("You should restore those files, or re-install the corresponding games.");
+            //if (Program.GamesRepository.MissingFiles.Any())
+            //{
+            //    var sb =
+            //        new StringBuilder(
+            //            "Octgn cannot find the following files. The corresponding games have been disabled.\n\n");
+            //    foreach (string file in Program.GamesRepository.MissingFiles)
+            //        sb.Append(file).Append("\n\n");
+            //    sb.Append("You should restore those files, or re-install the corresponding games.");
 
-                ShutdownMode oldShutdown = ShutdownMode;
-                ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                new Windows.MessageWindow(sb.ToString()).ShowDialog();
-                ShutdownMode = oldShutdown;
-            }
+            //    ShutdownMode oldShutdown = ShutdownMode;
+            //    ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            //    new Windows.MessageWindow(sb.ToString()).ShowDialog();
+            //    ShutdownMode = oldShutdown;
+            //}
 
             var uc = new UpdateChecker();
             uc.ShowDialog();

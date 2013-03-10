@@ -11,6 +11,9 @@ using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+    using Octgn.DataNew;
     using Octgn.Library;
 
     public class GameDef
@@ -42,7 +45,7 @@ namespace Octgn.Definitions
 
         internal string BasePath
         {
-            get { return GamesRepository.BasePath + '\\'; }
+            get { return Paths.DataDirectory + '\\'; }
         }
 
         internal string DecksPath
@@ -141,7 +144,7 @@ namespace Octgn.Definitions
                     return false;
 
                 // Check if the game already exists
-                if (Program.GamesRepository.Games.Any(g => g.Id == game.Id))
+                if (GameManager.Get().GetById(game.Id) != null)
                     if (
                         MessageBox.Show("This game already exists.\r\nDo you want to overwrite it?", "Confirmation",
                                         MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
@@ -152,7 +155,7 @@ namespace Octgn.Definitions
                     InstallFonts();
                 }
 
-                var gameData = new Data.Game
+                var gameData = new DataNew.Entities.Game
                                    {
                                        Id = game.Id,
                                        Name = game.Name,
@@ -166,7 +169,6 @@ namespace Octgn.Definitions
                                            game.SharedDeckDefinition == null
                                                ? null
                                                : game.SharedDeckDefinition.Sections.Keys,
-                                       Repository = Program.GamesRepository,
                                        FileHash = game.FileHash
                                    };
                 var rootDir = Path.Combine(Prefs.DataDirectory, "Games", game.Id.ToString()) + "\\";
@@ -178,7 +180,9 @@ namespace Octgn.Definitions
                     }
                 }
 
-                Program.GamesRepository.InstallGame(gameData, game.CardDefinition.Properties.Values);
+                gameData.CustomProperties = game.CardDefinition.Properties.Select(x => x.Value);
+
+                GameManager.Get().InstallGame(gameData);
                 return true;
             }
             catch (FileFormatException)

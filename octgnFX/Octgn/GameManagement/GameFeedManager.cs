@@ -7,6 +7,7 @@
 
     using NuGet;
 
+    using Octgn.Core.DataManagers;
     using Octgn.ViewModels;
 
     public class GameFeedManager
@@ -24,7 +25,7 @@
             foreach (var pack in packages)
             {
                 var ttl = pack.Tags.ToLower();
-                var game = Program.GamesRepository.AllGames.FirstOrDefault(x => ttl.Contains(x.Id.ToString().ToLower()));
+                var game = GameManager.Get().GetById(new Guid(pack.Id));
                 if (game == null) continue;
                 if (pack.Version.Version > game.Version)
                 {

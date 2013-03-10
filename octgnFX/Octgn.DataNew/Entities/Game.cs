@@ -17,6 +17,6 @@
         public IEnumerable<string> DeckSections { get; set; }
         public IEnumerable<string> SharedDeckSections { get; set; }
         public IEnumerable<PropertyDef> CustomProperties { get; set; }
-        public IQueryable<Set> Sets { get; set; }
+        public IEnumerable<Set> Sets { get; set; }
     }
 }

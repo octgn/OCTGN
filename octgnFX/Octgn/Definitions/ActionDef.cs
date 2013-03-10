@@ -4,6 +4,8 @@ using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using Octgn.DataNew;
+
     public abstract class BaseActionDef
     {
         public string Name { get; protected set; }

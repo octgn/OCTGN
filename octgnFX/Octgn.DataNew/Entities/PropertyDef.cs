@@ -21,9 +21,9 @@
     {
         public string Name { get; set; }
         public PropertyType Type { get; set; }
-        public bool IgnoreText { get; private set; }
-        public bool Hidden { get; private set; }
-        public PropertyTextKind TextKind { get; private set; }
+        public bool IgnoreText { get; set; }
+        public bool Hidden { get; set; }
+        public PropertyTextKind TextKind { get; set; }
 
         public bool Equals(PropertyDef other)
         {
