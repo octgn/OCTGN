@@ -81,7 +81,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.DataNew", "octgnFX\Oc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Core", "octgnFX\Octgn.Core\Octgn.Core.csproj", "{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.ProxyGenerator", "Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj", "{AB487BD2-9CF7-4C4E-A938-5B9FEE4C4E76}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.ProxyGenerator", "octgnFX\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj", "{AB487BD2-9CF7-4C4E-A938-5B9FEE4C4E76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
