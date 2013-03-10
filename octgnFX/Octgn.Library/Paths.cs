@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Octgn.Library
+﻿namespace Octgn.Library
 {
     using System.IO.Abstractions;
     using System.Reflection;
-
-    using Octgn.Data;
 
     public static class Paths
     {

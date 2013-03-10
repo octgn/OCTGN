@@ -2,15 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.IO.Abstractions;
     using System.Management.Instrumentation;
     using System.Reflection;
 
+    using log4net;
+
     internal static class PluginManager
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal static IFileSystem FS { get; set; }
 
         static PluginManager()
@@ -34,7 +36,7 @@
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine(e.Message);
+                    Log.Error("Problem loading plugin " + f.FullName, e);
                 }
             }
             // Load all plugins built into OCTGN

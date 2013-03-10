@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Octgn.Library
+﻿namespace Octgn.Core
 {
     using Octgn.Data;
+    using Octgn.Library;
 
     public class DataConfig : IDatabaseConfig 
     {

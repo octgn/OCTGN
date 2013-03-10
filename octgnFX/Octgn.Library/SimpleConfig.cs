@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using Polenter.Serialization;
-
-namespace Octgn.Data
+﻿namespace Octgn.Library
 {
+    using System;
+    using System.Collections;
+    using System.Diagnostics;
+    using System.IO;
+
+    using Polenter.Serialization;
+
     public static class SimpleConfig
     {
         private static object lockObject = new Object();

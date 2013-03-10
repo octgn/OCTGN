@@ -1,4 +1,4 @@
-﻿namespace Octgn.Library.Plugin
+﻿namespace Octgn.Core.Plugin
 {
     using System.Collections.Generic;
 
