@@ -75,6 +75,7 @@
                 Log.Debug("Starting DB Server");
                 this.Server = Db4objects.Db4o.CS.Db4oClientServer.OpenServer(DatabaseFile, 57634);
                 this.Server.GrantAccess("user", "password");
+                this.Client = Db4objects.Db4o.CS.Db4oClientServer.OpenClient("localhost", 57634, "user", "password");
                 return;
             }
             catch (Exception)

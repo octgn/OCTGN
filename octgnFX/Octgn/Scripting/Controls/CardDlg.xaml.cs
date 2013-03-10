@@ -16,6 +16,7 @@ using Octgn.Utils;
 namespace Octgn.Scripting.Controls
 {
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
 
     public partial class CardDlg
     {
@@ -29,9 +30,13 @@ namespace Octgn.Scripting.Controls
         {
             InitializeComponent();
             // Async load the cards (to make the GUI snappier with huge DB)
+            throw new NotImplementedException("GAALSDKJFWE");
             Task.Factory.StartNew(() =>
                                       {
-                                          _allCards = Database.GetCards(where).ToList();
+                                          //_allCards = Database.GetCards(where).ToList();
+                                          //TODO FIX THIS SHIT
+                                          var game = GameManager.Get().GetById(Program.Game.Definition.Id);
+                                          _allCards = game.AllCards().ToList();
                                           Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
                                       });
             recentList.ItemsSource = Program.Game.RecentCards;
