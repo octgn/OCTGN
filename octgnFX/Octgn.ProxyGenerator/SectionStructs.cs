@@ -10,8 +10,8 @@ namespace Octgn.ProxyGenerator
     {
         public struct Location
         {
-            public int x = 0;
-            public int y = 0;
+            public int x;
+            public int y;
 
             public Location(int x, int y) 
             {
@@ -27,8 +27,8 @@ namespace Octgn.ProxyGenerator
 
         public struct Text
         {
-            public Color color = Color.White;
-            public int size = 0;
+            public Color color;
+            public int size;
 
             public Text(string color, int size)
             {
@@ -39,8 +39,8 @@ namespace Octgn.ProxyGenerator
 
         public struct Border
         {
-            public Color color = Color.White;
-            public int size = 0;
+            public Color color;
+            public int size;
 
             public Border(string color, int size)
             {
@@ -51,8 +51,8 @@ namespace Octgn.ProxyGenerator
 
         public struct Block
         {
-            public int width = 0;
-            public int height = 0;
+            public int width;
+            public int height;
 
             public Block(int width, int height) 
             {

@@ -9,10 +9,10 @@ namespace Octgn.ProxyGenerator
 {
     public class SectionDefinition
     {
-        public SectionStructs.Location location;
-        public SectionStructs.Block block;
-        public SectionStructs.Text text;
-        public SectionStructs.Border border;
+        public SectionStructs.Location location = new SectionStructs.Location { x = 0, y = 0 };
+        public SectionStructs.Block block = new SectionStructs.Block { height = 0, width = 0 };
+        public SectionStructs.Text text = new SectionStructs.Text { color = Color.White, size = 0 };
+        public SectionStructs.Border border = new SectionStructs.Border { color = Color.White, size = 0 };
 
         public string id;
 
