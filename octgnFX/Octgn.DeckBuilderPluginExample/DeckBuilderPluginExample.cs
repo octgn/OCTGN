@@ -6,7 +6,6 @@ namespace Octgn.DeckBuilderPluginExample
     using System.Reflection;
     using System.Windows;
 
-    using Octgn.Data;
     using Octgn.Library.Plugin;
 
     public class DeckBuilderPluginExample : IDeckBuilderPlugin 

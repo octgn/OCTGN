@@ -1,7 +1,5 @@
-﻿namespace Octgn.Library.Plugin
+﻿namespace Octgn.Core.Plugin
 {
-    using System;
-
     /// <summary>
     /// Interface for creating plugin menu items.
     /// </summary>

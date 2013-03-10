@@ -18,6 +18,7 @@ namespace Octgn.DeckBuilder
 {
     using System.Diagnostics;
 
+    using Octgn.Core.Plugin;
     using Octgn.Library.Plugin;
     using Octgn.Windows;
 

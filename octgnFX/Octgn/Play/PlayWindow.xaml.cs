@@ -30,6 +30,8 @@ namespace Octgn.Play
 {
     using Microsoft.Windows.Controls.Ribbon;
 
+    using Octgn.Library;
+
     public partial class PlayWindow
     {
         private bool _isLocal;

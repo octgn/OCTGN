@@ -7,6 +7,8 @@
 
     using Db4objects.Db4o;
 
+    using Octgn.Library;
+
     public class DbContext : IDisposable
     {
         private static readonly string DatabasePath = Path.Combine(SimpleConfig.DataDirectory, "Database");

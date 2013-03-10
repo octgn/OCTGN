@@ -9,6 +9,8 @@ using System.IO;
 
 namespace Octgn.Data
 {
+    using Octgn.Library;
+
     public class DatabaseHandler
     {
         private static Dictionary<string, List<string>> columnCache = new Dictionary<string, List<string>>();

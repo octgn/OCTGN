@@ -77,6 +77,7 @@
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Data\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.DeckBuilderPluginExample\\DeckBuilderPluginExample.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Library\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Core\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.LobbyServer\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.ReleasePusher\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Server\\Properties\\AssemblyInfo.cs"));

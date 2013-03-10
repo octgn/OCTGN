@@ -166,6 +166,13 @@
     <Reference Include="IronPython.Wpf">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="LeLog4net">
+      <HintPath>..\..\packages\le_log4net.2.3.5\lib\4.0\LeLog4net.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Dynamic">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Dynamic.dll</HintPath>
     </Reference>
@@ -1017,6 +1024,10 @@
     <ProjectReference Include="..\agsxmpp\trunk\agsxmpp\agsXMPP2010.csproj">
       <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
       <Name>agsXMPP2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
+      <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
+      <Name>Octgn.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
       <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>

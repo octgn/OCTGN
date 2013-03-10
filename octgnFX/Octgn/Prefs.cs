@@ -7,6 +7,8 @@ namespace Octgn
 {
     using System.Windows.Controls;
 
+    using Octgn.Library;
+
     public static class Prefs
     {
         private static string _hideLoginNotifications;

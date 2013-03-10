@@ -11,6 +11,8 @@ using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using Octgn.Library;
+
     public class GameDef
     {
         private GameDef()
