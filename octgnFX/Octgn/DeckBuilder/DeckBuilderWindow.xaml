@@ -59,7 +59,7 @@
                     <TextBlock.Text>
                       <MultiBinding StringFormat="{}{0} ({1})">
                         <Binding Path="Name" Mode="OneTime" />
-                        <Binding Path="CardCount" />
+                        <Binding Path="Cards.Count" />
                       </MultiBinding>
                     </TextBlock.Text>
                     <TextBlock.FontWeight>
@@ -82,7 +82,7 @@
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
-                       <DataGridTextColumn Binding="{Binding Card.Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
+                       <DataGridTextColumn Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
                        <DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
                   </DataGrid.Columns>
                 </DataGrid>
