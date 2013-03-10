@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Data;
     using System.IO.Abstractions;
     using System.Linq;
@@ -60,6 +61,7 @@
         public static Deck CreateDeck(this Game game)
         {
             var deck = new Deck { GameId = game.Id };
+            deck.Sections = game.DeckSections.Select(x=> new Section{Name=x}).ToList();
             return deck;
         }
 
@@ -131,16 +133,23 @@
 
         public static DataTable ToDataTable(this IEnumerable<Card> cards)
         {
-            var ret = new DataTable();
-            foreach (var p in typeof(Card).GetProperties())
+            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(Card));
+            DataTable table = new DataTable();
+            for (int i = 0; i < props.Count; i++)
             {
-                ret.Columns.Add(p.Name, p.PropertyType);
+                PropertyDescriptor prop = props[i];
+                table.Columns.Add(prop.Name, prop.PropertyType);
             }
-            foreach (var list in cards.Select(c => typeof(Card).GetProperties().Select(p => p.GetValue(c, new object[] { })).ToList()))
+            object[] values = new object[props.Count];
+            foreach (Card item in cards)
             {
-                ret.Rows.Add(list);
+                for (int i = 0; i < values.Length; i++)
+                {
+                    values[i] = props[i].GetValue(item);
+                }
+                table.Rows.Add(values);
             }
-            return ret;
+            return table;   
         }
 
         public static Deck LoadDeck(this Game game, string filename)
