@@ -14,7 +14,7 @@ namespace Octgn.Utils
             xml_set = _xml_set;
         }
 
-        public void CheckXml(Octgn.Data.Game game)
+        public void CheckXml(DataNew.Entities.Game game)
         {
             XmlSetParser xmls = xml_set;
             if (game.Id.ToString() != xmls.game())
@@ -24,7 +24,7 @@ namespace Octgn.Utils
             xmls.check();
         }
 
-        public void CheckXml(Windows.ChangeSetsProgressDialog wnd, int max, Octgn.Data.Game game)
+        public void CheckXml(Windows.ChangeSetsProgressDialog wnd, int max, DataNew.Entities.Game game)
         {
             XmlSetParser xmls = xml_set;
             if (game.Id.ToString() != xmls.game())
@@ -35,7 +35,7 @@ namespace Octgn.Utils
             xmls.check();
         }
 
-        public void CheckVerboseXml(Windows.ChangeSetsProgressDialog wnd, int max, Octgn.Data.Game game)
+        public void CheckVerboseXml(Windows.ChangeSetsProgressDialog wnd, int max, DataNew.Entities.Game game)
         {
             XmlSetParser xmls = xml_set;
             wnd.UpdateProgress(1, max, "Parsing retrieved xml...", false);

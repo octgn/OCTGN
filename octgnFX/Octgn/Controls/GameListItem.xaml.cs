@@ -5,7 +5,9 @@ using System.Windows.Media.Imaging;
 
 namespace Octgn.Controls
 {
-	/// <summary>
+    using Octgn.Core.DataExtensionMethods;
+
+    /// <summary>
 	///   Interaction logic for GameListItem.xaml
 	/// </summary>
 	public partial class GameListItem
@@ -33,19 +35,19 @@ namespace Octgn.Controls
 			}
 		}
 
-		private Data.Game _game;
+        private DataNew.Entities.Game _game;
 		private bool _selected;
 
 		public GameListItem()
 		{
 			InitializeComponent();
-			_game = new Data.Game();
+            _game = new DataNew.Entities.Game();
 			DataContext = this;
 			LIBorder.DataContext = this;
 
 		}
 
-		public Data.Game Game
+        public DataNew.Entities.Game Game
 		{
 			get { return _game; }
 			set

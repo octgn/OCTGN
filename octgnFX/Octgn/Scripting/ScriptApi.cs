@@ -621,7 +621,7 @@ namespace Octgn.Scripting
 
             _engine.Invoke(() =>
                                {
-                                   CardModel model = Database.GetCardById(modelGuid);
+                                   DataNew.Entities.Card model = Database.GetCardById(modelGuid);
                                    if (model == null)
                                    {
                                    }

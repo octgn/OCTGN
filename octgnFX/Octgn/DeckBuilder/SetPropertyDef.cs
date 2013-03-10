@@ -4,13 +4,16 @@ using Octgn.Data;
 
 namespace Octgn.DeckBuilder
 {
+    using Octgn.DataNew.Entities;
+
     public class SetPropertyDef : PropertyDef
     {
         private readonly IList<Set> _allSets;
 
         public SetPropertyDef(IEnumerable<Set> allSets)
-            : base("Set", 0)
         {
+            base.Name = "Set";
+            base.Type = 0;
             _allSets = allSets.OrderBy(s => s.Name).ToList();
         }
 

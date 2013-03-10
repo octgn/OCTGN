@@ -28,7 +28,6 @@ namespace Skylabs.Lobby
     using agsXMPP.protocol.x.muc;
     using agsXMPP.Xml.Dom;
 
-    using Octgn.Data;
 
     using Error = agsXMPP.protocol.Error;
 
@@ -1020,7 +1019,7 @@ namespace Skylabs.Lobby
         /// <param name="gamename">
         /// The gamename.
         /// </param>
-        public void BeginHostGame(Game game, string gamename)
+        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename)
         {
             string data = string.Format("{0},:,{1},:,{2}", game.Id.ToString(), game.Version, gamename);
             var m = new Message(new Jid("gameserv@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");

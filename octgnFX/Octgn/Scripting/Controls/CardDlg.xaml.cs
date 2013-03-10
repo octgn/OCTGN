@@ -15,12 +15,14 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting.Controls
 {
+    using Octgn.Core.DataExtensionMethods;
+
     public partial class CardDlg
     {
         public static readonly DependencyProperty IsCardSelectedProperty = DependencyProperty.Register(
             "IsCardSelected", typeof (bool), typeof (CardDlg), new UIPropertyMetadata(false));
 
-        private List<CardModel> _allCards;
+        private List<DataNew.Entities.Card> _allCards;
         private string _filterText = "";
 
         public CardDlg(string where)
@@ -41,7 +43,7 @@ namespace Octgn.Scripting.Controls
             set { SetValue(IsCardSelectedProperty, value); }
         }
 
-        public CardModel SelectedCard { get; private set; }
+        public DataNew.Entities.Card SelectedCard { get; private set; }
 
         public int Quantity
         {
@@ -56,8 +58,8 @@ namespace Octgn.Scripting.Controls
             // (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
             if (sender is ListBox && ((ListBox) sender).SelectedIndex == -1) return;
 
-            if (recentList.SelectedIndex != -1) SelectedCard = (CardModel) recentList.SelectedItem;
-            if (allList.SelectedIndex != -1) SelectedCard = (CardModel) allList.SelectedItem;
+            if (recentList.SelectedIndex != -1) SelectedCard = (DataNew.Entities.Card)recentList.SelectedItem;
+            if (allList.SelectedIndex != -1) SelectedCard = (DataNew.Entities.Card)allList.SelectedItem;
 
             if (SelectedCard == null) return;
 
@@ -99,7 +101,7 @@ namespace Octgn.Scripting.Controls
             ThreadPool.QueueUserWorkItem(searchObj =>
                                              {
                                                  var search = (string) searchObj;
-                                                 List<CardModel> filtered =
+                                                 List<DataNew.Entities.Card> filtered =
                                                      _allCards.Where(
                                                          m =>
                                                          m.Name.IndexOf(search,
@@ -121,8 +123,8 @@ namespace Octgn.Scripting.Controls
         {
             var img = sender as Image;
             if (img == null) return;
-            var model = img.DataContext as CardModel;
-            if (model != null) ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
+            var model = img.DataContext as DataNew.Entities.Card;
+            if (model != null) ImageUtils.GetCardImage(new Uri(model.GetPicture()), x => img.Source = x);
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)

@@ -33,7 +33,7 @@ namespace Octgn.Definitions
         public int Width { get; private set; }
         public int Height { get; private set; }
         public int CornerRadius { get; private set; }
-        public Dictionary<string, PropertyDef> Properties { get; private set; }
+        public Dictionary<string, DataNew.Entities.PropertyDef> Properties { get; private set; }
 
         internal static CardDef LoadFromXml(XElement xml, PackagePart part)
         {

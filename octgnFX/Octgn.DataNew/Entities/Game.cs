@@ -1,4 +1,4 @@
-﻿namespace Octgn.Data.Entities
+﻿namespace Octgn.DataNew.Entities
 {
     using System;
     using System.Collections.Generic;

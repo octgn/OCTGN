@@ -18,6 +18,8 @@ namespace Octgn.Controls
 
     using Microsoft.Scripting.Utils;
 
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
     using Octgn.Definitions;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
@@ -110,10 +112,10 @@ namespace Octgn.Controls
             connectOfflineGameDialog.Close();
         }
 
-        private void StartJoinGame(HostedGameViewModel hostedGame, Data.Game game)
+        private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game)
         {
             Program.IsHost = false;
-            Program.Game = new Game(GameDef.FromO8G(game.FullPath),Program.LobbyClient.Me.UserName);
+            Program.Game = new Game(GameDef.FromO8G(game.GetFullPath()),Program.LobbyClient.Me.UserName);
             Program.CurrentOnlineGameName = hostedGame.Name;
             IPAddress hostAddress =  Dns.GetHostAddresses(Program.GameServerPath).FirstOrDefault();
             if(hostAddress == null)
@@ -202,7 +204,7 @@ namespace Octgn.Controls
                     if (Program.PreGameLobbyWindow == null)
                     {
                         Program.IsHost = false;
-                        Program.Game = new Octgn.Game(GameDef.FromO8G(connectOfflineGameDialog.Game.FullPath), null,true);
+                        Program.Game = new Octgn.Game(GameDef.FromO8G(connectOfflineGameDialog.Game.GetFullPath()), null,true);
 
                         Program.PreGameLobbyWindow = new PreGameLobbyWindow();
                         Program.PreGameLobbyWindow.Setup(true,Program.MainWindowNew);
@@ -253,7 +255,7 @@ namespace Octgn.Controls
             }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
-            var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == hostedgame.GameId);
+            var game = GameManager.Get().GetById(hostedgame.GameId);
             var task = new Task(() => this.StartJoinGame(hostedgame,game));
             task.ContinueWith((t) =>{ this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t)));});
             BorderButtons.IsEnabled = false;

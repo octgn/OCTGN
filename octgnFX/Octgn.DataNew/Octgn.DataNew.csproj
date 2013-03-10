@@ -32,14 +32,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CardPropertyComparer.cs" />
     <Compile Include="DbContext.cs" />
+    <Compile Include="Entities\Card.cs" />
+    <Compile Include="Entities\Deck.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\IPackItem.cs" />
+    <Compile Include="Entities\Marker.cs" />
+    <Compile Include="Entities\MultiCard.cs" />
     <Compile Include="Entities\Option.cs" />
     <Compile Include="Entities\OptionList.cs" />
     <Compile Include="Entities\Pack.cs" />
+    <Compile Include="Entities\PackContent.cs" />
     <Compile Include="Entities\Pick.cs" />
     <Compile Include="Entities\PropertyDef.cs" />
+    <Compile Include="Entities\Section.cs" />
     <Compile Include="Entities\Set.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

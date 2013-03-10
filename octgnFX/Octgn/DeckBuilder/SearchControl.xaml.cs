@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Octgn.Data;
+using Octgn.Core.DataExtensionMethods;
 using System.Text;
 
 namespace Octgn.DeckBuilder
@@ -15,17 +16,17 @@ namespace Octgn.DeckBuilder
     public partial class SearchControl
     {
         private DataView _CurrentView = null;
-        public SearchControl(Data.Game game)
+        public SearchControl(DataNew.Entities.Game game)
         {
             Game = game;
             InitializeComponent();
             filtersList.ItemsSource =
                 Enumerable.Repeat<object>("First", 1).Union(
                     Enumerable.Repeat<object>(new SetPropertyDef(Game.Sets), 1).Union(
-                        game.AllProperties.Where(p => !p.Hidden)));
+                        game.AllProperties().Where(p => !p.Hidden)));
             GenerateColumns(game);
             //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
-            UpdateDataGrid(game.SelectCards(null).DefaultView);
+            UpdateDataGrid(game.AllCards().ToDataTable().DefaultView);
         }//Why are we populating the list on load? I'd rather wait until the search is run with no parameters (V)_V
 
         public int SearchIndex { get; set; }
@@ -35,7 +36,7 @@ namespace Octgn.DeckBuilder
             get { return "Search #" + SearchIndex; }
         }
 
-        public Data.Game Game { get; private set; }
+        public DataNew.Entities.Game Game { get; private set; }
         public event EventHandler<SearchCardIdEventArgs> CardRemoved , CardAdded;
         public event EventHandler<SearchCardImageEventArgs> CardSelected;
 
@@ -101,9 +102,9 @@ namespace Octgn.DeckBuilder
                 }
         }
 
-        private void GenerateColumns(Data.Game game)
+        private void GenerateColumns(DataNew.Entities.Game game)
         {
-            foreach (PropertyDef prop in game.CustomProperties)
+            foreach (DataNew.Entities.PropertyDef prop in game.CustomProperties)
             {
                 resultsGrid.Columns.Add(new DataGridTextColumn
                                             {
@@ -142,7 +143,8 @@ namespace Octgn.DeckBuilder
                 conditions[i] = conditions[i].Replace("Card.", "");
             }
             //resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
-            UpdateDataGrid(Game.SelectCards(conditions).DefaultView);
+            // TODO REIMPLEMENT figure how to make this shit work.(line below)
+            //UpdateDataGrid(Game.SelectCards(conditions).DefaultView);
             e.Handled = true;
             ((Button)sender).IsEnabled = true;
         }
@@ -191,7 +193,7 @@ namespace Octgn.DeckBuilder
                 var rowid = row["id"] as string;
                 if (rowid != null)
                 {
-                    Deck.Element getCard = new Deck.Element { Card = Game.GetCardById(Guid.Parse(rowid)), Quantity = 1 };
+                    DataNew.Entities.MultiCard getCard = Game.GetCardById(Guid.Parse(rowid)).ToMultiCard();
                     DataObject dragCard = new DataObject("Card", getCard);
                     DragDrop.DoDragDrop(SearchCard, dragCard, DragDropEffects.Copy);
                 }
@@ -244,8 +246,8 @@ namespace Octgn.DeckBuilder
             if (guid != null)
             {
                 Guid setId = Guid.Parse(guid);
-                var game = (Data.Game) values[1];
-                Set set = game.GetSet(setId);
+                var game = (DataNew.Entities.Game)values[1];
+                DataNew.Entities.Set set = game.GetSetById(setId);
                 return set != null ? set.Name : "(unknown)";
             }
             return "(unknown)";

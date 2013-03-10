@@ -26,7 +26,7 @@ namespace Octgn.Scripting.Controls
             _allMarkersView = CollectionViewSource.GetDefaultView(Program.Game.Markers);
             _allMarkersView.Filter =
                 marker =>
-                ((MarkerModel) marker).Name.IndexOf(_filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
+                ((DataNew.Entities.Marker)marker).Name.IndexOf(_filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
             allList.ItemsSource = _allMarkersView;
             defaultList.ItemsSource = Marker.DefaultMarkers;
             recentList.ItemsSource = Program.Game.RecentMarkers;
@@ -38,7 +38,7 @@ namespace Octgn.Scripting.Controls
             set { SetValue(IsModelSelectedProperty, value); }
         }
 
-        public MarkerModel MarkerModel { get; private set; }
+        public DataNew.Entities.Marker MarkerModel { get; private set; }
 
         public int Quantity
         {
@@ -53,8 +53,8 @@ namespace Octgn.Scripting.Controls
             // (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
             if (sender is ListBox && ((ListBox) sender).SelectedIndex == -1) return;
 
-            if (recentList.SelectedIndex != -1) MarkerModel = (MarkerModel) recentList.SelectedItem;
-            if (allList.SelectedIndex != -1) MarkerModel = (MarkerModel) allList.SelectedItem;
+            if (recentList.SelectedIndex != -1) MarkerModel = (DataNew.Entities.Marker)recentList.SelectedItem;
+            if (allList.SelectedIndex != -1) MarkerModel = (DataNew.Entities.Marker)allList.SelectedItem;
             if (defaultList.SelectedIndex != -1)
             {
                 var m = ((DefaultMarkerModel) defaultList.SelectedItem);
