@@ -24,15 +24,15 @@ namespace Octgn.Controls
 	/// </summary>
 	public partial class SetList : UserControl
 	{
-		public Data.Game SelectedGame;
-		private Data.Game game;
+        public DataNew.Entities.Game SelectedGame;
+        private DataNew.Entities.Game game;
 
 		public SetList()
 		{
 			InitializeComponent();
 		}
 
-		public void Set(Data.Game game)
+        public void Set(DataNew.Entities.Game game)
 		{
 			SelectedGame = game;
 			RefreshList();
@@ -41,7 +41,7 @@ namespace Octgn.Controls
 		public void RefreshList()
 		{
 			lbSetList.Items.Clear();
-			foreach (Set s in SelectedGame.Sets)
+            foreach (DataNew.Entities.Set s in SelectedGame.Sets)
 			{
 				lbSetList.Items.Add(s);
 			}
@@ -58,7 +58,7 @@ namespace Octgn.Controls
 				int current = 0, max = items.Count;
 				wnd.UpdateProgress(current, max, null, false);
 				wnd.ShowMessage("Set Removal can take some time. Please be patient.");
-				foreach (Set s in items)
+                foreach (DataNew.Entities.Set s in items)
 				{
 					++current;
 					try
@@ -144,12 +144,12 @@ namespace Octgn.Controls
 			RefreshList();
 		}
 
-		public void AddAutoUpdatedSets()
-		{
-			if (SelectedGame == null)
-				return;
-			new Windows.UrlSetList { game = SelectedGame }.ShowDialog();
-			RefreshList();
-		}
+        //public void AddAutoUpdatedSets()
+        //{
+        //    if (SelectedGame == null)
+        //        return;
+        //    new Windows.UrlSetList { game = SelectedGame }.ShowDialog();
+        //    RefreshList();
+        //}
 	}
 }

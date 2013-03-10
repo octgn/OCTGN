@@ -524,12 +524,6 @@
     <Compile Include="Windows\UpgradeMessage.xaml.cs">
       <DependentUpon>UpgradeMessage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\UrlSetList.xaml.cs">
-      <DependentUpon>UrlSetList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\UrlSets.xaml.cs">
-      <DependentUpon>UrlSets.xaml</DependentUpon>
-    </Compile>
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -985,14 +979,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\UrlSetList.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\UrlSets.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Folder.png" />
@@ -1029,9 +1015,9 @@
       <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
       <Name>Octgn.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
-      <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
-      <Name>Octgn.Data</Name>
+    <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
+      <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
+      <Name>Octgn.DataNew</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
       <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>

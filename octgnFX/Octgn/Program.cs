@@ -36,7 +36,6 @@ namespace Octgn
         public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
-        public static GamesRepository GamesRepository = new GamesRepository();
         internal static Client Client;
         public static event Action OnOptionsChanged;
 

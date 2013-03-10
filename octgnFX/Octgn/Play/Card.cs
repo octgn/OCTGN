@@ -15,6 +15,8 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
+    using Octgn.Core.DataExtensionMethods;
+
     [Flags]
     public enum CardOrientation
     {
@@ -74,7 +76,7 @@ namespace Octgn.Play
         private Group _group;
         private Color? _highlight;
         private bool _isAlternateImage;
-        internal CardModel _alternateOf;
+        internal Octgn.DataNew.Entities.Card _alternateOf;
         private int numberOfSwitchWithAlternatesNotPerformed = 0;
 
         private CardOrientation _rot;
@@ -83,8 +85,8 @@ namespace Octgn.Play
         private double _x, _y;
 
         #endregion Private fields
-        
-        internal Card(Player owner, int id, ulong key, CardDef def, CardModel model, bool mySecret)
+
+        internal Card(Player owner, int id, ulong key, CardDef def, DataNew.Entities.Card model, bool mySecret)
             : base(owner)
         {
             _id = id;
@@ -289,9 +291,9 @@ namespace Octgn.Play
             get
             {
                 if (IsAlternateImage)
-                    return Type.Model.AlternatePicture ?? DefaultFront;
+                    return Type.Model.AlternatePicture() ?? DefaultFront;
                 if (!FaceUp) return DefaultBack;
-                return Type.Model == null ? DefaultFront : Type.Model.Picture;
+                return Type.Model == null ? DefaultFront : Type.Model.GetPicture();
             }
         }
 
@@ -337,7 +339,9 @@ namespace Octgn.Play
         {
             if (_type.Model == null) return null;
             if (name == "Name") return _type.Model.Name;
-            return name == "Id" ? _type.Model.Id : _type.Model.Properties[name];
+            if (name == "Id") return _type.Model.Id;
+            var prop = _type.Model.Properties.FirstOrDefault(x => x.Key.Name == name);
+            return prop.Value;
         }
 
         public void MoveTo(Group to, bool lFaceUp)
@@ -394,10 +398,10 @@ namespace Octgn.Play
         {
             if (IsAlternateImage)
                 //return Type.Model.AlternatePicture == null ? DefaultFront : Program.Game.CardFrontBitmap.ToString();
-                return Type.Model.AlternatePicture ?? DefaultFront;
+                return Type.Model.AlternatePicture() ?? DefaultFront;
             if (!up) return DefaultBack;
             if (Type == null || Type.Model == null) return DefaultFront;
-            return Type.Model.Picture;
+            return Type.Model.GetPicture();
         }
 
         internal BitmapImage GetBitmapImage(bool up)
@@ -407,7 +411,7 @@ namespace Octgn.Play
                 BitmapImage bmp = null;
                 try
                 {
-                    bmp = new BitmapImage(new Uri(Type.Model.AlternatePicture)) { CacheOption = BitmapCacheOption.OnLoad };
+                    bmp = new BitmapImage(new Uri(Type.Model.AlternatePicture())) { CacheOption = BitmapCacheOption.OnLoad };
                 }
                 catch (Exception)
                 {
@@ -420,7 +424,7 @@ namespace Octgn.Play
             }
             if (!up) return Program.Game.CardBackBitmap;
             if (Type == null || Type.Model == null) return Program.Game.CardFrontBitmap;
-            var bmpo = new BitmapImage(new Uri(Type.Model.Picture)) {CacheOption = BitmapCacheOption.OnLoad};
+            var bmpo = new BitmapImage(new Uri(Type.Model.GetPicture())) {CacheOption = BitmapCacheOption.OnLoad};
             bmpo.Freeze();
             return bmpo;
         }
@@ -477,7 +481,7 @@ namespace Octgn.Play
             }
         }
 
-        internal void SetModel(CardModel model)
+        internal void SetModel(DataNew.Entities.Card model)
         {
 #if (DEBUG)
             Debug.WriteLine("SetModel event happened!");
@@ -608,7 +612,7 @@ namespace Octgn.Play
             get { return _markers; }
         }
 
-        internal void AddMarker(MarkerModel model, ushort count)
+        internal void AddMarker(DataNew.Entities.Marker model, ushort count)
         {
             Marker marker = _markers.FirstOrDefault(m => m.Model.Equals(model));
             if (marker != null)
@@ -617,7 +621,7 @@ namespace Octgn.Play
                 _markers.Add(new Marker(this, model, count));
         }
 
-        internal void AddMarker(MarkerModel model)
+        internal void AddMarker(DataNew.Entities.Marker model)
         {
             AddMarker(model, 1);
         }
@@ -660,7 +664,7 @@ namespace Octgn.Play
             }
             else if (count > 0)
             {
-                MarkerModel model = Program.Game.GetMarkerModel(lId);
+                DataNew.Entities.Marker model = Program.Game.GetMarkerModel(lId);
                 var defaultMarkerModel = model as DefaultMarkerModel;
                 if (defaultMarkerModel != null)
                     (defaultMarkerModel).SetName(name);
@@ -676,7 +680,7 @@ namespace Octgn.Play
 
         internal bool hasProperty(string propertyName)
         {
-            return (Type.Model.hasProperty(propertyName));
+            return (Type.Model.HasProperty(propertyName));
         }
 
         /// <summary>
@@ -692,7 +696,7 @@ namespace Octgn.Play
 #endif
             if (_faceUp)
             {
-                if (Type.Model.hasProperty("Alternate"))
+                if (Type.Model.HasProperty("Alternate"))
                 {//if there is an alternate, we want to switch to it
                     if (_alternateOf == null)
                     {//Switching to first alternate

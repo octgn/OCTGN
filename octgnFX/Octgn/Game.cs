@@ -18,16 +18,18 @@ using Octgn.Utils;
 
 namespace Octgn
 {
+    using Octgn.Core.DataExtensionMethods;
+
     public class Game : INotifyPropertyChanged
     {
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
 
         private readonly GameDef _definition;
-        private readonly SortedList<Guid, MarkerModel> _markersById = new SortedList<Guid, MarkerModel>();
+        private readonly SortedList<Guid, DataNew.Entities.Marker> _markersById = new SortedList<Guid, DataNew.Entities.Marker>();
         private readonly List<RandomRequest> _random = new List<RandomRequest>();
-        private readonly List<CardModel> _recentCards = new List<CardModel>(MaxRecentCards);
-        private readonly List<MarkerModel> _recentMarkers = new List<MarkerModel>(MaxRecentMarkers);
+        private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
+        private readonly List<DataNew.Entities.Marker> _recentMarkers = new List<DataNew.Entities.Marker>(MaxRecentMarkers);
         private readonly Table _table;
 
         //wouldn't a heap be best for these caches? 
@@ -110,17 +112,17 @@ namespace Octgn
             get { return _random; }
         }
 
-        public IList<MarkerModel> Markers
+        public IList<DataNew.Entities.Marker> Markers
         {
             get { return _markersById.Values; }
         }
 
-        public IList<MarkerModel> RecentMarkers
+        public IList<DataNew.Entities.Marker> RecentMarkers
         {
             get { return _recentMarkers; }
         }
 
-        public IList<CardModel> RecentCards
+        public IList<DataNew.Entities.Card> RecentCards
         {
             get { return _recentCards; }
         }
@@ -171,7 +173,7 @@ namespace Octgn
                                      OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
                                      Program.Game.Definition.Id, Program.Game.Definition.Version);
             // Load all game markers
-            foreach (MarkerModel m in Database.GetAllMarkers())
+            foreach (DataNew.Entities.Marker m in Database.GetAllMarkers())
                 _markersById.Add(m.Id, m);
 
             Program.IsGameRunning = true;
@@ -259,20 +261,20 @@ namespace Octgn
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20
 
-        public void LoadDeck(Deck deck)
+        public void LoadDeck(DataNew.Entities.Deck deck)
         {
             Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
             GameDef def = Program.Game.Definition;
             DeckDef deckDef = deck.IsShared ? def.SharedDeckDefinition : def.DeckDefinition;
             CardDef cardDef = def.CardDefinition;
-            int nCards = deck.CardCount;
+            int nCards = deck.CardCount();
             var ids = new int[nCards];
             var keys = new ulong[nCards];
             var cards = new Card[nCards];
             var groups = new Group[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
             int j = 0;
-            foreach (Deck.Section section in deck.Sections)
+            foreach (DataNew.Entities.Section section in deck.Sections)
             {
                 DeckSectionDef sectionDef = deckDef.Sections[section.Name];
                 if (sectionDef == null)
@@ -288,12 +290,12 @@ namespace Octgn
                     gtmps.Add(gt);
                     group.SetVisibility(false, false);
                 }
-                foreach (Deck.Element element in section.Cards)
+                foreach (DataNew.Entities.MultiCard element in section.Cards)
                 {
-                    CardModel mod = Database.GetCardById(element.Card.Id);
+                    DataNew.Entities.Card mod = Database.GetCardById(element.Id);
                     for (int i = 0; i < element.Quantity; i++)
                     { //for every card in the deck, generate a unique key for it, ID for it
-                        ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | element.Card.Id.Condense();
+                        ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | element.Id.Condense();
                         int id = GenerateCardId();
                         ids[j] = id;
                         keys[j] = Crypto.ModExp(key);
@@ -304,7 +306,7 @@ namespace Octgn
                     }
 
                     // Load images in the background
-                    string pictureUri = element.Card.Picture;
+                    string pictureUri = element.GetPicture();
                     Dispatcher.CurrentDispatcher.BeginInvoke(
                         new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                         DispatcherPriority.ApplicationIdle, pictureUri);
@@ -335,7 +337,7 @@ namespace Octgn
             gtmps.TrimExcess();
         }
 
-        internal void AddRecentCard(CardModel card)
+        internal void AddRecentCard(DataNew.Entities.Card card)
         {
             int idx = _recentCards.FindIndex(c => c.Id == card.Id);
             if (idx == 0) return;
@@ -351,7 +353,7 @@ namespace Octgn
             _recentCards.Insert(0, card);
         }
 
-        internal void AddRecentMarker(MarkerModel marker)
+        internal void AddRecentMarker(DataNew.Entities.Marker marker)
         {
             int idx = _recentMarkers.IndexOf(marker);
             if (idx == 0) return;
@@ -367,9 +369,9 @@ namespace Octgn
             _recentMarkers.Insert(0, marker);
         }
 
-        internal MarkerModel GetMarkerModel(Guid id)
+        internal DataNew.Entities.Marker GetMarkerModel(Guid id)
         {
-            MarkerModel model;
+            DataNew.Entities.Marker model;
             if (id.CompareTo(new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10)) < 0)
             {
                 // Get a standard model

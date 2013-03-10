@@ -95,11 +95,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\DeckExceptions.cs" />
     <Compile Include="Exceptions\UserMessageException.cs" />
     <Compile Include="Networking\Socket\OTcpClient.cs" />
     <Compile Include="Networking\Socket\OTcpListener.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Schemas\CardSet.cs">
+      <DependentUpon>CardSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Schemas\Game.cs">
       <DependentUpon>Game.xsd</DependentUpon>
     </Compile>
@@ -116,6 +120,12 @@
       <DependentUpon>Game.xsd</DependentUpon>
       <SubType>Designer</SubType>
     </CodeAnalysisDictionary>
+    <EmbeddedResource Include="Schemas\CardSet.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="Schemas\CardSet.xsx">
+      <DependentUpon>CardSet.xsd</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="x64\SQLite.Interop.dll">

@@ -236,7 +236,7 @@ namespace Octgn.Play.Gui
                 object arg = args[i];
                 string placeholder = "{" + i + "}";
 
-                var cardModel = arg as CardModel;
+                var cardModel = arg as DataNew.Entities.Card;
                 var cardId = arg as CardIdentity;
                 var card = arg as Card;
                 if (card != null && (card.FaceUp || card.MayBeConsideredFaceUp))
@@ -262,9 +262,9 @@ namespace Octgn.Play.Gui
 
     internal class CardModelEventArgs : RoutedEventArgs
     {
-        public readonly CardModel CardModel;
+        public readonly DataNew.Entities.Card CardModel;
 
-        public CardModelEventArgs(CardModel model, RoutedEvent routedEvent, object source)
+        public CardModelEventArgs(DataNew.Entities.Card model, RoutedEvent routedEvent, object source)
             : base(routedEvent, source)
         {
             CardModel = model;
@@ -281,7 +281,7 @@ namespace Octgn.Play.Gui
                                                                                                      >),
                                                                                                  typeof (CardRun));
 
-        private CardModel _card;
+        private DataNew.Entities.Card _card;
 
         public CardRun(CardIdentity id)
             : base(id.ToString())
@@ -291,13 +291,13 @@ namespace Octgn.Play.Gui
                 id.Revealed += new CardIdentityNamer {Target = this}.Rename;
         }
 
-        public CardRun(CardModel model)
+        public CardRun(DataNew.Entities.Card model)
             : base(model.Name)
         {
             _card = model;
         }
 
-        public void SetCardModel(CardModel model)
+        public void SetCardModel(DataNew.Entities.Card model)
         {
             Debug.Assert(_card == null, "Cannot set the CardModel of a CardRun if it is already defined");
             _card = model;

@@ -8,6 +8,8 @@ using Octgn.Data;
 
 namespace Octgn.Play.Dialogs
 {
+    using Octgn.Core.DataExtensionMethods;
+
     public partial class LimitedDialog
     {
         public LimitedDialog()
@@ -21,7 +23,7 @@ namespace Octgn.Play.Dialogs
         public static LimitedDialog Singleton { get; private set; }
 
         public ObservableCollection<SelectedPack> Packs { get; set; }
-        public IEnumerable<Set> Sets { get; set; }
+        public IEnumerable<DataNew.Entities.Set> Sets { get; set; } 
 
         protected override void OnClosed(EventArgs e)
         {
@@ -36,8 +38,8 @@ namespace Octgn.Play.Dialogs
             // I am creating lightweight "clones" of the pack, because the 
             // WPF ListBox doesn't like having multiple copies of the same 
             // instance and messes up selection
-            var pack = (Pack) packsCombo.SelectedItem;
-            Packs.Add(new SelectedPack {Id = pack.Id, FullName = pack.FullName});
+            var pack = (DataNew.Entities.Pack) packsCombo.SelectedItem;
+            Packs.Add(new SelectedPack {Id = pack.Id, FullName = pack.GetFullName()});
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)

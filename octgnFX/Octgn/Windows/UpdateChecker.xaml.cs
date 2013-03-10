@@ -18,6 +18,10 @@ using vbAccelerator.Components.Shell;
 
 namespace Octgn.Windows
 {
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+    using Octgn.Library;
+
     /// <summary>
     ///   Interaction logic for UpdateChecker.xaml
     /// </summary>
@@ -35,8 +39,6 @@ namespace Octgn.Windows
         {
             IsClosingDown = false;
             InitializeComponent();
-            if (Program.GamesRepository == null)
-                Program.GamesRepository = new GamesRepository();
             ThreadPool.QueueUserWorkItem(s =>
                                              {
                 //UpdateUserShortcuts();
@@ -57,7 +59,7 @@ namespace Octgn.Windows
 #if(!DEBUG)
                 CheckForUpdates();
 #endif
-                CheckForXmlSetUpdates();
+                //CheckForXmlSetUpdates();
                 UpdateCheckDone();
             });
             lblStatus.Content = "";
@@ -123,7 +125,7 @@ namespace Octgn.Windows
         {
             UpdateStatus("Checking folders for games that aren't installed.");
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
-            var path2 = GamesRepository.BasePath;
+            var path2 = Paths.DataDirectory;
 
             //Grab all def files
             var defList = Directory.GetFiles(path , "*.o8g" , SearchOption.AllDirectories);
@@ -136,7 +138,7 @@ namespace Octgn.Windows
             foreach(var d in dList)
             {
                 var gd = GameDef.FromO8G(d);
-                var og = Program.GamesRepository.AllGames.FirstOrDefault(x => x.Id == gd.Id);
+                var og = GameManager.Get().Games.FirstOrDefault(x => x.Id == gd.Id);
                 if(og != null)
                 {
                     if (gd.Version > og.Version || (gd.Version == og.Version && gd.FileHash != og.FileHash))
@@ -163,7 +165,7 @@ namespace Octgn.Windows
         {
             UpdateStatus("Checking folders for sets that aren't installed.");
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
-            var path2 = GamesRepository.BasePath;
+            var path2 = Paths.DataDirectory;
 
             //Grab all def files
             var setList = Directory.GetFiles(path, "*.o8s", SearchOption.AllDirectories);
@@ -177,16 +179,14 @@ namespace Octgn.Windows
             {
                 try
                 {
-                    var ns = Set.SetFromFile(s , Program.GamesRepository);
-                    if (ns.Game == null) continue;
-                    var osg = Program.GamesRepository.AllGames.FirstOrDefault(x => x.Id == ns.Game.Id);
-                    if(osg == null)
-                        continue;
-                    var os = osg.GetSet(ns.Id);
+                    DataNew.Entities.Set ns = SetManager.Get().FromFile(s);
+                    var nsGame = ns.GetGame();
+                    if (nsGame == null) continue;
+                    var os = nsGame.GetSetById(ns.Id);
                     if(os == null)
-                        InstallSet(s,osg);
+                        InstallSet(s,nsGame);
                     else if(ns.Version > os.Version)
-                        InstallSet(s,osg);                    
+                        InstallSet(s,nsGame);                    
                 }
                 catch(Exception e)
                 {
@@ -201,7 +201,7 @@ namespace Octgn.Windows
             Prefs.InstallOnBoot = false;
         }
 
-        private void InstallSet(string fname, Octgn.Data.Game SelectedGame)
+        private void InstallSet(string fname, DataNew.Entities.Game SelectedGame)
         {
             string shortName = Path.GetFileName(fname);
             UpdateStatus("Installing Set " + shortName);
@@ -251,70 +251,70 @@ namespace Octgn.Windows
             }
         }
 
-        private void CheckForXmlSetUpdates()
-        {
-            UpdateStatus("Checking for xml game updates...");
-            foreach (Data.Game game in Program.GamesRepository.Games)
-            {
-                List<String> xml_links = game.GetAllXmls();
-                foreach (String xml_link in xml_links)
-                {
-                    try
-                    {
-                        Utils.XmlSetParser xmls = new Utils.XmlSetParser(xml_link);
-                        Utils.XmlSimpleValidate xml_validate = new Utils.XmlSimpleValidate(xmls);
-                        xml_validate.CheckXml(game);
-                        if (game.GetOldXmlByLink(xml_link) != null)
-                        {
-                            var xmlr = XmlReader.Create(new StringReader(game.GetOldXmlByLink(xml_link)));
-                            Utils.XmlSetParser old_xml = new Utils.XmlSetParser(xmlr);
-                            if (old_xml.uuid() != xmls.uuid())
-                            {
-                                UpdateStatus("Problem with xml at link " + xml_link + " - uuid of set changed");
-                            }
-                            if (xmls.version() > old_xml.version())
-                            {
-                                Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
-                                xmli.installSet(this, game);
-                                WebClient cli = new WebClient();
-                                try
-                                {
-                                    String xml_val = cli.DownloadString(xml_link);
-                                    game.WriteOldXmlByLink(xml_link, xml_val);
-                                }
-                                catch
-                                {
-                                    UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
-                                }
+        //private void CheckForXmlSetUpdates()
+        //{
+        //    UpdateStatus("Checking for xml game updates...");
+        //    foreach (DataNew.Entities.Game game in GameManager.Get().Games)
+        //    {
+        //        List<String> xml_links = game.GetAllXmls();
+        //        foreach (String xml_link in xml_links)
+        //        {
+        //            try
+        //            {
+        //                Utils.XmlSetParser xmls = new Utils.XmlSetParser(xml_link);
+        //                Utils.XmlSimpleValidate xml_validate = new Utils.XmlSimpleValidate(xmls);
+        //                xml_validate.CheckXml(game);
+        //                if (game.GetOldXmlByLink(xml_link) != null)
+        //                {
+        //                    var xmlr = XmlReader.Create(new StringReader(game.GetOldXmlByLink(xml_link)));
+        //                    Utils.XmlSetParser old_xml = new Utils.XmlSetParser(xmlr);
+        //                    if (old_xml.uuid() != xmls.uuid())
+        //                    {
+        //                        UpdateStatus("Problem with xml at link " + xml_link + " - uuid of set changed");
+        //                    }
+        //                    if (xmls.version() > old_xml.version())
+        //                    {
+        //                        Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
+        //                        xmli.installSet(this, game);
+        //                        WebClient cli = new WebClient();
+        //                        try
+        //                        {
+        //                            String xml_val = cli.DownloadString(xml_link);
+        //                            game.WriteOldXmlByLink(xml_link, xml_val);
+        //                        }
+        //                        catch
+        //                        {
+        //                            UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
+        //                        }
 
-                            }
-                        }
-                        else
-                        {
-                            try
-                            {
-                                Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
-                                xmli.installSet(this, game);
-                                WebClient cli = new WebClient();
-                                String xml_val = cli.DownloadString(xml_link);
-                                game.WriteOldXmlByLink(xml_link, xml_val);
-                            }
-                            catch
-                            {
-                                UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Problem with getting one of the xmls - " + xml_link);
-                        UpdateStatus("Problem with getting one of the xmls - " + xml_link);
-                    }
-                }
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    try
+        //                    {
+        //                        Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
+        //                        xmli.installSet(this, game);
+        //                        WebClient cli = new WebClient();
+        //                        String xml_val = cli.DownloadString(xml_link);
+        //                        game.WriteOldXmlByLink(xml_link, xml_val);
+        //                    }
+        //                    catch
+        //                    {
+        //                        UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
+        //                    }
+        //                }
+        //            }
+        //            catch
+        //            {
+        //                MessageBox.Show("Problem with getting one of the xmls - " + xml_link);
+        //                UpdateStatus("Problem with getting one of the xmls - " + xml_link);
+        //            }
+        //        }
 
-            }
+        //    }
 
-        }
+        //}
 
         private void UpdateCheckDone()
         {
@@ -363,15 +363,15 @@ namespace Octgn.Windows
             UpdateStatus("Loading Game Definitions...");
             try
             {
-                var g2R = new List<Data.Game>();
+                var g2R = new List<DataNew.Entities.Game>();
                 using (MD5 md5 = new MD5CryptoServiceProvider())
                 {
-                    foreach (Data.Game g in Program.GamesRepository.Games)
+                    foreach (DataNew.Entities.Game g in GameManager.Get().Games)
                     {
                         string fhash = "";
 
                         UpdateStatus("Checking Game: " + g.Name);
-                        var fpath = g.FullPath;
+                        var fpath = g.GetFullPath();
                         if (!File.Exists(fpath))
                         {
                             _errors.Add("[" + g.Name + "]: Def file doesn't exist at " + fpath);
@@ -399,7 +399,7 @@ namespace Octgn.Windows
                         g2R.Add(g);
                     }
                 }
-                foreach (Data.Game g in g2R)
+                foreach (DataNew.Entities.Game g in g2R)
                     Program.GamesRepository.Games.Remove(g);
                 if (_errors.Count > 0)
                 {

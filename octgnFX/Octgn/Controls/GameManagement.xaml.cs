@@ -18,13 +18,15 @@ using Octgn.Launcher;
 
 namespace Octgn.Controls
 {
-	/// <summary>
+    using Octgn.Core.DataManagers;
+
+    /// <summary>
 	/// Interaction logic for GameManagement.xaml
 	/// </summary>
 	public partial class GameManagement : UserControl
 	{
 		static public bool GamesChanged = false;
-		public Octgn.Data.Game SelectedGame = null;
+        public Octgn.DataNew.Entities.Game SelectedGame = null;
 		private bool isTaskRunning;
 		public GameManagement()
 		{
@@ -139,8 +141,7 @@ namespace Octgn.Controls
 		{
 			Dispatcher.Invoke(new Action(() => { 
 				stackPanel1.Children.Clear();
-				foreach (GameListItem gs in Program.GamesRepository
-					.AllGames
+				foreach (GameListItem gs in GameManager.Get().Games
 					.OrderBy(x=>x.Name)
 					.Select(g => new GameListItem { Game = g }))
 				{

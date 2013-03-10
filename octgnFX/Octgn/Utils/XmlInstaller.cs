@@ -17,14 +17,14 @@ namespace Octgn.Utils
             xml_set = _xml_set;
         }
 
-        public void installSet(Windows.ChangeSetsProgressDialog wnd, int max, Octgn.Data.Game game)
+        public void installSet(Windows.ChangeSetsProgressDialog wnd, int max, DataNew.Entities.Game game)
         {
             wnd.UpdateProgress(0, max, "Retrieving xml...", false);
             XmlSetParser xmls = xml_set;
             wnd.UpdateProgress(1, max, "Parsing retrieved xml...", false);
             xmls.check();
             bool is_spoiler_installed = true;
-            Data.Set set = null;
+            DataNew.Entities.Set set = null;
             string path = Path.Combine(Prefs.DataDirectory, "Games", game.Id.ToString(), "Sets");
             string downloadto = Path.Combine(path) + xmls.name() + ".o8s";
             var cli = new WebClient();
@@ -34,7 +34,7 @@ namespace Octgn.Utils
             wnd.UpdateProgress(3, max, "Checking for existence of old definition...", false);
             try
             {
-                set = game.Sets.First<Data.Set>(_set => _set.Id.ToString() == xmls.uuid());
+                set = game.Sets.First<DataNew.Entities.Set>(_set => _set.Id.ToString() == xmls.uuid());
             }
             catch
             {
@@ -50,14 +50,14 @@ namespace Octgn.Utils
             wnd.UpdateProgress(6, max, "Set installed correctly", false);
         }
 
-        public void installSet(Windows.UpdateChecker wnd, Octgn.Data.Game game)
+        public void installSet(Windows.UpdateChecker wnd, DataNew.Entities.Game game)
         {
             wnd.UpdateStatus("Retrieving xml...");
             XmlSetParser xmls = xml_set;
             wnd.UpdateStatus("Parsing retrieved xml...");
             xmls.check();
             bool is_spoiler_installed = true;
-            Data.Set set = null;
+            DataNew.Entities.Set set = null;
             string path = Path.Combine(Prefs.DataDirectory, "Games", game.Id.ToString(), "Sets");
             string downloadto = Path.Combine(path) + xmls.name() + ".o8s";
             var cli = new WebClient();
@@ -68,7 +68,7 @@ namespace Octgn.Utils
             wnd.UpdateStatus( "Checking for existence of old definition...");
             try
             {
-                set = game.Sets.First<Data.Set>(_set => _set.Id.ToString() == xmls.uuid());
+                set = game.Sets.First<DataNew.Entities.Set>(_set => _set.Id.ToString() == xmls.uuid());
             }
             catch
             {

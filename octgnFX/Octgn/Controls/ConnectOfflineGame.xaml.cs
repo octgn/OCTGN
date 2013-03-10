@@ -11,6 +11,7 @@
     using System.Windows.Controls;
     using System.Windows.Forms;
 
+    using Octgn.Core.DataManagers;
     using Octgn.Networking;
     using Octgn.ViewModels;
 
@@ -38,7 +39,7 @@
         }
 
         public bool Successful { get; private set; }
-        public Data.Game Game { get; private set; }
+        public DataNew.Entities.Game Game { get; private set; }
 
         public ObservableCollection<DataGameViewModel> Games { get; private set; }
         public ConnectOfflineGame()
@@ -52,7 +53,7 @@
         {
             if (Games == null)
                 Games = new ObservableCollection<DataGameViewModel>();
-            var list = Program.GamesRepository.Games.Select(x => new DataGameViewModel(x)).ToList();
+            var list = GameManager.Get().Games.Select(x => new DataGameViewModel(x)).ToList();
             Games.Clear();
             foreach (var l in list)
                 Games.Add(l);
@@ -93,7 +94,7 @@
                 Successful = false;
                 return;
             }
-            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository);
+            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
             this.Close(DialogResult.OK);
         }
 

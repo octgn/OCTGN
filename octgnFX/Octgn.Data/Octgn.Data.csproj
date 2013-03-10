@@ -151,10 +151,8 @@
     <Compile Include="CardModel.cs" />
     <Compile Include="DatabaseHandler.cs" />
     <Compile Include="Deck.cs" />
-    <Compile Include="DeckExceptions.cs" />
     <Compile Include="Def.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="GameSettings.cs" />
     <Compile Include="GamesRepository.cs" />
     <Compile Include="IDatabaseConfig.cs" />
     <Compile Include="MarkerModel.cs" />
