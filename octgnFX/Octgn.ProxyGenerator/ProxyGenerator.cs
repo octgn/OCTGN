@@ -46,6 +46,11 @@ namespace Octgn.ProxyGenerator
             values.Add(id, value);
         }
 
+        public void ClearValues()
+        {
+            values.Clear();
+        }
+
         public Image GenerateProxy(string id)
         {
             CardDefinition cardDef = cards[id];
