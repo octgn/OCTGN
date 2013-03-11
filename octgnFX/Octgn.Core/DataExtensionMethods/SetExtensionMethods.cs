@@ -27,13 +27,13 @@
 
         public static Set AddCard(this Set set, params Card[] cards)
         {
-            var temp = set.Cards.ToList();
+            var temp = set.Cards.Cards.ToList();
             foreach (var c in cards)
             {
                 if (temp.Any(x => x.Id == c.Id)) continue;
                 temp.Add(c);
             }
-            set.Cards = temp;
+            set.Cards = new SetCards { Cards = temp };
             return set;
         }
     }

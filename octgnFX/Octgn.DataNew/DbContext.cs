@@ -51,7 +51,7 @@
         {
             get
             {
-                return this.Client.Query<Set>().SelectMany(x=>x.Cards);
+                return this.Client.Query<Set>().SelectMany(x=>x.Cards.Cards);
             }
         }
 
@@ -59,7 +59,7 @@
         {
             var game = Games.FirstOrDefault(x => x.Id == set.GameId);
             if(game == null) throw new Exception("Game doesn't exist!");
-            if (this.Client.Query<Set>().Any(x => x.Id == set.Id))
+            if (this.Client.Query<Set>().Select(x=>x.Id).Any(x => x == set.Id))
             {
                 var id = this.Client.Ext().GetID(Sets.FirstOrDefault(x => x.Id == set.Id));
                 this.Client.Ext().Bind(set,id);
