@@ -30,7 +30,7 @@ namespace Octgn
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
 #else
 
-            AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
+            //AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
 #endif
 			//Program.GamesRepository = new GamesRepository();
 
