@@ -1,26 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 using Microsoft.Win32;
-using Octgn.Data;
+
 using Path = System.IO.Path;
 
 namespace Octgn.Controls
 {
+    using System.Linq;
+
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
 
     /// <summary>
 	/// Interaction logic for SetList.xaml
@@ -44,7 +37,7 @@ namespace Octgn.Controls
 		public void RefreshList()
 		{
 			lbSetList.Items.Clear();
-            foreach (DataNew.Entities.Set s in SelectedGame.Sets())
+            foreach (var s in SelectedGame.Sets().Select(x=>new SetListSetItem(x)))
 			{
 				lbSetList.Items.Add(s);
 			}
@@ -155,5 +148,24 @@ namespace Octgn.Controls
         //    new Windows.UrlSetList { game = SelectedGame }.ShowDialog();
         //    RefreshList();
         //}
+        internal class SetListSetItem : Set 
+        {
+            public SetListSetItem(Set set)
+            {
+                this.Id = set.Id;
+                this.Markers = set.Markers;
+                this.Name = set.Name;
+                this.PackageName = set.PackageName;
+                this.Packs = set.Packs;
+                this.Version = set.Version;
+                this.GameId = set.GameId;
+                this.GameVersion = set.GameVersion;
+                this.Filename = set.Filename;
+            }
+            public override string ToString()
+            {
+                return this.Name;
+            }
+        }
 	}
 }

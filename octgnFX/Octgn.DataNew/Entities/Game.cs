@@ -37,5 +37,16 @@
         {
             return Id.CompareTo(other.Id);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Game) return (obj as Game).Id == Id;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 }

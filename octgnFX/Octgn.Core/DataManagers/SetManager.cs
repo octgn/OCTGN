@@ -104,7 +104,7 @@
                             reader.ReadEndElement(); // </markers>
                         }
 
-                        var cardList = thisset.Cards().ToList();
+                        var cardList = thisset.Cards.ToList();
                         if (reader.IsStartElement("cards"))
                         {
                             reader.ReadStartElement(); // <cards>
@@ -117,8 +117,8 @@
                         }
 
                         reader.ReadEndElement();
-                        DbContext.Get().Save(thisset);
                         thisset.AddCard(cardList.ToArray());
+                        DbContext.Get().Save(thisset);
                     }
                     string path = Path.Combine(Paths.DataDirectory, "Decks");
                     PackageRelationshipCollection decks = package.GetRelationshipsByType("http://schemas.octgn.org/set/deck");
@@ -154,8 +154,6 @@
 
         public void UninstallSet(Set set)
         {
-            foreach(var c in set.Cards())
-                DbContext.Get().Remove(c);
             DbContext.Get().Remove(set);
         }
 
@@ -185,9 +183,15 @@
             reader.ReadStartElement("set");
             ret.Markers = new List<Marker>();
             ret.Packs = new List<Pack>();
+            ret.Cards = new List<Card>();
             return ret;
         }
 
+        /// <summary>
+        /// This is only used once, don't use this as it doesn't import cards.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public Set FromFile(string path)
         {
             var ret = new DataNew.Entities.Set();

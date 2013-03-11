@@ -10,10 +10,6 @@
 
     public static class SetExtensionMethods
     {
-        public static IEnumerable<Card> Cards(this Set set)
-        {
-            return DbContext.Get().Cards.Where(x => x.SetId == set.Id);
-        }
         public static string GetPackUri(this Set set)
         {
             return "pack://file:,,," + set.PackageName.Replace('\\', ',');
@@ -31,11 +27,13 @@
 
         public static Set AddCard(this Set set, params Card[] cards)
         {
+            var temp = set.Cards.ToList();
             foreach (var c in cards)
             {
-                c.SetId = set.Id;
-                DbContext.Get().Save(c);
+                if (temp.Any(x => x.Id == c.Id)) continue;
+                temp.Add(c);
             }
+            set.Cards = temp;
             return set;
         }
     }

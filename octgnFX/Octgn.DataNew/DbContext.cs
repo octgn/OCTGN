@@ -7,6 +7,9 @@
     using System.Reflection;
 
     using Db4objects.Db4o;
+    using Db4objects.Db4o.CS;
+    using Db4objects.Db4o.Config;
+    using Db4objects.Db4o.TA;
 
     using Octgn.DataNew.Entities;
     using Octgn.Library;
@@ -48,7 +51,7 @@
         {
             get
             {
-                return this.Client.Query<Card>().AsEnumerable();
+                return this.Client.Query<Set>().SelectMany(x=>x.Cards);
             }
         }
 
@@ -56,11 +59,9 @@
         {
             var game = Games.FirstOrDefault(x => x.Id == set.GameId);
             if(game == null) throw new Exception("Game doesn't exist!");
-
-            var curSet = Sets.FirstOrDefault(x => x.Id == set.Id);
-            if (curSet != null)
+            if (this.Client.Query<Set>().Any(x => x.Id == set.Id))
             {
-                var id = this.Client.Ext().GetID(curSet);
+                var id = this.Client.Ext().GetID(Sets.FirstOrDefault(x => x.Id == set.Id));
                 this.Client.Ext().Bind(set,id);
             }
             this.Client.Store(set);
@@ -86,26 +87,6 @@
                 throw e;
             }
         }
-        public void Save(Card card)
-        {
-            try
-            {
-                // Need to do this so that it doesn't just duplicate the entry
-                // Stupid db40 uses longs for ids
-                var curCard = Cards.FirstOrDefault(x => x.Id == card.Id);
-                if (curCard != null)
-                {
-                    var id = this.Client.Ext().GetID(curCard);
-                    this.Client.Ext().Bind(card,id);
-                }
-                this.Client.Store(card);
-                this.Client.Commit();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
 
         public void Remove(Game game)
         {
@@ -123,24 +104,31 @@
             this.Client.Commit();
         }
 
-        public void Remove(Card card)
+        public void Commit()
         {
-            var c = Cards.FirstOrDefault(x => x.Id == card.Id);
-            if (c == null) return;
-            this.Client.Delete(c);
             this.Client.Commit();
         }
 
         internal DbContext()
         {
             Log.Debug("Creating DB Context");
+            //Db4oFactory.Configure().ObjectClass(typeof(Set)).ObjectField("id");
+            //Db4oFactory.Configure().ObjectClass(typeof(Set)).Indexed(true);
+            var conf = Db4oClientServer.NewServerConfiguration();
+            conf.Common.Add(new TransparentPersistenceSupport());
+            //conf.Common.ObjectClass(typeof(Set)).ObjectField("id").Indexed(true);
+
+            var cconf = Db4oClientServer.NewClientConfiguration();
+            cconf.Common.Add(new TransparentPersistenceSupport());
+            //cconf.Common.ObjectClass(typeof(Set)).ObjectField("id").Indexed(true);
             // Try host server
             try
             {
                 Log.Debug("Starting DB Server");
-                this.Server = Db4objects.Db4o.CS.Db4oClientServer.OpenServer(DatabaseFile, 57634);
+
+                this.Server = Db4objects.Db4o.CS.Db4oClientServer.OpenServer(conf, DatabaseFile, 57634);
                 this.Server.GrantAccess("user", "password");
-                this.Client = Db4objects.Db4o.CS.Db4oClientServer.OpenClient("localhost", 57634, "user", "password");
+                this.Client = Db4objects.Db4o.CS.Db4oClientServer.OpenClient(cconf,"localhost", 57634, "user", "password");
                 return;
             }
             catch (Exception)
@@ -152,7 +140,7 @@
             try
             {
                 Log.Debug("Connecting to server");
-                this.Client = Db4objects.Db4o.CS.Db4oClientServer.OpenClient("localhost", 57634, "user", "password");
+                this.Client = Db4objects.Db4o.CS.Db4oClientServer.OpenClient(cconf,"localhost", 57634, "user", "password");
                 return;
             }
             catch (Exception)
