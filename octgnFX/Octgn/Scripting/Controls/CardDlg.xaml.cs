@@ -37,7 +37,12 @@ namespace Octgn.Scripting.Controls
                                           //_allCards = Database.GetCards(where).ToList();
                                           //TODO [DB MIGRATION]  FIX THIS SHIT
                                           var game = GameManager.Get().GetById(Program.Game.Definition.Id);
-                                          _allCards = game.AllCards().ToList();
+                                          foreach (string s in where.Split(','))
+                                          {
+                                              string name = s.Split('=')[0].Trim();
+                                              string value = s.Split('=')[1].Trim();
+                                              _allCards = _allCards.Concat(game.AllCards().Where(x => (x.Properties.Any(t => (t.Key.Name == name & t.Value.ToString().Equals(value)))))).Distinct().ToList();
+                                          }
                                           Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
                                       });
             recentList.ItemsSource = Program.Game.RecentCards;
