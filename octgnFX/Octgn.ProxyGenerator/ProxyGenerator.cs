@@ -14,6 +14,10 @@ namespace Octgn.ProxyGenerator
         private Dictionary<string, CardDefinition> cards = new Dictionary<string, CardDefinition>();
         private Dictionary<string, string> values = new Dictionary<string, string>();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filePath"></param>
         public ProxyGenerator(string filePath)
         {
             Doc = new XmlDocument();
@@ -21,6 +25,10 @@ namespace Octgn.ProxyGenerator
             LoadCards();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="doc"></param>
         public ProxyGenerator(XmlDocument doc)
         {
             Doc = doc;
@@ -37,6 +45,11 @@ namespace Octgn.ProxyGenerator
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="value"></param>
         public void AddValue(string id, string value)
         {
             if (values.ContainsKey(id))
@@ -46,11 +59,19 @@ namespace Octgn.ProxyGenerator
             values.Add(id, value);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void ClearValues()
         {
             values.Clear();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Image GenerateProxy(string id)
         {
             CardDefinition cardDef = cards[id];
@@ -75,6 +96,11 @@ namespace Octgn.ProxyGenerator
             return (ret);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="overlay"></param>
         public void MergeOverlay(Graphics graphics, OverlayDefinition overlay)
         {
             using (Image layer = Image.FromFile(overlay.filename))
@@ -83,6 +109,12 @@ namespace Octgn.ProxyGenerator
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="section"></param>
+        /// <param name="value"></param>
         public void WriteString(Graphics graphics, SectionDefinition section, string value)
         {
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -110,6 +142,14 @@ namespace Octgn.ProxyGenerator
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="size"></param>
+        /// <param name="text"></param>
+        /// <param name="block"></param>
+        /// <returns></returns>
         private GraphicsPath GetTextPath(Point location, int size, string text, Size block)
         {
             GraphicsPath myPath = new GraphicsPath();
@@ -128,6 +168,13 @@ namespace Octgn.ProxyGenerator
             return myPath;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="size"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
         public GraphicsPath GetTextPath(Point location, int size, string text)
         {
             GraphicsPath myPath = new GraphicsPath();
