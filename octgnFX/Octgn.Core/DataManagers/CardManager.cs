@@ -31,9 +31,9 @@
         
         public Card GetCardById(Guid id)
         {
-            var set = SetManager.Get().Sets.FirstOrDefault(x => x.Cards.Any(y => y.Id == id));
+            var set = SetManager.Get().Sets.FirstOrDefault(x => x.Cards.Cards.Any(y => y.Id == id));
             if (set == null) return null;
-            return set.Cards.FirstOrDefault(x => x.Id == id);
+            return set.Cards.Cards.FirstOrDefault(x => x.Id == id);
         }
 
         public Card FromXmlReader(XmlReader reader, Game game, Set set, PackagePart definition, Package package)
