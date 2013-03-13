@@ -104,7 +104,7 @@
                             reader.ReadEndElement(); // </markers>
                         }
 
-                        var cardList = thisset.Cards.Cards.ToList();
+                        var cardList = thisset.Cards.ToList();
                         if (reader.IsStartElement("cards"))
                         {
                             reader.ReadStartElement(); // <cards>
@@ -183,7 +183,7 @@
             reader.ReadStartElement("set");
             ret.Markers = new List<Marker>();
             ret.Packs = new List<Pack>();
-            ret.Cards = new SetCards();
+            ret.Cards = new List<Card>();
             return ret;
         }
 

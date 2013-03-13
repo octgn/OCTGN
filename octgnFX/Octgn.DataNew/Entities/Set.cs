@@ -1,12 +1,8 @@
 ﻿namespace Octgn.DataNew.Entities
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-
-    using Db4objects.Db4o.Config.Attributes;
-    [TransparentPersisted]
-    public class Set
+    public class Set:IEqualityComparer<Set>,IEquatable<Set>,IComparable<Set>,IComparer<Set>
     {
         public Guid Id { get; set; }
         public Guid GameId { get; set; }
@@ -17,15 +13,31 @@
         public string PackageName { get; set; }
         public IEnumerable<Pack> Packs { get; set; }
         public IEnumerable<Marker> Markers { get; set; }
-        public SetCards Cards { get; set; }
-    }
-    public class SetCards
-    {
         public IEnumerable<Card> Cards { get; set; }
 
-        public SetCards()
+        public bool Equals(Set x, Set y)
         {
-            Cards = new List<Card>();
+            return x.Id == y.Id;
+        }
+
+        public int GetHashCode(Set obj)
+        {
+            return Id.GetHashCode();
+        }
+
+        public bool Equals(Set other)
+        {
+            return this.Id.Equals(other.Id);
+        }
+
+        public int CompareTo(Set other)
+        {
+            return this.Id.CompareTo(other.Id);
+        }
+
+        public int Compare(Set x, Set y)
+        {
+            return x.Id.CompareTo(y.Id);
         }
     }
 }

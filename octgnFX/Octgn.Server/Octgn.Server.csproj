@@ -133,23 +133,6 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Db4objects.Db4o, Version=8.1.184.15492, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.CS, Version=8.1.184.15492, Culture=neutral, PublicKeyToken=6199cd4f203aa8eb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\db4o-cs-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.CS.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.Data.Services">
-      <HintPath>..\..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.Data.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.Linq">
-      <HintPath>..\..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Reflection">
-      <HintPath>..\..\packages\db4o-devel.8.1.184.15492\lib\net40\Mono.Reflection.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -212,7 +195,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IClientCalls.cs</LastGenOutput>
     </None>
-    <None Include="packages.config" />
     <None Include="protocol.xsd" />
   </ItemGroup>
   <ItemGroup>
@@ -225,10 +207,6 @@
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
       <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
       <Name>Octgn.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
-      <Project>{6c6e53ba-e75b-4e93-98ca-3c39ed908b2c}</Project>
-      <Name>Octgn.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Online.Library\Octgn.Online.Library.csproj">
       <Project>{73a5d9e8-eace-4ecf-b521-fc2df0abdc7b}</Project>
