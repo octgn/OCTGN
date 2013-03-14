@@ -8,14 +8,15 @@
 
     public class Part<T> : IPart
     {
-        public PartType Type { get; set; }
+        public PartType PartType { get; internal set; }
+        public Type Type { get; internal set; }
 
-        public string ThisPart { get; set; }
+        public string ThisPart { get; internal set; }
 
         public Part<T> Directory(string name)
         {
             this.ThisPart = name;
-            Type = PartType.Directory;
+            this.PartType = PartType.Directory;
             return this;
         }
         public Part<T> Property<P>(Expression<Func<T, P>> property)
@@ -31,18 +32,19 @@
             }
             plist.Reverse();
             this.ThisPart = String.Join(".", plist);
-            this.Type = PartType.Property;
+            this.PartType = PartType.Property;
+            this.Type = typeof(P);
             return this;
         }
         public Part<T> File(string name)
         {
             this.ThisPart = name;
-            this.Type = PartType.File;
+            this.PartType = PartType.File;
             return this;
         }
         public string PartString()
         {
-            switch (this.Type)
+            switch (this.PartType)
             {
                 case PartType.Directory:
                     return this.ThisPart as String;
