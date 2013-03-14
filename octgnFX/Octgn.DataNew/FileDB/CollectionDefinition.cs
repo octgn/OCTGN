@@ -2,11 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
 
     public interface ICollectionDefinition
     {
+        Type Type { get; }
         string Name { get; }
         IEnumerable<IPart> Parts { get; }
         IPart Root { get; }
@@ -16,22 +18,28 @@
 
     public class CollectionDefinition<T> : ICollectionDefinition
     {
+        public Type Type { get; internal set; }
         public string Name { get; internal set; }
         public IEnumerable<IPart> Parts { get; internal set; }
         public IPart Root { get; internal set; }
         public FileDbConfiguration Config { get; internal set; }
-        public string Path{get
+        public string Path
         {
-            var dir = new System.IO.DirectoryInfo(Config.Directory);
-            var ret = System.IO.Path.Combine(dir.FullName,Root.PartString());
-            return this.Parts.Aggregate(ret, (current, p) => System.IO.Path.Combine(current, p.PartString()));
-        }}
+            get
+            {
+                var dir = new System.IO.DirectoryInfo(Config.Directory);
+                var ret = System.IO.Path.Combine(dir.FullName, Root.PartString());
+                return this.Parts.Aggregate(ret, (current, p) => System.IO.Path.Combine(current, p.PartString()));
+            }
+        }
+
         public CollectionDefinition(FileDbConfiguration config, string name)
         {
             Config = config;
             Name = name;
             Root = new Part<T>().Directory(name);
             Parts = new List<IPart>();
+            Type = typeof(T);
         }
         public FileDbConfiguration Conf()
         {
@@ -51,10 +59,11 @@
                 else throw new NotImplementedException();
             }
             var res = body.Method.Invoke(npart, args.ToArray()) as Part<T>;
+            if (res.PartType != PartType.Directory) throw new ArgumentException("Root must be of type Directory, not " + res.PartType.ToString(), "part");
             Root = res;
             return this;
         }
-        public CollectionDefinition<T> SetPart(Expression<Func<Part<T>,Part<T>>> part)
+        public CollectionDefinition<T> SetPart(Expression<Func<Part<T>, Part<T>>> part)
         {
             var body = part.Body as MethodCallExpression;
             var npart = new Part<T>();
@@ -67,7 +76,7 @@
                     args.Add((a as UnaryExpression).Operand);
                 else throw new NotImplementedException();
             }
-            var res = body.Method.Invoke(npart, args.ToArray())as Part<T>;
+            var res = body.Method.Invoke(npart, args.ToArray()) as Part<T>;
             (Parts as List<IPart>).Add(res);
             return this;
         }
