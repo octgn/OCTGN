@@ -130,10 +130,6 @@
             var query = dbconfig
                 .Query<Game>()
                 .By(x => x.Id, Op.Neq, new Guid("30b298d9-cafd-41f0-a7dd-6abfcca3d094"));
-            foreach (var i in query.Index)
-            {
-                Console.WriteLine(i.FullName);
-            }
             foreach (var g in query.Where(x=>x.Name.Contains("D")))
             {
                 Console.WriteLine(g.Name);
