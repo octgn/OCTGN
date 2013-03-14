@@ -1,17 +1,20 @@
 ﻿namespace Octgn.DataNew.FileDB
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
 
     using Octgn.Library.ExtensionMethods;
 
-    public class CollectionQuery<T>
+    public class CollectionQuery<T> : IEnumerable<T> where T: class
     {
         internal List<DirectoryInfo> Index { get; set; }
+        internal List<T> Objects { get; set; } 
         internal ICollectionDefinition Def { get; set; }
         public Type ElementType { get { return typeof(T); } }
         private readonly object indexLock = new object();
@@ -110,6 +113,45 @@
                 break;
             }
             return this;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            if (Objects == null)GenerateObjects();
+            return Objects.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        internal void GenerateObjects()
+        {
+            Objects = new List<T>();
+            foreach (var i in Index)
+            {
+                T obj = null;
+                try
+                {
+                    obj = (T)Def.Serializer.Deserialize(
+                        Path.Combine(i.FullName, 
+                        Def
+                            .Parts
+                            .First(x => x.PartType == PartType.File)
+                            .PartString()
+                        )
+                    );
+
+                }
+                catch(Exception e)
+                {
+                    obj = null;
+                    Debug.WriteLine(e.Message);
+                } 
+                if (obj != null)
+                    Objects.Add(obj);
+            }
         }
     }
 

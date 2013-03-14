@@ -27,7 +27,7 @@
             return coll;
         }
 
-        public CollectionQuery<T> Query<T>()
+        public CollectionQuery<T> Query<T>() where T: class
 
         {
             var config = Configurations.FirstOrDefault(x => x.Type == typeof(T));

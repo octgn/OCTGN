@@ -11,6 +11,7 @@
         Type Type { get; }
         string Name { get; }
         IEnumerable<IPart> Parts { get; }
+        IFileDbSerializer Serializer { get; }
         IPart Root { get; }
         FileDbConfiguration Config { get; }
         string Path { get; }
@@ -21,6 +22,7 @@
         public Type Type { get; internal set; }
         public string Name { get; internal set; }
         public IEnumerable<IPart> Parts { get; internal set; }
+        public IFileDbSerializer Serializer { get; internal set; }
         public IPart Root { get; internal set; }
         public FileDbConfiguration Config { get; internal set; }
         public string Path
@@ -78,6 +80,11 @@
             }
             var res = body.Method.Invoke(npart, args.ToArray()) as Part<T>;
             (Parts as List<IPart>).Add(res);
+            return this;
+        }
+        public CollectionDefinition<T> SetSerializer<ST>()  where ST : IFileDbSerializer
+        {
+            this.Serializer = Activator.CreateInstance<ST>();
             return this;
         }
     }
