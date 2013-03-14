@@ -54,9 +54,11 @@
     <Compile Include="FileDB\CollectionQuery.cs" />
     <Compile Include="FileDB\FileDb.cs" />
     <Compile Include="FileDB\FileDbConfiguration.cs" />
+    <Compile Include="FileDB\IFileDbSerializer.cs" />
     <Compile Include="FileDB\IPart.cs" />
     <Compile Include="FileDB\Part.cs" />
     <Compile Include="FileDB\PartType.cs" />
+    <Compile Include="GameSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransparentPersistedAttribute.cs" />
   </ItemGroup>

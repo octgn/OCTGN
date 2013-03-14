@@ -8,6 +8,8 @@
     using System.Reflection;
 
     using NUnit.Framework;
+
+    using Octgn.DataNew;
     using Octgn.DataNew.FileDB;
     using Octgn.DataNew.Entities;
     using Octgn.Library;
@@ -63,6 +65,7 @@
                 .DefineCollection<Game>("Games")
                 .SetPart(x => x.Property(y => y.Id))
                 .SetPart(x => x.File("definition.xml"))
+                .SetSerializer<GameSerializer>()
                 .Conf()
                 .DefineCollection<Set>("Sets")
                 .OverrideRoot(x => x.Directory("Games"))
@@ -130,6 +133,10 @@
             foreach (var i in query.Index)
             {
                 Console.WriteLine(i.FullName);
+            }
+            foreach (var g in query.Where(x=>x.Name.Contains("D")))
+            {
+                Console.WriteLine(g.Name);
             }
 
             Assert.Fail();
