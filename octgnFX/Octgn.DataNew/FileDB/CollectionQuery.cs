@@ -147,6 +147,7 @@
                 catch(Exception e)
                 {
                     obj = null;
+                    //TODO [DB MIGRATION] find a better way to log this.
                     Debug.WriteLine(e.Message);
                 } 
                 if (obj != null)

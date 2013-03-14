@@ -36,7 +36,7 @@
                               FileHash = null,
                               Filename = fileName
                           };
-
+            //TODO [DB MIGRATION] Finish serialization here
             return ret;
         }
 
