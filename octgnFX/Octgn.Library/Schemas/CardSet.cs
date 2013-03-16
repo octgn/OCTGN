@@ -272,7 +272,7 @@ public partial class options {
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 public partial class pick {
     
-    private string qtyField;
+    private int qtyField;
     
     private string keyField;
     
@@ -280,7 +280,7 @@ public partial class pick {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string qty {
+    public int qty {
         get {
             return this.qtyField;
         }

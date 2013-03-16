@@ -166,13 +166,11 @@
     <Reference Include="IronPython.Wpf">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="LeLog4net">
-      <HintPath>..\..\packages\le_log4net.2.3.5\lib\4.0\LeLog4net.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Dynamic">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Dynamic.dll</HintPath>
     </Reference>
@@ -191,6 +189,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Nuget.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\SharpSerializer.2.18\lib\net20\Polenter.SharpSerializer.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="PresentationFramework.Classic" />
     <Reference Include="RibbonControlsLibrary, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -201,6 +203,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Abstractions, Version=1.4.0.41, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

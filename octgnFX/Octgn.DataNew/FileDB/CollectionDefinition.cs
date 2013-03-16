@@ -42,6 +42,7 @@
             Root = new Part<T>().Directory(name);
             Parts = new List<IPart>();
             Type = typeof(T);
+            //TODO [DB MIGRATION] Setting the file should only happen once, so it shouldn't be a part of the Parts enumerable
         }
         public FileDbConfiguration Conf()
         {

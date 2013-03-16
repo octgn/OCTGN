@@ -70,9 +70,9 @@
     <Reference Include="Microsoft.Scripting.Metadata">
       <HintPath>..\..\packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.Metadata.dll</HintPath>
     </Reference>
-    <Reference Include="NuGet.Core, Version=2.3.40210.45, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="NuGet.Core, Version=2.2.31210.9045, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Nuget.Core.2.3.0-alpha002\lib\net40-Client\NuGet.Core.dll</HintPath>
+      <HintPath>..\..\packages\Nuget.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

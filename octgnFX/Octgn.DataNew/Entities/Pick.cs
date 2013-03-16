@@ -5,6 +5,10 @@
 
     public class Pick : IPackItem
     {
+        public Pick()
+        {
+            
+        }
         public Pick(XmlReader reader)
         {
             string qtyAttribute = reader.GetAttribute("qty");

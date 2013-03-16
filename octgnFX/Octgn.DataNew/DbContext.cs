@@ -8,6 +8,7 @@
     using System.Reflection;
 
     using Octgn.DataNew.Entities;
+    using Octgn.DataNew.FileDB;
     using Octgn.Library;
 
     using log4net;
@@ -28,7 +29,7 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return Db.Query<Game>();
             }
         }
 
@@ -36,7 +37,7 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return Db.Query<Set>();
             }
         }
 
@@ -46,6 +47,27 @@
             {
                 throw new NotImplementedException();
             }
+        }
+
+        internal FileDbConfiguration Db { get; set; }
+
+        internal DbContext()
+        {
+            Db = new FileDbConfiguration()
+                .SetDirectory(Paths.DataDirectory)
+                .DefineCollection<Game>("Games")
+                .SetPart(x => x.Property(y => y.Id))
+                .SetPart(x => x.File("definition.xml"))
+                .SetSerializer<GameSerializer>()
+                .Conf()
+                .DefineCollection<Set>("Sets")
+                .OverrideRoot(x => x.Directory("Games"))
+                .SetPart(x => x.Property(y => y.GameId))
+                .SetPart(x => x.Directory("Sets"))
+                .SetPart(x => x.Property(y => y.Id))
+                .SetPart(x => x.File("set.xml"))
+                .SetSerializer<SetSerializer>()
+                .Conf();
         }
 
         public void Save(Set set)
@@ -71,10 +93,6 @@
             var s = Sets.FirstOrDefault(x => x.Id == set.Id);
             if (s == null) return;
             throw new NotImplementedException();
-        }
-
-        internal DbContext()
-        {
         }
 
 
