@@ -44,7 +44,8 @@
                               DeckSections = new List<string>(),
                               SharedDeckSections = new List<string>(),
                               FileHash = null,
-                              Filename = fileName
+                              Filename = fileName,
+                              Fonts = new List<Font>()
                           };
             if (g.deck != null)
             {
@@ -84,6 +85,24 @@
                     pd.IgnoreText = bool.Parse(prop.ignoreText.ToString());
                     pd.Hidden = bool.Parse(prop.hidden);
                     ret.CustomProperties.Add(pd);
+                }
+            }
+            if (g.fonts != null)
+            {
+                foreach (gameFont font in g.fonts)
+                {
+                    Font f = new Font();
+                    f.Src = font.src;
+                    f.Size = (int)font.size;
+                    switch (font.target)
+                    {
+                        case fonttarget.chat:
+                            f.Target = Enum.Parse(typeof(fonttarget), "chat").ToString();
+                            break;
+                        case fonttarget.context:
+                            f.Target = Enum.Parse(typeof(fonttarget), "context").ToString();
+                            break;
+                    }
                 }
             }
             if (g.scripts != null)

@@ -27,7 +27,11 @@
         }
         public static string GetPicture(this Card card)
         {
-            return card.GetSet().GetPackUri() + card.ImageUri;
+            string path = card.GetSet().GetPackUri() + card.ImageUri;
+            
+
+
+            return path;
         }
         public static string AlternatePicture(this Card card)
         {
