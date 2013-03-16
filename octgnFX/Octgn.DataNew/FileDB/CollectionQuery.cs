@@ -35,8 +35,18 @@
             }
         }
 
+        /// <summary>
+        /// Do not use. Currently blows up the internal enumerator. Will fix at some point...
+        /// </summary>
+        /// <
+        /// <typeparam name="P"></typeparam>
+        /// <param name="property"></param>
+        /// <param name="op"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public CollectionQuery<T> By<P>(Expression<Func<T, P>> property, Op op, P value)
         {
+            //TODO Fix this so it doesn't blow up the enumerator.
             var queryPart = new Part<T>();
             queryPart.Property(property);
 

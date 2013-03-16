@@ -18,7 +18,6 @@
         public List<string> SharedDeckSections { get; set; }
         public List<PropertyDef> CustomProperties { get; set; }
         public List<Font> Fonts { get; set; }
-        public List<GameScript> Scripts { get; set; } 
 
         public bool Equals(Game x, Game y)
         {

@@ -12,6 +12,7 @@
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
+    using Octgn.DataNew.FileDB;
     using Octgn.Library;
     using Octgn.Library.Exceptions;
 
@@ -63,6 +64,11 @@
             var deck = new Deck { GameId = game.Id };
             deck.Sections = game.DeckSections.Select(x=> new Section{Name=x}).ToList();
             return deck;
+        }
+
+        public static IEnumerable<GameScript> GetScripts(this Game game)
+        {
+            return DbContext.Get().Scripts.Where(x => x.GameId == game.Id);
         }
 
         public static string GetInstallPath(this Game game)

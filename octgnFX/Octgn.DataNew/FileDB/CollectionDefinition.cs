@@ -84,7 +84,16 @@
                     args.Add((a as ConstantExpression).Value);
                 else if (a is UnaryExpression)
                     args.Add((a as UnaryExpression).Operand);
-                else throw new NotImplementedException();
+                else if (a is MethodCallExpression)
+                {
+                    args.Add(Expression.Lambda((a as MethodCallExpression)).Compile().DynamicInvoke());
+                }
+                else if (a is BinaryExpression)
+                {
+                    var l = (a as BinaryExpression);
+                    args.Add(Expression.Lambda(l).Compile().DynamicInvoke());
+                }
+                else throw new NotImplementedException(a.GetType().Name);
             }
             var res = body.Method.Invoke(npart, args.ToArray()) as Part<T>;
             (Parts as List<IPart>).Add(res);
@@ -93,6 +102,13 @@
         public CollectionDefinition<T> SetSerializer<ST>()  where ST : IFileDbSerializer
         {
             this.Serializer = Activator.CreateInstance<ST>();
+            this.Serializer.Def = this;
+            return this;
+        }
+        public CollectionDefinition<T> SetSerializer(IFileDbSerializer serializer)
+        {
+            this.Serializer = serializer;
+            if (serializer.Def == null) serializer.Def = this;
             return this;
         }
         public IEnumerable<DirectoryInfo> CreateSearchIndex()
