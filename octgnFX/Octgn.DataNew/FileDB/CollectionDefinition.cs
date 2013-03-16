@@ -10,6 +10,7 @@
 
     public interface ICollectionDefinition
     {
+        Guid Key { get; }
         Type Type { get; }
         string Name { get; }
         IEnumerable<IPart> Parts { get; }
@@ -23,6 +24,7 @@
 
     public class CollectionDefinition<T> : ICollectionDefinition
     {
+        public Guid Key { get; internal set; }
         public Type Type { get; internal set; }
         public string Name { get; internal set; }
         public IEnumerable<IPart> Parts { get; internal set; }
@@ -41,6 +43,7 @@
 
         public CollectionDefinition(FileDbConfiguration config, string name)
         {
+            Key = Guid.NewGuid();
             Config = config;
             Name = name;
             Root = new Part<T>().Directory(name);

@@ -15,8 +15,8 @@
 
         public CollectionQuery<T> Query<T>() where T : class
         {
-            var config = Config.Configurations.FirstOrDefault(x => x.Type == typeof(T));
-            if (config == null)
+            var config = Config.Configurations.Where(x => x.Type == typeof(T)).ToList();
+            if (config.Count == 0)
                 throw new ArgumentException("can't find definition for type " + typeof(T).Name, "T");
 
             return new CollectionQuery<T>(config);
