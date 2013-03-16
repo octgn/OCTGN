@@ -22,21 +22,20 @@
                              ImageUri = card.ImageUri,
                              IsMutable = card.IsMutable,
                              Name = card.Name,
-                             Quantity = quantity
+                             Quantity = quantity,
+                             SetId = card.SetId,
+                             Properties = card.Properties
                          };
         }
         public static string GetPicture(this Card card)
         {
-            string path = card.GetSet().GetPackUri() + card.ImageUri;
-            
-
-
-            return path;
+            return card.GetSet().GetPictureUri(card.ImageUri).LocalPath;
         }
         public static string AlternatePicture(this Card card)
         {
-            string au = card.ImageUri.Replace(".jpg", ".b.jpg");
-            return card.GetSet().GetPackUri() + au;
+            return card.GetSet().GetPictureUri(card.ImageUri + ".b").LocalPath;
+            //string au = card.ImageUri.Replace(".jpg", ".b.jpg");
+            //return card.GetSet().GetPackUri() + au;
         }
         public static bool HasProperty(this Card card, string name)
         {
