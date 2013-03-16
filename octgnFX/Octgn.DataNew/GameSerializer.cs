@@ -19,23 +19,10 @@
 
     public class GameSerializer : IFileDbSerializer
     {
+        public ICollectionDefinition Def { get; set; }
         public object Deserialize(string fileName)
         {
-            //var timer = new Stopwatch();
-            //timer.Start();
-            XmlSerializer serializer = null;
-            try
-            {
-                serializer = new XmlSerializer(typeof(game));
-            }
-            catch (Exception e)
-            {
-#if(DEBUG)
-                if(System.Diagnostics.Debugger.IsAttached)
-                    Debugger.Break();
-#endif
-            }
-            if (serializer == null) return null;
+            var serializer = new XmlSerializer(typeof(game));
             game g = null;
             using (var fs = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read))
             {
@@ -45,8 +32,7 @@
                     return null;
                 }
             }
-            //timer.Stop();
-            var ret = new Octgn.DataNew.Entities.Game()
+            var ret = new Game()
                           {
                               Id = new Guid(g.id),
                               Name = g.name,
@@ -119,6 +105,24 @@
                     }
                 }
             }
+            if (g.scripts != null)
+            {
+                foreach (var s in g.scripts)
+                {
+                    var coll = Def.Config
+                        .DefineCollection<GameScript>("Scripts")
+                        .OverrideRoot(x=>x.Directory("Games"))
+                        .SetPart(x=>x.Property(y=>y.GameId));
+                    var pathParts = s.src.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    for (var index = 0; index < pathParts.Length; index++)
+                    {
+                        var i = index;
+                        if (i == pathParts.Length - 1) coll.SetPart(x => x.File(pathParts[i]));
+                        else coll.SetPart(x => x.Directory(pathParts[i]));
+                    }
+                    coll.SetSerializer(new GameScriptSerializer(ret.Id));
+                }
+            }
             using (MD5 md5 = new MD5CryptoServiceProvider())
             {
                 using (var file = new FileStream(fileName, FileMode.Open))
@@ -128,7 +132,6 @@
                 }
             }
             
-            //Console.WriteLine(timer.ElapsedMilliseconds);
             return ret;
         }
 
@@ -139,7 +142,7 @@
     }
     public class SetSerializer : IFileDbSerializer
     {
-        
+        public ICollectionDefinition Def { get; set; }
         public static XmlSchema SetSchema {get
         {
             if (setSchema != null) return setSchema;
@@ -256,6 +259,32 @@
         public byte[] Serialize(object obj)
         {
             throw new System.NotImplementedException();
+        }
+    }
+
+    public class GameScriptSerializer : IFileDbSerializer
+    {
+        public ICollectionDefinition Def { get;  set; }
+
+        internal Guid GameId { get; set; }
+
+        public GameScriptSerializer(Guid gameId)
+        {
+            GameId = gameId;
+        }
+
+        public object Deserialize(string fileName)
+        {
+            var ret = new GameScript();
+            ret.Path = fileName;
+            ret.GameId = GameId;
+            ret.Script = File.ReadAllText(fileName);
+            return ret;
+        }
+
+        public byte[] Serialize(object obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }

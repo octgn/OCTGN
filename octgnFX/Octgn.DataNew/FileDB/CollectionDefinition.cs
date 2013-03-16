@@ -6,8 +6,11 @@
     using System.Linq;
     using System.Linq.Expressions;
 
+    using Octgn.Library.ExtensionMethods;
+
     public interface ICollectionDefinition
     {
+        Guid Key { get; }
         Type Type { get; }
         string Name { get; }
         IEnumerable<IPart> Parts { get; }
@@ -15,10 +18,13 @@
         IPart Root { get; }
         FileDbConfiguration Config { get; }
         string Path { get; }
+
+        IEnumerable<DirectoryInfo> CreateSearchIndex();
     }
 
     public class CollectionDefinition<T> : ICollectionDefinition
     {
+        public Guid Key { get; internal set; }
         public Type Type { get; internal set; }
         public string Name { get; internal set; }
         public IEnumerable<IPart> Parts { get; internal set; }
@@ -37,6 +43,7 @@
 
         public CollectionDefinition(FileDbConfiguration config, string name)
         {
+            Key = Guid.NewGuid();
             Config = config;
             Name = name;
             Root = new Part<T>().Directory(name);
@@ -77,7 +84,16 @@
                     args.Add((a as ConstantExpression).Value);
                 else if (a is UnaryExpression)
                     args.Add((a as UnaryExpression).Operand);
-                else throw new NotImplementedException();
+                else if (a is MethodCallExpression)
+                {
+                    args.Add(Expression.Lambda((a as MethodCallExpression)).Compile().DynamicInvoke());
+                }
+                else if (a is BinaryExpression)
+                {
+                    var l = (a as BinaryExpression);
+                    args.Add(Expression.Lambda(l).Compile().DynamicInvoke());
+                }
+                else throw new NotImplementedException(a.GetType().Name);
             }
             var res = body.Method.Invoke(npart, args.ToArray()) as Part<T>;
             (Parts as List<IPart>).Add(res);
@@ -86,7 +102,57 @@
         public CollectionDefinition<T> SetSerializer<ST>()  where ST : IFileDbSerializer
         {
             this.Serializer = Activator.CreateInstance<ST>();
+            this.Serializer.Def = this;
             return this;
+        }
+        public CollectionDefinition<T> SetSerializer(IFileDbSerializer serializer)
+        {
+            this.Serializer = serializer;
+            if (serializer.Def == null) serializer.Def = this;
+            return this;
+        }
+        public IEnumerable<DirectoryInfo> CreateSearchIndex()
+        {
+            var root = new DirectoryInfo(System.IO.Path.Combine(Config.Directory,Root.PartString()));
+            foreach (var r in root.SplitFull().Where(r => !Directory.Exists(r.FullName))) Directory.CreateDirectory(r.FullName);
+
+            var ret = new List<DirectoryInfo>();
+
+            ret.Add(root);
+            var done = false;
+            foreach (var part in Parts)
+            {
+                if (done) break;
+                switch (part.PartType)
+                {
+                    case PartType.Directory:
+                        for (var i = 0; i < ret.Count; i++)
+                        {
+                            ret[i] = new DirectoryInfo(System.IO.Path.Combine(ret[i].FullName, part.PartString()));
+                            if (!Directory.Exists(ret[i].FullName)) Directory.CreateDirectory(ret[i].FullName);
+                        }
+                        break;
+                    case PartType.Property:
+                        //if next not file
+                        var newList = new List<DirectoryInfo>();
+                        foreach (var i in ret)
+                        {
+                            newList.AddRange(i.GetDirectories());
+                        }
+                        ret = newList;
+                        break;
+                    case PartType.File:
+                        foreach (var item in ret.Where(i => i.GetFiles().Any(x => x.Name == part.PartString()) == false).ToArray())
+                        {
+                            ret.Remove(item);
+                        }
+                        done = true;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            return ret;
         }
     }
 }

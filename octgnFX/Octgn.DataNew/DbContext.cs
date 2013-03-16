@@ -45,7 +45,15 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return Sets.SelectMany(x => x.Cards);
+            }
+        }
+
+        public IEnumerable<GameScript> Scripts
+        {
+            get
+            {
+                return Db.Query<GameScript>();
             }
         }
 
