@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
 
     using Octgn.Core.DataManagers;
@@ -12,12 +13,16 @@
     {
         public static string GetPackUri(this Set set)
         {
-            return "pack://file:,,," + set.PackageName.Replace('\\', ',');
+            return Path.Combine(set.GetGame().GetInstallPath(), "Sets", set.Id.ToString(), "Cards");
+            //return "pack://file:,,," + set.PackageName.Replace('\\', ',');
         }
 
         public static Uri GetPictureUri(this Set set, string path)
         {
-            return new Uri(set.GetPackUri() + path);
+            var fullpathnoext = Path.Combine(set.GetPackUri(), path);
+            var files = Directory.GetFiles(set.GetPackUri(), path + ".*");
+            if (files.Length == 0) return null;
+            return new Uri(files.First());
         }
 
         public static Game GetGame(this Set set)

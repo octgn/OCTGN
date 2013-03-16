@@ -13,8 +13,13 @@ using System.Text;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Reflection;
+
+    using log4net;
+
     public partial class SearchControl
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private DataView _CurrentView = null;
         public SearchControl(DataNew.Entities.Game game)
         {
@@ -86,20 +91,32 @@ namespace Octgn.DeckBuilder
         private void ResultCardSelected(object sender, SelectionChangedEventArgs e)
         {
             e.Handled = true;
+            Log.Debug("Item Selected");
             var row = (DataRowView) resultsGrid.SelectedItem;
+            Log.Debug("Grabbed selected item");
             if (CardSelected != null)
+            {
+                Log.Debug("Card selected != null");
                 if (row != null)
                 {
-                    var setid = row["set_id"] as string;
-                    if (setid != null)
-                        CardSelected(this,
-                                     new SearchCardImageEventArgs
-                                         {SetId = Guid.Parse(setid), Image = (string) row["image"]});
+                    Log.Debug("Row not null");
+                    var setid = row["set_id"] as String;
+                    Log.DebugFormat("Set ID: {0} \nImg Url: {1}", setid, row["img_uri"]);
+                    CardSelected(
+                        this, new SearchCardImageEventArgs { SetId = new Guid(setid), Image = (string)row["img_uri"] });
+                    Log.Debug("Card selected complete");
                 }
                 else
                 {
+                    Log.Debug("Row Null. Sending empy SearchCardImageEventArgs");
                     CardSelected(this, new SearchCardImageEventArgs());
+                    Log.Debug("Card selected complete");
                 }
+            }
+            else
+            {
+                Log.Debug("CardSelected == null");
+            }
         }
 
         private void GenerateColumns(DataNew.Entities.Game game)
