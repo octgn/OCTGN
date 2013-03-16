@@ -7,6 +7,10 @@
     public class PackDefinition
     {
         public List<IPackItem> Items { get; set; } 
+        public PackDefinition()
+        {
+            Items = new List<IPackItem>();
+        }
         public PackDefinition(XmlReader reader)
         {
             Items = new List<IPackItem>();

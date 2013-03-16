@@ -7,6 +7,10 @@
 
     public class OptionsList : IPackItem
     {
+        public OptionsList()
+        {
+            Options = new List<Option>();
+        }
         public OptionsList(XmlReader reader)
         {
             Options = new List<Option>();

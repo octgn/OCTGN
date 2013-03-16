@@ -8,11 +8,15 @@
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
 
     using Octgn.Library.ExtensionMethods;
 
+    using log4net;
+
     public class CollectionQuery<T> : IEnumerable<T> where T: class
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal List<DirectoryInfo> Index { get; set; }
         internal List<T> Objects { get; set; } 
         internal ICollectionDefinition Def { get; set; }
@@ -132,23 +136,18 @@
             foreach (var i in Index)
             {
                 T obj = null;
+                var path = "";
                 try
                 {
-                    obj = (T)Def.Serializer.Deserialize(
-                        Path.Combine(i.FullName, 
-                        Def
-                            .Parts
-                            .First(x => x.PartType == PartType.File)
-                            .PartString()
-                        )
-                    );
-
+                    path = Path.Combine(i.FullName, Def.Parts.First(x => x.PartType == PartType.File).PartString());
+                    obj = (T)Def.Serializer.Deserialize(path);
                 }
                 catch(Exception e)
                 {
                     obj = null;
-                    //TODO [DB MIGRATION] find a better way to log this.
-                    Debug.WriteLine(e.Message);
+                    Log.Error("Error desterilizing " + path ,e);
+                    //TODO [DB MIGRATION] find a better way to log this(log4net, wherever it is)
+                    
                 } 
                 if (obj != null)
                     Objects.Add(obj);

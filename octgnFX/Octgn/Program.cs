@@ -18,13 +18,17 @@ using Client = Octgn.Networking.Client;
 namespace Octgn
 {
     using System.Configuration;
+    using System.Reflection;
     using System.Windows.Interop;
     using System.Windows.Media;
 
     using Octgn.Windows;
 
+    using log4net;
+
     public static class Program
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static Windows.DWindow DebugWindow;
         public static Windows.Main MainWindowNew;
         public static DeckBuilderWindow DeckEditor;
@@ -70,16 +74,19 @@ namespace Octgn
 
         static Program()
         {
-
+            Log.Info("Starting OCTGN");
             try
             {
+                Log.Debug("Setting rendering mode.");
                 RenderOptions.ProcessRenderMode = Prefs.UseHardwareRendering ? RenderMode.Default : RenderMode.SoftwareOnly;
             }
             catch (Exception)
             {
                 // if the system gets mad, best to leave it alone.
             }
+            Log.Debug("Setting transparency");
             UseTransparentWindows = Prefs.UseWindowTransparency;
+            Log.Debug("Setting App Configs");
             WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
             ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
             GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
@@ -90,31 +97,42 @@ namespace Octgn
 #else
             UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
 #endif
-
+            Log.Info("Getting octgn processes...");
             var pList = Process.GetProcessesByName("OCTGN");
+            Log.Info("Got process list");
             if(pList != null && pList.Length > 0 && pList.Any(x=>x.Id != Process.GetCurrentProcess().Id))
             {
+                Log.Info("Found other octgn processes");
                 var res = MessageBox.Show("Another instance of OCTGN is current running. Would you like to close it?","OCTGN",MessageBoxButton.YesNo,MessageBoxImage.Question);
                 if (res == MessageBoxResult.Yes)
                 {
                     foreach (var p in Process.GetProcessesByName("OCTGN"))
                     {
                         if (p.Id != Process.GetCurrentProcess().Id)
+                        {
+                            Log.Info("Killing process...");
                             p.Kill();
+                            Log.Info("Killed Process");
+                        }
                     }
                 }
             }
 
 
-
+            Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(ChatServerPath);
+            Log.Info("Adding trace listeners");
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
+            Log.Info("Setting Games Path");
             GamesPath = BasePath + @"Games\";
+            Log.Info("Creating main window...");
             MainWindowNew = new Main();
+            Log.Info("Main window Created, Launching it.");
             Application.Current.MainWindow = MainWindowNew;
+            Log.Info("Main window set and launched.");
         }
 
         internal static void FireOptionsChanged()
@@ -161,6 +179,7 @@ namespace Octgn
 
         public static void Exit()
         {
+            LogManager.Shutdown();
             Application.Current.MainWindow = null;
             if (LobbyClient != null)
                 LobbyClient.Stop();

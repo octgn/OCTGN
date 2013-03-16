@@ -60,27 +60,11 @@
         [Test]
         public void Enumerate()
         {
-            var dbconfig = new FileDbConfiguration()
-                .SetDirectory(Paths.DataDirectory)
-                .DefineCollection<Game>("Games")
-                .SetPart(x => x.Property(y => y.Id))
-                .SetPart(x => x.File("definition.xml"))
-                .SetSerializer<GameSerializer>()
-                .Conf()
-                .DefineCollection<Set>("Sets")
-                .OverrideRoot(x => x.Directory("Games"))
-                .SetPart(x => x.Property(y => y.GameId))
-                .SetPart(x => x.Directory("Sets"))
-                .SetPart(x => x.Property(y => y.Id))
-                .SetPart(x => x.File("set.xml"))
-                .Conf();
-
+            var dbconfig = DbContext.Get().Db;
 
 
             foreach (var config in dbconfig.Configurations)
             {
-                var timer = new Stopwatch();
-                timer.Start();
                 var root = new DirectoryInfo(Path.Combine(dbconfig.Directory, config.Root.PartString()));
                 foreach (var r in root.SplitFull()) if (!Directory.Exists(r.FullName)) Directory.CreateDirectory(r.FullName);
 
@@ -122,18 +106,30 @@
                             throw new ArgumentOutOfRangeException();
                     }
                 }
-                timer.Stop();
                 //Console.WriteLine(timer.ElapsedMilliseconds);
                 //foreach (var f in searchList) Console.WriteLine(f.FullName);
             }
-
-            var query = dbconfig
-                .Query<Game>()
-                .By(x => x.Id, Op.Neq, new Guid("30b298d9-cafd-41f0-a7dd-6abfcca3d094"));
-            foreach (var g in query.Where(x=>x.Name.Contains("D")))
+            var timer = new Stopwatch();
+            timer.Start();
+            foreach (var g in dbconfig.Query<Game>())
             {
-                Console.WriteLine(g.Name);
+                
             }
+            timer.Stop();
+            Console.WriteLine("GameLoadTime: {0}",timer.ElapsedMilliseconds);
+            timer.Reset();
+            timer.Start();
+            var cardCount = 0;
+            var markerCount = 0;
+            foreach (var s in dbconfig.Query<Set>())
+            {
+                cardCount += s.Cards.Count();
+                markerCount += s.Markers.Count();
+            }
+            timer.Stop();
+            Console.WriteLine("TotalCards: {0}",cardCount);
+            Console.WriteLine("TotalMarkers: {0}",markerCount);
+            Console.WriteLine("TotalLoadTime: {0}",timer.ElapsedMilliseconds);
 
             Assert.Fail();
         }

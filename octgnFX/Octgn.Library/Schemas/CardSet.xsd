@@ -53,7 +53,7 @@
         Defines a random choice of cards.
       </xs:documentation>
     </xs:annotation>
-    <xs:attribute name="qty" use="required" />
+    <xs:attribute name="qty" type="xs:string" use="required" />
     <xs:attribute name="key" type="xs:string" use="required" />
     <xs:attribute name="value" type="xs:string" use="required" />
   </xs:complexType>
@@ -65,7 +65,7 @@
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="option" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="option" minOccurs="0" maxOccurs="unbounded">
         <xs:complexType>
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element name="pick" type="pick" />
