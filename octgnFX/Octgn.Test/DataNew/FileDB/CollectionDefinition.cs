@@ -126,6 +126,10 @@
                 cardCount += s.Cards.Count();
                 markerCount += s.Markers.Count();
             }
+            foreach (var s in dbconfig.Query<GameScript>())
+            {
+                Console.WriteLine(s.Path);
+            }
             timer.Stop();
             Console.WriteLine("TotalCards: {0}",cardCount);
             Console.WriteLine("TotalMarkers: {0}",markerCount);

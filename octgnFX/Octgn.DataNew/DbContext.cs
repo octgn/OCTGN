@@ -49,6 +49,14 @@
             }
         }
 
+        public IEnumerable<GameScript> Scripts
+        {
+            get
+            {
+                return Db.Query<GameScript>();
+            }
+        }
+
         internal FileDb Db { get; set; }
 
         internal DbContext()
