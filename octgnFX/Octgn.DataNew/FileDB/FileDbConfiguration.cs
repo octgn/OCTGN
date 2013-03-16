@@ -8,10 +8,23 @@
     {
         internal string Directory { get; set; }
         internal List<ICollectionDefinition> Configurations { get; set; }
+        internal ICacheProvider Cache { get; set; }
 
         public FileDbConfiguration()
         {
             Configurations = new List<ICollectionDefinition>();
+        }
+
+        public FileDbConfiguration SetCacheProvider(ICacheProvider cache)
+        {
+            Cache = cache;
+            return this;
+        }
+
+        public FileDbConfiguration SetCacheProvider<T>() where T : ICacheProvider
+        {
+            Cache = Activator.CreateInstance<T>();
+            return this;
         }
 
         public FileDbConfiguration SetDirectory(string directory)
@@ -25,16 +38,6 @@
             var coll = new CollectionDefinition<T>(this,name);
             Configurations.Add(coll);
             return coll;
-        }
-
-        public CollectionQuery<T> Query<T>() where T: class
-
-        {
-            var config = Configurations.FirstOrDefault(x => x.Type == typeof(T));
-            if(config == null)
-                throw new ArgumentException("can't find definition for type " + typeof(T).Name,"T");
-
-            return new CollectionQuery<T>(config);
         }
     }
 }

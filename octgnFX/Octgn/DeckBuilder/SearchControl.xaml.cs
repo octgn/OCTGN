@@ -26,7 +26,7 @@ namespace Octgn.DeckBuilder
                         game.AllProperties().Where(p => !p.Hidden)));
             GenerateColumns(game);
             //resultsGrid.ItemsSource = game.SelectCards(null).DefaultView;
-            UpdateDataGrid(game.AllCards().ToDataTable().DefaultView);
+            UpdateDataGrid(game.AllCards().ToDataTable(Game).DefaultView);
         }//Why are we populating the list on load? I'd rather wait until the search is run with no parameters (V)_V
 
         public int SearchIndex { get; set; }

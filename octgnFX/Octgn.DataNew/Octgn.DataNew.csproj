@@ -55,6 +55,8 @@
     <Compile Include="FileDB\CollectionQuery.cs" />
     <Compile Include="FileDB\FileDb.cs" />
     <Compile Include="FileDB\FileDbConfiguration.cs" />
+    <Compile Include="FileDB\FullCacheProvider.cs" />
+    <Compile Include="FileDB\ICacheProvider.cs" />
     <Compile Include="FileDB\IFileDbSerializer.cs" />
     <Compile Include="FileDB\IPart.cs" />
     <Compile Include="FileDB\Part.cs" />

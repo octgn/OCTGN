@@ -63,9 +63,9 @@
             var dbconfig = DbContext.Get().Db;
 
 
-            foreach (var config in dbconfig.Configurations)
+            foreach (var config in dbconfig.Config.Configurations)
             {
-                var root = new DirectoryInfo(Path.Combine(dbconfig.Directory, config.Root.PartString()));
+                var root = new DirectoryInfo(Path.Combine(dbconfig.Config.Directory, config.Root.PartString()));
                 foreach (var r in root.SplitFull()) if (!Directory.Exists(r.FullName)) Directory.CreateDirectory(r.FullName);
 
                 var searchList = new List<DirectoryInfo>();
@@ -131,7 +131,7 @@
             Console.WriteLine("TotalMarkers: {0}",markerCount);
             Console.WriteLine("TotalLoadTime: {0}",timer.ElapsedMilliseconds);
 
-            Assert.Fail();
+            //Assert.Fail();
         }
 
     }
