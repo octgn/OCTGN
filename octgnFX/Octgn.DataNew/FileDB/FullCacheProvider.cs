@@ -96,6 +96,9 @@
         public void Dispose()
         {
             if (Disposed) return;
+            Watcher.Changed -= this.WatcherOnChanged;
+            Watcher.Deleted -= this.WatcherOnDeleted;
+            Watcher.Renamed -= this.WatcherOnRenamed;
             Disposed = true;
             Watcher.Dispose();
             Object = null;
