@@ -73,9 +73,12 @@
             Path = path;
             Object = obj;
             Watcher = new FileSystemWatcher(fi.Directory.FullName,fi.Name);
+            Watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Size
+                                   | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Security;
             Watcher.Changed += WatcherOnChanged;
             Watcher.Deleted += WatcherOnDeleted;
             Watcher.Renamed += WatcherOnRenamed;
+            Watcher.EnableRaisingEvents = true;
         }
 
         private void WatcherOnRenamed(object sender, RenamedEventArgs renamedEventArgs)
@@ -96,6 +99,7 @@
         public void Dispose()
         {
             if (Disposed) return;
+            Watcher.EnableRaisingEvents = false;
             Watcher.Changed -= this.WatcherOnChanged;
             Watcher.Deleted -= this.WatcherOnDeleted;
             Watcher.Renamed -= this.WatcherOnRenamed;
