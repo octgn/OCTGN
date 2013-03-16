@@ -141,27 +141,40 @@
         {
             DataTable table = new DataTable();
             
-            var values = new object[game.CustomProperties.Count + 2];
+            var values = new object[game.CustomProperties.Count + 5];
+            var defaultValues = new object[game.CustomProperties.Count + 5];
             var indexes = new Dictionary<int, string>();
             var setCache = new Dictionary<Guid, string>();
-            var i = 0 + 2;
+            var i = 0 + 5;
             table.Columns.Add("Name", typeof(string));
             table.Columns.Add("SetName", typeof(string));
+            table.Columns.Add("set_id", typeof(String));
+            table.Columns.Add("img_uri", typeof(String));
+            table.Columns.Add("id", typeof(string));
+            defaultValues[0] = "";
+            defaultValues[1] = "";
+            defaultValues[2] = "";
+            defaultValues[3] = "";
+            defaultValues[4] = "";
             foreach (var prop in game.CustomProperties)
             {
                 switch (prop.Type)
                 {
                     case PropertyType.String:
                         table.Columns.Add(prop.Name, typeof(string));
+                        defaultValues[i] = "";
                         break;
                     case PropertyType.Integer:
-                        table.Columns.Add(prop.Name, typeof(Int32));
+                        table.Columns.Add(prop.Name, typeof(double));
+                        defaultValues[i] = 0;
                         break;
                     case PropertyType.GUID:
                         table.Columns.Add(prop.Name, typeof(Guid));
+                        defaultValues[i] = Guid.Empty;
                         break;
                     case PropertyType.Char:
                         table.Columns.Add(prop.Name, typeof(char));
+                        defaultValues[i] = 0;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -172,17 +185,22 @@
 
             foreach (Card item in cards)
             {
-                i = 0;
+                for (i = 5; i < values.Length; i++)
+                {
+                    values[i] = defaultValues[i];
+                }
                 values[0] = item.Name;
                 if(!setCache.ContainsKey(item.SetId))
                     setCache.Add(item.SetId,item.GetSet().Name);
                 values[1] = setCache[item.SetId];
-                
+                values[2] = item.SetId;
+                values[3] = item.ImageUri;
+                values[4] = item.Id;
                 foreach (var prop in item.Properties)
                 {
                     values[indexes.First(x=>x.Value == prop.Key.Name).Key] = prop.Value;
-                    i++;
                 }
+                   
                 table.Rows.Add(values);
             }
             return table;   

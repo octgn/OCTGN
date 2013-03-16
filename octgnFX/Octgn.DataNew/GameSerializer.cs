@@ -188,7 +188,8 @@
                                        Id = new Guid(c.Attribute("id").Value),
                                        Name = c.Attribute("name").Value,
                                        SetId = ret.Id,
-                                       Properties = new Dictionary<PropertyDef, object>()
+                                       Properties = new Dictionary<PropertyDef, object>(),
+                                       ImageUri = c.Attribute("id").Value
                                    };
                     foreach (var p in c.Descendants("property"))
                     {
