@@ -37,7 +37,7 @@ namespace Octgn.Controls
 		public void RefreshList()
 		{
 			lbSetList.Items.Clear();
-            foreach (var s in SelectedGame.Sets().Select(x=>new SetListSetItem(x)))
+            foreach (var s in SelectedGame.Sets().Select(x=>new SetListSetItem(x)).OrderBy(x=>x.Name))
 			{
 				lbSetList.Items.Add(s);
 			}
