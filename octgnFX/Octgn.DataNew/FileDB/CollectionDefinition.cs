@@ -6,6 +6,8 @@
     using System.Linq;
     using System.Linq.Expressions;
 
+    using Octgn.Library.ExtensionMethods;
+
     public interface ICollectionDefinition
     {
         Type Type { get; }
@@ -15,6 +17,8 @@
         IPart Root { get; }
         FileDbConfiguration Config { get; }
         string Path { get; }
+
+        IEnumerable<DirectoryInfo> CreateSearchIndex();
     }
 
     public class CollectionDefinition<T> : ICollectionDefinition
@@ -87,6 +91,49 @@
         {
             this.Serializer = Activator.CreateInstance<ST>();
             return this;
+        }
+        public IEnumerable<DirectoryInfo> CreateSearchIndex()
+        {
+            var root = new DirectoryInfo(System.IO.Path.Combine(Config.Directory,Root.PartString()));
+            foreach (var r in root.SplitFull().Where(r => !Directory.Exists(r.FullName))) Directory.CreateDirectory(r.FullName);
+
+            var ret = new List<DirectoryInfo>();
+
+            ret.Add(root);
+            var done = false;
+            foreach (var part in Parts)
+            {
+                if (done) break;
+                switch (part.PartType)
+                {
+                    case PartType.Directory:
+                        for (var i = 0; i < ret.Count; i++)
+                        {
+                            ret[i] = new DirectoryInfo(System.IO.Path.Combine(ret[i].FullName, part.PartString()));
+                            if (!Directory.Exists(ret[i].FullName)) Directory.CreateDirectory(ret[i].FullName);
+                        }
+                        break;
+                    case PartType.Property:
+                        //if next not file
+                        var newList = new List<DirectoryInfo>();
+                        foreach (var i in ret)
+                        {
+                            newList.AddRange(i.GetDirectories());
+                        }
+                        ret = newList;
+                        break;
+                    case PartType.File:
+                        foreach (var item in ret.Where(i => i.GetFiles().Any(x => x.Name == part.PartString()) == false).ToArray())
+                        {
+                            ret.Remove(item);
+                        }
+                        done = true;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            return ret;
         }
     }
 }
