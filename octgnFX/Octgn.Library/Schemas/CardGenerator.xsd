@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="cardgenerator" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="location">
+    <xs:complexType>
+      <xs:attribute name="x" type="xs:integer" default="0" />
+      <xs:attribute name="y" type="xs:integer" default="0" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="cardgenerator" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="location" />
+        <xs:element name="cards">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="card" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="overlays" minOccurs="0" maxOccurs="1">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="overlay" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element ref="location" minOccurs="1" maxOccurs="1" />
+                              </xs:sequence>
+                              <xs:attribute name="filename" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="sections" minOccurs="1" maxOccurs="1">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="section" minOccurs="1" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element ref="location" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="text" minOccurs="1" maxOccurs="1">
+                                  <xs:complexType>
+                                    <xs:attribute name="color" type="xs:string" default="#FFFFFF" />
+                                    <xs:attribute name="size" type="xs:integer" default="10" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="border" minOccurs="0" maxOccurs="1">
+                                  <xs:complexType>
+                                    <xs:attribute name="color" type="xs:string" default="#FFFFFF" />
+                                    <xs:attribute name="size" type="xs:integer" default="10" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="block" minOccurs="0" maxOccurs="1">
+                                  <xs:complexType>
+                                    <xs:attribute name="height" type="xs:integer" default="50" />
+                                    <xs:attribute name="width" type="xs:integer" default="100" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="id" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="id" type="xs:string" use="required" />
+                  <xs:attribute name="filename" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

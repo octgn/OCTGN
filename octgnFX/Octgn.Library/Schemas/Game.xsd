@@ -124,7 +124,7 @@
                   <xs:attribute name="src" type="xs:string" use="required">
                     <xs:annotation>
                       <xs:documentation>
-                        The id of the relationship pointing to the font
+                        The relative path to the font file to be used.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
@@ -145,6 +145,30 @@
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="proxygen">
+          <xs:annotation>
+            <xs:documentation>
+              TODO: Write explenation of the usage.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="mappings" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="mapping" minOccurs="1" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="name" type="xs:string" use="required" />
+                        <xs:attribute name="mapto" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="definitionsrc" type="xs:string" use="required" />
           </xs:complexType>
         </xs:element>
         <xs:element name="globalvariables" minOccurs="0" maxOccurs="1">
