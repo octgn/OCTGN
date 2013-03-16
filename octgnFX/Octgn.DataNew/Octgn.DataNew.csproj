@@ -38,6 +38,7 @@
     <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
     <Compile Include="Entities\Deck.cs" />
+    <Compile Include="Entities\Font.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\GameScript.cs" />
     <Compile Include="Entities\IPackItem.cs" />

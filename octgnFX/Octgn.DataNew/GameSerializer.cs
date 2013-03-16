@@ -100,6 +100,7 @@
                             f.Target = Enum.Parse(typeof(fonttarget), "context").ToString();
                             break;
                     }
+                    ret.Fonts.Add(f);
                 }
             }
             if (g.scripts != null)
