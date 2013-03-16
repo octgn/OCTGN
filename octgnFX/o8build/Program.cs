@@ -109,6 +109,8 @@ namespace o8build
             }
             var feedPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".nupkg");
             var olPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".o8g");
+            Console.WriteLine("Feed Path: " + feedPath);
+            Console.WriteLine("Manual Path: " + olPath);
             var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
             builder.Save(filestream);
             filestream.Flush(true);
