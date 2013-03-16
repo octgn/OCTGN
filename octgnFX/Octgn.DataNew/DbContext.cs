@@ -45,7 +45,7 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return Sets.SelectMany(x => x.Cards);
             }
         }
 
