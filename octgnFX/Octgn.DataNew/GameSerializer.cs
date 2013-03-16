@@ -23,9 +23,19 @@
         {
             //var timer = new Stopwatch();
             //timer.Start();
-            var gg = new game();
-            var shit = new XmlSerializer(typeof(string));
-            var serializer = new XmlSerializer(typeof(game));
+            XmlSerializer serializer = null;
+            try
+            {
+                serializer = new XmlSerializer(typeof(game));
+            }
+            catch (Exception e)
+            {
+#if(DEBUG)
+                if(System.Diagnostics.Debugger.IsAttached)
+                    Debugger.Break();
+#endif
+            }
+            if (serializer == null) return null;
             game g = null;
             using (var fs = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read))
             {
