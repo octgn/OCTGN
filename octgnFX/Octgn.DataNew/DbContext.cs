@@ -49,11 +49,11 @@
             }
         }
 
-        internal FileDbConfiguration Db { get; set; }
+        internal FileDb Db { get; set; }
 
         internal DbContext()
         {
-            Db = new FileDbConfiguration()
+            var config = new FileDbConfiguration()
                 .SetDirectory(Paths.DataDirectory)
                 .DefineCollection<Game>("Games")
                 .SetPart(x => x.Property(y => y.Id))
@@ -67,7 +67,9 @@
                 .SetPart(x => x.Property(y => y.Id))
                 .SetPart(x => x.File("set.xml"))
                 .SetSerializer<SetSerializer>()
-                .Conf();
+                .Conf()
+                .SetCacheProvider<FullCacheProvider>();
+            Db = new FileDb(config);
         }
 
         public void Save(Set set)

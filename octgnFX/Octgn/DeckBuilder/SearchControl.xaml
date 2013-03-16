@@ -79,15 +79,15 @@
         </Style>
       </DataGrid.RowStyle>
       <DataGrid.Columns>
-        <DataGridTextColumn Binding="{Binding name, Mode=OneTime}" Header="Name" Width="Auto" />
-        <DataGridTextColumn Header="Set" Width="Auto" SortMemberPath="set_id">
-          <DataGridTextColumn.Binding>
+        <DataGridTextColumn Binding="{Binding Name, Mode=OneTime}" Header="Name" Width="Auto" />
+        <DataGridTextColumn Binding="{Binding SetName, Mode=OneTime}" Header="Set" Width="Auto" >
+          <!--<DataGridTextColumn.Binding>
             <MultiBinding Converter="{StaticResource SetConverter}">
               <Binding Path="set_id" />
               <Binding Path="Game"
                        RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type deck:SearchControl}}" />
             </MultiBinding>
-          </DataGridTextColumn.Binding>
+          </DataGridTextColumn.Binding>-->
         </DataGridTextColumn>
       </DataGrid.Columns>
     </DataGrid>

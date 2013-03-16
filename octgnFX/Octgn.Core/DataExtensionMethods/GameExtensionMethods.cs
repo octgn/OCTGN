@@ -131,21 +131,51 @@
             return g.Sets().SelectMany(x => x.Cards);
         }
 
-        public static DataTable ToDataTable(this IEnumerable<Card> cards)
+        public static DataTable ToDataTable(this IEnumerable<Card> cards, Game game)
         {
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(Card));
             DataTable table = new DataTable();
-            for (int i = 0; i < props.Count; i++)
+            
+            var values = new object[game.CustomProperties.Count + 2];
+            var indexes = new Dictionary<int, string>();
+            var setCache = new Dictionary<Guid, string>();
+            var i = 0 + 2;
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("SetName", typeof(string));
+            foreach (var prop in game.CustomProperties)
             {
-                PropertyDescriptor prop = props[i];
-                table.Columns.Add(prop.Name, prop.PropertyType);
+                switch (prop.Type)
+                {
+                    case PropertyType.String:
+                        table.Columns.Add(prop.Name, typeof(string));
+                        break;
+                    case PropertyType.Integer:
+                        table.Columns.Add(prop.Name, typeof(Int32));
+                        break;
+                    case PropertyType.GUID:
+                        table.Columns.Add(prop.Name, typeof(Guid));
+                        break;
+                    case PropertyType.Char:
+                        table.Columns.Add(prop.Name, typeof(char));
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                indexes.Add(i, prop.Name);
+                i++;
             }
-            object[] values = new object[props.Count];
+
             foreach (Card item in cards)
             {
-                for (int i = 0; i < values.Length; i++)
+                i = 0;
+                values[0] = item.Name;
+                if(!setCache.ContainsKey(item.SetId))
+                    setCache.Add(item.SetId,item.GetSet().Name);
+                values[1] = setCache[item.SetId];
+                
+                foreach (var prop in item.Properties)
                 {
-                    values[i] = props[i].GetValue(item);
+                    values[indexes.First(x=>x.Value == prop.Key.Name).Key] = prop.Value;
+                    i++;
                 }
                 table.Rows.Add(values);
             }

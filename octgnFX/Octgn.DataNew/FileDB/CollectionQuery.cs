@@ -140,7 +140,11 @@
                 try
                 {
                     path = Path.Combine(i.FullName, Def.Parts.First(x => x.PartType == PartType.File).PartString());
-                    obj = (T)Def.Serializer.Deserialize(path);
+                    if (Def.Config.Cache != null) obj = Def.Config.Cache.GetObjectFromPath<T>(path);
+                    if(obj == null)
+                        obj = (T)Def.Serializer.Deserialize(path);
+                    if(Def.Config.Cache != null)
+                        Def.Config.Cache.AddObjectToCache(path,obj);
                 }
                 catch(Exception e)
                 {
