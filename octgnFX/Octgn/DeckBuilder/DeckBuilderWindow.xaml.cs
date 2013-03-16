@@ -135,6 +135,18 @@ namespace Octgn.DeckBuilder
             }
         }
 
+        public ObservableCollection<Section> Sections 
+        {
+            get
+            {
+                return (ObservableCollection<Section>)this.Deck.Sections;
+            }
+            set
+            {
+                
+            }
+        }
+
         private DataNew.Entities.Game Game
         {
             get { return _game; }
@@ -453,6 +465,7 @@ namespace Octgn.DeckBuilder
                 //}
                 var card = CardManager.Get().GetCardById(e.CardId);
                 ActiveSection.Cards.Add(card.ToMultiCard());
+                this.InvalidateVisual();
             }
         }
 
@@ -464,6 +477,7 @@ namespace Octgn.DeckBuilder
             element.Quantity -= 1;
             if (element.Quantity == 0)
                 ActiveSection.Cards.Remove(element);
+            this.InvalidateVisual();
         }
 
         private void DeckKeyDownHandler(object sender, KeyEventArgs e)

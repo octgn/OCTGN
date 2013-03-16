@@ -62,7 +62,7 @@
         public static Deck CreateDeck(this Game game)
         {
             var deck = new Deck { GameId = game.Id };
-            deck.Sections = game.DeckSections.Select(x=> new Section{Name=x}).ToList();
+            deck.Sections = game.DeckSections.Select(x=> new Section{Name=x,Cards = new List<MultiCard>()}).ToList();
             return deck;
         }
 
