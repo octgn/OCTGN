@@ -21,21 +21,6 @@
     {
         public object Deserialize(string fileName)
         {
-            //var timer = new Stopwatch();
-            //timer.Start();
-            XmlSerializer serializer = null;
-            try
-            {
-                serializer = new XmlSerializer(typeof(game));
-            }
-            catch (Exception e)
-            {
-#if(DEBUG)
-                if(System.Diagnostics.Debugger.IsAttached)
-                    Debugger.Break();
-#endif
-            }
-            if (serializer == null) return null;
             game g = null;
             using (var fs = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read))
             {
@@ -45,8 +30,6 @@
                     return null;
                 }
             }
-            //timer.Stop();
-            var ret = new Octgn.DataNew.Entities.Game()
                           {
                               Id = new Guid(g.id),
                               Name = g.name,
@@ -57,8 +40,8 @@
                               CustomProperties = new List<PropertyDef>(),
                               DeckSections = new List<string>(),
                               SharedDeckSections = new List<string>(),
+                              Scripts = new List<GameScript>(),
                               FileHash = null,
-                              Filename = fileName,
                               Fonts = new List<Font>()
                           };
             if (g.deck != null)
@@ -119,6 +102,17 @@
                     }
                 }
             }
+            if (g.scripts != null)
+            {
+                foreach (var s in g.scripts)
+                {
+                    var script = new GameScript();
+                    script.GameId = ret.Id;
+                    script.Path = Path.Combine(new FileInfo(fileName).Directory.FullName, s.src);
+                    script.Script = File.ReadAllText(script.Path);
+                    ret.Scripts.Add(script);
+                }
+            }
             using (MD5 md5 = new MD5CryptoServiceProvider())
             {
                 using (var file = new FileStream(fileName, FileMode.Open))
@@ -128,7 +122,6 @@
                 }
             }
             
-            //Console.WriteLine(timer.ElapsedMilliseconds);
             return ret;
         }
 
