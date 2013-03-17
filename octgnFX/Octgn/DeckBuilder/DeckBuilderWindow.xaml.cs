@@ -24,10 +24,13 @@ namespace Octgn.DeckBuilder
     using Octgn.Library.Plugin;
     using Octgn.Windows;
 
+    using log4net;
+
     using Game = Octgn.Game;
 
     public partial class DeckBuilderWindow : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private ObservableDeck _deck;
         private string _deckFilename;
         private Octgn.DataNew.Entities.Game _game;
@@ -246,7 +249,7 @@ namespace Octgn.DeckBuilder
             }
             try
             {
-                Deck.Save(_deckFilename);
+                Deck.Save(_game, _deckFilename);
                 _unsaved = false;
             }
             catch (Exception ex)
@@ -270,7 +273,7 @@ namespace Octgn.DeckBuilder
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
             try
             {
-                Deck.Save(sfd.FileName);
+                Deck.Save(_game,sfd.FileName);
                 _unsaved = false;
                 _deckFilename = sfd.FileName;
                 Prefs.LastFolder = Path.GetDirectoryName(_deckFilename);
@@ -431,7 +434,7 @@ namespace Octgn.DeckBuilder
             var bim = new BitmapImage();
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
-            bim.UriSource = element != null ? new Uri(element.GetPicture()) : Game.GetCardBackUri();
+            bim.UriSource = String.IsNullOrWhiteSpace(element.GetPicture()) ? Game.GetCardBackUri() : new Uri(element.GetPicture());
             bim.EndInit();
             cardImage.Source = bim;
 
@@ -574,7 +577,7 @@ namespace Octgn.DeckBuilder
                 bim.BeginInit();
                 bim.CacheOption = BitmapCacheOption.OnLoad;
                 var set = SetManager.Get().GetById(set_id);
-                bim.UriSource = set.GetPictureUri(selection);
+                bim.UriSource = set.GetPictureUri(selection) ?? Game.GetCardBackUri();
                 //bim.UriSource = CardModel.GetPictureUri(Game, set_id, selection);
                 bim.EndInit();
                 cardImage.Source = bim;
@@ -603,7 +606,15 @@ namespace Octgn.DeckBuilder
                 else
                 {
                     RemoveResultCard(null, new SearchCardIdEventArgs { CardId = getCard.Id });
-                    DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.Copy);
+                    try
+                    {
+                        DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.Copy);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex);
+                    }
                 }
             }
         }

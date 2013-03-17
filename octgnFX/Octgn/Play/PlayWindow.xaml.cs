@@ -593,7 +593,7 @@ namespace Octgn.Play
             var dlg = backstage.Child as PickCardsDialog;
             try
             {
-                if (dlg != null) dlg.LimitedDeck.Save(sfd.FileName);
+                if (dlg != null) dlg.LimitedDeck.Save(GameManager.Get().GetById(Program.Game.Definition.Id), sfd.FileName);
             }
             catch (Exception ex)
             {
