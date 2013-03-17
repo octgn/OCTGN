@@ -28,6 +28,15 @@ namespace Octgn.ProxyGenerator
             templates.Add(cardDef);
         }
 
+        public CardDefinition GetTemplate(Dictionary<string,string> values)
+        {
+            if (TemplateMatchField != null && values.ContainsKey(TemplateMatchField))
+            {
+                return GetTemplate(values[TemplateMatchField]);
+            }
+            return GetDefaultTemplate();
+        }
+
         public CardDefinition GetTemplate(string ID)
         {
             CardDefinition ret = GetDefaultTemplate();
