@@ -140,8 +140,8 @@ namespace Octgn.Definitions
                 if (!game.CheckVersion()) return false;
 
                 //Check game scripts
-                if (!Windows.UpdateChecker.CheckGameDef(game))
-                    return false;
+                //if (!Windows.UpdateChecker.CheckGameDef(game))
+                //    return false;
 
                 // Check if the game already exists
                 if (GameManager.Get().GetById(game.Id) != null)
