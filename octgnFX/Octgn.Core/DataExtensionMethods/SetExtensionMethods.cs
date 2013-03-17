@@ -17,11 +17,21 @@
             //return "pack://file:,,," + set.PackageName.Replace('\\', ',');
         }
 
+        public static string GetPackProxyUri(this Set set)
+        {
+            return Path.Combine(set.GetPackUri(), "Proxies");
+        }
+
         public static Uri GetPictureUri(this Set set, string path)
         {
             if (!Directory.Exists(set.GetPackUri())) Directory.CreateDirectory(set.GetPackUri());
             var files = Directory.GetFiles(set.GetPackUri(), path + ".*");
-            if (files.Length == 0) return null;
+            if (files.Length == 0)
+            {
+                files = Directory.GetFiles(set.GetPackProxyUri(), path + ".png");
+                if (files.Length == 0) return null;
+                return new Uri(files.First());
+            }
             return new Uri(files.First());
         }
 
