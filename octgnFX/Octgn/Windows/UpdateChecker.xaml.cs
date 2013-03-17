@@ -20,13 +20,17 @@ namespace Octgn.Windows
 {
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
+    using Octgn.DataNew;
     using Octgn.Library;
+
+    using log4net;
 
     /// <summary>
     ///   Interaction logic for UpdateChecker.xaml
     /// </summary>
     public partial class UpdateChecker
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsClosingDown { get; set; }
 
         private bool _realCloseWindow = false;
@@ -34,19 +38,50 @@ namespace Octgn.Windows
         private string _downloadURL = "";
         private string _updateURL = "";
 
+        private bool _hasLoaded = false;
+
         public UpdateChecker()
         {
+            this.Loaded += OnLoaded;
             IsClosingDown = false;
             InitializeComponent();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            if (_hasLoaded) return;
+            _hasLoaded = true;
             ThreadPool.QueueUserWorkItem(s =>
-                                             {
+            {
 #if(!DEBUG)
                 CheckForUpdates();
 #endif
                 //CheckForXmlSetUpdates();
+                this.LoadDatabase();
                 UpdateCheckDone();
+
             });
             lblStatus.Content = "";
+        }
+
+        private void LoadDatabase()
+        {
+            this.UpdateStatus("Loading games...");
+            foreach (var g in GameManager.Get().Games)
+            {
+                Log.DebugFormat("Loaded Game {0}",g.Name);
+            }
+            this.UpdateStatus("Loading sets...");
+            foreach (var s in SetManager.Get().Sets)
+            {
+                Log.DebugFormat("Loaded Set {0}",s.Name);
+            }
+            this.UpdateStatus("Loading scripts...");
+            foreach (var s in DbContext.Get().Scripts)
+            {
+                Log.DebugFormat("Loading Script {0}",s.Path);
+            }
+            this.UpdateStatus("Loaded database.");
         }
 
         private void CheckForUpdates()
