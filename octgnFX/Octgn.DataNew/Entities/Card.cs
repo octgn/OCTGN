@@ -3,7 +3,19 @@
     using System;
     using System.Collections.Generic;
 
-    public class Card
+    public interface ICard
+    {
+        Guid Id { get; }
+        Guid SetId { get; }
+        string Name { get; }
+        string ImageUri { get; }
+        Guid Alternate { get; }
+        string Dependent { get; }
+        bool IsMutable { get; }
+        IDictionary<PropertyDef, object> Properties { get; } 
+    }
+
+    public class Card : ICard
     {
         public Guid Id { get; set; }
 
