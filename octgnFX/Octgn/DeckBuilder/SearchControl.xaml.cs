@@ -160,14 +160,14 @@ namespace Octgn.DeckBuilder
                 //HACK: strip out the Card. that the sql query inserts
                 conditions[i] = conditions[i].Replace("Card.", "");
             }
-            //resultsGrid.ItemsSource = Game.SelectCards(conditions).DefaultView;
-            // TODO [DB MIGRATION]  figure how to make this shit work.(line below)
-            //UpdateDataGrid(Game.SelectCards(conditions).DefaultView);
+            _CurrentView.RowFilter = String.Join(" and ",conditions);
             e.Handled = true;
             ((Button)sender).IsEnabled = true;
         }
+        [Obsolete("We don't use sql anymore hoes.")]
         private string ConvertToSQLString(string[] conditions)
         {
+            //TODO Scrap this if we can.
             var sb = new StringBuilder();
             sb.Append("SELECT * FROM Card");
             if (conditions != null)
