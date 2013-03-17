@@ -66,7 +66,7 @@
             }
             Document = new XmlDocument();
             Document.Load(path);
-            rootPath = path.Substring(0, path.LastIndexOf(System.IO.Path.PathSeparator));
+            rootpath = path.Substring(0, path.LastIndexOf(System.IO.Path.PathSeparator));
             LoadTemplates();
         }
 
