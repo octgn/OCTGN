@@ -157,7 +157,6 @@ namespace Octgn.DeckBuilder
                 DependencyObject container = generator.ContainerFromIndex(i);
                 var filterCtrl = (FilterControl) VisualTreeHelper.GetChild(container, 0);
                 conditions[i] = filterCtrl.GetSqlCondition();
-                //HACK: strip out the Card. that the sql query inserts
                 conditions[i] = conditions[i].Replace("Card.", "");
             }
             _CurrentView.RowFilter = String.Join(" and ",conditions);
