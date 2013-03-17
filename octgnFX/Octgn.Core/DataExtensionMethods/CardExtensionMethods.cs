@@ -1,6 +1,7 @@
 ﻿namespace Octgn.Core.DataExtensionMethods
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
 
     using Octgn.Core.DataManagers;
@@ -29,7 +30,18 @@
         }
         public static string GetPicture(this Card card)
         {
-            return card.GetSet().GetPictureUri(card.ImageUri).LocalPath;
+            var set = card.GetSet();
+            var uri = set.GetPictureUri(card.ImageUri);
+            if (uri == null)
+            {
+                // Proxy shit
+                return "";
+            }
+            else
+            {
+                return uri.LocalPath;
+            }
+
         }
         public static string AlternatePicture(this Card card)
         {

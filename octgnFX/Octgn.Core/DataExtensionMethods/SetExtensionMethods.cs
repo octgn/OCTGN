@@ -19,7 +19,6 @@
 
         public static Uri GetPictureUri(this Set set, string path)
         {
-            var fullpathnoext = Path.Combine(set.GetPackUri(), path);
             var files = Directory.GetFiles(set.GetPackUri(), path + ".*");
             if (files.Length == 0) return null;
             return new Uri(files.First());
