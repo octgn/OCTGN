@@ -252,10 +252,9 @@ namespace Octgn.DeckBuilder
                 Deck.Save(_game, _deckFilename);
                 _unsaved = false;
             }
-            catch (Exception ex)
+            catch (UserMessageException ex)
             {
-                MessageBox.Show("An error occured while trying to save the deck:\n" + ex.Message, "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "Error",MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -278,10 +277,9 @@ namespace Octgn.DeckBuilder
                 _deckFilename = sfd.FileName;
                 Prefs.LastFolder = Path.GetDirectoryName(_deckFilename);
             }
-            catch (Exception ex)
+            catch (UserMessageException ex)
             {
-                MessageBox.Show("An error occured while trying to save the deck:\n" + ex.Message, "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

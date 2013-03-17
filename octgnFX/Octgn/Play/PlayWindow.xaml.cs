@@ -595,10 +595,9 @@ namespace Octgn.Play
             {
                 if (dlg != null) dlg.LimitedDeck.Save(GameManager.Get().GetById(Program.Game.Definition.Id), sfd.FileName);
             }
-            catch (Exception ex)
+            catch (UserMessageException ex)
             {
-                MessageBox.Show("An error occured while trying to save the deck:\n" + ex.Message, "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "Error",MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
