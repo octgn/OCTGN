@@ -8,6 +8,7 @@ namespace Octgn.ProxyGenerator
     public class FieldMapper
     {
         private List<FieldMapping> mappingList = null;
+        public string templateMapField { get; set; }
 
         public FieldMapper()
         {
@@ -58,6 +59,10 @@ namespace Octgn.ProxyGenerator
                 if (mapping.Name == field)
                 {
                     return (mapping.MapTo);
+                }
+                if (field == templateMapField)
+                {
+                    return field;
                 }
             }
             return (ret);
