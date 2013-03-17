@@ -34,7 +34,7 @@
             var uri = set.GetPictureUri(card.ImageUri);
             if (uri == null)
             {
-                uri = new System.Uri(Path.Combine(set.GetPackUri(), card.ImageUri));
+                uri = new System.Uri(Path.Combine(set.GetPackProxyUri(), card.ImageUri + ".png"));
                 set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
                 return uri.LocalPath;
             }
