@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -17,7 +18,7 @@ namespace Octgn.ProxyGenerator.Util
         /// <param name="overlay"></param>
         public static void MergeOverlay(Graphics graphics, OverlayDefinition overlay)
         {
-            using (Image layer = Image.FromFile(overlay.filename))
+            using (Image layer = Image.FromFile(Path.Combine(overlay.rootpath, overlay.filename))
             {
                 graphics.DrawImageUnscaled(layer, overlay.location.ToPoint());
             }

@@ -13,6 +13,7 @@ namespace Octgn.ProxyGenerator.Definitions
 
         public string id;
         public string filename;
+        public string rootPath;
 
         public static CardDefinition LoadCardDefinition(XmlNode node)
         {
@@ -38,7 +39,9 @@ namespace Octgn.ProxyGenerator.Definitions
         {
             foreach (XmlNode overlayNode in node.ChildNodes)
             {
-                Overlays.Add(OverlayDefinition.LoadOverlay(overlayNode));
+                OverlayDefinition overlay = OverlayDefinition.LoadOverlay(overlayNode);
+                overlay.rootpath = rootPath;
+                Overlays.Add(overlay);
             }
         }
 

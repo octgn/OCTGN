@@ -13,6 +13,7 @@
         public TemplateSelector TemplateSelector { get; internal set; }
         public FieldMapper FieldMapper { get; internal set; }
         internal XmlDocument Document;
+        public string rootpath;
 
         public ProxyDefinition(object key, string path)
         {
@@ -65,6 +66,7 @@
             }
             Document = new XmlDocument();
             Document.Load(path);
+            rootPath = path.Substring(0, path.LastIndexOf(System.IO.Path.PathSeparator));
             LoadTemplates();
         }
 
