@@ -328,7 +328,7 @@ namespace Octgn.DeckBuilder
             ObservableDeck newDeck;
             try
             {
-                newDeck = new Deck().Load(ofd.FileName).AsObservable();
+                newDeck = new Deck().Load(game,ofd.FileName).AsObservable();
             }
             catch (UserMessageException ex)
             {

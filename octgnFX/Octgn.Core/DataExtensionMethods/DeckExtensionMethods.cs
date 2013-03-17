@@ -1,10 +1,12 @@
 ﻿namespace Octgn.Core.DataExtensionMethods
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Xml;
+    using System.Xml.Linq;
 
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
@@ -59,11 +61,64 @@
                 throw new UserMessageException("Could not save deck to {0}, there was an unspecified problem.",path);
             }
         }
-        public static IDeck Load(this IDeck deck, string path)
+        public static IDeck Load(this IDeck deck, Game game, string path)
         {
-            //TODO [DB MIGRATION]  DO THIS!
-            throw new NotImplementedException("OH GODS");
-            return new Deck();
+            var ret = new Deck();
+            ret.Sections = new List<ISection>();
+            try
+            {
+                using (var fs = File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                {
+                    var doc = XDocument.Load(fs);
+                    var gameId = Guid.Parse(doc.Descendants("deck").First().Attribute("game").Value);
+                    foreach (var sectionelem in doc.Descendants("section"))
+                    {
+                        var section = new Section();
+                        section.Cards = new List<IMultiCard>();
+                        section.Name = sectionelem.Attribute("name").Value;
+                        foreach (var cardelem in sectionelem.Descendants("card"))
+                        {
+                            var cardId = Guid.Parse(cardelem.Attribute("id").Value);
+                            var cardq = Int32.Parse(cardelem.Attribute("qty").Value);
+                            var card = game.GetCardById(cardId).ToMultiCard(cardq);
+                            section.Cards.Add(card);
+                        }
+                        (ret.Sections as List<ISection>).Add(section);
+                    }
+                    ret.GameId = gameId;
+                }
+                return ret;
+            }
+            catch (FormatException e)
+            {
+                Log.Error(String.Format("Problem loading deck from path {0}", path), e);
+                throw new UserMessageException("The deck {0} is corrupt.",path);
+            }
+            catch (NullReferenceException e)
+            {
+                Log.Error(String.Format("Problem loading deck from path {0}", path), e);
+                throw new UserMessageException("The deck {0} is corrupt.",path);
+            }
+            catch (XmlException e)
+            {
+                Log.Error(String.Format("Problem loading deck from path {0}", path), e);
+                throw new UserMessageException("The deck {0} is corrupt.",path);
+            }
+            catch (FileNotFoundException)
+            {
+                throw new UserMessageException("Could not save deck to {0}, could not file the file.", path);
+            }
+            catch (IOException e)
+            {
+                Log.Error(String.Format("Problem loading deck from path {0}", path), e);
+                throw new UserMessageException("Could not load deck from {0}, {1}", path, e.Message);
+            }
+            catch (Exception e)
+            {
+                Log.Error(String.Format("Problem loading deck from path {0}", path), e);
+                throw new UserMessageException("Could not load deck from {0}, there was an unspecified problem.", path);
+            }
+            return ret;
         }
         public static int CardCount(this IDeck deck)
         {
