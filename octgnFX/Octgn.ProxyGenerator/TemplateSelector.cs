@@ -12,6 +12,8 @@ namespace Octgn.ProxyGenerator
 
         public string DefaultID { get; set; }
 
+        public string TemplateMatchField { get; set; }
+
         public TemplateSelector()
         {
             templates = new List<CardDefinition>();
