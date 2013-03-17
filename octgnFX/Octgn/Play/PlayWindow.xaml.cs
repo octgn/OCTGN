@@ -130,6 +130,7 @@ namespace Octgn.Play
         {
             var game = GameManager.Get().GetById(Program.Game.Definition.Id);
             string curDir = game.GetInstallPath();
+            string uri = "file:///" + curDir.Replace('\\', '/') + "/#";
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
             System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
 
@@ -153,12 +154,12 @@ namespace Octgn.Play
                 }
             }
 
-            chat.watermark.FontFamily = new FontFamily(curDir + context.Families[0].Name);
-            GroupControl.groupFont = new FontFamily(curDir + context.Families[0].Name);
+            chat.watermark.FontFamily = new FontFamily(uri + context.Families[0].Name);
+            GroupControl.groupFont = new FontFamily(uri + context.Families[0].Name);
             GroupControl.fontsize = contextFontsize;
             if (inchat)
             {
-                chat.output.FontFamily = new FontFamily(curDir + chatname.Families[0].Name);
+                chat.output.FontFamily = new FontFamily(uri + chatname.Families[0].Name);
                 chat.output.FontSize = chatFontsize;
             }
 
