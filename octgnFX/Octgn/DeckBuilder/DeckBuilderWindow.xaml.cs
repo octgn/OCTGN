@@ -383,7 +383,7 @@ namespace Octgn.DeckBuilder
         {
             selection = e.Image;
             set_id = e.SetId;
-
+            var cardid = e.CardId;
             var bim = new BitmapImage();
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
@@ -391,7 +391,15 @@ namespace Octgn.DeckBuilder
             try
             {
                 var set = SetManager.Get().GetById(e.SetId);
-                bim.UriSource = e.Image != null ? set.GetPictureUri(e.Image) : Game.GetCardBackUri();
+                var card = CardManager.Get().GetCardById(cardid);
+                var uri = card.GetPicture();
+                if(uri != null)
+                    bim.UriSource = new Uri(uri);
+                else
+                {
+                    bim.UriSource = Game.GetCardBackUri();
+                }
+                //bim.UriSource = e.Image != null ? new Uri(card.GetPicture()) : Game.GetCardBackUri();
                 //bim.UriSource = e.Image != null ? CardModel.GetPictureUri(Game, e.SetId, e.Image) : Game.GetCardBackUri();
                 bim.EndInit();
             }
