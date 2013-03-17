@@ -14,6 +14,7 @@ using Octgn.Data;
 using Octgn.Definitions;
 using Octgn.Play.Gui;
 using Octgn.Utils;
+using Octgn.Core.DataExtensionMethods;
 
 namespace Octgn.Play.Dialogs
 {
@@ -131,7 +132,7 @@ namespace Octgn.Play.Dialogs
             if (element != null)
                 element.Quantity++;
             else
-                section.Cards.Add(card.ToMultiCard());
+                section.Cards.AddCard(card.ToMultiCard());
 
             // RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, sender));
         }
@@ -154,7 +155,7 @@ namespace Octgn.Play.Dialogs
                                       if (element != null)
                                           element.Quantity += (byte) qty;
                                       else
-                                          section.Cards.Add(card.ToMultiCard((byte) qty));
+                                          section.Cards.AddCard(card.ToMultiCard((byte) qty));
                                   });
         }
 
@@ -173,7 +174,7 @@ namespace Octgn.Play.Dialogs
                                           int actuallyRemoved = Math.Min(qty, element.Quantity);
                                           if (element.Quantity > qty)
                                               element.Quantity -= (byte) qty;
-                                          else if (section != null) section.Cards.Remove(element);
+                                          else if (section != null) section.Cards.RemoveCard(element);
                                           if (!UnlimitedPool.Contains(element))
                                               for (int i = 0; i < actuallyRemoved; ++i)
                                                   // When there are multiple copies of the same card, we insert clones of the CardModel.
@@ -187,7 +188,7 @@ namespace Octgn.Play.Dialogs
             {
                 if (element.Quantity > 1)
                     element.Quantity--;
-                else if (section != null) section.Cards.Remove(element);
+                else if (section != null) section.Cards.RemoveCard(element);
                 if (!UnlimitedPool.Contains(element))
                     CardPool.Add(element);
             }
