@@ -32,7 +32,8 @@ namespace Octgn.ProxyGenerator
         {
             if (TemplateMatchField != null && values.ContainsKey(TemplateMatchField))
             {
-                return GetTemplate(values[TemplateMatchField]);
+                //todo have to fix this later
+                //return GetTemplate(values[TemplateMatchField]);
             }
             return GetDefaultTemplate();
         }
