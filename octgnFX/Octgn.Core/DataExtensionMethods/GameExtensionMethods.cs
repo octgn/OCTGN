@@ -62,7 +62,7 @@
         public static Deck CreateDeck(this Game game)
         {
             var deck = new Deck { GameId = game.Id };
-            deck.Sections = game.DeckSections.Select(x=> new Section{Name=x,Cards = new List<MultiCard>()}).ToList();
+            deck.Sections = game.DeckSections.Select(x=> new Section{Name=x,Cards = new List<IMultiCard>()}).ToList();
             return deck;
         }
 
@@ -254,7 +254,7 @@
                                                     select new Section()
                                                     {
                                                         Name = xAttribute.Value,
-                                                        Cards = new ObservableCollection<MultiCard>
+                                                        Cards = new ObservableCollection<IMultiCard>
                                                             (from card in section.Elements("card")
                                                              select new MultiCard
                                                              {
@@ -283,7 +283,8 @@
             foreach (var sec in deck.Sections)
             {
                 var newList = (from e in sec.Cards let card = game.GetCardById(e.Id) select card.ToMultiCard(e.Quantity)).ToList();
-                sec.Cards = newList;
+                foreach(var n in newList)
+                    sec.Cards.Add(n);
             }
 
             return deck;

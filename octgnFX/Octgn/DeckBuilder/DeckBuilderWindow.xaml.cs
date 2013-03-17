@@ -28,10 +28,10 @@ namespace Octgn.DeckBuilder
 
     public partial class DeckBuilderWindow : INotifyPropertyChanged
     {
-        private Deck _deck;
+        private ObservableDeck _deck;
         private string _deckFilename;
         private Octgn.DataNew.Entities.Game _game;
-        private DataNew.Entities.Section _section;
+        private DataNew.Entities.ObservableSection _section;
         private bool _unsaved;
         private string selection = null;
         private Guid set_id;
@@ -44,7 +44,7 @@ namespace Octgn.DeckBuilder
             if (GameManager.Get().GameCount == 1)
             {
                 Game = GameManager.Get().Games.First();
-                Deck = Game.CreateDeck();
+                Deck = Game.CreateDeck().AsObservable();
                 _deckFilename = null;
 
             }
@@ -122,7 +122,7 @@ namespace Octgn.DeckBuilder
 
         #endregion
 
-        public Deck Deck
+        public ObservableDeck Deck
         {
             get { return _deck; }
             set
@@ -130,20 +130,8 @@ namespace Octgn.DeckBuilder
                 if (_deck == value) return;
                 _deck = value;
                 _unsaved = false;
-                ActiveSection = value.Sections.FirstOrDefault();
+                ActiveSection = value.Sections.FirstOrDefault() as ObservableSection;
                 OnPropertyChanged("Deck");
-            }
-        }
-
-        public ObservableCollection<Section> Sections 
-        {
-            get
-            {
-                return (ObservableCollection<Section>)this.Deck.Sections;
-            }
-            set
-            {
-                
             }
         }
 
@@ -168,7 +156,7 @@ namespace Octgn.DeckBuilder
             }
         }
 
-        public Section ActiveSection
+        public ObservableSection ActiveSection
         {
             get { return _section; }
             set
@@ -208,7 +196,7 @@ namespace Octgn.DeckBuilder
                 //    return;
                 //}
             }
-            Deck = Game.CreateDeck();
+            Deck = Game.CreateDeck().AsObservable();
             //Deck = new Deck(Game);
             _deckFilename = null;
         }
@@ -232,7 +220,7 @@ namespace Octgn.DeckBuilder
             }
             Game = (DataNew.Entities.Game) ((MenuItem) e.OriginalSource).DataContext;
             CommandManager.InvalidateRequerySuggested();
-            Deck = Game.CreateDeck();
+            Deck = Game.CreateDeck().AsObservable();
             //Deck = new Deck(Game);
             _deckFilename = null;
         }
@@ -336,10 +324,10 @@ namespace Octgn.DeckBuilder
             Prefs.LastFolder = Path.GetDirectoryName(ofd.FileName);
 
             // Try to load the file contents
-            Deck newDeck;
+            ObservableDeck newDeck;
             try
             {
-                newDeck = new Deck().Load(ofd.FileName);
+                newDeck = new Deck().Load(ofd.FileName).AsObservable();
             }
             catch (UserMessageException ex)
             {
@@ -533,7 +521,7 @@ namespace Octgn.DeckBuilder
 
         private void SetActiveSection(object sender, RoutedEventArgs e)
         {
-            ActiveSection = (Section) ((FrameworkElement) sender).DataContext;
+            ActiveSection = (ObservableSection) ((FrameworkElement) sender).DataContext;
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -601,7 +589,7 @@ namespace Octgn.DeckBuilder
                 DataObject dragCard = new DataObject("Card", getCard);
                 if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift)
                 {
-                    ActiveSection.Cards.RemoveAt(cardIndex);
+                    ActiveSection.Cards.Remove(getCard);
                     DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.All);
                 }
                 else
@@ -624,7 +612,7 @@ namespace Octgn.DeckBuilder
             {
                 _unsaved = true;
                 var dragCard = e.Data.GetData("Card") as MultiCard;
-                Section dropSection = (Section)((FrameworkElement)sender).DataContext;
+                ObservableSection dropSection = (ObservableSection)((FrameworkElement)sender).DataContext;
                 var element = dropSection.Cards.FirstOrDefault(c => c.Id == dragCard.Id);
                     if (e.Effects == DragDropEffects.Copy)
                     {

@@ -127,7 +127,7 @@ namespace Octgn.Play.Dialogs
             if (section == null) return;
 
             CardPool.Remove(card);
-            MultiCard element = section.Cards.FirstOrDefault(x => x.Id == card.Id);
+            var element = section.Cards.FirstOrDefault(x => x.Id == card.Id).AsObservable();
             if (element != null)
                 element.Quantity++;
             else
@@ -150,7 +150,7 @@ namespace Octgn.Play.Dialogs
 
             OpenQuantityPopup(qty =>
                                   {
-                                      MultiCard element = section.Cards.FirstOrDefault(x => x.Id == card.Id);
+                                      var element = section.Cards.FirstOrDefault(x => x.Id == card.Id).AsObservable();
                                       if (element != null)
                                           element.Quantity += (byte) qty;
                                       else
