@@ -10,6 +10,8 @@ using System.Xml;
 
 namespace Octgn.ProxyGenerator
 {
+    using System.IO;
+
     public class ProxyGenerator
     {
         /// <summary>
@@ -17,9 +19,10 @@ namespace Octgn.ProxyGenerator
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static Image GenerateProxy(CardDefinition template, Dictionary<string,string> values)
+        public static Image GenerateProxy(string rootPath, CardDefinition template, Dictionary<string,string> values)
         {
-            Image ret = Image.FromFile(template.filename);
+            var path = Path.Combine(rootPath, template.filename);
+            Image ret = Image.FromFile(path);
 
             using (Graphics graphics = Graphics.FromImage(ret))
             {
