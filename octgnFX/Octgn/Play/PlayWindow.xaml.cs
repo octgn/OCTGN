@@ -32,6 +32,7 @@ namespace Octgn.Play
 
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
     using Octgn.Library;
     using Octgn.Library.Exceptions;
 
@@ -309,7 +310,7 @@ namespace Octgn.Play
             try
             {
                 var game = GameManager.Get().GetById(Program.Game.Definition.Id);
-                var newDeck = game.LoadDeck(ofd.FileName);
+                var newDeck = new Deck().Load(game,ofd.FileName);
                 //DataNew.Entities.Deck newDeck = Deck.Load(ofd.FileName,
                 //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game

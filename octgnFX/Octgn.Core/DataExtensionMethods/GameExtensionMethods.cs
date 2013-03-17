@@ -206,93 +206,10 @@
             return table;   
         }
 
-        public static Deck LoadDeck(this Game game, string filename)
-        {
-            if (game == null) throw new ArgumentNullException("game");
-
-            XDocument doc;
-            Guid gameId = new Guid();
-            try
-            {
-                doc = XDocument.Load(filename);
-            }
-            catch (Exception e)
-            {
-                throw new FileNotReadableException(e);
-            }
-
-            if (doc.Root != null)
-            {
-                XAttribute gameAttribute = doc.Root.Attribute("game");
-                if (gameAttribute == null)
-                    throw new InvalidFileFormatException("The <deck> tag is missing the 'game' attribute");
-
-                try
-                {
-                    gameId = new Guid(gameAttribute.Value);
-                }
-                catch
-                {
-                    throw new InvalidFileFormatException("The game attribute is not a valid GUID");
-                }
-            }
-
-            if (gameId != game.Id) throw new WrongGameException(gameId, game.Id.ToString());
-
-            Deck deck;
-            try
-            {
-                var isShared = doc.Root.Attr<bool>("shared");
-                IEnumerable<string> defSections = isShared ? game.SharedDeckSections : game.DeckSections;
-
-                deck = new Deck { GameId = game.Id, IsShared = isShared };
-                if (doc.Root != null)
-                {
-                    IEnumerable<Section> sections = from section in doc.Root.Elements("section")
-                                                    let xAttribute = section.Attribute("name")
-                                                    where xAttribute != null
-                                                    select new Section()
-                                                    {
-                                                        Name = xAttribute.Value,
-                                                        Cards = new ObservableCollection<IMultiCard>
-                                                            (from card in section.Elements("card")
-                                                             select new MultiCard
-                                                             {
-                                                                 Id = new Guid(card.Attr<string>("id")),
-                                                                 Name = card.Value,
-                                                                 Quantity =card.Attr<byte>("qty", 1)
-                                                             })
-                                                    };
-                    var allSections = new Section[defSections.Count()];
-                    int i = 0;
-                    foreach (string sectionName in defSections)
-                    {
-                        allSections[i] = sections.FirstOrDefault(x => x.Name == sectionName);
-                        if (allSections[i] == null) allSections[i] = new Section { Name = sectionName };
-                        ++i;
-                    }
-                    deck.Sections = allSections;
-                }
-            }
-            catch
-            {
-                throw new InvalidFileFormatException();
-            }
-            // Matches with actual cards in database
-
-            foreach (var sec in deck.Sections)
-            {
-                var newList = (from e in sec.Cards let card = game.GetCardById(e.Id) select card.ToMultiCard(e.Quantity)).ToList();
-                foreach(var n in newList)
-                    sec.Cards.Add(n);
-            }
-
-            return deck;
-        }
-
         public static void DeleteSet(this Game game, Set set)
         {
             SetManager.Get().UninstallSet(set);
         }
+
     }
 }
