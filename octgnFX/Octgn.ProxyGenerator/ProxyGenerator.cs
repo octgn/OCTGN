@@ -28,6 +28,7 @@ namespace Octgn.ProxyGenerator
             {
                 foreach (OverlayDefinition overlay in template.Overlays)
                 {
+                    overlay.filename = Path.Combine(rootPath, overlay.filename);
                    GraphicUtils.MergeOverlay(graphics, overlay);
                 }
 

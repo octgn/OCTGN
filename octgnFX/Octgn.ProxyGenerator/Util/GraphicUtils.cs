@@ -18,7 +18,7 @@ namespace Octgn.ProxyGenerator.Util
         /// <param name="overlay"></param>
         public static void MergeOverlay(Graphics graphics, OverlayDefinition overlay)
         {
-            using (Image layer = Image.FromFile(Path.Combine(overlay.rootpath, overlay.filename)))
+            using (Image layer = Image.FromFile(overlay.filename))
             {
                 graphics.DrawImageUnscaled(layer, overlay.location.ToPoint());
             }
