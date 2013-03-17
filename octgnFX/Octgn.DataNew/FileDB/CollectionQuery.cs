@@ -30,7 +30,7 @@
             lock (indexLock)
             {
                 this.Index = new Dictionary<Guid,List<DirectoryInfo>>();
-                foreach(var d in this.Defs)
+                foreach(var d in this.Defs.Where(x=>x.IsSteril == false))
                     this.Index.Add(d.Key,d.CreateSearchIndex().ToList());
             }
         }
@@ -143,7 +143,7 @@
                             catch (Exception e)
                             {
                                 obj = null;
-                                Log.Error("Error desterilizing " + path, e);
+                                Log.Error("Error desterilizing " + path + " for collection " + typeof(T).Name, e);
                             }
                             if (obj != null) Objects.Add(obj);
                         }

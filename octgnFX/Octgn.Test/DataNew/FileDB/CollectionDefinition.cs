@@ -14,6 +14,7 @@
     using Octgn.DataNew.Entities;
     using Octgn.Library;
     using Octgn.Library.ExtensionMethods;
+    using Octgn.ProxyGenerator;
 
     public class CollectionDefinition
     {
@@ -129,6 +130,10 @@
             foreach (var s in dbconfig.Query<GameScript>())
             {
                 Console.WriteLine(s.Path);
+            }
+            foreach (var p in dbconfig.Query<ProxyDefinition>())
+            {
+                Console.WriteLine(p.Key);
             }
             timer.Stop();
             Console.WriteLine("TotalCards: {0}",cardCount);

@@ -1017,6 +1017,10 @@
       <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
       <Name>Octgn.Library</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
+      <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>
+      <Name>Octgn.ProxyGenerator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>
       <Name>Octgn.Server</Name>

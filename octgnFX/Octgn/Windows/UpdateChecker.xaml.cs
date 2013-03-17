@@ -81,6 +81,11 @@ namespace Octgn.Windows
             {
                 Log.DebugFormat("Loading Script {0}",s.Path);
             }
+            this.UpdateStatus("Loading proxies...");
+            foreach (var p in DbContext.Get().ProxyDefinitions)
+            {
+                Log.DebugFormat("Loading Proxy {0}",p.Key);
+            }
             this.UpdateStatus("Loaded database.");
         }
 

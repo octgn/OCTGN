@@ -15,6 +15,7 @@
     using Octgn.DataNew.FileDB;
     using Octgn.Library;
     using Octgn.Library.Exceptions;
+    using Octgn.ProxyGenerator;
 
     public static class GameExtensionMethods
     {
@@ -211,5 +212,9 @@
             SetManager.Get().UninstallSet(set);
         }
 
+        public static ProxyDefinition GetCardProxyDef(this Game game)
+        {
+            return DbContext.Get().ProxyDefinitions.FirstOrDefault(x => (Guid)x.Key == game.Id);
+        }
     }
 }
