@@ -34,7 +34,7 @@
             var uri = set.GetPictureUri(card.ImageUri);
             if (uri == null)
             {
-                // Proxy shit
+                // Proxy stuff.
                 return "";
             }
             else
