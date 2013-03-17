@@ -28,6 +28,7 @@
             var files = Directory.GetFiles(set.GetPackUri(), path + ".*");
             if (files.Length == 0)
             {
+                if (!Directory.Exists(set.GetPackProxyUri())) Directory.CreateDirectory(set.GetPackProxyUri());
                 files = Directory.GetFiles(set.GetPackProxyUri(), path + ".png");
                 if (files.Length == 0) return null;
                 return new Uri(files.First());
