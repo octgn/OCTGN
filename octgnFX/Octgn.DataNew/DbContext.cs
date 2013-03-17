@@ -10,6 +10,7 @@
     using Octgn.DataNew.Entities;
     using Octgn.DataNew.FileDB;
     using Octgn.Library;
+    using Octgn.ProxyGenerator;
 
     using log4net;
 
@@ -57,6 +58,14 @@
             }
         }
 
+        public IEnumerable<ProxyDefinition> ProxyDefinitions
+        {
+            get
+            {
+                return Db.Query<ProxyDefinition>();
+            }
+        }
+
         internal FileDb Db { get; set; }
 
         internal DbContext()
@@ -75,6 +84,16 @@
                 .SetPart(x => x.Property(y => y.Id))
                 .SetPart(x => x.File("set.xml"))
                 .SetSerializer<SetSerializer>()
+                .Conf()
+                .DefineCollection<GameScript>("Scripts")
+                .SetSteril()
+                //.OverrideRoot(x => x.Directory("Games"))
+                //.SetPart(x => x.Property(y => y.GameId))
+                .Conf()
+                .DefineCollection<ProxyDefinition>("Proxies")
+                .SetSteril()
+                //.OverrideRoot(x => x.Directory("Games"))
+                //.SetPart(x => x.Property(y=>y.Key))
                 .Conf()
                 .SetCacheProvider<FullCacheProvider>();
             Db = new FileDb(config);

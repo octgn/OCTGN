@@ -45,6 +45,7 @@
     <Compile Include="FieldMapping.cs" />
     <Compile Include="Definitions\OverlayDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProxyDefinition.cs" />
     <Compile Include="ProxyGenerator.cs" />
     <Compile Include="ProxyManager.cs" />
     <Compile Include="Definitions\SectionDefinition.cs" />

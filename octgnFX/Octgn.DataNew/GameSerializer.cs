@@ -127,15 +127,18 @@
             }
             if (g.proxygen != null)
             {
-                if (ProxyManager.Get().LoadDefinition(g.proxygen.definitionsrc))
+                var coll =
+                    Def.Config.DefineCollection<ProxyDefinition>("Proxies")
+                       .OverrideRoot(x => x.Directory("Games"))
+                       .SetPart(x => x.Property(y => y.Key));
+                var pathParts = g.proxygen.definitionsrc.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                for (var index = 0; index < pathParts.Length; index++)
                 {
-                    foreach (gameProxygenMapping mapping in g.proxygen.mappings)
-                    {
-                        ProxyManager.Get().GetFieldMapper().AddMapping(mapping.name, mapping.mapto);
-                    }
-                    ProxyManager.Get().GetTemplateSelector().DefaultID = g.proxygen.templatemapping.defaulttemplate;
-                    ProxyManager.Get().GetTemplateSelector().TemplateMatchField = g.proxygen.templatemapping.templatemap.field;
+                    var i = index;
+                    if (i == pathParts.Length - 1) coll.SetPart(x => x.File(pathParts[i]));
+                    else coll.SetPart(x => x.Directory(pathParts[i]));
                 }
+                coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id,g.proxygen));
             }
             using (MD5 md5 = new MD5CryptoServiceProvider())
             {
@@ -305,12 +308,25 @@
 
     public class ProxyGeneratorSerializer : IFileDbSerializer
     {
-
         public ICollectionDefinition Def { get; set; }
+        internal gameProxygen ProxyGenFromDef { get; set; }
+        internal Guid GameId { get; set; }
+        public ProxyGeneratorSerializer(Guid gameId, gameProxygen proxygen)
+        {
+            ProxyGenFromDef = proxygen;
+            GameId = gameId;
+        }
 
         public object Deserialize(string fileName)
         {
-            throw new NotImplementedException();
+            var ret = new ProxyDefinition(GameId,fileName);
+            foreach (gameProxygenMapping mapping in ProxyGenFromDef.mappings)
+            {
+                ret.FieldMapper.AddMapping(mapping.name, mapping.mapto);
+            }
+            ret.TemplateSelector.DefaultID = ProxyGenFromDef.templatemapping.defaulttemplate;
+            ret.TemplateSelector.TemplateMatchField = ProxyGenFromDef.templatemapping.templatemap.field;
+            return ret;
         }
 
         public byte[] Serialize(object obj)

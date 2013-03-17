@@ -1,0 +1,65 @@
+﻿namespace Octgn.ProxyGenerator
+{
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.IO;
+    using System.Xml;
+
+    using Octgn.ProxyGenerator.Definitions;
+
+    public class ProxyDefinition
+    {
+        public object Key { get; internal set; }
+        public TemplateSelector TemplateSelector { get; internal set; }
+        public FieldMapper FieldMapper { get; internal set; }
+        internal XmlDocument Document;
+
+        public ProxyDefinition(object key, string path)
+        {
+            Key = key;
+            TemplateSelector = new TemplateSelector();
+            FieldMapper = new FieldMapper();
+            Load(path);
+        }
+
+        public Image GenerateProxyImage(string templateID, Dictionary<string, string> values)
+        {
+            values = FieldMapper.RemapDictionary(values);
+            CardDefinition cardDef = TemplateSelector.GetTemplate(templateID);
+            Image ret = ProxyGenerator.GenerateProxy(cardDef, values);
+            return (ret);
+        }
+
+        public bool SaveProxyImage(string templateID, Dictionary<string, string> values, string path)
+        {
+            Image proxy = GenerateProxyImage(templateID, values);
+            proxy.Save(path);
+            proxy.Dispose();
+            return (File.Exists(path));
+        }
+
+        internal void Load(string path)
+        {
+            if (Document != null)
+            {
+                Document.RemoveAll();
+                Document = null;
+                TemplateSelector.ClearTemplates();
+                FieldMapper.ClearMappings();
+            }
+            Document = new XmlDocument();
+            Document.Load(path);
+            LoadTemplates();
+        }
+
+        internal void LoadTemplates()
+        {
+            XmlNodeList cardList = Document.GetElementsByTagName("card");
+            foreach (XmlNode card in cardList)
+            {
+                CardDefinition cardDef = CardDefinition.LoadCardDefinition(card);
+                TemplateSelector.AddTemplate(cardDef);
+            }
+        }
+    }
+}

@@ -10,6 +10,7 @@
 
     public interface ICollectionDefinition
     {
+        bool IsSteril { get; }
         Guid Key { get; }
         Type Type { get; }
         string Name { get; }
@@ -24,6 +25,7 @@
 
     public class CollectionDefinition<T> : ICollectionDefinition
     {
+        public bool IsSteril { get; internal set; }
         public Guid Key { get; internal set; }
         public Type Type { get; internal set; }
         public string Name { get; internal set; }
@@ -50,6 +52,11 @@
             Parts = new List<IPart>();
             Type = typeof(T);
             //TODO [DB MIGRATION] Setting the file should only happen once, so it shouldn't be a part of the Parts enumerable
+        }
+        public CollectionDefinition<T> SetSteril()
+        {
+            IsSteril = true;
+            return this;
         }
         public FileDbConfiguration Conf()
         {
