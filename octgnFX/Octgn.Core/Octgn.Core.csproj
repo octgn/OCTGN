@@ -47,7 +47,10 @@
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="Plugin\IPluginMenuItem.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tabletop\GameEngine.cs" />
+    <Compile Include="Tabletop\GameState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
