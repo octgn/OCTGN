@@ -13,10 +13,11 @@
         public TemplateSelector TemplateSelector { get; internal set; }
         public FieldMapper FieldMapper { get; internal set; }
         internal XmlDocument Document;
-        public string rootpath;
+        public string RootPath { get; internal set; }
 
-        public ProxyDefinition(object key, string path)
+        public ProxyDefinition(object key, string path, string rootPath)
         {
+            RootPath = rootPath;
             Key = key;
             TemplateSelector = new TemplateSelector();
             FieldMapper = new FieldMapper();
@@ -27,7 +28,7 @@
         {
             values = FieldMapper.RemapDictionary(values);
             CardDefinition cardDef = TemplateSelector.GetTemplate(values);
-            Image ret = ProxyGenerator.GenerateProxy(cardDef, values);
+            Image ret = ProxyGenerator.GenerateProxy(RootPath,cardDef, values);
             return (ret);
         }
 
@@ -35,7 +36,7 @@
         {
             values = FieldMapper.RemapDictionary(values);
             CardDefinition cardDef = TemplateSelector.GetTemplate(templateID);
-            Image ret = ProxyGenerator.GenerateProxy(cardDef, values);
+            Image ret = ProxyGenerator.GenerateProxy(RootPath,cardDef, values);
             return (ret);
         }
 
@@ -66,7 +67,6 @@
             }
             Document = new XmlDocument();
             Document.Load(path);
-            rootpath = path.Substring(0, path.LastIndexOf(System.IO.Path.PathSeparator));
             LoadTemplates();
         }
 

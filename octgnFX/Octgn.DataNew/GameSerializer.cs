@@ -319,7 +319,8 @@
 
         public object Deserialize(string fileName)
         {
-            var ret = new ProxyDefinition(GameId,fileName);
+            var game = DbContext.Get().Games.First(x => x.Id == GameId);
+            var ret = new ProxyDefinition(GameId,fileName, new FileInfo(game.Filename).Directory.FullName);
             foreach (gameProxygenMapping mapping in ProxyGenFromDef.mappings)
             {
                 ret.FieldMapper.AddMapping(mapping.name, mapping.mapto);

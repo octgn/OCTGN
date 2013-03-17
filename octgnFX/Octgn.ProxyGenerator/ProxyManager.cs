@@ -70,7 +70,7 @@ namespace Octgn.ProxyGenerator
         {
             values = GetFieldMapper().RemapDictionary(values);
             CardDefinition cardDef = GetTemplateSelector().GetTemplate(values);
-            Image ret = ProxyGenerator.GenerateProxy(cardDef, values);
+            Image ret = ProxyGenerator.GenerateProxy(rootPath,cardDef, values);
             return (ret);
         }
 
@@ -78,7 +78,7 @@ namespace Octgn.ProxyGenerator
         {
             values = GetFieldMapper().RemapDictionary(values);
             CardDefinition cardDef = templateSelector.GetTemplate(templateID);
-            Image ret = ProxyGenerator.GenerateProxy(cardDef, values);
+            Image ret = ProxyGenerator.GenerateProxy(rootPath,cardDef, values);
             return (ret);
         }
 
