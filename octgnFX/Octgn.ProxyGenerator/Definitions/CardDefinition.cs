@@ -27,7 +27,7 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
                 if (subNode.Name.Equals("overlays"))
                 {
-                    ret.LoadOverlays(node);
+                    ret.LoadOverlays(subNode);
                 }
             }
 
