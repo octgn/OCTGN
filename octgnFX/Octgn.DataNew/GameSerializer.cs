@@ -327,6 +327,7 @@
             }
             ret.TemplateSelector.DefaultID = ProxyGenFromDef.templatemapping.defaulttemplate;
             ret.TemplateSelector.TemplateMatchField = ProxyGenFromDef.templatemapping.templatemap.field;
+            ret.FieldMapper.templateMapField = ProxyGenFromDef.templatemapping.templatemap.field;
             return ret;
         }
 
