@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Octgn.ProxyGenerator.Structs;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace Octgn.ProxyGenerator
+namespace Octgn.ProxyGenerator.Definitions
 {
     public class SectionDefinition
     {
