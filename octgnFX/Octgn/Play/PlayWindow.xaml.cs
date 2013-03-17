@@ -103,15 +103,14 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
-            if (!PartExists("http://schemas.octgn.org/game/rules"))
-            {
-                Rules.Visibility = Visibility.Hidden;
-                Help.Visibility = Visibility.Hidden;
-            }
-            if (Program.Game.Definition.Fonts.Count > 0)
-            {
-                UpdateFont();
-            }
+            
+            //TODO: load the rules here or somewhere else again.
+            //if (!PartExists("http://schemas.octgn.org/game/rules"))
+            //{
+            //    Rules.Visibility = Visibility.Hidden;
+            //    Help.Visibility = Visibility.Hidden;
+            //}
+
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
@@ -129,8 +128,8 @@ namespace Octgn.Play
 
         private void UpdateFont()
         {
-            string curDir = Path.Combine(SimpleConfig.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
-            string uri = "file:///" + curDir.Replace('\\', '/') + "/#";
+            var game = GameManager.Get().GetById(Program.Game.Definition.Id);
+            string curDir = game.GetInstallPath();
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
             System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
 
@@ -138,27 +137,28 @@ namespace Octgn.Play
             int chatFontsize = 12;
             int contextFontsize = 12;
             Boolean inchat = false;
-            foreach (FontDef font in Program.Game.Definition.Fonts)
+            
+            foreach (Font font in game.Fonts)
             {
                 if (font.Target.ToLower().Equals("chat"))
                 {
-                    chatname.AddFontFile(Path.Combine(curDir, font.FileName.TrimStart('/')));
+                    chatname.AddFontFile(Path.Combine(curDir, font.Src));
                     chatFontsize = font.Size;
                     inchat = true;
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
-                    context.AddFontFile(Path.Combine(curDir, font.FileName.TrimStart('/')));
+                    context.AddFontFile(Path.Combine(curDir, Path.Combine(curDir, font.Src)));
                     contextFontsize = font.Size;
                 }
             }
 
-            chat.watermark.FontFamily = new FontFamily(uri + context.Families[0].Name);
-            GroupControl.groupFont = new FontFamily(uri + context.Families[0].Name);
+            chat.watermark.FontFamily = new FontFamily(curDir + context.Families[0].Name);
+            GroupControl.groupFont = new FontFamily(curDir + context.Families[0].Name);
             GroupControl.fontsize = contextFontsize;
             if (inchat)
             {
-                chat.output.FontFamily = new FontFamily(uri + chatname.Families[0].Name);
+                chat.output.FontFamily = new FontFamily(curDir + chatname.Families[0].Name);
                 chat.output.FontSize = chatFontsize;
             }
 
@@ -166,48 +166,6 @@ namespace Octgn.Play
             // watermark = type to chat (ctrl+t)
             // output = chatbox
         }
-
-        private Boolean PartExists(string schema)
-        {
-            Boolean exists = false;
-            var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
-            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
-            using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                PackageRelationship defRelationship = package.GetRelationshipsByType(schema).FirstOrDefault();
-                if (defRelationship != null)
-                    if (package.PartExists(defRelationship.TargetUri))
-                        exists = true;
-            }
-            return exists;
-        }
-
-        //private static void ExtractPart(PackagePart packagePart, string targetDirectory, PackageRelationship relationship)
-        //{
-        //    string stringPart = packagePart.Uri.ToString().TrimStart('/');
-        //    Uri partUri = new Uri(stringPart, UriKind.Relative);
-        //    Uri uriFullFilePath = new Uri(new Uri(targetDirectory, UriKind.Absolute), partUri);
-
-        //    List<string> str = new List<string>();
-        //    str.Add(partUri.OriginalString);
-        //    str.Add(relationship.Id);
-        //    fontName.Add(str);
-
-        //    // Create the necessary directories based on the full part path
-        //    if (!Directory.Exists(Path.GetDirectoryName(uriFullFilePath.LocalPath)))
-        //    {
-        //        Directory.CreateDirectory(Path.GetDirectoryName(uriFullFilePath.LocalPath));
-        //    }
-
-        //    if (!File.Exists(uriFullFilePath.LocalPath))
-        //    {
-        //        // Write the file from the part’s content stream.
-        //        using (FileStream fileStream = File.Create(uriFullFilePath.LocalPath))
-        //        {
-        //            packagePart.GetStream().CopyTo(fileStream);
-        //        }
-        //    }                        
-        //}
 
         private void InitializePlayerSummary(object sender, EventArgs e)
         {
