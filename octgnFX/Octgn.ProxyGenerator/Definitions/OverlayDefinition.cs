@@ -11,6 +11,7 @@ namespace Octgn.ProxyGenerator.Definitions
     {
         public SectionStructs.Location location;
         public string filename;
+        public string rootpath;
 
         public static OverlayDefinition LoadOverlay(XmlNode node)
         {
