@@ -28,6 +28,7 @@ namespace Octgn.ProxyGenerator
         private TemplateSelector templateSelector = null;
         private FieldMapper fieldMapper = null;
         private XmlDocument doc = null;
+        public string rootPath;
 
         public bool LoadDefinition(string path)
         {
@@ -50,6 +51,7 @@ namespace Octgn.ProxyGenerator
             }
             doc = new XmlDocument();
             doc.Load(path);
+            rootPath = path.Substring(0, path.LastIndexOf(System.IO.Path.PathSeparator));
             LoadTemplates();
         }
 
@@ -59,6 +61,7 @@ namespace Octgn.ProxyGenerator
             foreach (XmlNode card in cardList)
             {
                 CardDefinition cardDef = CardDefinition.LoadCardDefinition(card);
+                cardDef.rootPath = rootPath;
                 templateSelector.AddTemplate(cardDef);
             }
         }
