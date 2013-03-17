@@ -147,28 +147,90 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="proxygen">
+        <xs:element name="proxygen" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>
-              TODO: Write explenation of the usage.
+              Defines the template and field mappings for the proxy generator.
             </xs:documentation>
           </xs:annotation>
           <xs:complexType>
             <xs:sequence>
+              <xs:element name="templatemapping" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    Defines the template mapping.
+                  </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="templatemap" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Defines which template will be selected.
+                        </xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:attribute name="field" type="xs:string" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              The field in the game definition it will try to use to load a template.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="defaulttemplate" type="xs:string">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The default template to use when it cannot match the field mapping to a template.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
               <xs:element name="mappings" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    Defines the field mappings for inserting the field data from a card into the template placeholders.
+                  </xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
                   <xs:sequence>
                     <xs:element name="mapping" minOccurs="1" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation>
+                          Defines the field mapping.
+                        </xs:documentation>
+                      </xs:annotation>
                       <xs:complexType>
-                        <xs:attribute name="name" type="xs:string" use="required" />
-                        <xs:attribute name="mapto" type="xs:string" use="required" />
+                        <xs:attribute name="name" type="xs:string" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              Name of the field in the gamedefinition to load the data from.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="mapto" type="xs:string" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              The field in template to load the data into.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
-            <xs:attribute name="definitionsrc" type="xs:string" use="required" />
+            <xs:attribute name="definitionsrc" type="xs:string" use="required">
+              <xs:annotation>
+                <xs:documentation>
+                  The relative path to the template definition for the proxy generator.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
           </xs:complexType>
         </xs:element>
         <xs:element name="globalvariables" minOccurs="0" maxOccurs="1">
