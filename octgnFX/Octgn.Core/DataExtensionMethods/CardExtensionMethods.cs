@@ -34,8 +34,8 @@
             var uri = set.GetPictureUri(card.ImageUri);
             if (uri == null)
             {
-                // Proxy stuff.
-                return "";
+                set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+                return uri.LocalPath;
             }
             else
             {
@@ -53,6 +53,18 @@
         {
             return card.Properties.Any(x => x.Key.Name == name);
         }
+
+        public static Dictionary<string, string> GetProxyMappings(this Card card)
+        {
+            Dictionary<string, string> ret = new Dictionary<string, string>();
+            ret.Add("Name", card.Name);
+            foreach (KeyValuePair<PropertyDef, object> kvi in card.Properties)
+            {
+                ret.Add(kvi.Key.Name, kvi.Value.ToString());
+            }
+            return (ret);
+        }
+
         public static MultiCard Clone(this MultiCard card)
         {
             var ret = new MultiCard
