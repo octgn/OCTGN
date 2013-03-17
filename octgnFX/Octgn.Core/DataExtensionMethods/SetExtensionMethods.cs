@@ -19,6 +19,7 @@
 
         public static Uri GetPictureUri(this Set set, string path)
         {
+            if (!Directory.Exists(set.GetPackUri())) Directory.CreateDirectory(set.GetPackUri());
             var files = Directory.GetFiles(set.GetPackUri(), path + ".*");
             if (files.Length == 0) return null;
             return new Uri(files.First());
