@@ -262,7 +262,7 @@ namespace Octgn
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20
 
-        public void LoadDeck(DataNew.Entities.Deck deck)
+        public void LoadDeck(DataNew.Entities.IDeck deck)
         {
             Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
             GameDef def = Program.Game.Definition;

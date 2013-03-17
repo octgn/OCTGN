@@ -8,6 +8,7 @@
     using System.Xml;
     using System.Xml.Linq;
 
+    using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
 
@@ -71,6 +72,7 @@
                 {
                     var doc = XDocument.Load(fs);
                     var gameId = Guid.Parse(doc.Descendants("deck").First().Attribute("game").Value);
+                    var shared = doc.Descendants("deck").First().Attr<bool>("shared");
                     foreach (var sectionelem in doc.Descendants("section"))
                     {
                         var section = new Section();
@@ -85,9 +87,16 @@
                         }
                         (ret.Sections as List<ISection>).Add(section);
                     }
+                    foreach (var section in game.DeckSections)
+                    {
+                        if(ret.Sections.Any(x=>x.Name == section) == false)
+                            (ret.Sections as List<ISection>).Add(new Section{Name = section,Cards = new List<IMultiCard>()});
+                    }
                     ret.GameId = gameId;
+                    ret.IsShared = shared;
                 }
-                return ret;
+                deck = ret;
+                return deck;
             }
             catch (FormatException e)
             {
