@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace Octgn.ProxyGenerator
+namespace Octgn.ProxyGenerator.Structs
 {
     public class SectionStructs
     {
