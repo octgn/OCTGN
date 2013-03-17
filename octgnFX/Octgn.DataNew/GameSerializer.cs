@@ -16,6 +16,7 @@
     using Octgn.DataNew.Entities;
     using Octgn.DataNew.FileDB;
     using Octgn.Library;
+    using Octgn.ProxyGenerator;
 
     public class GameSerializer : IFileDbSerializer
     {
@@ -119,6 +120,18 @@
                         else coll.SetPart(x => x.Directory(pathParts[i]));
                     }
                     coll.SetSerializer(new GameScriptSerializer(ret.Id));
+                }
+            }
+            if (g.proxygen != null)
+            {
+                if (ProxyManager.Get().LoadDefinition(g.proxygen.definitionsrc))
+                {
+                    foreach (gameProxygenMapping mapping in g.proxygen.mappings)
+                    {
+                        ProxyManager.Get().GetFieldMapper().AddMapping(mapping.name, mapping.mapto);
+                    }
+                    ProxyManager.Get().GetTemplateSelector().DefaultID = g.proxygen.templatemapping.defaulttemplate;
+                    ProxyManager.Get().GetTemplateSelector().TemplateMatchField = g.proxygen.templatemapping.templatemap.field;
                 }
             }
             using (MD5 md5 = new MD5CryptoServiceProvider())
@@ -279,6 +292,22 @@
             ret.GameId = GameId;
             ret.Script = File.ReadAllText(fileName);
             return ret;
+        }
+
+        public byte[] Serialize(object obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ProxyGeneratorSerializer : IFileDbSerializer
+    {
+
+        public ICollectionDefinition Def { get; set; }
+
+        public object Deserialize(string fileName)
+        {
+            throw new NotImplementedException();
         }
 
         public byte[] Serialize(object obj)
