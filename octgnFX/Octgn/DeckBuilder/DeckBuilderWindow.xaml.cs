@@ -461,7 +461,7 @@ namespace Octgn.DeckBuilder
                 //       "Warning: Add dependent card failed.", MessageBoxButton.OK);
                 //}
                 var card = CardManager.Get().GetCardById(e.CardId);
-                ActiveSection.Cards.Add(card.ToMultiCard());
+                ActiveSection.Cards.AddCard(card.ToMultiCard());
                 this.InvalidateVisual();
             }
         }
@@ -473,7 +473,7 @@ namespace Octgn.DeckBuilder
             if (element == null) return;
             element.Quantity -= 1;
             if (element.Quantity == 0)
-                ActiveSection.Cards.Remove(element);
+                ActiveSection.Cards.RemoveCard(element);
             this.InvalidateVisual();
         }
 
@@ -598,7 +598,7 @@ namespace Octgn.DeckBuilder
                 DataObject dragCard = new DataObject("Card", getCard);
                 if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift)
                 {
-                    ActiveSection.Cards.Remove(getCard);
+                    ActiveSection.Cards.RemoveCard(getCard);
                     DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.All);
                 }
                 else
@@ -640,7 +640,7 @@ namespace Octgn.DeckBuilder
                         else
                         {
                             var card = CardManager.Get().GetCardById(dragCard.Id);
-                            dropSection.Cards.Add(card.ToMultiCard());
+                            dropSection.Cards.AddCard(card.ToMultiCard());
                         }
                     }
                     else
@@ -652,7 +652,7 @@ namespace Octgn.DeckBuilder
                         else
                         {
                             var card = CardManager.Get().GetCardById(dragCard.Id);
-                            dropSection.Cards.Add(card.ToMultiCard(dragCard.Quantity));
+                            dropSection.Cards.AddCard(card.ToMultiCard(dragCard.Quantity));
                             //dropSection.Cards.Add(new Deck.Element { Card = Game.GetCardById(dragCard.Card.Id), Quantity = dragCard.Quantity });
                         }
                     }

@@ -1,7 +1,9 @@
 ﻿namespace Octgn.Core.DataExtensionMethods
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -83,7 +85,7 @@
                             var cardId = Guid.Parse(cardelem.Attribute("id").Value);
                             var cardq = Int32.Parse(cardelem.Attribute("qty").Value);
                             var card = game.GetCardById(cardId).ToMultiCard(cardq);
-                            section.Cards.Add(card);
+                            (section.Cards as IList<IMultiCard>).Add(card);
                         }
                         (ret.Sections as List<ISection>).Add(section);
                     }
@@ -164,6 +166,42 @@
             if (deck == null) return null;
             var ret = new ObservableDeck { GameId = deck.GameId, IsShared = deck.IsShared, Sections = deck.Sections };
             return ret;
+        }
+        public static IEnumerable<IMultiCard> AddCard(this IEnumerable<IMultiCard> cards, IMultiCard card)
+        {
+            if (cards is ObservableCollection<ObservableMultiCard>)
+                (cards as ObservableCollection<ObservableMultiCard>).Add(card.AsObservable());
+            else if (cards is ObservableCollection<IMultiCard>) 
+                (cards as ObservableCollection<IMultiCard>).Add(card);
+            else if (cards is IList<IMultiCard>)
+                (cards as IList<IMultiCard>).Add(card);
+            else if (cards is ICollection<IMultiCard>)
+                (cards as ICollection<IMultiCard>).Add(card);
+            else
+            {
+                var g = cards.ToList();
+                g.Add(card);
+                cards = g;
+            }
+            return cards;
+        }
+        public static IEnumerable<IMultiCard> RemoveCard(this IEnumerable<IMultiCard> cards, IMultiCard card)
+        {
+            if (cards is ObservableCollection<ObservableMultiCard>)
+                (cards as ObservableCollection<ObservableMultiCard>).Remove(card.AsObservable());
+            else if (cards is ObservableCollection<IMultiCard>)
+                (cards as ObservableCollection<IMultiCard>).Remove(card);
+            else if (cards is IList<IMultiCard>)
+                (cards as IList<IMultiCard>).Remove(card);
+            else if (cards is ICollection<IMultiCard>)
+                (cards as ICollection<IMultiCard>).Remove(card);
+            else
+            {
+                var g = cards.ToList();
+                g.Remove(card);
+                cards = g;
+            }
+            return cards;
         }
     }
 }

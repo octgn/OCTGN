@@ -14,7 +14,7 @@
         public int Quantity { get; set; }
     }
 
-    public class ObservableMultiCard : ICard,IMultiCard, INotifyPropertyChanged
+    public class ObservableMultiCard : IMultiCard, INotifyPropertyChanged
     {
         private Guid id;
 
