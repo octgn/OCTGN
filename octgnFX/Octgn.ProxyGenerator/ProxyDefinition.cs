@@ -22,12 +22,28 @@
             Load(path);
         }
 
+        public Image GenerateProxyImage(Dictionary<string, string> values)
+        {
+            values = FieldMapper.RemapDictionary(values);
+            CardDefinition cardDef = TemplateSelector.GetTemplate(values);
+            Image ret = ProxyGenerator.GenerateProxy(cardDef, values);
+            return (ret);
+        }
+
         public Image GenerateProxyImage(string templateID, Dictionary<string, string> values)
         {
             values = FieldMapper.RemapDictionary(values);
             CardDefinition cardDef = TemplateSelector.GetTemplate(templateID);
             Image ret = ProxyGenerator.GenerateProxy(cardDef, values);
             return (ret);
+        }
+
+        public bool SaveProxyImage(Dictionary<string, string> values, string path)
+        {
+            Image proxy = GenerateProxyImage(values);
+            proxy.Save(path);
+            proxy.Dispose();
+            return (File.Exists(path));
         }
 
         public bool SaveProxyImage(string templateID, Dictionary<string, string> values, string path)
