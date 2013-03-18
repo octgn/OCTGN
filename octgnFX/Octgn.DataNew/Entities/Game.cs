@@ -13,7 +13,9 @@
         public int CardWidth { get; set; }
         public int CardHeight { get; set; }
         public string CardBack { get; set; }
+        public string CardFront { get; set; }
         public string FileHash { get; set; }
+        public Group Table { get; set; }
         public List<string> DeckSections { get; set; }
         public List<string> SharedDeckSections { get; set; }
         public List<PropertyDef> CustomProperties { get; set; }

@@ -28,8 +28,8 @@ namespace Octgn.Play.Dialogs
         public InteractiveConsole()
         {
             InitializeComponent();
-            Program.Game.ComposeParts(this);
-            _scope = _scriptEngine.CreateScope(Path.Combine(Prefs.DataDirectory, "Games", Program.Game.Definition.Id.ToString()));
+            Program.GameEngine.ComposeParts(this);
+            _scope = _scriptEngine.CreateScope(Path.Combine(Prefs.DataDirectory, "Games", Program.GameEngine.Definition.Id.ToString()));
 
             Loaded += (s, a) => prompt.Focus();
         }

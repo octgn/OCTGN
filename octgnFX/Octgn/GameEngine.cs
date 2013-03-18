@@ -19,14 +19,18 @@ using Octgn.Utils;
 namespace Octgn
 {
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
 
-    public class Game : INotifyPropertyChanged
+    using Card = Octgn.Play.Card;
+    using Marker = Octgn.Play.Marker;
+
+    public class GameEngine : INotifyPropertyChanged
     {
         private const int MaxRecentMarkers = 10;
         private const int MaxRecentCards = 10;
 
-        private readonly GameDef _definition;
+        private readonly Game _definition;
         private readonly SortedList<Guid, DataNew.Entities.Marker> _markersById = new SortedList<Guid, DataNew.Entities.Marker>();
         private readonly List<RandomRequest> _random = new List<RandomRequest>();
         private readonly List<DataNew.Entities.Card> _recentCards = new List<DataNew.Entities.Card>(MaxRecentCards);
@@ -43,7 +47,7 @@ namespace Octgn
 
         public bool IsLocal { get; private set; }
 
-        public Game(GameDef def, string nickname, bool isLocal = false)
+        public GameEngine(Game def, string nickname, bool isLocal = false)
         {
             IsLocal = isLocal;
             _definition = def;
@@ -99,7 +103,7 @@ namespace Octgn
             get { return _table; }
         }
 
-        public GameDef Definition
+        public Game Definition
         {
             get { return _definition; }
         }
@@ -165,14 +169,14 @@ namespace Octgn
             CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
-            if (Program.Game.Definition.GlobalDefinition != null)
-                Player.GlobalPlayer = new Player(Program.Game.Definition);
+            if (Program.GameEngine.Definition.GlobalDefinition != null)
+                Player.GlobalPlayer = new Player(Program.GameEngine.Definition);
             // Create the local player
-            Player.LocalPlayer = new Player(Program.Game.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            Player.LocalPlayer = new Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
                                      OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
-                                     Program.Game.Definition.Id, Program.Game.Definition.Version);
+                                     Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version);
             // Load all game markers
             foreach (DataNew.Entities.Marker m in Database.GetAllMarkers())
                 _markersById.Add(m.Id, m);
@@ -191,10 +195,10 @@ namespace Octgn
             //CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
-            if (Program.Game.Definition.GlobalDefinition != null)
-                Player.GlobalPlayer = new Player(Program.Game.Definition);
+            if (Program.GameEngine.Definition.GlobalDefinition != null)
+                Player.GlobalPlayer = new Player(Program.GameEngine.Definition);
             // Create the local player
-            Player.LocalPlayer = new Player(Program.Game.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            Player.LocalPlayer = new Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
@@ -265,7 +269,7 @@ namespace Octgn
         public void LoadDeck(DataNew.Entities.IDeck deck)
         {
             Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
-            GameDef def = Program.Game.Definition;
+            GameDef def = Program.GameEngine.Definition;
             DeckDef deckDef = deck.IsShared ? def.SharedDeckDefinition : def.DeckDefinition;
             CardDef cardDef = def.CardDefinition;
             int nCards = deck.CardCount();

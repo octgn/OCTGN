@@ -28,7 +28,7 @@ namespace Octgn.Play.Actions
         {
             Who = who;
             Card = card;
-            To = Program.Game.Table;
+            To = Program.GameEngine.Table;
             From = card.Group;
             X = x;
             Y = y;
@@ -62,7 +62,7 @@ namespace Octgn.Play.Actions
                     //TODO Card.Delete();
                 else
                 {
-                    if (Program.Game.Definition.CardsRevertToOriginalOnGroupChange) { Card.RevertToOriginal(); }
+                    if (Program.GameEngine.Definition.CardsRevertToOriginalOnGroupChange) { Card.RevertToOriginal(); }
                     Card.SetFaceUp(FaceUp);//FaceUp may be false - it's one of the constructor parameters for this
                     Card.SetOverrideGroupVisibility(false);
                     Card.X = X;

@@ -26,8 +26,6 @@ namespace Octgn.DeckBuilder
 
     using log4net;
 
-    using Game = Octgn.Game;
-
     public partial class DeckBuilderWindow : INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

@@ -37,7 +37,7 @@ namespace Octgn.Play.Gui
         public GroupWindow(Group group, PilePosition position, int count)
             : this()
         {
-            _id = Program.Game.GetUniqueId();
+            _id = Program.GameEngine.GetUniqueId();
             _position = position;
             _count = count;
             DataContext = _group = group;
@@ -123,7 +123,7 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                IEnumerable<string> textProperties = Program.Game.Definition.CardDefinition.Properties.Values
+                IEnumerable<string> textProperties = Program.GameEngine.Definition.CardDefinition.Properties.Values
                     .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
                     .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;
