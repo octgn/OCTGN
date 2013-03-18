@@ -408,7 +408,7 @@
                 </xs:complexType>
               </xs:element>
               <xs:element name="counter" type="counter" minOccurs="0" maxOccurs="unbounded" />
-              <xs:element name="hand" type="group" minOccurs="0" />
+              <xs:element name="hand" type="hand" minOccurs="0" />
               <xs:element name="group" type="group" minOccurs="0" maxOccurs="unbounded" />
             </xs:choice>
             <xs:attribute name="summary" type="xs:string" use="optional">
@@ -623,10 +623,10 @@
       </xs:documentation>
     </xs:annotation>
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="groupaction" type="action" />
-      <xs:element name="groupactions" type="actionSubmenu" />
-      <xs:element name="cardaction" type="action" />
-      <xs:element name="cardactions" type="actionSubmenu" />
+      <xs:element name="groupaction" type="groupAction" />
+      <xs:element name="groupactions" type="groupActionSubmenu" />
+      <xs:element name="cardaction" type="cardAction" />
+      <xs:element name="cardactions" type="cardActionSubmenu" />
     </xs:choice>
     <xs:attribute name="name" type="xs:string">
       <xs:annotation>
@@ -733,6 +733,17 @@
     </xs:attribute>
   </xs:complexType>
 
+  <xs:complexType name="hand">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the properties of one card group.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="group"/>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="deck">
     <xs:annotation>
       <xs:documentation>
@@ -820,6 +831,50 @@
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="cardAction">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a card action.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="action"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="cardActionSubmenu">
+    <xs:annotation>
+      <xs:documentation>
+        This type represents a sub menu and contains other cardAction items.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="actionSubmenu"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="groupAction">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a group action.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="action"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="groupActionSubmenu">
+    <xs:annotation>
+      <xs:documentation>
+        This type represents a sub menu and contains other groupAction items.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="actionSubmenu"/>
     </xs:complexContent>
   </xs:complexType>
 

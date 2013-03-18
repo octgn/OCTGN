@@ -45,64 +45,110 @@
                               CustomProperties = new List<PropertyDef>(),
                               DeckSections = new List<string>(),
                               SharedDeckSections = new List<string>(),
+                              GlobalVariables = new List<GlobalVariable>(),
+                              Authors = g.authors.Split(',').ToList(),
+                              Description = g.description,
                               FileHash = null,
                               Filename = fileName,
-                              Fonts = new List<Font>()
+                              Fonts = new List<Font>(),
+                              GameUrl = g.gameurl,
+                              IconUrl = g.iconurl,
+                              Tags = g.tags.Split(' ').ToList(),
+                              OctgnVersion = Version.Parse(g.octgnVersion),
+                              Variables = new List<Variable>()
                           };
-            #region visibility
-            switch (g.table.visibility)
+
+            #region variables
+            if (g.variables != null)
             {
-                case groupVisibility.none:
-                    ret.Table.Visibility = GroupVisibility.Nobody;
-                    break;
-                case groupVisibility.me:
-                    ret.Table.Visibility = GroupVisibility.Owner;
-                    break;
-                case groupVisibility.all:
-                    ret.Table.Visibility = GroupVisibility.Everybody;
-                    break;
-                case groupVisibility.undefined:
-                    ret.Table.Visibility = GroupVisibility.Undefined;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                foreach (var item in g.variables)
+                {
+                    ret.Variables.Add(new Variable
+                                          {
+                                              Name = item.name,
+                                              Global = bool.Parse(item.global.ToString()),
+                                              Reset = bool.Parse(item.reset.ToString()),
+                                              Default = int.Parse(item.@default)
+                                          });
+                }
             }
-            #endregion visibility
+            #endregion variables
             #region table
-            ret.Table = new Group()
-            {
-                Id = 0,
-                Name = g.table.name,
-                Background = g.table.background,
-                BackgroundStyle = g.table.backgroundStyle.ToString(),
-                Board = g.table.board,
-                BoardPosition =
-                    new DataRectangle
-                    {
-                        X = double.Parse(g.table.boardPosition.Split(',')[0]),
-                        Y = double.Parse(g.table.boardPosition.Split(',')[1]),
-                        Width = double.Parse(g.table.boardPosition.Split(',')[2]),
-                        Height = double.Parse(g.table.boardPosition.Split(',')[3])
-                    },
-                Collapsed = bool.Parse(g.table.collapsed.ToString()),
-                Height = Int32.Parse(g.table.height),
-                Width = Int32.Parse(g.table.width),
-                Icon = g.table.icon,
-                Ordered = bool.Parse(g.table.ordered.ToString()),
-                Shortcut = g.table.shortcut,
-                CardActions = new List<IGroupAction>(),
-                GroupActions = new List<IGroupAction>()
-            };
-            if (g.table.Items != null)
-            {
-                //ret.Table.GroupActions
-                ret.Table.GroupActions = this.DeserializeGroupActions(g.table);
-            }
+            ret.Table = this.DeserialiseGroup(g.table, 0);
             #endregion table
+            #region shared
+            if (g.shared != null)
+            {
+                var player = new GlobalPlayer { Counters = new List<Counter>(), Groups = new List<Group>() };
+                var curCounter = 1;
+                var curGroup = 1;
+                foreach (var i in g.shared.counter)
+                {
+                    (player.Counters as List<Counter>)
+                        .Add(new Counter
+                                 {
+                                     Id = (byte)curCounter,
+                                     Name = i.name,
+                                     Icon = i.icon,
+                                     Reset = bool.Parse(i.reset.ToString()),
+                                     Start = int.Parse(i.@default)
+                                 });
+                    curCounter++;
+                }
+                foreach (var i in g.shared.group)
+                {
+                    (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
+                    curGroup++;
+                }
+                ret.GlobalPlayer = player;
+            }
+            #endregion shared
             #region Player
             if (g.player != null)
             {
-                g.player.Items
+                var player = new Player
+                                 {
+                                     Groups = new List<Group>(),
+                                     GlobalVariables = new List<GlobalVariable>(),
+                                     Counters = new List<Counter>(),
+                                     IndicatorsFormat = g.player.summary
+                                 };
+                var curCounter = 1;
+                var curGroup = 1;
+                foreach (var item in g.player.Items)
+                {
+                    if (item is counter)
+                    {
+                        var i = item as counter;
+                        (player.Counters as List<Counter>)
+                            .Add(new Counter
+                                     {
+                                         Id = (byte)curCounter,
+                                         Name = i.name,
+                                         Icon = i.icon,
+                                         Reset = bool.Parse(i.reset.ToString()),
+                                         Start = int.Parse(i.@default)
+                                     });
+                        curCounter++;
+                    }
+                    else if (item is gamePlayerGlobalvariable)
+                    {
+                        var i = item as gamePlayerGlobalvariable;
+                        var to = new GlobalVariable { Name = i.name, Value = i.value, DefaultValue = i.value };
+                        (player.GlobalVariables as List<GlobalVariable>).Add(to);
+                    }
+                    else if (item is hand)
+                    {
+                        player.Hand = this.DeserialiseGroup(item as hand, 0);
+                    }
+                    else if (item is group)
+                    {
+                        var i = item as group;
+                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i,curGroup));
+                        curGroup++;
+                    }
+                }
+                ret.Player = player;
             }
             #endregion Player
             #region deck
@@ -207,6 +253,15 @@
                 coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id,g.proxygen));
             }
             #endregion proxygen
+            #region globalvariables
+            if (g.globalvariables != null)
+            {
+                foreach (var item in g.globalvariables)
+                {
+                    ret.GlobalVariables.Add(new GlobalVariable{Name = item.name,Value = item.value,DefaultValue = item.value});
+                }
+            }
+            #endregion globalvariables
             #region hash
             using (MD5 md5 = new MD5CryptoServiceProvider())
             {
@@ -220,34 +275,89 @@
             return ret;
         }
 
-        internal IEnumerable<IGroupAction> DeserializeGroupActions(group group)
+        internal Group DeserialiseGroup(group grp, int id)
         {
-            var ret = new List<IGroupAction>();
-            foreach (var item in group.Items)
+            var ret = new Group
+            {
+                Id = (byte)id,
+                Name = grp.name,
+                Background = grp.background,
+                BackgroundStyle = grp.backgroundStyle.ToString(),
+                Board = grp.board,
+                BoardPosition =
+                    new DataRectangle
+                    {
+                        X = double.Parse(grp.boardPosition.Split(',')[0]),
+                        Y = double.Parse(grp.boardPosition.Split(',')[1]),
+                        Width = double.Parse(grp.boardPosition.Split(',')[2]),
+                        Height = double.Parse(grp.boardPosition.Split(',')[3])
+                    },
+                Collapsed = bool.Parse(grp.collapsed.ToString()),
+                Height = Int32.Parse(grp.height),
+                Width = Int32.Parse(grp.width),
+                Icon = grp.icon,
+                Ordered = bool.Parse(grp.ordered.ToString()),
+                Shortcut = grp.shortcut,
+                CardActions = new List<IGroupAction>(),
+                GroupActions = new List<IGroupAction>()
+            };
+            foreach (var item in grp.Items)
             {
                 if (item is action)
                 {
                     var i = item as action;
-                    var add = new GroupAction
+                    var to = new GroupAction
                     {
                         Name = i.menu,
                         Shortcut = i.shortcut,
-                        Execute = i.execute,
                         BatchExecute = i.batchExecute,
+                        Execute = i.execute,
                         DefaultAction = bool.Parse(i.@default.ToString())
                     };
-                    ret.Add(add);
+                    if (item is cardAction)
+                    {
+                        (ret.CardActions as List<IGroupAction>).Add(to);
+                    }
+                    else if (item is groupAction)
+                    {
+                        (ret.GroupActions as List<IGroupAction>).Add(to);
+                    }
                 }
-                if (item is actionSubmenu)
+                else if (item is actionSubmenu)
                 {
                     var i = item as actionSubmenu;
-                    var addgroup = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
-                    addgroup.Children = this.DeserializeGroupActionGroup(i);
-                    ret.Add(addgroup);
+                    var to = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
+                    to.Children = this.DeserializeGroupActionGroup(i);
+                    if (item is cardActionSubmenu)
+                    {
+                        (ret.CardActions as List<IGroupAction>).Add(to);
+                    }
+                    else if (item is groupActionSubmenu)
+                    {
+                        (ret.GroupActions as List<IGroupAction>).Add(to);
+                    }
                 }
+            }
+            switch (grp.visibility)
+            {
+                case groupVisibility.none:
+                    ret.Visibility = GroupVisibility.Nobody;
+                    break;
+                case groupVisibility.me:
+                    ret.Visibility = GroupVisibility.Owner;
+                    break;
+                case groupVisibility.all:
+                    ret.Visibility = GroupVisibility.Everybody;
+                    break;
+                case groupVisibility.undefined:
+                    ret.Visibility = GroupVisibility.Undefined;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             return ret;
         }
+
         internal IEnumerable<IGroupAction> DeserializeGroupActionGroup(actionSubmenu actiongroup)
         {
             var ret = new List<IGroupAction>();

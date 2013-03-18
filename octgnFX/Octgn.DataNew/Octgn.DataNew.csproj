@@ -53,6 +53,7 @@
     <Compile Include="Entities\PackContent.cs" />
     <Compile Include="Entities\PackDefinition.cs" />
     <Compile Include="Entities\Pick.cs" />
+    <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\PropertyDef.cs" />
     <Compile Include="Entities\Section.cs" />
     <Compile Include="Entities\Set.cs" />
