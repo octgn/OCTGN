@@ -23,13 +23,13 @@ namespace Octgn.Scripting.Controls
         public MarkerDlg()
         {
             InitializeComponent();
-            _allMarkersView = CollectionViewSource.GetDefaultView(Program.Game.Markers);
+            _allMarkersView = CollectionViewSource.GetDefaultView(Program.GameEngine.Markers);
             _allMarkersView.Filter =
                 marker =>
                 ((DataNew.Entities.Marker)marker).Name.IndexOf(_filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
             allList.ItemsSource = _allMarkersView;
             defaultList.ItemsSource = Marker.DefaultMarkers;
-            recentList.ItemsSource = Program.Game.RecentMarkers;
+            recentList.ItemsSource = Program.GameEngine.RecentMarkers;
         }
 
         public bool IsModelSelected
@@ -73,7 +73,7 @@ namespace Octgn.Scripting.Controls
                 return;
             }
 
-            Program.Game.AddRecentMarker(MarkerModel);
+            Program.GameEngine.AddRecentMarker(MarkerModel);
             DialogResult = true;
         }
 

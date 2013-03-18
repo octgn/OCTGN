@@ -36,7 +36,7 @@ namespace Octgn.Scripting.Controls
                                       {
                                           //_allCards = Database.GetCards(where).ToList();
                                           //TODO [DB MIGRATION]  FIX THIS SHIT
-                                          var game = GameManager.Get().GetById(Program.Game.Definition.Id);
+                                          var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
                                           foreach (string s in where.Split(','))
                                           {
                                               string name = s.Split('=')[0].Trim();
@@ -45,7 +45,7 @@ namespace Octgn.Scripting.Controls
                                           }
                                           Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
                                       });
-            recentList.ItemsSource = Program.Game.RecentCards;
+            recentList.ItemsSource = Program.GameEngine.RecentCards;
         }
 
         public bool IsCardSelected
@@ -83,7 +83,7 @@ namespace Octgn.Scripting.Controls
                 return;
             }
 
-            Program.Game.AddRecentCard(SelectedCard);
+            Program.GameEngine.AddRecentCard(SelectedCard);
             DialogResult = true;
         }
 
@@ -141,7 +141,7 @@ namespace Octgn.Scripting.Controls
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            CardDef cardDef = Program.GameEngine.Definition.CardDefinition;
             if (panel != null) panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
         }
     }

@@ -65,22 +65,22 @@ namespace Octgn.Networking
 
         public void Reset(Player player)
         {
-            Program.Game.Reset();
+            Program.GameEngine.Reset();
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} resets the game.", player);
         }
 
         public void NextTurn(Player player)
         {
-            Program.Game.TurnNumber++;
-            Program.Game.TurnPlayer = player;
-            Program.Game.StopTurn = false;
-            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.Game.TurnNumber, player);
+            Program.GameEngine.TurnNumber++;
+            Program.GameEngine.TurnPlayer = player;
+            Program.GameEngine.StopTurn = false;
+            Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", Program.GameEngine.TurnNumber, player);
         }
 
         public void StopTurn(Player player)
         {
             if (player == Player.LocalPlayer)
-                Program.Game.StopTurn = false;
+                Program.GameEngine.StopTurn = false;
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
         }
 
@@ -97,13 +97,13 @@ namespace Octgn.Networking
         public void Random(Player player, int id, int min, int max)
         {
             var req = new RandomRequest(player, id, min, max);
-            Program.Game.RandomRequests.Add(req);
+            Program.GameEngine.RandomRequests.Add(req);
             req.Answer1();
         }
 
         public void RandomAnswer1(Player player, int id, ulong value)
         {
-            var req = Program.Game.FindRandomRequest(id);
+            var req = Program.GameEngine.FindRandomRequest(id);
             if (req == null)
             {
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
@@ -121,7 +121,7 @@ namespace Octgn.Networking
 
         public void RandomAnswer2(Player player, int id, ulong value)
         {
-            var req = Program.Game.FindRandomRequest(id);
+            var req = Program.GameEngine.FindRandomRequest(id);
             if (req == null)
             {
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
@@ -147,7 +147,7 @@ namespace Octgn.Networking
         public void NewPlayer(byte id, string nick, ulong pkey)
         {
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
-            var player = new Player(Program.Game.Definition, nick, id, pkey);
+            var player = new Player(Program.GameEngine.Definition, nick, id, pkey);
             // Define the default table side if we are the host
             if (Program.IsHost)
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
@@ -205,7 +205,7 @@ namespace Octgn.Networking
             if (owner == Player.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
             {
-                Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
+                Card c = new Card(owner, id[i], type[i], Program.GameEngine.Definition.CardDefinition, null, false);
                 Group group = groups[i];
                 group.AddAt(c, group.Count);
             }
@@ -234,7 +234,7 @@ namespace Octgn.Networking
             {
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 //group.AddAt(c, group.Count);
-                var card = new Card(owner,id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
+                var card = new Card(owner,id[i], type[i], Program.GameEngine.Definition.CardDefinition, null, false);
                 group.AddAt(card, group.Count);
             }
         }
@@ -274,7 +274,7 @@ namespace Octgn.Networking
                 Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCardAt] Player not found.");
                 return;
             }
-            var table = Program.Game.Table;
+            var table = Program.GameEngine.Table;
             // Bring cards created by oneself to top, for z-order consistency
             if (owner == Player.LocalPlayer)
             {
@@ -349,7 +349,7 @@ namespace Octgn.Networking
         public void MoveCardAt(Player player, Card card, int x, int y, int idx, bool faceUp)
         {
             // Get the table control
-            Table table = Program.Game.Table;
+            Table table = Program.GameEngine.Table;
             // Because every player may manipulate the table at the same time, the index may be out of bound
             if (card.Group == table)
             { if (idx >= table.Count) idx = table.Count - 1; }
@@ -379,7 +379,7 @@ namespace Octgn.Networking
 
         public void AddMarker(Player player, Card card, Guid id, string name, ushort count)
         {
-            DataNew.Entities.Marker model = Program.Game.GetMarkerModel(id);
+            DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(id);
             DefaultMarkerModel defaultMarkerModel = model as DefaultMarkerModel;
             if (defaultMarkerModel != null)
                 (defaultMarkerModel).SetName(name);
@@ -639,7 +639,7 @@ namespace Octgn.Networking
                 }
                 else
                 {
-                    ci = new CardIdentity(Program.Game.GenerateCardId());
+                    ci = new CardIdentity(Program.GameEngine.GenerateCardId());
                     ci.MySecret = ci.Alias = true;
                     ci.Key = ((ulong)Crypto.PositiveRandom()) << 32 | (uint)tc;
                     card[i] = ci.Id; aliases[i] = Crypto.ModExp(ci.Key);
@@ -927,15 +927,15 @@ namespace Octgn.Networking
 
         public void SetGlobalVariable(string name, string value)
         {
-            if (Program.Game.GlobalVariables.ContainsKey(name))
-                Program.Game.GlobalVariables[name] = value;
+            if (Program.GameEngine.GlobalVariables.ContainsKey(name))
+                Program.GameEngine.GlobalVariables[name] = value;
             else
-                Program.Game.GlobalVariables.Add(name, value);
+                Program.GameEngine.GlobalVariables.Add(name, value);
         }
 
         public void IsTableBackgroundFlipped(bool isFlipped)
         {
-            Program.Game.IsTableBackgroundFlipped = isFlipped;
+            Program.GameEngine.IsTableBackgroundFlipped = isFlipped;
         }
 
         public void Ping()

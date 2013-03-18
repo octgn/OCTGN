@@ -28,7 +28,7 @@ namespace Octgn.Play.Dialogs
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
-            var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
+            var uri = new Uri(Program.GameEngine.Definition.PackUri.Replace(',', '/'));
             string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');            
             using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
