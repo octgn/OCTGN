@@ -1132,13 +1132,19 @@ public partial class gameProxygen {
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public partial class gameProxygenTemplatemapping {
     
-    private gameProxygenTemplatemappingTemplatemap templatemapField;
+    private gameProxygenTemplatemappingTemplatemap[] templatemapField;
     
     private string defaulttemplateField;
     
+    private boolean usemultimatchField;
+    
+    public gameProxygenTemplatemapping() {
+        this.usemultimatchField = boolean.False;
+    }
+    
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public gameProxygenTemplatemappingTemplatemap templatemap {
+    [System.Xml.Serialization.XmlElementAttribute("templatemap", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public gameProxygenTemplatemappingTemplatemap[] templatemap {
         get {
             return this.templatemapField;
         }
@@ -1155,6 +1161,18 @@ public partial class gameProxygenTemplatemapping {
         }
         set {
             this.defaulttemplateField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
+    public boolean usemultimatch {
+        get {
+            return this.usemultimatchField;
+        }
+        set {
+            this.usemultimatchField = value;
         }
     }
 }

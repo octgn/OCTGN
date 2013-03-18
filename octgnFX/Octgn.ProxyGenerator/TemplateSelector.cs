@@ -1,4 +1,5 @@
 ﻿using Octgn.ProxyGenerator.Definitions;
+using Octgn.ProxyGenerator.Mappings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,14 @@ namespace Octgn.ProxyGenerator
         private List<CardDefinition> templates = null;
 
         public string DefaultID { get; set; }
+        public bool UseMultiFieldMatching { get; set; }
 
-        public string TemplateMatchField { get; set; }
+        private List<TemplateMapping> templateMappings;
 
         public TemplateSelector()
         {
             templates = new List<CardDefinition>();
+            templateMappings = new List<TemplateMapping>();
         }
 
         public void AddTemplate(CardDefinition cardDef)
@@ -30,9 +33,10 @@ namespace Octgn.ProxyGenerator
 
         public CardDefinition GetTemplate(Dictionary<string,string> values)
         {
-            if (TemplateMatchField != null && values.ContainsKey(TemplateMatchField))
+            string field = templateMappings[0].Field;
+            if (field != null && values.ContainsKey(field))
             {
-                return GetTemplate(values[TemplateMatchField]);
+                return GetTemplate(values[field]);
             }
             return GetDefaultTemplate();
         }
@@ -66,6 +70,33 @@ namespace Octgn.ProxyGenerator
         public void ClearTemplates()
         {
             templates.Clear();
+        }
+
+        public void AddMapping(string field)
+        {
+            TemplateMapping mapping = new TemplateMapping()
+            {
+                Field = field
+            };
+            if (ContainsMapping(mapping))
+            {
+                templateMappings.Remove(mapping);
+            }
+            templateMappings.Add(mapping);
+        }
+
+        public bool ContainsMapping(string field)
+        {
+            TemplateMapping mapping = new TemplateMapping()
+            {
+                Field = field
+            };
+            return (ContainsMapping(mapping));
+        }
+
+        public bool ContainsMapping(TemplateMapping mapping)
+        {
+            return (templateMappings.Contains(mapping));
         }
     }
 }

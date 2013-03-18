@@ -21,6 +21,7 @@
             Key = key;
             TemplateSelector = new TemplateSelector();
             FieldMapper = new FieldMapper();
+            FieldMapper.TemplateSelector = TemplateSelector;
             Load(path);
         }
 

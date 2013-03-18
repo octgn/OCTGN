@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Octgn.ProxyGenerator.Mappings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Octgn.ProxyGenerator
     public class FieldMapper
     {
         private List<FieldMapping> mappingList = null;
-        public string templateMapField { get; set; }
+        public TemplateSelector TemplateSelector { get; set; }
 
         public FieldMapper()
         {
@@ -60,7 +61,7 @@ namespace Octgn.ProxyGenerator
                 {
                     return (mapping.MapTo);
                 }
-                if (field == templateMapField)
+                if (TemplateSelector.ContainsMapping(field))
                 {
                     return field;
                 }
