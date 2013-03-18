@@ -127,7 +127,7 @@
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Margin="0">
                             <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Focusable="False" />
-                            <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"
+                            <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"/>
                             <ToggleButton VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
                             IsChecked="{Binding Source={x:Static octgn:Program.Game}, Path=StopTurn}">
                                 <ToggleButton.Style>

@@ -431,7 +431,6 @@ namespace Octgn.Play.Dialogs
 
             public bool IsMatch(DataNew.Entities.Card c)
             {
-                return IsValueMatch(c.Properties[Property.Name]);
                 return IsValueMatch(c.Properties[Property]);
             }
 
