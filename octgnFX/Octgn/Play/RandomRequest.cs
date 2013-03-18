@@ -29,7 +29,7 @@ namespace Octgn.Play
 
         public static int GenerateId()
         {
-            return (Player.LocalPlayer.Id << 16) | Program.Game.GetUniqueId();
+            return (Player.LocalPlayer.Id << 16) | Program.GameEngine.GetUniqueId();
         }
 
         public void Answer1()
@@ -65,7 +65,7 @@ namespace Octgn.Play
 
         public void Complete()
         {
-            Program.Game.RandomRequests.Remove(this);
+            Program.GameEngine.RandomRequests.Remove(this);
 
             if (_max < _min)
             {

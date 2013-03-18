@@ -15,7 +15,7 @@ namespace Octgn.Play.Gui
             if (DesignerProperties.GetIsInDesignMode(this)) return;
 
             AddHandler(TableControl.TableKeyEvent, new EventHandler<TableKeyEventArgs>(TableKeyDown));
-            int markerSize = Program.Game.Definition.MarkerSize;
+            int markerSize = Program.GameEngine.Definition.MarkerSize;
             img1.Height = markerSize;
             textBorder.Margin = new Thickness(markerSize*0.2, markerSize*0.04, 0, markerSize*0.04);
             text.Margin = new Thickness(markerSize*0.3, 0, markerSize*0.3, 0);

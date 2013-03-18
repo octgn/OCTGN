@@ -129,10 +129,10 @@
                             <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Focusable="False" />
                             <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"/>
                             <ToggleButton VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
-                            IsChecked="{Binding Source={x:Static octgn:Program.Game}, Path=StopTurn}">
+                            IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}">
                                 <ToggleButton.Style>
                                     <MultiBinding Converter="{StaticResource CanPlay}">
-                                        <Binding Source="{x:Static octgn:Program.Game}" Path="TurnPlayer" />
+                                        <Binding Source="{x:Static octgn:Program.GameEngine}" Path="TurnPlayer" />
                                         <Binding />
                                     </MultiBinding>
                                 </ToggleButton.Style>

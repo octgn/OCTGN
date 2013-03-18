@@ -75,6 +75,8 @@ namespace Octgn.Controls
                 // Otherwise, messages notifying a disconnection may be lost
                 try
                 {
+                    if (Program.GameEngine != null)
+                        Dispatcher.BeginInvoke(new Action(Program.GameEngine.Begin));
                 }
                 catch (Exception)
                 {
