@@ -23,6 +23,7 @@
         public ICollectionDefinition Def { get; set; }
         public object Deserialize(string fileName)
         {
+            var serializer = new XmlSerializer(typeof(game));
             game g = null;
             using (var fs = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read))
             {
@@ -32,6 +33,7 @@
                     return null;
                 }
             }
+            var ret = new Game()
                           {
                               Id = new Guid(g.id),
                               Name = g.name,
@@ -43,6 +45,7 @@
                               DeckSections = new List<string>(),
                               SharedDeckSections = new List<string>(),
                               FileHash = null,
+                              Filename = fileName,
                               Fonts = new List<Font>()
                           };
             if (g.deck != null)
