@@ -105,7 +105,7 @@ namespace Octgn.Play.Dialogs
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            CardDef cardDef = Program.GameEngine.Definition.CardDefinition;
             if (panel != null) panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
         }
 
@@ -227,7 +227,7 @@ namespace Octgn.Play.Dialogs
         private void CreateFilters()
         {
             Filters = new ObservableCollection<Filter>();
-            foreach (Filter filter in Program.Game.Definition.CardDefinition.Properties.Values
+            foreach (Filter filter in Program.GameEngine.Definition.CardDefinition.Properties.Values
                 .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)).
                 Select(prop => new Filter
                                    {

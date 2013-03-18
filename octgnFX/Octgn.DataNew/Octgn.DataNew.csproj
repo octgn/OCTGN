@@ -37,10 +37,13 @@
     <Compile Include="DbContext.cs" />
     <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
+    <Compile Include="Entities\DataRectangle.cs" />
     <Compile Include="Entities\Deck.cs" />
     <Compile Include="Entities\Font.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\GameScript.cs" />
+    <Compile Include="Entities\Group.cs" />
+    <Compile Include="Entities\GroupVisibility.cs" />
     <Compile Include="Entities\IPackItem.cs" />
     <Compile Include="Entities\Marker.cs" />
     <Compile Include="Entities\MultiCard.cs" />

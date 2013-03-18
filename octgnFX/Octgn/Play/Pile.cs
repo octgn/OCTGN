@@ -86,7 +86,7 @@ namespace Octgn.Play
                 }
                 else
                 {
-                    CardIdentity ci = cis[i] = new CardIdentity(Program.Game.GenerateCardId());
+                    CardIdentity ci = cis[i] = new CardIdentity(Program.GameEngine.GenerateCardId());
                     ci.Alias = ci.MySecret = true;
                     ci.Key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) cards[i].Type.Id;
                     ci.Visible = false;

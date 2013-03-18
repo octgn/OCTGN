@@ -53,18 +53,18 @@ namespace Octgn.Scripting
             _api = new ScriptApi(this);
 
             var workingDirectory = Directory.GetCurrentDirectory();
-            if (Program.Game != null)
+            if (Program.GameEngine != null)
             {
-                workingDirectory = Path.Combine(Prefs.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
+                workingDirectory = Path.Combine(Prefs.DataDirectory, "Games", Program.GameEngine.Definition.Id.ToString());
                 var search = _engine.GetSearchPaths();
                 search.Add(workingDirectory);
                 _engine.SetSearchPaths(search);
             }
             ActionsScope = CreateScope(workingDirectory);
-            if (Program.Game == null || forTesting) return;
+            if (Program.GameEngine == null || forTesting) return;
             foreach (
                 ScriptSource src in
-                    Program.Game.Definition.Scripts.Select(
+                    Program.GameEngine.Definition.Scripts.Select(
                         s => _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
             {
                 src.Execute(ActionsScope);
@@ -76,7 +76,7 @@ namespace Octgn.Scripting
             get { return _executionQueue.Peek(); }
         }
 
-        public String[] TestScripts(Game game)
+        public String[] TestScripts(GameEngine game)
         {
             var errors = new List<string>();
             foreach (ScriptDef s in game.Definition.Scripts)
