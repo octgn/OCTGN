@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="Definitions\CardDefinition.cs" />
     <Compile Include="FieldMapper.cs" />
-    <Compile Include="FieldMapping.cs" />
+    <Compile Include="Mappings\FieldMapping.cs" />
     <Compile Include="Definitions\OverlayDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyDefinition.cs" />
@@ -50,6 +50,7 @@
     <Compile Include="ProxyManager.cs" />
     <Compile Include="Definitions\SectionDefinition.cs" />
     <Compile Include="Structs\SectionStructs.cs" />
+    <Compile Include="Mappings\TemplateMapping.cs" />
     <Compile Include="TemplateSelector.cs" />
     <Compile Include="Util\GraphicUtils.cs" />
   </ItemGroup>
