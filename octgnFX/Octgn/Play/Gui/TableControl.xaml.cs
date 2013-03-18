@@ -33,7 +33,7 @@ namespace Octgn.Play.Gui
             InitializeComponent();
             if (DesignerProperties.GetIsInDesignMode(this)) return;
 
-            GroupDef tableDef = Program.Game.Definition.TableDefinition;
+            GroupDef tableDef = Program.GameEngine.Definition.TableDefinition;
             if (tableDef.Background != null)
                 SetBackground(tableDef);
             if (!Program.GameSettings.HideBoard)
@@ -46,8 +46,8 @@ namespace Octgn.Play.Gui
             if (Player.LocalPlayer.InvertedTable)
                 transforms.Children.Insert(0, new ScaleTransform(-1, -1));
 
-            _defaultWidth = Program.Game.Definition.CardDefinition.Width;
-            _defaultHeight = Program.Game.Definition.CardDefinition.Height;
+            _defaultWidth = Program.GameEngine.Definition.CardDefinition.Width;
+            _defaultHeight = Program.GameEngine.Definition.CardDefinition.Height;
             SizeChanged += delegate
                                {
                                    IsCardSizeValid = false;
@@ -61,14 +61,14 @@ namespace Octgn.Play.Gui
                                 CreateCard.Done -= CardCreated;
                             };
             Loaded += delegate { CenterView(); };
-            Program.Game.PropertyChanged += GameOnPropertyChanged;
+            Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
         }
 
         private void GameOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
             if (propertyChangedEventArgs.PropertyName == "IsTableBackgroundFlipped")
             {
-                GroupDef tableDef = Program.Game.Definition.TableDefinition;
+                GroupDef tableDef = Program.GameEngine.Definition.TableDefinition;
                 this.SetBackground(tableDef);
             }
         }
@@ -79,11 +79,11 @@ namespace Octgn.Play.Gui
             {
                 if (!IsCardSizeValid)
                 {
-                    double scale = Math.Min(ActualWidth/Program.Game.Definition.TableDefinition.Width,
-                                            ActualHeight/Program.Game.Definition.TableDefinition.Height);
+                    double scale = Math.Min(ActualWidth/Program.GameEngine.Definition.TableDefinition.Width,
+                                            ActualHeight/Program.GameEngine.Definition.TableDefinition.Height);
                     scale *= Zoom;
-                    _cardSize = new Size(Program.Game.Definition.CardDefinition.Width*scale,
-                                         Program.Game.Definition.CardDefinition.Height*scale);
+                    _cardSize = new Size(Program.GameEngine.Definition.CardDefinition.Width*scale,
+                                         Program.GameEngine.Definition.CardDefinition.Height*scale);
                     IsCardSizeValid = true;
                 }
                 return _cardSize;
@@ -107,7 +107,7 @@ namespace Octgn.Play.Gui
 
         public void CenterView()
         {
-            GroupDef tableDef = Program.Game.Definition.TableDefinition;
+            GroupDef tableDef = Program.GameEngine.Definition.TableDefinition;
             Offset = new Vector(tableDef.Width/2, tableDef.Height/2);
         }
 
@@ -117,7 +117,7 @@ namespace Octgn.Play.Gui
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
             bim.UriSource = new Uri(tableDef.Background);
-            if(Program.Game.IsTableBackgroundFlipped)bim.Rotation = Rotation.Rotate180;
+            if(Program.GameEngine.IsTableBackgroundFlipped)bim.Rotation = Rotation.Rotate180;
             bim.EndInit();
 
             var backBrush = new ImageBrush(bim);
@@ -159,7 +159,7 @@ namespace Octgn.Play.Gui
 
         public static bool IsInInvertedZone(double y)
         {
-            return y < -Program.Game.Definition.CardDefinition.Height/2;
+            return y < -Program.GameEngine.Definition.CardDefinition.Height/2;
         }
 
         private void CardMoved(object sender, EventArgs e)
@@ -181,7 +181,7 @@ namespace Octgn.Play.Gui
             e.CardSize = CardSize;
 
             if (!Program.GameSettings.UseTwoSidedTable) return;
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            CardDef cardDef = Program.GameEngine.Definition.CardDefinition;
             var cardCtrl = (CardControl) e.OriginalSource;
             Card baseCard = cardCtrl.Card;
             double mouseY = Mouse.GetPosition(cardsView).Y;
@@ -203,9 +203,9 @@ namespace Octgn.Play.Gui
             e.Handled = e.CanDrop = true;
             var cardCtrl = e.OriginalSource as CardControl;
 
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            CardDef cardDef = Program.GameEngine.Definition.CardDefinition;
             int delta = cardDef.Height - cardDef.Width;
-            Table table = Program.Game.Table;
+            Table table = Program.GameEngine.Table;
             Vector mouseOffset;
             if (cardCtrl != null && (cardCtrl.IsInverted ||
                                      (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas)))
@@ -241,7 +241,7 @@ namespace Octgn.Play.Gui
                 e.ClickedCard.MoveToTable((int) pt.X, (int) pt.Y, e.FaceUp != null && e.FaceUp.Value, idx);
 
                 // If there were other cards (i.e. dragging from a count number in GroupWindow), move them accordingly
-                double xOffset = Program.Game.Definition.CardDefinition.Width*1.05;
+                double xOffset = Program.GameEngine.Definition.CardDefinition.Width*1.05;
                 foreach (Card c in e.Cards.Where(c => c != e.ClickedCard))
                 {
                     pt.X += xOffset;
@@ -284,7 +284,7 @@ namespace Octgn.Play.Gui
             double offset = e.MouseOffset.Y;
             if (Player.LocalPlayer.InvertedTable)
             {
-                y -= Program.Game.Definition.CardDefinition.Height;
+                y -= Program.GameEngine.Definition.CardDefinition.Height;
                 offset = -offset;
             }
             y -= offset;
@@ -461,9 +461,9 @@ namespace Octgn.Play.Gui
 
         protected void AspectRatioChanged()
         {
-            if (Program.Game == null) return; // Bug fix: Program.Game can be null when closing the game window.
+            if (Program.GameEngine == null) return; // Bug fix: Program.Game can be null when closing the game window.
 
-            int tWidth = Program.Game.Table.Definition.Width, tHeight = Program.Game.Table.Definition.Height;
+            int tWidth = Program.GameEngine.Table.Definition.Width, tHeight = Program.GameEngine.Table.Definition.Height;
             double wRatio = ActualWidth/tWidth, hRatio = ActualHeight/tHeight;
 
             if (wRatio < hRatio)
@@ -488,8 +488,8 @@ namespace Octgn.Play.Gui
             GeneralTransform transform = TransformToDescendant(cardsView);
             Rect visibleBounds = transform.TransformBounds(new Rect(0, 0, ActualWidth, ActualHeight));
 
-            var cardRect = new Rect(card.X, card.Y, Program.Game.Definition.CardDefinition.Width,
-                                    Program.Game.Definition.CardDefinition.Height);
+            var cardRect = new Rect(card.X, card.Y, Program.GameEngine.Definition.CardDefinition.Width,
+                                    Program.GameEngine.Definition.CardDefinition.Height);
             if (visibleBounds.Contains(cardRect)) return; // okay, already completely into view
 
             // Compute the new table bounds
@@ -508,8 +508,8 @@ namespace Octgn.Play.Gui
 
             // Compute the zoom and offset corresponding to the new view
             double newZoom = Math.Min(
-                (Program.Game.Table.Definition.Width + 2*_stretchMargins.Width)/newBounds.Width,
-                (Program.Game.Table.Definition.Height + 2*_stretchMargins.Height)/newBounds.Height);
+                (Program.GameEngine.Table.Definition.Width + 2*_stretchMargins.Width)/newBounds.Width,
+                (Program.GameEngine.Table.Definition.Height + 2*_stretchMargins.Height)/newBounds.Height);
             var newOffset = new Vector(
                 -_stretchMargins.Width - newBounds.X*newZoom,
                 -_stretchMargins.Height - newBounds.Y*newZoom);
@@ -614,12 +614,12 @@ namespace Octgn.Play.Gui
             var item = new MenuItem {Header = "Move to"};
             var subItem = new MenuItem
                               {
-                                  Header = Program.Game.Definition.PlayerDefinition.Hand.Name,
-                                  InputGestureText = Program.Game.Definition.PlayerDefinition.Hand.Shortcut
+                                  Header = Program.GameEngine.Definition.PlayerDefinition.Hand.Name,
+                                  InputGestureText = Program.GameEngine.Definition.PlayerDefinition.Hand.Shortcut
                               };
             subItem.Click += delegate { Selection.Do(c => c.MoveTo(Player.LocalPlayer.Hand, true), ContextCard); };
             item.Items.Add(subItem);
-            GroupDef[] groupDefs = Program.Game.Definition.PlayerDefinition.Groups;
+            GroupDef[] groupDefs = Program.GameEngine.Definition.PlayerDefinition.Groups;
             var moveToBottomItems = new List<MenuItem>();
             for (int i = 0; i < groupDefs.Length; ++i)
             {
@@ -643,11 +643,11 @@ namespace Octgn.Play.Gui
             items.Add(item);
 
             item = new MenuItem {Header = "Bring to front", InputGestureText = "PgUp"};
-            item.Click += delegate { Selection.Do(c => Program.Game.Table.BringToFront(c), ContextCard); };
+            item.Click += delegate { Selection.Do(c => Program.GameEngine.Table.BringToFront(c), ContextCard); };
             items.Add(item);
 
             item = new MenuItem {Header = "Send to back", InputGestureText = "PgDn"};
-            item.Click += delegate { Selection.Do(c => Program.Game.Table.SendToBack(c), ContextCard); };
+            item.Click += delegate { Selection.Do(c => Program.GameEngine.Table.SendToBack(c), ContextCard); };
             items.Add(item);            
 
             return items;
@@ -731,8 +731,8 @@ namespace Octgn.Play.Gui
                 // Get position in table space
                 GeneralTransform transform = Target.TransformToDescendant(Target.cardsView);
                 rect = transform.TransformBounds(rect);
-                int width = Program.Game.Definition.CardDefinition.Width;
-                int height = Program.Game.Definition.CardDefinition.Height;
+                int width = Program.GameEngine.Definition.CardDefinition.Width;
+                int height = Program.GameEngine.Definition.CardDefinition.Height;
 
                 // Remove cards which are not in the selection anymore
                 Selection.RemoveAll(card => !rect.IntersectsWith(ComputeCardBounds(card, width, height)));

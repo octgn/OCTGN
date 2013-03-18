@@ -206,7 +206,7 @@ namespace Octgn.Play
         #region Public interface
 
         // C'tor
-        internal Player(GameDef g, string name, byte id, ulong pkey)
+        internal Player(DataNew.Entities.Game g, string name, byte id, ulong pkey)
         {
             // Init fields
             _name = name;

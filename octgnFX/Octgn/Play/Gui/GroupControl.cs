@@ -48,7 +48,7 @@ namespace Octgn.Play.Gui
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
 
-            Program.Game.ComposeParts(this);
+            Program.GameEngine.ComposeParts(this);
 
             AddHandler(CardControl.CardOverEvent, new CardsEventHandler(OnCardOver));
             AddHandler(CardControl.CardOutEvent, new CardsEventHandler(OnCardOut));
