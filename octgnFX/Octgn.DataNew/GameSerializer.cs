@@ -326,8 +326,19 @@
                 ret.FieldMapper.AddMapping(mapping.name, mapping.mapto);
             }
             ret.TemplateSelector.DefaultID = ProxyGenFromDef.templatemapping.defaulttemplate;
-            ret.TemplateSelector.TemplateMatchField = ProxyGenFromDef.templatemapping.templatemap.field;
-            ret.FieldMapper.templateMapField = ProxyGenFromDef.templatemapping.templatemap.field;
+            switch (ProxyGenFromDef.templatemapping.usemultimatch)
+            {
+                case boolean.True:
+                    ret.TemplateSelector.UseMultiFieldMatching = true;
+                    break;
+                case boolean.False:
+                    ret.TemplateSelector.UseMultiFieldMatching = false;
+                    break;
+            }
+            foreach (gameProxygenTemplatemappingTemplatemap mapping in ProxyGenFromDef.templatemapping.templatemap)
+            {
+                ret.TemplateSelector.AddMapping(mapping.field);
+            }
             return ret;
         }
 

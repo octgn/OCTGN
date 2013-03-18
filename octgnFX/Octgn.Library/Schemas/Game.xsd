@@ -163,7 +163,7 @@
                 </xs:annotation>
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="templatemap" minOccurs="0" maxOccurs="1">
+                    <xs:element name="templatemap" minOccurs="1" maxOccurs="unbounded">
                       <xs:annotation>
                         <xs:documentation>
                           Defines which template will be selected.
@@ -184,6 +184,13 @@
                     <xs:annotation>
                       <xs:documentation>
                         The default template to use when it cannot match the field mapping to a template.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="usemultimatch" type="boolean" default="False">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Use multi field matching True or False. Defaults to False when not explicitly set.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
