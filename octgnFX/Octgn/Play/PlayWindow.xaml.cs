@@ -70,8 +70,8 @@ namespace Octgn.Play
             _isLocal = islocal;
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
-            Title = "Octgn  version : " + oversion + " : " + Program.Game.Definition.Name;
-            Program.Game.ComposeParts(this);            
+            Title = "Octgn  version : " + oversion + " : " + Program.GameEngine.Definition.Name;
+            Program.GameEngine.ComposeParts(this);            
             this.Loaded += OnLoaded;
         }
 
@@ -84,13 +84,13 @@ namespace Octgn.Play
         //{
         //    base.OnInitialized(e);
             Program.Dispatcher = Dispatcher;
-            DataContext = Program.Game;
+            DataContext = Program.GameEngine;
 
             _fadeIn = (Storyboard) Resources["ImageFadeIn"];
             _fadeOut = (Storyboard) Resources["ImageFadeOut"];
 
-            cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.Game.Definition.CardDefinition.Back));
-            if (Program.Game.Definition.CardDefinition.CornerRadius > 0)
+            cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardDefinition.Back));
+            if (Program.GameEngine.Definition.CardDefinition.CornerRadius > 0)
                 cardViewer.Clip = new RectangleGeometry();
             AddHandler(CardControl.CardHoveredEvent, new CardEventHandler(CardHovered));
             AddHandler(CardRun.ViewCardModelEvent, new EventHandler<CardModelEventArgs>(ViewCardModel));
@@ -128,7 +128,7 @@ namespace Octgn.Play
 
         private void UpdateFont()
         {
-            var game = GameManager.Get().GetById(Program.Game.Definition.Id);
+            var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
             string curDir = game.GetInstallPath();
             string uri = "file:///" + curDir.Replace('\\', '/') + "/#";
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
@@ -178,7 +178,7 @@ namespace Octgn.Play
                 return;
             }
 
-            PlayerDef def = Program.Game.Definition.PlayerDefinition;
+            PlayerDef def = Program.GameEngine.Definition.PlayerDefinition;
             string format = def.IndicatorsFormat;
             if (format == null)
             {
@@ -268,12 +268,12 @@ namespace Octgn.Play
             // Try to load the file contents
             try
             {
-                var game = GameManager.Get().GetById(Program.Game.Definition.Id);
+                var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
                 var newDeck = new Deck().Load(game,ofd.FileName);
                 //DataNew.Entities.Deck newDeck = Deck.Load(ofd.FileName,
                 //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
-                Program.Game.LoadDeck(newDeck);
+                Program.GameEngine.LoadDeck(newDeck);
             }
             catch (DeckException ex)
             {
@@ -451,7 +451,7 @@ namespace Octgn.Play
             _fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
 
             if (cardViewer.Clip == null) return;
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            CardDef cardDef = Program.GameEngine.Definition.CardDefinition;
             var clipRect = ((RectangleGeometry) cardViewer.Clip);
             double height = Math.Min(cardViewer.MaxHeight, cardViewer.Height);
             double width = cardViewer.Width*height/cardViewer.Height;
@@ -463,12 +463,12 @@ namespace Octgn.Play
         {
             var btn = (ToggleButton) sender;
             var targetPlayer = (Player) btn.DataContext;
-            if (Program.Game.TurnPlayer == null || Program.Game.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
                 Program.Client.Rpc.NextTurn(targetPlayer);
             else
             {
-                Program.Client.Rpc.StopTurnReq(Program.Game.TurnNumber, btn.IsChecked != null && btn.IsChecked.Value);
-                if (btn.IsChecked != null) Program.Game.StopTurn = btn.IsChecked.Value;
+                Program.Client.Rpc.StopTurnReq(Program.GameEngine.TurnNumber, btn.IsChecked != null && btn.IsChecked.Value);
+                if (btn.IsChecked != null) Program.GameEngine.StopTurn = btn.IsChecked.Value;
             }
         }
 
@@ -546,14 +546,14 @@ namespace Octgn.Play
                           {
                               AddExtension = true,
                               Filter = "Octgn decks|*.o8d",
-                              InitialDirectory = Program.Game.Definition.DecksPath
+                              InitialDirectory = Program.GameEngine.Definition.DecksPath
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
 
             var dlg = backstage.Child as PickCardsDialog;
             try
             {
-                if (dlg != null) dlg.LimitedDeck.Save(GameManager.Get().GetById(Program.Game.Definition.Id), sfd.FileName);
+                if (dlg != null) dlg.LimitedDeck.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
             }
             catch (UserMessageException ex)
             {
@@ -564,7 +564,7 @@ namespace Octgn.Play
         protected void LimitedOkClicked(object sender, EventArgs e)
         {
             var dlg = backstage.Child as PickCardsDialog;
-            if (dlg != null) Program.Game.LoadDeck(dlg.LimitedDeck);
+            if (dlg != null) Program.GameEngine.LoadDeck(dlg.LimitedDeck);
             HideBackstage();
         }
 

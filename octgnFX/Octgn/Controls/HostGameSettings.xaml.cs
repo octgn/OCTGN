@@ -138,7 +138,7 @@
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)port;
                     Program.GameSettings.UseTwoSidedTable = true;
-                    Program.Game = new Game(GameDef.FromO8G(game.GetFullPath()),Program.LobbyClient.Me.UserName);
+                    Program.GameEngine = new GameEngine(GameDef.FromO8G(game.GetFullPath()),Program.LobbyClient.Me.UserName);
                     Program.IsHost = true;
 
                     var hostAddress = Dns.GetHostAddresses(Program.GameServerPath).First();
@@ -218,7 +218,7 @@
             Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
             Program.GameSettings.UseTwoSidedTable = true;
-            Program.Game = new Game(GameDef.FromO8G(game.GetFullPath()), Username, true);
+            Program.GameEngine = new GameEngine(GameDef.FromO8G(game.GetFullPath()), Username, true);
             Program.IsHost = true;
 
             var ip = IPAddress.Parse("127.0.0.1");

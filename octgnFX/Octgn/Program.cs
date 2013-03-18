@@ -35,7 +35,7 @@ namespace Octgn
         public static PlayWindow PlayWindow;
         public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
 
-        public static Game Game;
+        public static GameEngine GameEngine;
 
         public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
@@ -157,7 +157,7 @@ namespace Octgn
             }
             if (Program.PlayWindow != null) return;
             Program.Client.Rpc.Start();
-            Program.PlayWindow = new PlayWindow(Program.Game.IsLocal);
+            Program.PlayWindow = new PlayWindow(Program.GameEngine.IsLocal);
             Program.PlayWindow.Show();
             if(Program.PreGameLobbyWindow != null)
                 Program.PreGameLobbyWindow.Close();
@@ -169,9 +169,9 @@ namespace Octgn
                 Client.Disconnect();
                 Client = null;
             }
-            if(Game != null)
-                Game.End();
-            Game = null;
+            if(GameEngine != null)
+                GameEngine.End();
+            GameEngine = null;
             Dispatcher = null;
             Database.Close();
             IsGameRunning = false;

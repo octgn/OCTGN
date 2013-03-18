@@ -19,7 +19,7 @@ namespace Octgn.Definitions
             get
             {
                 if (_icon == null) return null;
-                return Program.Game.Definition.PackUri + _icon;
+                return Program.GameEngine.Definition.PackUri + _icon;
             }
             private set { _icon = value; }
         }

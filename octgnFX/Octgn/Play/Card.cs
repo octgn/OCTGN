@@ -16,6 +16,7 @@ using Octgn.Utils;
 namespace Octgn.Play
 {
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.DataNew.Entities;
 
     [Flags]
     public enum CardOrientation
@@ -34,12 +35,12 @@ namespace Octgn.Play
 
         public static string DefaultFront
         {
-            get { return Program.Game.Definition.CardDefinition.Front; }
+            get { return Program.GameEngine.Definition.CardFront; }
         }
 
         public static string DefaultBack
         {
-            get { return Program.Game.Definition.CardDefinition.Back; }
+            get { return Program.GameEngine.Definition.CardBack; }
         }
 
         internal new static Card Find(int id)
@@ -85,8 +86,9 @@ namespace Octgn.Play
         private double _x, _y;
 
         #endregion Private fields
-
-        internal Card(Player owner, int id, ulong key, CardDef def, DataNew.Entities.Card model, bool mySecret)
+        
+        //TODO [Removal] - It would seem that the property def isn't being used? - Kelly E - 3/17/2013
+        internal Card(Player owner, int id, ulong key, Octgn.DataNew.Entities.Card def, DataNew.Entities.Card model, bool mySecret)
             : base(owner)
         {
             _id = id;
@@ -185,7 +187,8 @@ namespace Octgn.Play
                 PeekingPlayers.Clear();
                 //Switch back to original image.
                 IsAlternateImage = false;
-                if (Program.Game.Definition.CardsRevertToOriginalOnGroupChange) { RevertToOriginal(); } 
+                //TODO [Alternate] - Remove if we don't need it, or reimplement if we do.
+                //if (Program.GameEngine.Definition.CardsRevertToOriginalOnGroupChange) { RevertToOriginal(); } 
             }
         }
 
@@ -418,12 +421,12 @@ namespace Octgn.Play
                    
                 }
                 if (bmp == null)
-                    bmp = Program.Game.CardFrontBitmap;
+                    bmp = Program.GameEngine.CardFrontBitmap;
                 bmp.Freeze();
                 return bmp;
             }
-            if (!up) return Program.Game.CardBackBitmap;
-            if (Type == null || Type.Model == null) return Program.Game.CardFrontBitmap;
+            if (!up) return Program.GameEngine.CardBackBitmap;
+            if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
             var bmpo = new BitmapImage(new Uri(Type.Model.GetPicture())) {CacheOption = BitmapCacheOption.OnLoad};
             bmpo.Freeze();
             return bmpo;
@@ -664,7 +667,7 @@ namespace Octgn.Play
             }
             else if (count > 0)
             {
-                DataNew.Entities.Marker model = Program.Game.GetMarkerModel(lId);
+                DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(lId);
                 var defaultMarkerModel = model as DefaultMarkerModel;
                 if (defaultMarkerModel != null)
                     (defaultMarkerModel).SetName(name);

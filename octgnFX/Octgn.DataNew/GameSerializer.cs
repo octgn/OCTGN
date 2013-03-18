@@ -37,7 +37,8 @@
                           {
                               Id = new Guid(g.id),
                               Name = g.name,
-                              CardBack = g.card.back,
+                              CardBack = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : g.card.back,
+                              CardFront = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : g.card.front ,
                               CardHeight = int.Parse(g.card.height),
                               CardWidth = int.Parse(g.card.width),
                               Version = Version.Parse(g.version),
@@ -48,6 +49,63 @@
                               Filename = fileName,
                               Fonts = new List<Font>()
                           };
+            #region visibility
+            switch (g.table.visibility)
+            {
+                case groupVisibility.none:
+                    ret.Table.Visibility = GroupVisibility.Nobody;
+                    break;
+                case groupVisibility.me:
+                    ret.Table.Visibility = GroupVisibility.Owner;
+                    break;
+                case groupVisibility.all:
+                    ret.Table.Visibility = GroupVisibility.Everybody;
+                    break;
+                case groupVisibility.undefined:
+                    ret.Table.Visibility = GroupVisibility.Undefined;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            #endregion visibility
+            #region table
+            ret.Table = new Group()
+            {
+                Id = 0,
+                Name = g.table.name,
+                Background = g.table.background,
+                BackgroundStyle = g.table.backgroundStyle.ToString(),
+                Board = g.table.board,
+                BoardPosition =
+                    new DataRectangle
+                    {
+                        X = double.Parse(g.table.boardPosition.Split(',')[0]),
+                        Y = double.Parse(g.table.boardPosition.Split(',')[1]),
+                        Width = double.Parse(g.table.boardPosition.Split(',')[2]),
+                        Height = double.Parse(g.table.boardPosition.Split(',')[3])
+                    },
+                Collapsed = bool.Parse(g.table.collapsed.ToString()),
+                Height = Int32.Parse(g.table.height),
+                Width = Int32.Parse(g.table.width),
+                Icon = g.table.icon,
+                Ordered = bool.Parse(g.table.ordered.ToString()),
+                Shortcut = g.table.shortcut,
+                CardActions = new List<IGroupAction>(),
+                GroupActions = new List<IGroupAction>()
+            };
+            if (g.table.Items != null)
+            {
+                //ret.Table.GroupActions
+                ret.Table.GroupActions = this.DeserializeGroupActions(g.table);
+            }
+            #endregion table
+            #region Player
+            if (g.player != null)
+            {
+                g.player.Items
+            }
+            #endregion Player
+            #region deck
             if (g.deck != null)
             {
                 foreach (var ds in g.deck)
@@ -62,6 +120,8 @@
                     ret.SharedDeckSections.Add(s.name);
                 }
             }
+            #endregion deck
+            #region card
             if (g.card != null && g.card.property != null)
             {
                 foreach (var prop in g.card.property)
@@ -88,6 +148,8 @@
                     ret.CustomProperties.Add(pd);
                 }
             }
+            #endregion card
+            #region fonts
             if (g.fonts != null)
             {
                 foreach (gameFont font in g.fonts)
@@ -107,6 +169,8 @@
                     ret.Fonts.Add(f);
                 }
             }
+            #endregion fonts
+            #region scripts
             if (g.scripts != null)
             {
                 foreach (var s in g.scripts)
@@ -125,6 +189,8 @@
                     coll.SetSerializer(new GameScriptSerializer(ret.Id));
                 }
             }
+            #endregion scripts
+            #region proxygen
             if (g.proxygen != null)
             {
                 var coll =
@@ -140,6 +206,8 @@
                 }
                 coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id,g.proxygen));
             }
+            #endregion proxygen
+            #region hash
             using (MD5 md5 = new MD5CryptoServiceProvider())
             {
                 using (var file = new FileStream(fileName, FileMode.Open))
@@ -148,7 +216,64 @@
                     ret.FileHash = BitConverter.ToString(retVal).Replace("-", ""); // hex string
                 }
             }
-            
+            #endregion hash
+            return ret;
+        }
+
+        internal IEnumerable<IGroupAction> DeserializeGroupActions(group group)
+        {
+            var ret = new List<IGroupAction>();
+            foreach (var item in group.Items)
+            {
+                if (item is action)
+                {
+                    var i = item as action;
+                    var add = new GroupAction
+                    {
+                        Name = i.menu,
+                        Shortcut = i.shortcut,
+                        Execute = i.execute,
+                        BatchExecute = i.batchExecute,
+                        DefaultAction = bool.Parse(i.@default.ToString())
+                    };
+                    ret.Add(add);
+                }
+                if (item is actionSubmenu)
+                {
+                    var i = item as actionSubmenu;
+                    var addgroup = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
+                    addgroup.Children = this.DeserializeGroupActionGroup(i);
+                    ret.Add(addgroup);
+                }
+            }
+            return ret;
+        }
+        internal IEnumerable<IGroupAction> DeserializeGroupActionGroup(actionSubmenu actiongroup)
+        {
+            var ret = new List<IGroupAction>();
+            foreach (var item in actiongroup.Items)
+            {
+                if (item is action)
+                {
+                    var i = item as action;
+                    var add = new GroupAction
+                    {
+                        Name = i.menu,
+                        Shortcut = i.shortcut,
+                        Execute = i.execute,
+                        BatchExecute = i.batchExecute,
+                        DefaultAction = bool.Parse(i.@default.ToString())
+                    };
+                    ret.Add(add);
+                }
+                if (item is actionSubmenu)
+                {
+                    var i = item as actionSubmenu;
+                    var addgroup = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
+                    addgroup.Children = this.DeserializeGroupActionGroup(i);
+                    ret.Add(addgroup);
+                }
+            }
             return ret;
         }
 
@@ -160,14 +285,17 @@
     public class SetSerializer : IFileDbSerializer
     {
         public ICollectionDefinition Def { get; set; }
-        public static XmlSchema SetSchema {get
+        public static XmlSchema SetSchema
         {
-            if (setSchema != null) return setSchema;
-            var libAss = Assembly.GetAssembly(typeof(Paths));
-            var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("Set.xsd"));
-            setSchema = XmlSchema.Read(libAss.GetManifestResourceStream(setxsd), (sender, args) => Console.WriteLine(args.Exception));
-            return setSchema;
-        }}
+            get
+            {
+                if (setSchema != null) return setSchema;
+                var libAss = Assembly.GetAssembly(typeof(Paths));
+                var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("Set.xsd"));
+                setSchema = XmlSchema.Read(libAss.GetManifestResourceStream(setxsd), (sender, args) => Console.WriteLine(args.Exception));
+                return setSchema;
+            }
+        }
 
         internal static XmlSchema setSchema;
         public object Deserialize(string fileName)
@@ -210,7 +338,7 @@
                     foreach (var p in c.Descendants("property"))
                     {
                         var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
-                        card.Properties.Add(pd,p.Attribute("value").Value);
+                        card.Properties.Add(pd, p.Attribute("value").Value);
                     }
                     (ret.Cards as List<Card>).Add(card);
                 }
@@ -230,10 +358,10 @@
                     (ret.Markers as List<Marker>).Add(marker);
                 }
             }
-            
-            if(ret.Cards == null) ret.Cards = new Card[0];
-            if(ret.Markers == null) ret.Markers = new Marker[0];
-            if(ret.Packs == null) ret.Packs = new Pack[0];
+
+            if (ret.Cards == null) ret.Cards = new Card[0];
+            if (ret.Markers == null) ret.Markers = new Marker[0];
+            if (ret.Packs == null) ret.Packs = new Pack[0];
             //Console.WriteLine(timer.ElapsedMilliseconds);
             return ret;
         }
@@ -245,7 +373,7 @@
             {
                 var option = new Option();
                 var probAtt = op.Attributes("probability").FirstOrDefault();
-                option.Probability = double.Parse(probAtt != null ?probAtt.Value : "1", CultureInfo.InvariantCulture);
+                option.Probability = double.Parse(probAtt != null ? probAtt.Value : "1", CultureInfo.InvariantCulture);
                 option.Definition = DeserializePack(op.Elements());
             }
             return ret;
@@ -264,7 +392,7 @@
                     case "pick":
                         var pick = new Pick();
                         var qtyAttr = e.Attributes().FirstOrDefault(x => x.Name.LocalName == "qty");
-                        if(qtyAttr != null) pick.Quantity = qtyAttr.Value == "unlimited" ? -1 : int.Parse(qtyAttr.Value);
+                        if (qtyAttr != null) pick.Quantity = qtyAttr.Value == "unlimited" ? -1 : int.Parse(qtyAttr.Value);
                         pick.Key = e.Attribute("key").Value;
                         pick.Value = e.Attribute("value").Value;
                         ret.Items.Add(pick);
@@ -282,7 +410,7 @@
 
     public class GameScriptSerializer : IFileDbSerializer
     {
-        public ICollectionDefinition Def { get;  set; }
+        public ICollectionDefinition Def { get; set; }
 
         internal Guid GameId { get; set; }
 
@@ -320,7 +448,7 @@
         public object Deserialize(string fileName)
         {
             var game = DbContext.Get().Games.First(x => x.Id == GameId);
-            var ret = new ProxyDefinition(GameId,fileName, new FileInfo(game.Filename).Directory.FullName);
+            var ret = new ProxyDefinition(GameId, fileName, new FileInfo(game.Filename).Directory.FullName);
             foreach (gameProxygenMapping mapping in ProxyGenFromDef.mappings)
             {
                 ret.FieldMapper.AddMapping(mapping.name, mapping.mapto);
