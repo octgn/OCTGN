@@ -48,7 +48,6 @@ namespace Octgn.Play.Gui.Adorners
             Point cardOrigin;
             if (isCardInverted)
             {
-                CardDef cardDef = Program.Game.Definition.CardDefinition;
                 cardOrigin = new Point(cardDef.Width, cardDef.Height);
                 _mouseOffset = new Vector(cardDef.Width - mousePoint.X, cardDef.Height - mousePoint.Y);
             }
@@ -67,7 +66,7 @@ namespace Octgn.Play.Gui.Adorners
             var bim = new BitmapImage();
             bim.BeginInit();
             bim.CacheOption = BitmapCacheOption.OnLoad;
-            bim.UriSource = new Uri(Program.Game.Definition.CardDefinition.Front);
+            bim.UriSource = new Uri(Program.GameEngine.Definition.CardDefinition.Front);
             bim.EndInit();
 
             _faceUpBrush = _faceUp
@@ -180,9 +179,9 @@ namespace Octgn.Play.Gui.Adorners
                  Math.Abs(size.Height - _child.Height) > float.Epsilon))
             {
                 _mouseAdjustment +=
-                    new Vector(_mouseOffset.X*(size.Width - _child.Width)/Program.Game.Definition.CardDefinition.Width,
+                    new Vector(_mouseOffset.X*(size.Width - _child.Width)/Program.GameEngine.Definition.CardDefinition.Width,
                                _mouseOffset.Y*(size.Height - _child.Height)/
-                               Program.Game.Definition.CardDefinition.Height);
+                               Program.GameEngine.Definition.CardDefinition.Height);
                 if (_offsetTransform != null)
                 {
                     _offsetTransform.X *= size.Width/_child.Width;

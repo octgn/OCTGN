@@ -110,7 +110,7 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
 
             // Set overlay card size
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
+            CardDef cardDef = Program.GameEngine.Definition.CardDefinition;
             e.CardSize = new Size(cardDef.Width*100/cardDef.Height, 100);
             if (IsAlwaysUp) e.FaceUp = true;
 
