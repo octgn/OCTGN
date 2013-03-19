@@ -1,9 +1,12 @@
 using System.IO.Packaging;
 using System.Xml.Linq;
+using Octgn.Core.DataExtensionMethods;
 using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using System.IO;
+
     using Octgn.DataNew;
 
     public class CounterDef
@@ -19,7 +22,7 @@ namespace Octgn.Definitions
             get
             {
                 if (_icon == null) return null;
-                return Program.GameEngine.Definition.PackUri + _icon;
+                return Path.Combine(Program.GameEngine.Definition.GetInstallPath() , _icon);
             }
             private set { _icon = value; }
         }
