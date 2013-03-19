@@ -91,8 +91,8 @@
                     }
                     foreach (var section in game.DeckSections)
                     {
-                        if(ret.Sections.Any(x=>x.Name == section) == false)
-                            (ret.Sections as List<ISection>).Add(new Section{Name = section,Cards = new List<IMultiCard>()});
+                        if(ret.Sections.Any(x=>x.Name == section.Value.Name) == false)
+                            (ret.Sections as List<ISection>).Add(new Section{Name = section.Value.Name,Cards = new List<IMultiCard>()});
                     }
                     ret.GameId = gameId;
                     ret.IsShared = shared;
