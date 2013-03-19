@@ -88,8 +88,7 @@ namespace Octgn.Play
 
         #endregion Private fields
         
-        //TODO [Removal] - It would seem that the property def isn't being used? - Kelly E - 3/17/2013
-        internal Card(Player owner, int id, ulong key, Octgn.DataNew.Entities.Card def, DataNew.Entities.Card model, bool mySecret)
+        internal Card(Player owner, int id, ulong key,  DataNew.Entities.Card model, bool mySecret)
             : base(owner)
         {
             _id = id;

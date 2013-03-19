@@ -39,7 +39,7 @@ namespace Octgn
 
         //wouldn't a heap be best for these caches? 
         private bool _stopTurn;
-        private Player _turnPlayer;
+        private Play.Player _turnPlayer;
         private ushort _uniqueId;
         private bool _BeginCalled;
 
@@ -76,7 +76,7 @@ namespace Octgn
 
         public int TurnNumber { get; set; }
 
-        public Player TurnPlayer
+        public Octgn.Play.Player TurnPlayer
         {
             get { return _turnPlayer; }
             set

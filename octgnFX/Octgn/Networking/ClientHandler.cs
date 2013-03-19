@@ -11,6 +11,8 @@ using System.IO;
 
 namespace Octgn.Networking
 {
+    using Octgn.Core.DataExtensionMethods;
+
     internal sealed class Handler
     {
         private readonly BinaryParser _binParser;
@@ -205,7 +207,7 @@ namespace Octgn.Networking
             if (owner == Player.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
             {
-                Card c = new Card(owner, id[i], type[i], Program.GameEngine.Definition.CardDefinition, null, false);
+                Card c = new Card(owner, id[i], type[i], null, false);
                 Group group = groups[i];
                 group.AddAt(c, group.Count);
             }
@@ -234,7 +236,7 @@ namespace Octgn.Networking
             {
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 //group.AddAt(c, group.Count);
-                var card = new Card(owner,id[i], type[i], Program.GameEngine.Definition.CardDefinition, null, false);
+                var card = new Card(owner,id[i], type[i], null, false);
                 group.AddAt(card, group.Count);
             }
         }
@@ -292,15 +294,15 @@ namespace Octgn.Networking
             else
             {
                 for (int i = 0; i < id.Length; i++)
-                    new CreateCard(owner, id[i], key[i], faceUp,Database.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
+                    new CreateCard(owner, id[i], key[i], faceUp,Program.GameEngine.Definition.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
             }
 
             // Display log messages
             if (modelId.All(m => m == modelId[0]))
-                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Database.GetCardById(modelId[0]).Name :"card");
+                Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(modelId[0]).Name : "card");
             else
                 foreach (Guid m in modelId)
-                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp? Database.GetCardById(m).Name : "card");
+                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(m).Name : "card");
         }
 
         /// <summary>Create new CardIdentities, which hide aliases to other CardIdentities</summary>
@@ -481,7 +483,7 @@ namespace Octgn.Networking
             // Reveal a card's type
             else if (card.Type.Model == null)
             {
-                card.SetModel(Database.GetCardById(guid));
+                card.SetModel(Program.GameEngine.Definition.GetCardById(guid));
                 // Raise a notification
                 oldType.OnRevealed(oldType);
             }
@@ -510,7 +512,7 @@ namespace Octgn.Networking
                     return;
             }
 
-            if (!players.All(p => (card.Group.Visibility == GroupVisibility.Custom && card.Group.Viewers.Contains(p)) ||
+            if (!players.All(p => (card.Group.Visibility == DataNew.Entities.GroupVisibility.Custom && card.Group.Viewers.Contains(p)) ||
                                   card.PlayersLooking.Contains(p) || card.PeekingPlayers.Contains(p)))
                 Program.TraceWarning("[RevealTo] Revealing a card to a player, who isn't allowed to see it. This indicates a bug or cheating.");
 
@@ -549,7 +551,7 @@ namespace Octgn.Networking
             // Else it's a type and we are the final recipients
             if (!sendToMyself) return;
             if (card.Type.Model == null)
-                card.SetModel(Database.GetCardById(id));
+                card.SetModel(Program.GameEngine.Definition.GetCardById(id));
             // Raise a notification
             oldType.OnRevealed(card.Type);
         }
@@ -697,7 +699,7 @@ namespace Octgn.Networking
                 if (i >= group.Count) continue;
                 // Set the type
                 group[i].Type = ci;
-                group[i].SetVisibility(ci.Visible ? GroupVisibility.Everybody : GroupVisibility.Nobody, null);
+                group[i].SetVisibility(ci.Visible ? DataNew.Entities.GroupVisibility.Everybody : DataNew.Entities.GroupVisibility.Nobody, null);
             }
             if (group.FilledShuffleSlots == group.Count)
                 group.OnShuffled();
@@ -832,7 +834,7 @@ namespace Octgn.Networking
         {
             if (look)
             {
-                if (group.Visibility != GroupVisibility.Everybody)
+                if (group.Visibility != DataNew.Entities.GroupVisibility.Everybody)
                     foreach (Card c in group)
                     {
                         c.PlayersLooking.Add(player);
@@ -845,7 +847,7 @@ namespace Octgn.Networking
             {
                 if (!group.LookedAt.ContainsKey(uid))
                 { Program.TraceWarning("[LookAtTop] Protocol violation: unknown unique id received."); return; }
-                if (group.Visibility != GroupVisibility.Everybody)
+                if (group.Visibility != DataNew.Entities.GroupVisibility.Everybody)
                 {
                     foreach (Card c in group.LookedAt[uid])
                         c.PlayersLooking.Remove(player);
