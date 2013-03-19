@@ -173,7 +173,6 @@ namespace Octgn
                 GameEngine.End();
             GameEngine = null;
             Dispatcher = null;
-            Database.Close();
             IsGameRunning = false;
         }
 
