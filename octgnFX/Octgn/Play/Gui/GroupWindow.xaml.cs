@@ -68,7 +68,7 @@ namespace Octgn.Play.Gui
                 shuffleLink.Visibility = Visibility.Collapsed;
 
             // If the whole group is visible to everyone, there's nothing to be done, really.
-            if (group.Visibility == GroupVisibility.Everybody)
+            if (group.Visibility == DataNew.Entities.GroupVisibility.Everybody)
                 return;
 
             SendLookAtRpc(true);
@@ -123,7 +123,7 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                IEnumerable<string> textProperties = Program.GameEngine.Definition.CardDefinition.Properties.Values
+                IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
                     .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
                     .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;
