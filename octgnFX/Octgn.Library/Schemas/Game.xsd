@@ -177,6 +177,13 @@
                             </xs:documentation>
                           </xs:annotation>
                         </xs:attribute>
+                        <xs:attribute name="mapto" type="xs:string" use="optional">
+                          <xs:annotation>
+                            <xs:documentation>
+                              Used to match on multiple properties on a template. Optional map to field property. required if usemultimatch=True.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
