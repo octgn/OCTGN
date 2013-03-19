@@ -35,6 +35,7 @@
     <Compile Include="DataExtensionMethods\CardExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\DeckExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\GameExtensionMethods.cs" />
+    <Compile Include="DataExtensionMethods\IGroupActionExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\PackExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\SetExtensionMethods.cs" />
     <Compile Include="DataManagers\CardManager.cs" />
