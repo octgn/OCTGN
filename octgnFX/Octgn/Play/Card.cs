@@ -16,6 +16,7 @@ using Octgn.Utils;
 namespace Octgn.Play
 {
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
 
     [Flags]
@@ -714,7 +715,7 @@ namespace Octgn.Play
                         Debug.WriteLine("Not the first, not the last.");
 #endif
                     }
-                    SetModel(Database.GetCardById(Type.Model.Alternate));
+                    SetModel(Program.GameEngine.Definition.GetCardById(Type.Model.Alternate));
                     return true;
                 }
                 //if there is no alternate, we might have reached the end of the chain
