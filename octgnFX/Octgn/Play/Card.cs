@@ -7,8 +7,6 @@ using System.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Octgn.Controls;
-using Octgn.Data;
-using Octgn.Definitions;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui;
 using Octgn.Utils;

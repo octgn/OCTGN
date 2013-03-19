@@ -11,9 +11,7 @@
     using System.Windows.Controls;
     using System.Windows.Forms;
 
-    using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
-    using Octgn.Definitions;
     using Octgn.Library.Exceptions;
     using Octgn.ViewModels;
 

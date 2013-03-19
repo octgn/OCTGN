@@ -16,15 +16,12 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
-using Octgn.Data;
-using Octgn.Definitions;
+
 using Octgn.Extentions;
 using Octgn.Play.Dialogs;
 using Octgn.Play.Gui;
 using Octgn.Scripting;
 using Octgn.Utils;
-using System.IO.Packaging;
-using System.Collections.Generic;
 
 namespace Octgn.Play
 {
@@ -33,7 +30,6 @@ namespace Octgn.Play
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
-    using Octgn.Library;
     using Octgn.Library.Exceptions;
 
     public partial class PlayWindow

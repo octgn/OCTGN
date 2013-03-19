@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Media;
-using Octgn.Definitions;
 
 namespace Octgn.Play
 {

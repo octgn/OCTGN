@@ -12,7 +12,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using Octgn.Definitions;
 using Octgn.Play.Gui.Adorners;
 using Octgn.Scripting;
 using Octgn.Utils;

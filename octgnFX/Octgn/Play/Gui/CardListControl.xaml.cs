@@ -7,7 +7,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using Octgn.Definitions;
 
 namespace Octgn.Play.Gui
 {

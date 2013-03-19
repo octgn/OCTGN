@@ -10,7 +10,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.Controls;
 using Octgn.Data;
-using Octgn.Definitions;
 using Octgn.Utils;
 
 namespace Octgn.Scripting.Controls

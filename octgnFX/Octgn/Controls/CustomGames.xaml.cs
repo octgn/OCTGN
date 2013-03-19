@@ -20,7 +20,6 @@ namespace Octgn.Controls
 
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
-    using Octgn.Definitions;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
     using Octgn.ViewModels;

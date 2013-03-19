@@ -7,10 +7,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.ComponentModel;
 using System.Web;
 using System.Windows;
-using Octgn.Data;
 
 namespace Octgn.Launcher
 {
@@ -23,7 +21,6 @@ namespace Octgn.Launcher
     using System.Text.RegularExpressions;
     using System.Windows.Controls;
     using System.Windows.Documents;
-    using System.Windows.Forms;
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Navigation;
@@ -32,10 +29,6 @@ namespace Octgn.Launcher
 
     using Skylabs.Lobby;
     using Skylabs.Lobby.Threading;
-
-	using System.Windows.Threading;
-	using Octgn.DeckBuilder;
-	using Octgn.Definitions;
 
     using HorizontalAlignment = System.Windows.HorizontalAlignment;
     using KeyEventArgs = System.Windows.Input.KeyEventArgs;

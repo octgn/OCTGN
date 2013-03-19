@@ -15,7 +15,6 @@ using System.Windows;
 using IronPython.Hosting;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
-using Octgn.Definitions;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Properties;

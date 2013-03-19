@@ -11,11 +11,10 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Octgn.Definitions;
+
 using Octgn.Play.Actions;
 using Octgn.Play.Gui.Adorners;
 using Octgn.Play.Gui.DragOperations;
-using Octgn.Utils;
 using Octgn.Extentions;
 
 namespace Octgn.Play.Gui
@@ -653,14 +652,14 @@ namespace Octgn.Play.Gui
 
         protected override void GroupActionClicked(object sender, RoutedEventArgs e)
         {
-            var action = (ActionDef) ((MenuItem) sender).Tag;
+            var action = (DataNew.Entities.GroupAction) ((MenuItem) sender).Tag;
             if (action.Execute != null)
                 ScriptEngine.ExecuteOnGroup(action.Execute, group, ContextMenuPosition);
         }
 
         protected override void CardActionClicked(object sender, RoutedEventArgs e)
         {
-            var action = (ActionDef) ((MenuItem) sender).Tag;
+            var action = (DataNew.Entities.GroupAction)((MenuItem)sender).Tag;
             if (action.Execute != null)
                 ScriptEngine.ExecuteOnCards(action.Execute, Selection.ExtendToSelection(ContextCard),
                                             ContextMenuPosition);

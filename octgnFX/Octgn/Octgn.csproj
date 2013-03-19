@@ -281,7 +281,6 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Definitions\IconDef.cs" />
     <Compile Include="GameManagement\GameFeedManager.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
@@ -300,7 +299,6 @@
     </Compile>
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
-    <Compile Include="Definitions\FontDef.cs" />
     <Compile Include="ErrorReporter.cs" />
     <Compile Include="Extentions\BitmapImageExtensions.cs" />
     <Compile Include="Extentions\ControlExtensions.cs" />
@@ -313,7 +311,6 @@
     <Compile Include="Play\DragAdorner.cs" />
     <Compile Include="Utils\CacheTraceListener.cs" />
     <Compile Include="Utils\Cryptor.cs" />
-    <Compile Include="Definitions\GlobalVariableDef.cs" />
     <Compile Include="DeckBuilder\DeckBuilderWindow.xaml.cs">
       <DependentUpon>DeckBuilderWindow.xaml</DependentUpon>
     </Compile>
@@ -324,12 +321,6 @@
       <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DeckBuilder\SetPropertyDef.cs" />
-    <Compile Include="Definitions\ActionDef.cs" />
-    <Compile Include="Definitions\CounterDef.cs" />
-    <Compile Include="Definitions\DeckDef.cs" />
-    <Compile Include="Definitions\GameDef.cs" />
-    <Compile Include="Definitions\ScriptDef.cs" />
-    <Compile Include="Definitions\VariableDef.cs" />
     <Compile Include="Extentions\String.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="Utils\BigInteger.cs" />
@@ -1069,6 +1060,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Definitions\" />
     <Folder Include="Effects\" />
     <Folder Include="Server\" />
   </ItemGroup>

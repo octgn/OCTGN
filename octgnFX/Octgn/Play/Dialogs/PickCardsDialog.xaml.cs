@@ -10,11 +10,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Octgn.Controls;
-using Octgn.Data;
-using Octgn.Definitions;
 using Octgn.Play.Gui;
 using Octgn.Utils;
-using Octgn.Core.DataExtensionMethods;
 
 namespace Octgn.Play.Dialogs
 {

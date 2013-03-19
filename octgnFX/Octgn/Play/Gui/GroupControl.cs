@@ -7,9 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using Octgn.Definitions;
+
 using Octgn.Scripting;
-using Octgn.Utils;
 
 namespace Octgn.Play.Gui
 {
@@ -462,14 +461,14 @@ namespace Octgn.Play.Gui
 
         protected virtual void GroupActionClicked(object sender, RoutedEventArgs e)
         {
-            var action = (ActionDef) ((MenuItem) sender).Tag;
+            var action = (GroupAction) ((MenuItem) sender).Tag;
             if (action.Execute != null)
                 ScriptEngine.ExecuteOnGroup(action.Execute, group);
         }
 
         protected virtual void CardActionClicked(object sender, RoutedEventArgs e)
         {
-            var action = (ActionDef) ((MenuItem) sender).Tag;
+            var action = (GroupAction)((MenuItem)sender).Tag;
             if (action.Execute != null)
                 ScriptEngine.ExecuteOnCards(action.Execute, Selection.ExtendToSelection(ContextCard));
             else if (action.BatchExecute != null)

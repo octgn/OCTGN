@@ -7,8 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Security;
 using System.Windows.Media;
-using Octgn.Data;
-using Octgn.Definitions;
+
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Play.Actions;

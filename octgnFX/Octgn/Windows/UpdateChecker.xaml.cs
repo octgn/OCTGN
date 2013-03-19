@@ -1,27 +1,19 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Windows;
 using System.Xml;
-using Octgn.Data;
-using Octgn.Definitions;
-using Octgn.Scripting;
+
 using Skylabs.Lobby.Threading;
-using vbAccelerator.Components.Shell;
 
 namespace Octgn.Windows
 {
-    using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
-    using Octgn.Library;
 
     using log4net;
 
