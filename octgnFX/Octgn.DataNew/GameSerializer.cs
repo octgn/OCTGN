@@ -24,6 +24,7 @@
         public object Deserialize(string fileName)
         {
             var serializer = new XmlSerializer(typeof(game));
+            var directory = new FileInfo(fileName).Directory.FullName;
             game g = null;
             using (var fs = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read))
             {
@@ -37,8 +38,8 @@
                           {
                               Id = new Guid(g.id),
                               Name = g.name,
-                              CardBack = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : g.card.back,
-                              CardFront = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : g.card.front ,
+                              CardBack = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, g.card.back),
+                              CardFront = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front) ,
                               CardHeight = int.Parse(g.card.height),
                               CardWidth = int.Parse(g.card.width),
                               CardCornerRadius = int.Parse(g.card.cornerRadius),

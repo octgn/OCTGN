@@ -85,8 +85,13 @@
 
         public static Uri GetCardBackUri(this Game game)
         {
-            var path = IO.Path.Combine(game.GetInstallPath(), game.CardBack);
-            var ret = new Uri(path);
+            var ret = new Uri(game.CardBack);
+            return ret;
+        }
+
+        public static Uri GetCardFrontUri(this Game game)
+        {
+            var ret = new Uri(game.CardFront);
             return ret;
         }
 

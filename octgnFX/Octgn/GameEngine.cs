@@ -166,8 +166,8 @@ namespace Octgn
             TurnNumber = 0;
             TurnPlayer = null;
 
-            CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardFront);
-            CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardBack);
+            CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardFrontUri());
+            CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
             // Create the global player, if any
             if (Program.GameEngine.Definition.GlobalPlayer != null)
                 Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
