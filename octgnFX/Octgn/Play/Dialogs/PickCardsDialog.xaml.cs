@@ -26,8 +26,10 @@ namespace Octgn.Play.Dialogs
 
     public partial class PickCardsDialog
     {
+        public Game CurrentGame;
         public PickCardsDialog()
         {
+            CurrentGame = Program.GameEngine.Definition;
             CardPool = new ObservableCollection<DataNew.Entities.Card>();
             CardPoolView = new ListCollectionView(CardPool) {Filter = FilterCard};
             UnlimitedPool = new ObservableCollection<DataNew.Entities.Card>();
