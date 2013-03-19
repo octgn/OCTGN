@@ -127,8 +127,10 @@
                 {
                     foreach (var ilist in Index)
                     {
-                        var def = Defs.First(x => x.Key == ilist.Key);
-                        foreach (var i in ilist.Value)
+                        var il = ilist;
+                        var defs = Defs.Where(x => x.Key == il.Key).ToArray();
+                        var def = defs.First();
+                        foreach (var i in il.Value)
                         {
                             T obj = null;
                             var path = "";

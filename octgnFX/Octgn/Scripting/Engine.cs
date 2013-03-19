@@ -21,11 +21,16 @@ using Octgn.Properties;
 
 namespace Octgn.Scripting
 {
+    using System.Reflection;
+
     using Octgn.Core.DataExtensionMethods;
+
+    using log4net;
 
     [Export]
     public class Engine : IDisposable
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public readonly ScriptScope ActionsScope;
         private readonly ScriptApi _api;
         private readonly ScriptEngine _engine;
@@ -45,6 +50,7 @@ namespace Octgn.Scripting
 
         public Engine(bool forTesting)
         {
+            Log.DebugFormat("Creating scripting engine: forTesting={0}",forTesting);
             AppDomain sandbox = CreateSandbox(forTesting);
             _engine = Python.CreateEngine(sandbox);
             _outputWriter = new StreamWriter(_outputStream);
@@ -54,6 +60,7 @@ namespace Octgn.Scripting
             _api = new ScriptApi(this);
 
             var workingDirectory = Directory.GetCurrentDirectory();
+            Log.DebugFormat("Setting working directory: {0}",workingDirectory);
             if (Program.GameEngine != null)
             {
                 workingDirectory = Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString());
@@ -63,13 +70,20 @@ namespace Octgn.Scripting
             }
             ActionsScope = CreateScope(workingDirectory);
             if (Program.GameEngine == null || forTesting) return;
-            foreach (
-                ScriptSource src in
-                    Program.GameEngine.Definition.GetScripts().Select(
-                        s => _engine.CreateScriptSourceFromString(s.Script, SourceCodeKind.Statements)))
+            Log.Debug("Loading Scripts...");
+            foreach (var script in Program.GameEngine.Definition.GetScripts().ToArray())
             {
+                Log.DebugFormat("Loading Script {0}",script.Path);
+                var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
                 src.Execute(ActionsScope);
+                Log.DebugFormat("Script Loaded");
             }
+            Log.Debug("Scripts Loaded.");
+            //foreach (ScriptSource src in Program.GameEngine.Definition.GetScripts().Select(
+            //            s => _engine.CreateScriptSourceFromString(s.Script, SourceCodeKind.Statements)))
+            //{
+            //    src.Execute(ActionsScope);
+            //}
         }
 
         internal ScriptJob CurrentJob

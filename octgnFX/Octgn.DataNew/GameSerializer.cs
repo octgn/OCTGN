@@ -234,7 +234,7 @@
                     var coll = Def.Config
                         .DefineCollection<GameScript>("Scripts")
                         .OverrideRoot(x => x.Directory("GameDatabase"))
-                        .SetPart(x=>x.Property(y=>y.GameId));
+                        .SetPart(x=>x.Directory(ret.Id.ToString()));
                     var pathParts = s.src.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     for (var index = 0; index < pathParts.Length; index++)
                     {
