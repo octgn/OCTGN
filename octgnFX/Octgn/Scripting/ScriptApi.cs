@@ -189,13 +189,12 @@ namespace Octgn.Scripting
 
         public string[] CardProperties()
         {
-            return Program.GameEngine.Definition.CardDefinition.Properties.Keys.ToArray();
+            return Program.GameEngine.Definition.CustomProperties.Select(x=>x.Name).ToArray();
         }
 
         public Tuple<int, int> CardSize()
         {
-            CardDef def = Program.GameEngine.Definition.CardDefinition;
-            return Tuple.Create(def.Width, def.Height);
+            return Tuple.Create(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight);
         }
 
         public bool IsAlternate(int id)
@@ -560,7 +559,7 @@ namespace Octgn.Scripting
             Guid modelGuid;
             if (!Guid.TryParse(modelId, out modelGuid)) return ret;
 
-            var model = Database.GetCardById(modelGuid);
+            var model = Program.GameEngine.Definition.GetCardById(modelGuid);
             if (model == null) return ret;
 
             var group = Group.Find(groupId);
@@ -582,7 +581,7 @@ namespace Octgn.Scripting
                             ids[i] = id;
                             keys[i] = Crypto.ModExp(key);
                             ret.Add(id);
-                            var card = new Card(Player.LocalPlayer, id, key, Program.GameEngine.Definition.CardDefinition, model, true);
+                            var card = new Card(Player.LocalPlayer, id, key, model, true);
                             group.AddAt(card, group.Count);
                         }
 
@@ -595,10 +594,10 @@ namespace Octgn.Scripting
 
                         switch (gt.Visibility)
                         {
-                            case GroupVisibility.Everybody:
+                            case DataNew.Entities.GroupVisibility.Everybody:
                                 group.SetVisibility(true, false);
                                 break;
-                            case GroupVisibility.Nobody:
+                            case DataNew.Entities.GroupVisibility.Nobody:
                                 group.SetVisibility(false, false);
                                 break;
                             default:
@@ -623,7 +622,7 @@ namespace Octgn.Scripting
 
             _engine.Invoke(() =>
                                {
-                                   DataNew.Entities.Card model = Database.GetCardById(modelGuid);
+                                   DataNew.Entities.Card model = Program.GameEngine.Definition.GetCardById(modelGuid);
                                    if (model == null)
                                    {
                                    }
@@ -634,14 +633,13 @@ namespace Octgn.Scripting
                                        var models = new Guid[quantity];
                                        int[] xs = new int[quantity], ys = new int[quantity];
 
-                                       CardDef def = Program.GameEngine.Definition.CardDefinition;
 
                                        if (Player.LocalPlayer.InvertedTable)
                                        {
-                                           x -= def.Width;
-                                           y -= def.Height;
+                                           x -= Program.GameEngine.Definition.CardWidth;
+                                           y -= Program.GameEngine.Definition.CardHeight;
                                        }
-                                       var offset = (int) (Math.Min(def.Width, def.Height)*0.2);
+                                       var offset = (int)(Math.Min(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight) * 0.2);
                                        if (Program.GameSettings.UseTwoSidedTable && TableControl.IsInInvertedZone(y))
                                            offset = -offset;
 

@@ -424,11 +424,11 @@ namespace Octgn
 
         internal struct GrpTmp : IEquatable<GrpTmp>
         {
-            public readonly Group Group;
-            public readonly List<Player> Viewers;
+            public readonly Play.Group Group;
+            public readonly List<Play.Player> Viewers;
             public readonly GroupVisibility Visibility;
 
-            public GrpTmp(Group g, GroupVisibility vis, List<Player> v)
+            public GrpTmp(Play.Group g, GroupVisibility vis, List<Play.Player> v)
             {
                 Group = g;
                 Visibility = vis;
