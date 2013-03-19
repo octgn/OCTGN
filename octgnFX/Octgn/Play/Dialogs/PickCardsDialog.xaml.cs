@@ -33,7 +33,7 @@ namespace Octgn.Play.Dialogs
             UnlimitedPool = new ObservableCollection<DataNew.Entities.Card>();
             UnlimitedPoolView = new ListCollectionView(UnlimitedPool);
             UnlimitedPoolView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-            LimitedDeck = Database.OpenedGame.CreateDeck();
+            LimitedDeck = Program.GameEngine.Definition.CreateDeck();
             CreateFilters();
             InitializeComponent();
         }
@@ -64,7 +64,7 @@ namespace Octgn.Play.Dialogs
                             }));
                         this.StopListenningForFilterValueChanges();
 
-                        foreach (Pack pack in packs.Select(Database.GetPackById))
+                        foreach (Pack pack in packs.Select(Program.GameEngine.Definition.GetPackById))
                         {
                             if (pack == null)
                             {
@@ -105,8 +105,7 @@ namespace Octgn.Play.Dialogs
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            CardDef cardDef = Program.GameEngine.Definition.CardDefinition;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
+            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardWidth / Program.GameEngine.Definition.CardHeight;
         }
 
         private void SetPicture(object sender, RoutedEventArgs e)
@@ -227,7 +226,7 @@ namespace Octgn.Play.Dialogs
         private void CreateFilters()
         {
             Filters = new ObservableCollection<Filter>();
-            foreach (Filter filter in Program.GameEngine.Definition.CardDefinition.Properties.Values
+            foreach (Filter filter in Program.GameEngine.Definition.CustomProperties
                 .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)).
                 Select(prop => new Filter
                                    {
