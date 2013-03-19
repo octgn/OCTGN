@@ -24,6 +24,7 @@ namespace Octgn
 
     using Card = Octgn.Play.Card;
     using Marker = Octgn.Play.Marker;
+    using Player = Octgn.Play.Player;
 
     public class GameEngine : INotifyPropertyChanged
     {
@@ -51,12 +52,12 @@ namespace Octgn
         {
             IsLocal = isLocal;
             _definition = def;
-            _table = new Table(def.TableDefinition);
+            _table = new Table(def.Table);
             Variables = new Dictionary<string, int>();
-            foreach (VariableDef varDef in def.Variables.Where(v => v.Global))
-                Variables.Add(varDef.Name, varDef.DefaultValue);
+            foreach (var varDef in def.Variables.Where(v => v.Global))
+                Variables.Add(varDef.Name, varDef.Default);
             GlobalVariables = new Dictionary<string, string>();
-            foreach (GlobalVariableDef varDef in def.GlobalVariables)
+            foreach (var varDef in def.GlobalVariables)
                 GlobalVariables.Add(varDef.Name, varDef.DefaultValue);
 
             nick = nickname;
@@ -160,25 +161,24 @@ namespace Octgn
         {
             if (_BeginCalled) return;
             _BeginCalled = true;
-            Database.Open(Definition, true);
             // Init fields
             _uniqueId = 1;
             TurnNumber = 0;
             TurnPlayer = null;
 
-            CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
-            CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
+            CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardFront);
+            CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardBack);
             // Create the global player, if any
-            if (Program.GameEngine.Definition.GlobalDefinition != null)
-                Player.GlobalPlayer = new Player(Program.GameEngine.Definition);
+            if (Program.GameEngine.Definition.GlobalPlayer != null)
+                Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
             // Create the local player
-            Player.LocalPlayer = new Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
                                      OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version);
             // Load all game markers
-            foreach (DataNew.Entities.Marker m in Database.GetAllMarkers())
+            foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
                 _markersById.Add(m.Id, m);
 
             Program.IsGameRunning = true;
@@ -195,10 +195,10 @@ namespace Octgn
             //CardFrontBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Front);
             //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
-            if (Program.GameEngine.Definition.GlobalDefinition != null)
-                Player.GlobalPlayer = new Player(Program.GameEngine.Definition);
+            if (Program.GameEngine.Definition.GlobalPlayer != null)
+                Play.Player.GlobalPlayer = new Play.Player(Program.GameEngine.Definition);
             // Create the local player
-            Player.LocalPlayer = new Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
@@ -215,15 +215,15 @@ namespace Octgn
         {
             TurnNumber = 0;
             TurnPlayer = null;
-            foreach (Player p in Player.All)
+            foreach (var p in Player.All)
             {
-                foreach (Group g in p.Groups)
+                foreach (var g in p.Groups)
                     g.Reset();
-                foreach (Counter c in p.Counters)
+                foreach (var c in p.Counters)
                     c.Reset();
-                foreach (VariableDef varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
-                    p.Variables[varDef.Name] = varDef.DefaultValue;
-                foreach (GlobalVariableDef g in Definition.PlayerDefinition.GlobalVariables)
+                foreach (var varDef in Definition.Variables.Where(v => !v.Global && v.Reset))
+                    p.Variables[varDef.Name] = varDef.Default;
+                foreach (var g in Definition.Player.GlobalVariables)
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
             Table.Reset();
@@ -231,9 +231,9 @@ namespace Octgn
             CardIdentity.Reset();
             Selection.Clear();
             RandomRequests.Clear();
-            foreach (VariableDef varDef in Definition.Variables.Where(v => v.Global && v.Reset))
-                Variables[varDef.Name] = varDef.DefaultValue;
-            foreach (GlobalVariableDef g in Definition.GlobalVariables)
+            foreach (var varDef in Definition.Variables.Where(v => v.Global && v.Reset))
+                Variables[varDef.Name] = varDef.Default;
+            foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug
             PlayWindow mainWin = Program.PlayWindow;
@@ -269,22 +269,21 @@ namespace Octgn
         public void LoadDeck(DataNew.Entities.IDeck deck)
         {
             Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
-            GameDef def = Program.GameEngine.Definition;
-            DeckDef deckDef = deck.IsShared ? def.SharedDeckDefinition : def.DeckDefinition;
-            CardDef cardDef = def.CardDefinition;
+            var def = Program.GameEngine.Definition;
+            var deckDef = deck.IsShared ? def.SharedDeckSections : def.DeckSections;
             int nCards = deck.CardCount();
             var ids = new int[nCards];
             var keys = new ulong[nCards];
             var cards = new Card[nCards];
-            var groups = new Group[nCards];
+            var groups = new Play.Group[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
             int j = 0;
             foreach (DataNew.Entities.Section section in deck.Sections)
             {
-                DeckSectionDef sectionDef = deckDef.Sections[section.Name];
+                var sectionDef = deckDef[section.Name];
                 if (sectionDef == null)
                     throw new InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
-                Group group = player.Groups.First(x => x.Name == sectionDef.Group);
+                Play.Group group = player.Groups.First(x => x.Name == sectionDef.Group);
 
                 //In order to make the clients know what the card is (if visibility is set so that they can see it),
                 //we have to set the visibility to Nobody, and then after the cards are sent, set the visibility back
@@ -297,7 +296,7 @@ namespace Octgn
                 }
                 foreach (DataNew.Entities.MultiCard element in section.Cards)
                 {
-                    DataNew.Entities.Card mod = Database.GetCardById(element.Id);
+                    DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
                     for (int i = 0; i < element.Quantity; i++)
                     { //for every card in the deck, generate a unique key for it, ID for it
                         ulong key = ((ulong)Crypto.PositiveRandom()) << 32 | element.Id.Condense();
@@ -305,7 +304,7 @@ namespace Octgn
                         ids[j] = id;
                         keys[j] = Crypto.ModExp(key);
                         groups[j] = group;
-                        var card = new Card(player, id, key, cardDef, mod, true);
+                        var card = new Card(player, id, key, mod, true);
                         cards[j++] = card;
                         group.AddAt(card, group.Count);
                     }

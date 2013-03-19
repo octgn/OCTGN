@@ -26,8 +26,8 @@
         public GlobalPlayer GlobalPlayer { get; set; }
         public List<string> Authors { get; set; }
         public List<string> Tags { get; set; } 
-        public List<string> DeckSections { get; set; }
-        public List<string> SharedDeckSections { get; set; }
+        public Dictionary<string,DeckSection> DeckSections { get; set; }
+        public Dictionary<string,DeckSection> SharedDeckSections { get; set; }
         public List<PropertyDef> CustomProperties { get; set; }
         public List<GlobalVariable> GlobalVariables { get; set; }
         public List<Variable> Variables { get; set; } 

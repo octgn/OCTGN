@@ -44,8 +44,8 @@
                               CardCornerRadius = int.Parse(g.card.cornerRadius),
                               Version = Version.Parse(g.version),
                               CustomProperties = new List<PropertyDef>(),
-                              DeckSections = new List<string>(),
-                              SharedDeckSections = new List<string>(),
+                              DeckSections = new Dictionary<string,DeckSection>(),
+                              SharedDeckSections = new Dictionary<string,DeckSection>(),
                               GlobalVariables = new List<GlobalVariable>(),
                               Authors = g.authors.Split(',').ToList(),
                               Description = g.description,
@@ -157,14 +157,14 @@
             {
                 foreach (var ds in g.deck)
                 {
-                    ret.DeckSections.Add(ds.name);
+                    ret.DeckSections.Add(ds.name, new DeckSection{Group=ds.group,Name = ds.name});
                 }
             }
             if (g.sharedDeck != null)
             {
                 foreach (var s in g.sharedDeck)
                 {
-                    ret.SharedDeckSections.Add(s.name);
+                    ret.SharedDeckSections.Add(s.name, new DeckSection { Group = s.group, Name = s.name });
                 }
             }
             #endregion deck
