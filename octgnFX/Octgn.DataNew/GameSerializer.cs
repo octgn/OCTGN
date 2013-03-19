@@ -41,6 +41,7 @@
                               CardFront = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : g.card.front ,
                               CardHeight = int.Parse(g.card.height),
                               CardWidth = int.Parse(g.card.width),
+                              CardCornerRadius = int.Parse(g.card.cornerRadius),
                               Version = Version.Parse(g.version),
                               CustomProperties = new List<PropertyDef>(),
                               DeckSections = new List<string>(),
@@ -55,9 +56,9 @@
                               IconUrl = g.iconurl,
                               Tags = g.tags.Split(' ').ToList(),
                               OctgnVersion = Version.Parse(g.octgnVersion),
-                              Variables = new List<Variable>()
+                              Variables = new List<Variable>(),
+                              MarkerSize = g.markersize
                           };
-
             #region variables
             if (g.variables != null)
             {
