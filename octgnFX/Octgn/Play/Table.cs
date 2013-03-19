@@ -4,7 +4,7 @@ namespace Octgn.Play
 {
     public class Table : Group
     {
-        public Table(Group def)
+        public Table(DataNew.Entities.Group def)
             : base(null, def)
         {
         }
