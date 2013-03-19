@@ -5,6 +5,7 @@
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Data;
+    using System.IO;
     using System.IO.Abstractions;
     using System.Linq;
     using System.Xml.Linq;
@@ -58,6 +59,11 @@
             ret = IO.Path.Combine(ret, "Defs");
             ret = IO.Path.Combine(ret, game.Filename);
             return ret;
+        }
+
+        public static string DecksPath(this Game game)
+        {
+            return Path.Combine(game.GetInstallPath(), "Decks");
         }
 
         public static Deck CreateDeck(this Game game)

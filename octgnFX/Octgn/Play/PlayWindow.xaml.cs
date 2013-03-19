@@ -89,8 +89,8 @@ namespace Octgn.Play
             _fadeIn = (Storyboard) Resources["ImageFadeIn"];
             _fadeOut = (Storyboard) Resources["ImageFadeOut"];
 
-            cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardDefinition.Back));
-            if (Program.GameEngine.Definition.CardDefinition.CornerRadius > 0)
+            cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardBack));
+            if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 cardViewer.Clip = new RectangleGeometry();
             AddHandler(CardControl.CardHoveredEvent, new CardEventHandler(CardHovered));
             AddHandler(CardRun.ViewCardModelEvent, new EventHandler<CardModelEventArgs>(ViewCardModel));
@@ -178,7 +178,7 @@ namespace Octgn.Play
                 return;
             }
 
-            PlayerDef def = Program.GameEngine.Definition.PlayerDefinition;
+            var def = Program.GameEngine.Definition.Player;
             string format = def.IndicatorsFormat;
             if (format == null)
             {
@@ -359,10 +359,10 @@ namespace Octgn.Play
                         shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
                 if (match != null)
                 {
-                    if (match.ActionDef.Execute != null)
-                        ScriptEngine.ExecuteOnCards(match.ActionDef.Execute, Selection.Cards);
-                    else if (match.ActionDef.BatchExecute != null)
-                        ScriptEngine.ExecuteOnBatch(match.ActionDef.BatchExecute, Selection.Cards);
+                    if (match.ActionDef.AsAction().Execute != null)
+                        ScriptEngine.ExecuteOnCards(match.ActionDef.AsAction().Execute, Selection.Cards);
+                    else if (match.ActionDef.AsAction().BatchExecute != null)
+                        ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().BatchExecute, Selection.Cards);
                     e.Handled = true;
                     return;
                 }
@@ -375,8 +375,8 @@ namespace Octgn.Play
             {
                 ActionShortcut a = g.GroupShortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e));
                 if (a == null) continue;
-                if (a.ActionDef.Execute != null)
-                    ScriptEngine.ExecuteOnGroup(a.ActionDef.Execute, g);
+                if (a.ActionDef.AsAction().Execute != null)
+                    ScriptEngine.ExecuteOnGroup(a.ActionDef.AsAction().Execute, g);
                 e.Handled = true;
                 return;
             }
@@ -451,12 +451,11 @@ namespace Octgn.Play
             _fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
 
             if (cardViewer.Clip == null) return;
-            CardDef cardDef = Program.GameEngine.Definition.CardDefinition;
             var clipRect = ((RectangleGeometry) cardViewer.Clip);
             double height = Math.Min(cardViewer.MaxHeight, cardViewer.Height);
             double width = cardViewer.Width*height/cardViewer.Height;
             clipRect.Rect = new Rect(new Size(width, height));
-            clipRect.RadiusX = clipRect.RadiusY = cardDef.CornerRadius*height/cardDef.Height;
+            clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardHeight;
         }
 
         private void NextTurnClicked(object sender, RoutedEventArgs e)
@@ -546,7 +545,7 @@ namespace Octgn.Play
                           {
                               AddExtension = true,
                               Filter = "Octgn decks|*.o8d",
-                              InitialDirectory = Program.GameEngine.Definition.DecksPath
+                              InitialDirectory = Program.GameEngine.Definition.DecksPath()
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
 
