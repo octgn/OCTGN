@@ -28,7 +28,10 @@ namespace Octgn.Play.Dialogs
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
-            var uri = new Uri(Program.GameEngine.Definition.PackUri.Replace(',', '/'));
+            // TODO - [DB MIGRATION] - Reimplement this piece - Kelly Elton - 3/18/2013
+            // The uri assignment below has the real code commented out. 
+            // We need to have a def and load the path from the def.
+            var uri = new Uri(@"c:\");//new Uri(Program.GameEngine.Definition.PackUri.Replace(',', '/'));
             string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');            
             using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
