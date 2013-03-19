@@ -22,6 +22,8 @@ using Octgn.Properties;
 
 namespace Octgn.Scripting
 {
+    using Octgn.Core.DataExtensionMethods;
+
     [Export]
     public class Engine : IDisposable
     {
@@ -64,8 +66,8 @@ namespace Octgn.Scripting
             if (Program.GameEngine == null || forTesting) return;
             foreach (
                 ScriptSource src in
-                    Program.GameEngine.Definition.Scripts.Select(
-                        s => _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
+                    Program.GameEngine.Definition.GetScripts().Select(
+                        s => _engine.CreateScriptSourceFromString(s.Script, SourceCodeKind.Statements)))
             {
                 src.Execute(ActionsScope);
             }
@@ -79,18 +81,18 @@ namespace Octgn.Scripting
         public String[] TestScripts(GameEngine game)
         {
             var errors = new List<string>();
-            foreach (ScriptDef s in game.Definition.Scripts)
+            foreach (var s in game.Definition.GetScripts())
             {
                 try
                 {
-                    ScriptSource src = _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+                    ScriptSource src = _engine.CreateScriptSourceFromString(s.Script, SourceCodeKind.Statements);
                     src.Execute(ActionsScope);
                 }
                 catch (Exception e)
                 {
                     var eo = _engine.GetService<ExceptionOperations>();
                     string error = eo.FormatException(e);
-                    errors.Add(String.Format("[{2}:{0}]: Python Error:\n{1}", game.Definition.Name, error, s.FileName));
+                    errors.Add(String.Format("[{2}:{0}]: Python Error:\n{1}", game.Definition.Name, error, s.Path));
                 }
             }
             return errors.ToArray();
