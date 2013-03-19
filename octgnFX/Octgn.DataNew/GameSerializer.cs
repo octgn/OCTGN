@@ -480,7 +480,7 @@
                     marker.Id = new Guid(m.Attribute("id").Value);
                     marker.Name = m.Attribute("name").Value;
                     var mpathd = new DirectoryInfo(Path.Combine(directory, "Markers"));
-                    var mpath = mpathd.GetFiles(marker.Id.ToString() + ".*", SearchOption.TopDirectoryOnly).First();
+                    var mpath = mpathd.Exists == false ? null : mpathd.GetFiles(marker.Id.ToString() + ".*", SearchOption.TopDirectoryOnly).First();
                     marker.IconUri = mpath == null ? null : Path.Combine(directory, "Markers", mpath.FullName);
                     (ret.Markers as List<Marker>).Add(marker);
                 }
