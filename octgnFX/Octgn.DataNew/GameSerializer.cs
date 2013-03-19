@@ -21,10 +21,12 @@
     public class GameSerializer : IFileDbSerializer
     {
         public ICollectionDefinition Def { get; set; }
+
+        private string directory;
         public object Deserialize(string fileName)
         {
             var serializer = new XmlSerializer(typeof(game));
-            var directory = new FileInfo(fileName).Directory.FullName;
+            directory = new FileInfo(fileName).Directory.FullName;
             game g = null;
             using (var fs = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read))
             {
@@ -93,7 +95,7 @@
                                 {
                                     Id = (byte)curCounter,
                                     Name = i.name,
-                                    Icon = i.icon,
+                                    Icon = Path.Combine(directory,i.icon ?? ""),
                                     Reset = bool.Parse(i.reset.ToString()),
                                     Start = int.Parse(i.@default)
                                 });
@@ -133,7 +135,7 @@
                                      {
                                          Id = (byte)curCounter,
                                          Name = i.name,
-                                         Icon = i.icon,
+                                         Icon = Path.Combine(directory,i.icon ?? ""),
                                          Reset = bool.Parse(i.reset.ToString()),
                                          Start = int.Parse(i.@default)
                                      });
@@ -209,7 +211,7 @@
                 foreach (gameFont font in g.fonts)
                 {
                     Font f = new Font();
-                    f.Src = font.src;
+                    f.Src = Path.Combine(directory,font.src ?? "");
                     f.Size = (int)font.size;
                     switch (font.target)
                     {
@@ -289,9 +291,9 @@
             {
                 Id = (byte)id,
                 Name = grp.name,
-                Background = grp.background,
+                Background = grp.background == null ? null : Path.Combine(directory,grp.background),
                 BackgroundStyle = grp.backgroundStyle.ToString(),
-                Board = grp.board,
+                Board = grp.board == null ? null : Path.Combine(directory,grp.board),
                 BoardPosition = grp.boardPosition  == null ? new DataRectangle{X = 0,Y=0,Height = 0,Width = 0} : 
                     new DataRectangle
                     {
@@ -303,7 +305,7 @@
                 Collapsed = bool.Parse(grp.collapsed.ToString()),
                 Height = Int32.Parse(grp.height),
                 Width = Int32.Parse(grp.width),
-                Icon = grp.icon,
+                Icon = grp.icon == null ? null : Path.Combine(directory,grp.icon),
                 Ordered = bool.Parse(grp.ordered.ToString()),
                 Shortcut = grp.shortcut,
                 CardActions = new List<IGroupAction>(),
