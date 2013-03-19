@@ -115,7 +115,7 @@ namespace Octgn.Controls
         private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game)
         {
             Program.IsHost = false;
-            Program.GameEngine = new GameEngine(GameDef.FromO8G(game.GetFullPath()),Program.LobbyClient.Me.UserName);
+            Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName);
             Program.CurrentOnlineGameName = hostedGame.Name;
             IPAddress hostAddress =  Dns.GetHostAddresses(Program.GameServerPath).FirstOrDefault();
             if(hostAddress == null)
@@ -204,7 +204,7 @@ namespace Octgn.Controls
                     if (Program.PreGameLobbyWindow == null)
                     {
                         Program.IsHost = false;
-                        Program.GameEngine = new Octgn.GameEngine(GameDef.FromO8G(connectOfflineGameDialog.Game.GetFullPath()), null,true);
+                        Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null,true);
 
                         Program.PreGameLobbyWindow = new PreGameLobbyWindow();
                         Program.PreGameLobbyWindow.Setup(true,Program.MainWindowNew);
