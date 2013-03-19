@@ -83,23 +83,29 @@
                 var player = new GlobalPlayer { Counters = new List<Counter>(), Groups = new List<Group>() };
                 var curCounter = 1;
                 var curGroup = 1;
-                foreach (var i in g.shared.counter)
+                if (g.shared.counter != null)
                 {
-                    (player.Counters as List<Counter>)
-                        .Add(new Counter
-                                 {
-                                     Id = (byte)curCounter,
-                                     Name = i.name,
-                                     Icon = i.icon,
-                                     Reset = bool.Parse(i.reset.ToString()),
-                                     Start = int.Parse(i.@default)
-                                 });
-                    curCounter++;
+                    foreach (var i in g.shared.counter)
+                    {
+                        (player.Counters as List<Counter>).Add(
+                            new Counter
+                                {
+                                    Id = (byte)curCounter,
+                                    Name = i.name,
+                                    Icon = i.icon,
+                                    Reset = bool.Parse(i.reset.ToString()),
+                                    Start = int.Parse(i.@default)
+                                });
+                        curCounter++;
+                    }
                 }
-                foreach (var i in g.shared.group)
+                if (g.shared.group != null)
                 {
-                    (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
-                    curGroup++;
+                    foreach (var i in g.shared.group)
+                    {
+                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
+                        curGroup++;
+                    }
                 }
                 ret.GlobalPlayer = player;
             }
@@ -285,7 +291,7 @@
                 Background = grp.background,
                 BackgroundStyle = grp.backgroundStyle.ToString(),
                 Board = grp.board,
-                BoardPosition =
+                BoardPosition = grp.boardPosition  == null ? new DataRectangle{X = 0,Y=0,Height = 0,Width = 0} : 
                     new DataRectangle
                     {
                         X = double.Parse(grp.boardPosition.Split(',')[0]),
@@ -302,40 +308,43 @@
                 CardActions = new List<IGroupAction>(),
                 GroupActions = new List<IGroupAction>()
             };
-            foreach (var item in grp.Items)
+            if (grp.Items != null)
             {
-                if (item is action)
+                foreach (var item in grp.Items)
                 {
-                    var i = item as action;
-                    var to = new GroupAction
+                    if (item is action)
                     {
-                        Name = i.menu,
-                        Shortcut = i.shortcut,
-                        BatchExecute = i.batchExecute,
-                        Execute = i.execute,
-                        DefaultAction = bool.Parse(i.@default.ToString())
-                    };
-                    if (item is cardAction)
-                    {
-                        (ret.CardActions as List<IGroupAction>).Add(to);
+                        var i = item as action;
+                        var to = new GroupAction
+                                     {
+                                         Name = i.menu,
+                                         Shortcut = i.shortcut,
+                                         BatchExecute = i.batchExecute,
+                                         Execute = i.execute,
+                                         DefaultAction = bool.Parse(i.@default.ToString())
+                                     };
+                        if (item is cardAction)
+                        {
+                            (ret.CardActions as List<IGroupAction>).Add(to);
+                        }
+                        else if (item is groupAction)
+                        {
+                            (ret.GroupActions as List<IGroupAction>).Add(to);
+                        }
                     }
-                    else if (item is groupAction)
+                    else if (item is actionSubmenu)
                     {
-                        (ret.GroupActions as List<IGroupAction>).Add(to);
-                    }
-                }
-                else if (item is actionSubmenu)
-                {
-                    var i = item as actionSubmenu;
-                    var to = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
-                    to.Children = this.DeserializeGroupActionGroup(i);
-                    if (item is cardActionSubmenu)
-                    {
-                        (ret.CardActions as List<IGroupAction>).Add(to);
-                    }
-                    else if (item is groupActionSubmenu)
-                    {
-                        (ret.GroupActions as List<IGroupAction>).Add(to);
+                        var i = item as actionSubmenu;
+                        var to = new GroupActionGroup { Children = new List<IGroupAction>(), Name = i.menu };
+                        to.Children = this.DeserializeGroupActionGroup(i);
+                        if (item is cardActionSubmenu)
+                        {
+                            (ret.CardActions as List<IGroupAction>).Add(to);
+                        }
+                        else if (item is groupActionSubmenu)
+                        {
+                            (ret.GroupActions as List<IGroupAction>).Add(to);
+                        }
                     }
                 }
             }

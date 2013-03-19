@@ -132,19 +132,23 @@
                         {
                             T obj = null;
                             var path = "";
+#if(!DEBUG)
                             try
                             {
+#endif
                                 path = Path.Combine(
                                     i.FullName, def.Parts.First(x => x.PartType == PartType.File).PartString());
                                 if (def.Config.Cache != null) obj = def.Config.Cache.GetObjectFromPath<T>(path);
                                 if (obj == null) obj = (T)def.Serializer.Deserialize(path);
                                 if (def.Config.Cache != null) def.Config.Cache.AddObjectToCache(path, obj);
+#if(!DEBUG)
                             }
                             catch (Exception e)
                             {
                                 obj = null;
                                 Log.Error("Error desterilizing " + path + " for collection " + typeof(T).Name, e);
                             }
+#endif
                             if (obj != null) Objects.Add(obj);
                         }
                     }
