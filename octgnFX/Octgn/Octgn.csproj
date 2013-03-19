@@ -328,7 +328,6 @@
     <Compile Include="Definitions\CounterDef.cs" />
     <Compile Include="Definitions\DeckDef.cs" />
     <Compile Include="Definitions\GameDef.cs" />
-    <Compile Include="Definitions\LocalDef.cs" />
     <Compile Include="Definitions\ScriptDef.cs" />
     <Compile Include="Definitions\VariableDef.cs" />
     <Compile Include="Extentions\String.cs" />

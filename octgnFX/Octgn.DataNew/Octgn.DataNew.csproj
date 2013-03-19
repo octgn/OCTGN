@@ -37,11 +37,13 @@
     <Compile Include="DbContext.cs" />
     <Compile Include="Def.cs" />
     <Compile Include="Entities\Card.cs" />
+    <Compile Include="Entities\Counter.cs" />
     <Compile Include="Entities\DataRectangle.cs" />
     <Compile Include="Entities\Deck.cs" />
     <Compile Include="Entities\Font.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="Entities\GameScript.cs" />
+    <Compile Include="Entities\GlobalVariable.cs" />
     <Compile Include="Entities\Group.cs" />
     <Compile Include="Entities\GroupVisibility.cs" />
     <Compile Include="Entities\IPackItem.cs" />
@@ -57,6 +59,7 @@
     <Compile Include="Entities\PropertyDef.cs" />
     <Compile Include="Entities\Section.cs" />
     <Compile Include="Entities\Set.cs" />
+    <Compile Include="Entities\Variable.cs" />
     <Compile Include="FileDB\CollectionDefinition.cs" />
     <Compile Include="FileDB\CollectionQuery.cs" />
     <Compile Include="FileDB\FileDb.cs" />

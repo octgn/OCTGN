@@ -13,7 +13,7 @@ namespace Octgn.Play
 
         private bool _collapsed;
 
-        internal Pile(Player owner, GroupDef def)
+        internal Pile(Player owner, DataNew.Entities.Group def)
             : base(owner, def)
         {
             _collapsed = def.Collapsed;
