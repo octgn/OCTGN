@@ -76,6 +76,8 @@ namespace Octgn.Controls
 
 		void ButtonInstallGame_Click(object sender, RoutedEventArgs e)
 		{
+		    // TODO - [DB Migration] - Reimplement install game - Kelly Elton - 3/18/2013
+            // This should just open a .o8g and unzip it to the right location. That's all that's required.
 			var ofd = new OpenFileDialog { Filter = "Game definition files (*.o8g)|*.o8g", Multiselect = true };
 			if (ofd.ShowDialog() != true) return;
 			var max = ofd.FileNames.Length;
@@ -86,7 +88,7 @@ namespace Octgn.Controls
 							 {
 								 var file = ofd.FileNames[i];
 								 var newFileName = Uri.UnescapeDataString(file);
-								 GameDef.FromO8G(newFileName).Install();
+								 //GameDef.FromO8G(newFileName).Install();
 								 UpdateTask(i,max);
 							 }
 							 ReloadGameList();
