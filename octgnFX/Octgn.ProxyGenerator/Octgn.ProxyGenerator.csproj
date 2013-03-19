@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Definitions\CardDefinition.cs" />
+    <Compile Include="Definitions\MultiMatchDefinition.cs" />
     <Compile Include="FieldMapper.cs" />
     <Compile Include="Mappings\FieldMapping.cs" />
     <Compile Include="Definitions\OverlayDefinition.cs" />
