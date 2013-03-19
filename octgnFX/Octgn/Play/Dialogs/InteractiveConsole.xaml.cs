@@ -29,7 +29,7 @@ namespace Octgn.Play.Dialogs
         {
             InitializeComponent();
             Program.GameEngine.ComposeParts(this);
-            _scope = _scriptEngine.CreateScope(Path.Combine(Prefs.DataDirectory, "Games", Program.GameEngine.Definition.Id.ToString()));
+            _scope = _scriptEngine.CreateScope(Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString()));
 
             Loaded += (s, a) => prompt.Focus();
         }

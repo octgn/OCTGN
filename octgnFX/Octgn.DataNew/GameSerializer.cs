@@ -224,7 +224,7 @@
                 {
                     var coll = Def.Config
                         .DefineCollection<GameScript>("Scripts")
-                        .OverrideRoot(x=>x.Directory("Games"))
+                        .OverrideRoot(x => x.Directory("GameDatabase"))
                         .SetPart(x=>x.Property(y=>y.GameId));
                     var pathParts = s.src.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     for (var index = 0; index < pathParts.Length; index++)
@@ -242,7 +242,7 @@
             {
                 var coll =
                     Def.Config.DefineCollection<ProxyDefinition>("Proxies")
-                       .OverrideRoot(x => x.Directory("Games"))
+                       .OverrideRoot(x => x.Directory("GameDatabase"))
                        .SetPart(x => x.Property(y => y.Key));
                 var pathParts = g.proxygen.definitionsrc.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                 for (var index = 0; index < pathParts.Length; index++)

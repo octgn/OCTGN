@@ -127,7 +127,7 @@ namespace Octgn
             Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
-            GamesPath = BasePath + @"Games\";
+            GamesPath = BasePath + @"GameDatabase\";
             Log.Info("Creating main window...");
             MainWindowNew = new Main();
             Log.Info("Main window Created, Launching it.");

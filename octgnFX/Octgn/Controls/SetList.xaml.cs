@@ -93,7 +93,7 @@ namespace Octgn.Controls
 
 
 			//Move the definition file to a new location, so that the old one can be deleted
-			string path = System.IO.Path.Combine(Prefs.DataDirectory, "Games", SelectedGame.Id.ToString(), "Sets");
+            string path = System.IO.Path.Combine(Prefs.DataDirectory, "GameDatabase", SelectedGame.Id.ToString(), "Sets");
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 

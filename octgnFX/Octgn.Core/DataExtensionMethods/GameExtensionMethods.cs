@@ -54,7 +54,7 @@
         public static string GetFullPath(this Game game)
         {
             var ret = "";
-            ret = IO.Path.Combine(Paths.DataDirectory, "Games");
+            ret = IO.Path.Combine(Paths.DataDirectory, "GameDatabase");
             ret = IO.Path.Combine(ret, game.Id.ToString());
             ret = IO.Path.Combine(ret, "Defs");
             ret = IO.Path.Combine(ret, game.Filename);
@@ -80,7 +80,7 @@
 
         public static string GetInstallPath(this Game game)
         {
-            return IO.Path.Combine(IO.Path.Combine(Paths.DataDirectory, "Games"), game.Id.ToString());
+            return IO.Path.Combine(IO.Path.Combine(Paths.DataDirectory, "GameDatabase"), game.Id.ToString());
         }
 
         public static Uri GetCardBackUri(this Game game)

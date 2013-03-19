@@ -57,7 +57,7 @@ namespace Octgn.Scripting
             var workingDirectory = Directory.GetCurrentDirectory();
             if (Program.GameEngine != null)
             {
-                workingDirectory = Path.Combine(Prefs.DataDirectory, "Games", Program.GameEngine.Definition.Id.ToString());
+                workingDirectory = Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString());
                 var search = _engine.GetSearchPaths();
                 search.Add(workingDirectory);
                 _engine.SetSearchPaths(search);

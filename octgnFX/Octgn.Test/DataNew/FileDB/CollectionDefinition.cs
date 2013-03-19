@@ -29,12 +29,12 @@
             var config = new FileDbConfiguration();
             config
                 .SetDirectory(Paths.DataDirectory)
-                .DefineCollection<Game>("Games")
+                .DefineCollection<Game>("GameDatabase")
                 .SetPart(x => x.Property(y => y.Id))
                 .SetPart(x => x.File("definition.xml"))
                 .Conf()
                 .DefineCollection<Set>("Sets")
-                .OverrideRoot(x => x.Directory("Games"))
+                .OverrideRoot(x => x.Directory("GameDatabase"))
                 .SetPart(x => x.Property(y => y.GameId))
                 .SetPart(x => x.Directory("Sets"))
                 .SetPart(x => x.Property(y => y.Id))
@@ -46,7 +46,7 @@
 
             Assert.AreEqual("{Id}", conf.Parts.First().PartString());
             Assert.AreEqual("definition.xml", conf.Parts.Skip(1).Take(1).First().PartString());
-            Assert.AreEqual("Games", conf.Root.PartString());
+            Assert.AreEqual("GameDatabase", conf.Root.PartString());
             foreach (var c in config.Configurations)
             {
                 System.Console.WriteLine(c.Path);
