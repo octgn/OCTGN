@@ -10,6 +10,7 @@ namespace Octgn.ProxyGenerator.Definitions
     {
         public List<OverlayDefinition> Overlays = new List<OverlayDefinition>();
         public List<SectionDefinition> Sections = new List<SectionDefinition>();
+        public MultiMatchDefinition MultiMatch = null;
 
         public string id;
         public string filename;
@@ -29,6 +30,10 @@ namespace Octgn.ProxyGenerator.Definitions
                 if (subNode.Name.Equals("overlays"))
                 {
                     ret.LoadOverlays(subNode);
+                }
+                if (subNode.Name.Equals("multimatch"))
+                {
+                    ret.LoadMultiMatch(subNode);
                 }
             }
 
@@ -51,6 +56,11 @@ namespace Octgn.ProxyGenerator.Definitions
             {
                 Sections.Add(SectionDefinition.LoadSectionDefinition(sectionNode));
             }
+        }
+
+        public void LoadMultiMatch(XmlNode node)
+        {
+            MultiMatch = MultiMatchDefinition.LoadMultiMatchDefinition(node);
         }
     }
 }
