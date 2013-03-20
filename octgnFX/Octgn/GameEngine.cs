@@ -176,8 +176,12 @@ namespace Octgn
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version);
             // Load all game markers
             foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
-                _markersById.Add(m.Id, m);
-
+            {
+                if (!_markersById.ContainsKey(m.Id))
+                {
+                    _markersById.Add(m.Id, m);
+                }
+            }
             Program.IsGameRunning = true;
         }
 
