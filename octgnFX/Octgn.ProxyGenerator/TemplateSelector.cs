@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Octgn.ProxyGenerator
 {
-    public class TemplateSelector
+    public class TemplateManager
     {
         private List<CardDefinition> templates = null;
 
@@ -16,7 +16,7 @@ namespace Octgn.ProxyGenerator
 
         private List<TemplateMapping> templateMappings;
 
-        public TemplateSelector()
+        public TemplateManager()
         {
             templates = new List<CardDefinition>();
             templateMappings = new List<TemplateMapping>();
@@ -33,7 +33,7 @@ namespace Octgn.ProxyGenerator
 
         public CardDefinition GetTemplate(Dictionary<string,string> values)
         {
-            string field = templateMappings[0].Field;
+            string field = templateMappings[0].Name;
             if (field != null && values.ContainsKey(field))
             {
                 return GetTemplate(values[field]);
@@ -81,7 +81,7 @@ namespace Octgn.ProxyGenerator
         {
             TemplateMapping mapping = new TemplateMapping()
             {
-                Field = field,
+                Name = field,
                 MapTo = mapTo
             };
             if (ContainsMapping(mapping))
@@ -95,7 +95,7 @@ namespace Octgn.ProxyGenerator
         {
             TemplateMapping mapping = new TemplateMapping()
             {
-                Field = field
+                Name = field
             };
             return (ContainsMapping(mapping));
         }
@@ -104,7 +104,7 @@ namespace Octgn.ProxyGenerator
         {
             foreach (TemplateMapping map in templateMappings)
             {
-                if (map.Field == mapping.Field)
+                if (map.Equals(mapping))
                 {
                     return (true);
                 }

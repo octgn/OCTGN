@@ -6,11 +6,12 @@
     using System.Xml;
 
     using Octgn.ProxyGenerator.Definitions;
+    using System.Drawing.Imaging;
 
     public class ProxyDefinition
     {
         public object Key { get; internal set; }
-        public TemplateSelector TemplateSelector { get; internal set; }
+        public TemplateManager TemplateSelector { get; internal set; }
         public FieldMapper FieldMapper { get; internal set; }
         internal XmlDocument Document;
         public string RootPath { get; internal set; }
@@ -19,7 +20,7 @@
         {
             RootPath = rootPath;
             Key = key;
-            TemplateSelector = new TemplateSelector();
+            TemplateSelector = new TemplateManager();
             FieldMapper = new FieldMapper();
             FieldMapper.TemplateSelector = TemplateSelector;
             Load(path);
@@ -44,17 +45,21 @@
         public bool SaveProxyImage(Dictionary<string, string> values, string path)
         {
             Image proxy = GenerateProxyImage(values);
-            proxy.Save(path);
-            proxy.Dispose();
+            SaveProxyImage(proxy, path);
             return (File.Exists(path));
         }
 
         public bool SaveProxyImage(string templateID, Dictionary<string, string> values, string path)
         {
             Image proxy = GenerateProxyImage(templateID, values);
-            proxy.Save(path);
-            proxy.Dispose();
+            SaveProxyImage(proxy, path);
             return (File.Exists(path));
+        }
+
+        private void SaveProxyImage(Image proxy, string path)
+        {
+            proxy.Save(path, ImageFormat.Png);
+            proxy.Dispose();
         }
 
         internal void Load(string path)
