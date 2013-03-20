@@ -95,7 +95,8 @@ namespace Octgn.ProxyGenerator
         {
             TemplateMapping mapping = new TemplateMapping()
             {
-                Name = field
+                Name = field,
+                MapTo = string.Empty
             };
             return (ContainsMapping(mapping));
         }
