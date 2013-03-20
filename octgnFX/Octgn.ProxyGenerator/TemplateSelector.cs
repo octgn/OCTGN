@@ -74,9 +74,15 @@ namespace Octgn.ProxyGenerator
 
         public void AddMapping(string field)
         {
+            AddMapping(field, string.Empty);
+        }
+
+        public void AddMapping(string field, string mapTo)
+        {
             TemplateMapping mapping = new TemplateMapping()
             {
-                Field = field
+                Field = field,
+                MapTo = mapTo
             };
             if (ContainsMapping(mapping))
             {
@@ -96,7 +102,14 @@ namespace Octgn.ProxyGenerator
 
         public bool ContainsMapping(TemplateMapping mapping)
         {
-            return (templateMappings.Contains(mapping));
+            foreach (TemplateMapping map in templateMappings)
+            {
+                if (map.Field == mapping.Field)
+                {
+                    return (true);
+                }
+            }
+            return (false);
         }
     }
 }
