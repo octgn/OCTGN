@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Octgn.ProxyGenerator.Abstract;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Octgn.ProxyGenerator.Mappings
 {
-    public class TemplateMapping
+    public class TemplateMapping : Mapping
     {
-        public string Field { get; set; }
-        public string MapTo { get; set; }
     }
 }

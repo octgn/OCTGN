@@ -20,12 +20,12 @@ namespace Octgn.ProxyGenerator
         }
         internal ProxyManager()
         {
-            templateSelector = new TemplateSelector();
+            templateSelector = new TemplateManager();
             fieldMapper = new FieldMapper();
         }
         #endregion Singleton
 
-        private TemplateSelector templateSelector = null;
+        private TemplateManager templateSelector = null;
         private FieldMapper fieldMapper = null;
         private XmlDocument doc = null;
         public string rootPath;
@@ -103,7 +103,7 @@ namespace Octgn.ProxyGenerator
             return (fieldMapper);
         }
 
-        public TemplateSelector GetTemplateSelector()
+        public TemplateManager GetTemplateSelector()
         {
             return (templateSelector);
         }

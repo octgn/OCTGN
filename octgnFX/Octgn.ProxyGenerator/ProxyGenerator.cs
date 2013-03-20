@@ -10,6 +10,7 @@ using System.Xml;
 
 namespace Octgn.ProxyGenerator
 {
+    using System.Drawing.Imaging;
     using System.IO;
 
     public class ProxyGenerator
@@ -23,6 +24,8 @@ namespace Octgn.ProxyGenerator
         {
             var path = Path.Combine(rootPath, template.filename);
             Image ret = Image.FromFile(path);
+            //ret.PixelFormat = PixelFormat.Format32bppArgb;
+
 
             using (Graphics graphics = Graphics.FromImage(ret))
             {
