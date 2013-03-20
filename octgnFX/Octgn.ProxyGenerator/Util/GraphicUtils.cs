@@ -23,7 +23,7 @@ namespace Octgn.ProxyGenerator.Util
             {
                 Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
                 b.MakeTransparent();
-                graphics.DrawImageUnscaled(b, overlay.location.ToPoint());
+                graphics.DrawImage(b,overlay.location.x, overlay.location.y, b.Width, b.Height);
             }
         }
 
