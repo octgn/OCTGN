@@ -60,6 +60,7 @@ namespace Octgn.Controls
         {
             InitializeComponent();
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, new DragDeltaEventHandler(ListViewGameList_OnDragDelta), true);
+            ListViewGameList.MouseDoubleClick += ListViewGameListOnMouseDoubleClick;
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
@@ -68,6 +69,11 @@ namespace Octgn.Controls
             timer = new Timer(10000);
             timer.Start();
             timer.Elapsed += this.TimerElapsed;
+        }
+
+        private void ListViewGameListOnMouseDoubleClick(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            ButtonJoinClick(sender, null);
         }
 
         void RefreshGameList()
