@@ -23,11 +23,13 @@ namespace Octgn.ProxyGenerator
         public static Image GenerateProxy(string rootPath, CardDefinition template, Dictionary<string,string> values)
         {
             var path = Path.Combine(rootPath, template.filename);
-            Image ret = Image.FromFile(path);
-            //ret.PixelFormat = PixelFormat.Format32bppArgb;
+            Image temp = Image.FromFile(path);
+            Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
+            b.MakeTransparent();
+                //ret.PixelFormat = PixelFormat.Format32bppArgb;
 
 
-            using (Graphics graphics = Graphics.FromImage(ret))
+            using (Graphics graphics = Graphics.FromImage(b))
             {
                 foreach (OverlayDefinition overlay in template.Overlays)
                 {
@@ -44,7 +46,7 @@ namespace Octgn.ProxyGenerator
                 }
             }
 
-            return (ret);
+            return (b);
         }
 
 
