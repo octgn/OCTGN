@@ -9,7 +9,7 @@ namespace Octgn.ProxyGenerator
     public class FieldMapper
     {
         private List<FieldMapping> mappingList = null;
-        public TemplateSelector TemplateSelector { get; set; }
+        public TemplateManager TemplateSelector { get; set; }
 
         public FieldMapper()
         {
