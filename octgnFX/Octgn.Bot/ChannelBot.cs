@@ -53,8 +53,8 @@
                     Silence = true;
                     break;
                 case "sorry":
-                    this.Message("Better be. I'm a real sensitive guy.");
                     Silence = false;
+                    this.Message("Better be. I'm a real sensitive guy.");
                     break;
             }
             if (String.IsNullOrWhiteSpace(ircMessageEventArgs.Text.Trim())) return;
@@ -85,6 +85,9 @@
                         this.Message(".tv - Current test version");
                         this.Message(".todo {message} - Add a todo message");
                         this.Message(".todor {mess#} - Remove todo message");
+                        this.Message(".gtc - GTC Counter");
+                        this.Message(".g {whatever} - Google search");
+                        this.Message(".murder {username} - Kicks a user");
                         this.Message(".die - ...");
                         break;
                     }
@@ -186,13 +189,14 @@
                         task.Start();
                         break;
                     }
+                case ".g":
+                    {
+                        this.Message("http://lmgtfy.com/?q=" + HttpUtility.UrlEncode(ircMessageEventArgs.Text.Substring(2)));
+                        break;
+                    }
                 default:
                     {
-                        if (ircMessageEventArgs.Text.Trim().EndsWith("?"))
-                        {
-                            this.Message("http://lmgtfy.com/?q=" + HttpUtility.UrlEncode(ircMessageEventArgs.Text));
-                        }
-                        else if (ircMessageEventArgs.Text.ToLower().Contains(":p")
+                        if (ircMessageEventArgs.Text.ToLower().Contains(":p")
                                  && ircMessageEventArgs.Source.Name.Contains("Grave"))
                         {
                             if(!File.Exists("gtc.txt"))File.Create("gtc.txt").Close();
