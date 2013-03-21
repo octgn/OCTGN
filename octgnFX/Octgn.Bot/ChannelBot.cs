@@ -33,7 +33,8 @@
         internal void Message(string message)
         {
             const string template = "PRIVMSG {0} :{1}";
-            Channel.Client.SendRawMessage(String.Format(template,Channel.Name,message));
+            if(!Silence)
+                Channel.Client.SendRawMessage(String.Format(template,Channel.Name,message));
         }
 
         private void ChannelOnUsersListReceived(object sender, EventArgs eventArgs)
@@ -56,7 +57,6 @@
                     Silence = false;
                     break;
             }
-            if (Silence) return;
             if (String.IsNullOrWhiteSpace(ircMessageEventArgs.Text.Trim())) return;
             switch (ircMessageEventArgs.Text.Trim().ToLower().Split(' ')[0])
             {
@@ -156,6 +156,15 @@
                         }
                         break;
                     }
+                case ".gtc":
+                    {
+                        if (!File.Exists("gtc.txt")) File.Create("gtc.txt").Close();
+                        var numstr = File.ReadAllText("gtc.txt");
+                        int num = 0;
+                        int.TryParse(numstr, out num);
+                        this.Message("GTC=" + num);
+                        break;
+                    }
                 case ".die":
                     {
                         if (ircMessageEventArgs.Source.Name.ToLower() != "kellyelton")
@@ -183,7 +192,7 @@
                         {
                             this.Message("http://lmgtfy.com/?q=" + HttpUtility.UrlEncode(ircMessageEventArgs.Text));
                         }
-                        else if (ircMessageEventArgs.Text.Contains(":p")
+                        else if (ircMessageEventArgs.Text.ToLower().Contains(":p")
                                  && ircMessageEventArgs.Source.Name.Contains("Grave"))
                         {
                             if(!File.Exists("gtc.txt"))File.Create("gtc.txt").Close();
@@ -191,7 +200,7 @@
                             int num = 0;
                             int.TryParse(numstr, out num);
                             num++;
-                            this.Message("gtc: " + num);
+                            //this.Message("gtc: " + num);
                             File.WriteAllText("gtc.txt",num.ToString());
                         }
                         else if (ircMessageEventArgs.Text.Trim().StartsWith(".")) Message("I don't understand '" + ircMessageEventArgs.Text + "'");
