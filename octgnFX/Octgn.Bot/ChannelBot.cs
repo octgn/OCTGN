@@ -154,6 +154,7 @@
                                 this.Message("Well that felt good.");
                                 }).Start();
                         }
+                        break;
                     }
                 case ".die":
                     {
