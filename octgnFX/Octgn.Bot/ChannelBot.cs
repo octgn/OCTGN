@@ -131,6 +131,30 @@
                         }
                         break;
                     }
+                case ".murder":
+                    {
+                        var who = ircMessageEventArgs.Text.Trim().Replace(".murder", "");
+                        if (string.IsNullOrWhiteSpace(who))
+                        {
+                            this.Message("You have to tell me who to murder " + ircMessageEventArgs.Source.Name);
+                        }
+                        else if (who.ToLower() == "kellyelton")
+                        {
+                            this.Message("I can't murder my creator!");
+                        }
+                        else if (who.ToLower() == "botctgn")
+                        {
+                            this.Message("That would be suicide, not murder.");
+                        }
+                        else
+                        {
+                            new Task(() => { 
+                                Channel.Kick(who,ircMessageEventArgs.Source.Name + " Told me to do it! I didn't mean it, I swear!");
+                                Thread.Sleep(2000);
+                                this.Message("Well that felt good.");
+                                }).Start();
+                        }
+                    }
                 case ".die":
                     {
                         if (ircMessageEventArgs.Source.Name.ToLower() != "kellyelton")
