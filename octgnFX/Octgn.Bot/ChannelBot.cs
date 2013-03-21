@@ -133,7 +133,7 @@
                     }
                 case ".murder":
                     {
-                        var who = ircMessageEventArgs.Text.Trim().Replace(".murder", "");
+                        var who = ircMessageEventArgs.Text.Trim().Replace(".murder", "").Trim();
                         if (string.IsNullOrWhiteSpace(who))
                         {
                             this.Message("You have to tell me who to murder " + ircMessageEventArgs.Source.Name);
