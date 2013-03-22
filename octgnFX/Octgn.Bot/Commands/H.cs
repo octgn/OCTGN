@@ -31,7 +31,8 @@
             foreach (var c in commands)
             {
                 var com = (ICommand)Activator.CreateInstance(c);
-                Channel.Message("." + c.Name.ToLower() + " - " + com.Usage);
+                var argstring = string.Join(" ", com.Arguments.Select(x => "{" + x + "}"));
+                Channel.Message("." + c.Name.ToLower() +  " " +  argstring + " - " + com.Usage);
             }
         }
 
