@@ -18,21 +18,21 @@
         {
             if (!File.Exists("todo.txt"))
             {
-                Channel.Message("Nothing to do.");
+                Channel.Message("Nothing to do.",true);
                 return;
             }
 
             var lines = File.ReadAllLines("todo.txt");
             if (lines.Length == 0)
             {
-                Channel.Message("Nothing to do.");
+                Channel.Message("Nothing to do.",true);
                 return;
             }
-            Channel.Message("==============TODO==============");
+            Channel.Message("==============TODO==============",true);
             var i = 0;
             foreach (var l in lines)
             {
-                Channel.Message("[" + i + "] " + l);
+                Channel.Message("[" + i + "] " + l,true);
                 i++;
             }
         }
@@ -85,7 +85,7 @@
 
             var filestr = File.ReadAllLines("todo.txt").ToList();
             var remstr = filestr[num];
-            Channel.Message("[Removed " + num + "] " + remstr);
+            Channel.Message("[Removed " + num + "] " + remstr,true);
             filestr.RemoveAt(num);
             File.WriteAllLines("todo.txt",filestr);
         }

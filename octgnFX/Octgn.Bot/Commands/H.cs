@@ -27,12 +27,12 @@
                      .SelectMany(x => x.GetTypes())
                      .Where(x => x.GetInterfaces().Any(y => y == typeof(ICommand)))
                      .ToList();
-            Channel.Message("====================Help====================");
+            Channel.Message("====================Help====================",true);
             foreach (var c in commands)
             {
                 var com = (ICommand)Activator.CreateInstance(c);
                 var argstring = string.Join(" ", com.Arguments.Select(x => "{" + x + "}"));
-                Channel.Message("." + c.Name.ToLower() +  " " +  argstring + " - " + com.Usage);
+                Channel.Message("." + c.Name.ToLower() +  " " +  argstring + " - " + com.Usage,true);
             }
         }
 

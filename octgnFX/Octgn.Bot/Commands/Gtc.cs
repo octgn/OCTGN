@@ -19,7 +19,7 @@
             var numstr = File.ReadAllText("gtc.txt");
             int num = 0;
             int.TryParse(numstr, out num);
-            Channel.Message("GTC=" + num);
+            Channel.Message("GTC=" + num,true);
         }
 
         public bool CanProcessMessage(IrcMessageEventArgs args, string message)

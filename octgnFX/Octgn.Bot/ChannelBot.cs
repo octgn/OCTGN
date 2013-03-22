@@ -30,10 +30,12 @@
             //ircRawMessageEventArgs.
         }
 
-        internal void Message(string message)
+        internal void Message(string message, bool force = false)
         {
             const string template = "PRIVMSG {0} :{1}";
             if(!Silence)
+                Channel.Client.SendRawMessage(String.Format(template, Channel.Name, message));
+            else if(Silence && force)
                 Channel.Client.SendRawMessage(String.Format(template,Channel.Name,message));
         }
 
@@ -75,7 +77,7 @@
                 var command = commands.FirstOrDefault(x => x.Name.ToLower() == comstr);
                 if (command == null)
                 {
-                    Message("I don't understand '" + ircMessageEventArgs.Text + "'");
+                    Message("I don't understand '" + ircMessageEventArgs.Text + "'",true);
                     return;
                 }
 
@@ -89,11 +91,11 @@
                 }
                 catch (ArgumentException e)
                 {
-                    this.Message("Paradox: " + e.Message);
+                    this.Message("Paradox: " + e.Message,true);
                 }
                 catch(Exception e)
                 {
-                    Message("Something blew up...I'm scared.");
+                    Message("Something blew up...I'm scared.",true);
                     this.Message(e.ToString());
                 }
             }

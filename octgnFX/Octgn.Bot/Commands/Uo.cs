@@ -19,7 +19,7 @@
         public void ProcessMessage(IrcMessageEventArgs args, string @from, string message)
         {
             var ret = new WebClient().DownloadString("http://www.octgn.net/api/stats/usersonlinenow.php");
-            Channel.Message("There are " + ret.Trim() + " users online right now.");
+            Channel.Message("There are " + ret.Trim() + " users online right now.",true);
         }
 
         public bool CanProcessMessage(IrcMessageEventArgs args, string message)

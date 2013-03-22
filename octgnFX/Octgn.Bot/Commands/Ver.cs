@@ -16,11 +16,11 @@
         {
             var ret =new WebClient().DownloadString(
                                 "https://raw.github.com/kellyelton/OCTGN/master/octgnFX/Octgn/CurrentReleaseVersion.txt").Trim();
-            Channel.Message("Current live version is " + ret);
+            Channel.Message("Current live version is " + ret,true);
             ret =
                 new WebClient().DownloadString(
                     "https://raw.github.com/kellyelton/OCTGN/master/octgnFX/Octgn/CurrentTestVersion.txt").Trim();
-            Channel.Message("Current test version is " + ret);
+            Channel.Message("Current test version is " + ret,true);
         }
 
         public bool CanProcessMessage(IrcMessageEventArgs args, string message)

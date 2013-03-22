@@ -68,20 +68,20 @@
             var fpath = Path.Combine(path, from + ".txt");
             if (!File.Exists(fpath))
             {
-                Channel.Message("There are no messages for you, what a surprise.");
+                Channel.Message("There are no messages for you, what a surprise.",true);
                 return;
             }
             var cur = File.ReadAllLines(fpath);
             if (cur.Length == 0)
             {
-                Channel.Message("There are no messages for you, what a surprise.");
+                Channel.Message("There are no messages for you, what a surprise.",true);
                 return;
             }
             else
             {
                 foreach (var s in cur)
                 {
-                    Channel.Message(s);
+                    Channel.Message(s,true);
                     Channel.Message("Well that's about it. Now don't you feel special?");
                 }
                 File.WriteAllText(fpath,"");
