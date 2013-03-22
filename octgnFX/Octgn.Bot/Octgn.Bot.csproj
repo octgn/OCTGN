@@ -48,12 +48,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChannelBot.cs" />
+    <Compile Include="Commands\Die.cs" />
+    <Compile Include="Commands\For.cs" />
+    <Compile Include="Commands\G.cs" />
+    <Compile Include="Commands\Gtc.cs" />
+    <Compile Include="Commands\H.cs" />
+    <Compile Include="Commands\Murder.cs" />
+    <Compile Include="Commands\Shutup.cs" />
+    <Compile Include="Commands\Todo.cs" />
+    <Compile Include="Commands\Uo.cs" />
+    <Compile Include="Commands\Ver.cs" />
+    <Compile Include="ICommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

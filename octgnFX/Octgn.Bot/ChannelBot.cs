@@ -45,171 +45,57 @@
         private void ChannelOnMessageReceived(object sender, IrcMessageEventArgs ircMessageEventArgs)
         {
             if (ircMessageEventArgs.Source.Name == "botctgn") return;
-            switch (ircMessageEventArgs.Text.Trim().ToLower())
+
+            var commands = AppDomain.CurrentDomain.GetAssemblies()
+                     .SelectMany(x => x.GetModules())
+                     .SelectMany(x => x.GetTypes())
+                     .Where(x => x.GetInterfaces().Any(y => y == typeof(ICommand)))
+                     .ToList();
+
+            var fullMess = ircMessageEventArgs.Text;
+            var from = ircMessageEventArgs.Source.Name;
+
+            if (string.IsNullOrWhiteSpace(fullMess)) return;
+
+            if (!fullMess.StartsWith("."))
             {
-                case "shutup":
-                case "shut up":
-                    this.Message("Ok fine " + ircMessageEventArgs.Source.Name);
-                    Silence = true;
-                    break;
-                case "sorry":
-                    Silence = false;
-                    this.Message("Better be. I'm a real sensitive guy.");
-                    break;
+                foreach (var com in commands)
+                {
+                    var ac = Activator.CreateInstance(com) as ICommand;
+                    ac.CanProcessMessage(ircMessageEventArgs, fullMess);
+                }
             }
-            if (String.IsNullOrWhiteSpace(ircMessageEventArgs.Text.Trim())) return;
-            switch (ircMessageEventArgs.Text.Trim().ToLower().Split(' ')[0])
+            else
             {
-                case ".uo":
-                    {
-                        var ret = new WebClient().DownloadString("http://www.octgn.net/api/stats/usersonlinenow.php");
-                        this.Message("There are " + ret.Trim() + " users online right now.");
-                        break;
-                    }
-                case ".ver":
-                    {
-                        var ret =
-                            new WebClient().DownloadString(
-                                "https://raw.github.com/kellyelton/OCTGN/master/octgnFX/Octgn/CurrentReleaseVersion.txt").Trim();
-                        this.Message("Current live version is " + ret);
-                        ret =
-                            new WebClient().DownloadString(
-                                "https://raw.github.com/kellyelton/OCTGN/master/octgnFX/Octgn/CurrentTestVersion.txt").Trim();
-                        this.Message("Current test version is " + ret);
-                        break;
-                    }
-                case ".h":
-                    {
-                        this.Message(".uo - Online users on OCTGN");
-                        this.Message(".ver - Current live version");
-                        this.Message(".tv - Current test version");
-                        this.Message(".todo {message} - Add a todo message");
-                        this.Message(".todor {mess#} - Remove todo message");
-                        this.Message(".gtc - GTC Counter");
-                        this.Message(".g {whatever} - Google search");
-                        this.Message(".murder {username} - Kicks a user");
-                        this.Message(".die - ...");
-                        break;
-                    }
-                case ".todo":
-                    {
-                        if (!File.Exists("todo.txt")) File.Create("todo.txt").Close();
-                        var str = ircMessageEventArgs.Text.Trim().Replace(".todo", "").Trim();
-                        if (String.IsNullOrWhiteSpace(str))
-                        {
-                            var filestr = File.ReadAllLines("todo.txt");
-                            var i = 0;
-                            foreach (var s in filestr)
-                            {
-                                this.Message(i + " " + s);
-                                i++;
-                            }
-                        }
-                        else
-                        {
-                            var filestr = File.ReadAllLines("todo.txt").ToList();
-                            filestr.Add(ircMessageEventArgs.Source.Name + ": " + str);
-                            File.WriteAllLines("todo.txt",filestr);
-                            this.Message("I'll jot that down asshole.");
-                        }
-                        break;
-                    }
-                case ".todor":
-                    {
-                        if(!File.Exists("todo.txt"))File.Create("todo.txt").Close();
-                        var numstr = ircMessageEventArgs.Text.Trim().Replace(".todor", "").Trim();
-                        if (string.IsNullOrWhiteSpace(numstr)) break;
-                        int num = -1;
-                        if (!int.TryParse(numstr, out num))
-                        {
-                            this.Message("Don't be dumb " + ircMessageEventArgs.Source.Name + ", " + numstr + " is not a number!");
-                        }
-                        else
-                        {
-                            var filestr = File.ReadAllLines("todo.txt").ToList();
-                            var remstr = filestr[num];
-                            this.Message("[Removed] " + num + " " + remstr);
-                            filestr.RemoveAt(num);
-                            File.WriteAllLines("todo.txt",filestr);
-                        }
-                        break;
-                    }
-                case ".murder":
-                    {
-                        var who = ircMessageEventArgs.Text.Trim().Replace(".murder", "").Trim();
-                        if (string.IsNullOrWhiteSpace(who))
-                        {
-                            this.Message("You have to tell me who to murder " + ircMessageEventArgs.Source.Name);
-                        }
-                        else if (who.ToLower() == "kellyelton")
-                        {
-                            this.Message("I can't murder my creator!");
-                        }
-                        else if (who.ToLower() == "botctgn")
-                        {
-                            this.Message("That would be suicide, not murder.");
-                        }
-                        else
-                        {
-                            new Task(() => { 
-                                Channel.Kick(who,ircMessageEventArgs.Source.Name + " Told me to do it! I didn't mean it, I swear!");
-                                Thread.Sleep(2000);
-                                this.Message("Well that felt good.");
-                                }).Start();
-                        }
-                        break;
-                    }
-                case ".gtc":
-                    {
-                        if (!File.Exists("gtc.txt")) File.Create("gtc.txt").Close();
-                        var numstr = File.ReadAllText("gtc.txt");
-                        int num = 0;
-                        int.TryParse(numstr, out num);
-                        this.Message("GTC=" + num);
-                        break;
-                    }
-                case ".die":
-                    {
-                        if (ircMessageEventArgs.Source.Name.ToLower() != "kellyelton")
-                        {
-                            this.Message("You wished " + ircMessageEventArgs.Source.Name);
-                            break;
-                        }
-                        this.Message("I will never forget this " + ircMessageEventArgs.Source.Name);
-                        var task = new Task(
-                            () =>
-                                {
-                                    Thread.Sleep(5000);
-                                    this.Channel.Leave("WHY DOES NOBODY LOVE ME FAAAAAWK!");
-                                    Thread.Sleep(5000);
-                                    Program.client.Quit("WAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                                    Thread.Sleep(5000);
-                                    Program.client.Disconnect();
-                                });
-                        task.Start();
-                        break;
-                    }
-                case ".g":
-                    {
-                        this.Message("http://lmgtfy.com/?q=" + HttpUtility.UrlEncode(ircMessageEventArgs.Text.Substring(2)));
-                        break;
-                    }
-                default:
-                    {
-                        if (ircMessageEventArgs.Text.ToLower().Contains(":p")
-                                 && ircMessageEventArgs.Source.Name.Contains("Grave"))
-                        {
-                            if(!File.Exists("gtc.txt"))File.Create("gtc.txt").Close();
-                            var numstr = File.ReadAllText("gtc.txt");
-                            int num = 0;
-                            int.TryParse(numstr, out num);
-                            num++;
-                            //this.Message("gtc: " + num);
-                            File.WriteAllText("gtc.txt",num.ToString());
-                        }
-                        else if (ircMessageEventArgs.Text.Trim().StartsWith(".")) Message("I don't understand '" + ircMessageEventArgs.Text + "'");
-                        break;
-                    }
+                fullMess = fullMess.Substring(1);
+                var firstSpace = fullMess.IndexOf(' ');
+                if (firstSpace <= 0) firstSpace = fullMess.Length;
+                var comstr = fullMess.Substring(0, firstSpace).Trim();
+
+                var command = commands.FirstOrDefault(x => x.Name.ToLower() == comstr);
+                if (command == null)
+                {
+                    Message("I don't understand '" + ircMessageEventArgs.Text + "'");
+                    return;
+                }
+
+                var messstr = fullMess.Substring(comstr.Length).Trim();
+
+                try
+                {
+                    var ac = Activator.CreateInstance(command) as ICommand;
+                    ac.Channel = this;
+                    ac.ProcessMessage(ircMessageEventArgs,from,messstr);
+                }
+                catch (ArgumentException e)
+                {
+                    this.Message("Paradox: " + e.Message);
+                }
+                catch(Exception e)
+                {
+                    Message("Something blew up...I'm scared.");
+                    this.Message(e.ToString());
+                }
             }
         }
 
