@@ -9,13 +9,13 @@ namespace Octgn.ProxyGenerator
 {
     public class MultiMatcher
     {
-        public static CardDefinition GetTemplate(List<CardDefinition> cards, Dictionary<string, string> dict)
+        public static CardDefinition GetTemplate(List<CardDefinition> cards, Dictionary<string, string> dict, List<string> matchMapping)
         {
-            List<string> values = DictToList(dict);
             CardDefinition ret = null;
             foreach (CardDefinition card in cards)
             {
-                int c = card.MultiMatch.MultiMatchMappings.Count;
+                List<string> values = RemapToList(dict, matchMapping);
+                int c = values.Count;
                 int i = 1;
 
                 foreach (string value in values)
@@ -57,6 +57,20 @@ namespace Octgn.ProxyGenerator
                 ret.Add(kvi.Value);
             }
             return (ret);
+        }
+
+        internal static List<string> RemapToList(Dictionary<string, string> dict, List<string> matchMapping)
+        {
+            Dictionary<string, string> temp = new Dictionary<string, string>();
+
+            foreach (KeyValuePair<string, string> kvi in dict)
+            {
+                if (matchMapping.Contains(kvi.Key))
+                {
+                    temp.Add(kvi.Key, kvi.Value);
+                }
+            }
+            return DictToList(temp);
         }
     }
 }
