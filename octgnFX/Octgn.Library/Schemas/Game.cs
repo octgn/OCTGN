@@ -1202,8 +1202,6 @@ public partial class gameProxygenTemplatemappingTemplatemap {
     
     private string fieldField;
     
-    private string maptoField;
-    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string field {
@@ -1212,17 +1210,6 @@ public partial class gameProxygenTemplatemappingTemplatemap {
         }
         set {
             this.fieldField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string mapto {
-        get {
-            return this.maptoField;
-        }
-        set {
-            this.maptoField = value;
         }
     }
 }
