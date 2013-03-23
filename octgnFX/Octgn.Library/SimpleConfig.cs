@@ -157,6 +157,11 @@
             }
         }
 
+        /// <summary>
+        /// Adds a feed url to the feeds file. This method does not check the validity
+        /// of the feed, you shoudl use GameFeedManager.AddFeed instead
+        /// </summary>
+        /// <param name="feed">Feed url</param>
         public static void AddFeed(string feed)
         {
             var lines = GetFeeds().ToList();
@@ -174,6 +179,11 @@
             }
         }
 
+        /// <summary>
+        /// Remove a feed url from the feed file. This method is for internal use only, use
+        /// GameFeedManager.RemoveFeed instead.
+        /// </summary>
+        /// <param name="feed">Feed url</param>
         public static void RemoveFeed(string feed)
         {
             var lines = GetFeeds().ToList();

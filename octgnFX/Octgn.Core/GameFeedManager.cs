@@ -8,6 +8,7 @@
 
     using NuGet;
 
+    using Octgn.Library;
     using Octgn.Library.Exceptions;
 
     using log4net;
@@ -88,6 +89,18 @@
             {
                 //package.
             }
+        }
+
+        public void AddFeed(string feed)
+        {
+            if(!this.ValidateFeedUrl(feed))
+                throw new UserMessageException("{0} is not a valid feed.",feed);
+            SimpleConfig.AddFeed(feed);
+        }
+
+        public void RemoveFeed(string feed)
+        {
+            SimpleConfig.RemoveFeed(feed);
         }
 
         internal IQueryable<IPackage> GetPackages()
