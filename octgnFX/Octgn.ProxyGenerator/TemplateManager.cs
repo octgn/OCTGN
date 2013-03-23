@@ -33,12 +33,25 @@ namespace Octgn.ProxyGenerator
 
         public CardDefinition GetTemplate(Dictionary<string,string> values)
         {
-            string field = templateMappings[0].Name;
-            if (field != null && values.ContainsKey(field))
+            CardDefinition ret = GetDefaultTemplate();
+            if (UseMultiFieldMatching)
             {
-                return GetTemplate(values[field]);
+                CardDefinition temp = MultiMatcher.GetTemplate(templates, values);
+                if (temp != null)
+                {
+                    ret = temp;
+                }
             }
-            return GetDefaultTemplate();
+            else
+            {
+                string field = templateMappings[0].Name;
+                if (field != null && values.ContainsKey(field))
+                {
+                    ret = GetTemplate(values[field]);
+                }
+            }
+            
+            return (ret);
         }
 
         public CardDefinition GetTemplate(string ID)
