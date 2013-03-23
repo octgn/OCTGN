@@ -88,11 +88,11 @@
             }
         }
 
-        internal IEnumerable<IPackage> GetPackages()
+        internal IQueryable<IPackage> GetPackages()
         {
             var repo = PackageRepositoryFactory.Default.CreateRepository(MainFeed);
             var packages = repo.GetPackages().Where(x => x.IsAbsoluteLatestVersion);
-            return packages.ToList();
+            return packages;
         }
 
         public void Dispose()

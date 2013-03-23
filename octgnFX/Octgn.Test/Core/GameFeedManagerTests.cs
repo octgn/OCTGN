@@ -1,6 +1,7 @@
 ﻿namespace Octgn.Test.Core
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using NUnit.Framework;
@@ -9,11 +10,17 @@
 
     public class GameFeedManagerTests
     {
-        [NUnit.Framework.Test]
-        public void GetPackages_GetsOneRepo()
+        [Test]
+        public void GetPackages_NoDuplicates()
         {
             var ret = GameFeedManager.Get().GetPackages();
-            Assert.AreEqual(1, ret.Count());
+            var packList = new List<string>();
+            foreach (var pack in ret)
+            {
+                if (packList.Any(x => x == pack.Id)) Assert.Fail("Found duplicate of a package");
+                else packList.Add(pack.Id);
+            }
+            
             Console.WriteLine(ret.First().Version.Version);
         }
     }
