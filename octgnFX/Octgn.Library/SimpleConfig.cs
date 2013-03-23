@@ -9,6 +9,7 @@
     using System.Threading;
 
     using Octgn.Library.Exceptions;
+    using Octgn.Library.Networking;
 
     using Polenter.Serialization;
 
@@ -141,7 +142,7 @@
             }
         }
 
-        public static IEnumerable<string> GetFeeds()
+        public static IEnumerable<NamedUrl> GetFeeds()
         {
             Stream stream = null;
             while (!OpenFile(Paths.FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
@@ -152,20 +153,23 @@
             {
                 var lines = sr.ReadToEnd()
                     .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Where(x=>!String.IsNullOrWhiteSpace(x.Trim()));
+                    .Where(x=>!String.IsNullOrWhiteSpace(x.Trim()))
+                    .Select(x=>x.Split(new[]{(char)1},StringSplitOptions.RemoveEmptyEntries))
+                    .Select(x => x.Length != 2 ? null : new NamedUrl(x[0], x[1]))
+                    .Where(x=>x != null);
                 return lines;
             }
         }
 
         /// <summary>
         /// Adds a feed url to the feeds file. This method does not check the validity
-        /// of the feed, you shoudl use GameFeedManager.AddFeed instead
+        /// of the feed, you should use GameFeedManager.AddFeed instead
         /// </summary>
         /// <param name="feed">Feed url</param>
-        public static void AddFeed(string feed)
+        public static void AddFeed(NamedUrl feed)
         {
             var lines = GetFeeds().ToList();
-            if (lines.Any(x => x.ToLower() == feed.ToLower())) return;
+            if (lines.Any(x => x.Name.ToLower() == feed.Name.ToLower())) return;
             Stream stream = null;
             while (!OpenFile(Paths.FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
@@ -175,7 +179,7 @@
             using (var sr = new StreamWriter(stream))
             {
                 foreach (var f in lines)
-                    sr.WriteLine(f);
+                    sr.WriteLine(f.Name + (char)1 + f.Url);
             }
         }
 
@@ -184,23 +188,24 @@
         /// GameFeedManager.RemoveFeed instead.
         /// </summary>
         /// <param name="feed">Feed url</param>
-        public static void RemoveFeed(string feed)
+        public static void RemoveFeed(NamedUrl feed)
         {
             var lines = GetFeeds().ToList();
-            if (lines.Any(x => x.ToLower() == feed.ToLower())) return;
             Stream stream = null;
             while (!OpenFile(Paths.FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
                 Thread.Sleep(10);
             }
-            foreach (var l in lines.ToArray().Where(l => l.ToLower() == feed.ToLower()))
+            foreach (var l in lines
+                .ToArray()
+                .Where(l => l.Name.ToLower() == feed.Name.ToLower()))
             {
                 lines.Remove(l);
             }
             using (var sr = new StreamWriter(stream))
             {
                 foreach (var f in lines)
-                    sr.WriteLine(f);
+                    sr.WriteLine(f.Name + (char)1 + f.Url);
             }
         }
 

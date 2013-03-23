@@ -10,6 +10,7 @@
 
     using Octgn.Library;
     using Octgn.Library.Exceptions;
+    using Octgn.Library.Networking;
 
     using log4net;
 
@@ -94,21 +95,25 @@
         /// <summary>
         /// Add a feed url to the system.
         /// </summary>
+        /// <exception cref="UserMessageException">If the feed name already exists or the feed is invalid.</exception>
+        /// <param name="name">Feed name</param>
         /// <param name="feed">Feed url</param>
-        public void AddFeed(string feed)
+        public void AddFeed(string name, string feed)
         {
             if(!this.ValidateFeedUrl(feed))
                 throw new UserMessageException("{0} is not a valid feed.",feed);
-            SimpleConfig.AddFeed(feed);
+            if(SimpleConfig.GetFeeds().Any(x=>x.Name.ToLower() == name.ToLower()))
+                throw new UserMessageException("Feed name {0} already exists.",name);
+            SimpleConfig.AddFeed(new NamedUrl(name,feed));
         }
 
         /// <summary>
         /// Remove a feed url from the system.
         /// </summary>
-        /// <param name="feed">Feed url</param>
-        public void RemoveFeed(string feed)
+        /// <param name="name">Feed name</param>
+        public void RemoveFeed(string name)
         {
-            SimpleConfig.RemoveFeed(feed);
+            SimpleConfig.RemoveFeed(new NamedUrl(name,""));
         }
 
         /// <summary>

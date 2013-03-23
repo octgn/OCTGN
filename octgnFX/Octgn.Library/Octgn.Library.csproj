@@ -94,6 +94,7 @@
     <Compile Include="Exceptions\UserMessageException.cs" />
     <Compile Include="ExtensionMethods\DirectoryInfoExtensionMethods.cs" />
     <Compile Include="ExtensionMethods\StringExtensionMethods.cs" />
+    <Compile Include="Networking\NamedUrl.cs" />
     <Compile Include="Networking\Socket\OTcpClient.cs" />
     <Compile Include="Networking\Socket\OTcpListener.cs" />
     <Compile Include="Paths.cs" />
