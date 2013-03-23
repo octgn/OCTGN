@@ -15,7 +15,7 @@ namespace Octgn.ProxyGenerator
             CardDefinition ret = null;
             foreach (CardDefinition card in cards)
             {
-                int c = values.Count;
+                int c = card.MultiMatch.MultiMatchMappings.Count;
                 int i = 1;
 
                 foreach (string value in values)
