@@ -91,6 +91,10 @@
             }
         }
 
+        /// <summary>
+        /// Add a feed url to the system.
+        /// </summary>
+        /// <param name="feed">Feed url</param>
         public void AddFeed(string feed)
         {
             if(!this.ValidateFeedUrl(feed))
@@ -98,11 +102,19 @@
             SimpleConfig.AddFeed(feed);
         }
 
+        /// <summary>
+        /// Remove a feed url from the system.
+        /// </summary>
+        /// <param name="feed">Feed url</param>
         public void RemoveFeed(string feed)
         {
             SimpleConfig.RemoveFeed(feed);
         }
 
+        /// <summary>
+        /// Get all packages from all feeds.
+        /// </summary>
+        /// <returns>All packages from all feeds.</returns>
         internal IQueryable<IPackage> GetPackages()
         {
             var repo = PackageRepositoryFactory.Default.CreateRepository(MainFeed);
@@ -110,6 +122,14 @@
             return packages;
         }
 
+        /// <summary>
+        /// Make sure a feed url is valid.
+        /// This doesn't check to make sure it has octgn games on it, it only
+        /// checks to make sure it's a valid nuget feed, and sometimes it's even 
+        /// wrong when it check that, so don't 100% rely on this for validation.
+        /// </summary>
+        /// <param name="feed">Feed url</param>
+        /// <returns>Returns true if it is, or false if it isn't</returns>
         internal bool ValidateFeedUrl(string feed)
         {
             if (PathValidator.IsValidUrl(feed) && PathValidator.IsValidSource(feed))
