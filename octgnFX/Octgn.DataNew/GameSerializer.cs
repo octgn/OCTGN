@@ -592,7 +592,7 @@
             }
             foreach (gameProxygenTemplatemappingTemplatemap mapping in ProxyGenFromDef.templatemapping.templatemap)
             {
-                ret.TemplateSelector.AddMapping(mapping.field);
+                ret.TemplateSelector.AddMatch(mapping.field);
             }
             return ret;
         }
