@@ -2,8 +2,13 @@
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
+    using System.Threading;
+
+    using Octgn.Library.Exceptions;
 
     using Polenter.Serialization;
 
@@ -133,6 +138,59 @@
                         f = null;
                     }
                 }
+            }
+        }
+
+        public static IEnumerable<string> GetFeeds()
+        {
+            Stream stream = null;
+            while (!OpenFile(Paths.FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
+            {
+                Thread.Sleep(10);
+            }
+            using (var sr = new StreamReader(stream))
+            {
+                var lines = sr.ReadToEnd()
+                    .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Where(x=>!String.IsNullOrWhiteSpace(x.Trim()));
+                return lines;
+            }
+        }
+
+        public static void AddFeed(string feed)
+        {
+            var lines = GetFeeds().ToList();
+            if (lines.Any(x => x.ToLower() == feed.ToLower())) return;
+            Stream stream = null;
+            while (!OpenFile(Paths.FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
+            {
+                Thread.Sleep(10);
+            }
+            lines.Add(feed);
+            using (var sr = new StreamWriter(stream))
+            {
+                foreach (var f in lines)
+                    sr.WriteLine(f);
+            }
+        }
+
+        public static void RemoveFeed(string feed)
+        {
+            var lines = GetFeeds().ToList();
+            if (lines.Any(x => x.ToLower() == feed.ToLower())) return;
+            Stream stream = null;
+            while (!OpenFile(Paths.FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
+            {
+                Thread.Sleep(10);
+            }
+            foreach (var l in lines.ToArray().Where(l => l.ToLower() == feed.ToLower()))
+            {
+                lines.Remove(l);
+            }
+            using (var sr = new StreamWriter(stream))
+            {
+                foreach (var f in lines)
+                    sr.WriteLine(f);
             }
         }
 

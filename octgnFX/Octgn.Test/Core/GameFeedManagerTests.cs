@@ -23,5 +23,21 @@
             
             Console.WriteLine(ret.First().Version.Version);
         }
+
+        [Test]
+        public void ValidateFeedUrl_FailsOnBadUri()
+        {
+            var ret = GameFeedManager.Get();
+            var badUri = "sdflakwejfasw";
+            Assert.False(ret.ValidateFeedUrl(badUri));
+        }
+
+        [Test]
+        public void ValidateFeedUrl_FailsOnNotARepo()
+        {
+            var ret = GameFeedManager.Get();
+            var goodUriButNotAFeed = "http://en.wikipedia.org/wiki/Human_feces/";
+            Assert.False(ret.ValidateFeedUrl(goodUriButNotAFeed));
+        }
     }
 }

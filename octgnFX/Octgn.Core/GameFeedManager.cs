@@ -8,6 +8,8 @@
 
     using NuGet;
 
+    using Octgn.Library.Exceptions;
+
     using log4net;
 
     public class GameFeedManager : IDisposable
@@ -93,6 +95,26 @@
             var repo = PackageRepositoryFactory.Default.CreateRepository(MainFeed);
             var packages = repo.GetPackages().Where(x => x.IsAbsoluteLatestVersion);
             return packages;
+        }
+
+        internal bool ValidateFeedUrl(string feed)
+        {
+            if (PathValidator.IsValidUrl(feed) && PathValidator.IsValidSource(feed))
+            {
+                try
+                {
+                    var repo = PackageRepositoryFactory.Default.CreateRepository(feed);
+                    var list = repo.GetPackages().ToList();
+                    foreach(var l in list)
+                        System.Diagnostics.Trace.WriteLine(l.Id);
+                    return true;
+                }
+                catch(Exception e)
+                {
+                    Log.WarnFormat("{0} is an invalid feed.",feed);
+                }
+            }
+            return false;
         }
 
         public void Dispose()
