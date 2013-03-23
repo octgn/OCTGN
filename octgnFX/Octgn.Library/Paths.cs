@@ -12,6 +12,7 @@
         public static string PluginPath { get; private set; }
         public static string DataDirectory { get; private set; }
         public static string DatabasePath { get; set; }
+        public static string ConfigDirectory { get; set; }
 
         static Paths()
         {
@@ -30,6 +31,7 @@
             DatabasePath = FS.Path.Combine(SimpleConfig.DataDirectory, "Database");
             DatabasePath = FS.Path.Combine(DatabasePath, "master.db3");
             DataDirectory = SimpleConfig.DataDirectory;
+            ConfigDirectory = FS.Path.Combine(SimpleConfig.DataDirectory, "Config");
         }
     }
 }
