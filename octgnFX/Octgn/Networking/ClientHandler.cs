@@ -301,10 +301,10 @@ namespace Octgn.Networking
             try
             {
                 if (modelId.All(m => m == modelId[0]))
-                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Database.GetCardById(modelId[0]).Name : "card");
+                    Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(modelId[0]).Name : "card");
                 else
                     foreach (Guid m in modelId)
-                        Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp ? Database.GetCardById(m).Name : "card");
+                        Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == Player.LocalPlayer || faceUp ? Program.GameEngine.Definition.GetCardById(m).Name : "card");
 
             }
             catch (Exception e)
