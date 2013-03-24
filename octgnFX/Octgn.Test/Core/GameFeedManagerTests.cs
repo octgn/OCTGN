@@ -187,5 +187,25 @@
                 SimpleConfig.SingletonContext = curSimple;
             }
         }
+
+        [Test]
+        public void RemoveFeed_JustCallsSimpleConfigRemoveFeed()
+        {
+            var curSimple = SimpleConfig.Get();
+            try
+            {
+                var fake = A.Fake<ISimpleConfig>();
+                A.CallTo(fake).DoesNothing();
+                SimpleConfig.SingletonContext = fake;
+
+                GameFeedManager.Get().RemoveFeed("asdf");
+                
+                A.CallTo(() => fake.RemoveFeed(A<NamedUrl>._)).MustHaveHappened(Repeated.Exactly.Once);
+            }
+            finally
+            {
+                SimpleConfig.SingletonContext = curSimple;
+            }
+        }
     }
 }

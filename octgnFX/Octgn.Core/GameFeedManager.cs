@@ -22,6 +22,7 @@
         void CheckForUpdates();
         IEnumerable<NamedUrl> GetFeeds();
         void AddFeed(string name, string feed);
+        void RemoveFeed(string name);
         bool ValidateFeedUrl(string feed);
     }
 
