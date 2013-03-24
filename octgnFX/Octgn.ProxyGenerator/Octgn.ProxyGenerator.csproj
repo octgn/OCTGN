@@ -54,7 +54,7 @@
     <Compile Include="Definitions\SectionDefinition.cs" />
     <Compile Include="Structs\SectionStructs.cs" />
     <Compile Include="Mappings\TemplateMapping.cs" />
-    <Compile Include="TemplateSelector.cs" />
+    <Compile Include="TemplateManager.cs" />
     <Compile Include="Util\GraphicUtils.cs" />
   </ItemGroup>
   <ItemGroup />

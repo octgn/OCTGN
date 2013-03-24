@@ -15,11 +15,13 @@ namespace Octgn.ProxyGenerator
         public bool UseMultiFieldMatching { get; set; }
 
         private List<TemplateMapping> templateMappings;
+        private List<string> matchMapping;
 
         public TemplateManager()
         {
             templates = new List<CardDefinition>();
             templateMappings = new List<TemplateMapping>();
+            matchMapping = new List<string>();
         }
 
         public void AddTemplate(CardDefinition cardDef)
@@ -33,12 +35,25 @@ namespace Octgn.ProxyGenerator
 
         public CardDefinition GetTemplate(Dictionary<string,string> values)
         {
-            string field = templateMappings[0].Name;
-            if (field != null && values.ContainsKey(field))
+            CardDefinition ret = GetDefaultTemplate();
+            if (UseMultiFieldMatching)
             {
-                return GetTemplate(values[field]);
+                CardDefinition temp = MultiMatcher.GetTemplate(templates, values, matchMapping);
+                if (temp != null)
+                {
+                    ret = temp;
+                }
             }
-            return GetDefaultTemplate();
+            else
+            {
+                string field = templateMappings[0].Name;
+                if (field != null && values.ContainsKey(field))
+                {
+                    ret = GetTemplate(values[field]);
+                }
+            }
+            
+            return (ret);
         }
 
         public CardDefinition GetTemplate(string ID)
@@ -111,6 +126,20 @@ namespace Octgn.ProxyGenerator
                 }
             }
             return (false);
+        }
+
+        public void AddMatch(string value)
+        {
+            if(ContainsMatch(value))
+            {
+                matchMapping.Remove(value);
+            }
+            matchMapping.Add(value);
+        }
+
+        public bool ContainsMatch(string value)
+        {
+            return (matchMapping.Contains(value));
         }
     }
 }
