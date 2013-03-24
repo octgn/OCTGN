@@ -35,11 +35,11 @@
     {
         #region Singleton
 
-        internal static SimpleConfig SingletonContext { get; set; }
+        internal static ISimpleConfig SingletonContext { get; set; }
 
         private static readonly object SimpleConfigSingletonLocker = new object();
 
-        public static SimpleConfig Get()
+        public static ISimpleConfig Get()
         {
             lock (SimpleConfigSingletonLocker) return SingletonContext ?? (SingletonContext = new SimpleConfig());
         }

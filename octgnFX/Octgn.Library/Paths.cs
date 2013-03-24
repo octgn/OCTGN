@@ -6,7 +6,7 @@
 
     public interface IPaths
     {
-        string WorkingDirectory { get; }
+        string WorkingDirectory { get; set; }
         string BasePath { get; }
         string PluginPath { get; }
         string DataDirectory { get; }
@@ -19,11 +19,11 @@
     {
         #region Singleton
 
-        internal static Paths SingletonContext { get; set; }
+        internal static IPaths SingletonContext { get; set; }
 
         private static readonly object PathsSingletonLocker = new object();
 
-        public static Paths Get()
+        public static IPaths Get()
         {
             lock (PathsSingletonLocker) return SingletonContext ?? (SingletonContext = new Paths());
         }
