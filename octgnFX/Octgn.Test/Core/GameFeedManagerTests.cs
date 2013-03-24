@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using System.Timers;
 
     using FakeItEasy;
 
@@ -46,6 +47,7 @@
             Assert.False(ret.ValidateFeedUrl(goodUriButNotAFeed));
         }
 
+        #region AddFeed
         [Test]
         public void AddFeed_CallsValidate()
         {
@@ -167,6 +169,7 @@
             }
             Assert.Fail();
         }
+        #endregion AddFeed
 
         [Test]
         public void GetFeeds_JustCallsSimpleConfigGetFeeds()
@@ -227,5 +230,51 @@
                 GameFeedManager.SingletonContext = curGf;
             }
         }
+
+        [Test]
+        public void Start_DoesNothingIfRunning()
+        {
+            var cur = GameFeedManager.Get();
+            GameFeedManager.SingletonContext = null;
+            var gf = A.Fake<GameFeedManager>();
+            var pass = false;
+            try
+            {
+                GameFeedManager.SingletonContext = gf;
+                A.CallTo(() => gf.ConstructTimer()).Throws(new UserMessageException("1"));
+                gf.IsRunning = true;
+                // Will throw an except if it gets passed the IsRunning check.
+                gf.Start();
+            }
+            finally
+            {
+                GameFeedManager.SingletonContext = cur;
+            }
+        }
+
+        [Test]
+        public void Start_SetsIsRunningToTrue()
+        {
+            var cur = GameFeedManager.Get();
+            GameFeedManager.SingletonContext = null;
+            var gf = A.Fake<GameFeedManager>();
+            var pass = false;
+            try
+            {
+                GameFeedManager.SingletonContext = gf;
+
+                Assert.False(gf.IsRunning);
+
+                A.CallTo(() => gf.ConstructTimer()).DoesNothing();
+                // Will throw an except if it gets passed the IsRunning check.
+                gf.Start();
+                Assert.True(gf.IsRunning);
+            }
+            finally
+            {
+                GameFeedManager.SingletonContext = cur;
+            }
+        }
+
     }
 }

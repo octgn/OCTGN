@@ -36,11 +36,20 @@
 
         public static IGameFeedManager Get()
         {
-            lock (GameFeedManagerSingletonLocker) return SingletonContext ?? (SingletonContext = new GameFeedManager());
+            lock (GameFeedManagerSingletonLocker)
+            {
+                if (SingletonContext != null) return SingletonContext;
+            }
+            return new GameFeedManager();
         }
-        internal GameFeedManager()
+        public GameFeedManager()
         {
-            
+            lock (GameFeedManagerSingletonLocker)
+            {
+                if (SingletonContext != null)
+                    throw new InvalidOperationException("Game feed manager already exists!");
+                SingletonContext = this;
+            }
         }
         #endregion Singleton
 
@@ -50,7 +59,7 @@
 
         public bool IsRunning { get; internal set; }
         internal Timer RefreshTimer { get; set; }
-
+        
         #region StartStop
         public void Start()
         {
@@ -58,8 +67,7 @@
             if (IsRunning) return;
             Log.Info("Start");
             IsRunning = true;
-            this.ConstructTimer();
-            this.RefreshTimerOnElapsed(null,null);
+            ConstructTimer();
             Log.Info("Start Finished");
         }
 
@@ -82,6 +90,7 @@
             RefreshTimer = new Timer(RefreshTime);
             RefreshTimer.Elapsed += RefreshTimerOnElapsed;
             RefreshTimer.Start();
+            this.RefreshTimerOnElapsed(null, null);
             Log.Info("Constructing Timer Complete");
         }
 
