@@ -165,6 +165,7 @@
                 {
                     var repo = PackageRepositoryFactory.Default.CreateRepository(feed);
                     var list = repo.GetPackages().ToList();
+                    // This happens so that enumerating the list isn't optimized away.
                     foreach(var l in list)
                         System.Diagnostics.Trace.WriteLine(l.Id);
                     return true;
