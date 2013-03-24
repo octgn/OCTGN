@@ -17,7 +17,7 @@
     public class DbContext : IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private static readonly string DatabasePath = Path.Combine(SimpleConfig.DataDirectory, "Database");
+        private static readonly string DatabasePath = Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
         private static readonly string DatabaseFile = Path.Combine(DatabasePath, "master.db");
 
         internal static DbContext Context { get; set; }
@@ -71,7 +71,7 @@
         internal DbContext()
         {
             var config = new FileDbConfiguration()
-                .SetDirectory(Paths.DataDirectory)
+                .SetDirectory(Paths.Get().DataDirectory)
                 .DefineCollection<Game>("GameDatabase")
                 .SetPart(x => x.Property(y => y.Id))
                 .SetPart(x => x.File("definition.xml"))

@@ -39,5 +39,19 @@
             var goodUriButNotAFeed = "http://en.wikipedia.org/wiki/Human_feces/";
             Assert.False(ret.ValidateFeedUrl(goodUriButNotAFeed));
         }
+
+        [Test]
+        public void AddFeed_SaveLoadRemoveWorks()
+        {
+            var feedName = "asdfASDFasdf1234";
+            var feedUrl = "http://www.myget.org/F/octgngames/";
+            var gf = GameFeedManager.Get();
+            gf.AddFeed(feedName,feedUrl);
+            var nf = gf.GetFeeds().FirstOrDefault(x => x.Name == feedName);
+            Assert.AreEqual(feedUrl,nf.Url);
+            gf.RemoveFeed(feedName);
+            nf = gf.GetFeeds().FirstOrDefault(x => x.Name == feedName);
+            Assert.Null(nf);
+        }
     }
 }

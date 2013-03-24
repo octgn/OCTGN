@@ -53,7 +53,7 @@ namespace Octgn
         internal static readonly bool UseGamePackageManagement;
 
         internal static bool IsGameRunning;
-        internal static readonly string BasePath = Octgn.Library.Paths.BasePath;
+        internal static readonly string BasePath = Octgn.Library.Paths.Get().BasePath;
         internal static readonly string GamesPath;
         internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 

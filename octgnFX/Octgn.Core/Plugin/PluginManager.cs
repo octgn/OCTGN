@@ -23,9 +23,9 @@
 
         internal static IQueryable<T> GetPlugins<T>()
         {
-            if (!FS.Directory.Exists(Paths.PluginPath)) FS.Directory.CreateDirectory(Paths.PluginPath);
+            if (!FS.Directory.Exists(Paths.Get().PluginPath)) FS.Directory.CreateDirectory(Paths.Get().PluginPath);
 
-            var folder = FS.DirectoryInfo.FromDirectoryName(Paths.PluginPath);
+            var folder = FS.DirectoryInfo.FromDirectoryName(Paths.Get().PluginPath);
 
             var ret = new List<T>();
             foreach (var f in folder.GetDirectories().SelectMany(dir => dir.GetFiles("*.dll", SearchOption.TopDirectoryOnly)))

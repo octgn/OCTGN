@@ -93,6 +93,15 @@
         }
 
         /// <summary>
+        /// Gets all saved game feeds
+        /// </summary>
+        /// <returns>Saved game feeds</returns>
+        public IEnumerable<NamedUrl> GetFeeds()
+        {
+            return SimpleConfig.Get().GetFeeds();
+        }
+
+        /// <summary>
         /// Add a feed url to the system.
         /// </summary>
         /// <exception cref="UserMessageException">If the feed name already exists or the feed is invalid.</exception>
@@ -102,9 +111,9 @@
         {
             if(!this.ValidateFeedUrl(feed))
                 throw new UserMessageException("{0} is not a valid feed.",feed);
-            if(SimpleConfig.GetFeeds().Any(x=>x.Name.ToLower() == name.ToLower()))
+            if (SimpleConfig.Get().GetFeeds().Any(x => x.Name.ToLower() == name.ToLower()))
                 throw new UserMessageException("Feed name {0} already exists.",name);
-            SimpleConfig.AddFeed(new NamedUrl(name,feed));
+            SimpleConfig.Get().AddFeed(new NamedUrl(name, feed));
         }
 
         /// <summary>
@@ -113,7 +122,7 @@
         /// <param name="name">Feed name</param>
         public void RemoveFeed(string name)
         {
-            SimpleConfig.RemoveFeed(new NamedUrl(name,""));
+            SimpleConfig.Get().RemoveFeed(new NamedUrl(name, ""));
         }
 
         /// <summary>
@@ -122,6 +131,7 @@
         /// <returns>All packages from all feeds.</returns>
         internal IQueryable<IPackage> GetPackages()
         {
+            // TODO - [GAME FEED] - This should be made for each feed, not all combined - Kelly Elton - 3/24/2013   
             var repo = PackageRepositoryFactory.Default.CreateRepository(MainFeed);
             var packages = repo.GetPackages().Where(x => x.IsAbsoluteLatestVersion);
             return packages;

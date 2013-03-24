@@ -21,14 +21,14 @@
         [SetUp]
         public void Setup()
         {
-            Paths.WorkingDirectory = System.IO.Directory.GetCurrentDirectory();
+            Paths.Get().WorkingDirectory = System.IO.Directory.GetCurrentDirectory();
         }
         [Test]
         public void Test()
         {
             var config = new FileDbConfiguration();
             config
-                .SetDirectory(Paths.DataDirectory)
+                .SetDirectory(Paths.Get().DataDirectory)
                 .DefineCollection<Game>("GameDatabase")
                 .SetPart(x => x.Property(y => y.Id))
                 .SetPart(x => x.File("definition.xml"))
