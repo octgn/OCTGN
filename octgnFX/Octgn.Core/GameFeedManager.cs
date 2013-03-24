@@ -68,7 +68,7 @@
         #endregion StartStop
 
         #region Timer
-        internal void ConstructTimer()
+        internal virtual void ConstructTimer()
         {
             this.DestroyTimer();
             RefreshTimer = new Timer(RefreshTime);
@@ -76,7 +76,7 @@
             RefreshTimer.Start();
         }
 
-        internal void DestroyTimer()
+        internal virtual void DestroyTimer()
         {
             if (RefreshTimer != null)
             {
@@ -89,7 +89,7 @@
                 RefreshTimer = null;
             }
         }
-        internal void RefreshTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        internal virtual void RefreshTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
 
         }
@@ -120,7 +120,7 @@
         /// <param name="feed">Feed url</param>
         public void AddFeed(string name, string feed)
         {
-            if(!this.ValidateFeedUrl(feed))
+            if (!SingletonContext.ValidateFeedUrl(feed))
                 throw new UserMessageException("{0} is not a valid feed.",feed);
             if (SimpleConfig.Get().GetFeeds().Any(x => x.Name.ToLower() == name.ToLower()))
                 throw new UserMessageException("Feed name {0} already exists.",name);
@@ -140,7 +140,7 @@
         /// Get all packages from all feeds.
         /// </summary>
         /// <returns>All packages from all feeds.</returns>
-        internal IQueryable<IPackage> GetPackages()
+        internal virtual IQueryable<IPackage> GetPackages()
         {
             // TODO - [GAME FEED] - This should be made for each feed, not all combined - Kelly Elton - 3/24/2013   
             var repo = PackageRepositoryFactory.Default.CreateRepository(MainFeed);
@@ -178,7 +178,7 @@
 
         public void Dispose()
         {
-            this.Stop();
+            SingletonContext.Stop();
         }
     }
 }
