@@ -39,7 +39,7 @@ namespace Octgn.Windows
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
-            new GameFeedManager().CheckForUpdates();
+            //new GameFeedManager().CheckForUpdates();
         }
 
         /// <summary>
