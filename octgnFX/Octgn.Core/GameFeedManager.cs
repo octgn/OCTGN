@@ -14,15 +14,26 @@
 
     using log4net;
 
-    public class GameFeedManager : IDisposable
+    public interface IGameFeedManager : IDisposable
+    {
+        bool IsRunning { get; }
+        void Start();
+        void Stop();
+        void CheckForUpdates();
+        IEnumerable<NamedUrl> GetFeeds();
+        void AddFeed(string name, string feed);
+        bool ValidateFeedUrl(string feed);
+    }
+
+    public class GameFeedManager : IGameFeedManager
     {
         #region Singleton
 
-        internal static GameFeedManager SingletonContext { get; set; }
+        internal static IGameFeedManager SingletonContext { get; set; }
 
         private static readonly object GameFeedManagerSingletonLocker = new object();
 
-        public static GameFeedManager Get()
+        public static IGameFeedManager Get()
         {
             lock (GameFeedManagerSingletonLocker) return SingletonContext ?? (SingletonContext = new GameFeedManager());
         }
@@ -36,7 +47,7 @@
         internal string MainFeed = "http://www.myget.org/F/octgngames/";
         internal int RefreshTime = 10 * 60 * 1000; //Believe that's 10 minutes
 
-        internal bool IsRunning { get; set; }
+        public bool IsRunning { get; internal set; }
         internal Timer RefreshTimer { get; set; }
 
         #region StartStop
@@ -145,7 +156,7 @@
         /// </summary>
         /// <param name="feed">Feed url</param>
         /// <returns>Returns true if it is, or false if it isn't</returns>
-        internal bool ValidateFeedUrl(string feed)
+        public bool ValidateFeedUrl(string feed)
         {
             if (PathValidator.IsValidUrl(feed) && PathValidator.IsValidSource(feed))
             {
