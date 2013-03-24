@@ -207,5 +207,25 @@
                 SimpleConfig.SingletonContext = curSimple;
             }
         }
+
+        [Test]
+        public void Dispose_CallsStop()
+        {
+            var curGf =GameFeedManager.Get();
+            try
+            {
+                var fake = A.Fake<IGameFeedManager>(x=>x.Wrapping(curGf));
+                A.CallTo(()=>fake.Stop()).DoesNothing();
+                GameFeedManager.SingletonContext = fake;
+
+                GameFeedManager.Get().Dispose();
+
+                A.CallTo(() => fake.Stop()).MustHaveHappened(Repeated.Exactly.Once);
+            }
+            finally
+            {
+                GameFeedManager.SingletonContext = curGf;
+            }
+        }
     }
 }
