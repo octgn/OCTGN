@@ -1,3 +1,6 @@
+#3.0.12.58
++ Fixed issue where people boot into the game and crash https://github.com/kellyelton/OCTGN/issues/723
+
 #3.0.10.55
 + Fixed offline gaming https://github.com/kellyelton/OCTGN/issues/679
 + Fixed deck builder crash when no games installed https://github.com/kellyelton/OCTGN/issues/680
