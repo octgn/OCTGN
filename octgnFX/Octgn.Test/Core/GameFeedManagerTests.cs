@@ -167,5 +167,25 @@
             }
             Assert.Fail();
         }
+
+        [Test]
+        public void GetFeeds_JustCallsSimpleConfigGetFeeds()
+        {
+            var curSimple = SimpleConfig.Get();
+            try
+            {
+                var fake = A.Fake<ISimpleConfig>();
+                A.CallTo(fake).DoesNothing();
+                SimpleConfig.SingletonContext = fake;
+
+                var res = GameFeedManager.Get().GetFeeds();
+                Assert.IsNull(res);
+                A.CallTo(()=>fake.GetFeeds()).MustHaveHappened(Repeated.Exactly.Once);
+            }
+            finally
+            {
+                SimpleConfig.SingletonContext = curSimple;
+            }
+        }
     }
 }
