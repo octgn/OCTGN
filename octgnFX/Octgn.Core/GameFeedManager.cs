@@ -57,6 +57,7 @@
         internal int RefreshTime = 10 * 60 * 1000; //Believe that's 10 minutes
 
         public bool IsRunning { get; internal set; }
+        public event EventHandler OnUpdateFeedList;
         internal Timer RefreshTimer { get; set; }
         
         #region StartStop
@@ -146,6 +147,7 @@
             if (SimpleConfig.Get().GetFeeds().Any(x => x.Name.ToLower() == name.ToLower()))
                 throw new UserMessageException("Feed name {0} already exists.",name);
             SimpleConfig.Get().AddFeed(new NamedUrl(name, feed));
+            this.FireOnUpdateFeedList();
             Log.InfoFormat("Feed {0} {1} added.",name,feed);
         }
 
@@ -157,6 +159,7 @@
         {
             Log.InfoFormat("Removing feed {0}",name);
             SimpleConfig.Get().RemoveFeed(new NamedUrl(name, ""));
+            this.FireOnUpdateFeedList();
             Log.InfoFormat("Removed feed {0}",name);
         }
 
@@ -207,9 +210,18 @@
             return false;
         }
 
+        internal void FireOnUpdateFeedList()
+        {
+            if (OnUpdateFeedList != null)
+            {
+                OnUpdateFeedList(this, null);
+            }
+        }
+
         public void Dispose()
         {
             Log.Info("Dispose called");
+            OnUpdateFeedList = null;
             SingletonContext.Stop();
             Log.Info("Dispose finished");
         }
