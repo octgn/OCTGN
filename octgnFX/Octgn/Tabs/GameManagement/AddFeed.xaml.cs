@@ -58,7 +58,7 @@
         void ValidateFields()
         {
             if (string.IsNullOrWhiteSpace(FeedName))
-                this.SetError("You must enter a game name");
+                this.SetError("You must enter a feed name");
             else if (String.IsNullOrWhiteSpace(FeedUrl))
                 this.SetError("You must enter a feed path");
             else if (!Core.GameFeedManager.Get().ValidateFeedUrl(FeedUrl)) 
@@ -118,7 +118,9 @@
             Program.Dispatcher = this.Dispatcher;
             if (this.HasErrors) return;
             this.StartWait();
-            var task = new Task(() => Core.GameFeedManager.Get().AddFeed(this.FeedName,this.FeedUrl));
+            var feedName = FeedName;
+            var feedUrl = FeedUrl;
+            var task = new Task(() => Core.GameFeedManager.Get().AddFeed(feedName,feedUrl));
             task.ContinueWith((continueTask) =>
                 {
                     var error = "";

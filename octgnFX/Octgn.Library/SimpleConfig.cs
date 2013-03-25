@@ -22,7 +22,7 @@
 
         void WriteValue(string valName, string value);
 
-        IEnumerable<NamedUrl> GetFeeds();
+        IEnumerable<NamedUrl> GetFeeds(bool ignoreDefaults = false);
 
         void AddFeed(NamedUrl feed);
 
@@ -177,7 +177,7 @@
             }
         }
 
-        public IEnumerable<NamedUrl> GetFeeds()
+        public IEnumerable<NamedUrl> GetFeeds(bool ignoreDefaults = false)
         {
             Stream stream = null;
             while (!OpenFile(Paths.Get().FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
@@ -192,8 +192,11 @@
                     .Select(x=>x.Split(new[]{(char)1},StringSplitOptions.RemoveEmptyEntries))
                     .Select(x => x.Length != 2 ? null : new NamedUrl(x[0].Trim(), x[1].Trim()))
                     .Where(x=>x != null).ToList();
-                lines.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
-                lines.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
+                if (!ignoreDefaults)
+                {
+                    lines.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
+                    lines.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
+                }
                 return lines;
             }
         }
@@ -205,7 +208,7 @@
         /// <param name="feed">Feed url</param>
         public void AddFeed(NamedUrl feed)
         {
-            var lines = GetFeeds().ToList();
+            var lines = GetFeeds(true).ToList();
             if (lines.Any(x => x.Name.ToLower() == feed.Name.ToLower())) return;
             Stream stream = null;
             while (!OpenFile(Paths.Get().FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
@@ -227,7 +230,7 @@
         /// <param name="feed">Feed url</param>
         public void RemoveFeed(NamedUrl feed)
         {
-            var lines = GetFeeds().ToList();
+            var lines = GetFeeds(true).ToList();
             Stream stream = null;
             while (!OpenFile(Paths.Get().FeedListPath, FileMode.Create, FileShare.None, TimeSpan.FromDays(1), out stream))
             {
