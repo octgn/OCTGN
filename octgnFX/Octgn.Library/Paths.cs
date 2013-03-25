@@ -50,6 +50,7 @@
             ConfigDirectory = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Config");
             FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
             LocalFeedPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "LocalFeed");
+            FS.Directory.CreateDirectory(LocalFeedPath);
             MainOctgnFeed = "http://www.myget.org/F/octgngames/";
         }
 
