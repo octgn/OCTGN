@@ -54,7 +54,6 @@
         #endregion Singleton
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal string MainFeed = "http://www.myget.org/F/octgngames/";
         internal int RefreshTime = 10 * 60 * 1000; //Believe that's 10 minutes
 
         public bool IsRunning { get; internal set; }
@@ -129,10 +128,8 @@
         /// <returns>Saved game feeds</returns>
         public IEnumerable<NamedUrl> GetFeeds()
         {
-            var ret = new List<NamedUrl>(SimpleConfig.Get().GetFeeds());
-            ret.Add(new NamedUrl("OCTGN Official", MainFeed));
             Log.Info("Getting Feeds");
-            return ret;
+            return SimpleConfig.Get().GetFeeds();
         }
 
         /// <summary>
@@ -170,9 +167,10 @@
         internal virtual IQueryable<IPackage> GetPackages()
         {
             // TODO - [GAME FEED] - This should be made for each feed, not all combined - Kelly Elton - 3/24/2013   
-            var repo = PackageRepositoryFactory.Default.CreateRepository(MainFeed);
-            var packages = repo.GetPackages().Where(x => x.IsAbsoluteLatestVersion);
-            return packages;
+            //var repo = PackageRepositoryFactory.Default.CreateRepository(MainFeed);
+            //var packages = repo.GetPackages().Where(x => x.IsAbsoluteLatestVersion);
+            //return packages;
+            throw new NotImplementedException();
         }
 
         /// <summary>

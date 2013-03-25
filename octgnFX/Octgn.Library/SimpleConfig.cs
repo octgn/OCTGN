@@ -191,7 +191,9 @@
                     .Where(x=>!String.IsNullOrWhiteSpace(x.Trim()))
                     .Select(x=>x.Split(new[]{(char)1},StringSplitOptions.RemoveEmptyEntries))
                     .Select(x => x.Length != 2 ? null : new NamedUrl(x[0].Trim(), x[1].Trim()))
-                    .Where(x=>x != null);
+                    .Where(x=>x != null).ToList();
+                lines.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
+                lines.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
                 return lines;
             }
         }

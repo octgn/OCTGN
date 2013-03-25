@@ -13,6 +13,8 @@
         string DatabasePath { get; }
         string ConfigDirectory { get; }
         string FeedListPath { get; }
+        string LocalFeedPath { get; }
+        string MainOctgnFeed { get; }
     }
 
     public class Paths : IPaths
@@ -47,6 +49,8 @@
             DataDirectory = SimpleConfig.Get().DataDirectory;
             ConfigDirectory = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Config");
             FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
+            LocalFeedPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "LocalFeed");
+            MainOctgnFeed = "http://www.myget.org/F/octgngames/";
         }
 
         #endregion Singleton
@@ -59,5 +63,7 @@
         public string DatabasePath { get; set; }
         public string ConfigDirectory { get; set; }
         public string FeedListPath { get; set; }
+        public string LocalFeedPath { get; set; }
+        public string MainOctgnFeed { get; set; }
     }
 }
