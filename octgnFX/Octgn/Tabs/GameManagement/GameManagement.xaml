@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Octgn.Tabs.GameManagement.GameManagement"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement"
+             x:Name="Me"
+             mc:Ignorable="d" d:DesignHeight="453" d:DesignWidth="662"
+             DataContext="{Binding ElementName=Me}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="100*"/>
+        </Grid.RowDefinitions>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Feeds}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock DataContext="{Binding}" Text="{Binding Path=Name}" Foreground="#FFE0E0E0"></TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+    </Grid>
+</UserControl>

@@ -282,6 +282,9 @@
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameManagement\GameFeedManager.cs" />
+    <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
+      <DependentUpon>GameManagement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
@@ -906,6 +909,9 @@
     <Page Include="Scripting\Controls\MarkerDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\GameManagement\GameManagement.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

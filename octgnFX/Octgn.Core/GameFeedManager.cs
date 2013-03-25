@@ -129,8 +129,10 @@
         /// <returns>Saved game feeds</returns>
         public IEnumerable<NamedUrl> GetFeeds()
         {
+            var ret = new List<NamedUrl>(SimpleConfig.Get().GetFeeds());
+            ret.Add(new NamedUrl("OCTGN Official", MainFeed));
             Log.Info("Getting Feeds");
-            return SimpleConfig.Get().GetFeeds();
+            return ret;
         }
 
         /// <summary>
