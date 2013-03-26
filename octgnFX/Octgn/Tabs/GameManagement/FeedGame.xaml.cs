@@ -51,9 +51,16 @@ namespace Octgn.Tabs.GameManagement
                 }
                 this.installed = value;
                 this.OnPropertyChanged("Installed");
+                this.OnPropertyChanged("InstallButtonText");
             }
         }
-
+        public string InstallButtonText
+        {
+            get
+            {
+                return Installed ? "Install" : "Uninstall";
+            }
+        }
         public FeedGame()
         {
             InitializeComponent();
