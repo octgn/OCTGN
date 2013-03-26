@@ -20,29 +20,65 @@ namespace Octgn.ProxyGenerator
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static Image GenerateProxy(string rootPath, CardDefinition template, Dictionary<string,string> values)
+        public static Image GenerateProxy(string rootPath, TemplateDefinition template, Dictionary<string,string> values)
         {
-            var path = Path.Combine(rootPath, template.filename);
+            var path = Path.Combine(rootPath, template.src);
             Image temp = Image.FromFile(path);
             Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
             b.MakeTransparent();
                 //ret.PixelFormat = PixelFormat.Format32bppArgb;
 
-
             using (Graphics graphics = Graphics.FromImage(b))
             {
-                foreach (OverlayDefinition overlay in template.Overlays)
+                foreach (LinkDefinition overlay in template.OverlayBlocks)
                 {
-                    overlay.filename = Path.Combine(rootPath, overlay.filename);
-                   GraphicUtils.MergeOverlay(graphics, overlay);
+                    BlockDefinition block = BlockManager.GetInstance().GetBlock(overlay.Block);
+                    if (block.type != "overlay")
+                    {
+                        continue;
+                    }
+                    block.src = Path.Combine(rootPath, block.src);
+                    GraphicUtils.MergeOverlay(graphics, block);
                 }
 
-                foreach (SectionDefinition section in template.Sections)
+                foreach (LinkDefinition section in template.TextBlocks)
                 {
-                    if (values.ContainsKey(section.id))
+                    BlockDefinition block = BlockManager.GetInstance().GetBlock(section.Block);
+                    if (block.type != "text")
                     {
-                        GraphicUtils.WriteString(graphics, section, values[section.id]);
+                        continue;
                     }
+                    foreach (Property prop in section.NestedProperties)
+                    {
+                        if (!values.ContainsKey(prop.Name))
+                        {
+                            goto end;
+                        }
+                    }
+                    StringBuilder toWrite = new StringBuilder();
+                    if (section.NestedProperties.Count > 1)
+                    {
+                        for (int i = 0; i < section.NestedProperties.Count; i++)
+                        {
+                            string propertyName = section.NestedProperties[i].Name;
+                            if (i < (section.NestedProperties.Count - 1))
+                            {
+                                toWrite.Append(string.Format("{0} {1}", values[propertyName], section.Concentate));
+                            }
+                            else
+                            {
+                                toWrite.Append(values[propertyName]);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        string propertyName = section.NestedProperties[0].Name;
+                        toWrite.Append(values[propertyName]);
+                    }
+                    GraphicUtils.WriteString(graphics, block, toWrite.ToString());
+                end: ;
                 }
             }
 
