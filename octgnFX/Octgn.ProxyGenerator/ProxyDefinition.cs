@@ -12,7 +12,6 @@
     {
         public object Key { get; internal set; }
         public TemplateManager TemplateSelector { get; internal set; }
-        public FieldMapper FieldMapper { get; internal set; }
         internal XmlDocument Document;
         public string RootPath { get; internal set; }
 
@@ -21,23 +20,12 @@
             RootPath = rootPath;
             Key = key;
             TemplateSelector = new TemplateManager();
-            FieldMapper = new FieldMapper();
-            FieldMapper.TemplateSelector = TemplateSelector;
             Load(path);
         }
 
         public Image GenerateProxyImage(Dictionary<string, string> values)
         {
-            values = FieldMapper.RemapDictionary(values);
-            CardDefinition cardDef = TemplateSelector.GetTemplate(values);
-            Image ret = ProxyGenerator.GenerateProxy(RootPath,cardDef, values);
-            return (ret);
-        }
-
-        public Image GenerateProxyImage(string templateID, Dictionary<string, string> values)
-        {
-            values = FieldMapper.RemapDictionary(values);
-            CardDefinition cardDef = TemplateSelector.GetTemplate(templateID);
+            TemplateDefinition cardDef = TemplateSelector.GetTemplate(values);
             Image ret = ProxyGenerator.GenerateProxy(RootPath,cardDef, values);
             return (ret);
         }
@@ -45,13 +33,6 @@
         public bool SaveProxyImage(Dictionary<string, string> values, string path)
         {
             Image proxy = GenerateProxyImage(values);
-            SaveProxyImage(proxy, path);
-            return (File.Exists(path));
-        }
-
-        public bool SaveProxyImage(string templateID, Dictionary<string, string> values, string path)
-        {
-            Image proxy = GenerateProxyImage(templateID, values);
             SaveProxyImage(proxy, path);
             return (File.Exists(path));
         }
@@ -69,7 +50,6 @@
                 Document.RemoveAll();
                 Document = null;
                 TemplateSelector.ClearTemplates();
-                FieldMapper.ClearMappings();
             }
             Document = new XmlDocument();
             Document.Load(path);
@@ -78,12 +58,17 @@
 
         internal void LoadTemplates()
         {
-            XmlNodeList cardList = Document.GetElementsByTagName("card");
-            foreach (XmlNode card in cardList)
+            XmlNodeList blockList = Document.GetElementsByTagName("blocks");
+            BlockManager.GetInstance().LoadBlocks(blockList[0]);
+
+            XmlNodeList templateList = Document.GetElementsByTagName("template");
+            foreach (XmlNode template in templateList)
             {
-                CardDefinition cardDef = CardDefinition.LoadCardDefinition(card);
-                TemplateSelector.AddTemplate(cardDef);
+                TemplateDefinition templateDef = TemplateDefinition.LoadCardDefinition(template);
+                templateDef.rootPath = RootPath;
+                TemplateSelector.AddTemplate(templateDef);
             }
+            
         }
     }
 }

@@ -1,84 +1,93 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="cardgenerator" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-  <xs:element name="location">
+<xs:schema id="templates" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="link">
     <xs:complexType>
-      <xs:attribute name="x" type="xs:integer" default="0" />
-      <xs:attribute name="y" type="xs:integer" default="0" />
+      <xs:sequence>
+        <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="block" type="xs:string" />
+      <xs:attribute name="concentate" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="cardgenerator" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+  <xs:element name="templates" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element ref="location" />
-        <xs:element name="cards">
+        <xs:element ref="link" />
+        <xs:element name="blocks">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="card" minOccurs="1" maxOccurs="unbounded">
+              <xs:element name="block" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                   <xs:sequence>
-				    <xs:element name="multimatch" minOccurs="0" maxOccurs="1">
+                    <xs:element name="location" minOccurs="1" maxOccurs="1">
                       <xs:complexType>
-                        <xs:sequence>
-                          <xs:element name="match" minOccurs="1" maxOccurs="unbounded">
-                            <xs:complexType>
-                              <xs:attribute name="id" type="xs:string" use="required" />
-                            </xs:complexType>
-                          </xs:element>
-                        </xs:sequence>
+                        <xs:attribute name="x" type="xs:string" use="required" />
+                        <xs:attribute name="y" type="xs:string" use="required" />
                       </xs:complexType>
                     </xs:element>
-                    <xs:element name="overlays" minOccurs="0" maxOccurs="1">
+                    <xs:element name="text" minOccurs="0" maxOccurs="1">
                       <xs:complexType>
-                        <xs:sequence>
-                          <xs:element name="overlay" minOccurs="0" maxOccurs="unbounded">
-                            <xs:complexType>
-                              <xs:sequence>
-                                <xs:element ref="location" minOccurs="1" maxOccurs="1" />
-                              </xs:sequence>
-                              <xs:attribute name="filename" type="xs:string" use="required" />
-                            </xs:complexType>
-                          </xs:element>
-                        </xs:sequence>
+                        <xs:attribute name="color" type="xs:string" use="required" />
+                        <xs:attribute name="size" type="xs:string" use="required" />
                       </xs:complexType>
                     </xs:element>
-                    <xs:element name="sections" minOccurs="1" maxOccurs="1">
+                    <xs:element name="border" minOccurs="0" maxOccurs="1">
                       <xs:complexType>
-                        <xs:sequence>
-                          <xs:element name="section" minOccurs="1" maxOccurs="unbounded">
-                            <xs:complexType>
-                              <xs:sequence>
-                                <xs:element ref="location" minOccurs="1" maxOccurs="1" />
-                                <xs:element name="text" minOccurs="1" maxOccurs="1">
-                                  <xs:complexType>
-                                    <xs:attribute name="color" type="xs:string" default="#FFFFFF" />
-                                    <xs:attribute name="size" type="xs:integer" default="10" />
-                                  </xs:complexType>
-                                </xs:element>
-                                <xs:element name="border" minOccurs="0" maxOccurs="1">
-                                  <xs:complexType>
-                                    <xs:attribute name="color" type="xs:string" default="#FFFFFF" />
-                                    <xs:attribute name="size" type="xs:integer" default="10" />
-                                  </xs:complexType>
-                                </xs:element>
-                                <xs:element name="block" minOccurs="0" maxOccurs="1">
-                                  <xs:complexType>
-                                    <xs:attribute name="height" type="xs:integer" default="50" />
-                                    <xs:attribute name="width" type="xs:integer" default="100" />
-                                  </xs:complexType>
-                                </xs:element>
-                              </xs:sequence>
-                              <xs:attribute name="id" type="xs:string" use="required" />
-                            </xs:complexType>
-                          </xs:element>
-                        </xs:sequence>
+                        <xs:attribute name="color" type="xs:string" use="required" />
+                        <xs:attribute name="size" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="wordwrap" minOccurs="0" maxOccurs="1">
+                      <xs:complexType>
+                        <xs:attribute name="height" type="xs:string" use="required" />
+                        <xs:attribute name="width" type="xs:string" use="required" />
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
+                  <xs:attribute name="type" type="xs:string" use="required" />
                   <xs:attribute name="id" type="xs:string" use="required" />
-                  <xs:attribute name="filename" type="xs:string" use="required" />
+                  <xs:attribute name="src" type="xs:string" />
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="template">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="matches" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="match" minOccurs="1" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="name" type="xs:string" use="required" />
+                        <xs:attribute name="value" type="xs:string" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="overlayblocks" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element ref="link" minOccurs="1" maxOccurs="unbounded" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="textblocks" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element ref="link" minOccurs="1" maxOccurs="unbounded" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="src" type="xs:string" use="required" />
+            <xs:attribute name="default" type="xs:string" default="False" />
           </xs:complexType>
         </xs:element>
       </xs:choice>

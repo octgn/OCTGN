@@ -22,38 +22,66 @@ using System.Xml.Serialization;
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 [System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
-public partial class location {
+public partial class link {
     
-    private string xField;
+    private linkProperty[] propertyField;
     
-    private string yField;
+    private string blockField;
     
-    public location() {
-        this.xField = "0";
-        this.yField = "0";
-    }
+    private string concentateField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    [System.ComponentModel.DefaultValueAttribute("0")]
-    public string x {
+    [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public linkProperty[] property {
         get {
-            return this.xField;
+            return this.propertyField;
         }
         set {
-            this.xField = value;
+            this.propertyField = value;
         }
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    [System.ComponentModel.DefaultValueAttribute("0")]
-    public string y {
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string block {
         get {
-            return this.yField;
+            return this.blockField;
         }
         set {
-            this.yField = value;
+            this.blockField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string concentate {
+        get {
+            return this.concentateField;
+        }
+        set {
+            this.concentateField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class linkProperty {
+    
+    private string nameField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
         }
     }
 }
@@ -65,13 +93,14 @@ public partial class location {
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 [System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
-public partial class cardgenerator {
+public partial class templates {
     
     private object[] itemsField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("cards", typeof(cardgeneratorCards), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("location", typeof(location))]
+    [System.Xml.Serialization.XmlElementAttribute("blocks", typeof(templatesBlocks), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("link", typeof(link))]
+    [System.Xml.Serialization.XmlElementAttribute("template", typeof(templatesTemplate), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
         get {
             return this.itemsField;
@@ -88,18 +117,18 @@ public partial class cardgenerator {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class cardgeneratorCards {
+public partial class templatesBlocks {
     
-    private cardgeneratorCardsCard[] cardField;
+    private templatesBlocksBlock[] blockField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("card", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public cardgeneratorCardsCard[] card {
+    [System.Xml.Serialization.XmlElementAttribute("block", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesBlocksBlock[] block {
         get {
-            return this.cardField;
+            return this.blockField;
         }
         set {
-            this.cardField = value;
+            this.blockField = value;
         }
     }
 }
@@ -110,153 +139,25 @@ public partial class cardgeneratorCards {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class cardgeneratorCardsCard {
+public partial class templatesBlocksBlock {
     
-    private cardgeneratorCardsCardMatch[] multimatchField;
+    private templatesBlocksBlockLocation locationField;
     
-    private cardgeneratorCardsCardOverlay[] overlaysField;
+    private templatesBlocksBlockText textField;
     
-    private cardgeneratorCardsCardSection[] sectionsField;
+    private templatesBlocksBlockBorder borderField;
+    
+    private templatesBlocksBlockWordwrap wordwrapField;
+    
+    private string typeField;
     
     private string idField;
     
-    private string filenameField;
+    private string srcField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("match", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
-    public cardgeneratorCardsCardMatch[] multimatch {
-        get {
-            return this.multimatchField;
-        }
-        set {
-            this.multimatchField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("overlay", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
-    public cardgeneratorCardsCardOverlay[] overlays {
-        get {
-            return this.overlaysField;
-        }
-        set {
-            this.overlaysField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("section", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
-    public cardgeneratorCardsCardSection[] sections {
-        get {
-            return this.sectionsField;
-        }
-        set {
-            this.sectionsField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string id {
-        get {
-            return this.idField;
-        }
-        set {
-            this.idField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string filename {
-        get {
-            return this.filenameField;
-        }
-        set {
-            this.filenameField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class cardgeneratorCardsCardMatch {
-    
-    private string idField;
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string id {
-        get {
-            return this.idField;
-        }
-        set {
-            this.idField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class cardgeneratorCardsCardOverlay {
-    
-    private location locationField;
-    
-    private string filenameField;
-    
-    /// <remarks/>
-    public location location {
-        get {
-            return this.locationField;
-        }
-        set {
-            this.locationField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string filename {
-        get {
-            return this.filenameField;
-        }
-        set {
-            this.filenameField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class cardgeneratorCardsCardSection {
-    
-    private location locationField;
-    
-    private cardgeneratorCardsCardSectionText textField;
-    
-    private cardgeneratorCardsCardSectionBorder borderField;
-    
-    private cardgeneratorCardsCardSectionBlock blockField;
-    
-    private string idField;
-    
-    /// <remarks/>
-    public location location {
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesBlocksBlockLocation location {
         get {
             return this.locationField;
         }
@@ -267,7 +168,7 @@ public partial class cardgeneratorCardsCardSection {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public cardgeneratorCardsCardSectionText text {
+    public templatesBlocksBlockText text {
         get {
             return this.textField;
         }
@@ -278,7 +179,7 @@ public partial class cardgeneratorCardsCardSection {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public cardgeneratorCardsCardSectionBorder border {
+    public templatesBlocksBlockBorder border {
         get {
             return this.borderField;
         }
@@ -289,12 +190,23 @@ public partial class cardgeneratorCardsCardSection {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public cardgeneratorCardsCardSectionBlock block {
+    public templatesBlocksBlockWordwrap wordwrap {
         get {
-            return this.blockField;
+            return this.wordwrapField;
         }
         set {
-            this.blockField = value;
+            this.wordwrapField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string type {
+        get {
+            return this.typeField;
+        }
+        set {
+            this.typeField = value;
         }
     }
     
@@ -308,6 +220,17 @@ public partial class cardgeneratorCardsCardSection {
             this.idField = value;
         }
     }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string src {
+        get {
+            return this.srcField;
+        }
+        set {
+            this.srcField = value;
+        }
+    }
 }
 
 /// <remarks/>
@@ -316,20 +239,49 @@ public partial class cardgeneratorCardsCardSection {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class cardgeneratorCardsCardSectionText {
+public partial class templatesBlocksBlockLocation {
+    
+    private string xField;
+    
+    private string yField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string x {
+        get {
+            return this.xField;
+        }
+        set {
+            this.xField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string y {
+        get {
+            return this.yField;
+        }
+        set {
+            this.yField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesBlocksBlockText {
     
     private string colorField;
     
     private string sizeField;
     
-    public cardgeneratorCardsCardSectionText() {
-        this.colorField = "#FFFFFF";
-        this.sizeField = "10";
-    }
-    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("#FFFFFF")]
     public string color {
         get {
             return this.colorField;
@@ -340,8 +292,7 @@ public partial class cardgeneratorCardsCardSectionText {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    [System.ComponentModel.DefaultValueAttribute("10")]
+    [System.Xml.Serialization.XmlAttributeAttribute()]
     public string size {
         get {
             return this.sizeField;
@@ -358,20 +309,14 @@ public partial class cardgeneratorCardsCardSectionText {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class cardgeneratorCardsCardSectionBorder {
+public partial class templatesBlocksBlockBorder {
     
     private string colorField;
     
     private string sizeField;
     
-    public cardgeneratorCardsCardSectionBorder() {
-        this.colorField = "#FFFFFF";
-        this.sizeField = "10";
-    }
-    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("#FFFFFF")]
     public string color {
         get {
             return this.colorField;
@@ -382,8 +327,7 @@ public partial class cardgeneratorCardsCardSectionBorder {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    [System.ComponentModel.DefaultValueAttribute("10")]
+    [System.Xml.Serialization.XmlAttributeAttribute()]
     public string size {
         get {
             return this.sizeField;
@@ -400,20 +344,14 @@ public partial class cardgeneratorCardsCardSectionBorder {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class cardgeneratorCardsCardSectionBlock {
+public partial class templatesBlocksBlockWordwrap {
     
     private string heightField;
     
     private string widthField;
     
-    public cardgeneratorCardsCardSectionBlock() {
-        this.heightField = "50";
-        this.widthField = "100";
-    }
-    
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    [System.ComponentModel.DefaultValueAttribute("50")]
+    [System.Xml.Serialization.XmlAttributeAttribute()]
     public string height {
         get {
             return this.heightField;
@@ -424,14 +362,130 @@ public partial class cardgeneratorCardsCardSectionBlock {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
-    [System.ComponentModel.DefaultValueAttribute("100")]
+    [System.Xml.Serialization.XmlAttributeAttribute()]
     public string width {
         get {
             return this.widthField;
         }
         set {
             this.widthField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplate {
+    
+    private templatesTemplateMatch[] matchesField;
+    
+    private link[] overlayblocksField;
+    
+    private link[] textblocksField;
+    
+    private string srcField;
+    
+    private string defaultField;
+    
+    public templatesTemplate() {
+        this.defaultField = "False";
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("match", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public templatesTemplateMatch[] matches {
+        get {
+            return this.matchesField;
+        }
+        set {
+            this.matchesField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
+    public link[] overlayblocks {
+        get {
+            return this.overlayblocksField;
+        }
+        set {
+            this.overlayblocksField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
+    public link[] textblocks {
+        get {
+            return this.textblocksField;
+        }
+        set {
+            this.textblocksField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string src {
+        get {
+            return this.srcField;
+        }
+        set {
+            this.srcField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("False")]
+    public string @default {
+        get {
+            return this.defaultField;
+        }
+        set {
+            this.defaultField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateMatch {
+    
+    private string nameField;
+    
+    private string valueField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
         }
     }
 }
