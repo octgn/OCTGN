@@ -283,6 +283,9 @@
     </Compile>
     <Compile Include="GameManagement\GameFeedManager.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Tabs\GameManagement\FeedGame.xaml.cs">
+      <DependentUpon>FeedGame.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
       <DependentUpon>GameManagement.xaml</DependentUpon>
     </Compile>
@@ -913,6 +916,10 @@
     <Page Include="Scripting\Controls\MarkerDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\GameManagement\FeedGame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\GameManagement\GameManagement.xaml">
       <Generator>MSBuild:Compile</Generator>
