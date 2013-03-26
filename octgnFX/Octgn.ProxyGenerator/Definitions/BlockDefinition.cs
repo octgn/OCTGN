@@ -8,20 +8,28 @@ using System.Xml;
 
 namespace Octgn.ProxyGenerator.Definitions
 {
-    public class SectionDefinition
+    public class BlockDefinition
     {
+
         public SectionStructs.Location location = new SectionStructs.Location { x = 0, y = 0 };
-        public SectionStructs.Block block = new SectionStructs.Block { height = 0, width = 0 };
+        public SectionStructs.WordWrap wordwrap = new SectionStructs.WordWrap { height = 0, width = 0 };
         public SectionStructs.Text text = new SectionStructs.Text { color = Color.White, size = 0 };
         public SectionStructs.Border border = new SectionStructs.Border { color = Color.White, size = 0 };
 
         public string id;
+        public string type;
+        public string src;
 
-        public static SectionDefinition LoadSectionDefinition(XmlNode node)
+        public static BlockDefinition LoadSectionDefinition(XmlNode node)
         {
-            SectionDefinition ret = new SectionDefinition();
+            BlockDefinition ret = new BlockDefinition();
 
             ret.id = node.Attributes["id"].Value;
+            ret.type = node.Attributes["type"].Value;
+            if (node.Attributes["src"] != null)
+            {
+                ret.src = node.Attributes["src"].Value;
+            }
             foreach (XmlNode prop in node.ChildNodes)
             {
                 if (prop.Name.Equals("location"))
@@ -39,10 +47,10 @@ namespace Octgn.ProxyGenerator.Definitions
                     ret.border.color = ColorTranslator.FromHtml(prop.Attributes["color"].Value);
                     ret.border.size = int.Parse(prop.Attributes["size"].Value);
                 }
-                if (prop.Name.Equals("block"))
+                if (prop.Name.Equals("wordwrap"))
                 {
-                    ret.block.height = int.Parse(prop.Attributes["height"].Value);
-                    ret.block.width = int.Parse(prop.Attributes["width"].Value);
+                    ret.wordwrap.height = int.Parse(prop.Attributes["height"].Value);
+                    ret.wordwrap.width = int.Parse(prop.Attributes["width"].Value);
                 }
             }
 

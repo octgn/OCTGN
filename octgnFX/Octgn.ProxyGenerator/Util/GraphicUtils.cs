@@ -17,9 +17,9 @@ namespace Octgn.ProxyGenerator.Util
         /// </summary>
         /// <param name="graphics"></param>
         /// <param name="overlay"></param>
-        public static void MergeOverlay(Graphics graphics, OverlayDefinition overlay)
+        public static void MergeOverlay(Graphics graphics, BlockDefinition overlay)
         {
-            using (Image temp = Image.FromFile(overlay.filename))
+            using (Image temp = Image.FromFile(overlay.src))
             {
                 Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
                 b.MakeTransparent();
@@ -34,13 +34,13 @@ namespace Octgn.ProxyGenerator.Util
         /// <param name="graphics"></param>
         /// <param name="section"></param>
         /// <param name="value"></param>
-        public static void WriteString(Graphics graphics, SectionDefinition section, string value)
+        public static void WriteString(Graphics graphics, BlockDefinition section, string value)
         {
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             GraphicsPath path = null;
-            if (section.block.width > 0 && section.block.height > 0)
+            if (section.wordwrap.width > 0 && section.wordwrap.height > 0)
             {
-                path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.block.ToSize());
+                path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.wordwrap.ToSize());
             }
             else
             {

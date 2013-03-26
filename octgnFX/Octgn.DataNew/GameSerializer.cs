@@ -576,24 +576,6 @@
         {
             var game = DbContext.Get().Games.First(x => x.Id == GameId);
             var ret = new ProxyDefinition(GameId, fileName, new FileInfo(game.Filename).Directory.FullName);
-            foreach (gameProxygenMapping mapping in ProxyGenFromDef.mappings)
-            {
-                ret.FieldMapper.AddMapping(mapping.name, mapping.mapto);
-            }
-            ret.TemplateSelector.DefaultID = ProxyGenFromDef.templatemapping.defaulttemplate;
-            switch (ProxyGenFromDef.templatemapping.usemultimatch)
-            {
-                case boolean.True:
-                    ret.TemplateSelector.UseMultiFieldMatching = true;
-                    break;
-                case boolean.False:
-                    ret.TemplateSelector.UseMultiFieldMatching = false;
-                    break;
-            }
-            foreach (gameProxygenTemplatemappingTemplatemap mapping in ProxyGenFromDef.templatemapping.templatemap)
-            {
-                ret.TemplateSelector.AddMatch(mapping.field);
-            }
             return ret;
         }
 

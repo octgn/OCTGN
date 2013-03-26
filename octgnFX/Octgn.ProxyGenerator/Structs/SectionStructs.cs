@@ -49,12 +49,12 @@ namespace Octgn.ProxyGenerator.Structs
             }
         }
 
-        public struct Block
+        public struct WordWrap
         {
             public int width;
             public int height;
 
-            public Block(int width, int height) 
+            public WordWrap(int width, int height) 
             {
                 this.width = width;
                 this.height = height; 
