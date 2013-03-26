@@ -30,6 +30,10 @@ public partial class link {
     
     private string concentateField;
     
+    public link() {
+        this.concentateField = " ";
+    }
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public linkProperty[] property {
@@ -54,6 +58,7 @@ public partial class link {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(" ")]
     public string concentate {
         get {
             return this.concentateField;
