@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Octgn.Tabs.GameManagement
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
-    using System.Windows.Forms;
+
+    using NuGet;
 
     using Octgn.Annotations;
     using Octgn.Core;
@@ -46,6 +39,7 @@ namespace Octgn.Tabs.GameManagement
                 }
                 this.selected = value;
                 this.OnPropertyChanged("Selected");
+                this.OnPropertyChanged("Packages");
             }
         }
 
@@ -58,6 +52,26 @@ namespace Octgn.Tabs.GameManagement
                 OnPropertyChanged("ButtonsEnabled");
             }
         }
+
+        private ObservableCollection<IPackage> packages; 
+        public ObservableCollection<IPackage> Packages
+        {
+            get
+            {
+                if(packages == null)packages = new ObservableCollection<IPackage>();
+                var ret = GameFeedManager.Get().GetPackages(Selected).ToList();
+                foreach (var p in packages.ToList())
+                {
+                    if (!ret.Contains(p)) packages.Remove(p);
+                }
+                foreach (var r in ret)
+                {
+                    if(!packages.Contains(r))packages.Add(r);
+                }
+                return packages;
+            }
+        }
+
         public GameManagement()
         {
             ButtonsEnabled = true;

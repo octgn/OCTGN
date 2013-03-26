@@ -5,35 +5,37 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
              HorizontalContentAlignment="Stretch"
-             VerticalContentAlignment="Stretch" 
-             d:DesignWidth="378"
+             HorizontalAlignment="Stretch"
+             VerticalContentAlignment="Center"
              Height="Auto"
              x:Name="Me"
-             
-             DataContext="{Binding ElementName=Me}">
-    <Grid Margin="5" Height="64">
+             IsHitTestVisible="False"
+             >
+    <!--DataContext="{Binding ElementName=Me}">-->
+    <Grid Margin="5" Height="64" HorizontalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="64"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Image Source="{Binding Package.IconUrl}"/>
+        <Image DataContext="{Binding ElementName=Me}" Source="{Binding Path=ImageUri}"/>
         <StackPanel Grid.Column="1" Margin="5,0,5,0">
             <StackPanel.Resources>
                 <Style TargetType="{x:Type TextBlock}">
                     <Setter Property="Margin" Value="0,3,0,0"/>
                 </Style>
             </StackPanel.Resources>
-            <TextBlock Text="{Binding Package.Title}" FontWeight="Bold"></TextBlock>
-            <TextBlock Text="{Binding Package.Description}" TextWrapping="Wrap"></TextBlock>
+            <TextBlock DataContext="{Binding ElementName=Me}" Text="{Binding Package.Title}" FontWeight="Bold"></TextBlock>
+            <TextBlock DataContext="{Binding ElementName=Me}" Text="{Binding Package.Description}" TextWrapping="Wrap"></TextBlock>
         </StackPanel>
-        <Grid Grid.Column="2" Width="100">
+        <Grid Grid.Column="2" Width="Auto">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50*"/>
                 <RowDefinition Height="50*"/>
             </Grid.RowDefinitions>
-            <Button Content="{Binding InstallButtonText}"></Button>
-            <Image Grid.Row="1" Source="../../Resources/Icons/Ok.png" Stretch="Uniform" Margin="5" HorizontalAlignment="Right" Visibility="{Binding Installed,Converter={StaticResource BooleanToVisibilityConverter}}"></Image>
+            <Button Width="100" x:Name="ButtonInstallUninstall" DataContext="{Binding ElementName=Me}" Content="{Binding InstallButtonText}" Visibility="{Binding IsThisSelected,Converter={StaticResource BooleanToVisibilityConverter}}">
+            </Button>
+            <Image Grid.Row="1" Source="../../Resources/Icons/Ok.png" Stretch="Uniform" Margin="5" HorizontalAlignment="Right" DataContext="{Binding ElementName=Me}" Visibility="{Binding Installed,Converter={StaticResource BooleanToVisibilityConverter}}"></Image>
         </Grid>
     </Grid>
 </ListBoxItem>

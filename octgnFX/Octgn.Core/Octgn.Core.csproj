@@ -42,6 +42,7 @@
     <Compile Include="DataManagers\GameManager.cs" />
     <Compile Include="DataManagers\PackManager.cs" />
     <Compile Include="DataManagers\SetManager.cs" />
+    <Compile Include="EmptyPackage.cs" />
     <Compile Include="GameFeedManager.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />

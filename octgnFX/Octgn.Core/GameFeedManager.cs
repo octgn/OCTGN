@@ -24,6 +24,7 @@
         void AddFeed(string name, string feed);
         void RemoveFeed(string name);
         bool ValidateFeedUrl(string url);
+        IEnumerable<IPackage> GetPackages(NamedUrl url);
         event EventHandler OnUpdateFeedList;
     }
 
@@ -162,6 +163,20 @@
             SimpleConfig.Get().RemoveFeed(new NamedUrl(name, ""));
             this.FireOnUpdateFeedList();
             Log.InfoFormat("Removed feed {0}",name);
+        }
+
+        public IEnumerable<IPackage> GetPackages(NamedUrl url)
+        {
+            if (url == null)
+            {
+                Log.Info("Getting packages for null NamedUrl");
+                return new List<IPackage>();
+            }
+            Log.InfoFormat("Getting packages for feed {0}:{1}",url.Name,url.Url);
+            var ret = new List<IPackage>();
+            ret = PackageRepositoryFactory.Default.CreateRepository(url.Url).GetPackages().ToList();
+            Log.InfoFormat("Finished getting packages for feed {0}:{1}", url.Name, url.Url);
+            return ret;
         }
 
         /// <summary>

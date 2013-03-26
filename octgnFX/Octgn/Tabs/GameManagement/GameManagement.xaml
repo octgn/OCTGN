@@ -6,8 +6,8 @@
              xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement"
              x:Name="Me"
              mc:Ignorable="d" d:DesignHeight="453" d:DesignWidth="662"
-             DataContext="{Binding ElementName=Me}">
-    <Grid>
+             >
+    <Grid DataContext="{Binding ElementName=Me}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition/>
@@ -29,6 +29,12 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-
+        <ListBox Grid.Column="1" Grid.Row="1" Background="Transparent" ItemsSource="{Binding Packages}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <gameManagement:FeedGame Package="{Binding}" HorizontalAlignment="Stretch"></gameManagement:FeedGame>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>
