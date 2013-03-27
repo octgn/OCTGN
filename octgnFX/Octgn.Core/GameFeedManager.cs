@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Timers;
@@ -25,6 +26,7 @@
         void RemoveFeed(string name);
         bool ValidateFeedUrl(string url);
         IEnumerable<IPackage> GetPackages(NamedUrl url);
+        void ExtractPackage(string directory, IPackage package);
         event EventHandler OnUpdateFeedList;
     }
 
@@ -177,6 +179,30 @@
             ret = PackageRepositoryFactory.Default.CreateRepository(url.Url).GetPackages().ToList();
             Log.InfoFormat("Finished getting packages for feed {0}:{1}", url.Name, url.Url);
             return ret;
+        }
+
+        public void ExtractPackage(string directory, IPackage package)
+        {
+            foreach (var file in package.GetFiles())
+            {
+                var p = Path.Combine(directory, file.Path);
+                var fi = new FileInfo(p);
+                var dir = fi.Directory.FullName;
+                Directory.CreateDirectory(dir);
+                var byteList = new List<byte>();
+                using (var sr = new BinaryReader(file.GetStream()))
+                {
+                    var buffer = new byte[1024];
+                    var len = sr.Read(buffer, 0, 1024);
+                    while (len > 0)
+                    {
+                        byteList.AddRange(buffer.Take(len));
+                        Array.Clear(buffer, 0, buffer.Length);
+                        len = sr.Read(buffer, 0, 1024);
+                    }
+                    File.WriteAllBytes(p,byteList.ToArray());
+                }
+            }
         }
 
         /// <summary>

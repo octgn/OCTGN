@@ -7,13 +7,19 @@ namespace Octgn.Tabs.GameManagement
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.IO;
+    using System.Reflection;
+    using System.Windows.Controls;
 
     using NuGet;
 
     using Octgn.Annotations;
     using Octgn.Core;
+    using Octgn.Core.DataManagers;
     using Octgn.Extentions;
     using Octgn.Library.Networking;
+
+    using log4net;
 
     using UserControl = System.Windows.Controls.UserControl;
 
@@ -22,6 +28,7 @@ namespace Octgn.Tabs.GameManagement
     /// </summary>
     public partial class GameManagement : UserControl, INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public ObservableCollection<NamedUrl> Feeds { get; set; }
 
         private NamedUrl selected;
@@ -79,9 +86,16 @@ namespace Octgn.Tabs.GameManagement
             {
                 Feeds = new ObservableCollection<NamedUrl>(Octgn.Core.GameFeedManager.Get().GetFeeds());
                 GameFeedManager.Get().OnUpdateFeedList += OnOnUpdateFeedList;
+                GameManager.Get().GameListChanged += OnGameListChanged;
             }
             else Feeds = new ObservableCollection<NamedUrl>();
             InitializeComponent();
+        }
+
+        private void OnGameListChanged(object sender, EventArgs eventArgs)
+        {
+            OnPropertyChanged("Selected");
+            OnPropertyChanged("Packages");
         }
 
         private void OnOnUpdateFeedList(object sender, EventArgs eventArgs)
@@ -115,6 +129,66 @@ namespace Octgn.Tabs.GameManagement
             GameFeedManager.Get().RemoveFeed(Selected.Name);
         }
 
+        private void ButtonInstallUninstallClick(object sender, RoutedEventArgs e)
+        {
+            var button = e.Source as Button;
+            if(button == null || button.DataContext == null)return;
+            var model = button.DataContext as FeedGameViewModel;
+            if (model == null) return;
+            if (model.Installed)
+            {
+                var game = GameManager.Get().GetById(model.Id);
+                if (game != null)
+                {
+                    try
+                    {
+                        GameManager.Get().UninstallGame(game);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Could not fully uninstall game " + model.Package.Title,ex);
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    GameManager.Get().InstallGame(model.Package);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Could not install game " + model.Package.Title,ex);
+                    var res = MessageBox.Show(
+                        "There was a problem installing " + model.Package.Title
+                        + ". Do you want to get in contact with the game developer?",
+                        "Error",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Exclamation);
+
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            System.Diagnostics.Process.Start(model.Package.ProjectUrl.ToString());
+
+                        }
+                        catch(Exception exx)
+                        {
+                            Log.Warn("Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",exx);
+                            MessageBox.Show(
+                                "We could not open your browser. Please set a default browser and try again",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -126,5 +200,7 @@ namespace Octgn.Tabs.GameManagement
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+        #endregion PropertyChanged
+
     }
 }

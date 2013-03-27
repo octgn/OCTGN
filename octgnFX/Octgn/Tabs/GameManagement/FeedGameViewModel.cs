@@ -61,7 +61,18 @@
         public FeedGameViewModel(IPackage package)
         {
             Package = package;
+            GameManager.Get().GameListChanged += OnGameListChanged;
         }
+
+        private void OnGameListChanged(object sender, EventArgs eventArgs)
+        {
+            this.OnPropertyChanged("Package");
+            this.OnPropertyChanged("Installed");
+            this.OnPropertyChanged("ImageUri");
+            this.OnPropertyChanged("Id");
+            this.OnPropertyChanged("InstallButtonText");
+        }
+
         #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
