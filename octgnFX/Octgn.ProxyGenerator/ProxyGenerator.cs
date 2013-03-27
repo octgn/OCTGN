@@ -25,7 +25,7 @@ namespace Octgn.ProxyGenerator
             var path = Path.Combine(rootPath, template.src);
             Image temp = Image.FromFile(path);
             Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
-            b.MakeTransparent();
+            //b.MakeTransparent();
                 //ret.PixelFormat = PixelFormat.Format32bppArgb;
 
             using (Graphics graphics = Graphics.FromImage(b))
@@ -48,13 +48,22 @@ namespace Octgn.ProxyGenerator
                     {
                         continue;
                     }
+                    List<Property> removeProps = new List<Property>();
+                    
                     foreach (Property prop in section.NestedProperties)
                     {
                         if (!values.ContainsKey(prop.Name))
                         {
-                            goto end;
+                            removeProps.Add(prop);
                         }
                     }
+                    foreach (Property prop in removeProps)
+                    {
+                        section.NestedProperties.Remove(prop);
+                    }
+                    removeProps.Clear();
+                    removeProps = null;
+
                     StringBuilder toWrite = new StringBuilder();
                     if (section.NestedProperties.Count > 1)
                     {
