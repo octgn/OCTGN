@@ -161,7 +161,7 @@ namespace Octgn.Tabs.GameManagement
                     Log.Error("Could not install game " + model.Package.Title,ex);
                     var res = MessageBox.Show(
                         "There was a problem installing " + model.Package.Title
-                        + ". Please be aware, this is not our fault. Our code is impervious and perfect."
+                        + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
                         +"\n\nDo you want to get in contact with the game developer who broke this busted game?",
                         "Error",
                         MessageBoxButton.YesNo,
