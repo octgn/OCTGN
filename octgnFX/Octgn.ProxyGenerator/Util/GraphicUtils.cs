@@ -22,7 +22,7 @@ namespace Octgn.ProxyGenerator.Util
             using (Image temp = Image.FromFile(overlay.src))
             {
                 Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
-                b.MakeTransparent();
+                //b.MakeTransparent();
                 graphics.DrawImage(b,overlay.location.x, overlay.location.y, b.Width, b.Height);
                 b.Dispose();
             }
