@@ -25,15 +25,51 @@
         <ListBox Grid.Row="1" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock DataContext="{Binding}" Text="{Binding Path=Name}" Foreground="#FFE0E0E0"></TextBlock>
+                    <TextBlock DataContext="{Binding}" Text="{Binding Path=Name}"></TextBlock>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
         <ListBox Grid.Column="1" Grid.Row="1" Background="Transparent" ItemsSource="{Binding Packages}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <gameManagement:FeedGame Package="{Binding}" HorizontalAlignment="Stretch"></gameManagement:FeedGame>
+                    <Grid Margin="5" Height="64" HorizontalAlignment="Stretch" DataContext="{Binding}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="64"/>
+                            <ColumnDefinition Width="100*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="{Binding Path=ImageUri}"/>
+                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Margin" Value="0,3,0,0"/>
+                                </Style>
+                            </StackPanel.Resources>
+                            <TextBlock DataContext="{Binding}" Text="{Binding Package.Title}" FontWeight="Bold"></TextBlock>
+                            <TextBlock DataContext="{Binding}" Text="{Binding Package.Description}" TextWrapping="Wrap"></TextBlock>
+                        </StackPanel>
+                        <Grid Grid.Column="2" Width="Auto">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50*"/>
+                                <RowDefinition Height="50*"/>
+                            </Grid.RowDefinitions>
+                            <Button Width="100" x:Name="ButtonInstallUninstall" DataContext="{Binding}" Content="{Binding InstallButtonText}" 
+                                    >
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=IsSelected,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListBoxItem}}}" Value="False">
+                                                <Setter Property="Button.Visibility" Value="Collapsed"></Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Image Grid.Row="1" Source="../../Resources/Icons/Ok.png" Stretch="Uniform" Margin="5" HorizontalAlignment="Right" DataContext="{Binding}" Visibility="{Binding Installed,Converter={StaticResource BooleanToVisibilityConverter}}"></Image>
+                        </Grid>
+                    </Grid>
                 </DataTemplate>
+
             </ListBox.ItemTemplate>
         </ListBox>
     </Grid>

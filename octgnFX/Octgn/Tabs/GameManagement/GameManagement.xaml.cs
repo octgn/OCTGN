@@ -53,18 +53,18 @@ namespace Octgn.Tabs.GameManagement
             }
         }
 
-        private ObservableCollection<IPackage> packages; 
-        public ObservableCollection<IPackage> Packages
+        private ObservableCollection<FeedGameViewModel> packages;
+        public ObservableCollection<FeedGameViewModel> Packages
         {
             get
             {
-                if(packages == null)packages = new ObservableCollection<IPackage>();
-                var ret = GameFeedManager.Get().GetPackages(Selected).ToList();
+                if (packages == null) packages = new ObservableCollection<FeedGameViewModel>();
+                var packs = GameFeedManager.Get().GetPackages(Selected).Select(x=> new FeedGameViewModel(x)).ToList();
                 foreach (var p in packages.ToList())
                 {
-                    if (!ret.Contains(p)) packages.Remove(p);
+                    if (!packs.Contains(p)) packages.Remove(p);
                 }
-                foreach (var r in ret)
+                foreach (var r in packs)
                 {
                     if(!packages.Contains(r))packages.Add(r);
                 }
