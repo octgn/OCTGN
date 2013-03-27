@@ -83,11 +83,13 @@ namespace Octgn.ProxyGenerator
                     }
                     else
                     {
-                        string propertyName = section.NestedProperties[0].Name;
-                        toWrite.Append(values[propertyName]);
+                        if (section.NestedProperties.Count > 0)
+                        {
+                            string propertyName = section.NestedProperties[0].Name;
+                            toWrite.Append(values[propertyName]);
+                        }
                     }
                     GraphicUtils.WriteString(graphics, block, toWrite.ToString());
-                end: ;
                 }
             }
 
