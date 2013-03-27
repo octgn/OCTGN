@@ -40,7 +40,7 @@ namespace Octgn.ProxyGenerator
                     block.src = Path.Combine(rootPath, block.src);
                     GraphicUtils.MergeOverlay(graphics, block);
                 }
-
+                List<Property> removedProps = new List<Property>();
                 foreach (LinkDefinition section in template.TextBlocks)
                 {
                     BlockDefinition block = BlockManager.GetInstance().GetBlock(section.Block);
@@ -48,21 +48,19 @@ namespace Octgn.ProxyGenerator
                     {
                         continue;
                     }
-                    List<Property> removeProps = new List<Property>();
+                    
                     
                     foreach (Property prop in section.NestedProperties)
                     {
                         if (!values.ContainsKey(prop.Name))
                         {
-                            removeProps.Add(prop);
+                            removedProps.Add(prop);
                         }
                     }
-                    foreach (Property prop in removeProps)
+                    foreach (Property prop in removedProps)
                     {
                         section.NestedProperties.Remove(prop);
                     }
-                    removeProps.Clear();
-                    removeProps = null;
 
                     StringBuilder toWrite = new StringBuilder();
                     if (section.NestedProperties.Count > 1)
@@ -90,6 +88,11 @@ namespace Octgn.ProxyGenerator
                         }
                     }
                     GraphicUtils.WriteString(graphics, block, toWrite.ToString());
+                    foreach (Property prop in removedProps)
+                    {
+                        section.NestedProperties.Add(prop);
+                    }
+                    removedProps.Clear();
                 }
             }
 
