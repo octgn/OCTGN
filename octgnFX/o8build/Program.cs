@@ -27,6 +27,9 @@ namespace o8build
         static string BuildDirectory { get; set; }
         static bool GetHelp { get; set; }
         static bool Validate { get; set; }
+        static bool LocalFeedInstall { get; set; }
+        static string O8gPath { get; set; }
+        static string NupkgPath { get; set; }
         static void Main(string[] args)
         {
             try
@@ -73,8 +76,18 @@ namespace o8build
             if (Validate) return;
             Console.WriteLine("Building packages");
             BuildPackages();
-
+            if (LocalFeedInstall)
+                InstallLocalFeed();
             //testXsd();
+        }
+
+        private static void InstallLocalFeed()
+        {
+            Console.WriteLine("Installing to local feed at {0}",Paths.Get().LocalFeedPath);
+            var fi = new FileInfo(NupkgPath);
+            var newPath = Path.Combine(Paths.Get().LocalFeedPath,fi.Name);
+            File.Copy(NupkgPath,newPath);
+            Console.WriteLine("Installed to local feed at {0}",newPath);
         }
 
         private static void BuildPackages()
@@ -109,6 +122,8 @@ namespace o8build
             }
             var feedPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".nupkg");
             var olPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".o8g");
+            O8gPath = olPath;
+            NupkgPath = feedPath;
             Console.WriteLine("Feed Path: " + feedPath);
             Console.WriteLine("Manual Path: " + olPath);
             var filestream = File.Open(feedPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
@@ -128,6 +143,7 @@ namespace o8build
             //ret.Add("s|set", "Build a set", x => BuildSet = true);
             //ret.Add("g|game", "Build a game", x => BuildGame = true);
             ret.Add("v|validate", "Only validate the game, don't build the packages", x => Validate = true);
+            ret.Add("i|install", "Installs package into the local octgn feed",x=>LocalFeedInstall = true);
             ret.Add("?|help", "Get help cause you're a real confused guy.", x => GetHelp = true);
             return ret;
         }
