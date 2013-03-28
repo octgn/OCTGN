@@ -27,6 +27,7 @@
         bool ValidateFeedUrl(string url);
         IEnumerable<IPackage> GetPackages(NamedUrl url);
         void ExtractPackage(string directory, IPackage package);
+        void AddToLocalFeed(string file);
         event EventHandler OnUpdateFeedList;
     }
 
@@ -165,6 +166,18 @@
             SimpleConfig.Get().RemoveFeed(new NamedUrl(name, ""));
             this.FireOnUpdateFeedList();
             Log.InfoFormat("Removed feed {0}",name);
+        }
+
+        public void AddToLocalFeed(string file)
+        {
+            var fi = new FileInfo(file);
+            var newFileName = fi.Name.Replace(fi.Extension, ".nupkg");
+            var newpath = Path.Combine(Paths.Get().LocalFeedPath, newFileName);
+            Log.InfoFormat("Adding to local feed {0} to {1}",file,newpath);
+            if (!File.Exists(file)) return;
+            File.Copy(file,newpath);
+            this.FireOnUpdateFeedList();
+            Log.InfoFormat("Feed {0} Added at {1}",file,newpath);
         }
 
         public IEnumerable<IPackage> GetPackages(NamedUrl url)

@@ -10,6 +10,7 @@ namespace Octgn.Tabs.GameManagement
     using System.IO;
     using System.Reflection;
     using System.Windows.Controls;
+    using System.Windows.Forms;
 
     using NuGet;
 
@@ -21,6 +22,8 @@ namespace Octgn.Tabs.GameManagement
 
     using log4net;
 
+    using Button = System.Windows.Controls.Button;
+    using MessageBox = System.Windows.MessageBox;
     using UserControl = System.Windows.Controls.UserControl;
 
     /// <summary>
@@ -161,6 +164,32 @@ namespace Octgn.Tabs.GameManagement
         {
             if (Selected == null) return;
             GameFeedManager.Get().RemoveFeed(Selected.Name);
+        }
+
+        private void ButtonAddo8gClick(object sender, RoutedEventArgs e)
+        {
+            var of = new System.Windows.Forms.OpenFileDialog();
+            of.Filter = "Octgn Game File (*.o8g) |*.o8g";
+            var result = of.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if (!File.Exists(of.FileName)) return;
+                try
+                {
+                    GameFeedManager.Get().AddToLocalFeed(of.FileName);
+                    OnPropertyChanged("Packages");
+                }
+                catch (Exception ex)
+                {
+                    Log.Warn("Could not add " + of.FileName + " to local feed.",ex);
+                    MessageBox.Show(
+                        "Could not add file " + of.FileName
+                        + ". Please make sure it isn't in use and that you have access to it.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+            }
         }
 
         private void ButtonInstallUninstallClick(object sender, RoutedEventArgs e)

@@ -21,6 +21,7 @@
         <WrapPanel Margin="2,2,0,0" IsEnabled="{Binding ButtonsEnabled}">
             <Button Click="ButtonAddClick" Content="Add" Width="40" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
             <Button Click="ButtonRemoveClick" Content="Remove" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
+            <Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
         </WrapPanel>
         <ListBox Grid.Row="1" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}">
             <ListBox.ItemTemplate>
