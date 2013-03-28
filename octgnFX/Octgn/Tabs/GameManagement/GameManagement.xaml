@@ -56,7 +56,7 @@
                             <Button Width="100" x:Name="ButtonInstallUninstall" DataContext="{Binding}" 
                                     Content="{Binding InstallButtonText}"
                                     Click="ButtonInstallUninstallClick"
-                                    IsEnabled="{Binding Source=Me,Path=ButtonsEnabled}">
+                                    IsEnabled="{Binding ElementName=Me,Path=ButtonsEnabled}">
                                 <Button.Style>
                                     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
                                         <Style.Triggers>

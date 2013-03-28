@@ -48,6 +48,7 @@ namespace Octgn.Tabs.GameManagement
                 this.OnPropertyChanged("Selected");
                 this.OnPropertyChanged("Packages");
                 this.OnPropertyChanged("IsGameSelected");
+                this.OnPropertyChanged("SelectedGame");
             }
         }
 
