@@ -28,10 +28,10 @@ public partial class link {
     
     private string blockField;
     
-    private string seperatorField;
+    private string separatorField;
     
     public link() {
-        this.seperatorField = " ";
+        this.separatorField = " ";
     }
     
     /// <remarks/>
@@ -59,12 +59,12 @@ public partial class link {
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     [System.ComponentModel.DefaultValueAttribute(" ")]
-    public string seperator {
+    public string separator {
         get {
-            return this.seperatorField;
+            return this.separatorField;
         }
         set {
-            this.seperatorField = value;
+            this.separatorField = value;
         }
     }
 }
