@@ -22,7 +22,7 @@ namespace Octgn.Controls
 		public GameManagement()
 		{
 			InitializeComponent();
-			GameManager.Get().GameInstalled += GamesRepositoryGameInstalled;
+            //GameManager.Get().GameInstalled += GamesRepositoryGameInstalled;
 			this.Loaded += GameManagement_Loaded;
 			this.ButtonInstallGame.Click += ButtonInstallGame_Click;
 			this.ButtonUninstallGame.Click += ButtonUninstallGame_Click;
@@ -126,8 +126,8 @@ namespace Octgn.Controls
 
 		private void GamesRepositoryGameInstalled(object sender, EventArgs eventArgs)
 		{
-			ReloadGameList();
-			GamesChanged = true;
+            //ReloadGameList();
+            //GamesChanged = true;
 		}
 
 		private void ReloadGameList()

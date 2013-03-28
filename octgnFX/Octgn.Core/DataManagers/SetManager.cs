@@ -120,7 +120,7 @@
                         thisset.AddCard(cardList.ToArray());
                         DbContext.Get().Save(thisset);
                     }
-                    string path = Path.Combine(Paths.DataDirectory, "Decks");
+                    string path = Path.Combine(Paths.Get().DataDirectory, "Decks");
                     PackageRelationshipCollection decks = package.GetRelationshipsByType("http://schemas.octgn.org/set/deck");
                     var buffer = new byte[0x1000];
                     foreach (PackageRelationship deckRel in decks)
