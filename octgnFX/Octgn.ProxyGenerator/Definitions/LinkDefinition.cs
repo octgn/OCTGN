@@ -10,15 +10,15 @@ namespace Octgn.ProxyGenerator.Definitions
     {
         public string Block { get; set; }
         public List<Property> NestedProperties = new List<Property>();
-        public string Concentate = string.Empty;
+        public string Seperator = string.Empty;
 
         public static LinkDefinition LoadLink(XmlNode node)
         {
             LinkDefinition ret = new LinkDefinition();
             ret.Block = node.Attributes["block"].Value;
-            if (node.Attributes["concentate"] != null)
+            if (node.Attributes["seperator"] != null)
             {
-                ret.Concentate = node.Attributes["concentate"].Value;
+                ret.Seperator = node.Attributes["seperator"].Value;
             }
             if (node.HasChildNodes)
             {
