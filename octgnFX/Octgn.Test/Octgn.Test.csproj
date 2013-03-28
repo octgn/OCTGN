@@ -88,7 +88,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FakeItEasy">
-      <HintPath>..\Octgn.ReleasePusher\bin\Debug x86\FakeItEasy.dll</HintPath>
+      <HintPath>..\..\packages\FakeItEasy.1.9.0-beta01\lib\net40\FakeItEasy.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
