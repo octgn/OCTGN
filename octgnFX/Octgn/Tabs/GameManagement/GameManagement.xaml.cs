@@ -9,6 +9,7 @@ namespace Octgn.Tabs.GameManagement
     using System.ComponentModel;
     using System.IO;
     using System.Reflection;
+    using System.Threading.Tasks;
     using System.Windows.Controls;
     using System.Windows.Forms;
 
@@ -96,22 +97,13 @@ namespace Octgn.Tabs.GameManagement
         {
             get
             {
-                if (packages == null) packages = new ObservableCollection<FeedGameViewModel>();
-                var packs = GameFeedManager.Get().GetPackages(Selected).Select(x=> new FeedGameViewModel(x)).ToList();
-                foreach (var p in packages.ToList())
-                {
-                    if (!packs.Contains(p)) packages.Remove(p);
-                }
-                foreach (var r in packs)
-                {
-                    if(!packages.Contains(r))packages.Add(r);
-                }
                 return packages;
             }
         }
 
         public GameManagement()
         {
+            packages = new ObservableCollection<FeedGameViewModel>();
             ButtonsEnabled = true;
             if (!this.IsInDesignMode())
             {
@@ -126,6 +118,34 @@ namespace Octgn.Tabs.GameManagement
                     OnPropertyChanged("SelectedGame");
                     OnPropertyChanged("IsGameSelected");
                 };
+            this.PropertyChanged += OnPropertyChanged;
+        }
+
+        internal void UpdatePackageList()
+        {
+            Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = false; }));
+            var packs = GameFeedManager.Get().GetPackages(Selected).Select(x => new FeedGameViewModel(x)).ToList();
+            foreach (var p in packages.ToList())
+            {
+                if (!packs.Contains(p)) 
+                    Dispatcher.Invoke(new Action(()=>packages.Remove(p)));
+            }
+            foreach (var r in packs)
+            {
+                if (!packages.Contains(r)) 
+                    Dispatcher.Invoke(new Action(()=>packages.Add(r)));
+            }
+            Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = true; }));
+        }
+
+        #region Events
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (propertyChangedEventArgs.PropertyName == "Packages")
+            {
+                new Task(this.UpdatePackageList).Start();
+            }
         }
 
         private void OnGameListChanged(object sender, EventArgs eventArgs)
@@ -264,6 +284,8 @@ namespace Octgn.Tabs.GameManagement
                 
             }
         }
+
+        #endregion Events
 
         #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
