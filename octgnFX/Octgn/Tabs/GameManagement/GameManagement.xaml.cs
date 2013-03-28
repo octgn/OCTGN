@@ -30,7 +30,7 @@ namespace Octgn.Tabs.GameManagement
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public ObservableCollection<NamedUrl> Feeds { get; set; }
-
+        private FeedGameViewModel selectedGame;
         private NamedUrl selected;
         public NamedUrl Selected
         {
@@ -47,6 +47,33 @@ namespace Octgn.Tabs.GameManagement
                 this.selected = value;
                 this.OnPropertyChanged("Selected");
                 this.OnPropertyChanged("Packages");
+                this.OnPropertyChanged("IsGameSelected");
+            }
+        }
+
+        public FeedGameViewModel SelectedGame
+        {
+            get
+            {
+                return this.selectedGame;
+            }
+            set
+            {
+                if (Equals(value, this.selectedGame))
+                {
+                    return;
+                }
+                this.selectedGame = value;
+                this.OnPropertyChanged("IsGameSelected");
+                this.OnPropertyChanged("SelectedGame");
+            }
+        }
+
+        public bool IsGameSelected
+        {
+            get
+            {
+                return ListBoxGames.SelectedIndex > -1;
             }
         }
 
@@ -90,12 +117,18 @@ namespace Octgn.Tabs.GameManagement
             }
             else Feeds = new ObservableCollection<NamedUrl>();
             InitializeComponent();
+            ListBoxGames.SelectionChanged += delegate
+                {
+                    OnPropertyChanged("SelectedGame");
+                    OnPropertyChanged("IsGameSelected");
+                };
         }
 
         private void OnGameListChanged(object sender, EventArgs eventArgs)
         {
             OnPropertyChanged("Selected");
             OnPropertyChanged("Packages");
+            this.OnPropertyChanged("IsGameSelected");
         }
 
         private void OnOnUpdateFeedList(object sender, EventArgs eventArgs)
@@ -187,6 +220,19 @@ namespace Octgn.Tabs.GameManagement
                 }
             }
 
+        }
+
+        private void UrlMouseButtonUp(object sender, object whatever)
+        {
+            if (!(sender is TextBlock)) return;
+            try
+            {
+                System.Diagnostics.Process.Start((sender as TextBlock).Text);
+            }
+            catch
+            {
+                
+            }
         }
 
         #region PropertyChanged
