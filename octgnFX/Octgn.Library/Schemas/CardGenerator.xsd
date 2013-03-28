@@ -10,7 +10,7 @@
         </xs:element>
       </xs:sequence>
       <xs:attribute name="block" type="xs:string" use="required" />
-      <xs:attribute name="concentate" type="xs:string" default=" " />
+      <xs:attribute name="seperator" type="xs:string" default=" " />
     </xs:complexType>
   </xs:element>
   <xs:element name="templates" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">

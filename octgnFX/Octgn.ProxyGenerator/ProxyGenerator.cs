@@ -70,7 +70,7 @@ namespace Octgn.ProxyGenerator
                             string propertyName = section.NestedProperties[i].Name;
                             if (i < (section.NestedProperties.Count - 1))
                             {
-                                toWrite.Append(string.Format("{0} {1}", values[propertyName], section.Concentate));
+                                toWrite.Append(string.Format("{0} {1}", values[propertyName], section.Seperator));
                             }
                             else
                             {
