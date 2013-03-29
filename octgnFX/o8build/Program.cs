@@ -106,7 +106,9 @@ namespace o8build
             foreach (var sfile in sets)
             {
                 var set = Set.SetFromFile(sfile.FullName);
-                
+                set.UnpackBase = convertDirectory;
+                set.ExtractImages();
+                set.ExtractSetXML();
             }
 
         }
