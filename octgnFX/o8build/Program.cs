@@ -8,6 +8,7 @@ namespace o8build
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
+    using System.Threading.Tasks;
     using System.Xml.Linq;
     using System.Xml.Schema;
     using System.Xml.Serialization;
@@ -103,13 +104,15 @@ namespace o8build
 
             var convertDirectory = Path.Combine(BuildDirectory, "Conversion");
             var sets = new DirectoryInfo(BuildDirectory).GetFiles("*.o8s", SearchOption.TopDirectoryOnly);
-            foreach (var sfile in sets)
-            {
+            //foreach (var sfile in sets)
+            //{
+            sets.AsParallel().ForAll(sfile => { 
                 var set = Set.SetFromFile(sfile.FullName);
                 set.UnpackBase = convertDirectory;
                 set.ExtractImages();
                 set.ExtractSetXML();
-            }
+            });
+            //}
 
         }
 

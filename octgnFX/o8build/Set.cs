@@ -127,13 +127,23 @@
 
         public void ExtractSetXML()
         {
+            var extractSite = "";
             PackageRelationship defRelationship = Package.GetRelationshipsByType("http://schemas.octgn.org/set/definition").First();
             PackagePart definition = Package.GetPart(defRelationship.TargetUri);
             string defUri = definition.Uri.ToString();
-            string fileName = defUri.Substring(defUri.LastIndexOf('/')+1);
+            string fileName = defUri.Substring(defUri.LastIndexOf('/') + 1);
             Console.WriteLine(fileName);
-            var extractSite = Path.Combine(UnpackBase, "Sets", this.Name, this.Id.ToString());
-            ExtractPart(definition, extractSite, "set.xml");
+            try
+            {
+                var gameName = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).Aggregate(this.Name, (current, c) => current.Replace(c, ' '));
+                extractSite = Path.Combine(UnpackBase, "Sets", gameName);
+                ExtractPart(definition, extractSite, "set.xml");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("path {0} Is Fucked {1}-{2}-{3}",extractSite,fileName, defUri,Name);
+                throw;
+            }
         }
 
         private void ExtractPart(PackagePart packagePart, string targetDir, string fileName)
