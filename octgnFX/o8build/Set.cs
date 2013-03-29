@@ -89,6 +89,17 @@
                 PackagePart part = Package.GetPart(cardImage);
                 ExtractPart(part, extractDir, fileName);
             }
+            var markers = Doc.GetElementsByTagName("marker");
+            extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Markers");
+            foreach (XmlNode marker in markers)
+            {
+                var id = new Guid(marker.Attributes["id"].Value);
+                Uri cardImage = definition.GetRelationship("M" + id.ToString("N")).TargetUri;
+                string imageUri = cardImage.ToString();
+                string fileName = id.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
+                PackagePart part = Package.GetPart(cardImage);
+                ExtractPart(part, extractDir, fileName);
+            }
         }
 
         public void ExtractSetXML()
