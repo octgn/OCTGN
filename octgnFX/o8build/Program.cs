@@ -109,17 +109,61 @@ namespace o8build
             foreach (var author in game.authors.Split(',')) builder.Authors.Add(author);
             foreach (var tag in game.tags.Split(' ')) builder.Tags.Add(tag);
             // files and maybe release notes
-            var allFiles = directory
-                .GetFiles("*.*", SearchOption.AllDirectories)
-                .Where(x=>x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g");
-            foreach (var file in allFiles)
-            {
-                var path = file.FullName;
-                var relPath = path.Replace(directory.FullName, "\\def");
-                var pf = new PhysicalPackageFile() { SourcePath = path, TargetPath = relPath };
 
-                builder.Files.Add(pf);
+            var baseRefPath = "\\def";
+
+            foreach (var dir in directory.GetDirectories())
+            {
+                if (dir.Name == "Sets")
+                {
+                    var refpath = baseRefPath + "\\";
+                    foreach (var setdir in dir.GetDirectories())
+                    {
+                        var doc = XDocument.Load(Path.Combine(setdir.FullName, "set.xml"));
+                        var gameId = doc.Root.Attribute("id").Value;
+                        var setRefPath = refpath + gameId;
+                        foreach (var f in setdir.GetFiles("*", SearchOption.AllDirectories))
+                        {
+                            var relPath = f.FullName.Replace(f.Directory.FullName, setRefPath);
+                            var pf = new PhysicalPackageFile() { SourcePath = f.FullName, TargetPath = relPath };
+                            builder.Files.Add(pf);
+                        }
+                    }
+                }
+                else
+                {
+                    var refpath = baseRefPath + "\\" + dir.Name;
+                    var files = dir.GetFiles("*", SearchOption.AllDirectories);
+                    foreach (var f in files)
+                    {
+                        var relPath = f.FullName.Replace(f.Directory.FullName, refpath);
+                        var pf = new PhysicalPackageFile() { SourcePath = f.FullName, TargetPath = relPath };
+                        builder.Files.Add(pf);
+                    }
+                }
             }
+            var defFile = new FileInfo(Path.Combine(directory.FullName, "definition.xml"));
+            var defFilePack = new PhysicalPackageFile()
+                                  {
+                                      SourcePath = defFile.FullName,
+                                      TargetPath =
+                                          defFile.FullName.Replace(defFile.Directory.FullName, baseRefPath)
+                                  };
+            builder.Files.Add(defFilePack);
+
+
+            //var allFiles = directory
+            //    .GetFiles("*.*", SearchOption.AllDirectories)
+            //    .Where(x=>x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g");
+            //foreach (var file in allFiles)
+            //{
+            //    //Sets\0abccf03-2825-4b6e-ba59-698408a2005c
+            //    var path = file.FullName;
+            //    var relPath = path.Replace(directory.FullName, "\\def");
+            //    var pf = new PhysicalPackageFile() { SourcePath = path, TargetPath = relPath };
+
+            //    builder.Files.Add(pf);
+            //}
             var feedPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".nupkg");
             var olPath = Path.Combine(directory.FullName, game.name + '-' + game.version + ".o8g");
             O8gPath = olPath;
