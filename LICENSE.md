@@ -1,15 +1,8 @@
-This will be the license pending the original authors approval... for now see 
-the wiki under License to learn more about the current licensing.
-
-https://github.com/kellyelton/OCTGN/wiki/License
-
-===============================================================================
-
 Non-Profit Open Software License 3.0 (NPOSL-3.0)
 
-This Non-Profit Open Software License (“Non-Profit OSL”) version 3.0 (the
-“License”) applies to any original work of authorship (the “Original Work”)
-whose owner (the “Licensor”) has placed the following licensing notice adjacent
+This Non-Profit Open Software License (ï¿½Non-Profit OSLï¿½) version 3.0 (the
+ï¿½Licenseï¿½) applies to any original work of authorship (the ï¿½Original Workï¿½)
+whose owner (the ï¿½Licensorï¿½) has placed the following licensing notice adjacent
 to the copyright notice for the Original Work:
 
 Licensed under the Non-Profit Open Software License version 3.0
@@ -22,7 +15,7 @@ a) to reproduce the Original Work in copies, either alone or as part of a
 collective work;
 
 b) to translate, adapt, alter, transform, modify, or arrange the Original Work,
-thereby creating derivative works (“Derivative Works”) based upon the Original
+thereby creating derivative works (ï¿½Derivative Worksï¿½) based upon the Original
 Work;
 
 c) to distribute or communicate copies of the Original Work and Derivative Works
@@ -40,7 +33,7 @@ the Licensor that are embodied in the Original Work as furnished by the
 Licensor, for the duration of the patents, to make, use, sell, offer for sale,
 have made, and import the Original Work and Derivative Works.
 
-3) Grant of Source Code License. The term “Source Code” means the preferred form
+3) Grant of Source Code License. The term ï¿½Source Codeï¿½ means the preferred form
 of the Original Work for making modifications to it and all available
 documentation describing how to modify the Original Work. Licensor agrees to
 provide a machine-readable copy of the Source Code of the Original Work along
@@ -54,7 +47,7 @@ distribute the Original Work.
 of any contributors to the Original Work, nor any of their trademarks or service
 marks, may be used to endorse or promote products derived from this Original
 Work without express prior permission of the Licensor. Except as expressly
-stated herein, nothing in this License grants any license to Licensor’s
+stated herein, nothing in this License grants any license to Licensorï¿½s
 trademarks, copyrights, patents, trade secrets or any other intellectual
 property. No patent license is granted to make, use, sell, offer for sale, have
 made, or import embodiments of any patent claims other than the licensed claims
@@ -64,7 +57,7 @@ be interpreted to prohibit Licensor from licensing under terms different from
 this License any Original Work that Licensor otherwise would have a right to
 license.
 
-5) External Deployment. The term “External Deployment” means the use,
+5) External Deployment. The term ï¿½External Deploymentï¿½ means the use,
 distribution, or communication of the Original Work or Derivative Works in any
 way such that the Original Work or Derivative Works may be used by anyone other
 than You, whether those works are distributed or communicated to those persons
@@ -76,13 +69,13 @@ distribution under section 1(c).
 6) Attribution Rights. You must retain, in the Source Code of any Derivative
 Works that You create, all copyright, patent, or trademark notices from the
 Source Code of the Original Work, as well as any notices of licensing and any
-descriptive text identified therein as an “Attribution Notice.” You must cause
+descriptive text identified therein as an ï¿½Attribution Notice.ï¿½ You must cause
 the Source Code for any Derivative Works that You create to carry a prominent
 Attribution Notice reasonably calculated to inform recipients that You have
 modified the Original Work.
 
 7) Warranty of Provenance and Disclaimer of Warranty. The Original Work is
-provided under this License on an “AS IS” BASIS and WITHOUT WARRANTY, either
+provided under this License on an ï¿½AS ISï¿½ BASIS and WITHOUT WARRANTY, either
 express or implied, including, without limitation, the warranties of
 non-infringement, merchantability or fitness for a particular purpose. THE
 ENTIRE RISK AS TO THE QUALITY OF THE ORIGINAL WORK IS WITH YOU. This DISCLAIMER
@@ -108,7 +101,7 @@ activities listed in Section 1, including your right to create Derivative Works
 based upon the Original Work, and doing so without honoring these terms and
 conditions is prohibited by copyright law and international treaty. Nothing in
 this License is intended to affect copyright exceptions and limitations
-(including “fair use” or “fair dealing”). This License shall terminate
+(including ï¿½fair useï¿½ or ï¿½fair dealingï¿½). This License shall terminate
 immediately and You may no longer exercise any of the rights granted to You by
 this License upon your failure to honor the conditions in Section 1(c).
 
@@ -130,10 +123,10 @@ this License or after its termination shall be subject to the requirements and
 penalties of copyright or patent law in the appropriate jurisdiction. This
 section shall survive the termination of this License.
 
-12) Attorneys’ Fees. In any action to enforce the terms of this License or
+12) Attorneysï¿½ Fees. In any action to enforce the terms of this License or
 seeking damages relating thereto, the prevailing party shall be entitled to
 recover its costs and expenses, including, without limitation, reasonable
-attorneys’ fees and costs incurred in connection with such action, including any
+attorneysï¿½ fees and costs incurred in connection with such action, including any
 appeal of such action. This section shall survive the termination of this
 License.
 
@@ -141,11 +134,11 @@ License.
 such provision shall be reformed only to the extent necessary to make it
 enforceable.
 
-14) Definition of “You” in This License. “You” throughout this License, whether
+14) Definition of ï¿½Youï¿½ in This License. ï¿½Youï¿½ throughout this License, whether
 in upper or lower case, means an individual or a legal entity exercising rights
 under, and complying with all of the terms of, this License. For legal entities,
-“You” includes any entity that controls, is controlled by, or is under common
-control with you. For purposes of this definition, “control” means (i) the
+ï¿½Youï¿½ includes any entity that controls, is controlled by, or is under common
+control with you. For purposes of this definition, ï¿½controlï¿½ means (i) the
 power, direct or indirect, to cause the direction or management of such entity,
 whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or
 more of the outstanding shares, or (iii) beneficial ownership of such entity.
@@ -154,24 +147,24 @@ more of the outstanding shares, or (iii) beneficial ownership of such entity.
 restricted or conditioned by this License or by law, and Licensor promises not
 to interfere with or be responsible for such uses by You.
 
-16) Modification of This License. This License is Copyright © 2005 Lawrence
+16) Modification of This License. This License is Copyright ï¿½ 2005 Lawrence
 Rosen. Permission is granted to copy, distribute, or communicate this License
 without modification. Nothing in this License permits You to modify this License
 as applied to the Original Work or to Derivative Works. However, You may modify
 the text of this License and copy, distribute or communicate your modified
-version (the “Modified License”) and apply it to other original works of
+version (the ï¿½Modified Licenseï¿½) and apply it to other original works of
 authorship subject to the following conditions: (i) You may not indicate in any
-way that your Modified License is the “Open Software License” or “OSL” and you
+way that your Modified License is the ï¿½Open Software Licenseï¿½ or ï¿½OSLï¿½ and you
 may not use those names in the name of your Modified License; (ii) You must
 replace the notice specified in the first paragraph above with the notice
-“Licensed under ” or with a notice of your own that is not confusingly similar
+ï¿½Licensed under ï¿½ or with a notice of your own that is not confusingly similar
 to the notice in this License; and (iii) You may not claim that your original
 works are open source software unless your Modified License has been approved by
 Open Source Initiative (OSI) and You comply with its license review and
 certification process.
 
 17) Non-Profit Amendment. The name of this amended version of the Open Software
-License (“OSL 3.0?) is “Non-Profit Open Software License 3.0?. The original OSL
+License (ï¿½OSL 3.0?) is ï¿½Non-Profit Open Software License 3.0?. The original OSL
 3.0 license has been amended as follows:
 
 (a) Licensor represents and declares that it is a not-for-profit organization
@@ -184,10 +177,10 @@ LICENSOR OFFERS NO WARRANTIES WHATSOEVER.
 
 (c) In the first sentence of Section 8 ["Limitation of Liability"] of this
 Non-Profit OSL 3.0, the list of damages for which LIABILITY IS LIMITED now
-includes “direct” damages.
+includes ï¿½directï¿½ damages.
 
-(d) The proviso in Section 1(c) of this License now refers to this “Non-Profit
-Open Software License” rather than the “Open Software License”. You may
+(d) The proviso in Section 1(c) of this License now refers to this ï¿½Non-Profit
+Open Software Licenseï¿½ rather than the ï¿½Open Software Licenseï¿½. You may
 distribute or communicate the Original Work or Derivative Works thereof under
 this Non-Profit OSL 3.0 license only if You make the representation and
 declaration in paragraph (a) of this Section 17. Otherwise, You shall distribute
@@ -197,6 +190,6 @@ way of clarification, this License does not authorize You to distribute or
 communicate works under this Non-Profit OSL 3.0 if You received them under the
 original OSL 3.0 license.
 
-(e) Original Works licensed under this license shall reference “Non-Profit OSL
+(e) Original Works licensed under this license shall reference ï¿½Non-Profit OSL
 3.0? in licensing notices to distinguish them from works licensed under the
 original OSL 3.0 license.
