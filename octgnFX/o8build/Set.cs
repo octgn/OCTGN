@@ -81,35 +81,48 @@
             PackagePart definition = Package.GetPart(defRelationship.TargetUri);
             XmlNodeList cards = Doc.GetElementsByTagName("card");
             var markers = Doc.GetElementsByTagName("marker");
-            cards.OfType<XmlNode>().AsParallel().ForAll(card =>
-                {
-                    string extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Cards");
-                    Guid cardID = new Guid(card.Attributes["id"].Value);
-                    Uri cardImage = definition.GetRelationship("C" + cardID.ToString("N")).TargetUri;
-                    string imageUri = cardImage.ToString();
-                    string fileName = cardID.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
-                    PackagePart part = Package.GetPart(cardImage);
-                    ExtractPart(part, extractDir, fileName);
-                });
-            //foreach (XmlNode card in cards)
-            //{
-            //    Guid cardID = new Guid(card.Attributes["id"].Value);
-            //    Uri cardImage = definition.GetRelationship("C" + cardID.ToString("N")).TargetUri;
-            //    string imageUri = cardImage.ToString();
-            //    string fileName = cardID.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
-            //    PackagePart part = Package.GetPart(cardImage);
-            //    ExtractPart(part, extractDir, fileName);
-            //}
-            markers.OfType<XmlNode>().AsParallel().ForAll(marker =>
-                {
-                    var extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Markers");
-                    var id = new Guid(marker.Attributes["id"].Value);
-                    Uri cardImage = definition.GetRelationship("M" + id.ToString("N")).TargetUri;
-                    string imageUri = cardImage.ToString();
-                    string fileName = id.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
-                    PackagePart part = Package.GetPart(cardImage);
-                    ExtractPart(part, extractDir, fileName);
-                });
+            //cards.OfType<XmlNode>().AsParallel().ForAll(card =>
+            //    {
+            //        card = card.Clone();
+            //        string extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Cards");
+            //        Guid cardID = new Guid(card.Attributes["id"].Value);
+            //        Uri cardImage = definition.GetRelationship("C" + cardID.ToString("N")).TargetUri;
+            //        string imageUri = cardImage.ToString();
+            //        string fileName = cardID.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
+            //        PackagePart part = Package.GetPart(cardImage);
+            //        ExtractPart(part, extractDir, fileName);
+            //    });
+            //markers.OfType<XmlNode>().AsParallel().ForAll(marker =>
+            //    {
+            //        marker = marker.Clone();
+            //        var extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Markers");
+            //        var id = new Guid(marker.Attributes["id"].Value);
+            //        Uri cardImage = definition.GetRelationship("M" + id.ToString("N")).TargetUri;
+            //        string imageUri = cardImage.ToString();
+            //        string fileName = id.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
+            //        PackagePart part = Package.GetPart(cardImage);
+            //        ExtractPart(part, extractDir, fileName);
+            //    });
+            string extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Cards");
+            foreach (XmlNode card in cards)
+            {
+                Guid cardID = new Guid(card.Attributes["id"].Value);
+                Uri cardImage = definition.GetRelationship("C" + cardID.ToString("N")).TargetUri;
+                string imageUri = cardImage.ToString();
+                string fileName = cardID.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
+                PackagePart part = Package.GetPart(cardImage);
+                ExtractPart(part, extractDir, fileName);
+            }
+            extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Markers");
+            foreach(XmlNode marker in markers)
+            {
+                var id = new Guid(marker.Attributes["id"].Value);
+                Uri cardImage = definition.GetRelationship("M" + id.ToString("N")).TargetUri;
+                string imageUri = cardImage.ToString();
+                string fileName = id.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
+                PackagePart part = Package.GetPart(cardImage);
+                ExtractPart(part, extractDir, fileName);
+            }
         }
 
         public void ExtractSetXML()
