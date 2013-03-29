@@ -30,6 +30,7 @@ namespace o8build
         static bool LocalFeedInstall { get; set; }
         static string O8gPath { get; set; }
         static string NupkgPath { get; set; }
+        static bool Converto8sFiles { get; set; }
         static void Main(string[] args)
         {
             try
@@ -70,6 +71,11 @@ namespace o8build
 
         private static void Start()
         {
+            if (Converto8sFiles)
+            {
+                Converto8S();
+                return;
+            }
             var gv = new GameValidator(BuildDirectory);
             Console.WriteLine("Running tests on {0}",BuildDirectory);
             gv.RunTests();
@@ -88,6 +94,21 @@ namespace o8build
             var newPath = Path.Combine(Paths.Get().LocalFeedPath,fi.Name);
             File.Copy(NupkgPath,newPath);
             Console.WriteLine("Installed to local feed at {0}",newPath);
+        }
+
+        private static void Converto8S()
+        {
+            if(String.IsNullOrWhiteSpace(BuildDirectory))
+                throw new UserMessageException("Need to set -d to a real directory fool!");
+
+            var convertDirectory = Path.Combine(BuildDirectory, "Conversion");
+            var sets = new DirectoryInfo(BuildDirectory).GetFiles("*.o8s", SearchOption.TopDirectoryOnly);
+            foreach (var sfile in sets)
+            {
+                var set = Set.SetFromFile(sfile.FullName);
+                
+            }
+
         }
 
         private static void BuildPackages()
@@ -188,6 +209,7 @@ namespace o8build
             //ret.Add("g|game", "Build a game", x => BuildGame = true);
             ret.Add("v|validate", "Only validate the game, don't build the packages", x => Validate = true);
             ret.Add("i|install", "Installs package into the local octgn feed",x=>LocalFeedInstall = true);
+            ret.Add("c|converts", "Converts a directory of .o8s files into the new format. Requires -d", x => Converto8sFiles = true);
             ret.Add("?|help", "Get help cause you're a real confused guy.", x => GetHelp = true);
             return ret;
         }
