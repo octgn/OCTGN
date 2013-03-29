@@ -5,6 +5,7 @@
     using System.IO.Packaging;
     using System.Linq;
     using System.Reflection;
+    using System.Threading;
     using System.Xml;
 
     public class Set : IDisposable
@@ -79,27 +80,36 @@
             PackageRelationship defRelationship = Package.GetRelationshipsByType("http://schemas.octgn.org/set/definition").First();
             PackagePart definition = Package.GetPart(defRelationship.TargetUri);
             XmlNodeList cards = Doc.GetElementsByTagName("card");
-            string extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Cards");
-            foreach (XmlNode card in cards)
-            {
-                Guid cardID = new Guid(card.Attributes["id"].Value);
-                Uri cardImage = definition.GetRelationship("C" + cardID.ToString("N")).TargetUri;
-                string imageUri = cardImage.ToString();
-                string fileName = cardID.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
-                PackagePart part = Package.GetPart(cardImage);
-                ExtractPart(part, extractDir, fileName);
-            }
             var markers = Doc.GetElementsByTagName("marker");
-            extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Markers");
-            foreach (XmlNode marker in markers)
-            {
-                var id = new Guid(marker.Attributes["id"].Value);
-                Uri cardImage = definition.GetRelationship("M" + id.ToString("N")).TargetUri;
-                string imageUri = cardImage.ToString();
-                string fileName = id.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
-                PackagePart part = Package.GetPart(cardImage);
-                ExtractPart(part, extractDir, fileName);
-            }
+            cards.OfType<XmlNode>().AsParallel().ForAll(card =>
+                {
+                    string extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Cards");
+                    Guid cardID = new Guid(card.Attributes["id"].Value);
+                    Uri cardImage = definition.GetRelationship("C" + cardID.ToString("N")).TargetUri;
+                    string imageUri = cardImage.ToString();
+                    string fileName = cardID.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
+                    PackagePart part = Package.GetPart(cardImage);
+                    ExtractPart(part, extractDir, fileName);
+                });
+            //foreach (XmlNode card in cards)
+            //{
+            //    Guid cardID = new Guid(card.Attributes["id"].Value);
+            //    Uri cardImage = definition.GetRelationship("C" + cardID.ToString("N")).TargetUri;
+            //    string imageUri = cardImage.ToString();
+            //    string fileName = cardID.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
+            //    PackagePart part = Package.GetPart(cardImage);
+            //    ExtractPart(part, extractDir, fileName);
+            //}
+            markers.OfType<XmlNode>().AsParallel().ForAll(marker =>
+                {
+                    var extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Markers");
+                    var id = new Guid(marker.Attributes["id"].Value);
+                    Uri cardImage = definition.GetRelationship("M" + id.ToString("N")).TargetUri;
+                    string imageUri = cardImage.ToString();
+                    string fileName = id.ToString() + imageUri.Substring(imageUri.LastIndexOf('.'));
+                    PackagePart part = Package.GetPart(cardImage);
+                    ExtractPart(part, extractDir, fileName);
+                });
         }
 
         public void ExtractSetXML()
@@ -109,7 +119,8 @@
             string defUri = definition.Uri.ToString();
             string fileName = defUri.Substring(defUri.LastIndexOf('/')+1);
             Console.WriteLine(fileName);
-            ExtractPart(definition, UnpackBase, fileName);
+            var extractSite = Path.Combine(UnpackBase, "Sets", this.Name, this.Id.ToString());
+            ExtractPart(definition, extractSite, fileName);
         }
 
         private void ExtractPart(PackagePart packagePart, string targetDir, string fileName)
