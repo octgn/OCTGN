@@ -120,7 +120,7 @@
             string fileName = defUri.Substring(defUri.LastIndexOf('/')+1);
             Console.WriteLine(fileName);
             var extractSite = Path.Combine(UnpackBase, "Sets", this.Name, this.Id.ToString());
-            ExtractPart(definition, extractSite, fileName);
+            ExtractPart(definition, extractSite, "set.xml");
         }
 
         private void ExtractPart(PackagePart packagePart, string targetDir, string fileName)
