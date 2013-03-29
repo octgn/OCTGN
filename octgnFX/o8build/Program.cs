@@ -150,7 +150,7 @@ namespace o8build
                         var setRefPath = refpath + gameId;
                         foreach (var f in setdir.GetFiles("*", SearchOption.AllDirectories))
                         {
-                            var relPath = f.FullName.Replace(f.Directory.FullName, setRefPath);
+                            var relPath = f.FullName.Replace(setdir.FullName, setRefPath);
                             var pf = new PhysicalPackageFile() { SourcePath = f.FullName, TargetPath = relPath };
                             builder.Files.Add(pf);
                         }
@@ -162,7 +162,7 @@ namespace o8build
                     var files = dir.GetFiles("*", SearchOption.AllDirectories);
                     foreach (var f in files)
                     {
-                        var relPath = f.FullName.Replace(f.Directory.FullName, refpath);
+                        var relPath = f.FullName.Replace(dir.FullName, refpath);
                         var pf = new PhysicalPackageFile() { SourcePath = f.FullName, TargetPath = relPath };
                         builder.Files.Add(pf);
                     }
