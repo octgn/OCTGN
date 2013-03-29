@@ -179,9 +179,10 @@
 
         public IEnumerable<NamedUrl> GetFeeds()
         {
-            var ret = this.GetFeedsList().ToList();
-            ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
+            var ret = new List<NamedUrl>();
             ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
+            ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
+            ret.AddRange(this.GetFeedsList().ToList());
             return ret;
         }
 

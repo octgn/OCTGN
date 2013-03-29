@@ -122,9 +122,27 @@
 
         public void CheckForUpdates()
         {
-            foreach (var package in this.GetPackages())
+            try
             {
-                //package.
+                foreach (var g in DataManagers.GameManager.Get().Games)
+                {
+                    foreach (var f in this.GetFeeds())
+                    {
+                        var repo = PackageRepositoryFactory.Default.CreateRepository(f.Url);
+                        var newestPackage = repo.FindPackagesById(g.Id.ToString()).FirstOrDefault(x => x.IsAbsoluteLatestVersion);
+                        if (newestPackage == null) continue;
+                        if (newestPackage.Version.Version > g.Version)
+                        {
+                            DataManagers.GameManager.Get().InstallGame(newestPackage);
+                            break;
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error checking for updates",e);
             }
         }
 
@@ -216,19 +234,6 @@
                     File.WriteAllBytes(p,byteList.ToArray());
                 }
             }
-        }
-
-        /// <summary>
-        /// Get all packages from all feeds.
-        /// </summary>
-        /// <returns>All packages from all feeds.</returns>
-        internal virtual IQueryable<IPackage> GetPackages()
-        {
-            // TODO - [GAME FEED] - This should be made for each feed, not all combined - Kelly Elton - 3/24/2013   
-            //var repo = PackageRepositoryFactory.Default.CreateRepository(MainFeed);
-            //var packages = repo.GetPackages().Where(x => x.IsAbsoluteLatestVersion);
-            //return packages;
-            throw new NotImplementedException();
         }
 
         /// <summary>

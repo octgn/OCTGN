@@ -40,6 +40,7 @@ namespace Octgn.Windows
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
+            Core.GameFeedManager.Get().Start();
             //new GameFeedManager().CheckForUpdates();
         }
 
@@ -81,6 +82,7 @@ namespace Octgn.Windows
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             Program.LobbyClient.Stop();
+            Core.GameFeedManager.Get().Stop();
         }
 
         /// <summary>
