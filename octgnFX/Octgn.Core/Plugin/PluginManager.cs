@@ -47,7 +47,9 @@
 
         internal static T LoadExtension<T>(string path)
         {
-            foreach (var t in Assembly.LoadFile(path).GetTypes().Where(t => t.GetInterfaces().Any(i => i == typeof(T))))
+            var loadedHotAss = Assembly.LoadFile(path);
+            var assTypes = loadedHotAss.GetTypes();
+            foreach (var t in assTypes.Where(t => t.GetInterfaces().Any(i => i == typeof(T))))
                 return (T)Activator.CreateInstance(t);
             throw new InstanceNotFoundException(String.Format("Instance of the plugin type {0} was not found in the file {1}",typeof(T).Name,path));
         }

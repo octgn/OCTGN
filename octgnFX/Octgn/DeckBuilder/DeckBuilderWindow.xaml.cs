@@ -14,8 +14,6 @@ using Microsoft.Win32;
 
 namespace Octgn.DeckBuilder
 {
-    using System.Diagnostics;
-
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.Core.Plugin;
@@ -26,13 +24,13 @@ namespace Octgn.DeckBuilder
 
     using log4net;
 
-    public partial class DeckBuilderWindow : INotifyPropertyChanged
+    public partial class DeckBuilderWindow : INotifyPropertyChanged, IDeckBuilderPluginController
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private ObservableDeck _deck;
         private string _deckFilename;
-        private Octgn.DataNew.Entities.Game _game;
-        private DataNew.Entities.ObservableSection _section;
+        private Game _game;
+        private ObservableSection _section;
         private bool _unsaved;
         private string selection = null;
         private Guid set_id;
@@ -54,36 +52,36 @@ namespace Octgn.DeckBuilder
             loadSubMenu.ItemsSource = GameManager.Get().Games;
             //Title = "Octgn Deck Editor  version " + oversion;
 
-            //var deplugins = PluginManager.GetPlugins<IDeckBuilderPlugin>();
-            //foreach (var p in deplugins)
-            //{
-            //    try
-            //    {
-            //        p.OnLoad(Program.GamesRepository);
-            //        foreach (var m in p.MenuItems)
-            //        {
-            //            var mi = new MenuItem() { Header = m.Name };
-            //            var m1 = m;
-            //            mi.Click += (sender, args) =>
-            //                {
-            //                    try
-            //                    {
-            //                        m1.OnClick(this);
-            //                    }
-            //                    catch (Exception e)
-            //                    {
-            //                        new ErrorWindow(e).Show();
-            //                    }
-            //                };
-            //            MenuPlugins.Items.Add(mi);
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Trace.WriteLine(e.Message);
-            //    }
-                
-            //}
+            var deplugins = PluginManager.GetPlugins<IDeckBuilderPlugin>();
+            foreach (var p in deplugins)
+            {
+                try
+                {
+                    p.OnLoad(GameManager.Get());
+                    foreach (var m in p.MenuItems)
+                    {
+                        var mi = new MenuItem() { Header = m.Name };
+                        var m1 = m;
+                        mi.Click += (sender, args) =>
+                            {
+                                try
+                                {
+                                    m1.OnClick(this);
+                                }
+                                catch (Exception e)
+                                {
+                                    new ErrorWindow(e).Show();
+                                }
+                            };
+                        MenuPlugins.Items.Add(mi);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Unable to load plugin " + p.Name,e);
+                }
+
+            }
         }
 
         #region Search tabs
@@ -671,37 +669,36 @@ namespace Octgn.DeckBuilder
             while (Current != null);
             return null;
         }
-        //TODO [DB MIGRATION] Reimplemen plugin shit.
-        //#region IDeckBuilderPluginController
-        //public GamesRepository Games
-        //{
-        //    get
-        //    {
-        //        return Program.GamesRepository;
-        //    }
-        //}
+        #region IDeckBuilderPluginController
+        public GameManager Games
+        {
+            get
+            {
+                return GameManager.Get();
+            }
+        }
 
-        //public void SetLoadedGame(Game game)
-        //{
-        //    Game = game;
-        //}
+        public void SetLoadedGame(Game game)
+        {
+            Game = game;
+        }
 
-        //public Game GetLoadedGame()
-        //{
-        //    return Game;
-        //}
+        public Game GetLoadedGame()
+        {
+            return Game;
+        }
 
-        //public void LoadDeck(Deck deck)
-        //{
-        //    Deck = deck;
-        //}
+        public void LoadDeck(IDeck deck)
+        {
+            Deck = deck.AsObservable();
+        }
 
-        //public Deck GetLoadedDeck()
-        //{
-        //    return Deck;
-        //}
+        public IDeck GetLoadedDeck()
+        {
+            return Deck;
+        }
 
-        //#endregion 
+        #endregion 
     }
 
     public class ActiveSectionConverter : IMultiValueConverter
