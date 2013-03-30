@@ -142,7 +142,7 @@ namespace o8build
             {
                 if (dir.Name == "Sets")
                 {
-                    var refpath = baseRefPath + "\\";
+                    var refpath = baseRefPath + "\\" + "Sets" + "\\";
                     foreach (var setdir in dir.GetDirectories())
                     {
                         var doc = XDocument.Load(Path.Combine(setdir.FullName, "set.xml"));
