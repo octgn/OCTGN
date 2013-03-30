@@ -65,8 +65,31 @@
                 foreach (var dir in setDir.GetDirectories())
                 {
                     this.VerifySetDirectory(dir);
+                    var setFile = dir.GetFiles().First();
+                    TestSetXml(setFile.FullName);
                 }
             }
+        }
+
+        public void TestSetXml(string filename)
+        {
+            var libAss = Assembly.GetAssembly(typeof(Paths));
+            var setxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardSet.xsd"));
+            if (setxsd == null)
+                throw new UserMessageException("Shits fucked bro.");
+            var schemas = new XmlSchemaSet();
+            var schema = XmlSchema.Read(libAss.GetManifestResourceStream(setxsd), (sender, args) => { throw args.Exception; });
+            schemas.Add(schema);
+
+            var fileName = Directory.GetFiles().First().FullName;
+            XDocument doc = XDocument.Load(fileName);
+            string msg = "";
+            doc.Validate(schemas, (o, e) =>
+            {
+                msg = e.Message;
+            });
+            if (!string.IsNullOrWhiteSpace(msg))
+                throw new UserMessageException(msg);
         }
 
         public void VerifySetDirectory(DirectoryInfo dir)
