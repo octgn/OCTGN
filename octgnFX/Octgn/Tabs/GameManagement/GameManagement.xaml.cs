@@ -124,7 +124,7 @@ namespace Octgn.Tabs.GameManagement
         internal void UpdatePackageList()
         {
             Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = false; }));
-            var packs = GameFeedManager.Get().GetPackages(Selected).Select(x => new FeedGameViewModel(x)).ToList();
+            var packs = GameFeedManager.Get().GetPackages(Selected).Where(x=>x.IsAbsoluteLatestVersion).Select(x => new FeedGameViewModel(x)).ToList();
             foreach (var p in packages.ToList())
             {
                 if (!packs.Contains(p)) 
