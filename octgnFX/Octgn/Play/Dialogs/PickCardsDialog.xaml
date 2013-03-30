@@ -160,7 +160,7 @@ Template="{StaticResource ExpanderButton}" />
                     <TextBlock Text="Sort:" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Left" Width="31"
                      Height="20" TextAlignment="Right" Margin="205,2,0,0" RenderTransformOrigin="0.884,0.614" Foreground="White"/>
                     <ComboBox x:Name="sortBox"
-                    ItemsSource="{Binding AllProperties, Source={x:Static octgn:Database.OpenedGame}, Mode=OneTime}"
+                    ItemsSource="{Binding CurrentGame.CustomProperties, Mode=OneTime}"
                     DisplayMemberPath="Name" SelectionChanged="SortChanged" VerticalAlignment="Top" Margin="241,0,0,0" Height="24" />
           <Border Style="{StaticResource ControlBorder}" Padding="0" Margin="0,26,0,0" HorizontalAlignment="Left"
                   Width="200">

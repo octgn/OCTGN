@@ -9,6 +9,8 @@ using System.Xml.Linq;
 
 namespace Octgn.Data
 {
+    using Octgn.Library.Exceptions;
+
     public class Patch
     {
         private static readonly XmlReaderSettings XmlSettings = GetXmlReaderSettings();

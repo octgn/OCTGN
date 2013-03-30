@@ -28,7 +28,7 @@ namespace Octgn.Play.Actions
         {
             Who = who;
             Card = card;
-            To = Program.Game.Table;
+            To = Program.GameEngine.Table;
             From = card.Group;
             X = x;
             Y = y;
@@ -62,7 +62,11 @@ namespace Octgn.Play.Actions
                     //TODO Card.Delete();
                 else
                 {
-                    if (Program.Game.Definition.CardsRevertToOriginalOnGroupChange) { Card.RevertToOriginal(); }
+                    // TODO - [DB Migration] - I commented out the below code, maybe it's required - Kelly Elton - 3/18/2013
+                    // The below line doesn't have that value imported from the game def file, and it didn't seem like it
+                    // was being used, so I commented it out. If there are issues with alternate images, we'll know
+                    // this might be part of it.
+                    //if (Program.GameEngine.Definition.CardsRevertToOriginalOnGroupChange) { Card.RevertToOriginal(); }
                     Card.SetFaceUp(FaceUp);//FaceUp may be false - it's one of the constructor parameters for this
                     Card.SetOverrideGroupVisibility(false);
                     Card.X = X;

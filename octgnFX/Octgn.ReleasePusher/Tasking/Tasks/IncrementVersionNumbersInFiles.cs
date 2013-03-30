@@ -74,15 +74,16 @@
             list.Add(this.CreateUpdateString(context,"currentversion.txt"));
             list.Add(this.CreateUpdateString(context,"nuget\\Octgn.Library.nuspec"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn\\Properties\\AssemblyInfo.cs"));
-            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Data\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Core\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.DataNew\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.DeckBuilderPluginExample\\DeckBuilderPluginExample.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Library\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.ProxyGenerator\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Server\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Test\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.LobbyServer\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.ReleasePusher\\Properties\\AssemblyInfo.cs"));
-            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Server\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.StandAloneServer\\Properties\\AssemblyInfo.cs"));
-            list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Test\\Properties\\AssemblyInfo.cs"));
-            list.Add(this.CreateUpdateString(context, "octgnFX\\Skylabs.Lobby\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Online.Client\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Online.Data\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Online.GameService\\Properties\\AssemblyInfo.cs"));
@@ -91,6 +92,8 @@
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Online.StandAloneServer\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn.Online.Test\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Skylabs.Lobby\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\Skylabs.LobbyServer\\Properties\\AssemblyInfo.cs"));
+            list.Add(this.CreateUpdateString(context, "octgnFX\\o8build\\Properties\\AssemblyInfo.cs"));
             list.Add(this.CreateUpdateString(context, "octgnFX\\Octgn\\CurrentVersion.txt"));
             if ((context.Data["Mode"] as string).ToLower() == "release")
             {

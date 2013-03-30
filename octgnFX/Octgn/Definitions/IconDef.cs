@@ -8,6 +8,8 @@ using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using Octgn.DataNew;
+
     public class IconDef
     {
         public string Icon { get; private set; }

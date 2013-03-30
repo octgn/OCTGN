@@ -1,10 +1,8 @@
-using Octgn.Definitions;
-
 namespace Octgn.Play
 {
     public class Table : Group
     {
-        public Table(GroupDef def)
+        public Table(DataNew.Entities.Group def)
             : base(null, def)
         {
         }

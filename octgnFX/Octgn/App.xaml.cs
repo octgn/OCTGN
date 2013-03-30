@@ -10,8 +10,11 @@ using Octgn.Windows;
 
 namespace Octgn
 {
+    using log4net;
+
     public partial class OctgnApp
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal const string ClientName = "Octgn.NET";
         internal static readonly Version OctgnVersion = GetClientVersion();
         internal static readonly Version BackwardCompatibility = new Version(0, 2, 0, 0);
@@ -25,7 +28,10 @@ namespace Octgn
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            Log.Debug("Calling Base");
             base.OnStartup(e);
+            Log.Debug("Base called.");
+
 #if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
 #else
@@ -34,29 +40,34 @@ namespace Octgn
 #endif
 			//Program.GamesRepository = new GamesRepository();
 
-            if (Program.GamesRepository.MissingFiles.Any())
-            {
-                var sb =
-                    new StringBuilder(
-                        "Octgn cannot find the following files. The corresponding games have been disabled.\n\n");
-                foreach (string file in Program.GamesRepository.MissingFiles)
-                    sb.Append(file).Append("\n\n");
-                sb.Append("You should restore those files, or re-install the corresponding games.");
+            //if (Program.GamesRepository.MissingFiles.Any())
+            //{
+            //    var sb =
+            //        new StringBuilder(
+            //            "Octgn cannot find the following files. The corresponding games have been disabled.\n\n");
+            //    foreach (string file in Program.GamesRepository.MissingFiles)
+            //        sb.Append(file).Append("\n\n");
+            //    sb.Append("You should restore those files, or re-install the corresponding games.");
 
-                ShutdownMode oldShutdown = ShutdownMode;
-                ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                new Windows.MessageWindow(sb.ToString()).ShowDialog();
-                ShutdownMode = oldShutdown;
-            }
+            //    ShutdownMode oldShutdown = ShutdownMode;
+            //    ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            //    new Windows.MessageWindow(sb.ToString()).ShowDialog();
+            //    ShutdownMode = oldShutdown;
+            //}
 
+            Log.Info("Launching UpdateChecker");
             var uc = new UpdateChecker();
             uc.ShowDialog();
+            Log.Info("UpdateChecker Done.");
             if (!uc.IsClosingDown)
             {
+                Log.Info("Launching Main Window");
                 Program.MainWindowNew.Show();
+                Log.Info("Main Window Launched");
             }
             else
             {
+                Log.Info("Closing For Updates");
                 Program.MainWindowNew.Close();
                 Current.MainWindow = null;
                 Program.Exit();
@@ -74,15 +85,14 @@ namespace Octgn
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
-            //if (e.Exception.Message.Contains("agsXMPP.Xml.xpnet.PartialTokenException"))
-            //    System.Diagnostics.Debugger.Break();
-            //Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, e.Exception.ToString());
+            Log.Error("FirstChanceException",e.Exception);
 #endif
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception)e.ExceptionObject;
+            Log.Fatal(ex);
             if (!Debugger.IsAttached)
             {
                 var wnd = new Windows.ErrorWindow(ex);

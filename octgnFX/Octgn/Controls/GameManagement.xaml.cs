@@ -1,35 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 using Microsoft.Win32;
-using Octgn.Definitions;
-using Octgn.Launcher;
 
 namespace Octgn.Controls
 {
-	/// <summary>
+    using Octgn.Core.DataManagers;
+
+    /// <summary>
 	/// Interaction logic for GameManagement.xaml
 	/// </summary>
 	public partial class GameManagement : UserControl
 	{
 		static public bool GamesChanged = false;
-		public Octgn.Data.Game SelectedGame = null;
+        public Octgn.DataNew.Entities.Game SelectedGame = null;
 		private bool isTaskRunning;
 		public GameManagement()
 		{
 			InitializeComponent();
-			Program.GamesRepository.GameInstalled += GamesRepositoryGameInstalled;
+            //GameManager.Get().GameInstalled += GamesRepositoryGameInstalled;
 			this.Loaded += GameManagement_Loaded;
 			this.ButtonInstallGame.Click += ButtonInstallGame_Click;
 			this.ButtonUninstallGame.Click += ButtonUninstallGame_Click;
@@ -46,7 +39,7 @@ namespace Octgn.Controls
 
 		void ButtonAddAutoUpdateSet_Click(object sender, RoutedEventArgs e)
 		{
-			SetList.AddAutoUpdatedSets();
+            //SetList.AddAutoUpdatedSets();
 		}
 
 		void ButtonUninstallSet_Click(object sender, RoutedEventArgs e)
@@ -65,7 +58,7 @@ namespace Octgn.Controls
 			var msg = MessageBox.Show(string.Format("Are you sure you want to delete {0}?", SelectedGame.Name), "Confirmation", MessageBoxButton.YesNo);
 			if (msg != MessageBoxResult.Yes) return;
 			var uninstallTask = new Task(() => { 
-				Program.GamesRepository.UninstallGame(SelectedGame);
+				GameManager.Get().UninstallGame(SelectedGame);
 				ReloadGameList();
 			});
 			StartTask(uninstallTask, 0);
@@ -73,6 +66,8 @@ namespace Octgn.Controls
 
 		void ButtonInstallGame_Click(object sender, RoutedEventArgs e)
 		{
+		    // TODO - [DB Migration] - Reimplement install game - Kelly Elton - 3/18/2013
+            // This should just open a .o8g and unzip it to the right location. That's all that's required.
 			var ofd = new OpenFileDialog { Filter = "Game definition files (*.o8g)|*.o8g", Multiselect = true };
 			if (ofd.ShowDialog() != true) return;
 			var max = ofd.FileNames.Length;
@@ -83,7 +78,7 @@ namespace Octgn.Controls
 							 {
 								 var file = ofd.FileNames[i];
 								 var newFileName = Uri.UnescapeDataString(file);
-								 GameDef.FromO8G(newFileName).Install();
+								 //GameDef.FromO8G(newFileName).Install();
 								 UpdateTask(i,max);
 							 }
 							 ReloadGameList();
@@ -129,18 +124,18 @@ namespace Octgn.Controls
 			ReloadGameList();
 		}
 
-		private void GamesRepositoryGameInstalled(object sender, EventArgs e)
+		private void GamesRepositoryGameInstalled(object sender, EventArgs eventArgs)
 		{
-			ReloadGameList();
-			GamesChanged = true;
+            //ReloadGameList();
+            //GamesChanged = true;
 		}
 
 		private void ReloadGameList()
 		{
 			Dispatcher.Invoke(new Action(() => { 
 				stackPanel1.Children.Clear();
-				foreach (GameListItem gs in Program.GamesRepository
-					.AllGames
+			    var games = GameManager.Get().Games.ToList();
+				foreach (GameListItem gs in games
 					.OrderBy(x=>x.Name)
 					.Select(g => new GameListItem { Game = g }))
 				{

@@ -14,6 +14,7 @@ namespace Octgn.Windows
     using System.Windows;
     using System.Windows.Input;
 
+    using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
     using Octgn.GameManagement;
 
@@ -39,7 +40,8 @@ namespace Octgn.Windows
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
-            new GameFeedManager().CheckForUpdates();
+            Core.GameFeedManager.Get().Start();
+            //new GameFeedManager().CheckForUpdates();
         }
 
         /// <summary>
@@ -80,6 +82,7 @@ namespace Octgn.Windows
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             Program.LobbyClient.Stop();
+            Core.GameFeedManager.Get().Stop();
         }
 
         /// <summary>
@@ -209,7 +212,7 @@ namespace Octgn.Windows
 
         private void MenuDeckEditorClick(object sender, RoutedEventArgs e)
         {
-            if (Program.GamesRepository.Games.Count == 0)
+            if (GameManager.Get().GameCount == 0)
             {
                 MessageBox.Show(
                     "You need to install a game before you can use the deck editor.",

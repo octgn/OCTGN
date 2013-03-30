@@ -1,38 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 using Microsoft.Win32;
-using Octgn.Data;
+
 using Path = System.IO.Path;
 
 namespace Octgn.Controls
 {
-	/// <summary>
+    using System.Linq;
+
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
+
+    /// <summary>
 	/// Interaction logic for SetList.xaml
 	/// </summary>
 	public partial class SetList : UserControl
 	{
-		public Data.Game SelectedGame;
-		private Data.Game game;
+        public DataNew.Entities.Game SelectedGame;
+        private DataNew.Entities.Game game;
 
 		public SetList()
 		{
 			InitializeComponent();
 		}
 
-		public void Set(Data.Game game)
+        public void Set(DataNew.Entities.Game game)
 		{
 			SelectedGame = game;
 			RefreshList();
@@ -41,7 +37,7 @@ namespace Octgn.Controls
 		public void RefreshList()
 		{
 			lbSetList.Items.Clear();
-			foreach (Set s in SelectedGame.Sets)
+            foreach (var s in SelectedGame.Sets().Select(x=>new SetListSetItem(x)).OrderBy(x=>x.Name))
 			{
 				lbSetList.Items.Add(s);
 			}
@@ -58,12 +54,13 @@ namespace Octgn.Controls
 				int current = 0, max = items.Count;
 				wnd.UpdateProgress(current, max, null, false);
 				wnd.ShowMessage("Set Removal can take some time. Please be patient.");
-				foreach (Set s in items)
+                foreach (DataNew.Entities.Set s in items)
 				{
 					++current;
 					try
 					{
 						wnd.ShowMessage(string.Format("Removing '{0}' ...", s.Name));
+                        
 						SelectedGame.DeleteSet(s);
 						wnd.UpdateProgress(current, max,
 										   string.Format("'{0}' removed.", s.Name),
@@ -96,7 +93,7 @@ namespace Octgn.Controls
 
 
 			//Move the definition file to a new location, so that the old one can be deleted
-			string path = System.IO.Path.Combine(Prefs.DataDirectory, "Games", SelectedGame.Id.ToString(), "Sets");
+            string path = System.IO.Path.Combine(Prefs.DataDirectory, "GameDatabase", SelectedGame.Id.ToString(), "Sets");
 			if (!Directory.Exists(path))
 				Directory.CreateDirectory(path);
 
@@ -116,7 +113,7 @@ namespace Octgn.Controls
 							string copyto = Path.Combine(path, shortName);
 							if (setName.ToLower() != copyto.ToLower())
 								File.Copy(setName, copyto, true);
-							SelectedGame.InstallSet(copyto);
+                            SetManager.Get().InstallSet(copyto);
 						}
 						wnd.UpdateProgress(current, max,
 										   string.Format("'{0}' installed.", shortName),
@@ -144,12 +141,31 @@ namespace Octgn.Controls
 			RefreshList();
 		}
 
-		public void AddAutoUpdatedSets()
-		{
-			if (SelectedGame == null)
-				return;
-			new Windows.UrlSetList { game = SelectedGame }.ShowDialog();
-			RefreshList();
-		}
+        //public void AddAutoUpdatedSets()
+        //{
+        //    if (SelectedGame == null)
+        //        return;
+        //    new Windows.UrlSetList { game = SelectedGame }.ShowDialog();
+        //    RefreshList();
+        //}
+        internal class SetListSetItem : Set 
+        {
+            public SetListSetItem(Set set)
+            {
+                this.Id = set.Id;
+                this.Markers = set.Markers;
+                this.Name = set.Name;
+                this.PackageName = set.PackageName;
+                this.Packs = set.Packs;
+                this.Version = set.Version;
+                this.GameId = set.GameId;
+                this.GameVersion = set.GameVersion;
+                this.Filename = set.Filename;
+            }
+            public override string ToString()
+            {
+                return this.Name;
+            }
+        }
 	}
 }

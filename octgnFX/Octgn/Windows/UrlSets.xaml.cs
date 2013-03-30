@@ -22,7 +22,7 @@ namespace Octgn.Windows
     /// </summary>
     public partial class UrlSets : Window
     {
-        public Data.Game game;
+        public DataNew.Entities.Game game;
 
         public UrlSets()
         {

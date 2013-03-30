@@ -10,8 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Octgn.Controls;
-using Octgn.Data;
-using Octgn.Definitions;
 using Octgn.Play.Gui;
 using Octgn.Utils;
 
@@ -19,24 +17,30 @@ namespace Octgn.Play.Dialogs
 {
     using System.Threading.Tasks;
 
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.DataNew;
+    using Octgn.DataNew.Entities;
+
     public partial class PickCardsDialog
     {
+        public Game CurrentGame;
         public PickCardsDialog()
         {
-            CardPool = new ObservableCollection<CardModel>();
+            CurrentGame = Program.GameEngine.Definition;
+            CardPool = new ObservableCollection<DataNew.Entities.Card>();
             CardPoolView = new ListCollectionView(CardPool) {Filter = FilterCard};
-            UnlimitedPool = new ObservableCollection<CardModel>();
+            UnlimitedPool = new ObservableCollection<DataNew.Entities.Card>();
             UnlimitedPoolView = new ListCollectionView(UnlimitedPool);
             UnlimitedPoolView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-            LimitedDeck = new Deck(Database.OpenedGame);
+            LimitedDeck = Program.GameEngine.Definition.CreateDeck();
             CreateFilters();
             InitializeComponent();
         }
 
         public ListCollectionView CardPoolView { get; private set; }
-        public ObservableCollection<CardModel> CardPool { get; private set; }
+        public ObservableCollection<DataNew.Entities.Card> CardPool { get; private set; }
         public ListCollectionView UnlimitedPoolView { get; private set; }
-        public ObservableCollection<CardModel> UnlimitedPool { get; private set; }
+        public ObservableCollection<DataNew.Entities.Card> UnlimitedPool { get; private set; }
         public Deck LimitedDeck { get; private set; }
         public ObservableCollection<Filter> Filters { get; private set; }
 
@@ -59,7 +63,7 @@ namespace Octgn.Play.Dialogs
                             }));
                         this.StopListenningForFilterValueChanges();
 
-                        foreach (Pack pack in packs.Select(Database.GetPackById))
+                        foreach (Pack pack in packs.Select(Program.GameEngine.Definition.GetPackById))
                         {
                             if (pack == null)
                             {
@@ -67,13 +71,13 @@ namespace Octgn.Play.Dialogs
                                 continue;
                             }
 
-                            Pack.PackContent content = pack.CrackOpen();
-                            foreach (CardModel c in content.LimitedCards)
+                            PackContent content = pack.CrackOpen();
+                            foreach (DataNew.Entities.Card c in content.LimitedCards)
                             {
                                 Dispatcher.Invoke(new Action(() => { this.CardPool.Add(c); }));
                             }
 
-                            foreach (CardModel c in content.UnlimitedCards)
+                            foreach (DataNew.Entities.Card c in content.UnlimitedCards)
                             {
                                 Dispatcher.Invoke(new Action(() => { this.UnlimitedPool.Add(c); }));
                             }
@@ -100,34 +104,33 @@ namespace Octgn.Play.Dialogs
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
+            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardWidth / Program.GameEngine.Definition.CardHeight;
         }
 
         private void SetPicture(object sender, RoutedEventArgs e)
         {
             var img = sender as Image;
             if (img == null) return;
-            var model = img.DataContext as CardModel ?? (img.DataContext as Deck.Element).Card;
+            var model = img.DataContext as DataNew.Entities.Card ?? (img.DataContext as MultiCard);
             if (model == null) return;
-            ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
+            ImageUtils.GetCardImage(new Uri(model.GetPicture()), x => img.Source = x);
         }
 
         private void PickPoolCard(object sender, RoutedEventArgs e)
         {
             var src = e.OriginalSource as FrameworkElement;
             if (src == null) return;
-            var card = src.DataContext as CardModel;
+            var card = src.DataContext as DataNew.Entities.Card;
             if (card == null) return;
-            var section = deckTabs.SelectedItem as Deck.Section;
+            var section = deckTabs.SelectedItem as Section;
             if (section == null) return;
 
             CardPool.Remove(card);
-            Deck.Element element = section.Cards.FirstOrDefault(x => x.Card.Id == card.Id);
+            var element = section.Cards.FirstOrDefault(x => x.Id == card.Id).AsObservable();
             if (element != null)
                 element.Quantity++;
             else
-                section.Cards.Add(new Deck.Element {Card = card, Quantity = 1});
+                section.Cards.AddCard(card.ToMultiCard());
 
             // RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, sender));
         }
@@ -136,9 +139,9 @@ namespace Octgn.Play.Dialogs
         {
             var src = e.OriginalSource as FrameworkElement;
             if (src == null) return;
-            var card = src.DataContext as CardModel;
+            var card = src.DataContext as DataNew.Entities.Card;
             if (card == null) return;
-            var section = deckTabs.SelectedItem as Deck.Section;
+            var section = deckTabs.SelectedItem as Section;
             if (section == null) return;
 
             // Hide the big card preview
@@ -146,11 +149,11 @@ namespace Octgn.Play.Dialogs
 
             OpenQuantityPopup(qty =>
                                   {
-                                      Deck.Element element = section.Cards.FirstOrDefault(x => x.Card.Id == card.Id);
+                                      var element = section.Cards.FirstOrDefault(x => x.Id == card.Id).AsObservable();
                                       if (element != null)
                                           element.Quantity += (byte) qty;
                                       else
-                                          section.Cards.Add(new Deck.Element {Card = card, Quantity = (byte) qty});
+                                          section.Cards.AddCard(card.ToMultiCard((byte) qty));
                                   });
         }
 
@@ -158,9 +161,9 @@ namespace Octgn.Play.Dialogs
         {
             var src = e.OriginalSource as FrameworkElement;
             if (src == null) return;
-            var element = (src.DataContext as Deck.Element);
+            var element = (src.DataContext as MultiCard);
             if (element == null) return;
-            var section = deckTabs.SelectedItem as Deck.Section;
+            var section = deckTabs.SelectedItem as Section;
 
             if (element.Quantity > 1)
             {
@@ -169,23 +172,23 @@ namespace Octgn.Play.Dialogs
                                           int actuallyRemoved = Math.Min(qty, element.Quantity);
                                           if (element.Quantity > qty)
                                               element.Quantity -= (byte) qty;
-                                          else if (section != null) section.Cards.Remove(element);
-                                          if (!UnlimitedPool.Contains(element.Card))
+                                          else if (section != null) section.Cards.RemoveCard(element);
+                                          if (!UnlimitedPool.Contains(element))
                                               for (int i = 0; i < actuallyRemoved; ++i)
                                                   // When there are multiple copies of the same card, we insert clones of the CardModel.
                                                   // Otherwise, the ListBox gets confused with selection.
                                                   CardPool.Add(element.Quantity > 1
-                                                                   ? element.Card.Clone()
-                                                                   : element.Card);
+                                                                   ? element.Clone()
+                                                                   : element);
                                       });
             }
             else
             {
                 if (element.Quantity > 1)
                     element.Quantity--;
-                else if (section != null) section.Cards.Remove(element);
-                if (!UnlimitedPool.Contains(element.Card))
-                    CardPool.Add(element.Card);
+                else if (section != null) section.Cards.RemoveCard(element);
+                if (!UnlimitedPool.Contains(element))
+                    CardPool.Add(element);
             }
         }
 
@@ -193,7 +196,7 @@ namespace Octgn.Play.Dialogs
         {
             var src = e.Source as FrameworkElement;
             if (src == null) return;
-            var model = src.DataContext as CardModel ?? (src.DataContext as Deck.Element).Card;
+            var model = src.DataContext as DataNew.Entities.Card ?? (src.DataContext as MultiCard);
             if (model == null) return;
             RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
         }
@@ -211,18 +214,18 @@ namespace Octgn.Play.Dialogs
         {
             if (_activeRestrictions == null || _activeRestrictions.Count == 0)
                 return true;
-            var card = (CardModel) c;
+            var card = (DataNew.Entities.Card) c;
 
             return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
                     let prop = restriction.Key
-                    let value = card.Properties[prop.Name]
+                    let value = card.Properties[prop]
                     select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
         private void CreateFilters()
         {
             Filters = new ObservableCollection<Filter>();
-            foreach (Filter filter in Program.Game.Definition.CardDefinition.Properties.Values
+            foreach (Filter filter in Program.GameEngine.Definition.CustomProperties
                 .Where(p => !p.Hidden && (p.Type == PropertyType.Integer || p.TextKind != PropertyTextKind.FreeText)).
                 Select(prop => new Filter
                                    {
@@ -257,8 +260,8 @@ namespace Octgn.Play.Dialogs
                     {
                         case PropertyTextKind.Enumeration:
                             Filter filter2 = filter;
-                            IEnumerable<EnumFilterValue> q = from CardModel c in CardPoolView
-                                                             group c by (string) c.Properties[prop.Name]
+                            IEnumerable<EnumFilterValue> q = from DataNew.Entities.Card c in CardPoolView
+                                                             group c by (string) c.Properties[prop]
                                                              into g
                                                              orderby g.Key
                                                              select
@@ -273,8 +276,8 @@ namespace Octgn.Play.Dialogs
                             break;
                         case PropertyTextKind.Tokens:
                             Filter filter1 = filter;
-                            IEnumerable<TokenFilterValue> q2 = from CardModel c in CardPoolView
-                                                               let all = (string) c.Properties[prop.Name]
+                            IEnumerable<TokenFilterValue> q2 = from DataNew.Entities.Card c in CardPoolView
+                                                               let all = (string) c.Properties[prop]
                                                                where all != null
                                                                from token in
                                                                    all.Split(new[] {' '},
@@ -303,13 +306,13 @@ namespace Octgn.Play.Dialogs
                 if (e.NewItems != null)
                 {
                     FilterValue fv1 = fv;
-                    foreach (CardModel card in e.NewItems.Cast<CardModel>().Where(fv1.IsMatch))
+                    foreach (DataNew.Entities.Card card in e.NewItems.Cast<DataNew.Entities.Card>().Where(fv1.IsMatch))
                         fv.Count++;
                 }
                 if (e.OldItems != null)
                 {
                     FilterValue fv1 = fv;
-                    foreach (CardModel card in e.OldItems.Cast<CardModel>().Where(fv1.IsMatch))
+                    foreach (DataNew.Entities.Card card in e.OldItems.Cast<DataNew.Entities.Card>().Where(fv1.IsMatch))
                         fv.Count--;
                 }
             }
@@ -391,7 +394,7 @@ namespace Octgn.Play.Dialogs
         public class Filter
         {
             public string Name { get; set; }
-            public PropertyDef Property { get; set; }
+            public DataNew.Entities.PropertyDef Property { get; set; }
             public ObservableCollection<FilterValue> Values { get; set; }
         }
 
@@ -402,7 +405,7 @@ namespace Octgn.Play.Dialogs
         public abstract class FilterValue : INotifyPropertyChanged
         {
             private int _count;
-            public PropertyDef Property { get; set; }
+            public DataNew.Entities.PropertyDef Property { get; set; }
             public bool IsActive { get; set; }
 
             public int Count
@@ -424,9 +427,9 @@ namespace Octgn.Play.Dialogs
 
             public abstract bool IsValueMatch(object value);
 
-            public bool IsMatch(CardModel c)
+            public bool IsMatch(DataNew.Entities.Card c)
             {
-                return IsValueMatch(c.Properties[Property.Name]);
+                return IsValueMatch(c.Properties[Property]);
             }
 
             protected void OnPropertyChanged(string propertyName)

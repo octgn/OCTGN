@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit;
+
 using NUnit.Framework;
 
 namespace Octgn.Test
@@ -29,12 +25,10 @@ namespace Octgn.Test
 
             Debug.WriteLine("Check Version Of Octgn");
             Assert.AreEqual(realVersion , typeof (Program).Assembly.GetName().Version);
-            Debug.WriteLine("Check Version Of Octgn.Data");
-            Assert.AreEqual(realVersion , typeof(Octgn.Data.Game).Assembly.GetName().Version);
+            Debug.WriteLine("Check Version Of Octgn.DataNew");
+            Assert.AreEqual(realVersion , typeof(Octgn.DataNew.DbContext).Assembly.GetName().Version);
             Debug.WriteLine("Check Version Of Octgn.Server");
             Assert.AreEqual(realVersion  ,typeof(Octgn.Server.Server).Assembly.GetName().Version);
-            Debug.WriteLine("Check Version Of Octgn.StandAloneServer");
-            Assert.AreEqual(realVersion , typeof(Octgn.StandAloneServer.Program).Assembly.GetName().Version);
             Debug.WriteLine("Check Version Of Skylabs.Lobby");
             Assert.AreEqual(realVersion , typeof(Skylabs.Lobby.Client).Assembly.GetName().Version);
             Debug.WriteLine("Check Version Of Octgn.LobbyServer");

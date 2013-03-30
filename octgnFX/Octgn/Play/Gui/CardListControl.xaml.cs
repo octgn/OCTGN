@@ -7,7 +7,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using Octgn.Definitions;
 
 namespace Octgn.Play.Gui
 {
@@ -110,8 +109,7 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
 
             // Set overlay card size
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
-            e.CardSize = new Size(cardDef.Width*100/cardDef.Height, 100);
+            e.CardSize = new Size(Program.GameEngine.Definition.CardWidth * 100 / Program.GameEngine.Definition.CardHeight, 100);
             if (IsAlwaysUp) e.FaceUp = true;
 
             // Drop is forbidden when not ordered by position
