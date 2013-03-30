@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace o8build
 {
     using System.Diagnostics;
     using System.IO;
     using System.Reflection;
-    using System.Threading.Tasks;
     using System.Xml.Linq;
-    using System.Xml.Schema;
     using System.Xml.Serialization;
 
     using Mono.Options;

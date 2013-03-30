@@ -52,15 +52,65 @@
         {
             if (Directory.GetFiles().Where(x => x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g").ToArray().Length != 1)
                 throw new UserMessageException("You can only have 1 file in the root of your game directory.");
-            if (Directory.GetFiles().Where(x => x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g").First().Name != "definition.xml")
+            if (this.Directory.GetFiles().First(x => x.Extension.ToLower() != ".nupkg" && x.Extension.ToLower() != ".o8g").Name != "definition.xml")
                 throw new UserMessageException("You must have a definition.xml in the root of your game directory.");
             if(Directory.GetDirectories().Any(x=>x.Name == "_rels"))
                 throw new UserMessageException("The _rels folder is depreciated.");
             if (Directory.GetDirectories().Any(x => x.Name == "Sets"))
             {
                 var setDir = Directory.GetDirectories().First(x => x.Name == "Sets");
-                if(setDir.GetFiles("*.o8s").Length != setDir.GetFiles().Length)
-                    throw new UserMessageException("You can only have .o8s files in the Sets folder.");
+                if(setDir.GetFiles("*",SearchOption.TopDirectoryOnly).Any())
+                    throw new UserMessageException("You can only have folders in your Sets directory");
+                // Check each sub directory of Sets and make sure that it has a proper root.
+                foreach (var dir in setDir.GetDirectories())
+                {
+                    this.VerifySetDirectory(dir);
+                }
+            }
+        }
+
+        public void VerifySetDirectory(DirectoryInfo dir)
+        {
+            var files = dir.GetFiles("*", SearchOption.TopDirectoryOnly);
+            if(files.Length == 0)
+                throw new UserMessageException("You must have a set.xml file inside of your set folder {0}",dir.FullName);
+            if(files.Length > 1)
+                throw new UserMessageException("You can only have a set.xml file in your set folder {0}",dir.FullName);
+            var setFile = files.First();
+            if(setFile.Name != "set.xml")
+                throw new UserMessageException("You must have a set.xml file inside of your set folder {0}",dir.FullName);
+
+            // Check folders...there should only be two if they exists
+            var dirs = dir.GetDirectories("*", SearchOption.TopDirectoryOnly);
+            if(dirs.Length > 2)
+                throw new UserMessageException("You may only have a Cards and/or Markers folder in your set folder {0}",dir.FullName);
+            if(!dirs.All(x=>x.Name == "Cards" || x.Name == "Markers"))
+                throw new UserMessageException("You may only have a Cards and/or Markers folder in your set folder {0}", dir.FullName);
+
+            // check Cards directory. There should only be image files in there
+            var cardDir = dirs.First(x => x.Name == "Cards");
+            if (cardDir != null)
+            {
+                if(cardDir.GetDirectories("*",SearchOption.AllDirectories).Any())
+                    throw new UserMessageException("You cannot have any folders inside of the Cards folder {0}",cardDir.FullName);
+                foreach (var f in cardDir.GetFiles("*",SearchOption.TopDirectoryOnly))
+                {
+                    var test = Guid.Empty;
+                    if(!Guid.TryParse(f.Name.Replace(f.Extension,""),out test))
+                        throw new UserMessageException("Your card file {0} was named incorrectly",f.FullName);
+                }
+            }
+            var markersDir = dirs.First(x => x.Name == "Markers");
+            if (markersDir != null)
+            {
+                if (markersDir.GetDirectories("*", SearchOption.AllDirectories).Any())
+                    throw new UserMessageException("You cannot have any folders inside of the Markers folder {0}", markersDir.FullName);
+                foreach (var f in markersDir.GetFiles("*", SearchOption.TopDirectoryOnly))
+                {
+                    var test = Guid.Empty;
+                    if(!Guid.TryParse(f.Name.Replace(f.Extension,""),out test))
+                        throw new UserMessageException("Your Marker file {0} was named incorrectly", f.FullName);
+                }
             }
         }
 
