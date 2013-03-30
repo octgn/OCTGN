@@ -82,7 +82,7 @@
             schemas.Add(schema);
 
             var fileName = Directory.GetFiles().First().FullName;
-            XDocument doc = XDocument.Load(fileName);
+            XDocument doc = XDocument.Load(filename);
             string msg = "";
             doc.Validate(schemas, (o, e) =>
             {
@@ -111,7 +111,7 @@
                 throw new UserMessageException("You may only have a Cards and/or Markers folder in your set folder {0}", dir.FullName);
 
             // check Cards directory. There should only be image files in there
-            var cardDir = dirs.First(x => x.Name == "Cards");
+            var cardDir = dirs.FirstOrDefault(x => x.Name == "Cards");
             if (cardDir != null)
             {
                 if(cardDir.GetDirectories("*",SearchOption.AllDirectories).Any())
@@ -123,7 +123,7 @@
                         throw new UserMessageException("Your card file {0} was named incorrectly",f.FullName);
                 }
             }
-            var markersDir = dirs.First(x => x.Name == "Markers");
+            var markersDir = dirs.FirstOrDefault(x => x.Name == "Markers");
             if (markersDir != null)
             {
                 if (markersDir.GetDirectories("*", SearchOption.AllDirectories).Any())
