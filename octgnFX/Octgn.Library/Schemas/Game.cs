@@ -28,6 +28,10 @@ public partial class game {
     
     private gameFont[] fontsField;
     
+    private gameProxygen proxygenField;
+    
+    private gameDocument[] documentsField;
+    
     private gameGlobalvariable[] globalvariablesField;
     
     private gameVariable[] variablesField;
@@ -93,6 +97,29 @@ public partial class game {
         }
         set {
             this.fontsField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public gameProxygen proxygen {
+        get {
+            return this.proxygenField;
+        }
+        set {
+            this.proxygenField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("document", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public gameDocument[] documents {
+        get {
+            return this.documentsField;
+        }
+        set {
+            this.documentsField = value;
         }
     }
     
@@ -446,7 +473,11 @@ public enum boolean {
 
 /// <remarks/>
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(action))]
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(groupAction))]
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(cardAction))]
 [System.Xml.Serialization.XmlIncludeAttribute(typeof(actionSubmenu))]
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(groupActionSubmenu))]
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(cardActionSubmenu))]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -468,6 +499,8 @@ public abstract partial class baseAction {
 }
 
 /// <remarks/>
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(groupAction))]
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(cardAction))]
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -537,6 +570,24 @@ public partial class action : baseAction {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class groupAction : action {
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class cardAction : action {
+}
+
+/// <remarks/>
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(groupActionSubmenu))]
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(cardActionSubmenu))]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
 public partial class actionSubmenu : baseAction {
     
     private baseAction[] itemsField;
@@ -595,11 +646,26 @@ public enum ItemsChoiceType {
 [System.SerializableAttribute()]
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class groupActionSubmenu : actionSubmenu {
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class cardActionSubmenu : actionSubmenu {
+}
+
+/// <remarks/>
+[System.Xml.Serialization.XmlIncludeAttribute(typeof(hand))]
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
 public partial class group {
     
     private baseAction[] itemsField;
-    
-    private ItemsChoiceType1[] itemsElementNameField;
     
     private string nameField;
     
@@ -635,29 +701,16 @@ public partial class group {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("cardaction", typeof(action), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("cardactions", typeof(actionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("groupaction", typeof(action), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("groupactions", typeof(actionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemsElementName")]
+    [System.Xml.Serialization.XmlElementAttribute("cardaction", typeof(cardAction), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("cardactions", typeof(cardActionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("groupaction", typeof(groupAction), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("groupactions", typeof(groupActionSubmenu), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public baseAction[] Items {
         get {
             return this.itemsField;
         }
         set {
             this.itemsField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("ItemsElementName")]
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public ItemsChoiceType1[] ItemsElementName {
-        get {
-            return this.itemsElementNameField;
-        }
-        set {
-            this.itemsElementNameField = value;
         }
     }
     
@@ -821,25 +874,6 @@ public partial class group {
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
 [System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(IncludeInSchema=false)]
-public enum ItemsChoiceType1 {
-    
-    /// <remarks/>
-    cardaction,
-    
-    /// <remarks/>
-    cardactions,
-    
-    /// <remarks/>
-    groupaction,
-    
-    /// <remarks/>
-    groupactions,
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public enum groupVisibility {
     
@@ -873,6 +907,14 @@ public enum groupBackgroundStyle {
     
     /// <remarks/>
     stretch,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class hand : group {
 }
 
 /// <remarks/>
@@ -1060,6 +1102,76 @@ public enum fonttarget {
     
     /// <remarks/>
     chat,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class gameProxygen {
+    
+    private string definitionsrcField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string definitionsrc {
+        get {
+            return this.definitionsrcField;
+        }
+        set {
+            this.definitionsrcField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class gameDocument {
+    
+    private string srcField;
+    
+    private string iconField;
+    
+    private string nameField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string src {
+        get {
+            return this.srcField;
+        }
+        set {
+            this.srcField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string icon {
+        get {
+            return this.iconField;
+        }
+        set {
+            this.iconField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
+        }
+    }
 }
 
 /// <remarks/>
@@ -1269,34 +1381,19 @@ public partial class gamePlayer {
     
     private object[] itemsField;
     
-    private ItemsChoiceType2[] itemsElementNameField;
-    
     private string summaryField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("counter", typeof(counter), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("globalvariable", typeof(gamePlayerGlobalvariable), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlElementAttribute("group", typeof(group), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("hand", typeof(group), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemsElementName")]
+    [System.Xml.Serialization.XmlElementAttribute("hand", typeof(hand), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
         get {
             return this.itemsField;
         }
         set {
             this.itemsField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("ItemsElementName")]
-    [System.Xml.Serialization.XmlIgnoreAttribute()]
-    public ItemsChoiceType2[] ItemsElementName {
-        get {
-            return this.itemsElementNameField;
-        }
-        set {
-            this.itemsElementNameField = value;
         }
     }
     
@@ -1345,25 +1442,6 @@ public partial class gamePlayerGlobalvariable {
             this.valueField = value;
         }
     }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Xml.Serialization.XmlTypeAttribute(IncludeInSchema=false)]
-public enum ItemsChoiceType2 {
-    
-    /// <remarks/>
-    counter,
-    
-    /// <remarks/>
-    globalvariable,
-    
-    /// <remarks/>
-    group,
-    
-    /// <remarks/>
-    hand,
 }
 
 /// <remarks/>

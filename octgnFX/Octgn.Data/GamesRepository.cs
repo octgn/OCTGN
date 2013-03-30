@@ -12,6 +12,8 @@ using Octgn.Data.Properties;
 
 namespace Octgn.Data
 {
+    using Octgn.Library;
+
     public class GamesRepository
     {
         public static string BasePath = SimpleConfig.DataDirectory;

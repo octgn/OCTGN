@@ -23,6 +23,7 @@
 *_p.c
 *.orig
 .svn
+*.DotSettings
 /octgnFX/CassiniDev/CassiniDev/bin
 /octgnFX/CassiniDev/CassiniDev/obj
 /octgnFX/ConsoleHelper/bin

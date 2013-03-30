@@ -18,7 +18,8 @@ namespace Octgn.Controls
 
     using Microsoft.Scripting.Utils;
 
-    using Octgn.Definitions;
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
     using Octgn.ViewModels;
@@ -59,6 +60,7 @@ namespace Octgn.Controls
         {
             InitializeComponent();
             ListViewGameList.AddHandler(Thumb.DragDeltaEvent, new DragDeltaEventHandler(ListViewGameList_OnDragDelta), true);
+            ListViewGameList.MouseDoubleClick += ListViewGameListOnMouseDoubleClick;
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
             Program.LobbyClient.OnDisconnect += LobbyClient_OnDisconnect;
@@ -67,6 +69,11 @@ namespace Octgn.Controls
             timer = new Timer(10000);
             timer.Start();
             timer.Elapsed += this.TimerElapsed;
+        }
+
+        private void ListViewGameListOnMouseDoubleClick(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            ButtonJoinClick(sender, null);
         }
 
         void RefreshGameList()
@@ -110,10 +117,10 @@ namespace Octgn.Controls
             connectOfflineGameDialog.Close();
         }
 
-        private void StartJoinGame(HostedGameViewModel hostedGame, Data.Game game)
+        private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game)
         {
             Program.IsHost = false;
-            Program.Game = new Game(GameDef.FromO8G(game.FullPath),Program.LobbyClient.Me.UserName);
+            Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName);
             Program.CurrentOnlineGameName = hostedGame.Name;
             IPAddress hostAddress =  Dns.GetHostAddresses(Program.GameServerPath).FirstOrDefault();
             if(hostAddress == null)
@@ -202,7 +209,7 @@ namespace Octgn.Controls
                     if (Program.PreGameLobbyWindow == null)
                     {
                         Program.IsHost = false;
-                        Program.Game = new Octgn.Game(GameDef.FromO8G(connectOfflineGameDialog.Game.FullPath), null,true);
+                        Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null,true);
 
                         Program.PreGameLobbyWindow = new PreGameLobbyWindow();
                         Program.PreGameLobbyWindow.Setup(true,Program.MainWindowNew);
@@ -253,7 +260,7 @@ namespace Octgn.Controls
             }
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
-            var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == hostedgame.GameId);
+            var game = GameManager.Get().GetById(hostedgame.GameId);
             var task = new Task(() => this.StartJoinGame(hostedgame,game));
             task.ContinueWith((t) =>{ this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t)));});
             BorderButtons.IsEnabled = false;

@@ -1,6 +1,5 @@
-using System;
 using System.Linq;
-using Octgn.Definitions;
+
 using Octgn.Utils;
 
 //using Octgn.Play.GUI;
@@ -13,7 +12,7 @@ namespace Octgn.Play
 
         private bool _collapsed;
 
-        internal Pile(Player owner, GroupDef def)
+        internal Pile(Player owner, DataNew.Entities.Group def)
             : base(owner, def)
         {
             _collapsed = def.Collapsed;
@@ -86,7 +85,7 @@ namespace Octgn.Play
                 }
                 else
                 {
-                    CardIdentity ci = cis[i] = new CardIdentity(Program.Game.GenerateCardId());
+                    CardIdentity ci = cis[i] = new CardIdentity(Program.GameEngine.GenerateCardId());
                     ci.Alias = ci.MySecret = true;
                     ci.Key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) cards[i].Type.Id;
                     ci.Visible = false;

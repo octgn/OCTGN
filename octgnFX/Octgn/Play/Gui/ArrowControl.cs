@@ -85,7 +85,7 @@ namespace Octgn.Play.Gui
 
         private void ComputeShape()
         {
-            double arrowHalfWidth = Program.Game.Definition.TableDefinition.Height*0.017; // 1/60th
+            double arrowHalfWidth = Program.GameEngine.Definition.Table.Height*0.017; // 1/60th
             double headHalfWidth = arrowHalfWidth*HeadHalfWidthFactor;
             double headLength = arrowHalfWidth*HeadLengthFactor;
 

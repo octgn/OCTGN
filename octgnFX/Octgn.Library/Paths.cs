@@ -1,32 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Octgn.Library
+﻿namespace Octgn.Library
 {
+    using System;
     using System.IO.Abstractions;
     using System.Reflection;
 
-    using Octgn.Data;
-
-    public static class Paths
+    public interface IPaths
     {
-        internal static IFileSystem FS { get; set; }
-        public static string BasePath {get;private set;}
-        public static string PluginPath { get; private set; }
-        public static string DataDirectory { get; private set; }
-        public static string DatabasePath { get; set; }
+        string WorkingDirectory { get; set; }
+        string BasePath { get; }
+        string PluginPath { get; }
+        string DataDirectory { get; }
+        string DatabasePath { get; }
+        string ConfigDirectory { get; }
+        string FeedListPath { get; }
+        string LocalFeedPath { get; }
+        string MainOctgnFeed { get; }
+    }
 
-        static Paths()
+    public class Paths : IPaths
+    {
+        #region Singleton
+
+        internal static IPaths SingletonContext { get; set; }
+
+        private static readonly object PathsSingletonLocker = new object();
+
+        public static IPaths Get()
         {
-            if(FS == null)
-                FS = new FileSystem();
-            BasePath = FS.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\";
-            PluginPath = FS.Path.Combine(SimpleConfig.DataDirectory, "Plugins");
-            DatabasePath = FS.Path.Combine(SimpleConfig.DataDirectory, "Database");
-            DatabasePath = FS.Path.Combine(DatabasePath, "master.db3");
-            DataDirectory = SimpleConfig.DataDirectory;
+            lock (PathsSingletonLocker) return SingletonContext ?? (SingletonContext = new Paths());
         }
+
+        internal Paths()
+        {
+            if (FS == null)
+                FS = new FileSystem();
+            try
+            {
+                if (WorkingDirectory == null)
+                    WorkingDirectory = Assembly.GetEntryAssembly().Location;
+            }
+            catch
+            {
+            }
+            BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
+            PluginPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Plugins");
+            DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
+            DatabasePath = FS.Path.Combine(DatabasePath, "master.db3");
+            DataDirectory = SimpleConfig.Get().DataDirectory;
+            ConfigDirectory = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Config");
+            FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
+            LocalFeedPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "LocalFeed");
+            FS.Directory.CreateDirectory(LocalFeedPath);
+            MainOctgnFeed = "http://www.myget.org/F/octgngames/";
+        }
+
+        #endregion Singleton
+
+        internal IFileSystem FS { get; set; }
+        public string WorkingDirectory { get; set; }
+        public string BasePath {get;private set;}
+        public string PluginPath { get; private set; }
+        public string DataDirectory { get; private set; }
+        public string DatabasePath { get; set; }
+        public string ConfigDirectory { get; set; }
+        public string FeedListPath { get; set; }
+        public string LocalFeedPath { get; set; }
+        public string MainOctgnFeed { get; set; }
     }
 }

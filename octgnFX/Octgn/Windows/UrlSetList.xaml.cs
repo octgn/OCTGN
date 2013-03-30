@@ -18,7 +18,7 @@ namespace Octgn.Windows
     /// </summary>
     public partial class UrlSetList : Window
     {
-        public Data.Game game;
+        public DataNew.Entities.Game game;
         public UrlSetList()
         {
             InitializeComponent();

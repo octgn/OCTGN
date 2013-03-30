@@ -7,8 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Security;
 using System.Windows.Media;
-using Octgn.Data;
-using Octgn.Definitions;
+
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Play.Actions;
@@ -20,6 +19,8 @@ namespace Octgn.Scripting
 {
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
+
+    using Octgn.Core.DataExtensionMethods;
 
     [SecuritySafeCritical]
     public class ScriptApi : MarshalByRefObject
@@ -64,14 +65,14 @@ namespace Octgn.Scripting
 
         public bool IsActivePlayer(int id)
         {
-            if (Program.Game.TurnPlayer == null)
+            if (Program.GameEngine.TurnPlayer == null)
                 return false;
-            return (Program.Game.TurnPlayer.Id == id);
+            return (Program.GameEngine.TurnPlayer.Id == id);
         }
 
         public void setActivePlayer(int id)
         {
-            if (Program.Game.TurnPlayer == null || Program.Game.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
                 Program.Client.Rpc.NextTurn(Player.Find((byte) id));
         }
 
@@ -173,7 +174,7 @@ namespace Octgn.Scripting
 
         public bool IsTableBackgroundFlipped()
         {
-            return Program.Game.IsTableBackgroundFlipped;
+            return Program.GameEngine.IsTableBackgroundFlipped;
         }
 
         public void SetTableBackgroundFlipped(bool isFlipped)
@@ -187,13 +188,12 @@ namespace Octgn.Scripting
 
         public string[] CardProperties()
         {
-            return Program.Game.Definition.CardDefinition.Properties.Keys.ToArray();
+            return Program.GameEngine.Definition.CustomProperties.Select(x=>x.Name).ToArray();
         }
 
         public Tuple<int, int> CardSize()
         {
-            CardDef def = Program.Game.Definition.CardDefinition;
-            return Tuple.Create(def.Width, def.Height);
+            return Tuple.Create(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight);
         }
 
         public bool IsAlternate(int id)
@@ -243,8 +243,8 @@ namespace Octgn.Scripting
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
             property = property.ToLower();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
-            if (!c.Type.Model.Properties.Keys.Select(x => x.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
-            object ret = c.Type.Model.Properties.FirstOrDefault(x => x.Key.ToLower().Equals(property)).Value;
+            if (!c.Type.Model.Properties.Keys.Select(x => x.Name.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
+            object ret = c.Type.Model.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
             return (ret);
         }
 
@@ -341,7 +341,7 @@ namespace Octgn.Scripting
         {
             Card c = Card.Find(cardId);
             bool faceUp = !forceFaceDown && (!(c.Group is Table) || c.FaceUp);
-            _engine.Invoke(() => c.MoveToTable((int) x, (int) y, faceUp, Program.Game.Table.Count));
+            _engine.Invoke(() => c.MoveToTable((int) x, (int) y, faceUp, Program.GameEngine.Table.Count));
         }
 
         public void CardSelect(int id)
@@ -548,7 +548,7 @@ namespace Octgn.Scripting
 
         public int TurnNumber()
         {
-            return (int)Program.Game.TurnNumber;
+            return (int)Program.GameEngine.TurnNumber;
         }
 
         public List<int> Create(string modelId, int groupId, int quantity)
@@ -558,7 +558,7 @@ namespace Octgn.Scripting
             Guid modelGuid;
             if (!Guid.TryParse(modelId, out modelGuid)) return ret;
 
-            var model = Database.GetCardById(modelGuid);
+            var model = Program.GameEngine.Definition.GetCardById(modelGuid);
             if (model == null) return ret;
 
             var group = Group.Find(groupId);
@@ -567,7 +567,7 @@ namespace Octgn.Scripting
             _engine.Invoke(
                 () =>
                     {
-                        var gt = new Game.GrpTmp(group, group.Visibility, group.Viewers.ToList());
+                        var gt = new GameEngine.GrpTmp(group, group.Visibility, group.Viewers.ToList());
                         group.SetVisibility(false, false);
 
 
@@ -576,15 +576,15 @@ namespace Octgn.Scripting
                         for (int i = 0; i < quantity; ++i)
                         {
                             ulong key = (ulong)Crypto.PositiveRandom() << 32 | model.Id.Condense();
-                            int id = Program.Game.GenerateCardId();
+                            int id = Program.GameEngine.GenerateCardId();
                             ids[i] = id;
                             keys[i] = Crypto.ModExp(key);
                             ret.Add(id);
-                            var card = new Card(Player.LocalPlayer, id, key, Program.Game.Definition.CardDefinition, model, true);
+                            var card = new Card(Player.LocalPlayer, id, key, model, true);
                             group.AddAt(card, group.Count);
                         }
 
-                        string pictureUri = model.Picture;
+                        string pictureUri = model.GetPicture();
                         Dispatcher.CurrentDispatcher.BeginInvoke(
                             new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                             DispatcherPriority.ApplicationIdle, pictureUri);
@@ -593,10 +593,10 @@ namespace Octgn.Scripting
 
                         switch (gt.Visibility)
                         {
-                            case GroupVisibility.Everybody:
+                            case DataNew.Entities.GroupVisibility.Everybody:
                                 group.SetVisibility(true, false);
                                 break;
-                            case GroupVisibility.Nobody:
+                            case DataNew.Entities.GroupVisibility.Nobody:
                                 group.SetVisibility(false, false);
                                 break;
                             default:
@@ -621,7 +621,7 @@ namespace Octgn.Scripting
 
             _engine.Invoke(() =>
                                {
-                                   CardModel model = Database.GetCardById(modelGuid);
+                                   DataNew.Entities.Card model = Program.GameEngine.Definition.GetCardById(modelGuid);
                                    if (model == null)
                                    {
                                    }
@@ -632,21 +632,20 @@ namespace Octgn.Scripting
                                        var models = new Guid[quantity];
                                        int[] xs = new int[quantity], ys = new int[quantity];
 
-                                       CardDef def = Program.Game.Definition.CardDefinition;
 
                                        if (Player.LocalPlayer.InvertedTable)
                                        {
-                                           x -= def.Width;
-                                           y -= def.Height;
+                                           x -= Program.GameEngine.Definition.CardWidth;
+                                           y -= Program.GameEngine.Definition.CardHeight;
                                        }
-                                       var offset = (int) (Math.Min(def.Width, def.Height)*0.2);
+                                       var offset = (int)(Math.Min(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight) * 0.2);
                                        if (Program.GameSettings.UseTwoSidedTable && TableControl.IsInInvertedZone(y))
                                            offset = -offset;
 
                                        for (int i = 0; i < quantity; ++i)
                                        {
                                            ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
-                                           int id = Program.Game.GenerateCardId();
+                                           int id = Program.GameEngine.GenerateCardId();
 
                                            new CreateCard(Player.LocalPlayer, id, key, faceDown != true, model, x, y, !persist).Do();
 
@@ -660,7 +659,7 @@ namespace Octgn.Scripting
                                            x += offset;
                                            y += offset;
                                        }
-                                       string pictureUri = model.Picture;
+                                       string pictureUri = model.GetPicture();
                                        Dispatcher.CurrentDispatcher.BeginInvoke(
                                            new Func<string, BitmapImage>(ImageUtils.CreateFrozenBitmap),
                                            DispatcherPriority.ApplicationIdle, pictureUri);
@@ -780,7 +779,7 @@ namespace Octgn.Scripting
 
         public string GameDef_Version()
         {
-            return Program.Game.Definition.Version.ToString();
+            return Program.GameEngine.Definition.Version.ToString();
         }
 
         #endregion Special APIs
@@ -811,16 +810,16 @@ namespace Octgn.Scripting
         public void SetGlobalVariable(string name, object value)
         {
             string val = String.Format("{0}", value);
-            if (Program.Game.GlobalVariables.ContainsKey(name))
-                _engine.Invoke(() => Program.Game.GlobalVariables[name] = val);
+            if (Program.GameEngine.GlobalVariables.ContainsKey(name))
+                _engine.Invoke(() => Program.GameEngine.GlobalVariables[name] = val);
             else
-                _engine.Invoke(() => Program.Game.GlobalVariables.Add(name, val));
+                _engine.Invoke(() => Program.GameEngine.GlobalVariables.Add(name, val));
             Program.Client.Rpc.SetGlobalVariable(name, val);
         }
 
         public string GetGlobalVariable(string name)
         {
-            return Program.Game.GlobalVariables.ContainsKey(name) ? Program.Game.GlobalVariables[name] : "";
+            return Program.GameEngine.GlobalVariables.ContainsKey(name) ? Program.GameEngine.GlobalVariables[name] : "";
         }
 
         #endregion
