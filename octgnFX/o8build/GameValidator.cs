@@ -186,6 +186,21 @@
                 }
             }
 
+            if (game.documents != null)
+            {
+                foreach (var doc in game.documents)
+                {
+                    path = Path.Combine(Directory.FullName, doc.src);
+                    if(!File.Exists(path))
+                        throw new UserMessageException(gError,"Document",doc.src,path);
+                }
+            }
+            if (game.proxygen != null)
+            {
+                path = Path.Combine(Directory.FullName, game.proxygen.definitionsrc);
+                if(!File.Exists(path))
+                    throw new UserMessageException(gError, "ProxyGen", game.proxygen.definitionsrc, path);
+            }
             path = Path.Combine(Directory.FullName, game.card.front);
             if(!File.Exists(path))
                 throw new UserMessageException(gError,"Card front",game.card.front,path);
