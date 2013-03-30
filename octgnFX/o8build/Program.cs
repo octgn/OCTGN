@@ -37,7 +37,8 @@ namespace o8build
             try
             {
                 HandleArguments(args);
-                Start();
+                if(!GetHelp)
+                    Start();
             }
             catch (UserMessageException e)
             {
