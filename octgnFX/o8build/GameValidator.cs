@@ -326,7 +326,6 @@
         [GameValidatorAttribute]
         public void VerifyProxyDefPaths()
         {
-            //todo need to check all the files exist in the overlay blocks from the proxydef.
             const string gError = "{0} {1} does not exist here {1}. Remember paths cannot start with / or \\";
             XmlSerializer serializer = new XmlSerializer(typeof(game));
             var fs = File.Open(Directory.GetFiles().First().FullName, FileMode.Open);
