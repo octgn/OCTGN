@@ -70,5 +70,45 @@
             }
             
         }
+
+        public static Dictionary<string, string> GetBlockSources(string path)
+        {
+            Dictionary<string, string> ret = new Dictionary<string, string>();
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(path);
+
+            foreach (XmlNode node in doc.GetElementsByTagName("block"))
+            {
+                string id = node.Attributes["id"].Value;
+                if (node.Attributes["src"] != null)
+                {
+                    ret.Add(id, node.Attributes["src"].Value);
+                }
+            }
+
+            doc.RemoveAll();
+            doc = null;
+
+            return (ret);
+        }
+
+        public static List<string> GetTemplateSources(string path)
+        {
+            List<string> ret = new List<string>();
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(path);
+
+            foreach (XmlNode node in doc.GetElementsByTagName("template"))
+            {
+                ret.Add(node.Attributes["src"].Value);
+            }
+
+            doc.RemoveAll();
+            doc = null;
+
+            return (ret);
+        }
     }
 }
