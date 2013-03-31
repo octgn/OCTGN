@@ -58,8 +58,10 @@ namespace o8build
                 var tits = Console.KeyAvailable;
                 Debug.WriteLine(tits);
                 Console.WriteLine();
+#if(DEBUG)
                 Console.WriteLine("== Press any key to quite ==");
                 Console.ReadKey();
+#endif 
             }
             catch
             {

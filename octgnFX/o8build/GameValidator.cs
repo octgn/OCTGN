@@ -149,7 +149,7 @@
             var schema = XmlSchema.Read(libAss.GetManifestResourceStream(gamexsd), (sender, args) =>{ throw args.Exception; });
             schemas.Add(schema);
 
-            var fileName = Directory.GetFiles().First().FullName;
+            var fileName = Directory.GetFiles().First(x=>x.Name == "definition.xml").FullName;
             XDocument doc = XDocument.Load(fileName);
             string msg = "";
             doc.Validate(schemas, (o, e) =>
@@ -165,7 +165,7 @@
         {
             const string gError = "{0} {1} does not exist here {1}. Remember paths cannot start with / or \\";
             XmlSerializer serializer = new XmlSerializer(typeof(game));
-            var fs = File.Open(Directory.GetFiles().First().FullName, FileMode.Open);
+            var fs = File.Open(Directory.GetFiles().First(x=>x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
             var path = "";
@@ -258,7 +258,7 @@
         public void VerifyScripts()
         {
             XmlSerializer serializer = new XmlSerializer(typeof(game));
-            var fs = File.Open(Directory.GetFiles().First().FullName, FileMode.Open);
+            var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
 
@@ -307,9 +307,12 @@
             schemas.Add(schema);
 
             XmlSerializer serializer = new XmlSerializer(typeof(game));
-            var fs = File.Open(Directory.GetFiles().First().FullName, FileMode.Open);
+            var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
+
+            if(game.proxygen == null)
+                throw new UserMessageException("You must have a ProxyGen element defined.");
 
             var fileName = Path.Combine(Directory.FullName, game.proxygen.definitionsrc);
             
@@ -328,7 +331,7 @@
         {
             const string gError = "{0} {1} does not exist here {1}. Remember paths cannot start with / or \\";
             XmlSerializer serializer = new XmlSerializer(typeof(game));
-            var fs = File.Open(Directory.GetFiles().First().FullName, FileMode.Open);
+            var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
 
