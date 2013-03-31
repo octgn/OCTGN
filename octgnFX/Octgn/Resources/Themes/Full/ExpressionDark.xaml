@@ -711,7 +711,7 @@
                 <ControlTemplate TargetType="{x:Type ListBox}">
                     <Grid>
                         <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2" Background="{DynamicResource ControlBackgroundBrush}" />
-                        <ScrollViewer Margin="1" Style="{DynamicResource NuclearScrollViewer}" Focusable="false" Background="{x:Null}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <ScrollViewer Margin="1" Style="{DynamicResource NuclearScrollViewer}" Focusable="false" Background="{x:Null}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel Margin="1,1,1,1" IsItemsHost="true" HorizontalAlignment="Stretch" />
                         </ScrollViewer>
                     </Grid>
