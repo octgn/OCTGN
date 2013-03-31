@@ -98,7 +98,7 @@
                     <Setter Property="VerticalAlignment" Value="Center"></Setter>
                 </Style>
             </StackPanel.Resources>
-            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
+            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
                 <TextBlock Text="Created By: " Style="{StaticResource Title}"/>
                 <TextBlock Text="{Binding Authors}" Style="{StaticResource Standard}"/>
             </StackPanel>

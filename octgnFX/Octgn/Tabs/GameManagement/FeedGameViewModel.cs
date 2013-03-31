@@ -58,6 +58,13 @@
                            : Package.IconUrl;
             }
         }
+        public String Authors
+        {
+            get
+            {
+                return Package.Authors == null ? "" : String.Join(", ", Package.Authors);
+            }
+        }
         public FeedGameViewModel(IPackage package)
         {
             Package = package;

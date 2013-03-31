@@ -58,8 +58,10 @@ namespace o8build
                 var tits = Console.KeyAvailable;
                 Debug.WriteLine(tits);
                 Console.WriteLine();
+#if(DEBUG)
                 Console.WriteLine("== Press any key to quite ==");
                 Console.ReadKey();
+#endif 
             }
             catch
             {
@@ -90,7 +92,7 @@ namespace o8build
             Console.WriteLine("Installing to local feed at {0}",Paths.Get().LocalFeedPath);
             var fi = new FileInfo(NupkgPath);
             var newPath = Path.Combine(Paths.Get().LocalFeedPath,fi.Name);
-            File.Copy(NupkgPath,newPath);
+            File.Copy(NupkgPath,newPath,true);
             Console.WriteLine("Installed to local feed at {0}",newPath);
         }
 
@@ -117,7 +119,7 @@ namespace o8build
         {
             var directory = new DirectoryInfo(BuildDirectory);
             XmlSerializer serializer = new XmlSerializer(typeof(game));
-            var fs = File.Open(directory.GetFiles().First().FullName, FileMode.Open);
+            var fs = File.Open(directory.GetFiles().First(x=>x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
             var builder = new NuGet.PackageBuilder()

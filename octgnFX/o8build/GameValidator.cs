@@ -17,6 +17,7 @@
 
     using Octgn.Library;
     using Octgn.Library.Exceptions;
+    using Octgn.ProxyGenerator;
 
     public class GameValidator
     {
@@ -148,7 +149,7 @@
             var schema = XmlSchema.Read(libAss.GetManifestResourceStream(gamexsd), (sender, args) =>{ throw args.Exception; });
             schemas.Add(schema);
 
-            var fileName = Directory.GetFiles().First().FullName;
+            var fileName = Directory.GetFiles().First(x=>x.Name == "definition.xml").FullName;
             XDocument doc = XDocument.Load(fileName);
             string msg = "";
             doc.Validate(schemas, (o, e) =>
@@ -164,7 +165,7 @@
         {
             const string gError = "{0} {1} does not exist here {1}. Remember paths cannot start with / or \\";
             XmlSerializer serializer = new XmlSerializer(typeof(game));
-            var fs = File.Open(Directory.GetFiles().First().FullName, FileMode.Open);
+            var fs = File.Open(Directory.GetFiles().First(x=>x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
             var path = "";
@@ -257,7 +258,7 @@
         public void VerifyScripts()
         {
             XmlSerializer serializer = new XmlSerializer(typeof(game));
-            var fs = File.Open(Directory.GetFiles().First().FullName, FileMode.Open);
+            var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
 
@@ -293,6 +294,70 @@
             if (errorList.Count > 0)
                 throw new UserMessageException(sb.ToString());
         }
+
+        [GameValidatorAttribute]
+        public void VerifyProxyDef()
+        {
+            var libAss = Assembly.GetAssembly(typeof(Paths));
+            var proxyxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardGenerator.xsd"));
+            if (proxyxsd == null)
+                throw new UserMessageException("Shits fucked bro.");
+            var schemas = new XmlSchemaSet();
+            var schema = XmlSchema.Read(libAss.GetManifestResourceStream(proxyxsd), (sender, args) => { throw args.Exception; });
+            schemas.Add(schema);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(game));
+            var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
+            var game = (game)serializer.Deserialize(fs);
+            fs.Close();
+
+            if(game.proxygen == null)
+                throw new UserMessageException("You must have a ProxyGen element defined.");
+
+            var fileName = Path.Combine(Directory.FullName, game.proxygen.definitionsrc);
+            
+            XDocument doc = XDocument.Load(fileName);
+            string msg = "";
+            doc.Validate(schemas, (o, e) =>
+            {
+                msg = e.Message;
+            });
+            if (!string.IsNullOrWhiteSpace(msg))
+                throw new UserMessageException(msg);
+        }
+
+        [GameValidatorAttribute]
+        public void VerifyProxyDefPaths()
+        {
+            const string gError = "{0} {1} does not exist here {1}. Remember paths cannot start with / or \\";
+            XmlSerializer serializer = new XmlSerializer(typeof(game));
+            var fs = File.Open(Directory.GetFiles().First(x => x.Name == "definition.xml").FullName, FileMode.Open);
+            var game = (game)serializer.Deserialize(fs);
+            fs.Close();
+
+            var proxyDef = Path.Combine(Directory.FullName, game.proxygen.definitionsrc);
+
+            Dictionary<string, string> blockSources = ProxyDefinition.GetBlockSources(proxyDef);
+            foreach (KeyValuePair<string, string> kvi in blockSources)
+            {
+                string path = Path.Combine(Directory.FullName, kvi.Value);
+                if (!File.Exists(path))
+                {
+                    throw new UserMessageException(gError, "Block id: " + kvi.Key, "src: " + kvi.Value, path);
+                }
+            }
+
+            List<string> templateSources = ProxyDefinition.GetTemplateSources(proxyDef);
+            foreach (string source in templateSources)
+            {
+                string path = Path.Combine(Directory.FullName, source);
+                if (!File.Exists(path))
+                {
+                    throw new UserMessageException(gError, "Template", "src: " + source, path);
+                }
+            }
+        }
+
         internal class CompileErrorListener : ErrorListener
         {
             internal delegate void OnErrorDelegate(
