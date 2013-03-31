@@ -20,10 +20,10 @@
             }
             set
             {
-                if (Equals(value, this.package))
-                {
-                    return;
-                }
+                //if (Equals(value, this.package))
+                //{
+                //    return;
+                //}
                 this.package = value;
                 if (!Guid.TryParse(package.Id, out this.id)) this.id = Guid.Empty;
                 this.OnPropertyChanged("Package");

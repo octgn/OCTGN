@@ -125,15 +125,17 @@ namespace Octgn.Tabs.GameManagement
         {
             Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = false; }));
             var packs = GameFeedManager.Get().GetPackages(Selected).Where(x=>x.IsAbsoluteLatestVersion).Select(x => new FeedGameViewModel(x)).ToList();
-            foreach (var p in packages.ToList())
+            foreach (var package in packages.ToList())
             {
-                if (!packs.Contains(p)) 
-                    Dispatcher.Invoke(new Action(()=>packages.Remove(p)));
+                var pack = package;
+                Dispatcher.Invoke(new Action(()=>packages.Remove(pack)));
+                //if (!packs.Contains(p)) 
+                //    Dispatcher.Invoke(new Action(()=>packages.Remove(p)));
             }
-            foreach (var r in packs)
+            foreach (var package in packs)
             {
-                if (!packages.Contains(r)) 
-                    Dispatcher.Invoke(new Action(()=>packages.Add(r)));
+                var pack = package;
+                Dispatcher.Invoke(new Action(()=>packages.Add(pack)));
             }
             Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = true; }));
         }
