@@ -1006,6 +1006,10 @@
       <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
       <Name>agsXMPP2010</Name>
     </ProjectReference>
+    <ProjectReference Include="..\o8build\o8build.csproj">
+      <Project>{f31191fb-dd9e-4c6c-a37b-796d653dd864}</Project>
+      <Name>o8build</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
       <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
       <Name>Octgn.Core</Name>

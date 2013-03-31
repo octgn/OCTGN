@@ -3,20 +3,20 @@
 !include "GetDotNet.nsh"
 !include "GetVC.nsh"
 
-Name "OCTGN 3.0.11.58"
-OutFile "OCTGN-Test-Setup-3.0.11.58.exe"
+Name "OCTGN 3.1.12.61"
+OutFile "OCTGN-Test-Setup-3.1.12.61.exe"
 ShowInstDetails show
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 
 ; Version Information
-VIProductVersion "3.0.11.58"
+VIProductVersion "3.1.12.61"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "OCTGN - Test"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A tabletop engine"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "OCTGN"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" ""
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "OCTGN release 3"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.0.11.58"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "3.1.12.61"
 
 ; Make plugin directory same as script
 !addplugindir .
@@ -83,7 +83,6 @@ Exec "$INSTDIR\OCTGN.exe"
 SectionEnd
  
 Section "Uninstall" 
-  ; Has to be removed first for some reason
   Delete $INSTDIR\uninstall.exe
 
   ; Remove registry keys

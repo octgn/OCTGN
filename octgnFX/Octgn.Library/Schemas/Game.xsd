@@ -163,6 +163,47 @@
             </xs:attribute>
           </xs:complexType>
         </xs:element>
+        <xs:element name="documents" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines a list of documents used by the game.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="document" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single document
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="src" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The relative path to the document file to be used.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="icon" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The relative path to an icon to display for this document.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The name of this document.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
         <xs:element name="globalvariables" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>

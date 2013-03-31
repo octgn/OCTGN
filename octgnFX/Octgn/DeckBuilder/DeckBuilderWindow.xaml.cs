@@ -416,7 +416,7 @@ namespace Octgn.DeckBuilder
         private void ElementSelected(object sender, SelectionChangedEventArgs e)
         {
             var grid = (DataGrid) sender;
-            var element = (Card) grid.SelectedItem;            
+            var element = (ICard) grid.SelectedItem;
 
             // Don't hide the picture if the selected element was removed 
             // with a keyboard shortcut from the results grid
@@ -476,7 +476,7 @@ namespace Octgn.DeckBuilder
         private void DeckKeyDownHandler(object sender, KeyEventArgs e)
         {
             var grid = (DataGrid) sender;
-            var element = (MultiCard) grid.SelectedItem;
+            var element = (IMultiCard)grid.SelectedItem;
             if (element == null) return;
 
             // jods used a Switch statement here. I needed to check conditions of multiple keys.
@@ -624,7 +624,7 @@ namespace Octgn.DeckBuilder
             if (e.Data.GetDataPresent("Card"))
             {
                 _unsaved = true;
-                var dragCard = e.Data.GetData("Card") as MultiCard;
+                var dragCard = e.Data.GetData("Card") as IMultiCard;
                 ObservableSection dropSection = (ObservableSection)((FrameworkElement)sender).DataContext;
                 var element = dropSection.Cards.FirstOrDefault(c => c.Id == dragCard.Id);
                     if (e.Effects == DragDropEffects.Copy)

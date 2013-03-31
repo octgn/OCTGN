@@ -20,10 +20,10 @@
             }
             set
             {
-                if (Equals(value, this.package))
-                {
-                    return;
-                }
+                //if (Equals(value, this.package))
+                //{
+                //    return;
+                //}
                 this.package = value;
                 if (!Guid.TryParse(package.Id, out this.id)) this.id = Guid.Empty;
                 this.OnPropertyChanged("Package");
@@ -56,6 +56,13 @@
                 return Package == null
                            ? new Uri("pack://application:,,,/Octgn;Component/Resources/FileIcons/Game.ico")
                            : Package.IconUrl;
+            }
+        }
+        public String Authors
+        {
+            get
+            {
+                return Package.Authors == null ? "" : String.Join(", ", Package.Authors);
             }
         }
         public FeedGameViewModel(IPackage package)

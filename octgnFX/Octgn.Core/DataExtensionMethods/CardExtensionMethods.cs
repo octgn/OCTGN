@@ -9,11 +9,11 @@
 
     public static class CardExtensionMethods
     {
-        public static Set GetSet(this Card card)
+        public static Set GetSet(this ICard card)
         {
             return SetManager.Get().Sets.FirstOrDefault(x => x.Id == card.SetId);
         }
-        public static MultiCard ToMultiCard(this Card card, int quantity = 1)
+        public static MultiCard ToMultiCard(this ICard card, int quantity = 1)
         {
             return new MultiCard
                          {
@@ -28,7 +28,7 @@
                              Properties = card.Properties
                          };
         }
-        public static string GetPicture(this Card card)
+        public static string GetPicture(this ICard card)
         {
             var set = card.GetSet();
             var uri = set.GetPictureUri(card.ImageUri);
@@ -44,7 +44,7 @@
             }
 
         }
-        public static string AlternatePicture(this Card card)
+        public static string AlternatePicture(this ICard card)
         {
             return card.GetSet().GetPictureUri(card.ImageUri + ".b").LocalPath;
             //string au = card.ImageUri.Replace(".jpg", ".b.jpg");
@@ -55,7 +55,7 @@
             return card.Properties.Any(x => x.Key.Name == name);
         }
 
-        public static Dictionary<string, string> GetProxyMappings(this Card card)
+        public static Dictionary<string, string> GetProxyMappings(this ICard card)
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
             ret.Add("Name", card.Name);
