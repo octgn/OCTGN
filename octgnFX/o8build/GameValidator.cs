@@ -293,6 +293,41 @@
             if (errorList.Count > 0)
                 throw new UserMessageException(sb.ToString());
         }
+
+        [GameValidatorAttribute]
+        public void VerifyProxyDef()
+        {
+            var libAss = Assembly.GetAssembly(typeof(Paths));
+            var proxyxsd = libAss.GetManifestResourceNames().FirstOrDefault(x => x.Contains("CardGenerator.xsd"));
+            if (proxyxsd == null)
+                throw new UserMessageException("Shits fucked bro.");
+            var schemas = new XmlSchemaSet();
+            var schema = XmlSchema.Read(libAss.GetManifestResourceStream(proxyxsd), (sender, args) => { throw args.Exception; });
+            schemas.Add(schema);
+
+            XmlSerializer serializer = new XmlSerializer(typeof(game));
+            var fs = File.Open(Directory.GetFiles().First().FullName, FileMode.Open);
+            var game = (game)serializer.Deserialize(fs);
+            fs.Close();
+
+            var fileName = Path.Combine(Directory.FullName, game.proxygen.definitionsrc);
+            
+            XDocument doc = XDocument.Load(fileName);
+            string msg = "";
+            doc.Validate(schemas, (o, e) =>
+            {
+                msg = e.Message;
+            });
+            if (!string.IsNullOrWhiteSpace(msg))
+                throw new UserMessageException(msg);
+        }
+
+        [GameValidatorAttribute]
+        public void VerifyProxyDefPaths()
+        {
+            //todo need to check all the files exist in the overlay blocks from the proxydef.
+        }
+
         internal class CompileErrorListener : ErrorListener
         {
             internal delegate void OnErrorDelegate(
