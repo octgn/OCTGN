@@ -117,7 +117,7 @@ namespace o8build
         {
             var directory = new DirectoryInfo(BuildDirectory);
             XmlSerializer serializer = new XmlSerializer(typeof(game));
-            var fs = File.Open(directory.GetFiles().First().FullName, FileMode.Open);
+            var fs = File.Open(directory.GetFiles().First(x=>x.Name == "definition.xml").FullName, FileMode.Open);
             var game = (game)serializer.Deserialize(fs);
             fs.Close();
             var builder = new NuGet.PackageBuilder()
