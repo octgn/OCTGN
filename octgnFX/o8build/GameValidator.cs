@@ -17,6 +17,7 @@
 
     using Octgn.Library;
     using Octgn.Library.Exceptions;
+    using Octgn.ProxyGenerator;
 
     public class GameValidator
     {
@@ -326,6 +327,33 @@
         public void VerifyProxyDefPaths()
         {
             //todo need to check all the files exist in the overlay blocks from the proxydef.
+            const string gError = "{0} {1} does not exist here {1}. Remember paths cannot start with / or \\";
+            XmlSerializer serializer = new XmlSerializer(typeof(game));
+            var fs = File.Open(Directory.GetFiles().First().FullName, FileMode.Open);
+            var game = (game)serializer.Deserialize(fs);
+            fs.Close();
+
+            var proxyDef = Path.Combine(Directory.FullName, game.proxygen.definitionsrc);
+
+            Dictionary<string, string> blockSources = ProxyDefinition.GetBlockSources(proxyDef);
+            foreach (KeyValuePair<string, string> kvi in blockSources)
+            {
+                string path = Path.Combine(Directory.FullName, kvi.Value);
+                if (!File.Exists(path))
+                {
+                    throw new UserMessageException(gError, "Block id: " + kvi.Key, "src: " + kvi.Value, path);
+                }
+            }
+
+            List<string> templateSources = ProxyDefinition.GetTemplateSources(proxyDef);
+            foreach (string source in templateSources)
+            {
+                string path = Path.Combine(Directory.FullName, source);
+                if (!File.Exists(path))
+                {
+                    throw new UserMessageException(gError, "Template", "src: " + source, path);
+                }
+            }
         }
 
         internal class CompileErrorListener : ErrorListener
