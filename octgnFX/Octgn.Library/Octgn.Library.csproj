@@ -102,11 +102,6 @@
     <Compile Include="Schemas\CardGenerator.cs">
       <DependentUpon>CardGenerator.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Schemas\CardGenerator.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CardGenerator.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Schemas\CardSet.cs">
       <DependentUpon>CardSet.xsd</DependentUpon>
     </Compile>
@@ -129,17 +124,10 @@
     <EmbeddedResource Include="Schemas\CardSet.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="Schemas\CardGenerator.xsc">
-      <DependentUpon>CardGenerator.xsd</DependentUpon>
-    </None>
-    <None Include="Schemas\CardGenerator.xsd">
-      <Generator>MSDataSetGenerator</Generator>
+    <EmbeddedResource Include="Schemas\CardGenerator.xsd">
       <LastGenOutput>CardGenerator.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\CardGenerator.xss">
-      <DependentUpon>CardGenerator.xsd</DependentUpon>
-    </None>
+    </EmbeddedResource>
     <None Include="Schemas\CardSet.xsx">
       <DependentUpon>CardSet.xsd</DependentUpon>
     </None>
