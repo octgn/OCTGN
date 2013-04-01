@@ -26,6 +26,10 @@ namespace Octgn.ProxyGenerator.Definitions
             }
             foreach (XmlNode subNode in node)
             {
+                if (subNode.NodeType == XmlNodeType.Comment)
+                {
+                    continue;
+                }
                 if (subNode.Name.Equals("textblocks"))
                 {
                     ret.LoadTextBlocks(subNode);
