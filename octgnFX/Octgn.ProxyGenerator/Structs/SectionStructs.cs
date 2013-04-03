@@ -12,11 +12,15 @@ namespace Octgn.ProxyGenerator.Structs
         {
             public int x;
             public int y;
+            public int rotate;
+            public bool flip;
 
             public Location(int x, int y) 
             {
                 this.x = x;
-                this.y = y; 
+                this.y = y;
+                this.rotate = 0;
+                this.flip = false;
             }
 
             public Point ToPoint()

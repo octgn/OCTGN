@@ -56,6 +56,10 @@ namespace Octgn.ProxyGenerator
         {
             foreach (XmlNode subNode in node.ChildNodes)
             {
+                if (TemplateDefinition.SkipNode(subNode))
+                {
+                    continue;
+                }
                 BlockDefinition blockDef = BlockDefinition.LoadSectionDefinition(subNode);
                 AddBlock(blockDef);
             }
