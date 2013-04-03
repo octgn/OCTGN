@@ -37,6 +37,7 @@ namespace Octgn.ProxyGenerator.Util
         public static void WriteString(Graphics graphics, BlockDefinition section, string value)
         {
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            value = System.Web.HttpUtility.HtmlDecode(value);
             GraphicsPath path = null;
             if (section.wordwrap.width > 0 && section.wordwrap.height > 0)
             {
@@ -46,6 +47,63 @@ namespace Octgn.ProxyGenerator.Util
             {
                 path = GetTextPath(section.location.ToPoint(), section.text.size, value);
             }
+
+            if (section.location.flip)
+            {
+                using (Matrix matrix = new Matrix(1,0,0,-1,0,0))
+                {
+                    //matrix.Translate(section.location.x, section.location.y);
+                    path.Transform(matrix);
+                }
+                using (Matrix matrix = new Matrix())
+                {
+                    PointF p = path.PathData.Points[0];
+                    int y = (int)p.Y;
+                    int ny = (section.location.y - y);
+                    float newY = (p.Y+ny)+(~((int)p.Y)+1) + (path.GetBounds().Height/2);
+                    matrix.Translate(0, newY);
+                    path.Transform(matrix);
+                }
+            }
+
+            if (section.location.rotate > 0)
+            {
+                float height = path.GetBounds().Height;
+                using (Matrix matrix = new Matrix())
+                {
+                    matrix.Rotate(section.location.rotate);
+                    path.Transform(matrix);
+                }
+                using (Matrix matrix = new Matrix())
+                {
+                    PointF p = path.PathData.Points[0];
+                    float x = 0;
+                    float y = 0;
+                    if (p.X < 0)
+                    {
+                        int tx = (int)p.X;
+                        int nx = (section.location.x - tx);
+                        x = (p.X + nx) + (~((int)p.X) + 1);
+                    }
+                    else
+                    {
+                        x = (section.location.x - p.X) + (height/2);
+                    }
+                    if (p.Y < 0)
+                    {
+                        int ty = (int)p.Y;
+                        int ny = (section.location.y - ty);
+                        y = (p.Y + ny) + (~((int)p.Y) + 1);
+                    }
+                    else
+                    {
+                        y = (section.location.y - p.Y) + (height/2);
+                    }
+                    matrix.Translate(x, y);
+                    path.Transform(matrix);
+                }
+            }
+            
 
             SolidBrush b = new SolidBrush(section.text.color);
 

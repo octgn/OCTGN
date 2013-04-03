@@ -250,6 +250,15 @@ public partial class templatesBlocksBlockLocation {
     
     private string yField;
     
+    private int rotateField;
+    
+    private string flipField;
+    
+    public templatesBlocksBlockLocation() {
+        this.rotateField = 0;
+        this.flipField = "False";
+    }
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string x {
@@ -269,6 +278,30 @@ public partial class templatesBlocksBlockLocation {
         }
         set {
             this.yField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(0)]
+    public int rotate {
+        get {
+            return this.rotateField;
+        }
+        set {
+            this.rotateField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("False")]
+    public string flip {
+        get {
+            return this.flipField;
+        }
+        set {
+            this.flipField = value;
         }
     }
 }
