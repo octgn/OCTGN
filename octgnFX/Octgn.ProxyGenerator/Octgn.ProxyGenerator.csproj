@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="BlockManager.cs" />
     <Compile Include="Definitions\BlockDefinition.cs" />
+    <Compile Include="Definitions\ConditionalDefinition.cs" />
     <Compile Include="Definitions\LinkDefinition.cs" />
     <Compile Include="Definitions\Property.cs" />
     <Compile Include="Definitions\TemplateDefinition.cs" />

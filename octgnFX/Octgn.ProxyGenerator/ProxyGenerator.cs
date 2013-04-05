@@ -30,7 +30,7 @@ namespace Octgn.ProxyGenerator
 
             using (Graphics graphics = Graphics.FromImage(b))
             {
-                foreach (LinkDefinition overlay in template.OverlayBlocks)
+                foreach (LinkDefinition overlay in template.GetOverLayBlocks(values))
                 {
                     BlockDefinition block = BlockManager.GetInstance().GetBlock(overlay.Block);
                     if (block.type != "overlay")
@@ -41,7 +41,7 @@ namespace Octgn.ProxyGenerator
                     GraphicUtils.MergeOverlay(graphics, block);
                 }
                 List<Property> removedProps = new List<Property>();
-                foreach (LinkDefinition section in template.TextBlocks)
+                foreach (LinkDefinition section in template.GetTextBlocks(values))
                 {
                     BlockDefinition block = BlockManager.GetInstance().GetBlock(section.Block);
                     if (block.type != "text")
