@@ -36,6 +36,11 @@ namespace Octgn.ProxyGenerator.Util
         /// <param name="value"></param>
         public static void WriteString(Graphics graphics, BlockDefinition section, string value)
         {
+            if (value == null || value == string.Empty)
+            {
+                return;
+            }
+
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             value = System.Web.HttpUtility.HtmlDecode(value);
             GraphicsPath path = null;
