@@ -48,25 +48,35 @@
             this.definitionOpenDialog = new System.Windows.Forms.OpenFileDialog();
             this.generateProxyButton = new System.Windows.Forms.Button();
             this.proxyPictureBox = new System.Windows.Forms.PictureBox();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.propertiesDataGrid)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.proxyPictureBox)).BeginInit();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // propertiesDataGrid
             // 
             this.propertiesDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.propertiesDataGrid.Location = new System.Drawing.Point(0, 1);
+            this.propertiesDataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertiesDataGrid.Location = new System.Drawing.Point(3, 3);
             this.propertiesDataGrid.MultiSelect = false;
             this.propertiesDataGrid.Name = "propertiesDataGrid";
-            this.propertiesDataGrid.Size = new System.Drawing.Size(244, 323);
+            this.propertiesDataGrid.Size = new System.Drawing.Size(522, 690);
             this.propertiesDataGrid.TabIndex = 0;
             // 
             // newPropertiesButton
             // 
-            this.newPropertiesButton.Location = new System.Drawing.Point(3, 330);
+            this.newPropertiesButton.Location = new System.Drawing.Point(110, 3);
             this.newPropertiesButton.Name = "newPropertiesButton";
             this.newPropertiesButton.Size = new System.Drawing.Size(75, 23);
             this.newPropertiesButton.TabIndex = 1;
@@ -76,7 +86,7 @@
             // 
             // loadPropertiesButton
             // 
-            this.loadPropertiesButton.Location = new System.Drawing.Point(84, 330);
+            this.loadPropertiesButton.Location = new System.Drawing.Point(191, 3);
             this.loadPropertiesButton.Name = "loadPropertiesButton";
             this.loadPropertiesButton.Size = new System.Drawing.Size(75, 23);
             this.loadPropertiesButton.TabIndex = 2;
@@ -86,7 +96,7 @@
             // 
             // savePropertiesButton
             // 
-            this.savePropertiesButton.Location = new System.Drawing.Point(165, 330);
+            this.savePropertiesButton.Location = new System.Drawing.Point(272, 3);
             this.savePropertiesButton.Name = "savePropertiesButton";
             this.savePropertiesButton.Size = new System.Drawing.Size(75, 23);
             this.savePropertiesButton.TabIndex = 3;
@@ -98,22 +108,20 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(256, 386);
+            this.tabControl1.Size = new System.Drawing.Size(536, 722);
             this.tabControl1.TabIndex = 4;
             // 
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.propertiesDataGrid);
-            this.tabPage1.Controls.Add(this.savePropertiesButton);
-            this.tabPage1.Controls.Add(this.newPropertiesButton);
-            this.tabPage1.Controls.Add(this.loadPropertiesButton);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(248, 360);
+            this.tabPage1.Size = new System.Drawing.Size(528, 696);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Properties";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -130,7 +138,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(248, 360);
+            this.tabPage2.Size = new System.Drawing.Size(528, 696);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Templatedef";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -217,9 +225,9 @@
             // generateProxyButton
             // 
             this.generateProxyButton.Enabled = false;
-            this.generateProxyButton.Location = new System.Drawing.Point(275, 160);
+            this.generateProxyButton.Location = new System.Drawing.Point(3, 3);
             this.generateProxyButton.Name = "generateProxyButton";
-            this.generateProxyButton.Size = new System.Drawing.Size(136, 23);
+            this.generateProxyButton.Size = new System.Drawing.Size(101, 23);
             this.generateProxyButton.TabIndex = 5;
             this.generateProxyButton.Text = "Generate Proxy";
             this.generateProxyButton.UseVisualStyleBackColor = true;
@@ -227,21 +235,68 @@
             // 
             // proxyPictureBox
             // 
-            this.proxyPictureBox.Location = new System.Drawing.Point(417, 12);
+            this.proxyPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.proxyPictureBox.Location = new System.Drawing.Point(0, 0);
             this.proxyPictureBox.Name = "proxyPictureBox";
-            this.proxyPictureBox.Size = new System.Drawing.Size(273, 382);
+            this.proxyPictureBox.Size = new System.Drawing.Size(557, 722);
             this.proxyPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.proxyPictureBox.TabIndex = 6;
             this.proxyPictureBox.TabStop = false;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.splitContainer1, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1108, 764);
+            this.tableLayoutPanel1.TabIndex = 7;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.flowLayoutPanel1, 2);
+            this.flowLayoutPanel1.Controls.Add(this.generateProxyButton);
+            this.flowLayoutPanel1.Controls.Add(this.newPropertiesButton);
+            this.flowLayoutPanel1.Controls.Add(this.loadPropertiesButton);
+            this.flowLayoutPanel1.Controls.Add(this.savePropertiesButton);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 731);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1102, 30);
+            this.flowLayoutPanel1.TabIndex = 4;
+            // 
+            // splitContainer1
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.splitContainer1, 2);
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.tabControl1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.proxyPictureBox);
+            this.splitContainer1.Size = new System.Drawing.Size(1102, 722);
+            this.splitContainer1.SplitterDistance = 536;
+            this.splitContainer1.SplitterWidth = 9;
+            this.splitContainer1.TabIndex = 8;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(702, 412);
-            this.Controls.Add(this.proxyPictureBox);
-            this.Controls.Add(this.generateProxyButton);
-            this.Controls.Add(this.tabControl1);
+            this.ClientSize = new System.Drawing.Size(1108, 764);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
             this.Text = "Proxydef Tester";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -251,6 +306,12 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.proxyPictureBox)).EndInit();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -277,6 +338,9 @@
         private System.Windows.Forms.OpenFileDialog definitionOpenDialog;
         private System.Windows.Forms.Button generateProxyButton;
         private System.Windows.Forms.PictureBox proxyPictureBox;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
 
