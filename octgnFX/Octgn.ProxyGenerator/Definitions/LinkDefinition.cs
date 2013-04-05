@@ -24,6 +24,10 @@ namespace Octgn.ProxyGenerator.Definitions
             {
                 foreach (XmlNode subNode in node.ChildNodes)
                 {
+                    if (TemplateDefinition.SkipNode(subNode))
+                    {
+                        continue;
+                    }
                     Property prop = new Property();
                     prop.Name = subNode.Attributes["name"].Value;
                     prop.Value = string.Empty;

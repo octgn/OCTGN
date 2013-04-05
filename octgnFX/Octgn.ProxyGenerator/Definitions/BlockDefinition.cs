@@ -32,10 +32,22 @@ namespace Octgn.ProxyGenerator.Definitions
             }
             foreach (XmlNode prop in node.ChildNodes)
             {
+                if (TemplateDefinition.SkipNode(prop))
+                {
+                    continue;
+                }
                 if (prop.Name.Equals("location"))
                 {
                     ret.location.x = int.Parse(prop.Attributes["x"].Value);
                     ret.location.y = int.Parse(prop.Attributes["y"].Value);
+                    if (prop.Attributes["rotate"] != null)
+                    {
+                        ret.location.rotate = int.Parse(prop.Attributes["rotate"].Value);
+                    }
+                    if (prop.Attributes["flip"] != null)
+                    {
+                        ret.location.flip = bool.Parse(prop.Attributes["flip"].Value);
+                    }
                 }
                 if (prop.Name.Equals("text"))
                 {

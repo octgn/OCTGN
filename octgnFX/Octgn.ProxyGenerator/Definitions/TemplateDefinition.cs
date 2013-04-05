@@ -26,6 +26,10 @@ namespace Octgn.ProxyGenerator.Definitions
             }
             foreach (XmlNode subNode in node)
             {
+                if (SkipNode(subNode))
+                {
+                    continue;
+                }
                 if (subNode.Name.Equals("textblocks"))
                 {
                     ret.LoadTextBlocks(subNode);
@@ -47,6 +51,10 @@ namespace Octgn.ProxyGenerator.Definitions
         {
             foreach (XmlNode match in node.ChildNodes)
             {
+                if (SkipNode(match))
+                {
+                    continue;
+                }
                 Property prop = new Property();
                 prop.Name = match.Attributes["name"].Value;
                 prop.Value = match.Attributes["value"].Value;
@@ -58,6 +66,10 @@ namespace Octgn.ProxyGenerator.Definitions
         {
             foreach (XmlNode overlayBlockNode in node.ChildNodes)
             {
+                if (SkipNode(overlayBlockNode))
+                {
+                    continue;
+                }
                 LinkDefinition link = LinkDefinition.LoadLink(overlayBlockNode);
                 OverlayBlocks.Add(link);
             }
@@ -67,9 +79,22 @@ namespace Octgn.ProxyGenerator.Definitions
         {
             foreach (XmlNode textBlocksNode in node.ChildNodes)
             {
+                if (SkipNode(textBlocksNode))
+                {
+                    continue;
+                }
                 LinkDefinition link = LinkDefinition.LoadLink(textBlocksNode);
                 TextBlocks.Add(link);
             }
+        }
+
+        public static bool SkipNode(XmlNode node)
+        {
+            if (node.NodeType == XmlNodeType.Comment)
+            {
+                return (true);
+            }
+            return (false);
         }
 
     }
