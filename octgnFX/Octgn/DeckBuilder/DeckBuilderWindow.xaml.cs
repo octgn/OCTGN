@@ -373,7 +373,7 @@ namespace Octgn.DeckBuilder
                 cardImage.Source = null;
             cardImage = null;
             Game = null; // Close DB if required
-            Program.DeckEditor = null;
+            WindowManager.DeckEditor = null;
         }
 
         private void CardSelected(object sender, SearchCardImageEventArgs e)

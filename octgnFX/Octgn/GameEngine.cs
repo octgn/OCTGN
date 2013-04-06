@@ -172,7 +172,7 @@ namespace Octgn
             Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
-                                     OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
+                                     Const.ClientName, Const.OctgnVersion, Const.OctgnVersion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version);
             // Load all game markers
             foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
@@ -237,7 +237,7 @@ namespace Octgn
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug
-            PlayWindow mainWin = Program.PlayWindow;
+            PlayWindow mainWin = WindowManager.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
         }
 

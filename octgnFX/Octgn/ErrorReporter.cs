@@ -29,7 +29,7 @@ namespace Octgn
         /// <summary>
         /// The post uri.
         /// </summary>
-        internal static readonly Uri PostUri = new Uri(Program.WebsitePath + "errorreport.php");
+        internal static readonly Uri PostUri = new Uri(AppConfig.WebsitePath + "errorreport.php");
 
         /// <summary>
         /// Submit an exception online.

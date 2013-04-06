@@ -59,7 +59,7 @@ namespace Octgn.Play.Dialogs
             Close();
             // Solves an issue where Dialog isn't the active window anymore if the confirmation dialog above was shown
             //fix MAINWINDOW bug
-            Program.PlayWindow.Activate();
+            WindowManager.PlayWindow.Activate();
         }
 
         private void CancelClicked(object sender, RoutedEventArgs e)

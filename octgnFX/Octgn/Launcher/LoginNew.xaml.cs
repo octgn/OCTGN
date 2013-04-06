@@ -60,12 +60,12 @@ namespace Octgn.Launcher
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
 	        Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
 
-            this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start(Program.WebsitePath + "register.php");
+            this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start(AppConfig.WebsitePath + "register.php");
             this.labelForgot.MouseLeftButtonUp +=
-				(sender, args) => Process.Start(Program.WebsitePath + "passwordresetrequest.php");
+                (sender, args) => Process.Start(AppConfig.WebsitePath + "passwordresetrequest.php");
             this.labelResend.MouseLeftButtonUp += (sender, args) =>
                 {
-                    var url = Program.WebsitePath + "api/user/resendemailverify.php?username="
+                    var url = AppConfig.WebsitePath + "api/user/resendemailverify.php?username="
                               + HttpUtility.UrlEncode(textBox1.Text);
                     using (var wc = new WebClient())
                     {
@@ -89,7 +89,7 @@ namespace Octgn.Launcher
                 {
                     using (var wc = new WebClient())
                     {
-                        var str = wc.DownloadString(Program.WebsitePath + "news.xml");
+                        var str = wc.DownloadString(AppConfig.WebsitePath + "news.xml");
                         if (string.IsNullOrWhiteSpace(str))
                         {
                             throw new Exception("Null news feed.");
@@ -252,7 +252,7 @@ namespace Octgn.Launcher
                             {
                                 try
                                 {
-                                    var ustring = Program.WebsitePath + "api/user/login.php?username=" + HttpUtility.UrlEncode(username)
+                                    var ustring = AppConfig.WebsitePath + "api/user/login.php?username=" + HttpUtility.UrlEncode(username)
                                                   + "&password=" + HttpUtility.UrlEncode(password);
                                     if (email != null) ustring += "&email=" + HttpUtility.UrlEncode(email);
                                     var res = wc.DownloadString(new Uri(ustring));

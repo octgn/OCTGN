@@ -240,7 +240,7 @@ namespace Octgn.Play
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            Program.PlayWindow = null;
+            WindowManager.PlayWindow = null;
             Program.StopGame();            
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
         }
@@ -478,7 +478,7 @@ namespace Octgn.Play
             e.Handled = true;
             //var wnd = new AboutWindow() { Owner = this };
             //wnd.ShowDialog();
-            Process.Start(Program.WebsitePath);
+            Process.Start(AppConfig.WebsitePath);
         }
 
         private void ConsoleClicked(object sender, RoutedEventArgs e)
