@@ -65,6 +65,11 @@ namespace Octgn.ProxyGenerator
             }
         }
 
+        public void ClearBlocks()
+        {
+            blocks.Clear();
+        }
+
         public static BlockManager GetInstance()
         {
             if (instance == null)

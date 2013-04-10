@@ -59,6 +59,7 @@
         internal void LoadTemplates()
         {
             XmlNodeList blockList = Document.GetElementsByTagName("blocks");
+            BlockManager.GetInstance().ClearBlocks();
             BlockManager.GetInstance().LoadBlocks(blockList[0]);
 
             XmlNodeList templateList = Document.GetElementsByTagName("template");

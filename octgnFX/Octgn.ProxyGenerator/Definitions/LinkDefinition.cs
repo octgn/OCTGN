@@ -37,5 +37,11 @@ namespace Octgn.ProxyGenerator.Definitions
 
             return (ret);
         }
+
+        public class LinkWrapper
+        {
+            public LinkDefinition Link = null;
+            public ConditionalDefinition Conditional = null;
+        }
     }
 }

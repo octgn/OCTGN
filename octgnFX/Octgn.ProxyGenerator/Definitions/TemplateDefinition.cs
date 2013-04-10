@@ -8,8 +8,8 @@ namespace Octgn.ProxyGenerator.Definitions
 {
     public class TemplateDefinition
     {
-        public List<LinkDefinition> OverlayBlocks = new List<LinkDefinition>();
-        public List<LinkDefinition> TextBlocks = new List<LinkDefinition>();
+        public List<LinkDefinition.LinkWrapper> OverlayBlocks = new List<LinkDefinition.LinkWrapper>();
+        public List<LinkDefinition.LinkWrapper> TextBlocks = new List<LinkDefinition.LinkWrapper>();
         public List<Property> Matches = new List<Property>();
 
         public string src;
@@ -70,8 +70,19 @@ namespace Octgn.ProxyGenerator.Definitions
                 {
                     continue;
                 }
-                LinkDefinition link = LinkDefinition.LoadLink(overlayBlockNode);
-                OverlayBlocks.Add(link);
+                LinkDefinition.LinkWrapper wrapper = new LinkDefinition.LinkWrapper();
+                if (overlayBlockNode.Name == "link")
+                {
+                    LinkDefinition link = LinkDefinition.LoadLink(overlayBlockNode);
+                    wrapper.Link = link;
+                }
+                if (overlayBlockNode.Name == "conditional")
+                {
+                    ConditionalDefinition conditional = ConditionalDefinition.LoadConditional(overlayBlockNode);
+                    wrapper.Conditional = conditional;
+                }
+
+                OverlayBlocks.Add(wrapper);
             }
         }
 
@@ -83,9 +94,58 @@ namespace Octgn.ProxyGenerator.Definitions
                 {
                     continue;
                 }
-                LinkDefinition link = LinkDefinition.LoadLink(textBlocksNode);
-                TextBlocks.Add(link);
+                LinkDefinition.LinkWrapper wrapper = new LinkDefinition.LinkWrapper();
+                if (textBlocksNode.Name == "link")
+                {
+                    LinkDefinition link = LinkDefinition.LoadLink(textBlocksNode);
+                    wrapper.Link = link;
+                }
+                if (textBlocksNode.Name == "conditional")
+                {
+                    ConditionalDefinition conditional = ConditionalDefinition.LoadConditional(textBlocksNode);
+                    wrapper.Conditional = conditional;
+                }
+
+                TextBlocks.Add(wrapper);
             }
+        }
+
+        public List<LinkDefinition> GetOverLayBlocks(Dictionary<string, string> values)
+        {
+            List<LinkDefinition> ret = new List<LinkDefinition>();
+
+            foreach (LinkDefinition.LinkWrapper wrapper in OverlayBlocks)
+            {
+                if (wrapper.Link != null)
+                {
+                    ret.Add(wrapper.Link);
+                }
+                if (wrapper.Conditional != null)
+                {
+                    ret.AddRange(wrapper.Conditional.ResolveConditional(values));
+                }
+            }
+
+            return (ret);
+        }
+
+        public List<LinkDefinition> GetTextBlocks(Dictionary<string, string> values)
+        {
+            List<LinkDefinition> ret = new List<LinkDefinition>();
+
+            foreach (LinkDefinition.LinkWrapper wrapper in TextBlocks)
+            {
+                if (wrapper.Link != null)
+                {
+                    ret.Add(wrapper.Link);
+                }
+                if (wrapper.Conditional != null)
+                {
+                    ret.AddRange(wrapper.Conditional.ResolveConditional(values));
+                }
+            }
+
+            return (ret);
         }
 
         public static bool SkipNode(XmlNode node)

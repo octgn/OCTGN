@@ -40,7 +40,7 @@ namespace Octgn.Play.Gui.Adorners
 
         //fix MAINWINDOW bug
         public CardDragAdorner(CardControl anchor, CardControl sourceCard, Vector mousePoint)
-            : base(Program.PlayWindow.Content as UIElement)
+            : base(WindowManager.PlayWindow.Content as UIElement)
         {
             SourceCard = sourceCard;
             bool isCardInverted = anchor.IsOnTableCanvas && (Player.LocalPlayer.InvertedTable ^ anchor.IsInverted);
@@ -56,7 +56,7 @@ namespace Octgn.Play.Gui.Adorners
                 _mouseOffset = mousePoint;
             }
             //fix MAINWINDOW bug
-            _basePt = anchor.TranslatePoint(cardOrigin, Program.PlayWindow.Content as UIElement);
+            _basePt = anchor.TranslatePoint(cardOrigin, WindowManager.PlayWindow.Content as UIElement);
 
             _faceUp = sourceCard.IsAlwaysUp || sourceCard.Card.FaceUp;
             _lightRedBrush = Brushes.Red.Clone();

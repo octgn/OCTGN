@@ -86,7 +86,7 @@ namespace Octgn.Windows
             UpdateStatus("Checking for updates...");
             try
             {
-                string[] update = ReadUpdateXml(Program.UpdateInfoPath);
+                string[] update = ReadUpdateXml(AppConfig.UpdateInfoPath);
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -195,8 +195,8 @@ namespace Octgn.Windows
                                 case "installpath":
                                     if (reader.Read())
                                     {
-                                        values[2] = Program.WebsitePath + reader.Value;
-                                        values[1] = Program.WebsitePath + reader.Value;
+                                        values[2] = AppConfig.WebsitePath + reader.Value;
+                                        values[1] = AppConfig.WebsitePath + reader.Value;
                                     }
                                     break;
 

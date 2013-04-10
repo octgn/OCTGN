@@ -483,8 +483,7 @@ namespace Octgn.Scripting
             return _engine.Invoke<Tuple<string, string, int>>(() =>
                                                                   {
                                                                       //fix MAINWINDOW bug
-                                                                      var dlg = new MarkerDlg
-                                                                                    {Owner = Program.PlayWindow};
+                                                                      var dlg = new MarkerDlg { Owner = WindowManager.PlayWindow };
                                                                       if (!dlg.ShowDialog().GetValueOrDefault())
                                                                           return null;
                                                                       return Tuple.Create(dlg.MarkerModel.Name,
@@ -498,8 +497,7 @@ namespace Octgn.Scripting
             return _engine.Invoke<Tuple<string, int>>(() =>
                                                           {
                                                               //fix MAINWINDOW bug
-                                                              var dlg = new CardDlg(restriction)
-                                                                            {Owner = Program.PlayWindow};
+                                                              var dlg = new CardDlg(restriction) { Owner = WindowManager.PlayWindow };
                                                               if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                                                               return Tuple.Create(dlg.SelectedCard.Id.ToString(),
                                                                                   dlg.Quantity);
@@ -774,7 +772,7 @@ namespace Octgn.Scripting
 
         public string OCTGN_Version()
         {
-            return OctgnApp.OctgnVersion.ToString();
+            return Const.OctgnVersion.ToString();
         }
 
         public string GameDef_Version()
