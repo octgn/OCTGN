@@ -421,9 +421,9 @@ public partial class templatesTemplate {
     
     private templatesTemplateMatch[] matchesField;
     
-    private link[] overlayblocksField;
+    private templatesTemplateOverlayblocks overlayblocksField;
     
-    private link[] textblocksField;
+    private templatesTemplateTextblocks textblocksField;
     
     private string srcField;
     
@@ -446,9 +446,8 @@ public partial class templatesTemplate {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
-    public link[] overlayblocks {
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateOverlayblocks overlayblocks {
         get {
             return this.overlayblocksField;
         }
@@ -458,9 +457,8 @@ public partial class templatesTemplate {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
-    public link[] textblocks {
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateTextblocks textblocks {
         get {
             return this.textblocksField;
         }
@@ -524,6 +522,270 @@ public partial class templatesTemplateMatch {
         }
         set {
             this.valueField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateOverlayblocks {
+    
+    private templatesTemplateOverlayblocksConditional[] conditionalField;
+    
+    private link[] linkField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("conditional", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateOverlayblocksConditional[] conditional {
+        get {
+            return this.conditionalField;
+        }
+        set {
+            this.conditionalField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link")]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateOverlayblocksConditional {
+    
+    private templatesTemplateOverlayblocksConditionalIF ifField;
+    
+    private link[] elseField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateOverlayblocksConditionalIF @if {
+        get {
+            return this.ifField;
+        }
+        set {
+            this.ifField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
+    public link[] @else {
+        get {
+            return this.elseField;
+        }
+        set {
+            this.elseField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateOverlayblocksConditionalIF {
+    
+    private link[] linkField;
+    
+    private string propertyField;
+    
+    private string valueField;
+    
+    private string containsField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link")]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string contains {
+        get {
+            return this.containsField;
+        }
+        set {
+            this.containsField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateTextblocks {
+    
+    private templatesTemplateTextblocksConditional[] conditionalField;
+    
+    private link[] linkField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("conditional", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateTextblocksConditional[] conditional {
+        get {
+            return this.conditionalField;
+        }
+        set {
+            this.conditionalField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link")]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateTextblocksConditional {
+    
+    private templatesTemplateTextblocksConditionalIF ifField;
+    
+    private link[] elseField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateTextblocksConditionalIF @if {
+        get {
+            return this.ifField;
+        }
+        set {
+            this.ifField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
+    public link[] @else {
+        get {
+            return this.elseField;
+        }
+        set {
+            this.elseField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateTextblocksConditionalIF {
+    
+    private link[] linkField;
+    
+    private string propertyField;
+    
+    private string valueField;
+    
+    private string containsField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link")]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string contains {
+        get {
+            return this.containsField;
+        }
+        set {
+            this.containsField = value;
         }
     }
 }

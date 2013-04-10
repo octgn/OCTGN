@@ -139,7 +139,7 @@
                     Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName);
                     Program.IsHost = true;
 
-                    var hostAddress = Dns.GetHostAddresses(Program.GameServerPath).First();
+                    var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
                     Program.Client = new Client(hostAddress, (int)port);
                     Program.Client.Connect();
@@ -208,7 +208,7 @@
         {
             var hostport = new Random().Next(5000,6000);
             while (!Networking.IsPortAvailable(hostport)) hostport++;
-            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name, name, Password, new User(Username + "@" + Program.ChatServerPath), true);
+            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name, name, Password, new User(Username + "@" + AppConfig.ChatServerPath), true);
             if (!hs.StartProcess())
             {
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");

@@ -214,6 +214,10 @@ namespace Octgn.Tools.Proxytest
             {
                 string key = (string)row.ItemArray[0];
                 string value = (string)row.ItemArray[1];
+                if (value == null || value.Length == 0)
+                {
+                    value = string.Empty;
+                }
                 ret.Add(key, value);
             }
 

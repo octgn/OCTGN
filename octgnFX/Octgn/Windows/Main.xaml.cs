@@ -16,7 +16,6 @@ namespace Octgn.Windows
 
     using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
-    using Octgn.GameManagement;
 
     using agsXMPP;
 
@@ -221,10 +220,10 @@ namespace Octgn.Windows
                     MessageBoxImage.Error);
                 return;
             }
-            if (Program.DeckEditor == null)
+            if (WindowManager.DeckEditor == null)
             {
-                Program.DeckEditor = new DeckBuilderWindow();
-                Program.DeckEditor.Show();
+                WindowManager.DeckEditor = new DeckBuilderWindow();
+                WindowManager.DeckEditor.Show();
             }
         }
 

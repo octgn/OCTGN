@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using System.Text;
 using System.Windows;
 
 using Octgn.Windows;
@@ -15,70 +14,24 @@ namespace Octgn
     public partial class OctgnApp
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal const string ClientName = "Octgn.NET";
-        internal static readonly Version OctgnVersion = GetClientVersion();
-        internal static readonly Version BackwardCompatibility = new Version(0, 2, 0, 0);
-
-        private static Version GetClientVersion()
-        {
-            Assembly asm = typeof (OctgnApp).Assembly;
-            //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0];
-            return asm.GetName().Version;
-        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            Log.Debug("Calling Base");
-            base.OnStartup(e);
-            Log.Debug("Base called.");
-
 #if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
 #else
 
             AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
 #endif
-			//Program.GamesRepository = new GamesRepository();
-
-            //if (Program.GamesRepository.MissingFiles.Any())
-            //{
-            //    var sb =
-            //        new StringBuilder(
-            //            "Octgn cannot find the following files. The corresponding games have been disabled.\n\n");
-            //    foreach (string file in Program.GamesRepository.MissingFiles)
-            //        sb.Append(file).Append("\n\n");
-            //    sb.Append("You should restore those files, or re-install the corresponding games.");
-
-            //    ShutdownMode oldShutdown = ShutdownMode;
-            //    ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            //    new Windows.MessageWindow(sb.ToString()).ShowDialog();
-            //    ShutdownMode = oldShutdown;
-            //}
-
-            Log.Info("Launching UpdateChecker");
-            var uc = new UpdateChecker();
-            uc.ShowDialog();
-            Log.Info("UpdateChecker Done.");
-            if (!uc.IsClosingDown)
-            {
-                Log.Info("Launching Main Window");
-                Program.MainWindowNew.Show();
-                Log.Info("Main Window Launched");
-            }
-            else
-            {
-                Log.Info("Closing For Updates");
-                Program.MainWindowNew.Close();
-                Current.MainWindow = null;
-                Program.Exit();
-            }
-
             if (e.Args.Any())
             {
                 Properties["ArbitraryArgName"] = e.Args[0];
             }
 
-
+            Log.Debug("Calling Base");
+            base.OnStartup(e);
+            Log.Debug("Base called.");
+            Program.Start();
 
         }
 

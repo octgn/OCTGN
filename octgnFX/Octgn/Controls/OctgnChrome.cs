@@ -341,7 +341,7 @@ namespace Octgn.Controls
 
             if (!this.IsInDesignMode())
             {
-                if (Program.UseTransparentWindows)
+                if (Prefs.UseWindowTransparency)
                 {
                     this.AllowsTransparency = true;
                     base.Background = Brushes.Transparent;

@@ -21,14 +21,14 @@ namespace Octgn.Scripting.Controls
         {
             //fix MAINWINDOW bug
             return
-                MessageBox.Show(Program.PlayWindow, prompt, "Confirmation", MessageBoxButton.YesNo,
+                MessageBox.Show(WindowManager.PlayWindow, prompt, "Confirmation", MessageBoxButton.YesNo,
                                 MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
 
         public static void Message(string msg)
         {
             //fix MAINWINDOW bug
-            MessageBox.Show(Program.PlayWindow, msg, "Message", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(WindowManager.PlayWindow, msg, "Message", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
