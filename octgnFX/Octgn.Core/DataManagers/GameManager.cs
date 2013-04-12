@@ -81,6 +81,22 @@
                     Directory.CreateDirectory(newFileInfo.Directory.FullName);
                 File.Copy(f.FullName,newPath,true);
             }
+            //Sets//setid//Cards//Proxies
+            // Clear out all proxies if they exist
+            var setsDir = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", package.Id,"Sets");
+            foreach (var setdir in new DirectoryInfo(setsDir).GetDirectories())
+            {
+                var pdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards", "Proxies"));
+                if(!pdir.Exists)continue;
+                try
+                {
+                    Directory.Delete(pdir.FullName,true);
+                }
+                catch (Exception e)
+                {
+                    Log.WarnFormat("Could not delete proxy directory {0}",pdir.FullName);
+                }
+            }
             this.OnGameListChanged();
 
         }
