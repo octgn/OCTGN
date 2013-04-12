@@ -37,10 +37,14 @@
             return SetManager.Get().Sets.Where(x => x.GameId == game.Id);
         }
 
+        /// <summary>
+        /// Not Implemented
+        /// </summary>
+        /// <param name="game"></param>
+        /// <returns></returns>
         public static Game Install(this Game game)
         {
-            DbContext.Get().Save(game);
-            return game;
+            throw new NotImplementedException();
         }
 
         public static Game UpdateGameHash(this Game game, string hash)

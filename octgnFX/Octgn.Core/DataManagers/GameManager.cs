@@ -70,17 +70,6 @@
             if (!Directory.Exists(defPath)) return;
             var di = new DirectoryInfo(defPath);
 
-            // Try and delete the existing game first
-            try
-            {
-                var destPath = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", package.Id);
-                Directory.Delete(destPath,true);
-            }
-            catch (Exception e)
-            {
-                Log.InfoFormat("Could not delete all files in install directory");
-            }
-
             foreach (var f in di.GetFiles("*",SearchOption.AllDirectories))
             {
                 var relPath = f.FullName.Replace(di.FullName, "");
@@ -90,7 +79,7 @@
                 var newFileInfo = new FileInfo(newPath);
                 if(newFileInfo.Directory != null)
                     Directory.CreateDirectory(newFileInfo.Directory.FullName);
-                File.Copy(f.FullName,newPath);
+                File.Copy(f.FullName,newPath,true);
             }
             this.OnGameListChanged();
 
