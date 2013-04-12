@@ -1,9 +1,11 @@
 ﻿namespace Octgn
 {
+    using System.IO;
     using System.Reflection;
     using System.Timers;
 
     using Octgn.Core;
+    using Octgn.Library;
 
     using log4net;
 
@@ -22,6 +24,11 @@
 
         internal GameUpdater()
         {
+            LocalFeedWatcher = new FileSystemWatcher(Paths.Get().LocalFeedPath);
+            LocalFeedWatcher.Changed += (sender, args) => this.RefreshTimerOnElapsed(this, null);
+            LocalFeedWatcher.Created += (sender, args) => this.RefreshTimerOnElapsed(this, null);
+            LocalFeedWatcher.Deleted += (sender, args) => this.RefreshTimerOnElapsed(this, null);
+            LocalFeedWatcher.Renamed += (sender, args) => this.RefreshTimerOnElapsed(this, null);
         }
 
         #endregion Singleton
@@ -30,6 +37,7 @@
         internal const int RefreshTime = 10 * 60 * 1000; //Believe that's 10 minutes
         public bool IsRunning { get; internal set; }
         internal Timer RefreshTimer { get; set; }
+        internal FileSystemWatcher LocalFeedWatcher { get; set; }
 
         #region StartStop
         public void Start()
