@@ -88,15 +88,16 @@
         {
             var path = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", game.Id.ToString());
             var gamePathDi = new DirectoryInfo(path);
-            foreach (var file in gamePathDi.GetFiles("*", SearchOption.AllDirectories))
-            {
-                File.Delete(file.FullName);
-            }
-            foreach (var dir in gamePathDi.GetDirectories("*", SearchOption.AllDirectories))
-            {
-                Directory.Delete(dir.FullName);
-            }
-            Directory.Delete(gamePathDi.FullName);
+            Directory.Delete(gamePathDi.FullName, true);
+            //foreach (var file in gamePathDi.GetFiles("*", SearchOption.AllDirectories))
+            //{
+            //    File.Delete(file.FullName);
+            //}
+            //foreach (var dir in gamePathDi.GetDirectories("*", SearchOption.AllDirectories))
+            //{
+            //    Directory.Delete(dir.FullName,true);
+            //}
+            //Directory.Delete(gamePathDi.FullName);
             this.OnGameListChanged();
         }
 
