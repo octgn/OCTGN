@@ -4,7 +4,7 @@
         xmlns:octgn="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play" xmlns:gui="clr-namespace:Octgn.Play.Gui"
         xmlns:ctrl="clr-namespace:Octgn.Controls" x:Name="self" Title="Octgn" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
         Height="800" Width="900" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True"
-        RenderOptions.BitmapScalingMode="Fant">
+        RenderOptions.BitmapScalingMode="Fant" >
 
     <ctrl:OctgnChrome.Resources>
         <Style TargetType="ms:RibbonGroup">
@@ -64,7 +64,7 @@
             <ms:Ribbon.ApplicationMenu>
                 <ms:RibbonApplicationMenu Visibility="Collapsed" />
             </ms:Ribbon.ApplicationMenu>
-            <ms:RibbonTab Header="Main">
+            <ms:RibbonTab Header="Main" Visibility="Collapsed">
                 <ms:RibbonGroup Header="Deck">
                     <ms:RibbonButton Label="Load deck" LargeImageSource="/Resources/Icons/LoadDeck.png"
                            Command="gui:Commands.LoadDeck" />
@@ -96,10 +96,14 @@
                     <ms:RibbonButton Label="About Octgn" LargeImageSource="/Resources/Icons/About.png" Click="ShowAboutWindow" />
                     <ms:RibbonButton Label="Console" x:Name="Console" LargeImageSource="/Resources/Icons/console.png"
                            Click="ConsoleClicked" Visibility="Hidden" />
-                    <ms:RibbonButton Label="Game Rules" x:Name="Rules" LargeImageSource="/Resources/Icons/rules.png"
-                           Click="ShowRules" />
-                    <ms:RibbonButton Label="Game Help" x:Name="Help" LargeImageSource="/Resources/Icons/rules.png"
-                           Click="ShowHelp" />
+                    <ms:RibbonControlGroup DataContext="{Binding Definition}" ItemsSource="{Binding Documents}">
+                        <ms:RibbonControlGroup.ItemTemplate>
+                            <DataTemplate>
+                                <ms:RibbonButton DataContext="{Binding}" Label="{Binding Name}" LargeImageSource="{Binding Icon}" Click="KillJoshJohnson"></ms:RibbonButton>
+                            </DataTemplate>
+                        </ms:RibbonControlGroup.ItemTemplate>
+                    </ms:RibbonControlGroup>
+
                 </ms:RibbonGroup>
             </ms:RibbonTab>
         </ms:Ribbon>

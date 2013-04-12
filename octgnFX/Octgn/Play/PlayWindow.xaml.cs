@@ -99,14 +99,6 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
-            
-            //TODO: load the rules here or somewhere else again.
-            //if (!PartExists("http://schemas.octgn.org/game/rules"))
-            //{
-            //    Rules.Visibility = Visibility.Hidden;
-            //    Help.Visibility = Visibility.Hidden;
-            //}
-
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
@@ -503,24 +495,6 @@ namespace Octgn.Play
                 }));
         }
 
-        public static string txt = "rul";
-
-        private void ShowRules(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true;
-            var wnd = new RulesWindow {Owner = this};
-            txt = "rul";
-            wnd.ShowDialog();
-        }
-
-        private void ShowHelp(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true;
-            var wnd = new RulesWindow { Owner = this };
-            txt = "hlp";
-            wnd.ShowDialog();
-        }
-
         internal void HideBackstage()
         {
             limitedTab.Visibility = Visibility.Collapsed;
@@ -584,6 +558,18 @@ namespace Octgn.Play
                 }
 
             }
+        }
+
+        private void KillJoshJohnson(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var s = sender as FrameworkElement;
+            if (s == null) return;
+            var document = s.DataContext as Document;
+            if (document == null) return;
+            var wnd = new RulesWindow(document) { Owner = this };
+            wnd.ShowDialog();
+
         }
     }
 

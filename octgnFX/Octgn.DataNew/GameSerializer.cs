@@ -169,9 +169,9 @@
                 foreach (var doc in g.documents)
                 {
                     var d = new Document();
-                    d.Icon = doc.icon;
+                    d.Icon = Path.Combine(directory,doc.icon);
                     d.Name = doc.name;
-                    d.Source = doc.src;
+                    d.Source = Path.Combine(directory,doc.src);
                     ret.Documents.Add(d);
                 }
             }
