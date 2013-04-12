@@ -64,7 +64,7 @@
             <ms:Ribbon.ApplicationMenu>
                 <ms:RibbonApplicationMenu Visibility="Collapsed" />
             </ms:Ribbon.ApplicationMenu>
-            <ms:RibbonTab Header="Main" Visibility="Collapsed">
+            <ms:RibbonTab Header="Main" >
                 <ms:RibbonGroup Header="Deck">
                     <ms:RibbonButton Label="Load deck" LargeImageSource="/Resources/Icons/LoadDeck.png"
                            Command="gui:Commands.LoadDeck" />
