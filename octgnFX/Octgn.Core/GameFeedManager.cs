@@ -17,9 +17,6 @@
 
     public interface IGameFeedManager : IDisposable
     {
-        bool IsRunning { get; }
-        void Start();
-        void Stop();
         void CheckForUpdates();
         IEnumerable<NamedUrl> GetFeeds();
         void AddFeed(string name, string feed);
@@ -59,66 +56,8 @@
         #endregion Singleton
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal int RefreshTime = 10 * 60 * 1000; //Believe that's 10 minutes
 
-        public bool IsRunning { get; internal set; }
         public event EventHandler OnUpdateFeedList;
-        internal Timer RefreshTimer { get; set; }
-        
-        #region StartStop
-        public void Start()
-        {
-            Log.Info("Try Start");
-            if (IsRunning) return;
-            Log.Info("Start");
-            IsRunning = true;
-            ConstructTimer();
-            Log.Info("Start Finished");
-        }
-
-        public void Stop()
-        {
-            Log.Info("Try Stop");
-            if (!IsRunning) return;
-            Log.Info("Stop");
-            IsRunning = false;
-            this.DestroyTimer();
-            Log.Info("Stop Finished");
-        }
-        #endregion StartStop
-
-        #region Timer
-        internal virtual void ConstructTimer()
-        {
-            Log.Info("Constructing Timer");
-            this.DestroyTimer();
-            RefreshTimer = new Timer(RefreshTime);
-            RefreshTimer.Elapsed += RefreshTimerOnElapsed;
-            RefreshTimer.Start();
-            this.RefreshTimerOnElapsed(null, null);
-            Log.Info("Constructing Timer Complete");
-        }
-
-        internal virtual void DestroyTimer()
-        {
-            Log.Info("Destroying Timer");
-            if (RefreshTimer != null)
-            {
-                try { RefreshTimer.Elapsed -= this.RefreshTimerOnElapsed; }
-                catch { }
-                try { RefreshTimer.Stop(); }
-                catch { }
-                try { RefreshTimer.Dispose(); }
-                catch { }
-                RefreshTimer = null;
-            }
-            Log.Info("Timer destruction complete");
-        }
-        internal virtual void RefreshTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
-        {
-            Log.Info("Timer Ticks");
-        }
-        #endregion Timer
 
         public void CheckForUpdates()
         {
@@ -282,7 +221,6 @@
         {
             Log.Info("Dispose called");
             OnUpdateFeedList = null;
-            SingletonContext.Stop();
             Log.Info("Dispose finished");
         }
     }

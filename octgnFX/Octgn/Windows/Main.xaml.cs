@@ -11,6 +11,7 @@ namespace Octgn.Windows
 {
     using System;
     using System.ComponentModel;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
 
@@ -39,7 +40,7 @@ namespace Octgn.Windows
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
-            Core.GameFeedManager.Get().Start();
+            GameUpdater.Get().Start();
             //new GameFeedManager().CheckForUpdates();
         }
 
@@ -81,7 +82,8 @@ namespace Octgn.Windows
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             Program.LobbyClient.Stop();
-            Core.GameFeedManager.Get().Stop();
+            GameUpdater.Get().Stop();
+            Task.Factory.StartNew(Program.Exit);
         }
 
         /// <summary>

@@ -283,6 +283,7 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GameUpdater.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Tabs\GameManagement\FeedGameViewModel.cs" />
     <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
