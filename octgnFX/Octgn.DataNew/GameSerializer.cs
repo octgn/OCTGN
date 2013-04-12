@@ -60,7 +60,8 @@
                               Tags = g.tags.Split(' ').ToList(),
                               OctgnVersion = Version.Parse(g.octgnVersion),
                               Variables = new List<Variable>(),
-                              MarkerSize = g.markersize
+                              MarkerSize = g.markersize,
+                              Documents = new List<Document>()
                           };
             #region variables
             if (g.variables != null)
@@ -161,6 +162,20 @@
                 ret.Player = player;
             }
             #endregion Player
+
+            #region documents
+            if (g.documents != null)
+            {
+                foreach (var doc in g.documents)
+                {
+                    var d = new Document();
+                    d.Icon = doc.icon;
+                    d.Name = doc.name;
+                    d.Source = doc.src;
+                    ret.Documents.Add(d);
+                }
+            }
+            #endregion documents
             #region deck
             if (g.deck != null)
             {
