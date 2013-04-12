@@ -194,6 +194,10 @@
                     path = Path.Combine(Directory.FullName, doc.src);
                     if(!File.Exists(path))
                         throw new UserMessageException(gError,"Document",doc.src,path);
+                    path = Path.Combine(Directory.FullName, doc.icon);
+                    if(!File.Exists(path))
+                        throw new UserMessageException(gError,"Document",doc.icon,path);
+
                 }
             }
             if (game.proxygen != null)
