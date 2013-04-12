@@ -34,6 +34,9 @@ namespace Octgn.Windows
         /// </summary>
         public Main()
         {
+#if(Release_Test)
+            this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
+#endif
             this.InitializeComponent();
             ConnectBox.Visibility = Visibility.Hidden;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
