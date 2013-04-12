@@ -12,6 +12,7 @@ using Skylabs.Lobby.Threading;
 
 namespace Octgn.Windows
 {
+    using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
 
@@ -50,6 +51,7 @@ namespace Octgn.Windows
 #endif
                 //CheckForXmlSetUpdates();
                 this.LoadDatabase();
+                this.UpdateGames();
                 UpdateCheckDone();
 
             });
@@ -79,6 +81,12 @@ namespace Octgn.Windows
                 Log.DebugFormat("Loading Proxy {0}",p.Key);
             }
             this.UpdateStatus("Loaded database.");
+        }
+
+        private void UpdateGames()
+        {
+            this.UpdateStatus("Updating Games...");
+            GameFeedManager.Get().CheckForUpdates();
         }
 
         private void CheckForUpdates()
