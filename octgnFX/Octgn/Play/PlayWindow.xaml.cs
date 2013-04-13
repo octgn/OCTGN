@@ -101,6 +101,10 @@ namespace Octgn.Play
             if (fname != "/developer") return;
 #endif
             Console.Visibility = Visibility.Visible;
+            if (Program.GameEngine.Definition.Fonts.Count > 0)
+            {
+                UpdateFont();
+            }
         }
 
         private void UpdateFont()
