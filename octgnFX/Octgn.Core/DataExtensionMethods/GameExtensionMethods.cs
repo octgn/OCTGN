@@ -2,20 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
     using System.Data;
     using System.IO;
     using System.IO.Abstractions;
     using System.Linq;
-    using System.Xml.Linq;
 
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
-    using Octgn.DataNew.FileDB;
     using Octgn.Library;
-    using Octgn.Library.Exceptions;
     using Octgn.ProxyGenerator;
 
     public static class GameExtensionMethods
@@ -174,6 +169,7 @@
             defaultValues[4] = "";
             foreach (var prop in game.CustomProperties)
             {
+                if (prop.Name == "Name") continue;
                 switch (prop.Type)
                 {
                     case PropertyType.String:
