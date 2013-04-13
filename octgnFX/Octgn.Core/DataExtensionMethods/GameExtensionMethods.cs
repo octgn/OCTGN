@@ -210,6 +210,7 @@
                 values[4] = item.Id;
                 foreach (var prop in item.Properties)
                 {
+                    if (prop.Key.Name == "Name") continue;
                     values[indexes.First(x=>x.Value == prop.Key.Name).Key] = prop.Value;
                 }
                    
