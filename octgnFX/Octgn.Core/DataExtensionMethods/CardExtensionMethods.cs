@@ -65,7 +65,6 @@
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
-            ret.Add("Name", card.Name);
             foreach (KeyValuePair<PropertyDef, object> kvi in card.Properties)
             {
                 ret.Add(kvi.Key.Name, kvi.Value.ToString());

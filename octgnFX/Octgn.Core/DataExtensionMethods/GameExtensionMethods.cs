@@ -152,8 +152,8 @@
         {
             DataTable table = new DataTable();
             
-            var values = new object[game.CustomProperties.Count + 5];
-            var defaultValues = new object[game.CustomProperties.Count + 5];
+            var values = new object[game.CustomProperties.Count + 5 - 1];
+            var defaultValues = new object[game.CustomProperties.Count + 5 - 1];
             var indexes = new Dictionary<int, string>();
             var setCache = new Dictionary<Guid, string>();
             var i = 0 + 5;
