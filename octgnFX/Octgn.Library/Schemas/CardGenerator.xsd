@@ -48,6 +48,8 @@
                       <xs:complexType>
                         <xs:attribute name="height" type="xs:string" use="required" />
                         <xs:attribute name="width" type="xs:string" use="required" />
+						<xs:attribute name="align" type="xs:string" default="near" />
+						<xs:attribute name="valign" type="xs:string" default="near" />
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>

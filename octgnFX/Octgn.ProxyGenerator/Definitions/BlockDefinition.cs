@@ -74,6 +74,14 @@ namespace Octgn.ProxyGenerator.Definitions
                 {
                     ret.wordwrap.height = int.Parse(prop.Attributes["height"].Value);
                     ret.wordwrap.width = int.Parse(prop.Attributes["width"].Value);
+                    if (prop.Attributes["align"] != null)
+                    {
+                        ret.wordwrap.align = prop.Attributes["align"].Value;
+                    }
+                    if (prop.Attributes["valign"] != null)
+                    {
+                        ret.wordwrap.valign = prop.Attributes["valign"].Value;
+                    }
                 }
             }
 

@@ -44,29 +44,7 @@ namespace Octgn.ProxyGenerator.Util
 
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             value = System.Web.HttpUtility.HtmlDecode(value);
-            GraphicsPath path = null;
-            if (section.wordwrap.width > 0 && section.wordwrap.height > 0)
-            {
-                if (section.text.font == null)
-                {
-                    path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.wordwrap.ToSize());
-                }
-                else
-                {
-                    path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.wordwrap.ToSize(), section.text.font);
-                }
-            }
-            else
-            {
-                if (section.text.font == null)
-                {
-                    path = GetTextPath(section.location.ToPoint(), section.text.size, value);
-                }
-                else
-                {
-                    path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.text.font);
-                }
-            }
+            GraphicsPath path = GetTextPath(section, value);
 
             if (section.location.flip)
             {
@@ -139,93 +117,65 @@ namespace Octgn.ProxyGenerator.Util
             }
         }
 
-        private static GraphicsPath GetTextPath(Point location, int size, string text, Size block, string font)
+        public static GraphicsPath GetTextPath(BlockDefinition section, string text)
         {
             GraphicsPath myPath = new GraphicsPath();
-            PrivateFontCollection col = new PrivateFontCollection();
-            col.AddFontFile(Path.Combine(BlockManager.GetInstance().rootPath, font));
-            FontFamily family = col.Families[0];
+            FontFamily family = new FontFamily("Arial");
+            if (section.text.font != null)
+            {
+                PrivateFontCollection col = new PrivateFontCollection();
+                col.AddFontFile(Path.Combine(BlockManager.GetInstance().rootPath, section.text.font));
+                family = col.Families[0];
+            }
+            int size = section.text.size;
             int fontStyle = (int)FontStyle.Regular;
+            Point location = section.location.ToPoint();
             StringFormat format = StringFormat.GenericDefault;
-            Rectangle rect = new Rectangle(location, block);
+            if (section.wordwrap.height > 0)
+            {
+                format = new StringFormat();
+                format.Alignment = GetAlignment(section.wordwrap.align);
+                format.LineAlignment = GetAlignment(section.wordwrap.valign);
+                Size block = section.wordwrap.ToSize();
+                Rectangle rect = new Rectangle(location, block);
 
-            myPath.AddString(text,
+                myPath.AddString(text,
                 family,
                 fontStyle,
                 size,
                 rect,
                 format);
-
-            return myPath;
-        }
-
-        public static GraphicsPath GetTextPath(Point location, int size, string text, string font)
-        {
-            GraphicsPath myPath = new GraphicsPath();
-            PrivateFontCollection col = new PrivateFontCollection();
-            col.AddFontFile(Path.Combine(BlockManager.GetInstance().rootPath, font));
-            FontFamily family = col.Families[0];
-            int fontStyle = (int)FontStyle.Regular;
-            StringFormat format = StringFormat.GenericDefault;
-
-            myPath.AddString(text,
+            }
+            else
+            {
+                myPath.AddString(text,
                 family,
                 fontStyle,
                 size,
                 location,
                 format);
-
+            }
             return myPath;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="location"></param>
-        /// <param name="size"></param>
-        /// <param name="text"></param>
-        /// <param name="block"></param>
-        /// <returns></returns>
-        private static GraphicsPath GetTextPath(Point location, int size, string text, Size block)
+        private static StringAlignment GetAlignment(string alignment)
         {
-            GraphicsPath myPath = new GraphicsPath();
-            FontFamily family = new FontFamily("Arial");
-            int fontStyle = (int)FontStyle.Regular;
-            StringFormat format = StringFormat.GenericDefault;
-            Rectangle rect = new Rectangle(location, block);
+            StringAlignment ret = StringAlignment.Near;
 
-            myPath.AddString(text,
-                family,
-                fontStyle,
-                size,
-                rect,
-                format);
+            if (alignment == null)
+            {
+                return (ret);
+            }
+            if (alignment == "center")
+            {
+                ret = StringAlignment.Center;
+            }
+            if (alignment == "far")
+            {
+                ret = StringAlignment.Far;
+            }
 
-            return myPath;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="location"></param>
-        /// <param name="size"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static GraphicsPath GetTextPath(Point location, int size, string text)
-        {
-            GraphicsPath myPath = new GraphicsPath();
-            FontFamily family = new FontFamily("Arial");
-            int fontStyle = (int)FontStyle.Regular;
-            StringFormat format = StringFormat.GenericDefault;
-
-            myPath.AddString(text,
-                family,
-                fontStyle,
-                size,
-                location,
-                format);
-
-            return myPath;
+            return (ret);
         }
     }
 }
