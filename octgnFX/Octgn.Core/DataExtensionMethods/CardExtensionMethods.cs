@@ -1,5 +1,6 @@
 ﻿namespace Octgn.Core.DataExtensionMethods
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -27,6 +28,12 @@
                              SetId = card.SetId,
                              Properties = card.Properties
                          };
+        }
+        public static bool IsDependant(this ICard card)
+        {
+            if (string.IsNullOrWhiteSpace(card.Dependent) || card.Dependent.Equals("false", StringComparison.InvariantCultureIgnoreCase))
+                return false;
+            return true;
         }
         public static string GetPicture(this ICard card)
         {

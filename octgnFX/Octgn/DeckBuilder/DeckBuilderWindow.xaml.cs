@@ -448,15 +448,14 @@ namespace Octgn.DeckBuilder
                 element.Quantity += 1;
             else
             {
-                //TODO [DB MIGRATION]  Reimplement this
-                //CardModel Card = Game.GetCardById(e.CardId);
-                //if (Card.isDependent())
-                //{
-                //    MessageBox.Show("Unable to add " + Card.Name +
-                //       "to the deck. It is marked as dependent, which implies it is the alternate version of another card. Please try to add the original instead.",
-                //       "Warning: Add dependent card failed.", MessageBoxButton.OK);
-                //}
-                var card = CardManager.Get().GetCardById(e.CardId);
+                var card = Game.GetCardById(e.CardId);
+                if (card.IsDependant())
+                {
+                    MessageBox.Show("Unable to add " + card.Name +
+                       "to the deck. It is marked as dependent, which implies it is the alternate version of another card. Please try to add the original instead.",
+                       "Warning: Add dependent card failed.", MessageBoxButton.OK);
+                    return;
+                }
                 ActiveSection.Cards.AddCard(card.ToMultiCard());
                 this.InvalidateVisual();
             }
