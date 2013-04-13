@@ -33,11 +33,13 @@ namespace Octgn.ProxyGenerator.Structs
         {
             public Color color;
             public int size;
+            public string font;
 
             public Text(string color, int size)
             {
                 this.color = ColorTranslator.FromHtml(color);
                 this.size = size;
+                this.font = null;
             }
         }
 

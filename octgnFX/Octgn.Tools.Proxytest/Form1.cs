@@ -213,10 +213,10 @@ namespace Octgn.Tools.Proxytest
             foreach (DataRow row in dt.Rows)
             {
                 string key = (string)row.ItemArray[0];
-                string value = (string)row.ItemArray[1];
-                if (value == null || value.Length == 0)
+                string value = string.Empty;
+                if (!row.IsNull(1))
                 {
-                    value = string.Empty;
+                    value = (string)row.ItemArray[1];
                 }
                 ret.Add(key, value);
             }

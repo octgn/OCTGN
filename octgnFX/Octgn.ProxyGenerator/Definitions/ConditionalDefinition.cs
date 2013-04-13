@@ -56,7 +56,7 @@ namespace Octgn.ProxyGenerator.Definitions
 
             if (value != null)
             {
-                if (values[property] == value)
+                if (values.ContainsKey(property) && values[property] == value)
                 {
                     foreach (XmlNode node in ifNode.ChildNodes)
                     {
@@ -80,7 +80,7 @@ namespace Octgn.ProxyGenerator.Definitions
 
             if (contains != null)
             {
-                if (values[property].Contains(contains))
+                if (values.ContainsKey(property) && values[property].Contains(contains))
                 {
                     foreach (XmlNode node in ifNode.ChildNodes)
                     {

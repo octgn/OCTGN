@@ -10,6 +10,7 @@ namespace Octgn.ProxyGenerator
     public class BlockManager
     {
         private static BlockManager instance = null;
+        public string rootPath = string.Empty;
 
         private List<BlockDefinition> blocks = new List<BlockDefinition>();
 
