@@ -14,6 +14,8 @@ using Microsoft.Win32;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Windows.Controls.Primitives;
+
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.Core.Plugin;
@@ -535,6 +537,21 @@ namespace Octgn.DeckBuilder
         private void ElementEditEnd(object sender, DataGridCellEditEndingEventArgs e)
         {
             _unsaved = true;
+            var tb = e.EditingElement as TextBox;
+            if (tb == null) return;
+            int val = -1;
+            if (int.TryParse(tb.Text, out val))
+            {
+                if (val <= 0)
+                {
+                    var ic = sender as Selector;
+                    if (ic == null) return;
+                    var item = ic.SelectedItem as IMultiCard;
+                    if (item == null) return;
+                    ActiveSection.Cards.RemoveCard(item);
+                }
+            }
+
         }
 
         private void SetActiveSection(object sender, RoutedEventArgs e)

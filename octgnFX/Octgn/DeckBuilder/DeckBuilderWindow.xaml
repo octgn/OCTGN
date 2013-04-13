@@ -73,7 +73,7 @@
                 <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
                           CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
                           VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
-                          Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" 
+                          Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd"
                           AllowDrop="True" Name="dgDeck">
                     <DataGrid.RowStyle>
                         <Style>
