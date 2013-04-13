@@ -202,6 +202,7 @@ namespace Octgn
         public static void Exit()
         {
             LogManager.Shutdown();
+            Application.Current.Dispatcher.Invoke(new Action(() => { 
             Application.Current.MainWindow = null;
             if (LobbyClient != null)
                 LobbyClient.Stop();
@@ -223,6 +224,7 @@ namespace Octgn
             //Apparently this can be null sometimes?
             if(Application.Current != null)
                 Application.Current.Shutdown(0);
+            }));
         }
 
         internal static void Print(Player player, string text)
