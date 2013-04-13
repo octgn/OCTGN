@@ -27,25 +27,26 @@ namespace Octgn.Play.Dialogs
         public PickCardsDialog()
         {
             CurrentGame = Program.GameEngine.Definition;
-            CardPool = new ObservableCollection<DataNew.Entities.Card>();
+            CardPool = new ObservableCollection<ObservableMultiCard>();
             CardPoolView = new ListCollectionView(CardPool) {Filter = FilterCard};
-            UnlimitedPool = new ObservableCollection<DataNew.Entities.Card>();
+            UnlimitedPool = new ObservableCollection<ObservableMultiCard>();
             UnlimitedPoolView = new ListCollectionView(UnlimitedPool);
             UnlimitedPoolView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-            LimitedDeck = Program.GameEngine.Definition.CreateDeck();
+            LimitedDeck = Program.GameEngine.Definition.CreateDeck().AsObservable();
             CreateFilters();
             InitializeComponent();
         }
 
         public ListCollectionView CardPoolView { get; private set; }
-        public ObservableCollection<DataNew.Entities.Card> CardPool { get; private set; }
+        public ObservableCollection<ObservableMultiCard> CardPool { get; private set; }
         public ListCollectionView UnlimitedPoolView { get; private set; }
-        public ObservableCollection<DataNew.Entities.Card> UnlimitedPool { get; private set; }
-        public Deck LimitedDeck { get; private set; }
+        public ObservableCollection<ObservableMultiCard> UnlimitedPool { get; private set; }
+        public ObservableDeck LimitedDeck { get; private set; }
         public ObservableCollection<Filter> Filters { get; private set; }
 
         private void SortChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (sortBox.SelectedItem == null) return;
             CardPoolView.CustomSort = new CardPropertyComparer(((PropertyDef) sortBox.SelectedItem).Name);
         }
 
@@ -72,12 +73,12 @@ namespace Octgn.Play.Dialogs
                             }
 
                             PackContent content = pack.CrackOpen();
-                            foreach (DataNew.Entities.Card c in content.LimitedCards)
+                            foreach (ObservableMultiCard c in content.LimitedCards.Select(x=>x.ToMultiCard().AsObservable()))
                             {
                                 Dispatcher.Invoke(new Action(() => { this.CardPool.Add(c); }));
                             }
 
-                            foreach (DataNew.Entities.Card c in content.UnlimitedCards)
+                            foreach (ObservableMultiCard c in content.UnlimitedCards.Select(x => x.ToMultiCard().AsObservable()))
                             {
                                 Dispatcher.Invoke(new Action(() => { this.UnlimitedPool.Add(c); }));
                             }
@@ -111,7 +112,7 @@ namespace Octgn.Play.Dialogs
         {
             var img = sender as Image;
             if (img == null) return;
-            var model = img.DataContext as DataNew.Entities.Card ?? (img.DataContext as MultiCard);
+            var model = img.DataContext as ObservableMultiCard ;
             if (model == null) return;
             ImageUtils.GetCardImage(new Uri(model.GetPicture()), x => img.Source = x);
         }
@@ -120,17 +121,17 @@ namespace Octgn.Play.Dialogs
         {
             var src = e.OriginalSource as FrameworkElement;
             if (src == null) return;
-            var card = src.DataContext as DataNew.Entities.Card;
+            var card = src.DataContext as ObservableMultiCard;
             if (card == null) return;
-            var section = deckTabs.SelectedItem as Section;
+            var section = deckTabs.SelectedItem as ObservableSection;
             if (section == null) return;
 
             CardPool.Remove(card);
-            var element = section.Cards.FirstOrDefault(x => x.Id == card.Id).AsObservable();
+            var element = section.Cards.FirstOrDefault(x => x.Id == card.Id);//.AsObservable();
             if (element != null)
                 element.Quantity++;
             else
-                section.Cards.AddCard(card.ToMultiCard());
+                section.Cards.AddCard(card);
 
             // RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, sender));
         }
@@ -139,9 +140,9 @@ namespace Octgn.Play.Dialogs
         {
             var src = e.OriginalSource as FrameworkElement;
             if (src == null) return;
-            var card = src.DataContext as DataNew.Entities.Card;
+            var card = src.DataContext as ObservableMultiCard;
             if (card == null) return;
-            var section = deckTabs.SelectedItem as Section;
+            var section = deckTabs.SelectedItem as ObservableSection;
             if (section == null) return;
 
             // Hide the big card preview
@@ -149,11 +150,14 @@ namespace Octgn.Play.Dialogs
 
             OpenQuantityPopup(qty =>
                                   {
-                                      var element = section.Cards.FirstOrDefault(x => x.Id == card.Id).AsObservable();
-                                      if (element != null)
-                                          element.Quantity += (byte) qty;
+                                      var element = section.Cards.FirstOrDefault(x => x.Id == card.Id);
+                                      if (element != null) element.Quantity += qty;
                                       else
-                                          section.Cards.AddCard(card.ToMultiCard((byte) qty));
+                                      {
+                                          var nc = card.AsObservable();
+                                          nc.Quantity = qty;
+                                          section.Cards.AddCard(nc);
+                                      }
                                   });
         }
 
@@ -161,9 +165,9 @@ namespace Octgn.Play.Dialogs
         {
             var src = e.OriginalSource as FrameworkElement;
             if (src == null) return;
-            var element = (src.DataContext as MultiCard);
+            var element = (src.DataContext as ObservableMultiCard);
             if (element == null) return;
-            var section = deckTabs.SelectedItem as Section;
+            var section = deckTabs.SelectedItem as ObservableSection;
 
             if (element.Quantity > 1)
             {
@@ -178,7 +182,7 @@ namespace Octgn.Play.Dialogs
                                                   // When there are multiple copies of the same card, we insert clones of the CardModel.
                                                   // Otherwise, the ListBox gets confused with selection.
                                                   CardPool.Add(element.Quantity > 1
-                                                                   ? element.Clone()
+                                                                   ? element.AsObservable()
                                                                    : element);
                                       });
             }
@@ -196,7 +200,7 @@ namespace Octgn.Play.Dialogs
         {
             var src = e.Source as FrameworkElement;
             if (src == null) return;
-            var model = src.DataContext as DataNew.Entities.Card ?? (src.DataContext as MultiCard);
+            var model = src.DataContext as ObservableMultiCard ;
             if (model == null) return;
             RaiseEvent(new CardEventArgs(model, CardControl.CardHoveredEvent, sender));
         }
@@ -214,7 +218,7 @@ namespace Octgn.Play.Dialogs
         {
             if (_activeRestrictions == null || _activeRestrictions.Count == 0)
                 return true;
-            var card = (DataNew.Entities.Card) c;
+            var card = (ObservableMultiCard)c;
 
             return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
                     let prop = restriction.Key
@@ -260,7 +264,7 @@ namespace Octgn.Play.Dialogs
                     {
                         case PropertyTextKind.Enumeration:
                             Filter filter2 = filter;
-                            IEnumerable<EnumFilterValue> q = from DataNew.Entities.Card c in CardPoolView
+                            IEnumerable<EnumFilterValue> q = from ObservableMultiCard c in CardPoolView
                                                              group c by this.GetCardPropertyValue(c, prop)
                                                              into g
                                                              orderby g.Key
@@ -276,7 +280,7 @@ namespace Octgn.Play.Dialogs
                             break;
                         case PropertyTextKind.Tokens:
                             Filter filter1 = filter;
-                            IEnumerable<TokenFilterValue> q2 = from DataNew.Entities.Card c in CardPoolView
+                            IEnumerable<TokenFilterValue> q2 = from ObservableMultiCard c in CardPoolView
                                                                let all = this.GetCardPropertyValue(c,prop)
                                                                where all != null
                                                                from token in
@@ -299,7 +303,7 @@ namespace Octgn.Play.Dialogs
             }
         }
 
-        private string GetCardPropertyValue(Card card,PropertyDef def)
+        private string GetCardPropertyValue(ObservableMultiCard card,PropertyDef def)
         {
             if (!card.Properties.ContainsKey(def)) return null;
             return card.Properties[def] as String;
@@ -312,13 +316,13 @@ namespace Octgn.Play.Dialogs
                 if (e.NewItems != null)
                 {
                     FilterValue fv1 = fv;
-                    foreach (DataNew.Entities.Card card in e.NewItems.Cast<DataNew.Entities.Card>().Where(fv1.IsMatch))
+                    foreach (ObservableMultiCard card in e.NewItems.Cast<ObservableMultiCard>().Where(fv1.IsMatch))
                         fv.Count++;
                 }
                 if (e.OldItems != null)
                 {
                     FilterValue fv1 = fv;
-                    foreach (DataNew.Entities.Card card in e.OldItems.Cast<DataNew.Entities.Card>().Where(fv1.IsMatch))
+                    foreach (ObservableMultiCard card in e.OldItems.Cast<ObservableMultiCard>().Where(fv1.IsMatch))
                         fv.Count--;
                 }
             }
@@ -433,7 +437,7 @@ namespace Octgn.Play.Dialogs
 
             public abstract bool IsValueMatch(object value);
 
-            public bool IsMatch(DataNew.Entities.Card c)
+            public bool IsMatch(ObservableMultiCard c)
             {
                 return IsValueMatch(c.Properties[Property]);
             }

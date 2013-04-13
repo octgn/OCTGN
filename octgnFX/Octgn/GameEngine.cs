@@ -267,7 +267,7 @@ namespace Octgn
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20
 
-        public void LoadDeck(DataNew.Entities.IDeck deck)
+        public void LoadDeck(IDeck deck)
         {
             Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
             var def = Program.GameEngine.Definition;
@@ -279,7 +279,7 @@ namespace Octgn
             var groups = new Play.Group[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
             int j = 0;
-            foreach (DataNew.Entities.Section section in deck.Sections)
+            foreach (ISection section in deck.Sections)
             {
                 var sectionDef = deckDef[section.Name];
                 if (sectionDef == null)
@@ -295,7 +295,7 @@ namespace Octgn
                     gtmps.Add(gt);
                     group.SetVisibility(false, false);
                 }
-                foreach (DataNew.Entities.MultiCard element in section.Cards)
+                foreach (IMultiCard element in section.Cards)
                 {
                     DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
                     for (int i = 0; i < element.Quantity; i++)

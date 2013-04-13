@@ -170,7 +170,7 @@
         public static IEnumerable<IMultiCard> AddCard(this IEnumerable<IMultiCard> cards, IMultiCard card)
         {
             if (cards is ObservableCollection<ObservableMultiCard>)
-                (cards as ObservableCollection<ObservableMultiCard>).Add(card.AsObservable());
+                (cards as ObservableCollection<ObservableMultiCard>).Add(card as ObservableMultiCard);
             else if (cards is ObservableCollection<IMultiCard>) 
                 (cards as ObservableCollection<IMultiCard>).Add(card);
             else if (cards is IList<IMultiCard>)
@@ -188,7 +188,7 @@
         public static IEnumerable<IMultiCard> RemoveCard(this IEnumerable<IMultiCard> cards, IMultiCard card)
         {
             if (cards is ObservableCollection<ObservableMultiCard>)
-                (cards as ObservableCollection<ObservableMultiCard>).Remove(card.AsObservable());
+                (cards as ObservableCollection<ObservableMultiCard>).Remove(card as ObservableMultiCard);
             else if (cards is ObservableCollection<IMultiCard>)
                 (cards as ObservableCollection<IMultiCard>).Remove(card);
             else if (cards is IList<IMultiCard>)
