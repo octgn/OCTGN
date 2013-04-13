@@ -529,6 +529,7 @@
                 var probAtt = op.Attributes("probability").FirstOrDefault();
                 option.Probability = double.Parse(probAtt != null ? probAtt.Value : "1", CultureInfo.InvariantCulture);
                 option.Definition = DeserializePack(op.Elements());
+                ret.Options.Add(option);
             }
             return ret;
         }
