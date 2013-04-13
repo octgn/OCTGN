@@ -42,9 +42,13 @@ namespace Octgn.DeckBuilder
             // If there's only one game in the repository, create a deck of the correct kind
             if (GameManager.Get().GameCount == 1)
             {
-                Game = GameManager.Get().Games.First();
-                Deck = Game.CreateDeck().AsObservable();
-                _deckFilename = null;
+                var g = GameManager.Get().Games.First();
+                if (g.SharedDeckSections.Count > 0 || g.DeckSections.Count > 0)
+                {
+                    Game = g;
+                    Deck = Game.CreateDeck().AsObservable();
+                    _deckFilename = null;
+                }
 
             }
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -202,6 +206,16 @@ namespace Octgn.DeckBuilder
 
         private void NewClicked(object sender, RoutedEventArgs e)
         {
+            var game = (DataNew.Entities.Game)((MenuItem)e.OriginalSource).DataContext;
+            if (game.DeckSections.Count == 0 && game.SharedDeckSections.Count == 0)
+            {
+                MessageBox.Show(
+                    "This game has no deck sections, so you cannot build a deck for it.",
+                    "Warning",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+                return;
+            }
             if (_unsaved)
             {
                 MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
@@ -217,7 +231,7 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
-            Game = (DataNew.Entities.Game) ((MenuItem) e.OriginalSource).DataContext;
+            Game = game;
             CommandManager.InvalidateRequerySuggested();
             Deck = Game.CreateDeck().AsObservable();
             //Deck = new Deck(Game);

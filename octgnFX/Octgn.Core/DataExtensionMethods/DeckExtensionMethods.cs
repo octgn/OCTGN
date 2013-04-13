@@ -170,13 +170,15 @@
         public static IEnumerable<IMultiCard> AddCard(this IEnumerable<IMultiCard> cards, IMultiCard card)
         {
             if (cards is ObservableCollection<ObservableMultiCard>)
-                (cards as ObservableCollection<ObservableMultiCard>).Add(card as ObservableMultiCard);
-            else if (cards is ObservableCollection<IMultiCard>) 
-                (cards as ObservableCollection<IMultiCard>).Add(card);
-            else if (cards is IList<IMultiCard>)
-                (cards as IList<IMultiCard>).Add(card);
-            else if (cards is ICollection<IMultiCard>)
-                (cards as ICollection<IMultiCard>).Add(card);
+            {
+                if(card is ObservableMultiCard)
+                    (cards as ObservableCollection<ObservableMultiCard>).Add(card as ObservableMultiCard);
+                else
+                    (cards as ObservableCollection<ObservableMultiCard>).Add(card.AsObservable());
+            }
+            else if (cards is ObservableCollection<IMultiCard>) (cards as ObservableCollection<IMultiCard>).Add(card);
+            else if (cards is IList<IMultiCard>) (cards as IList<IMultiCard>).Add(card);
+            else if (cards is ICollection<IMultiCard>) (cards as ICollection<IMultiCard>).Add(card);
             else
             {
                 var g = cards.ToList();
@@ -188,7 +190,16 @@
         public static IEnumerable<IMultiCard> RemoveCard(this IEnumerable<IMultiCard> cards, IMultiCard card)
         {
             if (cards is ObservableCollection<ObservableMultiCard>)
-                (cards as ObservableCollection<ObservableMultiCard>).Remove(card as ObservableMultiCard);
+            {
+                if (card is ObservableMultiCard) (cards as ObservableCollection<ObservableMultiCard>).Remove(card as ObservableMultiCard);
+                else
+                {
+                    var tcard = (cards as ObservableCollection<ObservableMultiCard>).FirstOrDefault(
+                        x => x.Id == card.Id);
+                    if (tcard == null) return cards;
+                    (cards as ObservableCollection<ObservableMultiCard>).Remove(tcard);
+                }
+            }
             else if (cards is ObservableCollection<IMultiCard>)
                 (cards as ObservableCollection<IMultiCard>).Remove(card);
             else if (cards is IList<IMultiCard>)
