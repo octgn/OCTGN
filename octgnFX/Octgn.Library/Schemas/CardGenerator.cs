@@ -401,6 +401,15 @@ public partial class templatesBlocksBlockWordwrap {
     
     private string widthField;
     
+    private string alignField;
+    
+    private string valignField;
+    
+    public templatesBlocksBlockWordwrap() {
+        this.alignField = "near";
+        this.valignField = "near";
+    }
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string height {
@@ -420,6 +429,30 @@ public partial class templatesBlocksBlockWordwrap {
         }
         set {
             this.widthField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("near")]
+    public string align {
+        get {
+            return this.alignField;
+        }
+        set {
+            this.alignField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("near")]
+    public string valign {
+        get {
+            return this.valignField;
+        }
+        set {
+            this.valignField = value;
         }
     }
 }
