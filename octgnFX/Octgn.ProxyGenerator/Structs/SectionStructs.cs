@@ -59,11 +59,15 @@ namespace Octgn.ProxyGenerator.Structs
         {
             public int width;
             public int height;
+            public string align;
+            public string valign;
 
             public WordWrap(int width, int height) 
             {
                 this.width = width;
-                this.height = height; 
+                this.height = height;
+                this.align = "near";
+                this.valign = "near";
             }
 
             public Size ToSize()
