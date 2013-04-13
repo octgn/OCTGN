@@ -163,27 +163,6 @@ namespace Octgn.DeckBuilder
             e.Handled = true;
             ((Button)sender).IsEnabled = true;
         }
-        [Obsolete("We don't use sql anymore hoes.")]
-        private string ConvertToSQLString(string[] conditions)
-        {
-            //TODO Scrap this if we can.
-            var sb = new StringBuilder();
-            sb.Append("SELECT * FROM Card");
-            if (conditions != null)
-            {
-                string connector = " WHERE ";
-                foreach (string condition in conditions)
-                {
-                    sb.Append(connector);
-                    sb.Append("(");
-                    sb.Append(condition);
-                    sb.Append(")");
-                    connector = " AND ";
-                }
-            }
-            return sb.ToString();
-        }
-
         public void UpdateDataGrid(DataView view)
         {
             if (_CurrentView == null)
