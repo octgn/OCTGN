@@ -479,6 +479,11 @@
                         var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
                         card.Properties.Add(pd, p.Attribute("value").Value);
                     }
+                    foreach (var cp in game.CustomProperties)
+                    {
+                        if(!card.Properties.ContainsKey(cp))
+                            card.Properties.Add(cp,"");
+                    }
                     (ret.Cards as List<Card>).Add(card);
                 }
                 foreach (var p in doc.Document.Descendants("pack"))
@@ -487,6 +492,7 @@
                     pack.Id = new Guid(p.Attribute("id").Value);
                     pack.Name = p.Attribute("name").Value;
                     pack.Definition = DeserializePack(p.Elements());
+                    pack.SetId = ret.Id;
                     (ret.Packs as List<Pack>).Add(pack);
                 }
                 foreach (var m in doc.Document.Descendants("marker"))

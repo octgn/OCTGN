@@ -261,7 +261,7 @@ namespace Octgn.Play.Dialogs
                         case PropertyTextKind.Enumeration:
                             Filter filter2 = filter;
                             IEnumerable<EnumFilterValue> q = from DataNew.Entities.Card c in CardPoolView
-                                                             group c by (string) c.Properties[prop]
+                                                             group c by this.GetCardPropertyValue(c, prop)
                                                              into g
                                                              orderby g.Key
                                                              select
@@ -277,7 +277,7 @@ namespace Octgn.Play.Dialogs
                         case PropertyTextKind.Tokens:
                             Filter filter1 = filter;
                             IEnumerable<TokenFilterValue> q2 = from DataNew.Entities.Card c in CardPoolView
-                                                               let all = (string) c.Properties[prop]
+                                                               let all = this.GetCardPropertyValue(c,prop)
                                                                where all != null
                                                                from token in
                                                                    all.Split(new[] {' '},
@@ -297,6 +297,12 @@ namespace Octgn.Play.Dialogs
                             break;
                     }
             }
+        }
+
+        private string GetCardPropertyValue(Card card,PropertyDef def)
+        {
+            if (!card.Properties.ContainsKey(def)) return null;
+            return card.Properties[def] as String;
         }
 
         private void CardPoolChanged(object sender, NotifyCollectionChangedEventArgs e)
