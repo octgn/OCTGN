@@ -62,6 +62,8 @@ namespace Octgn.Play
         public PlayWindow(bool islocal = false)
             : base()
         {
+            Program.Dispatcher = Dispatcher;
+            DataContext = Program.GameEngine;
             InitializeComponent();
             _isLocal = islocal;
             //Application.Current.MainWindow = this;
@@ -73,14 +75,6 @@ namespace Octgn.Play
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
         {
-            
-        //}
-
-        //protected override void OnInitialized(EventArgs e)
-        //{
-        //    base.OnInitialized(e);
-            Program.Dispatcher = Dispatcher;
-            DataContext = Program.GameEngine;
 
             _fadeIn = (Storyboard) Resources["ImageFadeIn"];
             _fadeOut = (Storyboard) Resources["ImageFadeOut"];
@@ -107,11 +101,6 @@ namespace Octgn.Play
             if (fname != "/developer") return;
 #endif
             Console.Visibility = Visibility.Visible;
-            Loaded += (sender, args) =>
-                          {
-                              var wnd = new InteractiveConsole {Owner = this};
-                              wnd.Show();
-                          };
         }
 
         private void UpdateFont()
