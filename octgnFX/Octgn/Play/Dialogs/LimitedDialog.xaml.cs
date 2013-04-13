@@ -16,7 +16,7 @@ namespace Octgn.Play.Dialogs
         {
             Singleton = this;
             Packs = new ObservableCollection<SelectedPack>();
-            Sets = Program.GameEngine.Definition.Sets().ToArray();
+            Sets = Program.GameEngine.Definition.Sets().OrderBy(x=>x.Name).ToArray();
             InitializeComponent();
         }
 
