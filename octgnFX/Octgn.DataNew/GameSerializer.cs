@@ -219,6 +219,11 @@
                     ret.CustomProperties.Add(pd);
                 }
             }
+            var namepd = new PropertyDef();
+            namepd.Name = "Name";
+            namepd.TextKind = PropertyTextKind.FreeText;
+            namepd.Type = PropertyType.String;
+            ret.CustomProperties.Add(namepd);
             #endregion card
             #region fonts
             if (g.fonts != null)
@@ -484,6 +489,7 @@
                         if(!card.Properties.ContainsKey(cp))
                             card.Properties.Add(cp,"");
                     }
+                    card.Properties[game.CustomProperties.First(x => x.Name == "Name")] = card.Name;
                     (ret.Cards as List<Card>).Add(card);
                 }
                 foreach (var p in doc.Document.Descendants("pack"))
