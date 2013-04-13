@@ -318,6 +318,8 @@ public partial class templatesBlocksBlockText {
     
     private string sizeField;
     
+    private string fontField;
+    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
     public string color {
@@ -337,6 +339,17 @@ public partial class templatesBlocksBlockText {
         }
         set {
             this.sizeField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string font {
+        get {
+            return this.fontField;
+        }
+        set {
+            this.fontField = value;
         }
     }
 }

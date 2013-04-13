@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -53,6 +54,16 @@ namespace Octgn.ProxyGenerator.Definitions
                 {
                     ret.text.color = ColorTranslator.FromHtml(prop.Attributes["color"].Value);
                     ret.text.size = int.Parse(prop.Attributes["size"].Value);
+                    if (prop.Attributes["font"] != null)
+                    {
+                        string relativePath = prop.Attributes["font"].Value;
+                        string rootPath = BlockManager.GetInstance().rootPath;
+                        string combined = Path.Combine(rootPath, relativePath);
+                        if (File.Exists(combined))
+                        {
+                            ret.text.font = relativePath;
+                        }
+                    }
                 }
                 if (prop.Name.Equals("border"))
                 {

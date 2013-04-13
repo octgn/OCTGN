@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -46,11 +47,25 @@ namespace Octgn.ProxyGenerator.Util
             GraphicsPath path = null;
             if (section.wordwrap.width > 0 && section.wordwrap.height > 0)
             {
-                path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.wordwrap.ToSize());
+                if (section.text.font == null)
+                {
+                    path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.wordwrap.ToSize());
+                }
+                else
+                {
+                    path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.wordwrap.ToSize(), section.text.font);
+                }
             }
             else
             {
-                path = GetTextPath(section.location.ToPoint(), section.text.size, value);
+                if (section.text.font == null)
+                {
+                    path = GetTextPath(section.location.ToPoint(), section.text.size, value);
+                }
+                else
+                {
+                    path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.text.font);
+                }
             }
 
             if (section.location.flip)
@@ -122,6 +137,45 @@ namespace Octgn.ProxyGenerator.Util
             {
                 graphics.FillPath(b, path);
             }
+        }
+
+        private static GraphicsPath GetTextPath(Point location, int size, string text, Size block, string font)
+        {
+            GraphicsPath myPath = new GraphicsPath();
+            PrivateFontCollection col = new PrivateFontCollection();
+            col.AddFontFile(Path.Combine(BlockManager.GetInstance().rootPath, font));
+            FontFamily family = col.Families[0];
+            int fontStyle = (int)FontStyle.Regular;
+            StringFormat format = StringFormat.GenericDefault;
+            Rectangle rect = new Rectangle(location, block);
+
+            myPath.AddString(text,
+                family,
+                fontStyle,
+                size,
+                rect,
+                format);
+
+            return myPath;
+        }
+
+        public static GraphicsPath GetTextPath(Point location, int size, string text, string font)
+        {
+            GraphicsPath myPath = new GraphicsPath();
+            PrivateFontCollection col = new PrivateFontCollection();
+            col.AddFontFile(Path.Combine(BlockManager.GetInstance().rootPath, font));
+            FontFamily family = col.Families[0];
+            int fontStyle = (int)FontStyle.Regular;
+            StringFormat format = StringFormat.GenericDefault;
+
+            myPath.AddString(text,
+                family,
+                fontStyle,
+                size,
+                location,
+                format);
+
+            return myPath;
         }
 
         /// <summary>
