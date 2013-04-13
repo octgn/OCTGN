@@ -17,6 +17,7 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting
 {
+    using System.Linq.Expressions;
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
 
@@ -492,18 +493,31 @@ namespace Octgn.Scripting
                                                                   });
         }
 
-        public Tuple<string, int> AskCard(string restriction)
+        //public Tuple<string, int> AskCard(string restriction)
+        //{
+        //    return _engine.Invoke<Tuple<string, int>>(() =>
+        //                                                  {
+        //                                                      //fix MAINWINDOW bug
+        //                                                      var dlg = new CardDlg(restriction) { Owner = WindowManager.PlayWindow };
+        //                                                      if (!dlg.ShowDialog().GetValueOrDefault()) return null;
+        //                                                      return Tuple.Create(dlg.SelectedCard.Id.ToString(),
+        //                                                                          dlg.Quantity);
+        //                                                  });
+        //}
+
+        public Tuple<string, int> AskCard(Dictionary<string,string> properties, string op )
         {
+            //this.AskCard(x => x.Where(y => y.Name = "a"));
+            //default(DataNew.Entities.ICard).Properties.Where(x => x.Key.Name == "Rarity" && x.Value == "Token");
             return _engine.Invoke<Tuple<string, int>>(() =>
                                                           {
                                                               //fix MAINWINDOW bug
-                                                              var dlg = new CardDlg(restriction) { Owner = WindowManager.PlayWindow };
+                                                              var dlg = new CardDlg(properties,op) { Owner = WindowManager.PlayWindow };
                                                               if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                                                               return Tuple.Create(dlg.SelectedCard.Id.ToString(),
                                                                                   dlg.Quantity);
                                                           });
         }
-
         #endregion Messages API
 
         #region Random

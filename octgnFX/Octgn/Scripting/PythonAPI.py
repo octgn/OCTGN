@@ -1,4 +1,6 @@
 ﻿from System.IO import Directory, Path
+from System.Collections.Generic import *
+from System import *
 #Rotation constants
 Rot0 = 0
 Rot90 = 1
@@ -50,8 +52,9 @@ def askMarker():
   if apiResult == None: return (None, 0)
   return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def askCard(restriction = None):
-  apiResult = _api.AskCard(restriction)
+def askCard(properties = {},operator = None):
+  realDick = Dictionary[String,String](properties)
+  apiResult = _api.AskCard(realDick,operator)
   if apiResult == None: return (None, 0)
   return (apiResult.Item1, apiResult.Item2)
 

@@ -14,42 +14,65 @@ using Octgn.Utils;
 
 namespace Octgn.Scripting.Controls
 {
+    using System.Linq.Expressions;
+
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
 
     public partial class CardDlg
     {
         public static readonly DependencyProperty IsCardSelectedProperty = DependencyProperty.Register(
-            "IsCardSelected", typeof (bool), typeof (CardDlg), new UIPropertyMetadata(false));
+            "IsCardSelected", typeof(bool), typeof(CardDlg), new UIPropertyMetadata(false));
 
         private List<DataNew.Entities.Card> _allCards;
         private string _filterText = "";
 
-        public CardDlg(string where)
+        public CardDlg(Dictionary<string, string> properties, string op)
         {
             InitializeComponent();
-            // Async load the cards (to make the GUI snappier with huge DB)
-            //TODO [DB MIGRATION] Fuck card dlg
-            throw new NotImplementedException("GAALSDKJFWE");
             Task.Factory.StartNew(() =>
-                                      {
-                                          //_allCards = Database.GetCards(where).ToList();
-                                          //TODO [DB MIGRATION]  FIX THIS SHIT
-                                          var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
-                                          foreach (string s in where.Split(','))
-                                          {
-                                              string name = s.Split('=')[0].Trim();
-                                              string value = s.Split('=')[1].Trim();
-                                              _allCards = _allCards.Concat(game.AllCards().Where(x => (x.Properties.Any(t => (t.Key.Name == name & t.Value.ToString().Equals(value)))))).Distinct().ToList();
-                                          }
-                                          Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
-                                      });
+              {
+                  var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
+                  op = op.ToLower().Trim();
+                  if (String.IsNullOrWhiteSpace(op)) op = "and";
+                  if (properties == null) properties = new Dictionary<string, string>();
+                  
+                  switch (op)
+                  {
+                      case "or":
+                          _allCards = new List<Card>();
+                          foreach (var p in properties)
+                          {
+                              var tlist = game.AllCards()
+                                  .Where(x => x.Properties
+                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
+                                          && y.Value.ToString().ToLower() == p.Value.ToLower())).ToList();
+                              _allCards.AddRange(tlist);
+                          }
+                          break;
+                      default:
+                          var query = game.AllCards();
+                          foreach (var p in properties)
+                          {
+                              query = query
+                                  .Where(
+                                  x => x.Properties
+                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
+                                          && y.Value.ToString().ToLower() == p.Value.ToLower()));
+                          }
+                          _allCards = query.ToList();
+                          break;
+
+                  }
+                  Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
+              });
             recentList.ItemsSource = Program.GameEngine.RecentCards;
         }
 
         public bool IsCardSelected
         {
-            get { return (bool) GetValue(IsCardSelectedProperty); }
+            get { return (bool)GetValue(IsCardSelectedProperty); }
             set { SetValue(IsCardSelectedProperty, value); }
         }
 
@@ -66,7 +89,7 @@ namespace Octgn.Scripting.Controls
 
             // A double-click can only select a marker in its own list
             // (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
-            if (sender is ListBox && ((ListBox) sender).SelectedIndex == -1) return;
+            if (sender is ListBox && ((ListBox)sender).SelectedIndex == -1) return;
 
             if (recentList.SelectedIndex != -1) SelectedCard = (DataNew.Entities.Card)recentList.SelectedItem;
             if (allList.SelectedIndex != -1) SelectedCard = (DataNew.Entities.Card)allList.SelectedItem;
@@ -76,8 +99,7 @@ namespace Octgn.Scripting.Controls
             int qty;
             if (!int.TryParse(quantityBox.Text, out qty) || qty < 1)
             {
-                var anim = new ColorAnimation(Colors.Red, new Duration(TimeSpan.FromMilliseconds(800)))
-                               {AutoReverse = true};
+                var anim = new ColorAnimation(Colors.Red, new Duration(TimeSpan.FromMilliseconds(800))) { AutoReverse = true };
                 validationBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.Compose);
                 return;
             }
@@ -89,7 +111,7 @@ namespace Octgn.Scripting.Controls
         private void CardSelected(object sender, SelectionChangedEventArgs e)
         {
             e.Handled = true;
-            var list = (ListBox) sender;
+            var list = (ListBox)sender;
             if (list.SelectedIndex != -1)
             {
                 if (list != recentList) recentList.SelectedIndex = -1;
@@ -110,7 +132,7 @@ namespace Octgn.Scripting.Controls
             if (_allCards == null) return;
             ThreadPool.QueueUserWorkItem(searchObj =>
                                              {
-                                                 var search = (string) searchObj;
+                                                 var search = (string)searchObj;
                                                  List<DataNew.Entities.Card> filtered =
                                                      _allCards.Where(
                                                          m =>
