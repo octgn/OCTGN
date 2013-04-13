@@ -11,6 +11,10 @@ using Octgn.Play;
 
 namespace Octgn.Scripting.Controls
 {
+    using System.Globalization;
+    using System.IO;
+    using System.Windows.Media.Imaging;
+
     public partial class MarkerDlg
     {
         public static readonly DependencyProperty IsModelSelectedProperty =

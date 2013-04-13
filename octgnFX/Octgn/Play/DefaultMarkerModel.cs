@@ -11,12 +11,16 @@ namespace Octgn.Play
         {
             Id = id;
             _key = key;
+            this.IconUri = "pack://application:,,,/Resources/Markers/" + _key + ".png";
         }
 
         public string Picture
         {
             get { return "pack://application:,,,/Resources/Markers/" + _key + ".png"; }
+            
         }
+
+
 
         public override bool Equals(object obj)
         {
