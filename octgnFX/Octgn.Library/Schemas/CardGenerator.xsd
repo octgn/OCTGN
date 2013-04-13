@@ -35,6 +35,7 @@
                       <xs:complexType>
                         <xs:attribute name="color" type="xs:string" use="required" />
                         <xs:attribute name="size" type="xs:string" use="required" />
+						<xs:attribute name="font" type="xs:string" use="optional" />
                       </xs:complexType>
                     </xs:element>
                     <xs:element name="border" minOccurs="0" maxOccurs="1">
