@@ -257,82 +257,104 @@ namespace Octgn.Tabs.GameManagement
             }
         }
 
+        private bool installuninstallprocessing = false;
         private void ButtonInstallUninstallClick(object sender, RoutedEventArgs e)
         {
-            if (WindowManager.PlayWindow != null)
+            if (installuninstallprocessing) return;
+            installuninstallprocessing = true;
+            try
             {
-                MessageBox.Show(
-                    "You can not install/uninstall games while you are in a game.",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return;
-            }
-            if (WindowManager.DeckEditor!= null)
-            {
-                MessageBox.Show(
-                    "You can not install/uninstall games while you are in the deck editor.",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return;
-            }
-            var button = e.Source as Button;
-            if(button == null || button.DataContext == null)return;
-            var model = button.DataContext as FeedGameViewModel;
-            if (model == null) return;
-            if (model.Installed)
-            {
-                var game = GameManager.Get().GetById(model.Id);
-                if (game != null)
+                if (WindowManager.PlayWindow != null)
                 {
-                    try
-                    {
-                        GameManager.Get().UninstallGame(game);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error("Could not fully uninstall game " + model.Package.Title,ex);
-                    }
-                }
-            }
-            else
-            {
-                try
-                {
-                    GameManager.Get().InstallGame(model.Package);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Could not install game " + model.Package.Title,ex);
-                    var res = MessageBox.Show(
-                        "There was a problem installing " + model.Package.Title
-                        + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
-                        +"\n\nDo you want to get in contact with the game developer who broke this busted game?",
+                    MessageBox.Show(
+                        "You can not install/uninstall games while you are in a game.",
                         "Error",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Exclamation);
-
-                    if (res == MessageBoxResult.Yes)
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+                if (WindowManager.DeckEditor != null)
+                {
+                    MessageBox.Show(
+                        "You can not install/uninstall games while you are in the deck editor.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+                var button = e.Source as Button;
+                if (button == null || button.DataContext == null) return;
+                var model = button.DataContext as FeedGameViewModel;
+                if (model == null) return;
+                if (model.Installed)
+                {
+                    var game = GameManager.Get().GetById(model.Id);
+                    if (game != null)
                     {
                         try
                         {
-                            System.Diagnostics.Process.Start(model.Package.ProjectUrl.ToString());
-
+                            GameManager.Get().UninstallGame(game);
                         }
-                        catch(Exception exx)
+                        catch (Exception ex)
                         {
-                            Log.Warn("Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",exx);
-                            MessageBox.Show(
-                                "We could not open your browser. Please set a default browser and try again",
-                                "Error",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
+                            Log.Error("Could not fully uninstall game " + model.Package.Title, ex);
                         }
                     }
                 }
-            }
+                else
+                {
+                    try
+                    {
+                        GameManager.Get().InstallGame(model.Package);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Could not install game " + model.Package.Title, ex);
+                        var res =
+                            MessageBox.Show(
+                                "There was a problem installing " + model.Package.Title
+                                + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
+                                + "\n\nDo you want to get in contact with the game developer who broke this busted game?",
+                                "Error",
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.Exclamation);
 
+                        if (res == MessageBoxResult.Yes)
+                        {
+                            try
+                            {
+                                System.Diagnostics.Process.Start(model.Package.ProjectUrl.ToString());
+
+                            }
+                            catch (Exception exx)
+                            {
+                                Log.Warn(
+                                    "Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",
+                                    exx);
+                                MessageBox.Show(
+                                    "We could not open your browser. Please set a default browser and try again",
+                                    "Error",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Mega Error", ex);
+                MessageBox.Show(
+                    "There was an error, please try again later or get in contact with us at http://www.octgn.net",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            finally
+            {
+                installuninstallprocessing = false;
+            }
         }
 
         private void UrlMouseButtonUp(object sender, object whatever)
