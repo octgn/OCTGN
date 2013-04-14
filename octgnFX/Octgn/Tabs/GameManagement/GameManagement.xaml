@@ -111,6 +111,11 @@
                 <TextBlock Text="Version: " Style="{StaticResource Title}"/>
                 <TextBlock Text="{Binding Version}" Style="{StaticResource Standard}"/>
             </StackPanel>
+            <!-- OMG OMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOMGOM -->
+            <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame}">
+                <TextBlock Text="Installed Version: " Style="{StaticResource Title}"/>
+                <TextBlock Text="{Binding InstalledVersion}" Style="{StaticResource Standard}"/>
+            </StackPanel>
             <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=Me,Path=SelectedGame.Package}">
                 <TextBlock Text="Last Published: "  Style="{StaticResource Title}"/>
                 <TextBlock Text="{Binding Published.LocalDateTime}" Style="{StaticResource Standard}"/>
