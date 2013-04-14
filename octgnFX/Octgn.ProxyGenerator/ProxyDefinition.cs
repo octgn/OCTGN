@@ -25,6 +25,7 @@
 
         public Image GenerateProxyImage(Dictionary<string, string> values)
         {
+            Reload();
             TemplateDefinition cardDef = TemplateSelector.GetTemplate(values);
             Image ret = ProxyGenerator.GenerateProxy(RootPath,cardDef, values);
             return (ret);
@@ -50,9 +51,16 @@
                 Document.RemoveAll();
                 Document = null;
                 TemplateSelector.ClearTemplates();
+                
             }
             Document = new XmlDocument();
             Document.Load(path);
+            LoadTemplates();
+        }
+
+        internal void Reload()
+        {
+            TemplateSelector.ClearTemplates();
             LoadTemplates();
         }
 
