@@ -69,6 +69,7 @@
             var defPath = Path.Combine(dirPath, "def");
             if (!Directory.Exists(defPath)) return;
             var di = new DirectoryInfo(defPath);
+
             foreach (var f in di.GetFiles("*",SearchOption.AllDirectories))
             {
                 var relPath = f.FullName.Replace(di.FullName, "");
@@ -78,7 +79,23 @@
                 var newFileInfo = new FileInfo(newPath);
                 if(newFileInfo.Directory != null)
                     Directory.CreateDirectory(newFileInfo.Directory.FullName);
-                File.Copy(f.FullName,newPath);
+                File.Copy(f.FullName,newPath,true);
+            }
+            //Sets//setid//Cards//Proxies
+            // Clear out all proxies if they exist
+            var setsDir = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", package.Id,"Sets");
+            foreach (var setdir in new DirectoryInfo(setsDir).GetDirectories())
+            {
+                var pdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards", "Proxies"));
+                if(!pdir.Exists)continue;
+                try
+                {
+                    Directory.Delete(pdir.FullName,true);
+                }
+                catch (Exception e)
+                {
+                    Log.WarnFormat("Could not delete proxy directory {0}",pdir.FullName);
+                }
             }
             this.OnGameListChanged();
 
@@ -88,15 +105,16 @@
         {
             var path = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", game.Id.ToString());
             var gamePathDi = new DirectoryInfo(path);
-            foreach (var file in gamePathDi.GetFiles("*", SearchOption.AllDirectories))
-            {
-                File.Delete(file.FullName);
-            }
-            foreach (var dir in gamePathDi.GetDirectories("*", SearchOption.AllDirectories))
-            {
-                Directory.Delete(dir.FullName);
-            }
-            Directory.Delete(gamePathDi.FullName);
+            Directory.Delete(gamePathDi.FullName, true);
+            //foreach (var file in gamePathDi.GetFiles("*", SearchOption.AllDirectories))
+            //{
+            //    File.Delete(file.FullName);
+            //}
+            //foreach (var dir in gamePathDi.GetDirectories("*", SearchOption.AllDirectories))
+            //{
+            //    Directory.Delete(dir.FullName,true);
+            //}
+            //Directory.Delete(gamePathDi.FullName);
             this.OnGameListChanged();
         }
 

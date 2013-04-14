@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -32,15 +33,37 @@ namespace Octgn.ProxyGenerator.Definitions
             }
             foreach (XmlNode prop in node.ChildNodes)
             {
+                if (TemplateDefinition.SkipNode(prop))
+                {
+                    continue;
+                }
                 if (prop.Name.Equals("location"))
                 {
                     ret.location.x = int.Parse(prop.Attributes["x"].Value);
                     ret.location.y = int.Parse(prop.Attributes["y"].Value);
+                    if (prop.Attributes["rotate"] != null)
+                    {
+                        ret.location.rotate = int.Parse(prop.Attributes["rotate"].Value);
+                    }
+                    if (prop.Attributes["flip"] != null)
+                    {
+                        ret.location.flip = bool.Parse(prop.Attributes["flip"].Value);
+                    }
                 }
                 if (prop.Name.Equals("text"))
                 {
                     ret.text.color = ColorTranslator.FromHtml(prop.Attributes["color"].Value);
                     ret.text.size = int.Parse(prop.Attributes["size"].Value);
+                    if (prop.Attributes["font"] != null)
+                    {
+                        string relativePath = prop.Attributes["font"].Value;
+                        string rootPath = BlockManager.GetInstance().rootPath;
+                        string combined = Path.Combine(rootPath, relativePath);
+                        if (File.Exists(combined))
+                        {
+                            ret.text.font = relativePath;
+                        }
+                    }
                 }
                 if (prop.Name.Equals("border"))
                 {
@@ -51,6 +74,14 @@ namespace Octgn.ProxyGenerator.Definitions
                 {
                     ret.wordwrap.height = int.Parse(prop.Attributes["height"].Value);
                     ret.wordwrap.width = int.Parse(prop.Attributes["width"].Value);
+                    if (prop.Attributes["align"] != null)
+                    {
+                        ret.wordwrap.align = prop.Attributes["align"].Value;
+                    }
+                    if (prop.Attributes["valign"] != null)
+                    {
+                        ret.wordwrap.valign = prop.Attributes["valign"].Value;
+                    }
                 }
             }
 

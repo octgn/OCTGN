@@ -1,8 +1,9 @@
 ﻿namespace Octgn.DataNew.Entities
 {
     using System;
+    using System.Linq;
     using System.Xml;
-
+    using Octgn.Library.ExtensionMethods;
     public class Pick : IPackItem
     {
         public Pick()
@@ -21,19 +22,37 @@
         public string Key { get; set; }
         public string Value { get; set; }
 
-        public PackContent GetCards(Pack pack)
+        public PackContent GetCards(Pack pack, Set set)
         {
-            var result = new PackContent();
-            //TODO [DB MIGRATION] blah
-            throw new NotImplementedException("Holy Moly");
-            //var conditions = new string[2];
-            //conditions[0] = "set_id = '" + pack.Set.Id + "'";
-            //conditions[1] = string.Format("{0} = '{1}'", Key, Value);
-            //if (Quantity < 0)
-            //    result.UnlimitedCards.AddRange(pack.Set.Game.SelectCardModels(conditions));
-            //else
-            //    result.LimitedCards.AddRange(pack.Set.Game.SelectRandomCardModels(Quantity, conditions));
-            return result;
+            var ret = new PackContent();
+
+            if (Quantity < 0)
+            {
+                ret.UnlimitedCards.AddRange(
+                    from card in set.Cards
+                    where
+                        card.Properties.Any(
+                            x =>
+                            x.Key.Name.ToLower() ==Key.ToLower()
+                            && x.Value.ToString().ToLower() ==Value.ToLower())
+                    select card);
+            }
+            else
+            {
+                var list = (
+                    from card in set.Cards
+                    where
+                        card.Properties.Any(
+                            x =>
+                            x.Key.Name.ToLower() ==Key.ToLower()
+                            && x.Value.ToString().ToLower() ==Value.ToLower())
+                    select card).ToArray();
+
+                for (var i = 0; i <Quantity; i++)
+                    ret.LimitedCards.Add(list.RandomElement());
+            }
+
+            return ret;
         }
     }
 }

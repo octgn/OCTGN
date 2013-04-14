@@ -122,7 +122,7 @@ namespace Octgn.Controls
             Program.IsHost = false;
             Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName);
             Program.CurrentOnlineGameName = hostedGame.Name;
-            IPAddress hostAddress =  Dns.GetHostAddresses(Program.GameServerPath).FirstOrDefault();
+            IPAddress hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).FirstOrDefault();
             if(hostAddress == null)
                 throw new UserMessageException("There was a problem with your DNS. Please try again.");
 
@@ -155,8 +155,8 @@ namespace Octgn.Controls
                 MessageBox.Show(error, "OCTGN", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            Program.PreGameLobbyWindow = new PreGameLobbyWindow();
-            Program.PreGameLobbyWindow.Setup(false,Program.MainWindowNew);
+            WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
+            WindowManager.PreGameLobbyWindow.Setup(false, WindowManager.Main);
         }
 
         #region LobbyEvents
@@ -190,10 +190,10 @@ namespace Octgn.Controls
             {
                 if (hostGameDialog.SuccessfulHost)
                 {
-                    if (Program.PreGameLobbyWindow == null)
+                    if (WindowManager.PreGameLobbyWindow == null)
                     {
-                        Program.PreGameLobbyWindow = new PreGameLobbyWindow();
-                        Program.PreGameLobbyWindow.Setup(hostGameDialog.IsLocalGame,Program.MainWindowNew);
+                        WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
+                        WindowManager.PreGameLobbyWindow.Setup(hostGameDialog.IsLocalGame, WindowManager.Main);
                     }
                 }
             }
@@ -206,13 +206,13 @@ namespace Octgn.Controls
             {
                 if (connectOfflineGameDialog.Successful)
                 {
-                    if (Program.PreGameLobbyWindow == null)
+                    if (WindowManager.PreGameLobbyWindow == null)
                     {
                         Program.IsHost = false;
                         Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null,true);
 
-                        Program.PreGameLobbyWindow = new PreGameLobbyWindow();
-                        Program.PreGameLobbyWindow.Setup(true,Program.MainWindowNew);
+                        WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
+                        WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
                     }
                 }
             }
@@ -235,7 +235,7 @@ namespace Octgn.Controls
 
         private void ButtonHostClick(object sender, RoutedEventArgs e)
         {
-            if (Program.PreGameLobbyWindow != null || Program.PlayWindow != null)
+            if (WindowManager.PreGameLobbyWindow != null || WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
                     "You are currently in a game or game lobby. Please leave before you host a new game.",
@@ -249,7 +249,7 @@ namespace Octgn.Controls
 
         private void ButtonJoinClick(object sender, RoutedEventArgs e)
         {
-            if (Program.PreGameLobbyWindow != null || Program.PlayWindow != null)
+            if (WindowManager.PreGameLobbyWindow != null || WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
                     "You are currently in a game or game lobby. Please leave before you join game.",
@@ -271,7 +271,7 @@ namespace Octgn.Controls
 
         private void ButtonJoinOfflineGame(object sender, RoutedEventArgs e)
         {
-            if (Program.PreGameLobbyWindow != null || Program.PlayWindow != null)
+            if (WindowManager.PreGameLobbyWindow != null || WindowManager.PlayWindow != null)
             {
                 MessageBox.Show(
                     "You are currently in a game or game lobby. Please leave before you join game.",

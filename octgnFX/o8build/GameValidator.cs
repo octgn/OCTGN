@@ -108,8 +108,8 @@
             var dirs = dir.GetDirectories("*", SearchOption.TopDirectoryOnly);
             if(dirs.Length > 2)
                 throw new UserMessageException("You may only have a Cards and/or Markers folder in your set folder {0}",dir.FullName);
-            if(!dirs.All(x=>x.Name == "Cards" || x.Name == "Markers"))
-                throw new UserMessageException("You may only have a Cards and/or Markers folder in your set folder {0}", dir.FullName);
+            if(!dirs.All(x=>x.Name == "Cards" || x.Name == "Markers" || x.Name == "Decks"))
+                throw new UserMessageException("You may only have a Cards, Markers, and/or Decks folder in your set folder {0}", dir.FullName);
 
             // check Cards directory. There should only be image files in there
             var cardDir = dirs.FirstOrDefault(x => x.Name == "Cards");
@@ -194,6 +194,10 @@
                     path = Path.Combine(Directory.FullName, doc.src);
                     if(!File.Exists(path))
                         throw new UserMessageException(gError,"Document",doc.src,path);
+                    path = Path.Combine(Directory.FullName, doc.icon);
+                    if(!File.Exists(path))
+                        throw new UserMessageException(gError,"Document",doc.icon,path);
+
                 }
             }
             if (game.proxygen != null)

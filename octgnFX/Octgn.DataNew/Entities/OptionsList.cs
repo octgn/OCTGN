@@ -33,7 +33,7 @@
         }
         public IList<Option> Options { get; set; }
 
-        public PackContent GetCards(Pack pack)
+        public PackContent GetCards(Pack pack, Set set)
         {
             var rnd = new Random();
             double value = rnd.NextDouble();
@@ -41,7 +41,7 @@
             foreach (Option option in Options)
             {
                 threshold += option.Probability;
-                if (value <= threshold) return option.Definition.GenerateContent(pack);
+                if (value <= threshold) return option.Definition.GenerateContent(pack,set);
             }
             return new PackContent(); // Empty pack
         }

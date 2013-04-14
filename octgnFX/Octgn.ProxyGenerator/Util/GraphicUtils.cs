@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,16 +37,71 @@ namespace Octgn.ProxyGenerator.Util
         /// <param name="value"></param>
         public static void WriteString(Graphics graphics, BlockDefinition section, string value)
         {
+            if (value == null || value == string.Empty)
+            {
+                return;
+            }
+
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            GraphicsPath path = null;
-            if (section.wordwrap.width > 0 && section.wordwrap.height > 0)
+            value = System.Web.HttpUtility.HtmlDecode(value);
+            GraphicsPath path = GetTextPath(section, value);
+
+            if (section.location.flip)
             {
-                path = GetTextPath(section.location.ToPoint(), section.text.size, value, section.wordwrap.ToSize());
+                using (Matrix matrix = new Matrix(1,0,0,-1,0,0))
+                {
+                    //matrix.Translate(section.location.x, section.location.y);
+                    path.Transform(matrix);
+                }
+                using (Matrix matrix = new Matrix())
+                {
+                    PointF p = path.PathData.Points[0];
+                    int y = (int)p.Y;
+                    int ny = (section.location.y - y);
+                    float newY = (p.Y+ny)+(~((int)p.Y)+1) + (path.GetBounds().Height/2);
+                    matrix.Translate(0, newY);
+                    path.Transform(matrix);
+                }
             }
-            else
+
+            if (section.location.rotate > 0)
             {
-                path = GetTextPath(section.location.ToPoint(), section.text.size, value);
+                float height = path.GetBounds().Height;
+                using (Matrix matrix = new Matrix())
+                {
+                    matrix.Rotate(section.location.rotate);
+                    path.Transform(matrix);
+                }
+                using (Matrix matrix = new Matrix())
+                {
+                    PointF p = path.PathData.Points[0];
+                    float x = 0;
+                    float y = 0;
+                    if (p.X < 0)
+                    {
+                        int tx = (int)p.X;
+                        int nx = (section.location.x - tx);
+                        x = (p.X + nx) + (~((int)p.X) + 1);
+                    }
+                    else
+                    {
+                        x = (section.location.x - p.X) + (height/2);
+                    }
+                    if (p.Y < 0)
+                    {
+                        int ty = (int)p.Y;
+                        int ny = (section.location.y - ty);
+                        y = (p.Y + ny) + (~((int)p.Y) + 1);
+                    }
+                    else
+                    {
+                        y = (section.location.y - p.Y) + (height/2);
+                    }
+                    matrix.Translate(x, y);
+                    path.Transform(matrix);
+                }
             }
+            
 
             SolidBrush b = new SolidBrush(section.text.color);
 
@@ -61,54 +117,65 @@ namespace Octgn.ProxyGenerator.Util
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="location"></param>
-        /// <param name="size"></param>
-        /// <param name="text"></param>
-        /// <param name="block"></param>
-        /// <returns></returns>
-        private static GraphicsPath GetTextPath(Point location, int size, string text, Size block)
+        public static GraphicsPath GetTextPath(BlockDefinition section, string text)
         {
             GraphicsPath myPath = new GraphicsPath();
             FontFamily family = new FontFamily("Arial");
+            if (section.text.font != null)
+            {
+                PrivateFontCollection col = new PrivateFontCollection();
+                col.AddFontFile(Path.Combine(BlockManager.GetInstance().rootPath, section.text.font));
+                family = col.Families[0];
+            }
+            int size = section.text.size;
             int fontStyle = (int)FontStyle.Regular;
+            Point location = section.location.ToPoint();
             StringFormat format = StringFormat.GenericDefault;
-            Rectangle rect = new Rectangle(location, block);
+            if (section.wordwrap.height > 0)
+            {
+                format = new StringFormat();
+                format.Alignment = GetAlignment(section.wordwrap.align);
+                format.LineAlignment = GetAlignment(section.wordwrap.valign);
+                Size block = section.wordwrap.ToSize();
+                Rectangle rect = new Rectangle(location, block);
 
-            myPath.AddString(text,
+                myPath.AddString(text,
                 family,
                 fontStyle,
                 size,
                 rect,
                 format);
-
-            return myPath;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="location"></param>
-        /// <param name="size"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static GraphicsPath GetTextPath(Point location, int size, string text)
-        {
-            GraphicsPath myPath = new GraphicsPath();
-            FontFamily family = new FontFamily("Arial");
-            int fontStyle = (int)FontStyle.Regular;
-            StringFormat format = StringFormat.GenericDefault;
-
-            myPath.AddString(text,
+            }
+            else
+            {
+                myPath.AddString(text,
                 family,
                 fontStyle,
                 size,
                 location,
                 format);
-
+            }
             return myPath;
+        }
+
+        private static StringAlignment GetAlignment(string alignment)
+        {
+            StringAlignment ret = StringAlignment.Near;
+
+            if (alignment == null)
+            {
+                return (ret);
+            }
+            if (alignment == "center")
+            {
+                ret = StringAlignment.Center;
+            }
+            if (alignment == "far")
+            {
+                ret = StringAlignment.Far;
+            }
+
+            return (ret);
         }
     }
 }

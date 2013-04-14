@@ -60,7 +60,8 @@
                               Tags = g.tags.Split(' ').ToList(),
                               OctgnVersion = Version.Parse(g.octgnVersion),
                               Variables = new List<Variable>(),
-                              MarkerSize = g.markersize
+                              MarkerSize = g.markersize,
+                              Documents = new List<Document>()
                           };
             #region variables
             if (g.variables != null)
@@ -161,6 +162,20 @@
                 ret.Player = player;
             }
             #endregion Player
+
+            #region documents
+            if (g.documents != null)
+            {
+                foreach (var doc in g.documents)
+                {
+                    var d = new Document();
+                    d.Icon = Path.Combine(directory,doc.icon);
+                    d.Name = doc.name;
+                    d.Source = Path.Combine(directory,doc.src);
+                    ret.Documents.Add(d);
+                }
+            }
+            #endregion documents
             #region deck
             if (g.deck != null)
             {
@@ -204,6 +219,11 @@
                     ret.CustomProperties.Add(pd);
                 }
             }
+            var namepd = new PropertyDef();
+            namepd.Name = "Name";
+            namepd.TextKind = PropertyTextKind.FreeText;
+            namepd.Type = PropertyType.String;
+            ret.CustomProperties.Add(namepd);
             #endregion card
             #region fonts
             if (g.fonts != null)
@@ -464,6 +484,12 @@
                         var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
                         card.Properties.Add(pd, p.Attribute("value").Value);
                     }
+                    foreach (var cp in game.CustomProperties)
+                    {
+                        if(!card.Properties.ContainsKey(cp))
+                            card.Properties.Add(cp,"");
+                    }
+                    card.Properties[game.CustomProperties.First(x => x.Name == "Name")] = card.Name;
                     (ret.Cards as List<Card>).Add(card);
                 }
                 foreach (var p in doc.Document.Descendants("pack"))
@@ -472,6 +498,7 @@
                     pack.Id = new Guid(p.Attribute("id").Value);
                     pack.Name = p.Attribute("name").Value;
                     pack.Definition = DeserializePack(p.Elements());
+                    pack.SetId = ret.Id;
                     (ret.Packs as List<Pack>).Add(pack);
                 }
                 foreach (var m in doc.Document.Descendants("marker"))
@@ -502,6 +529,7 @@
                 var probAtt = op.Attributes("probability").FirstOrDefault();
                 option.Probability = double.Parse(probAtt != null ? probAtt.Value : "1", CultureInfo.InvariantCulture);
                 option.Definition = DeserializePack(op.Elements());
+                ret.Options.Add(option);
             }
             return ret;
         }

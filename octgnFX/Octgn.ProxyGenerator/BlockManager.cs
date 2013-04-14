@@ -10,6 +10,7 @@ namespace Octgn.ProxyGenerator
     public class BlockManager
     {
         private static BlockManager instance = null;
+        public string rootPath = string.Empty;
 
         private List<BlockDefinition> blocks = new List<BlockDefinition>();
 
@@ -56,9 +57,18 @@ namespace Octgn.ProxyGenerator
         {
             foreach (XmlNode subNode in node.ChildNodes)
             {
+                if (TemplateDefinition.SkipNode(subNode))
+                {
+                    continue;
+                }
                 BlockDefinition blockDef = BlockDefinition.LoadSectionDefinition(subNode);
                 AddBlock(blockDef);
             }
+        }
+
+        public void ClearBlocks()
+        {
+            blocks.Clear();
         }
 
         public static BlockManager GetInstance()

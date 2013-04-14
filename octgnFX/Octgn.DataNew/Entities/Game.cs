@@ -32,6 +32,7 @@
         public List<GlobalVariable> GlobalVariables { get; set; }
         public List<Variable> Variables { get; set; } 
         public List<Font> Fonts { get; set; }
+        public List<Document> Documents { get; set; } 
 
         public bool Equals(Game x, Game y)
         {
@@ -63,5 +64,12 @@
         {
             return Id.GetHashCode();
         }
+    }
+
+    public class Document
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public string Source { get; set; }
     }
 }

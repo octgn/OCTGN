@@ -2,20 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
     using System.Data;
     using System.IO;
     using System.IO.Abstractions;
     using System.Linq;
-    using System.Xml.Linq;
 
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
-    using Octgn.DataNew.FileDB;
     using Octgn.Library;
-    using Octgn.Library.Exceptions;
     using Octgn.ProxyGenerator;
 
     public static class GameExtensionMethods
@@ -37,10 +32,14 @@
             return SetManager.Get().Sets.Where(x => x.GameId == game.Id);
         }
 
+        /// <summary>
+        /// Not Implemented
+        /// </summary>
+        /// <param name="game"></param>
+        /// <returns></returns>
         public static Game Install(this Game game)
         {
-            DbContext.Get().Save(game);
-            return game;
+            throw new NotImplementedException();
         }
 
         public static Game UpdateGameHash(this Game game, string hash)
@@ -153,8 +152,8 @@
         {
             DataTable table = new DataTable();
             
-            var values = new object[game.CustomProperties.Count + 5];
-            var defaultValues = new object[game.CustomProperties.Count + 5];
+            var values = new object[game.CustomProperties.Count + 5 - 1];
+            var defaultValues = new object[game.CustomProperties.Count + 5 - 1];
             var indexes = new Dictionary<int, string>();
             var setCache = new Dictionary<Guid, string>();
             var i = 0 + 5;
@@ -170,6 +169,7 @@
             defaultValues[4] = "";
             foreach (var prop in game.CustomProperties)
             {
+                if (prop.Name == "Name") continue;
                 switch (prop.Type)
                 {
                     case PropertyType.String:
@@ -210,6 +210,7 @@
                 values[4] = item.Id;
                 foreach (var prop in item.Properties)
                 {
+                    if (prop.Key.Name == "Name") continue;
                     values[indexes.First(x=>x.Value == prop.Key.Name).Key] = prop.Value;
                 }
                    

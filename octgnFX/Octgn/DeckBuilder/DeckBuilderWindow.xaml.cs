@@ -14,6 +14,8 @@ using Microsoft.Win32;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Windows.Controls.Primitives;
+
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.Core.Plugin;
@@ -42,9 +44,13 @@ namespace Octgn.DeckBuilder
             // If there's only one game in the repository, create a deck of the correct kind
             if (GameManager.Get().GameCount == 1)
             {
-                Game = GameManager.Get().Games.First();
-                Deck = Game.CreateDeck().AsObservable();
-                _deckFilename = null;
+                var g = GameManager.Get().Games.First();
+                if (g.SharedDeckSections.Count > 0 || g.DeckSections.Count > 0)
+                {
+                    Game = g;
+                    Deck = Game.CreateDeck().AsObservable();
+                    _deckFilename = null;
+                }
 
             }
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -202,6 +208,16 @@ namespace Octgn.DeckBuilder
 
         private void NewClicked(object sender, RoutedEventArgs e)
         {
+            var game = (DataNew.Entities.Game)((MenuItem)e.OriginalSource).DataContext;
+            if (game.DeckSections.Count == 0 && game.SharedDeckSections.Count == 0)
+            {
+                MessageBox.Show(
+                    "This game has no deck sections, so you cannot build a deck for it.",
+                    "Warning",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+                return;
+            }
             if (_unsaved)
             {
                 MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
@@ -217,7 +233,7 @@ namespace Octgn.DeckBuilder
                         return;
                 }
             }
-            Game = (DataNew.Entities.Game) ((MenuItem) e.OriginalSource).DataContext;
+            Game = game;
             CommandManager.InvalidateRequerySuggested();
             Deck = Game.CreateDeck().AsObservable();
             //Deck = new Deck(Game);
@@ -373,7 +389,7 @@ namespace Octgn.DeckBuilder
                 cardImage.Source = null;
             cardImage = null;
             Game = null; // Close DB if required
-            Program.DeckEditor = null;
+            WindowManager.DeckEditor = null;
         }
 
         private void CardSelected(object sender, SearchCardImageEventArgs e)
@@ -448,15 +464,14 @@ namespace Octgn.DeckBuilder
                 element.Quantity += 1;
             else
             {
-                //TODO [DB MIGRATION]  Reimplement this
-                //CardModel Card = Game.GetCardById(e.CardId);
-                //if (Card.isDependent())
-                //{
-                //    MessageBox.Show("Unable to add " + Card.Name +
-                //       "to the deck. It is marked as dependent, which implies it is the alternate version of another card. Please try to add the original instead.",
-                //       "Warning: Add dependent card failed.", MessageBoxButton.OK);
-                //}
-                var card = CardManager.Get().GetCardById(e.CardId);
+                var card = Game.GetCardById(e.CardId);
+                if (card.IsDependant())
+                {
+                    MessageBox.Show("Unable to add " + card.Name +
+                       "to the deck. It is marked as dependent, which implies it is the alternate version of another card. Please try to add the original instead.",
+                       "Warning: Add dependent card failed.", MessageBoxButton.OK);
+                    return;
+                }
                 ActiveSection.Cards.AddCard(card.ToMultiCard());
                 this.InvalidateVisual();
             }
@@ -522,6 +537,21 @@ namespace Octgn.DeckBuilder
         private void ElementEditEnd(object sender, DataGridCellEditEndingEventArgs e)
         {
             _unsaved = true;
+            var tb = e.EditingElement as TextBox;
+            if (tb == null) return;
+            int val = -1;
+            if (int.TryParse(tb.Text, out val))
+            {
+                if (val <= 0)
+                {
+                    var ic = sender as Selector;
+                    if (ic == null) return;
+                    var item = ic.SelectedItem as IMultiCard;
+                    if (item == null) return;
+                    ActiveSection.Cards.RemoveCard(item);
+                }
+            }
+
         }
 
         private void SetActiveSection(object sender, RoutedEventArgs e)

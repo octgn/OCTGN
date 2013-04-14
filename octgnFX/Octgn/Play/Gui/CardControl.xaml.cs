@@ -85,7 +85,7 @@ namespace Octgn.Play.Gui
             Program.GameEngine.ComposeParts(this);
 
             //fix MAINWINDOW bug
-            _mainWin = Program.PlayWindow;
+            _mainWin = WindowManager.PlayWindow;
             int markerSize = Program.GameEngine.Definition. MarkerSize;
             if (markerSize == 0) markerSize = 20;
             markers.Margin = new Thickness(markerSize/8);

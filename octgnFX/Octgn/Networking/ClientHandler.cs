@@ -919,7 +919,7 @@ namespace Octgn.Networking
         {
             Program.TracePlayerEvent(player, "{0} starts a limited game.", player);
             var wnd = new Play.Dialogs.PickCardsDialog();
-            Program.PlayWindow.ShowBackstage(wnd);
+            WindowManager.PlayWindow.ShowBackstage(wnd);
             wnd.OpenPacks(packs);
         }
 

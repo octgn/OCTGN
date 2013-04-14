@@ -216,6 +216,24 @@ namespace Octgn.Tabs.GameManagement
 
         private void ButtonInstallUninstallClick(object sender, RoutedEventArgs e)
         {
+            if (WindowManager.PlayWindow != null)
+            {
+                MessageBox.Show(
+                    "You can not install/uninstall games while you are in a game.",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+            if (WindowManager.DeckEditor!= null)
+            {
+                MessageBox.Show(
+                    "You can not install/uninstall games while you are in the deck editor.",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
             var button = e.Source as Button;
             if(button == null || button.DataContext == null)return;
             var model = button.DataContext as FeedGameViewModel;

@@ -1,5 +1,6 @@
 ﻿namespace Octgn.Core.DataExtensionMethods
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -27,6 +28,12 @@
                              SetId = card.SetId,
                              Properties = card.Properties
                          };
+        }
+        public static bool IsDependant(this ICard card)
+        {
+            if (string.IsNullOrWhiteSpace(card.Dependent) || card.Dependent.Equals("false", StringComparison.InvariantCultureIgnoreCase))
+                return false;
+            return true;
         }
         public static string GetPicture(this ICard card)
         {
@@ -58,7 +65,6 @@
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
-            ret.Add("Name", card.Name);
             foreach (KeyValuePair<PropertyDef, object> kvi in card.Properties)
             {
                 ret.Add(kvi.Key.Name, kvi.Value.ToString());

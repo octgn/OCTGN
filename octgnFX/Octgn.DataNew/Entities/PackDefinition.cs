@@ -25,10 +25,10 @@
             }
         }
 
-        public PackContent GenerateContent(Pack pack)
+        public PackContent GenerateContent(Pack pack, Set set)
         {
             var result = new PackContent();
-            foreach (PackContent defContent in Items.Select(def => def.GetCards(pack)))
+            foreach (PackContent defContent in Items.Select(def => def.GetCards(pack,set)))
             {
                 result.Merge(defContent);
             }

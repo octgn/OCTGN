@@ -59,6 +59,8 @@
         internal void LoadTemplates()
         {
             XmlNodeList blockList = Document.GetElementsByTagName("blocks");
+            BlockManager.GetInstance().ClearBlocks();
+            BlockManager.GetInstance().rootPath = RootPath;
             BlockManager.GetInstance().LoadBlocks(blockList[0]);
 
             XmlNodeList templateList = Document.GetElementsByTagName("template");
@@ -85,11 +87,37 @@
                 {
                     ret.Add(id, node.Attributes["src"].Value);
                 }
+                string fontPath = GetFontPath(node);
+                if (fontPath != string.Empty)
+                {
+                    ret.Add(id, fontPath);
+                }
             }
 
             doc.RemoveAll();
             doc = null;
 
+            return (ret);
+        }
+
+        private static string GetFontPath(XmlNode node)
+        {
+            string ret = string.Empty;
+            foreach (XmlNode subNode in node.ChildNodes)
+            {
+                if (TemplateDefinition.SkipNode(subNode))
+                {
+                    continue;
+                }
+                if (subNode.Name == "text")
+                {
+                    if (subNode.Attributes["font"] != null)
+                    {
+                        ret = subNode.Attributes["font"].Value;
+                        break;
+                    }
+                }
+            }
             return (ret);
         }
 

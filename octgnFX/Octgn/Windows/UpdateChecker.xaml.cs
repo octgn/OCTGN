@@ -12,6 +12,9 @@ using Skylabs.Lobby.Threading;
 
 namespace Octgn.Windows
 {
+    using System.Threading.Tasks;
+
+    using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
 
@@ -50,6 +53,7 @@ namespace Octgn.Windows
 #endif
                 //CheckForXmlSetUpdates();
                 this.LoadDatabase();
+                this.UpdateGames();
                 UpdateCheckDone();
 
             });
@@ -81,12 +85,18 @@ namespace Octgn.Windows
             this.UpdateStatus("Loaded database.");
         }
 
+        private void UpdateGames()
+        {
+            this.UpdateStatus("Updating Games...");
+            Task.Factory.StartNew(GameFeedManager.Get().CheckForUpdates).Wait(1500);
+        }
+
         private void CheckForUpdates()
         {
             UpdateStatus("Checking for updates...");
             try
             {
-                string[] update = ReadUpdateXml(Program.UpdateInfoPath);
+                string[] update = ReadUpdateXml(AppConfig.UpdateInfoPath);
 
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -195,8 +205,8 @@ namespace Octgn.Windows
                                 case "installpath":
                                     if (reader.Read())
                                     {
-                                        values[2] = Program.WebsitePath + reader.Value;
-                                        values[1] = Program.WebsitePath + reader.Value;
+                                        values[2] = AppConfig.WebsitePath + reader.Value;
+                                        values[1] = AppConfig.WebsitePath + reader.Value;
                                     }
                                     break;
 

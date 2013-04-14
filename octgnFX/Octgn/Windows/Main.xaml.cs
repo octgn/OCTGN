@@ -11,12 +11,12 @@ namespace Octgn.Windows
 {
     using System;
     using System.ComponentModel;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
 
     using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
-    using Octgn.GameManagement;
 
     using agsXMPP;
 
@@ -35,12 +35,15 @@ namespace Octgn.Windows
         public Main()
         {
             this.InitializeComponent();
+#if(Release_Test)
+            this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
+#endif
             ConnectBox.Visibility = Visibility.Hidden;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
-            Core.GameFeedManager.Get().Start();
+            GameUpdater.Get().Start();
             //new GameFeedManager().CheckForUpdates();
         }
 
@@ -82,7 +85,8 @@ namespace Octgn.Windows
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             Program.LobbyClient.Stop();
-            Core.GameFeedManager.Get().Stop();
+            GameUpdater.Get().Stop();
+            Task.Factory.StartNew(Program.Exit);
         }
 
         /// <summary>
@@ -221,10 +225,10 @@ namespace Octgn.Windows
                     MessageBoxImage.Error);
                 return;
             }
-            if (Program.DeckEditor == null)
+            if (WindowManager.DeckEditor == null)
             {
-                Program.DeckEditor = new DeckBuilderWindow();
-                Program.DeckEditor.Show();
+                WindowManager.DeckEditor = new DeckBuilderWindow();
+                WindowManager.DeckEditor.Show();
             }
         }
 

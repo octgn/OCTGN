@@ -83,6 +83,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.ProxyGenerator", "oct
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Bot", "octgnFX\Octgn.Bot\Octgn.Bot.csproj", "{B3629009-205C-4986-8E22-C121F0A30906}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Octgn.Tools.Proxytest", "octgnFX\Octgn.Tools.Proxytest\Octgn.Tools.Proxytest.csproj", "{4EA73D38-5443-4A40-93AB-4869202EFFFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug x86|Any CPU = Debug x86|Any CPU
@@ -572,6 +574,26 @@ Global
 		{B3629009-205C-4986-8E22-C121F0A30906}.Release|ARM.ActiveCfg = Release|Any CPU
 		{B3629009-205C-4986-8E22-C121F0A30906}.Release|x64.ActiveCfg = Release|Any CPU
 		{B3629009-205C-4986-8E22-C121F0A30906}.Release|x86.ActiveCfg = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug x86|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug x86|Any CPU.Build.0 = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug x86|ARM.ActiveCfg = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug x86|x64.ActiveCfg = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug x86|x86.ActiveCfg = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release_Test|Any CPU.ActiveCfg = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release_Test|Any CPU.Build.0 = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release_Test|ARM.ActiveCfg = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release_Test|x64.ActiveCfg = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release_Test|x86.ActiveCfg = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release|ARM.ActiveCfg = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release|x64.ActiveCfg = Release|Any CPU
+		{4EA73D38-5443-4A40-93AB-4869202EFFFC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

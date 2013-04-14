@@ -172,7 +172,7 @@ namespace Octgn
             Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
-                                     OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
+                                     Const.ClientName, Const.OctgnVersion, Const.OctgnVersion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version);
             // Load all game markers
             foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
@@ -237,7 +237,7 @@ namespace Octgn
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug
-            PlayWindow mainWin = Program.PlayWindow;
+            PlayWindow mainWin = WindowManager.PlayWindow;
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
         }
 
@@ -267,7 +267,7 @@ namespace Octgn
 
         //Temporarily store group visibility information for LoadDeck. //bug (google) #20
 
-        public void LoadDeck(DataNew.Entities.IDeck deck)
+        public void LoadDeck(IDeck deck)
         {
             Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
             var def = Program.GameEngine.Definition;
@@ -279,7 +279,7 @@ namespace Octgn
             var groups = new Play.Group[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
             int j = 0;
-            foreach (DataNew.Entities.Section section in deck.Sections)
+            foreach (ISection section in deck.Sections)
             {
                 var sectionDef = deckDef[section.Name];
                 if (sectionDef == null)
@@ -295,7 +295,7 @@ namespace Octgn
                     gtmps.Add(gt);
                     group.SetVisibility(false, false);
                 }
-                foreach (DataNew.Entities.MultiCard element in section.Cards)
+                foreach (IMultiCard element in section.Cards)
                 {
                     DataNew.Entities.Card mod = Definition.GetCardById(element.Id);
                     for (int i = 0; i < element.Quantity; i++)

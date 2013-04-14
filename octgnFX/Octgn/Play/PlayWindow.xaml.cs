@@ -62,6 +62,8 @@ namespace Octgn.Play
         public PlayWindow(bool islocal = false)
             : base()
         {
+            Program.Dispatcher = Dispatcher;
+            DataContext = Program.GameEngine;
             InitializeComponent();
             _isLocal = islocal;
             //Application.Current.MainWindow = this;
@@ -73,14 +75,6 @@ namespace Octgn.Play
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
         {
-            
-        //}
-
-        //protected override void OnInitialized(EventArgs e)
-        //{
-        //    base.OnInitialized(e);
-            Program.Dispatcher = Dispatcher;
-            DataContext = Program.GameEngine;
 
             _fadeIn = (Storyboard) Resources["ImageFadeIn"];
             _fadeOut = (Storyboard) Resources["ImageFadeOut"];
@@ -99,14 +93,6 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
-            
-            //TODO: load the rules here or somewhere else again.
-            //if (!PartExists("http://schemas.octgn.org/game/rules"))
-            //{
-            //    Rules.Visibility = Visibility.Hidden;
-            //    Help.Visibility = Visibility.Hidden;
-            //}
-
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
@@ -115,11 +101,10 @@ namespace Octgn.Play
             if (fname != "/developer") return;
 #endif
             Console.Visibility = Visibility.Visible;
-            Loaded += (sender, args) =>
-                          {
-                              var wnd = new InteractiveConsole {Owner = this};
-                              wnd.Show();
-                          };
+            if (Program.GameEngine.Definition.Fonts.Count > 0)
+            {
+                UpdateFont();
+            }
         }
 
         private void UpdateFont()
@@ -240,7 +225,7 @@ namespace Octgn.Play
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            Program.PlayWindow = null;
+            WindowManager.PlayWindow = null;
             Program.StopGame();            
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
         }
@@ -478,7 +463,7 @@ namespace Octgn.Play
             e.Handled = true;
             //var wnd = new AboutWindow() { Owner = this };
             //wnd.ShowDialog();
-            Process.Start(Program.WebsitePath);
+            Process.Start(AppConfig.WebsitePath);
         }
 
         private void ConsoleClicked(object sender, RoutedEventArgs e)
@@ -501,24 +486,6 @@ namespace Octgn.Play
                     this.limitedTab.Visibility = Visibility.Visible;
                     this.ribbon.SelectedItem = this.limitedTab;
                 }));
-        }
-
-        public static string txt = "rul";
-
-        private void ShowRules(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true;
-            var wnd = new RulesWindow {Owner = this};
-            txt = "rul";
-            wnd.ShowDialog();
-        }
-
-        private void ShowHelp(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true;
-            var wnd = new RulesWindow { Owner = this };
-            txt = "hlp";
-            wnd.ShowDialog();
         }
 
         internal void HideBackstage()
@@ -584,6 +551,18 @@ namespace Octgn.Play
                 }
 
             }
+        }
+
+        private void KillJoshJohnson(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var s = sender as FrameworkElement;
+            if (s == null) return;
+            var document = s.DataContext as Document;
+            if (document == null) return;
+            var wnd = new RulesWindow(document) { Owner = this };
+            wnd.ShowDialog();
+
         }
     }
 

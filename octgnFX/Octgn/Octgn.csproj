@@ -238,6 +238,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AppConfig.cs" />
+    <Compile Include="Const.cs" />
     <Compile Include="Controls\ChatBar.cs" />
     <Compile Include="Controls\ChatBarItem.cs" />
     <Compile Include="Controls\ChatControl.xaml.cs">
@@ -281,7 +283,7 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GameManagement\GameFeedManager.cs" />
+    <Compile Include="GameUpdater.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Tabs\GameManagement\FeedGameViewModel.cs" />
     <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
@@ -479,6 +481,7 @@
     <Compile Include="Utils\XmlInstaller.cs" />
     <Compile Include="Utils\XmlSetParser.cs" />
     <Compile Include="Utils\XmlSimpleValidate.cs" />
+    <Compile Include="WindowManager.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
@@ -1029,6 +1032,10 @@
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>
       <Name>Octgn.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Tools.Proxytest\Octgn.Tools.Proxytest.csproj">
+      <Project>{4ea73d38-5443-4a40-93ab-4869202efffc}</Project>
+      <Name>Octgn.Tools.Proxytest</Name>
     </ProjectReference>
     <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>

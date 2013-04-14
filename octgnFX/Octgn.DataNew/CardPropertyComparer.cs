@@ -6,7 +6,7 @@
 
     using Octgn.DataNew.Entities;
 
-    public class CardPropertyComparer : IComparer, IComparer<Card>
+    public class CardPropertyComparer : IComparer, IComparer<ICard>
     {
         private readonly bool _isName;
         private readonly string _propertyName;
@@ -21,14 +21,14 @@
 
         int IComparer.Compare(object x, object y)
         {
-            return Compare(x as Card, y as Card);
+            return Compare(x as ICard, y as ICard);
         }
 
         #endregion
 
         #region IComparer<CardModel> Members
 
-        public int Compare(Card x, Card y)
+        public int Compare(ICard x, ICard y)
         {
             if (_isName)
                 return String.CompareOrdinal(x.Name, y.Name);
