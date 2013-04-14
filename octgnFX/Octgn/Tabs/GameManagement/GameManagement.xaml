@@ -18,10 +18,11 @@
             <RowDefinition Height="100*"/>
         </Grid.RowDefinitions>
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
-        <WrapPanel Margin="2,2,0,0" IsEnabled="{Binding ButtonsEnabled}">
+        <WrapPanel Margin="2,2,0,0" IsEnabled="{Binding ButtonsEnabled}" Grid.ColumnSpan="2">
             <Button Click="ButtonAddClick" Content="Add" Width="40" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
             <Button Click="ButtonRemoveClick" Content="Remove" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
             <Button Click="ButtonAddo8gClick" Content="Add o8g" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
+            <Button Click="ButtonAddo8cClick" Content="Add o8c" Width="60" Height="30" VerticalAlignment="Center" Margin="0,0,5,0"></Button>
         </WrapPanel>
         <ListBox Grid.Row="1" ItemsSource="{Binding Feeds}" SelectedItem="{Binding Selected,Mode=TwoWay}">
             <ListBox.ItemTemplate>

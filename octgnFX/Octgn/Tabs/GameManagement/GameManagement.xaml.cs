@@ -225,6 +225,38 @@ namespace Octgn.Tabs.GameManagement
             }
         }
 
+        private void ButtonAddo8cClick(object sender, RoutedEventArgs e)
+        {
+            var of = new System.Windows.Forms.OpenFileDialog();
+            of.Filter = "Octgn Card Package (*.o8c) |*.o8c";
+            var result = of.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if (!File.Exists(of.FileName)) return;
+                try
+                {
+                    GameManager.Get().Installo8c(of.FileName);
+                    MessageBox.Show(
+                        "The image pack was installed.", "Install", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (UserMessageException ex)
+                {
+                    Log.Warn("Could not install o8c " + of.FileName + ".",ex);
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warn("Could not install o8c " + of.FileName + ".", ex);
+                    MessageBox.Show(
+                        "Could not install o8c " + of.FileName
+                        + ". Please make sure it isn't in use and that you have access to it.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+            }
+        }
+
         private void ButtonInstallUninstallClick(object sender, RoutedEventArgs e)
         {
             if (WindowManager.PlayWindow != null)

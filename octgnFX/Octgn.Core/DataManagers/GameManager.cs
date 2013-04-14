@@ -6,12 +6,15 @@
     using System.Linq;
     using System.Reflection;
 
+    using Ionic.Zip;
+
     using NuGet;
 
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.Library;
+    using Octgn.Library.Exceptions;
 
     using log4net;
 
@@ -99,6 +102,28 @@
             }
             this.OnGameListChanged();
 
+        }
+
+        public void Installo8c(string filename)
+        {
+            try
+            {
+                if(!Ionic.Zip.ZipFile.IsZipFile(filename))
+                    throw new UserMessageException("This is not a valid o8c file.");
+                if(!ZipFile.CheckZip(filename))
+                    throw new UserMessageException("This is not a valid o8c file.");
+                var zipFile = ZipFile.Read(filename);
+                zipFile.ExtractAll(Paths.Get().DatabasePath,ExtractExistingFileAction.OverwriteSilently);
+            }
+            catch (UserMessageException e)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Log.Error("",e);
+                throw new UserMessageException("There was an error. If this keeps happening please let us know.");
+            }
         }
 
         public void UninstallGame(Game game)
