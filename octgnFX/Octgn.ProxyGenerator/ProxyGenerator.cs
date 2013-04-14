@@ -56,6 +56,10 @@ namespace Octgn.ProxyGenerator
                         {
                             removedProps.Add(prop);
                         }
+                        if (!removedProps.Contains(prop) && (values[prop.Name] == null || values[prop.Name].Length == 0))
+                        {
+                            removedProps.Add(prop);
+                        }
                     }
                     foreach (Property prop in removedProps)
                     {
