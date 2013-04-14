@@ -67,14 +67,14 @@
                 {
                     foreach (var f in this.GetFeeds())
                     {
-                        Log.InfoFormat("Getting feed {0} {1}",f.Name,f.Url);
+                        Log.InfoFormat("Getting feed {0} {1}", f.Name, f.Url);
                         var repo = PackageRepositoryFactory.Default.CreateRepository(f.Url);
                         var newestPackage = repo.FindPackagesById(g.Id.ToString()).FirstOrDefault(x => x.IsAbsoluteLatestVersion);
                         if (newestPackage == null) continue;
                         Log.InfoFormat("Got feed {0} {1}", f.Name, f.Url);
                         if (newestPackage.Version.Version > g.Version)
                         {
-                            Log.InfoFormat("Update found. Updating from {0} to {1}",g.Version,newestPackage.Version.Version);
+                            Log.InfoFormat("Update found. Updating from {0} to {1}", g.Version, newestPackage.Version.Version);
                             DataManagers.GameManager.Get().InstallGame(newestPackage);
                             break;
                         }
@@ -84,7 +84,7 @@
             }
             catch (Exception e)
             {
-                Log.Error("Error checking for updates",e);
+                Log.Error("Error checking for updates", e);
             }
         }
 
@@ -106,14 +106,14 @@
         /// <param name="feed">Feed url</param>
         public void AddFeed(string name, string feed)
         {
-            Log.InfoFormat("Adding Feed {0} {1}",name,feed);
+            Log.InfoFormat("Adding Feed {0} {1}", name, feed);
             if (!SingletonContext.ValidateFeedUrl(feed))
-                throw new UserMessageException("{0} is not a valid feed.",feed);
+                throw new UserMessageException("{0} is not a valid feed.", feed);
             if (SimpleConfig.Get().GetFeeds().Any(x => x.Name.ToLower() == name.ToLower()))
-                throw new UserMessageException("Feed name {0} already exists.",name);
+                throw new UserMessageException("Feed name {0} already exists.", name);
             SimpleConfig.Get().AddFeed(new NamedUrl(name, feed));
             this.FireOnUpdateFeedList();
-            Log.InfoFormat("Feed {0} {1} added.",name,feed);
+            Log.InfoFormat("Feed {0} {1} added.", name, feed);
         }
 
         /// <summary>
@@ -122,22 +122,42 @@
         /// <param name="name">Feed name</param>
         public void RemoveFeed(string name)
         {
-            Log.InfoFormat("Removing feed {0}",name);
+            Log.InfoFormat("Removing feed {0}", name);
             SimpleConfig.Get().RemoveFeed(new NamedUrl(name, ""));
             this.FireOnUpdateFeedList();
-            Log.InfoFormat("Removed feed {0}",name);
+            Log.InfoFormat("Removed feed {0}", name);
         }
 
         public void AddToLocalFeed(string file)
         {
+            this.VerifyPackage(file);
             var fi = new FileInfo(file);
             var newFileName = fi.Name.Replace(fi.Extension, ".nupkg");
             var newpath = Path.Combine(Paths.Get().LocalFeedPath, newFileName);
-            Log.InfoFormat("Adding to local feed {0} to {1}",file,newpath);
+            Log.InfoFormat("Adding to local feed {0} to {1}", file, newpath);
             if (!File.Exists(file)) return;
-            File.Copy(file,newpath);
+            File.Copy(file, newpath);
             this.FireOnUpdateFeedList();
-            Log.InfoFormat("Feed {0} Added at {1}",file,newpath);
+            Log.InfoFormat("Feed {0} Added at {1}", file, newpath);
+        }
+
+        internal void VerifyPackage(string filename)
+        {
+            try
+            {
+                var fi = new FileInfo(filename);
+                var tempPath = new FileInfo(Path.Combine(Path.GetTempPath(), "octgn", Guid.NewGuid().ToString(), fi.Name.Replace(fi.Extension,".nupkg")));
+                if (!File.Exists(filename)) return;
+                if (!Directory.Exists(tempPath.Directory.FullName)) Directory.CreateDirectory(tempPath.Directory.FullName);
+                File.Copy(filename,tempPath.FullName,true);
+                var repo = new LocalPackageRepository(tempPath.Directory.FullName);
+                var arr = repo.GetPackages().ToArray();
+                Log.Info(arr.Length);
+            }
+            catch (Exception e)
+            {
+                throw new UserMessageException("The file {0} is invalid.",filename);
+            }
         }
 
         public IEnumerable<IPackage> GetPackages(NamedUrl url)
@@ -147,7 +167,7 @@
                 Log.Info("Getting packages for null NamedUrl");
                 return new List<IPackage>();
             }
-            Log.InfoFormat("Getting packages for feed {0}:{1}",url.Name,url.Url);
+            Log.InfoFormat("Getting packages for feed {0}:{1}", url.Name, url.Url);
             var ret = new List<IPackage>();
             ret = PackageRepositoryFactory.Default.CreateRepository(url.Url).GetPackages().ToList();
             Log.InfoFormat("Finished getting packages for feed {0}:{1}", url.Name, url.Url);
@@ -173,7 +193,7 @@
                         Array.Clear(buffer, 0, buffer.Length);
                         len = sr.Read(buffer, 0, 1024);
                     }
-                    File.WriteAllBytes(p,byteList.ToArray());
+                    File.WriteAllBytes(p, byteList.ToArray());
                 }
             }
         }
@@ -188,27 +208,27 @@
         /// <returns>Returns true if it is, or false if it isn't</returns>
         public bool ValidateFeedUrl(string feed)
         {
-            Log.InfoFormat("Validating feed url {0}",feed);
+            Log.InfoFormat("Validating feed url {0}", feed);
             if (PathValidator.IsValidUrl(feed) && PathValidator.IsValidSource(feed))
             {
-                Log.InfoFormat("Path Validator says feed {0} is valid",feed);
+                Log.InfoFormat("Path Validator says feed {0} is valid", feed);
                 try
                 {
-                    Log.InfoFormat("Trying to query feed {0}",feed);
+                    Log.InfoFormat("Trying to query feed {0}", feed);
                     var repo = PackageRepositoryFactory.Default.CreateRepository(feed);
                     var list = repo.GetPackages().ToList();
                     // This happens so that enumerating the list isn't optimized away.
-                    foreach(var l in list)
+                    foreach (var l in list)
                         System.Diagnostics.Trace.WriteLine(l.Id);
-                    Log.InfoFormat("Queried feed {0}, feed is valid",feed);
+                    Log.InfoFormat("Queried feed {0}, feed is valid", feed);
                     return true;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    Log.WarnFormat("{0} is an invalid feed.",feed);
+                    Log.WarnFormat("{0} is an invalid feed.", feed);
                 }
             }
-            Log.InfoFormat("Path validator failed for feed {0}",feed);
+            Log.InfoFormat("Path validator failed for feed {0}", feed);
             return false;
         }
 

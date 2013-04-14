@@ -19,6 +19,7 @@ namespace Octgn.Tabs.GameManagement
     using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.Extentions;
+    using Octgn.Library.Exceptions;
     using Octgn.Library.Networking;
 
     using log4net;
@@ -205,6 +206,11 @@ namespace Octgn.Tabs.GameManagement
                 {
                     GameFeedManager.Get().AddToLocalFeed(of.FileName);
                     OnPropertyChanged("Packages");
+                }
+                catch (UserMessageException ex)
+                {
+                    Log.Warn("Could not add " + of.FileName + " to local feed.",ex);
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
