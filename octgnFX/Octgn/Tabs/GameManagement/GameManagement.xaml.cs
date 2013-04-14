@@ -16,6 +16,7 @@ namespace Octgn.Tabs.GameManagement
     using NuGet;
 
     using Octgn.Annotations;
+    using Octgn.Controls;
     using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.Extentions;
@@ -257,6 +258,16 @@ namespace Octgn.Tabs.GameManagement
             }
         }
 
+        private WaitingDialog ProcessTask(Action action, Action completeAction,string title, string message)
+        {
+            ButtonsEnabled = false;
+            var dialog = new WaitingDialog();
+            dialog.OnClose += (o, result) => ButtonsEnabled = true;
+            dialog.OnClose += (o, result) => completeAction();
+            dialog.Show(DialogPlaceHolder, action,title,message);
+            return dialog;
+        }
+
         private bool installuninstallprocessing = false;
         private void ButtonInstallUninstallClick(object sender, RoutedEventArgs e)
         {
@@ -291,54 +302,87 @@ namespace Octgn.Tabs.GameManagement
                     var game = GameManager.Get().GetById(model.Id);
                     if (game != null)
                     {
-                        try
-                        {
-                            GameManager.Get().UninstallGame(game);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error("Could not fully uninstall game " + model.Package.Title, ex);
-                        }
+                        this.ProcessTask(
+                            () =>
+                                {
+                                    try
+                                    {
+                                        GameManager.Get().UninstallGame(game);
+                                    }
+                                    catch (UnauthorizedAccessException ex)
+                                    {
+                                        Dispatcher.Invoke(new Action(() => MessageBox.Show(
+                                            "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
+                                            "Error",
+                                            MessageBoxButton.OK,
+                                            MessageBoxImage.Error)));
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Log.Error("Could not fully uninstall game " + model.Package.Title, ex);
+                                    }
+                                },
+                            () => { this.installuninstallprocessing = false; },
+                            "Uninstalling Game",
+                            "Please wait while your game is uninstalled. You can switch tabs if you like.");
                     }
                 }
                 else
                 {
-                    try
-                    {
-                        GameManager.Get().InstallGame(model.Package);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error("Could not install game " + model.Package.Title, ex);
-                        var res =
-                            MessageBox.Show(
-                                "There was a problem installing " + model.Package.Title
-                                + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
-                                + "\n\nDo you want to get in contact with the game developer who broke this busted game?",
-                                "Error",
-                                MessageBoxButton.YesNo,
-                                MessageBoxImage.Exclamation);
-
-                        if (res == MessageBoxResult.Yes)
+                    this.ProcessTask(
+                    () =>
                         {
                             try
                             {
-                                System.Diagnostics.Process.Start(model.Package.ProjectUrl.ToString());
-
+                                GameManager.Get().InstallGame(model.Package);
                             }
-                            catch (Exception exx)
+                            catch (UnauthorizedAccessException ex)
                             {
-                                Log.Warn(
-                                    "Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",
-                                    exx);
-                                MessageBox.Show(
-                                    "We could not open your browser. Please set a default browser and try again",
+                                Dispatcher.Invoke(new Action(() => MessageBox.Show(
+                                    "Could not install the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
                                     "Error",
                                     MessageBoxButton.OK,
-                                    MessageBoxImage.Error);
+                                    MessageBoxImage.Error)));
                             }
-                        }
-                    }
+                            catch (Exception ex)
+                            {
+                                Log.Error("Could not install game " + model.Package.Title, ex);
+                                Dispatcher.Invoke(new Action(() => { 
+                                                                  var res =
+                                                                      MessageBox.Show(
+                                                                          "There was a problem installing " + model.Package.Title
+                                                                          + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
+                                                                          + "\n\nDo you want to get in contact with the game developer who broke this busted game?",
+                                                                          "Error",
+                                                                          MessageBoxButton.YesNo,
+                                                                          MessageBoxImage.Exclamation);
+
+                                                                  if (res == MessageBoxResult.Yes)
+                                                                  {
+                                                                      try
+                                                                      {
+                                                                          System.Diagnostics.Process.Start(model.Package.ProjectUrl.ToString());
+
+                                                                      }
+                                                                      catch (Exception exx)
+                                                                      {
+                                                                          Log.Warn(
+                                                                              "Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",
+                                                                              exx);
+                                                                          MessageBox.Show(
+                                                                              "We could not open your browser. Please set a default browser and try again",
+                                                                              "Error",
+                                                                              MessageBoxButton.OK,
+                                                                              MessageBoxImage.Error);
+                                                                      }
+                                                                  }
+                                }));
+                            }
+
+                        },
+                    () => { this.installuninstallprocessing = false; },
+                    "Installing Game",
+                    "Please wait while your game is installed. You can switch tabs if you like.");
                 }
 
             }
@@ -350,10 +394,6 @@ namespace Octgn.Tabs.GameManagement
                     "Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-            }
-            finally
-            {
-                installuninstallprocessing = false;
             }
         }
 

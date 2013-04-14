@@ -259,6 +259,9 @@
     <Compile Include="Controls\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WaitingDialog.xaml.cs">
+      <DependentUpon>WaitingDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CustomGames.xaml.cs">
       <DependentUpon>CustomGames.xaml</DependentUpon>
     </Compile>
@@ -666,6 +669,10 @@
     <Page Include="Controls\ContactList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\WaitingDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\CustomGames.xaml">
       <SubType>Designer</SubType>
