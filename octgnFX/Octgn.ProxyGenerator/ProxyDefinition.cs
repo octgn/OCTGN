@@ -12,7 +12,9 @@
     {
         public object Key { get; internal set; }
         public TemplateManager TemplateSelector { get; internal set; }
+        public BlockManager BlockManager { get; internal set; }
         internal XmlDocument Document;
+
         public string RootPath { get; internal set; }
 
         public ProxyDefinition(object key, string path, string rootPath)
@@ -26,7 +28,7 @@
         public Image GenerateProxyImage(Dictionary<string, string> values)
         {
             TemplateDefinition cardDef = TemplateSelector.GetTemplate(values);
-            Image ret = ProxyGenerator.GenerateProxy(RootPath,cardDef, values);
+            Image ret = ProxyGenerator.GenerateProxy(BlockManager,RootPath,cardDef, values);
             return (ret);
         }
 
@@ -59,9 +61,8 @@
         internal void LoadTemplates()
         {
             XmlNodeList blockList = Document.GetElementsByTagName("blocks");
-            BlockManager.GetInstance().ClearBlocks();
-            BlockManager.GetInstance().rootPath = RootPath;
-            BlockManager.GetInstance().LoadBlocks(blockList[0]);
+            BlockManager = new BlockManager(RootPath);
+            BlockManager.LoadBlocks(blockList[0]);
 
             XmlNodeList templateList = Document.GetElementsByTagName("template");
             foreach (XmlNode template in templateList)

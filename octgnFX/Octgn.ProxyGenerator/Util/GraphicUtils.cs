@@ -124,7 +124,7 @@ namespace Octgn.ProxyGenerator.Util
             if (section.text.font != null)
             {
                 PrivateFontCollection col = new PrivateFontCollection();
-                col.AddFontFile(Path.Combine(BlockManager.GetInstance().rootPath, section.text.font));
+                col.AddFontFile(Path.Combine(section.Manager.RootPath, section.text.font));
                 family = col.Families[0];
             }
             int size = section.text.size;
