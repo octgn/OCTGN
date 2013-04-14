@@ -67,11 +67,14 @@
                 {
                     foreach (var f in this.GetFeeds())
                     {
+                        Log.InfoFormat("Getting feed {0} {1}",f.Name,f.Url);
                         var repo = PackageRepositoryFactory.Default.CreateRepository(f.Url);
                         var newestPackage = repo.FindPackagesById(g.Id.ToString()).FirstOrDefault(x => x.IsAbsoluteLatestVersion);
                         if (newestPackage == null) continue;
+                        Log.InfoFormat("Got feed {0} {1}", f.Name, f.Url);
                         if (newestPackage.Version.Version > g.Version)
                         {
+                            Log.InfoFormat("Update found. Updating from {0} to {1}",g.Version,newestPackage.Version.Version);
                             DataManagers.GameManager.Get().InstallGame(newestPackage);
                             break;
                         }

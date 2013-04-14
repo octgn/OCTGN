@@ -12,6 +12,8 @@ using Skylabs.Lobby.Threading;
 
 namespace Octgn.Windows
 {
+    using System.Threading.Tasks;
+
     using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
@@ -86,7 +88,7 @@ namespace Octgn.Windows
         private void UpdateGames()
         {
             this.UpdateStatus("Updating Games...");
-            GameFeedManager.Get().CheckForUpdates();
+            Task.Factory.StartNew(GameFeedManager.Get().CheckForUpdates).Wait(1500);
         }
 
         private void CheckForUpdates()
