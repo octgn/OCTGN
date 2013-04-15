@@ -24,11 +24,13 @@
 
         internal GameUpdater()
         {
+            Log.Info("Creating");
             LocalFeedWatcher = new FileSystemWatcher(Paths.Get().LocalFeedPath);
-            LocalFeedWatcher.Changed += (sender, args) => this.RefreshTimerOnElapsed(this, null);
-            LocalFeedWatcher.Created += (sender, args) => this.RefreshTimerOnElapsed(this, null);
-            LocalFeedWatcher.Deleted += (sender, args) => this.RefreshTimerOnElapsed(this, null);
-            LocalFeedWatcher.Renamed += (sender, args) => this.RefreshTimerOnElapsed(this, null);
+            LocalFeedWatcher.Changed += FileWatcherEvent;
+            LocalFeedWatcher.Created += FileWatcherEvent;
+            LocalFeedWatcher.Deleted += FileWatcherEvent;
+            LocalFeedWatcher.Renamed += FileWatcherEvent;
+            Log.Info("Created");
         }
 
         #endregion Singleton
@@ -38,6 +40,20 @@
         public bool IsRunning { get; internal set; }
         internal Timer RefreshTimer { get; set; }
         internal FileSystemWatcher LocalFeedWatcher { get; set; }
+
+        internal virtual void FileWatcherEvent(object sender, FileSystemEventArgs args)
+        {
+            try
+            {
+                Log.InfoFormat("File event received {0} {1}",args.FullPath,args.ChangeType);
+                this.RefreshTimerOnElapsed(this, null);
+                Log.InfoFormat("File event no errors {0}", args.FullPath);
+            }
+            finally
+            {
+                Log.InfoFormat("File event complete {0}", args.FullPath);
+            }
+        }
 
         #region StartStop
         public void Start()
@@ -87,11 +103,26 @@
             }
             Log.Info("Timer destruction complete");
         }
+        internal static readonly object timerLock = new object();
         internal virtual void RefreshTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            Log.Info("Timer Ticks");
-            if (WindowManager.PlayWindow != null || WindowManager.DeckEditor != null) return;
-            GameFeedManager.Get().CheckForUpdates();
+            Log.Info("Updater ticks");
+            lock (timerLock)
+            {
+                Log.Info("Entered timer lock");
+                if (WindowManager.PlayWindow != null || WindowManager.DeckEditor != null)
+                {
+                    Log.InfoFormat(
+                        "Can't update PlayWindow={0} DeckEditor={1}",
+                        WindowManager.PlayWindow != null,
+                        WindowManager.DeckEditor != null);
+                    return;
+                }
+                Log.Info("Checking for updates");
+                GameFeedManager.Get().CheckForUpdates();
+                Log.InfoFormat("Update check complete");
+            }
+            Log.Info("Exited timer lock");
         }
         #endregion Timer
     }
