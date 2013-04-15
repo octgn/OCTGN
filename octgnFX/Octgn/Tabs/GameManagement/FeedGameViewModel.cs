@@ -42,6 +42,14 @@
                 return isInstalled;
             }
         }
+        public Version InstalledVersion
+        {
+            get
+            {
+                if(!Installed)return new Version();
+                return GameManager.Get().GetById(Id).Version;
+            }
+        }
         public string InstallButtonText
         {
             get

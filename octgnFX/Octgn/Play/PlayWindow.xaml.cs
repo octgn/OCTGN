@@ -30,6 +30,7 @@ namespace Octgn.Play
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
+    using Octgn.Library;
     using Octgn.Library.Exceptions;
 
     public partial class PlayWindow
@@ -233,19 +234,23 @@ namespace Octgn.Play
         private void Open(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
- 
+
+            var loadDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
             // Make sure that Prefs.LastFolder exists
-            if (!Directory.Exists(Prefs.LastFolder)) Prefs.LastFolder = Prefs.DataDirectory;
+            if (Directory.Exists(Program.GameEngine.Definition.DecksPath()))
+            {
+                loadDirectory = Program.GameEngine.Definition.DecksPath();
+            }
             // Show the dialog to choose the file
 
             var ofd = new OpenFileDialog
                           {
                               Filter = "Octgn deck files (*.o8d) | *.o8d",
-                              InitialDirectory = Prefs.LastFolder
+                              InitialDirectory = loadDirectory
                           };
             //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
             if (ofd.ShowDialog() != true) return;
-            Prefs.LastFolder = Path.GetDirectoryName(ofd.FileName);
             // Try to load the file contents
             try
             {

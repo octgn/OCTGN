@@ -16,9 +16,11 @@ namespace Octgn.Tabs.GameManagement
     using NuGet;
 
     using Octgn.Annotations;
+    using Octgn.Controls;
     using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.Extentions;
+    using Octgn.Library.Exceptions;
     using Octgn.Library.Networking;
 
     using log4net;
@@ -124,7 +126,12 @@ namespace Octgn.Tabs.GameManagement
         internal void UpdatePackageList()
         {
             Dispatcher.Invoke(new Action(() => { this.ButtonsEnabled = false; }));
-            var packs = GameFeedManager.Get().GetPackages(Selected).Where(x=>x.IsAbsoluteLatestVersion).Select(x => new FeedGameViewModel(x)).ToList();
+            var packs = GameFeedManager.Get()
+                .GetPackages(Selected)
+                .Where(x=>x.IsAbsoluteLatestVersion)
+                .GroupBy(x=>x.Id)
+                .Select(x=>x.OrderByDescending(y=>y.Version.Version).First())
+                .Select(x => new FeedGameViewModel(x)).ToList();
             foreach (var package in packages.ToList())
             {
                 var pack = package;
@@ -201,6 +208,11 @@ namespace Octgn.Tabs.GameManagement
                     GameFeedManager.Get().AddToLocalFeed(of.FileName);
                     OnPropertyChanged("Packages");
                 }
+                catch (UserMessageException ex)
+                {
+                    Log.Warn("Could not add " + of.FileName + " to local feed.",ex);
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
                 catch (Exception ex)
                 {
                     Log.Warn("Could not add " + of.FileName + " to local feed.",ex);
@@ -214,82 +226,185 @@ namespace Octgn.Tabs.GameManagement
             }
         }
 
+        private bool installo8cprocessing = false;
+        private void ButtonAddo8cClick(object sender, RoutedEventArgs e)
+        {
+            if (installo8cprocessing) return;
+            installo8cprocessing = true;
+            var of = new System.Windows.Forms.OpenFileDialog();
+            of.Filter = "Octgn Card Package (*.o8c) |*.o8c";
+            var result = of.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if (!File.Exists(of.FileName)) return;
+                this.ProcessTask(
+                            () =>
+                                {
+                                    try
+                                    {
+                                        GameManager.Get().Installo8c(of.FileName);
+                                        MessageBox.Show(
+                                            "The image pack was installed.", "Install", MessageBoxButton.OK, MessageBoxImage.Information);
+                                    }
+                                    catch (UserMessageException ex)
+                                    {
+                                        Log.Warn("Could not install o8c " + of.FileName + ".",ex);
+                                        MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Log.Warn("Could not install o8c " + of.FileName + ".", ex);
+                                        MessageBox.Show(
+                                            "Could not install o8c " + of.FileName
+                                            + ". Please make sure it isn't in use and that you have access to it.",
+                                            "Error",
+                                            MessageBoxButton.OK,
+                                            MessageBoxImage.Error);
+                                    }
+                                },
+                            () => { this.installo8cprocessing = false; },
+                            "Installing image pack.",
+                            "Please wait while your image pack is installed. You can switch tabs if you like.");
+            }
+        }
+
+        private WaitingDialog ProcessTask(Action action, Action completeAction,string title, string message)
+        {
+            ButtonsEnabled = false;
+            var dialog = new WaitingDialog();
+            dialog.OnClose += (o, result) => ButtonsEnabled = true;
+            dialog.OnClose += (o, result) => completeAction();
+            dialog.Show(DialogPlaceHolder, action,title,message);
+            return dialog;
+        }
+
+        private bool installuninstallprocessing = false;
         private void ButtonInstallUninstallClick(object sender, RoutedEventArgs e)
         {
-            if (WindowManager.PlayWindow != null)
+            if (installuninstallprocessing) return;
+            installuninstallprocessing = true;
+            try
             {
-                MessageBox.Show(
-                    "You can not install/uninstall games while you are in a game.",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return;
-            }
-            if (WindowManager.DeckEditor!= null)
-            {
-                MessageBox.Show(
-                    "You can not install/uninstall games while you are in the deck editor.",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-                return;
-            }
-            var button = e.Source as Button;
-            if(button == null || button.DataContext == null)return;
-            var model = button.DataContext as FeedGameViewModel;
-            if (model == null) return;
-            if (model.Installed)
-            {
-                var game = GameManager.Get().GetById(model.Id);
-                if (game != null)
+                if (WindowManager.PlayWindow != null)
                 {
-                    try
-                    {
-                        GameManager.Get().UninstallGame(game);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error("Could not fully uninstall game " + model.Package.Title,ex);
-                    }
-                }
-            }
-            else
-            {
-                try
-                {
-                    GameManager.Get().InstallGame(model.Package);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Could not install game " + model.Package.Title,ex);
-                    var res = MessageBox.Show(
-                        "There was a problem installing " + model.Package.Title
-                        + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
-                        +"\n\nDo you want to get in contact with the game developer who broke this busted game?",
+                    MessageBox.Show(
+                        "You can not install/uninstall games while you are in a game.",
                         "Error",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Exclamation);
-
-                    if (res == MessageBoxResult.Yes)
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+                if (WindowManager.DeckEditor != null)
+                {
+                    MessageBox.Show(
+                        "You can not install/uninstall games while you are in the deck editor.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+                var button = e.Source as Button;
+                if (button == null || button.DataContext == null) return;
+                var model = button.DataContext as FeedGameViewModel;
+                if (model == null) return;
+                if (model.Installed)
+                {
+                    var game = GameManager.Get().GetById(model.Id);
+                    if (game != null)
                     {
-                        try
-                        {
-                            System.Diagnostics.Process.Start(model.Package.ProjectUrl.ToString());
-
-                        }
-                        catch(Exception exx)
-                        {
-                            Log.Warn("Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",exx);
-                            MessageBox.Show(
-                                "We could not open your browser. Please set a default browser and try again",
-                                "Error",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                        }
+                        this.ProcessTask(
+                            () =>
+                                {
+                                    try
+                                    {
+                                        GameManager.Get().UninstallGame(game);
+                                    }
+                                    catch (UnauthorizedAccessException ex)
+                                    {
+                                        Dispatcher.Invoke(new Action(() => MessageBox.Show(
+                                            "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
+                                            "Error",
+                                            MessageBoxButton.OK,
+                                            MessageBoxImage.Error)));
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Log.Error("Could not fully uninstall game " + model.Package.Title, ex);
+                                    }
+                                },
+                            () => { this.installuninstallprocessing = false; },
+                            "Uninstalling Game",
+                            "Please wait while your game is uninstalled. You can switch tabs if you like.");
                     }
                 }
-            }
+                else
+                {
+                    this.ProcessTask(
+                    () =>
+                        {
+                            try
+                            {
+                                GameManager.Get().InstallGame(model.Package);
+                            }
+                            catch (UnauthorizedAccessException ex)
+                            {
+                                Dispatcher.Invoke(new Action(() => MessageBox.Show(
+                                    "Could not install the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
+                                    "Error",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error)));
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error("Could not install game " + model.Package.Title, ex);
+                                Dispatcher.Invoke(new Action(() => { 
+                                                                  var res =
+                                                                      MessageBox.Show(
+                                                                          "There was a problem installing " + model.Package.Title
+                                                                          + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
+                                                                          + "\n\nDo you want to get in contact with the game developer who broke this busted game?",
+                                                                          "Error",
+                                                                          MessageBoxButton.YesNo,
+                                                                          MessageBoxImage.Exclamation);
 
+                                                                  if (res == MessageBoxResult.Yes)
+                                                                  {
+                                                                      try
+                                                                      {
+                                                                          System.Diagnostics.Process.Start(model.Package.ProjectUrl.ToString());
+
+                                                                      }
+                                                                      catch (Exception exx)
+                                                                      {
+                                                                          Log.Warn(
+                                                                              "Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",
+                                                                              exx);
+                                                                          MessageBox.Show(
+                                                                              "We could not open your browser. Please set a default browser and try again",
+                                                                              "Error",
+                                                                              MessageBoxButton.OK,
+                                                                              MessageBoxImage.Error);
+                                                                      }
+                                                                  }
+                                }));
+                            }
+
+                        },
+                    () => { this.installuninstallprocessing = false; },
+                    "Installing Game",
+                    "Please wait while your game is installed. You can switch tabs if you like.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Mega Error", ex);
+                MessageBox.Show(
+                    "There was an error, please try again later or get in contact with us at http://www.octgn.net",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
         private void UrlMouseButtonUp(object sender, object whatever)

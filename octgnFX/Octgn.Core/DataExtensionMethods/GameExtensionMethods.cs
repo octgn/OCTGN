@@ -226,7 +226,8 @@
 
         public static ProxyDefinition GetCardProxyDef(this Game game)
         {
-            return DbContext.Get().ProxyDefinitions.FirstOrDefault(x => (Guid)x.Key == game.Id);
+            var retdef = DbContext.Get().ProxyDefinitions.FirstOrDefault(x => (Guid)x.Key == game.Id);
+            return retdef;
         }
     }
 }

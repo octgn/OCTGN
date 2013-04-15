@@ -20,7 +20,7 @@ namespace Octgn.ProxyGenerator
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static Image GenerateProxy(string rootPath, TemplateDefinition template, Dictionary<string,string> values)
+        public static Image GenerateProxy(BlockManager manager, string rootPath, TemplateDefinition template, Dictionary<string,string> values)
         {
             var path = Path.Combine(rootPath, template.src);
             Image temp = Image.FromFile(path);
@@ -32,7 +32,7 @@ namespace Octgn.ProxyGenerator
             {
                 foreach (LinkDefinition overlay in template.GetOverLayBlocks(values))
                 {
-                    BlockDefinition block = BlockManager.GetInstance().GetBlock(overlay.Block);
+                    BlockDefinition block = manager.GetBlock(overlay.Block);
                     if (block.type != "overlay")
                     {
                         continue;
@@ -43,7 +43,7 @@ namespace Octgn.ProxyGenerator
                 List<Property> removedProps = new List<Property>();
                 foreach (LinkDefinition section in template.GetTextBlocks(values))
                 {
-                    BlockDefinition block = BlockManager.GetInstance().GetBlock(section.Block);
+                    BlockDefinition block = manager.GetBlock(section.Block);
                     if (block.type != "text")
                     {
                         continue;
@@ -53,6 +53,10 @@ namespace Octgn.ProxyGenerator
                     foreach (Property prop in section.NestedProperties)
                     {
                         if (!values.ContainsKey(prop.Name))
+                        {
+                            removedProps.Add(prop);
+                        }
+                        if (!removedProps.Contains(prop) && (values[prop.Name] == null || values[prop.Name].Length == 0))
                         {
                             removedProps.Add(prop);
                         }

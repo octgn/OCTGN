@@ -1,17 +1,14 @@
 ﻿using Octgn.ProxyGenerator.Structs;
-using System;
-using System.Collections.Generic;
+
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Xml;
 
 namespace Octgn.ProxyGenerator.Definitions
 {
     public class BlockDefinition
     {
-
+        public BlockManager Manager { get; set; }
         public SectionStructs.Location location = new SectionStructs.Location { x = 0, y = 0 };
         public SectionStructs.WordWrap wordwrap = new SectionStructs.WordWrap { height = 0, width = 0 };
         public SectionStructs.Text text = new SectionStructs.Text { color = Color.White, size = 0 };
@@ -21,9 +18,10 @@ namespace Octgn.ProxyGenerator.Definitions
         public string type;
         public string src;
 
-        public static BlockDefinition LoadSectionDefinition(XmlNode node)
+        public static BlockDefinition LoadSectionDefinition(BlockManager manager, XmlNode node)
         {
             BlockDefinition ret = new BlockDefinition();
+            ret.Manager = manager;
 
             ret.id = node.Attributes["id"].Value;
             ret.type = node.Attributes["type"].Value;
@@ -57,7 +55,7 @@ namespace Octgn.ProxyGenerator.Definitions
                     if (prop.Attributes["font"] != null)
                     {
                         string relativePath = prop.Attributes["font"].Value;
-                        string rootPath = BlockManager.GetInstance().rootPath;
+                        string rootPath = manager.RootPath;
                         string combined = Path.Combine(rootPath, relativePath);
                         if (File.Exists(combined))
                         {

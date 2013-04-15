@@ -9,10 +9,14 @@ namespace Octgn.ProxyGenerator
 {
     public class BlockManager
     {
-        private static BlockManager instance = null;
-        public string rootPath = string.Empty;
+        public string RootPath = string.Empty;
 
         private List<BlockDefinition> blocks = new List<BlockDefinition>();
+
+        public BlockManager(string rootPath)
+        {
+            RootPath = rootPath;
+        }
 
         public void AddBlock(BlockDefinition block)
         {
@@ -61,7 +65,7 @@ namespace Octgn.ProxyGenerator
                 {
                     continue;
                 }
-                BlockDefinition blockDef = BlockDefinition.LoadSectionDefinition(subNode);
+                BlockDefinition blockDef = BlockDefinition.LoadSectionDefinition(this,subNode);
                 AddBlock(blockDef);
             }
         }
@@ -69,15 +73,6 @@ namespace Octgn.ProxyGenerator
         public void ClearBlocks()
         {
             blocks.Clear();
-        }
-
-        public static BlockManager GetInstance()
-        {
-            if (instance == null)
-            {
-                instance = new BlockManager();
-            }
-            return (instance);
         }
     }
 }

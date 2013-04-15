@@ -44,8 +44,8 @@
             }
             BasePath = FS.Path.GetDirectoryName(WorkingDirectory) + "\\";
             PluginPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Plugins");
-            DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
-            DatabasePath = FS.Path.Combine(DatabasePath, "master.db3");
+            //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
+            DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "GameDatabase");
             DataDirectory = SimpleConfig.Get().DataDirectory;
             ConfigDirectory = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Config");
             FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
