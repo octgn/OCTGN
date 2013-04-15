@@ -17,6 +17,7 @@
     using Octgn.DataNew.FileDB;
     using Octgn.Library;
     using Octgn.ProxyGenerator;
+    using log4net;
 
     public class GameSerializer : IFileDbSerializer
     {
@@ -592,9 +593,11 @@
 
     public class ProxyGeneratorSerializer : IFileDbSerializer
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public ICollectionDefinition Def { get; set; }
         internal gameProxygen ProxyGenFromDef { get; set; }
         internal Guid GameId { get; set; }
+        internal static ProxyDefinition bullshit { get; set; }
         public ProxyGeneratorSerializer(Guid gameId, gameProxygen proxygen)
         {
             ProxyGenFromDef = proxygen;
@@ -605,6 +608,16 @@
         {
             var game = DbContext.Get().Games.First(x => x.Id == GameId);
             var ret = new ProxyDefinition(GameId, fileName, new FileInfo(game.Filename).Directory.FullName);
+            Log.Warn(string.Format("Deserializing proxy: GameGuid: {0}, GamePath: {1}, ProxydefPath: {2}", ret.Key, ret.RootPath, fileName));
+            if (fileName.Contains(game.Id.ToString()))
+            {
+                bullshit = ret;
+            }
+            else
+            {
+                ret = bullshit;
+            }
+            
             return ret;
         }
 
