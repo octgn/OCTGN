@@ -5,6 +5,7 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Net;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
@@ -17,11 +18,14 @@
 
     using Skylabs.Lobby;
 
+    using log4net;
+
     using Client = Octgn.Networking.Client;
     using UserControl = System.Windows.Controls.UserControl;
 
     public partial class HostGameSettings : UserControl
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
         {
@@ -262,6 +266,7 @@
                     if (continueTask.IsFaulted)
                     {
                         error = "There was a problem, please try again.";
+                        Log.Debug("Start Game Error",continueTask.Exception);
                         SuccessfulHost = false;
                     }
                     else
