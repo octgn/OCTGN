@@ -17,11 +17,11 @@
   <xs:simpleType name="version">
     <xs:annotation>
       <xs:documentation>
-        Defines a version number: major.minor[.build[.revision]]
+        Defines a version number: major.minor.build.revision
       </xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
-      <xs:pattern value="\d+\.\d+(\.\d+(\.\d+)?)?" />
+      <xs:pattern value="\d+\.\d+\.\d+\.\d+" />
     </xs:restriction>
   </xs:simpleType>
 
