@@ -6,12 +6,15 @@
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
 
     using Octgn.Library.Exceptions;
     using Octgn.Library.Networking;
 
     using Polenter.Serialization;
+
+    using log4net;
 
     public interface ISimpleConfig
     {
@@ -52,6 +55,9 @@
 
         internal object LockObject = new Object();
 
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
         /// <summary>
         /// Special case since it's required in Octgn.Data, and Prefs can't go there
         /// </summary>
@@ -179,29 +185,52 @@
 
         public IEnumerable<NamedUrl> GetFeeds()
         {
-            var ret = new List<NamedUrl>();
-            ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
-            ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
-            ret.AddRange(this.GetFeedsList().ToList());
-            return ret;
+            try
+            {
+                Log.Info("Getting feeds");
+                var ret = new List<NamedUrl>();
+                ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
+                ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
+                Log.Info("Adding remote feeds from feed file");
+                ret.AddRange(this.GetFeedsList().ToList());
+                Log.Info("Got remote feeds from feed file");
+                return ret;
+
+            }
+            finally
+            {
+                Log.Info("Finished GetFeeds");
+            }
         }
 
         internal IEnumerable<NamedUrl> GetFeedsList()
         {
-            Stream stream = null;
-            while (!OpenFile(Paths.Get().FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
+            try
             {
-                Thread.Sleep(10);
+                Log.InfoFormat("Getting feed list {0}",Paths.Get().FeedListPath);
+                Stream stream = null;
+                while (!OpenFile(Paths.Get().FeedListPath, FileMode.OpenOrCreate, FileShare.None, TimeSpan.FromDays(1), out stream))
+                {
+                    Log.Info("Getting feed list file still locked.");
+                    Thread.Sleep(2000);
+                }
+                Log.Info("Making stream reader");
+                using (var sr = new StreamReader(stream))
+                {
+                    Log.Info("Reading feed file");
+                    var lines = sr.ReadToEnd()
+                        .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Where(x => !String.IsNullOrWhiteSpace(x.Trim()))
+                        .Select(x => x.Split(new[] { (char)1 }, StringSplitOptions.RemoveEmptyEntries))
+                        .Select(x => x.Length != 2 ? null : new NamedUrl(x[0].Trim(), x[1].Trim()))
+                        .Where(x => x != null).ToList();
+                    Log.Info("Read info file");
+                    return lines;
+                }
             }
-            using (var sr = new StreamReader(stream))
+            finally
             {
-                var lines = sr.ReadToEnd()
-                    .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Where(x=>!String.IsNullOrWhiteSpace(x.Trim()))
-                    .Select(x=>x.Split(new[]{(char)1},StringSplitOptions.RemoveEmptyEntries))
-                    .Select(x => x.Length != 2 ? null : new NamedUrl(x[0].Trim(), x[1].Trim()))
-                    .Where(x=>x != null).ToList();
-                return lines;
+                Log.Info("Finished");
             }
         }
 
@@ -255,21 +284,33 @@
 
         public bool OpenFile(string path, FileMode fileMode, FileShare share, TimeSpan timeout, out Stream stream)
         {
-            var endTime = DateTime.Now + timeout;
-            while (DateTime.Now < endTime)
+            try
             {
-                try
+                Log.InfoFormat("Open file {0} {1} {2} {3}",path,fileMode,share,timeout.ToString());
+                var endTime = DateTime.Now + timeout;
+                while (DateTime.Now < endTime)
                 {
-                    stream = File.Open(path, fileMode, FileAccess.ReadWrite, share);
-                    return true;
+                    Log.InfoFormat("Trying to lock file {0}",path);
+                    try
+                    {
+                        stream = File.Open(path, fileMode, FileAccess.ReadWrite, share);
+                        Log.InfoFormat("Got lock on file {0}",path);
+                        return true;
+                    }
+                    catch (IOException e)
+                    {
+                        Log.Warn("Could not aquire lock on file " + path,e);
+                    }
                 }
-                catch (IOException e)
-                {
-                    //ignore this
-                }
+                Log.WarnFormat("Timed out reading file {0}",path);
+                stream = null;
+                return false;
+
             }
-            stream = null;
-            return false;
+            finally
+            {
+                Log.InfoFormat("Finished {0}",path);
+            }
         }
     }
 }
