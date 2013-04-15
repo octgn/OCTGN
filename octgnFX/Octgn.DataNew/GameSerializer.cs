@@ -272,7 +272,8 @@
                 var coll =
                     Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                        .OverrideRoot(x => x.Directory("GameDatabase"))
-                       .SetPart(x => x.Property(y => y.Key));
+                       .SetPart(x=>x.Directory(ret.Id.ToString()));
+                       //.SetPart(x => x.Property(y => y.Key));
                 var pathParts = g.proxygen.definitionsrc.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                 for (var index = 0; index < pathParts.Length; index++)
                 {
