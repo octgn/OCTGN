@@ -15,12 +15,12 @@
   </xs:element>
   <xs:element name="templates" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
     <xs:complexType>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
         <xs:element ref="link" />
         <xs:element name="blocks">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="block" minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="block" minOccurs="1" maxOccurs="unbounded">
                 <xs:complexType>
                   <xs:sequence>
                     <xs:element name="location" minOccurs="1" maxOccurs="1">
