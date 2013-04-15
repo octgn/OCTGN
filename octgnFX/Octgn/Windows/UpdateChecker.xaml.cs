@@ -44,6 +44,7 @@ namespace Octgn.Windows
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
+            Log.Info("Starting");
             if (_hasLoaded) return;
             _hasLoaded = true;
             ThreadPool.QueueUserWorkItem(s =>
@@ -58,6 +59,7 @@ namespace Octgn.Windows
 
             });
             lblStatus.Content = "";
+            Log.Info("Finsihed");
         }
 
         private void LoadDatabase()
@@ -96,66 +98,79 @@ namespace Octgn.Windows
             UpdateStatus("Checking for updates...");
             try
             {
+                Log.InfoFormat("Getting update info from {0}",AppConfig.UpdateInfoPath);
                 string[] update = ReadUpdateXml(AppConfig.UpdateInfoPath);
-
+                Log.Info("Got update info");
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
                 var online = new Version(update[0]);
                 _isNotUpToDate = online > local;
+                Log.InfoFormat("Online: {0} Local:{1}",online,local);
                 _updateURL = update[1];
                 _downloadURL = update[2];
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 _isNotUpToDate = false;
                 _downloadURL = "";
+                Log.Error("Check For Updates Error",e);
             }
         }
 
         private void UpdateCheckDone()
         {
+            Log.Info("UpdateCheckDone");
             Dispatcher.Invoke(new Action(() =>
                                          {
                                              _realCloseWindow = true;
 											 if (_isNotUpToDate)
 											 {
-												 IsClosingDown = true;
+											     Log.Info("Not up to date.");
+											     IsClosingDown = true;
 
 											     var downloadUri = new Uri(_updateURL);
-                                                 string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
+											     string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
 
-												 UpdateStatus("Downloading new version.");
-												 var c = new WebClient();
-												 progressBar1.Maximum = 100;
-												 progressBar1.IsIndeterminate = false;
-												 progressBar1.Value = 0;
-												 c.DownloadFileCompleted += delegate(object sender, AsyncCompletedEventArgs args)
-												 {
-													 if (!args.Cancelled)
-													 {
-
-														 LazyAsync.Invoke(()=> Process.Start(Path.Combine(Directory.GetCurrentDirectory(),filename)));
-													 }
-													 else
-													 {
-														 UpdateStatus("Downloading the new version failed. Please manually download.");
-														 Process.Start(_downloadURL);
-													 }
-													 Close();
-												 };
-												 c.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
-												 {
-													 progressBar1.Value = args.ProgressPercentage;
-												 };
-												 c.DownloadFileAsync(downloadUri, Path.Combine(Directory.GetCurrentDirectory(),filename));
+											     UpdateStatus("Downloading new version.");
+											     var c = new WebClient();
+											     progressBar1.Maximum = 100;
+											     progressBar1.IsIndeterminate = false;
+											     progressBar1.Value = 0;
+											     c.DownloadFileCompleted += delegate(object sender, AsyncCompletedEventArgs args)
+											         {
+                                                         Log.Info("Download complete");
+											             if (!args.Cancelled)
+											             {
+                                                             Log.Info("Launching updater");
+											                 LazyAsync.Invoke(
+											                     () => Process.Start(Path.Combine(Directory.GetCurrentDirectory(), filename)));
+											             }
+											             else
+											             {
+                                                             Log.Info("Download failed");
+											                 UpdateStatus("Downloading the new version failed. Please manually download.");
+											                 Process.Start(_downloadURL);
+											             }
+											             Close();
+											         };
+											     c.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
+											         { progressBar1.Value = args.ProgressPercentage; };
+                                                 Log.InfoFormat("Downloading new version to {0}",filename);
+											     c.DownloadFileAsync(downloadUri, Path.Combine(Directory.GetCurrentDirectory(), filename));
 											 }
-											 else Close();
+											 else
+											 {
+                                                 Log.Info("Up to date...Closing");
+											     Close();
+											 }
             }));
+            Log.Info("UpdateCheckDone Complete");
         }
 
         public void UpdateStatus(string stat)
         {
+            Log.Info(stat);
             Dispatcher.BeginInvoke(new Action(() =>
                                                   {
                                                       try
@@ -169,6 +184,7 @@ namespace Octgn.Windows
                                                       }
                                                       catch (Exception e)
                                                       {
+                                                          Log.Error("Update status error",e);
                                                           if(Debugger.IsAttached)Debugger.Break();
                                                       }
                                                   }));
@@ -176,17 +192,22 @@ namespace Octgn.Windows
 
         private static string[] ReadUpdateXml(string url)
         {
+            Log.Info("Reading update xml");
             var values = new string[3];
             try
             {
+                Log.InfoFormat("Downloading info from {0}",url);
                 WebRequest wr = WebRequest.Create(url);
                 wr.Timeout = 15000;
                 WebResponse resp = wr.GetResponse();
                 Stream rgrp = resp.GetResponseStream();
+                Log.Info("Got stream");
                 if (rgrp != null)
                 {
+                    Log.Info("Creating reader");
                     using (XmlReader reader = XmlReader.Create(rgrp))
                     {
+                        Log.Info("Created reader...reading");
                         
                         while (reader.Read())
                         {
@@ -196,7 +217,10 @@ namespace Octgn.Windows
                             {
                                 case "version":
                                     if (reader.Read())
+                                    {
+                                        Log.InfoFormat("Reading version {0}",reader.Value);
                                         values[0] = reader.Value;
+                                    }
                                     break;
                                 case "updatepath":
                                     //if (reader.Read())
@@ -205,6 +229,7 @@ namespace Octgn.Windows
                                 case "installpath":
                                     if (reader.Read())
                                     {
+                                        Log.InfoFormat("Reading paths {0} {1}",reader.Value,reader.Value);
                                         values[2] = AppConfig.WebsitePath + reader.Value;
                                         values[1] = AppConfig.WebsitePath + reader.Value;
                                     }
@@ -217,6 +242,7 @@ namespace Octgn.Windows
             }
             catch (Exception e)
             {
+                Log.Error("Error",e);
                 Debug.WriteLine(e);
 #if(DEBUG)
                 if (Debugger.IsAttached) Debugger.Break();
@@ -227,7 +253,13 @@ namespace Octgn.Windows
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!_realCloseWindow) e.Cancel = true;
+            Log.Info("Closing Window");
+            if (!_realCloseWindow)
+            {
+                Log.Info("Not a real close");
+                e.Cancel = true;
+            }else
+            Log.Info("Real close");
         }
     }
 }
