@@ -84,7 +84,6 @@
             RefreshTimer = new Timer(RefreshTime);
             RefreshTimer.Elapsed += RefreshTimerOnElapsed;
             RefreshTimer.Start();
-            this.RefreshTimerOnElapsed(null, null);
             Log.Info("Constructing Timer Complete");
         }
 

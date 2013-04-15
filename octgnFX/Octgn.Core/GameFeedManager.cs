@@ -72,7 +72,7 @@
                         Log.InfoFormat("Getting feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                         var repo = PackageRepositoryFactory.Default.CreateRepository(f.Url);
                         Log.InfoFormat("Repo Created {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
-                        var newestPackage = repo.GetPackages().Where(x=>x.Id.ToString().ToLower() == g.Id.ToString().ToLower()).OrderByDescending(x=>x.Version.Version).FirstOrDefault(x => x.IsAbsoluteLatestVersion);
+                        var newestPackage = repo.GetPackages().Where(x=>x.Id.ToLower() == g.Id.ToString().ToLower()).ToList().OrderByDescending(x=>x.Version.Version).FirstOrDefault(x => x.IsAbsoluteLatestVersion);
                         Log.InfoFormat("Grabbed newest package for {0} {1} {2} {3}",g.Id,g.Name,f.Name,f.Url);
                         if (newestPackage == null)
                         {
