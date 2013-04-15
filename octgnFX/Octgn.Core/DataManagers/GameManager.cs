@@ -181,7 +181,7 @@
                     foreach (var e in selection)
                     {
                         Log.InfoFormat("Checking zip file {0} {1}",e.FileName, filename);
-                        bool extracted = extract(e, out gameGuid, Guid.Empty);
+                        bool extracted = extract(e, out gameGuid, gameGuid);
                         if (!extracted)
                         {
                             Log.Warn(string.Format("Invalid entry in {0}. Entry: {1}.", filename, e.FileName));
@@ -244,10 +244,10 @@
                         gameGuid = Guid.Parse(o8cEntry.gameGuid);
                         Log.InfoFormat("Setting gameguid and testguid {0},{1},{2}", entry.FileName, testGuid, gameGuid);
                     }
-                    Log.InfoFormat("Checking if {0}=={1} {2}", testGuid, gameGuid, entry.FileName);
-                    if (!testGuid.Equals(gameGuid))
+                    Log.InfoFormat("Checking if {0}=={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
+                    if (!testGuid.Equals(Guid.Parse(o8cEntry.gameGuid)))
                     {
-                        Log.InfoFormat("{0}!={1} {2}", testGuid, gameGuid, entry.FileName);
+                        Log.InfoFormat("{0}!={1} {2}", testGuid, o8cEntry.gameGuid, entry.FileName);
                         return (ret);
                     }
                     Log.InfoFormat("Checking if should extract part {0},{1}", entry.FileName, testGuid);
