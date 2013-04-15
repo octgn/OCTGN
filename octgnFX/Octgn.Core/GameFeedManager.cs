@@ -81,7 +81,8 @@
                         }
                         Log.InfoFormat("Got feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                         Log.InfoFormat("Installed Version: {0} Feed Version: {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version, g.Id, g.Name, f.Name, f.Url);
-                        if (newestPackage.Version.Version > g.Version)
+                        var gameVersion = new SemanticVersion(g.Version);
+                        if (newestPackage.Version.Version > gameVersion.Version)
                         {
                             Log.InfoFormat(
                                 "Update found. Updating from {0} to {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version,g.Id, g.Name, f.Name, f.Url);
