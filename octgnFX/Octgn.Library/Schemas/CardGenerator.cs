@@ -252,10 +252,13 @@ public partial class templatesBlocksBlockLocation {
     
     private int rotateField;
     
+    private string altrotateField;
+    
     private string flipField;
     
     public templatesBlocksBlockLocation() {
         this.rotateField = 0;
+        this.altrotateField = "False";
         this.flipField = "False";
     }
     
@@ -290,6 +293,18 @@ public partial class templatesBlocksBlockLocation {
         }
         set {
             this.rotateField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("False")]
+    public string altrotate {
+        get {
+            return this.altrotateField;
+        }
+        set {
+            this.altrotateField = value;
         }
     }
     

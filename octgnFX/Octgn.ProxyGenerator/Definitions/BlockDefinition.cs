@@ -43,6 +43,10 @@ namespace Octgn.ProxyGenerator.Definitions
                     {
                         ret.location.rotate = int.Parse(prop.Attributes["rotate"].Value);
                     }
+                    if (prop.Attributes["altrotate"] != null)
+                    {
+                        ret.location.altrotate = bool.Parse(prop.Attributes["altrotate"].Value);
+                    }
                     if (prop.Attributes["flip"] != null)
                     {
                         ret.location.flip = bool.Parse(prop.Attributes["flip"].Value);

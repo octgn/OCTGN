@@ -66,17 +66,33 @@ namespace Octgn.ProxyGenerator.Util
             {
                 int rotateMod = section.location.rotate % 360;
 
-                using (Matrix matrix = new Matrix())
+                if (!section.location.altrotate)
                 {
-                    matrix.Rotate(rotateMod, MatrixOrder.Append);
-                    path.Transform(matrix);
+                    float centerX = 0;
+                    float centerY = 0;
+                    centerX = section.location.x;
+                    centerY = section.location.y;
+
+                    using (Matrix mat = new Matrix())
+                    {
+                        mat.RotateAt(rotateMod, new PointF(centerX, centerY), MatrixOrder.Append);
+                        path.Transform(mat);
+                    }
                 }
-                using (Matrix matrix = new Matrix())
+                else
                 {
-                    float minX = path.PathPoints.Min(p => p.X);
-                    float minY = path.PathPoints.Min(p => p.Y);
-                    matrix.Translate(((-minX) + section.location.x), ((-minY) + section.location.y));
-                    path.Transform(matrix);
+                    using (Matrix matrix = new Matrix())
+                    {
+                        matrix.Rotate(rotateMod, MatrixOrder.Append);
+                        path.Transform(matrix);
+                    }
+                    using (Matrix matrix = new Matrix())
+                    {
+                        float minX = path.PathPoints.Min(p => p.X);
+                        float minY = path.PathPoints.Min(p => p.Y);
+                        matrix.Translate(((-minX) + section.location.x), ((-minY) + section.location.y));
+                        path.Transform(matrix);
+                    }
                 }
             }
 
