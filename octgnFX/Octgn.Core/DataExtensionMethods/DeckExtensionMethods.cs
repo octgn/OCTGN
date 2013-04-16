@@ -84,21 +84,29 @@
                         {
                             var cardId = Guid.Parse(cardelem.Attribute("id").Value);
                             var cardq = Int32.Parse(cardelem.Attribute("qty").Value);
-                            var card = game.GetCardById(cardId).ToMultiCard(cardq);
-                            (section.Cards as IList<IMultiCard>).Add(card);
+                            var card = game.GetCardById(cardId);
+                            if (card == null)
+                                throw new UserMessageException(
+                                    "Problem loading deck {0}. The card {1} is not installed.", path, cardId);
+                            (section.Cards as IList<IMultiCard>).Add(card.ToMultiCard(cardq));
                         }
                         (ret.Sections as List<ISection>).Add(section);
                     }
                     foreach (var section in game.DeckSections)
                     {
-                        if(ret.Sections.Any(x=>x.Name == section.Value.Name) == false)
-                            (ret.Sections as List<ISection>).Add(new Section{Name = section.Value.Name,Cards = new List<IMultiCard>()});
+                        if (ret.Sections.Any(x => x.Name == section.Value.Name) == false)
+                            (ret.Sections as List<ISection>).Add(
+                                new Section { Name = section.Value.Name, Cards = new List<IMultiCard>() });
                     }
                     ret.GameId = gameId;
                     ret.IsShared = shared;
                 }
                 deck = ret;
                 return deck;
+            }
+            catch (UserMessageException)
+            {
+                throw;
             }
             catch (FormatException e)
             {
