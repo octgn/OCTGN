@@ -266,7 +266,7 @@
                     if (continueTask.IsFaulted)
                     {
                         error = "There was a problem, please try again.";
-                        Log.Debug("Start Game Error",continueTask.Exception);
+                        Log.Warn("Start Game Error",continueTask.Exception);
                         SuccessfulHost = false;
                     }
                     else
