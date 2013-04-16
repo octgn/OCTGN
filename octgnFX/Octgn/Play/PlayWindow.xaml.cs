@@ -110,44 +110,34 @@ namespace Octgn.Play
 
         private void UpdateFont()
         {
-            var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
-            string curDir = game.GetInstallPath();
-            string uri = "file:///" + curDir.Replace('\\', '/') + "/#";
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
             System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
 
+            var game = Program.GameEngine.Definition;
 
             int chatFontsize = 12;
             int contextFontsize = 12;
-            Boolean inchat = false;
             
             foreach (Font font in game.Fonts)
             {
                 if (font.Target.ToLower().Equals("chat"))
                 {
-                    chatname.AddFontFile(Path.Combine(curDir, font.Src));
                     chatFontsize = font.Size;
-                    inchat = true;
+                    string uri = Path.Combine(game.GetInstallPath(), font.Src).Replace('\\', '/');
+                    chatname.AddFontFile(uri);
+                    chat.output.FontFamily = new FontFamily("file:///" + Path.GetDirectoryName(uri) + "/#" + chatname.Families[0].Name);
+                    chat.output.FontSize = chatFontsize;
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
-                    context.AddFontFile(Path.Combine(curDir, Path.Combine(curDir, font.Src)));
                     contextFontsize = font.Size;
+                    string uri = Path.Combine(game.GetInstallPath(), font.Src).Replace('\\', '/');
+                    context.AddFontFile(uri);
+                    chat.watermark.FontFamily = new FontFamily("file:///" + Path.GetDirectoryName(uri) + "/#" + context.Families[0].Name);
+                    GroupControl.groupFont = new FontFamily("file:///" + Path.GetDirectoryName(uri) + "/#" + context.Families[0].Name);
+                    GroupControl.fontsize = contextFontsize;
                 }
             }
-
-            chat.watermark.FontFamily = new FontFamily(uri + context.Families[0].Name);
-            GroupControl.groupFont = new FontFamily(uri + context.Families[0].Name);
-            GroupControl.fontsize = contextFontsize;
-            if (inchat)
-            {
-                chat.output.FontFamily = new FontFamily(uri + chatname.Families[0].Name);
-                chat.output.FontSize = chatFontsize;
-            }
-
-            // self = player tab information
-            // watermark = type to chat (ctrl+t)
-            // output = chatbox
         }
 
         private void InitializePlayerSummary(object sender, EventArgs e)

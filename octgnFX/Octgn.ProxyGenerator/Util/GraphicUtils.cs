@@ -98,14 +98,29 @@ namespace Octgn.ProxyGenerator.Util
         {
             GraphicsPath myPath = new GraphicsPath();
             FontFamily family = new FontFamily("Arial");
+            int fontStyle = (int)FontStyle.Regular;
             if (section.text.font != null)
             {
                 PrivateFontCollection col = new PrivateFontCollection();
                 col.AddFontFile(Path.Combine(section.Manager.RootPath, section.text.font));
                 family = col.Families[0];
+                bool fontStyleFound = false;
+                foreach (var fontstyleEnum in Enum.GetValues(typeof(FontStyle)))
+                {
+                    if (family.IsStyleAvailable(((FontStyle)fontstyleEnum)))
+                    {
+                        fontStyle = (int)fontstyleEnum;
+                        fontStyleFound = true;
+                        break;
+                    }
+                }
+                if (!fontStyleFound)
+                {
+                    family = new FontFamily("Arial");
+                }
             }
             int size = section.text.size;
-            int fontStyle = (int)FontStyle.Regular;
+            
             Point location = section.location.ToPoint();
             StringFormat format = StringFormat.GenericDefault;
             if (section.wordwrap.height > 0)
