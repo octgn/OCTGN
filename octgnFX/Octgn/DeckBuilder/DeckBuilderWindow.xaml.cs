@@ -647,25 +647,25 @@ namespace Octgn.DeckBuilder
         {
             if (MouseButtonState.Pressed.Equals(e.LeftButton))
             {
-                var getCard = ActiveSection.Cards.ElementAt(cardIndex);
-                DataObject dragCard = new DataObject("Card", getCard);
-                if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift)
+                try
                 {
-                    ActiveSection.Cards.RemoveCard(getCard);
-                    DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.All);
-                }
-                else
-                {
-                    RemoveResultCard(null, new SearchCardIdEventArgs { CardId = getCard.Id });
-                    try
+                    var getCard = ActiveSection.Cards.ElementAt(cardIndex);
+                    DataObject dragCard = new DataObject("Card", getCard);
+                    if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift)
                     {
+                        ActiveSection.Cards.RemoveCard(getCard);
+                        DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.All);
+                    }
+                    else
+                    {
+                        RemoveResultCard(null, new SearchCardIdEventArgs { CardId = getCard.Id });
                         DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.Copy);
+                    }
 
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex);
                 }
             }
         }
