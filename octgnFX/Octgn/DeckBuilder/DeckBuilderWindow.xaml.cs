@@ -42,15 +42,33 @@ namespace Octgn.DeckBuilder
             Searches = new ObservableCollection<SearchControl>();
             InitializeComponent();
             // If there's only one game in the repository, create a deck of the correct kind
-            if (GameManager.Get().GameCount == 1)
+            try
             {
-                var g = GameManager.Get().Games.First();
-                if (g.SharedDeckSections.Count > 0 || g.DeckSections.Count > 0)
+                if (GameManager.Get().GameCount == 1)
                 {
-                    Game = g;
-                    Deck = Game.CreateDeck().AsObservable();
-                    _deckFilename = null;
+                    var g = GameManager.Get().Games.First();
+                    if (g.SharedDeckSections.Count > 0 || g.DeckSections.Count > 0)
+                    {
+                        Game = g;
+                        Deck = Game.CreateDeck().AsObservable();
+                        _deckFilename = null;
+                    }
+
                 }
+
+            }
+            catch (UserMessageException e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch(Exception e) 
+            {
+                Log.Error("",e);
+                MessageBox.Show(
+                    "There was an unexpected error. Please try restarting and trying again.\n If that doesn't help please let us know on our site http://www.octgn.net",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
 
             }
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -157,7 +175,16 @@ namespace Octgn.DeckBuilder
                 bim.EndInit();
                 cardImage.Source = bim;
                 Searches.Clear();
-                AddSearchTab();
+                try
+                {
+                    AddSearchTab();
+
+                }
+                catch (Exception e)
+                {
+                    Log.Error("",e);
+                    throw new UserMessageException("There was an error. Try restarting!", e);
+                }
             }
         }
 
