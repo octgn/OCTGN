@@ -48,60 +48,38 @@ namespace Octgn.ProxyGenerator.Util
 
             if (section.location.flip)
             {
-                using (Matrix matrix = new Matrix(1,0,0,-1,0,0))
+                using (Matrix matrix = new Matrix())
                 {
-                    //matrix.Translate(section.location.x, section.location.y);
+
+                    matrix.Scale(-1, 1, MatrixOrder.Append);
                     path.Transform(matrix);
                 }
                 using (Matrix matrix = new Matrix())
                 {
-                    PointF p = path.PathData.Points[0];
-                    int y = (int)p.Y;
-                    int ny = (section.location.y - y);
-                    float newY = (p.Y+ny)+(~((int)p.Y)+1) + (path.GetBounds().Height/2);
-                    matrix.Translate(0, newY);
+                    float min = path.PathPoints.Min(p => p.X);
+                    matrix.Translate(((-min)+section.location.x), 0);
                     path.Transform(matrix);
                 }
             }
 
             if (section.location.rotate > 0)
             {
-                float height = path.GetBounds().Height;
-                using (Matrix matrix = new Matrix())
+                int rotateMod = section.location.rotate % 360;
+
+                GraphicsPath duplicate = (GraphicsPath)path.Clone();
+                PointF p = GetRotatedBounds(duplicate, rotateMod);
+                duplicate.Dispose();
+                float centerX = 0;
+                float centerY = 0;
+                centerX = section.location.x;
+                centerY = section.location.y;
+
+                using (Matrix mat = new Matrix())
                 {
-                    matrix.Rotate(section.location.rotate);
-                    path.Transform(matrix);
-                }
-                using (Matrix matrix = new Matrix())
-                {
-                    PointF p = path.PathData.Points[0];
-                    float x = 0;
-                    float y = 0;
-                    if (p.X < 0)
-                    {
-                        int tx = (int)p.X;
-                        int nx = (section.location.x - tx);
-                        x = (p.X + nx) + (~((int)p.X) + 1);
-                    }
-                    else
-                    {
-                        x = (section.location.x - p.X) + (height/2);
-                    }
-                    if (p.Y < 0)
-                    {
-                        int ty = (int)p.Y;
-                        int ny = (section.location.y - ty);
-                        y = (p.Y + ny) + (~((int)p.Y) + 1);
-                    }
-                    else
-                    {
-                        y = (section.location.y - p.Y) + (height/2);
-                    }
-                    matrix.Translate(x, y);
-                    path.Transform(matrix);
+                    mat.RotateAt(rotateMod, new PointF(centerX, centerY), MatrixOrder.Append);
+                    path.Transform(mat);
                 }
             }
-            
 
             SolidBrush b = new SolidBrush(section.text.color);
 
@@ -115,6 +93,25 @@ namespace Octgn.ProxyGenerator.Util
             {
                 graphics.FillPath(b, path);
             }
+        }
+
+        public static PointF GetRotatedBounds(GraphicsPath duplicate, int rotateMod)
+        {
+            PointF ret = new PointF();
+            float centerX = duplicate.GetBounds().Height / 2;
+            float centerY = duplicate.GetBounds().Width / 2;
+
+            using (Matrix mat = new Matrix())
+            {
+                mat.RotateAt(rotateMod, new PointF(centerX, centerY), MatrixOrder.Append);
+
+                duplicate.Transform(mat);
+            }
+
+            ret.X = duplicate.GetBounds().Height;
+            ret.Y = duplicate.GetBounds().Width;
+
+            return (ret);
         }
 
         public static GraphicsPath GetTextPath(BlockDefinition section, string text)
