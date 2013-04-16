@@ -66,18 +66,17 @@ namespace Octgn.ProxyGenerator.Util
             {
                 int rotateMod = section.location.rotate % 360;
 
-                GraphicsPath duplicate = (GraphicsPath)path.Clone();
-                PointF p = GetRotatedBounds(duplicate, rotateMod);
-                duplicate.Dispose();
-                float centerX = 0;
-                float centerY = 0;
-                centerX = section.location.x;
-                centerY = section.location.y;
-
-                using (Matrix mat = new Matrix())
+                using (Matrix matrix = new Matrix())
                 {
-                    mat.RotateAt(rotateMod, new PointF(centerX, centerY), MatrixOrder.Append);
-                    path.Transform(mat);
+                    matrix.Rotate(rotateMod, MatrixOrder.Append);
+                    path.Transform(matrix);
+                }
+                using (Matrix matrix = new Matrix())
+                {
+                    float minX = path.PathPoints.Min(p => p.X);
+                    float minY = path.PathPoints.Min(p => p.Y);
+                    matrix.Translate(((-minX) + section.location.x), ((-minY) + section.location.y));
+                    path.Transform(matrix);
                 }
             }
 
@@ -93,25 +92,6 @@ namespace Octgn.ProxyGenerator.Util
             {
                 graphics.FillPath(b, path);
             }
-        }
-
-        public static PointF GetRotatedBounds(GraphicsPath duplicate, int rotateMod)
-        {
-            PointF ret = new PointF();
-            float centerX = duplicate.GetBounds().Height / 2;
-            float centerY = duplicate.GetBounds().Width / 2;
-
-            using (Matrix mat = new Matrix())
-            {
-                mat.RotateAt(rotateMod, new PointF(centerX, centerY), MatrixOrder.Append);
-
-                duplicate.Transform(mat);
-            }
-
-            ret.X = duplicate.GetBounds().Height;
-            ret.Y = duplicate.GetBounds().Width;
-
-            return (ret);
         }
 
         public static GraphicsPath GetTextPath(BlockDefinition section, string text)
