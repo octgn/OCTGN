@@ -114,7 +114,7 @@ namespace Octgn.Windows
             {
                 _isNotUpToDate = false;
                 _downloadURL = "";
-                Log.Error("Check For Updates Error",e);
+                Log.Warn("Check For Updates Error",e);
             }
         }
 
@@ -196,7 +196,7 @@ namespace Octgn.Windows
             var values = new string[3];
             try
             {
-                Log.InfoFormat("Downloading info from {0}",url);
+                Log.InfoFormat("Downloading info from {0}", url);
                 WebRequest wr = WebRequest.Create(url);
                 wr.Timeout = 15000;
                 WebResponse resp = wr.GetResponse();
@@ -208,7 +208,7 @@ namespace Octgn.Windows
                     using (XmlReader reader = XmlReader.Create(rgrp))
                     {
                         Log.Info("Created reader...reading");
-                        
+
                         while (reader.Read())
                         {
                             if (!reader.IsStartElement()) continue;
@@ -218,18 +218,18 @@ namespace Octgn.Windows
                                 case "version":
                                     if (reader.Read())
                                     {
-                                        Log.InfoFormat("Reading version {0}",reader.Value);
+                                        Log.InfoFormat("Reading version {0}", reader.Value);
                                         values[0] = reader.Value;
                                     }
                                     break;
                                 case "updatepath":
                                     //if (reader.Read())
-                                        //values[1] = Program.WebsitePath + reader.Value;
+                                    //values[1] = Program.WebsitePath + reader.Value;
                                     break;
                                 case "installpath":
                                     if (reader.Read())
                                     {
-                                        Log.InfoFormat("Reading paths {0} {1}",reader.Value,reader.Value);
+                                        Log.InfoFormat("Reading paths {0} {1}", reader.Value, reader.Value);
                                         values[2] = AppConfig.WebsitePath + reader.Value;
                                         values[1] = AppConfig.WebsitePath + reader.Value;
                                     }
@@ -239,6 +239,10 @@ namespace Octgn.Windows
                         }
                     }
                 }
+            }
+            catch (WebException e)
+            {
+                Log.Warn("",e);
             }
             catch (Exception e)
             {

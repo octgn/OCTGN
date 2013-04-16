@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Reflection;
     using System.Timers;
 
@@ -11,6 +12,7 @@
 
     using Octgn.Library;
     using Octgn.Library.Exceptions;
+    using Octgn.Library.ExtensionMethods;
     using Octgn.Library.Networking;
 
     using log4net;
@@ -72,8 +74,18 @@
                         Log.InfoFormat("Getting feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                         var repo = PackageRepositoryFactory.Default.CreateRepository(f.Url);
                         Log.InfoFormat("Repo Created {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
-                        var newestPackage = repo.GetPackages().Where(x=>x.Id.ToLower() == g.Id.ToString().ToLower()).ToList().OrderByDescending(x=>x.Version.Version).FirstOrDefault(x => x.IsAbsoluteLatestVersion);
-                        Log.InfoFormat("Grabbed newest package for {0} {1} {2} {3}",g.Id,g.Name,f.Name,f.Url);
+                        IPackage newestPackage = default(IPackage);
+                        try
+                        {
+                            newestPackage = repo.GetPackages().Where(x => x.Id.ToLower() == g.Id.ToString().ToLower()).ToList().OrderByDescending(x => x.Version.Version).FirstOrDefault(x => x.IsAbsoluteLatestVersion);
+                        }
+                        catch (WebException e)
+                        {
+                            Log.WarnFormat("Could not get feed {0} {1}",f.Name,f.Url);
+                            Log.Warn("",e);
+                            continue;
+                        } 
+                        Log.InfoFormat("Grabbed newest package for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                         if (newestPackage == null)
                         {
                             Log.InfoFormat("No package found for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
@@ -178,7 +190,7 @@
                     Log.InfoFormat("o8g magically disappeared {0}", file);
                     return;
                 }
-                File.Copy(file, newpath);
+                fi.MegaCopyTo(newpath);
                 Log.InfoFormat("Firing update feed list {0}", file);
                 this.FireOnUpdateFeedList();
                 Log.InfoFormat("Feed {0} Added at {1}", file, newpath);
@@ -211,7 +223,7 @@
                 Log.InfoFormat("Creating directory {0}", filename);
                 if (!Directory.Exists(tempPath.Directory.FullName)) Directory.CreateDirectory(tempPath.Directory.FullName);
                 Log.InfoFormat("Copying file {0}", filename);
-                File.Copy(filename, tempPath.FullName, true);
+                fi.MegaCopyTo(tempPath);
                 Log.InfoFormat("Creating repo to make sure it loads {0}", filename);
                 var repo = new LocalPackageRepository(tempPath.Directory.FullName);
                 Log.InfoFormat("Loading repo into array to make sure it works {0}", filename);

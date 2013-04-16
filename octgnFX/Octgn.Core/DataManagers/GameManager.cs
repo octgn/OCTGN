@@ -14,6 +14,7 @@
     using Octgn.DataNew.Entities;
     using Octgn.Library;
     using Octgn.Library.Exceptions;
+    using Octgn.Library.ExtensionMethods;
 
     using log4net;
 
@@ -120,7 +121,7 @@
                         Directory.CreateDirectory(newFileInfo.Directory.FullName);
                     }
                     Log.InfoFormat("Copying file {0} {1} {2} {3}", f.FullName, newPath,package.Id, package.Title);
-                    File.Copy(f.FullName, newPath, true);
+                    f.MegaCopyTo(newPath);
                     Log.InfoFormat("File copied {0} {1} {2} {3}", f.FullName, newPath,package.Id, package.Title);
                 }
                 //Sets//setid//Cards//Proxies
