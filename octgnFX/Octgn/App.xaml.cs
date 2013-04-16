@@ -9,6 +9,10 @@ using Octgn.Windows;
 
 namespace Octgn
 {
+    using System.Windows.Threading;
+
+    using Octgn.Library.Exceptions;
+
     using log4net;
 
     public partial class OctgnApp
@@ -19,6 +23,7 @@ namespace Octgn
         {
 #if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+            Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
 #else
 
             AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
@@ -42,6 +47,20 @@ namespace Octgn
 #endif
         }
 
+        private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            if (e.Exception is UserMessageException)
+            {
+                Dispatcher.Invoke(new Action(() => MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
+                e.Handled = true;
+            }
+            else
+            {
+                Dispatcher.Invoke(new Action(() => MessageBox.Show("Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
+                Log.Fatal("", e.Exception);
+            }
+        }
+
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception)e.ExceptionObject;
@@ -50,7 +69,7 @@ namespace Octgn
             {
                 var wnd = new Windows.ErrorWindow(ex);
                 wnd.ShowDialog();
-                ErrorReporter.SumbitException(ex);
+                //ErrorReporter.SumbitException(ex);
             }
             else
             {
