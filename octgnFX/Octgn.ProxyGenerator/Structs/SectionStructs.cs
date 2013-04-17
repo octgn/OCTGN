@@ -14,6 +14,7 @@ namespace Octgn.ProxyGenerator.Structs
             public int y;
             public int rotate;
             public bool flip;
+            public bool altrotate;
 
             public Location(int x, int y) 
             {
@@ -21,6 +22,7 @@ namespace Octgn.ProxyGenerator.Structs
                 this.y = y;
                 this.rotate = 0;
                 this.flip = false;
+                this.altrotate = false;
             }
 
             public Point ToPoint()
