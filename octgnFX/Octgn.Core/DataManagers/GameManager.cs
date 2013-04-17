@@ -283,7 +283,7 @@
                     Log.InfoFormat("Game exists {0},{1}", o8centry.gameGuid, o8centry.cardImage);
                     Guid cardGuid = Guid.Parse(o8centry.cardImage.Split('.')[0]);
                     Log.InfoFormat("Checking Paths {0},{1},{2}", o8centry.setsDir,o8centry.cardsDir, o8centry.cardImage);
-                    if (o8centry.setsDir == "Sets" && (o8centry.cardsDir == "Cards" || o8centry.cardsDir == "Markers"))
+                    if (o8centry.setsDir == "Sets" && o8centry.cardsDir == "Cards")
                     {
                         Log.InfoFormat("Paths good {0},{1},{2}", o8centry.setsDir, o8centry.cardsDir, o8centry.cardImage);
                         ret = true;
