@@ -153,7 +153,17 @@ namespace Octgn.Tabs.GameManagement
         {
             if (propertyChangedEventArgs.PropertyName == "Packages")
             {
-                new Task(this.UpdatePackageList).Start();
+                new Task(() =>
+                    {
+                        try
+                        {
+                            this.UpdatePackageList();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Warn("",e);
+                        }
+                    }).Start();
             }
         }
 
