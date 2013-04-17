@@ -4,12 +4,17 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
 
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
 
+    using log4net;
+
     public static class CardExtensionMethods
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        
         public static Set GetSet(this ICard card)
         {
             return SetManager.Get().Sets.FirstOrDefault(x => x.Id == card.SetId);
@@ -53,7 +58,15 @@
         }
         public static string AlternatePicture(this ICard card)
         {
-            return card.GetSet().GetPictureUri(card.ImageUri + ".b").LocalPath;
+            try
+            {
+                return card.GetSet().GetPictureUri(card.ImageUri + ".b").LocalPath;
+            }
+            catch (Exception e)
+            {
+                Log.Warn("",e);
+            }
+            return null;
             //string au = card.ImageUri.Replace(".jpg", ".b.jpg");
             //return card.GetSet().GetPackUri() + au;
         }
