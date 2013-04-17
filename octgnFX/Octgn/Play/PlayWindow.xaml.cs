@@ -123,18 +123,16 @@ namespace Octgn.Play
                 if (font.Target.ToLower().Equals("chat"))
                 {
                     chatFontsize = font.Size;
-                    string uri = Path.Combine(game.GetInstallPath(), font.Src).Replace('\\', '/');
-                    chatname.AddFontFile(uri);
-                    chat.output.FontFamily = new FontFamily("file:///" + Path.GetDirectoryName(uri) + "/#" + chatname.Families[0].Name);
+                    chatname.AddFontFile(font.Src);
+                    chat.output.FontFamily = new FontFamily("file:///" + Path.GetDirectoryName(font.Src) + "/#" + chatname.Families[0].Name);
                     chat.output.FontSize = chatFontsize;
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
                     contextFontsize = font.Size;
-                    string uri = Path.Combine(game.GetInstallPath(), font.Src).Replace('\\', '/');
-                    context.AddFontFile(uri);
-                    chat.watermark.FontFamily = new FontFamily("file:///" + Path.GetDirectoryName(uri) + "/#" + context.Families[0].Name);
-                    GroupControl.groupFont = new FontFamily("file:///" + Path.GetDirectoryName(uri) + "/#" + context.Families[0].Name);
+                    context.AddFontFile(font.Src);
+                    chat.watermark.FontFamily = new FontFamily("file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name);
+                    GroupControl.groupFont = new FontFamily("file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name);
                     GroupControl.fontsize = contextFontsize;
                 }
             }
