@@ -124,15 +124,17 @@ namespace Octgn.Play
                 {
                     chatFontsize = font.Size;
                     chatname.AddFontFile(font.Src);
-                    chat.output.FontFamily = new FontFamily("file:///" + Path.GetDirectoryName(font.Src) + "/#" + chatname.Families[0].Name);
+                    string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + chatname.Families[0].Name;
+                    chat.output.FontFamily = new FontFamily(font1.Replace("\\", "/"));
                     chat.output.FontSize = chatFontsize;
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
                     contextFontsize = font.Size;
                     context.AddFontFile(font.Src);
-                    chat.watermark.FontFamily = new FontFamily("file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name);
-                    GroupControl.groupFont = new FontFamily("file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name);
+                    string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name;
+                    chat.watermark.FontFamily = new FontFamily(font1.Replace("\\","/"));
+                    GroupControl.groupFont = new FontFamily(font1.Replace("\\", "/"));
                     GroupControl.fontsize = contextFontsize;
                 }
             }
