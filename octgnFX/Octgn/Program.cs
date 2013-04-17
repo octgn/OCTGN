@@ -78,7 +78,9 @@ namespace Octgn
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
             GamesPath = BasePath + @"GameDatabase\";
-            pingOB();
+
+            System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(pingOB));
+            t.Start();
         }
 
         internal static void Start()
