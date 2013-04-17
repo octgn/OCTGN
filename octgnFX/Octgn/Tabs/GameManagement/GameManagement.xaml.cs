@@ -329,6 +329,14 @@ namespace Octgn.Tabs.GameManagement
                                     {
                                         GameManager.Get().UninstallGame(game);
                                     }
+                                    catch (IOException ex)
+                                    {
+                                        Dispatcher.Invoke(new Action(() => MessageBox.Show(
+                                            "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
+                                            "Error",
+                                            MessageBoxButton.OK,
+                                            MessageBoxImage.Error)));
+                                    }
                                     catch (UnauthorizedAccessException ex)
                                     {
                                         Dispatcher.Invoke(new Action(() => MessageBox.Show(
