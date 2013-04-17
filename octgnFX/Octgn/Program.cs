@@ -78,6 +78,7 @@ namespace Octgn
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
             GamesPath = BasePath + @"GameDatabase\";
+            pingOB();
         }
 
         internal static void Start()
@@ -99,6 +100,20 @@ namespace Octgn
             Log.Info("Launching Main Window");
             WindowManager.Main.Show();
             Log.Info("Main Window Launched");
+            
+        }
+
+        internal static void pingOB()
+        {
+            try
+            {
+                System.Net.WebRequest request = System.Net.WebRequest.Create("http://www.octgn.net/ping.php");
+                request.GetResponse();
+            }
+            catch (Exception ex)
+            {
+                int i = 0;
+            }
         }
 
         /// <summary>
