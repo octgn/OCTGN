@@ -78,9 +78,6 @@ namespace Octgn
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
             GamesPath = BasePath + @"GameDatabase\";
-
-            System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(pingOB));
-            t.Start();
         }
 
         internal static void Start()
@@ -94,6 +91,8 @@ namespace Octgn
                 Program.Exit();
                 return;
             }
+            Log.Info("Ping back");
+            System.Threading.Tasks.Task.Factory.StartNew(pingOB);
             Log.Info("Creating main window...");
             WindowManager.Main = new Main();
             Log.Info("Main window Created, Launching it.");
