@@ -51,13 +51,8 @@ namespace Octgn
         {
             if (e.Exception is UserMessageException)
             {
-                Dispatcher.Invoke(new Action(() => MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
+                e.Dispatcher.Invoke(new Action(() => MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
                 e.Handled = true;
-            }
-            else
-            {
-                Dispatcher.Invoke(new Action(() => MessageBox.Show("Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
-                Log.Fatal("", e.Exception);
             }
         }
 
@@ -65,20 +60,13 @@ namespace Octgn
         {
             var ex = (Exception)e.ExceptionObject;
             Log.Fatal(ex);
-            if (!Debugger.IsAttached)
-            {
-                var wnd = new Windows.ErrorWindow(ex);
-                wnd.ShowDialog();
-                //ErrorReporter.SumbitException(ex);
-            }
-            else
-            {
-                if (e.IsTerminating)
-                    Debugger.Break();
-            }
-
+            //var wnd = new Windows.ErrorWindow(ex);
+            //wnd.ShowDialog();
+            //ErrorReporter.SumbitException(ex);
+            Application.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show("Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
             if (!e.IsTerminating)
                 Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, ex.ToString());
+            Application.Current.Shutdown(0);
         }
 
         protected override void OnExit(ExitEventArgs e)
