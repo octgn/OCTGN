@@ -59,10 +59,13 @@ namespace Octgn
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception)e.ExceptionObject;
-            Log.Fatal(ex);
-            //var wnd = new Windows.ErrorWindow(ex);
-            //wnd.ShowDialog();
-            //ErrorReporter.SumbitException(ex);
+            if (e.IsTerminating) Log.Fatal("",ex);
+            else Log.Error("",ex);
+            if (ex is UserMessageException)
+            {
+                Current.Dispatcher.Invoke(new Action(() => MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
+            }
+            
             Application.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show("Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
             if (!e.IsTerminating)
                 Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, ex.ToString());
