@@ -645,14 +645,14 @@ namespace Octgn.Scripting
                                        int[] xs = new int[quantity], ys = new int[quantity];
 
 
-                                       if (Player.LocalPlayer.InvertedTable)
-                                       {
-                                           x -= Program.GameEngine.Definition.CardWidth;
-                                           y -= Program.GameEngine.Definition.CardHeight;
-                                       }
-                                       var offset = (int)(Math.Min(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight) * 0.2);
-                                       if (Program.GameSettings.UseTwoSidedTable && TableControl.IsInInvertedZone(y))
-                                           offset = -offset;
+                                    //   if (Player.LocalPlayer.InvertedTable)
+                                    //   {
+                                    //       x -= Program.GameEngine.Definition.CardWidth;
+                                    //       y -= Program.GameEngine.Definition.CardHeight;
+                                    //   }
+                                    //   var offset = (int)(Math.Min(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight) * 0.2);
+                                    //   if (Program.GameSettings.UseTwoSidedTable && TableControl.IsInInvertedZone(y))
+                                    //       offset = -offset;
 
                                        for (int i = 0; i < quantity; ++i)
                                        {
@@ -668,8 +668,8 @@ namespace Octgn.Scripting
                                            ys[i] = y;
                                            result.Add(id);
 
-                                           x += offset;
-                                           y += offset;
+                                    //       x += offset;
+                                    //       y += offset;
                                        }
                                        string pictureUri = model.GetPicture();
                                        Dispatcher.CurrentDispatcher.BeginInvoke(
