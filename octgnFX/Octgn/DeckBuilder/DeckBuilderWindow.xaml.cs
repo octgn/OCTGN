@@ -553,6 +553,7 @@ namespace Octgn.DeckBuilder
             {
                 _unsaved = true;
                 element.Quantity -= 1;
+                if (element.Quantity <= 0) ActiveSection.Cards.RemoveCard(element);
                 e.Handled = true;
             }
 		}
@@ -602,6 +603,7 @@ namespace Octgn.DeckBuilder
             if (selection == null) return;
             if (cardImage.Source.ToString().Contains(selection))
             {
+                // TODO - [ALTERNATE] - Need to fix this if you want alternates to work - Kelly Elton - 4/17/2013
                 string alternate = cardImage.Source.ToString().Replace(".jpg", ".b.jpg");
                 try
                 {
