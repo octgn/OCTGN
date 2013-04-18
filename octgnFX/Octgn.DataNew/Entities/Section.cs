@@ -21,7 +21,7 @@
             get
             {
                 if (Cards == null) return 0;
-                return Cards.Count();
+                return Cards.Sum(x=>x.Quantity);
             }
         }
         public IEnumerable<IMultiCard> Cards { get; set; }
@@ -33,7 +33,20 @@
 
         private ObservableCollection<ObservableMultiCard> cards;
 
-        private void CardsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        private void CardsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            if (args.Action == NotifyCollectionChangedAction.Add || args.Action == NotifyCollectionChangedAction.Replace)
+            {
+                foreach (ObservableMultiCard i in args.NewItems)
+                {
+                    i.PropertyChanged += this.CardOnPropertyChanged;
+                }
+            }
+            this.OnPropertyChanged("Cards");
+            this.OnPropertyChanged("Quantity");
+        }
+
+        private void CardOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
         {
             this.OnPropertyChanged("Cards");
                 this.OnPropertyChanged("Quantity");
@@ -56,7 +69,7 @@
         public int Quantity {
             get
             {
-                return cards.Count;
+                return Cards.Sum(x => x.Quantity);
             }
         }
 
@@ -71,18 +84,24 @@
                 if (this.cards == value) return;
                 this.cards = new ObservableCollection<ObservableMultiCard>
                     (value
-                    .Select(x=>new ObservableMultiCard
-                                   {
-                                       Id = x.Id,
-                                       Name = x.Name,
-                                       Properties = x.Properties.ToDictionary(z => z.Key, y => y.Value),
-                                       ImageUri = x.ImageUri,
-                                       IsMutable = x.IsMutable,
-                                       Alternate = x.Alternate,
-                                       SetId = x.SetId,
-                                       Dependent = x.Dependent,
-                                       Quantity = x.Quantity
-                                   }));
+                    .Select(x=>
+                        {
+                            var ret = new ObservableMultiCard
+                                          {
+                                              Id = x.Id,
+                                              Name = x.Name,
+                                              Properties =
+                                                  x.Properties.ToDictionary(z => z.Key, y => y.Value),
+                                              ImageUri = x.ImageUri,
+                                              IsMutable = x.IsMutable,
+                                              Alternate = x.Alternate,
+                                              SetId = x.SetId,
+                                              Dependent = x.Dependent,
+                                              Quantity = x.Quantity
+                                          };
+                            ret.PropertyChanged += this.CardOnPropertyChanged;
+                            return ret;
+                        }));
                 cards.CollectionChanged += CardsOnCollectionChanged;
                 OnPropertyChanged("Cards");
                 this.OnPropertyChanged("Quantity");

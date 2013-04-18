@@ -59,7 +59,7 @@
                     <TextBlock.Text>
                       <MultiBinding StringFormat="{}{0} ({1})">
                         <Binding Path="Name" Mode="OneTime" />
-                        <Binding Path="Cards.Count" />
+                        <Binding Path="Quantity" />
                       </MultiBinding>
                     </TextBlock.Text>
                     <TextBlock.FontWeight>
