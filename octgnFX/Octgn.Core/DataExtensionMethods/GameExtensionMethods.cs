@@ -60,11 +60,6 @@
             return ret;
         }
 
-        public static string DecksPath(this Game game)
-        {
-            return Path.Combine(game.GetInstallPath(), "Decks");
-        }
-
         public static Deck CreateDeck(this Game game)
         {
             var deck = new Deck { GameId = game.Id };
@@ -96,7 +91,9 @@
 
         public static string GetDefaultDeckPath(this Game game)
         {
-            return IO.Path.Combine(Paths.Get().DataDirectory, "Decks");
+            var path = IO.Path.Combine(Paths.Get().DataDirectory, "Decks");
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            return path;
         }
 
         public static Card GetCardByName(this Game game, string name)

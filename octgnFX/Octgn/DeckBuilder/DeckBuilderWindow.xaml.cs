@@ -303,10 +303,7 @@ namespace Octgn.DeckBuilder
                           {
                               AddExtension = true,
                               Filter = "Octgn decks|*.o8d",
-                              InitialDirectory =
-                                  Prefs.LastFolder == ""
-                                      ? Game.GetDefaultDeckPath()
-                                      : Prefs.LastFolder
+                              InitialDirectory = Game.GetDefaultDeckPath()
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
             try
@@ -314,7 +311,6 @@ namespace Octgn.DeckBuilder
                 Deck.Save(_game,sfd.FileName);
                 _unsaved = false;
                 _deckFilename = sfd.FileName;
-                Prefs.LastFolder = Path.GetDirectoryName(_deckFilename);
             }
             catch (UserMessageException ex)
             {
@@ -355,13 +351,9 @@ namespace Octgn.DeckBuilder
             var ofd = new OpenFileDialog
                           {
                               Filter = "Octgn deck files (*.o8d) | *.o8d",
-                              InitialDirectory =
-                                  ((game != null) && Prefs.LastFolder == "")
-                                      ? game.GetDefaultDeckPath()
-                                      : Prefs.LastFolder
+                              InitialDirectory = game.GetDefaultDeckPath()
                           };
             if (ofd.ShowDialog() != true) return;
-            Prefs.LastFolder = Path.GetDirectoryName(ofd.FileName);
 
             // Try to load the file contents
             ObservableDeck newDeck;

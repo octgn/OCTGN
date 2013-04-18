@@ -225,13 +225,8 @@ namespace Octgn.Play
         {
             e.Handled = true;
 
-            var loadDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var loadDirectory = Program.GameEngine.Definition.GetDefaultDeckPath();
 
-            // Make sure that Prefs.LastFolder exists
-            if (Directory.Exists(Program.GameEngine.Definition.DecksPath()))
-            {
-                loadDirectory = Program.GameEngine.Definition.DecksPath();
-            }
             // Show the dialog to choose the file
 
             var ofd = new OpenFileDialog
@@ -503,7 +498,7 @@ namespace Octgn.Play
                           {
                               AddExtension = true,
                               Filter = "Octgn decks|*.o8d",
-                              InitialDirectory = Program.GameEngine.Definition.DecksPath()
+                              InitialDirectory = Program.GameEngine.Definition.GetDefaultDeckPath()
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
 
