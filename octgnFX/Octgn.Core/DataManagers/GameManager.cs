@@ -207,7 +207,7 @@
             }
         }
 
-        private struct O8cEntry
+        internal struct O8cEntry
         {
             public string gameGuid;
             public string setsDir;
@@ -217,7 +217,7 @@
         }
 
 
-        private bool extract(ZipEntry entry, out Guid gameGuid, Guid testGuid)
+        internal bool extract(ZipEntry entry, out Guid gameGuid, Guid testGuid)
         {
             try
             {
@@ -270,7 +270,7 @@
             }
         }
 
-        private bool ShouldExtract(O8cEntry o8centry)
+        internal bool ShouldExtract(O8cEntry o8centry)
         {
             try
             {

@@ -79,7 +79,7 @@
             PackagePart definition = Package.GetPart(defRelationship.TargetUri);
             XmlNodeList cards = Doc.GetElementsByTagName("card");
             var markers = Doc.GetElementsByTagName("marker");
-            string extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Cards");
+            string extractDir = Path.Combine(UnpackBase, "SetImages",GameId.ToString(),"Sets", Id.ToString(), "Cards");
             foreach (XmlNode card in cards)
             {
                 Guid cardID = new Guid(card.Attributes["id"].Value);
@@ -89,7 +89,7 @@
                 PackagePart part = Package.GetPart(cardImage);
                 ExtractPart(part, extractDir, fileName);
             }
-            extractDir = Path.Combine(UnpackBase, "SetImages", Id.ToString(), "Markers");
+            extractDir = Path.Combine(UnpackBase, "SetImages", GameId.ToString(), "Sets", Id.ToString(), "Markers");
             foreach(XmlNode marker in markers)
             {
                 var id = new Guid(marker.Attributes["id"].Value);
