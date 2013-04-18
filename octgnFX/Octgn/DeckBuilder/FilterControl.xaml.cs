@@ -48,11 +48,16 @@ namespace Octgn.DeckBuilder
 
         public event EventHandler RemoveFilter;
 
+        public bool IsOr;
+
         public string GetSqlCondition()
         {
             if (comparisonList.SelectedItem == null) return "";
             if (_property is SetPropertyDef)
+            {
+                IsOr = true;
                 return "set_id = '" + ((DataNew.Entities.Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
+            }
             return ((SqlComparison) comparisonList.SelectedItem).GetSql(_property.Name, comparisonText.Text);
         }
 
@@ -60,6 +65,7 @@ namespace Octgn.DeckBuilder
         {
             if (_property is SetPropertyDef)
             {
+                IsOr = true;
                 comparisonList.Width = 262;
                 comparisonText.Visibility = Visibility.Collapsed;
 

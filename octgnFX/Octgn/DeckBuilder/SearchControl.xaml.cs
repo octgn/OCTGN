@@ -13,6 +13,7 @@ using System.Text;
 
 namespace Octgn.DeckBuilder
 {
+    using System.Collections.Generic;
     using System.Reflection;
 
     using log4net;
@@ -151,16 +152,39 @@ namespace Octgn.DeckBuilder
         private void RefreshSearch(object sender, RoutedEventArgs e)
         {
             ((Button)sender).IsEnabled = false;
-            var conditions = new string[filterList.Items.Count];
+            var conditions = new List<String>();
+            var orconditions = new List<String>();
             ItemContainerGenerator generator = filterList.ItemContainerGenerator;
             for (int i = 0; i < filterList.Items.Count; i++)
             {
                 DependencyObject container = generator.ContainerFromIndex(i);
                 var filterCtrl = (FilterControl) VisualTreeHelper.GetChild(container, 0);
-                conditions[i] = filterCtrl.GetSqlCondition();
-                conditions[i] = conditions[i].Replace("Card.", "");
+                if (filterCtrl.IsOr)
+                {
+                    var c = filterCtrl.GetSqlCondition();
+                    c = c.Replace("Card.", "");
+                    orconditions.Add(c);
+                }
+                else
+                {
+                    var c = filterCtrl.GetSqlCondition();
+                    c = c.Replace("Card.", "");
+                    conditions.Add(c);
+                }
             }
-            _CurrentView.RowFilter = String.Join(" and ",conditions);
+
+            var filterString = "";
+            if (orconditions.Count > 0)
+            {
+                filterString = String.Format("({0})", String.Join(" or ", orconditions));
+            }
+            if (conditions.Count > 0)
+            {
+                if (orconditions.Count > 0) filterString += " and ";
+                filterString += String.Format("({0})", String.Join(" and ", conditions));
+            }
+
+            _CurrentView.RowFilter = filterString;
             e.Handled = true;
             ((Button)sender).IsEnabled = true;
         }
