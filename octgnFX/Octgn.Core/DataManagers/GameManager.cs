@@ -143,6 +143,8 @@
                         var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.GetInstallPath(), "Decks")).FullName, "").TrimStart('\\');
                         var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
                         Log.InfoFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
+                        if(new DirectoryInfo(newPath).Exists)
+                            Directory.Move(newPath,Paths.Get().GraveyardPath);
                         Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
                         Log.InfoFormat("Copying deck to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
                         f.MegaCopyTo(newPath);
@@ -187,7 +189,7 @@
                     try
                     {
                         Log.InfoFormat("Deleting proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
-                        Directory.Delete(pdir.FullName, true);
+                        pdir.MoveTo(Paths.Get().GraveyardPath);
                         Log.InfoFormat("Deleted proxy dir {0} {1} {2}", pdir, package.Id, package.Title);
                     }
                     catch (Exception e)
@@ -361,7 +363,7 @@
                 int tryCount = 0;
                 try
                 {
-                    Directory.Delete(gamePathDi.FullName, true);
+                    gamePathDi.MoveTo(Paths.Get().GraveyardPath);
                 }
                 catch
                 {

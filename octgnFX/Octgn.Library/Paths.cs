@@ -16,6 +16,7 @@
         string LocalFeedPath { get; }
         string MainOctgnFeed { get; }
         string DeckPath { get; }
+        string GraveyardPath { get; }
     }
 
     public class Paths : IPaths
@@ -69,5 +70,9 @@
         public string LocalFeedPath { get; set; }
         public string MainOctgnFeed { get; set; }
         public string DeckPath { get; set; }
+        public string GraveyardPath {get
+        {
+            return System.IO.Path.Combine(FS.Path.GetTempPath(), "OCTGN", "Graveyard", Guid.NewGuid().ToString());
+        }}
     }
 }
