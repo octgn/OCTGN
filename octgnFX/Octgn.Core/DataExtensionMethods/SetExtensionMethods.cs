@@ -11,9 +11,17 @@
 
     public static class SetExtensionMethods
     {
+        public static string GetInstallPath(this Set set)
+        {
+            return Path.Combine(set.GetGame().GetInstallPath(), "Sets", set.Id.ToString());
+        }
+        public static string GetDeckUri(this Set set)
+        {
+            return Path.Combine(set.GetInstallPath(), "Decks");
+        }
         public static string GetPackUri(this Set set)
         {
-            return Path.Combine(set.GetGame().GetInstallPath(), "Sets", set.Id.ToString(), "Cards");
+            return Path.Combine(set.GetInstallPath(), "Cards");
             //return "pack://file:,,," + set.PackageName.Replace('\\', ',');
         }
 

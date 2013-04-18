@@ -15,6 +15,7 @@
         string FeedListPath { get; }
         string LocalFeedPath { get; }
         string MainOctgnFeed { get; }
+        string DeckPath { get; }
     }
 
     public class Paths : IPaths
@@ -51,6 +52,7 @@
             FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
             LocalFeedPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "LocalFeed");
             FS.Directory.CreateDirectory(LocalFeedPath);
+            DeckPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Decks");
             MainOctgnFeed = "http://www.myget.org/F/octgngames/";
         }
 
@@ -66,5 +68,6 @@
         public string FeedListPath { get; set; }
         public string LocalFeedPath { get; set; }
         public string MainOctgnFeed { get; set; }
+        public string DeckPath { get; set; }
     }
 }

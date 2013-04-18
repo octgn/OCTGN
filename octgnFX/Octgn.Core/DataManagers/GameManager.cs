@@ -10,6 +10,7 @@
 
     using NuGet;
 
+    using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
     using Octgn.Library;
@@ -125,9 +126,55 @@
                     Log.InfoFormat("File copied {0} {1} {2} {3}", f.FullName, newPath,package.Id, package.Title);
                 }
                 //Sets//setid//Cards//Proxies
-                // Clear out all proxies if they exist
+                
                 var setsDir = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", package.Id, "Sets");
+
+                Log.InfoFormat("Installing decks {0} {1}", package.Id, package.Title);
+                var game = GameManager.Get().GetById(new Guid(package.Id));
+
+                if (Directory.Exists(Path.Combine(game.GetInstallPath(), "Decks")))
+                {
+                    foreach (
+                        var f in
+                            new DirectoryInfo(Path.Combine(game.GetInstallPath(), "Decks")).GetFiles(
+                                "*.o8d", SearchOption.AllDirectories))
+                    {
+                        Log.InfoFormat("Found deck file {0} {1} {2}", f.FullName, package.Id, package.Title);
+                        var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.GetInstallPath(), "Decks")).FullName, "").TrimStart('\\');
+                        var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
+                        Log.InfoFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
+                        Directory.CreateDirectory(newPath);
+                        Log.InfoFormat("Copying deck to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
+                        f.MegaCopyTo(newPath);
+                    }
+                }
+
+                foreach (var set in game.Sets())
+                {
+                    Log.InfoFormat("Checking set for decks {0} {1} {2}",setsDir,package.Id,package.Title);
+                    var dp = set.GetDeckUri();
+                    Log.InfoFormat("Got deck uri {0}",dp);
+                    var decki = new DirectoryInfo(dp);
+                    if (!decki.Exists)
+                    {
+                        Log.InfoFormat("No decks exist for set {0} {1} {2}",setsDir,package.Id,package.Title);
+                        continue;
+                    }
+                    Log.InfoFormat("Finding deck files in set {0} {1} {2}",setsDir,package.Id,package.Title);
+                    foreach (var f in decki.GetFiles("*.o8d", SearchOption.AllDirectories))
+                    {
+                        Log.InfoFormat("Found deck file {0} {1} {2} {3}",f.FullName, setsDir, package.Id, package.Title);
+                        var relPath = f.FullName.Replace(decki.FullName, "").TrimStart('\\');
+                        var newPath = Path.Combine(Paths.Get().DeckPath, game.Name,relPath);
+                        Log.InfoFormat("Creating directories {0} {1} {2} {3}", f.FullName, setsDir, package.Id, package.Title);
+                        Directory.CreateDirectory(newPath);
+                        Log.InfoFormat("Copying deck to {0} {1} {2} {3} {4}",f.FullName, newPath,setsDir, package.Id, package.Title);
+                        f.MegaCopyTo(newPath);
+                    }
+                }
+
                 Log.InfoFormat("Deleting proxy cards {0} {1} {2}", setsDir, package.Id, package.Title);
+                // Clear out all proxies if they exist
                 foreach (var setdir in new DirectoryInfo(setsDir).GetDirectories())
                 {
                     var pdir = new DirectoryInfo(Path.Combine(setdir.FullName, "Cards", "Proxies"));
