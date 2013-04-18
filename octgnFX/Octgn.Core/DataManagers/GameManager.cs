@@ -143,7 +143,7 @@
                         var relPath = f.FullName.Replace(new DirectoryInfo(Path.Combine(game.GetInstallPath(), "Decks")).FullName, "").TrimStart('\\');
                         var newPath = Path.Combine(Paths.Get().DeckPath, game.Name, relPath);
                         Log.InfoFormat("Creating directories {0} {1} {2}", f.FullName, package.Id, package.Title);
-                        Directory.CreateDirectory(newPath);
+                        Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
                         Log.InfoFormat("Copying deck to {0} {1} {2} {3}", f.FullName, newPath, package.Id, package.Title);
                         f.MegaCopyTo(newPath);
                     }
@@ -167,7 +167,7 @@
                         var relPath = f.FullName.Replace(decki.FullName, "").TrimStart('\\');
                         var newPath = Path.Combine(Paths.Get().DeckPath, game.Name,relPath);
                         Log.InfoFormat("Creating directories {0} {1} {2} {3}", f.FullName, setsDir, package.Id, package.Title);
-                        Directory.CreateDirectory(newPath);
+                        Directory.CreateDirectory(new FileInfo(newPath).Directory.FullName);
                         Log.InfoFormat("Copying deck to {0} {1} {2} {3} {4}",f.FullName, newPath,setsDir, package.Id, package.Title);
                         f.MegaCopyTo(newPath);
                     }
