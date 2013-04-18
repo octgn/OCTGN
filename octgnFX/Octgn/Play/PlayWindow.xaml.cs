@@ -32,6 +32,7 @@ namespace Octgn.Play
     using Octgn.DataNew.Entities;
     using Octgn.Library;
     using Octgn.Library.Exceptions;
+    using log4net;
 
     public partial class PlayWindow
     {
@@ -39,7 +40,7 @@ namespace Octgn.Play
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
         [Import] protected Engine ScriptEngine;
-
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 #pragma warning restore 649
 
@@ -94,6 +95,12 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
+            Console.Visibility = Visibility.Visible;
+            Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
+            if (Program.GameEngine.Definition.Fonts.Count > 0)
+            {
+                UpdateFont();
+            }
 
 #if(!DEBUG)
             // Show the Scripting console in dev only
@@ -101,11 +108,7 @@ namespace Octgn.Play
             string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
             if (fname != "/developer") return;
 #endif
-            Console.Visibility = Visibility.Visible;
-            if (Program.GameEngine.Definition.Fonts.Count > 0)
-            {
-                UpdateFont();
-            }
+            
         }
 
         private void UpdateFont()
@@ -120,22 +123,37 @@ namespace Octgn.Play
             
             foreach (Font font in game.Fonts)
             {
+                Log.Info(string.Format("Found font with target({0}) and has path({1})", font.Target, font.Src));
                 if (font.Target.ToLower().Equals("chat"))
                 {
+                    Log.Info("Loading font");
                     chatFontsize = font.Size;
                     chatname.AddFontFile(font.Src);
+                    if (chatname.Families.Length > 0)
+                    {
+                        Log.Info("Loaded font into collection");
+                    }
                     string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + chatname.Families[0].Name;
+                    Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
                     chat.output.FontFamily = new FontFamily(font1.Replace("\\", "/"));
                     chat.output.FontSize = chatFontsize;
+                    Log.Info(string.Format("Loaded font with source: {0}", chat.output.FontFamily.Source));
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
+                    Log.Info(string.Format("Loading font"));
                     contextFontsize = font.Size;
                     context.AddFontFile(font.Src);
+                    if (context.Families.Length > 0)
+                    {
+                        Log.Info("Loaded font into collection");
+                    }
                     string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name;
+                    Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
                     chat.watermark.FontFamily = new FontFamily(font1.Replace("\\","/"));
                     GroupControl.groupFont = new FontFamily(font1.Replace("\\", "/"));
                     GroupControl.fontsize = contextFontsize;
+                    Log.Info(string.Format("Loaded font with source: {0}", GroupControl.groupFont.Source));
                 }
             }
         }
