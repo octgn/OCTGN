@@ -358,8 +358,17 @@
                 var path = Path.Combine(Paths.Get().DataDirectory, "GameDatabase", game.Id.ToString());
                 var gamePathDi = new DirectoryInfo(path);
                 Log.InfoFormat("Deleting folder {0} {1}", path,game.Id);
-                Directory.Delete(gamePathDi.FullName, true);
-                Log.InfoFormat("Folder deleted {0} {1}", path,game.Id);
+                int tryCount = 0;
+                try
+                {
+                    Directory.Delete(gamePathDi.FullName, true);
+                }
+                catch
+                {
+                    tryCount++;
+                    if(tryCount == 4) throw;
+                } 
+                Log.InfoFormat("Folder deleted {0} {1}", path, game.Id);
             }
             finally
             {
