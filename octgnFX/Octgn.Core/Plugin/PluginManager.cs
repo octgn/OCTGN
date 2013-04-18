@@ -36,7 +36,7 @@
                 }
                 catch (Exception e)
                 {
-                    Log.Error("Problem loading plugin " + f.FullName, e);
+                    Log.Warn("Problem loading plugin " + f.FullName, e);
                 }
             }
             // Load all plugins built into OCTGN
