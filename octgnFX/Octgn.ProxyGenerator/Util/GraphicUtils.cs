@@ -129,6 +129,16 @@ namespace Octgn.ProxyGenerator.Util
                         fontStyleFound = true;
                         break;
                     }
+                    foreach (var secondStyle in Enum.GetValues(typeof(FontStyle)))
+                    {
+                        var combinedStyle = ((FontStyle)fontstyleEnum) | ((FontStyle)secondStyle);
+                        if (family.IsStyleAvailable(combinedStyle))
+                        {
+                            fontStyle = (int)combinedStyle;
+                            fontStyleFound = true;
+                            break;
+                        }
+                    }
                 }
                 if (!fontStyleFound)
                 {
