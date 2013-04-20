@@ -68,6 +68,7 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="context" />
       <xs:enumeration value="chat" />
+      <xs:enumeration value="deckeditor" />
     </xs:restriction>
   </xs:simpleType>
 

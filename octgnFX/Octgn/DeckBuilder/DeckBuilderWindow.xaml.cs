@@ -139,6 +139,7 @@ namespace Octgn.DeckBuilder
             ctrl.CardAdded += AddResultCard;
             ctrl.CardRemoved += RemoveResultCard;
             ctrl.CardSelected += CardSelected;
+            LoadFonts(ctrl.resultsGrid);
             Searches.Add(ctrl);
             searchTabs.SelectedIndex = Searches.Count - 1;
         }
@@ -265,6 +266,32 @@ namespace Octgn.DeckBuilder
             Deck = Game.CreateDeck().AsObservable();
             //Deck = new Deck(Game);
             _deckFilename = null;
+        }
+
+        private void LoadFonts(Control control)
+        {
+            if (Game == null)
+            {
+                return;
+            }
+            if (Game.Fonts.Count > 0)
+            {
+                foreach (Font font in Game.Fonts)
+                {
+                    if (font.Target.ToLower().Equals("deckeditor"))
+                    {
+                        if(!File.Exists(font.Src))
+                        {
+                            return;
+                        }
+                        System.Drawing.Text.PrivateFontCollection pfc = new System.Drawing.Text.PrivateFontCollection();
+                        control.FontSize = font.Size; 
+                        pfc.AddFontFile(font.Src);
+                        string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + pfc.Families[0].Name;
+                        control.FontFamily = new System.Windows.Media.FontFamily(font1.Replace("\\", "/"));
+                    }
+                }
+            }
         }
 
         private void SaveDeck(object sender, ExecutedRoutedEventArgs e)

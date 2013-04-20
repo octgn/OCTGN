@@ -241,6 +241,9 @@
                         case fonttarget.context:
                             f.Target = Enum.Parse(typeof(fonttarget), "context").ToString();
                             break;
+                        case fonttarget.deckeditor:
+                            f.Target = Enum.Parse(typeof(fonttarget), "deckeditor").ToString();
+                            break;
                     }
                     ret.Fonts.Add(f);
                 }
