@@ -6,10 +6,7 @@ namespace Octgn.DeckBuilderPluginExample
     using System.Reflection;
     using System.Windows;
 
-    using Octgn.Core.DataExtensionMethods;
-    using Octgn.Core.DataManagers;
-    using Octgn.Core.Plugin;
-    using Octgn.DataNew.Entities;
+    using Octgn.Data;
     using Octgn.Library.Plugin;
 
     public class DeckBuilderPluginExample : IDeckBuilderPlugin 
@@ -23,7 +20,7 @@ namespace Octgn.DeckBuilderPluginExample
             }
         }
 
-        public void OnLoad(GameManager games)
+        public void OnLoad(GamesRepository games)
         {
             // I'm showing a message box, but don't do this, unless it's for updates or something...but don't do it every time as it pisses people off.
             MessageBox.Show("Hello!");
@@ -62,8 +59,8 @@ namespace Octgn.DeckBuilderPluginExample
         {
             get
             {
-                // Don't allow this plugin to be used in any version less than 3.0.12.58
-                return Version.Parse("3.1.0.0");
+                // Don't allow this plugin to be used in any version less than 3.0.13.59
+                return Version.Parse("3.0.13.59");
             }
         }
     }
@@ -87,10 +84,10 @@ namespace Octgn.DeckBuilderPluginExample
             var curDeck = con.GetLoadedDeck();
 
             if(curDeck != null)
-                MessageBox.Show(String.Format("{0}",curDeck.CardCount()));
+                MessageBox.Show(String.Format("{0}",curDeck.CardCount));
 
             // Find the first game with cards in it.
-            var game = con.Games.Games.FirstOrDefault(x => x.AllCards().Count() > 0);
+            var game = con.Games.Games.FirstOrDefault(x => x.SelectCards(null).Rows.Count > 0);
             if (game == null)
             {
                 MessageBox.Show("No Games Installed?!?!?");
@@ -100,15 +97,16 @@ namespace Octgn.DeckBuilderPluginExample
             con.SetLoadedGame(game);
 
             // Select a random card from the games card list.
-            var cm = game.AllCards().First();
-            var d = new Deck();
-            d.GameId = game.Id;
+            var cm = game.SelectRandomCardModels(1).FirstOrDefault();
+            var d = new Deck(game);
 
             // It's weird, but this is how you add a card.
-            var multiCard = cm.ToMultiCard(1);
-            var secArray = d.Sections.ToArray();
-            secArray[0].Cards.AddCard(multiCard);
-            d.Sections = secArray;
+            d.Sections[0].Cards.Add(new Deck.Element()
+                                        {
+                                            Card = cm,
+                                            Quantity = (byte)1
+                                        });
+
             // Load that mother.
             con.LoadDeck(d);
         }
