@@ -274,7 +274,7 @@ namespace Octgn.Launcher
                                         case "EmailUnverifiedException":
                                             {
                                                 //TODO Needs a way to resend e-mail and stuff
-                                                this.LoginFinished(LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail.");
+                                                this.LoginFinished(LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.");
                                                 break;
                                             }
                                         case "UnknownUsernameException":
@@ -290,6 +290,16 @@ namespace Octgn.Launcher
                                         case "NoEmailException":
                                             {
                                                 this.LoginFinished(LoginResult.Failure,DateTime.Now,"Your account does not have an e-mail associated with it. Please enter one above.",true);
+                                                break;
+                                            }
+                                        case "NoSubscriptionException":
+                                            {
+                                                this.LoginFinished(LoginResult.Failure, DateTime.Now, "Your account doesn't not have a subscription associated with it. Please visit your Account page on http://www.octgn.net/", true);
+                                                break;
+                                            }
+                                        case "SubscriptionExpiredException":
+                                            {
+                                                this.LoginFinished(LoginResult.Failure, DateTime.Now, "Your account's subscription has expired. Please visit your Account page on http://www.octgn.net/", true);
                                                 break;
                                             }
                                         default:
@@ -378,9 +388,10 @@ namespace Octgn.Launcher
             private void DoErrorMessage(string message)
             {
                 Dispatcher.Invoke((Action) (() =>
-                                                {
-                                                    lError.Text = message;
-                                                    bError.Visibility = Visibility.Visible;
+                    {
+                        MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                                                    //lError.Text = message;
+                                                    //bError.Visibility = Visibility.Visible;
                                                 }), new object[] {});
             }
         #endregion
