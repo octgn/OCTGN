@@ -76,6 +76,7 @@
         <Style>
           <EventSetter Event="DataGridRow.MouseDoubleClick" Handler="ResultDoubleClick" />
           <EventSetter Event="DataGridRow.MouseLeave" Handler="PickUpCard" />
+          <EventSetter Event="DataGridRow.PreviewMouseLeftButtonDown" Handler="SelectPickupCard" />
         </Style>
       </DataGrid.RowStyle>
       <DataGrid.Columns>
