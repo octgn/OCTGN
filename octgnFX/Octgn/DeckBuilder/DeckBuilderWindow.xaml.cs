@@ -502,7 +502,7 @@ namespace Octgn.DeckBuilder
             var element = ActiveSection.Cards.FirstOrDefault(c => c.Id == e.CardId);
             if (element == null) return;
             element.Quantity -= 1;
-            if (element.Quantity == 0)
+            if (element.Quantity <= 0)
                 ActiveSection.Cards.RemoveCard(element);
             this.InvalidateVisual();
         }
@@ -628,32 +628,31 @@ namespace Octgn.DeckBuilder
                 cardImage.Source = bim;
             }
         }
-        private Point startPoint = new Point();
-        private int cardIndex;
-        private DataGridRow DeckCard;
+        private DataGridRow activeCard;
+        private ObservableSection dragSection;
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
-            startPoint = e.GetPosition(null);
-            DeckCard = FindRow<DataGridRow>((DependencyObject)e.OriginalSource);
-            cardIndex = DeckCard.GetIndex();
+            activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
+            dragSection = (ObservableSection)FindAncestor<Expander>((FrameworkElement)sender).DataContext;
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
-            if (MouseButtonState.Pressed.Equals(e.LeftButton))
+            if (MouseButtonState.Pressed.Equals(e.LeftButton) && activeCard != null)
             {
                 try
                 {
+                    int cardIndex = activeCard.GetIndex();
                     var getCard = ActiveSection.Cards.ElementAt(cardIndex);
                     DataObject dragCard = new DataObject("Card", getCard);
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift)
                     {
                         ActiveSection.Cards.RemoveCard(getCard);
-                        DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.All);
+                        DragDrop.DoDragDrop(activeCard, dragCard, DragDropEffects.All);
                     }
                     else
                     {
                         RemoveResultCard(null, new SearchCardIdEventArgs { CardId = getCard.Id });
-                        DragDrop.DoDragDrop(DeckCard, dragCard, DragDropEffects.Copy);
+                        DragDrop.DoDragDrop(activeCard, dragCard, DragDropEffects.Copy);
                     }
 
                 }
@@ -662,6 +661,7 @@ namespace Octgn.DeckBuilder
                     Log.Error(ex);
                 }
             }
+            activeCard = null;
         }
         private void DeckDragEnter(object sender, DragEventArgs e)
         {
@@ -706,7 +706,7 @@ namespace Octgn.DeckBuilder
             }
             e.Handled = true;
         }
-        private static T FindRow<T>(DependencyObject Current)
+        private static T FindAncestor<T>(DependencyObject Current)
             where T : DependencyObject
         {
             do
