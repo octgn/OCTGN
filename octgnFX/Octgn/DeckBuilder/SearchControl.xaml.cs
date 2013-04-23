@@ -179,11 +179,16 @@ namespace Octgn.DeckBuilder
                 _CurrentView.Table.ImportRow(row);
             }
         }
-        private DataGridRow SearchCard = new DataGridRow();
+        private bool dragActive = false;
+        private void SelectPickupCard(object sender, MouseButtonEventArgs e)
+        {
+            dragActive = true;
+        }
         private void PickUpCard(object sender, MouseEventArgs e)
         {
-            if (MouseButtonState.Pressed.Equals(e.LeftButton))
+            if (MouseButtonState.Pressed.Equals(e.LeftButton) && dragActive)
             {
+                DataGridRow SearchCard = new DataGridRow();
                 var row = (DataRowView)resultsGrid.SelectedItem;
                 if (row == null) return;
                 if (CardAdded == null) return;
@@ -195,26 +200,12 @@ namespace Octgn.DeckBuilder
                     DragDrop.DoDragDrop(SearchCard, dragCard, DragDropEffects.Copy);
                 }
             }
+            dragActive = false;
         }
         private void SearchDragEnter(object sender, DragEventArgs e)
         {
                 e.Effects = DragDropEffects.None;
         }
-        private static T FindRow<T>(DependencyObject Current)
-            where T : DependencyObject
-        {
-            do
-            {
-                if (Current is T)
-                {
-                    return (T)Current;
-                }
-                Current = System.Windows.Media.VisualTreeHelper.GetParent(Current);
-            }
-            while (Current != null);
-            return null;
-        }
-
     }
 
     public class SearchCardIdEventArgs : EventArgs
