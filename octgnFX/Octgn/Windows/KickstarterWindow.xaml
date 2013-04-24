@@ -1,11 +1,11 @@
 ﻿<Window x:Class="Octgn.Windows.KickstarterWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:Octgn.Controls"
-                                    Title="OCTGN" Height="539" Width="230" ResizeMode="NoResize">
+                                    Title="OCTGN" Height="559" Width="250" ResizeMode="NoResize" Topmost="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="39"/>
-            <RowDefinition Height="422*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Label FontSize="20" Foreground="Black">Help Us Out(we need it)</Label>
