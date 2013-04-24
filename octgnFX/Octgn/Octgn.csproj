@@ -493,6 +493,9 @@
     <Compile Include="Launcher\LoginNew.xaml.cs">
       <DependentUpon>LoginNew.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\KickstarterWindow.xaml.cs">
+      <DependentUpon>KickstarterWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
@@ -945,6 +948,10 @@
     <Page Include="Launcher\LoginNew.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\KickstarterWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Main.xaml">
       <Generator>MSBuild:Compile</Generator>

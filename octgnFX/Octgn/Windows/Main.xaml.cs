@@ -39,6 +39,7 @@ namespace Octgn.Windows
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
+            this.Loaded += (sender, args) => new KickstarterWindow().ShowDialog();
             //new GameFeedManager().CheckForUpdates();
         }
 

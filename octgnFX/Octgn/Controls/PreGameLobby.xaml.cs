@@ -13,6 +13,7 @@ namespace Octgn.Controls
 
     using Octgn.Networking;
     using Octgn.Play;
+    using Octgn.Windows;
 
     /// <summary>
     /// Interaction logic for PreGameLobby.xaml
@@ -65,7 +66,8 @@ namespace Octgn.Controls
             }
 
             Loaded += delegate
-            {
+                {
+                    new KickstarterWindow().ShowDialog();
                 Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
                 Program.Dispatcher = Dispatcher;
                 Program.ServerError += HandshakeError;
