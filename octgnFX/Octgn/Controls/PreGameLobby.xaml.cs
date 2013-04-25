@@ -67,7 +67,7 @@ namespace Octgn.Controls
 
             Loaded += delegate
                 {
-                    new KickstarterWindow().ShowDialog();
+                    //new KickstarterWindow().ShowDialog();
                 Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
                 Program.Dispatcher = Dispatcher;
                 Program.ServerError += HandshakeError;
