@@ -43,6 +43,8 @@ namespace Octgn.ProxyGenerator.Util
             }
 
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             value = System.Web.HttpUtility.HtmlDecode(value);
             GraphicsPath path = GetTextPath(section, value);
 
