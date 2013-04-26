@@ -93,11 +93,10 @@
                                               Properties =
                                                   x.Properties.ToDictionary(z => z.Key, y => y.Value),
                                               ImageUri = x.ImageUri,
-                                              IsMutable = x.IsMutable,
                                               Alternate = x.Alternate,
                                               SetId = x.SetId,
-                                              Dependent = x.Dependent,
-                                              Quantity = x.Quantity
+                                              Quantity = x.Quantity,
+                                              Alternates = x.Alternates.ToDictionary(z => z.Key, y => y.Value),
                                           };
                             ret.PropertyChanged += this.CardOnPropertyChanged;
                             return ret;

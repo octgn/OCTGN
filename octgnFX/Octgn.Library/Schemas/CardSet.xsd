@@ -147,6 +147,54 @@
                         </xs:attribute>
                       </xs:complexType>
                     </xs:element>
+                    <xs:element name="alternate" minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation>
+                          This element defines an alternate version of the card.
+                        </xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+                            <xs:annotation>
+                              <xs:documentation>
+                                This element defines one property of the alternate of the card.
+                              </xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                              <xs:attribute name="name" type="xs:string" use="required">
+                                <xs:annotation>
+                                  <xs:documentation>
+                                    This attribute defines the name of this property. Note: this name must have been declared in the game definition file.
+                                  </xs:documentation>
+                                </xs:annotation>
+                              </xs:attribute>
+                              <xs:attribute name="value" type="xs:string" use="required">
+                                <xs:annotation>
+                                  <xs:documentation>
+                                    This attribute defines the value of this property.
+                                  </xs:documentation>
+                                </xs:annotation>
+                              </xs:attribute>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              This attribute defines the name of this alternate version of this card.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="type" type="xs:string" use="required">
+                          <xs:annotation>
+                            <xs:documentation>
+                              This attribute defines the type of alternate card.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:attribute>
+                      </xs:complexType>
+                    </xs:element>
                   </xs:sequence>
                   <xs:attribute name="name" type="xs:string" use="required">
                     <xs:annotation>
@@ -159,20 +207,6 @@
                     <xs:annotation>
                       <xs:documentation>
                         This attribute is the card's unique id.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                  <xs:attribute name="alternate" type="guid" use="optional">
-                    <xs:annotation>
-                      <xs:documentation>
-                        A GUID, with or without the enclosing curly braces. Used for defining an Alternate CardModel (that python can switch this one to)
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:attribute>
-                  <xs:attribute name="dependent" type="xs:string" use="optional">
-                    <xs:annotation>
-                      <xs:documentation>
-                        Anything means "True, this card is dependent" (and therefore AlternateOnly), but a specific guid to use instead may be declared.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>

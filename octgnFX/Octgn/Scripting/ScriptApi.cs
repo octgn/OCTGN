@@ -196,11 +196,6 @@ namespace Octgn.Scripting
         {
             return Tuple.Create(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight);
         }
-
-        public bool IsAlternate(int id)
-        {
-            return Card.Find(id).isAlternate();
-        }
         public bool IsAlternateImage(int id)
         {
             return Card.Find(id).IsAlternateImage;

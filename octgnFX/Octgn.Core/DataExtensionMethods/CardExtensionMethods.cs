@@ -24,21 +24,14 @@
             return new MultiCard
                          {
                              Alternate = card.Alternate,
-                             Dependent = card.Dependent,
                              Id = card.Id,
                              ImageUri = card.ImageUri,
-                             IsMutable = card.IsMutable,
                              Name = card.Name,
                              Quantity = quantity,
                              SetId = card.SetId,
-                             Properties = card.Properties
+                             Properties = card.Properties,
+                             Alternates = card.Alternates
                          };
-        }
-        public static bool IsDependant(this ICard card)
-        {
-            if (string.IsNullOrWhiteSpace(card.Dependent) || card.Dependent.Equals("false", StringComparison.InvariantCultureIgnoreCase))
-                return false;
-            return true;
         }
         public static string GetPicture(this ICard card)
         {
@@ -92,15 +85,19 @@
                               Name = card.Name,
                               Id = card.Id,
                               Alternate = card.Alternate,
-                              Dependent = card.Dependent,
                               ImageUri = card.ImageUri,
-                              IsMutable = card.IsMutable,
                               Quantity = card.Quantity,
-                              Properties = new Dictionary<PropertyDef, object>()
+                              Properties = new Dictionary<PropertyDef, object>(),
+                                Alternates = new Dictionary<string, CardAlternate>(),
+                                SetId = card.SetId
                           };
             foreach (var p in card.Properties)
             {
                 ret.Properties.Add(p.Key, p.Value);
+            }
+            foreach (var p in card.Alternates)
+            {
+                ret.Alternates.Add(p.Key,p.Value);
             }
             return ret;
         }

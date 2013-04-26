@@ -161,11 +161,10 @@
                               Name = card.Name,
                               Properties = card.Properties.ToDictionary(x => x.Key, y => y.Value),
                               ImageUri = card.ImageUri,
-                              IsMutable = card.IsMutable,
                               Alternate = card.Alternate,
                               SetId = card.SetId,
-                              Dependent = card.Dependent,
-                              Quantity = card.Quantity
+                              Quantity = card.Quantity,
+                              Alternates = card.Alternates.ToDictionary(x=>x.Key,y=>y.Value)
                           };
             return ret;
         }

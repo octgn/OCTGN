@@ -44,38 +44,6 @@
             ret.Name = reader.Value;
             reader.MoveToAttribute("id");
             ret.Id = new Guid(reader.Value);
-            //           isMutable = false;
-            if (reader.MoveToAttribute("alternate"))
-            {
-                try { ret.Alternate = new Guid(reader.Value); }
-                catch (Exception e)
-                {
-                    throw new ArgumentException(String.Format("The value {0} is not of expected type for property Alternate. Alternate must be a GUID.",
-                                                reader.Value));
-                }
-            }
-            else { ret.Alternate = System.Guid.Empty; }
-            if (reader.MoveToAttribute("dependent"))
-            {
-                try
-                {
-                    ret.Dependent = new Guid(reader.Value).ToString();
-                }
-                catch
-                {
-                    try
-                    {
-                        ret.Dependent = Boolean.Parse(reader.Value).ToString();
-                    }
-                    catch
-                    {
-
-                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property Dependent. Dependent must be either true/false, or the Guid of the card to use instead.",
-                                                      reader.Value));
-                    }
-                }
-            }
-            else { ret.Dependent = String.Empty; }
             Uri cardImageUri = definition.GetRelationship("C" + ret.Id.ToString("N")).TargetUri;
             ret.ImageUri = cardImageUri.OriginalString;
             if (!package.PartExists(cardImageUri))
@@ -113,6 +81,60 @@
                                                                 reader.Value, prop.Name));
                 }
                 reader.Read(); // <property/>
+            }
+            ret.Alternates = new Dictionary<string, CardAlternate>();
+            while (reader.IsStartElement("alternate"))
+            {
+                reader.MoveToAttribute("name");
+                var alternate = new CardAlternate();
+                alternate.Properties = new Dictionary<PropertyDef, object>();
+                var nameprop = new PropertyDef()
+                                   {
+                                       Name = "name",
+                                       TextKind = PropertyTextKind.FreeText,
+                                       Type = PropertyType.String
+                                   };
+                alternate.Properties.Add(nameprop,reader.Value);
+
+                reader.MoveToAttribute("type");
+                alternate.Type = reader.Value;
+
+                //grab it's stupid props
+                while (reader.IsStartElement("property"))
+                {
+                    reader.MoveToAttribute("name");
+                    PropertyDef prop = game.CustomProperties.FirstOrDefault(p => p.Name == reader.Value);
+                    if (prop == null)
+                        throw new ArgumentException(string.Format("The property '{0}' is unknown", reader.Value));
+                    reader.MoveToAttribute("value");
+                    try
+                    {
+                        switch (prop.Type)
+                        {
+                            case PropertyType.String:
+                                alternate.Properties.Add(prop, reader.Value);
+                                break;
+                            case PropertyType.Integer:
+                                alternate.Properties.Add(prop, Int32.Parse(reader.Value));
+                                break;
+                            case PropertyType.Char:
+                                alternate.Properties.Add(prop, Char.Parse(reader.Value));
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property {1}",
+                                                                    reader.Value, prop.Name));
+                    }
+                    reader.Read(); // <property/>
+                }
+
+                if (ret.Alternates.ContainsKey(alternate.Type)) ret.Alternates[alternate.Type] = alternate;
+                else ret.Alternates.Add(alternate.Type,alternate);
+                reader.Read(); //</alternate>
             }
             ret.Properties = Properties;
 

@@ -272,7 +272,7 @@ public partial class options {
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 public partial class pick {
     
-    private int qtyField;
+    private string qtyField;
     
     private string keyField;
     
@@ -280,7 +280,7 @@ public partial class pick {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public int qty {
+    public string qty {
         get {
             return this.qtyField;
         }
@@ -357,13 +357,11 @@ public partial class setCard {
     
     private setCardProperty[] propertyField;
     
+    private setCardAlternate[] alternateField;
+    
     private string nameField;
     
     private string idField;
-    
-    private string alternateField;
-    
-    private string dependentField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -373,6 +371,17 @@ public partial class setCard {
         }
         set {
             this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("alternate", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public setCardAlternate[] alternate {
+        get {
+            return this.alternateField;
+        }
+        set {
+            this.alternateField = value;
         }
     }
     
@@ -397,26 +406,39 @@ public partial class setCard {
             this.idField = value;
         }
     }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class setCardProperty {
+    
+    private string nameField;
+    
+    private string valueField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string alternate {
+    public string name {
         get {
-            return this.alternateField;
+            return this.nameField;
         }
         set {
-            this.alternateField = value;
+            this.nameField = value;
         }
     }
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string dependent {
+    public string value {
         get {
-            return this.dependentField;
+            return this.valueField;
         }
         set {
-            this.dependentField = value;
+            this.valueField = value;
         }
     }
 }
@@ -427,7 +449,55 @@ public partial class setCard {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class setCardProperty {
+public partial class setCardAlternate {
+    
+    private setCardAlternateProperty[] propertyField;
+    
+    private string nameField;
+    
+    private string typeField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public setCardAlternateProperty[] property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string type {
+        get {
+            return this.typeField;
+        }
+        set {
+            this.typeField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class setCardAlternateProperty {
     
     private string nameField;
     

@@ -511,13 +511,6 @@ namespace Octgn.DeckBuilder
             else
             {
                 var card = Game.GetCardById(e.CardId);
-                if (card.IsDependant())
-                {
-                    MessageBox.Show("Unable to add " + card.Name +
-                       "to the deck. It is marked as dependent, which implies it is the alternate version of another card. Please try to add the original instead.",
-                       "Warning: Add dependent card failed.", MessageBoxButton.OK);
-                    return;
-                }
                 ActiveSection.Cards.AddCard(card.ToMultiCard());
                 this.InvalidateVisual();
             }

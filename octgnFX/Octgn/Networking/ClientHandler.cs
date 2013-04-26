@@ -243,8 +243,9 @@ namespace Octgn.Networking
 
         public void SwitchWithAlternate(Card c)
         {
-            c.SwitchWithAlternate();
+            throw new NotImplementedException("Depreciated");
         }
+
         public void IsAlternateImage(Card c, bool isAlternateImage)
         {
             c.IsAlternateImage = isAlternateImage;
