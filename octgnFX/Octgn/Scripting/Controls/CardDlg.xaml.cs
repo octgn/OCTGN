@@ -34,6 +34,7 @@ namespace Octgn.Scripting.Controls
             Task.Factory.StartNew(() =>
               {
                   var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
+                  if (op == null) op = "";
                   op = op.ToLower().Trim();
                   if (String.IsNullOrWhiteSpace(op)) op = "and";
                   if (properties == null) properties = new Dictionary<string, string>();
