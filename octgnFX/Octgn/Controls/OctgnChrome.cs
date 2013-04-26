@@ -484,6 +484,8 @@ namespace Octgn.Controls
                 this.Left = ((bounds.Right - bounds.Left) / 2) + (Width / 2);
                 this.Top = ((bounds.Bottom - bounds.Top) / 2) + (Height / 2);
             }
+            System.IntPtr handle = (new WinInterop.WindowInteropHelper(this)).Handle;
+            WinInterop.HwndSource.FromHwnd(handle).AddHook(new WinInterop.HwndSourceHook(WindowProc));
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
