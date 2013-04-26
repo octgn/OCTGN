@@ -40,7 +40,7 @@ namespace Octgn.ProxyGenerator
                     block.src = Path.Combine(rootPath, block.src);
                     GraphicUtils.MergeOverlay(graphics, block);
                 }
-                List<Property> removedProps = new List<Property>();
+                List<Property> clonedProps = new List<Property>();
                 foreach (LinkDefinition section in template.GetTextBlocks(values))
                 {
                     BlockDefinition block = manager.GetBlock(section.Block);
@@ -48,31 +48,27 @@ namespace Octgn.ProxyGenerator
                     {
                         continue;
                     }
-                    
+                    clonedProps.AddRange(section.NestedProperties);
                     
                     foreach (Property prop in section.NestedProperties)
                     {
                         if (!values.ContainsKey(prop.Name))
                         {
-                            removedProps.Add(prop);
+                            clonedProps.Remove(prop);
                         }
-                        if (!removedProps.Contains(prop) && (values[prop.Name] == null || values[prop.Name].Length == 0))
+                        if (clonedProps.Contains(prop) && (values[prop.Name] == null || values[prop.Name].Length == 0))
                         {
-                            removedProps.Add(prop);
+                            clonedProps.Remove(prop);
                         }
-                    }
-                    foreach (Property prop in removedProps)
-                    {
-                        section.NestedProperties.Remove(prop);
                     }
 
                     StringBuilder toWrite = new StringBuilder();
-                    if (section.NestedProperties.Count > 1)
+                    if (clonedProps.Count > 1)
                     {
-                        for (int i = 0; i < section.NestedProperties.Count; i++)
+                        for (int i = 0; i < clonedProps.Count; i++)
                         {
-                            string propertyName = section.NestedProperties[i].Name;
-                            if (i < (section.NestedProperties.Count - 1))
+                            string propertyName = clonedProps[i].Name;
+                            if (i < (clonedProps.Count - 1))
                             {
                                 toWrite.Append(string.Format("{0} {1}", values[propertyName], section.Separator));
                             }
@@ -85,18 +81,13 @@ namespace Octgn.ProxyGenerator
                     }
                     else
                     {
-                        if (section.NestedProperties.Count > 0)
+                        if (clonedProps.Count > 0)
                         {
-                            string propertyName = section.NestedProperties[0].Name;
+                            string propertyName = clonedProps[0].Name;
                             toWrite.Append(values[propertyName]);
                         }
                     }
                     GraphicUtils.WriteString(graphics, block, toWrite.ToString());
-                    foreach (Property prop in removedProps)
-                    {
-                        section.NestedProperties.Add(prop);
-                    }
-                    removedProps.Clear();
                 }
             }
 
