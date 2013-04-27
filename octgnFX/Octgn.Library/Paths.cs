@@ -4,6 +4,8 @@
     using System.IO.Abstractions;
     using System.Reflection;
 
+    using log4net;
+
     public interface IPaths
     {
         string WorkingDirectory { get; set; }
@@ -21,6 +23,8 @@
 
     public class Paths : IPaths
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         #region Singleton
 
         internal static IPaths SingletonContext { get; set; }
@@ -34,6 +38,7 @@
 
         internal Paths()
         {
+            Log.Info("Creating paths");
             if (FS == null)
                 FS = new FileSystem();
             try
@@ -57,6 +62,11 @@
             FS.Directory.CreateDirectory(LocalFeedPath);
             DeckPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Decks");
             MainOctgnFeed = "http://www.myget.org/F/octgngames/";
+
+            foreach (var prop in this.GetType().GetProperties())
+            {
+                Log.InfoFormat("Path {0} = {1}",prop.Name,prop.GetValue(this,null));
+            }
         }
 
         #endregion Singleton
