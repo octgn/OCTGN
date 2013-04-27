@@ -84,8 +84,10 @@
         public string DeckPath { get; set; }
         public string GraveyardPath {get
         {
-            var ret = System.IO.Path.Combine(FS.Path.GetTempPath(), "OCTGN", "Graveyard", Guid.NewGuid().ToString());
+            var ret = FS.Path.Combine(FS.Path.GetTempPath(), "OCTGN");
+            ret = FS.Path.Combine(ret, "Graveyard");
             if (!FS.Directory.Exists(ret)) FS.Directory.CreateDirectory(ret);
+            ret = FS.Path.Combine(ret, Guid.NewGuid().ToString());
             return ret;
         }}
     }

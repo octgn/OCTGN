@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
 
     using log4net;
@@ -55,6 +56,17 @@
                     Cache[path].Dispose();
                     Cache.Remove(path);
                     Log.DebugFormat("Path Invalidated {0}",path);
+                }
+            }
+        }
+        public void InvalidateObject(object obj)
+        {
+            lock (CacheLocker)
+            {
+                foreach (var o in Cache.Where(x => x.Value.Object == obj).ToArray())
+                {
+                    Cache[o.Key].Dispose();
+                    Cache.Remove(o.Key);
                 }
             }
         }

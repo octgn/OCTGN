@@ -365,7 +365,10 @@
                 {
                     try
                     {
+                        DbContext.Get().Invalidate(game);
+                        gamePathDi.ClearReadonlyFlag();
                         gamePathDi.MoveTo(Paths.Get().GraveyardPath);
+                        break;
                     }
                     catch
                     {

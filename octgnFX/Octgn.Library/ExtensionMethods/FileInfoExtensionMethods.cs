@@ -23,5 +23,16 @@
                 file.Attributes = (FileAttributes)(Convert.ToInt32(file.Attributes) - Convert.ToInt32(FileAttributes.ReadOnly));
             }
         }
+        public static void ClearReadonlyFlag(this DirectoryInfo dir)
+        {
+            if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            {
+                dir.Attributes = (FileAttributes)(Convert.ToInt32(dir.Attributes) - Convert.ToInt32(FileAttributes.ReadOnly));
+            }
+            foreach (var f in dir.GetFiles("*.*", SearchOption.AllDirectories))
+            {
+                f.ClearReadonlyFlag();
+            }
+        }
     }
 }

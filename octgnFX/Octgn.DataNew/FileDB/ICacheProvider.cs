@@ -9,5 +9,7 @@
         void AddObjectToCache(string path, object obj);
 
         void InvalidatePath(string path);
+
+        void InvalidateObject(object obj);
     }
 }
