@@ -85,6 +85,7 @@
         public string GraveyardPath {get
         {
             var ret = System.IO.Path.Combine(FS.Path.GetTempPath(), "OCTGN", "Graveyard", Guid.NewGuid().ToString());
+            if (!FS.Directory.Exists(ret)) FS.Directory.CreateDirectory(ret);
             return ret;
         }}
     }

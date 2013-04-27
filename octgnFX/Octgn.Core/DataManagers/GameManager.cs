@@ -361,15 +361,18 @@
                 var gamePathDi = new DirectoryInfo(path);
                 Log.InfoFormat("Deleting folder {0} {1}", path,game.Id);
                 int tryCount = 0;
-                try
+                while (tryCount < 5)
                 {
-                    gamePathDi.MoveTo(Paths.Get().GraveyardPath);
+                    try
+                    {
+                        gamePathDi.MoveTo(Paths.Get().GraveyardPath);
+                    }
+                    catch
+                    {
+                        tryCount++;
+                        if (tryCount == 4) throw;
+                    }
                 }
-                catch
-                {
-                    tryCount++;
-                    if(tryCount == 4) throw;
-                } 
                 Log.InfoFormat("Folder deleted {0} {1}", path, game.Id);
             }
             finally
