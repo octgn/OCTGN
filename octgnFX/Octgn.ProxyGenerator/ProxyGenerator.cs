@@ -40,9 +40,10 @@ namespace Octgn.ProxyGenerator
                     block.src = Path.Combine(rootPath, block.src);
                     GraphicUtils.MergeOverlay(graphics, block);
                 }
-                List<Property> clonedProps = new List<Property>();
+                
                 foreach (LinkDefinition section in template.GetTextBlocks(values))
                 {
+                    List<Property> clonedProps = new List<Property>();
                     BlockDefinition block = manager.GetBlock(section.Block);
                     if (block.type != "text")
                     {
