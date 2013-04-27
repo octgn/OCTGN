@@ -95,8 +95,7 @@
                                               ImageUri = x.ImageUri,
                                               Alternate = x.Alternate,
                                               SetId = x.SetId,
-                                              Quantity = x.Quantity,
-                                              Alternates = x.Alternates != null ? x.Alternates.ToDictionary(z => z.Key, y => y.Value) : null,
+                                              Quantity = x.Quantity
                                           };
                             ret.PropertyChanged += this.CardOnPropertyChanged;
                             return ret;

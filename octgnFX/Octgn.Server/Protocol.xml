@@ -421,9 +421,9 @@
   <msg name="CancelLimited" client="true">
     <param name="player" type="Player" />
   </msg>
-  <msg name="IsAlternateImage" server="true" client="true">
+  <msg name="CardSwitchTo" server="true" client="true">
     <param name="card" type="Card" />
-    <param name="isAlternateImage" type="bool" />
+    <param name="alternate" type="string" />
   </msg>
   <msg name="PlayerSetGlobalVariable" server="true" client="true">
     <param name="player" type="Player"/>
@@ -434,8 +434,7 @@
     <param name="name" type="string"/>
     <param name="val" type="string"/>
   </msg>
-  <msg name="SwitchWithAlternate" server="true" client="true">
-    <param name="card" type="Card"/>
+  <msg name="SwitchWithAlternate">
   </msg>
   <msg name="Ping" server="true" client="true"></msg>
   <msg name="IsTableBackgroundFlipped" server="true" client="true">

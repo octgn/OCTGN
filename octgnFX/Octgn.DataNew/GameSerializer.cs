@@ -28,7 +28,7 @@
             var serializer = new XmlSerializer(typeof(game));
             directory = new FileInfo(fileName).Directory.FullName;
             game g = null;
-            using (var fs = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read))
+            using (var fs = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 g = (game)serializer.Deserialize(fs);
                 if (g == null)
@@ -41,14 +41,14 @@
                               Id = new Guid(g.id),
                               Name = g.name,
                               CardBack = String.IsNullOrWhiteSpace(g.card.back) ? "pack://application:,,,/Resources/Back.jpg" : Path.Combine(directory, g.card.back),
-                              CardFront = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front) ,
+                              CardFront = String.IsNullOrWhiteSpace(g.card.front) ? "pack://application:,,,/Resources/Front.jpg" : Path.Combine(directory, g.card.front),
                               CardHeight = int.Parse(g.card.height),
                               CardWidth = int.Parse(g.card.width),
                               CardCornerRadius = int.Parse(g.card.cornerRadius),
                               Version = Version.Parse(g.version),
                               CustomProperties = new List<PropertyDef>(),
-                              DeckSections = new Dictionary<string,DeckSection>(),
-                              SharedDeckSections = new Dictionary<string,DeckSection>(),
+                              DeckSections = new Dictionary<string, DeckSection>(),
+                              SharedDeckSections = new Dictionary<string, DeckSection>(),
                               GlobalVariables = new List<GlobalVariable>(),
                               Authors = g.authors.Split(',').ToList(),
                               Description = g.description,
@@ -96,7 +96,7 @@
                                 {
                                     Id = (byte)curCounter,
                                     Name = i.name,
-                                    Icon = Path.Combine(directory,i.icon ?? ""),
+                                    Icon = Path.Combine(directory, i.icon ?? ""),
                                     Reset = bool.Parse(i.reset.ToString()),
                                     Start = int.Parse(i.@default)
                                 });
@@ -136,7 +136,7 @@
                                      {
                                          Id = (byte)curCounter,
                                          Name = i.name,
-                                         Icon = Path.Combine(directory,i.icon ?? ""),
+                                         Icon = Path.Combine(directory, i.icon ?? ""),
                                          Reset = bool.Parse(i.reset.ToString()),
                                          Start = int.Parse(i.@default)
                                      });
@@ -155,7 +155,7 @@
                     else if (item is group)
                     {
                         var i = item as group;
-                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i,curGroup));
+                        (player.Groups as List<Group>).Add(this.DeserialiseGroup(i, curGroup));
                         curGroup++;
                     }
                 }
@@ -169,9 +169,9 @@
                 foreach (var doc in g.documents)
                 {
                     var d = new Document();
-                    d.Icon = Path.Combine(directory,doc.icon);
+                    d.Icon = Path.Combine(directory, doc.icon);
                     d.Name = doc.name;
-                    d.Source = Path.Combine(directory,doc.src);
+                    d.Source = Path.Combine(directory, doc.src);
                     ret.Documents.Add(d);
                 }
             }
@@ -181,7 +181,7 @@
             {
                 foreach (var ds in g.deck)
                 {
-                    ret.DeckSections.Add(ds.name, new DeckSection{Group=ds.group,Name = ds.name});
+                    ret.DeckSections.Add(ds.name, new DeckSection { Group = ds.group, Name = ds.name });
                 }
             }
             if (g.sharedDeck != null)
@@ -213,7 +213,7 @@
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-                    pd.Type = (PropertyType)Enum.Parse(typeof(PropertyType),prop.type.ToString());
+                    pd.Type = (PropertyType)Enum.Parse(typeof(PropertyType), prop.type.ToString());
                     pd.IgnoreText = bool.Parse(prop.ignoreText.ToString());
                     pd.Hidden = bool.Parse(prop.hidden);
                     ret.CustomProperties.Add(pd);
@@ -231,7 +231,7 @@
                 foreach (gameFont font in g.fonts)
                 {
                     Font f = new Font();
-                    f.Src = Path.Combine(directory,font.src ?? "");
+                    f.Src = Path.Combine(directory, font.src ?? "");
                     f.Size = (int)font.size;
                     switch (font.target)
                     {
@@ -257,7 +257,7 @@
                     var coll = Def.Config
                         .DefineCollection<GameScript>("Scripts")
                         .OverrideRoot(x => x.Directory("GameDatabase"))
-                        .SetPart(x=>x.Directory(ret.Id.ToString()));
+                        .SetPart(x => x.Directory(ret.Id.ToString()));
                     var pathParts = s.src.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                     for (var index = 0; index < pathParts.Length; index++)
                     {
@@ -275,8 +275,8 @@
                 var coll =
                     Def.Config.DefineCollection<ProxyDefinition>("Proxies")
                        .OverrideRoot(x => x.Directory("GameDatabase"))
-                       .SetPart(x=>x.Directory(ret.Id.ToString()));
-                       //.SetPart(x => x.Property(y => y.Key));
+                       .SetPart(x => x.Directory(ret.Id.ToString()));
+                //.SetPart(x => x.Property(y => y.Key));
                 var pathParts = g.proxygen.definitionsrc.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
                 for (var index = 0; index < pathParts.Length; index++)
                 {
@@ -284,7 +284,7 @@
                     if (i == pathParts.Length - 1) coll.SetPart(x => x.File(pathParts[i]));
                     else coll.SetPart(x => x.Directory(pathParts[i]));
                 }
-                coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id,g.proxygen));
+                coll.SetSerializer(new ProxyGeneratorSerializer(ret.Id, g.proxygen));
             }
             #endregion proxygen
             #region globalvariables
@@ -292,7 +292,7 @@
             {
                 foreach (var item in g.globalvariables)
                 {
-                    ret.GlobalVariables.Add(new GlobalVariable{Name = item.name,Value = item.value,DefaultValue = item.value});
+                    ret.GlobalVariables.Add(new GlobalVariable { Name = item.name, Value = item.value, DefaultValue = item.value });
                 }
             }
             #endregion globalvariables
@@ -315,10 +315,10 @@
             {
                 Id = (byte)id,
                 Name = grp.name,
-                Background = grp.background == null ? null : Path.Combine(directory,grp.background),
+                Background = grp.background == null ? null : Path.Combine(directory, grp.background),
                 BackgroundStyle = grp.backgroundStyle.ToString(),
-                Board = grp.board == null ? null : Path.Combine(directory,grp.board),
-                BoardPosition = grp.boardPosition  == null ? new DataRectangle{X = 0,Y=0,Height = 0,Width = 0} : 
+                Board = grp.board == null ? null : Path.Combine(directory, grp.board),
+                BoardPosition = grp.boardPosition == null ? new DataRectangle { X = 0, Y = 0, Height = 0, Width = 0 } :
                     new DataRectangle
                     {
                         X = double.Parse(grp.boardPosition.Split(',')[0]),
@@ -329,7 +329,7 @@
                 Collapsed = bool.Parse(grp.collapsed.ToString()),
                 Height = Int32.Parse(grp.height),
                 Width = Int32.Parse(grp.width),
-                Icon = grp.icon == null ? null : Path.Combine(directory,grp.icon),
+                Icon = grp.icon == null ? null : Path.Combine(directory, grp.icon),
                 Ordered = bool.Parse(grp.ordered.ToString()),
                 Shortcut = grp.shortcut,
                 CardActions = new List<IGroupAction>(),
@@ -480,20 +480,47 @@
                                        Id = new Guid(c.Attribute("id").Value),
                                        Name = c.Attribute("name").Value,
                                        SetId = ret.Id,
-                                       Properties = new Dictionary<PropertyDef, object>(),
-                                       ImageUri = c.Attribute("id").Value
+                                       Properties = new Dictionary<string, CardPropertySet>(),
+                                       ImageUri = c.Attribute("id").Value,
+                                        Alternate = ""
                                    };
+                    var defaultProperties = new CardPropertySet();
+                    defaultProperties.Type = "";
+                    defaultProperties.Properties = new Dictionary<PropertyDef, object>();
                     foreach (var p in c.Descendants("property"))
                     {
                         var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
-                        card.Properties.Add(pd, p.Attribute("value").Value);
+                        defaultProperties.Properties.Add(pd, p.Attribute("value").Value);
                     }
                     foreach (var cp in game.CustomProperties)
                     {
-                        if(!card.Properties.ContainsKey(cp))
-                            card.Properties.Add(cp,"");
+                        if(!defaultProperties.Properties.ContainsKey(cp))
+                            defaultProperties.Properties.Add(cp,"");
                     }
-                    card.Properties[game.CustomProperties.First(x => x.Name == "Name")] = card.Name;
+                    defaultProperties.Properties[game.CustomProperties.First(x => x.Name == "Name")] = card.Name;
+                    card.Properties.Add("",defaultProperties);
+
+                    // Add all of the other property sets
+                    foreach (var a in c.Descendants("alternate"))
+                    {
+                        var propset = new CardPropertySet();
+                        propset.Properties = new Dictionary<PropertyDef, object>();
+                        propset.Type = a.Attribute("type").Value;
+                        propset.Properties[game.CustomProperties.First(x => x.Name == "Name")] =
+                            a.Attribute("name").Value;
+                        foreach (var cp in defaultProperties.Properties)
+                        {
+                            if(!propset.Properties.ContainsKey(cp.Key))
+                                propset.Properties.Add(cp.Key,cp.Value);
+                        }
+                        foreach (var p in a.Descendants("property"))
+                        {
+                            var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
+                            propset.Properties[pd] = p.Attribute("value").Value;
+                        }
+                        card.Properties.Add(propset.Type,propset);
+                    }
+
                     (ret.Cards as List<Card>).Add(card);
                 }
                 foreach (var p in doc.Document.Descendants("pack"))

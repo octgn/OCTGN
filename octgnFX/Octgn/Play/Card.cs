@@ -104,18 +104,18 @@ namespace Octgn.Play
             _isAlternateImage = false;
         }
 
-        public bool IsAlternateImage
-        {
-            get { return _isAlternateImage; }
-            set
-            {
-                if (value == _isAlternateImage) return;
-                Program.Client.Rpc.IsAlternateImage(this, value);
+        //public bool IsAlternateImage
+        //{
+        //    get { return _isAlternateImage; }
+        //    set
+        //    {
+        //        if (value == _isAlternateImage) return;
+        //        Program.Client.Rpc.IsAlternateImage(this, value);
 
-                _isAlternateImage = value;
-                OnPropertyChanged("Picture");
-            }
-        }
+        //        _isAlternateImage = value;
+        //        OnPropertyChanged("Picture");
+        //    }
+        //}
 
         internal override int Id
         {
@@ -190,9 +190,7 @@ namespace Octgn.Play
                 // Clear peeking (if any)
                 PeekingPlayers.Clear();
                 //Switch back to original image.
-                IsAlternateImage = false;
-                //TODO [Alternate] - Remove if we don't need it, or reimplement if we do.
-                //if (Program.GameEngine.Definition.CardsRevertToOriginalOnGroupChange) { RevertToOriginal(); } 
+                this.SwitchTo();
             }
         }
 
@@ -295,8 +293,6 @@ namespace Octgn.Play
         {
             get
             {
-                if (IsAlternateImage)
-                    return Type.Model.AlternatePicture() ?? DefaultFront;
                 if (!FaceUp) return DefaultBack;
                 return Type.Model == null ? DefaultFront : Type.Model.GetPicture();
             }
@@ -340,12 +336,20 @@ namespace Octgn.Play
             return Name;
         }
 
+        public void SwitchTo(string alternate = "")
+        {
+            if (_type.Model == null) return;
+            _type.Model.SetPropertySet(alternate);
+            this.OnPropertyChanged("Picture");
+        }
+
         public object GetProperty(string name)
         {
             if (_type.Model == null) return null;
             if (name == "Name") return _type.Model.Name;
             if (name == "Id") return _type.Model.Id;
-            var prop = _type.Model.Properties.FirstOrDefault(x => x.Key.Name == name);
+            var prop = _type.Model.PropertySet().FirstOrDefault(x => x.Key.Name == name);
+            //var prop = _type.Model.Properties.FirstOrDefault(x => x.Key.Name == name);
             return prop.Value;
         }
 
@@ -401,9 +405,6 @@ namespace Octgn.Play
 
         internal string GetPicture(bool up)
         {
-            if (IsAlternateImage)
-                //return Type.Model.AlternatePicture == null ? DefaultFront : Program.Game.CardFrontBitmap.ToString();
-                return Type.Model.AlternatePicture() ?? DefaultFront;
             if (!up) return DefaultBack;
             if (Type == null || Type.Model == null) return DefaultFront;
             return Type.Model.GetPicture();
@@ -411,22 +412,6 @@ namespace Octgn.Play
 
         internal BitmapImage GetBitmapImage(bool up)
         {
-            if (IsAlternateImage)
-            {       
-                BitmapImage bmp = null;
-                try
-                {
-                    bmp = new BitmapImage(new Uri(Type.Model.AlternatePicture())) { CacheOption = BitmapCacheOption.OnLoad };
-                }
-                catch (Exception)
-                {
-                   
-                }
-                if (bmp == null)
-                    bmp = Program.GameEngine.CardFrontBitmap;
-                bmp.Freeze();
-                return bmp;
-            }
             if (!up) return Program.GameEngine.CardBackBitmap;
             if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
             var bmpo = new BitmapImage(new Uri(Type.Model.GetPicture())) {CacheOption = BitmapCacheOption.OnLoad};

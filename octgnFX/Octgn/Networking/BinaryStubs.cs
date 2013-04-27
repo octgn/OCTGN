@@ -1042,7 +1042,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void IsAlternateImage(Card card, bool isAlternateImage)
+		public void CardSwitchTo(Card card, string alternate)
 		{
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -1054,7 +1054,7 @@ namespace Octgn.Networking
           writer.Write(0);
 			writer.Write((byte)87);
 			writer.Write(card.Id);
-			writer.Write(isAlternateImage);
+			writer.Write(alternate);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();
@@ -1094,24 +1094,6 @@ namespace Octgn.Networking
 			writer.Write((byte)89);
 			writer.Write(name);
 			writer.Write(val);
-			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
-			writer.Write((int)stream.Length);
-			writer.Close();
-			Send(stream.ToArray());
-		}
-
-		public void SwitchWithAlternate(Card card)
-		{
-			MemoryStream stream = new MemoryStream(512);
-			stream.Seek(4, SeekOrigin.Begin);
-			BinaryWriter writer = new BinaryWriter(stream);
-
-      if (Program.Client.Muted != 0)
-          writer.Write(Program.Client.Muted);
-      else
-          writer.Write(0);
-			writer.Write((byte)90);
-			writer.Write(card.Id);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);
 			writer.Write((int)stream.Length);
 			writer.Close();

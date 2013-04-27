@@ -241,16 +241,6 @@ namespace Octgn.Networking
             }
         }
 
-        public void SwitchWithAlternate(Card c)
-        {
-            throw new NotImplementedException("Depreciated");
-        }
-
-        public void IsAlternateImage(Card c, bool isAlternateImage)
-        {
-            c.IsAlternateImage = isAlternateImage;
-        }
-
         /// <summary>Creates new cards on the table, as well as the corresponding CardIdentities.</summary>
         /// <param name="id">An array with the new CardIdentity ids</param>
         /// <param name="modelId"> </param>
@@ -948,6 +938,11 @@ namespace Octgn.Networking
         public void IsTableBackgroundFlipped(bool isFlipped)
         {
             Program.GameEngine.IsTableBackgroundFlipped = isFlipped;
+        }
+
+        public void CardSwitchTo(Card card, string alternate)
+        {
+            card.SwitchTo(alternate);
         }
 
         public void Ping()

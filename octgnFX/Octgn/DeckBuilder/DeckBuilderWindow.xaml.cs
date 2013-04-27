@@ -613,40 +613,14 @@ namespace Octgn.DeckBuilder
         private void cardImage_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (selection == null) return;
-            if (cardImage.Source.ToString().Contains(selection))
-            {
-                // TODO - [ALTERNATE] - Need to fix this if you want alternates to work - Kelly Elton - 4/17/2013
-                string alternate = cardImage.Source.ToString().Replace(".jpg", ".b.jpg");
-                try
-                {
-                    var bim = new BitmapImage();
-                    bim.BeginInit();
-                    bim.CacheOption = BitmapCacheOption.OnLoad;
-                    bim.UriSource = new Uri(alternate);
-                    bim.EndInit();
-                    cardImage.Source = bim;
-                }
-                catch
-                {
-                    var bim = new BitmapImage();
-                    bim.BeginInit();
-                    bim.CacheOption = BitmapCacheOption.OnLoad;
-                    bim.UriSource = Game.GetCardBackUri();
-                    bim.EndInit();
-                    cardImage.Source = bim;
-                }
-            }
-            else
-            {
-                var bim = new BitmapImage();
-                bim.BeginInit();
-                bim.CacheOption = BitmapCacheOption.OnLoad;
-                var set = SetManager.Get().GetById(set_id);
-                bim.UriSource = set.GetPictureUri(selection) ?? Game.GetCardBackUri();
-                //bim.UriSource = CardModel.GetPictureUri(Game, set_id, selection);
-                bim.EndInit();
-                cardImage.Source = bim;
-            }
+            var bim = new BitmapImage();
+            bim.BeginInit();
+            bim.CacheOption = BitmapCacheOption.OnLoad;
+            var set = SetManager.Get().GetById(set_id);
+            bim.UriSource = set.GetPictureUri(selection) ?? Game.GetCardBackUri();
+            //bim.UriSource = CardModel.GetPictureUri(Game, set_id, selection);
+            bim.EndInit();
+            cardImage.Source = bim;
         }
         private DataGridRow activeCard;
         private ObservableSection dragSection;

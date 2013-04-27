@@ -386,40 +386,19 @@ namespace Octgn.Play
                     outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Left;
 
                 var ctrl = e.OriginalSource as CardControl;                  
-                if (e.Card != null && ((Keyboard.IsKeyDown(Key.LeftAlt)) || (Keyboard.IsKeyDown(Key.RightAlt))))
+                if (e.Card != null )
                 {
-                    string alternate;
-                    if (e.Card.IsAlternateImage)
-                        alternate = e.Card.Picture.Replace(".b.jpg", ".jpg");
-                    else
-                        alternate = e.Card.Picture.Replace(".jpg", ".b.jpg");
-                    try
-                    {
-                        var img = new BitmapImage();
-                        img.BeginInit();
-                        img.CacheOption = BitmapCacheOption.OnLoad;
-                        img.UriSource = new Uri(alternate);
-                        img.EndInit();
-                        ShowCardPicture(img);
-                    }
-                    catch
-                    {
-
-                    }
+                    var img =
+                        e.Card.GetBitmapImage(
+                            ctrl != null && ctrl.IsAlwaysUp
+                            || (e.Card.FaceUp || e.Card.PeekingPlayers.Contains(Player.LocalPlayer)));
+                    ShowCardPicture(img);
                 }
                 else
                 {
-                    // TODO: Change to readable code
-                    // LOL - kellye
-                    var img = e.Card != null
-                                          ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
-                                                                                                      e.Card.PeekingPlayers.
-                                                                                                          Contains(
-                                                                                                              Player.
-                                                                                                                  LocalPlayer)))
-                                          : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture()));
-                    ShowCardPicture(img);
-                }                
+                    var img = ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture()));
+                    this.ShowCardPicture(img);
+                }
             }
         }
 

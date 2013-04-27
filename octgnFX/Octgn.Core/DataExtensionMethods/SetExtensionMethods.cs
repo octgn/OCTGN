@@ -21,13 +21,17 @@
         }
         public static string GetPackUri(this Set set)
         {
-            return Path.Combine(set.GetInstallPath(), "Cards");
+            var ret = Path.Combine(set.GetInstallPath(), "Cards");
+            if (!Directory.Exists(ret)) Directory.CreateDirectory(ret);
+            return ret;
             //return "pack://file:,,," + set.PackageName.Replace('\\', ',');
         }
 
         public static string GetPackProxyUri(this Set set)
         {
-            return Path.Combine(set.GetPackUri(), "Proxies");
+            var ret = Path.Combine(set.GetPackUri(), "Proxies");
+            if (!Directory.Exists(ret)) Directory.CreateDirectory(ret);
+            return ret;
         }
 
         public static Uri GetPictureUri(this Set set, string path)

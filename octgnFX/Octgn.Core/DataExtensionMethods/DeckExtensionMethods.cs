@@ -163,8 +163,7 @@
                               ImageUri = card.ImageUri,
                               Alternate = card.Alternate,
                               SetId = card.SetId,
-                              Quantity = card.Quantity,
-                              Alternates = card.Alternates != null ? card.Alternates.ToDictionary(x=>x.Key,y=>y.Value) : null
+                              Quantity = card.Quantity
                           };
             return ret;
         }

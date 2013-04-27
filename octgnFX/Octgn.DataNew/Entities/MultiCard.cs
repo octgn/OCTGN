@@ -26,11 +26,9 @@
 
         private string alternate;
 
-        private IDictionary<PropertyDef, object> properties;
+        private IDictionary<string, CardPropertySet> properties;
 
         private int quantity;
-
-        private IDictionary<string,CardAlternate> alternates;
 
         public Guid Id
         {
@@ -100,24 +98,11 @@
                 if (this.alternate == value) return;
                 this.alternate = value;
                 OnPropertyChanged("Alternate");
+                this.OnPropertyChanged("Properties");
             }
         }
 
-        public IDictionary<string, CardAlternate> Alternates
-        {
-            get
-            {
-                return this.alternates;
-            }
-            set
-            {
-                if (this.alternates == value) return;
-                this.alternates = value;
-                OnPropertyChanged("Alternates");
-            }
-        }
-
-        public IDictionary<PropertyDef, object> Properties
+        public IDictionary<string, CardPropertySet> Properties
         {
             get
             {

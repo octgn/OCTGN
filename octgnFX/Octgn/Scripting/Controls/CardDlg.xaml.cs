@@ -46,7 +46,7 @@ namespace Octgn.Scripting.Controls
                           foreach (var p in properties)
                           {
                               var tlist = game.AllCards()
-                                  .Where(x => x.Properties
+                                  .Where(x => x.Properties.SelectMany(y=>y.Value.Properties)
                                       .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
                                           && y.Value.ToString().ToLower() == p.Value.ToLower())).ToList();
                               _allCards.AddRange(tlist);
@@ -58,7 +58,7 @@ namespace Octgn.Scripting.Controls
                           {
                               query = query
                                   .Where(
-                                  x => x.Properties
+                                  x => x.Properties.SelectMany(y=>y.Value.Properties)
                                       .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
                                           && y.Value.ToString().ToLower() == p.Value.ToLower()));
                           }

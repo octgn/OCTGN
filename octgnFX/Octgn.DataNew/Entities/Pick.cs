@@ -31,7 +31,7 @@
                 ret.UnlimitedCards.AddRange(
                     from card in set.Cards
                     where
-                        card.Properties.Any(
+                        card.Properties.SelectMany(x=>x.Value.Properties).Any(
                             x =>
                             x.Key.Name.ToLower() ==Key.ToLower()
                             && x.Value.ToString().ToLower() ==Value.ToLower())
@@ -42,7 +42,7 @@
                 var list = (
                     from card in set.Cards
                     where
-                        card.Properties.Any(
+                        card.Properties.SelectMany(x=>x.Value.Properties).Any(
                             x =>
                             x.Key.Name.ToLower() ==Key.ToLower()
                             && x.Value.ToString().ToLower() ==Value.ToLower())

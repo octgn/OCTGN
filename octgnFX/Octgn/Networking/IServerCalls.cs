@@ -1,4 +1,13 @@
-﻿/* 
+﻿
+
+
+
+
+
+
+
+
+/* 
  * This file was automatically generated.
  * Do not modify, changes will get lost when the file is regenerated!
  */
@@ -61,11 +70,11 @@ namespace Octgn.Networking
 		void LookAtBottomReq(int uid, Group group, int count, bool look);
 		void StartLimitedReq(Guid[] packs);
 		void CancelLimitedReq();
-		void IsAlternateImage(Card card, bool isAlternateImage);
+		void CardSwitchTo(Card card, string alternate);
 		void PlayerSetGlobalVariable(Player player, string name, string val);
 		void SetGlobalVariable(string name, string val);
-		void SwitchWithAlternate(Card card);
 		void Ping();
 		void IsTableBackgroundFlipped(bool isFlipped);
+
 	}
 }

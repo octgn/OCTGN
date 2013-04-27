@@ -205,7 +205,7 @@
                 values[2] = item.SetId;
                 values[3] = item.ImageUri;
                 values[4] = item.Id;
-                foreach (var prop in item.Properties)
+                foreach (var prop in item.PropertySet())
                 {
                     if (prop.Key.Name == "Name") continue;
                     values[indexes.First(x=>x.Value == prop.Key.Name).Key] = prop.Value;
@@ -214,11 +214,6 @@
                 table.Rows.Add(values);
             }
             return table;   
-        }
-
-        public static void DeleteSet(this Game game, Set set)
-        {
-            SetManager.Get().UninstallSet(set);
         }
 
         public static ProxyDefinition GetCardProxyDef(this Game game)

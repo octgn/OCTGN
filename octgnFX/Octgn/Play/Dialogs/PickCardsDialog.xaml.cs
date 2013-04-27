@@ -222,7 +222,7 @@ namespace Octgn.Play.Dialogs
 
             return (from restriction in _activeRestrictions.GroupBy(fv => fv.Property)
                     let prop = restriction.Key
-                    let value = card.Properties[prop]
+                    let value = card.PropertySet()[prop]
                     select restriction.Any(filterValue => filterValue.IsValueMatch(value))).All(isOk => isOk);
         }
 
@@ -305,8 +305,8 @@ namespace Octgn.Play.Dialogs
 
         private string GetCardPropertyValue(ObservableMultiCard card,PropertyDef def)
         {
-            if (!card.Properties.ContainsKey(def)) return null;
-            return card.Properties[def] as String;
+            if (!card.PropertySet().ContainsKey(def)) return null;
+            return card.PropertySet()[def] as String;
         }
 
         private void CardPoolChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -439,7 +439,7 @@ namespace Octgn.Play.Dialogs
 
             public bool IsMatch(ObservableMultiCard c)
             {
-                return IsValueMatch(c.Properties[Property]);
+                return IsValueMatch(c.PropertySet()[Property]);
             }
 
             protected void OnPropertyChanged(string propertyName)

@@ -33,8 +33,8 @@
             if (_isName)
                 return String.CompareOrdinal(x.Name, y.Name);
 
-            object px = x.Properties[new PropertyDef(){Name=_propertyName}];
-            object py = y.Properties[new PropertyDef() { Name = _propertyName }];
+            object px = x.Properties[x.Alternate].Properties[new PropertyDef(){Name=_propertyName}];
+            object py = y.Properties[y.Alternate].Properties[new PropertyDef() { Name = _propertyName }];
             if (px == null) return py == null ? 0 : -1;
             return ((IComparable)px).CompareTo(py);
         }

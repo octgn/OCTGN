@@ -1,13 +1,9 @@
 ﻿namespace Octgn.Core.DataManagers
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO.Packaging;
     using System.Linq;
     using System.Reflection;
-    using System.Xml;
 
-    using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew.Entities;
 
     using log4net;
@@ -35,112 +31,5 @@
             if (set == null) return null;
             return set.Cards.FirstOrDefault(x => x.Id == id);
         }
-
-        public Card FromXmlReader(XmlReader reader, Game game, Set set, PackagePart definition, Package package)
-        {
-            var ret = new Card();
-            var Properties = new SortedList<PropertyDef, object>(game.CustomProperties.Count());
-            reader.MoveToAttribute("name");
-            ret.Name = reader.Value;
-            reader.MoveToAttribute("id");
-            ret.Id = new Guid(reader.Value);
-            Uri cardImageUri = definition.GetRelationship("C" + ret.Id.ToString("N")).TargetUri;
-            ret.ImageUri = cardImageUri.OriginalString;
-            if (!package.PartExists(cardImageUri))
-                throw new Exception(string.Format("Image for card '{0}', with URI '{1}' was not found in the package.",
-                                                  ret.Name, ret.ImageUri));
-            reader.Read(); // <card>
-
-            while (reader.IsStartElement("property"))
-            {
-                reader.MoveToAttribute("name");
-                PropertyDef prop = game.CustomProperties.FirstOrDefault(p => p.Name == reader.Value);
-                if (prop == null)
-                    throw new ArgumentException(string.Format("The property '{0}' is unknown", reader.Value));
-                reader.MoveToAttribute("value");
-                try
-                {
-                    switch (prop.Type)
-                    {
-                        case PropertyType.String:
-                            Properties.Add(prop, reader.Value);
-                            break;
-                        case PropertyType.Integer:
-                            Properties.Add(prop, Int32.Parse(reader.Value));
-                            break;
-                        case PropertyType.Char:
-                            Properties.Add(prop, Char.Parse(reader.Value));
-                            break;
-                        default:
-                            throw new NotImplementedException();
-                    }
-                }
-                catch (FormatException)
-                {
-                    throw new ArgumentException(String.Format("The value {0} is not of expected type for property {1}",
-                                                                reader.Value, prop.Name));
-                }
-                reader.Read(); // <property/>
-            }
-            ret.Alternates = new Dictionary<string, CardAlternate>();
-            while (reader.IsStartElement("alternate"))
-            {
-                reader.MoveToAttribute("name");
-                var alternate = new CardAlternate();
-                alternate.Properties = new Dictionary<PropertyDef, object>();
-                var nameprop = new PropertyDef()
-                                   {
-                                       Name = "name",
-                                       TextKind = PropertyTextKind.FreeText,
-                                       Type = PropertyType.String
-                                   };
-                alternate.Properties.Add(nameprop,reader.Value);
-
-                reader.MoveToAttribute("type");
-                alternate.Type = reader.Value;
-
-                //grab it's stupid props
-                while (reader.IsStartElement("property"))
-                {
-                    reader.MoveToAttribute("name");
-                    PropertyDef prop = game.CustomProperties.FirstOrDefault(p => p.Name == reader.Value);
-                    if (prop == null)
-                        throw new ArgumentException(string.Format("The property '{0}' is unknown", reader.Value));
-                    reader.MoveToAttribute("value");
-                    try
-                    {
-                        switch (prop.Type)
-                        {
-                            case PropertyType.String:
-                                alternate.Properties.Add(prop, reader.Value);
-                                break;
-                            case PropertyType.Integer:
-                                alternate.Properties.Add(prop, Int32.Parse(reader.Value));
-                                break;
-                            case PropertyType.Char:
-                                alternate.Properties.Add(prop, Char.Parse(reader.Value));
-                                break;
-                            default:
-                                throw new NotImplementedException();
-                        }
-                    }
-                    catch (FormatException)
-                    {
-                        throw new ArgumentException(String.Format("The value {0} is not of expected type for property {1}",
-                                                                    reader.Value, prop.Name));
-                    }
-                    reader.Read(); // <property/>
-                }
-
-                if (ret.Alternates.ContainsKey(alternate.Type)) ret.Alternates[alternate.Type] = alternate;
-                else ret.Alternates.Add(alternate.Type,alternate);
-                reader.Read(); //</alternate>
-            }
-            ret.Properties = Properties;
-
-            reader.Read(); // </card>
-            return ret;
-        }
-
     }
 }

@@ -649,9 +649,9 @@ namespace Octgn.Networking
 				{
 					Card arg0 = Card.Find(reader.ReadInt32());
 					if (arg0 == null)
-					{ Debug.WriteLine("[IsAlternateImage] Card not found."); return; }
-					bool arg1 = reader.ReadBoolean();
-					handler.IsAlternateImage(arg0, arg1);
+					{ Debug.WriteLine("[CardSwitchTo] Card not found."); return; }
+					string arg1 = reader.ReadString();
+					handler.CardSwitchTo(arg0, arg1);
 					break;
 				}
 				case 88:
@@ -669,14 +669,6 @@ namespace Octgn.Networking
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
 					handler.SetGlobalVariable(arg0, arg1);
-					break;
-				}
-				case 90:
-				{
-					Card arg0 = Card.Find(reader.ReadInt32());
-					if (arg0 == null)
-					{ Debug.WriteLine("[SwitchWithAlternate] Card not found."); return; }
-					handler.SwitchWithAlternate(arg0);
 					break;
 				}
 				case 91:

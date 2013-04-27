@@ -10,8 +10,7 @@
         string Name { get; }
         string ImageUri { get; }
         string Alternate { get; }
-        IDictionary<string, CardAlternate> Alternates { get; }
-        IDictionary<PropertyDef, object> Properties { get; } 
+        IDictionary<string , CardPropertySet> Properties { get; } 
     }
 
     public class Card : ICard
@@ -26,12 +25,10 @@
 
         public string Alternate { get; set; }
 
-        public IDictionary<string, CardAlternate> Alternates { get; set; }
-
-        public IDictionary<PropertyDef, object> Properties { get; set; }
+        public IDictionary<string , CardPropertySet> Properties { get; set; }
     }
 
-    public class CardAlternate
+    public class CardPropertySet
     {
         public string Type { get; set; }
         public IDictionary<PropertyDef, object> Properties { get; set; }

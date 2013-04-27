@@ -29,17 +29,30 @@
                              Name = card.Name,
                              Quantity = quantity,
                              SetId = card.SetId,
-                             Properties = card.Properties,
-                             Alternates = card.Alternates
+                             Properties = card.Properties
                          };
         }
         public static string GetPicture(this ICard card)
         {
             var set = card.GetSet();
-            var uri = set.GetPictureUri(card.ImageUri);
+
+            Uri uri = null;
+
+            var files = Directory.GetFiles(set.GetPackUri(), card.GetImageUri() + ".*");
+            if (files.Length == 0) //Generate or grab proxy
+            {
+                files = Directory.GetFiles(set.GetPackProxyUri(), card.GetImageUri() + ".png");
+                if (files.Length != 0)
+                {
+                    uri = new Uri(files.First());
+                }
+            }
+            else
+                uri = new Uri(files.First());
+
             if (uri == null)
             {
-                uri = new System.Uri(Path.Combine(set.GetPackProxyUri(), card.ImageUri + ".png"));
+                uri = new System.Uri(Path.Combine(set.GetPackProxyUri(), card.GetImageUri() + ".png"));
                 set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
                 return uri.LocalPath;
             }
@@ -47,35 +60,40 @@
             {
                 return uri.LocalPath;
             }
+        }
 
-        }
-        public static string AlternatePicture(this ICard card)
+        public static string GetImageUri(this ICard card)
         {
-            try
-            {
-                return card.GetSet().GetPictureUri(card.ImageUri + ".b").LocalPath;
-            }
-            catch (Exception e)
-            {
-                Log.Warn("",e);
-            }
-            return null;
-            //string au = card.ImageUri.Replace(".jpg", ".b.jpg");
-            //return card.GetSet().GetPackUri() + au;
+            var ret = card.ImageUri;
+            if (!String.IsNullOrWhiteSpace(card.Alternate)) ret = ret + "." + card.Alternate;
+            return ret;
         }
+
         public static bool HasProperty(this Card card, string name)
         {
-            return card.Properties.Any(x => x.Key.Name == name);
+            return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name == name);
         }
 
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
-            foreach (KeyValuePair<PropertyDef, object> kvi in card.Properties)
+            foreach (KeyValuePair<PropertyDef, object> kvi in card.PropertySet())
             {
                 ret.Add(kvi.Key.Name, kvi.Value.ToString());
             }
             return (ret);
+        }
+
+        public static IDictionary<PropertyDef, object> PropertySet(this ICard card)
+        {
+            return card.Properties[card.Alternate].Properties;
+        }
+
+        public static void SetPropertySet(this Card card, string propertyType = "")
+        {
+            if (String.IsNullOrWhiteSpace(propertyType)) propertyType = "";
+            if(card.Properties.Any(x=>x.Key.ToLower() == propertyType.ToLower()))
+                card.Alternate = propertyType;
         }
 
         public static MultiCard Clone(this MultiCard card)
@@ -87,17 +105,12 @@
                               Alternate = card.Alternate,
                               ImageUri = card.ImageUri,
                               Quantity = card.Quantity,
-                              Properties = new Dictionary<PropertyDef, object>(),
-                                Alternates = new Dictionary<string, CardAlternate>(),
-                                SetId = card.SetId
+                              Properties = new Dictionary<string,CardPropertySet>(),
+                              SetId = card.SetId
                           };
             foreach (var p in card.Properties)
             {
                 ret.Properties.Add(p.Key, p.Value);
-            }
-            foreach (var p in card.Alternates)
-            {
-                ret.Alternates.Add(p.Key,p.Value);
             }
             return ret;
         }

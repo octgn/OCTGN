@@ -463,8 +463,8 @@ namespace Octgn.Server
 				case 87:
 				{
 					int arg0 = reader.ReadInt32();
-					bool arg1 = reader.ReadBoolean();
-					handler.IsAlternateImage(arg0, arg1);
+					string arg1 = reader.ReadString();
+					handler.CardSwitchTo(arg0, arg1);
 					break;
 				}
 				case 88:
@@ -480,12 +480,6 @@ namespace Octgn.Server
 					string arg0 = reader.ReadString();
 					string arg1 = reader.ReadString();
 					handler.SetGlobalVariable(arg0, arg1);
-					break;
-				}
-				case 90:
-				{
-					int arg0 = reader.ReadInt32();
-					handler.SwitchWithAlternate(arg0);
 					break;
 				}
 				case 91:

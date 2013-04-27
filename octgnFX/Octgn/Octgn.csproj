@@ -265,9 +265,6 @@
     <Compile Include="Controls\CustomGames.xaml.cs">
       <DependentUpon>CustomGames.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GameManagement.xaml.cs">
-      <DependentUpon>GameManagement.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\GroupChatListItem.xaml.cs">
       <DependentUpon>GroupChatListItem.xaml</DependentUpon>
     </Compile>
@@ -675,10 +672,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\CustomGames.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\GameManagement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -196,10 +196,6 @@ namespace Octgn.Scripting
         {
             return Tuple.Create(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight);
         }
-        public bool IsAlternateImage(int id)
-        {
-            return Card.Find(id).IsAlternateImage;
-        }
 
         /// <summary>
         /// takes a card with id, and swaps it with the predefined "alternate" version of the card
@@ -207,18 +203,18 @@ namespace Octgn.Scripting
         /// id and identity will remain the same, all other data should change.
         /// </summary>
         /// <param name="id"></param>
-        public void SwitchWithAlternate(int id)
-        {
-            Card c = Card.Find(id);
-            _engine.Invoke(() => Program.Client.Rpc.SwitchWithAlternate(c) );
-                //I'm relying on this to send the message to other clients. TODO: Need to fully test
-        }
-        public void SwitchImage(int id)
-        {
-            Card c = Card.Find(id);
-            //c.IsAlternateImage = (c.IsAlternateImage != true);
-            _engine.Invoke(() => { c.IsAlternateImage = (c.IsAlternateImage != true); });
-        }
+        //public void SwitchWithAlternate(int id)
+        //{
+        //    Card c = Card.Find(id);
+        //    _engine.Invoke(() => Program.Client.Rpc.SwitchWithAlternate(c) );
+        //        //I'm relying on this to send the message to other clients. TODO: Need to fully test
+        //}
+        //public void SwitchImage(int id)
+        //{
+        //    Card c = Card.Find(id);
+        //    //c.IsAlternateImage = (c.IsAlternateImage != true);
+        //    _engine.Invoke(() => { c.IsAlternateImage = (c.IsAlternateImage != true); });
+        //}
 
         public string CardName(int id)
         {
@@ -239,8 +235,8 @@ namespace Octgn.Scripting
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
             property = property.ToLower();
             if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
-            if (!c.Type.Model.Properties.Keys.Select(x => x.Name.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
-            object ret = c.Type.Model.Properties.FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
+            if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
+            object ret = c.Type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
             return (ret);
         }
 
