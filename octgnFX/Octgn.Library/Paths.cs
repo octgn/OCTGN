@@ -74,7 +74,8 @@
         public string DeckPath { get; set; }
         public string GraveyardPath {get
         {
-            return System.IO.Path.Combine(FS.Path.GetTempPath(), "OCTGN", "Graveyard", Guid.NewGuid().ToString());
+            var ret = System.IO.Path.Combine(FS.Path.GetTempPath(), "OCTGN", "Graveyard", Guid.NewGuid().ToString());
+            return ret;
         }}
     }
 }
