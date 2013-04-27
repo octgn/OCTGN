@@ -49,13 +49,13 @@ namespace Octgn.Windows
             _hasLoaded = true;
             ThreadPool.QueueUserWorkItem(s =>
             {
-
+#if(!DEBUG)
                 if (CheckForUpdates())
                 {
                     Dispatcher.Invoke(new Action(Update));
                     return;
                 }
-
+#endif
                 //CheckForXmlSetUpdates();
                 this.LoadDatabase();
                 this.UpdateGames();
