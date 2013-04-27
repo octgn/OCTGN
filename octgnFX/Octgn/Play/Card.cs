@@ -336,9 +336,22 @@ namespace Octgn.Play
             return Name;
         }
 
+        public string[] Alternates()
+        {
+            if(_type.Model == null)return new string[0];
+            return _type.Model.Properties.Select(x => x.Key).ToArray();
+        }
+
+        public string Alternate()
+        {
+            return this._type.Model == null ? "" : this._type.Model.Alternate;
+        }
+
         public void SwitchTo(string alternate = "")
         {
             if (_type.Model == null) return;
+            if (_type.Model.Alternate.ToLower() == alternate) return;
+            Program.Client.Rpc.CardSwitchTo(this,alternate);
             _type.Model.SetPropertySet(alternate);
             this.OnPropertyChanged("Picture");
         }

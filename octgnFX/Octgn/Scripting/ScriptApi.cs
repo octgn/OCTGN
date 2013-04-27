@@ -197,24 +197,27 @@ namespace Octgn.Scripting
             return Tuple.Create(Program.GameEngine.Definition.CardWidth, Program.GameEngine.Definition.CardHeight);
         }
 
-        /// <summary>
-        /// takes a card with id, and swaps it with the predefined "alternate" version of the card
-        /// alternate may be considered the "back" of the card, or another card entirely - up to Game Definer.
-        /// id and identity will remain the same, all other data should change.
-        /// </summary>
-        /// <param name="id"></param>
-        //public void SwitchWithAlternate(int id)
-        //{
-        //    Card c = Card.Find(id);
-        //    _engine.Invoke(() => Program.Client.Rpc.SwitchWithAlternate(c) );
-        //        //I'm relying on this to send the message to other clients. TODO: Need to fully test
-        //}
-        //public void SwitchImage(int id)
-        //{
-        //    Card c = Card.Find(id);
-        //    //c.IsAlternateImage = (c.IsAlternateImage != true);
-        //    _engine.Invoke(() => { c.IsAlternateImage = (c.IsAlternateImage != true); });
-        //}
+        public void CardSwitchTo(int id, string alternate)
+        {
+            var c = Card.Find(id);
+            if (c == null) return;
+            c.SwitchTo(alternate);
+            
+        }
+
+        public string[] CardAlternates(int id)
+        {
+            var c = Card.Find(id);
+            if(c == null)return new string[0];
+            return c.Alternates();
+        }
+
+        public string CardAlternate(int id)
+        {
+            var c = Card.Find(id);
+            if (c == null) return "";
+            return c.Alternate();
+        }
 
         public string CardName(int id)
         {
