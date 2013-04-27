@@ -92,7 +92,7 @@
                         }
                         (ret.Sections as List<ISection>).Add(section);
                     }
-                    foreach (var section in game.DeckSections)
+                    foreach (var section in shared ? game.SharedDeckSections : game.DeckSections)
                     {
                         if (ret.Sections.Any(x => x.Name == section.Value.Name) == false)
                             (ret.Sections as List<ISection>).Add(
