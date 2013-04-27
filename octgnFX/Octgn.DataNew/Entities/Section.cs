@@ -96,7 +96,7 @@
                                               Alternate = x.Alternate,
                                               SetId = x.SetId,
                                               Quantity = x.Quantity,
-                                              Alternates = x.Alternates.ToDictionary(z => z.Key, y => y.Value),
+                                              Alternates = x.Alternates != null ? x.Alternates.ToDictionary(z => z.Key, y => y.Value) : null,
                                           };
                             ret.PropertyChanged += this.CardOnPropertyChanged;
                             return ret;

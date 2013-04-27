@@ -164,7 +164,7 @@
                               Alternate = card.Alternate,
                               SetId = card.SetId,
                               Quantity = card.Quantity,
-                              Alternates = card.Alternates.ToDictionary(x=>x.Key,y=>y.Value)
+                              Alternates = card.Alternates != null ? card.Alternates.ToDictionary(x=>x.Key,y=>y.Value) : null
                           };
             return ret;
         }
