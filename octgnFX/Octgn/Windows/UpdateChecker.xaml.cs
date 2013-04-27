@@ -49,9 +49,13 @@ namespace Octgn.Windows
             _hasLoaded = true;
             ThreadPool.QueueUserWorkItem(s =>
             {
-#if(!DEBUG)
-                CheckForUpdates();
-#endif
+
+                if (CheckForUpdates())
+                {
+                    Dispatcher.Invoke(new Action(Update));
+                    return;
+                }
+
                 //CheckForXmlSetUpdates();
                 this.LoadDatabase();
                 this.UpdateGames();
@@ -93,7 +97,44 @@ namespace Octgn.Windows
             Task.Factory.StartNew(GameFeedManager.Get().CheckForUpdates).Wait(1500);
         }
 
-        private void CheckForUpdates()
+        private void Update()
+        {
+            _realCloseWindow = true;
+            Log.Info("Not up to date.");
+            IsClosingDown = true;
+
+            var downloadUri = new Uri(_updateURL);
+            string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
+
+            UpdateStatus("Downloading new version.");
+            var c = new WebClient();
+            progressBar1.Maximum = 100;
+            progressBar1.IsIndeterminate = false;
+            progressBar1.Value = 0;
+            c.DownloadFileCompleted += delegate(object sender, AsyncCompletedEventArgs args)
+            {
+                Log.Info("Download complete");
+                if (!args.Cancelled)
+                {
+                    Log.Info("Launching updater");
+                    LazyAsync.Invoke(
+                        () => Process.Start(Path.Combine(Directory.GetCurrentDirectory(), filename)));
+                }
+                else
+                {
+                    Log.Info("Download failed");
+                    UpdateStatus("Downloading the new version failed. Please manually download.");
+                    Process.Start(_downloadURL);
+                }
+                Close();
+            };
+            c.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
+            { progressBar1.Value = args.ProgressPercentage; };
+            Log.InfoFormat("Downloading new version to {0}", filename);
+            c.DownloadFileAsync(downloadUri, Path.Combine(Directory.GetCurrentDirectory(), filename));
+        }
+
+        private bool CheckForUpdates()
         {
             UpdateStatus("Checking for updates...");
             try
@@ -101,7 +142,7 @@ namespace Octgn.Windows
                 Log.InfoFormat("Getting update info from {0}",AppConfig.UpdateInfoPath);
                 string[] update = ReadUpdateXml(AppConfig.UpdateInfoPath);
                 Log.Info("Got update info");
-
+                
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
                 var online = new Version(update[0]);
@@ -109,6 +150,7 @@ namespace Octgn.Windows
                 Log.InfoFormat("Online: {0} Local:{1}",online,local);
                 _updateURL = update[1];
                 _downloadURL = update[2];
+                if (_isNotUpToDate) return true;
             }
             catch (Exception e)
             {
@@ -116,6 +158,7 @@ namespace Octgn.Windows
                 _downloadURL = "";
                 Log.Warn("Check For Updates Error",e);
             }
+            return false;
         }
 
         private void UpdateCheckDone()
@@ -124,46 +167,8 @@ namespace Octgn.Windows
             Dispatcher.Invoke(new Action(() =>
                                          {
                                              _realCloseWindow = true;
-											 if (_isNotUpToDate)
-											 {
-											     Log.Info("Not up to date.");
-											     IsClosingDown = true;
-
-											     var downloadUri = new Uri(_updateURL);
-											     string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
-
-											     UpdateStatus("Downloading new version.");
-											     var c = new WebClient();
-											     progressBar1.Maximum = 100;
-											     progressBar1.IsIndeterminate = false;
-											     progressBar1.Value = 0;
-											     c.DownloadFileCompleted += delegate(object sender, AsyncCompletedEventArgs args)
-											         {
-                                                         Log.Info("Download complete");
-											             if (!args.Cancelled)
-											             {
-                                                             Log.Info("Launching updater");
-											                 LazyAsync.Invoke(
-											                     () => Process.Start(Path.Combine(Directory.GetCurrentDirectory(), filename)));
-											             }
-											             else
-											             {
-                                                             Log.Info("Download failed");
-											                 UpdateStatus("Downloading the new version failed. Please manually download.");
-											                 Process.Start(_downloadURL);
-											             }
-											             Close();
-											         };
-											     c.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
-											         { progressBar1.Value = args.ProgressPercentage; };
-                                                 Log.InfoFormat("Downloading new version to {0}",filename);
-											     c.DownloadFileAsync(downloadUri, Path.Combine(Directory.GetCurrentDirectory(), filename));
-											 }
-											 else
-											 {
-                                                 Log.Info("Up to date...Closing");
-											     Close();
-											 }
+                                             Log.Info("Up to date...Closing");
+                                             Close();
             }));
             Log.Info("UpdateCheckDone Complete");
         }
