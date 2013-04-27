@@ -49,7 +49,9 @@
             //DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Database");
             DatabasePath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "GameDatabase");
             DataDirectory = SimpleConfig.Get().DataDirectory;
-            ConfigDirectory = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Config");
+            ConfigDirectory = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
+            //ConfigDirectory = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "Config");
             FeedListPath = FS.Path.Combine(ConfigDirectory, "feeds.txt");
             LocalFeedPath = FS.Path.Combine(SimpleConfig.Get().DataDirectory, "LocalFeed");
             FS.Directory.CreateDirectory(LocalFeedPath);

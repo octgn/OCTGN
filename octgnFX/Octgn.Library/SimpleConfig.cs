@@ -75,7 +75,7 @@
 
         public string GetConfigPath()
         {
-            string p = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn", "Config");
+            string p = Paths.Get().ConfigDirectory;
             const string f = "settings.xml";
             string fullPath = Path.Combine(p, f);
 
