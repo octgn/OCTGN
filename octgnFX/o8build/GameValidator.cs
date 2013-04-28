@@ -120,7 +120,7 @@
                 foreach (var f in cardDir.GetFiles("*",SearchOption.TopDirectoryOnly))
                 {
                     var test = Guid.Empty;
-                    if(!Guid.TryParse(f.Name.Replace(f.Extension,""),out test))
+                    if(!Guid.TryParse(f.Name.Substring(0,f.Name.IndexOf('.')),out test))
                         throw new UserMessageException("Your card file {0} was named incorrectly",f.FullName);
                 }
             }
