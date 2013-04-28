@@ -487,7 +487,7 @@
                     var defaultProperties = new CardPropertySet();
                     defaultProperties.Type = "";
                     defaultProperties.Properties = new Dictionary<PropertyDef, object>();
-                    foreach (var p in c.Descendants("property"))
+                    foreach (var p in c.Descendants("property").Where(x => x.Parent.Name == "card"))
                     {
                         var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
                         defaultProperties.Properties.Add(pd, p.Attribute("value").Value);
