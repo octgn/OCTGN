@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Media;
 
 using Octgn.Play;
 using Octgn.Play.Actions;
@@ -12,6 +11,7 @@ using System.IO;
 namespace Octgn.Networking
 {
     using Octgn.Core.DataExtensionMethods;
+    using System.Windows.Media;
 
     internal sealed class Handler
     {
@@ -155,15 +155,8 @@ namespace Octgn.Networking
                 player.InvertedTable = (Player.AllExceptGlobal.Count() & 1) == 0;
             if (Program.IsHost)
             {
-                PlaySound(Properties.Resources.knockknock);
+                Sounds.PlaySound(Properties.Resources.knockknock);
             }
-        }
-
-        System.Media.SoundPlayer snd = null;
-        private void PlaySound(Stream sound)
-        {
-            snd = new System.Media.SoundPlayer(sound);
-            snd.Play();
         }
 
         /// <summary>Loads a player deck.</summary>
@@ -326,7 +319,7 @@ namespace Octgn.Networking
             Program.Trace.TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has left the game.", player);
             if (Program.IsHost)
             {
-                PlaySound(Properties.Resources.doorclose);
+                Sounds.PlaySound(Properties.Resources.doorclose);
             }
         }
 
