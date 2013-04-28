@@ -12,11 +12,14 @@ using Skylabs.Lobby.Threading;
 
 namespace Octgn.Windows
 {
+    using System.Linq;
     using System.Threading.Tasks;
 
     using Octgn.Core;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew;
+    using Octgn.Library;
+    using Octgn.Library.ExtensionMethods;
 
     using log4net;
 
@@ -56,6 +59,7 @@ namespace Octgn.Windows
                     return;
                 }
 #endif
+                this.ClearGarbage();
                 //CheckForXmlSetUpdates();
                 this.LoadDatabase();
                 this.UpdateGames();
@@ -89,6 +93,38 @@ namespace Octgn.Windows
                 Log.DebugFormat("Loading Proxy {0}",p.Key);
             }
             this.UpdateStatus("Loaded database.");
+        }
+
+        private void ClearGarbage()
+        {
+            this.UpdateStatus("Clearing out garbage...");
+            var gp = new DirectoryInfo(Paths.Get().GraveyardPath).Parent;
+            foreach (var file in gp.GetFiles("*.*", SearchOption.AllDirectories))
+            {
+                try
+                {
+                    file.Delete();
+                }
+                catch(Exception e)
+                {
+                    Log.Warn("Couldn't delete garbage file " + file.FullName,e);
+                }
+            }
+            for (var i = 0; i < 10; i++)
+            {
+                foreach (var dir in gp.GetDirectories("*", SearchOption.AllDirectories).ToArray())
+                {
+                    try
+                    {
+                        dir.Delete(true);
+
+                    }
+                    catch(Exception e)
+                    {
+                        Log.Warn("Couldn't delete garbage folder " + dir.FullName, e);
+                    }
+                }
+            }
         }
 
         private void UpdateGames()
