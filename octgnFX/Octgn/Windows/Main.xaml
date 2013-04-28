@@ -21,6 +21,7 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
+        <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"></Controls:SubscribeMessage>
         <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Bottom" Background="Transparent"
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
         <TabControl x:Name="TabControlMain" Grid.Row="1" >

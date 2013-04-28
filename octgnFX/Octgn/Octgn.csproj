@@ -259,6 +259,9 @@
     <Compile Include="Controls\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SubscribeMessage.xaml.cs">
+      <DependentUpon>SubscribeMessage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>
@@ -285,6 +288,7 @@
     </Compile>
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="SubscriptionModule.cs" />
     <Compile Include="Tabs\GameManagement\FeedGameViewModel.cs" />
     <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
       <DependentUpon>GameManagement.xaml</DependentUpon>
@@ -685,6 +689,9 @@
     </Page>
     <Page Include="Controls\ContactList.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SubscribeMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\WaitingDialog.xaml">

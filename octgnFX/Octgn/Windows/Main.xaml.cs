@@ -11,6 +11,8 @@ namespace Octgn.Windows
 {
     using System;
     using System.ComponentModel;
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
@@ -144,7 +146,22 @@ namespace Octgn.Windows
             {
                 case LoginResults.Success:
                     this.SetStateOnline();
-                    this.Dispatcher.BeginInvoke(new Action(() => TabCommunityChat.Focus()));
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                        { 
+                            TabCommunityChat.Focus();
+
+                        })).Completed += (o, args) => Task.Factory.StartNew(() => { 
+                                                                                      Thread.Sleep(15000);
+                                                                                      this.Dispatcher.Invoke(new Action(()
+                                                                                                                        =>
+                                                                                          {
+                                                                                              var s =
+                                                                                                  SubscriptionModule.Get
+                                                                                                      ().IsSubscribed;
+                                                                                              if(s != null && s == false)
+                                                                                                this.SubMessage.Visibility = Visibility.Visible;
+                                                                                          }));
+                        });
                     break;
                 default:
                     this.SetStateOffline();
