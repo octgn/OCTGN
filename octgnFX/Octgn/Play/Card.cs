@@ -350,7 +350,7 @@ namespace Octgn.Play
         public void SwitchTo(string alternate = "")
         {
             if (_type.Model == null) return;
-            if (_type.Model.Alternate.ToLower() == alternate) return;
+            if (_type.Model.Alternate.ToLower() == alternate.ToLower()) return;
             Program.Client.Rpc.CardSwitchTo(this,alternate);
             _type.Model.SetPropertySet(alternate);
             this.OnPropertyChanged("Picture");
