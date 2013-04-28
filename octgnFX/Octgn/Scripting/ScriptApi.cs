@@ -201,7 +201,7 @@ namespace Octgn.Scripting
         {
             var c = Card.Find(id);
             if (c == null) return;
-            c.SwitchTo(alternate);
+            _engine.Invoke(()=>c.SwitchTo(alternate));
             
         }
 

@@ -115,8 +115,6 @@ class Card(object):
   @property
   def alternates(self): return _api.CardAlternates(self._id)
   @property
-  def switchTo(self, alt = ""): _api.CardSwitchTo(self._id,alt)
-  @property
   def model(self): return _api.CardModel(self._id)
   @property
   def name(self): return _api.CardName(self._id)
@@ -147,6 +145,8 @@ class Card(object):
   def markers(self):
     if self._markers == None: self._markers = Markers(self)
     return self._markers
+  def switchTo(self, alt = ""): 
+    _api.CardSwitchTo(self._id,alt)
   def moveTo(self, group, index = None):
     _api.CardMoveTo(self._id, group._id, index)
   def moveToBottom(self, pile):
