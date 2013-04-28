@@ -23,7 +23,7 @@ namespace Octgn.ProxyGenerator
         public static Image GenerateProxy(BlockManager manager, string rootPath, TemplateDefinition template, Dictionary<string,string> values)
         {
             var path = Path.Combine(rootPath, template.src);
-            Image temp = Image.FromFile(path);
+            Image temp = GraphicUtils.LoadImage(path);
             Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
             //b.MakeTransparent();
                 //ret.PixelFormat = PixelFormat.Format32bppArgb;
@@ -50,7 +50,7 @@ namespace Octgn.ProxyGenerator
                         continue;
                     }
                     clonedProps.AddRange(section.NestedProperties);
-                    
+
                     foreach (Property prop in section.NestedProperties)
                     {
                         if (!values.ContainsKey(prop.Name))

@@ -20,7 +20,7 @@ namespace Octgn.ProxyGenerator.Util
         /// <param name="overlay"></param>
         public static void MergeOverlay(Graphics graphics, BlockDefinition overlay)
         {
-            using (Image temp = Image.FromFile(overlay.src))
+            using (Image temp = GraphicUtils.LoadImage(overlay.src))
             {
                 Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
                 //b.MakeTransparent();
@@ -105,11 +105,14 @@ namespace Octgn.ProxyGenerator.Util
                 Pen p = new Pen(section.border.color, section.border.size);
                 graphics.DrawPath(p, path);
                 graphics.FillPath(b, path);
+                p.Dispose();
             }
             else
             {
                 graphics.FillPath(b, path);
             }
+            b.Dispose();
+            path.Dispose();
         }
 
         public static GraphicsPath GetTextPath(BlockDefinition section, string text)
@@ -196,6 +199,19 @@ namespace Octgn.ProxyGenerator.Util
             }
 
             return (ret);
+        }
+
+        public static Image LoadImage(string fileName)
+        {
+            Image img = Image.FromFile(fileName);
+            Bitmap bmp = img as Bitmap;
+            Graphics g = Graphics.FromImage(bmp);
+            Bitmap bmpNew = new Bitmap(bmp);
+            g.DrawImage(bmpNew, new Point(0, 0));
+            g.Dispose();
+            bmp.Dispose();
+            img.Dispose();
+            return (bmpNew);
         }
     }
 }
