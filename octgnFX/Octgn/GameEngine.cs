@@ -176,7 +176,7 @@ namespace Octgn
             oversion = new Version(3,0,0,0);
 #endif
             Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
-                                     Const.ClientName, Const.OctgnVersion, Const.OctgnVersion,
+                                     Const.ClientName, oversion, oversion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version);
             // Load all game markers
             foreach (DataNew.Entities.Marker m in Definition.GetAllMarkers())
