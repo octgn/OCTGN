@@ -38,7 +38,7 @@
 
             Uri uri = null;
 
-            var files = Directory.GetFiles(set.GetPackUri(), card.GetImageUri() + ".*");
+            var files = Directory.GetFiles(set.GetPackUri(), card.GetImageUri() + ".*").OrderBy(x=>x.Length).ToArray();
             if (files.Length == 0) //Generate or grab proxy
             {
                 files = Directory.GetFiles(set.GetPackProxyUri(), card.GetImageUri() + ".png");
