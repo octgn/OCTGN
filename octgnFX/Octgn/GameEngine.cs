@@ -171,6 +171,10 @@ namespace Octgn
             // Create the local player
             Play.Player.LocalPlayer = new Play.Player(Program.GameEngine.Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
+            Version oversion = Const.OctgnVersion;
+#if(Release_Test)
+            oversion = new Version(3,0,0,0);
+#endif
             Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, Const.OctgnVersion, Const.OctgnVersion,
                                      Program.GameEngine.Definition.Id, Program.GameEngine.Definition.Version);
