@@ -173,7 +173,7 @@ namespace Octgn
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
 #if(Release_Test)
-            oversion = new Version(3,0,0,0);
+            if(!IsLocal)oversion = new Version(3,0,0,0);
 #endif
             Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
