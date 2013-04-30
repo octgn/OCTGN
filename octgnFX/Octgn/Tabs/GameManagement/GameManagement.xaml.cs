@@ -276,6 +276,10 @@ namespace Octgn.Tabs.GameManagement
                             "Installing image pack.",
                             "Please wait while your image pack is installed. You can switch tabs if you like.");
             }
+            else
+            {
+                installo8cprocessing = false;
+            }
         }
 
         private WaitingDialog ProcessTask(Action action, Action completeAction,string title, string message)
