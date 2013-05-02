@@ -86,12 +86,12 @@ namespace Octgn.Controls
             Dispatcher.Invoke(
                 new Action(
                     () =>
-                        {
-                            Log.Info("Hiding sub nag");
-                            var da = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromSeconds(.5)));
-                            da.Completed += (o, args) => this.Visibility = Visibility.Collapsed;
-                            this.BeginAnimation(UIElement.OpacityProperty, da);
-                        }));
+                    {
+                        Log.Info("Hiding sub nag");
+                        var da = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromSeconds(.5)));
+                        da.Completed += (o, args) => this.Visibility = Visibility.Collapsed;
+                        this.BeginAnimation(UIElement.OpacityProperty, da);
+                    }));
         }
 
         private void SubscribeClick(object sender, RoutedEventArgs e)
@@ -100,12 +100,28 @@ namespace Octgn.Controls
             if ((SubBox.SelectedItem as SubType) == null) return;
             var subtype = (SubBox.SelectedItem as SubType);
             Log.InfoFormat("Sub clicked type {0}", subtype.Name);
-            Task.Factory.StartNew(() => this.ShowSubscribeSite(subtype));
+            Task.Factory.StartNew(() =>
+                this.ShowSubscribeSite(subtype)).ContinueWith(x =>
+                                                  {
+                                                      if (x.Exception != null)
+                                                      {
+                                                          Log.Warn("Sub Problem", x.Exception);
+                                                          Dispatcher.Invoke(
+                                                              new Action(
+                                                                  () =>
+                                                                  MessageBox.Show(
+                                                                      "Could not subscribe. Please visit "
+                                                                      + AppConfig.WebsitePath + " to subscribe.",
+                                                                      "Error",
+                                                                      MessageBoxButton.OK,
+                                                                      MessageBoxImage.Asterisk)));
+                                                      }
+                                                  });
         }
 
         private void ShowSubscribeSite(SubType subtype)
         {
-            Log.InfoFormat("Show sub site {0}",subtype);
+            Log.InfoFormat("Show sub site {0}", subtype);
             var url = SubscriptionModule.Get().GetSubscribeUrl(subtype);
             if (url != null)
             {
