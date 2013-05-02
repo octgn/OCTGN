@@ -28,7 +28,7 @@ namespace Octgn.Controls
         {
             Log.Info("Creating");
             this.Opacity = 0d;
-            TotalSeconds = 60;
+            TotalSeconds = 30;
             this.Loaded += OnLoaded;
             this.IsVisibleChanged += OnIsVisibleChanged;
 
