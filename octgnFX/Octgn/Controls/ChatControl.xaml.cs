@@ -266,7 +266,7 @@ namespace Octgn.Controls
                         if (ChatRowGroup.Rows.Count > 100)
                         {
                             var remlist =
-                                ChatRowGroup.Rows.Cast<ChatTableRow>()
+                                ChatRowGroup.Rows.Where(x=>x is ChatTableRow).Cast<ChatTableRow>()
                                             .OrderBy(x => x.MessageDate)
                                             .Take(ChatRowGroup.Rows.Count - 50).ToArray();
                             foreach (var r in remlist)
