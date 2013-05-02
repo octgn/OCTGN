@@ -381,7 +381,7 @@ namespace Octgn.Launcher
             {
                 Dispatcher.Invoke((Action) (() =>
                     {
-                        MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                        MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                                                     //lError.Text = message;
                                                     //bError.Visibility = Visibility.Visible;
                                                 }), new object[] {});
