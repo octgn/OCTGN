@@ -40,7 +40,8 @@ namespace Skylabs.Lobby
             atemp.Add("-gameid=" + gameguid);
             atemp.Add("-gameversion=" + gameversion);
             atemp.Add("-bind=" + "0.0.0.0:" + port.ToString());
-            atemp.Add("-local");
+            if(localGame)
+                atemp.Add("-local");
 
             StandAloneApp = new Process();
             StandAloneApp.StartInfo.FileName = Directory.GetCurrentDirectory() + "\\Octgn.Online.StandAloneServer.exe";

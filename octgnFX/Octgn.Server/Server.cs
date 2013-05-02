@@ -9,11 +9,18 @@ using System.Threading;
 using Octgn.Online.Library.Models;
 namespace Octgn.Server
 {
+    using System.Reflection;
+
     using Octgn.Online.Library;
     using Octgn.Online.Library.Enums;
 
+    using log4net;
+
     public sealed class Server
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
         #region Private fields
 
         private readonly List<Connection> _clients = new List<Connection>(); // List of all the connected clients		
@@ -37,6 +44,7 @@ namespace Octgn.Server
         public Server(IGameStateEngine stateEngine)
         {
             GameStateEngine.Set(stateEngine);
+            Log.InfoFormat("Creating server {0}",stateEngine.Game.HostUri);
             _tcp = new TcpListener(IPAddress.Any, stateEngine.Game.HostUri.Port);
             _handler = new Handler(stateEngine.Game.GameId, stateEngine.Game.GameVersion);
             _connectionChecker = new Thread(CheckConnections);
