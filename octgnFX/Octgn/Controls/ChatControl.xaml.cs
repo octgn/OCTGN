@@ -263,6 +263,17 @@ namespace Octgn.Controls
                         {
                             Chat.ScrollToEnd();
                         }
+                        if (ChatRowGroup.Rows.Count > 100)
+                        {
+                            var remlist =
+                                ChatRowGroup.Rows.Cast<ChatTableRow>()
+                                            .OrderBy(x => x.MessageDate)
+                                            .Take(ChatRowGroup.Rows.Count - 50).ToArray();
+                            foreach (var r in remlist)
+                            {
+                                ChatRowGroup.Rows.Remove(r);
+                            }
+                        }
                     }));
         }
 
