@@ -1067,6 +1067,10 @@
       <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>
       <Name>Octgn.Server</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Octgn.Tools.O8buildgui\Octgn.Tools.O8buildgui.csproj">
+      <Project>{98045ae6-1ceb-43bc-8305-e6b0fbf540a7}</Project>
+      <Name>Octgn.Tools.O8buildgui</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Tools.Proxytest\Octgn.Tools.Proxytest.csproj">
       <Project>{4ea73d38-5443-4a40-93ab-4869202efffc}</Project>
       <Name>Octgn.Tools.Proxytest</Name>
