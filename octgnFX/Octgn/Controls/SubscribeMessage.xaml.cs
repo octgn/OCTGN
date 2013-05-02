@@ -33,7 +33,8 @@ namespace Octgn.Controls
             this.IsVisibleChanged += OnIsVisibleChanged;
 
             InitializeComponent();
-            SubBox.Items.Add(SubscriptionModule.Get().SubTypes);
+            foreach (var s in SubscriptionModule.Get().SubTypes)
+                SubBox.Items.Add(s);
             Log.Info("Created");
         }
 
