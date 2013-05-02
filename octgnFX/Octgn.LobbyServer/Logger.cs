@@ -13,19 +13,19 @@ namespace Skylabs.LobbyServer
         {
             var method = GetPreviousMethod();
             //WriteLine("#PreLock[{1}]: {0}",method,Thread.CurrentThread.ManagedThreadId);
-            WriteTag("PreLock");
+            //WriteTag("PreLock");
         }
         public static void InLock()
         {
             var method = GetPreviousMethod();
             //WriteLine("#InLock[{1}]: {0}", method, Thread.CurrentThread.ManagedThreadId);
-            WriteTag("InLock");
+            //WriteTag("InLock");
         }
         public static void EndLock()
         {
             var method = GetPreviousMethod();
             //WriteLine("#EndLock[{1}]: {0}", method, Thread.CurrentThread.ManagedThreadId);
-            WriteTag("EndLock");
+            //WriteTag("EndLock");
         }
         public static void Er(Exception e, params string[] extras)
         {

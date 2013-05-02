@@ -120,7 +120,7 @@ namespace Skylabs.LobbyServer
 
         private static void XmppOnOnReadXml(object sender , string xml)
         {
-            Trace.WriteLine("[Bot]RawData:\n" + xml + "\n");
+            //Trace.WriteLine("[Bot]RawData:\n" + xml + "\n");
         }
 
         static void Xmpp_OnAuthError(object sender, agsXMPP.Xml.Dom.Element e)
@@ -206,7 +206,7 @@ namespace Skylabs.LobbyServer
 
         public static void RefreshLists()
         {
-            Trace.WriteLine("[Bot]RefreshList");
+            //Trace.WriteLine("[Bot]RefreshList");
             var arr = _userList.ToArray();
             if(arr == null) Trace.WriteLine("[Bot]arr=null");
             foreach(var u in arr)
@@ -223,7 +223,7 @@ namespace Skylabs.LobbyServer
                 var m = new Message(u.Bare , MessageType.normal , "" , "refresh");
                 Xmpp.Send(m);
             }
-            Trace.WriteLine("[Bot]RefreshListEnd");
+            //Trace.WriteLine("[Bot]RefreshListEnd");
         }
 
         private static void XmppOnOnLogin(object sender) 
