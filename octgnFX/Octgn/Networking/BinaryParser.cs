@@ -647,11 +647,14 @@ namespace Octgn.Networking
 				}
 				case 87:
 				{
-					Card arg0 = Card.Find(reader.ReadInt32());
+					Player arg0 = Player.Find(reader.ReadByte());
 					if (arg0 == null)
+					{ Debug.WriteLine("[CardSwitchTo] Player not found."); return; }
+					Card arg1 = Card.Find(reader.ReadInt32());
+					if (arg1 == null)
 					{ Debug.WriteLine("[CardSwitchTo] Card not found."); return; }
-					string arg1 = reader.ReadString();
-					handler.CardSwitchTo(arg0, arg1);
+					string arg2 = reader.ReadString();
+					handler.CardSwitchTo(arg0, arg1, arg2);
 					break;
 				}
 				case 88:

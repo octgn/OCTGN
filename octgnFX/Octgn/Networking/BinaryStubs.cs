@@ -1042,7 +1042,7 @@ namespace Octgn.Networking
 			Send(stream.ToArray());
 		}
 
-		public void CardSwitchTo(Card card, string alternate)
+		public void CardSwitchTo(Player player, Card card, string alternate)
 		{
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -1053,6 +1053,7 @@ namespace Octgn.Networking
       else
           writer.Write(0);
 			writer.Write((byte)87);
+			writer.Write(player.Id);
 			writer.Write(card.Id);
 			writer.Write(alternate);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);

@@ -373,9 +373,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void CardSwitchTo(int card, string alternate)
+    public void CardSwitchTo(byte player, int card, string alternate)
     {
-      bin.CardSwitchTo(card, alternate);
+      bin.CardSwitchTo(player, card, alternate);
       Send();
     }
 

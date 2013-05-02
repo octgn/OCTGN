@@ -62,7 +62,7 @@ namespace Octgn.Play.Actions
                     //TODO Card.Delete();
                 else
                 {
-                    Card.SwitchTo();
+                    Card.SwitchTo(Who);
                     Card.SetFaceUp(FaceUp);//FaceUp may be false - it's one of the constructor parameters for this
                     Card.SetOverrideGroupVisibility(false);
                     Card.X = X;

@@ -350,9 +350,9 @@ namespace Octgn.Server
                 _turnStopPlayers.Remove(id);
         }
 
-        public void CardSwitchTo(int c, string alternate)
+        public void CardSwitchTo(byte uid, int c, string alternate)
         {
-            _broadcaster.CardSwitchTo(c,alternate);
+            _broadcaster.CardSwitchTo(uid,c,alternate);
         }
 
         public void MoveCardReq(int card, int to, int idx, bool faceUp)

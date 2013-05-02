@@ -422,6 +422,7 @@
     <param name="player" type="Player" />
   </msg>
   <msg name="CardSwitchTo" server="true" client="true">
+    <param name="player" type="Player"/>
     <param name="card" type="Card" />
     <param name="alternate" type="string" />
   </msg>

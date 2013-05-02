@@ -190,7 +190,7 @@ namespace Octgn.Play
                 // Clear peeking (if any)
                 PeekingPlayers.Clear();
                 //Switch back to original image.
-                this.SwitchTo();
+                this.SwitchTo(Player.LocalPlayer);
             }
         }
 
@@ -347,11 +347,12 @@ namespace Octgn.Play
             return this._type.Model == null ? "" : this._type.Model.Alternate;
         }
 
-        public void SwitchTo(string alternate = "")
+        public void SwitchTo(Player player, string alternate = "")
         {
             if (_type.Model == null) return;
             if (_type.Model.Alternate.ToLower() == alternate.ToLower()) return;
-            Program.Client.Rpc.CardSwitchTo(this,alternate);
+            if(player.Id == Player.LocalPlayer.Id)
+                Program.Client.Rpc.CardSwitchTo(player,this,alternate);
             _type.Model.SetPropertySet(alternate);
             this.OnPropertyChanged("Picture");
         }

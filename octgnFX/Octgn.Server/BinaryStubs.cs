@@ -944,7 +944,7 @@ namespace Octgn.Server
 			Send(stream.ToArray());
 		}
 
-    public void CardSwitchTo(int card, string alternate)
+    public void CardSwitchTo(byte player, int card, string alternate)
     {
 			MemoryStream stream = new MemoryStream(512);
 			stream.Seek(4, SeekOrigin.Begin);
@@ -952,6 +952,7 @@ namespace Octgn.Server
 
       writer.Write(handler.muted);
 			writer.Write((byte)87);
+			writer.Write(player);
 			writer.Write(card);
 			writer.Write(alternate);
 			writer.Flush(); writer.Seek(0, SeekOrigin.Begin);

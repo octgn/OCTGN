@@ -933,9 +933,10 @@ namespace Octgn.Networking
             Program.GameEngine.IsTableBackgroundFlipped = isFlipped;
         }
 
-        public void CardSwitchTo(Card card, string alternate)
+        public void CardSwitchTo(Player player, Card card, string alternate)
         {
-            card.SwitchTo(alternate);
+            if(player.Id != Player.LocalPlayer.Id)
+                card.SwitchTo(player, alternate);
         }
 
         public void Ping()

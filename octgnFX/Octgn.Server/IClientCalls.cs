@@ -61,7 +61,7 @@ namespace Octgn.Server
 		void LookAtBottom(byte player, int uid, int group, int count, bool look);
 		void StartLimited(byte player, Guid[] packs);
 		void CancelLimited(byte player);
-		void CardSwitchTo(int card, string alternate);
+		void CardSwitchTo(byte player, int card, string alternate);
 		void PlayerSetGlobalVariable(byte player, string name, string val);
 		void SetGlobalVariable(string name, string val);
 		void Ping();

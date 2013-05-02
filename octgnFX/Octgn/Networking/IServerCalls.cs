@@ -70,7 +70,7 @@ namespace Octgn.Networking
 		void LookAtBottomReq(int uid, Group group, int count, bool look);
 		void StartLimitedReq(Guid[] packs);
 		void CancelLimitedReq();
-		void CardSwitchTo(Card card, string alternate);
+		void CardSwitchTo(Player player, Card card, string alternate);
 		void PlayerSetGlobalVariable(Player player, string name, string val);
 		void SetGlobalVariable(string name, string val);
 		void Ping();
