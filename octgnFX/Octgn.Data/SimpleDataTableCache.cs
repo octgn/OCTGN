@@ -9,6 +9,8 @@ using System.IO.Compression;
 
 namespace Octgn.Data
 {
+    using Octgn.Library;
+
     class SimpleDataTableCache
     {
 

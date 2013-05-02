@@ -373,9 +373,9 @@ namespace Octgn.Server
       Send();
     }
 
-    public void IsAlternateImage(int card, bool isAlternateImage)
+    public void CardSwitchTo(byte player, int card, string alternate)
     {
-      bin.IsAlternateImage(card, isAlternateImage);
+      bin.CardSwitchTo(player, card, alternate);
       Send();
     }
 
@@ -388,12 +388,6 @@ namespace Octgn.Server
     public void SetGlobalVariable(string name, string val)
     {
       bin.SetGlobalVariable(name, val);
-      Send();
-    }
-
-    public void SwitchWithAlternate(int card)
-    {
-      bin.SwitchWithAlternate(card);
       Send();
     }
 

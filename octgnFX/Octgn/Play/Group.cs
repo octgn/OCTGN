@@ -6,12 +6,12 @@ using System.Linq;
 using System.Windows.Documents;
 using System.Windows.Input;
 using Octgn.Controls;
-using Octgn.Definitions;
 using Octgn.Extentions;
-using Octgn.Utils;
 
 namespace Octgn.Play
 {
+    using Octgn.DataNew.Entities;
+
     public abstract class Group : ControllableObject, IEnumerable<Card>
     {
         #region Non-public fields
@@ -20,7 +20,7 @@ namespace Octgn.Play
 
         // List of cards in this group        
 
-        internal GroupDef Def;
+        internal DataNew.Entities.Group Def;
         internal int FilledShuffleSlots;
         internal bool HasReceivedFirstShuffledMessage;
 
@@ -48,7 +48,7 @@ namespace Octgn.Play
         public readonly ActionShortcut[] CardShortcuts;
         public readonly ActionShortcut[] GroupShortcuts;
 
-        internal Group(Player owner, GroupDef def)
+        internal Group(Player owner, DataNew.Entities.Group def)
             : base(owner)
         {
             Def = def;
@@ -59,7 +59,7 @@ namespace Octgn.Play
                 MoveToShortcut = (KeyGesture) KeyConverter.ConvertFromInvariantString(def.Shortcut);
         }
 
-        public GroupDef Definition
+        public DataNew.Entities.Group Definition
         {
             get { return Def; }
         }
@@ -102,7 +102,7 @@ namespace Octgn.Play
 
         internal new static Group Find(int id)
         {
-            if (id == 0x01000000) return Program.Game.Table;
+            if (id == 0x01000000) return Program.GameEngine.Table;
             Player player = Player.Find((byte) (id >> 16));
             return player.IndexedGroups[(byte) id];
         }
@@ -168,17 +168,17 @@ namespace Octgn.Play
         internal event EventHandler<ShuffleTraceEventArgs> ShuffledTrace;
         internal event EventHandler Shuffled;
 
-        private static ActionShortcut[] CreateShortcuts(IEnumerable<BaseActionDef> baseActionDef)
+        private static ActionShortcut[] CreateShortcuts(IEnumerable<IGroupAction> baseActionDef)
         {
             if (baseActionDef == null) return new ActionShortcut[0];
 
-            IEnumerable<ActionDef> actionDef = baseActionDef
+            IEnumerable<GroupAction> actionDef = baseActionDef
                 .Flatten(x =>
                              {
-                                 var y = x as ActionGroupDef;
+                                 var y = x as GroupActionGroup;
                                  return y == null ? null : y.Children;
                              })
-                .OfType<ActionDef>();
+                .OfType<GroupAction>();
 
             IEnumerable<ActionShortcut> shortcuts = from action in actionDef
                                                     where action.Shortcut != null
@@ -386,6 +386,6 @@ namespace Octgn.Play
     public class ActionShortcut
     {
         public KeyGesture Key { get; set; }
-        public ActionDef ActionDef { get; set; }
+        public IGroupAction ActionDef { get; set; }
     }
 }

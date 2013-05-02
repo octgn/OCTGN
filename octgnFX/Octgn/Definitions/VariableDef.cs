@@ -5,6 +5,8 @@ using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using Octgn.DataNew;
+
     public class VariableDef
     {
         public string Name { get; private set; }

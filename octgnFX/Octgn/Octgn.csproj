@@ -166,6 +166,11 @@
     <Reference Include="IronPython.Wpf">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\IronPython.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Dynamic">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Dynamic.dll</HintPath>
     </Reference>
@@ -184,6 +189,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Nuget.Core.2.2.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Polenter.SharpSerializer, Version=2.18.0.0, Culture=neutral, PublicKeyToken=8f4f20011571ee5f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\SharpSerializer.2.18\lib\net20\Polenter.SharpSerializer.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="PresentationFramework.Classic" />
     <Reference Include="RibbonControlsLibrary, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -194,14 +203,12 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.83.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\System.Data.SQLite.1.0.83.0\lib\net40\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq">
-      <HintPath>..\..\packages\System.Data.SQLite.1.0.83.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Abstractions, Version=1.4.0.41, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\System.IO.Abstractions.1.4.0.41\lib\net35\System.IO.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
@@ -231,6 +238,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AppConfig.cs" />
+    <Compile Include="Const.cs" />
     <Compile Include="Controls\ChatBar.cs" />
     <Compile Include="Controls\ChatBarItem.cs" />
     <Compile Include="Controls\ChatControl.xaml.cs">
@@ -250,11 +259,14 @@
     <Compile Include="Controls\ContactList.xaml.cs">
       <DependentUpon>ContactList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SubscribeMessage.xaml.cs">
+      <DependentUpon>SubscribeMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\WaitingDialog.xaml.cs">
+      <DependentUpon>WaitingDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CustomGames.xaml.cs">
       <DependentUpon>CustomGames.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\GameManagement.xaml.cs">
-      <DependentUpon>GameManagement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\GroupChatListItem.xaml.cs">
       <DependentUpon>GroupChatListItem.xaml</DependentUpon>
@@ -274,9 +286,18 @@
     <Compile Include="Controls\HostGameSettings.xaml.cs">
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Definitions\IconDef.cs" />
-    <Compile Include="GameManagement\GameFeedManager.cs" />
+    <Compile Include="GameUpdater.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="SubscriptionModule.cs" />
+    <Compile Include="Tabs\GameManagement\FeedGameViewModel.cs" />
+    <Compile Include="Tabs\GameManagement\GameManagement.xaml.cs">
+      <DependentUpon>GameManagement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tabs\GameManagement\AddFeed.xaml.cs">
+      <DependentUpon>AddFeed.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\CryptoRandom.cs" />
+    <Compile Include="Utils\Sounds.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
@@ -293,7 +314,6 @@
     </Compile>
     <Compile Include="Controls\TabCommands.cs" />
     <Compile Include="Controls\VirtualizingWrapPanel.cs" />
-    <Compile Include="Definitions\FontDef.cs" />
     <Compile Include="ErrorReporter.cs" />
     <Compile Include="Extentions\BitmapImageExtensions.cs" />
     <Compile Include="Extentions\ControlExtensions.cs" />
@@ -306,8 +326,6 @@
     <Compile Include="Play\DragAdorner.cs" />
     <Compile Include="Utils\CacheTraceListener.cs" />
     <Compile Include="Utils\Cryptor.cs" />
-    <Compile Include="Database.cs" />
-    <Compile Include="Definitions\GlobalVariableDef.cs" />
     <Compile Include="DeckBuilder\DeckBuilderWindow.xaml.cs">
       <DependentUpon>DeckBuilderWindow.xaml</DependentUpon>
     </Compile>
@@ -318,17 +336,8 @@
       <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DeckBuilder\SetPropertyDef.cs" />
-    <Compile Include="Definitions\ActionDef.cs" />
-    <Compile Include="Definitions\CardDef.cs" />
-    <Compile Include="Definitions\CounterDef.cs" />
-    <Compile Include="Definitions\DeckDef.cs" />
-    <Compile Include="Definitions\GameDef.cs" />
-    <Compile Include="Definitions\GroupDef.cs" />
-    <Compile Include="Definitions\LocalDef.cs" />
-    <Compile Include="Definitions\ScriptDef.cs" />
-    <Compile Include="Definitions\VariableDef.cs" />
     <Compile Include="Extentions\String.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="GameEngine.cs" />
     <Compile Include="Utils\BigInteger.cs" />
     <Compile Include="Networking\BinaryParser.cs">
       <AutoGen>True</AutoGen>
@@ -469,7 +478,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\FileIcon.cs" />
     <Compile Include="Utils\GridViewSort.cs" />
-    <Compile Include="Utils\GroupVisibility.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Extentions\LinqExtensions.cs" />
     <Compile Include="Utils\IServerCalls.cs" />
@@ -478,6 +486,7 @@
     <Compile Include="Utils\XmlInstaller.cs" />
     <Compile Include="Utils\XmlSetParser.cs" />
     <Compile Include="Utils\XmlSimpleValidate.cs" />
+    <Compile Include="WindowManager.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
@@ -520,12 +529,7 @@
     <Compile Include="Windows\UpgradeMessage.xaml.cs">
       <DependentUpon>UpgradeMessage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\UrlSetList.xaml.cs">
-      <DependentUpon>UrlSetList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\UrlSets.xaml.cs">
-      <DependentUpon>UrlSets.xaml</DependentUpon>
-    </Compile>
+    <None Include="Resources\elevatording.wav" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -548,12 +552,23 @@
     <Resource Include="Resources\Icons\setting_tools.png" />
     <Resource Include="CurrentReleaseVersion.txt" />
     <Resource Include="CurrentTestVersion.txt" />
-    <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="app.Debug x86.config">
+      <DependentUpon>app.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="app.Debug.config">
+      <DependentUpon>app.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="app.Release.config">
+      <DependentUpon>app.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="app.Release_Test.config">
+      <DependentUpon>app.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="packageRestore.proj" />
     <None Include="packages.config" />
     <None Include="Networking\BinaryStubs.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -646,6 +661,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TransformOnBuild>true</TransformOnBuild>
     </None>
     <None Include="Networking\BinaryParser.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -678,11 +694,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\CustomGames.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Controls\SubscribeMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\GameManagement.xaml">
+    <Page Include="Controls\WaitingDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\CustomGames.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -929,6 +948,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Tabs\GameManagement\GameManagement.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\GameManagement\AddFeed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Windows\AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -985,14 +1011,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Windows\UrlSetList.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\UrlSets.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Folder.png" />
@@ -1025,17 +1043,33 @@
       <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
       <Name>agsXMPP2010</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
-      <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
-      <Name>Octgn.Data</Name>
+    <ProjectReference Include="..\o8build\o8build.csproj">
+      <Project>{f31191fb-dd9e-4c6c-a37b-796d653dd864}</Project>
+      <Name>o8build</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
+      <Project>{9BDB193E-E3BA-4A1D-8C6E-ECABB6FFC7AB}</Project>
+      <Name>Octgn.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
+      <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
+      <Name>Octgn.DataNew</Name>
     </ProjectReference>
     <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
       <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
       <Name>Octgn.Library</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Octgn.ProxyGenerator\Octgn.ProxyGenerator.csproj">
+      <Project>{ab487bd2-9cf7-4c4e-a938-5b9fee4c4e76}</Project>
+      <Name>Octgn.ProxyGenerator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.Server\Octgn.Server.csproj">
       <Project>{6DD203AF-5003-4AF3-A982-67F10B704D4A}</Project>
       <Name>Octgn.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Tools.Proxytest\Octgn.Tools.Proxytest.csproj">
+      <Project>{4ea73d38-5443-4a40-93ab-4869202efffc}</Project>
+      <Name>Octgn.Tools.Proxytest</Name>
     </ProjectReference>
     <ProjectReference Include="..\Skylabs.Lobby\Skylabs.Lobby.csproj">
       <Project>{131805CF-7971-4813-848B-CE156D4F6827}</Project>
@@ -1086,6 +1120,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Definitions\" />
     <Folder Include="Effects\" />
     <Folder Include="Server\" />
   </ItemGroup>
@@ -1162,5 +1197,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup Label="SlowCheetah">
+    <SlowCheetah_EnableImportFromNuGet Condition=" '$(SC_EnableImportFromNuGet)'=='' ">true</SlowCheetah_EnableImportFromNuGet>
+    <SlowCheetah_NuGetImportPath Condition=" '$(SlowCheetah_NuGetImportPath)'=='' ">$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\..\packages\SlowCheetah.2.5.5\tools\SlowCheetah.Transforms.targets ))</SlowCheetah_NuGetImportPath>
+    <SlowCheetahTargets Condition=" '$(SlowCheetah_EnableImportFromNuGet)'=='true' and Exists('$(SlowCheetah_NuGetImportPath)') ">$(SlowCheetah_NuGetImportPath)</SlowCheetahTargets>
+  </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
 </Project>

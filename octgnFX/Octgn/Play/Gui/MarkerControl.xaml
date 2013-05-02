@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="32" d:DesignWidth="79">
 
   <StackPanel Orientation="Horizontal" ToolTip="{Binding Description}">
-    <Image x:Name="img1" Source="{Binding Model.Picture}" HorizontalAlignment="Left" />
+        <Image x:Name="img1" Source="{Binding Model.IconUri}" HorizontalAlignment="Left" />
     <Border x:Name="textBorder" VerticalAlignment="Center" Background="#80000000" CornerRadius="3">
       <TextBlock x:Name="text" Text="{Binding Count}" RenderOptions.ClearTypeHint="Enabled"
                  HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="Bold" />

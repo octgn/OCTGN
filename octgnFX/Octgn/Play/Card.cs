@@ -7,14 +7,20 @@ using System.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Octgn.Controls;
-using Octgn.Data;
-using Octgn.Definitions;
 using Octgn.Play.Actions;
 using Octgn.Play.Gui;
 using Octgn.Utils;
 
 namespace Octgn.Play
 {
+    using System.Reflection;
+
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
+
+    using log4net;
+
     [Flags]
     public enum CardOrientation
     {
@@ -26,18 +32,20 @@ namespace Octgn.Play
 
     public sealed class Card : ControllableObject
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         #region Static interface
 
         private static readonly Dictionary<int, Card> All = new Dictionary<int, Card>();
 
         public static string DefaultFront
         {
-            get { return Program.Game.Definition.CardDefinition.Front; }
+            get { return Program.GameEngine.Definition.CardFront; }
         }
 
         public static string DefaultBack
         {
-            get { return Program.Game.Definition.CardDefinition.Back; }
+            get { return Program.GameEngine.Definition.CardBack; }
         }
 
         internal new static Card Find(int id)
@@ -74,7 +82,7 @@ namespace Octgn.Play
         private Group _group;
         private Color? _highlight;
         private bool _isAlternateImage;
-        internal CardModel _alternateOf;
+        internal Octgn.DataNew.Entities.Card _alternateOf;
         private int numberOfSwitchWithAlternatesNotPerformed = 0;
 
         private CardOrientation _rot;
@@ -84,7 +92,7 @@ namespace Octgn.Play
 
         #endregion Private fields
         
-        internal Card(Player owner, int id, ulong key, CardDef def, CardModel model, bool mySecret)
+        internal Card(Player owner, int id, ulong key,  DataNew.Entities.Card model, bool mySecret)
             : base(owner)
         {
             _id = id;
@@ -96,18 +104,18 @@ namespace Octgn.Play
             _isAlternateImage = false;
         }
 
-        public bool IsAlternateImage
-        {
-            get { return _isAlternateImage; }
-            set
-            {
-                if (value == _isAlternateImage) return;
-                Program.Client.Rpc.IsAlternateImage(this, value);
+        //public bool IsAlternateImage
+        //{
+        //    get { return _isAlternateImage; }
+        //    set
+        //    {
+        //        if (value == _isAlternateImage) return;
+        //        Program.Client.Rpc.IsAlternateImage(this, value);
 
-                _isAlternateImage = value;
-                OnPropertyChanged("Picture");
-            }
-        }
+        //        _isAlternateImage = value;
+        //        OnPropertyChanged("Picture");
+        //    }
+        //}
 
         internal override int Id
         {
@@ -182,8 +190,7 @@ namespace Octgn.Play
                 // Clear peeking (if any)
                 PeekingPlayers.Clear();
                 //Switch back to original image.
-                IsAlternateImage = false;
-                if (Program.Game.Definition.CardsRevertToOriginalOnGroupChange) { RevertToOriginal(); } 
+                this.SwitchTo(Player.LocalPlayer);
             }
         }
 
@@ -196,7 +203,6 @@ namespace Octgn.Play
                 Program.Client.Rpc.TurnReq(this, value);
                 if (_faceUp) MayBeConsideredFaceUp = true; // See comment for mayBeConsideredFaceUp
                 new Turn(Player.LocalPlayer, this, value).Do();
-                if (value) catchUpOnAlternateSwitches();
             }
         }
         //Okay, someone please explain to me why we have the setter above and the set function below? (V)_V
@@ -208,7 +214,6 @@ namespace Octgn.Play
             if (lFaceUp)
             {
                 PeekingPlayers.Clear();
-                catchUpOnAlternateSwitches();
             }
         }
 
@@ -288,10 +293,8 @@ namespace Octgn.Play
         {
             get
             {
-                if (IsAlternateImage)
-                    return Type.Model.AlternatePicture ?? DefaultFront;
                 if (!FaceUp) return DefaultBack;
-                return Type.Model == null ? DefaultFront : Type.Model.Picture;
+                return Type.Model == null ? DefaultFront : Type.Model.GetPicture();
             }
         }
 
@@ -333,11 +336,35 @@ namespace Octgn.Play
             return Name;
         }
 
+        public string[] Alternates()
+        {
+            if(_type.Model == null)return new string[0];
+            return _type.Model.Properties.Select(x => x.Key).ToArray();
+        }
+
+        public string Alternate()
+        {
+            return this._type.Model == null ? "" : this._type.Model.Alternate;
+        }
+
+        public void SwitchTo(Player player, string alternate = "")
+        {
+            if (_type.Model == null) return;
+            if (_type.Model.Alternate.ToLower() == alternate.ToLower()) return;
+            if(player.Id == Player.LocalPlayer.Id)
+                Program.Client.Rpc.CardSwitchTo(player,this,alternate);
+            _type.Model.SetPropertySet(alternate);
+            this.OnPropertyChanged("Picture");
+        }
+
         public object GetProperty(string name)
         {
             if (_type.Model == null) return null;
             if (name == "Name") return _type.Model.Name;
-            return name == "Id" ? _type.Model.Id : _type.Model.Properties[name];
+            if (name == "Id") return _type.Model.Id;
+            var prop = _type.Model.PropertySet().FirstOrDefault(x => x.Key.Name == name);
+            //var prop = _type.Model.Properties.FirstOrDefault(x => x.Key.Name == name);
+            return prop.Value;
         }
 
         public void MoveTo(Group to, bool lFaceUp)
@@ -392,35 +419,16 @@ namespace Octgn.Play
 
         internal string GetPicture(bool up)
         {
-            if (IsAlternateImage)
-                //return Type.Model.AlternatePicture == null ? DefaultFront : Program.Game.CardFrontBitmap.ToString();
-                return Type.Model.AlternatePicture ?? DefaultFront;
             if (!up) return DefaultBack;
             if (Type == null || Type.Model == null) return DefaultFront;
-            return Type.Model.Picture;
+            return Type.Model.GetPicture();
         }
 
         internal BitmapImage GetBitmapImage(bool up)
         {
-            if (IsAlternateImage)
-            {       
-                BitmapImage bmp = null;
-                try
-                {
-                    bmp = new BitmapImage(new Uri(Type.Model.AlternatePicture)) { CacheOption = BitmapCacheOption.OnLoad };
-                }
-                catch (Exception)
-                {
-                   
-                }
-                if (bmp == null)
-                    bmp = Program.Game.CardFrontBitmap;
-                bmp.Freeze();
-                return bmp;
-            }
-            if (!up) return Program.Game.CardBackBitmap;
-            if (Type == null || Type.Model == null) return Program.Game.CardFrontBitmap;
-            var bmpo = new BitmapImage(new Uri(Type.Model.Picture)) {CacheOption = BitmapCacheOption.OnLoad};
+            if (!up) return Program.GameEngine.CardBackBitmap;
+            if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
+            var bmpo = new BitmapImage(new Uri(Type.Model.GetPicture())) {CacheOption = BitmapCacheOption.OnLoad};
             bmpo.Freeze();
             return bmpo;
         }
@@ -477,16 +485,11 @@ namespace Octgn.Play
             }
         }
 
-        internal void SetModel(CardModel model)
+        internal void SetModel(DataNew.Entities.Card model)
         {
-#if (DEBUG)
-            Debug.WriteLine("SetModel event happened!");
-#endif
-            bool processSwitches = false;
-            if (Type.Model == null) processSwitches = true;//if there is no current model, we've built up unperformed Alternate Switches
+            Log.Info("SetModel event happened!");
             Type.Model = model;
             OnPropertyChanged("Picture");//This should be changed - the model is much more than just the picture.
-            if (processSwitches) catchUpOnAlternateSwitches();
         }
 
         internal bool IsVisibleToAll()
@@ -520,12 +523,10 @@ namespace Octgn.Play
             // It then leads to bugs if not taken good care of.
             if (Type.Revealing) return;
 
-#if (DEBUG)
-            Debug.WriteLine("REVEAL event about to fire!");
-#endif
+            Log.Info("REVEAL event about to fire!");
             Type.Revealing = true;
             if (!Type.MySecret) return;
-            Program.Client.Rpc.Reveal(this, _type.Key, _type.Alias ? Guid.Empty : isAlternate() ? _alternateOf.Id : _type.Model.Id);
+            Program.Client.Rpc.Reveal(this, _type.Key, _type.Alias ? Guid.Empty : _type.Model.Id);
         }
 
         internal void RevealTo(IEnumerable<Player> players)
@@ -557,7 +558,7 @@ namespace Octgn.Play
                     else
                     {
                         pArray[0] = p;
-                        Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.Encrypt(isAlternate() ? _alternateOf.Id : Type.Model.Id, p.PublicKey));
+                        Program.Client.Rpc.RevealToReq(p, pArray, this, Crypto.Encrypt(Type.Model.Id, p.PublicKey));
                     }
                 }
             }
@@ -608,7 +609,7 @@ namespace Octgn.Play
             get { return _markers; }
         }
 
-        internal void AddMarker(MarkerModel model, ushort count)
+        internal void AddMarker(DataNew.Entities.Marker model, ushort count)
         {
             Marker marker = _markers.FirstOrDefault(m => m.Model.Equals(model));
             if (marker != null)
@@ -617,7 +618,7 @@ namespace Octgn.Play
                 _markers.Add(new Marker(this, model, count));
         }
 
-        internal void AddMarker(MarkerModel model)
+        internal void AddMarker(DataNew.Entities.Marker model)
         {
             AddMarker(model, 1);
         }
@@ -660,7 +661,7 @@ namespace Octgn.Play
             }
             else if (count > 0)
             {
-                MarkerModel model = Program.Game.GetMarkerModel(lId);
+                DataNew.Entities.Marker model = Program.GameEngine.GetMarkerModel(lId);
                 var defaultMarkerModel = model as DefaultMarkerModel;
                 if (defaultMarkerModel != null)
                     (defaultMarkerModel).SetName(name);
@@ -676,97 +677,7 @@ namespace Octgn.Play
 
         internal bool hasProperty(string propertyName)
         {
-            return (Type.Model.hasProperty(propertyName));
-        }
-
-        /// <summary>
-        /// Switches the underlying card model with some predefined Alternate
-        /// Returns true if the model was switched (or the switch was recorded to be performed when applicable)
-        /// Returns false if it did nothing.
-        /// </summary>
-        /// <returns></returns>
-        internal bool SwitchWithAlternate()
-        {//This function will change the underlying Model of a Card to some predefined alternate version.
-#if (DEBUG)
-            Debug.WriteLine("Attempting to SwitchWithAlternate on " + Name);
-#endif
-            if (_faceUp)
-            {
-                if (Type.Model.hasProperty("Alternate"))
-                {//if there is an alternate, we want to switch to it
-                    if (_alternateOf == null)
-                    {//Switching to first alternate
-                        _alternateOf = Type.Model;
-#if (DEBUG)
-                        Debug.WriteLine("Switching for the first time!");
-#endif
-                    }
-                    else
-                    {//Not the first, not the last
-#if (DEBUG)
-                        Debug.WriteLine("Not the first, not the last.");
-#endif
-                    }
-                    SetModel(Database.GetCardById(Type.Model.Alternate));
-                    return true;
-                }
-                //if there is no alternate, we might have reached the end of the chain
-                else if (_alternateOf != null)
-                {//Then we've come from somewhere, and we want to go back.
-                    SetModel(_alternateOf);
-                    _alternateOf = null;
-#if (DEBUG)
-                    Debug.WriteLine("Reached the end of the chain - Going back to the original");
-#endif
-                    return true;
-                }
-                //if we don't have a specified alternate, and we haven't come from an alternate, do nothing.
-#if (DEBUG)
-                Debug.WriteLine("No Alternate, No Original - Doin' Nothin.");
-#endif
-                return false;
-            }
-            else //if not face up
-            {
-                numberOfSwitchWithAlternatesNotPerformed++;//the number of switches
-#if (DEBUG)
-                Debug.WriteLine("Not FaceUp. Catching the missed switch. New Number: " + numberOfSwitchWithAlternatesNotPerformed);
-#endif
-                return true;
-            }
-        }
-
-        public bool isAlternate()
-        {
-#if (DEBUG)
-            Debug.WriteLine(this.Name + " is Alternate? " + (_alternateOf != null));
-#endif
-            return (_alternateOf != null);//If there is an original version, return true.
-        }
-        private bool catchUpOnAlternateSwitches()
-        {
-#if (DEBUG)
-            Debug.WriteLine("Time to catch up on the Alternate Switches we missed! Number: " + numberOfSwitchWithAlternatesNotPerformed);
-#endif
-            try
-            {
-                while( 0 < numberOfSwitchWithAlternatesNotPerformed)
-                {
-                    SwitchWithAlternate();
-                    numberOfSwitchWithAlternatesNotPerformed--;
-                }
-                return true;
-            }
-            catch(Exception)
-            {
-                Debug.WriteLine("Unable To Catchup on Alternate Switches at this time. Please try again Later.");
-            }
-            return false;
-        }
-        public void RevertToOriginal()
-        {
-            if (isAlternate()) { SetModel(_alternateOf); }
-            numberOfSwitchWithAlternatesNotPerformed = 0;
+            return (Type.Model.HasProperty(propertyName));
         }
     }
 }

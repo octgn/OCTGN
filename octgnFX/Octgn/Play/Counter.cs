@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using Octgn.Definitions;
 
 namespace Octgn.Play
 {
@@ -9,7 +8,7 @@ namespace Octgn.Play
     {
         #region Private fields
 
-        private readonly CounterDef _defintion;
+        private readonly DataNew.Entities.Counter _defintion;
         private readonly byte _id;
         private readonly Player _player; // Player who owns this counter, if any        
         private int _state; // Value of this counter
@@ -23,7 +22,7 @@ namespace Octgn.Play
         // Name of this counter
         private readonly string _name;
 
-        public Counter(Player player, CounterDef def)
+        public Counter(Player player, DataNew.Entities.Counter def)
         {
             _player = player;
             _state = def.Start;
@@ -44,7 +43,7 @@ namespace Octgn.Play
             set { SetValue(value, Player.LocalPlayer, true); }
         }
 
-        public CounterDef Definition
+        public DataNew.Entities.Counter Definition
         {
             get { return _defintion; }
         }

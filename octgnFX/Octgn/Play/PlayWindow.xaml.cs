@@ -16,19 +16,23 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
-using Octgn.Data;
-using Octgn.Definitions;
+
 using Octgn.Extentions;
 using Octgn.Play.Dialogs;
 using Octgn.Play.Gui;
 using Octgn.Scripting;
 using Octgn.Utils;
-using System.IO.Packaging;
-using System.Collections.Generic;
 
 namespace Octgn.Play
 {
     using Microsoft.Windows.Controls.Ribbon;
+
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
+    using Octgn.Library;
+    using Octgn.Library.Exceptions;
+    using log4net;
 
     public partial class PlayWindow
     {
@@ -36,7 +40,7 @@ namespace Octgn.Play
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
         [Import] protected Engine ScriptEngine;
-
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
 #pragma warning restore 649
 
@@ -60,31 +64,25 @@ namespace Octgn.Play
         public PlayWindow(bool islocal = false)
             : base()
         {
+            Program.Dispatcher = Dispatcher;
+            DataContext = Program.GameEngine;
             InitializeComponent();
             _isLocal = islocal;
             //Application.Current.MainWindow = this;
             Version oversion = Assembly.GetExecutingAssembly().GetName().Version;
-            Title = "Octgn  version : " + oversion + " : " + Program.Game.Definition.Name;
-            Program.Game.ComposeParts(this);            
+            Title = "Octgn  version : " + oversion + " : " + Program.GameEngine.Definition.Name;
+            Program.GameEngine.ComposeParts(this);            
             this.Loaded += OnLoaded;
         }
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
         {
-            
-        //}
-
-        //protected override void OnInitialized(EventArgs e)
-        //{
-        //    base.OnInitialized(e);
-            Program.Dispatcher = Dispatcher;
-            DataContext = Program.Game;
 
             _fadeIn = (Storyboard) Resources["ImageFadeIn"];
             _fadeOut = (Storyboard) Resources["ImageFadeOut"];
 
-            cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.Game.Definition.CardDefinition.Back));
-            if (Program.Game.Definition.CardDefinition.CornerRadius > 0)
+            cardViewer.Source = ExtensionMethods.BitmapFromUri(new Uri(Program.GameEngine.Definition.CardBack));
+            if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 cardViewer.Clip = new RectangleGeometry();
             AddHandler(CardControl.CardHoveredEvent, new CardEventHandler(CardHovered));
             AddHandler(CardRun.ViewCardModelEvent, new EventHandler<CardModelEventArgs>(ViewCardModel));
@@ -97,13 +95,9 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
-            //TODO This path doesn't exist.
-            if (!PartExists("http://schemas.octgn.org/game/rules"))
-            {
-                Rules.Visibility = Visibility.Hidden;
-                Help.Visibility = Visibility.Hidden;
-            }
-            if (Program.Game.Definition.Fonts.Count > 0)
+            Console.Visibility = Visibility.Visible;
+            Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
+            if (Program.GameEngine.Definition.Fonts.Count > 0)
             {
                 UpdateFont();
             }
@@ -114,95 +108,55 @@ namespace Octgn.Play
             string fname = Application.Current.Properties["ArbitraryArgName"].ToString();
             if (fname != "/developer") return;
 #endif
-            Console.Visibility = Visibility.Visible;
-            Loaded += (sender, args) =>
-                          {
-                              var wnd = new InteractiveConsole {Owner = this};
-                              wnd.Show();
-                          };
+            
         }
 
         private void UpdateFont()
         {
-            string curDir = Path.Combine(SimpleConfig.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
-            string uri = "file:///" + curDir.Replace('\\', '/') + "/#";
             System.Drawing.Text.PrivateFontCollection context = new System.Drawing.Text.PrivateFontCollection();
             System.Drawing.Text.PrivateFontCollection chatname = new System.Drawing.Text.PrivateFontCollection();
 
+            var game = Program.GameEngine.Definition;
 
             int chatFontsize = 12;
             int contextFontsize = 12;
-            Boolean inchat = false;
-            foreach (FontDef font in Program.Game.Definition.Fonts)
+            
+            foreach (Font font in game.Fonts)
             {
+                Log.Info(string.Format("Found font with target({0}) and has path({1})", font.Target, font.Src));
                 if (font.Target.ToLower().Equals("chat"))
                 {
-                    chatname.AddFontFile(Path.Combine(curDir, font.FileName.TrimStart('/')));
+                    Log.Info("Loading font");
                     chatFontsize = font.Size;
-                    inchat = true;
+                    chatname.AddFontFile(font.Src);
+                    if (chatname.Families.Length > 0)
+                    {
+                        Log.Info("Loaded font into collection");
+                    }
+                    string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + chatname.Families[0].Name;
+                    Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
+                    chat.output.FontFamily = new FontFamily(font1.Replace("\\", "/"));
+                    chat.output.FontSize = chatFontsize;
+                    Log.Info(string.Format("Loaded font with source: {0}", chat.output.FontFamily.Source));
                 }
                 if (font.Target.ToLower().Equals("context"))
                 {
-                    context.AddFontFile(Path.Combine(curDir, font.FileName.TrimStart('/')));
+                    Log.Info(string.Format("Loading font"));
                     contextFontsize = font.Size;
+                    context.AddFontFile(font.Src);
+                    if (context.Families.Length > 0)
+                    {
+                        Log.Info("Loaded font into collection");
+                    }
+                    string font1 = "file:///" + Path.GetDirectoryName(font.Src) + "/#" + context.Families[0].Name;
+                    Log.Info(string.Format("Loading font with path: {0}", font1).Replace("\\", "/"));
+                    chat.watermark.FontFamily = new FontFamily(font1.Replace("\\","/"));
+                    GroupControl.groupFont = new FontFamily(font1.Replace("\\", "/"));
+                    GroupControl.fontsize = contextFontsize;
+                    Log.Info(string.Format("Loaded font with source: {0}", GroupControl.groupFont.Source));
                 }
             }
-
-            chat.watermark.FontFamily = new FontFamily(uri + context.Families[0].Name);
-            GroupControl.groupFont = new FontFamily(uri + context.Families[0].Name);
-            GroupControl.fontsize = contextFontsize;
-            if (inchat)
-            {
-                chat.output.FontFamily = new FontFamily(uri + chatname.Families[0].Name);
-                chat.output.FontSize = chatFontsize;
-            }
-
-            // self = player tab information
-            // watermark = type to chat (ctrl+t)
-            // output = chatbox
         }
-
-        private Boolean PartExists(string schema)
-        {
-            Boolean exists = false;
-            var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
-            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');
-            using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                PackageRelationship defRelationship = package.GetRelationshipsByType(schema).FirstOrDefault();
-                if (defRelationship != null)
-                    if (package.PartExists(defRelationship.TargetUri))
-                        exists = true;
-            }
-            return exists;
-        }
-
-        //private static void ExtractPart(PackagePart packagePart, string targetDirectory, PackageRelationship relationship)
-        //{
-        //    string stringPart = packagePart.Uri.ToString().TrimStart('/');
-        //    Uri partUri = new Uri(stringPart, UriKind.Relative);
-        //    Uri uriFullFilePath = new Uri(new Uri(targetDirectory, UriKind.Absolute), partUri);
-
-        //    List<string> str = new List<string>();
-        //    str.Add(partUri.OriginalString);
-        //    str.Add(relationship.Id);
-        //    fontName.Add(str);
-
-        //    // Create the necessary directories based on the full part path
-        //    if (!Directory.Exists(Path.GetDirectoryName(uriFullFilePath.LocalPath)))
-        //    {
-        //        Directory.CreateDirectory(Path.GetDirectoryName(uriFullFilePath.LocalPath));
-        //    }
-
-        //    if (!File.Exists(uriFullFilePath.LocalPath))
-        //    {
-        //        // Write the file from the part’s content stream.
-        //        using (FileStream fileStream = File.Create(uriFullFilePath.LocalPath))
-        //        {
-        //            packagePart.GetStream().CopyTo(fileStream);
-        //        }
-        //    }                        
-        //}
 
         private void InitializePlayerSummary(object sender, EventArgs e)
         {
@@ -214,7 +168,7 @@ namespace Octgn.Play
                 return;
             }
 
-            PlayerDef def = Program.Game.Definition.PlayerDefinition;
+            var def = Program.GameEngine.Definition.Player;
             string format = def.IndicatorsFormat;
             if (format == null)
             {
@@ -280,7 +234,7 @@ namespace Octgn.Play
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            Program.PlayWindow = null;
+            WindowManager.PlayWindow = null;
             Program.StopGame();            
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
         }
@@ -288,26 +242,27 @@ namespace Octgn.Play
         private void Open(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
- 
-            // Make sure that Prefs.LastFolder exists
-            if (!Directory.Exists(Prefs.LastFolder)) Prefs.LastFolder = Prefs.DataDirectory;
+
+            var loadDirectory = Program.GameEngine.Definition.GetDefaultDeckPath();
+
             // Show the dialog to choose the file
 
             var ofd = new OpenFileDialog
                           {
                               Filter = "Octgn deck files (*.o8d) | *.o8d",
-                              InitialDirectory = Prefs.LastFolder
+                              InitialDirectory = loadDirectory
                           };
             //ofd.InitialDirectory = Program.Game.Definition.DecksPath;
             if (ofd.ShowDialog() != true) return;
-            Prefs.LastFolder = Path.GetDirectoryName(ofd.FileName);
             // Try to load the file contents
             try
             {
-                Deck newDeck = Deck.Load(ofd.FileName,
-                                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
+                var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
+                var newDeck = new Deck().Load(game,ofd.FileName);
+                //DataNew.Entities.Deck newDeck = Deck.Load(ofd.FileName,
+                //                         Program.GamesRepository.Games.First(g => g.Id == Program.Game.Definition.Id));
                 // Load the deck into the game
-                Program.Game.LoadDeck(newDeck);
+                Program.GameEngine.LoadDeck(newDeck);
             }
             catch (DeckException ex)
             {
@@ -393,10 +348,10 @@ namespace Octgn.Play
                         shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
                 if (match != null)
                 {
-                    if (match.ActionDef.Execute != null)
-                        ScriptEngine.ExecuteOnCards(match.ActionDef.Execute, Selection.Cards);
-                    else if (match.ActionDef.BatchExecute != null)
-                        ScriptEngine.ExecuteOnBatch(match.ActionDef.BatchExecute, Selection.Cards);
+                    if (match.ActionDef.AsAction().Execute != null)
+                        ScriptEngine.ExecuteOnCards(match.ActionDef.AsAction().Execute, Selection.Cards);
+                    else if (match.ActionDef.AsAction().BatchExecute != null)
+                        ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().BatchExecute, Selection.Cards);
                     e.Handled = true;
                     return;
                 }
@@ -409,8 +364,8 @@ namespace Octgn.Play
             {
                 ActionShortcut a = g.GroupShortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e));
                 if (a == null) continue;
-                if (a.ActionDef.Execute != null)
-                    ScriptEngine.ExecuteOnGroup(a.ActionDef.Execute, g);
+                if (a.ActionDef.AsAction().Execute != null)
+                    ScriptEngine.ExecuteOnGroup(a.ActionDef.AsAction().Execute, g);
                 e.Handled = true;
                 return;
             }
@@ -431,39 +386,19 @@ namespace Octgn.Play
                     outerCardViewer.HorizontalAlignment = cardViewer.HorizontalAlignment = HorizontalAlignment.Left;
 
                 var ctrl = e.OriginalSource as CardControl;                  
-                if (e.Card != null && ((Keyboard.IsKeyDown(Key.LeftAlt)) || (Keyboard.IsKeyDown(Key.RightAlt))))
+                if (e.Card != null )
                 {
-                    string alternate;
-                    if (e.Card.IsAlternateImage)
-                        alternate = e.Card.Picture.Replace(".b.jpg", ".jpg");
-                    else
-                        alternate = e.Card.Picture.Replace(".jpg", ".b.jpg");
-                    try
-                    {
-                        var img = new BitmapImage();
-                        img.BeginInit();
-                        img.CacheOption = BitmapCacheOption.OnLoad;
-                        img.UriSource = new Uri(alternate);
-                        img.EndInit();
-                        ShowCardPicture(img);
-                    }
-                    catch
-                    {
-
-                    }
+                    var img =
+                        e.Card.GetBitmapImage(
+                            ctrl != null && ctrl.IsAlwaysUp
+                            || (e.Card.FaceUp || e.Card.PeekingPlayers.Contains(Player.LocalPlayer)));
+                    ShowCardPicture(img);
                 }
                 else
                 {
-                    // TODO: Change to readable code
-                    var img = e.Card != null
-                                          ? e.Card.GetBitmapImage(ctrl != null && ctrl.IsAlwaysUp || (e.Card.FaceUp ||
-                                                                                                      e.Card.PeekingPlayers.
-                                                                                                          Contains(
-                                                                                                              Player.
-                                                                                                                  LocalPlayer)))
-                                          : ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture));
-                    ShowCardPicture(img);
-                }                
+                    var img = ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture()));
+                    this.ShowCardPicture(img);
+                }
             }
         }
 
@@ -472,7 +407,7 @@ namespace Octgn.Play
             if (e.CardModel == null)
                 _fadeOut.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
             else
-                ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.Picture)));
+                ShowCardPicture(ImageUtils.CreateFrozenBitmap(new Uri(e.CardModel.GetPicture())));
         }
 
         private void ShowCardPicture(BitmapSource img)
@@ -484,24 +419,23 @@ namespace Octgn.Play
             _fadeIn.Begin(outerCardViewer, HandoffBehavior.SnapshotAndReplace);
 
             if (cardViewer.Clip == null) return;
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
             var clipRect = ((RectangleGeometry) cardViewer.Clip);
             double height = Math.Min(cardViewer.MaxHeight, cardViewer.Height);
             double width = cardViewer.Width*height/cardViewer.Height;
             clipRect.Rect = new Rect(new Size(width, height));
-            clipRect.RadiusX = clipRect.RadiusY = cardDef.CornerRadius*height/cardDef.Height;
+            clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius * height / Program.GameEngine.Definition.CardHeight;
         }
 
         private void NextTurnClicked(object sender, RoutedEventArgs e)
         {
             var btn = (ToggleButton) sender;
             var targetPlayer = (Player) btn.DataContext;
-            if (Program.Game.TurnPlayer == null || Program.Game.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
                 Program.Client.Rpc.NextTurn(targetPlayer);
             else
             {
-                Program.Client.Rpc.StopTurnReq(Program.Game.TurnNumber, btn.IsChecked != null && btn.IsChecked.Value);
-                if (btn.IsChecked != null) Program.Game.StopTurn = btn.IsChecked.Value;
+                Program.Client.Rpc.StopTurnReq(Program.GameEngine.TurnNumber, btn.IsChecked != null && btn.IsChecked.Value);
+                if (btn.IsChecked != null) Program.GameEngine.StopTurn = btn.IsChecked.Value;
             }
         }
 
@@ -516,7 +450,7 @@ namespace Octgn.Play
             e.Handled = true;
             //var wnd = new AboutWindow() { Owner = this };
             //wnd.ShowDialog();
-            Process.Start(Program.WebsitePath);
+            Process.Start(AppConfig.WebsitePath);
         }
 
         private void ConsoleClicked(object sender, RoutedEventArgs e)
@@ -541,24 +475,6 @@ namespace Octgn.Play
                 }));
         }
 
-        public static string txt = "rul";
-
-        private void ShowRules(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true;
-            var wnd = new RulesWindow {Owner = this};
-            txt = "rul";
-            wnd.ShowDialog();
-        }
-
-        private void ShowHelp(object sender, RoutedEventArgs e)
-        {
-            e.Handled = true;
-            var wnd = new RulesWindow { Owner = this };
-            txt = "hlp";
-            wnd.ShowDialog();
-        }
-
         internal void HideBackstage()
         {
             limitedTab.Visibility = Visibility.Collapsed;
@@ -579,26 +495,25 @@ namespace Octgn.Play
                           {
                               AddExtension = true,
                               Filter = "Octgn decks|*.o8d",
-                              InitialDirectory = Program.Game.Definition.DecksPath
+                              InitialDirectory = Program.GameEngine.Definition.GetDefaultDeckPath()
                           };
             if (!sfd.ShowDialog().GetValueOrDefault()) return;
 
             var dlg = backstage.Child as PickCardsDialog;
             try
             {
-                if (dlg != null) dlg.LimitedDeck.Save(sfd.FileName);
+                if (dlg != null) dlg.LimitedDeck.Save(GameManager.Get().GetById(Program.GameEngine.Definition.Id), sfd.FileName);
             }
-            catch (Exception ex)
+            catch (UserMessageException ex)
             {
-                MessageBox.Show("An error occured while trying to save the deck:\n" + ex.Message, "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "Error",MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         protected void LimitedOkClicked(object sender, EventArgs e)
         {
             var dlg = backstage.Child as PickCardsDialog;
-            if (dlg != null) Program.Game.LoadDeck(dlg.LimitedDeck);
+            if (dlg != null) Program.GameEngine.LoadDeck(dlg.LimitedDeck);
             HideBackstage();
         }
 
@@ -623,6 +538,18 @@ namespace Octgn.Play
                 }
 
             }
+        }
+
+        private void KillJoshJohnson(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            var s = sender as FrameworkElement;
+            if (s == null) return;
+            var document = s.DataContext as Document;
+            if (document == null) return;
+            var wnd = new RulesWindow(document) { Owner = this };
+            wnd.ShowDialog();
+
         }
     }
 

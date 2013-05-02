@@ -11,11 +11,14 @@ namespace Octgn.Windows
 {
     using System;
     using System.ComponentModel;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
 
+    using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
-    using Octgn.GameManagement;
 
     using agsXMPP;
 
@@ -34,12 +37,15 @@ namespace Octgn.Windows
         public Main()
         {
             this.InitializeComponent();
+#if(Release_Test)
+            this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
+#endif
             ConnectBox.Visibility = Visibility.Hidden;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
-            //this.Loaded += (sender, args) => new KickstarterWindow().ShowDialog();
+            GameUpdater.Get().Start();
             //new GameFeedManager().CheckForUpdates();
         }
 
@@ -81,6 +87,8 @@ namespace Octgn.Windows
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
             Program.LobbyClient.Stop();
+            GameUpdater.Get().Stop();
+            Task.Factory.StartNew(Program.Exit);
         }
 
         /// <summary>
@@ -138,7 +146,22 @@ namespace Octgn.Windows
             {
                 case LoginResults.Success:
                     this.SetStateOnline();
-                    this.Dispatcher.BeginInvoke(new Action(() => TabCommunityChat.Focus()));
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                        { 
+                            TabCommunityChat.Focus();
+
+                        })).Completed += (o, args) => Task.Factory.StartNew(() => { 
+                                                                                      Thread.Sleep(15000);
+                                                                                      this.Dispatcher.Invoke(new Action(()
+                                                                                                                        =>
+                                                                                          {
+                                                                                              var s =
+                                                                                                  SubscriptionModule.Get
+                                                                                                      ().IsSubscribed;
+                                                                                              if(s != null && s == false)
+                                                                                                this.SubMessage.Visibility = Visibility.Visible;
+                                                                                          }));
+                        });
                     break;
                 default:
                     this.SetStateOffline();
@@ -210,7 +233,7 @@ namespace Octgn.Windows
 
         private void MenuDeckEditorClick(object sender, RoutedEventArgs e)
         {
-            if (Program.GamesRepository.Games.Count == 0)
+            if (GameManager.Get().GameCount == 0)
             {
                 MessageBox.Show(
                     "You need to install a game before you can use the deck editor.",
@@ -219,10 +242,10 @@ namespace Octgn.Windows
                     MessageBoxImage.Error);
                 return;
             }
-            if (Program.DeckEditor == null)
+            if (WindowManager.DeckEditor == null)
             {
-                Program.DeckEditor = new DeckBuilderWindow();
-                Program.DeckEditor.Show();
+                WindowManager.DeckEditor = new DeckBuilderWindow();
+                WindowManager.DeckEditor.Show();
             }
         }
 

@@ -1,4 +1,6 @@
 ﻿from System.IO import Directory, Path
+from System.Collections.Generic import *
+from System import *
 #Rotation constants
 Rot0 = 0
 Rot90 = 1
@@ -50,8 +52,9 @@ def askMarker():
   if apiResult == None: return (None, 0)
   return ((apiResult.Item1, apiResult.Item2), apiResult.Item3)
 
-def askCard(restriction = None):
-  apiResult = _api.AskCard(restriction)
+def askCard(properties = {},operator = None):
+  realDick = Dictionary[String,String](properties)
+  apiResult = _api.AskCard(realDick,operator)
   if apiResult == None: return (None, 0)
   return (apiResult.Item1, apiResult.Item2)
 
@@ -108,13 +111,9 @@ class Card(object):
   def __format__(self, format_spec):
     return '{#%d}' % self._id
   @property
-  def isAlternateImage(self): return _api.IsAlternateImage(self._id)
+  def alternate(self): return _api.CardAlternate(self._id)
   @property
-  def switchImage(self): _api.SwitchImage(self._id)
-  @property
-  def isAlternate(self): return _api.IsAlternate(self._id)
-  @property
-  def switchWithAlternate(self): _api.SwitchWithAlternate(self._id)
+  def alternates(self): return _api.CardAlternates(self._id)
   @property
   def model(self): return _api.CardModel(self._id)
   @property
@@ -146,6 +145,8 @@ class Card(object):
   def markers(self):
     if self._markers == None: self._markers = Markers(self)
     return self._markers
+  def switchTo(self, alt = ""): 
+    _api.CardSwitchTo(self._id,alt)
   def moveTo(self, group, index = None):
     _api.CardMoveTo(self._id, group._id, index)
   def moveToBottom(self, pile):

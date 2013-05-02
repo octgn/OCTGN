@@ -59,7 +59,7 @@
                     <TextBlock.Text>
                       <MultiBinding StringFormat="{}{0} ({1})">
                         <Binding Path="Name" Mode="OneTime" />
-                        <Binding Path="CardCount" />
+                        <Binding Path="Quantity" />
                       </MultiBinding>
                     </TextBlock.Text>
                     <TextBlock.FontWeight>
@@ -73,7 +73,7 @@
                 <DataGrid ItemsSource="{Binding Cards}" AutoGenerateColumns="False" HeadersVisibility="None"
                           CanUserAddRows="False" HorizontalScrollBarVisibility="Hidden" AlternatingRowBackground="#e1ffd7"
                           VerticalGridLinesBrush="LightGray" HorizontalGridLinesBrush="LightGray" SelectionChanged="ElementSelected"
-                          Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd" 
+                          Keyboard.PreviewKeyDown="DeckKeyDownHandler" CellEditEnding="ElementEditEnd"
                           AllowDrop="True" Name="dgDeck">
                     <DataGrid.RowStyle>
                         <Style>
@@ -82,7 +82,7 @@
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
-                       <DataGridTextColumn Binding="{Binding Card.Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
+                       <DataGridTextColumn Binding="{Binding Name, Mode=OneWay}" IsReadOnly="True" Width="*" />
                        <DataGridTextColumn Binding="{Binding Quantity}" Width="50" />
                   </DataGrid.Columns>
                 </DataGrid>
@@ -105,7 +105,6 @@
     <GridSplitter Grid.Row="1" Grid.RowSpan="2" ResizeDirection="Columns" Width="4" HorizontalAlignment="Right"
                   Background="Transparent" />        
         <!--ComboBox Grid.Row="2" Height="23" HorizontalAlignment="Left" Margin="11,181,0,0" Name="DeckSort" VerticalAlignment="Bottom" Width="229" ItemsSource="{Binding Deck.}" SelectionChanged="DeckSort_SelectionChanged" /-->
-    <!--TODO: Fill in Combobox with properties. On selection re-sort deck according to selected property-->
 
     </Grid>
     </AdornerDecorator>

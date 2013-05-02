@@ -37,7 +37,7 @@ namespace Octgn.Play.Gui
         public GroupWindow(Group group, PilePosition position, int count)
             : this()
         {
-            _id = Program.Game.GetUniqueId();
+            _id = Program.GameEngine.GetUniqueId();
             _position = position;
             _count = count;
             DataContext = _group = group;
@@ -68,7 +68,7 @@ namespace Octgn.Play.Gui
                 shuffleLink.Visibility = Visibility.Collapsed;
 
             // If the whole group is visible to everyone, there's nothing to be done, really.
-            if (group.Visibility == GroupVisibility.Everybody)
+            if (group.Visibility == DataNew.Entities.GroupVisibility.Everybody)
                 return;
 
             SendLookAtRpc(true);
@@ -123,8 +123,8 @@ namespace Octgn.Play.Gui
             }
             else
             {
-                IEnumerable<string> textProperties = Program.Game.Definition.CardDefinition.Properties.Values
-                    .Where(p => p.Type == PropertyType.String && !p.IgnoreText)
+                IEnumerable<string> textProperties = Program.GameEngine.Definition.CustomProperties
+                    .Where(p => p.Type == DataNew.Entities.PropertyType.String && !p.IgnoreText)
                     .Select(p => p.Name);
                 watermark.Visibility = Visibility.Hidden;
                 cardsList.FilterCards = c =>

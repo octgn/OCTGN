@@ -5,23 +5,27 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Net;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Forms;
 
-    using Octgn.Definitions;
+    using Octgn.Core.DataManagers;
     using Octgn.Library.Exceptions;
     using Octgn.ViewModels;
 
     using Skylabs.Lobby;
+
+    using log4net;
 
     using Client = Octgn.Networking.Client;
     using UserControl = System.Windows.Controls.UserControl;
 
     public partial class HostGameSettings : UserControl
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
         {
@@ -46,7 +50,7 @@
         public string Gamename { get; private set; }
         public string Password { get; private set; }
         public string Username { get; set; }
-        public Data.Game Game { get; private set; }
+        public DataNew.Entities.Game Game { get; private set; }
         public bool SuccessfulHost { get; private set; }
 
         private Decorator Placeholder;
@@ -96,7 +100,7 @@
         {
             if (Games == null)
                 Games = new ObservableCollection<DataGameViewModel>();
-            var list = Program.GamesRepository.Games.Select(x => new DataGameViewModel(x)).ToList();
+            var list = GameManager.Get().Games.Select(x => new DataGameViewModel(x)).ToList();
             Games.Clear();
             foreach (var l in list)
                 Games.Add(l);
@@ -136,10 +140,10 @@
                     var game = this.Game;
                     Program.LobbyClient.CurrentHostedGamePort = (int)port;
                     Program.GameSettings.UseTwoSidedTable = true;
-                    Program.Game = new Game(GameDef.FromO8G(game.FullPath),Program.LobbyClient.Me.UserName);
+                    Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName);
                     Program.IsHost = true;
 
-                    var hostAddress = Dns.GetHostAddresses(Program.GameServerPath).First();
+                    var hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).First();
 
                     Program.Client = new Client(hostAddress, (int)port);
                     Program.Client.Connect();
@@ -164,7 +168,7 @@
             
             if (lastHostedGameType != Guid.Empty)
             {
-                var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == lastHostedGameType);
+                var game = GameManager.Get().Games.FirstOrDefault(x => x.Id == lastHostedGameType);
                 if (game != null)
                 {
                     var model = Games.FirstOrDefault(x => x.Id == game.Id);
@@ -187,7 +191,7 @@
             Gamename = TextBoxGameName.Text;
             Password = PasswordGame.Password;
             if (ComboBoxGame.SelectedIndex != -1)
-                Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository);
+                Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
             Placeholder.Child = null;
             this.FireOnClose(this, result);
         }
@@ -204,11 +208,11 @@
             ProgressBar.Visibility = Visibility.Hidden;
         }
 
-        void StartLocalGame(Data.Game game, string name, string password)
+        void StartLocalGame(DataNew.Entities.Game game, string name, string password)
         {
             var hostport = new Random().Next(5000,6000);
             while (!Networking.IsPortAvailable(hostport)) hostport++;
-            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name, name, Password, new User(Username + "@" + Program.ChatServerPath), true);
+            var hs = new HostedGame(hostport, game.Id, game.Version, game.Name, name, Password, new User(Username + "@" + AppConfig.ChatServerPath), true);
             if (!hs.StartProcess())
             {
                 throw new UserMessageException("Cannot start local game. You may be missing a file.");
@@ -216,7 +220,7 @@
             Prefs.Nickname = Username;
             Program.LobbyClient.CurrentHostedGamePort = hostport;
             Program.GameSettings.UseTwoSidedTable = true;
-            Program.Game = new Game(GameDef.FromO8G(game.FullPath), Username, true);
+            Program.GameEngine = new GameEngine(game, Username, true);
             Program.IsHost = true;
 
             var ip = IPAddress.Parse("127.0.0.1");
@@ -226,7 +230,7 @@
             SuccessfulHost = true;
         }
 
-        void StartOnlineGame(Data.Game game, string name, string password)
+        void StartOnlineGame(DataNew.Entities.Game game, string name, string password)
         {
             Program.CurrentOnlineGameName = name;
             Program.LobbyClient.BeginHostGame(game, name);
@@ -246,7 +250,7 @@
             Program.Dispatcher = this.Dispatcher;
             if (this.HasErrors) return;
             this.StartWait();
-            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository);
+            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
             this.Gamename = TextBoxGameName.Text;
             this.Password = PasswordGame.Password;
             this.Username = TextBoxUserName.Text;
@@ -262,6 +266,7 @@
                     if (continueTask.IsFaulted)
                     {
                         error = "There was a problem, please try again.";
+                        Log.Warn("Start Game Error",continueTask.Exception);
                         SuccessfulHost = false;
                     }
                     else

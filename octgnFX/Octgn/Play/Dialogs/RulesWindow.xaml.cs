@@ -10,14 +10,18 @@ using System.Windows.Threading;
 
 namespace Octgn.Play.Dialogs
 {
+    using Octgn.DataNew.Entities;
+
     /// <summary>
     ///   Interaction logic for RulesWindow.xaml
     /// </summary>
     public partial class RulesWindow
     {
-        public RulesWindow()
+
+        public RulesWindow(Document doc)
         {
             InitializeComponent();
+            this.LoadText(doc);
         }
 
         public static void CopyStream(Stream input, Stream output)
@@ -26,64 +30,17 @@ namespace Octgn.Play.Dialogs
             input.Position = output.Position = 0;
         }
 
-        private void WindowLoaded(object sender, RoutedEventArgs e)
+        private void LoadText(Document doc)
         {
-            var uri = new Uri(Program.Game.Definition.PackUri.Replace(',', '/'));
-            string defLoc = uri.LocalPath.Remove(0, 3).Replace('/', '\\');            
-            using (Package package = Package.Open(defLoc, FileMode.Open, FileAccess.Read, FileShare.Read))
+            foreach (var line in File.ReadAllLines(doc.Source))
             {
-                foreach (PackageRelationship defRelationship in package.GetRelationshipsByType("http://schemas.octgn.org/game/rules"))
-                {
-                    if (!package.PartExists(defRelationship.TargetUri)) continue;
-
-                    // Check if the file is for Rules
-                    if (defRelationship.Id == PlayWindow.txt)
-                    {
-                        PackagePart definition = package.GetPart(defRelationship.TargetUri);
-                        using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
-                        {
-                            const int bufferLength = 1024 * 75;
-                            while (!fileReader.EndOfStream)
-                            {
-                                const int readLength = bufferLength;
-                                var buffer = new char[readLength];
-                                fileReader.Read(buffer, 0, readLength);
-                                // RichText loads \n as a new paragraph. Very slow for large text
-                                string currentLine = new string(buffer).Replace("\n", string.Empty).Trim('\0');
-                                // Load in background
-                                Dispatcher.BeginInvoke(new Action(() =>
-                                                                      {
-                                                                          new TextRange(rules.Document.ContentEnd,
-                                                                                        rules.Document.ContentEnd) { Text = currentLine };
-                                                                      }), DispatcherPriority.Normal);
-                            }
-                        }
-                        return;
-                    }
-
-                    // Check if the file is for Help
-                    if (defRelationship.Id == PlayWindow.txt)
-                    {
-                        PackagePart definition = package.GetPart(defRelationship.TargetUri);
-                        using (var fileReader = new StreamReader(definition.GetStream(FileMode.Open, FileAccess.Read)))
-                        {
-                            const int bufferLength = 1024 * 75;
-                            while (!fileReader.EndOfStream)
-                            {
-                                const int readLength = bufferLength;
-                                var buffer = new char[readLength];
-                                fileReader.Read(buffer, 0, readLength);
-                                string currentLine = new string(buffer).Replace("\n", string.Empty).Trim('\0');
-                                Dispatcher.BeginInvoke(new Action(() =>
-                                                                        {
-                                                                            new TextRange(rules.Document.ContentEnd,
-                                                                                          rules.Document.ContentEnd) { Text = currentLine };
-                                                                        }), DispatcherPriority.Normal);
-                            }
-                        }
-                        return;
-                    }
-                }
+                //var curLine = line.Replace("\n", string.Empty).Trim('\0');
+                Dispatcher
+                    .BeginInvoke(new Action(() =>
+                                  {
+                                      new TextRange(rules.Document.ContentEnd,
+                                                    rules.Document.ContentEnd) { Text = line  + Environment.NewLine};
+                                  }), DispatcherPriority.Normal);
             }
         }
 
@@ -96,7 +53,7 @@ namespace Octgn.Play.Dialogs
             // WPF RichTextBox doesn't include "scrolltocaret"
             Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
             double totaloffset = thisposition.Top + rules.VerticalOffset;
-            scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
+            scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight / 2);
             // Handle the keypress. We don't want to muck with rules text
             e.Handled = true;
         }
@@ -148,7 +105,7 @@ namespace Octgn.Play.Dialogs
                 // WPF RichTextBox doesn't include "scrolltocaret"
                 Rect thisposition = rules.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
                 double totaloffset = thisposition.Top + rules.VerticalOffset;
-                scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight/2);
+                scroller.ScrollToVerticalOffset(totaloffset - scroller.ActualHeight / 2);
             }
             e.Handled = true;
         }

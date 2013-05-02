@@ -15,7 +15,7 @@ namespace Octgn.Scripting.Controls
         {
             InitializeComponent();
             //fix MAINWINDOW bug
-            Owner = Program.PlayWindow;
+            Owner = WindowManager.PlayWindow;
             Title = title;
             promptLbl.Text = prompt;
             inputBox.Text = defaultValue;

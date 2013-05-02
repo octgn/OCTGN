@@ -2,6 +2,8 @@
 
 namespace Octgn.Data
 {
+    using Octgn.Library.Exceptions;
+
     public enum PropertyType : byte
     {
         String,

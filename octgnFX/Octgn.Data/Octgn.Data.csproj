@@ -117,21 +117,6 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Db4objects.Db4o">
-      <HintPath>..\..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.CS">
-      <HintPath>..\..\packages\db4o-cs-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.CS.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.Data.Services">
-      <HintPath>..\..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.Data.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="Db4objects.Db4o.Linq">
-      <HintPath>..\..\packages\db4o-devel.8.1.184.15492\lib\net40\Db4objects.Db4o.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Reflection">
-      <HintPath>..\..\packages\db4o-devel.8.1.184.15492\lib\net40\Mono.Reflection.dll</HintPath>
-    </Reference>
     <Reference Include="Polenter.SharpSerializer">
       <HintPath>..\Octgn\packages\SharpSerializer.2.18\lib\net20\Polenter.SharpSerializer.dll</HintPath>
     </Reference>
@@ -165,20 +150,9 @@
   <ItemGroup>
     <Compile Include="CardModel.cs" />
     <Compile Include="DatabaseHandler.cs" />
-    <Compile Include="DbContext.cs" />
     <Compile Include="Deck.cs" />
-    <Compile Include="DeckExceptions.cs" />
     <Compile Include="Def.cs" />
-    <Compile Include="Entities\Game.cs" />
-    <Compile Include="Entities\IPackItem.cs" />
-    <Compile Include="Entities\Option.cs" />
-    <Compile Include="Entities\OptionList.cs" />
-    <Compile Include="Entities\Pack.cs" />
-    <Compile Include="Entities\Pick.cs" />
-    <Compile Include="Entities\PropertyDef.cs" />
-    <Compile Include="Entities\Set.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="GameSettings.cs" />
     <Compile Include="GamesRepository.cs" />
     <Compile Include="IDatabaseConfig.cs" />
     <Compile Include="MarkerModel.cs" />
@@ -192,7 +166,6 @@
     </Compile>
     <Compile Include="PropertyDef.cs" />
     <Compile Include="Set.cs" />
-    <Compile Include="SimpleConfig.cs" />
     <Compile Include="SimpleDataTableCache.cs" />
     <Compile Include="UpdateDatabase.cs" />
   </ItemGroup>
@@ -226,7 +199,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
+      <Name>Octgn.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

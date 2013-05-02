@@ -52,7 +52,7 @@ namespace Octgn.Play.Gui
         private void CardMoving(object sender, EventArgs e)
         {
             var action = (MoveCard) sender;
-            Table table = Program.Game.Table;
+            Table table = Program.GameEngine.Table;
             if (action.Who == Player.LocalPlayer || action.To != table || action.From != table)
                 return;
 

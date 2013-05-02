@@ -711,8 +711,8 @@
                 <ControlTemplate TargetType="{x:Type ListBox}">
                     <Grid>
                         <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2" Background="{DynamicResource ControlBackgroundBrush}" />
-                        <ScrollViewer Margin="1" Style="{DynamicResource NuclearScrollViewer}" Focusable="false" Background="{x:Null}">
-                            <StackPanel Margin="1,1,1,1" IsItemsHost="true" />
+                        <ScrollViewer Margin="1" Style="{DynamicResource NuclearScrollViewer}" Focusable="false" Background="{x:Null}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel Margin="1,1,1,1" IsItemsHost="true" HorizontalAlignment="Stretch" />
                         </ScrollViewer>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -775,11 +775,11 @@
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                     </ControlTemplate.Resources>
-                    <Grid SnapsToDevicePixels="true" Margin="1,1,1,1">
+                    <Grid SnapsToDevicePixels="true" Margin="1,1,1,1" HorizontalAlignment="Stretch">
                         <Rectangle x:Name="Background" IsHitTestVisible="False" Opacity="0.25" Fill="{StaticResource NormalBrush}" RadiusX="1" RadiusY="1"/>
                         <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource NormalBrush}" RadiusX="1" RadiusY="1"/>
                         <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource SelectedBackgroundBrush}" RadiusX="1" RadiusY="1"/>
-                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="5,2,0,2" x:Name="contentPresenter" />
+                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="5,2,0,2" x:Name="contentPresenter" />
                         <Rectangle x:Name="FocusVisualElement" Stroke="{StaticResource HoverShineBrush}" StrokeThickness="1" RadiusX="1" RadiusY="1" Opacity="0"/>
                     </Grid>
                     <ControlTemplate.Triggers>

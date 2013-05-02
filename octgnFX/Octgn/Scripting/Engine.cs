@@ -15,16 +15,22 @@ using System.Windows;
 using IronPython.Hosting;
 using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
-using Octgn.Definitions;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Properties;
 
 namespace Octgn.Scripting
 {
+    using System.Reflection;
+
+    using Octgn.Core.DataExtensionMethods;
+
+    using log4net;
+
     [Export]
     public class Engine : IDisposable
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public readonly ScriptScope ActionsScope;
         private readonly ScriptApi _api;
         private readonly ScriptEngine _engine;
@@ -44,6 +50,7 @@ namespace Octgn.Scripting
 
         public Engine(bool forTesting)
         {
+            Log.DebugFormat("Creating scripting engine: forTesting={0}",forTesting);
             AppDomain sandbox = CreateSandbox(forTesting);
             _engine = Python.CreateEngine(sandbox);
             _outputWriter = new StreamWriter(_outputStream);
@@ -53,22 +60,30 @@ namespace Octgn.Scripting
             _api = new ScriptApi(this);
 
             var workingDirectory = Directory.GetCurrentDirectory();
-            if (Program.Game != null)
+            Log.DebugFormat("Setting working directory: {0}",workingDirectory);
+            if (Program.GameEngine != null)
             {
-                workingDirectory = Path.Combine(Prefs.DataDirectory, "Games", Program.Game.Definition.Id.ToString());
+                workingDirectory = Path.Combine(Prefs.DataDirectory, "GameDatabase", Program.GameEngine.Definition.Id.ToString());
                 var search = _engine.GetSearchPaths();
                 search.Add(workingDirectory);
                 _engine.SetSearchPaths(search);
             }
             ActionsScope = CreateScope(workingDirectory);
-            if (Program.Game == null || forTesting) return;
-            foreach (
-                ScriptSource src in
-                    Program.Game.Definition.Scripts.Select(
-                        s => _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements)))
+            if (Program.GameEngine == null || forTesting) return;
+            Log.Debug("Loading Scripts...");
+            foreach (var script in Program.GameEngine.Definition.GetScripts().ToArray())
             {
+                Log.DebugFormat("Loading Script {0}",script.Path);
+                var src = _engine.CreateScriptSourceFromString(script.Script, SourceCodeKind.Statements);
                 src.Execute(ActionsScope);
+                Log.DebugFormat("Script Loaded");
             }
+            Log.Debug("Scripts Loaded.");
+            //foreach (ScriptSource src in Program.GameEngine.Definition.GetScripts().Select(
+            //            s => _engine.CreateScriptSourceFromString(s.Script, SourceCodeKind.Statements)))
+            //{
+            //    src.Execute(ActionsScope);
+            //}
         }
 
         internal ScriptJob CurrentJob
@@ -76,21 +91,21 @@ namespace Octgn.Scripting
             get { return _executionQueue.Peek(); }
         }
 
-        public String[] TestScripts(Game game)
+        public String[] TestScripts(GameEngine game)
         {
             var errors = new List<string>();
-            foreach (ScriptDef s in game.Definition.Scripts)
+            foreach (var s in game.Definition.GetScripts())
             {
                 try
                 {
-                    ScriptSource src = _engine.CreateScriptSourceFromString(s.Python, SourceCodeKind.Statements);
+                    ScriptSource src = _engine.CreateScriptSourceFromString(s.Script, SourceCodeKind.Statements);
                     src.Execute(ActionsScope);
                 }
                 catch (Exception e)
                 {
                     var eo = _engine.GetService<ExceptionOperations>();
                     string error = eo.FormatException(e);
-                    errors.Add(String.Format("[{2}:{0}]: Python Error:\n{1}", game.Definition.Name, error, s.FileName));
+                    errors.Add(String.Format("[{2}:{0}]: Python Error:\n{1}", game.Definition.Name, error, s.Path));
                 }
             }
             return errors.ToArray();

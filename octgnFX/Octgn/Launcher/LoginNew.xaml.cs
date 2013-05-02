@@ -7,10 +7,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.ComponentModel;
 using System.Web;
 using System.Windows;
-using Octgn.Data;
 
 namespace Octgn.Launcher
 {
@@ -23,7 +21,6 @@ namespace Octgn.Launcher
     using System.Text.RegularExpressions;
     using System.Windows.Controls;
     using System.Windows.Documents;
-    using System.Windows.Forms;
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Navigation;
@@ -32,10 +29,6 @@ namespace Octgn.Launcher
 
     using Skylabs.Lobby;
     using Skylabs.Lobby.Threading;
-
-	using System.Windows.Threading;
-	using Octgn.DeckBuilder;
-	using Octgn.Definitions;
 
     using HorizontalAlignment = System.Windows.HorizontalAlignment;
     using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -67,12 +60,12 @@ namespace Octgn.Launcher
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
 	        Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
 
-            this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start(Program.WebsitePath + "register.php");
+            this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start(AppConfig.WebsitePath + "register.php");
             this.labelForgot.MouseLeftButtonUp +=
-				(sender, args) => Process.Start(Program.WebsitePath + "passwordresetrequest.php");
+                (sender, args) => Process.Start(AppConfig.WebsitePath + "passwordresetrequest.php");
             this.labelResend.MouseLeftButtonUp += (sender, args) =>
                 {
-                    var url = Program.WebsitePath + "api/user/resendemailverify.php?username="
+                    var url = AppConfig.WebsitePath + "api/user/resendemailverify.php?username="
                               + HttpUtility.UrlEncode(textBox1.Text);
                     using (var wc = new WebClient())
                     {
@@ -96,7 +89,7 @@ namespace Octgn.Launcher
                 {
                     using (var wc = new WebClient())
                     {
-                        var str = wc.DownloadString(Program.WebsitePath + "news.xml");
+                        var str = wc.DownloadString(AppConfig.WebsitePath + "news.xml");
                         if (string.IsNullOrWhiteSpace(str))
                         {
                             throw new Exception("Null news feed.");
@@ -259,7 +252,7 @@ namespace Octgn.Launcher
                             {
                                 try
                                 {
-                                    var ustring = Program.WebsitePath + "api/user/login.php?username=" + HttpUtility.UrlEncode(username)
+                                    var ustring = AppConfig.WebsitePath + "api/user/login.php?username=" + HttpUtility.UrlEncode(username)
                                                   + "&password=" + HttpUtility.UrlEncode(password);
                                     if (email != null) ustring += "&email=" + HttpUtility.UrlEncode(email);
                                     var res = wc.DownloadString(new Uri(ustring));
@@ -273,7 +266,6 @@ namespace Octgn.Launcher
                                             }
                                         case "EmailUnverifiedException":
                                             {
-                                                //TODO Needs a way to resend e-mail and stuff
                                                 this.LoginFinished(LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.");
                                                 break;
                                             }
@@ -426,7 +418,7 @@ namespace Octgn.Launcher
 
             private void PageLoaded(object sender, RoutedEventArgs e)
             {
-                //TODO Check for server here
+                //TODO [NEW UI] Check for server here
             }
         #endregion            
         internal struct NewsFeedItem

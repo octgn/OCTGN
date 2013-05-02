@@ -51,22 +51,22 @@ namespace Octgn.Play
                                                                            };
 
         private readonly Card _card;
-        private readonly MarkerModel _model;
+        private readonly DataNew.Entities.Marker _model;
         private ushort _count = 1;
 
-        public Marker(Card card, MarkerModel model)
+        public Marker(Card card, DataNew.Entities.Marker model)
         {
             _card = card;
             _model = model;
         }
 
-        public Marker(Card card, MarkerModel model, ushort count)
+        public Marker(Card card, DataNew.Entities.Marker model, ushort count)
             : this(card, model)
         {
             _count = count;
         }
 
-        public MarkerModel Model
+        public DataNew.Entities.Marker Model
         {
             get { return _model; }
         }

@@ -8,7 +8,7 @@ namespace Octgn.Play.Gui
     public class CardEventArgs : RoutedEventArgs
     {
         public readonly Card Card;
-        public readonly CardModel CardModel;
+        public readonly DataNew.Entities.ICard CardModel;
 
         public CardEventArgs(RoutedEvent routedEvent, object src)
             : base(routedEvent, src)
@@ -21,7 +21,7 @@ namespace Octgn.Play.Gui
             Card = card;
         }
 
-        public CardEventArgs(CardModel model, RoutedEvent routedEvent, object src)
+        public CardEventArgs(DataNew.Entities.ICard model, RoutedEvent routedEvent, object src)
             : base(routedEvent, src)
         {
             CardModel = model;

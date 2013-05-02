@@ -6,6 +6,9 @@
     using System.Linq;
     using System.Windows.Media.Imaging;
 
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+
     public class DataGameViewModel : INotifyPropertyChanged
     {
         private bool isSelected;
@@ -17,7 +20,7 @@
         public string Name { get; private set; }
         public Version Version { get; private set; }
         public Uri CardBackUri { get; private set; }
-        public string FullPath { get; private set; }
+        //public string FullPath { get; private set; }
         public BitmapImage CardBack { get
         {
             if (cardBack == null)
@@ -41,19 +44,19 @@
             }
         }
 
-        public DataGameViewModel(Data.Game game)
+        public DataGameViewModel(DataNew.Entities.Game game)
         {
             Id = game.Id;
             Name = game.Name;
             Version = game.Version;
             CardBackUri = game.GetCardBackUri();
-            FullPath = game.FullPath;
+            //FullPath = game.FullPath;
             IsSelected = false;
         }
 
-        public Data.Game GetGame(Data.GamesRepository repo)
+        public DataNew.Entities.Game GetGame()
         {
-            return repo.AllGames.FirstOrDefault(x => x.Id == Id);
+            return GameManager.Get().GetById(Id);
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

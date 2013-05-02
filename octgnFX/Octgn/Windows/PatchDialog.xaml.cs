@@ -103,18 +103,18 @@ namespace Octgn.Windows
         private void OkClicked(object sender, RoutedEventArgs e)
         {
             Close();
-            if (PatchFileName == null || (!PatchInstalledSets && (!PatchFolder || TargetFolderName == null))) return;
-            var patch = new Patch(PatchFileName);
-            var dlg = new PatchProgressDialog {Owner = Owner};
-            patch.Progress += dlg.UpdateProgress;
+            //if (PatchFileName == null || (!PatchInstalledSets && (!PatchFolder || TargetFolderName == null))) return;
+            //var patch = new Patch(PatchFileName);
+            //var dlg = new PatchProgressDialog {Owner = Owner};
+            //patch.Progress += dlg.UpdateProgress;
 
-            // Capture variables to prevent a cross-thread call to dependency properties.
-            bool patchInstalledSets = PatchInstalledSets;
-            string targetFolder = PatchFolder ? TargetFolderName : null;
-            ThreadPool.QueueUserWorkItem(
-                _ => patch.Apply(Program.GamesRepository, patchInstalledSets, targetFolder));
+            //// Capture variables to prevent a cross-thread call to dependency properties.
+            //bool patchInstalledSets = PatchInstalledSets;
+            //string targetFolder = PatchFolder ? TargetFolderName : null;
+            //ThreadPool.QueueUserWorkItem(
+            //    _ => patch.Apply(Program.GamesRepository, patchInstalledSets, targetFolder));
 
-            dlg.ShowDialog();
+            //dlg.ShowDialog();
         }
     }
 }

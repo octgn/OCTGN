@@ -5,6 +5,8 @@ using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using Octgn.DataNew;
+
     public class DeckDef
     {
         public Dictionary<string, DeckSectionDef> Sections { get; set; }

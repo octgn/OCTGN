@@ -12,13 +12,14 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using Octgn.Definitions;
 using Octgn.Play.Gui.Adorners;
 using Octgn.Scripting;
 using Octgn.Utils;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.Core.DataExtensionMethods;
+
     public partial class CardControl
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
@@ -81,16 +82,16 @@ namespace Octgn.Play.Gui
             InitializeComponent();
             if (DesignerProperties.GetIsInDesignMode(this)) return;
 
-            Program.Game.ComposeParts(this);
+            Program.GameEngine.ComposeParts(this);
 
             //fix MAINWINDOW bug
-            _mainWin = Program.PlayWindow;
-            int markerSize = Program.Game.Definition.MarkerSize;
+            _mainWin = WindowManager.PlayWindow;
+            int markerSize = Program.GameEngine.Definition. MarkerSize;
             if (markerSize == 0) markerSize = 20;
             markers.Margin = new Thickness(markerSize/8);
             peekEyeIcon.Width = peekers.MinHeight = markerSize;
             peekers.SetValue(TextBlock.FontSizeProperty, markerSize*0.8);
-            if (Program.Game.Definition.CardDefinition.CornerRadius > 0)
+            if (Program.GameEngine.Definition.CardCornerRadius > 0)
                 img.Clip = new RectangleGeometry();
             AddHandler(MarkerControl.MarkerDroppedEvent, new EventHandler<MarkerEventArgs>(MarkerDropped));
             AddHandler(TableControl.TableKeyEvent, new EventHandler<TableKeyEventArgs>(TableKeyDown));
@@ -104,8 +105,7 @@ namespace Octgn.Play.Gui
                                    // don't propagate to the layout
                                    if (double.IsNaN(Width) && !double.IsNaN(Height))
                                    {
-                                       CardDef cardDef = Program.Game.Definition.CardDefinition;
-                                       Width = cardDef.Width*Height/cardDef.Height;
+                                       Width = Program.GameEngine.Definition.CardWidth * Height / Program.GameEngine.Definition.CardHeight;
                                    }
                                    target.Height = target.Width = Math.Min(Height, Width);
                                    peekers.Margin = new Thickness(ActualWidth - 1, 8, -200, 0);
@@ -182,12 +182,12 @@ namespace Octgn.Play.Gui
             // Shortcut: always reuse the same bitmap images for default face up and down
             if (value == Card.DefaultFront)
             {
-                DisplayedPicture = Program.Game.CardFrontBitmap;
+                DisplayedPicture = Program.GameEngine.CardFrontBitmap;
                 return;
             }
             if (value == Card.DefaultBack)
             {
-                DisplayedPicture = Program.Game.CardBackBitmap;
+                DisplayedPicture = Program.GameEngine.CardBackBitmap;
                 return;
             }
 
@@ -212,10 +212,9 @@ namespace Octgn.Play.Gui
             img.Measure(constraint);
             if (img.Clip != null)
             {
-                CardDef cardDef = Program.Game.Definition.CardDefinition;
                 var clipRect = ((RectangleGeometry) img.Clip);
                 clipRect.Rect = new Rect(img.DesiredSize);
-                clipRect.RadiusX = clipRect.RadiusY = cardDef.CornerRadius*clipRect.Rect.Height/cardDef.Height;
+                clipRect.RadiusX = clipRect.RadiusY = Program.GameEngine.Definition.CardCornerRadius*clipRect.Rect.Height/Program.GameEngine.Definition.CardHeight;
             }
             return img.DesiredSize;
         }
@@ -437,13 +436,13 @@ namespace Octgn.Play.Gui
             // Clear or modify selection
             if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
             {
-                if (Program.Game == null || Program.Game.Table == null)
+                if (Program.GameEngine == null || Program.GameEngine.Table == null)
                 {
                     return;
                 }
 
                 // Add/Remove from selection (currently only on table and hand)
-                if (Card.Group == Program.Game.Table || Card.Group is Hand)
+                if (Card.Group == Program.GameEngine.Table || Card.Group is Hand)
                 {
                     if (Card.Selected)
                     {
@@ -608,8 +607,8 @@ namespace Octgn.Play.Gui
             ScaleFactor = TransformToAncestor(_mainWin).TransformBounds(new Rect(0, 0, 1, 1)).Size;
             //bool rot90 = (Card.Orientation & CardOrientation.Rot90) != 0;
             _mouseOffset =
-                new Vector(_mousePt.X*Program.Game.Definition.CardDefinition.Width/ActualWidth,
-                           _mousePt.Y*Program.Game.Definition.CardDefinition.Height/ActualHeight);
+                new Vector(_mousePt.X*Program.GameEngine.Definition.CardWidth/ActualWidth,
+                           _mousePt.Y*Program.GameEngine.Definition.CardHeight/ActualHeight);
 
             // Create adorners
             var mwn = _mainWin.Content as Visual;
@@ -869,11 +868,11 @@ namespace Octgn.Play.Gui
             switch (e.Key)
             {
                 case Key.PageUp:
-                    Program.Game.Table.BringToFront(Card);
+                    Program.GameEngine.Table.BringToFront(Card);
                     e.Handled = te.Handled = true;
                     break;
                 case Key.PageDown:
-                    Program.Game.Table.SendToBack(Card);
+                    Program.GameEngine.Table.SendToBack(Card);
                     e.Handled = te.Handled = true;
                     break;
                 case Key.P:
@@ -903,10 +902,10 @@ namespace Octgn.Play.Gui
                         Point? pos = GroupControl is TableControl
                                          ? ((TableControl) GroupControl).MousePosition()
                                          : (Point?) null;
-                        if (match.ActionDef.Execute != null)
-                            ScriptEngine.ExecuteOnCards(match.ActionDef.Execute, targets, pos);
-                        else if (match.ActionDef.BatchExecute != null)
-                            ScriptEngine.ExecuteOnBatch(match.ActionDef.BatchExecute, targets, pos);
+                        if (match.ActionDef.AsAction().Execute != null)
+                            ScriptEngine.ExecuteOnCards(match.ActionDef.AsAction().Execute, targets, pos);
+                        else if (match.ActionDef.AsAction().BatchExecute != null)
+                            ScriptEngine.ExecuteOnBatch(match.ActionDef.AsAction().BatchExecute, targets, pos);
                         e.Handled = te.Handled = true;
                         break;
                     }
