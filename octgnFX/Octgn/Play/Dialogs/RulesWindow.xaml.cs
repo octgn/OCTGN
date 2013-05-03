@@ -32,15 +32,23 @@ namespace Octgn.Play.Dialogs
 
         private void LoadText(Document doc)
         {
-            foreach (var line in File.ReadAllLines(doc.Source))
+            using (var fileReader = new StreamReader(new FileStream(doc.Source, FileMode.Open, FileAccess.Read)))
             {
-                //var curLine = line.Replace("\n", string.Empty).Trim('\0');
-                Dispatcher
-                    .BeginInvoke(new Action(() =>
-                                  {
-                                      new TextRange(rules.Document.ContentEnd,
-                                                    rules.Document.ContentEnd) { Text = line  + Environment.NewLine};
-                                  }), DispatcherPriority.Normal);
+                const int bufferLength = 1024 * 75;
+                while (!fileReader.EndOfStream)
+                {
+                    const int readLength = bufferLength;
+                    var buffer = new char[readLength];
+                    fileReader.Read(buffer, 0, readLength);
+                    // RichText loads \n as a new paragraph. Very slow for large text
+                    string currentLine = new string(buffer).Replace("\n", string.Empty).Trim('\0');
+                    // Load in background
+                    Dispatcher.BeginInvoke(new Action(() =>
+                                                          {
+                                                              new TextRange(rules.Document.ContentEnd,
+                                                                            rules.Document.ContentEnd) { Text = currentLine };
+                                                          }), DispatcherPriority.Normal);
+                }
             }
         }
 
