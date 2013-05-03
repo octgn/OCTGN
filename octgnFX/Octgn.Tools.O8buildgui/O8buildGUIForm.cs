@@ -93,6 +93,7 @@ namespace Octgn.Tools.O8buildgui
             test.Add("-v", "Verify");
             test.Add("", "Build");
             test.Add("-c", "Convert o8s");
+            test.Add("-i", "install package");
             ActionComboBox.DataSource = new BindingSource(test, null);
             ActionComboBox.DisplayMember = "Value";
             ActionComboBox.ValueMember = "Key";
