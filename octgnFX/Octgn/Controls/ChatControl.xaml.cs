@@ -267,7 +267,7 @@ namespace Octgn.Controls
                         {
                             Chat.ScrollToEnd();
                         }
-                        if (ChatRowGroup.Rows.Count > 100)
+                        if (ChatRowGroup.Rows.Count > 1000)
                         {
                             var remlist =
                                 ChatRowGroup.Rows.Where(x=>x is ChatTableRow).Cast<ChatTableRow>()
