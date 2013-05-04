@@ -196,7 +196,7 @@ namespace Octgn.Controls
                         var rtbatbottom = false;
 
                         // bool firstAutoScroll = true; // never used 
-                        Chat.ScrollToVerticalOffset(Chat.VerticalOffset);
+                        //Chat.ScrollToVerticalOffset(Chat.VerticalOffset);
 
                         // check to see if the richtextbox is scrolled to the bottom.
                         var dVer = Chat.VerticalOffset;

@@ -59,45 +59,50 @@ namespace Octgn.Controls
             this.MessageDate = DateTime.Now;
             this.Message = "TestMessage";
             this.Unloaded += OnUnloaded;
-            this.Loaded += (sender, args) =>
-                {
-                    Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
-                    if(useLightChat == null)
-                        this.ProgramOnOnOptionsChanged();
-                };
+            this.Initialized += OnInitialized;
+            Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             this.UsernameParagraph.Inlines.Add(new Run());
+        }
+
+        private void OnInitialized(object sender, EventArgs eventArgs)
+        {
+            if (Prefs.UseLightChat && useLightChat == null)
+                this.ProgramOnOnOptionsChanged();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
         {
+            this.Initialized -= this.OnInitialized;
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
             this.Unloaded -= this.OnUnloaded;
         }
 
         private void ProgramOnOnOptionsChanged()
         {
-            Dispatcher.Invoke(new Action(() =>
-                {
-                    var cur = Prefs.UseLightChat;
-                    if (useLightChat != null && (bool)useLightChat == cur) return;
-                    useLightChat = cur;
-                if (cur)
-                {
-                    var res = this.Resources["LightUserColor"] as SolidColorBrush;
-                    UrlBrush = Brushes.Green;
-                    UsernameParagraph.Foreground = res;
-                }
-                else
-                {
-                    var res = this.Resources["DarkUserColor"] as SolidColorBrush;
-                    UrlBrush = Brushes.LightGreen;
-                    UsernameParagraph.Foreground = res;
-                }
-                foreach (var hl in MessageParagraph.Inlines.OfType<Hyperlink>())
-                {
-                    hl.Foreground = UrlBrush;
-                }
-            }));
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.BeginInvoke(new Action(this.ProgramOnOnOptionsChanged));
+                return;
+            }
+            var cur = Prefs.UseLightChat;
+            if (useLightChat != null && (bool)useLightChat == cur) return;
+            useLightChat = cur;
+            if (cur)
+            {
+                var res = this.Resources["LightUserColor"] as SolidColorBrush;
+                UrlBrush = Brushes.Green;
+                UsernameParagraph.Foreground = res;
+            }
+            else
+            {
+                var res = this.Resources["DarkUserColor"] as SolidColorBrush;
+                UrlBrush = Brushes.LightGreen;
+                UsernameParagraph.Foreground = res;
+            }
+            foreach (var hl in MessageParagraph.Inlines.OfType<Hyperlink>())
+            {
+                hl.Foreground = UrlBrush;
+            }
         }
 
         /// <summary>
