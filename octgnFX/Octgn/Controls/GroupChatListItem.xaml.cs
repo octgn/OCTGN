@@ -13,18 +13,16 @@ namespace Octgn.Controls
     {
         private bool _isRemoving = false;
 
+        public string UserName { get
+        {
+            return (string)this.GetValue(UsernameProperty);
+        } set
+        {
+            this.SetValue(UsernameProperty,value);
+        } }
+
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
             "UserName", typeof (string), typeof (GroupChatListItem));
-
-        public static DependencyProperty CustomStatusProperty = DependencyProperty.Register(
-            "CustomStatus", typeof (string), typeof (GroupChatListItem));
-
-        public static DependencyProperty PictureProperty = DependencyProperty.Register(
-            "Picture", typeof (ImageSource), typeof (GroupChatListItem));
-
-        public static DependencyProperty StatusPictureProperty = DependencyProperty.Register(
-            "StatusPicture", typeof (ImageSource), typeof (GroupChatListItem));
-
 
         private long _chatRoomId;
 
@@ -45,12 +43,12 @@ namespace Octgn.Controls
                 {
                     _chatRoomId = value.Rid;
                     image1.Opacity = 1;
-                    SetValue(UsernameProperty , value.GroupUser.UserName);
+                    UserName = value.GroupUser.UserName;
                 }
                 else
                 {
                     _chatRoomId = 0;
-                    SetValue(UsernameProperty,"null");
+                    UserName = "null";
                 }
                 _chatRoom = value;
             }

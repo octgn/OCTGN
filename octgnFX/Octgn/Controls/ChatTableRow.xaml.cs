@@ -47,7 +47,7 @@ namespace Octgn.Controls
 
         private Brush UrlBrush { get; set; }
 
-
+        private bool? useLightChat;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatTableRow"/> class.
@@ -62,7 +62,8 @@ namespace Octgn.Controls
             this.Loaded += (sender, args) =>
                 {
                     Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
-                    this.ProgramOnOnOptionsChanged();
+                    if(useLightChat == null)
+                        this.ProgramOnOnOptionsChanged();
                 };
             this.UsernameParagraph.Inlines.Add(new Run());
         }
@@ -75,8 +76,12 @@ namespace Octgn.Controls
 
         private void ProgramOnOnOptionsChanged()
         {
-            Dispatcher.Invoke(new Action(() => {
-                if (Prefs.UseLightChat)
+            Dispatcher.Invoke(new Action(() =>
+                {
+                    var cur = Prefs.UseLightChat;
+                    if (useLightChat != null && (bool)useLightChat == cur) return;
+                    useLightChat = cur;
+                if (cur)
                 {
                     var res = this.Resources["LightUserColor"] as SolidColorBrush;
                     UrlBrush = Brushes.Green;

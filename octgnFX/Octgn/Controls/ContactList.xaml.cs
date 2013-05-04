@@ -32,7 +32,7 @@ namespace Octgn.Controls
         
 		private void ChattingOnOnCreateRoom(object sender , ChatRoom room)
         {
-            LazyAsync.Invoke(RefreshList);
+            //LazyAsync.Invoke(RefreshList);
         }
 
         private void LobbyClientOnOnDataRecieved(object sender,DataRecType type, object data)
