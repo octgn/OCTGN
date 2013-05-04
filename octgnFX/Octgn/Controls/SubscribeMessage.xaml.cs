@@ -29,7 +29,6 @@ namespace Octgn.Controls
             Log.Info("Creating");
             this.Opacity = 0d;
             TotalSeconds = 30;
-            this.Loaded += OnLoaded;
             this.IsVisibleChanged += OnIsVisibleChanged;
 
             InitializeComponent();
@@ -52,10 +51,6 @@ namespace Octgn.Controls
                 da.Completed += (o, args) => this.WaitStart();
                 this.BeginAnimation(UIElement.OpacityProperty, da);
             }
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
-        {
         }
 
         private void WaitStart()

@@ -64,27 +64,7 @@ namespace Octgn.Controls
                 startBtn.Visibility = Visibility.Collapsed;
                 options.IsEnabled = playersList.IsEnabled = false;
             }
-
-            Loaded += delegate
-                {
-                    //new KickstarterWindow().ShowDialog();
-                Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
-                Program.Dispatcher = Dispatcher;
-                Program.ServerError += HandshakeError;
-                Program.GameSettings.PropertyChanged += SettingsChanged;
-                // Fix: defer the call to Program.Game.Begin(), so that the trace has 
-                // time to connect to the ChatControl (done inside ChatControl.Loaded).
-                // Otherwise, messages notifying a disconnection may be lost
-                try
-                {
-                    if (Program.GameEngine != null)
-                        Dispatcher.BeginInvoke(new Action(Program.GameEngine.Begin));
-                }
-                catch (Exception)
-                {
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
-            };
+            Loaded += OnLoaded;
             Unloaded += delegate
             {
                 if (_startingGame == false)
@@ -94,6 +74,28 @@ namespace Octgn.Controls
                 Player.OnLocalPlayerWelcomed -= PlayerOnOnLocalPlayerWelcomed;
                 OnClose = null;
             };
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Loaded -= OnLoaded;
+            //new KickstarterWindow().ShowDialog();
+            Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
+            Program.Dispatcher = Dispatcher;
+            Program.ServerError += HandshakeError;
+            Program.GameSettings.PropertyChanged += SettingsChanged;
+            // Fix: defer the call to Program.Game.Begin(), so that the trace has 
+            // time to connect to the ChatControl (done inside ChatControl.Loaded).
+            // Otherwise, messages notifying a disconnection may be lost
+            try
+            {
+                if (Program.GameEngine != null)
+                    Dispatcher.BeginInvoke(new Action(Program.GameEngine.Begin));
+            }
+            catch (Exception)
+            {
+                if (Debugger.IsAttached) Debugger.Break();
+            }
         }
 
         private void GetIps()

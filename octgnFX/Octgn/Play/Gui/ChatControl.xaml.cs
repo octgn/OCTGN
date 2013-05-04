@@ -24,7 +24,7 @@ namespace Octgn.Play.Gui
 
             (output.Document.Blocks.FirstBlock).Margin = new Thickness();
 
-            Loaded += delegate { Program.Trace.Listeners.Add(new ChatTraceListener("ChatListener", this)); };
+            Initialized += delegate { Program.Trace.Listeners.Add(new ChatTraceListener("ChatListener", this)); };
             Unloaded += delegate { Program.Trace.Listeners.Remove("ChatListener"); };
         }
 
@@ -199,7 +199,7 @@ namespace Octgn.Play.Gui
                         if (p != null && Player.LocalPlayer.Id != p.Id)
                         {
                             var theinline = inline;
-                            theinline.Loaded += (sender, eventArgs) =>
+                            theinline.Initialized += (sender, eventArgs) =>
                                 {
                                     try
                                     {

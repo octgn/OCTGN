@@ -44,9 +44,21 @@ namespace Octgn.Controls
             this.currentTabSelection = this.Items[0];
             if (!this.IsInDesignMode())
             {
-                this.Loaded +=
-                    (sender, args) => Program.LobbyClient.Chatting.OnCreateRoom += this.LobbyCreateRoom;
+                this.Loaded += OnLoaded;
+                this.Unloaded += OnUnloaded;
             }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            this.Unloaded -= this.OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, EventArgs eventArgs)
+        {
+            this.Loaded -= this.OnLoaded;
+            Program.LobbyClient.Chatting.OnCreateRoom += this.LobbyCreateRoom;
+            
         }
 
         /// <summary>
