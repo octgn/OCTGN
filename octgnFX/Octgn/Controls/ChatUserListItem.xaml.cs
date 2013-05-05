@@ -16,20 +16,19 @@ using agsXMPP;
 
 namespace Octgn.Controls
 {
+    using System.ComponentModel;
+
     /// <summary>
     /// Interaction logic for ChatUserListItem.xaml
     /// </summary>
-    public partial class ChatUserListItem : UserControl,IComparable<ChatUserListItem>,IEquatable<ChatUserListItem>,IEqualityComparer<ChatUserListItem>
+    public partial class ChatUserListItem : UserControl,IComparable<ChatUserListItem>,IEquatable<ChatUserListItem>,IEqualityComparer<ChatUserListItem>,INotifyPropertyChanged
     {
         public User User
         {
             get { return _user; }
             set { 
                 _user = value;
-                Dispatcher.BeginInvoke(new Action(() =>
-                                                      {
-                                                          UserNameTextBox.Text = _user.UserName;
-                                                      }));
+                OnPropertyChanged("User");
             }
         }
 
@@ -39,12 +38,7 @@ namespace Octgn.Controls
             set
             {
                 _isAdmin = value;
-                Dispatcher.BeginInvoke(new Action(() =>
-                                                      {
-                                                          ImageAdmin.Visibility = _isAdmin
-                                                                                      ? Visibility.Visible
-                                                                                      : Visibility.Collapsed;
-                                                      }));
+                OnPropertyChanged("IsAdmin");
             }
         }
 
@@ -54,13 +48,7 @@ namespace Octgn.Controls
             set
             {
                 _isMod = value;
-                Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    ImageMod.Visibility = _isMod
-                                                                                      ? Visibility.Visible
-                                                                                      : Visibility.Collapsed;
-
-                }));
+                OnPropertyChanged("IsMod");
             }
         }
 
@@ -70,13 +58,17 @@ namespace Octgn.Controls
             set
             {
                 _isOwner = value;
-                Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    ImageOwner.Visibility = _isOwner
-                                                                                      ? Visibility.Visible
-                                                                                      : Visibility.Collapsed;
+                OnPropertyChanged("IsOwner");
+            }
+        }
 
-                }));
+        public bool IsSub
+        {
+            get { return _isSub; }
+            set
+            {
+                _isSub = value;
+                OnPropertyChanged("IsSub");
             }
         }
 
@@ -84,6 +76,7 @@ namespace Octgn.Controls
         private bool _isAdmin;
         private bool _isMod;
         private bool _isOwner;
+        private bool _isSub;
         public ChatUserListItem()
         {
             InitializeComponent();
@@ -91,56 +84,85 @@ namespace Octgn.Controls
             IsAdmin = false;
             IsMod = false;
             IsOwner = false;
+            IsSub = false;
         }
 
         public ChatUserListItem(ChatRoom room, User user)
         {
             InitializeComponent();
-            IsAdmin = room.AdminList.Any(x => x == user);
-            IsMod = room.ModeratorList.Any(x => x == user);
-            IsOwner = room.OwnerList.Any(x => x == user);
+            room.OnUserListChange += RoomOnOnUserListChange;
             User = user;
+        }
+
+        internal void Update(ChatRoom room)
+        {
+            IsAdmin = room.AdminList.Any(x => x == _user);
+            IsMod = room.ModeratorList.Any(x => x == _user);
+            IsOwner = room.OwnerList.Any(x => x == _user);
+        }
+
+        private void RoomOnOnUserListChange(object sender, List<User> users)
+        {
+            var room = sender as ChatRoom;
+            if (room == null) return;
+            this.Update(room);
         }
 
         public int CompareTo(ChatUserListItem other)
         {
             if (this.IsOwner)
             {
-                if (other.IsOwner) return this.User.UserName.CompareTo(other.User.UserName);
+                if (other.IsOwner) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);
                 return -1;
             }
             if (this.IsAdmin)
             {
                 if (other.IsOwner) return 1;
-                if (other.IsAdmin) return this.User.UserName.CompareTo(other.User.UserName);
+                if (other.IsAdmin) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);
                 return -1;
             }
             if (this.IsMod)
             {
                 if (this.IsOwner) return 1;
                 if (this.IsAdmin) return 1;
-                if (this.IsMod) return this.User.UserName.CompareTo(other.User.UserName);
+                if (this.IsMod) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);
+                return -1;
+            }
+            if (this.IsSub)
+            {
+                if (this.IsOwner) return 1;
+                if (this.IsAdmin) return 1;
+                if (this.IsMod) return 1;
+                if (this.IsSub) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);
                 return -1;
             }
             if (other.IsOwner)
             {
-                if (this.IsOwner) return other.User.UserName.CompareTo(this.User.UserName);
+                if (this.IsOwner) return String.Compare(other.User.UserName, this.User.UserName, StringComparison.InvariantCultureIgnoreCase);
                 return 1;
             }
             if (other.IsAdmin)
             {
                 if (this.IsOwner) return -1;
-                if (this.IsAdmin) return other.User.UserName.CompareTo(this.User.UserName);
+                if (this.IsAdmin) return String.Compare(other.User.UserName, this.User.UserName, StringComparison.InvariantCultureIgnoreCase);
                 return 1;
             }
             if (other.IsMod)
             {
                 if (this.IsOwner) return -1;
                 if (this.IsAdmin) return -1;
-                if (this.IsMod) return other.User.UserName.CompareTo(this.User.UserName);
+                if (this.IsMod) return String.Compare(other.User.UserName, this.User.UserName, StringComparison.InvariantCultureIgnoreCase);
                 return 1;
             }
-            return this.User.UserName.CompareTo(other.User.UserName);
+            if (other.IsSub)
+            {
+                if (this.IsOwner) return -1;
+                if (this.IsAdmin) return -1;
+                if (this.IsMod) return -1;
+                if (this.IsSub) return String.Compare(other.User.UserName, this.User.UserName, StringComparison.InvariantCultureIgnoreCase);
+                return 1;
+            }
+            return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase); 
         }
 
         public bool Equals(ChatUserListItem other)
@@ -156,6 +178,17 @@ namespace Octgn.Controls
         public int GetHashCode(ChatUserListItem obj)
         {
             return obj.User.GetHashCode();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

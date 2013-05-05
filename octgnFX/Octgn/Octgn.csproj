@@ -527,6 +527,7 @@
       <DependentUpon>UpgradeMessage.xaml</DependentUpon>
     </Compile>
     <None Include="Resources\elevatording.wav" />
+    <Resource Include="Resources\sub.png" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
