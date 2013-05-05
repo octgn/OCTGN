@@ -59,20 +59,19 @@ namespace Octgn.Controls
             this.MessageDate = DateTime.Now;
             this.Message = "TestMessage";
             this.Unloaded += OnUnloaded;
-            this.Initialized += OnInitialized;
+            this.Loaded += OnLoaded;
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             this.UsernameParagraph.Inlines.Add(new Run());
         }
 
-        private void OnInitialized(object sender, EventArgs eventArgs)
+        private void OnLoaded(object sender, EventArgs eventArgs)
         {
-            if (Prefs.UseLightChat && useLightChat == null)
-                this.ProgramOnOnOptionsChanged();
+            this.Loaded -= this.OnLoaded;
+            this.ProgramOnOnOptionsChanged();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            this.Initialized -= this.OnInitialized;
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
             this.Unloaded -= this.OnUnloaded;
         }

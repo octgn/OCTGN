@@ -84,20 +84,19 @@ namespace Octgn.Controls
             {
                 return;
             }
-            this.Initialized += OnInitialized;
+            this.Loaded += OnLoaded;
             this.Unloaded += OnUnloaded;
         }
 
-        private void OnInitialized(object sender, EventArgs eventArgs)
+        private void OnLoaded(object sender, EventArgs eventArgs)
         {
+            this.Loaded -= OnLoaded;
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
-            if(Prefs.UseLightChat)
-                ProgramOnOnOptionsChanged();
+            ProgramOnOnOptionsChanged();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            Initialized -= this.OnInitialized;
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
             Unloaded -= this.OnUnloaded;
         }

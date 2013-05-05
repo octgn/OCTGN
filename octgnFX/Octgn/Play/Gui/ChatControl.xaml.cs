@@ -24,7 +24,7 @@ namespace Octgn.Play.Gui
 
             (output.Document.Blocks.FirstBlock).Margin = new Thickness();
 
-            Initialized += delegate { Program.Trace.Listeners.Add(new ChatTraceListener("ChatListener", this)); };
+            Loaded += delegate { Program.Trace.Listeners.Add(new ChatTraceListener("ChatListener", this)); };
             Unloaded += delegate { Program.Trace.Listeners.Remove("ChatListener"); };
         }
 
