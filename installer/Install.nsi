@@ -41,10 +41,10 @@ UninstPage instfiles
 
 ; DotNet Checkup and Install
 Section ""
-  ${If} ${DOTNETVER_4_0} HasDotNetFullProfile 1
-	DetailPrint "Microsoft .NET Framework 4.0 available."
+  ${If} ${DOTNETVER_4_5} HasDotNetFullProfile 1
+	DetailPrint "Microsoft .NET Framework 4.5 available."
   ${Else}
-	DetailPrint "Microsoft .NET Framework 4.0 missing."
+	DetailPrint "Microsoft .NET Framework 4.5 missing."
 	!insertmacro GetDotNet
   ${EndIf}
   !insertmacro GetVC++
