@@ -27,13 +27,7 @@ namespace Octgn.Controls
 		{
 			InitializeComponent();
             Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataRecieved;
-            Program.LobbyClient.Chatting.OnCreateRoom += ChattingOnOnCreateRoom;
 		}
-        
-		private void ChattingOnOnCreateRoom(object sender , ChatRoom room)
-        {
-            //LazyAsync.Invoke(RefreshList);
-        }
 
         private void LobbyClientOnOnDataRecieved(object sender,DataRecType type, object data)
         {

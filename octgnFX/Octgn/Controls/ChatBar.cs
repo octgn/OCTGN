@@ -108,6 +108,7 @@ namespace Octgn.Controls
             var r = room;
             this.Dispatcher.Invoke(new Action(() =>
                 {
+                    if (Items.OfType<ChatBarItem>().Any(x => x.Room.Rid == room.Rid)) return;
                     var chatBarItem = new ChatBarItem(r) { Height = this.barHeight.Value };
                     chatBarItem.HeaderMouseUp += ChatBarItemOnPreviewMouseUp;
                     this.Items.Add(chatBarItem);
