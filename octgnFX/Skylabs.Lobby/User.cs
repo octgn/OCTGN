@@ -96,6 +96,11 @@ namespace Skylabs.Lobby
         public string Email { get; set; }
 
         /// <summary>
+        /// Gets or Sets if the user is subbed
+        /// </summary>
+        public bool IsSubbed { get; set; }
+
+        /// <summary>
         /// Convert a <see cref="Presence"/> packet into a <see cref="UserStatus"/>
         /// </summary>
         /// <param name="p">

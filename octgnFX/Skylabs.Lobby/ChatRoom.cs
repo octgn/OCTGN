@@ -484,13 +484,13 @@ namespace Skylabs.Lobby
             {
                 return;
             }
-
             if (message[0] == '/')
             {
                 var userCommand = message.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 var args = userCommand.Skip(1).ToArray();
                 var command = userCommand.Length > 0 ? userCommand[0] : string.Empty;
 
+                #region SlashCommands
                 switch (command)
                 {
                     case "?":
@@ -597,6 +597,7 @@ namespace Skylabs.Lobby
                             break;
                         }
                 }
+            #endregion SlashCommands
             }
             else
             {

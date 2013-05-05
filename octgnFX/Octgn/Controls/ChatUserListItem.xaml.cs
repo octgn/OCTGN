@@ -91,7 +91,21 @@ namespace Octgn.Controls
         {
             InitializeComponent();
             room.OnUserListChange += RoomOnOnUserListChange;
+            Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
             User = user;
+        }
+
+        private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
+        {
+            if (type == DataRecType.UserSubChanged)
+            {
+                var d = data as User;
+                if (d == null) return;
+                if (d.Equals(_user))
+                {
+                    this.IsSub = d.IsSubbed;
+                }
+            }
         }
 
         internal void Update(ChatRoom room)

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Net;
     using System.Reflection;
+    using System.Threading.Tasks;
     using System.Timers;
 
     using Octgn.Library.Exceptions;
@@ -37,6 +38,9 @@
             CheckTimer.Elapsed += CheckTimerOnElapsed;
             CheckTimer.Start();
             Log.Info("Created");
+            Task.Factory.StartNew(() => CheckTimerOnElapsed(null,null)).ContinueWith(
+                x =>
+                    { if (x.Exception != null) Log.Info("Get Is Subbed Failed", x.Exception); });
         }
 
         #endregion Singleton
@@ -86,6 +90,12 @@
                     Log.Warn("ce",e);
                 }
                 Log.InfoFormat("Is Subscribed = {0}",ret == null ? "Unknown" : ret.ToString());
+                if (ret != PrevSubValue && ret != null)
+                {
+                    this.OnIsSubbedChanged((bool)ret);
+                    Program.LobbyClient.SetSub((bool)ret);
+                }
+                PrevSubValue = ret;
                 return ret;
             }
         }
@@ -145,12 +155,7 @@
         private void CheckTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             Log.Info("Check timer elapsed");
-            var subbed = IsSubscribed;
-            if (subbed != PrevSubValue && subbed != null)
-            {
-                this.OnIsSubbedChanged((bool)subbed);
-            }
-            PrevSubValue = subbed;
+            Log.Info(IsSubscribed);
         }
 
     }

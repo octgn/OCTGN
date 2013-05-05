@@ -289,6 +289,7 @@ namespace Skylabs.Lobby
                 this.xmpp = new XmppClientConnection(Host);
                 this.Chatting = new Chat(this, this.xmpp);
                 ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
+                ElementFactory.AddElementType("sub","octgn:sub",typeof(Sub));
                 this.Notifications = new List<Notification>();
                 this.Friends = new List<User>();
                 this.xmpp.OnRegistered += this.XmppOnOnRegistered;
@@ -603,6 +604,19 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnMessage(object sender, Message msg)
         {
+            if (msg.Type == MessageType.groupchat)
+            {
+                if (msg.HasTag(typeof(Sub)))
+                {
+                    var sub = msg.SelectSingleElement<Sub>();
+                    if (this.OnDataReceived != null)
+                    {
+                        var u = new User(new Jid(msg.From.Resource + "@" + Host));
+                        u.IsSubbed = sub.IsSubbed;
+                        this.OnDataReceived.Invoke(this,DataRecType.UserSubChanged, u);
+                    }
+                }
+            }
             if (msg.Type == MessageType.normal)
             {
                 if (msg.Subject == "gameready")
@@ -618,6 +632,18 @@ namespace Skylabs.Lobby
                         this.CurrentHostedGamePort = port;
                     }
                 }
+                //else if (msg.Subject == "sub")
+                //{
+                //    var parts = msg.Body.Split(' ');
+                //    if (parts.Length != 2) return;
+                //    var isSubbed = false;
+                //    if (!bool.TryParse(parts[1], out isSubbed)) return;
+                //    var u = new User(new Jid(parts[0])) { IsSubbed = isSubbed };
+                //    if (this.OnDataReceived != null)
+                //    {
+                //        this.OnDataReceived.Invoke(this,DataRecType.UserSubChanged,u);
+                //    }
+                //}
                 else if (msg.Subject == "gamelist")
                 {
                     var list = new List<HostedGameData>();
@@ -1037,6 +1063,15 @@ namespace Skylabs.Lobby
             this.xmpp.Send(m);
         }
 
+        public void SetSub(bool subbed)
+        {
+            var m = new Message(new Jid("lobby@conference." + Host), MessageType.groupchat, string.Empty);
+            //m.Body = Me.FullUserName + " " + subbed;
+            m.AddChild(new Sub(subbed));
+            m.GenerateId();
+            this.xmpp.Send(m);
+        }
+
         /// <summary>
         /// The begin reconnect.
         /// </summary>
@@ -1211,6 +1246,24 @@ namespace Skylabs.Lobby
         {
             Trace.WriteLine("[Lobby]Stop Called.");
             this.RebuildXmpp();
+        }
+    }
+    internal class Sub : Element
+    {
+        public bool IsSubbed
+        {
+            get { return this.GetTagBool("issubbed"); }
+            set{SetTag("issubbed",value);}
+        }
+
+        public Sub()
+        {
+            this.TagName = "sub";
+            this.Namespace = "octgn:sub";
+        }
+        public Sub(bool isSubbed):this()
+        {
+            this.IsSubbed = isSubbed;
         }
     }
 }
