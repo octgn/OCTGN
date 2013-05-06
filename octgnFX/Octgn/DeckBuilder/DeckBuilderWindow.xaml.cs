@@ -450,7 +450,8 @@ namespace Octgn.DeckBuilder
             try
             {
                 var set = SetManager.Get().GetById(e.SetId);
-                var card = CardManager.Get().GetCardById(cardid);
+                var card = set.Cards.FirstOrDefault(x => x.Id == cardid);
+                //var card = CardManager.Get().GetCardById(cardid);
                 var uri = card.GetPicture();
                 if(uri != null)
                     bim.UriSource = new Uri(uri);
@@ -680,8 +681,9 @@ namespace Octgn.DeckBuilder
                         }
                         else
                         {
-                            var card = CardManager.Get().GetCardById(dragCard.Id);
-                            dropSection.Cards.AddCard(card.ToMultiCard());
+                            dropSection.Cards.AddCard(dragCard);
+                            //var card = CardManager.Get().GetCardById(dragCard.Id);
+                            //dropSection.Cards.AddCard(card.ToMultiCard());
                         }
                     }
                     else
@@ -692,8 +694,9 @@ namespace Octgn.DeckBuilder
                         }
                         else
                         {
-                            var card = CardManager.Get().GetCardById(dragCard.Id);
-                            dropSection.Cards.AddCard(card.ToMultiCard(dragCard.Quantity));
+                            dropSection.Cards.AddCard(dragCard);
+                            //var card = CardManager.Get().GetCardById(dragCard.Id);
+                            //dropSection.Cards.AddCard(card.ToMultiCard(dragCard.Quantity));
                             //dropSection.Cards.Add(new Deck.Element { Card = Game.GetCardById(dragCard.Card.Id), Quantity = dragCard.Quantity });
                         }
                     }

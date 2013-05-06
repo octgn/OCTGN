@@ -16,7 +16,8 @@
         }
         public static string GetFullName(this Pack pack)
         {
-            var set = SetManager.Get().Sets.FirstOrDefault(x => x.Packs.Any(y => y.Id == pack.Id));
+            var set = SetManager.Get().GetById(pack.SetId);
+            //var set = SetManager.Get().Sets.FirstOrDefault(x => x.Packs.Any(y => y.Id == pack.Id));
             if (set == null) return null;
             return set.Name + ", " + pack.Name;
         }

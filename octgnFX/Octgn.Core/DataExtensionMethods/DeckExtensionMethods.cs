@@ -70,6 +70,7 @@
             ret.Sections = new List<ISection>();
             try
             {
+                var cards = game.Sets().SelectMany(x => x.Cards).ToArray();
                 using (var fs = File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
                 {
                     var doc = XDocument.Load(fs);
@@ -84,7 +85,7 @@
                         {
                             var cardId = Guid.Parse(cardelem.Attribute("id").Value);
                             var cardq = Int32.Parse(cardelem.Attribute("qty").Value);
-                            var card = game.GetCardById(cardId);
+                            var card = cards.FirstOrDefault(x => x.Id == cardId);
                             if (card == null)
                                 throw new UserMessageException(
                                     "Problem loading deck {0}. The card {1} is not installed.", path, cardId);
