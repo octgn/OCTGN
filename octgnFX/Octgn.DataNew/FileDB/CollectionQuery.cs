@@ -71,28 +71,30 @@
                     lock (indexLock)
                     {
                         var dindex = Index[def.Key];
+                        var remlist = new List<DirectoryInfo>();
                         foreach (var i in dindex)
                         {
                             var dirParts = i.Split();
                             var partString = dirParts[partIndex];
                             if (!partString.Is(queryPart.Type))
                             {
-                                dindex.Remove(i);
+                                remlist.Add(i);
                                 continue;
                             }
                             switch (op)
                             {
                                 case Op.Eq:
-                                    if (partString == value.ToString()) continue;
+                                    if (String.Equals(partString,value.ToString(),StringComparison.InvariantCultureIgnoreCase)) continue;
                                     break;
                                 case Op.Neq:
-                                    if (partString != value.ToString()) continue;
+                                    if (!String.Equals(partString, value.ToString(), StringComparison.InvariantCultureIgnoreCase)) continue;
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException("op");
                             }
-                            dindex.Remove(i);
+                            remlist.Add(i);
                         }
+                        foreach (var r in remlist) dindex.Remove(r);
                         Index[def.Key] = dindex;
                     }
                     break;

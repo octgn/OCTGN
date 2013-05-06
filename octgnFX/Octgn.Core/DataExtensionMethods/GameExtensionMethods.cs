@@ -29,7 +29,9 @@
 
         public static IEnumerable<Set> Sets(this Game game)
         {
-            return SetManager.Get().Sets.Where(x => x.GameId == game.Id);
+            var ret = SetManager.Get().GetByGameId(game.Id);
+            return ret;
+            //return SetManager.Get().Sets.Where(x => x.GameId == game.Id);
         }
 
         /// <summary>

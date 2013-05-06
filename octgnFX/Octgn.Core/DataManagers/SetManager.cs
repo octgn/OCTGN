@@ -10,6 +10,7 @@
 
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
+    using Octgn.DataNew.FileDB;
     using Octgn.Library;
 
     public class SetManager
@@ -37,7 +38,13 @@
 
         public Set GetById(Guid id)
         {
-            return Sets.FirstOrDefault(x => x.Id == id);
+            return DbContext.Get().SetsById(id).FirstOrDefault();
+            //return Sets.FirstOrDefault(x => x.Id == id);
+        }
+
+        public IEnumerable<Set> GetByGameId(Guid id)
+        {
+            return DbContext.Get().SetQuery.By(x => x.GameId,Op.Eq, id);
         }
 
         public Set FromXmlReader(string packageName, XmlReader reader)

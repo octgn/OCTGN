@@ -38,8 +38,21 @@
         {
             get
             {
+                return SetQuery;
+            }
+        }
+
+        public CollectionQuery<Set> SetQuery
+        {
+            get
+            {
                 return Db.Query<Set>();
             }
+        }
+
+        public IEnumerable<Set> SetsById(Guid setId)
+        {
+            return Db.Query<Set>().By(x => x.Id, Op.Eq, setId);
         }
 
         public IEnumerable<Card> Cards

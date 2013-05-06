@@ -17,7 +17,8 @@
         
         public static Set GetSet(this ICard card)
         {
-            return SetManager.Get().Sets.FirstOrDefault(x => x.Id == card.SetId);
+            return SetManager.Get().GetById(card.SetId);
+            //return SetManager.Get().Sets.FirstOrDefault(x => x.Id == card.SetId);
         }
         public static MultiCard ToMultiCard(this ICard card, int quantity = 1)
         {

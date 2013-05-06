@@ -24,12 +24,5 @@
         #endregion Singleton
 
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        
-        public Card GetCardById(Guid id)
-        {
-            var set = SetManager.Get().Sets.FirstOrDefault(x => x.Cards.Any(y => y.Id == id));
-            if (set == null) return null;
-            return set.Cards.FirstOrDefault(x => x.Id == id);
-        }
     }
 }
