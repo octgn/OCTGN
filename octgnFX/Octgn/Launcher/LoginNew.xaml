@@ -58,7 +58,6 @@
                         <ColumnDefinition Width="70*" />
                         <ColumnDefinition Width="30*" />
                     </Grid.ColumnDefinitions>
-                    <Label Height="28" Name="lblLoginStatus" Foreground="Yellow" HorizontalContentAlignment="Right" Grid.Column="1" VerticalContentAlignment="Center"/>
                     <Border Style="{StaticResource Panel}" BorderBrush="Silver" BorderThickness="1" Name="bError" Visibility="Collapsed" Grid.Column="0" Grid.ColumnSpan="1" Padding="5">
                         <Grid Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Stretch" Name="grid1" VerticalAlignment="Stretch">
                             <Grid.RowDefinitions>

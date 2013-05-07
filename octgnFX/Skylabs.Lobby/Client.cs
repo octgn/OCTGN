@@ -351,6 +351,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnStreamError(object sender, Element element)
         {
+            Log.Warn(element);
             var st = element as Error;
             if (st != null && st.Condition == StreamErrorCondition.Conflict)
             {
@@ -378,6 +379,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnSocketError(object sender, Exception exception)
         {
+            Log.Warn("Xmpp Socket Error ",exception);
             var se = exception as SocketException;
             if (se != null)
             {
@@ -411,6 +413,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnError(object sender, Exception exception)
         {
+            Log.Warn("Xmpp Error ",exception);
             Trace.WriteLine("[Xmpp]Error: " + exception.Message);
         }
 
@@ -422,6 +425,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnClose(object sender)
         {
+            Log.Info("Xmpp Closed");
             Trace.WriteLine("[Xmpp]Closed");
             IsConnected = false;
         }
@@ -808,6 +812,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnAuthError(object sender, Element element)
         {
+            Log.WarnFormat("Auth error {0}",element);
             this.FireLoginComplete(LoginResults.AuthError);
             Trace.WriteLine("[XMPP]AuthError: Closing...");
             this.IsConnected = false;
@@ -822,6 +827,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnLogin(object sender)
         {
+            Log.Info("Xmpp Login Complete");
             this.myPresence.Type = PresenceType.available;
             this.myPresence.Show = ShowType.chat;
             this.MucManager = new MucManager(this.xmpp);
@@ -833,6 +839,7 @@ namespace Skylabs.Lobby
             this.Me.SetStatus(UserStatus.Online);
             this.xmpp.PresenceManager.Subscribe(this.xmpp.MyJID);
             IsConnected = true;
+            Log.Info("Xmpp Login Firing Login Complete");
             this.FireLoginComplete(LoginResults.Success);
         }
 
@@ -847,6 +854,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnXmppConnectionStateChanged(object sender, XmppConnectionState state)
         {
+            Log.InfoFormat("Xmpp Connection State Changed To {0}",state);
             Trace.WriteLine("[Xmpp]State: " + state.ToString());
             if (this.OnStateChanged != null)
             {
@@ -945,8 +953,10 @@ namespace Skylabs.Lobby
         /// </param>
         private void FireLoginComplete(LoginResults result)
         {
+            Log.Info("Firing login complete");
             if (this.OnLoginComplete != null)
             {
+                Log.Info("Fired login complete");
                 this.OnLoginComplete.Invoke(this, result);
             }
         }
@@ -1055,6 +1065,7 @@ namespace Skylabs.Lobby
         /// </summary>
         public void BeginReconnect()
         {
+            Log.Info("Begin reconnect");
             this.RebuildXmpp();
             this.BeginLogin(this.Username, this.Password);
         }
@@ -1213,6 +1224,7 @@ namespace Skylabs.Lobby
         /// </summary>
         public void LogOut()
         {
+            Log.Info("Logging out");
             Trace.WriteLine("[Lobby]Log out called.");
             this.Stop();
         }
@@ -1222,6 +1234,7 @@ namespace Skylabs.Lobby
         /// </summary>
         public void Stop()
         {
+            Log.Info("Xmpp Stop called");
             Trace.WriteLine("[Lobby]Stop Called.");
             this.RebuildXmpp();
         }
