@@ -16,8 +16,8 @@
 
         public void Sort(IComparer<T> comparer)
         {
-            isSorting = true;
             if (isSorting) return;
+            isSorting = true;
             var arr = this.Items.ToArray();
             bool changed = true;
             while (changed)
