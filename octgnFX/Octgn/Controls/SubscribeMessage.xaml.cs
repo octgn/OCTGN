@@ -120,7 +120,7 @@ namespace Octgn.Controls
             var url = SubscriptionModule.Get().GetSubscribeUrl(subtype);
             if (url != null)
             {
-                Process.Start(url);
+                Program.LaunchUrl(url);
             }
         }
     }

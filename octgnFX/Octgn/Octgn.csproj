@@ -490,6 +490,9 @@
     <Compile Include="Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\BrowserWindow.xaml.cs">
+      <DependentUpon>BrowserWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\ChangeSetsProgressDialog.xaml.cs">
       <DependentUpon>ChangeSetsProgressDialog.xaml</DependentUpon>
     </Compile>
@@ -956,6 +959,10 @@
     <Page Include="Windows\AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\BrowserWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ChangeSetsProgressDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

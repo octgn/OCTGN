@@ -393,7 +393,7 @@ namespace Octgn.Tabs.GameManagement
                                                                   {
                                                                       try
                                                                       {
-                                                                          System.Diagnostics.Process.Start(model.Package.ProjectUrl.ToString());
+                                                                          Program.LaunchUrl(model.Package.ProjectUrl.ToString());
 
                                                                       }
                                                                       catch (Exception exx)
@@ -434,7 +434,7 @@ namespace Octgn.Tabs.GameManagement
             if (!(sender is TextBlock)) return;
             try
             {
-                System.Diagnostics.Process.Start((sender as TextBlock).Text);
+                Program.LaunchUrl((sender as TextBlock).Text);
             }
             catch
             {
