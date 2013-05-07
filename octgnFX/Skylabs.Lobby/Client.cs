@@ -16,6 +16,7 @@ namespace Skylabs.Lobby
     using System.Globalization;
     using System.Linq;
     using System.Net.Sockets;
+    using System.Reflection;
 
     using agsXMPP;
     using agsXMPP.Factory;
@@ -28,6 +29,7 @@ namespace Skylabs.Lobby
     using agsXMPP.protocol.x.muc;
     using agsXMPP.Xml.Dom;
 
+    using log4net;
 
     using Error = agsXMPP.protocol.Error;
 
@@ -96,6 +98,8 @@ namespace Skylabs.Lobby
 
     public class Client
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        
         #region Events
 
         /// <summary>
@@ -609,8 +613,10 @@ namespace Skylabs.Lobby
                 if (msg.HasTag(typeof(Sub)))
                 {
                     var sub = msg.SelectSingleElement<Sub>();
+                    Log.Info("Sub Message");
                     if (this.OnDataReceived != null)
                     {
+                        Log.Info("Firing Sub Message Data Event");
                         var u = new User(new Jid(msg.From.Resource + "@" + Host));
                         u.IsSubbed = sub.IsSubbed;
                         this.OnDataReceived.Invoke(this,DataRecType.UserSubChanged, u);
@@ -621,31 +627,27 @@ namespace Skylabs.Lobby
             {
                 if (msg.Subject == "gameready")
                 {
+                    Log.Info("Got gameready message");
                     int port = -1;
                     if (int.TryParse(msg.Body, out port) && port != -1)
                     {
+                        Log.Info("gameready port " + port);
                         if (this.OnDataReceived != null)
                         {
+                            Log.Info("Firing gameready data on port " + port);
                             this.OnDataReceived.Invoke(this, DataRecType.HostedGameReady, port);
                         }
-
+                        Log.InfoFormat("CurrentHostedGamePort={0}", CurrentHostedGamePort);
                         this.CurrentHostedGamePort = port;
                     }
+                    else
+                    {
+                        Log.Info("Couldn't parse gameready port " + msg.Body ?? "null");
+                    }
                 }
-                //else if (msg.Subject == "sub")
-                //{
-                //    var parts = msg.Body.Split(' ');
-                //    if (parts.Length != 2) return;
-                //    var isSubbed = false;
-                //    if (!bool.TryParse(parts[1], out isSubbed)) return;
-                //    var u = new User(new Jid(parts[0])) { IsSubbed = isSubbed };
-                //    if (this.OnDataReceived != null)
-                //    {
-                //        this.OnDataReceived.Invoke(this,DataRecType.UserSubChanged,u);
-                //    }
-                //}
                 else if (msg.Subject == "gamelist")
                 {
+                    Log.Info("Got game list");
                     var list = new List<HostedGameData>();
                     foreach (object a in msg.ChildNodes)
                     {
@@ -654,25 +656,22 @@ namespace Skylabs.Lobby
                         {
                             list.Add(gi);
                         }
-
-                        var el = a as Element;
-                        gi = el as HostedGameData;
-                        if (el == null)
-                        {
-                            continue;
-                        }
                     }
 
                     this.games = list;
+                    Log.Info("Going to fire game list event");
                     if (this.OnDataReceived != null)
                     {
+                        Log.Info("Firing game list event");
                         this.OnDataReceived.Invoke(this, DataRecType.GameList, list);
                     }
                 }
                 else if (msg.Subject == "refresh")
                 {
+                    Log.Info("Server wants a refresh of game list");
                     if (this.OnDataReceived != null)
                     {
+                        Log.Info("Firing server wants a refresh of game list");
                         this.OnDataReceived.Invoke(this, DataRecType.GamesNeedRefresh, null);
                     }
                 }
@@ -718,29 +717,6 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnRosterEnd(object sender)
         {
-            //foreach (var n in this.Friends)
-            //{
-            //    var email = DatabaseHandler.GetUser(n.FullUserName);
-            //    if (string.IsNullOrWhiteSpace(email))
-            //    {
-            //        /*
-            //        var viq = new VcardIq
-            //        {
-            //            Type = IqType.get ,
-            //            To = n.User.Bare
-            //        };
-            //        viq.From = Me.User.Bare;
-            //        viq.Vcard.JabberId = n.User.Bare;
-            //        viq.GenerateId();
-            //        Xmpp.Send(viq);
-            //         */
-            //    }
-            //    else
-            //    {
-            //        n.Email = email;
-            //    }
-            //}
-
             if (this.OnDataReceived != null)
             {
                 this.OnDataReceived.Invoke(this, DataRecType.FriendList, this.Friends);
@@ -1048,6 +1024,7 @@ namespace Skylabs.Lobby
         public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename)
         {
             string data = string.Format("{0},:,{1},:,{2}", game.Id.ToString(), game.Version, gamename);
+            Log.InfoFormat("BeginHostGame {0}",data);
             var m = new Message(new Jid("gameserv@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
             m.GenerateId();
             this.xmpp.Send(m);
@@ -1058,6 +1035,7 @@ namespace Skylabs.Lobby
         /// </summary>
         public void BeginGetGameList()
         {
+            Log.Info("Begin get game list");
             var m = new Message(new Jid("gameserv@" + Host), MessageType.normal, string.Empty, "gamelist");
             m.GenerateId();
             this.xmpp.Send(m);
