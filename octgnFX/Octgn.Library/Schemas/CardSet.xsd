@@ -244,7 +244,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="version" type="version" use="optional">
+      <xs:attribute name="version" type="version" use="required">
         <xs:annotation>
           <xs:documentation>Version of this set.</xs:documentation>
         </xs:annotation>
