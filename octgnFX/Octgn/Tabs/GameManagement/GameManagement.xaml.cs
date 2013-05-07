@@ -253,23 +253,29 @@ namespace Octgn.Tabs.GameManagement
                                     try
                                     {
                                         GameManager.Get().Installo8c(of.FileName);
-                                        MessageBox.Show(
+                                        Window newWindow = new Window() { Topmost = true };
+                                        MessageBox.Show(newWindow,
                                             "The image pack was installed.", "Install", MessageBoxButton.OK, MessageBoxImage.Information);
+                                        newWindow.Close();
                                     }
                                     catch (UserMessageException ex)
                                     {
                                         Log.Warn("Could not install o8c " + of.FileName + ".",ex);
-                                        MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                        Window newWindow = new Window() { Topmost = true };
+                                        MessageBox.Show(newWindow, ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                        newWindow.Close();
                                     }
                                     catch (Exception ex)
                                     {
                                         Log.Warn("Could not install o8c " + of.FileName + ".", ex);
-                                        MessageBox.Show(
+                                        Window newWindow = new Window() { Topmost = true };
+                                        MessageBox.Show(newWindow,
                                             "Could not install o8c " + of.FileName
                                             + ". Please make sure it isn't in use and that you have access to it.",
                                             "Error",
                                             MessageBoxButton.OK,
                                             MessageBoxImage.Error);
+                                        newWindow.Close();
                                     }
                                 },
                             () => { this.installo8cprocessing = false; },
