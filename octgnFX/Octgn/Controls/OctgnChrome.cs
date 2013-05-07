@@ -471,7 +471,7 @@ namespace Octgn.Controls
         private void win_SourceInitialized(object sender, EventArgs e)
         {
             System.IntPtr handle = (new WinInterop.WindowInteropHelper(this)).Handle;
-            WinInterop.HwndSource.FromHwnd(handle).AddHook(new WinInterop.HwndSourceHook(WindowProc));
+            WinInterop.HwndSource.FromHwnd(handle).AddHook(WindowProc);
         }
 
         private void OnLocationChanged(object sender, EventArgs eventArgs)
@@ -485,7 +485,7 @@ namespace Octgn.Controls
                 this.Top = ((bounds.Bottom - bounds.Top) / 2) + (Height / 2);
             }
             System.IntPtr handle = (new WinInterop.WindowInteropHelper(this)).Handle;
-            WinInterop.HwndSource.FromHwnd(handle).AddHook(new WinInterop.HwndSourceHook(WindowProc));
+            //WinInterop.HwndSource.FromHwnd(handle).AddHook(new WinInterop.HwndSourceHook(WindowProc));
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -602,7 +602,7 @@ namespace Octgn.Controls
         /// </param>
         private void DragMouseDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            if (!this.CanResize)
+            if (!this.CanResize || this.WindowState == WindowState.Maximized)
             {
                 return;
             }
@@ -660,7 +660,7 @@ namespace Octgn.Controls
             this.DragMove();
         }
 
-        private static System.IntPtr WindowProc(System.IntPtr hwnd,int msg,System.IntPtr wParam,System.IntPtr lParam,ref bool handled)
+        private System.IntPtr WindowProc(System.IntPtr hwnd,int msg,System.IntPtr wParam,System.IntPtr lParam,ref bool handled)
         {
             switch (msg)
             {
@@ -673,7 +673,7 @@ namespace Octgn.Controls
             return (System.IntPtr)0;
         }
 
-        private static void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
+        private void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
         {
 
             MINMAXINFO mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
@@ -693,6 +693,8 @@ namespace Octgn.Controls
                 mmi.ptMaxPosition.y = Math.Abs(rcWorkArea.top - rcMonitorArea.top);
                 mmi.ptMaxSize.x = Math.Abs(rcWorkArea.right - rcWorkArea.left);
                 mmi.ptMaxSize.y = Math.Abs(rcWorkArea.bottom - rcWorkArea.top);
+                mmi.ptMinTrackSize.x = (int)this.MinWidth;
+                mmi.ptMinTrackSize.y = (int)this.MinHeight;
             }
 
             Marshal.StructureToPtr(mmi, lParam, true);
