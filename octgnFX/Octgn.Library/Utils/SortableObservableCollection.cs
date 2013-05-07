@@ -17,8 +17,16 @@
         public void Sort(IComparer<T> comparer)
         {
             isSorting = true;
+            if (isSorting) return;
             var arr = this.Items.ToArray();
-            Array.Sort(arr,comparer);
+            bool changed = true;
+            while (changed)
+            {
+                var temp = new T[arr.Length];
+                Array.Copy(arr,temp,arr.Length);
+                Array.Sort(arr, comparer);
+                changed = arr.Where((t, i) => !Equals(temp[i], t)).Any();
+            }
             for (int i = 0; i < arr.Length; i++)
             {
                 this[i] = arr[i];
