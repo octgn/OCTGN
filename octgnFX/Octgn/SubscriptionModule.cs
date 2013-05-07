@@ -33,7 +33,7 @@
             PrevSubValue = null;
             this.SubTypes = new List<SubType>();
             SubTypes.Add(new SubType { Description = "$3.00 per month", Name = "silver" });
-            SubTypes.Add(new SubType { Description = "$33.00 per month", Name = "gold" });
+            SubTypes.Add(new SubType { Description = "$33.00 per year", Name = "gold" });
             CheckTimer = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             CheckTimer.Elapsed += CheckTimerOnElapsed;
             CheckTimer.Start();
