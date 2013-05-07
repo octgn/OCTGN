@@ -34,9 +34,12 @@
             this.SubTypes = new List<SubType>();
             SubTypes.Add(new SubType { Description = "$3.00 per month", Name = "silver" });
             SubTypes.Add(new SubType { Description = "$33.00 per year", Name = "gold" });
-            CheckTimer = new Timer(TimeSpan.FromMinutes(2).TotalMilliseconds);
+            CheckTimer = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             CheckTimer.Elapsed += CheckTimerOnElapsed;
             CheckTimer.Start();
+            BroadcastTimer = new Timer(TimeSpan.FromMinutes(1).TotalMilliseconds);
+            BroadcastTimer.Elapsed += BroadcastTimerOnElapsed;
+            BroadcastTimer.Start();
             Log.Info("Created");
             Task.Factory.StartNew(() => CheckTimerOnElapsed(null,null)).ContinueWith(
                 x =>
@@ -56,48 +59,53 @@
         {
             get
             {
-                Log.Info("Getting IsSubscribed");
-                bool? ret = null;
-                try
-                {
-                    if (Program.LobbyClient.IsConnected)
-                    {
-
-                        var wc = new WebClient();
-                        var res =
-                            wc.DownloadString(
-                                AppConfig.WebsitePath + "api/user/issubbed.php?username="
-                                + Program.LobbyClient.Me.UserName).Trim();
-                        switch (res)
-                        {
-                            case "NoSubscriptionException":
-                            case "SubscriptionExpiredException":
-                                {
-                                    ret = false;
-                                    break;
-                                }
-                            case "ok":
-                                {
-                                    ret = true;
-                                    break;
-                                }
-                        }
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Log.Warn("ce",e);
-                }
-                Log.InfoFormat("Is Subscribed = {0}",ret == null ? "Unknown" : ret.ToString());
-                if (ret != PrevSubValue && ret != null)
-                {
-                    this.OnIsSubbedChanged((bool)ret);
-                    Program.LobbyClient.SetSub((bool)ret);
-                }
-                PrevSubValue = ret;
-                return ret;
+                if (PrevSubValue == null)
+                    this.UpdateIsSubbed();
+                return PrevSubValue;
             }
+        }
+
+        internal void UpdateIsSubbed()
+        {
+            Log.Info("Getting IsSubscribed");
+            bool? ret = null;
+            try
+            {
+                if (Program.LobbyClient.IsConnected)
+                {
+                    var wc = new WebClient();
+                    var res =
+                        wc.DownloadString(
+                            AppConfig.WebsitePath + "api/user/issubbed.php?username="
+                            + Program.LobbyClient.Me.UserName).Trim();
+                    switch (res)
+                    {
+                        case "NoSubscriptionException":
+                        case "SubscriptionExpiredException":
+                            {
+                                ret = false;
+                                break;
+                            }
+                        case "ok":
+                            {
+                                ret = true;
+                                break;
+                            }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("ce", e);
+            }
+            Log.InfoFormat("Is Subscribed = {0}", ret == null ? "Unknown" : ret.ToString());
+            if (ret != PrevSubValue && ret != null)
+            {
+                this.OnIsSubbedChanged((bool)ret);
+                Program.LobbyClient.SetSub((bool)ret);
+            }
+            PrevSubValue = ret;
         }
 
         internal bool? PrevSubValue { get; set; }
@@ -151,11 +159,18 @@
         }
 
         internal Timer CheckTimer { get; set; }
+        internal Timer BroadcastTimer { get; set; }
 
         private void CheckTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             Log.Info("Check timer elapsed");
-            Log.Info(IsSubscribed);
+            this.UpdateIsSubbed();
+        }
+        private void BroadcastTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            Log.Info("Broadcasting Sub");
+            if(PrevSubValue != null)
+                Program.LobbyClient.SetSub((bool)PrevSubValue);
         }
 
     }
