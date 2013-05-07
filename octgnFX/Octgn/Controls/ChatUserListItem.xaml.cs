@@ -29,6 +29,7 @@ namespace Octgn.Controls
             set { 
                 _user = value;
                 OnPropertyChanged("User");
+                OnPropertyChanged("IsSub");
             }
         }
 
@@ -64,11 +65,10 @@ namespace Octgn.Controls
 
         public bool IsSub
         {
-            get { return _isSub; }
-            set
+            get
             {
-                _isSub = value;
-                OnPropertyChanged("IsSub");
+                if (User == null) return false;
+                return User.IsSubbed;
             }
         }
 
@@ -84,7 +84,6 @@ namespace Octgn.Controls
             IsAdmin = false;
             IsMod = false;
             IsOwner = false;
-            IsSub = false;
         }
 
         public ChatUserListItem(ChatRoom room, User user)
@@ -93,6 +92,7 @@ namespace Octgn.Controls
             room.OnUserListChange += RoomOnOnUserListChange;
             Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
             User = user;
+            this.Update(room);
         }
 
         private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
@@ -103,7 +103,7 @@ namespace Octgn.Controls
                 if (d == null) return;
                 if (d.Equals(_user))
                 {
-                    this.IsSub = d.IsSubbed;
+                    OnPropertyChanged("IsSub");
                 }
             }
         }
