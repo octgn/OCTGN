@@ -40,7 +40,7 @@ namespace Skylabs.Lobby
         /// Gets or sets the raw JID user.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        public Jid JidUser { get; set; }
+        public Jid JidUser { get; private set; }
 
         /// <summary>
         /// Gets or sets the users User Name.
@@ -98,7 +98,17 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets or Sets if the user is subbed
         /// </summary>
-        public bool IsSubbed { get; set; }
+        public bool IsSubbed {
+            get
+            {
+                return UserManager.Get().IsUserSubbed(this);
+            }
+            set
+            {
+                UserManager.Get().SetUserSubbed(this,value);
+            }
+        }
+
 
         /// <summary>
         /// Convert a <see cref="Presence"/> packet into a <see cref="UserStatus"/>
