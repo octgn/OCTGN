@@ -57,6 +57,10 @@
                 <MenuItem x:Name="menuHelp" Header="_Help" HorizontalAlignment="Left" Width="137"/>
                 <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" Width="137" Click="MenuAboutClick"/>
             </MenuItem>
+            <MenuItem x:Name="menuSub"  Header="_Subscribe" Visibility="Collapsed">
+                <MenuItem x:Name="menuSilver" Header="_Silver($3 per month)" HorizontalAlignment="Left" Width="157" Click="MenuSubSilverClick"/>
+                <MenuItem x:Name="menuGold" Header="_Gold($33 per year)" HorizontalAlignment="Left" Width="157" Click="MenuSubGoldClick"/>
+            </MenuItem>
         </Menu>
         <StackPanel Grid.ColumnSpan="3" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="#FF4B4B4B">
             <StackPanel x:Name="ConnectBox" Orientation="Horizontal" Visibility="Visible" Margin="10,0,10,0">

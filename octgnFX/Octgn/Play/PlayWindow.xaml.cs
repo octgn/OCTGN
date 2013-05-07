@@ -450,7 +450,7 @@ namespace Octgn.Play
             e.Handled = true;
             //var wnd = new AboutWindow() { Owner = this };
             //wnd.ShowDialog();
-            Process.Start(AppConfig.WebsitePath);
+            Program.LaunchUrl(AppConfig.WebsitePath);
         }
 
         private void ConsoleClicked(object sender, RoutedEventArgs e)

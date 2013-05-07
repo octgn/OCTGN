@@ -64,9 +64,9 @@ namespace Octgn.Launcher
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
 	        Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
 
-            this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start(AppConfig.WebsitePath + "register.php");
+            this.labelRegister.MouseLeftButtonUp += (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath + "register.php");
             this.labelForgot.MouseLeftButtonUp +=
-                (sender, args) => Process.Start(AppConfig.WebsitePath + "passwordresetrequest.php");
+                (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath + "passwordresetrequest.php");
             this.labelResend.MouseLeftButtonUp += (sender, args) =>
                 {
                     var url = AppConfig.WebsitePath + "api/user/resendemailverify.php?username="

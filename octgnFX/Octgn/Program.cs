@@ -19,6 +19,8 @@ namespace Octgn
     using System.Windows.Interop;
     using System.Windows.Media;
 
+    using Microsoft.Win32;
+
     using Octgn.Windows;
 
     using log4net;
@@ -298,6 +300,59 @@ namespace Octgn
         internal static void TraceWarning(string message, params object[] args)
         {
             Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message, args);
+        }
+
+        public static void LaunchUrl(string url)
+        {
+            if (GetDefaultBrowserPath() == null)
+            {
+                //TODO Launch in custom browser window
+                Application
+                    .Current
+                    .Dispatcher
+                    .Invoke(new Action(() => new BrowserWindow(url).Show()));
+                return;
+            }
+            Process.Start(url);
+
+        }
+
+        public static string GetDefaultBrowserPath()
+        {
+            string defaultBrowserPath = null;
+            try
+            {
+                RegistryKey regkey;
+
+                // Check if we are on Vista or Higher
+                OperatingSystem OS = Environment.OSVersion;
+                if ((OS.Platform == PlatformID.Win32NT) && (OS.Version.Major >= 6))
+                {
+                    regkey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\shell\\Associations\\UrlAssociations\\http\\UserChoice", false);
+                    if (regkey != null)
+                    {
+                        defaultBrowserPath = regkey.GetValue("Progid").ToString();
+                    }
+                    else
+                    {
+                        regkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\IE.HTTP\\shell\\open\\command", false);
+                        defaultBrowserPath = regkey.GetValue("").ToString();
+                    }
+                }
+                else
+                {
+                    regkey = Registry.ClassesRoot.OpenSubKey("http\\shell\\open\\command", false);
+                    defaultBrowserPath = regkey.GetValue("").ToString();
+                }
+
+                
+
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+            return defaultBrowserPath;
         }
     }
 }

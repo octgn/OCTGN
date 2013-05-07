@@ -46,7 +46,21 @@ namespace Octgn.Windows
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
             GameUpdater.Get().Start();
+            this.Loaded += OnLoaded;
             //new GameFeedManager().CheckForUpdates();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            this.Loaded -= OnLoaded;
+            SubscriptionModule.Get().IsSubbedChanged += Main_IsSubbedChanged;
+        }
+
+        void Main_IsSubbedChanged(bool obj)
+        {
+            Dispatcher.Invoke(
+                new Action(() =>
+                          { this.menuSub.Visibility = obj == false ? Visibility.Visible : Visibility.Collapsed; }));
         }
 
         /// <summary>
@@ -86,6 +100,7 @@ namespace Octgn.Windows
         /// </param>
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
+            SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.Stop();
             GameUpdater.Get().Stop();
             Task.Factory.StartNew(Program.Exit);
@@ -184,6 +199,7 @@ namespace Octgn.Windows
                     {
                         TabCommunityChat.IsEnabled = false;
                         TabMain.Focus();
+                        menuSub.Visibility = Visibility.Collapsed;
                     }));
         }
 
@@ -197,6 +213,11 @@ namespace Octgn.Windows
                     () =>
                     {
                         TabCommunityChat.IsEnabled = true;
+                        var subbed = SubscriptionModule.Get().IsSubscribed;
+                        if(subbed == null || subbed == false)
+                            menuSub.Visibility = Visibility.Visible;
+                        else
+                            menuSub.Visibility = Visibility.Collapsed;
                     }));
         }
 
@@ -258,6 +279,26 @@ namespace Octgn.Windows
         private void MenuLogOffClick(object sender, RoutedEventArgs e)
         {
             Program.LobbyClient.LogOut();
+        }
+
+        private void MenuSubSilverClick(object sender, RoutedEventArgs e)
+        {
+            var url =
+                SubscriptionModule.Get()
+                                  .GetSubscribeUrl(
+                                      SubscriptionModule.Get()
+                                                        .SubTypes.FirstOrDefault(x => x.Name.ToLower() == "silver"));
+            Program.LaunchUrl(url);
+        }
+
+        private void MenuSubGoldClick(object sender, RoutedEventArgs e)
+        {
+            var url =
+                SubscriptionModule.Get()
+                                  .GetSubscribeUrl(
+                                      SubscriptionModule.Get()
+                                                        .SubTypes.FirstOrDefault(x => x.Name.ToLower() == "gold"));
+            Program.LaunchUrl(url);
         }
     }
 }

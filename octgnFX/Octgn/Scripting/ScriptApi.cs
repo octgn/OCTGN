@@ -765,7 +765,7 @@ namespace Octgn.Scripting
                 {
                     try
                     {
-                        _engine.Invoke(() => Process.Start(url));
+                        _engine.Invoke(() => Program.LaunchUrl(url));
                         return true;
                     }
                     catch (Exception)

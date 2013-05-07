@@ -154,13 +154,13 @@ namespace Octgn.Windows
                 {
                     Log.Info("Launching updater");
                     LazyAsync.Invoke(
-                        () => Process.Start(Path.Combine(Directory.GetCurrentDirectory(), filename)));
+                        () =>Program.LaunchUrl(Path.Combine(Directory.GetCurrentDirectory(), filename)));
                 }
                 else
                 {
                     Log.Info("Download failed");
                     UpdateStatus("Downloading the new version failed. Please manually download.");
-                    Process.Start(_downloadURL);
+                    Program.LaunchUrl(_downloadURL);
                 }
                 Close();
             };
