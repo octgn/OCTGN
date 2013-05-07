@@ -5,14 +5,14 @@
         xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement"
         x:Class="Octgn.Windows.Main"
         Title="OCTGN"
-        Height="600" Width="1024" WindowStyle="None" 
-        MinHeight="600" MinWidth="1024" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
+        Height="600" Width="1054" WindowStyle="None" 
+        MinHeight="600" MinWidth="1054" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*" MinWidth="840"/>
             <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="185" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -64,7 +64,7 @@
                 <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
             </StackPanel>
         </StackPanel>
-        <Border Margin="0,20,0,0" Style="{StaticResource Panel}" Grid.Column="3" Grid.Row="1" ClipToBounds="True">
+        <Border Margin="0,20,0,0" Style="{StaticResource Panel}" Grid.Column="3" Grid.Row="1" ClipToBounds="True" HorizontalAlignment="Stretch">
             <Controls:ContactList x:Name="ContactList"/>
         </Border>
     </Grid>
