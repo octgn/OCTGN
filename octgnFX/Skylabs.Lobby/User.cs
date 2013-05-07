@@ -11,6 +11,7 @@ namespace Skylabs.Lobby
 {
     using System;
     using System.Collections;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
@@ -20,8 +21,14 @@ namespace Skylabs.Lobby
     /// <summary>
     /// A user model for lobby users.
     /// </summary>
-    public class User : IEquatable<User>, IEqualityComparer
+    public class User : IEquatable<User>, IEqualityComparer, INotifyPropertyChanged
     {
+        private Jid jidUser;
+
+        private UserStatus status;
+
+        private string customStatus;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="User"/> class.
         /// </summary>
@@ -40,7 +47,21 @@ namespace Skylabs.Lobby
         /// Gets or sets the raw JID user.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        public Jid JidUser { get; private set; }
+        public Jid JidUser  
+        {
+            get
+            {
+                return this.jidUser;
+            }
+            private set
+            {
+                this.jidUser = value;
+                this.OnPropertyChanged("JidUser");
+                this.OnPropertyChanged("UserName");
+                this.OnPropertyChanged("FullUserName");
+                this.OnPropertyChanged("Server");
+            }
+        }
 
         /// <summary>
         /// Gets or sets the users User Name.
@@ -54,6 +75,10 @@ namespace Skylabs.Lobby
             set
             {
                 this.JidUser.User = value;
+                this.OnPropertyChanged("JidUser");
+                this.OnPropertyChanged("UserName");
+                this.OnPropertyChanged("FullUserName");
+                this.OnPropertyChanged("Server");
             }
         }
 
@@ -83,12 +108,34 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets the users status.
         /// </summary>
-        public UserStatus Status { get; private set; }
+        public UserStatus Status
+        {
+            get
+            {
+                return this.status;
+            }
+            private set
+            {
+                this.status = value;
+                this.OnPropertyChanged("Status");
+            }
+        }
 
         /// <summary>
         /// Gets or sets the custom status.
         /// </summary>
-        public string CustomStatus { get; set; }
+        public string CustomStatus
+        {
+            get
+            {
+                return this.customStatus;
+            }
+            set
+            {
+                this.customStatus = value;
+                this.OnPropertyChanged("CustomStatus");
+            }
+        }
 
         /// <summary>
         /// Gets or sets the email.
@@ -106,6 +153,7 @@ namespace Skylabs.Lobby
             set
             {
                 UserManager.Get().SetUserSubbed(this,value);
+                this.OnPropertyChanged("IsSubbed");
             }
         }
 
@@ -325,6 +373,17 @@ namespace Skylabs.Lobby
         public override bool Equals(object obj)
         {
             return obj.GetHashCode() == this.GetHashCode();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }
