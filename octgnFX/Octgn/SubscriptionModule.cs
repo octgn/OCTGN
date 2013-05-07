@@ -37,7 +37,7 @@
             CheckTimer = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             CheckTimer.Elapsed += CheckTimerOnElapsed;
             CheckTimer.Start();
-            BroadcastTimer = new Timer(TimeSpan.FromMinutes(1).TotalMilliseconds);
+            BroadcastTimer = new Timer(TimeSpan.FromMinutes(3).TotalMilliseconds);
             BroadcastTimer.Elapsed += BroadcastTimerOnElapsed;
             BroadcastTimer.Start();
             Log.Info("Created");
@@ -169,7 +169,7 @@
         private void BroadcastTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
             Log.Info("Broadcasting Sub");
-            if(PrevSubValue != null)
+            if(PrevSubValue != null && PrevSubValue != false)
                 Program.LobbyClient.SetSub((bool)PrevSubValue);
         }
 
