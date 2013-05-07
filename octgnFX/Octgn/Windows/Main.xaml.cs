@@ -256,7 +256,7 @@ namespace Octgn.Windows
         {
             if (GameManager.Get().GameCount == 0)
             {
-                MessageBox.Show(
+                TopMostMessageBox.Show(
                     "You need to install a game before you can use the deck editor.",
                     "OCTGN",
                     MessageBoxButton.OK,

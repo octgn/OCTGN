@@ -221,12 +221,12 @@ namespace Octgn.Tabs.GameManagement
                 catch (UserMessageException ex)
                 {
                     Log.Warn("Could not add " + of.FileName + " to local feed.",ex);
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
                     Log.Warn("Could not add " + of.FileName + " to local feed.",ex);
-                    MessageBox.Show(
+                    TopMostMessageBox.Show(
                         "Could not add file " + of.FileName
                         + ". Please make sure it isn't in use and that you have access to it.",
                         "Error",
@@ -253,29 +253,23 @@ namespace Octgn.Tabs.GameManagement
                                     try
                                     {
                                         GameManager.Get().Installo8c(of.FileName);
-                                        Window newWindow = new Window() { Topmost = true };
-                                        MessageBox.Show(newWindow,
-                                            "The image pack was installed.", "Install", MessageBoxButton.OK, MessageBoxImage.Information);
-                                        newWindow.Close();
+                                        TopMostMessageBox.Show(
+                                                "The image pack was installed.", "Install", MessageBoxButton.OK, MessageBoxImage.Information);
                                     }
                                     catch (UserMessageException ex)
                                     {
                                         Log.Warn("Could not install o8c " + of.FileName + ".",ex);
-                                        Window newWindow = new Window() { Topmost = true };
-                                        MessageBox.Show(newWindow, ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                                        newWindow.Close();
+                                        TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                     }
                                     catch (Exception ex)
                                     {
                                         Log.Warn("Could not install o8c " + of.FileName + ".", ex);
-                                        Window newWindow = new Window() { Topmost = true };
-                                        MessageBox.Show(newWindow,
+                                        TopMostMessageBox.Show(
                                             "Could not install o8c " + of.FileName
                                             + ". Please make sure it isn't in use and that you have access to it.",
                                             "Error",
                                             MessageBoxButton.OK,
                                             MessageBoxImage.Error);
-                                        newWindow.Close();
                                     }
                                 },
                             () => { this.installo8cprocessing = false; },
@@ -307,7 +301,7 @@ namespace Octgn.Tabs.GameManagement
             {
                 if (WindowManager.PlayWindow != null)
                 {
-                    MessageBox.Show(
+                    TopMostMessageBox.Show(
                         "You can not install/uninstall games while you are in a game.",
                         "Error",
                         MessageBoxButton.OK,
@@ -316,7 +310,7 @@ namespace Octgn.Tabs.GameManagement
                 }
                 if (WindowManager.DeckEditor != null)
                 {
-                    MessageBox.Show(
+                    TopMostMessageBox.Show(
                         "You can not install/uninstall games while you are in the deck editor.",
                         "Error",
                         MessageBoxButton.OK,
@@ -341,19 +335,19 @@ namespace Octgn.Tabs.GameManagement
                                     }
                                     catch (IOException ex)
                                     {
-                                        Dispatcher.Invoke(new Action(() => MessageBox.Show(
+                                        TopMostMessageBox.Show(
                                             "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
                                             "Error",
                                             MessageBoxButton.OK,
-                                            MessageBoxImage.Error)));
+                                            MessageBoxImage.Error);
                                     }
                                     catch (UnauthorizedAccessException ex)
                                     {
-                                        Dispatcher.Invoke(new Action(() => MessageBox.Show(
+                                        TopMostMessageBox.Show(
                                             "Could not uninstall the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
                                             "Error",
                                             MessageBoxButton.OK,
-                                            MessageBoxImage.Error)));
+                                            MessageBoxImage.Error);
                                     }
                                     catch (Exception ex)
                                     {
@@ -376,45 +370,42 @@ namespace Octgn.Tabs.GameManagement
                             }
                             catch (UnauthorizedAccessException ex)
                             {
-                                Dispatcher.Invoke(new Action(() => MessageBox.Show(
+                                TopMostMessageBox.Show(
                                     "Could not install the game. Please try exiting all running instances of OCTGN and try again.\nYou can also try switching feeds, and then switching back and try again.",
                                     "Error",
                                     MessageBoxButton.OK,
-                                    MessageBoxImage.Error)));
+                                    MessageBoxImage.Error);
                             }
                             catch (Exception ex)
                             {
                                 Log.Error("Could not install game " + model.Package.Title, ex);
-                                Dispatcher.Invoke(new Action(() => { 
-                                                                  var res =
-                                                                      MessageBox.Show(
-                                                                          "There was a problem installing " + model.Package.Title
-                                                                          + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
-                                                                          + "\n\nDo you want to get in contact with the game developer who broke this busted game?",
-                                                                          "Error",
-                                                                          MessageBoxButton.YesNo,
-                                                                          MessageBoxImage.Exclamation);
+                                var res = TopMostMessageBox.Show(
+                                        "There was a problem installing " + model.Package.Title
+                                        + ". \n\nPlease be aware, this is not our fault. Our code is impervious and perfect. Angels get their wings every time we press enter."
+                                        + "\n\nDo you want to get in contact with the game developer who broke this busted game?",
+                                        "Error",
+                                        MessageBoxButton.YesNo,
+                                        MessageBoxImage.Exclamation);
 
-                                                                  if (res == MessageBoxResult.Yes)
-                                                                  {
-                                                                      try
-                                                                      {
-                                                                          Program.LaunchUrl(model.Package.ProjectUrl.ToString());
+                                if (res == MessageBoxResult.Yes)
+                                {
+                                    try
+                                    {
+                                        Program.LaunchUrl(model.Package.ProjectUrl.ToString());
 
-                                                                      }
-                                                                      catch (Exception exx)
-                                                                      {
-                                                                          Log.Warn(
-                                                                              "Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",
-                                                                              exx);
-                                                                          MessageBox.Show(
-                                                                              "We could not open your browser. Please set a default browser and try again",
-                                                                              "Error",
-                                                                              MessageBoxButton.OK,
-                                                                              MessageBoxImage.Error);
-                                                                      }
-                                                                  }
-                                }));
+                                    }
+                                    catch (Exception exx)
+                                    {
+                                        Log.Warn(
+                                            "Could not launch " + model.Package.ProjectUrl.ToString() + " In default browser",
+                                            exx);
+                                        TopMostMessageBox.Show(
+                                            "We could not open your browser. Please set a default browser and try again",
+                                            "Error",
+                                            MessageBoxButton.OK,
+                                            MessageBoxImage.Error);
+                                    }
+                                }
                             }
 
                         },
@@ -427,7 +418,7 @@ namespace Octgn.Tabs.GameManagement
             catch (Exception ex)
             {
                 Log.Error("Mega Error", ex);
-                MessageBox.Show(
+                TopMostMessageBox.Show(
                     "There was an error, please try again later or get in contact with us at http://www.octgn.net",
                     "Error",
                     MessageBoxButton.OK,

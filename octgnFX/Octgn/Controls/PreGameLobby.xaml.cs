@@ -208,7 +208,7 @@ namespace Octgn.Controls
 
         private void HandshakeError(object sender, ServerErrorEventArgs e)
         {
-            MessageBox.Show("The server returned an error:\n" + e.Message, "Error", MessageBoxButton.OK,
+            TopMostMessageBox.Show("The server returned an error:\n" + e.Message, "Error", MessageBoxButton.OK,
                             MessageBoxImage.Error);
             e.Handled = true;
             Back();

@@ -36,6 +36,7 @@ namespace Octgn.Launcher
     using HorizontalAlignment = System.Windows.HorizontalAlignment;
     using KeyEventArgs = System.Windows.Input.KeyEventArgs;
     using Uri = System.Uri;
+using Octgn.Controls;
 
     /// <summary>
     ///   Interaction logic for Login.xaml
@@ -399,12 +400,7 @@ namespace Octgn.Launcher
 
             private void DoErrorMessage(string message)
             {
-                Dispatcher.Invoke((Action) (() =>
-                    {
-                        MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-                                                    //lError.Text = message;
-                                                    //bError.Visibility = Visibility.Visible;
-                                                }), new object[] {});
+                TopMostMessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
         #endregion
 

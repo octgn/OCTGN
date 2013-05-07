@@ -9,6 +9,7 @@ using Octgn.Data;
 namespace Octgn.Play.Dialogs
 {
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Controls;
 
     public partial class LimitedDialog
     {
@@ -49,7 +50,7 @@ namespace Octgn.Play.Dialogs
             if (Player.All.Any(p => p.Groups.Any(x => x.Count > 0)))
             {
                 if (MessageBoxResult.Yes ==
-                    MessageBox.Show(
+                    TopMostMessageBox.Show(
                         "Some players have cards currently loaded.\n\nReset the game before starting limited game?",
                         "Warning", MessageBoxButton.YesNo))
                     Program.Client.Rpc.ResetReq();

@@ -33,6 +33,7 @@ namespace Octgn.Play
     using Octgn.Library;
     using Octgn.Library.Exceptions;
     using log4net;
+    using Octgn.Controls;
 
     public partial class PlayWindow
     {
@@ -220,7 +221,7 @@ namespace Octgn.Play
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (MessageBox.Show(
+            if (TopMostMessageBox.Show(
                 "Are you sure you want to quit?",
                 "Octgn",
                 MessageBoxButton.YesNo,
@@ -266,11 +267,11 @@ namespace Octgn.Play
             }
             catch (DeckException ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Octgn couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
+                TopMostMessageBox.Show("Octgn couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -309,7 +310,7 @@ namespace Octgn.Play
         {
             // Prompt for a confirmation
             if (MessageBoxResult.Yes ==
-                MessageBox.Show("The current game will end. Are you sure you want to continue?",
+                TopMostMessageBox.Show("The current game will end. Are you sure you want to continue?",
                                 "Confirmation", MessageBoxButton.YesNo))
             {
                 Program.Client.Rpc.ResetReq();
@@ -506,7 +507,7 @@ namespace Octgn.Play
             }
             catch (UserMessageException ex)
             {
-                MessageBox.Show(ex.Message, "Error",MessageBoxButton.OK, MessageBoxImage.Error);
+                TopMostMessageBox.Show(ex.Message, "Error",MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

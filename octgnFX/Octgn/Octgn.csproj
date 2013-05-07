@@ -262,6 +262,7 @@
     <Compile Include="Controls\SubscribeMessage.xaml.cs">
       <DependentUpon>SubscribeMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TopMostMessageBox.cs" />
     <Compile Include="Controls\WaitingDialog.xaml.cs">
       <DependentUpon>WaitingDialog.xaml</DependentUpon>
     </Compile>

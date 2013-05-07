@@ -25,6 +25,7 @@ namespace Octgn.DeckBuilder
     using Octgn.Windows;
 
     using log4net;
+    using Octgn.Controls;
 
     public partial class DeckBuilderWindow : INotifyPropertyChanged, IDeckBuilderPluginController
     {
@@ -59,12 +60,12 @@ namespace Octgn.DeckBuilder
             }
             catch (UserMessageException e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                TopMostMessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch(Exception e) 
             {
                 Log.Error("",e);
-                MessageBox.Show(
+                TopMostMessageBox.Show(
                     "There was an unexpected error. Please try restarting and trying again.\n If that doesn't help please let us know on our site http://www.octgn.net",
                     "Error",
                     MessageBoxButton.OK,
@@ -216,7 +217,7 @@ namespace Octgn.DeckBuilder
                 if (GameManager.Get().GameCount == 1) Game = GameManager.Get().Games.First();
                 else
                 {
-                    MessageBox.Show("You have to select a game before you can use this command.", "Error",
+                    TopMostMessageBox.Show("You have to select a game before you can use this command.", "Error",
                                     MessageBoxButton.OK);
                     return;
                 }
@@ -239,7 +240,7 @@ namespace Octgn.DeckBuilder
             var game = (DataNew.Entities.Game)((MenuItem)e.OriginalSource).DataContext;
             if (game.DeckSections.Count == 0 && game.SharedDeckSections.Count == 0)
             {
-                MessageBox.Show(
+                TopMostMessageBox.Show(
                     "This game has no deck sections, so you cannot build a deck for it.",
                     "Warning",
                     MessageBoxButton.OK,
@@ -248,7 +249,7 @@ namespace Octgn.DeckBuilder
             }
             if (_unsaved)
             {
-                MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
+                MessageBoxResult result = TopMostMessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
                                                           MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 switch (result)
                 {
@@ -320,7 +321,7 @@ namespace Octgn.DeckBuilder
             }
             catch (UserMessageException ex)
             {
-                MessageBox.Show(ex.Message, "Error",MessageBoxButton.OK, MessageBoxImage.Error);
+                TopMostMessageBox.Show(ex.Message, "Error",MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -341,7 +342,7 @@ namespace Octgn.DeckBuilder
             }
             catch (UserMessageException ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -361,7 +362,7 @@ namespace Octgn.DeckBuilder
         {
             if (_unsaved)
             {
-                MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
+                MessageBoxResult result = TopMostMessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
                                                           MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 switch (result)
                 {
@@ -390,12 +391,12 @@ namespace Octgn.DeckBuilder
             }
             catch (UserMessageException ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Octgn couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
+                TopMostMessageBox.Show("Octgn couldn't load the deck.\r\nDetails:\r\n\r\n" + ex.Message, "Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
@@ -417,7 +418,7 @@ namespace Octgn.DeckBuilder
 
             if (_unsaved)
             {
-                MessageBoxResult result = MessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
+                MessageBoxResult result = TopMostMessageBox.Show("This deck contains unsaved modifications. Save?", "Warning",
                                                           MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 switch (result)
                 {

@@ -24,6 +24,7 @@ namespace Octgn
     using Octgn.Windows;
 
     using log4net;
+    using Octgn.Controls;
 
     public static class Program
     {
@@ -143,7 +144,7 @@ namespace Octgn
                 if (!force)
                 {
                     var res =
-                        MessageBox.Show(
+                        TopMostMessageBox.Show(
                             "Another instance of OCTGN is current running. Would you like to close it?",
                             "OCTGN",
                             MessageBoxButton.YesNo,

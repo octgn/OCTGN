@@ -101,15 +101,12 @@ namespace Octgn.Controls
                                                       if (x.Exception != null)
                                                       {
                                                           Log.Warn("Sub Problem", x.Exception);
-                                                          Dispatcher.Invoke(
-                                                              new Action(
-                                                                  () =>
-                                                                  MessageBox.Show(
+                                                          TopMostMessageBox.Show(
                                                                       "Could not subscribe. Please visit "
                                                                       + AppConfig.WebsitePath + " to subscribe.",
                                                                       "Error",
                                                                       MessageBoxButton.OK,
-                                                                      MessageBoxImage.Asterisk)));
+                                                                      MessageBoxImage.Asterisk);
                                                       }
                                                   });
         }
