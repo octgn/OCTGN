@@ -632,6 +632,8 @@ public partial class templatesTemplateOverlayblocksConditional {
     
     private templatesTemplateOverlayblocksConditionalIF ifField;
     
+    private templatesTemplateOverlayblocksConditionalElseif[] elseifField;
+    
     private link[] elseField;
     
     /// <remarks/>
@@ -642,6 +644,17 @@ public partial class templatesTemplateOverlayblocksConditional {
         }
         set {
             this.ifField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("elseif", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateOverlayblocksConditionalElseif[] elseif {
+        get {
+            return this.elseifField;
+        }
+        set {
+            this.elseifField = value;
         }
     }
     
@@ -665,6 +678,67 @@ public partial class templatesTemplateOverlayblocksConditional {
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public partial class templatesTemplateOverlayblocksConditionalIF {
+    
+    private link[] linkField;
+    
+    private string propertyField;
+    
+    private string valueField;
+    
+    private string containsField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link")]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string contains {
+        get {
+            return this.containsField;
+        }
+        set {
+            this.containsField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateOverlayblocksConditionalElseif {
     
     private link[] linkField;
     

@@ -9,6 +9,7 @@ namespace Octgn.ProxyGenerator.Definitions
     public class ConditionalDefinition
     {
         public XmlNode ifNode = null;
+        public List<XmlNode> elseifNodeList = new List<XmlNode>();
         public XmlNode elseNode = null;
 
 
@@ -30,6 +31,10 @@ namespace Octgn.ProxyGenerator.Definitions
                 {
                     ret.ifNode = subNode;
                 }
+                if (subNode.Name == "elseif")
+                {
+                    ret.elseifNodeList.Add(subNode);
+                }
                 if (subNode.Name == "else")
                 {
                     ret.elseNode = subNode;
@@ -44,6 +49,7 @@ namespace Octgn.ProxyGenerator.Definitions
             string property = ifNode.Attributes["property"].Value;
             string value = null;
             string contains = null;
+            bool loadElse = false;
 
             if (ifNode.Attributes["value"] != null)
             {
@@ -66,16 +72,45 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
                 else
                 {
-                    if (elseNode != null)
+                    if (elseifNodeList.Count == 0 && ret.Count == 0)
                     {
-                        foreach (XmlNode node in elseNode.ChildNodes)
+                        loadElse = true;
+                    }
+                }
+            }
+
+            foreach (XmlNode elseIfNode in elseifNodeList)
+            {
+                string elseIfValue = null;
+                if (elseIfNode.Attributes["value"] != null)
+                {
+                    elseIfValue = elseIfNode.Attributes["value"].Value;
+                }
+                if (elseIfValue != null)
+                {
+                    if (values.ContainsKey(property) && values[property] == elseIfValue)
+                    {
+                        foreach (XmlNode node in elseIfNode.ChildNodes)
                         {
                             LinkDefinition link = LinkDefinition.LoadLink(node);
                             ret.Add(link);
+                            loadElse = false;
                         }
                     }
                 }
-                return (ret);
+            }
+
+            if (value != null && loadElse)
+            {
+                if (elseNode != null)
+                {
+                    foreach (XmlNode node in elseNode.ChildNodes)
+                    {
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
+                    }
+                }
+
             }
 
             if (contains != null)
@@ -90,16 +125,44 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
                 else
                 {
-                    if (elseNode != null)
+                    if (elseifNodeList.Count == 0 && ret.Count == 0)
                     {
-                        foreach (XmlNode node in elseNode.ChildNodes)
+                        loadElse = true;
+                    }
+                }
+            }
+
+            foreach (XmlNode elseIfNode in elseifNodeList)
+            {
+                string elseIfContains = null;
+                if (elseIfNode.Attributes["value"] != null)
+                {
+                    elseIfContains = elseIfNode.Attributes["value"].Value;
+                }
+                if (elseIfContains != null)
+                {
+                    if (values.ContainsKey(property) && values[property].Contains(elseIfContains))
+                    {
+                        foreach (XmlNode node in elseIfNode.ChildNodes)
                         {
                             LinkDefinition link = LinkDefinition.LoadLink(node);
                             ret.Add(link);
+                            loadElse = false;
                         }
                     }
                 }
-                return (ret);
+            }
+
+            if (contains != null && loadElse)
+            {
+                if (elseNode != null)
+                {
+                    foreach (XmlNode node in elseNode.ChildNodes)
+                    {
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
+                    }
+                }
             }
 
 
