@@ -12,20 +12,21 @@ namespace Octgn.Controls
 {
     using System.Collections.ObjectModel;
     using System.Net;
+    using System.Reflection;
     using System.Threading.Tasks;
     using System.Windows.Controls.Primitives;
     using System.Windows.Forms;
 
     using Microsoft.Scripting.Utils;
 
-    using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.Library.Exceptions;
     using Octgn.Networking;
     using Octgn.ViewModels;
     using Octgn.Windows;
 
-    using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+    using log4net;
+
     using Timer = System.Timers.Timer;
 
     /// <summary>
@@ -33,6 +34,7 @@ namespace Octgn.Controls
     /// </summary>
     public partial class CustomGameList
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static DependencyProperty IsJoinableGameSelectedProperty = DependencyProperty.Register(
             "IsJoinableGameSelected", typeof(bool), typeof(CustomGameList));
 
@@ -46,13 +48,12 @@ namespace Octgn.Controls
             }
             private set
             {
-                SetValue(IsJoinableGameSelectedProperty,value);
+                SetValue(IsJoinableGameSelectedProperty, value);
             }
         }
 
         private readonly Timer timer;
         private bool isConnected;
-        private bool waitingForGames;
         private HostGameSettings hostGameDialog;
         private ConnectOfflineGame connectOfflineGameDialog;
 
@@ -78,17 +79,21 @@ namespace Octgn.Controls
 
         void RefreshGameList()
         {
-            Trace.WriteLine("Refreshing list...");
+            Log.Info("Refreshing list...");
             var list = Program.LobbyClient.GetHostedGames().Select(x => new HostedGameViewModel(x)).ToList();
+            Log.Info("Got hosted games list");
             Dispatcher.Invoke(new Action(() =>
-            {
-                var removeList = HostedGameList.Where(i => !list.Any(x => x.Port == i.Port)).ToList();
-                removeList.ForEach(x => HostedGameList.Remove(x));
-                var addList = list.Where(i => !HostedGameList.Any(x => x.Port == i.Port)).ToList();
-                HostedGameList.AddRange(addList);
-                foreach(var g in HostedGameList)
-                    g.Update();
-            }));
+                                             {
+                                                 Log.Info("Refreshing visual list");
+                                                 var removeList = HostedGameList.Where(i => list.All(x => x.Port != i.Port)).ToList();
+                                                 removeList.ForEach(x => HostedGameList.Remove(x));
+                                                 var addList = list.Where(i => this.HostedGameList.All(x => x.Port != i.Port)).ToList();
+                                                 HostedGameList.AddRange(addList);
+                                                 foreach (var g in HostedGameList)
+                                                     g.Update();
+                                                 Log.Info("Visual list refreshed");
+
+                                             }));
         }
 
         private void ShowHostGameDialog()
@@ -119,33 +124,43 @@ namespace Octgn.Controls
 
         private void StartJoinGame(HostedGameViewModel hostedGame, DataNew.Entities.Game game)
         {
+            Log.InfoFormat("Starting to join a game {0} {1}", hostedGame.GameId, hostedGame.Name);
             Program.IsHost = false;
-            Program.GameEngine = new GameEngine(game,Program.LobbyClient.Me.UserName);
+            Program.GameEngine = new GameEngine(game, Program.LobbyClient.Me.UserName);
             Program.CurrentOnlineGameName = hostedGame.Name;
             IPAddress hostAddress = Dns.GetHostAddresses(AppConfig.GameServerPath).FirstOrDefault();
-            if(hostAddress == null)
+            if (hostAddress == null)
+            {
+                Log.WarnFormat("Dns Error, couldn't resolve {0}", AppConfig.GameServerPath);
                 throw new UserMessageException("There was a problem with your DNS. Please try again.");
+            }
 
             try
             {
-                Program.Client = new Client(hostAddress,hostedGame.Port);
+                Log.InfoFormat("Creating client for {0}:{1}", hostAddress, hostedGame.Port);
+                Program.Client = new Client(hostAddress, hostedGame.Port);
+                Log.InfoFormat("Connecting client for {0}:{1}", hostAddress, hostedGame.Port);
                 Program.Client.Connect();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log.Warn("Start join game error ", e);
                 throw new UserMessageException("Could not connect. Please try again.");
             }
-            
+
         }
 
         private void FinishJoinGame(Task task)
         {
+            Log.Info("Finished joining game task");
             BorderButtons.IsEnabled = true;
             if (task.IsFaulted)
             {
+                Log.Warn("Couldn't join game");
                 var error = "Unknown Error: Please try again";
                 if (task.Exception != null)
                 {
+                    Log.Warn("Finish join game exception", task.Exception);
                     var umException = task.Exception.InnerExceptions.OfType<UserMessageException>().FirstOrDefault();
                     if (umException != null)
                     {
@@ -155,6 +170,7 @@ namespace Octgn.Controls
                 MessageBox.Show(error, "OCTGN", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            Log.Info("Starting to join game");
             WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
             WindowManager.PreGameLobbyWindow.Setup(false, WindowManager.Main);
         }
@@ -162,21 +178,22 @@ namespace Octgn.Controls
         #region LobbyEvents
         void LobbyClient_OnDisconnect(object sender, EventArgs e)
         {
+            Log.Info("Disconnected");
             isConnected = false;
         }
 
         void LobbyClient_OnLoginComplete(object sender, LoginResults results)
         {
+            Log.Info("Connected");
             isConnected = true;
         }
 
-        void LobbyClient_OnDataReceived(object sender, DataRecType type, object data) 
+        void LobbyClient_OnDataReceived(object sender, DataRecType type, object data)
         {
             if (type == DataRecType.GameList || type == DataRecType.GamesNeedRefresh)
             {
-                Trace.WriteLine("Games Received");
+                Log.Info("Games List Received");
                 RefreshGameList();
-                waitingForGames = false;
             }
         }
         #endregion
@@ -209,7 +226,7 @@ namespace Octgn.Controls
                     if (WindowManager.PreGameLobbyWindow == null)
                     {
                         Program.IsHost = false;
-                        Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null,true);
+                        Program.GameEngine = new Octgn.GameEngine(connectOfflineGameDialog.Game, null, true);
 
                         WindowManager.PreGameLobbyWindow = new PreGameLobbyWindow();
                         WindowManager.PreGameLobbyWindow.Setup(true, WindowManager.Main);
@@ -220,17 +237,25 @@ namespace Octgn.Controls
 
         void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            Trace.WriteLine("Timer ticks");
-            if (!isConnected || waitingForGames) return;
-            Trace.WriteLine("Begin refresh games.");
-            waitingForGames = true;
-            Program.LobbyClient.BeginGetGameList();
+            Log.Info("Refresh game list timer ticks");
+            try
+            {
+                Program.LobbyClient.BeginGetGameList();
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("Get Custom games timer tick error", ex);
+            }
         }
 
         private void ListViewGameListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Log.Info("Changed custom game selection");
+            if (ListViewGameList == null) return;
             var game = ListViewGameList.SelectedItem as HostedGameViewModel;
-            this.IsJoinableGameSelected = game != null && game.CanPlay;
+            if (game == null) return;
+            Log.InfoFormat("Selected game {0} {1}", game.GameId, game.Name);
+            this.IsJoinableGameSelected = game.CanPlay;
         }
 
         private void ButtonHostClick(object sender, RoutedEventArgs e)
@@ -261,12 +286,10 @@ namespace Octgn.Controls
             var hostedgame = ListViewGameList.SelectedItem as HostedGameViewModel;
             if (hostedgame == null) return;
             var game = GameManager.Get().GetById(hostedgame.GameId);
-            var task = new Task(() => this.StartJoinGame(hostedgame,game));
-            task.ContinueWith((t) =>{ this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t)));});
+            var task = new Task(() => this.StartJoinGame(hostedgame, game));
+            task.ContinueWith((t) => { this.Dispatcher.Invoke(new Action(() => this.FinishJoinGame(t))); });
             BorderButtons.IsEnabled = false;
             task.Start();
-
-            //this.NavigateForward();
         }
 
         private void ButtonJoinOfflineGame(object sender, RoutedEventArgs e)
@@ -287,15 +310,13 @@ namespace Octgn.Controls
 
         private void ListViewGameList_OnDragDelta(object sender, DragDeltaEventArgs e)
         {
-            if(e == null || e.OriginalSource == null)return;
+            if (e == null || e.OriginalSource == null) return;
             var senderAsThumb = e.OriginalSource as Thumb;
-            if(senderAsThumb == null || senderAsThumb.TemplatedParent == null)return;
+            if (senderAsThumb == null || senderAsThumb.TemplatedParent == null) return;
             var header = senderAsThumb.TemplatedParent as GridViewColumnHeader;
-            if(header == null)return;
+            if (header == null) return;
             if (header.Column.ActualWidth < 20)
                 header.Column.Width = 20;
-            //if (header.Column.ActualWidth > 100)
-            //    header.Column.Width = 100;
         }
     }
 }
