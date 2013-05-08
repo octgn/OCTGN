@@ -266,8 +266,9 @@ using Octgn.Controls;
                                     Log.Info("Sending login request");
                                     var ustring = AppConfig.WebsitePath + "api/user/login.php?username=" + HttpUtility.UrlEncode(username)
                                                   + "&password=" + HttpUtility.UrlEncode(password);
+                                    var cstring = ustring.Replace(HttpUtility.UrlEncode(password) ?? "", "#############");
                                     if (email != null) ustring += "&email=" + HttpUtility.UrlEncode(email);
-                                    Log.Info("Sending login: " + ustring);
+                                    Log.Info("Sending login: " + cstring);
                                     var res = wc.DownloadString(new Uri(ustring));
                                     res = res.Trim();
                                     Log.Info("Do Login Request Result: " + res);
