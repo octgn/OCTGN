@@ -32,8 +32,16 @@
                 <RowDefinition Height="100*"/>
             </Grid.RowDefinitions>
 
-            <ListBox x:Name="UserList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding UserListItems,ElementName=thisControl}">
-            </ListBox>
+            <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" Padding="5" Grid.Row="1" Grid.ColumnSpan="2">
+                <ItemsControl ItemsSource="{Binding UserListItems,ElementName=thisControl}" Margin="5">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical">
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
             <Image Source="../Resources/search.png" Width="16" Height="16"/>
             <TextBox x:Name="UserFilter"  TextWrapping="NoWrap" Text="" VerticalContentAlignment="Center" Grid.Column="2" TextChanged="UserFilterTextChanged" >
             </TextBox>
@@ -51,9 +59,12 @@
 
                     <TableRowGroup x:Name="ChatRowGroup">
                         <TableRow>
-                            <TableCell><Paragraph Foreground="#FFE66E09">-------></Paragraph></TableCell>
                             <TableCell>
-                                <Paragraph Foreground="#FFE66E09">Type /? for a list of commands</Paragraph></TableCell>
+                                <Paragraph Foreground="#FFE66E09">-------></Paragraph>
+                            </TableCell>
+                            <TableCell>
+                                <Paragraph Foreground="#FFE66E09">Type /? for a list of commands</Paragraph>
+                            </TableCell>
                         </TableRow>
                     </TableRowGroup>
                 </Table>

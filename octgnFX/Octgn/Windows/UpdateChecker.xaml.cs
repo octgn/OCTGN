@@ -12,8 +12,10 @@ using Skylabs.Lobby.Threading;
 
 namespace Octgn.Windows
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Windows.Input;
 
     using Octgn.Core;
     using Octgn.Core.DataManagers;
@@ -38,11 +40,42 @@ namespace Octgn.Windows
 
         private bool _hasLoaded = false;
 
+        private Key[] keys = new Key[] { Key.None, Key.None, Key.None, Key.None, Key.None, Key.None, };
+        private Key[] correctKeys = new Key[]{Key.N,Key.U,Key.D, Key.I, Key.T, Key.Y};
+
+        private bool cancel = false;
+
         public UpdateChecker()
         {
             this.Loaded += OnLoaded;
             IsClosingDown = false;
             InitializeComponent();
+            this.PreviewKeyUp += OnPreviewKeyUp;
+        }
+
+        private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
+        {
+            bool gotOne = false;
+            for(var i =0;i<keys.Length;i++)
+            {
+                if (keys[i] == Key.None)
+                {
+                    keys[i] = keyEventArgs.Key;
+                    gotOne = true;
+                    break;
+                }
+            }
+            if (!gotOne)
+            {
+                Array.Copy(keys.ToArray(),1,keys,0,5);
+                keys[5] = keyEventArgs.Key;
+            }
+            if (keys.SequenceEqual(correctKeys))
+            {
+                // Blam
+                cancel = true;
+                //this.UpdateCheckDone();
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -59,6 +92,17 @@ namespace Octgn.Windows
                     return;
                 }
 #endif
+                this.RandomMessage();
+                for (var i = 0; i < 10; i++)
+                {
+                    Thread.Sleep(500);
+                    if (cancel) break;
+                }
+                if (cancel)
+                {
+                    this.UpdateCheckDone();
+                    return;
+                }
                 this.ClearGarbage();
                 //CheckForXmlSetUpdates();
                 this.LoadDatabase();
@@ -66,8 +110,23 @@ namespace Octgn.Windows
                 UpdateCheckDone();
 
             });
-            lblStatus.Content = "";
+            lblStatus.Text = "";
             Log.Info("Finsihed");
+        }
+
+        private void RandomMessage()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var objStream = assembly.GetManifestResourceStream("Octgn.Resources.StartupMessages.txt");
+            var objReader = new StreamReader(objStream);
+            var lines = new List<string>();
+            while (!objReader.EndOfStream)
+            {
+                lines.Add(objReader.ReadLine());
+            }
+            var rand = new Random();
+            var linenum = rand.Next(0, lines.Count - 1);
+            this.UpdateStatus(lines[linenum]);
         }
 
         private void LoadDatabase()
@@ -216,7 +275,7 @@ namespace Octgn.Windows
                                                   {
                                                       try
                                                       {
-                                                          lblStatus.Content = stat;
+                                                          lblStatus.Text = stat;
                                                           listBox1.Items.Add(String.Format("[{0}] {1}" ,
                                                                                            DateTime.Now.
                                                                                                ToShortTimeString() ,

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
     using System.Linq;
     using System.Reflection;
 
@@ -12,8 +13,9 @@
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        
-        private bool isSorting = false;
+        private readonly object sortLock = new object();
+        private bool sorting = false;
+        private List<NotifyCollectionChangedEventArgs> notifyQueue;
 
         public void Sort()
         {
@@ -22,36 +24,40 @@
 
         public void Sort(IComparer<T> comparer)
         {
-            if (isSorting) return;
-            try
+            lock (sortLock)
             {
-                isSorting = true;
-                var arr = this.Items.ToArray();
-                bool changed = true;
-                var count = 0;
-                while (changed)
+                try
                 {
-                    if (count == 5) break;
-                    var temp = new T[arr.Length];
-                    Array.Copy(arr, temp, arr.Length);
-                    Array.Sort(arr, comparer);
-                    changed = arr.Where((t, i) => !Equals(temp[i], t)).Any();
-                    count++;
+                    sorting = true;
+                    notifyQueue = new List<NotifyCollectionChangedEventArgs>();
+                    var arr = this.ToList();
+                    arr.Sort(comparer);
+                    foreach (var i in arr)
+                    {
+                        var findex = this.IndexOf(i);
+                        var toindex = arr.IndexOf(i);
+                        this.Move(findex, toindex);
+                    }
+                    foreach (var nq in notifyQueue)
+                    {
+                        base.OnCollectionChanged(nq);
+                    }
                 }
-                for (int i = 0; i < arr.Length; i++)
+                finally
                 {
-                    this[i] = arr[i];
+                    sorting = false;
                 }
+            }
+        }
 
-            }
-            catch (Exception e)
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            if (!sorting)
             {
-                Log.Error("Sort error",e);
+                base.OnCollectionChanged(e);
+                return;
             }
-            finally
-            {
-                isSorting = false;
-            }
+            notifyQueue.Add(e);
         }
     }
 }

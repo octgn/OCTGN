@@ -21,6 +21,8 @@ namespace Octgn.Controls
     using System.Windows.Input;
     using System.Windows.Media;
 
+    using CodeBits;
+
     using Octgn.Extentions;
     using Octgn.Library.Utils;
 
@@ -66,7 +68,7 @@ namespace Octgn.Controls
         /// </summary>
         private bool justScrolledToBottom;
 
-        public SortableObservableCollection<ChatUserListItem> UserListItems { get; set; }
+        public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
 
 
         protected Brush HoverBackBrush { get; set; }
@@ -75,7 +77,7 @@ namespace Octgn.Controls
         /// </summary>
         public ChatControl()
         {
-            this.UserListItems = new SortableObservableCollection<ChatUserListItem>();
+            this.UserListItems = new OrderedObservableCollection<ChatUserListItem>();
             this.InitializeComponent();
             this.messageCache = new List<string>();
             this.DataContext = UserListItems;
@@ -92,13 +94,23 @@ namespace Octgn.Controls
         {
             this.Loaded -= OnLoaded;
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
+            Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
             ProgramOnOnOptionsChanged();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
+            Program.LobbyClient.OnDataReceived -= this.LobbyClientOnOnDataReceived;
             Unloaded -= this.OnUnloaded;
+        }
+
+        private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
+        {
+            if (type == DataRecType.UserSubChanged)
+            {
+                InvokeResetUserList();
+            }
         }
 
         private void ProgramOnOnOptionsChanged()
@@ -305,36 +317,69 @@ namespace Octgn.Controls
             var filterText = "";
             Dispatcher.Invoke(new Func<string>(() => filterText = this.UserFilter.Text.ToLower()));
 
-            var roomUserList = this.room.Users.ToArray()
-                .Where(x => x.UserName.ToLower().Contains(filterText)).ToArray();
-            //foreach (var missingUser in roomUserList.Except(this.UserListItems.Select(x => x.User)).ToList())
-            //{
-            //    this.UserListItems.Add(missingUser);
-            //}
+            var roomUserList = this.room.Users
+                .ToArray()
+                .Where(x => x.UserName.ToLower().Contains(filterText))
+                .ToArray();
 
-            //foreach (var offlineUser in this.UserListItems.Select(x => x.User).Except(roomUserList).ToList())
-            //{
-            //    this.UserListItems.Remove(offlineUser);
-            //}
-
-            Dispatcher.BeginInvoke(
-                new Action(
-                    () => this.ResetUserList(
-                        roomUserList.Except(this.UserListItems.Select(x => x.User)).ToArray(),
-                        this.UserListItems.Select(x => x.User).Except(roomUserList).ToArray()
-                         ))
-                );
+            Dispatcher.BeginInvoke(new Action(() => this.ResetUserList(this.room.Users.ToArray(),roomUserList)));
         }
+
+        private object resestLocker = new object();
 
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.
         /// </summary>
-        private void ResetUserList(IEnumerable<User> usersToAdd, IEnumerable<User> usersToRemove)
+        private void ResetUserList(User[] fullList, User[] filteredList)
         {
-            foreach (var u in usersToAdd) UserListItems.Add(new ChatUserListItem(this.room, u));
-            foreach (var u in usersToRemove) UserListItems.Remove(new ChatUserListItem(this.room,u));
-            UserListItems.Sort();
-            this.needsRefresh = false;
+            lock (resestLocker)
+            {
+                //Add all users that should exist
+                foreach (var u in fullList)
+                {
+                    if (this.UserListItems.All(x => x.User != u)) 
+                        UserListItems.Add(new ChatUserListItem(this.Room, u));
+                }
+
+                // remove any users that aren't on the fullList
+                foreach (var u in UserListItems.ToArray())
+                {
+                    if (!fullList.Contains(u.User)) UserListItems.Remove(u);
+                }
+
+                // Remove and re add subbed users
+                var tlist = new OrderedObservableCollection<ChatUserListItem>();
+                foreach(var i in UserListItems)
+                    tlist.Add(i);
+                foreach (var u in UserListItems.Where(x => x.User.IsSubbed).ToArray())
+                {
+                    var u2 = new ChatUserListItem(Room, u.User);
+                    tlist.Remove(u);
+                    tlist.Add(u2);
+
+                    if (tlist.IndexOf(u2) == UserListItems.IndexOf(u)) continue;
+
+                    UserListItems.Remove(u);
+                    UserListItems.Add(u2);
+                }
+
+                // Show all users that should be shown
+                for (var i = 0; i < UserListItems.Count; i++)
+                {
+                    if (!filteredList.Contains(UserListItems[i].User))
+                    {
+                        //UserListItems[i].Visibility = Visibility.Collapsed;
+                        UserListItems[i].Hide();
+                    }
+                    else
+                    {
+                        //UserListItems[i].Visibility = Visibility.Visible;
+                        UserListItems[i].Show();
+                    }
+                }
+
+                this.needsRefresh = false;
+            }
         }
 
         /// <summary>

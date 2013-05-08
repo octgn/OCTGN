@@ -2,7 +2,7 @@
         x:Class="Octgn.Windows.UpdateChecker" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         xmlns:Controls="clr-namespace:Octgn.Controls"
-        Title="Loading Octgn..." MinHeight="237" MinWidth="438" Height="237" Width="438"
+        Title="Loading Octgn..." MinHeight="237" MinWidth="438" Height="400" Width="600"
         WindowStartupLocation="CenterScreen" WindowIcon="/OCTGN;component/Resources/Icons/Reset.png" 
         ResizeMode="CanResizeWithGrip" ShowInTaskbar="True" Topmost="False" 
         Closing="Window_Closing" CloseButtonVisibility="Hidden" MinimizeButtonVisibility="Hidden" >
@@ -10,12 +10,13 @@
     <Border BorderBrush="Silver" BorderThickness="1" Name="border1">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="73" />
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="29" />
                 <RowDefinition Height="100*" />
             </Grid.RowDefinitions>
-            <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Margin="6,40,6,4" />
-            <Label Content="Checking for updates..." Height="28" Margin="6,6,0,0" Name="lblStatus" VerticalAlignment="Top" />
-            <ListBox Grid.Row="1" HorizontalAlignment="Stretch" Name="listBox1" VerticalAlignment="Stretch" />
+            <TextBlock Foreground="White" FontSize="16" FontWeight="Bold" Text="Checking for updates..." Height="28" Margin="5" Name="lblStatus" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" TextWrapping="Wrap"/>
+            <ProgressBar Height="29" Name="progressBar1" IsIndeterminate="True" Grid.Row="1"/>
+            <ListBox Grid.Row="2" HorizontalAlignment="Stretch" Name="listBox1" VerticalAlignment="Stretch" />
         </Grid>
     </Border>
 </Controls:OctgnChrome>

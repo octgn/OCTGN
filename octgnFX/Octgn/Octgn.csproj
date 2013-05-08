@@ -239,6 +239,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppConfig.cs" />
+    <Compile Include="CodeBits\OrderedObservableCollection.cs" />
     <Compile Include="Const.cs" />
     <Compile Include="Controls\ChatBar.cs" />
     <Compile Include="Controls\ChatBarItem.cs" />
@@ -532,6 +533,7 @@
     </Compile>
     <None Include="Resources\elevatording.wav" />
     <Resource Include="Resources\sub.png" />
+    <EmbeddedResource Include="Resources\StartupMessages.txt" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

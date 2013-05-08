@@ -17,12 +17,19 @@ using agsXMPP;
 namespace Octgn.Controls
 {
     using System.ComponentModel;
+    using System.Reflection;
+    using System.Windows.Media.Animation;
+
+    using log4net;
 
     /// <summary>
     /// Interaction logic for ChatUserListItem.xaml
     /// </summary>
-    public partial class ChatUserListItem : UserControl,IComparable<ChatUserListItem>,IEquatable<ChatUserListItem>,IEqualityComparer<ChatUserListItem>,INotifyPropertyChanged
+    public partial class ChatUserListItem : IComparable<ChatUserListItem>,IEquatable<ChatUserListItem>,IEqualityComparer<ChatUserListItem>,INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
         public User User
         {
             get { return _user; }
@@ -67,7 +74,8 @@ namespace Octgn.Controls
         {
             get
             {
-                if (User == null) return false;
+                if (User == null) 
+                    return false;
                 return User.IsSubbed;
             }
         }
@@ -77,6 +85,7 @@ namespace Octgn.Controls
         private bool _isMod;
         private bool _isOwner;
         private bool _isSub;
+        private double _realHeight;
         public ChatUserListItem()
         {
             InitializeComponent();
@@ -88,11 +97,20 @@ namespace Octgn.Controls
 
         public ChatUserListItem(ChatRoom room, User user)
         {
+            User = user;
             InitializeComponent();
             room.OnUserListChange += RoomOnOnUserListChange;
             Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
-            User = user;
             this.Update(room);
+            this.Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            this.Loaded -= OnLoaded;
+            _realHeight = 25;
+            var hanim = new DoubleAnimation(0, _realHeight, new Duration(TimeSpan.FromMilliseconds(500)));
+            this.BeginAnimation(HeightProperty, hanim, HandoffBehavior.Compose);
         }
 
         private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
@@ -122,6 +140,30 @@ namespace Octgn.Controls
             this.Update(room);
         }
 
+        private Visibility pretendVisible = Visibility.Visible;
+
+        public void Hide()
+        {
+            if (pretendVisible == Visibility.Hidden) return;
+            pretendVisible = Visibility.Hidden;
+            //Log.Info("Hiding " + User.UserName);
+            //var anim = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(500)));
+            var hanim = new DoubleAnimation(_realHeight, 0, new Duration(TimeSpan.FromMilliseconds(100)));
+            //this.BeginAnimation(OpacityProperty,anim,HandoffBehavior.Compose);
+            this.BeginAnimation(HeightProperty,hanim,HandoffBehavior.Compose);
+        }
+
+        public void Show()
+        {
+            if (pretendVisible == Visibility.Visible) return;
+            pretendVisible = Visibility.Visible;
+            //Log.Info("Showing " + User.UserName);
+            //var anim = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500)));
+            var hanim = new DoubleAnimation(0, _realHeight, new Duration(TimeSpan.FromMilliseconds(100)));
+            //this.BeginAnimation(OpacityProperty,anim,HandoffBehavior.Compose);
+            this.BeginAnimation(HeightProperty,hanim,HandoffBehavior.Compose);
+        }
+
         public int CompareTo(ChatUserListItem other)
         {
             if (this.IsOwner)
@@ -137,17 +179,17 @@ namespace Octgn.Controls
             }
             if (this.IsMod)
             {
-                if (this.IsOwner) return 1;
-                if (this.IsAdmin) return 1;
-                if (this.IsMod) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);
+                if (other.IsOwner) return 1;
+                if (other.IsAdmin) return 1;
+                if (other.IsMod) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);
                 return -1;
             }
             if (this.IsSub)
             {
-                if (this.IsOwner) return 1;
-                if (this.IsAdmin) return 1;
-                if (this.IsMod) return 1;
-                if (this.IsSub) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);
+                if (other.IsOwner) return 1;
+                if (other.IsAdmin) return 1;
+                if (other.IsMod) return 1;
+                if (other.IsSub) return String.Compare(this.User.UserName, other.User.UserName, StringComparison.InvariantCultureIgnoreCase);
                 return -1;
             }
             if (other.IsOwner)
