@@ -14,6 +14,7 @@ namespace Octgn.Controls
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Windows;
     using System.Windows.Controls;
@@ -28,11 +29,14 @@ namespace Octgn.Controls
 
     using Skylabs.Lobby;
 
+    using log4net;
+
     /// <summary>
     /// Interaction logic for ChatControl
     /// </summary>
     public partial class ChatControl : UserControl
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
         /// The sent message cache
         /// </summary>
@@ -109,7 +113,8 @@ namespace Octgn.Controls
         {
             if (type == DataRecType.UserSubChanged)
             {
-                InvokeResetUserList();
+                needsRefresh = true;
+                //InvokeResetUserList();
             }
         }
 
