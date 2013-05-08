@@ -9,24 +9,6 @@ namespace Skylabs.LobbyServer
 
     public static class Logger
     {
-        public static void PreLock()
-        {
-            var method = GetPreviousMethod();
-            //WriteLine("#PreLock[{1}]: {0}",method,Thread.CurrentThread.ManagedThreadId);
-            //WriteTag("PreLock");
-        }
-        public static void InLock()
-        {
-            var method = GetPreviousMethod();
-            //WriteLine("#InLock[{1}]: {0}", method, Thread.CurrentThread.ManagedThreadId);
-            //WriteTag("InLock");
-        }
-        public static void EndLock()
-        {
-            var method = GetPreviousMethod();
-            //WriteLine("#EndLock[{1}]: {0}", method, Thread.CurrentThread.ManagedThreadId);
-            //WriteTag("EndLock");
-        }
         public static void Er(Exception e, params string[] extras)
         {
             string methodName = GetPreviousMethod();
