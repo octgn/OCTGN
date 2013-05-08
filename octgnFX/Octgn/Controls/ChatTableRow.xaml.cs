@@ -53,15 +53,22 @@ namespace Octgn.Controls
         /// Initializes a new instance of the <see cref="ChatTableRow"/> class.
         /// </summary>
         public ChatTableRow()
+            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")),"TestMessage",DateTime.Now,LobbyMessageType.Standard)
+        {
+        }
+
+        public ChatTableRow(User user, string message, DateTime messageDate, LobbyMessageType messageType)
         {
             this.InitializeComponent();
-            this.User = new User(new Jid("NoUser", "server.octgn.info", "agsxmpp"));
-            this.MessageDate = DateTime.Now;
-            this.Message = "TestMessage";
+            this.User = user;
+            this.Message = message;
+            this.MessageDate = messageDate;
+            this.MessageType = messageType;
             this.Unloaded += OnUnloaded;
             this.Loaded += OnLoaded;
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             this.UsernameParagraph.Inlines.Add(new Run());
+
         }
 
         private void OnLoaded(object sender, EventArgs eventArgs)

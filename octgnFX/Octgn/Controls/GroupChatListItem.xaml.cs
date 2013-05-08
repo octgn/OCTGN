@@ -39,10 +39,15 @@ namespace Octgn.Controls
 
         private ChatRoom _chatRoom;
 
-        public GroupChatListItem()
+        public GroupChatListItem():this(null)
         {
+        }
+
+        public GroupChatListItem(ChatRoom room)
+        {
+            ThisRoom = room;
+            this.HorizontalAlignment = HorizontalAlignment.Stretch;
             InitializeComponent();
-            ThisRoom = null;
             this.GotFocus += OnGotFocus;
             this.LostFocus += OnLostFocus;
             this.Unloaded += (sender, args) =>
@@ -60,7 +65,7 @@ namespace Octgn.Controls
                 if (value != null)
                 {
                     _chatRoomId = value.Rid;
-                    image1.Opacity = 1;
+                    //image1.Opacity = 1;
                     UserName = value.GroupUser.UserName;
                 }
                 else

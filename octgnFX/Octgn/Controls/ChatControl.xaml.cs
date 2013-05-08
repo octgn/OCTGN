@@ -247,7 +247,8 @@ namespace Octgn.Controls
                             }
                         }
 
-                        var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
+                        var ctr = new ChatTableRow(theFrom, theMessage, therTime, themType);
+                        //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
 
                         ctr.MouseEnter += (o, args) =>
                         {

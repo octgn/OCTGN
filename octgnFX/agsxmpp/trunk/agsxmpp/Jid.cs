@@ -202,6 +202,7 @@ namespace agsXMPP
                     this.m_Server = server;
                 if (resource != null)
                     this.m_Resource = resource;
+                BuildJid();
 
                 return true;
             }
@@ -225,11 +226,26 @@ namespace agsXMPP
 				sb.Append("@");
 			}
 			sb.Append(server);
+            m_bare = sb.ToString();
 			if (resource != null)
 			{
 				sb.Append("/");
 				sb.Append(resource);
 			}
+
+            //Hash code
+            int hcode = 0;
+            if (m_User != null)
+                hcode ^= m_User.GetHashCode();
+
+            if (m_Server != null)
+                hcode ^= m_Server.GetHashCode();
+
+            if (m_Resource != null)
+                hcode ^= m_Resource.GetHashCode();
+            m_HashCode = hcode;
+            //end hash code
+
 			return sb.ToString();
 		}
         
@@ -319,15 +335,21 @@ namespace agsXMPP
 			}
 		}
 
+	    private string m_bare = "";
+
 		/// <summary>
 		/// The Bare Jid only (user@server).
 		/// </summary>		
         public string Bare
 		{
 			get
-			{				
-				return BuildJid(m_User, m_Server, null);
+			{
+			    return m_bare;
 			}
+            internal set
+            {
+                m_bare = BuildJid(m_User, m_Server, null);
+            }
         }
 
         #region << Overrides >>
@@ -341,19 +363,10 @@ namespace agsXMPP
             return Equals(obj, new FullJidComparer());
         }
 
+	    private int m_HashCode = 0;
         public override int GetHashCode()
         {
-            int hcode = 0;
-            if (m_User  !=null)
-                hcode ^= m_User.GetHashCode();
-
-            if (m_Server != null)
-                hcode ^= m_Server.GetHashCode();
-
-            if (m_Resource != null)
-                hcode ^= m_Resource.GetHashCode();
-            
-            return hcode;
+            return m_HashCode;
         }
         #endregion
 

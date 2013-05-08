@@ -58,11 +58,7 @@ namespace Octgn.Controls
                 }
                 foreach( var g in Program.LobbyClient.Chatting.Rooms.Where(x=>x.IsGroupChat))
                 {
-                    var gc = new GroupChatListItem()
-                    {
-                        ThisRoom = g ,
-                        HorizontalAlignment = HorizontalAlignment.Stretch
-                    };
+                    var gc = new GroupChatListItem(g);
                     gc.MouseDoubleClick += GiMouseDoubleClick;
                     stackPanel1.Children.Add(gc);
                 }
