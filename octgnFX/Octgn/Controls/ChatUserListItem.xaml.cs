@@ -109,8 +109,8 @@ namespace Octgn.Controls
         {
             this.Loaded -= OnLoaded;
             _realHeight = 25;
-            var hanim = new DoubleAnimation(0, _realHeight, new Duration(TimeSpan.FromMilliseconds(500)));
-            this.BeginAnimation(HeightProperty, hanim, HandoffBehavior.Compose);
+            //var hanim = new DoubleAnimation(0, _realHeight, new Duration(TimeSpan.FromMilliseconds(500)));
+            //this.BeginAnimation(HeightProperty, hanim, HandoffBehavior.Compose);
         }
 
         private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
@@ -146,22 +146,18 @@ namespace Octgn.Controls
         {
             if (pretendVisible == Visibility.Hidden) return;
             pretendVisible = Visibility.Hidden;
-            //Log.Info("Hiding " + User.UserName);
-            //var anim = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(500)));
-            var hanim = new DoubleAnimation(_realHeight, 0, new Duration(TimeSpan.FromMilliseconds(100)));
-            //this.BeginAnimation(OpacityProperty,anim,HandoffBehavior.Compose);
-            this.BeginAnimation(HeightProperty,hanim,HandoffBehavior.Compose);
+            //var hanim = new DoubleAnimation(_realHeight, 0, new Duration(TimeSpan.FromMilliseconds(100)));
+            //this.BeginAnimation(HeightProperty,hanim,HandoffBehavior.Compose);
+            this.Visibility = Visibility.Collapsed;
         }
 
         public void Show()
         {
             if (pretendVisible == Visibility.Visible) return;
             pretendVisible = Visibility.Visible;
-            //Log.Info("Showing " + User.UserName);
-            //var anim = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(500)));
-            var hanim = new DoubleAnimation(0, _realHeight, new Duration(TimeSpan.FromMilliseconds(100)));
-            //this.BeginAnimation(OpacityProperty,anim,HandoffBehavior.Compose);
-            this.BeginAnimation(HeightProperty,hanim,HandoffBehavior.Compose);
+            //var hanim = new DoubleAnimation(0, _realHeight, new Duration(TimeSpan.FromMilliseconds(100)));
+            //this.BeginAnimation(HeightProperty,hanim,HandoffBehavior.Compose);
+            this.Visibility = Visibility.Visible;
         }
 
         public int CompareTo(ChatUserListItem other)
