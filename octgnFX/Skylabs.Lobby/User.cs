@@ -224,6 +224,9 @@ namespace Skylabs.Lobby
             string rid1 = null;
             string rid2 = null;
 
+            if ((null == a as object && null != b as object) || (null != a as object && null == b as object)) 
+                return false;
+
             // null must be on the left side of a, or we get a stack overflow
             if (null != a as object && a.JidUser != null && a.JidUser.Bare != null)
             {
