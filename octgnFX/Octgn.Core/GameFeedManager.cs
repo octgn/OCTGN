@@ -68,38 +68,56 @@
             {
                 foreach (var g in DataManagers.GameManager.Get().Games)
                 {
-                    Log.InfoFormat("Checking for updates for game {0} {1}",g.Id,g.Name);
+                    Log.DebugFormat("Checking for updates for game {0} {1}",g.Id,g.Name);
                     foreach (var f in this.GetFeeds())
                     {
-                        Log.InfoFormat("Getting feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
+                        Log.DebugFormat("Getting feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                         var repo = PackageRepositoryFactory.Default.CreateRepository(f.Url);
-                        Log.InfoFormat("Repo Created {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
+                        Log.DebugFormat("Repo Created {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                         IPackage newestPackage = default(IPackage);
                         try
                         {
-                            newestPackage = repo.GetPackages().Where(x => x.Id.ToLower() == g.Id.ToString().ToLower()).ToList().OrderByDescending(x => x.Version.Version).FirstOrDefault(x => x.IsAbsoluteLatestVersion);
+                            var retryCount = 0;
+                            while (retryCount < 3)
+                            {
+                                try
+                                {
+                                    newestPackage =
+                                        repo.GetPackages()
+                                            .Where(x => x.Id.ToLower() == g.Id.ToString().ToLower())
+                                            .ToList()
+                                            .OrderByDescending(x => x.Version.Version)
+                                            .FirstOrDefault(x => x.IsAbsoluteLatestVersion);
+                                    break;
+                                }
+                                catch
+                                {
+                                    retryCount++;
+                                    if (retryCount == 3) throw;
+                                }
+                            }
                         }
                         catch (WebException e)
                         {
                             Log.WarnFormat("Could not get feed {0} {1}",f.Name,f.Url);
                             Log.Warn("",e);
                             continue;
-                        } 
-                        Log.InfoFormat("Grabbed newest package for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
+                        }
+                        Log.DebugFormat("Grabbed newest package for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                         if (newestPackage == null)
                         {
-                            Log.InfoFormat("No package found for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
+                            Log.DebugFormat("No package found for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                             continue;
                         }
-                        Log.InfoFormat("Got feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
-                        Log.InfoFormat("Installed Version: {0} Feed Version: {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version, g.Id, g.Name, f.Name, f.Url);
+                        Log.DebugFormat("Got feed {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
+                        Log.DebugFormat("Installed Version: {0} Feed Version: {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version, g.Id, g.Name, f.Name, f.Url);
                         var gameVersion = new SemanticVersion(g.Version);
                         if (newestPackage.Version.Version.CompareTo(gameVersion.Version) > 0)
                         {
-                            Log.InfoFormat(
+                            Log.DebugFormat(
                                 "Update found. Updating from {0} to {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version,g.Id, g.Name, f.Name, f.Url);
                             DataManagers.GameManager.Get().InstallGame(newestPackage);
-                            Log.InfoFormat("Updated game finished for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
+                            Log.DebugFormat("Updated game finished for {0} {1} {2} {3}", g.Id, g.Name, f.Name, f.Url);
                             break;
                         }
                     }
@@ -108,7 +126,7 @@
             }
             catch (Exception e)
             {
-                Log.Error("Error checking for updates", e);
+                Log.Warn("Error checking for updates", e);
             }
             finally
             {

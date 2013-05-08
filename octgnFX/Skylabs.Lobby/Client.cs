@@ -617,10 +617,8 @@ namespace Skylabs.Lobby
                 if (msg.HasTag(typeof(Sub)))
                 {
                     var sub = msg.SelectSingleElement<Sub>();
-                    Log.Info("Sub Message");
                     if (this.OnDataReceived != null)
                     {
-                        Log.Info("Firing Sub Message Data Event");
                         var u = new User(new Jid(msg.From.Resource + "@" + Host));
                         u.IsSubbed = sub.IsSubbed;
                         this.OnDataReceived.Invoke(this,DataRecType.UserSubChanged, u);

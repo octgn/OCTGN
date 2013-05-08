@@ -287,15 +287,15 @@
         {
             try
             {
-                Log.InfoFormat("Open file {0} {1} {2} {3}",path,fileMode,share,timeout.ToString());
+                Log.DebugFormat("Open file {0} {1} {2} {3}",path,fileMode,share,timeout.ToString());
                 var endTime = DateTime.Now + timeout;
                 while (DateTime.Now < endTime)
                 {
-                    Log.InfoFormat("Trying to lock file {0}",path);
+                    Log.DebugFormat("Trying to lock file {0}", path);
                     try
                     {
                         stream = File.Open(path, fileMode, FileAccess.ReadWrite, share);
-                        Log.InfoFormat("Got lock on file {0}",path);
+                        Log.DebugFormat("Got lock on file {0}", path);
                         return true;
                     }
                     catch (IOException e)
@@ -310,7 +310,7 @@
             }
             finally
             {
-                Log.InfoFormat("Finished {0}",path);
+                Log.DebugFormat("Finished {0}", path);
             }
         }
     }
