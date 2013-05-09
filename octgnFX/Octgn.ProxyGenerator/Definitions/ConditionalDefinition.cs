@@ -57,7 +57,7 @@ namespace Octgn.ProxyGenerator.Definitions
             }
             if (switchNode != null)
             {
-                ResolveSwitch(values);
+                return(ResolveSwitch(values));
             }
             return (ret);
         }
