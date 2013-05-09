@@ -225,9 +225,23 @@
 
             var ip = IPAddress.Parse("127.0.0.1");
 
-            Program.Client = new Client(ip, hostport);
-            Program.Client.Connect();
-            SuccessfulHost = true;
+            for (var i = 0; i < 5; i++)
+            {
+                try
+                {
+                    Program.Client = new Client(ip, hostport);
+                    Program.Client.Connect();
+                    SuccessfulHost = true;
+                    return;
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("Start local game error",e);
+                    if (i == 4) throw;
+                }
+                Thread.Sleep(2000);
+            }
+            
         }
 
         void StartOnlineGame(DataNew.Entities.Game game, string name, string password)

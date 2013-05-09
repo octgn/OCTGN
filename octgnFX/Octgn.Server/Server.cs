@@ -97,7 +97,7 @@ namespace Octgn.Server
         {
             while (!_closed)
             {
-                Thread.Sleep(20000);
+                Thread.Sleep(120000);
                 lock (_clients)
                 {
                     if (_clients.Count == 0)
@@ -112,8 +112,8 @@ namespace Octgn.Server
                         Stop();
                         break;
                     }
-                    _clients.FindAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 60).ForEach(me => me.Disconnect());
-                    _clients.RemoveAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 60);
+                    _clients.FindAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 240).ForEach(me => me.Disconnect());
+                    _clients.RemoveAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 240);
                 }
             }
         }
@@ -192,7 +192,7 @@ namespace Octgn.Server
                     //lock (this)
                     //{
                     var ts = new TimeSpan(DateTime.Now.Ticks - _lastPing.Ticks);
-                    if (ts.TotalSeconds > 20)
+                    if (ts.TotalSeconds > 120)
                         Disconnect("Ping timeout");
                     if (Disposed) return;
                     //}
