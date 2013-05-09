@@ -216,6 +216,7 @@ namespace Octgn.ProxyGenerator.Definitions
             string property = switchNode.Attributes["property"].Value;
 
             bool fallThrough = false;
+            bool firstRun = true;
             foreach (XmlNode childNode in switchNode.ChildNodes)
             {
                 if (TemplateDefinition.SkipNode(childNode))
@@ -239,7 +240,7 @@ namespace Octgn.ProxyGenerator.Definitions
                     {
                         breakValue = bool.Parse(childNode.Attributes["break"].Value);
                     }
-                    if (fallThrough)
+                    if (firstRun || fallThrough)
                     {
                         if (value != null)
                         {
@@ -285,6 +286,7 @@ namespace Octgn.ProxyGenerator.Definitions
                                 continue;
                             }
                         }
+                        firstRun = false;
                     }
                     else
                     {
