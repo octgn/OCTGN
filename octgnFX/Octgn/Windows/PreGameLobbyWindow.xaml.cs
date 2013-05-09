@@ -18,9 +18,11 @@
 
         public void Setup(bool isLocalGame, Window owner)
         {
-            this.Owner = owner;
+            //this.Owner = owner;
+            //this.Topmost = false;
             if(this.Visibility != Visibility.Visible)
                 this.Show();
+            this.Focus();
             this.Content = null;
             this.lobby = null;
             lobby = new PreGameLobby(isLocalGame);
