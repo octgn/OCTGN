@@ -242,37 +242,49 @@ namespace Octgn.Tabs.GameManagement
             if (installo8cprocessing) return;
             installo8cprocessing = true;
             var of = new System.Windows.Forms.OpenFileDialog();
+            of.Multiselect = true;
             of.Filter = "Octgn Card Package (*.o8c) |*.o8c";
             var result = of.ShowDialog();
             if (result == DialogResult.OK)
             {
-                if (!File.Exists(of.FileName)) return;
                 this.ProcessTask(
                             () =>
                                 {
-                                    try
+                                    foreach (var f in of.FileNames)
                                     {
-                                        GameManager.Get().Installo8c(of.FileName);
-                                        TopMostMessageBox.Show(
-                                                "The image pack was installed.", "Install", MessageBoxButton.OK, MessageBoxImage.Information);
-                                    }
-                                    catch (UserMessageException ex)
-                                    {
-                                        Log.Warn("Could not install o8c " + of.FileName + ".",ex);
-                                        TopMostMessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Log.Warn("Could not install o8c " + of.FileName + ".", ex);
-                                        TopMostMessageBox.Show(
-                                            "Could not install o8c " + of.FileName
-                                            + ". Please make sure it isn't in use and that you have access to it.",
-                                            "Error",
-                                            MessageBoxButton.OK,
-                                            MessageBoxImage.Error);
+                                        try
+                                        {
+                                            if (!File.Exists(f)) continue;
+                                            GameManager.Get().Installo8c(of.FileName);
+                                        }
+                                        catch (UserMessageException ex)
+                                        {
+                                            Log.Warn("Could not install o8c " + of.FileName + ".", ex);
+                                            TopMostMessageBox.Show(
+                                                ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Log.Warn("Could not install o8c " + of.FileName + ".", ex);
+                                            TopMostMessageBox.Show(
+                                                "Could not install o8c " + of.FileName
+                                                + ". Please make sure it isn't in use and that you have access to it.",
+                                                "Error",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Error);
+                                        }
                                     }
                                 },
-                            () => { this.installo8cprocessing = false; },
+                            () =>
+                                {
+                                    this.installo8cprocessing = false;
+                                    TopMostMessageBox.Show(
+                                                "The image packs were installed.",
+                                                "Install",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
+                                    
+                                },
                             "Installing image pack.",
                             "Please wait while your image pack is installed. You can switch tabs if you like.");
             }
