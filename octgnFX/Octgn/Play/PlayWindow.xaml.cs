@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -25,12 +24,9 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
-    using Microsoft.Windows.Controls.Ribbon;
-
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
-    using Octgn.Library;
     using Octgn.Library.Exceptions;
     using log4net;
     using Octgn.Controls;
@@ -96,7 +92,7 @@ namespace Octgn.Play
             chat.output.FontFamily = new FontFamily("Seqoe UI");
             chat.output.FontSize = 12;
             chat.watermark.FontFamily = new FontFamily("Sequo UI");
-            Console.Visibility = Visibility.Visible;
+            MenuConsole.Visibility = Visibility.Visible;
             Log.Info(string.Format("Found #{0} amount of fonts", Program.GameEngine.Definition.Fonts.Count));
             if (Program.GameEngine.Definition.Fonts.Count > 0)
             {
@@ -227,8 +223,6 @@ namespace Octgn.Play
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question) != MessageBoxResult.Yes)
                 e.Cancel = true;
-            // Fix for this bug: http://wpf.codeplex.com/workitem/14078
-            ribbon.IsMinimized = false;
             base.OnClosing(e);
         }
 
@@ -469,19 +463,17 @@ namespace Octgn.Play
                     this.wndManager.Visibility = Visibility.Collapsed
                         ;
                     this.backstage.Child = ui;
-                    this.backstage.Visibility = Visibility.Visible;
-                    if (!(ui is PickCardsDialog)) return;
-                    this.limitedTab.Visibility = Visibility.Visible;
-                    this.ribbon.SelectedItem = this.limitedTab;
+                    this.LimitedBackstage.Visibility = Visibility.Visible;
+                    backstage.Visibility = Visibility.Visible;
                 }));
         }
 
         internal void HideBackstage()
         {
-            limitedTab.Visibility = Visibility.Collapsed;
 
             table.Visibility = Visibility.Visible;
             wndManager.Visibility = Visibility.Visible;
+            LimitedBackstage.Visibility = Visibility.Collapsed;
             backstage.Visibility = Visibility.Collapsed;
             backstage.Child = null;
 
@@ -525,21 +517,6 @@ namespace Octgn.Play
         }
 
         #endregion
-
-        private void RibbonSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var tab = ribbon.SelectedItem as RibbonTab;
-            if (tab == null) return;
-            tab.HeaderStyle = Resources["SelectedHeaderColor"] as Style;
-            foreach (var t in ribbon.Items.OfType<RibbonTab>())
-            {
-                if (!(Equals(t, tab)))
-                {
-                    t.HeaderStyle = Resources["NormalHeaderColor"] as Style;
-                }
-
-            }
-        }
 
         private void KillJoshJohnson(object sender, RoutedEventArgs e)
         {

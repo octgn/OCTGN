@@ -12,8 +12,14 @@ using Octgn.Scripting;
 
 namespace Octgn.Play.Gui
 {
+    using System.Reflection;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew.Entities;
+
+    using log4net;
 
     using Card = Octgn.Play.Card;
     using Group = Octgn.Play.Group;
@@ -21,6 +27,7 @@ namespace Octgn.Play.Gui
 
     public class GroupControl : UserControl
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF
 
         [Import] protected Engine ScriptEngine;
@@ -54,13 +61,14 @@ namespace Octgn.Play.Gui
         {
             if (DesignerProperties.GetIsInDesignMode(this)) return;
 
-            Program.GameEngine.ComposeParts(this);
+            this.Loaded += OnLoaded;
 
             AddHandler(CardControl.CardOverEvent, new CardsEventHandler(OnCardOver));
             AddHandler(CardControl.CardOutEvent, new CardsEventHandler(OnCardOut));
             AddHandler(CardControl.CardDroppedEvent, new CardsEventHandler(OnCardDropped));
             AddHandler(TableControl.TableKeyEvent, new EventHandler<TableKeyEventArgs>(OnKeyShortcut));
 
+            Dispatcher.BeginInvoke(new Action(() => Program.GameEngine.ComposeParts(this)));
             DataContextChanged += delegate
                                       {
                                           group = DataContext as Group;
@@ -73,6 +81,11 @@ namespace Octgn.Play.Gui
                                           e.Handled = true;
                                           ShowContextMenu(null);
                                       };
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            this.Loaded -= OnLoaded;
         }
 
         internal virtual ItemContainerGenerator GetItemContainerGenerator()
