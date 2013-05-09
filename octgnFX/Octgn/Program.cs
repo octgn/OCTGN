@@ -85,8 +85,8 @@ namespace Octgn
 
         internal static void Start()
         {
-            KillOtherOctgn();
             Application.Current.MainWindow = new Window();
+            KillOtherOctgn();
             bool isUpdate = RunUpdateChecker();
             if (isUpdate)
             {
