@@ -19,6 +19,7 @@
             CheckBoxLightChat.IsChecked = Prefs.UseLightChat;
             CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
             CheckBoxUseWindowTransparency.IsChecked = Prefs.UseWindowTransparency;
+            MaxChatHistory.Value = Prefs.MaxChatHistory;
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
             this.CanResize = false;
@@ -41,7 +42,8 @@
                 }));
         }
 
-        void ValidateFields(ref string dataDirectory, bool installOnBoot, bool useLightChat, bool useHardwareRendering, bool useTransparentWindows)
+        void ValidateFields(ref string dataDirectory, bool installOnBoot, 
+            bool useLightChat, bool useHardwareRendering, bool useTransparentWindows, int maxChatHistory)
         {
             try
             {
@@ -53,31 +55,35 @@
             {
                 throw new UserMessageException("The data directory value is invalid");
             }
+            if (maxChatHistory < 50) throw new UserMessageException("Max chat history can't be less than 50");
 
         }
 
         void SaveSettings()
         {
             SetError();
+            if (MaxChatHistory.Value == null) MaxChatHistory.Value = 100;
             var dataDirectory = TextBoxDataDirectory.Text;
             var installOnBoot = CheckBoxInstallOnBoot.IsChecked ?? false;
             var useLightChat = CheckBoxLightChat.IsChecked ?? false;
             var useHardwareRendering = CheckBoxUseHardwareRendering.IsChecked ?? false;
             var useTransparentWindows = CheckBoxUseWindowTransparency.IsChecked ?? false;
-            var task = new Task(() => this.SaveSettingsTask(ref dataDirectory, installOnBoot, useLightChat, useHardwareRendering, useTransparentWindows));
+            var maxChatHistory = MaxChatHistory.Value ?? 100;
+            var task = new Task(() => this.SaveSettingsTask(ref dataDirectory, installOnBoot, useLightChat, useHardwareRendering, useTransparentWindows,maxChatHistory));
             task.ContinueWith((t) => { Dispatcher.Invoke(new Action(() => this.SaveSettingsComplete(t))); });
             task.Start();
         }
 
-        void SaveSettingsTask(ref string dataDirectory, bool installOnBoot, bool useLightChat, bool useHardwareRendering, bool useTransparentWindows)
+        void SaveSettingsTask(ref string dataDirectory, bool installOnBoot, bool useLightChat, bool useHardwareRendering, bool useTransparentWindows,int maxChatHistory)
         {
             this.ValidateFields(
-                ref dataDirectory, installOnBoot, useLightChat, useHardwareRendering, useTransparentWindows);
+                ref dataDirectory, installOnBoot, useLightChat, useHardwareRendering, useTransparentWindows,maxChatHistory);
             Prefs.DataDirectory = dataDirectory;
             Prefs.InstallOnBoot = installOnBoot;
             Prefs.UseLightChat = useLightChat;
             Prefs.UseHardwareRendering = useHardwareRendering;
             Prefs.UseWindowTransparency = useTransparentWindows;
+            Prefs.MaxChatHistory = maxChatHistory;
         }
 
         void SaveSettingsComplete(Task task)

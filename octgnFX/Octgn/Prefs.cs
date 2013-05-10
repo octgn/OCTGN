@@ -68,6 +68,18 @@ namespace Octgn
             }
         }        
 
+        public static int MaxChatHistory
+        {
+            get
+            {
+                return int.Parse(SimpleConfig.Get().ReadValue("MaxChatHistory", "100"));
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("MaxChatHistory", value.ToString());
+            }
+        }
+
         public static bool getFilterGame(string name)
         {
             bool ret = true;

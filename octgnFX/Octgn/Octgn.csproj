@@ -232,6 +232,12 @@
     <Reference Include="WpfAnimatedGif">
       <HintPath>..\..\packages\WpfAnimatedGif.1.4.0-beta1\lib\net\WpfAnimatedGif.dll</HintPath>
     </Reference>
+    <Reference Include="WPFToolkit">
+      <HintPath>..\..\..\clientservices\remindertestmvvm\packages\extended.wpf.toolkit.1.9.0\lib\net35\WPFToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="xceed.wpf.toolkit">
+      <HintPath>..\..\..\clientservices\remindertestmvvm\packages\extended.wpf.toolkit.1.9.0\lib\net35\xceed.wpf.toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">

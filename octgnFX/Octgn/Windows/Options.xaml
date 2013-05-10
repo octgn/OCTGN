@@ -1,4 +1,4 @@
-﻿<controls:OctgnChrome x:Class="Octgn.Windows.Options"
+﻿<controls:OctgnChrome xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"  x:Class="Octgn.Windows.Options"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:Octgn.Controls"
              Title="Options" Width="438" WindowIcon="/OCTGN;component/Resources/Icons/setting_tools.png" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Top" Height="301" WindowStartupLocation="CenterScreen">
@@ -25,6 +25,17 @@
                 <TextBox x:Name="TextBoxDataDirectory" Grid.Column="0"></TextBox>
                 <Button x:Name="ButtonPickDataDirectory" Grid.Column="2" Click="ButtonPickDataDirectoryClick">Choose</Button>
             </Grid>
+            <Grid Height="10"></Grid>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Max Chat History"/>
+                <Grid Width="10"/>
+                <xctk:IntegerUpDown x:Name="MaxChatHistory" 
+                                    Width="75" Background="#FF555555" 
+                                    Foreground="White" BorderBrush="Blue" 
+                                    Increment="1" Minimum="1"
+                                    ShowButtonSpinner="True"
+                                    AllowSpin="True"></xctk:IntegerUpDown>
+            </StackPanel>
             <Grid Height="10"></Grid>
             <CheckBox x:Name="CheckBoxInstallOnBoot">Always Install Games On Install(useful for game devs)</CheckBox>
             <Grid Height="10"></Grid>
