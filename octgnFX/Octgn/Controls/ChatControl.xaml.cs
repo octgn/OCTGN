@@ -11,7 +11,6 @@ namespace Octgn.Controls
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
     using System.Reflection;
@@ -25,7 +24,6 @@ namespace Octgn.Controls
     using CodeBits;
 
     using Octgn.Extentions;
-    using Octgn.Library.Utils;
 
     using Skylabs.Lobby;
 
@@ -34,7 +32,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for ChatControl
     /// </summary>
-    public partial class ChatControl : UserControl
+    public partial class ChatControl : UserControl,INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
@@ -72,8 +70,23 @@ namespace Octgn.Controls
         /// </summary>
         private bool justScrolledToBottom;
 
+        private bool showChatInputHint = true;
+
         public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
 
+        public bool ShowChatInputHint
+        {
+            get
+            {
+                return this.showChatInputHint;
+            }
+            set
+            {
+                if (this.showChatInputHint == value) return;
+                this.showChatInputHint = value;
+                OnPropertyChanged("ShowChatInputHint");
+            }
+        }
 
         protected Brush HoverBackBrush { get; set; }
         /// <summary>
@@ -437,7 +450,7 @@ namespace Octgn.Controls
                 this.shiftDown = true;
             }
 
-            if (!this.shiftDown && e.Key == Key.Enter)
+            if (!this.shiftDown && (e.Key == Key.Return || e.Key == Key.Enter))
             {
                 this.messageCache.Add(ChatInput.Text);
                 if (this.messageCache.Count >= 51)
@@ -491,5 +504,23 @@ namespace Octgn.Controls
                 }
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void ChatInput_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(ChatInput.Text)) ShowChatInputHint = true;
+            else ShowChatInputHint = false;
+        }
+
     }
 }

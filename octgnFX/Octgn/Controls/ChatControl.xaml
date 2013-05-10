@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="100*"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" Grid.RowSpan="2" Width="2" ResizeBehavior="PreviousAndNext"/>
         <Grid Grid.Column="2" Grid.RowSpan="2" Background="#FF333333">
@@ -46,7 +46,26 @@
             <TextBox x:Name="UserFilter"  TextWrapping="NoWrap" Text="" VerticalContentAlignment="Center" Grid.Column="2" TextChanged="UserFilterTextChanged" >
             </TextBox>
         </Grid>
-        <TextBox x:Name="ChatInput" Grid.Row="1" TextWrapping="Wrap" VerticalContentAlignment="Center" PreviewKeyUp="ChatInputPreviewKeyUp" PreviewKeyDown="ChatInputPreviewKeyDown"/>
+        <TextBlock 
+            Grid.Row="1"
+            VerticalAlignment="Center"
+            Margin="10,0,0,0"
+            Foreground="LightGray"
+            Canvas.ZIndex="1"
+            Text="/? for user and chat commands"
+            IsHitTestVisible="False"
+            Visibility="{Binding ShowChatInputHint,ElementName=thisControl,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <TextBox x:Name="ChatInput" Grid.Row="1"  TextWrapping="Wrap" VerticalContentAlignment="Center" 
+                 PreviewKeyUp="ChatInputPreviewKeyUp" PreviewKeyDown="ChatInputPreviewKeyDown"
+                 AcceptsReturn="True"
+                 Padding="5,0,0,0"
+                 Height="Auto"
+                 MinHeight="30"
+                 MaxHeight="150"
+                 VerticalScrollBarVisibility="Auto"
+                 TextChanged="ChatInput_OnTextChanged"
+        >
+        </TextBox>
         <RichTextBox x:Name="Chat" VerticalScrollBarVisibility="Auto" 
                      IsReadOnly="True" IsDocumentEnabled="True" Background="{StaticResource DarkChatBackBrush}"
                      Foreground="{StaticResource DarkChatFontBrush}">

@@ -191,7 +191,7 @@ namespace Octgn.Controls
                 12,
                 Brushes.Black);
             f.SetFontWeight(FontWeights.Bold);
-            return f.Width + 5;
+            return f.Width + 10;
         }
 
         /// <summary>
