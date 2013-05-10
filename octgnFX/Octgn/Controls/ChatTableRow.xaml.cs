@@ -86,10 +86,7 @@ namespace Octgn.Controls
             this.MessageType = messageType;
             this.Unloaded += OnUnloaded;
             this.Loaded += OnLoaded;
-            Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             this.UsernameParagraph.Inlines.Add(new Run());
-            this.UsernameParagraph.MouseEnter += UsernameParagraphOnMouseEnter;
-            this.UsernameParagraph.MouseLeave += UsernameParagraphOnMouseLeave;
             enableGifs = Prefs.EnableChatGifs;
             enableImages = Prefs.EnableChatImages;
         }
@@ -106,14 +103,19 @@ namespace Octgn.Controls
 
         private void OnLoaded(object sender, EventArgs eventArgs)
         {
-            this.Loaded -= this.OnLoaded;
+            //this.Loaded -= this.OnLoaded;
+            //this.User = user;
+            //this.Message = message;
+            //this.MessageDate = messageDate;
+            this.UsernameParagraph.MouseEnter += UsernameParagraphOnMouseEnter;
+            this.UsernameParagraph.MouseLeave += UsernameParagraphOnMouseLeave;
+            Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             this.ProgramOnOnOptionsChanged();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
-            this.Unloaded -= this.OnUnloaded;
             this.UsernameParagraph.MouseEnter -= this.UsernameParagraphOnMouseEnter;
             this.UsernameParagraph.MouseLeave -= this.UsernameParagraphOnMouseLeave;
         }

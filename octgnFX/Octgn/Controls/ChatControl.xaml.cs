@@ -113,7 +113,7 @@ namespace Octgn.Controls
 
         private void OnLoaded(object sender, EventArgs eventArgs)
         {
-            this.Loaded -= OnLoaded;
+            //this.Loaded -= OnLoaded;
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
             ProgramOnOnOptionsChanged();
@@ -123,11 +123,11 @@ namespace Octgn.Controls
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived -= this.LobbyClientOnOnDataReceived;
-            Unloaded -= this.OnUnloaded;
-            foreach (var r in ChatRowGroup.Rows.ToArray())
-            {
-                ChatRowGroup.Rows.Remove(r);
-            }
+            //Unloaded -= this.OnUnloaded;
+            //foreach (var r in ChatRowGroup.Rows.ToArray())
+            //{
+            //    ChatRowGroup.Rows.Remove(r);
+            //}
         }
 
         private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
@@ -264,7 +264,6 @@ namespace Octgn.Controls
 
                         ctr.OnMouseUsernameEnter += ChatTableRow_MouseEnter;
                         ctr.OnMouseUsernameLeave += ChatTableRow_MouseLeave;
-                        ctr.Unloaded += ChatTableRow_Unloaded;
                         ChatRowGroup.Rows.Add(ctr);
                         if (rtbatbottom)
                         {
@@ -282,15 +281,6 @@ namespace Octgn.Controls
                             }
                         }
                     }));
-        }
-
-        void ChatTableRow_Unloaded(object sender, RoutedEventArgs e)
-        {
-            var s = sender as ChatTableRow;
-            if (s == null) return;
-            s.Unloaded -= ChatTableRow_Unloaded;
-            s.OnMouseUsernameEnter -= this.ChatTableRow_MouseEnter;
-            s.OnMouseUsernameLeave -= this.ChatTableRow_MouseLeave;
         }
 
         private void ChatTableRow_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
