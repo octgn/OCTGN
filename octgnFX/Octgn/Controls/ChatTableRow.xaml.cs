@@ -16,6 +16,7 @@ namespace Octgn.Controls
     using System.Text.RegularExpressions;
     using System.Windows;
     using System.Windows.Documents;
+    using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Navigation;
 
@@ -49,12 +50,16 @@ namespace Octgn.Controls
 
         private bool? useLightChat;
 
+        public event MouseEventHandler OnMouseUsernameEnter;
+        public event MouseEventHandler OnMouseUsernameLeave;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatTableRow"/> class.
         /// </summary>
         public ChatTableRow()
             : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")),"TestMessage",DateTime.Now,LobbyMessageType.Standard)
         {
+            
         }
 
         public ChatTableRow(User user, string message, DateTime messageDate, LobbyMessageType messageType)
@@ -68,7 +73,18 @@ namespace Octgn.Controls
             this.Loaded += OnLoaded;
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             this.UsernameParagraph.Inlines.Add(new Run());
+            this.UsernameParagraph.MouseEnter += UsernameParagraphOnMouseEnter;
+            this.UsernameParagraph.MouseLeave += UsernameParagraphOnMouseLeave;
+        }
 
+        private void UsernameParagraphOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        {
+            if (OnMouseUsernameLeave != null) OnMouseUsernameLeave(this, mouseEventArgs);
+        }
+
+        private void UsernameParagraphOnMouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        {
+            if (OnMouseUsernameEnter != null) OnMouseUsernameEnter(this, mouseEventArgs);
         }
 
         private void OnLoaded(object sender, EventArgs eventArgs)
@@ -81,6 +97,8 @@ namespace Octgn.Controls
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
             this.Unloaded -= this.OnUnloaded;
+            this.UsernameParagraph.MouseEnter -= this.UsernameParagraphOnMouseEnter;
+            this.UsernameParagraph.MouseLeave -= this.UsernameParagraphOnMouseLeave;
         }
 
         private void ProgramOnOnOptionsChanged()

@@ -235,8 +235,12 @@
     <Reference Include="WPFToolkit">
       <HintPath>..\..\..\clientservices\remindertestmvvm\packages\extended.wpf.toolkit.1.9.0\lib\net35\WPFToolkit.dll</HintPath>
     </Reference>
-    <Reference Include="xceed.wpf.toolkit">
-      <HintPath>..\..\..\clientservices\remindertestmvvm\packages\extended.wpf.toolkit.1.9.0\lib\net35\xceed.wpf.toolkit.dll</HintPath>
+    <Reference Include="Xceed.Wpf.DataGrid">
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.1.9.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=1.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Extended.Wpf.Toolkit.1.9.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -35,6 +35,8 @@ namespace Octgn.Controls
     public partial class ChatControl : UserControl,INotifyPropertyChanged
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        #region Privates
+
         /// <summary>
         /// The sent message cache
         /// </summary>
@@ -71,6 +73,8 @@ namespace Octgn.Controls
         private bool justScrolledToBottom;
 
         private bool showChatInputHint = true;
+
+        #endregion Privates
 
         public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
 
@@ -120,6 +124,10 @@ namespace Octgn.Controls
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived -= this.LobbyClientOnOnDataReceived;
             Unloaded -= this.OnUnloaded;
+            foreach (var r in ChatRowGroup.Rows.ToArray())
+            {
+                ChatRowGroup.Rows.Remove(r);
+            }
         }
 
         private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
@@ -177,20 +185,6 @@ namespace Octgn.Controls
             this.room.OnUserListChange += this.RoomOnUserListChange;
             this.room.OnMessageReceived += this.RoomOnMessageReceived;
             this.userRefreshTimer = new Timer(this.OnRefreshTimerTick, this, 5000, 1000);
-        }
-
-        /// <summary>
-        /// Ticks and refreshes the user list if needed
-        /// </summary>
-        /// <param name="state">
-        /// The state.
-        /// </param>
-        private void OnRefreshTimerTick(object state)
-        {
-            if (this.needsRefresh)
-            {
-                this.InvokeResetUserList();
-            }
         }
 
         /// <summary>
@@ -268,30 +262,9 @@ namespace Octgn.Controls
                         var ctr = new ChatTableRow(theFrom, theMessage, therTime, themType);
                         //var ctr = new ChatTableRow { User = theFrom, Message = theMessage, MessageDate = therTime, MessageType = themType };
 
-                        ctr.MouseEnter += (o, args) =>
-                        {
-                            foreach (var r in ChatRowGroup.Rows)
-                            {
-                                var rr = r as ChatTableRow;
-                                if (rr == null)
-                                {
-                                    continue;
-                                }
-
-                                if (rr.User.UserName
-                                    == theFrom.UserName)
-                                {
-                                    r.Background = this.HoverBackBrush;
-                                }
-                            }
-                        };
-                        ctr.MouseLeave += (o, args) =>
-                        {
-                            foreach (var r in ChatRowGroup.Rows)
-                            {
-                                r.Background = null;
-                            }
-                        };
+                        ctr.OnMouseUsernameEnter += ChatTableRow_MouseEnter;
+                        ctr.OnMouseUsernameLeave += ChatTableRow_MouseLeave;
+                        ctr.Unloaded += ChatTableRow_Unloaded;
                         ChatRowGroup.Rows.Add(ctr);
                         if (rtbatbottom)
                         {
@@ -311,6 +284,57 @@ namespace Octgn.Controls
                     }));
         }
 
+        void ChatTableRow_Unloaded(object sender, RoutedEventArgs e)
+        {
+            var s = sender as ChatTableRow;
+            if (s == null) return;
+            s.Unloaded -= ChatTableRow_Unloaded;
+            s.OnMouseUsernameEnter -= this.ChatTableRow_MouseEnter;
+            s.OnMouseUsernameLeave -= this.ChatTableRow_MouseLeave;
+        }
+
+        private void ChatTableRow_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
+        {
+            foreach (var r in ChatRowGroup.Rows)
+            {
+                r.Background = null;
+            }
+        }
+
+        private void ChatTableRow_MouseEnter(object sender, MouseEventArgs mouseEventArgs)
+        {
+            var theFrom = sender as ChatTableRow;
+            if (theFrom == null) return;
+            foreach (var r in ChatRowGroup.Rows)
+            {
+                var rr = r as ChatTableRow;
+                if (rr == null)
+                {
+                    continue;
+                }
+
+                if (rr.User.UserName == theFrom.User.UserName)
+                {
+                    r.Background = this.HoverBackBrush;
+                }
+            }
+        }
+
+        #region Users
+
+        /// <summary>
+        /// Ticks and refreshes the user list if needed
+        /// </summary>
+        /// <param name="state">
+        /// The state.
+        /// </param>
+        private void OnRefreshTimerTick(object state)
+        {
+            if (this.needsRefresh)
+            {
+                this.InvokeResetUserList();
+            }
+        }
         /// <summary>
         /// When the rooms user list changes
         /// </summary>
@@ -415,6 +439,10 @@ namespace Octgn.Controls
             this.InvokeResetUserList();
         }
 
+        #endregion Users
+
+        #region ChatInput
+
         /// <summary>
         /// Happens when a key goes up in the chat text box.
         /// </summary>
@@ -505,6 +533,15 @@ namespace Octgn.Controls
             }
         }
 
+        private void ChatInput_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(ChatInput.Text)) ShowChatInputHint = true;
+            else ShowChatInputHint = false;
+        }
+
+        #endregion ChatInput
+
+        #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -515,12 +552,8 @@ namespace Octgn.Controls
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+        #endregion INotifyPropertyChanged
 
-        private void ChatInput_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (String.IsNullOrEmpty(ChatInput.Text)) ShowChatInputHint = true;
-            else ShowChatInputHint = false;
-        }
 
     }
 }
