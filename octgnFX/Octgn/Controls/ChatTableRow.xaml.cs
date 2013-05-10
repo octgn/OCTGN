@@ -13,14 +13,25 @@ namespace Octgn.Controls
     using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
+    using System.Net;
+    using System.Net.Cache;
+    using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Documents;
     using System.Windows.Input;
     using System.Windows.Media;
+    using System.Windows.Media.Animation;
+    using System.Windows.Media.Imaging;
     using System.Windows.Navigation;
 
     using Octgn.Library.Utils;
+
+    using WpfAnimatedGif;
+
+    using Xceed.Wpf.DataGrid.Utils;
 
     using agsXMPP;
 
@@ -50,6 +61,10 @@ namespace Octgn.Controls
 
         private bool? useLightChat;
 
+        private bool enableGifs;
+
+        private bool enableImages;
+
         public event MouseEventHandler OnMouseUsernameEnter;
         public event MouseEventHandler OnMouseUsernameLeave;
 
@@ -57,9 +72,9 @@ namespace Octgn.Controls
         /// Initializes a new instance of the <see cref="ChatTableRow"/> class.
         /// </summary>
         public ChatTableRow()
-            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")),"TestMessage",DateTime.Now,LobbyMessageType.Standard)
+            : this(new User(new Jid("NoUser", "server.octgn.info", "agsxmpp")), "TestMessage", DateTime.Now, LobbyMessageType.Standard)
         {
-            
+
         }
 
         public ChatTableRow(User user, string message, DateTime messageDate, LobbyMessageType messageType)
@@ -75,6 +90,8 @@ namespace Octgn.Controls
             this.UsernameParagraph.Inlines.Add(new Run());
             this.UsernameParagraph.MouseEnter += UsernameParagraphOnMouseEnter;
             this.UsernameParagraph.MouseLeave += UsernameParagraphOnMouseLeave;
+            enableGifs = Prefs.EnableChatGifs;
+            enableImages = Prefs.EnableChatImages;
         }
 
         private void UsernameParagraphOnMouseLeave(object sender, MouseEventArgs mouseEventArgs)
@@ -123,6 +140,8 @@ namespace Octgn.Controls
                 UrlBrush = Brushes.LightGreen;
                 UsernameParagraph.Foreground = res;
             }
+            enableGifs = Prefs.EnableChatGifs;
+            enableImages = Prefs.EnableChatImages;
             foreach (var hl in MessageParagraph.Inlines.OfType<Hyperlink>())
             {
                 hl.Foreground = UrlBrush;
@@ -212,6 +231,7 @@ namespace Octgn.Controls
             return f.Width + 10;
         }
 
+        private static Brush almostBlack = new SolidColorBrush(Color.FromRgb(2, 2, 2));
         /// <summary>
         /// The construct message and takes care of hyperlinks and other visual fluff.
         /// </summary>
@@ -225,35 +245,150 @@ namespace Octgn.Controls
             {
                 if (Regex.IsMatch(s, RegexPatterns.Urlrx))
                 {
-                    try
+                    System.Uri uri;
+                    bool gotIt;
+                    if (!System.Uri.TryCreate(s, UriKind.RelativeOrAbsolute, out uri))
                     {
-                        var uri = new System.Uri(s);
-                        var hl = new Hyperlink(new Run(s)) { NavigateUri = uri };
-                        hl.Foreground = UrlBrush;
-                        hl.RequestNavigate += this.RequestNavigate;
-                        MessageParagraph.Inlines.Add(hl);
+                        gotIt = System.Uri.TryCreate("http://" + s, UriKind.RelativeOrAbsolute, out uri);
                     }
-                    catch (UriFormatException)
+                    else gotIt = true;
+
+                    if (gotIt && uri != null)
                     {
-                        try
+                        if (!IsImageUrl(uri))
                         {
-                            var uri = new System.Uri("http://" + s);
                             var hl = new Hyperlink(new Run(s)) { NavigateUri = uri };
                             hl.Foreground = UrlBrush;
-                            hl.RequestNavigate += this.RequestNavigate;                        
+                            hl.RequestNavigate += this.RequestNavigate;
                             MessageParagraph.Inlines.Add(hl);
+                            continue;
                         }
-                        catch (Exception)
+                        else
                         {
-                            MessageParagraph.Inlines.Add(s);
+                            try
+                            {
+                                var bi = BitmapFrame.Create(uri);
+                                var image = new Image
+                                {
+                                    Source = bi,
+                                    Stretch = Stretch.Uniform,
+                                    VerticalAlignment = VerticalAlignment.Top,
+                                    HorizontalAlignment = HorizontalAlignment.Left,
+                                    Width = double.NaN,
+                                    Height = double.NaN,
+                                    StretchDirection = StretchDirection.DownOnly
+                                };
+                                var border = new Border
+                                {
+                                    MaxWidth = 300,
+                                    MaxHeight = 500,
+                                    Child = image,
+                                    VerticalAlignment = VerticalAlignment.Top,
+                                    HorizontalAlignment = HorizontalAlignment.Left
+                                };
+                                if (enableGifs)
+                                {
+                                    ImageBehavior.SetAnimatedSource(image, bi);
+                                    ImageBehavior.SetRepeatBehavior(image, RepeatBehavior.Forever);
+                                }
+                                var container = new InlineUIContainer(border);
+                                var hl = new Hyperlink(container){TextDecorations = null};
+
+
+                                hl.Unloaded += LinkUnloaded;
+                                hl.RequestNavigate += this.RequestNavigate;
+
+                                MouseButtonEventHandler imageMouseUpHandler = (a, b) => RequestNavigate(hl, new RequestNavigateEventArgs(hl.NavigateUri, null));
+                                RoutedEventHandler imageUnloadHandler = (a, b) =>
+                                                                            {
+                                                                                image.PreviewMouseUp -= imageMouseUpHandler;
+                                                                            };
+                                image.PreviewMouseUp += imageMouseUpHandler;
+                                image.Unloaded += imageUnloadHandler;
+                                MessageParagraph.Inlines.Add(hl);
+                                continue;
+                            }
+                            catch
+                            {}
                         }
                     }
                 }
-                else
+                var sb = new StringBuilder();
+                var thingcount = 0;
+                foreach (var c in s)
                 {
-                    MessageParagraph.Inlines.Add(s);
+                    if (c == '`')
+                    {
+                        if (thingcount == 0)
+                        {
+                            MessageParagraph.Inlines.Add(sb.ToString());
+                            sb.Clear();
+                        }
+                        thingcount++;
+                    }
+                    if (thingcount == 2)
+                    {
+                        var str = sb.ToString().TrimStart('`');
+                        var textBorder = new Border()
+                                             {
+                                                 BorderBrush = almostBlack,
+                                                 Background = Brushes.LightGray,
+                                                 CornerRadius = new CornerRadius(5),
+                                                 //Padding = new Thickness(10,1,10,1),
+                                                 VerticalAlignment = VerticalAlignment.Top,
+                                                 HorizontalAlignment = HorizontalAlignment.Left
+                                             };
+                        var textBlock = new TextBlock()
+                                            {
+                                                Text = str,
+                                                FontWeight = FontWeights.Bold,
+                                                Foreground = almostBlack,
+                                                Background = Brushes.Transparent,
+                                                Margin = new Thickness(10,1,10,1)
+                                            };
+                        textBorder.Child = textBlock;
+                        var block = new InlineUIContainer(textBorder);
+                        MessageParagraph.Inlines.Add(block);
+                        thingcount = 0;
+                        sb.Clear();
+                    }
+                    else
+                        sb.Append(c);
+                }
+                MessageParagraph.Inlines.Add(sb.ToString());
+                //MessageParagraph.Inlines.Add(s);
+            }
+            
+        }
+
+        private void LinkUnloaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var o = sender as Hyperlink;
+            if (o == null) return;
+            o.Unloaded -= LinkUnloaded;
+            o.RequestNavigate -= this.RequestNavigate;
+        }
+
+        bool IsImageUrl(System.Uri url)
+        {
+            if (!enableImages) return false;
+            if ((SubscriptionModule.Get().IsSubscribed ?? false) == false) return false;
+            var req = (HttpWebRequest)HttpWebRequest.Create(url);
+            req.Method = "HEAD";
+            for (var i = 0; i < 3; i++)
+            {
+                try
+                {
+                    using (var resp = req.GetResponse())
+                    {
+                        return resp.ContentType.ToLower(CultureInfo.InvariantCulture).StartsWith("image/");
+                    }
+                }
+                catch
+                {
                 }
             }
+            return false;
         }
 
         /// <summary>
@@ -271,7 +406,8 @@ namespace Octgn.Controls
             var navigateUri = hl.NavigateUri.ToString();
             try
             {
-                Process.Start(new ProcessStartInfo(navigateUri));
+                Program.LaunchUrl(navigateUri);
+                //Process.Start(new ProcessStartInfo(navigateUri));
             }
             catch (Exception ex)
             {

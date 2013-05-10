@@ -41,7 +41,11 @@
 
         public IEnumerable<FrameworkAssemblyReference> FrameworkAssemblies { get; private set; }
 
+        public ICollection<PackageReferenceSet> PackageAssemblyReferences { get; private set; }
+
         public IEnumerable<PackageDependencySet> DependencySets { get; private set; }
+
+        public Version MinClientVersion { get; private set; }
 
         public Uri ReportAbuseUrl { get; private set; }
 

@@ -19,6 +19,8 @@
             CheckBoxLightChat.IsChecked = Prefs.UseLightChat;
             CheckBoxUseHardwareRendering.IsChecked = Prefs.UseHardwareRendering;
             CheckBoxUseWindowTransparency.IsChecked = Prefs.UseWindowTransparency;
+            CheckBoxEnableChatImages.IsChecked = Prefs.EnableChatImages;
+            CheckBoxEnableChatGifs.IsChecked = Prefs.EnableChatGifs;
             MaxChatHistory.Value = Prefs.MaxChatHistory;
             this.MinMaxButtonVisibility = Visibility.Collapsed;
             this.MinimizeButtonVisibility = Visibility.Collapsed;
@@ -43,7 +45,9 @@
         }
 
         void ValidateFields(ref string dataDirectory, bool installOnBoot, 
-            bool useLightChat, bool useHardwareRendering, bool useTransparentWindows, int maxChatHistory)
+            bool useLightChat, bool useHardwareRendering, 
+            bool useTransparentWindows, int maxChatHistory,
+            bool enableChatImages, bool enableChatGifs)
         {
             try
             {
@@ -69,21 +73,55 @@
             var useHardwareRendering = CheckBoxUseHardwareRendering.IsChecked ?? false;
             var useTransparentWindows = CheckBoxUseWindowTransparency.IsChecked ?? false;
             var maxChatHistory = MaxChatHistory.Value ?? 100;
-            var task = new Task(() => this.SaveSettingsTask(ref dataDirectory, installOnBoot, useLightChat, useHardwareRendering, useTransparentWindows,maxChatHistory));
-            task.ContinueWith((t) => { Dispatcher.Invoke(new Action(() => this.SaveSettingsComplete(t))); });
+            var enableChatImages = CheckBoxEnableChatImages.IsChecked ?? false;
+            var enableChatGifs = CheckBoxEnableChatGifs.IsChecked ?? false;
+            var task = new Task(
+                () => 
+                    this.SaveSettingsTask(
+                    ref dataDirectory, 
+                    installOnBoot, 
+                    useLightChat, 
+                    useHardwareRendering, 
+                    useTransparentWindows,
+                    maxChatHistory,
+                    enableChatImages,
+                    enableChatGifs));
+            task.ContinueWith((t) =>
+                                  {
+                                      Dispatcher
+                                          .Invoke(new Action(
+                                              () => this.SaveSettingsComplete(t)));
+                                  });
             task.Start();
         }
 
-        void SaveSettingsTask(ref string dataDirectory, bool installOnBoot, bool useLightChat, bool useHardwareRendering, bool useTransparentWindows,int maxChatHistory)
+        void SaveSettingsTask(
+            ref string dataDirectory, 
+            bool installOnBoot, 
+            bool useLightChat,
+            bool useHardwareRendering, 
+            bool useTransparentWindows,
+            int maxChatHistory,
+            bool enableChatImages,
+            bool enableChatGifs)
         {
             this.ValidateFields(
-                ref dataDirectory, installOnBoot, useLightChat, useHardwareRendering, useTransparentWindows,maxChatHistory);
+                ref dataDirectory, 
+                installOnBoot, 
+                useLightChat, 
+                useHardwareRendering, 
+                useTransparentWindows,
+                maxChatHistory,
+                enableChatImages,
+                enableChatGifs);
             Prefs.DataDirectory = dataDirectory;
             Prefs.InstallOnBoot = installOnBoot;
             Prefs.UseLightChat = useLightChat;
             Prefs.UseHardwareRendering = useHardwareRendering;
             Prefs.UseWindowTransparency = useTransparentWindows;
             Prefs.MaxChatHistory = maxChatHistory;
+            Prefs.EnableChatImages = enableChatImages;
+            Prefs.EnableChatGifs = enableChatGifs;
         }
 
         void SaveSettingsComplete(Task task)

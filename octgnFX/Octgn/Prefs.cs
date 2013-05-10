@@ -80,6 +80,30 @@ namespace Octgn
             }
         }
 
+        public static bool EnableChatImages
+        {
+            get
+            {
+                return bool.Parse(SimpleConfig.Get().ReadValue("EnableChatImages", "true"));
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("EnableChatImages", value.ToString());
+            }
+        }
+
+        public static bool EnableChatGifs
+        {
+            get
+            {
+                return bool.Parse(SimpleConfig.Get().ReadValue("EnableChatGifs", "true"));
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("EnableChatGifs", value.ToString());
+            }
+        }
+
         public static bool getFilterGame(string name)
         {
             bool ret = true;

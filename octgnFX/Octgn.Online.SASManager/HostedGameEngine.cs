@@ -8,6 +8,7 @@
     using System.Reflection;
     using System.Threading;
 
+    using MongoDB.Bson;
     using MongoDB.Driver;
     using MongoDB.Driver.Wrappers;
 
@@ -91,7 +92,7 @@
 
         internal void SaveState()
         {
-            var res = new WriteConcernResult();
+            WriteConcernResult res = null;
             for (var i = 0; i < 3; i++)
             {
                 res = Data.DbContext.Get().GameCollection.Save(State);
@@ -99,7 +100,9 @@
                 
                 Thread.Sleep(1000 * i);
             }
-            Log.ErrorFormat("Could not save state of game {0} in DB: {1}",State.Id,res.ErrorMessage ?? res.LastErrorMessage ?? "");
+            if (res == null) Log.ErrorFormat("Could not save sate of game {0}", State.Id);
+            else
+                Log.ErrorFormat("Could not save state of game {0} in DB: {1}",State.Id,res.ErrorMessage ?? res.LastErrorMessage ?? "");
         }
 
         internal string CloneSASToTemp()

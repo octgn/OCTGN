@@ -83,8 +83,9 @@ using Octgn.Controls;
                         }
                     }
                 };
-
+#if(!DEBUG)
             LazyAsync.Invoke(GetTwitterStuff);
+#endif
         }
 
         #region News Feed
