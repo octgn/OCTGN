@@ -181,6 +181,7 @@ namespace Octgn.Controls
             if (chatBar != null)
             {
                 chatBar.SelectedIndex = 0;
+                chatBar.Items.Remove(this);
             }
         }
 
