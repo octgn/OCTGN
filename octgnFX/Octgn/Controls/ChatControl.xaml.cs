@@ -491,7 +491,7 @@ namespace Octgn.Controls
                 this.curMessageCacheItem = -1;
                 e.Handled = true;
             }
-            else
+            else if(String.IsNullOrWhiteSpace(ChatInput.Text))
             {
                 switch (e.Key)
                 {
