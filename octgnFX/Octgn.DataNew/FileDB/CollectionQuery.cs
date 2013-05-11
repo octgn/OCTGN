@@ -143,8 +143,11 @@
                                 path = Path.Combine(
                                     i.FullName, def.Parts.First(x => x.PartType == PartType.File).PartString());
                                 if (def.Config.Cache != null) obj = def.Config.Cache.GetObjectFromPath<T>(path);
-                                if (obj == null) obj = (T)def.Serializer.Deserialize(path);
+                            if (obj == null)
+                            {
+                                obj = (T)def.Serializer.Deserialize(path);
                                 if (def.Config.Cache != null) def.Config.Cache.AddObjectToCache(path, obj);
+                            }
 #if(!DEBUG)
                             }
                             catch (Exception e)

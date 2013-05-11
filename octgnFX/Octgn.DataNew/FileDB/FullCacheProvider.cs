@@ -85,8 +85,8 @@
             Path = path;
             Object = obj;
             Watcher = new FileSystemWatcher(fi.Directory.FullName,fi.Name);
-            Watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Size
-                                   | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Security;
+            Watcher.NotifyFilter =  NotifyFilters.LastWrite | NotifyFilters.Size
+                                   | NotifyFilters.FileName | NotifyFilters.DirectoryName ;
             Watcher.Changed += WatcherOnChanged;
             Watcher.Deleted += WatcherOnDeleted;
             Watcher.Renamed += WatcherOnRenamed;
