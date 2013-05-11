@@ -1051,6 +1051,7 @@ namespace Skylabs.Lobby
 
         public void SetSub(bool subbed)
         {
+            if (!this.IsConnected) return;
             var m = new Message(new Jid("lobby@conference." + Host), MessageType.groupchat, string.Empty);
             //m.Body = Me.FullUserName + " " + subbed;
             m.AddChild(new Sub(subbed));
