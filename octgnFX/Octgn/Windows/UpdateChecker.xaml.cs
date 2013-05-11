@@ -188,8 +188,8 @@ namespace Octgn.Windows
 
         private void UpdateGames()
         {
-            this.UpdateStatus("Updating Games...");
-            Task.Factory.StartNew(GameFeedManager.Get().CheckForUpdates).Wait(1500);
+            this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
+            Task.Factory.StartNew(GameFeedManager.Get().CheckForUpdates).Wait(TimeSpan.FromMinutes(5));
         }
 
         private void Update()
