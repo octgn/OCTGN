@@ -1,3 +1,139 @@
+#3.1.25.112
++ Fixed chat memory issue
++ Chat images for subscribers(gifs disabled for now)
++ Login fixes
++ Fix of play window being always on top when fullscreen
++ Added html support for game documents
++ DB Fixes
+
+#3.1.24.111
++ Fixed now can't edit username if playing online
++ Fixed some event issues
+
+#3.1.24.110
++ Fixed some potential memory leaks
+
+#3.1.24.109
++ Added image and gif support in chat for subscribers
++ Fixed menu bar hiding in game
++ Fixed chat message bar not re showing up if closed
++ Only highlight chat lines if hovering usernames
++ Only allow up and down in chat if no text
++ Add option to change chat history length
++ Added hint in chat text input to show /? command
+
+#3.1.24.108
+#3.1.23.108
++ Allow installing multiple o8c files
++ Fixed self hosted game https://github.com/kellyelton/OCTGN/issues/822
++ Fixed pre game lobby always in front and annoying https://github.com/kellyelton/OCTGN/issues/832
++ Fixed not being able to open 2 OCTGN's https://github.com/kellyelton/OCTGN/issues/831
++ Fix for switch statement in proxygen
+
+#3.1.23.107
++ DESTROYED THE EVIL RIBBON CONTROL IN GAME
++ Less user list refreshes for performance
+
+#3.1.23.106
++ User equality speed boost(just a performance thing)
++ elseif in proxy gen fix
++ More performance updates
+
+#3.1.22.106
+#3.1.21.106
++ Fixed some chat slow down
++ Trimmed down some logging
++ Adding some logging
++ Fixed game list not showing up
++ Cleaned out some unrequired junk
++ Addes switch case support for proxygen
+
+#3.1.21.105
+#3.1.20.105
++ Fixed user chat list
++ Added elseif to proxygen
++ New message box system https://github.com/kellyelton/OCTGN/issues/807
+
+#3.1.20.104
++ Added some sub stuff
++ A fix for the chat log
++ Made version required in the set.xsd
+
+#3.1.19.104
++ Fixed feed games don't update with some version changes https://github.com/kellyelton/OCTGN/issues/809
++ Updated the new login with some visual changes
+
+#3.1.19.103
+#3.1.19.102
++ Fixed potential crash/freeze due to breaking my philosophy that while loops are evil
+
+#3.1.18.102
+#3.1.17.102
++ More extensive login logging
++ Added more logging
++ Faster propagation???
++ Fixed where you could accidently resize the window when you resize
++ Contact list cleanup
++ Better user icon usage
++ Fixed a sorting bug in the user list
++ Fixed sub price typo
+
+#3.1.17.101
++ Performance boosting
+
+#3.1.17.100
+#3.1.16.100
++ Badges for subbed users
+
+#3.1.16.99
+#3.1.15.99
++ Made an installer warning for xp
+
+#3.1.15.98
++ Fixed more chat issues
++ Fixed a null crash
+
+#3.1.15.97
++ More performance boosts
++ Killed the indygogo page
++ Increased chat limit to 1k
++ More chat improvements
++ Fixed slow loading of text files in game documents
++ Added install package option to o8buildgui
++ Added o8buildgui
+
+#3.1.15.96
++ Fixed a chat bug
+
+#3.1.14.96
++ Limit chat messages to 100
++ Fixed crash from nag window
++ Fixed bug talking to lobby while offline
+
+#3.1.13.96 - First release of 3.1.x.x
++ Always start as command line(sas)
++ Removed some unnessisary tracing in lobby server
++ Fixed sub list
++ Fixed message box bug
+
+#3.1.12.96
++ Cut sub nag box time in half
++ Fixed switchTo bug https://github.com/kellyelton/OCTGN/issues/797
+
+#3.1.12.95
++ Fixed game time
++ Fixed o8c cancel not allowed to install another o8c
+
+#3.1.12.94
++ Fixed a hack(nothing about that sounds right)
+
+#3.1.12.93
++ This is the real hack for the test version
+
+```
+To come...There are 30 ish more changes that can be found in our commit list https://github.com/kellyelton/OCTGN/commits/master for now
+```
+
 #3.0.12.58
 + Fixed issue where people boot into the game and crash https://github.com/kellyelton/OCTGN/issues/723
 
