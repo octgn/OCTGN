@@ -83,7 +83,7 @@ using Octgn.Controls;
                     }
                 };
 #if(!DEBUG)
-            LazyAsync.Invoke(GetTwitterStuff);
+            Skylabs.Lobby.Threading.LazyAsync.Invoke(GetTwitterStuff);
 #endif
         }
 
