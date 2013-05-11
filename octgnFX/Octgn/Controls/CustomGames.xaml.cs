@@ -244,10 +244,13 @@ namespace Octgn.Controls
 
         void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            Log.Info("Refresh game list timer ticks");
             try
             {
-                Program.LobbyClient.BeginGetGameList();
+                if (Program.LobbyClient.IsConnected)
+                {
+                    Log.Info("Refresh game list timer ticks");
+                    Program.LobbyClient.BeginGetGameList();
+                }
             }
             catch (Exception ex)
             {
