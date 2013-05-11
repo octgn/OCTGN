@@ -37,6 +37,7 @@
             this.PathLabel = new System.Windows.Forms.Label();
             this.PathTextBox = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.useTesto8buildCheckbox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.LayoutSplitContainer)).BeginInit();
             this.LayoutSplitContainer.Panel1.SuspendLayout();
             this.LayoutSplitContainer.Panel2.SuspendLayout();
@@ -57,6 +58,7 @@
             // 
             // LayoutSplitContainer.Panel2
             // 
+            this.LayoutSplitContainer.Panel2.Controls.Add(this.useTesto8buildCheckbox);
             this.LayoutSplitContainer.Panel2.Controls.Add(this.ActionLabel);
             this.LayoutSplitContainer.Panel2.Controls.Add(this.ActionComboBox);
             this.LayoutSplitContainer.Panel2.Controls.Add(this.RunButton);
@@ -134,6 +136,16 @@
             this.PathTextBox.Size = new System.Drawing.Size(331, 20);
             this.PathTextBox.TabIndex = 0;
             // 
+            // useTesto8buildCheckbox
+            // 
+            this.useTesto8buildCheckbox.AutoSize = true;
+            this.useTesto8buildCheckbox.Location = new System.Drawing.Point(54, 60);
+            this.useTesto8buildCheckbox.Name = "useTesto8buildCheckbox";
+            this.useTesto8buildCheckbox.Size = new System.Drawing.Size(102, 17);
+            this.useTesto8buildCheckbox.TabIndex = 6;
+            this.useTesto8buildCheckbox.Text = "Use test o8build";
+            this.useTesto8buildCheckbox.UseVisualStyleBackColor = true;
+            // 
             // O8buildGUIForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -163,6 +175,7 @@
         private System.Windows.Forms.ListBox ConsoleOutput;
         private System.Windows.Forms.Label ActionLabel;
         private System.Windows.Forms.ComboBox ActionComboBox;
+        private System.Windows.Forms.CheckBox useTesto8buildCheckbox;
     }
 }
 
