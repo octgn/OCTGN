@@ -306,11 +306,11 @@ namespace Octgn.Controls
                                     VerticalAlignment = VerticalAlignment.Top,
                                     HorizontalAlignment = HorizontalAlignment.Left
                                 };
-                                if (enableGifs)
-                                {
-                                    ImageBehavior.SetAnimatedSource(image, bi);
-                                    ImageBehavior.SetRepeatBehavior(image, RepeatBehavior.Forever);
-                                }
+                                //if (enableGifs)
+                                //{
+                                //    ImageBehavior.SetAnimatedSource(image, bi);
+                                //    ImageBehavior.SetRepeatBehavior(image, RepeatBehavior.Forever);
+                                //}
                                 var container = new InlineUIContainer(border);
                                 var hl = new Hyperlink(container){TextDecorations = null};
 
