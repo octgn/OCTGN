@@ -27,7 +27,7 @@ namespace Octgn.Controls
     /// <summary>
     /// The chat bar item.
     /// </summary>
-    public class ChatBarItem : TabItem
+    public class ChatBarItem : TabItem,IDisposable
     {
         /// <summary>
         /// Sets the Chat Room
@@ -196,6 +196,8 @@ namespace Octgn.Controls
             this.FireHeaderMouseUp(mouseButtonEventArgs);
         }
 
+        private ChatControl chatControl;
+
         /// <summary>
         /// Constructs the chat portion of the control.
         /// </summary>
@@ -213,7 +215,7 @@ namespace Octgn.Controls
                     MaxHeight = 253,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
-            var chatControl = new ChatControl { Width = 600, Height = 250 };
+            chatControl = new ChatControl { Width = 600, Height = 250 };
             
             chatBorder.Child = chatControl;
 
@@ -223,6 +225,11 @@ namespace Octgn.Controls
             {
                 chatControl.SetRoom(this.Room);
             }
+        }
+
+        public void Dispose()
+        {
+            chatControl.Dispose();
         }
     }
 }

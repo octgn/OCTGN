@@ -32,7 +32,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for ChatControl
     /// </summary>
-    public partial class ChatControl : UserControl,INotifyPropertyChanged
+    public partial class ChatControl : UserControl,INotifyPropertyChanged,IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         #region Privates
@@ -107,37 +107,14 @@ namespace Octgn.Controls
             {
                 return;
             }
+            Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
+            Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
             this.Loaded += OnLoaded;
-            this.Unloaded += OnUnloaded;
         }
 
         private void OnLoaded(object sender, EventArgs eventArgs)
         {
-            //this.Loaded -= OnLoaded;
-            Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
-            Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
-            if (this.room != null)
-            {
-                this.room.OnUserListChange += this.RoomOnUserListChange;
-                this.room.OnMessageReceived += this.RoomOnMessageReceived;
-            }
             ProgramOnOnOptionsChanged();
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
-            Program.LobbyClient.OnDataReceived -= this.LobbyClientOnOnDataReceived;
-            if (this.room != null)
-            {
-                this.room.OnUserListChange -= this.RoomOnUserListChange;
-                this.room.OnMessageReceived -= this.RoomOnMessageReceived;
-            }
-            //Unloaded -= this.OnUnloaded;
-            //foreach (var r in ChatRowGroup.Rows.ToArray())
-            //{
-            //    ChatRowGroup.Rows.Remove(r);
-            //}
         }
 
         private void LobbyClientOnOnDataReceived(object sender, DataRecType type, object data)
@@ -559,6 +536,16 @@ namespace Octgn.Controls
         }
         #endregion INotifyPropertyChanged
 
-
+        public void Dispose()
+        {
+            Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
+            Program.LobbyClient.OnDataReceived -= this.LobbyClientOnOnDataReceived;
+            this.Loaded -= OnLoaded;
+            if (this.room != null)
+            {
+                this.room.OnUserListChange -= this.RoomOnUserListChange;
+                this.room.OnMessageReceived -= this.RoomOnMessageReceived;
+            }
+        }
     }
 }
