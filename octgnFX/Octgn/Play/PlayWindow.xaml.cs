@@ -291,7 +291,7 @@ namespace Octgn.Play
             }
             else
             {
-                Topmost = true;
+                //Topmost = true;
                 WindowStyle = WindowStyle.None;
                 WindowState = WindowState.Maximized;
                 //menuRow.Height = new GridLength(2);
