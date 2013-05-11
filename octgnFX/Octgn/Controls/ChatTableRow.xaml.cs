@@ -378,21 +378,29 @@ namespace Octgn.Controls
         {
             if (!enableImages) return false;
             if ((SubscriptionModule.Get().IsSubscribed ?? false) == false) return false;
-            var req = (HttpWebRequest)HttpWebRequest.Create(url);
-            req.Method = "HEAD";
-            for (var i = 0; i < 3; i++)
+            try
             {
-                try
+                var req = (HttpWebRequest)HttpWebRequest.Create(url);
+                req.Method = "HEAD";
+                for (var i = 0; i < 3; i++)
                 {
-                    using (var resp = req.GetResponse())
+                    try
                     {
-                        return resp.ContentType.ToLower(CultureInfo.InvariantCulture).StartsWith("image/");
+                        using (var resp = req.GetResponse())
+                        {
+                            return resp.ContentType.ToLower(CultureInfo.InvariantCulture).StartsWith("image/");
+                        }
+                    }
+                    catch
+                    {
                     }
                 }
-                catch
-                {
-                }
+
             }
+            catch
+            {
+                
+            } 
             return false;
         }
 
