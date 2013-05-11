@@ -267,9 +267,9 @@ namespace Octgn.Controls
                 {
                     System.Uri uri;
                     bool gotIt;
-                    if (!System.Uri.TryCreate(s, UriKind.RelativeOrAbsolute, out uri))
+                    if (!System.Uri.TryCreate(s, UriKind.Absolute, out uri))
                     {
-                        gotIt = System.Uri.TryCreate("http://" + s, UriKind.RelativeOrAbsolute, out uri);
+                        gotIt = System.Uri.TryCreate("http://" + s, UriKind.Absolute, out uri);
                     }
                     else gotIt = true;
 
