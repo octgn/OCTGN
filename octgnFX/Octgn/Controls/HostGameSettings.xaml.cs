@@ -72,6 +72,7 @@
             TextBoxUserName.Text = (Program.LobbyClient.IsConnected == false 
                 || Program.LobbyClient.Me == null 
                 || Program.LobbyClient.Me.UserName == null) ? Prefs.Nickname : Program.LobbyClient.Me.UserName;
+            TextBoxUserName.IsEnabled = !Program.LobbyClient.IsConnected;
         }
 
         private void LobbyClientOnDisconnect(object sender, EventArgs e)
