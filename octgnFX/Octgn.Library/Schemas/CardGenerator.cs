@@ -816,6 +816,8 @@ public partial class templatesTemplateOverlayblocksConditionalSwitch {
     
     private templatesTemplateOverlayblocksConditionalSwitchCase[] caseField;
     
+    private link[] defaultField;
+    
     private string propertyField;
     
     /// <remarks/>
@@ -826,6 +828,18 @@ public partial class templatesTemplateOverlayblocksConditionalSwitch {
         }
         set {
             this.caseField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
+    public link[] @default {
+        get {
+            return this.defaultField;
+        }
+        set {
+            this.defaultField = value;
         }
     }
     
@@ -952,7 +966,11 @@ public partial class templatesTemplateTextblocksConditional {
     
     private templatesTemplateTextblocksConditionalIF ifField;
     
+    private templatesTemplateTextblocksConditionalElseif[] elseifField;
+    
     private link[] elseField;
+    
+    private templatesTemplateTextblocksConditionalSwitch switchField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -966,6 +984,17 @@ public partial class templatesTemplateTextblocksConditional {
     }
     
     /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("elseif", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateTextblocksConditionalElseif[] elseif {
+        get {
+            return this.elseifField;
+        }
+        set {
+            this.elseifField = value;
+        }
+    }
+    
+    /// <remarks/>
     [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
     public link[] @else {
@@ -974,6 +1003,17 @@ public partial class templatesTemplateTextblocksConditional {
         }
         set {
             this.elseField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateTextblocksConditionalSwitch @switch {
+        get {
+            return this.switchField;
+        }
+        set {
+            this.switchField = value;
         }
     }
 }
@@ -1035,6 +1075,182 @@ public partial class templatesTemplateTextblocksConditionalIF {
         }
         set {
             this.containsField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateTextblocksConditionalElseif {
+    
+    private link[] linkField;
+    
+    private string propertyField;
+    
+    private string valueField;
+    
+    private string containsField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link")]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string contains {
+        get {
+            return this.containsField;
+        }
+        set {
+            this.containsField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateTextblocksConditionalSwitch {
+    
+    private templatesTemplateTextblocksConditionalSwitchCase[] caseField;
+    
+    private link[] defaultField;
+    
+    private string propertyField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("case", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplateTextblocksConditionalSwitchCase[] @case {
+        get {
+            return this.caseField;
+        }
+        set {
+            this.caseField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
+    public link[] @default {
+        get {
+            return this.defaultField;
+        }
+        set {
+            this.defaultField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class templatesTemplateTextblocksConditionalSwitchCase {
+    
+    private link[] linkField;
+    
+    private string valueField;
+    
+    private string containsField;
+    
+    private string breakField;
+    
+    public templatesTemplateTextblocksConditionalSwitchCase() {
+        this.breakField = "True";
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link")]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string contains {
+        get {
+            return this.containsField;
+        }
+        set {
+            this.containsField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("True")]
+    public string @break {
+        get {
+            return this.breakField;
+        }
+        set {
+            this.breakField = value;
         }
     }
 }

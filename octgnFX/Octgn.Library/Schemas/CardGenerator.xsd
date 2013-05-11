@@ -115,12 +115,19 @@
                               <xs:sequence>
                                 <xs:element name="case" minOccurs="1" maxOccurs="unbounded">
 									<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="link" minOccurs="1" maxOccurs="unbounded" />
-									  </xs:sequence>
-									  <xs:attribute name="value" type="xs:string" use="optional" />
-									  <xs:attribute name="contains" type="xs:string" use="optional" />
-									  <xs:attribute name="break" type="xs:string" default="True" />
+										<xs:sequence>
+											<xs:element ref="link" minOccurs="1" maxOccurs="unbounded" />
+										</xs:sequence>
+										<xs:attribute name="value" type="xs:string" use="optional" />
+										<xs:attribute name="contains" type="xs:string" use="optional" />
+										<xs:attribute name="break" type="xs:string" default="True" />
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="default" minOccurs="0" maxOccurs="1">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element ref="link" minOccurs="1" maxOccurs="unbounded" />
+										</xs:sequence>
 									</xs:complexType>
 								</xs:element>
                               </xs:sequence>
@@ -137,7 +144,7 @@
               <xs:element name="textblocks" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                   <xs:sequence>
-				    <xs:element name="conditional" minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="conditional" minOccurs="0" maxOccurs="unbounded">
                       <xs:complexType>
                         <xs:sequence>
                           <xs:element name="if" minOccurs="0" maxOccurs="1">
@@ -172,12 +179,19 @@
                               <xs:sequence>
                                 <xs:element name="case" minOccurs="1" maxOccurs="unbounded">
 									<xs:complexType>
-									<xs:sequence>
-										<xs:element ref="link" minOccurs="1" maxOccurs="unbounded" />
-									  </xs:sequence>
-									  <xs:attribute name="value" type="xs:string" use="optional" />
-									  <xs:attribute name="contains" type="xs:string" use="optional" />
-									  <xs:attribute name="break" type="xs:string" default="True" />
+										<xs:sequence>
+											<xs:element ref="link" minOccurs="1" maxOccurs="unbounded" />
+										</xs:sequence>
+										<xs:attribute name="value" type="xs:string" use="optional" />
+										<xs:attribute name="contains" type="xs:string" use="optional" />
+										<xs:attribute name="break" type="xs:string" default="True" />
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="default" minOccurs="0" maxOccurs="1">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element ref="link" minOccurs="1" maxOccurs="unbounded" />
+										</xs:sequence>
 									</xs:complexType>
 								</xs:element>
                               </xs:sequence>
