@@ -92,7 +92,19 @@ namespace Octgn.Controls
             }
         }
 
-        protected Brush HoverBackBrush { get; set; }
+        public bool IsLightTheme
+        {
+            get
+            {
+                return this.isLightTheme;
+            }
+            set
+            {
+                if (value == this.isLightTheme) return;
+                this.isLightTheme = value;
+                OnPropertyChanged("IsLightTheme");
+            }
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatControl"/> class.
         /// </summary>
@@ -130,21 +142,7 @@ namespace Octgn.Controls
         {
             Dispatcher.Invoke(new Action(() =>
                 {
-                    SolidColorBrush backr = null;
-                    SolidColorBrush fontr = null;
-                    if (Prefs.UseLightChat)
-                    {
-                        backr = this.FindResource("LightChatBackBrush") as SolidColorBrush;
-                        fontr = this.FindResource("LightChatFontBrush") as SolidColorBrush;
-                    }
-                    else
-                    {
-                        backr = this.FindResource("DarkChatBackBrush") as SolidColorBrush;
-                        fontr = this.FindResource("DarkChatFontBrush") as SolidColorBrush;
-                    }
-                    Chat.Background = backr;
-                    Chat.Foreground = fontr;
-                    this.HoverBackBrush = Prefs.UseLightChat ? Brushes.AliceBlue : Brushes.DimGray;
+                    this.IsLightTheme = Prefs.UseLightChat;
                     this.InvalidateVisual();
                 }));
         }
@@ -272,27 +270,25 @@ namespace Octgn.Controls
 
         private void ChatTableRow_MouseLeave(object sender, MouseEventArgs mouseEventArgs)
         {
-            foreach (var r in ChatRowGroup.Rows)
+            Log.Info("MouseLeave");
+            foreach (var r in ChatRowGroup.Rows.OfType<ChatTableRow>())
             {
-                r.Background = null;
+                r.IsHighlighted = false;
+                //r.Background = null;
             }
         }
 
         private void ChatTableRow_MouseEnter(object sender, MouseEventArgs mouseEventArgs)
         {
+            Log.Info("MouseEnter");
             var theFrom = sender as ChatTableRow;
             if (theFrom == null) return;
-            foreach (var r in ChatRowGroup.Rows)
+            foreach (var r in ChatRowGroup.Rows.OfType<ChatTableRow>())
             {
-                var rr = r as ChatTableRow;
-                if (rr == null)
+                if (r.User.UserName == theFrom.User.UserName)
                 {
-                    continue;
-                }
-
-                if (rr.User.UserName == theFrom.User.UserName)
-                {
-                    r.Background = this.HoverBackBrush;
+                    r.IsHighlighted = true;
+                    //r.Background = this.HoverBackBrush;
                 }
             }
         }
@@ -346,6 +342,8 @@ namespace Octgn.Controls
         }
 
         private object resestLocker = new object();
+
+        private bool isLightTheme;
 
         /// <summary>
         /// Resets the user list visually and internally. Must be called on UI thread.

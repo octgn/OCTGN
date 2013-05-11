@@ -10,6 +10,7 @@
 namespace Octgn.Controls
 {
     using System;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
@@ -27,6 +28,7 @@ namespace Octgn.Controls
     using System.Windows.Media.Imaging;
     using System.Windows.Navigation;
 
+    using Octgn.Annotations;
     using Octgn.Library.Utils;
 
     using WpfAnimatedGif;
@@ -40,7 +42,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for ChatTableRow
     /// </summary>
-    public partial class ChatTableRow : TableRow,IDisposable
+    public partial class ChatTableRow : TableRow,INotifyPropertyChanged,IDisposable
     {
         /// <summary>
         /// The user.
@@ -57,13 +59,13 @@ namespace Octgn.Controls
         /// </summary>
         private DateTime messageDate;
 
-        private Brush UrlBrush { get; set; }
-
-        private bool? useLightChat;
-
         private bool enableGifs;
 
         private bool enableImages;
+
+        private bool isHighlighted;
+
+        private bool isLightTheme;
 
         public event MouseEventHandler OnMouseUsernameEnter;
         public event MouseEventHandler OnMouseUsernameLeave;
@@ -127,27 +129,9 @@ namespace Octgn.Controls
                 Dispatcher.BeginInvoke(new Action(this.ProgramOnOnOptionsChanged));
                 return;
             }
-            var cur = Prefs.UseLightChat;
-            if (useLightChat != null && (bool)useLightChat == cur) return;
-            useLightChat = cur;
-            if (cur)
-            {
-                var res = this.Resources["LightUserColor"] as SolidColorBrush;
-                UrlBrush = Brushes.Green;
-                UsernameParagraph.Foreground = res;
-            }
-            else
-            {
-                var res = this.Resources["DarkUserColor"] as SolidColorBrush;
-                UrlBrush = Brushes.LightGreen;
-                UsernameParagraph.Foreground = res;
-            }
+            this.IsLightTheme = Prefs.UseLightChat;
             enableGifs = Prefs.EnableChatGifs;
             enableImages = Prefs.EnableChatImages;
-            foreach (var hl in MessageParagraph.Inlines.OfType<Hyperlink>())
-            {
-                hl.Foreground = UrlBrush;
-            }
         }
 
         /// <summary>
@@ -214,6 +198,40 @@ namespace Octgn.Controls
         /// </summary>
         public LobbyMessageType MessageType { get; set; }
 
+        public bool IsHighlighted
+        {
+            get
+            {
+                return this.isHighlighted;
+            }
+            set
+            {
+                if (value.Equals(this.isHighlighted))
+                {
+                    return;
+                }
+                this.isHighlighted = value;
+                this.OnPropertyChanged("IsHighlighted");
+            }
+        }
+
+        public bool IsLightTheme
+        {
+            get
+            {
+                return this.isLightTheme;
+            }
+            set
+            {
+                if (value.Equals(this.isLightTheme))
+                {
+                    return;
+                }
+                this.isLightTheme = value;
+                this.OnPropertyChanged("IsLightTheme");
+            }
+        }
+
         /// <summary>
         /// The get username width.
         /// </summary>
@@ -260,7 +278,7 @@ namespace Octgn.Controls
                         if (!IsImageUrl(uri))
                         {
                             var hl = new Hyperlink(new Run(s)) { NavigateUri = uri };
-                            hl.Foreground = UrlBrush;
+                            hl.Foreground = Brushes.CornflowerBlue;
                             hl.RequestNavigate += this.RequestNavigate;
                             MessageParagraph.Inlines.Add(hl);
                             continue;
@@ -328,7 +346,7 @@ namespace Octgn.Controls
                                              {
                                                  BorderBrush = almostBlack,
                                                  Background = Brushes.LightGray,
-                                                 CornerRadius = new CornerRadius(5),
+                                                 CornerRadius = new CornerRadius(2),
                                                  //Padding = new Thickness(10,1,10,1),
                                                  VerticalAlignment = VerticalAlignment.Top,
                                                  HorizontalAlignment = HorizontalAlignment.Left
@@ -338,8 +356,8 @@ namespace Octgn.Controls
                                                 Text = str,
                                                 FontWeight = FontWeights.Bold,
                                                 Foreground = almostBlack,
-                                                Background = Brushes.Transparent,
-                                                Margin = new Thickness(10,1,10,1)
+                                                Background = null,
+                                                Margin = new Thickness(10,0,10,0)
                                             };
                         textBorder.Child = textBlock;
                         var block = new InlineUIContainer(textBorder);
@@ -428,5 +446,17 @@ namespace Octgn.Controls
         }
 
         #endregion
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 }

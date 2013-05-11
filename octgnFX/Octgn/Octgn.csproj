@@ -308,6 +308,7 @@
     <Compile Include="Tabs\GameManagement\AddFeed.xaml.cs">
       <DependentUpon>AddFeed.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
     <Compile Include="Utils\CryptoRandom.cs" />
     <Compile Include="Utils\Sounds.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
@@ -890,6 +891,9 @@
     <Page Include="Resources\Themes\BlueGlass\Window.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Brushes.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\Themes\ChildWindow.xaml">
       <SubType>Designer</SubType>
