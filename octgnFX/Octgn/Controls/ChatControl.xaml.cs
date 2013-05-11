@@ -379,12 +379,16 @@ namespace Octgn.Controls
                     tlist.Remove(u);
                     tlist.Add(u2);
 
-                    if (tlist.IndexOf(u2) == UserListItems.IndexOf(u)) continue;
+                    if (tlist.IndexOf(u2) == UserListItems.IndexOf(u))
+                        continue;
 
                     UserListItems.Remove(u);
                     u.Dispose();
                     UserListItems.Add(u2);
                 }
+                foreach(var u in tlist)
+                    u.Dispose();
+                tlist.Clear();
 
                 // Show all users that should be shown
                 for (var i = 0; i < UserListItems.Count; i++)
