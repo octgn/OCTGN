@@ -215,8 +215,8 @@ namespace Octgn.ProxyGenerator.Definitions
             List<LinkDefinition> ret = new List<LinkDefinition>();
             string property = switchNode.Attributes["property"].Value;
 
-            bool fallThrough = false;
-            bool firstRun = true;
+            bool currentBreak = true;
+            bool foundMatch = false;
             foreach (XmlNode childNode in switchNode.ChildNodes)
             {
                 if (TemplateDefinition.SkipNode(childNode))
@@ -225,72 +225,82 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
                 if (childNode.Name == "case")
                 {
-                    string value = null;
-                    string contains = null;
-                    bool breakValue = true;
-                    if (childNode.Attributes["value"] != null)
+                    List<LinkDefinition> list = ResolveCase(values, childNode, property, out currentBreak);
+                    foundMatch = (list.Count > 0);
+                    ret.AddRange(list);
+                }
+                if ((!foundMatch || !currentBreak) && childNode.Name == "default")
+                {
+                    foreach (XmlNode node in childNode.ChildNodes)
                     {
-                        value = childNode.Attributes["value"].Value;
-                    }
-                    if (childNode.Attributes["contains"] != null)
-                    {
-                        contains = childNode.Attributes["contains"].Value;
-                    }
-                    if (childNode.Attributes["break"] != null)
-                    {
-                        breakValue = bool.Parse(childNode.Attributes["break"].Value);
-                    }
-                    if (firstRun || fallThrough)
-                    {
-                        if (value != null)
+                        if (TemplateDefinition.SkipNode(node))
                         {
-
-                            if (values.ContainsKey(property) && values[property] == value)
-                            {
-                                foreach (XmlNode node in childNode.ChildNodes)
-                                {
-                                    if (TemplateDefinition.SkipNode(node))
-                                    {
-                                        continue;
-                                    }
-                                    LinkDefinition link = LinkDefinition.LoadLink(node);
-                                    ret.Add(link);
-                                }
-                            }
-
-                            if (!breakValue)
-                            {
-                                fallThrough = true;
-                                continue;
-                            }
+                            continue;
                         }
-                        if (contains != null)
-                        {
-
-                            if (values.ContainsKey(property) && values[property].Contains(contains))
-                            {
-                                foreach (XmlNode node in childNode.ChildNodes)
-                                {
-                                    if (TemplateDefinition.SkipNode(node))
-                                    {
-                                        continue;
-                                    }
-                                    LinkDefinition link = LinkDefinition.LoadLink(node);
-                                    ret.Add(link);
-                                }
-                            }
-
-                            if (!breakValue)
-                            {
-                                fallThrough = true;
-                                continue;
-                            }
-                        }
-                        firstRun = false;
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
                     }
-                    else
+                    foundMatch = true;
+                    currentBreak = true;
+                }
+                if (foundMatch && currentBreak)
+                {
+                    break;
+                }
+            }
+
+            return (ret);
+        }
+
+        private List<LinkDefinition> ResolveCase(Dictionary<string, string> values, XmlNode node, string property, out bool breakValue)
+        {
+            List<LinkDefinition> ret = new List<LinkDefinition>();
+
+            string value = null;
+            string contains = null;
+            breakValue = true;
+            if (node.Attributes["value"] != null)
+            {
+                value = node.Attributes["value"].Value;
+            }
+            if (node.Attributes["contains"] != null)
+            {
+                contains = node.Attributes["contains"].Value;
+            }
+            if (node.Attributes["break"] != null)
+            {
+                breakValue = bool.Parse(node.Attributes["break"].Value);
+            }
+
+            if (value != null)
+            {
+
+                if (values.ContainsKey(property) && values[property] == value)
+                {
+                    foreach (XmlNode subNode in node.ChildNodes)
                     {
-                        break;
+                        if (TemplateDefinition.SkipNode(subNode))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(subNode);
+                        ret.Add(link);
+                    }
+                }
+            }
+            if (contains != null)
+            {
+
+                if (values.ContainsKey(property) && values[property].Contains(contains))
+                {
+                    foreach (XmlNode subNode in node.ChildNodes)
+                    {
+                        if (TemplateDefinition.SkipNode(subNode))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(subNode);
+                        ret.Add(link);
                     }
                 }
             }
