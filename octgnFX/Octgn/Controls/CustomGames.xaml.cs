@@ -32,7 +32,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for CustomGames.xaml
     /// </summary>
-    public partial class CustomGameList
+    public partial class CustomGameList:IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public static DependencyProperty IsJoinableGameSelectedProperty = DependencyProperty.Register(
@@ -57,10 +57,13 @@ namespace Octgn.Controls
         private HostGameSettings hostGameDialog;
         private ConnectOfflineGame connectOfflineGameDialog;
 
+        private readonly DragDeltaEventHandler dragHandler;
+
         public CustomGameList()
         {
             InitializeComponent();
-            ListViewGameList.AddHandler(Thumb.DragDeltaEvent, new DragDeltaEventHandler(ListViewGameList_OnDragDelta), true);
+            dragHandler = this.ListViewGameList_OnDragDelta;
+            ListViewGameList.AddHandler(Thumb.DragDeltaEvent, dragHandler, true);
             ListViewGameList.MouseDoubleClick += ListViewGameListOnMouseDoubleClick;
             HostedGameList = new ObservableCollection<HostedGameViewModel>();
             Program.LobbyClient.OnLoginComplete += LobbyClient_OnLoginComplete;
@@ -214,6 +217,8 @@ namespace Octgn.Controls
                     }
                 }
             }
+            hostGameDialog.Dispose();
+            hostGameDialog = null;
         }
 
         private void ConnectOfflineGameDialogOnClose(object o, DialogResult dialogResult)
@@ -233,6 +238,8 @@ namespace Octgn.Controls
                     }
                 }
             }
+            connectOfflineGameDialog.Dispose();
+            connectOfflineGameDialog = null;
         }
 
         void TimerElapsed(object sender, ElapsedEventArgs e)
@@ -318,5 +325,25 @@ namespace Octgn.Controls
             if (header.Column.ActualWidth < 20)
                 header.Column.Width = 20;
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            ListViewGameList.RemoveHandler(Thumb.DragDeltaEvent, dragHandler);
+            ListViewGameList.MouseDoubleClick -= ListViewGameListOnMouseDoubleClick;
+            Program.LobbyClient.OnLoginComplete -= LobbyClient_OnLoginComplete;
+            Program.LobbyClient.OnDisconnect -= LobbyClient_OnDisconnect;
+            Program.LobbyClient.OnDataReceived -= LobbyClient_OnDataReceived;
+
+            timer.Elapsed -= this.TimerElapsed;
+            timer.Stop();
+            timer.Dispose();
+        }
+
+        #endregion
     }
 }

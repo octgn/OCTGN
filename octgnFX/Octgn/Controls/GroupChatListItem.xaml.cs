@@ -6,14 +6,16 @@ using Skylabs.Lobby;
 
 namespace Octgn.Controls
 {
+    using System;
     using System.ComponentModel;
+    using System.Linq;
 
     using Octgn.Annotations;
 
     /// <summary>
     ///   Interaction logic for FriendListItem.xaml
     /// </summary>
-    public partial class GroupChatListItem : INotifyPropertyChanged
+    public partial class GroupChatListItem : INotifyPropertyChanged,IDisposable
     {
         private bool _isRemoving = false;
 
@@ -50,11 +52,6 @@ namespace Octgn.Controls
             InitializeComponent();
             this.GotFocus += OnGotFocus;
             this.LostFocus += OnLostFocus;
-            this.Unloaded += (sender, args) =>
-                {
-                    this.GotFocus -= this.OnGotFocus;
-                    this.LostFocus -= this.OnLostFocus;
-                };
         }
 
         public ChatRoom ThisRoom
@@ -130,5 +127,25 @@ namespace Octgn.Controls
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.GotFocus -= this.OnGotFocus;
+            this.LostFocus -= this.OnLostFocus;
+            if (PropertyChanged != null)
+            {
+                foreach (var d in PropertyChanged.GetInvocationList().ToArray())
+                {
+                    PropertyChanged -= (PropertyChangedEventHandler)d;
+                }
+            }
+        }
+
+        #endregion
     }
 }

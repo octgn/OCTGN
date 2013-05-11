@@ -70,6 +70,11 @@ namespace Octgn.Tabs.GameManagement
                 {
                     return;
                 }
+                if (selectedGame != null)
+                {
+                    var old = selectedGame;
+                    old.Dispose();
+                }
                 this.selectedGame = value;
                 this.OnPropertyChanged("IsGameSelected");
                 this.OnPropertyChanged("SelectedGame");
@@ -135,7 +140,11 @@ namespace Octgn.Tabs.GameManagement
             foreach (var package in packages.ToList())
             {
                 var pack = package;
-                Dispatcher.Invoke(new Action(()=>packages.Remove(pack)));
+                Dispatcher.Invoke(new Action(() =>
+                                                 { 
+                                                     packages.Remove(pack); 
+                                                     pack.Dispose();
+                                                 }));
                 //if (!packs.Contains(p)) 
                 //    Dispatcher.Invoke(new Action(()=>packages.Remove(p)));
             }
@@ -196,7 +205,10 @@ namespace Octgn.Tabs.GameManagement
             ButtonsEnabled = false;
             var dialog = new AddFeed();
             dialog.Show(DialogPlaceHolder);
-            dialog.OnClose += (o, result) => ButtonsEnabled = true;
+            dialog.OnClose += (o, result) =>
+                                  { ButtonsEnabled = true; 
+                                      dialog.Dispose();
+                                  };
         }
 
         private void ButtonRemoveClick(object sender, RoutedEventArgs e)
@@ -298,8 +310,12 @@ namespace Octgn.Tabs.GameManagement
         {
             ButtonsEnabled = false;
             var dialog = new WaitingDialog();
-            dialog.OnClose += (o, result) => ButtonsEnabled = true;
-            dialog.OnClose += (o, result) => completeAction();
+            dialog.OnClose += (o, result) =>
+                                  { 
+                                      ButtonsEnabled = true;
+                                      completeAction();
+                                      dialog.Dispose();
+                                  };
             dialog.Show(DialogPlaceHolder, action,title,message);
             return dialog;
         }

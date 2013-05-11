@@ -6,7 +6,7 @@
     using System.Windows.Controls;
     using System.Windows.Forms;
 
-    public partial class WaitingDialog : INotifyPropertyChanged 
+    public partial class WaitingDialog : INotifyPropertyChanged ,IDisposable
     {
         public string Message
         {
@@ -99,5 +99,31 @@
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            
+            if (OnClose != null)
+            {
+                foreach (var d in OnClose.GetInvocationList())
+                {
+                    OnClose -= (Action<object, DialogResult>)d;
+                }
+            }
+            if (PropertyChanged != null)
+            {
+                foreach (var d in PropertyChanged.GetInvocationList())
+                {
+                    PropertyChanged -= (PropertyChangedEventHandler)d;
+                }
+            }
+        }
+
+        #endregion
     }
 }

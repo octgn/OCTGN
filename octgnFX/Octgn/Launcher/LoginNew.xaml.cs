@@ -29,7 +29,6 @@ namespace Octgn.Launcher
     using Octgn.Extentions;
 
     using Skylabs.Lobby;
-    using Skylabs.Lobby.Threading;
 
     using log4net;
 

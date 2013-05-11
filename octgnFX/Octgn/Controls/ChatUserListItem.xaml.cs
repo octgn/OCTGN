@@ -16,7 +16,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for ChatUserListItem.xaml
     /// </summary>
-    public partial class ChatUserListItem : IComparable<ChatUserListItem>,IEquatable<ChatUserListItem>,IEqualityComparer<ChatUserListItem>,INotifyPropertyChanged
+    public partial class ChatUserListItem : IComparable<ChatUserListItem>,IEquatable<ChatUserListItem>,IEqualityComparer<ChatUserListItem>,INotifyPropertyChanged,IDisposable
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -77,6 +77,7 @@ namespace Octgn.Controls
         private bool _isOwner;
         private bool _isSub;
         private double _realHeight;
+        private ChatRoom _room;
         public ChatUserListItem()
         {
             InitializeComponent();
@@ -90,7 +91,8 @@ namespace Octgn.Controls
         {
             User = user;
             InitializeComponent();
-            room.OnUserListChange += RoomOnOnUserListChange;
+            _room = room;
+            _room.OnUserListChange += RoomOnOnUserListChange;
             Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
             this.Update(room);
             this.Loaded += OnLoaded;
@@ -98,7 +100,6 @@ namespace Octgn.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            this.Loaded -= OnLoaded;
             _realHeight = 25;
             //var hanim = new DoubleAnimation(0, _realHeight, new Duration(TimeSpan.FromMilliseconds(500)));
             //this.BeginAnimation(HeightProperty, hanim, HandoffBehavior.Compose);
@@ -233,5 +234,29 @@ namespace Octgn.Controls
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_room != null)
+            {
+                _room.OnUserListChange -= RoomOnOnUserListChange;
+            }
+            Program.LobbyClient.OnDataReceived -= LobbyClientOnOnDataReceived;
+            this.Loaded -= OnLoaded;
+            if (PropertyChanged != null)
+            {
+                foreach (var d in PropertyChanged.GetInvocationList())
+                {
+                    PropertyChanged -= (PropertyChangedEventHandler)d;
+                }
+            }
+        }
+
+        #endregion
     }
 }

@@ -180,6 +180,7 @@ namespace Octgn.Controls
             var chatBar = this.Parent as ChatBar;
             if (chatBar != null)
             {
+                this.HeaderMouseUp -= chatBar.ChatBarItemOnPreviewMouseUp;
                 chatBar.SelectedIndex = 0;
                 chatBar.Items.Remove(this);
             }

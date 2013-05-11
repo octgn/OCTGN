@@ -51,12 +51,11 @@ namespace Octgn.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
         {
-            this.Unloaded -= this.OnUnloaded;
+            Program.LobbyClient.Chatting.OnCreateRoom -= this.LobbyCreateRoom;
         }
 
         private void OnLoaded(object sender, EventArgs eventArgs)
         {
-            this.Loaded -= this.OnLoaded;
             Program.LobbyClient.Chatting.OnCreateRoom += this.LobbyCreateRoom;
             
         }
@@ -130,7 +129,7 @@ namespace Octgn.Controls
         /// <param name="mouseButtonEventArgs">
         /// The mouse button event arguments.
         /// </param>
-        private void ChatBarItemOnPreviewMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        internal void ChatBarItemOnPreviewMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
             if (this.currentTabSelection is ChatBarItem && sender == this.currentTabSelection)
             {

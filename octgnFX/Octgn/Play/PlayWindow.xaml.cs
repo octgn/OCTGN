@@ -74,7 +74,7 @@ namespace Octgn.Play
 
         private void OnLoaded(object sen, RoutedEventArgs routedEventArgs)
         {
-
+            this.Loaded -= OnLoaded;
             _fadeIn = (Storyboard) Resources["ImageFadeIn"];
             _fadeOut = (Storyboard) Resources["ImageFadeOut"];
 

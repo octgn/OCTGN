@@ -1,5 +1,6 @@
 ﻿namespace Octgn
 {
+    using System;
     using System.IO;
     using System.Reflection;
     using System.Timers;
@@ -9,7 +10,7 @@
 
     using log4net;
 
-    public class GameUpdater
+    public class GameUpdater:IDisposable
     {
         #region Singleton
 
@@ -124,5 +125,20 @@
             Log.Info("Exited timer lock");
         }
         #endregion Timer
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            LocalFeedWatcher.Changed -= FileWatcherEvent;
+            LocalFeedWatcher.Created -= FileWatcherEvent;
+            LocalFeedWatcher.Deleted -= FileWatcherEvent;
+            LocalFeedWatcher.Renamed -= FileWatcherEvent;
+        }
+
+        #endregion
     }
 }

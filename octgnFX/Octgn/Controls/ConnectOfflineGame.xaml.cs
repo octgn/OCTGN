@@ -17,7 +17,7 @@
 
     using UserControl = System.Windows.Controls.UserControl;
 
-    public partial class ConnectOfflineGame : UserControl
+    public partial class ConnectOfflineGame : UserControl,IDisposable
     {
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
@@ -163,6 +163,24 @@
             task.ContinueWith(new Action<Task>((t) => this.Dispatcher.Invoke(new Action(() => this.ConnectDone(t)))));
             task.Start();
         }
+        #endregion
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (OnClose != null)
+            {
+                foreach (var d in OnClose.GetInvocationList())
+                {
+                    OnClose -= (Action<object, DialogResult>)d;
+                }
+            }
+        }
+
         #endregion
     }
 }

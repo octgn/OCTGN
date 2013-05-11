@@ -8,11 +8,12 @@ using agsXMPP;
 namespace Octgn.Controls
 {
     using System.ComponentModel;
+    using System.Linq;
 
     /// <summary>
     ///   Interaction logic for FriendListItem.xaml
     /// </summary>
-    public partial class FriendListItem : INotifyPropertyChanged 
+    public partial class FriendListItem : INotifyPropertyChanged,IDisposable
     {
         public static DependencyProperty UsernameProperty = DependencyProperty.Register(
             "UserName", typeof(string), typeof(FriendListItem));
@@ -73,11 +74,6 @@ namespace Octgn.Controls
             InitializeComponent();
             this.GotFocus += OnGotFocus;
             this.LostFocus += OnLostFocus;
-            this.Unloaded += (sender, args) =>
-                {
-                    this.GotFocus -= this.OnGotFocus;
-                    this.LostFocus -= this.OnLostFocus;
-                };
         }
 
         private void OnLostFocus(object sender, RoutedEventArgs routedEventArgs)
@@ -128,16 +124,6 @@ namespace Octgn.Controls
             Focus();
         }
 
-        private void image1_ImageFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-        }
-
-        private void image1_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-
-            Program.LobbyClient.RemoveFriend(ThisUser);
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -148,5 +134,25 @@ namespace Octgn.Controls
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.GotFocus -= this.OnGotFocus;
+            this.LostFocus -= this.OnLostFocus;
+            if (PropertyChanged != null)
+            {
+                foreach (var d in PropertyChanged.GetInvocationList().ToArray())
+                {
+                    PropertyChanged -= (PropertyChangedEventHandler)d;
+                }
+            }
+        }
+
+        #endregion
     }
 }

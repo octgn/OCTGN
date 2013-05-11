@@ -103,6 +103,7 @@ namespace Octgn.Windows
             SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.Stop();
             GameUpdater.Get().Stop();
+            GameUpdater.Get().Dispose();
             Task.Factory.StartNew(Program.Exit);
         }
 

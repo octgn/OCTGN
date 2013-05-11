@@ -116,6 +116,11 @@ namespace Octgn.Controls
             //this.Loaded -= OnLoaded;
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
+            if (this.room != null)
+            {
+                this.room.OnUserListChange += this.RoomOnUserListChange;
+                this.room.OnMessageReceived += this.RoomOnMessageReceived;
+            }
             ProgramOnOnOptionsChanged();
         }
 
@@ -123,6 +128,11 @@ namespace Octgn.Controls
         {
             Program.OnOptionsChanged -= this.ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived -= this.LobbyClientOnOnDataReceived;
+            if (this.room != null)
+            {
+                this.room.OnUserListChange -= this.RoomOnUserListChange;
+                this.room.OnMessageReceived -= this.RoomOnMessageReceived;
+            }
             //Unloaded -= this.OnUnloaded;
             //foreach (var r in ChatRowGroup.Rows.ToArray())
             //{
@@ -377,7 +387,11 @@ namespace Octgn.Controls
                 // remove any users that aren't on the fullList
                 foreach (var u in UserListItems.ToArray())
                 {
-                    if (!fullList.Contains(u.User)) UserListItems.Remove(u);
+                    if (!fullList.Contains(u.User))
+                    {
+                        UserListItems.Remove(u);
+                        u.Dispose();
+                    }
                 }
 
                 // Remove and re add subbed users
@@ -393,6 +407,7 @@ namespace Octgn.Controls
                     if (tlist.IndexOf(u2) == UserListItems.IndexOf(u)) continue;
 
                     UserListItems.Remove(u);
+                    u.Dispose();
                     UserListItems.Add(u2);
                 }
 

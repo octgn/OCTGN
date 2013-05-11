@@ -34,7 +34,7 @@ namespace Octgn.Controls
     /// Interaction logic for OctgnChrome.xaml
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. This rule fucks up using regions usefully."), SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed. Suppression is OK here.")]
-    public partial class OctgnChrome : Window
+    public partial class OctgnChrome : Window,IDisposable
     {
         #region Content Property
 
@@ -533,6 +533,15 @@ namespace Octgn.Controls
             }
         }
 
+        private Rectangle recTopLeft;
+        private Rectangle recTop;
+        private Rectangle recTopRight;
+        private Rectangle recLeft;
+        private Rectangle recRight;
+        private Rectangle recBottomLeft;
+        private Rectangle recBottom;
+        private Rectangle recBottomRight;
+
         /// <summary>
         /// Makes the resize area around the window.
         /// </summary>
@@ -546,43 +555,43 @@ namespace Octgn.Controls
             this.DragGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100, GridUnitType.Star) });
             this.DragGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(8) });
 
-            var recTopLeft = new Rectangle { Cursor = Cursors.SizeNWSE, Name = "dTopLeft", Fill = Brushes.Transparent };
+            recTopLeft = new Rectangle { Cursor = Cursors.SizeNWSE, Name = "dTopLeft", Fill = Brushes.Transparent };
             recTopLeft.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recTopLeft);
 
-            var recTop = new Rectangle { Cursor = Cursors.SizeNS, Name = "dTop", Fill = Brushes.Transparent };
+            recTop = new Rectangle { Cursor = Cursors.SizeNS, Name = "dTop", Fill = Brushes.Transparent };
             recTop.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recTop);
             Grid.SetColumn(recTop, 1);
 
-            var recTopRight = new Rectangle { Cursor = Cursors.SizeNESW, Name = "dTopRight", Fill = Brushes.Transparent };
+            recTopRight = new Rectangle { Cursor = Cursors.SizeNESW, Name = "dTopRight", Fill = Brushes.Transparent };
             recTopRight.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recTopRight);
             Grid.SetColumn(recTopRight, 2);
 
-            var recLeft = new Rectangle { Cursor = Cursors.SizeWE, Name = "dLeft", Fill = Brushes.Transparent };
+            recLeft = new Rectangle { Cursor = Cursors.SizeWE, Name = "dLeft", Fill = Brushes.Transparent };
             recLeft.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recLeft);
             Grid.SetRow(recLeft, 1);
 
-            var recRight = new Rectangle { Cursor = Cursors.SizeWE, Name = "dRight", Fill = Brushes.Transparent };
+            recRight = new Rectangle { Cursor = Cursors.SizeWE, Name = "dRight", Fill = Brushes.Transparent };
             recRight.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recRight);
             Grid.SetRow(recRight, 1);
             Grid.SetColumn(recRight, 2);
 
-            var recBottomLeft = new Rectangle { Cursor = Cursors.SizeNESW, Name = "dBottomLeft", Fill = Brushes.Transparent };
+            recBottomLeft = new Rectangle { Cursor = Cursors.SizeNESW, Name = "dBottomLeft", Fill = Brushes.Transparent };
             recBottomLeft.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recBottomLeft);
             Grid.SetRow(recBottomLeft, 2);
 
-            var recBottom = new Rectangle { Cursor = Cursors.SizeNS, Name = "dBottom", Fill = Brushes.Transparent };
+            recBottom = new Rectangle { Cursor = Cursors.SizeNS, Name = "dBottom", Fill = Brushes.Transparent };
             recBottom.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recBottom);
             Grid.SetColumn(recBottom, 1);
             Grid.SetRow(recBottom, 2);
 
-            var recBottomRight = new Rectangle { Cursor = Cursors.SizeNWSE, Name = "dBottomRight", Fill = Brushes.Transparent };
+            recBottomRight = new Rectangle { Cursor = Cursors.SizeNWSE, Name = "dBottomRight", Fill = Brushes.Transparent };
             recBottomRight.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recBottomRight);
             Grid.SetColumn(recBottomRight, 2);
@@ -856,5 +865,40 @@ namespace Octgn.Controls
         /// </summary>
         [DllImport("User32")]
         internal static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
+
+        #region Implementation of IDisposable
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            Dispose();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.SourceInitialized -= win_SourceInitialized;
+            this.LabelTitle.MouseDown -= this.BorderMouseDown1;
+            this.WindowMinimizeButton.MouseEnter -= this.WindowControlMouseEnter;
+            this.WindowMinimizeButton.MouseLeave -= this.WindowControlMouseLeave;
+            this.WindowResizeButton.MouseEnter -= this.WindowControlMouseEnter;
+            this.WindowResizeButton.MouseLeave -= this.WindowControlMouseLeave;
+            this.WindowCloseButton.MouseEnter -= this.WindowControlMouseEnter;
+            this.WindowCloseButton.MouseLeave -= this.WindowControlMouseLeave;
+            this.Loaded -= OnLoaded;
+            this.LocationChanged -= OnLocationChanged;
+            recTopLeft.MouseDown -= this.DragMouseDown;
+            recTop.MouseDown -= this.DragMouseDown;
+            recTopRight.MouseDown -= this.DragMouseDown;
+            recLeft.MouseDown -= this.DragMouseDown;
+            recRight.MouseDown -= this.DragMouseDown;
+            recBottomLeft.MouseDown -= this.DragMouseDown;
+            recBottom.MouseDown -= this.DragMouseDown;
+            recBottomRight.MouseDown -= this.DragMouseDown;
+        }
+
+        #endregion
     }
 }

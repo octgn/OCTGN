@@ -40,7 +40,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for ChatTableRow
     /// </summary>
-    public partial class ChatTableRow : TableRow
+    public partial class ChatTableRow : TableRow,IDisposable
     {
         /// <summary>
         /// The user.
@@ -297,16 +297,9 @@ namespace Octgn.Controls
                                 var hl = new Hyperlink(container){TextDecorations = null};
 
 
-                                hl.Unloaded += LinkUnloaded;
                                 hl.RequestNavigate += this.RequestNavigate;
 
-                                MouseButtonEventHandler imageMouseUpHandler = (a, b) => RequestNavigate(hl, new RequestNavigateEventArgs(hl.NavigateUri, null));
-                                RoutedEventHandler imageUnloadHandler = (a, b) =>
-                                                                            {
-                                                                                image.PreviewMouseUp -= imageMouseUpHandler;
-                                                                            };
-                                image.PreviewMouseUp += imageMouseUpHandler;
-                                image.Unloaded += imageUnloadHandler;
+                                image.PreviewMouseUp += (a, b) => RequestNavigate(hl, new RequestNavigateEventArgs(hl.NavigateUri, null));
                                 MessageParagraph.Inlines.Add(hl);
                                 continue;
                             }
@@ -363,14 +356,6 @@ namespace Octgn.Controls
             
         }
 
-        private void LinkUnloaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            var o = sender as Hyperlink;
-            if (o == null) return;
-            o.Unloaded -= LinkUnloaded;
-            o.RequestNavigate -= this.RequestNavigate;
-        }
-
         bool IsImageUrl(System.Uri url)
         {
             if (!enableImages) return false;
@@ -418,5 +403,30 @@ namespace Octgn.Controls
 
             e.Handled = true;
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (OnMouseUsernameEnter != null)
+            {
+                foreach (var d in OnMouseUsernameEnter.GetInvocationList())
+                {
+                    OnMouseUsernameEnter -= (MouseEventHandler)d;
+                }
+            }
+            if (OnMouseUsernameLeave != null)
+            {
+                foreach (var d in OnMouseUsernameLeave.GetInvocationList())
+                {
+                    OnMouseUsernameLeave -= (MouseEventHandler)d;
+                }
+            }
+        }
+
+        #endregion
     }
 }

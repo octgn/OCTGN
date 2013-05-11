@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -13,12 +12,11 @@ namespace Octgn.Controls
 
     using Octgn.Networking;
     using Octgn.Play;
-    using Octgn.Windows;
 
     /// <summary>
     /// Interaction logic for PreGameLobby.xaml
     /// </summary>
-    public partial class PreGameLobby: UserControl 
+    public partial class PreGameLobby: UserControl ,IDisposable
     {
         public event Action<object> OnClose;
 
@@ -65,15 +63,15 @@ namespace Octgn.Controls
                 options.IsEnabled = playersList.IsEnabled = false;
             }
             Loaded += OnLoaded;
-            Unloaded += delegate
-            {
-                if (_startingGame == false)
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            if (_startingGame == false)
                     Program.StopGame();
-                Program.GameSettings.PropertyChanged -= SettingsChanged;
-                Program.ServerError -= HandshakeError;
-                Player.OnLocalPlayerWelcomed -= PlayerOnOnLocalPlayerWelcomed;
-                OnClose = null;
-            };
+            Program.GameSettings.PropertyChanged -= SettingsChanged;
+            Program.ServerError -= HandshakeError;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -218,5 +216,24 @@ namespace Octgn.Controls
         {
             if (cbTwoSided.IsChecked != null) Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Player.OnLocalPlayerWelcomed -= PlayerOnOnLocalPlayerWelcomed;
+            if (OnClose != null)
+            {
+                foreach (var d in OnClose.GetInvocationList())
+                {
+                    OnClose -= (Action<object>)d;
+                }
+            }
+        }
+
+        #endregion
     }
 }

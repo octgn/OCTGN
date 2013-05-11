@@ -13,7 +13,13 @@
             InitializeComponent();
             WindowManager.PreGameLobbyWindow = this;
             this.CloseButtonVisibility = Visibility.Hidden;
-            this.Closed += (sender, args) => WindowManager.PreGameLobbyWindow = null;
+            this.Closed += OnClosed;
+        }
+
+        private void OnClosed(object sender, EventArgs eventArgs)
+        {
+            WindowManager.PreGameLobbyWindow = null;
+            this.Dispose();
         }
 
         public void Setup(bool isLocalGame, Window owner)
@@ -32,7 +38,14 @@
 
         private void PreGameLobbyOnOnClose(object o)
         {
+            lobby.OnClose -= this.PreGameLobbyOnOnClose;
+            lobby.Dispose();
             this.Close();
+        }
+        public new void Dispose()
+        {
+            this.Closed -= OnClosed;
+            base.Dispose();
         }
     }
 }
