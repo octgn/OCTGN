@@ -1,5 +1,6 @@
 ﻿namespace o8build
 {
+    using Octgn.Library.Exceptions;
     using System;
     using System.IO;
     using System.IO.Packaging;
@@ -41,6 +42,8 @@
             string gv = setNode.Attributes["gameVersion"].Value;
             if (gv != null) this.GameVersion = new Version(gv);
             Version ver;
+            if (setNode.Attributes["version"] == null)
+                throw new UserMessageException("No version attribute defined on the set element in file: {0}", packageName);
             Version.TryParse(setNode.Attributes["version"].Value, out ver);
             this.Version = ver ?? new Version(0, 0);
             Package = package;
