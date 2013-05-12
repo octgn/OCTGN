@@ -18,6 +18,7 @@
     using Octgn.Library;
     using Octgn.Library.Exceptions;
     using Octgn.ProxyGenerator;
+    using System.Xml;
 
     public class GameValidator
     {
@@ -68,6 +69,7 @@
                     this.VerifySetDirectory(dir);
                     var setFile = dir.GetFiles().First();
                     TestSetXml(setFile.FullName);
+                    CheckSetXML(setFile.FullName);
                 }
             }
         }
@@ -136,6 +138,55 @@
                         throw new UserMessageException("Your Marker file {0} was named incorrectly", f.FullName);
                 }
             }
+        }
+
+        public void CheckSetXML(string fileName)
+        {
+            string definitionPath = Path.Combine(this.Directory.FullName, "definition.xml");
+            List<string> properties = new List<string>();
+            XmlDocument doc = new XmlDocument();
+            doc.Load(definitionPath);
+            XmlNode cardDef = doc.GetElementsByTagName("card").Item(0);
+            foreach (XmlNode propNode in cardDef.ChildNodes)
+            {
+                if (propNode.Name == "property")
+                {
+                    if (propNode.Attributes["name"] != null)
+                    {
+                        properties.Add(propNode.Attributes["name"].Value);
+                    }
+                }
+            }
+            cardDef = null;
+            doc.RemoveAll();
+            doc = null;
+            doc = new XmlDocument();
+            doc.Load(fileName);
+            foreach (XmlNode cardNode in doc.GetElementsByTagName("card"))
+            {
+                string cardName = cardNode.Attributes["name"].Value;
+                List<string> cardProps = new List<string>();
+                foreach (XmlNode propNode in cardNode.ChildNodes)
+                {
+                    if (!cardProps.Contains(propNode.Attributes["name"].Value))
+                    {
+                        cardProps.Add(propNode.Attributes["name"].Value);
+                    }
+                    else
+                    {
+                        throw new UserMessageException("Duplicate property found named {0} on card named {1} in set file {2}", propNode.Attributes["name"].Value, cardName, fileName);
+                    }
+                }
+                foreach (string prop in cardProps)
+                {
+                    if (!properties.Contains(prop))
+                    {
+                        throw new UserMessageException("Property defined on card name {0} named {1} that is not defined in definition.xml in set file {2}", cardName, prop, fileName);
+                    }
+                }
+            }
+            doc.RemoveAll();
+            doc = null;
         }
 
         [GameValidatorAttribute]

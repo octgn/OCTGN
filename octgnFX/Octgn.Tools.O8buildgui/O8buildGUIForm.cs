@@ -125,5 +125,18 @@ namespace Octgn.Tools.O8buildgui
 
             RunCommand(arg);
         }
+
+        private void copySelectedLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (ConsoleOutput.SelectedItems.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (string line in ConsoleOutput.SelectedItems)
+                {
+                    sb.AppendLine(line);
+                }
+                Clipboard.SetText(sb.ToString());
+            }
+        }
     }
 }
