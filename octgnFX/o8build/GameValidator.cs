@@ -360,6 +360,27 @@
                 {
                     if (propNode.Name == "alternate")
                     {
+                        string altName = propNode.Attributes["name"].Value;
+                        List<string> props = new List<string>();
+                        foreach (XmlNode altPropNode in propNode.ChildNodes)
+                        {
+                            string prop = altPropNode.Attributes["name"].Value;
+                            if (!props.Contains(prop))
+                            {
+                                props.Add(prop);
+                            }
+                            else
+                            {
+                                throw new UserMessageException("Duplicate property found named {0} on card named {1} within alternate {2} in set file {3}",prop, cardName, altName, fileName);
+                            }
+                        }
+                        foreach (string prop in props)
+                        {
+                            if (!properties.Contains(prop))
+                            {
+                                throw new UserMessageException("Property defined on card {0} alternate with name {1} named {2} is not defined in definition.xml in set file {2}", cardName, altName, prop, fileName);
+                            }
+                        }
                         continue;
                     }
                     if (!cardProps.Contains(propNode.Attributes["name"].Value))
