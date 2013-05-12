@@ -358,6 +358,10 @@
                 List<string> cardProps = new List<string>();
                 foreach (XmlNode propNode in cardNode.ChildNodes)
                 {
+                    if (propNode.Name == "alternate")
+                    {
+                        continue;
+                    }
                     if (!cardProps.Contains(propNode.Attributes["name"].Value))
                     {
                         cardProps.Add(propNode.Attributes["name"].Value);
