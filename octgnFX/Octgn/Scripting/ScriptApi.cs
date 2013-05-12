@@ -473,6 +473,23 @@ namespace Octgn.Scripting
                                             });
         }
 
+        public int? AskChoice(string question, List<string> choices)
+        {
+            return _engine.Invoke<int?>(() =>
+            {
+                var dlg = new ChoiceDlg("Choose One", question, choices);
+                int result = dlg.GetChoice();
+                if (result == 0)
+                {
+                    return (int?)null;
+                }
+                else
+                {
+                    return dlg.DialogResult.GetValueOrDefault() ? result - 1: (int?)null;
+                }
+            });
+        }
+
         public Tuple<string, string, int> AskMarker()
         {
             return _engine.Invoke<Tuple<string, string, int>>(() =>

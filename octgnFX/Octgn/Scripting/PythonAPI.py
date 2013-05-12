@@ -47,6 +47,11 @@ def confirm(message):
 def askInteger(question, defaultAnswer):
   return _api.AskInteger(question, defaultAnswer)
 
+def askChoice(question, choices = []):
+  realList = List[String](choices)
+  apiResult = _api.AskChoice(question, realList)
+  return apiResult
+
 def askMarker():
   apiResult = _api.AskMarker()
   if apiResult == None: return (None, 0)
