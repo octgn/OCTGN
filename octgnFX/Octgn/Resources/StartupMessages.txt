@@ -1,4 +1,4 @@
-﻿Are we there yet?
+?Are we there yet?
 Insert quarter
 1,000,000 bottles of beer on the wall...
 I know your data is here somewhere...
@@ -39,17 +39,17 @@ Making you a cookie.
 Stealing bucket.
 Photographing cats... Attaching signs... MEME complete!
 Recalculating PI....
-Creating Universe (this may take some time
+Creating Universe (this may take some time)
 Creating Time-Loop Inversion Field
 Caching internet locally...
 Transporting you into the future one second at a time...
 Commencing infinite loop (this may take some time)
 I'm quite drunk, loading might take a little more time than the usual! Please be patient!
 Communing with nature
-Spinning the wheel of fortune
+Spinning the wheel of fortune...
 I'll be back
 Cybernet loading self awareness....please be patient
-Starting missile launch sequence in 10
+Starting missile launch sequence in 10, 9, 8...
 Increasing speed to 88.8mph
 Protect the innocent
 The internet is full... Please wait...
@@ -59,7 +59,7 @@ I know this is painful to watch, but I have to load this.
 Go read a book, I'm nearly finished.
 Oh, no! Loading time...
 Really sorry, it needs work I know...
-Buy more RAM...
+ERROR! Buy more RAM...
 Loading screen... If you can see this then it's already loaded.
 Busing through the motherboard, will arrive soon...
 640K ought to be enough for anybody
@@ -68,8 +68,8 @@ the bits are breeding
 we're building the buildings as fast as we can
 would you prefer chicken, steak, or tofu?
 pay no attention to the man behind the curtain
-and enjoy the elevator music
-while the little elves draw your map
+Please wait and enjoy the elevator music
+Please wait while the little elves draw your map
 a few bits tried to escape, but we caught them
 and dream of faster computers
 would you like fries with that?
@@ -81,13 +81,35 @@ you're not in Kansas any more
 the server is powered by a lemon and two electrodes
 we love you just the way you are
 while a larger software vendor in Seattle takes over the world
-we're testing your patience
+testing your patience...
 as if you had any other choice
 take a moment to sign up for our lovely prizes
 don't think of purple hippos
 follow the white rabbit
-why don't you order a sandwich?
+Still loading... why don't you order a sandwich?
 while the satellite moves into position
 the bits are flowing slowly today
 dig on the 'X' for buried treasure... ARRR!
-it's still faster than you could draw it
+it's still faster than YOU could draw it!
+Reticulating Splines...
+Have fun, play OCTGN!
+Removing FBI tracking devices...
+Renaming all your important files... just for kicks
+Go grab a coffee... You deserve it.
+You can't divide by zero... I just tried.
+Shovelling more coal into the server...
+Power failure at server, must replace hamsters...
+The monkey didn't survive last time. Let's hope it works better this time.
+Please wait while I find a funnier loading message.
+Please wait while the server returns from our coffee run.
+Call up Santa, we need another elf down here!
+Loading complete! HAHAHAHA, just kidding!
+Help! I'm being held hostage in here!
+Please wait while the gods contemplate your fate.
+I'm a personality prototype. You can tell, can't you.
+I've calculated your chance of survival, but I don't think you'll like it.
+Brain the size of a planet, and they ask me to write these dumb messages.
+Initiating giant laser...
+Please wait... those last few were quite a doozy.
+Have you considered going outside today?
+DDoS'ing the server... just for the lulz.
