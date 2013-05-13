@@ -3,7 +3,7 @@
 
 	<xs:complexType name="link">
 		<xs:sequence>
-			<xs:element name="property" minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="property" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:attribute name="name" type="xs:string" use="required" />
 				</xs:complexType>
@@ -14,64 +14,68 @@
 	</xs:complexType>
 
 	<xs:complexType name="conditional">
-		<xs:sequence>
-			<xs:element name="if" minOccurs="0" maxOccurs="1">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
-					</xs:sequence>
-					<xs:attribute name="property" type="xs:string" use="required" />
-					<xs:attribute name="value" type="xs:string" use="optional" />
-					<xs:attribute name="contains" type="xs:string" use="optional" />
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="elseif" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
-					</xs:sequence>
-					<xs:attribute name="property" type="xs:string" use="required" />
-					<xs:attribute name="value" type="xs:string" use="optional" />
-					<xs:attribute name="contains" type="xs:string" use="optional" />
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="else" minOccurs="0" maxOccurs="1">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
-					</xs:sequence>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="switch" minOccurs="0" maxOccurs="1">
-				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="case" minOccurs="1" maxOccurs="unbounded">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
-								</xs:sequence>
-								<xs:attribute name="value" type="xs:string" use="optional" />
-								<xs:attribute name="contains" type="xs:string" use="optional" />
-								<xs:attribute name="break" type="xs:string" default="True" />
-							</xs:complexType>
-						</xs:element>
-						<xs:element name="default" minOccurs="0" maxOccurs="1">
-							<xs:complexType>
-								<xs:sequence>
-									<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
-								</xs:sequence>
-							</xs:complexType>
-						</xs:element>
-					</xs:sequence>
-					<xs:attribute name="property" type="xs:string" use="required" />
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
+		<xs:choice>
+			<xs:sequence>
+				<xs:element name="if" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+						</xs:sequence>
+						<xs:attribute name="property" type="xs:string" use="required" />
+						<xs:attribute name="value" type="xs:string" use="optional" />
+						<xs:attribute name="contains" type="xs:string" use="optional" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="elseif" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+						</xs:sequence>
+						<xs:attribute name="property" type="xs:string" use="required" />
+						<xs:attribute name="value" type="xs:string" use="optional" />
+						<xs:attribute name="contains" type="xs:string" use="optional" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="else" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element name="switch" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="case" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+									</xs:sequence>
+									<xs:attribute name="value" type="xs:string" use="optional" />
+									<xs:attribute name="contains" type="xs:string" use="optional" />
+									<xs:attribute name="break" type="xs:string" default="True" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="default" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="property" type="xs:string" use="required" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:choice>
 	</xs:complexType>
 
 	<xs:element name="templates">
 		<xs:complexType>
-			<xs:choice minOccurs="1" maxOccurs="1">
+			<xs:sequence>
 				<xs:element name="blocks" minOccurs="1" maxOccurs="1">
 					<xs:complexType>
 						<xs:sequence>
@@ -134,18 +138,18 @@
 							</xs:element>
 							<xs:element name="overlayblocks" minOccurs="0" maxOccurs="1">
 								<xs:complexType>
-									<xs:sequence>
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
 										<xs:element name="conditional" type="conditional" minOccurs="0" maxOccurs="unbounded" />
 										<xs:element name="link" type="link" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
+									</xs:choice>
 								</xs:complexType>
 							</xs:element>
 							<xs:element name="textblocks" minOccurs="0" maxOccurs="1">
 								<xs:complexType>
-									<xs:sequence>
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
 										<xs:element name="conditional" type="conditional" minOccurs="0" maxOccurs="unbounded" />
 										<xs:element name="link" type="link" minOccurs="0" maxOccurs="unbounded" />
-									</xs:sequence>
+									</xs:choice>
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>
@@ -153,7 +157,7 @@
 						<xs:attribute name="default" type="xs:string" default="False" />
 					</xs:complexType>
 				</xs:element>
-			</xs:choice>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

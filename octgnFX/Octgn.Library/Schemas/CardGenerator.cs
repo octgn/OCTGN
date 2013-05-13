@@ -24,17 +24,30 @@ using System.Xml.Serialization;
 [System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
 public partial class templates {
     
-    private object[] itemsField;
+    private templatesBlock[] blocksField;
+    
+    private templatesTemplate[] templateField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("blocks", typeof(templatesBlocks), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("template", typeof(templatesTemplate), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public object[] Items {
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute("block", Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public templatesBlock[] blocks {
         get {
-            return this.itemsField;
+            return this.blocksField;
         }
         set {
-            this.itemsField = value;
+            this.blocksField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("template", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public templatesTemplate[] template {
+        get {
+            return this.templateField;
+        }
+        set {
+            this.templateField = value;
         }
     }
 }
@@ -45,37 +58,15 @@ public partial class templates {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class templatesBlocks {
+public partial class templatesBlock {
     
-    private templatesBlocksBlock[] blockField;
+    private templatesBlockLocation locationField;
     
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("block", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesBlocksBlock[] block {
-        get {
-            return this.blockField;
-        }
-        set {
-            this.blockField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class templatesBlocksBlock {
+    private templatesBlockText textField;
     
-    private templatesBlocksBlockLocation locationField;
+    private templatesBlockBorder borderField;
     
-    private templatesBlocksBlockText textField;
-    
-    private templatesBlocksBlockBorder borderField;
-    
-    private templatesBlocksBlockWordwrap wordwrapField;
+    private templatesBlockWordwrap wordwrapField;
     
     private string typeField;
     
@@ -85,7 +76,7 @@ public partial class templatesBlocksBlock {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesBlocksBlockLocation location {
+    public templatesBlockLocation location {
         get {
             return this.locationField;
         }
@@ -96,7 +87,7 @@ public partial class templatesBlocksBlock {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesBlocksBlockText text {
+    public templatesBlockText text {
         get {
             return this.textField;
         }
@@ -107,7 +98,7 @@ public partial class templatesBlocksBlock {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesBlocksBlockBorder border {
+    public templatesBlockBorder border {
         get {
             return this.borderField;
         }
@@ -118,7 +109,7 @@ public partial class templatesBlocksBlock {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesBlocksBlockWordwrap wordwrap {
+    public templatesBlockWordwrap wordwrap {
         get {
             return this.wordwrapField;
         }
@@ -167,7 +158,7 @@ public partial class templatesBlocksBlock {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class templatesBlocksBlockLocation {
+public partial class templatesBlockLocation {
     
     private string xField;
     
@@ -179,7 +170,7 @@ public partial class templatesBlocksBlockLocation {
     
     private string flipField;
     
-    public templatesBlocksBlockLocation() {
+    public templatesBlockLocation() {
         this.rotateField = 0;
         this.altrotateField = "False";
         this.flipField = "False";
@@ -325,56 +316,19 @@ public partial class linkProperty {
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 public partial class conditional {
     
-    private conditionalIF ifField;
-    
-    private conditionalElseif[] elseifField;
-    
-    private link[] elseField;
-    
-    private conditionalSwitch switchField;
+    private object[] itemsField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditionalIF @if {
+    [System.Xml.Serialization.XmlElementAttribute("else", typeof(conditionalElse), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("elseif", typeof(conditionalElseif), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("if", typeof(conditionalIF), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlElementAttribute("switch", typeof(conditionalSwitch), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public object[] Items {
         get {
-            return this.ifField;
+            return this.itemsField;
         }
         set {
-            this.ifField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("elseif", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditionalElseif[] elseif {
-        get {
-            return this.elseifField;
-        }
-        set {
-            this.elseifField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
-    public link[] @else {
-        get {
-            return this.elseField;
-        }
-        set {
-            this.elseField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditionalSwitch @switch {
-        get {
-            return this.switchField;
-        }
-        set {
-            this.switchField = value;
+            this.itemsField = value;
         }
     }
 }
@@ -385,7 +339,29 @@ public partial class conditional {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class conditionalIF {
+public partial class conditionalElse {
+    
+    private link[] linkField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalElseif {
     
     private link[] linkField;
     
@@ -446,7 +422,7 @@ public partial class conditionalIF {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class conditionalElseif {
+public partial class conditionalIF {
     
     private link[] linkField;
     
@@ -622,7 +598,7 @@ public partial class conditionalSwitchCase {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class templatesBlocksBlockText {
+public partial class templatesBlockText {
     
     private string colorField;
     
@@ -670,7 +646,7 @@ public partial class templatesBlocksBlockText {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class templatesBlocksBlockBorder {
+public partial class templatesBlockBorder {
     
     private string colorField;
     
@@ -705,7 +681,7 @@ public partial class templatesBlocksBlockBorder {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class templatesBlocksBlockWordwrap {
+public partial class templatesBlockWordwrap {
     
     private string heightField;
     
@@ -715,7 +691,7 @@ public partial class templatesBlocksBlockWordwrap {
     
     private string valignField;
     
-    public templatesBlocksBlockWordwrap() {
+    public templatesBlockWordwrap() {
         this.alignField = "near";
         this.valignField = "near";
     }
@@ -777,9 +753,9 @@ public partial class templatesTemplate {
     
     private templatesTemplateMatch[] matchesField;
     
-    private templatesTemplateOverlayblocks overlayblocksField;
+    private object[] overlayblocksField;
     
-    private templatesTemplateTextblocks textblocksField;
+    private object[] textblocksField;
     
     private string srcField;
     
@@ -802,8 +778,10 @@ public partial class templatesTemplate {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesTemplateOverlayblocks overlayblocks {
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(conditional), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(link), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public object[] overlayblocks {
         get {
             return this.overlayblocksField;
         }
@@ -813,8 +791,10 @@ public partial class templatesTemplate {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public templatesTemplateTextblocks textblocks {
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(conditional), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(typeof(link), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public object[] textblocks {
         get {
             return this.textblocksField;
         }
@@ -878,76 +858,6 @@ public partial class templatesTemplateMatch {
         }
         set {
             this.valueField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class templatesTemplateOverlayblocks {
-    
-    private conditional[] conditionalField;
-    
-    private link[] linkField;
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("conditional", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditional[] conditional {
-        get {
-            return this.conditionalField;
-        }
-        set {
-            this.conditionalField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public link[] link {
-        get {
-            return this.linkField;
-        }
-        set {
-            this.linkField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class templatesTemplateTextblocks {
-    
-    private conditional[] conditionalField;
-    
-    private link[] linkField;
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("conditional", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditional[] conditional {
-        get {
-            return this.conditionalField;
-        }
-        set {
-            this.conditionalField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public link[] link {
-        get {
-            return this.linkField;
-        }
-        set {
-            this.linkField = value;
         }
     }
 }
