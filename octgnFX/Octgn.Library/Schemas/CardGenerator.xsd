@@ -3,7 +3,7 @@
 
 	<xs:complexType name="link">
 		<xs:sequence>
-			<xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="property" minOccurs="1" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:attribute name="name" type="xs:string" use="required" />
 				</xs:complexType>
@@ -71,8 +71,8 @@
 
 	<xs:element name="templates">
 		<xs:complexType>
-			<xs:choice minOccurs="1" maxOccurs="unbounded">
-				<xs:element name="blocks">
+			<xs:choice minOccurs="1" maxOccurs="1">
+				<xs:element name="blocks" minOccurs="1" maxOccurs="1">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="block" minOccurs="1" maxOccurs="unbounded">
@@ -117,7 +117,7 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="template">
+				<xs:element name="template" minOccurs="1" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="matches" minOccurs="1" maxOccurs="1">
@@ -136,7 +136,7 @@
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element name="conditional" type="conditional" minOccurs="0" maxOccurs="unbounded" />
-										<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+										<xs:element name="link" type="link" minOccurs="0" maxOccurs="unbounded" />
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
@@ -144,7 +144,7 @@
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element name="conditional" type="conditional" minOccurs="0" maxOccurs="unbounded" />
-										<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+										<xs:element name="link" type="link" minOccurs="0" maxOccurs="unbounded" />
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
