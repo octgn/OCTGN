@@ -22,389 +22,12 @@ using System.Xml.Serialization;
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 [System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
-public partial class link {
-    
-    private linkProperty[] propertyField;
-    
-    private string blockField;
-    
-    private string separatorField;
-    
-    public link() {
-        this.separatorField = " ";
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public linkProperty[] property {
-        get {
-            return this.propertyField;
-        }
-        set {
-            this.propertyField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string block {
-        get {
-            return this.blockField;
-        }
-        set {
-            this.blockField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(" ")]
-    public string separator {
-        get {
-            return this.separatorField;
-        }
-        set {
-            this.separatorField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class linkProperty {
-    
-    private string nameField;
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string name {
-        get {
-            return this.nameField;
-        }
-        set {
-            this.nameField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
-public partial class conditional {
-    
-    private conditionalIF ifField;
-    
-    private conditionalElseif[] elseifField;
-    
-    private link[] elseField;
-    
-    private conditionalSwitch switchField;
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditionalIF @if {
-        get {
-            return this.ifField;
-        }
-        set {
-            this.ifField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("elseif", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditionalElseif[] elseif {
-        get {
-            return this.elseifField;
-        }
-        set {
-            this.elseifField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
-    public link[] @else {
-        get {
-            return this.elseField;
-        }
-        set {
-            this.elseField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditionalSwitch @switch {
-        get {
-            return this.switchField;
-        }
-        set {
-            this.switchField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class conditionalIF {
-    
-    private link[] linkField;
-    
-    private string propertyField;
-    
-    private string valueField;
-    
-    private string containsField;
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link")]
-    public link[] link {
-        get {
-            return this.linkField;
-        }
-        set {
-            this.linkField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string property {
-        get {
-            return this.propertyField;
-        }
-        set {
-            this.propertyField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string value {
-        get {
-            return this.valueField;
-        }
-        set {
-            this.valueField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string contains {
-        get {
-            return this.containsField;
-        }
-        set {
-            this.containsField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class conditionalElseif {
-    
-    private link[] linkField;
-    
-    private string propertyField;
-    
-    private string valueField;
-    
-    private string containsField;
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link")]
-    public link[] link {
-        get {
-            return this.linkField;
-        }
-        set {
-            this.linkField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string property {
-        get {
-            return this.propertyField;
-        }
-        set {
-            this.propertyField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string value {
-        get {
-            return this.valueField;
-        }
-        set {
-            this.valueField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string contains {
-        get {
-            return this.containsField;
-        }
-        set {
-            this.containsField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class conditionalSwitch {
-    
-    private conditionalSwitchCase[] caseField;
-    
-    private link[] defaultField;
-    
-    private string propertyField;
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("case", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    public conditionalSwitchCase[] @case {
-        get {
-            return this.caseField;
-        }
-        set {
-            this.caseField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlArrayItemAttribute("link", IsNullable=false)]
-    public link[] @default {
-        get {
-            return this.defaultField;
-        }
-        set {
-            this.defaultField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string property {
-        get {
-            return this.propertyField;
-        }
-        set {
-            this.propertyField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class conditionalSwitchCase {
-    
-    private link[] linkField;
-    
-    private string valueField;
-    
-    private string containsField;
-    
-    private string breakField;
-    
-    public conditionalSwitchCase() {
-        this.breakField = "True";
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link")]
-    public link[] link {
-        get {
-            return this.linkField;
-        }
-        set {
-            this.linkField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string value {
-        get {
-            return this.valueField;
-        }
-        set {
-            this.valueField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string contains {
-        get {
-            return this.containsField;
-        }
-        set {
-            this.containsField = value;
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("True")]
-    public string @break {
-        get {
-            return this.breakField;
-        }
-        set {
-            this.breakField = value;
-        }
-    }
-}
-
-/// <remarks/>
-[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
-[System.SerializableAttribute()]
-[System.Diagnostics.DebuggerStepThroughAttribute()]
-[System.ComponentModel.DesignerCategoryAttribute("code")]
-[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-[System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=false)]
 public partial class templates {
     
     private object[] itemsField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("blocks", typeof(templatesBlocks), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
-    [System.Xml.Serialization.XmlElementAttribute("link", typeof(link))]
     [System.Xml.Serialization.XmlElementAttribute("template", typeof(templatesTemplate), Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public object[] Items {
         get {
@@ -617,6 +240,378 @@ public partial class templatesBlocksBlockLocation {
         }
         set {
             this.flipField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class link {
+    
+    private linkProperty[] propertyField;
+    
+    private string blockField;
+    
+    private string separatorField;
+    
+    public link() {
+        this.separatorField = " ";
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("property", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public linkProperty[] property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string block {
+        get {
+            return this.blockField;
+        }
+        set {
+            this.blockField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(" ")]
+    public string separator {
+        get {
+            return this.separatorField;
+        }
+        set {
+            this.separatorField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class linkProperty {
+    
+    private string nameField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string name {
+        get {
+            return this.nameField;
+        }
+        set {
+            this.nameField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+public partial class conditional {
+    
+    private conditionalIF ifField;
+    
+    private conditionalElseif[] elseifField;
+    
+    private link[] elseField;
+    
+    private conditionalSwitch switchField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public conditionalIF @if {
+        get {
+            return this.ifField;
+        }
+        set {
+            this.ifField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("elseif", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public conditionalElseif[] elseif {
+        get {
+            return this.elseifField;
+        }
+        set {
+            this.elseifField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public link[] @else {
+        get {
+            return this.elseField;
+        }
+        set {
+            this.elseField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public conditionalSwitch @switch {
+        get {
+            return this.switchField;
+        }
+        set {
+            this.switchField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalIF {
+    
+    private link[] linkField;
+    
+    private string propertyField;
+    
+    private string valueField;
+    
+    private string containsField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string contains {
+        get {
+            return this.containsField;
+        }
+        set {
+            this.containsField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalElseif {
+    
+    private link[] linkField;
+    
+    private string propertyField;
+    
+    private string valueField;
+    
+    private string containsField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string contains {
+        get {
+            return this.containsField;
+        }
+        set {
+            this.containsField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalSwitch {
+    
+    private conditionalSwitchCase[] caseField;
+    
+    private link[] defaultField;
+    
+    private string propertyField;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("case", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public conditionalSwitchCase[] @case {
+        get {
+            return this.caseField;
+        }
+        set {
+            this.caseField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    [System.Xml.Serialization.XmlArrayItemAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
+    public link[] @default {
+        get {
+            return this.defaultField;
+        }
+        set {
+            this.defaultField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string property {
+        get {
+            return this.propertyField;
+        }
+        set {
+            this.propertyField = value;
+        }
+    }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+[System.Diagnostics.DebuggerStepThroughAttribute()]
+[System.ComponentModel.DesignerCategoryAttribute("code")]
+[System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
+public partial class conditionalSwitchCase {
+    
+    private link[] linkField;
+    
+    private string valueField;
+    
+    private string containsField;
+    
+    private string breakField;
+    
+    public conditionalSwitchCase() {
+        this.breakField = "True";
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+    public link[] link {
+        get {
+            return this.linkField;
+        }
+        set {
+            this.linkField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string value {
+        get {
+            return this.valueField;
+        }
+        set {
+            this.valueField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    public string contains {
+        get {
+            return this.containsField;
+        }
+        set {
+            this.containsField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("True")]
+    public string @break {
+        get {
+            return this.breakField;
+        }
+        set {
+            this.breakField = value;
         }
     }
 }
@@ -900,7 +895,7 @@ public partial class templatesTemplateOverlayblocks {
     private link[] linkField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("conditional")]
+    [System.Xml.Serialization.XmlElementAttribute("conditional", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public conditional[] conditional {
         get {
             return this.conditionalField;
@@ -911,7 +906,7 @@ public partial class templatesTemplateOverlayblocks {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link")]
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public link[] link {
         get {
             return this.linkField;
@@ -935,7 +930,7 @@ public partial class templatesTemplateTextblocks {
     private link[] linkField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("conditional")]
+    [System.Xml.Serialization.XmlElementAttribute("conditional", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public conditional[] conditional {
         get {
             return this.conditionalField;
@@ -946,7 +941,7 @@ public partial class templatesTemplateTextblocks {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("link")]
+    [System.Xml.Serialization.XmlElementAttribute("link", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
     public link[] link {
         get {
             return this.linkField;
