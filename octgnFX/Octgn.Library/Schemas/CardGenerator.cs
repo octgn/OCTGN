@@ -68,7 +68,7 @@ public partial class templatesBlock {
     
     private templatesBlockWordwrap wordwrapField;
     
-    private string typeField;
+    private blocktype typeField;
     
     private string idField;
     
@@ -120,7 +120,7 @@ public partial class templatesBlock {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public string type {
+    public blocktype type {
         get {
             return this.typeField;
         }
@@ -164,20 +164,20 @@ public partial class templatesBlockLocation {
     
     private string yField;
     
-    private int rotateField;
+    private string rotateField;
     
-    private string altrotateField;
+    private boolean altrotateField;
     
-    private string flipField;
+    private boolean flipField;
     
     public templatesBlockLocation() {
-        this.rotateField = 0;
-        this.altrotateField = "False";
-        this.flipField = "False";
+        this.rotateField = "0";
+        this.altrotateField = boolean.False;
+        this.flipField = boolean.False;
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
     public string x {
         get {
             return this.xField;
@@ -188,7 +188,7 @@ public partial class templatesBlockLocation {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
     public string y {
         get {
             return this.yField;
@@ -199,9 +199,9 @@ public partial class templatesBlockLocation {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(0)]
-    public int rotate {
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
+    [System.ComponentModel.DefaultValueAttribute("0")]
+    public string rotate {
         get {
             return this.rotateField;
         }
@@ -212,8 +212,8 @@ public partial class templatesBlockLocation {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("False")]
-    public string altrotate {
+    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
+    public boolean altrotate {
         get {
             return this.altrotateField;
         }
@@ -224,8 +224,8 @@ public partial class templatesBlockLocation {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("False")]
-    public string flip {
+    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
+    public boolean flip {
         get {
             return this.flipField;
         }
@@ -233,6 +233,18 @@ public partial class templatesBlockLocation {
             this.flipField = value;
         }
     }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+public enum boolean {
+    
+    /// <remarks/>
+    True,
+    
+    /// <remarks/>
+    False,
 }
 
 /// <remarks/>
@@ -540,10 +552,10 @@ public partial class conditionalSwitchCase {
     
     private string containsField;
     
-    private string breakField;
+    private boolean breakField;
     
     public conditionalSwitchCase() {
-        this.breakField = "True";
+        this.breakField = boolean.True;
     }
     
     /// <remarks/>
@@ -581,8 +593,8 @@ public partial class conditionalSwitchCase {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("True")]
-    public string @break {
+    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
+    public boolean @break {
         get {
             return this.breakField;
         }
@@ -618,7 +630,7 @@ public partial class templatesBlockText {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
     public string size {
         get {
             return this.sizeField;
@@ -664,7 +676,7 @@ public partial class templatesBlockBorder {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
     public string size {
         get {
             return this.sizeField;
@@ -687,17 +699,17 @@ public partial class templatesBlockWordwrap {
     
     private string widthField;
     
-    private string alignField;
+    private alignment alignField;
     
-    private string valignField;
+    private alignment valignField;
     
     public templatesBlockWordwrap() {
-        this.alignField = "near";
-        this.valignField = "near";
+        this.alignField = alignment.near;
+        this.valignField = alignment.near;
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
     public string height {
         get {
             return this.heightField;
@@ -708,7 +720,7 @@ public partial class templatesBlockWordwrap {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.Xml.Serialization.XmlAttributeAttribute(DataType="integer")]
     public string width {
         get {
             return this.widthField;
@@ -720,8 +732,8 @@ public partial class templatesBlockWordwrap {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("near")]
-    public string align {
+    [System.ComponentModel.DefaultValueAttribute(alignment.near)]
+    public alignment align {
         get {
             return this.alignField;
         }
@@ -732,8 +744,8 @@ public partial class templatesBlockWordwrap {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("near")]
-    public string valign {
+    [System.ComponentModel.DefaultValueAttribute(alignment.near)]
+    public alignment valign {
         get {
             return this.valignField;
         }
@@ -741,6 +753,33 @@ public partial class templatesBlockWordwrap {
             this.valignField = value;
         }
     }
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+public enum alignment {
+    
+    /// <remarks/>
+    near,
+    
+    /// <remarks/>
+    center,
+    
+    /// <remarks/>
+    far,
+}
+
+/// <remarks/>
+[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
+[System.SerializableAttribute()]
+public enum blocktype {
+    
+    /// <remarks/>
+    text,
+    
+    /// <remarks/>
+    overlay,
 }
 
 /// <remarks/>
@@ -759,10 +798,10 @@ public partial class templatesTemplate {
     
     private string srcField;
     
-    private string defaultField;
+    private boolean defaultField;
     
     public templatesTemplate() {
-        this.defaultField = "False";
+        this.defaultField = boolean.False;
     }
     
     /// <remarks/>
@@ -816,8 +855,8 @@ public partial class templatesTemplate {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute("False")]
-    public string @default {
+    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
+    public boolean @default {
         get {
             return this.defaultField;
         }
