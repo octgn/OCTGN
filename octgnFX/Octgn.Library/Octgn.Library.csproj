@@ -103,12 +103,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schemas\CardGenerator.cs">
       <DependentUpon>CardGenerator.xsd</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Schemas\CardSet.cs">
       <DependentUpon>CardSet.xsd</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Schemas\Game.cs">
       <DependentUpon>Game.xsd</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="SimpleConfig.cs" />
     <Compile Include="Utils\RegexPatterns.cs" />
@@ -118,20 +121,25 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="Schemas\Game.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <CodeAnalysisDictionary Include="Schemas\Game.xsx">
       <DependentUpon>Game.xsd</DependentUpon>
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </CodeAnalysisDictionary>
     <EmbeddedResource Include="Schemas\CardSet.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Schemas\CardGenerator.xsd">
       <LastGenOutput>CardGenerator.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <None Include="Schemas\CardSet.xsx">
       <DependentUpon>CardSet.xsd</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup />
