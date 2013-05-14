@@ -87,7 +87,8 @@
 
         public static IDictionary<PropertyDef, object> PropertySet(this ICard card)
         {
-            return card.Properties[card.Alternate].Properties.Where(x=>x.Key.IsUndefined == false).ToDictionary(x=>x.Key,x=>x.Value);
+             var ret = card.Properties[card.Alternate].Properties.Where(x=>x.Key.IsUndefined == false).ToDictionary(x=>x.Key,x=>x.Value);
+            return ret;
         }
 
         public static void SetPropertySet(this Card card, string propertyType = "")

@@ -520,16 +520,6 @@
                         var propset = new CardPropertySet();
                         propset.Properties = new Dictionary<PropertyDef, object>();
                         propset.Type = a.Attribute("type").Value;
-                        var np2 = new PropertyDef()
-                        {
-                            Hidden = false,
-                            Name = "Name",
-                            Type = PropertyType.String,
-                            TextKind = PropertyTextKind.FreeText,
-                            IgnoreText = false,
-                            IsUndefined = false
-                        };
-                        propset.Properties[np2] = a.Attribute("name").Value;
                         foreach (var p in a.Descendants("property"))
                         {
                             var pd = game.CustomProperties.First(x => x.Name.Equals(p.Attribute("name").Value,StringComparison.InvariantCultureIgnoreCase));
@@ -546,6 +536,16 @@
                                 propset.Properties.Add(cpnew, "");
                             }
                         }
+                        var np2 = new PropertyDef()
+                        {
+                            Hidden = false,
+                            Name = "Name",
+                            Type = PropertyType.String,
+                            TextKind = PropertyTextKind.FreeText,
+                            IgnoreText = false,
+                            IsUndefined = false
+                        };
+                        propset.Properties[np2] = a.Attribute("name").Value;
                         card.Properties.Add(propset.Type,propset);
                     }
 
