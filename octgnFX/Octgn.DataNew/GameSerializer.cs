@@ -522,6 +522,7 @@
                         var propset = new CardPropertySet();
                         propset.Properties = new Dictionary<PropertyDef, object>();
                         propset.Type = a.Attribute("type").Value;
+                        var thisName = a.Attribute("name").Value;
                         foreach (var p in a.Descendants("property"))
                         {
                             var pd = game.CustomProperties.First(x => x.Name.Equals(p.Attribute("name").Value,StringComparison.InvariantCultureIgnoreCase));
@@ -549,7 +550,7 @@
                         };
                         if (propset.Properties.ContainsKey(np2))
                             propset.Properties.Remove(np2);
-                        propset.Properties.Add(np2, card.Name);
+                        propset.Properties.Add(np2, thisName);
                         card.Properties.Add(propset.Type,propset);
                     }
 

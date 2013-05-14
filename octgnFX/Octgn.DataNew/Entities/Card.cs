@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public interface ICard
     {
@@ -28,9 +29,21 @@
         public IDictionary<string , CardPropertySet> Properties { get; set; }
     }
 
-    public class CardPropertySet
+    public class CardPropertySet : ICloneable
     {
         public string Type { get; set; }
         public IDictionary<PropertyDef, object> Properties { get; set; }
+
+        public object Clone()
+        {
+            var ret = new CardPropertySet()
+                          {
+                              Type = this.Type.Clone() as string,
+                              Properties =
+                                  this.Properties.ToDictionary(
+                                      x => x.Key.Clone() as PropertyDef, x => x.Value)
+                          };
+            return ret;
+        }
     }
 }

@@ -96,7 +96,7 @@ namespace Octgn.Play
             : base(owner)
         {
             _id = id;
-            Type = new CardIdentity(id) {Alias = false, Key = key, Model = model, MySecret = mySecret};
+            Type = new CardIdentity(id) {Alias = false, Key = key, Model = model.Clone() , MySecret = mySecret};
             // var _definition = def;
             All.Add(id, this);
             _alternateOf = null;

@@ -24,10 +24,10 @@
         {
             return new MultiCard
                          {
-                             Alternate = card.Alternate,
+                             Alternate = card.Alternate.Clone() as String,
                              Id = card.Id,
-                             ImageUri = card.ImageUri,
-                             Name = card.Name,
+                             ImageUri = card.ImageUri.Clone() as String,
+                             Name = card.Name.Clone() as String,
                              Quantity = quantity,
                              SetId = card.SetId,
                              Properties = card.Properties.ToDictionary(x=>x.Key,y=>y.Value)
@@ -110,10 +110,10 @@
         {
             var ret = new MultiCard
                           {
-                              Name = card.Name,
+                              Name = card.Name.Clone() as string,
                               Id = card.Id,
-                              Alternate = card.Alternate,
-                              ImageUri = card.ImageUri,
+                              Alternate = card.Alternate.Clone() as string,
+                              ImageUri = card.ImageUri.Clone() as string,
                               Quantity = card.Quantity,
                               Properties = new Dictionary<string,CardPropertySet>(),
                               SetId = card.SetId
@@ -122,6 +122,22 @@
             {
                 ret.Properties.Add(p.Key, p.Value);
             }
+            return ret;
+        }
+
+        public static Card Clone(this Card card)
+        {
+            var ret = new Card
+                          {
+                              Name = card.Name.Clone() as string,
+                              Alternate = card.Alternate.Clone() as string,
+                              Id = card.Id,
+                              ImageUri = card.ImageUri.Clone() as string,
+                              Properties =
+                                  card.Properties.ToDictionary(
+                                      x => x.Key.Clone() as string, x => x.Value.Clone() as CardPropertySet),
+                              SetId = card.SetId
+                          };
             return ret;
         }
     }
