@@ -72,7 +72,7 @@
 
         public static bool HasProperty(this Card card, string name)
         {
-            return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) && x.Key.IsUndefied == false);
+            return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) && x.Key.IsUndefined == false);
         }
 
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
@@ -87,7 +87,7 @@
 
         public static IDictionary<PropertyDef, object> PropertySet(this ICard card)
         {
-            return card.Properties[card.Alternate].Properties.Where(x=>x.Key.IsUndefied == false).ToDictionary(x=>x.Key,x=>x.Value);
+            return card.Properties[card.Alternate].Properties.Where(x=>x.Key.IsUndefined == false).ToDictionary(x=>x.Key,x=>x.Value);
         }
 
         public static void SetPropertySet(this Card card, string propertyType = "")
