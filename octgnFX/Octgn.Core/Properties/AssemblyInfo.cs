@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: Guid("7bae7c0b-a5b0-4b1e-9cd0-60b31436c85a")]
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 [assembly: InternalsVisibleTo("Octgn.Test")]
+[assembly: InternalsVisibleTo("Octgn.PlayTable")]
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version

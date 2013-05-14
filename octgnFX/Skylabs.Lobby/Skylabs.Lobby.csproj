@@ -176,9 +176,17 @@
       <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
       <Name>agsXMPP2010</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Octgn.Core\Octgn.Core.csproj">
+      <Project>{9bdb193e-e3ba-4a1d-8c6e-ecabb6ffc7ab}</Project>
+      <Name>Octgn.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
       <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
       <Name>Octgn.DataNew</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Octgn.Library\Octgn.Library.csproj">
+      <Project>{af4b3885-f178-4c6b-99c9-9eb178fec994}</Project>
+      <Name>Octgn.Library</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -189,10 +197,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Resources\jargonlist.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\nounlist.txt" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

@@ -43,17 +43,75 @@
     <Compile Include="DataManagers\PackManager.cs" />
     <Compile Include="DataManagers\SetManager.cs" />
     <Compile Include="EmptyPackage.cs" />
+    <Compile Include="Extensions\LinqExtensions.cs" />
+    <Compile Include="Extensions\String.cs" />
     <Compile Include="GameFeedManager.cs" />
+    <Compile Include="GameplayTrace.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="Injection\InjectedComponent.cs" />
+    <Compile Include="K.cs" />
+    <Compile Include="Networking\BinaryParser.cs">
+      <DependentUpon>BinaryParser.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Networking\BinaryStubs.cs">
+      <DependentUpon>BinaryStubs.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Networking\Client.cs" />
+    <Compile Include="Networking\ClientHandler.cs" />
+    <Compile Include="Networking\IServerCalls.cs">
+      <DependentUpon>IServerCalls.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Networking\Mute.cs" />
+    <Compile Include="Networking\ServerErrorEventArgs.cs" />
+    <Compile Include="Play\Actions\Action.cs" />
+    <Compile Include="Play\Actions\Create.cs" />
+    <Compile Include="Play\Actions\Move.cs" />
+    <Compile Include="Play\Actions\Rotate.cs" />
+    <Compile Include="Play\Actions\Target.cs" />
+    <Compile Include="Play\Actions\Turn.cs" />
+    <Compile Include="Play\CardIdentity.cs" />
+    <Compile Include="Play\CardOrientation.cs" />
+    <Compile Include="Play\CardStateMachine.cs" />
+    <Compile Include="Play\ControllableObjectStateMachine.cs" />
+    <Compile Include="Play\DefaultMarkerModel.cs" />
+    <Compile Include="Play\Events.cs" />
+    <Compile Include="Play\GroupStateMachine.cs" />
+    <Compile Include="Play\IGameEngine.cs" />
+    <Compile Include="Play\IPlayCard.cs" />
+    <Compile Include="Play\IPlayControllableObject.cs" />
+    <Compile Include="Play\IPlayCounter.cs" />
+    <Compile Include="Play\IPlayGroup.cs" />
+    <Compile Include="Play\IPlayPlayer.cs" />
+    <Compile Include="Play\IPlayTable.cs" />
+    <Compile Include="Play\ITraceChatHandler.cs" />
+    <Compile Include="Play\PlayMarker.cs" />
+    <Compile Include="Play\PlayerStateMachine.cs" />
+    <Compile Include="Play\RandomRequest.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
     <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="Plugin\IPluginMenuItem.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
+    <Compile Include="Prefs.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Randomness.cs" />
     <Compile Include="Tabletop\GameEngine.cs" />
     <Compile Include="Tabletop\GameState.cs" />
+    <Compile Include="Utils\BigInteger.cs" />
+    <Compile Include="Utils\CacheTraceListener.cs" />
+    <Compile Include="Utils\Crypto.cs" />
+    <Compile Include="Utils\Cryptor.cs" />
+    <Compile Include="Utils\CryptoRandom.cs" />
+    <Compile Include="Utils\IServerCalls.cs" />
+    <Compile Include="Utils\Sounds.cs" />
+    <Compile Include="Utils\Win32.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
@@ -73,13 +131,41 @@
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="IronPython">
+      <HintPath>..\..\packages\IronPython.2.7.3\lib\Net40\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Modules">
+      <HintPath>..\..\packages\IronPython.2.7.3\lib\Net40\IronPython.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.SQLite">
+      <HintPath>..\..\packages\IronPython.2.7.3\lib\Net40\IronPython.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Wpf">
+      <HintPath>..\..\packages\IronPython.2.7.3\lib\Net40\IronPython.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Dynamic">
+      <HintPath>..\..\packages\IronPython.2.7.3\lib\Net40\Microsoft.Dynamic.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting">
+      <HintPath>..\..\packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.AspNet">
+      <HintPath>..\..\packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Metadata">
+      <HintPath>..\..\packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="NuGet.Core, Version=2.5.40416.9020, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.5.0\lib\net40-Client\NuGet.Core.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.IO.Abstractions, Version=1.4.0.64, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
@@ -91,9 +177,30 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Networking\BinaryParser.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryParser.cs</LastGenOutput>
+    </None>
+    <None Include="Networking\BinaryStubs.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BinaryStubs.cs</LastGenOutput>
+    </None>
+    <None Include="Networking\IServerCalls.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IServerCalls.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\jargonlist.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\nounlist.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>

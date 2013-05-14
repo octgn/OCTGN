@@ -313,8 +313,6 @@
       <DependentUpon>AddFeed.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\Converters\BooleanToVisibleHiddenConverter.cs" />
-    <Compile Include="Utils\CryptoRandom.cs" />
-    <Compile Include="Utils\Sounds.cs" />
     <Compile Include="ViewModels\DataGameViewModel.cs" />
     <Compile Include="ViewModels\GameFeedViewModel.cs" />
     <Compile Include="ViewModels\HostedGameViewModel.cs" />
@@ -341,8 +339,6 @@
     </Compile>
     <Compile Include="Play\DefaultMarkerModel.cs" />
     <Compile Include="Play\DragAdorner.cs" />
-    <Compile Include="Utils\CacheTraceListener.cs" />
-    <Compile Include="Utils\Cryptor.cs" />
     <Compile Include="DeckBuilder\DeckBuilderWindow.xaml.cs">
       <DependentUpon>DeckBuilderWindow.xaml</DependentUpon>
     </Compile>
@@ -353,9 +349,7 @@
       <DependentUpon>SearchControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DeckBuilder\SetPropertyDef.cs" />
-    <Compile Include="Extentions\String.cs" />
     <Compile Include="GameEngine.cs" />
-    <Compile Include="Utils\BigInteger.cs" />
     <Compile Include="Networking\BinaryParser.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -367,7 +361,6 @@
       <DependentUpon>BinaryStubs.tt</DependentUpon>
     </Compile>
     <Compile Include="Networking\ClientHandler.cs" />
-    <Compile Include="Utils\Crypto.cs" />
     <Compile Include="Networking\Mute.cs" />
     <Compile Include="Play\Actions\Action.cs" />
     <Compile Include="Play\Actions\Create.cs" />
@@ -451,7 +444,6 @@
     <Compile Include="Play\Pile.cs" />
     <Compile Include="Play\Table.cs" />
     <Compile Include="Play\RandomRequest.cs" />
-    <Compile Include="Prefs.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -492,16 +484,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\FileIcon.cs" />
     <Compile Include="Utils\GridViewSort.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
-    <Compile Include="Extentions\LinqExtensions.cs" />
-    <Compile Include="Utils\IServerCalls.cs" />
-    <Compile Include="Utils\ShellLink.cs" />
-    <Compile Include="Utils\Win32.cs" />
-    <Compile Include="Utils\XmlInstaller.cs" />
-    <Compile Include="Utils\XmlSetParser.cs" />
-    <Compile Include="Utils\XmlSimpleValidate.cs" />
     <Compile Include="WindowManager.cs" />
     <Compile Include="Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>

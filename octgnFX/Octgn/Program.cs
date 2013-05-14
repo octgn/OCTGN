@@ -53,8 +53,6 @@ namespace Octgn
         internal static Dispatcher Dispatcher;
 
         internal static readonly TraceSource Trace = new TraceSource("MainTrace", SourceLevels.Information);
-        internal static readonly TraceSource DebugTrace = new TraceSource("DebugTrace", SourceLevels.All);
-        internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
         internal static Inline LastChatTrace;
 
         private static bool _locationUpdating;
@@ -75,9 +73,6 @@ namespace Octgn
             Log.Info("Creating Lobby Client");
             LobbyClient = new Skylabs.Lobby.Client(AppConfig.ChatServerPath);
             Log.Info("Adding trace listeners");
-            Debug.Listeners.Add(DebugListener);
-            DebugTrace.Listeners.Add(DebugListener);
-            Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
             Log.Info("Setting Games Path");
             GamesPath = BasePath + @"GameDatabase\";
