@@ -51,6 +51,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.TimeGeneratedTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.propertiesDataGrid)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -266,6 +267,7 @@
             this.flowLayoutPanel1.Controls.Add(this.newPropertiesButton);
             this.flowLayoutPanel1.Controls.Add(this.loadPropertiesButton);
             this.flowLayoutPanel1.Controls.Add(this.savePropertiesButton);
+            this.flowLayoutPanel1.Controls.Add(this.TimeGeneratedTextBox);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 731);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -291,6 +293,14 @@
             this.splitContainer1.SplitterWidth = 9;
             this.splitContainer1.TabIndex = 8;
             // 
+            // TimeGeneratedTextBox
+            // 
+            this.TimeGeneratedTextBox.Enabled = false;
+            this.TimeGeneratedTextBox.Location = new System.Drawing.Point(353, 3);
+            this.TimeGeneratedTextBox.Name = "TimeGeneratedTextBox";
+            this.TimeGeneratedTextBox.Size = new System.Drawing.Size(100, 20);
+            this.TimeGeneratedTextBox.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -308,6 +318,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.proxyPictureBox)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -341,6 +352,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.TextBox TimeGeneratedTextBox;
     }
 }
 

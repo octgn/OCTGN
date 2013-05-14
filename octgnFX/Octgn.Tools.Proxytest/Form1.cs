@@ -232,9 +232,12 @@ namespace Octgn.Tools.Proxytest
                 File.Delete(tempImagePath);
             }
             ProxyDefinition def = GetProxyDef(proxydefPathTextBox.Text, rootDirTextBox.Text);
+            DateTime startTime = DateTime.Now;
             def.SaveProxyImage(GetValues(), tempImagePath);
+            DateTime endTime = DateTime.Now;
             proxyPictureBox.ImageLocation = tempImagePath;
             proxyPictureBox.Refresh();
+            TimeGeneratedTextBox.Text = string.Format("Generated in {0}ms", (endTime - startTime).Milliseconds);
         }
 
  
