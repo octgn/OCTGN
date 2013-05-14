@@ -1,0 +1,42 @@
+﻿<#@ template language="C#" hostspecific="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text" #>
+<#
+  XDocument doc = XDocument.Load(Host.ResolvePath(@"..\..\Octgn.Server\Protocol.xml"));
+#>
+/* 
+ * This file was automatically generated.
+ * Do not modify, changes will get lost when the file is regenerated!
+ */
+using System;
+using System.Windows.Media;
+using Octgn.Play;
+
+namespace Octgn.Networking
+{
+	interface IServerCalls
+	{ 
+<#
+  foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("server") == true))
+    WriteLine("\t\tvoid {0}({1});", msg.Attribute("name").Value, BuildParameters(msg));
+#>
+	}
+}
+<#+
+  private string BuildParameters(XElement msg)
+  {
+    var sb = new StringBuilder();
+    foreach (var p in msg.Elements("param"))
+      sb.Append(p.Attribute("type").Value)
+        .Append(" ")
+        .Append(p.Attribute("name").Value)
+        .Append(", ");
+    if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
+    return sb.ToString();
+  }
+#>

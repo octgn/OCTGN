@@ -20,7 +20,7 @@ namespace Octgn
     using Octgn.Library.Exceptions;
 
     using Card = Octgn.Play.Card;
-    using Marker = Octgn.Play.Marker;
+    using Marker = Octgn.Play.PlayMarker;
     using Player = Octgn.Play.Player;
 
     public class GameEngine : INotifyPropertyChanged

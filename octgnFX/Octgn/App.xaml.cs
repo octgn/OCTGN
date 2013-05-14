@@ -68,8 +68,6 @@ namespace Octgn
             }
             
             Application.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show("Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
-            if (!e.IsTerminating)
-                Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, ex.ToString());
             Application.Current.Shutdown(0);
         }
 

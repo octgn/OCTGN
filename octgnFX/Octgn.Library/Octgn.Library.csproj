@@ -96,6 +96,7 @@
     <Compile Include="ExtensionMethods\EnumerableExtensionMethods.cs" />
     <Compile Include="ExtensionMethods\FileInfoExtensionMethods.cs" />
     <Compile Include="ExtensionMethods\StringExtensionMethods.cs" />
+    <Compile Include="Injection\Injected.cs" />
     <Compile Include="Networking\NamedUrl.cs" />
     <Compile Include="Networking\Socket\OTcpClient.cs" />
     <Compile Include="Networking\Socket\OTcpListener.cs" />
