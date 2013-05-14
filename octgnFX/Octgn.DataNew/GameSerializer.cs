@@ -498,7 +498,7 @@
                         if (!defaultProperties.Properties.ContainsKey(cp))
                         {
                             var cpnew = cp.Clone() as PropertyDef;
-                            cpnew.IsUndefied = true;
+                            cpnew.IsUndefined = true;
                             defaultProperties.Properties.Add(cpnew, "");
                         }
                     }
@@ -525,7 +525,7 @@
                             if (!propset.Properties.ContainsKey(cp))
                             {
                                 var cpnew = cp.Clone() as PropertyDef;
-                                cpnew.IsUndefied = true;
+                                cpnew.IsUndefined = true;
                                 propset.Properties.Add(cpnew, "");
                             }
                         }

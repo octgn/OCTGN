@@ -69,6 +69,7 @@ namespace Octgn.ProxyGenerator.Definitions
             string value = null;
             string contains = null;
             bool loadElse = false;
+            bool foundMatch = false;
 
             if (ifNode.Attributes["value"] != null)
             {
@@ -92,6 +93,7 @@ namespace Octgn.ProxyGenerator.Definitions
                         LinkDefinition link = LinkDefinition.LoadLink(node);
                         ret.Add(link);
                     }
+                    foundMatch = true;
                 }
                 else
                 {
@@ -101,27 +103,30 @@ namespace Octgn.ProxyGenerator.Definitions
                     }
                 }
             }
-
-            foreach (XmlNode elseIfNode in elseifNodeList)
+            if (!foundMatch)
             {
-                string elseIfValue = null;
-                if (elseIfNode.Attributes["value"] != null)
+                foreach (XmlNode elseIfNode in elseifNodeList)
                 {
-                    elseIfValue = elseIfNode.Attributes["value"].Value;
-                }
-                if (elseIfValue != null)
-                {
-                    if (values.ContainsKey(property) && values[property] == elseIfValue)
+                    string elseIfValue = null;
+                    if (elseIfNode.Attributes["value"] != null)
                     {
-                        foreach (XmlNode node in elseIfNode.ChildNodes)
+                        elseIfValue = elseIfNode.Attributes["value"].Value;
+                    }
+                    if (elseIfValue != null && !foundMatch)
+                    {
+                        if (values.ContainsKey(property) && values[property] == elseIfValue)
                         {
-                            if (TemplateDefinition.SkipNode(node))
+                            foreach (XmlNode node in elseIfNode.ChildNodes)
                             {
-                                continue;
+                                if (TemplateDefinition.SkipNode(node))
+                                {
+                                    continue;
+                                }
+                                LinkDefinition link = LinkDefinition.LoadLink(node);
+                                ret.Add(link);
                             }
-                            LinkDefinition link = LinkDefinition.LoadLink(node);
-                            ret.Add(link);
                             loadElse = false;
+                            foundMatch = true;
                         }
                     }
                 }
@@ -143,6 +148,10 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
 
             }
+            if (foundMatch)
+            {
+                return (ret);
+            }
 
             if (contains != null)
             {
@@ -157,6 +166,7 @@ namespace Octgn.ProxyGenerator.Definitions
                         LinkDefinition link = LinkDefinition.LoadLink(node);
                         ret.Add(link);
                     }
+                    foundMatch = true;
                 }
                 else
                 {
@@ -166,27 +176,31 @@ namespace Octgn.ProxyGenerator.Definitions
                     }
                 }
             }
-
-            foreach (XmlNode elseIfNode in elseifNodeList)
+            if (!foundMatch)
             {
-                string elseIfContains = null;
-                if (elseIfNode.Attributes["value"] != null)
+                foreach (XmlNode elseIfNode in elseifNodeList)
                 {
-                    elseIfContains = elseIfNode.Attributes["value"].Value;
-                }
-                if (elseIfContains != null)
-                {
-                    if (values.ContainsKey(property) && values[property].Contains(elseIfContains))
+                    string elseIfContains = null;
+                    if (elseIfNode.Attributes["value"] != null)
                     {
-                        foreach (XmlNode node in elseIfNode.ChildNodes)
+                        elseIfContains = elseIfNode.Attributes["value"].Value;
+                    }
+                    if (elseIfContains != null && !foundMatch)
+                    {
+                        if (values.ContainsKey(property) && values[property].Contains(elseIfContains))
                         {
-                            if (TemplateDefinition.SkipNode(node))
+                            foreach (XmlNode node in elseIfNode.ChildNodes)
                             {
-                                continue;
+                                if (TemplateDefinition.SkipNode(node))
+                                {
+                                    continue;
+                                }
+                                LinkDefinition link = LinkDefinition.LoadLink(node);
+                                ret.Add(link);
+                                
                             }
-                            LinkDefinition link = LinkDefinition.LoadLink(node);
-                            ret.Add(link);
                             loadElse = false;
+                            foundMatch = true;
                         }
                     }
                 }
