@@ -22,9 +22,9 @@ namespace Octgn
 
         Game Definition { get; }
 
-        BitmapImage CardFrontBitmap { get; }
+        //BitmapImage CardFrontBitmap { get; }
 
-        BitmapImage CardBackBitmap { get; }
+        //BitmapImage CardBackBitmap { get; }
 
         IList<RandomRequest> RandomRequests { get; }
 

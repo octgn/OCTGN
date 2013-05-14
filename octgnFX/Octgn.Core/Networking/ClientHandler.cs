@@ -25,7 +25,7 @@ namespace Octgn.Networking
             _binParser = new BinaryParser(this);
         }
 
-        public void ReceiveMessage(byte[] data)F:\Programming\OCTGN\Octgn.PlayTable\Play\CardIdentityNamer.cs
+        public void ReceiveMessage(byte[] data)
         {
             // Fix: because ReceiveMessage is called through the Dispatcher queue, we may be called
             // just after the Client has already been closed. In that case we should simply drop the message

@@ -19,6 +19,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Windows.Media;
 using Octgn.Play;
+using Octgn.Core;
 
 namespace Octgn.Networking
 {
@@ -40,8 +41,8 @@ namespace Octgn.Networking
 			stream.Seek(4, SeekOrigin.Begin);
 			BinaryWriter writer = new BinaryWriter(stream);
 
-      if (Program.Client.Muted != 0)
-          writer.Write(Program.Client.Muted);
+      if (K.C.Get<Client>().Muted != 0)
+          writer.Write(K.C.Get<Client>().Muted);
       else
           writer.Write(0);
 			writer.Write((byte)<#= msgId #>);
@@ -80,7 +81,7 @@ namespace Octgn.Networking
 			}
 			catch 
 			{ 
-				Program.Client.Disconnected();
+				K.C.Get<Client>().Disconnected();
 			}
 		}
 	}
@@ -90,10 +91,25 @@ namespace Octgn.Networking
   {
     var sb = new StringBuilder();
     foreach (var p in msg.Elements("param"))
-      sb.Append(p.Attribute("type").Value)
+    {
+		var t = p.Attribute("type").Value;
+		switch(t)
+        {
+			case "Player":
+			case "Group":
+			case "Card":
+			case "ControllableObject":
+			case "Counter":
+			case "Player[]":
+			case "Group[]":
+				t = "IPlay" + t;
+				break;
+        }
+      sb.Append(t)
         .Append(" ")
         .Append(p.Attribute("name").Value)
         .Append(", ");
+    }
     if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
     return sb.ToString();
   }
@@ -129,11 +145,11 @@ foreach (int p in {0})
     { "Color?", "writer.Write({0} == null ? \"\" : {0}.ToString());" },
 
     { "Player[]", @"writer.Write((short){0}.Length);
-foreach (Player p in {0})
+foreach (IPlayPlayer p in {0})
 	writer.Write(p.Id);" },    
 
     { "Group[]", @"writer.Write((short){0}.Length);
-foreach (Group p in {0})
+foreach (IPlayGroup p in {0})
 	writer.Write(p.Id);" },    
   };
 #>

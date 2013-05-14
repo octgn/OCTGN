@@ -2,21 +2,23 @@
 
 namespace Octgn.Networking
 {
+    using Octgn.Core;
+
     internal class Mute : IDisposable
     {
         private readonly int _oldMuteId;
 
         public Mute(int muteId)
         {
-            _oldMuteId = Program.Client.Muted;
-            Program.Client.Muted = muteId;
+            _oldMuteId = K.C.Get<Client>().Muted;
+            K.C.Get<Client>().Muted = muteId;
         }
 
         #region IDisposable Members
 
         public void Dispose()
         {
-            Program.Client.Muted = _oldMuteId;
+            K.C.Get<Client>().Muted = _oldMuteId;
         }
 
         #endregion

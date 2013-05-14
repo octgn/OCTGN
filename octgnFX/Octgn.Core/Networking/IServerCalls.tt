@@ -32,10 +32,25 @@ namespace Octgn.Networking
   {
     var sb = new StringBuilder();
     foreach (var p in msg.Elements("param"))
-      sb.Append(p.Attribute("type").Value)
+    {
+		var t = p.Attribute("type").Value;
+		switch(t)
+        {
+			case "Player":
+			case "Group":
+			case "Card":
+			case "ControllableObject":
+			case "Counter":
+			case "Player[]":
+			case "Group[]":
+				t = "IPlay" + t;
+				break;
+        }
+      sb.Append(t)
         .Append(" ")
         .Append(p.Attribute("name").Value)
         .Append(", ");
+    }
     if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
     return sb.ToString();
   }
