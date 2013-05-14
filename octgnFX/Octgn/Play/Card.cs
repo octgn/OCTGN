@@ -124,12 +124,12 @@ namespace Octgn.Play
 
         public override string Name
         {
-            get { return FaceUp && _type.Model != null ? _type.Model.Name : "Card"; }
+            get { return FaceUp && _type.Model != null ? _type.Model.PropertyName() : "Card"; }
         }
 
         public string RealName
         {
-            get { return _type.Model != null ? _type.Model.Name : "Card"; }
+            get { return _type.Model != null ? _type.Model.PropertyName(): "Card"; }
         }
 
         internal CardIdentity Type
@@ -360,7 +360,7 @@ namespace Octgn.Play
         public object GetProperty(string name)
         {
             if (_type.Model == null) return null;
-            if (name == "Name") return _type.Model.Name;
+            if (name == "Name") return _type.Model.PropertyName();
             if (name == "Id") return _type.Model.Id;
             var prop = _type.Model.PropertySet().FirstOrDefault(x => x.Key.Name == name);
             //var prop = _type.Model.Properties.FirstOrDefault(x => x.Key.Name == name);

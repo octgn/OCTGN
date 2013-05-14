@@ -5,6 +5,8 @@ using Octgn.Play.Gui;
 
 namespace Octgn.Play
 {
+    using Octgn.Core.DataExtensionMethods;
+
     public class CardIdentity
     {
         private static readonly Dictionary<int, CardIdentity> All = new Dictionary<int, CardIdentity>(100);
@@ -45,7 +47,7 @@ namespace Octgn.Play
 
         public override string ToString()
         {
-            return Model == null ? "Card" : Model.Name;
+            return Model == null ? "Card" : Model.PropertyName();
         }
 
         public void OnRevealed(CardIdentity newId)

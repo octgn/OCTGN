@@ -15,6 +15,8 @@ namespace Octgn.Play.Gui
     using System.Windows.Media.Media3D;
     using System.Windows.Threading;
 
+    using Octgn.Core.DataExtensionMethods;
+
     partial class ChatControl
     {
         public ChatControl()
@@ -292,7 +294,7 @@ namespace Octgn.Play.Gui
         }
 
         public CardRun(DataNew.Entities.Card model)
-            : base(model.Name)
+            : base(model.PropertyName())
         {
             _card = model;
         }
@@ -301,7 +303,7 @@ namespace Octgn.Play.Gui
         {
             Debug.Assert(_card == null, "Cannot set the CardModel of a CardRun if it is already defined");
             _card = model;
-            Text = model.Name;
+            Text = model.PropertyName();
         }
 
         protected override void OnMouseEnter(MouseEventArgs e)

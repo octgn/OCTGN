@@ -97,6 +97,14 @@
                 card.Alternate = propertyType;
         }
 
+        public static string PropertyName(this Card card)
+        {
+            return
+                card.PropertySet()
+                    .First(x => x.Key.Name.Equals("name", StringComparison.InvariantCultureIgnoreCase))
+                    .Value as string;
+        }
+
         public static MultiCard Clone(this MultiCard card)
         {
             var ret = new MultiCard
