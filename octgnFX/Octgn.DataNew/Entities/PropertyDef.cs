@@ -56,7 +56,7 @@
                 Type = this.Type,
                 TextKind = this.TextKind,
                 IgnoreText = this.IgnoreText,
-                IsUndefied = false
+                IsUndefined = false
             };
             return newprop;
         }
