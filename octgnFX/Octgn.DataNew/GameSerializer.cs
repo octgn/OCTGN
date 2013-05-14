@@ -494,8 +494,12 @@
                     }
                     foreach (var cp in game.CustomProperties)
                     {
-                        if(!defaultProperties.Properties.ContainsKey(cp))
-                            defaultProperties.Properties.Add(cp,"");
+                        if (!defaultProperties.Properties.ContainsKey(cp))
+                        {
+                            var cpnew = cp;
+                            cpnew.IsUndefied = true;
+                            defaultProperties.Properties.Add(cpnew, "");
+                        }
                     }
                     defaultProperties.Properties[game.CustomProperties.First(x => x.Name == "Name")] = card.Name;
                     card.Properties.Add("",defaultProperties);
@@ -508,15 +512,19 @@
                         propset.Type = a.Attribute("type").Value;
                         propset.Properties[game.CustomProperties.First(x => x.Name == "Name")] =
                             a.Attribute("name").Value;
-                        foreach (var cp in defaultProperties.Properties)
-                        {
-                            if(!propset.Properties.ContainsKey(cp.Key))
-                                propset.Properties.Add(cp.Key,cp.Value);
-                        }
                         foreach (var p in a.Descendants("property"))
                         {
                             var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
-                            propset.Properties[pd] = p.Attribute("value").Value;
+                            propset.Properties.Add(pd,p.Attribute("value").Value);
+                        }
+                        foreach (var cp in game.CustomProperties)
+                        {
+                            if (!propset.Properties.ContainsKey(cp))
+                            {
+                                var cpnew = cp;
+                                cpnew.IsUndefied = true;
+                                propset.Properties.Add(cpnew, "");
+                            }
                         }
                         card.Properties.Add(propset.Type,propset);
                     }
