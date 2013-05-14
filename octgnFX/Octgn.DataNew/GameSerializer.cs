@@ -511,7 +511,9 @@
                                      IgnoreText = false,
                                      IsUndefined = false
                                  };
-                    defaultProperties.Properties[np] = card.Name;
+                    if (defaultProperties.Properties.ContainsKey(np)) 
+                        defaultProperties.Properties.Remove(np);
+                    defaultProperties.Properties.Add(np,card.Name);
                     card.Properties.Add("",defaultProperties);
 
                     // Add all of the other property sets
@@ -545,7 +547,9 @@
                             IgnoreText = false,
                             IsUndefined = false
                         };
-                        propset.Properties[np2] = a.Attribute("name").Value;
+                        if (propset.Properties.ContainsKey(np2))
+                            propset.Properties.Remove(np2);
+                        propset.Properties.Add(np2, card.Name);
                         card.Properties.Add(propset.Type,propset);
                     }
 
