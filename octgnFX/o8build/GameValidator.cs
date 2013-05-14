@@ -83,14 +83,27 @@
             schemas.Add(schema);
 
             var fileName = Directory.GetFiles().First(x => x.Name == "definition.xml").FullName;
-            XDocument doc = XDocument.Load(fileName);
-            string msg = "";
-            doc.Validate(schemas, (o, e) =>
+            XmlReaderSettings settings = GetXmlReaderSettings();
+            settings.Schemas = schemas;
+            settings.ValidationEventHandler += new ValidationEventHandler(delegate(Object o, ValidationEventArgs e)
             {
-                msg = e.Message;
+                if (e.Severity == XmlSeverityType.Error)
+                {
+                    throw new UserMessageException(string.Format("line: {0} position: {1} msg: {2} file: {3}", e.Exception.LineNumber, e.Exception.LinePosition, e.Exception.Message, fileName));
+                }
             });
-            if (!string.IsNullOrWhiteSpace(msg))
-                throw new UserMessageException(msg);
+            using (XmlReader validatingReader = XmlReader.Create(fileName, settings))
+            {
+                while (validatingReader.Read()) { /* just loop through document */ }
+            }
+            //XDocument doc = XDocument.Load(fileName);
+            //string msg = "";
+            //doc.Validate(schemas, (o, e) =>
+            //{
+            //    msg = string.Format("{0} line: {1} position: {2}", e.Message, e.Exception.LineNumber, e.Exception.LinePosition);
+            //});
+            //if (!string.IsNullOrWhiteSpace(msg))
+            //    throw new UserMessageException(msg);
         }
 
         [GameValidatorAttribute]
@@ -275,14 +288,38 @@
             schemas.Add(schema);
 
             var fileName = Directory.GetFiles().First().FullName;
-            XDocument doc = XDocument.Load(filename);
-            string msg = "";
-            doc.Validate(schemas, (o, e) =>
-            {
-                msg = e.Message;
+            XmlReaderSettings settings = GetXmlReaderSettings();
+            settings.Schemas = schemas;
+            settings.ValidationEventHandler += new ValidationEventHandler(delegate (Object o, ValidationEventArgs e) {
+                if (e.Severity == XmlSeverityType.Error)
+                {
+                    throw new UserMessageException(string.Format("line: {0} position: {1} msg: {2} file: {3}", e.Exception.LineNumber, e.Exception.LinePosition, e.Exception.Message, fileName));
+                }
             });
-            if (!string.IsNullOrWhiteSpace(msg))
-                throw new UserMessageException(msg);
+            using (XmlReader validatingReader = XmlReader.Create(filename, settings))
+            {
+                while (validatingReader.Read()) { /* just loop through document */ }
+            }
+            //XDocument doc = XDocument.Load(filename);
+            //string msg = "";
+            //doc.Validate(schemas, (o, e) =>
+            //{
+            //    msg = string.Format("{0} line: {1} position: {2}", e.Message, e., e.Exception.LinePosition);
+            //});
+            //if (!string.IsNullOrWhiteSpace(msg))
+            //    throw new UserMessageException(msg);
+        }
+
+        private XmlReaderSettings GetXmlReaderSettings()
+        {
+            XmlReaderSettings ret = new XmlReaderSettings();
+            ret.ValidationType = ValidationType.Schema;
+            ret.ValidationFlags = XmlSchemaValidationFlags.None;
+            ret.CloseInput = true;
+            ret.IgnoreWhitespace = true;
+            ret.IgnoreComments = true;
+            ret.IgnoreProcessingInstructions = true;
+            return (ret);
         }
 
         public void VerifySetDirectory(DirectoryInfo dir)
@@ -467,6 +504,8 @@
                 }
             }
         }
+
+        
 
         internal class CompileErrorListener : ErrorListener
         {
