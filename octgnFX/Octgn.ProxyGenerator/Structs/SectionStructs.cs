@@ -63,6 +63,7 @@ namespace Octgn.ProxyGenerator.Structs
             public int height;
             public string align;
             public string valign;
+            public Boolean shrinkToFit;
 
             public WordWrap(int width, int height) 
             {
@@ -70,6 +71,7 @@ namespace Octgn.ProxyGenerator.Structs
                 this.height = height;
                 this.align = "near";
                 this.valign = "near";
+                shrinkToFit = false;
             }
 
             public Size ToSize()

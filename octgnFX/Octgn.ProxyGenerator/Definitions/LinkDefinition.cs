@@ -10,7 +10,7 @@ namespace Octgn.ProxyGenerator.Definitions
     {
         public string Block { get; set; }
         public List<Property> NestedProperties = new List<Property>();
-        public string Separator = string.Empty;
+        public string Separator = " ";
 
         public static LinkDefinition LoadLink(XmlNode node)
         {
@@ -31,6 +31,10 @@ namespace Octgn.ProxyGenerator.Definitions
                     Property prop = new Property();
                     prop.Name = subNode.Attributes["name"].Value;
                     prop.Value = string.Empty;
+                    if (subNode.Attributes["format"] != null)
+                    {
+                        prop.Format = subNode.Attributes["format"].Value.Contains("{}") ? subNode.Attributes["format"].Value : "{}";
+                    }
                     ret.NestedProperties.Add(prop);
                 }
             }

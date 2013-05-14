@@ -69,13 +69,14 @@ namespace Octgn.ProxyGenerator
                         for (int i = 0; i < clonedProps.Count; i++)
                         {
                             string propertyName = clonedProps[i].Name;
+                            string format = clonedProps[i].Format.Replace("{}", values[propertyName]);
                             if (i < (clonedProps.Count - 1))
                             {
-                                toWrite.Append(string.Format("{0} {1}", values[propertyName], section.Separator));
+                                toWrite.Append(string.Format("{0} {1}", format, section.Separator));
                             }
                             else
                             {
-                                toWrite.Append(values[propertyName]);
+                                toWrite.Append(format);
                             }
                         }
 
@@ -85,7 +86,8 @@ namespace Octgn.ProxyGenerator
                         if (clonedProps.Count > 0)
                         {
                             string propertyName = clonedProps[0].Name;
-                            toWrite.Append(values[propertyName]);
+                            string format = clonedProps[0].Format.Replace("{}", values[propertyName]);
+                            toWrite.Append(format);
                         }
                     }
                     GraphicUtils.WriteString(graphics, block, toWrite.ToString());

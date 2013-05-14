@@ -52,6 +52,7 @@
 		</xs:sequence>
 		<xs:attribute name="block" type="xs:string" use="required" />
 		<xs:attribute name="separator" type="xs:string" default=" " />
+		<xs:attribute name="format" type="xs:string" default="{}" />
 	</xs:complexType>
 
 	<xs:complexType name="conditional">
@@ -151,6 +152,7 @@
 												<xs:attribute name="width" type="positiveInt" use="required" />
 												<xs:attribute name="align" type="alignment" default="near" />
 												<xs:attribute name="valign" type="alignment" default="near" />
+												<xs:attribute name="shrinktofit" type="proxyBoolean" default="False" />
 											</xs:complexType>
 										</xs:element>
 									</xs:sequence>

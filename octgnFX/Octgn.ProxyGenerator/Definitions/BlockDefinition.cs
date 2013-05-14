@@ -84,6 +84,10 @@ namespace Octgn.ProxyGenerator.Definitions
                     {
                         ret.wordwrap.valign = prop.Attributes["valign"].Value;
                     }
+                    if (prop.Attributes["shrinktofit"] != null)
+                    {
+                        ret.wordwrap.shrinkToFit = bool.Parse(prop.Attributes["shrinktofit"].Value);
+                    }
                 }
             }
 

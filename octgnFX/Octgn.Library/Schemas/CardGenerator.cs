@@ -260,8 +260,11 @@ public partial class link {
     
     private string separatorField;
     
+    private string formatField;
+    
     public link() {
         this.separatorField = " ";
+        this.formatField = "{}";
     }
     
     /// <remarks/>
@@ -295,6 +298,18 @@ public partial class link {
         }
         set {
             this.separatorField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute("{}")]
+    public string format {
+        get {
+            return this.formatField;
+        }
+        set {
+            this.formatField = value;
         }
     }
 }
@@ -703,9 +718,12 @@ public partial class templatesBlockWordwrap {
     
     private alignment valignField;
     
+    private proxyBoolean shrinktofitField;
+    
     public templatesBlockWordwrap() {
         this.alignField = alignment.near;
         this.valignField = alignment.near;
+        this.shrinktofitField = proxyBoolean.False;
     }
     
     /// <remarks/>
@@ -751,6 +769,18 @@ public partial class templatesBlockWordwrap {
         }
         set {
             this.valignField = value;
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlAttributeAttribute()]
+    [System.ComponentModel.DefaultValueAttribute(proxyBoolean.False)]
+    public proxyBoolean shrinktofit {
+        get {
+            return this.shrinktofitField;
+        }
+        set {
+            this.shrinktofitField = value;
         }
     }
 }
