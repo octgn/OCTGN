@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -54,7 +55,20 @@
             if (uri == null)
             {
                 uri = new System.Uri(Path.Combine(set.GetPackProxyUri(), card.GetImageUri() + ".png"));
+#if(Release_Test || DEBUG)
+                Stopwatch s = new Stopwatch();
+                s.Start();
+#endif
                 set.GetGame().GetCardProxyDef().SaveProxyImage(card.GetProxyMappings(), uri.LocalPath);
+#if(Release_Test|| DEBUG)
+                s.Stop();
+                if (s.ElapsedMilliseconds > 200)
+                {
+                    //System.Diagnostics.Trace.TraceEvent(TraceEventType.Warning, 1|0, "Proxy gen lagged by " + s.ElapsedMilliseconds - 200 + " ms");
+                    Log.WarnFormat("Proxy gen lagged by {0} ms", s.ElapsedMilliseconds - 200);
+                }
+                else Log.InfoFormat("Proxy gen took {0} ms", s.ElapsedMilliseconds);
+#endif
                 return uri.LocalPath;
             }
             else

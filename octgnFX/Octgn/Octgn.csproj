@@ -299,6 +299,7 @@
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameUpdater.cs" />
+    <Compile Include="Play\Events.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Scripting\Controls\ChoiceDlg.xaml.cs">
       <DependentUpon>ChoiceDlg.xaml</DependentUpon>
@@ -384,7 +385,6 @@
     <Compile Include="Play\Dialogs\RulesWindow.xaml.cs">
       <DependentUpon>RulesWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Play\Events.cs" />
     <Compile Include="Play\Gui\Adorners\ArrowAdorner.cs" />
     <Compile Include="Play\Gui\Adorners\SelectAdorner.cs" />
     <Compile Include="Play\Gui\ArrowControl.cs" />
