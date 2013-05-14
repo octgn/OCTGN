@@ -30,7 +30,7 @@
                              Name = card.Name,
                              Quantity = quantity,
                              SetId = card.SetId,
-                             Properties = card.Properties
+                             Properties = card.Properties.ToDictionary(x=>x.Key,y=>y.Value)
                          };
         }
         public static string GetPicture(this ICard card)
@@ -72,7 +72,7 @@
 
         public static bool HasProperty(this Card card, string name)
         {
-            return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name == name);
+            return card.Properties[card.Alternate].Properties.Any(x => x.Key.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) && x.Key.IsUndefied == false);
         }
 
         public static Dictionary<string, string> GetProxyMappings(this ICard card)
@@ -87,13 +87,13 @@
 
         public static IDictionary<PropertyDef, object> PropertySet(this ICard card)
         {
-            return card.Properties[card.Alternate].Properties;
+            return card.Properties[card.Alternate].Properties.Where(x=>x.Key.IsUndefied == false).ToDictionary(x=>x.Key,x=>x.Value);
         }
 
         public static void SetPropertySet(this Card card, string propertyType = "")
         {
             if (String.IsNullOrWhiteSpace(propertyType)) propertyType = "";
-            if(card.Properties.Any(x=>x.Key.ToLower() == propertyType.ToLower()))
+            if(card.Properties.Any(x=>x.Key.Equals(propertyType,StringComparison.InvariantCultureIgnoreCase)))
                 card.Alternate = propertyType;
         }
 
