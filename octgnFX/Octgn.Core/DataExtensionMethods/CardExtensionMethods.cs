@@ -127,6 +127,7 @@
 
         public static Card Clone(this Card card)
         {
+            if (card == null) return null;
             var ret = new Card
                           {
                               Name = card.Name.Clone() as string,
