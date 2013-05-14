@@ -490,18 +490,19 @@
                     foreach (var p in c.Descendants("property").Where(x => x.Parent.Name == "card"))
                     {
                         var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
-                        defaultProperties.Properties.Add(pd, p.Attribute("value").Value);
+                        var newpd = pd.Clone() as PropertyDef;
+                        defaultProperties.Properties.Add(newpd, p.Attribute("value").Value);
                     }
                     foreach (var cp in game.CustomProperties)
                     {
                         if (!defaultProperties.Properties.ContainsKey(cp))
                         {
-                            var cpnew = cp;
+                            var cpnew = cp.Clone() as PropertyDef;
                             cpnew.IsUndefied = true;
                             defaultProperties.Properties.Add(cpnew, "");
                         }
                     }
-                    defaultProperties.Properties[game.CustomProperties.First(x => x.Name == "Name")] = card.Name;
+                    defaultProperties.Properties[game.CustomProperties.First(x => x.Name == "Name").Clone() as PropertyDef] = card.Name;
                     card.Properties.Add("",defaultProperties);
 
                     // Add all of the other property sets
@@ -510,18 +511,20 @@
                         var propset = new CardPropertySet();
                         propset.Properties = new Dictionary<PropertyDef, object>();
                         propset.Type = a.Attribute("type").Value;
-                        propset.Properties[game.CustomProperties.First(x => x.Name == "Name")] =
+                        propset.Properties[game.CustomProperties.First(x => x.Name == "Name").Clone() as PropertyDef] =
                             a.Attribute("name").Value;
                         foreach (var p in a.Descendants("property"))
                         {
-                            var pd = game.CustomProperties.First(x => x.Name == p.Attribute("name").Value);
-                            propset.Properties.Add(pd,p.Attribute("value").Value);
+                            var pd = game.CustomProperties.First(x => x.Name.Equals(p.Attribute("name").Value,StringComparison.InvariantCultureIgnoreCase));
+                            var newprop = pd.Clone() as PropertyDef;
+                            var val = p.Attribute("value").Value;
+                            propset.Properties.Add(newprop,val);
                         }
                         foreach (var cp in game.CustomProperties)
                         {
                             if (!propset.Properties.ContainsKey(cp))
                             {
-                                var cpnew = cp;
+                                var cpnew = cp.Clone() as PropertyDef;
                                 cpnew.IsUndefied = true;
                                 propset.Properties.Add(cpnew, "");
                             }

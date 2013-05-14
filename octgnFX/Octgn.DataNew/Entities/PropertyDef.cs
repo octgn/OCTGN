@@ -17,7 +17,7 @@
         Tokens
     };
 
-    public class PropertyDef : IEquatable<PropertyDef>,IComparable<PropertyDef>
+    public class PropertyDef : IEquatable<PropertyDef>,IComparable<PropertyDef>,ICloneable
     {
         public string Name { get; set; }
         public PropertyType Type { get; set; }
@@ -28,7 +28,7 @@
 
         public bool Equals(PropertyDef other)
         {
-            return Name == other.Name;
+            return Name.Equals(other.Name,StringComparison.InvariantCultureIgnoreCase);
         }
 
         public int CompareTo(PropertyDef other)
@@ -39,12 +39,26 @@
         {
             var other = obj as PropertyDef;
             if (other == null) return false;
-            return other.Type == Type && other.Name == Name;
+            return other.Type == Type && other.Name.Equals(Name,StringComparison.InvariantCultureIgnoreCase);
         }
 
         public override int GetHashCode()
         {
             return Name.GetHashCode();
+        }
+
+        public object Clone()
+        {
+            var newprop = new PropertyDef()
+            {
+                Hidden = this.Hidden,
+                Name = this.Name.Clone() as string,
+                Type = this.Type,
+                TextKind = this.TextKind,
+                IgnoreText = this.IgnoreText,
+                IsUndefied = false
+            };
+            return newprop;
         }
     }
 
