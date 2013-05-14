@@ -20,6 +20,7 @@ namespace Octgn
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
+    using Octgn.PlayTable;
 
     using Card = Octgn.Play.Card;
     using Marker = Octgn.Play.PlayMarker;
@@ -98,7 +99,7 @@ namespace Octgn
             }
         }
 
-        public Table Table
+        public IPlayTable Table
         {
             get { return _table; }
         }
@@ -169,12 +170,12 @@ namespace Octgn
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
             // Create the global player, if any
             if (Definition.GlobalPlayer != null)
-                Play.Player.GlobalPlayer = new Play.Player(Definition);
+                Program.Player.GlobalPlayer = new Play.Player(Definition);
             // Create the local player
-            Play.Player.LocalPlayer = new Play.Player(Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            Program.Player.LocalPlayer = new Play.Player(Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
-            Octgn.PlayTable.Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
+            Octgn.PlayTable.Program.Client.Rpc.Hello(nick, Program.Player.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Definition.Id, Definition.Version);
             // Load all game markers
@@ -200,9 +201,9 @@ namespace Octgn
             //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
             if (Definition.GlobalPlayer != null)
-                Play.Player.GlobalPlayer = new Play.Player(Definition);
+                Program.Player.GlobalPlayer = new Play.Player(Definition);
             // Create the local player
-            Play.Player.LocalPlayer = new Play.Player(Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            Program.Player.LocalPlayer = new Play.Player(Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
@@ -219,7 +220,7 @@ namespace Octgn
         {
             TurnNumber = 0;
             TurnPlayer = null;
-            foreach (var p in Player.All)
+            foreach (var p in Program.Player.All)
             {
                 foreach (var g in p.Groups)
                     g.Reset();
@@ -231,7 +232,7 @@ namespace Octgn
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
             Table.Reset();
-            Card.Reset();
+            Program.Card.Reset();
             CardIdentity.Reset();
             Selection.Clear();
             RandomRequests.Clear();
@@ -246,8 +247,8 @@ namespace Octgn
 
         public void End()
         {
-            Player.Reset();
-            Card.Reset();
+            Program.Player.Reset();
+            Program.Card.Reset();
             CardIdentity.Reset();
             History.Reset();
             Selection.Clear();
@@ -260,7 +261,7 @@ namespace Octgn
 
         public int GenerateCardId()
         {
-            return (Player.LocalPlayer.Id) << 16 | GetUniqueId();
+            return (Program.Player.LocalPlayer.Id) << 16 | GetUniqueId();
         }
 
         public RandomRequest FindRandomRequest(int id)
@@ -272,7 +273,7 @@ namespace Octgn
 
         public void LoadDeck(IDeck deck)
         {
-            Player player = deck.IsShared ? Player.GlobalPlayer : Player.LocalPlayer;
+            IPlayPlayer player = deck.IsShared ? Program.Player.GlobalPlayer : Program.Player.LocalPlayer;
             var def = Definition;
             var deckDef = deck.IsShared ? def.SharedDeckSections : def.DeckSections;
             int nCards = deck.CardCount();
@@ -287,7 +288,7 @@ namespace Octgn
                 var sectionDef = deckDef[section.Name];
                 if (sectionDef == null)
                     throw new InvalidFileFormatException("Invalid section '" + section.Name + "' in deck file.");
-                Play.Group group = player.Groups.First(x => x.Name == sectionDef.Group);
+                Play.IPlayGroup group = player.Groups.First(x => x.Name == sectionDef.Group);
 
                 //In order to make the clients know what the card is (if visibility is set so that they can see it),
                 //we have to set the visibility to Nobody, and then after the cards are sent, set the visibility back

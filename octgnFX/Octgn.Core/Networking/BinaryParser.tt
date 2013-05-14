@@ -19,6 +19,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using Octgn.Play;
+using Octgn.Core;
+using Octgn.Core.Play;
 
 namespace Octgn.Networking
 {
@@ -34,7 +36,7 @@ namespace Octgn.Networking
 			MemoryStream stream = new MemoryStream(data);
 			BinaryReader reader = new BinaryReader(stream);
 			short length;
-			Program.Client.Muted = reader.ReadInt32();
+			K.C.Get<Client>().Muted = reader.ReadInt32();
 			byte method = reader.ReadByte();
 			switch (method)
 			{
@@ -118,41 +120,41 @@ Guid[] arg{0} = new Guid[length];
 for (int i = 0; i < length; ++i)
 	arg{0}[i] = new Guid(reader.ReadBytes(16));" },
 
-    { "Player", @"Player arg{0} = Player.Find(reader.ReadByte());
+    { "Player", @"IPlayPlayer arg{0} = K.C.Get<PlayerStateMachine>().Find(reader.ReadByte());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Player not found.""); return; }}" },
 
     { "Player[]", @"length = reader.ReadInt16();
-Player[] arg{0} = new Player[length];
+IPlayPlayer[] arg{0} = new IPlayPlayer[length];
 for (int i = 0; i < length; ++i)
 {{
-  arg{0}[i] = Player.Find(reader.ReadByte());
+  arg{0}[i] = K.C.Get<PlayerStateMachine>().Find(reader.ReadByte());
   if (arg{0}[i] == null) 
     Debug.WriteLine(""[{1}] Player not found."");
 }}" },
 
-    { "ControllableObject", @"ControllableObject arg{0} = ControllableObject.Find(reader.ReadInt32());
+    { "ControllableObject", @"IPlayControllableObject arg{0} = K.C.Get<ControllableObjectStateMachine>().Find(reader.ReadInt32());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] ControllableObject not found.""); return; }}" },
 
-    { "Group", @"Group arg{0} = Group.Find(reader.ReadInt32());
+    { "Group", @"IPlayGroup arg{0} = K.C.Get<GroupStateMachine>().Find(reader.ReadInt32());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Group not found.""); return; }}" },
 
     { "Group[]", @"length = reader.ReadInt16();
-Group[] arg{0} = new Group[length];
+IPlayGroup[] arg{0} = new IPlayGroup[length];
 for (int i = 0; i < length; ++i)
 {{
-  arg{0}[i] = Group.Find(reader.ReadInt32());
+  arg{0}[i] = K.C.Get<GroupStateMachine>().Find(reader.ReadInt32());
   if (arg{0}[i] == null) 
     Debug.WriteLine(""[{1}] Group not found."");
 }}" },
 
-    { "Card", @"Card arg{0} = Card.Find(reader.ReadInt32());
+    { "Card", @"IPlayCard arg{0} = K.C.Get<CardStateMachine>().Find(reader.ReadInt32());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Card not found.""); return; }}" },
 
-    { "Counter", @"Counter arg{0} = Counter.Find(reader.ReadInt32());
+    { "Counter", @"IPlayCounter arg{0} = K.C.Get<CounterStateMachine>().Find(reader.ReadInt32());
 if (arg{0} == null)
 {{ Debug.WriteLine(""[{1}] Counter not found.""); return; }}" },
 

@@ -55,7 +55,7 @@
             MakeBindings();
         }
 
-        static void MakeBindings()
+        private static void MakeBindings()
         {
             K.C.Bind<GameplayTrace>().ToSelf().InSingletonScope();
             K.C.Bind<Dispatcher>().ToMethod(x => Application.Current.Dispatcher);
@@ -65,7 +65,7 @@
             K.C.Bind<IGameEngine>().To<GameEngine>().InSingletonScope();
             K.C.Bind<GroupStateMachine>().ToSelf().InSingletonScope();
             K.C.Bind<CardStateMachine>().ToSelf().InSingletonScope();
-
-        }
+        }
     }
+
 }

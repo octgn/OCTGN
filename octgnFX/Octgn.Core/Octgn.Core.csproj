@@ -79,6 +79,7 @@
     <Compile Include="Play\CardOrientation.cs" />
     <Compile Include="Play\CardStateMachine.cs" />
     <Compile Include="Play\ControllableObjectStateMachine.cs" />
+    <Compile Include="Play\CounterStateMachine.cs" />
     <Compile Include="Play\DefaultMarkerModel.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\GroupStateMachine.cs" />

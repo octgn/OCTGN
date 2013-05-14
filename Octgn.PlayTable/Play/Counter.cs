@@ -43,20 +43,12 @@ namespace Octgn.Play
         public int Value
         {
             get { return _state; }
-            set { SetValue(value, Player.LocalPlayer, true); }
+            set { SetValue(value, Program.Player.LocalPlayer, true); }
         }
 
         public DataNew.Entities.Counter Definition
         {
             get { return _defintion; }
-        }
-
-        public static Counter Find(int id)
-        {
-            Player p = Player.Find((byte) (id >> 16));
-            if (p == null || (byte) id > p.Counters.Length || (byte) id == 0)
-                return null;
-            return p.Counters[(byte) id - 1];
         }
 
         // C'tor
