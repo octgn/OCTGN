@@ -166,14 +166,14 @@ public partial class templatesBlockLocation {
     
     private string rotateField;
     
-    private boolean altrotateField;
+    private proxyBoolean altrotateField;
     
-    private boolean flipField;
+    private proxyBoolean flipField;
     
     public templatesBlockLocation() {
         this.rotateField = "0";
-        this.altrotateField = boolean.False;
-        this.flipField = boolean.False;
+        this.altrotateField = proxyBoolean.False;
+        this.flipField = proxyBoolean.False;
     }
     
     /// <remarks/>
@@ -212,8 +212,8 @@ public partial class templatesBlockLocation {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
-    public boolean altrotate {
+    [System.ComponentModel.DefaultValueAttribute(proxyBoolean.False)]
+    public proxyBoolean altrotate {
         get {
             return this.altrotateField;
         }
@@ -224,8 +224,8 @@ public partial class templatesBlockLocation {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
-    public boolean flip {
+    [System.ComponentModel.DefaultValueAttribute(proxyBoolean.False)]
+    public proxyBoolean flip {
         get {
             return this.flipField;
         }
@@ -238,7 +238,7 @@ public partial class templatesBlockLocation {
 /// <remarks/>
 [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.17929")]
 [System.SerializableAttribute()]
-public enum boolean {
+public enum proxyBoolean {
     
     /// <remarks/>
     True,
@@ -552,10 +552,10 @@ public partial class conditionalSwitchCase {
     
     private string containsField;
     
-    private boolean breakField;
+    private proxyBoolean breakField;
     
     public conditionalSwitchCase() {
-        this.breakField = boolean.True;
+        this.breakField = proxyBoolean.True;
     }
     
     /// <remarks/>
@@ -593,8 +593,8 @@ public partial class conditionalSwitchCase {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(boolean.True)]
-    public boolean @break {
+    [System.ComponentModel.DefaultValueAttribute(proxyBoolean.True)]
+    public proxyBoolean @break {
         get {
             return this.breakField;
         }
@@ -798,10 +798,10 @@ public partial class templatesTemplate {
     
     private string srcField;
     
-    private boolean defaultField;
+    private proxyBoolean defaultField;
     
     public templatesTemplate() {
-        this.defaultField = boolean.False;
+        this.defaultField = proxyBoolean.False;
     }
     
     /// <remarks/>
@@ -855,8 +855,8 @@ public partial class templatesTemplate {
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    [System.ComponentModel.DefaultValueAttribute(boolean.False)]
-    public boolean @default {
+    [System.ComponentModel.DefaultValueAttribute(proxyBoolean.False)]
+    public proxyBoolean @default {
         get {
             return this.defaultField;
         }

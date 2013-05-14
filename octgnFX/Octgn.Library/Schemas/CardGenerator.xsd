@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema id="templates" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-	<xs:simpleType name="boolean">
+	<xs:simpleType name="proxyBoolean">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="True" />
 			<xs:enumeration value="False" />
@@ -96,7 +96,7 @@
 									</xs:sequence>
 									<xs:attribute name="value" type="xs:string" use="optional" />
 									<xs:attribute name="contains" type="xs:string" use="optional" />
-									<xs:attribute name="break" type="boolean" default="True" />
+									<xs:attribute name="break" type="proxyBoolean" default="True" />
 								</xs:complexType>
 							</xs:element>
 							<xs:element name="default" minOccurs="0" maxOccurs="1">
@@ -128,8 +128,8 @@
 												<xs:attribute name="x" type="positiveInt" use="required" />
 												<xs:attribute name="y" type="positiveInt" use="required" />
 												<xs:attribute name="rotate" type="degrees" default="0" />
-												<xs:attribute name="altrotate" type="boolean" default="False" />
-												<xs:attribute name="flip" type="boolean" default="False" />
+												<xs:attribute name="altrotate" type="proxyBoolean" default="False" />
+												<xs:attribute name="flip" type="proxyBoolean" default="False" />
 											</xs:complexType>
 										</xs:element>
 										<xs:element name="text" minOccurs="0" maxOccurs="1">
@@ -195,7 +195,7 @@
 							</xs:element>
 						</xs:sequence>
 						<xs:attribute name="src" type="xs:string" use="required" />
-						<xs:attribute name="default" type="boolean" default="False" />
+						<xs:attribute name="default" type="proxyBoolean" default="False" />
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
