@@ -19,6 +19,9 @@ using Octgn.Extentions;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.Core.Play;
+    using Octgn.PlayTable;
+
     partial class TableControl
     {
         private readonly int _defaultHeight;
@@ -35,14 +38,14 @@ namespace Octgn.Play.Gui
             var tableDef = Program.GameEngine.Definition.Table;
             if (tableDef.Background != null)
                 SetBackground(tableDef);
-            if (!Program.GameSettings.HideBoard)
+            if (!GameStateMachine.C.GameSettings.HideBoard)
                 if (tableDef.Board != null)
                     SetBoard(tableDef);
 
-            if (!Program.GameSettings.UseTwoSidedTable)
+            if (!GameStateMachine.C.GameSettings.UseTwoSidedTable)
                 middleLine.Visibility = Visibility.Collapsed;
 
-            if (Player.LocalPlayer.InvertedTable)
+            if (GameStateMachine.C.LocalPlayer.InvertedTable)
                 transforms.Children.Insert(0, new ScaleTransform(-1, -1));
 
             _defaultWidth = Program.GameEngine.Definition.CardWidth;
@@ -179,12 +182,12 @@ namespace Octgn.Play.Gui
             base.OnCardOver(sender, e);
             e.CardSize = CardSize;
 
-            if (!Program.GameSettings.UseTwoSidedTable) return;
+            if (!GameStateMachine.C.GameSettings.UseTwoSidedTable) return;
             var cardCtrl = (CardControl) e.OriginalSource;
             Card baseCard = cardCtrl.Card;
             double mouseY = Mouse.GetPosition(cardsView).Y;
             double baseY = (cardCtrl.IsInverted ||
-                            (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas))
+                            (GameStateMachine.C.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas))
                                ? mouseY - Program.GameEngine.Definition.CardHeight + e.MouseOffset.Y
                                : mouseY - e.MouseOffset.Y;
             if (baseCard == null) return;
@@ -192,7 +195,7 @@ namespace Octgn.Play.Gui
             {
                 if (adorner == null || adorner.SourceCard == null || adorner.SourceCard.Card == null) continue;
                 double y = baseY + adorner.SourceCard.Card.Y - baseCard.Y;
-                adorner.OnHoverRequestInverted = IsInInvertedZone(y) ^ Player.LocalPlayer.InvertedTable;
+                adorner.OnHoverRequestInverted = IsInInvertedZone(y) ^ GameStateMachine.C.LocalPlayer.InvertedTable;
             }
         }
 
@@ -202,10 +205,10 @@ namespace Octgn.Play.Gui
             var cardCtrl = e.OriginalSource as CardControl;
 
             int delta = Program.GameEngine.Definition.CardHeight - Program.GameEngine.Definition.CardWidth;
-            Table table = Program.GameEngine.Table;
+            IPlayTable table = Program.GameEngine.Table;
             Vector mouseOffset;
             if (cardCtrl != null && (cardCtrl.IsInverted ||
-                                     (Player.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas)))
+                                     (GameStateMachine.C.LocalPlayer.InvertedTable && !cardCtrl.IsOnTableCanvas)))
                 mouseOffset = new Vector(Program.GameEngine.Definition.CardWidth - e.MouseOffset.X, Program.GameEngine.Definition.CardHeight - e.MouseOffset.Y);
             else
                 mouseOffset = e.MouseOffset;
@@ -214,7 +217,7 @@ namespace Octgn.Play.Gui
 
             if (Selection.IsEmpty() || !(Selection.Source is Table))
             {
-                if (Program.GameSettings.UseTwoSidedTable && (e.ClickedCard.Orientation & CardOrientation.Rot90) != 0)
+                if (GameStateMachine.C.GameSettings.UseTwoSidedTable && (e.ClickedCard.Orientation & CardOrientation.Rot90) != 0)
                 {
                     // We have to offset the position if we cross the middle line
                     bool newPosInverted = IsInInvertedZone(pt.Y);
@@ -255,7 +258,7 @@ namespace Octgn.Play.Gui
                     int x = (int) (c.X + dx), y = (int) (c.Y + dy);
                     int idx = table.GetCardIndex(c);
                     // If the card is tapped and has crossed the middle line in a two-sided table, we have to adjust its position
-                    if (Program.GameSettings.UseTwoSidedTable && (c.Orientation & CardOrientation.Rot90) != 0)
+                    if (GameStateMachine.C.GameSettings.UseTwoSidedTable && (c.Orientation & CardOrientation.Rot90) != 0)
                     {
                         bool oldPosInverted = IsInInvertedZone(c.Y);
                         bool newPosInverted = IsInInvertedZone(y);
@@ -279,7 +282,7 @@ namespace Octgn.Play.Gui
         {
             //var cardCtrl = e.OriginalSource as CardControl;
             double offset = e.MouseOffset.Y;
-            if (Player.LocalPlayer.InvertedTable)
+            if (GameStateMachine.C.LocalPlayer.InvertedTable)
             {
                 y -= Program.GameEngine.Definition.CardHeight;
                 offset = -offset;
@@ -442,7 +445,7 @@ namespace Octgn.Play.Gui
 
             // Adjust the offset to center the zoom on the mouse pointer
             double ratio = oldZoom - Zoom;
-            if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
+            if (GameStateMachine.C.LocalPlayer.InvertedTable) ratio = -ratio;
             Offset += new Vector(center.X*ratio, center.Y*ratio);
             BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
 
@@ -479,7 +482,7 @@ namespace Octgn.Play.Gui
             UpdateYCenterOffset();
         }
 
-        protected void BringCardIntoView(Card card)
+        protected void BringCardIntoView(IPlayCard card)
         {
             // Get the current target viewport (bypass animations in progress)
             GeneralTransform transform = TransformToDescendant(cardsView);
@@ -496,7 +499,7 @@ namespace Octgn.Play.Gui
             if (cardRect.Top < visibleBounds.Top) newBounds.Y = cardRect.Top;
             newBounds.Height = Math.Max(visibleBounds.Bottom, cardRect.Bottom) - newBounds.Top;
 
-            if (Player.LocalPlayer.InvertedTable)
+            if (GameStateMachine.C.LocalPlayer.InvertedTable)
             {
                 // Transform the viewport so that it will fit correctly after the invert transform is applied
                 newBounds.X = -newBounds.Right;
@@ -614,14 +617,14 @@ namespace Octgn.Play.Gui
                                   Header = Program.GameEngine.Definition.Player.Hand.Name,
                                   InputGestureText = Program.GameEngine.Definition.Player.Hand.Shortcut
                               };
-            subItem.Click += delegate { Selection.Do(c => c.MoveTo(Player.LocalPlayer.Hand, true), ContextCard); };
+            subItem.Click += delegate { Selection.Do(c => c.MoveTo(GameStateMachine.C.LocalPlayer.Hand, true), ContextCard); };
             item.Items.Add(subItem);
             var groupDefs = Program.GameEngine.Definition.Player.Groups.ToArray();
             var moveToBottomItems = new List<MenuItem>();
             for (int i = 0; i < groupDefs.Length; ++i)
             {
                 var groupDef = groupDefs[i];
-                Group indexedGroup = Player.LocalPlayer.IndexedGroups[i + 1]; // 0 is hand
+                IPlayGroup indexedGroup = GameStateMachine.C.LocalPlayer.IndexedGroups[i + 1]; // 0 is hand
                 subItem = new MenuItem {Header = groupDef.Name, InputGestureText = groupDef.Shortcut};
                 subItem.Click += delegate { Selection.Do(c => c.MoveTo(indexedGroup, true), ContextCard); };
                 item.Items.Add(subItem);
@@ -735,9 +738,9 @@ namespace Octgn.Play.Gui
                 Selection.RemoveAll(card => !rect.IntersectsWith(ComputeCardBounds(card, width, height)));
 
                 // Add cards which entered the selection rectangle
-                ObservableCollection<Card> allCards = Target.group.Cards;
-                IEnumerable<Card> cards = from card in allCards
-                                          where card.Controller == Player.LocalPlayer
+                ObservableCollection<IPlayCard> allCards = Target.group.Cards;
+                IEnumerable<IPlayCard> cards = from card in allCards
+                                          where card.Controller == GameStateMachine.C.LocalPlayer
                                                 && !card.Selected
                                                 && rect.IntersectsWith(ComputeCardBounds(card, width, height))
                                           select card;
@@ -750,14 +753,14 @@ namespace Octgn.Play.Gui
                 layer.Remove(_adorner);
             }
 
-            private static Rect ComputeCardBounds(Card c, int w, int h)
+            private static Rect ComputeCardBounds(IPlayCard c, int w, int h)
             {
                 Rect result =
                     // Case 1: straight card
                     (c.Orientation & CardOrientation.Rot90) == 0
                         ? new Rect(c.X, c.Y, w, h)
                         : // Case 2: rotated card on a 1-sided table
-                    !Program.GameSettings.UseTwoSidedTable
+                    !GameStateMachine.C.GameSettings.UseTwoSidedTable
                         ? new Rect(c.X, c.Y + h - w, h, w)
                         : // Case 3: rotated card on a 2-sided table, the card is not inversed
                     !IsInInvertedZone(c.Y)

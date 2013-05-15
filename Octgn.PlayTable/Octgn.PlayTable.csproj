@@ -69,6 +69,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -90,9 +92,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\AnimatedWrapPanel.cs" />
+    <Compile Include="Controls\ChildWindow.cs" />
+    <Compile Include="Controls\ChildWindowManager.cs" />
+    <Compile Include="Controls\OctgnChrome.cs" />
     <Compile Include="Controls\Tooltip.cs" />
+    <Compile Include="Extensions\BitmapImageExtensions.cs" />
+    <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="Play\CardIdentityNamer.cs" />
+    <Compile Include="Play\DragOperations\DragOperation.cs" />
     <Compile Include="Play\ObjectCreator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Scripting\Controls\CardDlg.xaml.cs">

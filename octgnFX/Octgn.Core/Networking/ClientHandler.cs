@@ -726,7 +726,7 @@ namespace Octgn.Networking
             // Check for null because the chat can currently be muted (e.g. during a Mulligan scripted action)
             if (GameplayTrace.LastChatTrace != null)
             {
-                var tc = K.C.Get<IObjectCreator>().CreateTraceChatHandler();
+                var tc = K.C.Get<IObjectCreator>().CreateShuffleTraceChatHandler();
                 tc.Set(GameplayTrace.LastChatTrace);
                 g.ShuffledTrace += (tc).ReplaceText;
             }

@@ -81,6 +81,7 @@
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\GameStateMachine.cs" />
     <Compile Include="Play\History.cs" />
+    <Compile Include="Play\IActionShortcut.cs" />
     <Compile Include="Play\IGameEngine.cs" />
     <Compile Include="Play\IObjectCreator.cs" />
     <Compile Include="Play\IPlayCard.cs" />

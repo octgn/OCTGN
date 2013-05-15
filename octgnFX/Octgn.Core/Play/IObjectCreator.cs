@@ -4,9 +4,7 @@
 
     public interface IObjectCreator
     {
-        T Create<T>();
-
-        ITraceChatHandler CreateTraceChatHandler();
+        ITraceChatHandler CreateShuffleTraceChatHandler();
 
         IPlayCard CreateCard(IPlayPlayer owner, int id, ulong key, DataNew.Entities.Card model, bool mySecret);
 
