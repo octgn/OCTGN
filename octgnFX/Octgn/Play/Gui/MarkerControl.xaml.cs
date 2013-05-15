@@ -32,14 +32,14 @@ namespace Octgn.Play.Gui
                 case Key.Add:
                     {
                         te.Handled = e.Handled = true;
-                        var marker = DataContext as PlayMarker;
+                        var marker = DataContext as Marker;
                         if (marker != null) marker.Count++;
                     }
                     break;
                 case Key.Subtract:
                     {
                         te.Handled = e.Handled = true;
-                        var marker = DataContext as PlayMarker;
+                        var marker = DataContext as Marker;
                         if (marker != null) marker.Count--;
                     }
                     break;
@@ -129,7 +129,7 @@ namespace Octgn.Play.Gui
         {
             ((AdornerLayer) _adorner.Parent).Remove(_adorner);
             _adorner = null;
-            var marker = (PlayMarker) DataContext;
+            var marker = (Marker) DataContext;
             ushort count = _takeAll ? marker.Count : (ushort) 1;
             var e = new MarkerEventArgs(this, marker, count);
             Mouse.DirectlyOver.RaiseEvent(e);
@@ -143,9 +143,9 @@ namespace Octgn.Play.Gui
     public class MarkerEventArgs : RoutedEventArgs
     {
         public readonly ushort Count;
-        public readonly PlayMarker Marker;
+        public readonly Marker Marker;
 
-        public MarkerEventArgs(object source, PlayMarker marker, ushort count)
+        public MarkerEventArgs(object source, Marker marker, ushort count)
             : base(MarkerControl.MarkerDroppedEvent, source)
         {
             Marker = marker;

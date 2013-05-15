@@ -32,7 +32,7 @@ namespace Octgn.Scripting.Controls
                 marker =>
                 ((DataNew.Entities.Marker)marker).Name.IndexOf(_filterText, StringComparison.CurrentCultureIgnoreCase) >= 0;
             allList.ItemsSource = _allMarkersView;
-            defaultList.ItemsSource = PlayMarker.DefaultMarkers;
+            defaultList.ItemsSource = Marker.DefaultMarkers;
             recentList.ItemsSource = Program.GameEngine.RecentMarkers;
         }
 

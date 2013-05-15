@@ -391,7 +391,7 @@ namespace Octgn.Networking
             // Ignore markers removed by oneself (already removed for responsiveness issues)
             if (player != Player.LocalPlayer)
             {
-                PlayMarker marker = card.FindMarker(id, name);
+                Marker marker = card.FindMarker(id, name);
                 if (marker == null)
                 {
                     Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "Inconsistent state. Marker not found on card.");
@@ -410,7 +410,7 @@ namespace Octgn.Networking
             // Ignore markers moved by oneself (already moved for responsiveness issues)
             if (player != Player.LocalPlayer)
             {
-                PlayMarker marker = from.FindMarker(id, name);
+                Marker marker = from.FindMarker(id, name);
                 if (marker == null)
                 {
                     Program.Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, "Inconsistent state. Marker not found on card.");

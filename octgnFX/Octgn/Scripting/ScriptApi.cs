@@ -419,7 +419,7 @@ namespace Octgn.Scripting
         public int MarkerGetCount(int cardId, string markerName, string markerId)
         {
             Card card = Card.Find(cardId);
-            PlayMarker marker = card.FindMarker(Guid.Parse(markerId), markerName);
+            Marker marker = card.FindMarker(Guid.Parse(markerId), markerName);
             return marker == null ? 0 : marker.Count;
         }
 
