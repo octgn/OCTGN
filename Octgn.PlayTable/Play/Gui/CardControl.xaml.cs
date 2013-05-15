@@ -18,7 +18,10 @@ using Octgn.Utils;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Play;
+    using Octgn.PlayTable;
 
     public partial class CardControl
     {
@@ -85,7 +88,7 @@ namespace Octgn.Play.Gui
             Program.GameEngine.ComposeParts(this);
 
             //fix MAINWINDOW bug
-            _mainWin = WindowManager.PlayWindow;
+            _mainWin = K.C.Get<PlayWindow>();
             int markerSize = Program.GameEngine.Definition. MarkerSize;
             if (markerSize == 0) markerSize = 20;
             markers.Margin = new Thickness(markerSize/8);
@@ -134,7 +137,7 @@ namespace Octgn.Play.Gui
                 if (iter is TableCanvas)
                 {
                     IsOnTableCanvas = true;
-                    if (Program.GameSettings.UseTwoSidedTable)
+                    if (GameStateMachine.C.GameSettings.UseTwoSidedTable)
                     {
                         _invertTransform = new ScaleTransform();
                         UpdateInvertedTransform();
@@ -180,14 +183,14 @@ namespace Octgn.Play.Gui
             }
 
             // Shortcut: always reuse the same bitmap images for default face up and down
-            if (value == Card.DefaultFront)
+            if (value == GameStateMachine.C.DefaultFront)
             {
-                DisplayedPicture = Program.GameEngine.CardFrontBitmap;
+                DisplayedPicture = (Program.GameEngine as GameEngine).CardFrontBitmap;
                 return;
             }
-            if (value == Card.DefaultBack)
+            if (value == GameStateMachine.C.DefaultBack)
             {
-                DisplayedPicture = Program.GameEngine.CardBackBitmap;
+                DisplayedPicture = (Program.GameEngine as GameEngine).CardBackBitmap;
                 return;
             }
 
@@ -448,7 +451,7 @@ namespace Octgn.Play.Gui
                     {
                         Selection.Remove(Card);
                     }
-                    else if (Card.Controller == Player.LocalPlayer)
+                    else if (Card.Controller == GameStateMachine.C.LocalPlayer)
                     {
                         Selection.Add(Card);
                     }
@@ -501,7 +504,7 @@ namespace Octgn.Play.Gui
                         _isDragging = true;
                         RaiseEvent(new CardEventArgs(CardHoveredEvent, this));
                         AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
-                        _draggedArrow = new ArrowAdorner(Player.LocalPlayer, this);
+                        _draggedArrow = new ArrowAdorner(GameStateMachine.C.LocalPlayer, this);
                         layer.Add(_draggedArrow);
                     }
                 }

@@ -28,6 +28,9 @@ namespace Octgn.Play
 
         short[] MyShufflePos { get; set; }
 
+        IActionShortcut[] CardShortcuts { get; set; }
+        IActionShortcut[] GroupShortcuts { get; set; }
+
         bool HasReceivedFirstShuffledMessage { get; set; }
         bool PreparingShuffle { get; set; }
         bool WantToShuffle { get; set; }

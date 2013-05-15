@@ -13,10 +13,10 @@ namespace Octgn.Play.Gui.Adorners
             DependencyPropertyDescriptor.FromProperty(CardControl.IsInvertedProperty, typeof (CardControl));
 
         private readonly ArrowControl _arrow = new ArrowControl {ToPoint = new Point(200, 200)};
-        private readonly Player _player;
+        private readonly IPlayPlayer _player;
         private CardControl _toCard;
 
-        public ArrowAdorner(Player player, UIElement adornedElement)
+        public ArrowAdorner(IPlayPlayer player, UIElement adornedElement)
             : base(adornedElement)
         {
             _player = player;

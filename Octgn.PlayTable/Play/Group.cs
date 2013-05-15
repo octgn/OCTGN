@@ -11,6 +11,7 @@ namespace Octgn.Play
 {
     using System.Windows.Documents;
 
+    using Octgn.Core.Play;
     using Octgn.DataNew.Entities;
     using Octgn.PlayTable;
     using Octgn.PlayTable.Controls;
@@ -72,8 +73,8 @@ namespace Octgn.Play
         // Find a group given its id
 
         // C'tor
-        public readonly ActionShortcut[] CardShortcuts;
-        public readonly ActionShortcut[] GroupShortcuts;
+        public IActionShortcut[] CardShortcuts { get; set; }
+        public IActionShortcut[] GroupShortcuts { get; set; }
 
         internal Group(Player owner, DataNew.Entities.Group def)
             : base(owner)
@@ -189,9 +190,9 @@ namespace Octgn.Play
 
         public event EventHandler Shuffled;
 
-        private static ActionShortcut[] CreateShortcuts(IEnumerable<IGroupAction> baseActionDef)
+        private static IActionShortcut[] CreateShortcuts(IEnumerable<IGroupAction> baseActionDef)
         {
-            if (baseActionDef == null) return new ActionShortcut[0];
+            if (baseActionDef == null) return new IActionShortcut[0];
 
             IEnumerable<GroupAction> actionDef = baseActionDef
                 .Flatten(x =>
@@ -201,7 +202,7 @@ namespace Octgn.Play
                              })
                 .OfType<GroupAction>();
 
-            IEnumerable<ActionShortcut> shortcuts = from action in actionDef
+            IEnumerable<IActionShortcut> shortcuts = from action in actionDef
                                                     where action.Shortcut != null
                                                     select new ActionShortcut
                                                                {
@@ -258,7 +259,7 @@ namespace Octgn.Play
             {
                 visibility = GroupVisibility.Everybody;
                 Viewers.Clear();
-                Viewers.AddRange(Program.Player.All);
+                Viewers.AddRange(GameStateMachine.C.AllPlayers);
             }
             else
             {
@@ -293,7 +294,7 @@ namespace Octgn.Play
                 Program.Client.Rpc.GroupVisRemoveReq(this, player);
             Viewers.Remove(player);
             visibility = Viewers.Count == 0 ? GroupVisibility.Nobody : GroupVisibility.Custom;
-            if (player == Program.Player.LocalPlayer)
+            if (player == GameStateMachine.C.LocalPlayer)
                 foreach (IPlayCard c in cards)
                     c.SetFaceUp(false);
         }
@@ -385,9 +386,9 @@ namespace Octgn.Play
         #endregion
     }
 
-    public class ActionShortcut
+    public class ActionShortcut : IActionShortcut
     {
-        public KeyGesture Key { get; set; }
+        public object Key { get; set; }
         public IGroupAction ActionDef { get; set; }
     }
 
