@@ -46,7 +46,7 @@ namespace Octgn.ProxyGenerator.Util
             graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
             graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
             value = System.Web.HttpUtility.HtmlDecode(value);
-            GraphicsPath path = GetTextPath(section, value);
+            GraphicsPath path = GetTextPath(section, value, graphics);
 
             if (section.location.flip)
             {
@@ -115,11 +115,11 @@ namespace Octgn.ProxyGenerator.Util
             path.Dispose();
         }
 
-        public static GraphicsPath GetTextPath(BlockDefinition section, string text)
+        public static GraphicsPath GetTextPath(BlockDefinition section, string text, Graphics graphics)
         {
             GraphicsPath myPath = new GraphicsPath();
             FontFamily family = new FontFamily("Arial");
-            int fontStyle = (int)FontStyle.Regular;
+            FontStyle fontStyle = FontStyle.Regular;
             if (section.text.font != null)
             {
                 PrivateFontCollection col = new PrivateFontCollection();
@@ -130,7 +130,7 @@ namespace Octgn.ProxyGenerator.Util
                 {
                     if (family.IsStyleAvailable(((FontStyle)fontstyleEnum)))
                     {
-                        fontStyle = (int)fontstyleEnum;
+                        fontStyle = (FontStyle)fontstyleEnum;
                         fontStyleFound = true;
                         break;
                     }
@@ -139,7 +139,7 @@ namespace Octgn.ProxyGenerator.Util
                         var combinedStyle = ((FontStyle)fontstyleEnum) | ((FontStyle)secondStyle);
                         if (family.IsStyleAvailable(combinedStyle))
                         {
-                            fontStyle = (int)combinedStyle;
+                            fontStyle = combinedStyle;
                             fontStyleFound = true;
                             break;
                         }
@@ -152,6 +152,8 @@ namespace Octgn.ProxyGenerator.Util
             }
             int size = section.text.size;
             
+            int minsize = 6;
+            
             Point location = section.location.ToPoint();
             StringFormat format = StringFormat.GenericDefault;
             if (section.wordwrap.height > 0)
@@ -161,10 +163,28 @@ namespace Octgn.ProxyGenerator.Util
                 format.LineAlignment = GetAlignment(section.wordwrap.valign);
                 Size block = section.wordwrap.ToSize();
                 Rectangle rect = new Rectangle(location, block);
-
+                if (section.wordwrap.shrinkToFit)
+                {
+                    GraphicsUnit original = graphics.PageUnit;
+                    graphics.PageUnit = GraphicsUnit.Point;  // Convert the PageUnit to Point just long enough to get an accurate measurement.
+                    Font tempfont = new Font(family, size, fontStyle); // Create the font for the measurement.
+                    if (rect.Height < graphics.MeasureString(text, tempfont, rect.Width, format).Height)
+                    {
+                        int modMax = size % 20;
+                        size = (modMax == 0 || modMax < minsize) ? minsize : modMax;
+                        tempfont = new Font(family, size, fontStyle);
+                    }
+                    while (size > minsize && rect.Height < graphics.MeasureString(text, tempfont, rect.Width, format).Height) // Compare the height of the rendered text to the bounding box.  If it's larger
+                    {
+                        size -= 1; // Reduce the size, test again.
+                        tempfont = new Font(family, size, fontStyle); // REcreate the font in the new size
+                    }
+                    // end addition
+                    graphics.PageUnit = original; // Change the PageUnit back to display.
+                }
                 myPath.AddString(text,
                 family,
-                fontStyle,
+                (int)fontStyle,
                 size,
                 rect,
                 format);
@@ -173,7 +193,7 @@ namespace Octgn.ProxyGenerator.Util
             {
                 myPath.AddString(text,
                 family,
-                fontStyle,
+                (int)fontStyle,
                 size,
                 location,
                 format);
