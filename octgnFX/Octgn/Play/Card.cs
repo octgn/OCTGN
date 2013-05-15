@@ -602,20 +602,20 @@ namespace Octgn.Play
 
         #region Markers
 
-        private readonly ObservableCollection<PlayMarker> _markers = new ObservableCollection<PlayMarker>();
+        private readonly ObservableCollection<Marker> _markers = new ObservableCollection<Marker>();
 
-        public IList<PlayMarker> Markers
+        public IList<Marker> Markers
         {
             get { return _markers; }
         }
 
         internal void AddMarker(DataNew.Entities.Marker model, ushort count)
         {
-            PlayMarker marker = _markers.FirstOrDefault(m => m.Model.Equals(model));
+            Marker marker = _markers.FirstOrDefault(m => m.Model.Equals(model));
             if (marker != null)
                 marker.SetCount((ushort) (marker.Count + count));
             else if (count > 0)
-                _markers.Add(new PlayMarker(this, model, count));
+                _markers.Add(new Marker(this, model, count));
         }
 
         internal void AddMarker(DataNew.Entities.Marker model)
@@ -623,7 +623,7 @@ namespace Octgn.Play
             AddMarker(model, 1);
         }
 
-        internal int RemoveMarker(PlayMarker marker, ushort count)
+        internal int RemoveMarker(Marker marker, ushort count)
         {
             if (!_markers.Contains(marker)) return 0;
 
@@ -638,12 +638,12 @@ namespace Octgn.Play
             return count;
         }
 
-        internal void RemoveMarker(PlayMarker marker)
+        internal void RemoveMarker(Marker marker)
         {
             _markers.Remove(marker);
         }
 
-        internal PlayMarker FindMarker(Guid lId, string name)
+        internal Marker FindMarker(Guid lId, string name)
         {
             return _markers.FirstOrDefault(m =>
                                            m.Model.Id == lId &&
@@ -653,7 +653,7 @@ namespace Octgn.Play
         internal void SetMarker(Player player, Guid lId, string name, int count)
         {
             int oldCount = 0;
-            PlayMarker marker = FindMarker(lId, name);
+            Marker marker = FindMarker(lId, name);
             if (marker != null)
             {
                 oldCount = marker.Count;
