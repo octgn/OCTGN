@@ -439,6 +439,8 @@ namespace Octgn.Play.Dialogs
 
             public bool IsMatch(ObservableMultiCard c)
             {
+                
+                if (!c.PropertySet().ContainsKey(Property)) return false;
                 return IsValueMatch(c.PropertySet()[Property]);
             }
 
