@@ -9,7 +9,8 @@ using Octgn.Data;
 namespace Octgn.Play.Dialogs
 {
     using Octgn.Core.DataExtensionMethods;
-    using Octgn.Controls;
+    using Octgn.Core.Play;
+    using Octgn.PlayTable;
 
     public partial class LimitedDialog
     {
@@ -47,7 +48,7 @@ namespace Octgn.Play.Dialogs
         {
             e.Handled = true;
 
-            if (Player.All.Any(p => p.Groups.Any(x => x.Count > 0)))
+            if (GameStateMachine.C.AllPlayers.Any(p => p.Groups.Any(x => x.Count > 0)))
             {
                 if (MessageBoxResult.Yes ==
                     TopMostMessageBox.Show(

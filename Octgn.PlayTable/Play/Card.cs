@@ -17,6 +17,7 @@ namespace Octgn.Play
 
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
+    using Octgn.Core.Play;
     using Octgn.DataNew.Entities;
     using Octgn.PlayTable;
     using Octgn.PlayTable.Controls;
@@ -51,7 +52,7 @@ namespace Octgn.Play
          // List of players looking at this card currently. A player may appear more than once since he can have more than one window opened
         private readonly ObservableCollection<IPlayPlayer> _playersPeeking = new ObservableCollection<IPlayPlayer>();
         // List of players, who had peeked at this card. The list is reset when the card changes group.
-        internal bool MayBeConsideredFaceUp;
+        public bool MayBeConsideredFaceUp { get; set; }
         /* For better responsiveness, turning a card face down is applied immediately,
 															   without waiting on the server.
 															   If a script tries to print the card's lName, when the message arrives the card is already
@@ -79,7 +80,7 @@ namespace Octgn.Play
             _id = id;
             Type = new CardIdentity(id) {Alias = false, Key = key, Model = model.Clone() , MySecret = mySecret};
             // var _definition = def;
-            Program.Card.All.Add(id, this);
+            GameStateMachine.C.AllCards.Add(id, this);
             _alternateOf = null;
             numberOfSwitchWithAlternatesNotPerformed = 0;
             _isAlternateImage = false;
@@ -171,7 +172,7 @@ namespace Octgn.Play
                 // Clear peeking (if any)
                 PeekingPlayers.Clear();
                 //Switch back to original image.
-                this.SwitchTo(Program.Player.LocalPlayer);
+                this.SwitchTo(GameStateMachine.C.LocalPlayer);
             }
         }
 
@@ -183,7 +184,7 @@ namespace Octgn.Play
                 if (_faceUp == value) return;
                 Program.Client.Rpc.TurnReq(this, value);
                 if (_faceUp) MayBeConsideredFaceUp = true; // See comment for mayBeConsideredFaceUp
-                new Turn(Program.Player.LocalPlayer, this, value).Do();
+                new Turn(GameStateMachine.C.LocalPlayer, this, value).Do();
             }
         }
         //Okay, someone please explain to me why we have the setter above and the set function below? (V)_V
@@ -207,7 +208,7 @@ namespace Octgn.Play
             {
                 if (value == _rot) return;
                 Program.Client.Rpc.RotateReq(this, value);
-                new Rotate(Program.Player.LocalPlayer, this, value).Do();
+                new Rotate(GameStateMachine.C.LocalPlayer, this, value).Do();
             }
         }
 
@@ -274,8 +275,8 @@ namespace Octgn.Play
         {
             get
             {
-                if (!FaceUp) return Program.Card.DefaultBack;
-                return Type.Model == null ? Program.Card.DefaultFront : Type.Model.GetPicture();
+                if (!FaceUp) return GameStateMachine.C.DefaultBack;
+                return Type.Model == null ? GameStateMachine.C.DefaultFront : Type.Model.GetPicture();
             }
         }
 
@@ -289,16 +290,16 @@ namespace Octgn.Play
 
         public void Target()
         {
-            if (TargetedBy == Program.Player.LocalPlayer) return;
+            if (TargetedBy == GameStateMachine.C.LocalPlayer) return;
             Program.Client.Rpc.TargetReq(this);
-            new Target(Program.Player.LocalPlayer, this, null, true).Do();
+            new Target(GameStateMachine.C.LocalPlayer, this, null, true).Do();
         }
 
         public void Untarget()
         {
             if (TargetedBy == null && !TargetsOtherCards) return;
             Program.Client.Rpc.UntargetReq(this);
-            new Target(Program.Player.LocalPlayer, this, null, false).Do();
+            new Target(GameStateMachine.C.LocalPlayer, this, null, false).Do();
         }
 
         public void Target(IPlayCard otherCard)
@@ -309,7 +310,7 @@ namespace Octgn.Play
                 return;
             }
             Program.Client.Rpc.TargetArrowReq(this, otherCard);
-            new Target(Program.Player.LocalPlayer, this, otherCard, true).Do();
+            new Target(GameStateMachine.C.LocalPlayer, this, otherCard, true).Do();
         }
 
         public override string ToString()
@@ -332,7 +333,7 @@ namespace Octgn.Play
         {
             if (_type.Model == null) return;
             if (_type.Model.Alternate.ToLower() == alternate.ToLower()) return;
-            if(player.Id == Program.Player.LocalPlayer.Id)
+            if (player.Id == GameStateMachine.C.LocalPlayer.Id)
                 Program.Client.Rpc.CardSwitchTo(player,this,alternate);
             _type.Model.SetPropertySet(alternate);
             this.OnPropertyChanged("Picture");
@@ -360,13 +361,13 @@ namespace Octgn.Play
             if (to == Group && idx < Group.Count && Group[idx] == this) return;
             if (to.Visibility != GroupVisibility.Undefined) lFaceUp = FaceUp;
             Program.Client.Rpc.MoveCardReq(this, to, idx, lFaceUp);
-            new MoveCard(Program.Player.LocalPlayer, this, to, idx, lFaceUp).Do();
+            new MoveCard(GameStateMachine.C.LocalPlayer, this, to, idx, lFaceUp).Do();
         }
 
         public void MoveToTable(int x, int y, bool lFaceUp, int idx)
         {
             Program.Client.Rpc.MoveCardAtReq(this, x, y, idx, lFaceUp);
-            new MoveCard(Program.Player.LocalPlayer, this, x, y, idx, lFaceUp).Do();
+            new MoveCard(GameStateMachine.C.LocalPlayer, this, x, y, idx, lFaceUp).Do();
         }
 
         public int GetIndex()
@@ -395,20 +396,20 @@ namespace Octgn.Play
                 e.NewIdentity.Revealed += PeekContinuation;
                 return;
             }
-            Program.Trace.TracePlayerEvent(Program.Player.LocalPlayer, "You peeked at {0}.", e.NewIdentity.Model);
+            Program.Trace.TracePlayerEvent(GameStateMachine.C.LocalPlayer, "You peeked at {0}.", e.NewIdentity.Model);
         }
 
         public string GetPicture(bool up)
         {
-            if (!up) return Program.Card.DefaultBack;
-            if (Type == null || Type.Model == null) return Program.Card.DefaultFront;
+            if (!up) return GameStateMachine.C.DefaultBack;
+            if (Type == null || Type.Model == null) return GameStateMachine.C.DefaultFront;
             return Type.Model.GetPicture();
         }
 
         internal BitmapImage GetBitmapImage(bool up)
         {
-            if (!up) return Program.GameEngine.CardBackBitmap;
-            if (Type == null || Type.Model == null) return Program.GameEngine.CardFrontBitmap;
+            if (!up) return (Program.GameEngine as GameEngine).CardBackBitmap;
+            if (Type == null || Type.Model == null) return (Program.GameEngine as GameEngine).CardFrontBitmap;
             var bmpo = new BitmapImage(new Uri(Type.Model.GetPicture())) {CacheOption = BitmapCacheOption.OnLoad};
             bmpo.Freeze();
             return bmpo;
@@ -457,7 +458,7 @@ namespace Octgn.Play
                     if (FaceUp) Reveal();
                     break;
                 case GroupVisibility.Custom:
-                    SetFaceUp(viewers.Contains(Program.Player.LocalPlayer));
+                    SetFaceUp(viewers.Contains(GameStateMachine.C.LocalPlayer));
                     RevealTo(viewers);
                     break;
                 default: // could be GroupVisibilty.Owner
@@ -481,7 +482,7 @@ namespace Octgn.Play
 
         public override void OnControllerChanged()
         {
-            if (Selected && Controller != Program.Player.LocalPlayer)
+            if (Selected && Controller != GameStateMachine.C.LocalPlayer)
                 Selection.Remove(this);
         }
 
@@ -517,7 +518,7 @@ namespace Octgn.Play
             {
                 // If the type is public and it's being revealed to myself,
                 // trigger the OnReveal event (e.g. during a Peek of a known face-down card)
-                if (Type.Model != null && players.Contains(Program.Player.LocalPlayer))
+                if (Type.Model != null && players.Contains(GameStateMachine.C.LocalPlayer))
                     Type.OnRevealed(Type);
                 return;
             }
@@ -525,7 +526,7 @@ namespace Octgn.Play
             // If it's an alias pass it to the one who created it
             if (Type.Alias)
             {
-                IPlayPlayer p = Program.Player.Find((byte) (Type.Key >> 16));
+                IPlayPlayer p = GameStateMachine.C.Find<IPlayPlayer>((byte) (Type.Key >> 16));
                 Program.Client.Rpc.RevealToReq(p, players.ToArray(), this, Crypto.Encrypt(Type.Key, p.PublicKey));
             }
                 // Else pass to every viewer
@@ -534,7 +535,7 @@ namespace Octgn.Play
                 var pArray = new IPlayPlayer[1];
                 foreach (IPlayPlayer p in players)
                 {
-                    if (p == Program.Player.LocalPlayer)
+                    if (p == GameStateMachine.C.LocalPlayer)
                         Type.OnRevealed(Type);
                     else
                     {

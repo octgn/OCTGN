@@ -9,6 +9,7 @@ namespace Octgn.Play
 
     public class PlayMarker : INotifyPropertyChanged
     {
+        #region SlowAssDefaults
         internal static readonly DefaultMarkerModel[] DefaultMarkers = new[]
                                                                            {
                                                                                new DefaultMarkerModel("white",
@@ -52,7 +53,7 @@ namespace Octgn.Play
                                                                                                                0, 0, 0,
                                                                                                                0, 8))
                                                                            };
-
+        #endregion SlowAssDefaults
         private readonly IPlayCard _card;
         private readonly DataNew.Entities.Marker _model;
         private ushort _count = 1;

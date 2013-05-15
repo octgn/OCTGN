@@ -152,14 +152,10 @@ namespace Octgn.Networking
         public void NewPlayer(byte id, string nick, ulong pkey)
         {
             K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
-            var player = new Player(GameStateMachine.C.Engine.Definition, nick, id, pkey);
+            var player = K.C.Get<IObjectCreator>().CreatePlayer(GameStateMachine.C.Engine.Definition, nick, id, pkey);
             // Define the default table side if we are the host
             if (GameStateMachine.C.IsHost)
                 player.InvertedTable = (GameStateMachine.C.AllExceptGlobal.Count() & 1) == 0;
-            if (GameStateMachine.C.IsHost)
-            {
-                Sounds.PlaySound(Properties.Resources.knockknock);
-            }
         }
 
         /// <summary>Loads a player deck.</summary>
@@ -203,7 +199,7 @@ namespace Octgn.Networking
             if (owner == GameStateMachine.C.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
             {
-                Card c = new Card(owner, id[i], type[i], null, false);
+                var c = K.C.Get<IObjectCreator>().CreateCard(owner, id[i], type[i], null, false);
                 IPlayGroup group = groups[i];
                 group.AddAt(c, group.Count);
             }
@@ -232,7 +228,7 @@ namespace Octgn.Networking
             {
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
                 //group.AddAt(c, group.Count);
-                var card = new Card(owner,id[i], type[i], null, false);
+                var card = K.C.Get<IObjectCreator>().CreateCard(owner, id[i], type[i], null, false);
                 group.AddAt(card, group.Count);
             }
         }
@@ -320,10 +316,6 @@ namespace Octgn.Networking
         {
             player.Delete();
             K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has left the game.", player);
-            if (GameStateMachine.C.IsHost)
-            {
-                Sounds.PlaySound(Properties.Resources.doorclose);
-            }
         }
 
         public void MoveCard(IPlayPlayer player, IPlayCard card, IPlayGroup to, int idx, bool faceUp)
@@ -706,7 +698,7 @@ namespace Octgn.Networking
         public void UnaliasGrp(IPlayGroup group)
         {
             // Get the group
-            Pile g = group as Pile;
+            var g = group as IPlayPile;
             if (g == null)
             { K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.NonGame, "[UnaliasGrp] Group is not a pile."); return; }
             // Collect aliases which we p
@@ -732,8 +724,12 @@ namespace Octgn.Networking
             // Notify the user
             K.C.Get<GameplayTrace>().TracePlayerEvent(group.Owner, "{0} is being prepared for shuffle.", g);
             // Check for null because the chat can currently be muted (e.g. during a Mulligan scripted action)
-            if (Program.LastChatTrace != null)
-                g.ShuffledTrace += (new ShuffleTraceChatHandler { Line = Program.LastChatTrace }).ReplaceText;
+            if (GameplayTrace.LastChatTrace != null)
+            {
+                var tc = K.C.Get<IObjectCreator>().CreateTraceChatHandler();
+                tc.Set(GameplayTrace.LastChatTrace);
+                g.ShuffledTrace += (tc).ReplaceText;
+            }
         }
 
         /// <summary>Unalias some Cards, e.g. before a shuffle</summary>
@@ -743,7 +739,7 @@ namespace Octgn.Networking
         {
             if (card.Length != type.Length)
             { K.C.Get<GameplayTrace>().TraceWarning("[Unalias] Card and type lengths don't match."); return; }
-            Pile g = null;
+            IPlayPile g = null;
             List<int> cards = new List<int>(card.Length);
             List<ulong> types = new List<ulong>(card.Length);
             for (int i = 0; i < card.Length; i++)
@@ -751,7 +747,7 @@ namespace Octgn.Networking
                 IPlayCard c = GameStateMachine.C.Find<IPlayCard>(card[i]);
                 if (c == null)
                 { K.C.Get<GameplayTrace>().TraceWarning("[Unalias] Card not found."); continue; }
-                if (g == null) g = c.Group as Pile;
+                if (g == null) g = c.Group as IPlayPile;
                 else if (g != c.Group)
                 { K.C.Get<GameplayTrace>().TraceWarning("[Unalias] Not all cards belong to the same group!"); continue; }
                 // Check nobody cheated
@@ -905,9 +901,7 @@ namespace Octgn.Networking
         public void StartLimited(IPlayPlayer player, Guid[] packs)
         {
             K.C.Get<GameplayTrace>().TracePlayerEvent(player, "{0} starts a limited game.", player);
-            var wnd = new Play.Dialogs.PickCardsDialog();
-            WindowManager.PlayWindow.ShowBackstage(wnd);
-            wnd.OpenPacks(packs);
+            GameStateMachine.C.Engine.StartLimited(player, packs);
         }
 
         public void CancelLimited(IPlayPlayer player)

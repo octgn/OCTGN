@@ -4,6 +4,7 @@ using Octgn.Data;
 namespace Octgn.Play.Actions
 {
     using Octgn.Core;
+    using Octgn.Core.Play;
 
     public class CreateCard : ActionBase
     {
@@ -35,10 +36,10 @@ namespace Octgn.Play.Actions
         public override void Do()
         {
             base.Do();
-
-            Card =
-                new Card(_owner, _id, _key, _model, false)
-                    {X = _x, Y = _y, DeleteWhenLeavesGroup = _deletesWhenLeavesGroup};
+            Card = K.C.Get<IObjectCreator>().CreateCard(_owner, _id, _key, _model, false);
+            Card.X = _x;
+            Card.Y = _y;
+            Card.DeleteWhenLeavesGroup = _deletesWhenLeavesGroup;
             Card.SetFaceUp(_faceUp);
             K.C.Get<IGameEngine>().Table.AddAt(Card, K.C.Get<IGameEngine>().Table.Count);
 

@@ -16,6 +16,7 @@
         CardIdentity Type { get; set; }
 
         bool DeleteWhenLeavesGroup { get; set; }
+        bool MayBeConsideredFaceUp { get; set; }
 
         IPlayGroup Group { get; set; }
 

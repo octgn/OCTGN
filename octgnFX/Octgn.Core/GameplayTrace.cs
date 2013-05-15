@@ -9,6 +9,8 @@
 
     public class GameplayTrace:TraceSource
     {
+        public static string LastChatTrace { get; set; }
+
         public GameplayTrace()
             : base("MainTrace", SourceLevels.Information)
         {

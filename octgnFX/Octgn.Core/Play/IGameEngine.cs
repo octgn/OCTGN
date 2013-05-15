@@ -50,6 +50,8 @@ namespace Octgn
 
         void End();
 
+        void StartLimited(IPlayPlayer player, Guid[] packs);
+
         ushort GetUniqueId();
 
         int GenerateCardId();

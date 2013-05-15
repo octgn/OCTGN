@@ -92,7 +92,7 @@ namespace Octgn.Play.Actions
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(Who),
                                          "{0} moves '{1}' to {3}{2}",
                                          Who, shouldSee ? Card.Type : (object) "Card",
-                                         To, To is Pile && Idx > 0 && Idx + 1 == To.Count ? "the bottom of " : "");
+                                         To, To is IPlayPile && Idx > 0 && Idx + 1 == To.Count ? "the bottom of " : "");
 
             if (Done != null) Done(this, EventArgs.Empty);
         }

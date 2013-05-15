@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using Octgn.Controls;
 using Octgn.Data;
 using Octgn.Utils;
 
@@ -19,6 +18,7 @@ namespace Octgn.Scripting.Controls
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
+    using Octgn.PlayTable;
 
     public partial class CardDlg
     {

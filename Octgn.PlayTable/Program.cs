@@ -18,22 +18,6 @@
             }
         }
 
-        public static PlayerStateMachine Player
-        {
-            get
-            {
-                return K.C.Get<PlayerStateMachine>();
-            }
-        }
-
-        public static CardStateMachine Card
-        {
-            get
-            {
-                return K.C.Get<CardStateMachine>();
-            }
-        }
-
         public static GameplayTrace Trace
         {
             get
@@ -50,6 +34,14 @@
             }
         }
 
+        public static IObjectCreator Creator
+        {
+            get
+            {
+                return K.C.Get<IObjectCreator>();
+            }
+        }
+
         static Program()
         {
             MakeBindings();
@@ -60,11 +52,9 @@
             K.C.Bind<GameplayTrace>().ToSelf().InSingletonScope();
             K.C.Bind<Dispatcher>().ToMethod(x => Application.Current.Dispatcher);
             K.C.Bind<Client>().ToSelf().InSingletonScope();
-            K.C.Bind<PlayerStateMachine>().ToSelf().InSingletonScope();
-            K.C.Bind<ControllableObjectStateMachine>().ToSelf().InSingletonScope();
             K.C.Bind<IGameEngine>().To<GameEngine>().InSingletonScope();
-            K.C.Bind<GroupStateMachine>().ToSelf().InSingletonScope();
-            K.C.Bind<CardStateMachine>().ToSelf().InSingletonScope();
+            K.C.Bind<GameStateMachine>().ToSelf().InSingletonScope();
+            K.C.Bind<IObjectCreator>().To<ObjectCreator>().InSingletonScope();
         }
     }
 
