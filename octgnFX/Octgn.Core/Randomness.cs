@@ -36,7 +36,7 @@ namespace Skylabs.Lobby
             try
             {
                 var l = new List<string>();
-                using(var s = new StringReader(Resource1.jargonlist))
+                using(var s = new StringReader( Octgn.Core.Resource1.jargonlist))
                 {
                     var ns = "";
                     while((ns = s.ReadLine()) != null)
@@ -59,7 +59,7 @@ namespace Skylabs.Lobby
             try
             {
                 var l = new List<string>();
-                using (var s = new StringReader(Resource1.nounlist))
+                using (var s = new StringReader(Octgn.Core.Resource1.nounlist))
                 {
                     var ns = "";
                     while ((ns = s.ReadLine()) != null)

@@ -16,7 +16,7 @@ namespace Octgn.Play
 
         public static int PlayerFlag(IPlayPlayer player)
         {
-            return player == K.C.Get<PlayerStateMachine>().LocalPlayer ? LocalPlayer : OtherPlayer;
+            return player == GameStateMachine.C.LocalPlayer ? LocalPlayer : OtherPlayer;
         }
     }
 }
