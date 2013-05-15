@@ -15,6 +15,8 @@ namespace Octgn.Scripting.Controls
     using System.IO;
     using System.Windows.Media.Imaging;
 
+    using Octgn.PlayTable;
+
     public partial class MarkerDlg
     {
         public static readonly DependencyProperty IsModelSelectedProperty =

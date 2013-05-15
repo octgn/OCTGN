@@ -8,6 +8,9 @@ using System.Windows.Controls;
 
 namespace Octgn.Scripting.Controls
 {
+    using Octgn.Core;
+    using Octgn.Play;
+
     public partial class ChoiceDlg
     {
         private int _intResult;
@@ -16,7 +19,7 @@ namespace Octgn.Scripting.Controls
         {
             InitializeComponent();
             //fix MAINWINDOW bug
-            Owner = WindowManager.PlayWindow;
+            Owner = K.C.Get<PlayWindow>();
             Title = title;
             promptLbl.Text = prompt;
             int count = 0;

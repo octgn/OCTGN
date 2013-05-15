@@ -6,6 +6,8 @@ using System.Windows.Input;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.PlayTable;
+
     public partial class MarkerControl
     {
         public MarkerControl()

@@ -21,7 +21,10 @@ namespace Octgn.Scripting
     using System.Windows.Media.Imaging;
     using System.Windows.Threading;
 
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Play;
+    using Octgn.PlayTable;
 
     [SecuritySafeCritical]
     public class ScriptApi : MarshalByRefObject
@@ -41,27 +44,27 @@ namespace Octgn.Scripting
 
         public int LocalPlayerId()
         {
-            return Player.LocalPlayer != null ? Player.LocalPlayer.Id : -1;
+            return GameStateMachine.C.LocalPlayer != null ? GameStateMachine.C.LocalPlayer.Id : -1;
         }
 
         public int SharedPlayerId()
         {
-            return Player.GlobalPlayer != null ? Player.GlobalPlayer.Id : -1;
+            return GameStateMachine.C.GlobalPlayer != null ? GameStateMachine.C.GlobalPlayer.Id : -1;
         }
 
         public List<int> AllPlayers()
         {
-            return Player.AllExceptGlobal.Select(p => (int) p.Id).ToList();
+            return GameStateMachine.C.AllExceptGlobal.Select(p => (int)p.Id).ToList();
         }
 
         public string PlayerName(int id)
         {
-            return Player.Find((byte) id).Name;
+            return GameStateMachine.C.Find<IPlayPlayer>((byte) id).Name;
         }
 
         public string PlayerColor(int id)
         {
-            return Player.Find((byte) id).Color.ToString().Remove(1, 2);
+            return GameStateMachine.C.Find<IPlayPlayer>((byte) id).Color.ToString().Remove(1, 2);
         }
 
         public bool IsActivePlayer(int id)
@@ -73,13 +76,13 @@ namespace Octgn.Scripting
 
         public void setActivePlayer(int id)
         {
-            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
-                Program.Client.Rpc.NextTurn(Player.Find((byte) id));
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == GameStateMachine.C.LocalPlayer)
+                Program.Client.Rpc.NextTurn(GameStateMachine.C.Find<IPlayPlayer>((byte) id));
         }
 
         public List<KeyValuePair<int, string>> PlayerCounters(int id)
         {
-            return Player.Find((byte) id)
+            return GameStateMachine.C.Find<IPlayPlayer>((byte) id)
                 .Counters
                 .Select(c => new KeyValuePair<int, string>(c.Id, c.Name))
                 .ToList();
@@ -87,13 +90,13 @@ namespace Octgn.Scripting
 
         public int PlayerHandId(int id)
         {
-            Hand hand = Player.Find((byte) id).Hand;
+            IPlayGroup hand = GameStateMachine.C.Find<IPlayPlayer>((byte) id).Hand;
             return hand != null ? hand.Id : 0;
         }
 
         public List<KeyValuePair<int, string>> PlayerPiles(int id)
         {
-            return Player.Find((byte) id)
+            return GameStateMachine.C.Find<IPlayPlayer>((byte) id)
                 .Groups.OfType<Pile>()
                 .Select(g => new KeyValuePair<int, string>(g.Id, g.Name))
                 .ToList();
@@ -101,7 +104,7 @@ namespace Octgn.Scripting
 
         public bool PlayerHasInvertedTable(int id)
         {
-            return Player.Find((byte) id).InvertedTable;
+            return GameStateMachine.C.Find<IPlayPlayer>((byte) id).InvertedTable;
         }
 
         #endregion Player API
@@ -110,12 +113,12 @@ namespace Octgn.Scripting
 
         public int CounterGet(int id)
         {
-            return Counter.Find(id).Value;
+            return GameStateMachine.C.Find<IPlayCounter>(id).Value;
         }
 
         public void CounterSet(int id, int value)
         {
-            Counter counter = Counter.Find(id);
+            IPlayCounter counter = GameStateMachine.C.Find<IPlayCounter>(id);
             _engine.Invoke(() => counter.Value = value);
         }
 
@@ -123,7 +126,7 @@ namespace Octgn.Scripting
 
         #region Group API
 
-        internal static string GroupCtor(Group group)
+        internal static string GroupCtor(IPlayGroup group)
         {
             if (group is Table) return "table";
             if (group is Hand) return string.Format("Hand({0}, Player({1}))", group.Id, group.Owner.Id);
@@ -133,27 +136,27 @@ namespace Octgn.Scripting
 
         public string GroupCtor(int id)
         {
-            return GroupCtor(Group.Find(id));
+            return GroupCtor(GameStateMachine.C.Find<IPlayGroup>(id));
         }
 
         public int GroupCount(int id)
         {
-            return Group.Find(id).Count;
+            return GameStateMachine.C.Find<IPlayGroup>(id).Count;
         }
 
         public int GroupCard(int id, int index)
         {
-            return Group.Find(id)[index].Id;
+            return GameStateMachine.C.Find<IPlayGroup>(id)[index].Id;
         }
 
         public int[] GroupCards(int id)
         {
-            return Group.Find(id).Select(c => c.Id).ToArray();
+            return GameStateMachine.C.Find<IPlayGroup>(id).Select(c => c.Id).ToArray();
         }
 
         public void GroupShuffle(int id)
         {
-            var pile = (Pile) Group.Find(id);
+            var pile = (Pile) GameStateMachine.C.Find<IPlayGroup>(id);
 
             var isAsync = _engine.Invoke<bool>(() => pile.Shuffle());
             if (!isAsync) return;
@@ -199,45 +202,45 @@ namespace Octgn.Scripting
 
         public void CardSwitchTo(int id, string alternate)
         {
-            var c = Card.Find(id);
+            var c = GameStateMachine.C.Find<IPlayCard>(id);
             if (c == null) return;
-            _engine.Invoke(()=>c.SwitchTo(Player.LocalPlayer,alternate));
+            _engine.Invoke(()=>c.SwitchTo(GameStateMachine.C.LocalPlayer,alternate));
             
         }
 
         public string[] CardAlternates(int id)
         {
-            var c = Card.Find(id);
+            var c = GameStateMachine.C.Find<IPlayCard>(id);
             if(c == null)return new string[0];
             return c.Alternates();
         }
 
         public string CardAlternate(int id)
         {
-            var c = Card.Find(id);
+            var c = GameStateMachine.C.Find<IPlayCard>(id);
             if (c == null) return "";
             return c.Alternate();
         }
 
         public string CardName(int id)
         {
-            return Card.Find(id).Name;
+            return GameStateMachine.C.Find<IPlayCard>(id).Name;
         }
 
         public string CardModel(int id)
         //Why is this public? I would expect the model to be private - (V)_V
         {
-            Card c = Card.Find(id);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(id);
             if (!c.FaceUp || c.Type.Model == null) return null;
             return c.Type.Model.Id.ToString();
         }
 
         public object CardProperty(int id, string property)
         {
-            Card c = Card.Find(id);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(id);
             //the ToLower() and ToLower() lambdas are for case insensitive properties requested by game developers.
             property = property.ToLower();
-            if ((!c.FaceUp && !c.PeekingPlayers.Contains(Player.LocalPlayer)) || c.Type.Model == null) return "?";
+            if ((!c.FaceUp && !c.PeekingPlayers.Contains(GameStateMachine.C.LocalPlayer)) || c.Type.Model == null) return "?";
             if (!c.Type.Model.PropertySet().Keys.Select(x => x.Name.ToLower()).Contains(property)) { return IronPython.Modules.Builtin.None; }
             object ret = c.Type.Model.PropertySet().FirstOrDefault(x => x.Key.Name.ToLower().Equals(property)).Value;
             return (ret);
@@ -245,63 +248,63 @@ namespace Octgn.Scripting
 
         public int CardOwner(int id)
         {
-            return Card.Find(id).Owner.Id;
+            return GameStateMachine.C.Find<IPlayCard>(id).Owner.Id;
         }
 
         public int CardController(int id)
         {
-            return Card.Find(id).Controller.Id;
+            return GameStateMachine.C.Find<IPlayCard>(id).Controller.Id;
         }
 
         public void SetController(int id, int player)
         {
-            Card c = Card.Find(id);
-            Player p = Player.Find((byte) player);
-            Player controller = c.Controller;
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(id);
+            IPlayPlayer p = GameStateMachine.C.Find<IPlayPlayer>((byte) player);
+            IPlayPlayer controller = c.Controller;
 
-            if (p == Player.LocalPlayer)
+            if (p == GameStateMachine.C.LocalPlayer)
             {
-                if (c.Controller == Player.LocalPlayer) return;
+                if (c.Controller == GameStateMachine.C.LocalPlayer) return;
                 _engine.Invoke(() => c.TakeControl());
             }
             else
             {
-                if (c.Controller != Player.LocalPlayer) return;
+                if (c.Controller != GameStateMachine.C.LocalPlayer) return;
                 _engine.Invoke(() => c.PassControlTo(p));
             }
         }
 
         public int CardGroup(int id)
         {
-            return Card.Find(id).Group.Id;
+            return GameStateMachine.C.Find<IPlayCard>(id).Group.Id;
         }
 
         public bool CardGetFaceUp(int id)
         {
-            return Card.Find(id).FaceUp;
+            return GameStateMachine.C.Find<IPlayCard>(id).FaceUp;
         }
 
         public void CardSetFaceUp(int id, bool value)
         {
-            Card card = Card.Find(id);
+            IPlayCard card = GameStateMachine.C.Find<IPlayCard>(id);
             _engine.Invoke(() => card.FaceUp = value);
         }
 
         public int CardGetOrientation(int id)
         {
-            return (int) Card.Find(id).Orientation;
+            return (int) GameStateMachine.C.Find<IPlayCard>(id).Orientation;
         }
 
         public void CardSetOrientation(int id, int rot)
         {
             if (rot < 0 || rot > 3) throw new IndexOutOfRangeException("orientation must be between 0 and 3");
-            Card card = Card.Find(id);
+            IPlayCard card = GameStateMachine.C.Find<IPlayCard>(id);
             _engine.Invoke(() => card.Orientation = (CardOrientation) rot);
         }
 
         public string CardGetHighlight(int id)
         {
-            Color? colorOrNull = Card.Find(id).HighlightColor;
+            Color? colorOrNull = GameStateMachine.C.Find<IPlayCard>(id).HighlightColor;
             if (colorOrNull == null) return null;
             Color color = colorOrNull.Value;
             return string.Format("#{0:x2}{1:x2}{2:x2}", color.R, color.G, color.B);
@@ -309,22 +312,22 @@ namespace Octgn.Scripting
 
         public void CardSetHighlight(int id, string color)
         {
-            Card card = Card.Find(id);
+            IPlayCard card = GameStateMachine.C.Find<IPlayCard>(id);
             Color? value = color == null ? null : (Color?) ColorConverter.ConvertFromString(color);
             _engine.Invoke(() => card.HighlightColor = value);
         }
 
         public void CardPosition(int id, out double x, out double y)
         {
-            Card c = Card.Find(id);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(id);
             x = c.X;
             y = c.Y;
         }
 
         public void CardMoveTo(int cardId, int groupId, int? position)
         {
-            Card card = Card.Find(cardId);
-            Group group = Group.Find(groupId);
+            IPlayCard card = GameStateMachine.C.Find<IPlayCard>(cardId);
+            IPlayGroup group = GameStateMachine.C.Find<IPlayGroup>(groupId);
             _engine.Invoke(() =>
                                {
                                    if (position == null) card.MoveTo(group, true);
@@ -334,18 +337,18 @@ namespace Octgn.Scripting
 
         public void CardMoveToTable(int cardId, double x, double y, bool forceFaceDown)
         {
-            Card c = Card.Find(cardId);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(cardId);
             bool faceUp = !forceFaceDown && (!(c.Group is Table) || c.FaceUp);
             _engine.Invoke(() => c.MoveToTable((int) x, (int) y, faceUp, Program.GameEngine.Table.Count));
         }
 
         public void CardSelect(int id)
         {
-            Card c = Card.Find(id);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(id);
             // At the moment, only table and hand support multiple selection
             _engine.Invoke(() =>
                                {
-                                   if (c.Group is Table || c.Group is Hand)
+                                   if (c.Group is IPlayTable || c.Group is Hand)
                                        Selection.Add(c);
                                    else
                                        Selection.Clear();
@@ -356,14 +359,14 @@ namespace Octgn.Scripting
         //ralig98
         public int CardGetIndex(int CardId)
         {
-            return Card.Find(CardId).GetIndex();
+            return GameStateMachine.C.Find<IPlayCard>(CardId).GetIndex();
         }
 
         //Set's the card's index to idx.  Enforces a TableOnly rule, since the index's on other piles/groups are inverted.
         //ralig98
         public void CardSetIndex(int CardId, int idx, bool TableOnly = false)
         {
-            Card c = Card.Find(CardId);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(CardId);
             if (TableOnly)
             {
                 if (c.Group is Table)
@@ -375,7 +378,7 @@ namespace Octgn.Scripting
 
         public void CardTarget(int id, bool active)
         {
-            Card c = Card.Find(id);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(id);
             _engine.Invoke(() =>
                                {
                                    if (active) c.Target();
@@ -385,7 +388,7 @@ namespace Octgn.Scripting
 
         public void CardPeek(int id)
         {
-            Card c = Card.Find(id);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(id);
             _engine.Invoke(() =>
             {
                 c.Peek();
@@ -396,8 +399,8 @@ namespace Octgn.Scripting
 
         public void CardTargetArrow(int id, int targetId, bool active)
         {
-            Card c = Card.Find(id);
-            Card target = Card.Find(targetId);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(id);
+            IPlayCard target = GameStateMachine.C.Find<IPlayCard>(targetId);
             _engine.Invoke(() =>
             {
                 if (active) c.Target(target);
@@ -407,18 +410,18 @@ namespace Octgn.Scripting
 
         public int CardTargeted(int id)
         {
-            Card c = Card.Find(id);
+            IPlayCard c = GameStateMachine.C.Find<IPlayCard>(id);
             return c.TargetedBy != null ? c.TargetedBy.Id : -1;
         }
 
         public Tuple<string, string>[] CardGetMarkers(int id)
         {
-            return Card.Find(id).Markers.Select(m => Tuple.Create(m.Model.Name, m.Model.Id.ToString())).ToArray();
+            return GameStateMachine.C.Find<IPlayCard>(id).Markers.Select(m => Tuple.Create(m.Model.Name, m.Model.Id.ToString())).ToArray();
         }
 
         public int MarkerGetCount(int cardId, string markerName, string markerId)
         {
-            Card card = Card.Find(cardId);
+            IPlayCard card = GameStateMachine.C.Find<IPlayCard>(cardId);
             PlayMarker marker = card.FindMarker(Guid.Parse(markerId), markerName);
             return marker == null ? 0 : marker.Count;
         }
@@ -426,12 +429,12 @@ namespace Octgn.Scripting
         public void MarkerSetCount(int cardId, int count, string markerName, string markerId)
         {
             if (count < 0) count = 0;
-            Card card = Card.Find(cardId);
+            IPlayCard card = GameStateMachine.C.Find<IPlayCard>(cardId);
             Guid guid = Guid.Parse(markerId);
-            //Marker marker = card.FindMarker(guid, markerName);
+            //Marker marker = GameStateMachine.C.Find<IPlayCard>Marker(guid, markerName);
             _engine.Invoke(() =>
                                {
-                                   card.SetMarker(Player.LocalPlayer, guid, markerName, count);
+                                   card.SetMarker(GameStateMachine.C.LocalPlayer, guid, markerName, count);
                                    Program.Client.Rpc.SetMarkerReq(card, guid, markerName, (ushort) count);
                                });
         }
@@ -453,7 +456,7 @@ namespace Octgn.Scripting
 
         public void Whisper(string message)
         {
-            _engine.Invoke(() => Program.Print(Player.LocalPlayer, message));
+            _engine.Invoke(() => Program.Trace.Print(GameStateMachine.C.LocalPlayer, message));
         }
 
         public bool Confirm(string message)
@@ -495,7 +498,7 @@ namespace Octgn.Scripting
             return _engine.Invoke<Tuple<string, string, int>>(() =>
                                                                   {
                                                                       //fix MAINWINDOW bug
-                                                                      var dlg = new MarkerDlg { Owner = WindowManager.PlayWindow };
+                                                                      var dlg = new MarkerDlg { Owner = K.C.Get<PlayWindow>() };
                                                                       if (!dlg.ShowDialog().GetValueOrDefault())
                                                                           return null;
                                                                       return Tuple.Create(dlg.MarkerModel.Name,
@@ -523,7 +526,7 @@ namespace Octgn.Scripting
             return _engine.Invoke<Tuple<string, int>>(() =>
                                                           {
                                                               //fix MAINWINDOW bug
-                                                              var dlg = new CardDlg(properties,op) { Owner = WindowManager.PlayWindow };
+                                                              var dlg = new CardDlg(properties,op) { Owner = K.C.Get<PlayWindow>() };
                                                               if (!dlg.ShowDialog().GetValueOrDefault()) return null;
                                                               return Tuple.Create(dlg.SelectedCard.Id.ToString(),
                                                                                   dlg.Quantity);
@@ -566,7 +569,7 @@ namespace Octgn.Scripting
 
         public string GetGameName()
         {
-            return Program.CurrentOnlineGameName;
+            return GameStateMachine.C.OnlineGameName;
         }
 
         public int TurnNumber()
@@ -584,7 +587,7 @@ namespace Octgn.Scripting
             var model = Program.GameEngine.Definition.GetCardById(modelGuid);
             if (model == null) return ret;
 
-            var group = Group.Find(groupId);
+            var group = GameStateMachine.C.Find<IPlayGroup>(groupId);
             if (group == null) return ret;
 
             _engine.Invoke(
@@ -603,7 +606,7 @@ namespace Octgn.Scripting
                             ids[i] = id;
                             keys[i] = Crypto.ModExp(key);
                             ret.Add(id);
-                            var card = new Card(Player.LocalPlayer, id, key, model, true);
+                            var card = new Card(GameStateMachine.C.LocalPlayer, id, key, model, true);
                             group.AddAt(card, group.Count);
                         }
 
@@ -623,7 +626,7 @@ namespace Octgn.Scripting
                                 group.SetVisibility(false, false);
                                 break;
                             default:
-                                foreach (Player p in gt.Viewers)
+                                foreach (IPlayPlayer p in gt.Viewers)
                                 {
                                     group.AddViewer(p, false);
                                 }
@@ -656,7 +659,7 @@ namespace Octgn.Scripting
                                        int[] xs = new int[quantity], ys = new int[quantity];
 
 
-                                    //   if (Player.LocalPlayer.InvertedTable)
+                                    //   if (GameStateMachine.C.LocalPlayer.InvertedTable)
                                     //   {
                                     //       x -= Program.GameEngine.Definition.CardWidth;
                                     //       y -= Program.GameEngine.Definition.CardHeight;
@@ -670,7 +673,7 @@ namespace Octgn.Scripting
                                            ulong key = ((ulong) Crypto.PositiveRandom()) << 32 | model.Id.Condense();
                                            int id = Program.GameEngine.GenerateCardId();
 
-                                           new CreateCard(Player.LocalPlayer, id, key, faceDown != true, model, x, y, !persist).Do();
+                                           new CreateCard(GameStateMachine.C.LocalPlayer, id, key, faceDown != true, model, x, y, !persist).Do();
 
                                            ids[i] = id;
                                            keys[i] = key;
@@ -695,7 +698,7 @@ namespace Octgn.Scripting
 
         public bool IsTwoSided()
         {
-            return Program.GameSettings.UseTwoSidedTable;
+            return GameStateMachine.C.GameSettings.UseTwoSidedTable;
         }
 
         //status code initial value set to -1
@@ -812,19 +815,19 @@ namespace Octgn.Scripting
         public void PlayerSetGlobalVariable(int id, string name, object value)
         {
             string val = String.Format("{0}", value);
-            Player p = Player.Find((byte) id);
-            if (p == null || p.Id != Player.LocalPlayer.Id)
+            IPlayPlayer p = GameStateMachine.C.Find<IPlayPlayer>((byte) id);
+            if (p == null || p.Id != GameStateMachine.C.LocalPlayer.Id)
                 return;
-            if (Player.LocalPlayer.GlobalVariables.ContainsKey(name))
-                _engine.Invoke(() => Player.LocalPlayer.GlobalVariables[name] = val);
+            if (GameStateMachine.C.LocalPlayer.GlobalVariables.ContainsKey(name))
+                _engine.Invoke(() => GameStateMachine.C.LocalPlayer.GlobalVariables[name] = val);
             else
-                _engine.Invoke(() => Player.LocalPlayer.GlobalVariables.Add(name, val));
-            Program.Client.Rpc.PlayerSetGlobalVariable(Player.LocalPlayer, name, val);
+                _engine.Invoke(() => GameStateMachine.C.LocalPlayer.GlobalVariables.Add(name, val));
+            Program.Client.Rpc.PlayerSetGlobalVariable(GameStateMachine.C.LocalPlayer, name, val);
         }
 
         public string PlayerGetGlobalVariable(int id, string name)
         {
-            Player p = Player.Find((byte) id);
+            IPlayPlayer p = GameStateMachine.C.Find<IPlayPlayer>((byte) id);
             if (p == null)
                 return "";
             return p.GlobalVariables.ContainsKey(name) ? p.GlobalVariables[name] : "";

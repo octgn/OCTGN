@@ -71,7 +71,7 @@ namespace Octgn.Play.Gui
             return idx;
         }
 
-        public void DisplayInsertIndicator(Card source, int idx)
+        public void DisplayInsertIndicator(IPlayCard source, int idx)
         {
             // If the index corresponds to the card being dragged, it's a NOP so don't provide any visual feedback
             if (idx < Children.Count)

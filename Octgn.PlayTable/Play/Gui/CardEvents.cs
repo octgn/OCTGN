@@ -32,10 +32,10 @@ namespace Octgn.Play.Gui
 
     public class CardsEventArgs : RoutedEventArgs
     {
-        public readonly IEnumerable<Card> Cards;
-        public readonly Card ClickedCard;
+        public readonly IEnumerable<IPlayCard> Cards;
+        public readonly IPlayCard ClickedCard;
 
-        public CardsEventArgs(Card card, IEnumerable<Card> cards, RoutedEvent routedEvent, object src)
+        public CardsEventArgs(IPlayCard card, IEnumerable<IPlayCard> cards, RoutedEvent routedEvent, object src)
             : base(routedEvent, src)
         {
             ClickedCard = card;

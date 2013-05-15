@@ -188,7 +188,7 @@ namespace Octgn
                     _markersById.Add(m.Id, m);
                 }
             }
-            Program.IsGameRunning = true;
+            //Program.IsGameRunning = true;
         }
 
         public void TestBegin()

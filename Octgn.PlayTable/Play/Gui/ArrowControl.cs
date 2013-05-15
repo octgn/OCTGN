@@ -4,6 +4,8 @@ using System.Windows.Shapes;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.PlayTable;
+
     internal class ArrowControl : DrawingVisual
     {
         //private const double ArrowHalfWidth = 7;

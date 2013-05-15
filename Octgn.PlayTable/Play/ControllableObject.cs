@@ -63,12 +63,12 @@ namespace Octgn.Play
         // Pass control to player p exclusively
         public void PassControlTo(IPlayPlayer p)
         {
-            PassControlTo(p, K.C.Get<PlayerStateMachine>().LocalPlayer, true, false);
+            PassControlTo(p, GameStateMachine.C.LocalPlayer, true, false);
         }
 
         public void TakeControl()
         {
-            if (Controller == K.C.Get<PlayerStateMachine>().LocalPlayer) return;
+            if (Controller == GameStateMachine.C.LocalPlayer) return;
             K.C.Get<Client>().Rpc.TakeFromReq(this, Controller);
         }
 
@@ -85,7 +85,7 @@ namespace Octgn.Play
             if (_keepControl > 0)
                 K.C.Get<Client>().Rpc.DontTakeReq(this, p);
             else
-                PassControlTo(p, K.C.Get<PlayerStateMachine>().LocalPlayer, true, true);
+                PassControlTo(p, GameStateMachine.C.LocalPlayer, true, true);
         }
 
         // Pass control to player p
@@ -94,7 +94,7 @@ namespace Octgn.Play
             if (notifyServer)
             {
                 // Can't pass control if I don't own it
-                if (Controller != K.C.Get<PlayerStateMachine>().LocalPlayer) return;
+                if (Controller != GameStateMachine.C.LocalPlayer) return;
                 K.C.Get<Client>().Rpc.PassToReq(this, p, requested);
             }
             Controller = p;
@@ -124,7 +124,7 @@ namespace Octgn.Play
         // Return true if the object can be manipulated by the local player
         public virtual bool CanManipulate()
         {
-            return Controller == K.C.Get<PlayerStateMachine>().LocalPlayer || Controller == null;
+            return Controller == GameStateMachine.C.LocalPlayer || Controller == null;
         }
 
         // Return true if we can manipulate this object, otherwise display an error and return false

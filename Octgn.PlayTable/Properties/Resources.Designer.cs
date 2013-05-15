@@ -59,5 +59,70 @@ namespace Octgn.PlayTable.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to import collections
+        ///
+        ///class idict(collections.Mapping):
+        ///
+        ///    def __init__(self, pairs): 
+        ///        &quot;&quot;&quot;Constructor: takes an iterable of tuples&quot;&quot;&quot; 
+        ///        self._dict = {} 
+        ///        for key, value in pairs: 
+        ///            k = key.lower() 
+        ///            self._dict[k] = (key, value) 
+        ///
+        ///    def __getitem__(self, key):
+        ///        k = key.lower()
+        ///        pair = self._dict[k]
+        ///        return pair[1]
+        ///
+        ///    def __len__(self):
+        ///        return len(self._dict)
+        ///
+        ///    def __iter__(self):
+        ///        return (key for key, value in self._dict.v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CaseInsensitiveDict {
+            get {
+                return ResourceManager.GetString("CaseInsensitiveDict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to from System.IO import Directory, Path
+        ///from System.Collections.Generic import *
+        ///from System import *
+        ///#Rotation constants
+        ///Rot0 = 0
+        ///Rot90 = 1
+        ///Rot180 = 2
+        ///Rot270 = 3
+        ///
+        ///def mute():
+        ///  class Muted(object):
+        ///    def __enter__(self):
+        ///      return self
+        ///    def __exit__(self, type, value, tb):
+        ///      _api.Mute(False)
+        ///  _api.Mute(True)
+        ///  return Muted()
+        ///
+        ///def wd(relativePath):
+        ///  return Path.Combine(_wd,relativePath)
+        ///
+        ///def notify(message):
+        ///  _api.Notify(message)
+        ///
+        ///def whisper(message):
+        ///  _api.Whisper(message)
+        ///
+        ///def rnd(min, max) [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string PythonAPI {
+            get {
+                return ResourceManager.GetString("PythonAPI", resourceCulture);
+            }
+        }
     }
 }

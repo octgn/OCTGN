@@ -79,6 +79,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -95,8 +97,12 @@
     <Compile Include="Controls\AnimatedWrapPanel.cs" />
     <Compile Include="Controls\ChildWindow.cs" />
     <Compile Include="Controls\ChildWindowManager.cs" />
+    <Compile Include="Controls\NumericUpDown.cs" />
     <Compile Include="Controls\OctgnChrome.cs" />
+    <Compile Include="Controls\TextOrIcon.cs" />
     <Compile Include="Controls\Tooltip.cs" />
+    <Compile Include="Controls\TopMostMessageBox.cs" />
+    <Compile Include="Controls\VirtualizingWrapPanel.cs" />
     <Compile Include="Extensions\BitmapImageExtensions.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="GameEngine.cs" />
@@ -123,6 +129,10 @@
     <Compile Include="Scripting\OPlayer.cs" />
     <Compile Include="Scripting\ScriptApi.cs" />
     <Compile Include="Scripting\ScriptJob.cs" />
+    <Compile Include="Utils\ImageUtils.cs" />
+    <Compile Include="Windows\BrowserWindow.xaml.cs">
+      <DependentUpon>BrowserWindow.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Play\Card.cs" />
@@ -261,6 +271,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Windows\BrowserWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Play\Dialogs\LimitedDialog.xaml">
@@ -368,8 +382,9 @@
     <Content Include="Scripting\Lib\_abcoll.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <EmbeddedResource Include="Scripting\PythonAPI.py" />
+    <Resource Include="Scripting\PythonAPI.py" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -9,9 +9,9 @@ namespace Octgn.Scripting
     [SecuritySafeCritical]
     public class OCounter : MarshalByRefObject
     {
-        private readonly Counter[] _counters;
+        private readonly IPlayCounter[] _counters;
 
-        public OCounter(Player player)
+        public OCounter(IPlayPlayer player)
         {
             _counters = player.Counters;
         }
@@ -22,7 +22,7 @@ namespace Octgn.Scripting
             get { return Find(name).Value; }
         }
 
-        private Counter Find(string name)
+        private IPlayCounter Find(string name)
         {
             return _counters.First(c => string.Equals(name, c.Name, StringComparison.InvariantCultureIgnoreCase));
         }

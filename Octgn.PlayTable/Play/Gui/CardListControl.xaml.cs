@@ -10,15 +10,17 @@ using System.Windows.Threading;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.PlayTable;
+
     public partial class CardListControl
     {
         public static readonly DependencyProperty IsAlwaysUpProperty =
             DependencyProperty.Register("IsAlwaysUp", typeof (bool), typeof (CardListControl),
                                         new UIPropertyMetadata(false));
 
-        private ObservableCollection<Card> _cards;
+        private ObservableCollection<IPlayCard> _cards;
 
-        private Predicate<Card> _filterCards;
+        private Predicate<IPlayCard> _filterCards;
         private bool _sort;
         private ListCollectionView _view;
         private WrapPanel _wrapPanel;
@@ -34,7 +36,7 @@ namespace Octgn.Play.Gui
             set { SetValue(IsAlwaysUpProperty, value); }
         }
 
-        public ObservableCollection<Card> Cards
+        public ObservableCollection<IPlayCard> Cards
         {
             get { return _cards; }
             set
@@ -44,7 +46,7 @@ namespace Octgn.Play.Gui
             }
         }
 
-        public Predicate<Card> FilterCards
+        public Predicate<IPlayCard> FilterCards
         {
             get { return _filterCards; }
             set

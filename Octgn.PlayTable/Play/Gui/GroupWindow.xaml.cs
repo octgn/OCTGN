@@ -14,6 +14,9 @@ using Octgn.Utils;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.Core.Play;
+    using Octgn.PlayTable;
+
     public enum PilePosition
     {
         All,
@@ -23,7 +26,7 @@ namespace Octgn.Play.Gui
 
     public partial class GroupWindow
     {
-        private readonly Group _group;
+        private readonly IPlayGroup _group;
         private readonly int _id;
         private readonly PilePosition _position;
         private int _count;
@@ -34,7 +37,7 @@ namespace Octgn.Play.Gui
             InitializeComponent();
         }
 
-        public GroupWindow(Group group, PilePosition position, int count)
+        public GroupWindow(IPlayGroup group, PilePosition position, int count)
             : this()
         {
             _id = Program.GameEngine.GetUniqueId();
@@ -50,12 +53,12 @@ namespace Octgn.Play.Gui
                     break;
                 case PilePosition.Top:
                     Title = string.Format("{0} Top {1} cards", group.FullName, count);
-                    cardsList.Cards = new ObservableCollection<Card>(group.Take(count));
+                    cardsList.Cards = new ObservableCollection<IPlayCard>(group.Take(count));
                     cardsList.RestrictDrop = true;
                     break;
                 case PilePosition.Bottom:
                     Title = string.Format("{0} Bottom {1} cards", group.FullName, count);
-                    cardsList.Cards = new ObservableCollection<Card>(group.Skip(Math.Max(0, group.Count - count)));
+                    cardsList.Cards = new ObservableCollection<IPlayCard>(group.Skip(Math.Max(0, group.Count - count)));
                     cardsList.RestrictDrop = true;
                     break;
             }
@@ -171,7 +174,7 @@ namespace Octgn.Play.Gui
 
         public void CardsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            ObservableCollection<Card> cards = cardsList.Cards;
+            ObservableCollection<IPlayCard> cards = cardsList.Cards;
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
@@ -217,7 +220,7 @@ namespace Octgn.Play.Gui
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value == Player.LocalPlayer ? Visibility.Visible : Visibility.Collapsed;
+            return value == GameStateMachine.C.LocalPlayer ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

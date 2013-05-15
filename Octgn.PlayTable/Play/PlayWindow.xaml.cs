@@ -26,8 +26,11 @@ namespace Octgn.Play
 {
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.DataManagers;
+    using Octgn.Core.Play;
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
+    using Octgn.PlayTable;
+
     using log4net;
     using Octgn.Controls;
 
@@ -55,13 +58,11 @@ namespace Octgn.Play
 
         #endregion
 
-
         private Storyboard _fadeIn, _fadeOut;
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
         public PlayWindow(bool islocal = false)
             : base()
         {
-            Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
             InitializeComponent();
             _isLocal = islocal;
@@ -180,7 +181,7 @@ namespace Octgn.Play
                                                                   string name = match.Groups[1].Value;
                                                                   if (player != null)
                                                                   {
-                                                                      Counter counter =
+                                                                      IPlayCounter counter =
                                                                           player.Counters.FirstOrDefault(
                                                                               c => c.Name == name);
                                                                       if (counter != null)
@@ -192,7 +193,7 @@ namespace Octgn.Play
                                                                   }
                                                                   if (player != null)
                                                                   {
-                                                                      Group group =
+                                                                      IPlayGroup group =
                                                                           player.IndexedGroups.FirstOrDefault(
                                                                               g => g.Name == name);
                                                                       if (@group != null)
@@ -229,8 +230,7 @@ namespace Octgn.Play
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            WindowManager.PlayWindow = null;
-            Program.StopGame();            
+            GameStateMachine.C.StopGame();            
             // Fix: Don't do this earlier (e.g. in OnClosing) because an animation (e.g. card turn) may try to access Program.Game           
         }
 
@@ -338,9 +338,9 @@ namespace Octgn.Play
             // If the event was unhandled, check if there's a selection and try to apply a shortcut action to it
             if (!Selection.IsEmpty() && Selection.Source.CanManipulate())
             {
-                ActionShortcut match =
+                IActionShortcut match =
                     Selection.Source.CardShortcuts.FirstOrDefault(
-                        shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
+                        shortcut => (shortcut.Key as KeyGesture).Matches(this, te.KeyEventArgs));
                 if (match != null)
                 {
                     if (match.ActionDef.AsAction().Execute != null)
@@ -355,9 +355,9 @@ namespace Octgn.Play
             // The event was still unhandled, try all groups, starting with the table
             table.RaiseEvent(te);
             if (te.Handled) return;
-            foreach (Group g in Player.LocalPlayer.Groups.Where(g => g.CanManipulate()))
+            foreach (Group g in GameStateMachine.C.LocalPlayer.Groups.Where(g => g.CanManipulate()))
             {
-                ActionShortcut a = g.GroupShortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e));
+                IActionShortcut a = g.GroupShortcuts.FirstOrDefault(shortcut => (shortcut.Key as KeyGesture).Matches(this, e));
                 if (a == null) continue;
                 if (a.ActionDef.AsAction().Execute != null)
                     ScriptEngine.ExecuteOnGroup(a.ActionDef.AsAction().Execute, g);
@@ -386,7 +386,7 @@ namespace Octgn.Play
                     var img =
                         e.Card.GetBitmapImage(
                             ctrl != null && ctrl.IsAlwaysUp
-                            || (e.Card.FaceUp || e.Card.PeekingPlayers.Contains(Player.LocalPlayer)));
+                            || (e.Card.FaceUp || e.Card.PeekingPlayers.Contains(GameStateMachine.C.LocalPlayer)));
                     ShowCardPicture(img);
                 }
                 else
@@ -425,7 +425,7 @@ namespace Octgn.Play
         {
             var btn = (ToggleButton) sender;
             var targetPlayer = (Player) btn.DataContext;
-            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == Player.LocalPlayer)
+            if (Program.GameEngine.TurnPlayer == null || Program.GameEngine.TurnPlayer == GameStateMachine.C.LocalPlayer)
                 Program.Client.Rpc.NextTurn(targetPlayer);
             else
             {
@@ -445,7 +445,7 @@ namespace Octgn.Play
             e.Handled = true;
             //var wnd = new AboutWindow() { Owner = this };
             //wnd.ShowDialog();
-            Program.LaunchUrl(AppConfig.WebsitePath);
+            Program.LaunchUrl("http://www.octgn.net");
         }
 
         private void ConsoleClicked(object sender, RoutedEventArgs e)
@@ -541,11 +541,11 @@ namespace Octgn.Play
             var player = values[1] as Player;
 
             string styleKey;
-            if (player == Player.GlobalPlayer)
+            if (player == GameStateMachine.C.GlobalPlayer)
                 styleKey = "InvisibleButton";
             else if (turnPlayer == null)
                 styleKey = "PlayButton";
-            else if (turnPlayer == Player.LocalPlayer)
+            else if (turnPlayer == GameStateMachine.C.LocalPlayer)
                 styleKey = "PlayButton";
             else
                 styleKey = turnPlayer == player ? "PauseButton" : "InvisibleButton";

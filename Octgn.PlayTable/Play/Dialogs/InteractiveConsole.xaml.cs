@@ -13,6 +13,8 @@ namespace Octgn.Play.Dialogs
 {
     using System.IO;
 
+    using Octgn.PlayTable;
+
     public partial class InteractiveConsole
     {
 #pragma warning disable 649   // Unassigned variable: it's initialized by MEF

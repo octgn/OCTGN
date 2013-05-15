@@ -6,6 +6,9 @@ using System.Windows.Media.Animation;
 
 namespace Octgn.Scripting.Controls
 {
+    using Octgn.Core;
+    using Octgn.Play;
+
     public partial class InputDlg
     {
         private int _intResult;
@@ -15,7 +18,7 @@ namespace Octgn.Scripting.Controls
         {
             InitializeComponent();
             //fix MAINWINDOW bug
-            Owner = WindowManager.PlayWindow;
+            Owner = K.C.Get<PlayWindow>();
             Title = title;
             promptLbl.Text = prompt;
             inputBox.Text = defaultValue;

@@ -5,6 +5,8 @@ using System.Windows.Input;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.PlayTable;
+
     partial class HandControl
     {
         private FanPanel _fanPanel;

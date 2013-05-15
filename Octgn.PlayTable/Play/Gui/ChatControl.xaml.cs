@@ -15,7 +15,10 @@ namespace Octgn.Play.Gui
     using System.Windows.Media.Media3D;
     using System.Windows.Threading;
 
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Play;
+    using Octgn.PlayTable;
 
     partial class ChatControl
     {
@@ -110,7 +113,7 @@ namespace Octgn.Play.Gui
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
                                         string format, params object[] args)
         {
-            Program.LastChatTrace = null;
+            GameplayTrace.LastChatTrace = null;
 
             if (eventType > TraceEventType.Warning &&
                 IsMuted() &&
@@ -146,7 +149,7 @@ namespace Octgn.Play.Gui
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id,
                                         string message)
         {
-            Program.LastChatTrace = null;
+            GameplayTrace.LastChatTrace = null;
 
             if (eventType > TraceEventType.Warning &&
                 IsMuted() &&
@@ -166,7 +169,7 @@ namespace Octgn.Play.Gui
             var p = (Paragraph)this._ctrl.output.Document.Blocks.LastBlock;
             if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
             p.Inlines.Add(message);
-            Program.LastChatTrace = message;
+            GameplayTrace.LastChatTrace = message.ContentStart.GetTextInRun(LogicalDirection.Forward);
             _ctrl.output.ScrollToEnd();
         }
 
@@ -198,7 +201,7 @@ namespace Octgn.Play.Gui
                         }
                         inline.Foreground = p != null ? new SolidColorBrush(p.Color) : Brushes.Red;
 
-                        if (p != null && Player.LocalPlayer.Id != p.Id)
+                        if (p != null && GameStateMachine.C.LocalPlayer.Id != p.Id)
                         {
                             var theinline = inline;
                             theinline.Initialized += (sender, eventArgs) =>

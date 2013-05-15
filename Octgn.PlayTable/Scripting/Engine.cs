@@ -155,7 +155,7 @@ namespace Octgn.Scripting
             StartExecution(src, ActionsScope, null);
         }
 
-        public void ExecuteOnCards(string function, IEnumerable<Card> cards, Point? position = null)
+        public void ExecuteOnCards(string function, IEnumerable<IPlayCard> cards, Point? position = null)
         {
             string posArguments = position == null
                                       ? ""
@@ -170,7 +170,7 @@ namespace Octgn.Scripting
             StartExecution(src, ActionsScope, null);
         }
 
-        public void ExecuteOnBatch(string function, IEnumerable<Card> cards, Point? position = null)
+        public void ExecuteOnBatch(string function, IEnumerable<IPlayCard> cards, Point? position = null)
         {
             var sb = new StringBuilder();
             sb.Append(function).Append("([");
