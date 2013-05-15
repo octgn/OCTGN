@@ -221,17 +221,6 @@ namespace Octgn
             if (LobbyClient != null)
                 LobbyClient.Stop();
 
-            try
-            {
-                if (WindowManager.DebugWindow != null)
-                    if (WindowManager.DebugWindow.IsLoaded)
-                        WindowManager.DebugWindow.Close();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                if (Debugger.IsAttached) Debugger.Break();
-            }
             if (WindowManager.PlayWindow != null)
                 if (WindowManager.PlayWindow.IsLoaded)
                     WindowManager.PlayWindow.Close();
