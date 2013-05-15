@@ -496,9 +496,6 @@
     <Compile Include="Windows\ChangeSetsProgressDialog.xaml.cs">
       <DependentUpon>ChangeSetsProgressDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\DWindow.xaml.cs">
-      <DependentUpon>DWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
     </Compile>
@@ -965,10 +962,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ChangeSetsProgressDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\DWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
