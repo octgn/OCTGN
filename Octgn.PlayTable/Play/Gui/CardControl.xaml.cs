@@ -401,7 +401,7 @@ namespace Octgn.Play.Gui
         private static bool _isDragging, _isOverCount;
         private static IInputElement _lastDragTarget;
 
-        private static readonly List<Card> DraggedCards = new List<Card>(4);
+        private static readonly List<IPlayCard> DraggedCards = new List<IPlayCard>(4);
         private static readonly List<CardDragAdorner> OverlayElements = new List<CardDragAdorner>(4);
         private static Vector _mouseOffset;
         internal static Size ScaleFactor;
@@ -803,7 +803,7 @@ namespace Octgn.Play.Gui
             _draggedArrow.UpdateToPoint(pt);
         }
 
-        public void CreateArrowTo(Player player, CardControl toCard)
+        public void CreateArrowTo(IPlayPlayer player, CardControl toCard)
         {
             AdornerLayer layer = AdornerLayer.GetAdornerLayer(this);
             var arrow = new ArrowAdorner(player, this);
@@ -889,13 +889,13 @@ namespace Octgn.Play.Gui
                     goto default;
                 default:
                     // Look for a custom shortcut in the game definition
-                    ActionShortcut[] shortcuts = Card.Group.CardShortcuts;
-                    ActionShortcut match =
-                        shortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, te.KeyEventArgs));
+                    IActionShortcut[] shortcuts = Card.Group.CardShortcuts;
+                    IActionShortcut match =
+                        shortcuts.FirstOrDefault(shortcut => (shortcut.Key as KeyGesture).Matches(this, te.KeyEventArgs));
                     if (match != null && Card.Group.CanManipulate())
                     {
                         // Look for cards to execute it upon, shortcuts are applied to selection first
-                        IEnumerable<Card> targets;
+                        IEnumerable<IPlayCard> targets;
                         if (!Selection.IsEmpty())
                             targets = Selection.Cards;
                         else if (Card.CanManipulate())
@@ -915,15 +915,15 @@ namespace Octgn.Play.Gui
                     }
 
                     // Look for a "Move to" shortcut
-                    Group group =
-                        Player.LocalPlayer.Groups.FirstOrDefault(
+                    IPlayGroup group =
+                        GameStateMachine.C.LocalPlayer.Groups.FirstOrDefault(
                             g => g.MoveToShortcut != null && g.MoveToShortcut.Matches(this, te.KeyEventArgs));
                     bool toBottom = false;
                     // If no group is found, try to match a shortcut with "Alt" and use it as "Move to bottom"
                     if (group == null)
                     {
                         group =
-                            Player.LocalPlayer.Groups.FirstOrDefault(
+                            GameStateMachine.C.LocalPlayer.Groups.FirstOrDefault(
                                 g =>
                                 g.MoveToShortcut != null &&
                                 new KeyGesture(g.MoveToShortcut.Key, g.MoveToShortcut.Modifiers | ModifierKeys.Alt).
@@ -932,9 +932,9 @@ namespace Octgn.Play.Gui
                     }
                     if (group != null && group.CanManipulate())
                     {
-                        Action<Card> moveAction = toBottom
+                        Action<IPlayCard> moveAction = toBottom
                                                       ? (c => c.MoveTo(@group, true, @group.Count))
-                                                      : new Action<Card>(c => c.MoveTo(group, true));
+                                                      : new Action<IPlayCard>(c => c.MoveTo(group, true));
                         if (!Selection.IsEmpty())
                             Selection.ForEachModifiable(moveAction);
                         else if (count.IsMouseOver)

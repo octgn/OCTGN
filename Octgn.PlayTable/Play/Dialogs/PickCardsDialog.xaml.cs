@@ -20,6 +20,7 @@ namespace Octgn.Play.Dialogs
     using Octgn.Core.DataExtensionMethods;
     using Octgn.DataNew;
     using Octgn.DataNew.Entities;
+    using Octgn.PlayTable;
 
     public partial class PickCardsDialog
     {
@@ -68,7 +69,7 @@ namespace Octgn.Play.Dialogs
                         {
                             if (pack == null)
                             {
-                                Program.TraceWarning("Received pack is missing from the database. Pack is ignored.");
+                                Program.Trace.TraceWarning("Received pack is missing from the database. Pack is ignored.");
                                 continue;
                             }
 

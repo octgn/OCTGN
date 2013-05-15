@@ -8,6 +8,10 @@ using System.Windows.Shapes;
 
 namespace Octgn.Play.Gui.Adorners
 {
+    using Octgn.Core;
+    using Octgn.Core.Play;
+    using Octgn.PlayTable;
+
     internal class CardDragAdorner : Adorner, IDisposable
     {
         private static readonly Duration EmptyDuration = TimeSpan.Zero;
@@ -40,10 +44,10 @@ namespace Octgn.Play.Gui.Adorners
 
         //fix MAINWINDOW bug
         public CardDragAdorner(CardControl anchor, CardControl sourceCard, Vector mousePoint)
-            : base(WindowManager.PlayWindow.Content as UIElement)
+            : base(K.C.Get<PlayWindow>().Content as UIElement)
         {
             SourceCard = sourceCard;
-            bool isCardInverted = anchor.IsOnTableCanvas && (Player.LocalPlayer.InvertedTable ^ anchor.IsInverted);
+            bool isCardInverted = anchor.IsOnTableCanvas && (GameStateMachine.C.LocalPlayer.InvertedTable ^ anchor.IsInverted);
             Point cardOrigin;
             if (isCardInverted)
             {
@@ -56,7 +60,7 @@ namespace Octgn.Play.Gui.Adorners
                 _mouseOffset = mousePoint;
             }
             //fix MAINWINDOW bug
-            _basePt = anchor.TranslatePoint(cardOrigin, WindowManager.PlayWindow.Content as UIElement);
+            _basePt = anchor.TranslatePoint(cardOrigin, K.C.Get<PlayWindow>().Content as UIElement);
 
             _faceUp = sourceCard.IsAlwaysUp || sourceCard.Card.FaceUp;
             _lightRedBrush = Brushes.Red.Clone();
@@ -234,7 +238,7 @@ namespace Octgn.Play.Gui.Adorners
 
         public void CollapseTo(double dx, double dy, bool animate)
         {
-            if (Player.LocalPlayer.InvertedTable)
+            if (GameStateMachine.C.LocalPlayer.InvertedTable)
             {
                 dx = -dx;
                 dy = -dy;

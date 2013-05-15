@@ -10,6 +10,9 @@ using Octgn.Play.Gui.Adorners;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.Core.Play;
+    using Octgn.PlayTable;
+
     public class TableCanvas : Canvas
     {
         public TableCanvas()
@@ -30,7 +33,7 @@ namespace Octgn.Play.Gui
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
             if (visualAdded == null) return;
             var child = (ContentPresenter) visualAdded;
-            if (((Card) child.DataContext).Controller == Player.LocalPlayer) return;
+            if (((Card)child.DataContext).Controller == GameStateMachine.C.LocalPlayer) return;
             var scale = new ScaleTransform();
             child.RenderTransformOrigin = new Point(0.5, 0.5);
             child.RenderTransform = scale;
@@ -52,14 +55,14 @@ namespace Octgn.Play.Gui
         private void CardMoving(object sender, EventArgs e)
         {
             var action = (MoveCard) sender;
-            Table table = Program.GameEngine.Table;
-            if (action.Who == Player.LocalPlayer || action.To != table || action.From != table)
+            IPlayTable table = Program.GameEngine.Table;
+            if (action.Who == GameStateMachine.C.LocalPlayer || action.To != table || action.From != table)
                 return;
 
             AnimateMove(action.Card, action.X, action.Y);
         }
 
-        private void AnimateMove(Card card, double x, double y)
+        private void AnimateMove(IPlayCard card, double x, double y)
         {
             foreach (ContentPresenter child in Children)
                 if (child.DataContext == card)

@@ -3,6 +3,9 @@ using System.Windows;
 
 namespace Octgn.Scripting.Controls
 {
+    using Octgn.Core;
+    using Octgn.Play;
+
     public static class Dialog
     {
         public static int InputInt(string title, string prompt, int n)
@@ -21,14 +24,14 @@ namespace Octgn.Scripting.Controls
         {
             //fix MAINWINDOW bug
             return
-                MessageBox.Show(WindowManager.PlayWindow, prompt, "Confirmation", MessageBoxButton.YesNo,
+                MessageBox.Show(K.C.Get<PlayWindow>(), prompt, "Confirmation", MessageBoxButton.YesNo,
                                 MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
 
         public static void Message(string msg)
         {
             //fix MAINWINDOW bug
-            MessageBox.Show(WindowManager.PlayWindow, msg, "Message", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(K.C.Get<PlayWindow>(), msg, "Message", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

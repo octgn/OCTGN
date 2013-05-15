@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Const.cs" />
     <Compile Include="DataExtensionMethods\CardExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\DeckExtensionMethods.cs" />
     <Compile Include="DataExtensionMethods\GameExtensionMethods.cs" />

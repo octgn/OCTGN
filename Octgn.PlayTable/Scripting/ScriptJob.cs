@@ -5,6 +5,9 @@ using Octgn.Play;
 
 namespace Octgn.Scripting
 {
+    using Octgn.Core.Play;
+    using Octgn.PlayTable;
+
     internal class ScriptJob
     {
         // The unique id of this job
@@ -30,7 +33,7 @@ namespace Octgn.Scripting
         {
             get
             {
-                if (_uniqueId == 0) _uniqueId = (Player.LocalPlayer.Id) << 16 | Program.GameEngine.GetUniqueId();
+                if (_uniqueId == 0) _uniqueId = (GameStateMachine.C.LocalPlayer.Id) << 16 | Program.GameEngine.GetUniqueId();
                 return _uniqueId;
             }
         }

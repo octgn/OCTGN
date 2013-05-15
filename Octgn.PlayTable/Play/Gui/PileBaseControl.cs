@@ -4,6 +4,8 @@ using Octgn.Scripting.Controls;
 
 namespace Octgn.Play.Gui
 {
+    using Octgn.Controls;
+
     public class PileBaseControl : GroupControl
     {
         private MenuItem _lookAtCardsMenuItem;

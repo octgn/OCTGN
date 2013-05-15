@@ -10,16 +10,16 @@ namespace Octgn.Play.Gui
 {
     internal static class Selection
     {
-        private static readonly List<Card> Selected = new List<Card>(4);
+        private static readonly List<IPlayCard> Selected = new List<IPlayCard>(4);
 
-        public static Group Source { get; private set; }
+        public static IPlayGroup Source { get; private set; }
 
-        public static IEnumerable<Card> Cards
+        public static IEnumerable<IPlayCard> Cards
         {
             get { return Selected; }
         }
 
-        public static void Add(Card c)
+        public static void Add(IPlayCard c)
         {
             // Only allow selection from one group at a time
             if (Source != c.Group)
@@ -32,14 +32,14 @@ namespace Octgn.Play.Gui
             Selected.Add(c);
         }
 
-        public static void Remove(Card c)
+        public static void Remove(IPlayCard c)
         {
             if (!c.Selected) return;
             c.Selected = false;
             Selected.Remove(c);
         }
 
-        public static void RemoveAll(Predicate<Card> match)
+        public static void RemoveAll(Predicate<IPlayCard> match)
         {
             Selected.ForEach(c => c.Selected = !match(c));
             Selected.RemoveAll(match);
@@ -56,12 +56,12 @@ namespace Octgn.Play.Gui
             return Selected.Count == 0;
         }
 
-        public static void ForEach(Action<Card> action)
+        public static void ForEach(Action<IPlayCard> action)
         {
             Selected.ForEach(action);
         }
 
-        public static void ForEachModifiable(Action<Card> action)
+        public static void ForEachModifiable(Action<IPlayCard> action)
         {
             for (int i = Selected.Count - 1; i >= 0; --i)
                 action(Selected[i]);
@@ -70,7 +70,7 @@ namespace Octgn.Play.Gui
         public static IEnumerable<CardControl> GetCardControls(GroupControl ctrl)
         {
             if (IsEmpty()) yield break;
-            ObservableCollection<Card> groupCards = ctrl.Group.Cards;
+            ObservableCollection<IPlayCard> groupCards = ctrl.Group.Cards;
             ItemContainerGenerator generator = ctrl.GetItemContainerGenerator();
             for (int i = 0; i < groupCards.Count; ++i)
                 if (groupCards[i].Selected)
@@ -90,17 +90,17 @@ namespace Octgn.Play.Gui
                     yield return cardCtrl;
         }
 
-        public static IEnumerable<Card> ExtendToSelection(Card card)
+        public static IEnumerable<IPlayCard> ExtendToSelection(IPlayCard card)
         {
             return Selected.Contains(card) ? Selected : Enumerable.Repeat(card, 1);
         }
 
-        public static void Do(Action<Card> action, Card card)
+        public static void Do(Action<IPlayCard> action, IPlayCard card)
         {
             // Because some actions may modify the selection (which breaks the enumeration),
             // we make a local copy of the selection
-            List<Card> cards = ExtendToSelection(card).ToList();
-            foreach (Card c in cards)
+            List<IPlayCard> cards = ExtendToSelection(card).ToList();
+            foreach (IPlayCard c in cards)
                 action(c);
         }
     }

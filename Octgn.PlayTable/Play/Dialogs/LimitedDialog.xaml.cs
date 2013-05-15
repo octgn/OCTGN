@@ -8,6 +8,8 @@ using Octgn.Data;
 
 namespace Octgn.Play.Dialogs
 {
+    using Octgn.Controls;
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
     using Octgn.Core.Play;
     using Octgn.PlayTable;
@@ -61,7 +63,7 @@ namespace Octgn.Play.Dialogs
             Close();
             // Solves an issue where Dialog isn't the active window anymore if the confirmation dialog above was shown
             //fix MAINWINDOW bug
-            WindowManager.PlayWindow.Activate();
+            K.C.Get<PlayWindow>().Activate();
         }
 
         private void CancelClicked(object sender, RoutedEventArgs e)

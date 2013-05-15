@@ -5,6 +5,7 @@ using System.Globalization;
 namespace Octgn.Play
 {
     using Octgn.Core;
+    using Octgn.Core.Play;
     using Octgn.PlayTable;
 
     public sealed class Counter : INotifyPropertyChanged, IPlayCounter
@@ -43,7 +44,7 @@ namespace Octgn.Play
         public int Value
         {
             get { return _state; }
-            set { SetValue(value, Program.Player.LocalPlayer, true); }
+            set { SetValue(value, GameStateMachine.C.LocalPlayer, true); }
         }
 
         public DataNew.Entities.Counter Definition

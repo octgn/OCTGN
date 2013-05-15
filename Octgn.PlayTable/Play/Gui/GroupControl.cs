@@ -15,9 +15,12 @@ namespace Octgn.Play.Gui
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Input;
 
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Play;
     using Octgn.DataNew.Entities;
+    using Octgn.PlayTable;
 
     using log4net;
 
@@ -106,7 +109,7 @@ namespace Octgn.Play.Gui
                     e.FaceUp = true;
                     break;
                 case GroupVisibility.Owner:
-                    e.FaceUp = group.Owner == Player.LocalPlayer;
+                    e.FaceUp = group.Owner == GameStateMachine.C.LocalPlayer;
                     break;
                 case GroupVisibility.Undefined:
                     if (e.ClickedCard.Group != group)
@@ -115,7 +118,7 @@ namespace Octgn.Play.Gui
                         e.FaceUp = e.ClickedCard.FaceUp;
                     break;
                 case GroupVisibility.Custom:
-                    e.FaceUp = group.Viewers.Contains(Player.LocalPlayer);
+                    e.FaceUp = group.Viewers.Contains(GameStateMachine.C.LocalPlayer);
                     break;
                 default:
                     throw new NotImplementedException("Unknown visibility : " + group.Visibility);
@@ -135,8 +138,8 @@ namespace Octgn.Play.Gui
 
         protected virtual void OnKeyShortcut(object sender, TableKeyEventArgs e)
         {
-            ActionShortcut[] shortcuts = group.GroupShortcuts;
-            ActionShortcut match = shortcuts.FirstOrDefault(shortcut => shortcut.Key.Matches(this, e.KeyEventArgs));
+            IActionShortcut[] shortcuts = group.GroupShortcuts;
+            IActionShortcut match = shortcuts.FirstOrDefault(shortcut => (shortcut.Key as KeyGesture).Matches(this, e.KeyEventArgs));
             if (match == null || !@group.TryToManipulate()) return;
             if (match.ActionDef.AsAction().Execute != null)
                 ScriptEngine.ExecuteOnGroup(match.ActionDef.AsAction().Execute, @group);
@@ -366,7 +369,7 @@ namespace Octgn.Play.Gui
                                           //((MenuItem)item.Items[2]).IsChecked = group.Visibility == GroupVisibility.Undefined;
                                           //while (item.Items.Count > 4) item.Items.RemoveAt(item.Items.Count - 1);
                                           while (item.Items.Count > 3) item.Items.RemoveAt(item.Items.Count - 1);
-                                          foreach (Player p in Player.AllExceptGlobal)
+                                          foreach (IPlayPlayer p in GameStateMachine.C.AllExceptGlobal)
                                           {
                                               playerItem = new MenuItem
                                                                {
@@ -399,8 +402,8 @@ namespace Octgn.Play.Gui
             passToItem.SubmenuOpened += delegate
                                             {
                                                 passToItem.Items.Clear();
-                                                foreach (MenuItem playerItem in from player in Player.AllExceptGlobal
-                                                                                where player != Player.LocalPlayer
+                                                foreach (MenuItem playerItem in from player in GameStateMachine.C.AllExceptGlobal
+                                                                                where player != GameStateMachine.C.LocalPlayer
                                                                                 select new MenuItem
                                                                                            {
                                                                                                Header = player.Name,
@@ -435,8 +438,8 @@ namespace Octgn.Play.Gui
             passToItem.SubmenuOpened += delegate
                                             {
                                                 passToItem.Items.Clear();
-                                                foreach (MenuItem playerItem in from player in Player.AllExceptGlobal
-                                                                                where player != Player.LocalPlayer
+                                                foreach (MenuItem playerItem in from player in GameStateMachine.C.AllExceptGlobal
+                                                                                where player != GameStateMachine.C.LocalPlayer
                                                                                 select new MenuItem
                                                                                            {
                                                                                                Header = player.Name,

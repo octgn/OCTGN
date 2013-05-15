@@ -34,6 +34,8 @@
 
         public bool IsHost { get; internal set; }
 
+        public string OnlineGameName { get; set; }
+
         public GameStateMachine()
         {
             AllCards = new Dictionary<int, IPlayCard>();

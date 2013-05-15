@@ -162,7 +162,7 @@ namespace Octgn.Play
             Id = id;
             PublicKey = pkey;
             // Register the lPlayer
-            Program.Player.All.Add(this);
+            GameStateMachine.C.AllPlayers.Add(this);
             //Create the color brushes           
             SetPlayerColor(id);
             // Create counters
@@ -191,7 +191,7 @@ namespace Octgn.Play
                     _groups[i] = new Pile(this, tempGroups[i - 1]);
             }
             // Raise the event
-            Program.Player.FirePlayerAdded(new PlayerEventArgs(this));
+            GameStateMachine.C.FirePlayerAdded(new PlayerEventArgs(this));
         }
 
         // C'tor for global items
@@ -199,7 +199,7 @@ namespace Octgn.Play
         {
             var globalDef = g.GlobalPlayer;
             // Register the lPlayer
-            Program.Player.All.Add(this);
+            GameStateMachine.C.AllPlayers.Add(this);
             // Init fields
             _name = "Global";
             Id = 0;
@@ -232,9 +232,9 @@ namespace Octgn.Play
         public void Delete()
         {
             // Remove from the list
-            Program.Player.All.Remove(this);
+            GameStateMachine.C.AllPlayers.Remove(this);
             // Raise the event
-            Program.Player.FirePlayerRemoved( new PlayerEventArgs(this));
+            GameStateMachine.C.FirePlayerRemoved(new PlayerEventArgs(this));
         }
 
         public override string ToString()
