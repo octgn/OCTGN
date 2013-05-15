@@ -17,7 +17,9 @@ namespace Octgn
 {
     using System.Windows;
 
+    using Octgn.Core;
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.Play;
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
     using Octgn.PlayTable;
@@ -170,12 +172,12 @@ namespace Octgn
             CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.GetCardBackUri());
             // Create the global player, if any
             if (Definition.GlobalPlayer != null)
-                Program.Player.GlobalPlayer = new Play.Player(Definition);
+                GameStateMachine.C.GlobalPlayer = new Play.Player(Definition);
             // Create the local player
-            Program.Player.LocalPlayer = new Play.Player(Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            GameStateMachine.C.LocalPlayer = new Play.Player(Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey));
             // Register oneself to the server
             Version oversion = Const.OctgnVersion;
-            Octgn.PlayTable.Program.Client.Rpc.Hello(nick, Program.Player.LocalPlayer.PublicKey,
+            Octgn.PlayTable.Program.Client.Rpc.Hello(nick, GameStateMachine.C.LocalPlayer.PublicKey,
                                      Const.ClientName, oversion, oversion,
                                      Definition.Id, Definition.Version);
             // Load all game markers
@@ -201,9 +203,9 @@ namespace Octgn
             //CardBackBitmap = ImageUtils.CreateFrozenBitmap(Definition.CardDefinition.Back);
             // Create the global player, if any
             if (Definition.GlobalPlayer != null)
-                Program.Player.GlobalPlayer = new Play.Player(Definition);
+                GameStateMachine.C.GlobalPlayer = new Play.Player(Definition);
             // Create the local player
-            Program.Player.LocalPlayer = new Play.Player(Definition, nick, 255, Crypto.ModExp(Program.PrivateKey));
+            GameStateMachine.C.LocalPlayer = new Play.Player(Definition, nick, 255, Crypto.ModExp(Prefs.PrivateKey));
             // Register oneself to the server
             //Program.Client.Rpc.Hello(nick, Player.LocalPlayer.PublicKey,
             //                       OctgnApp.ClientName, OctgnApp.OctgnVersion, OctgnApp.OctgnVersion,
@@ -220,7 +222,7 @@ namespace Octgn
         {
             TurnNumber = 0;
             TurnPlayer = null;
-            foreach (var p in Program.Player.All)
+            foreach (var p in GameStateMachine.C.AllPlayers)
             {
                 foreach (var g in p.Groups)
                     g.Reset();
@@ -232,7 +234,7 @@ namespace Octgn
                     p.GlobalVariables[g.Name] = g.DefaultValue;
             }
             Table.Reset();
-            Program.Card.Reset();
+            GameStateMachine.C.Reset();
             CardIdentity.Reset();
             Selection.Clear();
             RandomRequests.Clear();
@@ -241,17 +243,23 @@ namespace Octgn
             foreach (var g in Definition.GlobalVariables)
                 GlobalVariables[g.Name] = g.DefaultValue;
             //fix MAINWINDOW bug
-            PlayWindow mainWin = WindowManager.PlayWindow;
+            var mainWin = K.C.Get<PlayWindow>();
             mainWin.RaiseEvent(new CardEventArgs(CardControl.CardHoveredEvent, mainWin));
         }
 
         public void End()
         {
-            Program.Player.Reset();
-            Program.Card.Reset();
+            GameStateMachine.C.Reset();
             CardIdentity.Reset();
             History.Reset();
             Selection.Clear();
+        }
+
+        public void StartLimited(IPlayPlayer player, Guid[] packs)
+        {
+            var wnd = new Play.Dialogs.PickCardsDialog();
+            K.C.Get<PlayWindow>().ShowBackstage(wnd);
+            wnd.OpenPacks(packs);
         }
 
         public ushort GetUniqueId()
@@ -261,7 +269,7 @@ namespace Octgn
 
         public int GenerateCardId()
         {
-            return (Program.Player.LocalPlayer.Id) << 16 | GetUniqueId();
+            return (GameStateMachine.C.LocalPlayer.Id) << 16 | GetUniqueId();
         }
 
         public RandomRequest FindRandomRequest(int id)
@@ -273,14 +281,14 @@ namespace Octgn
 
         public void LoadDeck(IDeck deck)
         {
-            IPlayPlayer player = deck.IsShared ? Program.Player.GlobalPlayer : Program.Player.LocalPlayer;
+            IPlayPlayer player = deck.IsShared ? GameStateMachine.C.GlobalPlayer : GameStateMachine.C.LocalPlayer;
             var def = Definition;
             var deckDef = deck.IsShared ? def.SharedDeckSections : def.DeckSections;
             int nCards = deck.CardCount();
             var ids = new int[nCards];
             var keys = new ulong[nCards];
             var cards = new Card[nCards];
-            var groups = new Play.Group[nCards];
+            var groups = new Play.IPlayGroup[nCards];
             var gtmps = new List<GrpTmp>(); //for temp groups visibility
             int j = 0;
             foreach (ISection section in deck.Sections)
@@ -428,11 +436,11 @@ namespace Octgn
 
         internal struct GrpTmp : IEquatable<GrpTmp>
         {
-            public readonly Play.Group Group;
-            public readonly List<Play.Player> Viewers;
+            public readonly Play.IPlayGroup Group;
+            public readonly List<Play.IPlayPlayer> Viewers;
             public readonly GroupVisibility Visibility;
 
-            public GrpTmp(Play.Group g, GroupVisibility vis, List<Play.Player> v)
+            public GrpTmp(Play.IPlayGroup g, GroupVisibility vis, List<Play.IPlayPlayer> v)
             {
                 Group = g;
                 Visibility = vis;

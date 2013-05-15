@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using Octgn.Controls;
 using Octgn.Scripting.Controls;
 
 namespace Octgn.Play.Gui

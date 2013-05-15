@@ -2,8 +2,9 @@ namespace Octgn.Play
 {
     using System;
 
-    internal interface ITraceChatHandler
+    public interface ITraceChatHandler
     {
+        void Set(string message);
         void ReplaceText(object sender, TraceEventArgs e);
     }
 

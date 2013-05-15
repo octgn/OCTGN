@@ -80,11 +80,14 @@
     <Compile Include="Play\DefaultMarkerModel.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Play\GameStateMachine.cs" />
+    <Compile Include="Play\History.cs" />
     <Compile Include="Play\IGameEngine.cs" />
+    <Compile Include="Play\IObjectCreator.cs" />
     <Compile Include="Play\IPlayCard.cs" />
     <Compile Include="Play\IPlayControllableObject.cs" />
     <Compile Include="Play\IPlayCounter.cs" />
     <Compile Include="Play\IPlayGroup.cs" />
+    <Compile Include="Play\IPlayPile.cs" />
     <Compile Include="Play\IPlayPlayer.cs" />
     <Compile Include="Play\IPlayTable.cs" />
     <Compile Include="Play\ITraceChatHandler.cs" />

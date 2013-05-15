@@ -17,13 +17,14 @@ using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
 using Octgn.Networking;
 using Octgn.Play;
-using Octgn.Properties;
 
 namespace Octgn.Scripting
 {
     using System.Reflection;
 
     using Octgn.Core.DataExtensionMethods;
+    using Octgn.PlayTable;
+    using Octgn.PlayTable.Properties;
 
     using log4net;
 
@@ -223,7 +224,7 @@ namespace Octgn.Scripting
                 }
                 if (job.result != null && !String.IsNullOrWhiteSpace(job.result.Error))
                 {
-                    Program.TraceWarning("----Python Error----\n{0}\n----End Error----\n", job.result.Error);
+                    Program.Trace.TraceWarning("----Python Error----\n{0}\n----End Error----\n", job.result.Error);
                 }
                 if (job.suspended) return;
                 job.signal.Dispose();

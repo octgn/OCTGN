@@ -10,6 +10,8 @@ namespace Octgn.Play
     public interface IPlayGroup : IPlayControllableObject,IEnumerable<IPlayCard>
     {
         Dictionary<int, List<IPlayCard>> LookedAt { get; }
+        List<IPlayPlayer> Viewers { get; } 
+
         DataNew.Entities.Group Definition { get; }
 
         KeyGesture MoveToShortcut { get; }
@@ -22,6 +24,13 @@ namespace Octgn.Play
 
         int Count { get; }
 
+        int FilledShuffleSlots { get; set; }
+
+        short[] MyShufflePos { get; set; }
+
+        bool HasReceivedFirstShuffledMessage { get; set; }
+        bool PreparingShuffle { get; set; }
+        bool WantToShuffle { get; set; }
         bool Locked { get; set; }
 
         IPlayCard this[int idx] { get; }

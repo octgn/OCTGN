@@ -6,7 +6,11 @@ using Octgn.Utils;
 
 namespace Octgn.Play
 {
-    public sealed class Pile : Group
+    using Octgn.Core;
+    using Octgn.Core.Play;
+    using Octgn.Networking;
+
+    public sealed class Pile : Group,IPlayPile
     {
         #region Public interface
 
@@ -30,9 +34,9 @@ namespace Octgn.Play
         }
 
         // Dummy property to allow animations in the player panel
-        internal bool AnimateInsertion { get; set; }
+        public bool AnimateInsertion { get; set; }
 
-        public Card TopCard
+        public IPlayCard TopCard
         {
             get { return cards.Count > 0 ? null : cards[0]; }
         }
@@ -48,7 +52,7 @@ namespace Octgn.Play
             // Don't shuffle an empty pile
             if (cards.Count == 0) return false;
 
-            if (Player.Count > 1)
+            if (GameStateMachine.C.PlayerCount > 1)
             //if (false)
             {
                 WantToShuffle = Locked = true;
@@ -56,7 +60,7 @@ namespace Octgn.Play
                 // Unalias only if necessary
                 if (cards.Any(c => c.Type.Alias))
                 {
-                    Program.Client.Rpc.UnaliasGrp(this);
+                    K.C.Get<Client>().Rpc.UnaliasGrp(this);
                     ready = false;
                 }
                 if (ready)
@@ -68,7 +72,7 @@ namespace Octgn.Play
         }
 
         // Do the shuffle
-        internal void DoShuffle()
+        public void DoShuffle()
         {
             // Set internal fields
             PreparingShuffle = false;
@@ -85,7 +89,7 @@ namespace Octgn.Play
                 }
                 else
                 {
-                    CardIdentity ci = cis[i] = new CardIdentity(Program.GameEngine.GenerateCardId());
+                    CardIdentity ci = cis[i] = new CardIdentity(GameStateMachine.C.Engine.GenerateCardId());
                     ci.Alias = ci.MySecret = true;
                     ci.Key = ((ulong) Crypto.PositiveRandom()) << 32 | (uint) cards[i].Type.Id;
                     ci.Visible = false;
@@ -103,8 +107,8 @@ namespace Octgn.Play
                 cis[r] = cis[i];
             }
             // Send the request
-            Program.Client.Rpc.CreateAlias(cardIds, cardAliases);
-            Program.Client.Rpc.Shuffle(this, cardIds);
+            K.C.Get<Client>().Rpc.CreateAlias(cardIds, cardAliases);
+            K.C.Get<Client>().Rpc.Shuffle(this, cardIds);
         }
 
         #endregion
@@ -115,7 +119,7 @@ namespace Octgn.Play
             for (int i = cards.Count - 1; i >= 0; i--)
             {
                 int r = rnd.Next(i + 1);
-                Card temp = cards[r];
+                IPlayCard temp = cards[r];
                 cards[r] = cards[i];
                 cards[i] = temp;
             }

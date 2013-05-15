@@ -15,7 +15,7 @@ namespace Octgn.Play
     using Octgn.PlayTable;
     using Octgn.PlayTable.Controls;
 
-    public abstract class Group : ControllableObject,  IPlayGroup
+    public abstract class Group : ControllableObject, IPlayGroup
     {
         #region Non-public fields
 
@@ -24,8 +24,8 @@ namespace Octgn.Play
         // List of cards in this group        
 
         internal DataNew.Entities.Group Def;
-        internal int FilledShuffleSlots;
-        internal bool HasReceivedFirstShuffledMessage;
+        public int FilledShuffleSlots { get; set; }
+        public bool HasReceivedFirstShuffledMessage { get; set; }
 
         // when a group is locked, one cannot manipulate it anymore (e.g. during shuffles and other non-atomic actions)
 
@@ -43,10 +43,22 @@ namespace Octgn.Play
 
         internal Dictionary<int, List<IPlayCard>> lookedAt = new Dictionary<int, List<IPlayCard>>();
         // Cards being looked at, key is a unique identifier for each "look"; Note: cards may have left the group in the meantime, which is not important
+        
+        // Stores positions suggested by this client during a shuffle [transient]
+        public short[] MyShufflePos { get; set; }
 
-        internal short[] MyShufflePos; // Stores positions suggested by this client during a shuffle [transient]
-
-        internal List<IPlayPlayer> Viewers = new List<IPlayPlayer>(2);
+        public List<IPlayPlayer> Viewers
+        {
+            get
+            {
+                return viewers;
+            }
+            set
+            {
+                viewers = value;
+            }
+        }
+        private  List<IPlayPlayer> viewers = new List<IPlayPlayer>(2);
         private bool _locked;
         protected ObservableCollection<IPlayCard> cards = new ObservableCollection<IPlayCard>();
         // List of players who can see cards in this group, or null where this is irrelevant (Visibility.Undefined)
@@ -71,7 +83,7 @@ namespace Octgn.Play
             GroupShortcuts = CreateShortcuts(def.GroupActions);
             CardShortcuts = CreateShortcuts(def.CardActions);
             if (def.Shortcut != null)
-                MoveToShortcut = (KeyGesture) KeyConverter.ConvertFromInvariantString(def.Shortcut);
+                MoveToShortcut = (KeyGesture)KeyConverter.ConvertFromInvariantString(def.Shortcut);
         }
 
         public DataNew.Entities.Group Definition
@@ -150,10 +162,10 @@ namespace Octgn.Play
         #region Implementation
 
         // True if a UnaliasGrp message was received
-        internal bool PreparingShuffle;
+        public bool PreparingShuffle { get; set; }
 
         // True if the localPlayer is the one who wants to shuffle        
-        internal bool WantToShuffle;
+        public bool WantToShuffle { get; set; }
 
         // Get the Id of this group
         public override int Id
@@ -295,7 +307,7 @@ namespace Octgn.Play
                 c.PlayersLooking.Clear();
 
             // Notify trace event listeners
-            var shuffledArgs = new TraceEventArgs {TraceNotification = true};
+            var shuffledArgs = new TraceEventArgs { TraceNotification = true };
             if (ShuffledTrace != null)
                 ShuffledTrace(this, shuffledArgs);
             // Trace if required
@@ -382,6 +394,11 @@ namespace Octgn.Play
     internal class ShuffleTraceChatHandler : ITraceChatHandler
     {
         public Inline Line { get; set; }
+
+        public void Set(string message)
+        {
+            Line = new Run(message);
+        }
 
         public void ReplaceText(object sender, TraceEventArgs e)
         {

@@ -22,7 +22,7 @@ namespace Octgn.Core {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resource1 {
+    public class Resource1 {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -154,7 +154,7 @@ namespace Octgn.Core {
         ///Pascals
         /// [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string jargonlist {
+        public static string jargonlist {
             get {
                 return ResourceManager.GetString("jargonlist", resourceCulture);
             }
@@ -222,7 +222,7 @@ namespace Octgn.Core {
         ///anger
         ///ang [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string nounlist {
+        public static string nounlist {
             get {
                 return ResourceManager.GetString("nounlist", resourceCulture);
             }

@@ -6,6 +6,7 @@ namespace Octgn
 {
 
     using Octgn.Library;
+    using Octgn.Utils;
 
     public static class Prefs
     {
@@ -27,6 +28,23 @@ namespace Octgn
             set
             {
                 SimpleConfig.Get().WriteValue("InstallOnBoot", value.ToString(CultureInfo.InvariantCulture));
+            }
+        }
+
+        public static ulong PrivateKey
+        {
+            get
+            {
+                ulong ret = 0;
+                if (!ulong.TryParse(SimpleConfig.Get().ReadValue("PrivateKey", Crypto.CreatePrivateKey().ToString(CultureInfo.InvariantCulture)), out ret))
+                {
+                    ret = Crypto.CreatePrivateKey();
+                }
+                return ret;
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("PrivateKey",value.ToString(CultureInfo.InvariantCulture));
             }
         }
 
