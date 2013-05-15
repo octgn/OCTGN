@@ -36,7 +36,7 @@
                         {
                             int id;
                             if (!int.TryParse(token.Substring(1), out id)) break;
-                            IPlayControllableObject obj = K.C.Get<ControllableObjectStateMachine>().Find(id);
+                            IPlayControllableObject obj = K.C.Get<GameStateMachine>().Find<IPlayControllableObject>(id);
                             if (obj == null) break;
                             tokenValue = obj;
                             break;

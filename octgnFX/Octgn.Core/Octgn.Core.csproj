@@ -77,12 +77,9 @@
     <Compile Include="Play\Actions\Turn.cs" />
     <Compile Include="Play\CardIdentity.cs" />
     <Compile Include="Play\CardOrientation.cs" />
-    <Compile Include="Play\CardStateMachine.cs" />
-    <Compile Include="Play\ControllableObjectStateMachine.cs" />
-    <Compile Include="Play\CounterStateMachine.cs" />
     <Compile Include="Play\DefaultMarkerModel.cs" />
     <Compile Include="Play\Events.cs" />
-    <Compile Include="Play\GroupStateMachine.cs" />
+    <Compile Include="Play\GameStateMachine.cs" />
     <Compile Include="Play\IGameEngine.cs" />
     <Compile Include="Play\IPlayCard.cs" />
     <Compile Include="Play\IPlayControllableObject.cs" />
@@ -91,8 +88,8 @@
     <Compile Include="Play\IPlayPlayer.cs" />
     <Compile Include="Play\IPlayTable.cs" />
     <Compile Include="Play\ITraceChatHandler.cs" />
+    <Compile Include="Play\PlayerEventArgs.cs" />
     <Compile Include="Play\PlayMarker.cs" />
-    <Compile Include="Play\PlayerStateMachine.cs" />
     <Compile Include="Play\RandomRequest.cs" />
     <Compile Include="Plugin\IDeckBuilderPlugin.cs" />
     <Compile Include="Plugin\IDeckBuilderPluginController.cs" />
@@ -103,6 +100,11 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Randomness.cs" />
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
     <Compile Include="Tabletop\GameEngine.cs" />
     <Compile Include="Tabletop\GameState.cs" />
     <Compile Include="Utils\BigInteger.cs" />
@@ -195,7 +197,12 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\jargonlist.txt" />
   </ItemGroup>

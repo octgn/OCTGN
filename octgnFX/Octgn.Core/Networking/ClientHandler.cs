@@ -51,7 +51,7 @@ namespace Octgn.Networking
 
         public void Start()
         {
-            Program.StartGame();
+            GameStateMachine.C.StartGame();
         }
 
         public void Settings(bool twoSidedTable)
@@ -59,8 +59,8 @@ namespace Octgn.Networking
             // The host is the driver for this flag and should ignore notifications,
             // otherwise there might be a loop if the server takes more time to dispatch this message
             // than the user to click again on the checkbox.
-            if (!Program.IsHost)
-                Program.GameSettings.UseTwoSidedTable = twoSidedTable;
+            if (!GameStateMachine.C.IsHost)
+                GameStateMachine.C.GameSettings.UseTwoSidedTable = twoSidedTable;
         }
 
         public void PlayerSettings(IPlayPlayer player, bool invertedTable)
@@ -70,22 +70,22 @@ namespace Octgn.Networking
 
         public void Reset(IPlayPlayer player)
         {
-            K.C.Get<IGameEngine>().Reset();
+            GameStateMachine.C.Engine.Reset();
             K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} resets the game.", player);
         }
 
         public void NextTurn(IPlayPlayer player)
         {
-            K.C.Get<IGameEngine>().TurnNumber++;
-            K.C.Get<IGameEngine>().TurnPlayer = player;
-            K.C.Get<IGameEngine>().StopTurn = false;
-            K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", K.C.Get<IGameEngine>().TurnNumber, player);
+            GameStateMachine.C.Engine.TurnNumber++;
+            GameStateMachine.C.Engine.TurnPlayer = player;
+            GameStateMachine.C.Engine.StopTurn = false;
+            K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Turn, "Turn {0}: {1}", GameStateMachine.C.Engine.TurnNumber, player);
         }
 
         public void StopTurn(IPlayPlayer player)
         {
-            if (player == K.C.Get<PlayerStateMachine>().LocalPlayer)
-                K.C.Get<IGameEngine>().StopTurn = false;
+            if (player == GameStateMachine.C.LocalPlayer)
+                GameStateMachine.C.Engine.StopTurn = false;
             K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} wants to play before end of turn.", player);
         }
 
@@ -102,13 +102,13 @@ namespace Octgn.Networking
         public void Random(IPlayPlayer player, int id, int min, int max)
         {
             var req = new RandomRequest(player, id, min, max);
-            K.C.Get<IGameEngine>().RandomRequests.Add(req);
+            GameStateMachine.C.Engine.RandomRequests.Add(req);
             req.Answer1();
         }
 
         public void RandomAnswer1(IPlayPlayer player, int id, ulong value)
         {
-            var req = K.C.Get<IGameEngine>().FindRandomRequest(id);
+            var req = GameStateMachine.C.Engine.FindRandomRequest(id);
             if (req == null)
             {
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
@@ -126,7 +126,7 @@ namespace Octgn.Networking
 
         public void RandomAnswer2(IPlayPlayer player, int id, ulong value)
         {
-            var req = K.C.Get<IGameEngine>().FindRandomRequest(id);
+            var req = GameStateMachine.C.Engine.FindRandomRequest(id);
             if (req == null)
             {
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.Event, "[RandomAnswer1] Random request not found.");
@@ -144,19 +144,19 @@ namespace Octgn.Networking
 
         public void Welcome(byte id)
         {
-            K.C.Get<PlayerStateMachine>().LocalPlayer.Id = id;
+            GameStateMachine.C.LocalPlayer.Id = id;
             K.C.Get<Client>().StartPings();
-            K.C.Get<PlayerStateMachine>().FireLocalPlayerWelcomed();
+            GameStateMachine.C.FireLocalPlayerWelcomed();
         }
 
         public void NewPlayer(byte id, string nick, ulong pkey)
         {
             K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has joined the game.", nick);
-            var player = new Player(K.C.Get<IGameEngine>().Definition, nick, id, pkey);
+            var player = new Player(GameStateMachine.C.Engine.Definition, nick, id, pkey);
             // Define the default table side if we are the host
-            if (Program.IsHost)
-                player.InvertedTable = (K.C.Get<PlayerStateMachine>().AllExceptGlobal.Count() & 1) == 0;
-            if (Program.IsHost)
+            if (GameStateMachine.C.IsHost)
+                player.InvertedTable = (GameStateMachine.C.AllExceptGlobal.Count() & 1) == 0;
+            if (GameStateMachine.C.IsHost)
             {
                 Sounds.PlaySound(Properties.Resources.knockknock);
             }
@@ -176,7 +176,7 @@ namespace Octgn.Networking
 
             if (id.Length == 0) return;   // Loading an empty deck --> do nothing
 
-            IPlayPlayer who = K.C.Get<PlayerStateMachine>().Find((byte)(id[0] >> 16));
+            IPlayPlayer who = GameStateMachine.C.Find<IPlayPlayer>((byte)(id[0] >> 16));
             if (who == null)
             {
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.Event, "[LoadDeck] Player not found.");
@@ -193,14 +193,14 @@ namespace Octgn.Networking
         /// <seealso cref="CreateCard(int[], ulong[], Group)"> for a more efficient way to insert cards inside one group.</seealso>
         private static void CreateCard(IList<int> id, IList<ulong> type, IList<IPlayGroup> groups)
         {
-            IPlayPlayer owner = K.C.Get<PlayerStateMachine>().Find((byte)(id[0] >> 16));
+            IPlayPlayer owner = GameStateMachine.C.Find<IPlayPlayer>((byte)(id[0] >> 16));
             if (owner == null)
             {
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
                 return;
             }
             // Ignore cards created by oneself
-            if (owner == K.C.Get<PlayerStateMachine>().LocalPlayer) return;
+            if (owner == GameStateMachine.C.LocalPlayer) return;
             for (int i = 0; i < id.Count; i++)
             {
                 Card c = new Card(owner, id[i], type[i], null, false);
@@ -216,18 +216,18 @@ namespace Octgn.Networking
         /// <seealso cref="CreateCard(int[], ulong[], Group[])"> to add cards to several groups</seealso>
         public void CreateCard(int[] id, ulong[] type, IPlayGroup group)
         {
-            IPlayPlayer owner = K.C.Get<PlayerStateMachine>().Find((byte)(id[0] >> 16));
+            IPlayPlayer owner = GameStateMachine.C.Find<IPlayPlayer>((byte)(id[0] >> 16));
             if (owner == null)
             {
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCard] Player not found.");
                 return;
             }
             //var c = new Card(owner,id[0], type[0], Program.Game.Definition.CardDefinition, null, false);
-            var c = K.C.Get<CardStateMachine>().Find(id[0]);
+            var c = GameStateMachine.C.Find<IPlayCard>(id[0]);
             
             K.C.Get<GameplayTrace>().TracePlayerEvent(owner, "{0} creates {1} {2} in {3}'s {4}", owner.Name, id.Length, c == null ? "card" : c.Name, group.Owner.Name,group.Name);
             // Ignore cards created by oneself
-            if (owner == K.C.Get<PlayerStateMachine>().LocalPlayer) return;
+            if (owner == GameStateMachine.C.LocalPlayer) return;
             for (int i = 0; i < id.Length; i++)
             {
                 //Card c = new Card(owner, id[i], type[i], Program.Game.Definition.CardDefinition, null, false);
@@ -257,19 +257,19 @@ namespace Octgn.Networking
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCardAt] Inconsistent parameters length.");
                 return;
             }
-            IPlayPlayer owner = K.C.Get<PlayerStateMachine>().Find((byte)(id[0] >> 16));
+            IPlayPlayer owner = GameStateMachine.C.Find<IPlayPlayer>((byte)(id[0] >> 16));
             if (owner == null)
             {
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCardAt] Player not found.");
                 return;
             }
-            var table = K.C.Get<IGameEngine>().Table;
+            var table = GameStateMachine.C.Engine.Table;
             // Bring cards created by oneself to top, for z-order consistency
-            if (owner == K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (owner == GameStateMachine.C.LocalPlayer)
             {
                 for (int i = id.Length - 1; i >= 0; --i)
                 {
-                    var card = K.C.Get<CardStateMachine>().Find(id[i]);
+                    var card = GameStateMachine.C.Find<IPlayCard>(id[i]);
                     if (card == null)
                     {
                         K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.Event, "[CreateCardAt] Card not found.");
@@ -281,17 +281,17 @@ namespace Octgn.Networking
             else
             {
                 for (int i = 0; i < id.Length; i++)
-                    new CreateCard(owner, id[i], key[i], faceUp,K.C.Get<IGameEngine>().Definition.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
+                    new CreateCard(owner, id[i], key[i], faceUp,GameStateMachine.C.Engine.Definition.GetCardById(modelId[i]), x[i], y[i], !persist).Do();
             }
 
             // Display log messages
             try
             {
                 if (modelId.All(m => m == modelId[0]))
-                    K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == K.C.Get<PlayerStateMachine>().LocalPlayer || faceUp ? K.C.Get<IGameEngine>().Definition.GetCardById(modelId[0]).Name : "card");
+                    K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates {1} '{2}'", owner, modelId.Length, owner == GameStateMachine.C.LocalPlayer || faceUp ? GameStateMachine.C.Engine.Definition.GetCardById(modelId[0]).Name : "card");
                 else
                     foreach (Guid m in modelId)
-                        K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == K.C.Get<PlayerStateMachine>().LocalPlayer || faceUp ? K.C.Get<IGameEngine>().Definition.GetCardById(m).Name : "card");
+                        K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(owner), "{0} creates a '{1}'", owner, owner == GameStateMachine.C.LocalPlayer || faceUp ? GameStateMachine.C.Engine.Definition.GetCardById(m).Name : "card");
 
             }
             catch (Exception e)
@@ -308,7 +308,7 @@ namespace Octgn.Networking
         {
             byte playerId = (byte)(id[0] >> 16);
             // Ignore cards created by oneself
-            if (playerId == K.C.Get<PlayerStateMachine>().LocalPlayer.Id) return;
+            if (playerId == GameStateMachine.C.LocalPlayer.Id) return;
             for (int i = 0; i < id.Length; i++)
             {
                 if (type[i] == ulong.MaxValue) continue;
@@ -320,7 +320,7 @@ namespace Octgn.Networking
         {
             player.Delete();
             K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event, "{0} has left the game.", player);
-            if (Program.IsHost)
+            if (GameStateMachine.C.IsHost)
             {
                 Sounds.PlaySound(Properties.Resources.doorclose);
             }
@@ -329,7 +329,7 @@ namespace Octgn.Networking
         public void MoveCard(IPlayPlayer player, IPlayCard card, IPlayGroup to, int idx, bool faceUp)
         {
             // Ignore cards moved by the local player (already done, for responsiveness)
-            if (player != K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player != GameStateMachine.C.LocalPlayer)
                 new MoveCard(player, card, to, idx, faceUp).Do();
             else
             {
@@ -347,7 +347,7 @@ namespace Octgn.Networking
         public void MoveCardAt(IPlayPlayer player, IPlayCard card, int x, int y, int idx, bool faceUp)
         {
             // Get the table control
-            IPlayTable table = K.C.Get<IGameEngine>().Table;
+            IPlayTable table = GameStateMachine.C.Engine.Table;
             // Because every player may manipulate the table at the same time, the index may be out of bound
             if (card.Group == table)
             { if (idx >= table.Count) idx = table.Count - 1; }
@@ -355,7 +355,7 @@ namespace Octgn.Networking
                 if (idx > table.Count) idx = table.Count;
 
             // Ignore cards moved by the local player (already done, for responsiveness)
-            if (player == K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player == GameStateMachine.C.LocalPlayer)
             {
                 // See remark in MoveCard
                 if (card.Group == table)
@@ -377,12 +377,12 @@ namespace Octgn.Networking
 
         public void AddMarker(IPlayPlayer player, IPlayCard card, Guid id, string name, ushort count)
         {
-            DataNew.Entities.Marker model = K.C.Get<IGameEngine>().GetMarkerModel(id);
+            DataNew.Entities.Marker model = GameStateMachine.C.Engine.GetMarkerModel(id);
             DefaultMarkerModel defaultMarkerModel = model as DefaultMarkerModel;
             if (defaultMarkerModel != null)
                 (defaultMarkerModel).SetName(name);
             // Ignore markers created by oneself (already created for responsiveness issues)
-            if (player != K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player != GameStateMachine.C.LocalPlayer)
                 card.AddMarker(model, count);
             if (count != 0)
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player),
@@ -392,7 +392,7 @@ namespace Octgn.Networking
         public void RemoveMarker(IPlayPlayer player, IPlayCard card, Guid id, string name, ushort count)
         {
             // Ignore markers removed by oneself (already removed for responsiveness issues)
-            if (player != K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player != GameStateMachine.C.LocalPlayer)
             {
                 PlayMarker marker = card.FindMarker(id, name);
                 if (marker == null)
@@ -411,7 +411,7 @@ namespace Octgn.Networking
         public void TransferMarker(IPlayPlayer player, IPlayCard from, IPlayCard to, Guid id, string name, ushort count)
         {
             // Ignore markers moved by oneself (already moved for responsiveness issues)
-            if (player != K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player != GameStateMachine.C.LocalPlayer)
             {
                 PlayMarker marker = from.FindMarker(id, name);
                 if (marker == null)
@@ -479,7 +479,7 @@ namespace Octgn.Networking
             // Reveal a card's type
             else if (card.Type.Model == null)
             {
-                card.SetModel(K.C.Get<IGameEngine>().Definition.GetCardById(guid));
+                card.SetModel(GameStateMachine.C.Engine.Definition.GetCardById(guid));
                 // Raise a notification
                 oldType.OnRevealed(oldType);
             }
@@ -524,7 +524,7 @@ namespace Octgn.Networking
                 // If the revealed type is an alias, pass it to the one who owns it to continue the RevealTo chain.
                 if (ci.Alias)
                 {
-                    IPlayPlayer p = K.C.Get<PlayerStateMachine>().Find((byte)(ci.Key >> 16));
+                    IPlayPlayer p = GameStateMachine.C.Find<IPlayPlayer>((byte)(ci.Key >> 16));
                     K.C.Get<Client>().Rpc.RevealToReq(p, players, card, Crypto.Encrypt(ci.Key, p.PublicKey));
                 }
                 // Else revealed the card model to the ones, who must see it
@@ -532,7 +532,7 @@ namespace Octgn.Networking
                 {
                     IPlayPlayer[] pArray = new IPlayPlayer[1];
                     foreach (IPlayPlayer p in players)
-                        if (p != K.C.Get<PlayerStateMachine>().LocalPlayer)
+                        if (p != GameStateMachine.C.LocalPlayer)
                         {
                             pArray[0] = p;
                             K.C.Get<Client>().Rpc.RevealToReq(p, pArray, card, Crypto.Encrypt(ci.Model.Id, p.PublicKey));
@@ -547,7 +547,7 @@ namespace Octgn.Networking
             // Else it's a type and we are the final recipients
             if (!sendToMyself) return;
             if (card.Type.Model == null)
-                card.SetModel(K.C.Get<IGameEngine>().Definition.GetCardById(id));
+                card.SetModel(GameStateMachine.C.Engine.Definition.GetCardById(id));
             // Raise a notification
             oldType.OnRevealed(card.Type);
         }
@@ -557,7 +557,7 @@ namespace Octgn.Networking
             if (!card.PeekingPlayers.Contains(player))
                 card.PeekingPlayers.Add(player);
             card.RevealTo(Enumerable.Repeat(player, 1));
-            if (player != K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player != GameStateMachine.C.LocalPlayer)
             {
                 K.C.Get<GameplayTrace>().TracePlayerEvent(player, "{0} peeks at a card ({1}).", player,
                   card.Group is IPlayTable ? "on table" : "in " + card.Group.FullName);
@@ -567,21 +567,21 @@ namespace Octgn.Networking
         public void Untarget(IPlayPlayer player, IPlayCard card)
         {
             // Ignore the card we targeted ourselves
-            if (player == K.C.Get<PlayerStateMachine>().LocalPlayer) return;
+            if (player == GameStateMachine.C.LocalPlayer) return;
             new Target(player, card, null, false).Do();
         }
 
         public void Target(IPlayPlayer player, IPlayCard card)
         {
             // Ignore the card we targeted ourselves
-            if (player == K.C.Get<PlayerStateMachine>().LocalPlayer) return;
+            if (player == GameStateMachine.C.LocalPlayer) return;
             new Target(player, card, null, true).Do();
         }
 
         public void TargetArrow(IPlayPlayer player, IPlayCard card, IPlayCard otherCard)
         {
             // Ignore the card we targeted ourselves
-            if (player == K.C.Get<PlayerStateMachine>().LocalPlayer) return;
+            if (player == GameStateMachine.C.LocalPlayer) return;
             new Target(player, card, otherCard, true).Do();
         }
 
@@ -591,7 +591,7 @@ namespace Octgn.Networking
         public void Turn(IPlayPlayer player, IPlayCard card, bool up)
         {
             // Ignore the card we turned ourselves
-            if (player == K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player == GameStateMachine.C.LocalPlayer)
             {
                 card.MayBeConsideredFaceUp = false;     // see comment on mayBeConsideredFaceUp
                 return;
@@ -602,7 +602,7 @@ namespace Octgn.Networking
         public void Rotate(IPlayPlayer player, IPlayCard card, CardOrientation rot)
         {
             // Ignore the moves we made ourselves
-            if (player == K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player == GameStateMachine.C.LocalPlayer)
                 return;
             new Rotate(player, card, rot).Do();
         }
@@ -619,7 +619,7 @@ namespace Octgn.Networking
             group.HasReceivedFirstShuffledMessage = false;
             group.MyShufflePos = new short[card.Length];
             // Check if we received enough cards
-            if (card.Length < group.Count / (K.C.Get<PlayerStateMachine>().Count - 1))
+            if (card.Length < group.Count / (GameStateMachine.C.PlayerCount - 1))
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Warning, EventIds.Event, "[Shuffle] Too few cards received.");
             // Do the shuffling
             var rnd = new CryptoRandom();
@@ -637,7 +637,7 @@ namespace Octgn.Networking
                 }
                 else
                 {
-                    ci = new CardIdentity(K.C.Get<IGameEngine>().GenerateCardId());
+                    ci = new CardIdentity(GameStateMachine.C.Engine.GenerateCardId());
                     ci.MySecret = ci.Alias = true;
                     ci.Key = ((ulong)Crypto.PositiveRandom()) << 32 | (uint)tc;
                     card[i] = ci.Id; aliases[i] = Crypto.ModExp(ci.Key);
@@ -670,7 +670,7 @@ namespace Octgn.Networking
                 foreach (IPlayCard c in group) c.Type = null;
             group.HasReceivedFirstShuffledMessage = true;
             // Check that the server didn't change our positions
-            if (card[0] >> 16 == K.C.Get<PlayerStateMachine>().LocalPlayer.Id && group.MyShufflePos != null)
+            if (card[0] >> 16 == GameStateMachine.C.LocalPlayer.Id && group.MyShufflePos != null)
             {
                 if (pos.Where((t, i) => t != @group.MyShufflePos[i]).Any())
                 {
@@ -748,7 +748,7 @@ namespace Octgn.Networking
             List<ulong> types = new List<ulong>(card.Length);
             for (int i = 0; i < card.Length; i++)
             {
-                IPlayCard c = K.C.Get<CardStateMachine>().Find(card[i]);
+                IPlayCard c = GameStateMachine.C.Find<IPlayCard>(card[i]);
                 if (c == null)
                 { K.C.Get<GameplayTrace>().TraceWarning("[Unalias] Card not found."); continue; }
                 if (g == null) g = c.Group as Pile;
@@ -786,7 +786,7 @@ namespace Octgn.Networking
         public void PassTo(IPlayPlayer who, IPlayControllableObject obj, IPlayPlayer player, bool requested)
         {
             // Ignore message that we sent in the first place
-            if (who != K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (who != GameStateMachine.C.LocalPlayer)
                 obj.PassControlTo(player, who, false, requested);
         }
 
@@ -804,7 +804,7 @@ namespace Octgn.Networking
         public void GroupVis(IPlayPlayer player, IPlayGroup group, bool defined, bool visible)
         {
             // Ignore messages sent by myself
-            if (player != K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player != GameStateMachine.C.LocalPlayer)
                 group.SetVisibility(defined ? (bool?)visible : null, false);
             if (defined)
                 K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), visible ? "{0} shows {1} to everybody." : "{0} shows {1} to nobody.", player, group);
@@ -813,7 +813,7 @@ namespace Octgn.Networking
         public void GroupVisAdd(IPlayPlayer player, IPlayGroup group, IPlayPlayer whom)
         {
             // Ignore messages sent by myself
-            if (player != K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player != GameStateMachine.C.LocalPlayer)
                 group.AddViewer(whom, false);
             K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} shows {1} to {2}.", player, group, whom);
         }
@@ -821,7 +821,7 @@ namespace Octgn.Networking
         public void GroupVisRemove(IPlayPlayer player, IPlayGroup group, IPlayPlayer whom)
         {
             // Ignore messages sent by myself
-            if (player != K.C.Get<PlayerStateMachine>().LocalPlayer)
+            if (player != GameStateMachine.C.LocalPlayer)
                 group.RemoveViewer(whom, false);
             K.C.Get<GameplayTrace>().TraceEvent(TraceEventType.Information, EventIds.Event | EventIds.PlayerFlag(player), "{0} hides {1} from {2}.", player, group, whom);
         }
@@ -925,20 +925,20 @@ namespace Octgn.Networking
 
         public void SetGlobalVariable(string name, string value)
         {
-            if (K.C.Get<IGameEngine>().GlobalVariables.ContainsKey(name))
-                K.C.Get<IGameEngine>().GlobalVariables[name] = value;
+            if (GameStateMachine.C.Engine.GlobalVariables.ContainsKey(name))
+                GameStateMachine.C.Engine.GlobalVariables[name] = value;
             else
-                K.C.Get<IGameEngine>().GlobalVariables.Add(name, value);
+                GameStateMachine.C.Engine.GlobalVariables.Add(name, value);
         }
 
         public void IsTableBackgroundFlipped(bool isFlipped)
         {
-            K.C.Get<IGameEngine>().IsTableBackgroundFlipped = isFlipped;
+            GameStateMachine.C.Engine.IsTableBackgroundFlipped = isFlipped;
         }
 
         public void CardSwitchTo(IPlayPlayer player, IPlayCard card, string alternate)
         {
-            if(player.Id != K.C.Get<PlayerStateMachine>().LocalPlayer.Id)
+            if(player.Id != GameStateMachine.C.LocalPlayer.Id)
                 card.SwitchTo(player, alternate);
         }
 

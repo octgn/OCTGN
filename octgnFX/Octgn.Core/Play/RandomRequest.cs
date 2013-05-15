@@ -33,7 +33,7 @@ namespace Octgn.Play
 
         public static int GenerateId()
         {
-            return (K.C.Get<PlayerStateMachine>().LocalPlayer.Id << 16) | K.C.Get<IGameEngine>().GetUniqueId();
+            return (GameStateMachine.C.LocalPlayer.Id << 16) | K.C.Get<IGameEngine>().GetUniqueId();
         }
 
         public void Answer1()
@@ -91,12 +91,12 @@ namespace Octgn.Play
 
         public bool IsPhase1Completed()
         {
-            return _values.Count == K.C.Get<PlayerStateMachine>().Count;
+            return _values.Count == GameStateMachine.C.PlayerCount;
         }
 
         public bool IsPhase2Completed()
         {
-            return _phase2Count == K.C.Get<PlayerStateMachine>().Count;
+            return _phase2Count == GameStateMachine.C.PlayerCount;
         }
 
         #region Nested type: RandomValue
@@ -109,7 +109,7 @@ namespace Octgn.Play
 
             public RandomValue()
             {
-                Player = K.C.Get<PlayerStateMachine>().LocalPlayer;
+                Player = GameStateMachine.C.LocalPlayer;
                 Decrypted = (ulong) Crypto.PositiveRandom() << 32 | Crypto.Random();
                 Encrypted = Crypto.ModExp(Decrypted);
             }
