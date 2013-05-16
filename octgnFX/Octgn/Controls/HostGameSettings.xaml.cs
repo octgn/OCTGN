@@ -287,8 +287,9 @@
                     else
                     {
                         var i = 0;
-                        while (!SuccessfulHost || i < 10)
+                        while (i < 10)
                         {
+                            if (SuccessfulHost) break;
                             Thread.Sleep(1000);
                             i++;
                         }
