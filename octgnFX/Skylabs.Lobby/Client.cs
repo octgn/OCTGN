@@ -1036,9 +1036,9 @@ namespace Skylabs.Lobby
             var m = new Message(new Jid("gameserv@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
             m.GenerateId();
             this.xmpp.Send(m);
-            m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
-            m.GenerateId();
-            this.xmpp.Send(m);
+            //m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
+            //m.GenerateId();
+            //this.xmpp.Send(m);
         }
 
         /// <summary>
@@ -1050,9 +1050,9 @@ namespace Skylabs.Lobby
             var m = new Message(new Jid("gameserv@" + Host), MessageType.normal, string.Empty, "gamelist");
             m.GenerateId();
             this.xmpp.Send(m);
-            m = new Message(new Jid("gameserv2@" + Host), MessageType.normal, string.Empty, "gamelist");
-            m.GenerateId();
-            this.xmpp.Send(m);
+            //m = new Message(new Jid("gameserv2@" + Host), MessageType.normal, string.Empty, "gamelist");
+            //m.GenerateId();
+            //this.xmpp.Send(m);
         }
 
         public void SetSub(bool subbed)
@@ -1222,9 +1222,9 @@ namespace Skylabs.Lobby
             var m = new Message(
                 "gameserv@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
             this.xmpp.Send(m);
-            m = new Message(
-                "gameserv2@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
-            this.xmpp.Send(m);
+            //m = new Message(
+            //    "gameserv2@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
+            //this.xmpp.Send(m);
         }
 
         /// <summary>
