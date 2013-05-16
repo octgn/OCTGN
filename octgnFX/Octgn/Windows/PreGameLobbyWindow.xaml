@@ -1,0 +1,8 @@
+﻿<controls:OctgnChrome x:Class="Octgn.Windows.PreGameLobbyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:Octgn.Controls"
+        Title="PreGame Lobby" MinHeight="600" MinWidth="600" 
+        Width="600"
+        Height="600"
+        WindowIcon="pack://application:,,,/OCTGN;component/Resources/pregamelobbyicon.png">
+</controls:OctgnChrome>

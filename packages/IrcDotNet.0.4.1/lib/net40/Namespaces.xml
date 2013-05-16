@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Namespaces</name>
+  </assembly>
+  <members>
+    <member name="R:Project">
+      <summary>A library for communicating via the Internet Relay Chat (IRC) protocol, using the .NET Framework 4.0.</summary>
+    </member>
+    <member name="N:IrcDotNet">
+      <summary>Contains the core functionality for communicating via Internet Relay Chat (IRC) networks.</summary>
+    </member>
+    <member name="N:IrcDotNet.Collections">
+      <summary>
+        <p style="color: #dc143c; font-size: 8.5pt; font-weight: bold;">[Missing &lt;summary&gt; documentation for "N:IrcDotNet.Collections"]</p>
+      </summary>
+    </member>
+    <member name="N:IrcDotNet.Ctcp">
+      <summary>Contains the functionality for sending and receiving CTCP (Client-To-Client Protocol) messages over the IRC protocol.</summary>
+    </member>
+  </members>
+</doc>

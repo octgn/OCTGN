@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>CodeBits.OrderedObservableCollection</id>
+    <version>1.0.0</version>
+    <title>CodeBits Ordered Observable Collection</title>
+    <authors>Jeevan James</authors>
+    <owners>Jeevan James</owners>
+    <licenseUrl>http://codebits.codeplex.com/license</licenseUrl>
+    <projectUrl>http://codebits.codeplex.com/</projectUrl>
+    <iconUrl>http://www.codeplex.com/Download?ProjectName=codebits&amp;DownloadId=417912</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An always sorted observable collection. Has options to allow/disallow duplicate items as well as to sort in reverse order.
+See the project site for documentation.</description>
+    <releaseNotes>Initial release</releaseNotes>
+    <copyright>Copyright (c) Jeevan James 2012</copyright>
+    <language />
+    <tags>CodeBits code bits blocks ordered observable collection sorted</tags>
+    <references />
+  </metadata>
+</package>

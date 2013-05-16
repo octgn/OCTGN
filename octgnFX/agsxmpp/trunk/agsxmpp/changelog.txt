@@ -1,0 +1,241 @@
+version 1.2
+- added agsXMPP.protocol.x.muc.user.Destroy (see: http://forum.ag-software.de/forum.php?req=thread&postid=3663&nocount=1)
+- fixed a bug in clientsocket which can cause reconnect problems under some conditions
+- fixed Nickname bug in agsXMPP.protocol.extensions.bookmarks.Conference
+- added  new constructor to XmppClientConnenction
+- added implicit operators to Jid class
+- fixed a race condition in Bosh
+- added NotModified error condition
+- added Errortext property to Error class
+- set type automatically to error when an error child gets added
+- fixed sasl DIGESTMD5 error with escaped jids
+- added some more generic functions to Element
+- AutoResolveConnectServer is true by default now
+- added GSSAPI SASL mechanism (only enterprise version)
+
+version 1.1
+============
+- added TLS for Compact Framework
+- bugfix in clientsocket.cs which caused reconnect problems in some cases
+- some minor bugfixes
+
+version 1.0
+============
+- added XEP-0153: vCard-Based Avatars
+- added bookmark storage XEP-0048
+- added message receipts XEP-0184
+- added XEP-0047: In-Band Bytestreams (IBB)
+- added a hack to not send xmlns="jabbe:client" with all stanzas
+- added AutoPresence Property. This sends the own presence in XmppClientConnection automatically after login. If you already
+  send your presence after succesful login set AutoPresence to false or remove the SendMyPresence call
+- fixed a bug in agsXMPP.protocol.sasl.Mechamism  
+- added SASL failure conditions (FailureConditions.cs)
+- fixed HasChildElements property in Element.cs
+- did some refactoring on Element.cs
+- added some members to Element
+- added Console Client example
+- fixed typos in DiscoManager.cs
+- updated caps to teh latest xep version, can create the new ver attrib automatically.
+- published first BOSH version. Interoperability only tested with ejabberd2 beta 1
+- optimized Polling code
+- updated caps to the latest version of the XEP where caps versioning was changed.
+- added AMP
+- refactored and extended base classes
+
+version 0.95
+============
+- many improvements and bugfixes
+- added more stuff to the MucManager
+
+version 0.93
+============
+- improvements on socket errors
+- imporvements in resource binding. Leave resource empty and the server will asign a resource for you.
+- Added ClientName and ClientFeatures
+- Automatic response to DiscoInfo requests to clients
+
+version 0.93
+============
+- improvements in XmppComponentConnection
+- improved Keep Alive logic
+- OnXmppErrorHandler -> XmppElementHandler
+- XmppElementHandler -> XmppStanzaHandler ???
+- refactored IqHandler event public event (StreamHandler ==> IqHandler)
+- CreateNewThread member added for Messages
+- EscapeNode and Unescape Node in the Jid class is now static
+- added stringprep support and libidn#
+- fixes in jivesoftware phone stuff
+
+version 0.92
+============
+- added XEP-0115 Entity Capabilities
+- added XEP-0106 JID Escaping
+- added XEP-0199 XMPP Ping
+- licence change
+
+version 0.91
+============
+- fixed register account for servers which support only sasl Login
+- fixed a bug in ClientSocket.cs with the connect timeout timer
+- added X-GOOGLE-TOKEN authentication and Sasl mechanism
+  This means you can connect also on PPC and Smartphone to GTalk, or without SSL/TLS with Desktop Edition to GTalk
+- added synchronous Packet Grabbing to the IqGrabber
+- added new enum for packetId types. Now you can use Guid's for packet ID's
+
+version 0.90
+============
+- improved srv record handling
+- added nickname support (JEP-0172 User nickname)
+- imporoved filetransfer
+- fixed SASL to work with jabberd 1.4x
+- added disco manager
+- lots of minor changes and improvements
+
+version 0.81
+============
+- minor changes and refactoring
+- added bytestream support
+
+version 0.80
+============
+- added Ad-Hoc Commands
+- added pubsub
+- some minor changes and refactoring
+
+version 0.77
+============
+- added privacy list support (XMPP Core)
+
+version 0.76
+============
+- fixed a bug in XmppPacket (Error property)
+- fixed a bug in Register.cs
+- added Geoloc
+- started to add Jingle
+- small bugfix in event.cs
+- optimized the vcard code
+
+version 0.75
+============
+- added MUC
+- Chatstates JEP-0085
+- Added RPC JEP-0009 (Transporting XML-RPC over Jabber)
+- Added ElementList and changed all Select* functions that returned NodeList to the return value ElementList, because the NodeList messed up indexes
+
+version 0.71
+============
+- added SASL ANONYMOUS
+- fixed a bug in Mechanism.cs (password was always lower case)
+
+version 0.70
+============
+- 1st version of new roster control in agsXMPP.ui
+- stream compression
+- many improvements an minor bugfixes
+- some namespaces changed a bit because of VB .NET programmers
+- new version of Mono.Security.dll for .NET 1.1 included (see: http://bugzilla.ximian.com/show_bug.cgi?id=75687)
+
+version 0.65
+============
+- renamed featues namespace to feature becuase of VB programmers that couldn't access it
+- added stream compression and stream compression classes
+
+version 0.63
+============
+- added <item/> and <reported/> to xdata (for xdata search)
+- fixed a entity bug in attributes (StreamParser.cs) 
+
+version 0.62
+============
+- added PresenceGrabber to XmppClientConnection
+- added a new overload to the Helper functions in PresenceManager
+
+version 0.61
+============
+- Bugfix in Disco feature and identity
+
+version 0.60
+============
+- switched to visual studio 2005 and .NET 2.0
+- added SSL support for the build in SSL Stream in .NET 2.0
+- added support for Jive Software Phone Extensions
+
+version 0.51
+============
+- added BrowseItem class
+- changes in Browse to support historical service protocol
+- fixes in OnRosterStart and OnRosterEnd event
+
+version 0.50
+============
+- changed parser to xpnet
+- added xdata classes and xdata controls
+- added PresenceManager
+- added RosterManager
+- added private xml storage (JEP-0049)
+- added nested roster groups (JEP-0083)
+- rewrote StreamParser.cs
+- rewrote ClientSocket.cs
+
+version 0.40
+============
+- added Start-TLS Support
+- added Service Discovery (JEP-0030)
+- added RosterManager and PresenceManager for easier roster and presence managing
+- added x-conference
+
+version 0.35
+============
+- added jabber:iq:register for registering new accounts on jabber/xmpp servers
+- fixed issues on mono
+
+version 0.34
+============
+- minor changes in the xml classes
+- moved some classes to other namespaces because of vb problems (vb is not case sensitive)
+- created new project files for windows, ppc and smartphone
+- binaries are included too now
+
+version 0.33
+============
+- switched from the Mono-Miniparser to my port of kxml, because the Miniparser cant read mixed content xml and text-only nodes
+
+version 0.32
+============
+- made the xml parser more namespace correct
+- added separate classes for SearchItem and RosterItem (Item class is gone)
+- added Vcard and VcardIq
+- changed some namespaces
+
+version 0.31
+============
+- small change in Iq.Query proprety
+- added server example
+- added console client exsample
+
+version 0.30
+============
+- implemented stream features
+- implemented sasl protocol
+- sasl plain mechanism
+- sasl digest-md5 mechanism
+- sasl factory for plugging in new sasl mechanisms
+- resource binding
+- changed the xml parser ro the sax parser "MiniParser"
+- added MessageGrabber for message tracking
+- bugfixes
+
+version 0.27
+============
+- fixes in message, iq and presence for jabberd2
+
+version 0.26
+============
+- added Error.cs, it handles the old legacy jabber errors and xmpp stanza errors
+- Bugfixes in Presence.cs and the parser
+
+version 0.25
+============
+- added SSL Support using Mono.Security (Doesnt work in the CF)
+- created key file for signing the assembly
+- improvements to the DOM Parser

@@ -1,0 +1,23 @@
+﻿<Window x:Class="Octgn.Windows.UrlSets"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add auto updating set" Style="{StaticResource Window}" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="229" Width="300">
+    <Border Style="{StaticResource Panel}" Margin="0,0,0,4" Padding="4" Height="188">
+        <Grid Height="177" Name="grid1" Width="270">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25*" />
+                <RowDefinition Height="220*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="72*" />
+                <ColumnDefinition Width="60*" />
+                <ColumnDefinition Width="138*" />
+            </Grid.ColumnDefinitions>
+            <TextBox Height="23" HorizontalAlignment="Left" Name="urlBox" VerticalAlignment="Top" Width="264" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,15,0,0" Text="" TextChanged="urlBox_TextChanged" />
+            <TextBlock Height="23" HorizontalAlignment="Left" Margin="6,2,0,0" Name="textBlock1" Text="Autoconfiguration XML link" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="258" />
+            <Button Content="Check XML" Grid.ColumnSpan="3" Grid.Row="1" Height="29" HorizontalAlignment="Left" Margin="6,54,0,0" Name="button1" VerticalAlignment="Top" Width="258" Click="CheckXmlClick" />
+            <Button Content="Download and force install now" Grid.ColumnSpan="3" Grid.Row="1" Height="29" HorizontalAlignment="Left" Margin="6,89,0,0" Name="button2" VerticalAlignment="Top" Width="258" Click="DownloadAndInstallClick" IsEnabled="False" />
+            <Button Content="Save configuration" Grid.ColumnSpan="3" Grid.Row="1" Height="29" HorizontalAlignment="Left" Margin="6,124,0,0" Name="button3" VerticalAlignment="Top" Width="258" Click="SaveConfigurationClick" IsEnabled="False" />
+        </Grid>
+    </Border>
+</Window>

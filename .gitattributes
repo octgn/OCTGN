@@ -1,0 +1,18 @@
+*.sln text eol=crlf
+*.xml text eol=crlf
+*.txt text
+*.cs text eol=crlf
+*.csproj text eol=crlf
+*.md text
+*.git* text
+*.nsh text
+*.nsi text
+*.xsd text
+*.xsx text
+*.sql text
+*.config text
+*.resx text
+*.xaml text eol=crlf
+*.tt text
+*.py text
+*.bat text eol=crlf

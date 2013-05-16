@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="Octgn.Controls.WaitingDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:controls="clr-namespace:Octgn.Controls"
+             mc:Ignorable="d" d:DesignWidth="300"
+             Panel.ZIndex="5" Height="Auto"
+             x:Name="Me"
+             DataContext="{Binding ElementName=Me}">
+    <Border x:Name="BorderHostGame" Width="300" MinHeight="100" Visibility="Visible" Padding="10,10,10,10" Style="{StaticResource Panel}">
+        <Border.Background>
+            <LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
+                <LinearGradientBrush.Transform>
+                    <RotateTransform Angle="-22" CenterY="0.5" CenterX="0.5"/>
+                </LinearGradientBrush.Transform>
+                <GradientStop Color="#FF333333" Offset="0.558"/>
+                <GradientStop Color="#FF555555" Offset="1"/>
+                <GradientStop Color="#FF777777" Offset="0"/>
+                <GradientStop Color="#FF555555" Offset="0.154"/>
+                <GradientStop Color="#FF333333" Offset="0.351"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid>
+            <Grid.RowDefinitions >
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="85"></ColumnDefinition>
+                <ColumnDefinition Width="100*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" FontSize="15" HorizontalAlignment="Center" Text="{Binding Title}" TextWrapping="Wrap"/>
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Message}" TextWrapping="Wrap"/>
+            <ProgressBar Grid.Row="3" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Margin="0,5,0,5" IsIndeterminate="True"></ProgressBar>
+        </Grid>
+    </Border>
+</UserControl>

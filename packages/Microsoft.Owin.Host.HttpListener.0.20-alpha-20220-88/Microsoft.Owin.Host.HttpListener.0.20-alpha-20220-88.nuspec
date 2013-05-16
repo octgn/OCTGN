@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Owin.Host.HttpListener</id>
+    <version>0.20-alpha-20220-88</version>
+    <authors>Microsoft Open Technologies,  Inc.</authors>
+    <owners>Microsoft Open Technologies,  Inc.</owners>
+    <licenseUrl>http://katanaproject.codeplex.com/license</licenseUrl>
+    <projectUrl>http://katanaproject.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>OWIN HttpListener</description>
+    <tags>OWIN</tags>
+    <references>
+      <reference file="Microsoft.Owin.Host.HttpListener.dll" />
+    </references>
+  </metadata>
+</package>

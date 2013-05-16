@@ -1,0 +1,126 @@
+﻿<#@ template language="C#" hostspecific="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Xml.Linq" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Text" #>
+<#
+  XDocument doc = XDocument.Load(Host.ResolvePath(@"Protocol.xml"));
+#>
+/*
+ * This file was automatically generated.
+ * Do not modify, changes will get lots when the file is regenerated!
+ */
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Net.Sockets;
+ 
+namespace Octgn.Server
+{
+	internal sealed class Broadcaster : Octgn.Server.IClientCalls
+	{
+		private byte[] binData = new byte[1024];
+		private Dictionary<TcpClient, Handler.PlayerInfo> to;
+		private BinFormatter bin;
+		private Handler handler;
+
+		private sealed class BinFormatter : BaseBinaryStub
+		{
+			private Broadcaster bcast;
+			
+			internal BinFormatter(Broadcaster bcast, Handler handler) : base(handler)
+			{ this.bcast = bcast; }
+			
+			protected override void Send(byte[] data)
+			{ bcast.binData = data; }
+		}
+
+		internal Broadcaster(Dictionary<TcpClient, Handler.PlayerInfo> to, Handler handler)
+		{ 
+			this.to = to; this.handler = handler;
+			bin = new BinFormatter(this, handler);
+		}
+		
+		internal void RefreshTypes()
+		{
+
+		}
+		
+		internal void Send()
+		{
+			foreach (KeyValuePair<TcpClient, Handler.PlayerInfo> kvp in to)
+				try
+				{
+					Stream stream = kvp.Key.GetStream();
+					stream.Write(binData, 0, binData.Length);
+					stream.Flush();
+				}
+				catch
+				{
+// TODO notify disconnection
+//					Program.server.Disconnected(kvp.Key);
+				}
+		}
+<#
+  foreach (var msg in doc.Root.Elements("msg").Where(m => (bool?)m.Attribute("client") == true))
+  {
+    string msgName = msg.Attribute("name").Value;
+#>
+
+    public void <#= msgName #>(<#= DeclareParameters(msg) #>)
+    {
+      bin.<#= msgName #>(<#= CallParameters(msg) #>);
+      Send();
+    }
+<# } #>
+	}
+}
+<#+
+  private string DeclareParameters(XElement msg)
+  {
+    var sb = new StringBuilder();
+    foreach (var p in msg.Elements("param"))
+      sb.Append(ConvertParameterType(p.Attribute("type").Value))
+        .Append(" ")
+        .Append(p.Attribute("name").Value)
+        .Append(", ");
+    if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
+    return sb.ToString();
+  }
+
+  private string CallParameters(XElement msg)
+  {
+    var sb = new StringBuilder();
+    foreach (var p in msg.Elements("param"))
+      sb.Append(p.Attribute("name").Value)
+        .Append(", ");
+    if (sb.Length > 0) sb.Remove(sb.Length - 2, 2);
+    return sb.ToString();
+  }
+
+  private string ConvertParameterType(string type)
+  {
+    switch (type)
+    {
+      case "Player":
+        return "byte";
+      case "ControllableObject":
+      case "Group":
+      case "Card":
+      case "Counter":
+        return "int";
+      case "Player[]":
+        return "byte[]";
+      case "Group[]":
+        return "int[]";
+      case "Color?":
+        return "string";
+      default:
+        return type;
+    }
+  }
+#>

@@ -1,0 +1,24 @@
+<Window x:Class="Octgn.Windows.UpgradeMessage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Octgn - Upgrade" Style="{StaticResource Window}"
+        Width="451" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterScreen">
+    <Border Style="{StaticResource Panel}" Margin="8" Padding="8">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <TextBlock Margin="0,0,0,20">
+        The way Octgn manages your games has changed since the last release.
+        <LineBreak />
+        <LineBreak />
+        Its database is now in %LocalAppData%\Octgn. Your old Octgn data folder is not used anymore, you can
+        delete it if you don't want to keep it.
+        <LineBreak />
+        <LineBreak />
+        You have to re-install all your games and sets.
+      </TextBlock>
+      <Button Content="Continue" HorizontalAlignment="Center" Grid.Row="1" MinWidth="120" IsDefault="True"
+              Click="ContinueClicked" />
+    </Grid>
+  </Border>
+</Window>

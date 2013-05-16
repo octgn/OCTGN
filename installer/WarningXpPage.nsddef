@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file was created by NSISDialogDesigner 1.1.2.0
+http://coolsoft.altervista.org/nsisdialogdesigner
+Do not edit manually!
+-->
+<Dialog Name="WarningXpPage" Title="Dialog title..." Subtitle="Dialog subtitle..." Style="none" ExStyle="none">
+  <Label Name="WARNING" Location="162, 9" Size="131, 28" Text="WARNING" Font="Microsoft Sans Serif, 15.75pt, style=Bold" ForeColor="Red" TabIndex="0" Style="none" ExStyle="none" />
+  <HLine Name="HLine1" Location="-5, 35" Size="453, 2" Style="none" ExStyle="none" />
+  <Label Name="Label1" Location="12, 40" Size="426, 23" Text="You are currently running Windows XP, which is incompatible with .net 4.5." TabIndex="2" Style="none" ExStyle="none" />
+  <Label Name="Label2" Location="12, 63" Size="375, 36" Text="If you install and run this software, be aware that you will run into issues with memory and CPU usage." TabIndex="3" Style="none" ExStyle="none" />
+  <Label Name="Label3" Location="12, 99" Size="365, 23" Text="We recommend updating to at least Windows 7." TabIndex="4" Style="none" ExStyle="none" />
+  <Label Name="Label4" Location="12, 122" Size="375, 29" Text="If you are unable to update, the program will work, however it will run poorly and we can not offer tech support for you." TabIndex="5" Style="none" ExStyle="none" />
+</Dialog>
