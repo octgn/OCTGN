@@ -168,13 +168,25 @@ namespace Octgn.ProxyGenerator.Util
                     GraphicsUnit original = graphics.PageUnit;
                     graphics.PageUnit = GraphicsUnit.Point;  // Convert the PageUnit to Point just long enough to get an accurate measurement.
                     Font tempfont = new Font(family, size, fontStyle); // Create the font for the measurement.
-                    float measuredHeight = graphics.MeasureString(text, tempfont, rect.Width, format).Height;
-                    if (rect.Height < measuredHeight)
+                    SizeF unwrappedSize = graphics.MeasureString(text, tempfont);
+                    if (unwrappedSize.Height <= section.wordwrap.height)
                     {
-                        int sizePerIncrement = (int)Math.Round((double)(measuredHeight / size), MidpointRounding.ToEven);
-                        size = (int)Math.Round((double)(rect.Height / sizePerIncrement), MidpointRounding.ToEven);
-
+                        int sizePerIncrement = (int)Math.Round((double)(unwrappedSize.Width / size), MidpointRounding.ToEven);
+                        size = (int)Math.Round((double)(rect.Width / sizePerIncrement), MidpointRounding.ToEven);
+                        size = (size < minsize) ? minsize : size;
                         tempfont = new Font(family, size, fontStyle);
+                    }
+                    else
+                    {
+
+                        float measuredHeight = graphics.MeasureString(text, tempfont, rect.Width, format).Height;
+                        if (rect.Height < measuredHeight)
+                        {
+                            int sizePerIncrement = (int)Math.Round((double)(measuredHeight / size), MidpointRounding.ToEven);
+                            size = (int)Math.Round((double)(rect.Height / sizePerIncrement), MidpointRounding.ToEven);
+                            size = (size < minsize) ? minsize : size;
+                            tempfont = new Font(family, size, fontStyle);
+                        }
                     }
                     while (size > minsize && rect.Height < graphics.MeasureString(text, tempfont, rect.Width, format).Height) // Compare the height of the rendered text to the bounding box.  If it's larger
                     {
