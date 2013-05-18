@@ -477,27 +477,6 @@ namespace Octgn.DeckBuilder
             cardImage.Source = bim;
         }
 
-        private void ElementSelected(object sender, SelectionChangedEventArgs e)
-        {
-            var grid = (DataGrid) sender;
-            var element = (ICard) grid.SelectedItem;
-
-            // Don't hide the picture if the selected element was removed 
-            // with a keyboard shortcut from the results grid
-            if (element == null && !grid.IsFocused) return;
-
-            selection = element.ImageUri;
-            set_id = element.GetSet().Id;
-
-            var bim = new BitmapImage();
-            bim.BeginInit();
-            bim.CacheOption = BitmapCacheOption.OnLoad;
-            bim.UriSource = String.IsNullOrWhiteSpace(element.GetPicture()) ? Game.GetCardBackUri() : new Uri(element.GetPicture());
-            bim.EndInit();
-            cardImage.Source = bim;
-
-        }
-
         private void IsDeckOpen(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = Deck != null;
@@ -630,6 +609,12 @@ namespace Octgn.DeckBuilder
         {
             activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
             dragSection = (ObservableSection)FindAncestor<Expander>((FrameworkElement)sender).DataContext;
+            if (activeCard != null)
+            {
+                int cardIndex = activeCard.GetIndex();
+                var getCard = ActiveSection.Cards.ElementAt(cardIndex);
+                CardSelected(sender, new SearchCardImageEventArgs {SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+            }
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
