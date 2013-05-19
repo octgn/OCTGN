@@ -612,7 +612,7 @@ namespace Octgn.DeckBuilder
             if (activeCard != null)
             {
                 int cardIndex = activeCard.GetIndex();
-                var getCard = ActiveSection.Cards.ElementAt(cardIndex);
+                var getCard = dragSection.Cards.ElementAt(cardIndex);
                 CardSelected(sender, new SearchCardImageEventArgs {SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
             }
         }
@@ -623,11 +623,11 @@ namespace Octgn.DeckBuilder
                 try
                 {
                     int cardIndex = activeCard.GetIndex();
-                    var getCard = ActiveSection.Cards.ElementAt(cardIndex);
-                    DataObject dragCard = new DataObject("Card", getCard);
-                    if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift)
+                    var getCard = dragSection.Cards.ElementAt(cardIndex);
+                    DataObject dragCard = new DataObject("Card", getCard.ToMultiCard());
+                    if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {
-                        ActiveSection.Cards.RemoveCard(getCard);
+                        dragSection.Cards.RemoveCard(getCard);
                         DragDrop.DoDragDrop(activeCard, dragCard, DragDropEffects.All);
                     }
                     else
