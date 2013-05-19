@@ -23,7 +23,7 @@ namespace Octgn.ProxyGenerator
         public static Image GenerateProxy(BlockManager manager, string rootPath, TemplateDefinition template, Dictionary<string,string> values)
         {
             var path = Path.Combine(rootPath, template.src);
-            Image temp = GraphicUtils.LoadImage(path,PixelFormat.Format32bppArgb);
+            Bitmap temp = GraphicUtils.LoadImage(path,PixelFormat.Format32bppArgb);
 
             using (Graphics graphics = Graphics.FromImage(temp))
             {

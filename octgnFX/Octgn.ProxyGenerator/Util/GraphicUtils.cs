@@ -20,7 +20,7 @@ namespace Octgn.ProxyGenerator.Util
         /// <param name="overlay"></param>
         public static void MergeOverlay(Graphics graphics, BlockDefinition overlay)
         {
-            using (Image temp = GraphicUtils.LoadImage(overlay.src, PixelFormat.Format32bppArgb))
+            using (Bitmap temp = GraphicUtils.LoadImage(overlay.src, PixelFormat.Format32bppArgb))
             {
                 graphics.DrawImage(temp,overlay.location.x, overlay.location.y, temp.Width, temp.Height);
             }
@@ -232,24 +232,22 @@ namespace Octgn.ProxyGenerator.Util
             return (ret);
         }
 
-        public static Image LoadImage(string fileName, PixelFormat px = PixelFormat.DontCare)
+        public static Bitmap LoadImage(string fileName, PixelFormat px = PixelFormat.DontCare)
         {
             Image img = Image.FromFile(fileName);
             Bitmap bmp = img as Bitmap;
             Graphics g = Graphics.FromImage(bmp);
-            Bitmap bmpNew;
-            if (px != PixelFormat.DontCare)
-            {
-                bmpNew = new Bitmap(bmp.Width, bmp.Height, px);
-            }
-            else
-            {
-                bmpNew = new Bitmap(bmp);
-            }
+            Bitmap bmpNew = new Bitmap(bmp);
             g.DrawImage(bmpNew, new Point(0, 0));
             g.Dispose();
             bmp.Dispose();
             img.Dispose();
+            if (px != PixelFormat.DontCare)
+            {
+                Bitmap ret = bmpNew.Clone(new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), px);
+                bmpNew.Dispose();
+                return (ret);
+            }
             return (bmpNew);
         }
     }
