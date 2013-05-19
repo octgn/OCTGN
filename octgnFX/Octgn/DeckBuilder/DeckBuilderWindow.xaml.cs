@@ -479,8 +479,8 @@ namespace Octgn.DeckBuilder
 
         private void ElementSelected(object sender, SelectionChangedEventArgs e)
         {
-            var grid = (DataGrid) sender;
-            var element = (ICard) grid.SelectedItem;
+            var grid = (DataGrid)sender;
+            var element = (ICard)grid.SelectedItem;
 
             // Don't hide the picture if the selected element was removed 
             // with a keyboard shortcut from the results grid
@@ -624,12 +624,19 @@ namespace Octgn.DeckBuilder
             bim.EndInit();
             cardImage.Source = bim;
         }
+
         private DataGridRow activeCard;
         private ObservableSection dragSection;
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
         {
             activeCard = FindAncestor<DataGridRow>((DependencyObject)e.OriginalSource);
             dragSection = (ObservableSection)FindAncestor<Expander>((FrameworkElement)sender).DataContext;
+            if (activeCard != null)
+            {
+                int cardIndex = activeCard.GetIndex();
+                var getCard = dragSection.Cards.ElementAt(cardIndex);
+                CardSelected(sender, new SearchCardImageEventArgs {SetId = getCard.SetId, Image = getCard.ImageUri, CardId = getCard.Id });
+            }
         }
         private void PickUpDeckCard(object sender, MouseEventArgs e)
         {
@@ -638,11 +645,11 @@ namespace Octgn.DeckBuilder
                 try
                 {
                     int cardIndex = activeCard.GetIndex();
-                    var getCard = ActiveSection.Cards.ElementAt(cardIndex);
-                    DataObject dragCard = new DataObject("Card", getCard);
-                    if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift)
+                    var getCard = dragSection.Cards.ElementAt(cardIndex);
+                    DataObject dragCard = new DataObject("Card", getCard.ToMultiCard(getCard.Quantity));
+                    if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {
-                        ActiveSection.Cards.RemoveCard(getCard);
+                        dragSection.Cards.RemoveCard(getCard);
                         DragDrop.DoDragDrop(activeCard, dragCard, DragDropEffects.All);
                     }
                     else
@@ -674,32 +681,14 @@ namespace Octgn.DeckBuilder
                 var dragCard = e.Data.GetData("Card") as IMultiCard;
                 ObservableSection dropSection = (ObservableSection)((FrameworkElement)sender).DataContext;
                 var element = dropSection.Cards.FirstOrDefault(c => c.Id == dragCard.Id);
-                    if (e.Effects == DragDropEffects.Copy)
+                    if (e.Effects == DragDropEffects.Copy) dragCard.Quantity = 1;
+                    if (element != null)
                     {
-                        if (element != null)
-                        {
-                            element.Quantity += 1;
-                        }
-                        else
-                        {
-                            dropSection.Cards.AddCard(dragCard);
-                            //var card = CardManager.Get().GetCardById(dragCard.Id);
-                            //dropSection.Cards.AddCard(card.ToMultiCard());
-                        }
+                        element.Quantity = (byte)(element.Quantity + dragCard.Quantity);
                     }
                     else
                     {
-                        if (element != null)
-                        {
-                            element.Quantity = (byte)(element.Quantity + dragCard.Quantity);
-                        }
-                        else
-                        {
-                            dropSection.Cards.AddCard(dragCard);
-                            //var card = CardManager.Get().GetCardById(dragCard.Id);
-                            //dropSection.Cards.AddCard(card.ToMultiCard(dragCard.Quantity));
-                            //dropSection.Cards.Add(new Deck.Element { Card = Game.GetCardById(dragCard.Card.Id), Quantity = dragCard.Quantity });
-                        }
+                        dropSection.Cards.AddCard(dragCard);
                     }
             }
             e.Handled = true;
