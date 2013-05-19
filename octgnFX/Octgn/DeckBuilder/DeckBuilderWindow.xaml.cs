@@ -603,6 +603,7 @@ namespace Octgn.DeckBuilder
             bim.EndInit();
             cardImage.Source = bim;
         }
+
         private DataGridRow activeCard;
         private ObservableSection dragSection;
         private void DeckCardMouseDown(object sender, MouseButtonEventArgs e)
@@ -624,7 +625,7 @@ namespace Octgn.DeckBuilder
                 {
                     int cardIndex = activeCard.GetIndex();
                     var getCard = dragSection.Cards.ElementAt(cardIndex);
-                    DataObject dragCard = new DataObject("Card", getCard.ToMultiCard());
+                    DataObject dragCard = new DataObject("Card", getCard.ToMultiCard(getCard.Quantity));
                     if (System.Windows.Forms.Control.ModifierKeys == System.Windows.Forms.Keys.Shift || getCard.Quantity <= 1)
                     {
                         dragSection.Cards.RemoveCard(getCard);
@@ -659,32 +660,14 @@ namespace Octgn.DeckBuilder
                 var dragCard = e.Data.GetData("Card") as IMultiCard;
                 ObservableSection dropSection = (ObservableSection)((FrameworkElement)sender).DataContext;
                 var element = dropSection.Cards.FirstOrDefault(c => c.Id == dragCard.Id);
-                    if (e.Effects == DragDropEffects.Copy)
+                    if (e.Effects == DragDropEffects.Copy) dragCard.Quantity = 1;
+                    if (element != null)
                     {
-                        if (element != null)
-                        {
-                            element.Quantity += 1;
-                        }
-                        else
-                        {
-                            dropSection.Cards.AddCard(dragCard);
-                            //var card = CardManager.Get().GetCardById(dragCard.Id);
-                            //dropSection.Cards.AddCard(card.ToMultiCard());
-                        }
+                        element.Quantity = (byte)(element.Quantity + dragCard.Quantity);
                     }
                     else
                     {
-                        if (element != null)
-                        {
-                            element.Quantity = (byte)(element.Quantity + dragCard.Quantity);
-                        }
-                        else
-                        {
-                            dropSection.Cards.AddCard(dragCard);
-                            //var card = CardManager.Get().GetCardById(dragCard.Id);
-                            //dropSection.Cards.AddCard(card.ToMultiCard(dragCard.Quantity));
-                            //dropSection.Cards.Add(new Deck.Element { Card = Game.GetCardById(dragCard.Card.Id), Quantity = dragCard.Quantity });
-                        }
+                        dropSection.Cards.AddCard(dragCard);
                     }
             }
             e.Handled = true;
