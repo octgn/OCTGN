@@ -166,12 +166,15 @@ namespace Octgn.ProxyGenerator.Util
                     graphics.PageUnit = GraphicsUnit.Point;  // Convert the PageUnit to Point just long enough to get an accurate measurement.
                     Font tempfont = new Font(family, size, fontStyle); // Create the font for the measurement.
                     SizeF unwrappedSize = graphics.MeasureString(text, tempfont);
-                    if (unwrappedSize.Height <= section.wordwrap.height)
+                    if (unwrappedSize.Height > section.wordwrap.height)
                     {
-                        int sizePerIncrement = (int)Math.Round((double)(unwrappedSize.Width / size), MidpointRounding.ToEven);
-                        size = (int)Math.Round((double)(rect.Width / sizePerIncrement), MidpointRounding.ToEven);
-                        size = (size < minsize) ? minsize : size;
-                        tempfont = new Font(family, size, fontStyle);
+                        if (unwrappedSize.Width > section.wordwrap.width)
+                        {
+                            int sizePerIncrement = (int)Math.Round((double)(unwrappedSize.Width / size), MidpointRounding.ToEven);
+                            size = (int)Math.Round((double)(rect.Width / sizePerIncrement), MidpointRounding.ToEven);
+                            size = (size < minsize) ? minsize : size;
+                            tempfont = new Font(family, size, fontStyle);
+                        }
                     }
                     else
                     {
