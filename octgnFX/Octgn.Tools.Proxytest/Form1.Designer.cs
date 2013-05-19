@@ -50,8 +50,8 @@
             this.proxyPictureBox = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.TimeGeneratedTextBox = new System.Windows.Forms.TextBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.propertiesDataGrid)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -240,7 +240,7 @@
             this.proxyPictureBox.Location = new System.Drawing.Point(0, 0);
             this.proxyPictureBox.Name = "proxyPictureBox";
             this.proxyPictureBox.Size = new System.Drawing.Size(557, 722);
-            this.proxyPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.proxyPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.proxyPictureBox.TabIndex = 6;
             this.proxyPictureBox.TabStop = false;
             // 
@@ -274,6 +274,14 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(1102, 30);
             this.flowLayoutPanel1.TabIndex = 4;
             // 
+            // TimeGeneratedTextBox
+            // 
+            this.TimeGeneratedTextBox.Enabled = false;
+            this.TimeGeneratedTextBox.Location = new System.Drawing.Point(353, 3);
+            this.TimeGeneratedTextBox.Name = "TimeGeneratedTextBox";
+            this.TimeGeneratedTextBox.Size = new System.Drawing.Size(100, 20);
+            this.TimeGeneratedTextBox.TabIndex = 6;
+            // 
             // splitContainer1
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.splitContainer1, 2);
@@ -292,14 +300,6 @@
             this.splitContainer1.SplitterDistance = 536;
             this.splitContainer1.SplitterWidth = 9;
             this.splitContainer1.TabIndex = 8;
-            // 
-            // TimeGeneratedTextBox
-            // 
-            this.TimeGeneratedTextBox.Enabled = false;
-            this.TimeGeneratedTextBox.Location = new System.Drawing.Point(353, 3);
-            this.TimeGeneratedTextBox.Name = "TimeGeneratedTextBox";
-            this.TimeGeneratedTextBox.Size = new System.Drawing.Size(100, 20);
-            this.TimeGeneratedTextBox.TabIndex = 6;
             // 
             // Form1
             // 

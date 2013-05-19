@@ -12,7 +12,7 @@ namespace Octgn.ProxyGenerator.Definitions
         public List<XmlNode> elseifNodeList = new List<XmlNode>();
         public XmlNode elseNode = null;
         public XmlNode switchNode = null;
-
+        private string NullConstant = "#NULL#";
 
         public static ConditionalDefinition LoadConditional(XmlNode node)
         {
@@ -102,6 +102,20 @@ namespace Octgn.ProxyGenerator.Definitions
                         loadElse = true;
                     }
                 }
+                if (value.Equals(NullConstant) && CheckNullConstant(values, property))
+                {
+                    foreach (XmlNode node in ifNode.ChildNodes)
+                    {
+                        if (TemplateDefinition.SkipNode(node))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
+                    }
+                    foundMatch = true;
+                    loadElse = false;
+                }
             }
             if (!foundMatch)
             {
@@ -127,6 +141,20 @@ namespace Octgn.ProxyGenerator.Definitions
                             }
                             loadElse = false;
                             foundMatch = true;
+                        }
+                        if (value.Equals(NullConstant) && CheckNullConstant(values, property))
+                        {
+                            foreach (XmlNode node in elseIfNode.ChildNodes)
+                            {
+                                if (TemplateDefinition.SkipNode(node))
+                                {
+                                    continue;
+                                }
+                                LinkDefinition link = LinkDefinition.LoadLink(node);
+                                ret.Add(link);
+                            }
+                            foundMatch = true;
+                            loadElse = false;
                         }
                     }
                 }
@@ -181,9 +209,9 @@ namespace Octgn.ProxyGenerator.Definitions
                 foreach (XmlNode elseIfNode in elseifNodeList)
                 {
                     string elseIfContains = null;
-                    if (elseIfNode.Attributes["value"] != null)
+                    if (elseIfNode.Attributes["contains"] != null)
                     {
-                        elseIfContains = elseIfNode.Attributes["value"].Value;
+                        elseIfContains = elseIfNode.Attributes["contains"].Value;
                     }
                     if (elseIfContains != null && !foundMatch)
                     {
@@ -221,6 +249,22 @@ namespace Octgn.ProxyGenerator.Definitions
                     }
                 }
             }
+            return (ret);
+        }
+
+        internal bool CheckNullConstant(Dictionary<string, string> values, string property)
+        {
+            bool ret = false;
+
+            if (!values.ContainsKey(property))
+            {
+                ret = true;
+            }
+            if (values.ContainsKey(property) && values[property] == null)
+            {
+                ret = true;
+            }
+
             return (ret);
         }
 
@@ -298,6 +342,18 @@ namespace Octgn.ProxyGenerator.Definitions
                             continue;
                         }
                         LinkDefinition link = LinkDefinition.LoadLink(subNode);
+                        ret.Add(link);
+                    }
+                }
+                if (value.Equals(NullConstant) && CheckNullConstant(values, property))
+                {
+                    foreach (XmlNode subNode in node.ChildNodes)
+                    {
+                        if (TemplateDefinition.SkipNode(subNode))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
                         ret.Add(link);
                     }
                 }
