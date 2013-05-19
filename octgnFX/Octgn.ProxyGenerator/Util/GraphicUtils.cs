@@ -182,7 +182,7 @@ namespace Octgn.ProxyGenerator.Util
                         float measuredHeight = graphics.MeasureString(text, tempfont, rect.Width, format).Height;
                         if (rect.Height < measuredHeight)
                         {
-                            int sizePerIncrement = (int)Math.Round((double)(measuredHeight / size), MidpointRounding.ToEven);
+                             int sizePerIncrement = (int)Math.Round((double)(measuredHeight / unwrappedSize.Height), MidpointRounding.ToEven); //unwrappedSize.Height seems to be a better method of getting sizePerIncrement. 
                             size = (int)Math.Round((double)(rect.Height / sizePerIncrement), MidpointRounding.ToEven);
                             size = (size < minsize) ? minsize : size;
                             tempfont = new Font(family, size, fontStyle);
