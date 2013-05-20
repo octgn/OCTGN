@@ -1,5 +1,5 @@
 #3.1.30.123 - Test
-+ Proxygen fixed schema and validation on the format attribute.
++ Proxygen fixed schema and validation on the format attribute. -Gravecorp
 
 #3.1.31.122
 #3.1.30.122 - Test
