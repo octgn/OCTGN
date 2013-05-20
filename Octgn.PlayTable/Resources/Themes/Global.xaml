@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Octgn.Controls">
+
+    <!-- TODO: this doesn't seem to work !? -->
+    <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}">
+        <!-- Empty style (by default it displays a dashed rectangle -->
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Stroke="Red" StrokeThickness="1" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ChatUserListItem" TargetType="ContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="MouseOverAnimation" Storyboard.TargetProperty="Color">
+                            <ColorAnimation Storyboard.TargetName="ButtonBorderGradientStop1" To="#895E0101" Duration="0:0:0.2" />
+                            <ColorAnimation Storyboard.TargetName="ButtonBorderGradientStop2" To="#895E0101" Duration="0:0:0.2" />
+                        </Storyboard>
+                        <Storyboard x:Key="MouseOutAnimation" Storyboard.TargetProperty="Color"
+                                FillBehavior="Stop">
+                            <!-- <=================== -->
+                            <ColorAnimation Storyboard.TargetName="ButtonBorderGradientStop1" To="Transparent" Duration="0:0:0.2" />
+                            <ColorAnimation Storyboard.TargetName="ButtonBorderGradientStop2" To="Transparent" Duration="0:0:0.2" />
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource MouseOverAnimation}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource MouseOutAnimation}" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                    <Border >
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientBrush.GradientStops>
+                                    <GradientStop x:Name="ButtonBorderGradientStop1" Color="Transparent" Offset="0.0" />
+                                    <GradientStop x:Name="ButtonBorderGradientStop2" Color="Transparent" Offset="1.0" />
+                                </GradientBrush.GradientStops>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <ContentPresenter>
+                        </ContentPresenter>
+                    </Border>
+                </ControlTemplate>
+                
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

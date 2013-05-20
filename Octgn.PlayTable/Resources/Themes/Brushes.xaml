@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="ChatDarkUserColor" Color="LightBlue"></SolidColorBrush>
+    <SolidColorBrush x:Key="ChatLightUserColor" Color="DarkBlue"></SolidColorBrush>
+    
+    <SolidColorBrush x:Key="ChatDarkBackBrush" Color="#FF333333"></SolidColorBrush>
+    <SolidColorBrush x:Key="ChatLightBackBrush" Color="#FFF9F9F9"></SolidColorBrush>
+
+    <SolidColorBrush x:Key="ChatDarkFontBrush" Color="#FFF9F9F9"></SolidColorBrush>
+    <SolidColorBrush x:Key="ChatLightFontBrush" Color="#FF333333"></SolidColorBrush>
+
+    <SolidColorBrush x:Key="ChatDarkHoverBackBrush" Color="DimGray"></SolidColorBrush>
+    <SolidColorBrush x:Key="ChatLightHoverBackBrush" Color="#D0E9FE"></SolidColorBrush>
+    
+</ResourceDictionary>
