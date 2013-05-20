@@ -1,7 +1,8 @@
 ﻿<ctrl:OctgnChrome x:Class="Octgn.Play.PlayWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:octgn="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play" xmlns:gui="clr-namespace:Octgn.Play.Gui"
-        xmlns:ctrl="clr-namespace:Octgn.Controls" xmlns:play2="clr-namespace:Octgn.Core.Play;assembly=Octgn.Core"
+        xmlns:octgn="clr-namespace:Octgn" xmlns:play="clr-namespace:Octgn.Play;assembly=Octgn.PlayTable" xmlns:gui="clr-namespace:Octgn.Play.Gui;assembly=Octgn.PlayTable"
+        xmlns:ctrl="clr-namespace:Octgn.Controls;assembly=Octgn.PlayTable" xmlns:play2="clr-namespace:Octgn.Core.Play;assembly=Octgn.Core"
+                  xmlns:playTable="clr-namespace:Octgn.PlayTable"
                   x:Name="self" Title="Octgn" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
         Height="800" Width="900" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True"
         RenderOptions.BitmapScalingMode="Fant" >
@@ -124,7 +125,7 @@
             </Border>
 
             <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1" MinHeight="100"
-                  DataContext="{x:Static Member=Octgn.Core.Play.GameStateMachine.C.AllPlayers}" ItemsSource="{Binding}" SelectedItem="{x:Static play:Player.LocalPlayer}">
+                  DataContext="{x:Reference Octgn.Core.Play.GameStateMachine.C.AllPlayers}" ItemsSource="{Binding}" SelectedItem="{x:Static play:Player.LocalPlayer}">
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" Margin="0">
@@ -132,10 +133,10 @@
                             <TextBlock VerticalAlignment="Center" Focusable="False" Margin="5,0,0,0" FontWeight="Normal"
                          FontSize="11" Foreground="#282828" Initialized="InitializePlayerSummary" />
                             <ToggleButton VerticalAlignment="Center" Click="NextTurnClicked" Focusable="False" Margin="5,0,-8,0"
-                            IsChecked="{Binding Source={x:Static octgn:Program.GameEngine}, Path=StopTurn}">
+                            IsChecked="{Binding Source={x:Static playTable:Program.GameEngine}, Path=StopTurn}">
                                 <ToggleButton.Style>
                                     <MultiBinding Converter="{StaticResource CanPlay}">
-                                        <Binding Source="{x:Static octgn:Program.GameEngine}" Path="TurnPlayer" />
+                                        <Binding Source="{x:Static playTable:Program.GameEngine}" Path="TurnPlayer" />
                                         <Binding />
                                     </MultiBinding>
                                 </ToggleButton.Style>

@@ -255,6 +255,102 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Resources\PlayResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Button.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\CardRun.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\ChildWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\CommonControls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Menu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\NumericUpDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Panel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\ProgressBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\ScrollBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Tabs.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\BlueGlass\Window.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Brushes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\ChildWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Full\BureauBlack.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Full\BureauBlue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Full\ExpressionDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Full\ExpressionLight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Full\ShinyBlue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Full\ShinyRed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Full\WhistlerBlue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Global.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\NumericUpDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Themes\Target.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Scripting\Controls\CardDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -364,6 +460,101 @@
     <Resource Include="Scripting\CaseInsensitiveDict.py" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\109_AllAnnotations_Error_24x24_72.png" />
+    <Resource Include="Resources\admin.png" />
+    <Resource Include="Resources\back-button.png" />
+    <Resource Include="Resources\Back.jpg" />
+    <Resource Include="Resources\chaticon.png" />
+    <Resource Include="Resources\close.png" />
+    <Resource Include="Resources\closewindow.png" />
+    <Resource Include="Resources\cross.png" />
+    <None Include="Resources\doorclose.wav" />
+    <None Include="Resources\elevatording.wav" />
+    <Resource Include="Resources\eye.png" />
+    <Resource Include="Resources\FileIcons\Deck.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\FileIcons\Game.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\FileIcons\Patch.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\FileIcons\Set.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Folder.png" />
+    <Resource Include="Resources\Front.jpg" />
+    <Resource Include="Resources\gbreak.png" />
+    <Resource Include="Resources\google.png" />
+    <Resource Include="Resources\Icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icons\About.png" />
+    <Resource Include="Resources\Icons\bullet_arrow_down.png" />
+    <Resource Include="Resources\Icons\bullet_arrow_down_small.png" />
+    <Resource Include="Resources\Icons\cards.png" />
+    <Resource Include="Resources\Icons\console.png" />
+    <Resource Include="Resources\Icons\FilterGames.png" />
+    <Resource Include="Resources\Icons\FullScreen.png" />
+    <Resource Include="Resources\Icons\Help.png" />
+    <Resource Include="Resources\Icons\image_add.png" />
+    <Resource Include="Resources\Icons\image_add_small.png" />
+    <Resource Include="Resources\Icons\image_delete.png" />
+    <Resource Include="Resources\Icons\image_delete_small.png" />
+    <Resource Include="Resources\Icons\image_link.png" />
+    <Resource Include="Resources\Icons\image_link_small.png" />
+    <Resource Include="Resources\Icons\image_xml.png" />
+    <Resource Include="Resources\Icons\image_xml_small.png" />
+    <Resource Include="Resources\Icons\layer_edit.png" />
+    <Resource Include="Resources\Icons\LoadDeck.png" />
+    <Resource Include="Resources\Icons\LoadLimited.png" />
+    <Resource Include="Resources\Icons\Ok.png" />
+    <Resource Include="Resources\Icons\page_edit.png" />
+    <Resource Include="Resources\Icons\page_edit_small.png" />
+    <Resource Include="Resources\Icons\PiggyBank.png" />
+    <Resource Include="Resources\Icons\Quit.png" />
+    <Resource Include="Resources\Icons\Reset.png" />
+    <Resource Include="Resources\Icons\ruby_add.png" />
+    <Resource Include="Resources\Icons\ruby_add_small.png" />
+    <Resource Include="Resources\Icons\ruby_delete.png" />
+    <Resource Include="Resources\Icons\ruby_delete_small.png" />
+    <Resource Include="Resources\Icons\rules.png" />
+    <Resource Include="Resources\Icons\Save.png" />
+    <Resource Include="Resources\Icons\savedeck.png" />
+    <Resource Include="Resources\Icons\setting_tools.png" />
+    <Resource Include="Resources\Icons\user_add.png" />
+    <None Include="Resources\knockknock.wav" />
+    <Resource Include="Resources\loading.gif" />
+    <Resource Include="Resources\logo %281%29.png" />
+    <Resource Include="Resources\logoback.png" />
+    <Resource Include="Resources\logowords.png" />
+    <Resource Include="Resources\Markers\black.png" />
+    <Resource Include="Resources\Markers\blue.png" />
+    <Resource Include="Resources\Markers\brown.png" />
+    <Resource Include="Resources\Markers\green.png" />
+    <Resource Include="Resources\Markers\orange.png" />
+    <Resource Include="Resources\Markers\purple.png" />
+    <Resource Include="Resources\Markers\red.png" />
+    <Resource Include="Resources\Markers\white.png" />
+    <Resource Include="Resources\Markers\yellow.png" />
+    <Resource Include="Resources\minimize.png" />
+    <Resource Include="Resources\minmax.png" />
+    <Resource Include="Resources\moderator.png" />
+    <Resource Include="Resources\none.jpg" />
+    <Resource Include="Resources\owner.png" />
+    <Resource Include="Resources\Patch.png" />
+    <Resource Include="Resources\pregamelobbyicon.png" />
+    <Resource Include="Resources\randomname.png" />
+    <Resource Include="Resources\search.png" />
+    <Resource Include="Resources\StartupMessages.txt" />
+    <Resource Include="Resources\statusAway.png" />
+    <Resource Include="Resources\statusDND.png" />
+    <Resource Include="Resources\statusOffline.png" />
+    <Resource Include="Resources\statusOnline.png" />
+    <Resource Include="Resources\sub.png" />
+    <Resource Include="Resources\uicon.png" />
+    <Resource Include="Resources\usernoimage.png" />
     <Content Include="Scripting\Lib\abc.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
