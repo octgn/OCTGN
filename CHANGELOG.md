@@ -1,3 +1,74 @@
+#3.1.30.122 - Test
++ Removed white square in userlist when both scrollbars are shown. - iGemini
++ Proxygen conditional element if structure splitted value and contains logic for ease of debugging. - Graves
++ Improved image updating in deck editor Fixes #774 - Soul1355
++ Fixed issue with dragging between deck sections - Soul1355
++ Fix some issues in deck editor - Soul1355
++ Update GraphicUtils for proxy generator - DarkSir23
++ Wordwrap shrink to fit for proxies - Graves
++ Reduce overhead on image load in proxygen - Graves
++ Fixed contains not correctly working in some cases add a check for a null constant so you can check value for not defined/null its named #NULL# - Graves
++ Proxytester maintains image aspect ratio now - Graves
++ Fixed o8c group install - Graves
+
+#3.1.30.121
+#3.1.29.121 - Test
++ Fix start game dialog never closing - Kelly 
++ Fix temp cleanup during dns change - Kelly
+
+#3.1.29.120
+#3.1.28.120 - Test
++ Fixed broken limited deck editor #847 - Brine
++ Xml validation improvements in the o8build - Graves
+
+#3.1.28.119 - Test
++ Implemented fixed/formated text values #846 - Graves
+
+#3.1.28.118
+#3.1.27.118 - Test
++ Simple timer for testing proxy gen speed - Graves
++ Added some logging for proxy gen speeds - Kelly
++ Fixed card clone null crash - Kelly
++ Fixed #817 #815 #791 alternate issues - Kelly
+
+#3.1.27.117 - Test
++ Cleaned up some loading messages - Brine
++ More alternate fixes - Kelly
++ Fixed a typo - Kelly
++ Fixed if/else proxygen structure not breaking on match - Graves
+
+#3.1.27.116 - Test
++ Xsd fix - Graves
++ Ignore undefined properties for cards - Kelly
++ Added some schema changes and some restrictions on attributes for proxygen - Graves
++ Proxygen xsd overhaul - Graves
++ Include xsd files in octgn's folder for devs - Graves
++ Added more loading messages - Brine
++ o8build alternate card validation - Graves
+
+#3.1.27.115 - Test
++ Alternates get skipped for validation - Graves
+
+#3.1.27.114 - Test
++ Changed o8build validation order added duplicated property checking for gamedef. - Graves
++ o8build now checks sets for duplicate properties on cards and on properties not defined in definition.xml - Graves
++ o8buildgui updated with selection of lines and a right click menu to copy to clipboard. - Graves
++ Start of askChoice API for multiple choice dialog boxes(python function askChoice('question string', [python list]) will create a box with radio buttons to select the option you want returns index number of chosen option in list) - Brine
+
+#4.1.27.113 - Test
++ Removed xp warning, always install .net 4.0 - Kelly
++ o8build throws an error when version is not defined in a set while converting o8s files - Graves
++ Fixed big memory leak - Kelly
++ Cleanup proxygen xsd - Graves
++ Added option to o8buildgui to use test version instead of master - Graves
++ Redone switch conditional and updated xsd proxygen - Graves
+
+#3.1.26.113
+#3.1.26.112 - Test
++ More memory fix - Kelly
++ Fixed image check for chat images - Kelly
++ Updated changelog - Kelly
+
 #3.1.25.112
 + Fixed chat memory issue
 + Chat images for subscribers(gifs disabled for now)
