@@ -1,3 +1,6 @@
+#3.1.30.123 - Test
++ Proxygen fixed schema and validation on the format attribute.
+
 #3.1.31.122
 #3.1.30.122 - Test
 + Removed white square in userlist when both scrollbars are shown. - iGemini
