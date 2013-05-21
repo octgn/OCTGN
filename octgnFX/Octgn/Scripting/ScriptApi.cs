@@ -473,20 +473,13 @@ namespace Octgn.Scripting
                                             });
         }
 
-        public int? AskChoice(string question, List<string> choices)
+        public int? AskChoice(string question, List<string> choices, string includeCustomButton, bool includeCancelButton)
         {
             return _engine.Invoke<int?>(() =>
             {
-                var dlg = new ChoiceDlg("Choose One", question, choices);
-                int result = dlg.GetChoice();
-                if (result == 0)
-                {
-                    return (int?)null;
-                }
-                else
-                {
-                    return dlg.DialogResult.GetValueOrDefault() ? result - 1: (int?)null;
-                }
+                var dlg = new ChoiceDlg("Choose One", question, choices, includeCustomButton, includeCancelButton);
+                int? result = dlg.GetChoice();
+                return dlg.DialogResult.GetValueOrDefault() ? result: (int?)null;
             });
         }
 

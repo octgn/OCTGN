@@ -1,16 +1,13 @@
 ﻿<Window x:Class="Octgn.Scripting.Controls.ChoiceDlg" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource Window}" Width="300"
         SizeToContent="Height" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" x:Name="choiceWindow">
 
         <Border Style="{StaticResource Panel}" Margin="8">
-            <StackPanel Orientation="Vertical" x:Name="radioField">
+            <StackPanel Orientation="Vertical" x:Name="buttonField">
                 <TextBlock x:Name="promptLbl" Margin="16,8,16,8" Text="Prompt" />
             </StackPanel>
         </Border>
-
-        <Button Content="OK" IsDefault="True" Click="OkClicked" TabIndex="2" Margin="8" MinWidth="128"
-            HorizontalAlignment="Center" />
 
     </StackPanel>
 </Window>
