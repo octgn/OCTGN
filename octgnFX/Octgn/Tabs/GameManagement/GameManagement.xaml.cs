@@ -267,19 +267,19 @@ namespace Octgn.Tabs.GameManagement
                                         try
                                         {
                                             if (!File.Exists(f)) continue;
-                                            GameManager.Get().Installo8c(of.FileName);
+                                            GameManager.Get().Installo8c(f);
                                         }
                                         catch (UserMessageException ex)
                                         {
-                                            Log.Warn("Could not install o8c " + of.FileName + ".", ex);
+                                            Log.Warn("Could not install o8c " + f + ".", ex);
                                             TopMostMessageBox.Show(
                                                 ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                                         }
                                         catch (Exception ex)
                                         {
-                                            Log.Warn("Could not install o8c " + of.FileName + ".", ex);
+                                            Log.Warn("Could not install o8c " + f + ".", ex);
                                             TopMostMessageBox.Show(
-                                                "Could not install o8c " + of.FileName
+                                                "Could not install o8c " + f
                                                 + ". Please make sure it isn't in use and that you have access to it.",
                                                 "Error",
                                                 MessageBoxButton.OK,

@@ -23,12 +23,9 @@ namespace Octgn.ProxyGenerator
         public static Image GenerateProxy(BlockManager manager, string rootPath, TemplateDefinition template, Dictionary<string,string> values)
         {
             var path = Path.Combine(rootPath, template.src);
-            Image temp = GraphicUtils.LoadImage(path);
-            Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
-            //b.MakeTransparent();
-                //ret.PixelFormat = PixelFormat.Format32bppArgb;
+            Bitmap temp = GraphicUtils.LoadImage(path,PixelFormat.Format32bppArgb);
 
-            using (Graphics graphics = Graphics.FromImage(b))
+            using (Graphics graphics = Graphics.FromImage(temp))
             {
                 foreach (LinkDefinition overlay in template.GetOverLayBlocks(values))
                 {
@@ -94,7 +91,7 @@ namespace Octgn.ProxyGenerator
                 }
             }
 
-            return (b);
+            return (temp);
         }
 
 

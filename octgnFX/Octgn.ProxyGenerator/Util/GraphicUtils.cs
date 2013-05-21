@@ -20,12 +20,9 @@ namespace Octgn.ProxyGenerator.Util
         /// <param name="overlay"></param>
         public static void MergeOverlay(Graphics graphics, BlockDefinition overlay)
         {
-            using (Image temp = GraphicUtils.LoadImage(overlay.src))
+            using (Bitmap temp = GraphicUtils.LoadImage(overlay.src, PixelFormat.Format32bppArgb))
             {
-                Bitmap b = ((Bitmap)temp).Clone(new Rectangle(0, 0, temp.Width, temp.Height), PixelFormat.Format32bppArgb);
-                //b.MakeTransparent();
-                graphics.DrawImage(b,overlay.location.x, overlay.location.y, b.Width, b.Height);
-                b.Dispose();
+                graphics.DrawImage(temp,overlay.location.x, overlay.location.y, temp.Width, temp.Height);
             }
         }
 
@@ -168,13 +165,28 @@ namespace Octgn.ProxyGenerator.Util
                     GraphicsUnit original = graphics.PageUnit;
                     graphics.PageUnit = GraphicsUnit.Point;  // Convert the PageUnit to Point just long enough to get an accurate measurement.
                     Font tempfont = new Font(family, size, fontStyle); // Create the font for the measurement.
-                    float measuredHeight = graphics.MeasureString(text, tempfont, rect.Width, format).Height;
-                    if (rect.Height < measuredHeight)
+                    SizeF unwrappedSize = graphics.MeasureString(text, tempfont);
+                    if (unwrappedSize.Height > section.wordwrap.height)
                     {
-                        int sizePerIncrement = (int)Math.Round((double)(measuredHeight / size), MidpointRounding.ToEven);
-                        size = (int)Math.Round((double)(rect.Height / sizePerIncrement), MidpointRounding.ToEven);
+                        if (unwrappedSize.Width > section.wordwrap.width)
+                        {
+                            int sizePerIncrement = (int)Math.Round((double)(unwrappedSize.Width / size), MidpointRounding.ToEven);
+                            size = (int)Math.Round((double)(rect.Width / sizePerIncrement), MidpointRounding.ToEven);
+                            size = (size < minsize) ? minsize : size;
+                            tempfont = new Font(family, size, fontStyle);
+                        }
+                    }
+                    else
+                    {
 
-                        tempfont = new Font(family, size, fontStyle);
+                        float measuredHeight = graphics.MeasureString(text, tempfont, rect.Width, format).Height;
+                        if (rect.Height < measuredHeight)
+                        {
+                             int sizePerIncrement = (int)Math.Round((double)(measuredHeight / unwrappedSize.Height), MidpointRounding.ToEven); //unwrappedSize.Height seems to be a better method of getting sizePerIncrement. 
+                            size = (int)Math.Round((double)(rect.Height / sizePerIncrement), MidpointRounding.ToEven);
+                            size = (size < minsize) ? minsize : size;
+                            tempfont = new Font(family, size, fontStyle);
+                        }
                     }
                     while (size > minsize && rect.Height < graphics.MeasureString(text, tempfont, rect.Width, format).Height) // Compare the height of the rendered text to the bounding box.  If it's larger
                     {
@@ -223,7 +235,7 @@ namespace Octgn.ProxyGenerator.Util
             return (ret);
         }
 
-        public static Image LoadImage(string fileName)
+        public static Bitmap LoadImage(string fileName, PixelFormat px = PixelFormat.DontCare)
         {
             Image img = Image.FromFile(fileName);
             Bitmap bmp = img as Bitmap;
@@ -233,6 +245,12 @@ namespace Octgn.ProxyGenerator.Util
             g.Dispose();
             bmp.Dispose();
             img.Dispose();
+            if (px != PixelFormat.DontCare)
+            {
+                Bitmap ret = bmpNew.Clone(new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), px);
+                bmpNew.Dispose();
+                return (ret);
+            }
             return (bmpNew);
         }
     }

@@ -207,6 +207,7 @@ namespace Octgn.DeckBuilder
         private void SelectPickupCard(object sender, MouseButtonEventArgs e)
         {
             dragActive = true;
+            ResultCardSelected(sender, new SelectionChangedEventArgs(e.RoutedEvent, new List<Object>(), new List<Object>()));
         }
         private void PickUpCard(object sender, MouseEventArgs e)
         {

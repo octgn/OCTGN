@@ -12,7 +12,7 @@ namespace Octgn.ProxyGenerator.Definitions
         public List<XmlNode> elseifNodeList = new List<XmlNode>();
         public XmlNode elseNode = null;
         public XmlNode switchNode = null;
-
+        private string NullConstant = "#NULL#";
 
         public static ConditionalDefinition LoadConditional(XmlNode node)
         {
@@ -68,7 +68,6 @@ namespace Octgn.ProxyGenerator.Definitions
             string property = ifNode.Attributes["property"].Value;
             string value = null;
             string contains = null;
-            bool loadElse = false;
             bool foundMatch = false;
 
             if (ifNode.Attributes["value"] != null)
@@ -80,6 +79,29 @@ namespace Octgn.ProxyGenerator.Definitions
                 contains = ifNode.Attributes["contains"].Value;
             }
 
+            if (value != null)
+            {
+                ret.AddRange(IfValue(values, property, value, out foundMatch));
+            }
+            
+            if (foundMatch)
+            {
+                return (ret);
+            }
+
+            if(contains != null)
+            {
+                ret.AddRange(IfContains(values, property, contains, out foundMatch));
+            }
+ 
+            return (ret);
+        }
+
+        private List<LinkDefinition> IfValue(Dictionary<string, string> values, string property,string value, out bool foundMatch)
+        {
+            List<LinkDefinition> ret = new List<LinkDefinition>();
+            bool loadElse = false;
+            foundMatch = false;
             if (value != null)
             {
                 if (values.ContainsKey(property) && values[property] == value)
@@ -101,6 +123,20 @@ namespace Octgn.ProxyGenerator.Definitions
                     {
                         loadElse = true;
                     }
+                }
+                if (value.Equals(NullConstant) && CheckNullConstant(values, property))
+                {
+                    foreach (XmlNode node in ifNode.ChildNodes)
+                    {
+                        if (TemplateDefinition.SkipNode(node))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
+                        ret.Add(link);
+                    }
+                    foundMatch = true;
+                    loadElse = false;
                 }
             }
             if (!foundMatch)
@@ -128,6 +164,20 @@ namespace Octgn.ProxyGenerator.Definitions
                             loadElse = false;
                             foundMatch = true;
                         }
+                        if (value.Equals(NullConstant) && CheckNullConstant(values, property))
+                        {
+                            foreach (XmlNode node in elseIfNode.ChildNodes)
+                            {
+                                if (TemplateDefinition.SkipNode(node))
+                                {
+                                    continue;
+                                }
+                                LinkDefinition link = LinkDefinition.LoadLink(node);
+                                ret.Add(link);
+                            }
+                            foundMatch = true;
+                            loadElse = false;
+                        }
                     }
                 }
             }
@@ -148,11 +198,14 @@ namespace Octgn.ProxyGenerator.Definitions
                 }
 
             }
-            if (foundMatch)
-            {
-                return (ret);
-            }
+            return (ret);
+        }
 
+        private List<LinkDefinition> IfContains(Dictionary<string, string> values, string property, string contains, out bool foundMatch)
+        {
+            List<LinkDefinition> ret = new List<LinkDefinition>();
+            bool loadElse = false;
+            foundMatch = false;
             if (contains != null)
             {
                 if (values.ContainsKey(property) && values[property].Contains(contains))
@@ -181,9 +234,9 @@ namespace Octgn.ProxyGenerator.Definitions
                 foreach (XmlNode elseIfNode in elseifNodeList)
                 {
                     string elseIfContains = null;
-                    if (elseIfNode.Attributes["value"] != null)
+                    if (elseIfNode.Attributes["contains"] != null)
                     {
-                        elseIfContains = elseIfNode.Attributes["value"].Value;
+                        elseIfContains = elseIfNode.Attributes["contains"].Value;
                     }
                     if (elseIfContains != null && !foundMatch)
                     {
@@ -197,7 +250,7 @@ namespace Octgn.ProxyGenerator.Definitions
                                 }
                                 LinkDefinition link = LinkDefinition.LoadLink(node);
                                 ret.Add(link);
-                                
+
                             }
                             loadElse = false;
                             foundMatch = true;
@@ -221,6 +274,22 @@ namespace Octgn.ProxyGenerator.Definitions
                     }
                 }
             }
+            return (ret);
+        }
+
+        internal bool CheckNullConstant(Dictionary<string, string> values, string property)
+        {
+            bool ret = false;
+
+            if (!values.ContainsKey(property))
+            {
+                ret = true;
+            }
+            if (values.ContainsKey(property) && values[property] == null)
+            {
+                ret = true;
+            }
+
             return (ret);
         }
 
@@ -298,6 +367,18 @@ namespace Octgn.ProxyGenerator.Definitions
                             continue;
                         }
                         LinkDefinition link = LinkDefinition.LoadLink(subNode);
+                        ret.Add(link);
+                    }
+                }
+                if (value.Equals(NullConstant) && CheckNullConstant(values, property))
+                {
+                    foreach (XmlNode subNode in node.ChildNodes)
+                    {
+                        if (TemplateDefinition.SkipNode(subNode))
+                        {
+                            continue;
+                        }
+                        LinkDefinition link = LinkDefinition.LoadLink(node);
                         ret.Add(link);
                     }
                 }

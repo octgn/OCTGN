@@ -22,8 +22,8 @@ git push --tags origin";
             }
             else if ((context.Data["Mode"] as string).ToLower() == "test")
             {
-                const string BatTemplate = @"git commit -am ""Auto generated commit for version %v""
-git tag -a %v -m ""Auto generated commit for version %v""
+                const string BatTemplate = @"git commit -am ""Auto generated commit for version %v-Test""
+git tag -a %v -m ""Auto generated commit for version %v-Test""
 git push origin HEAD:test
 git push --tags origin";
                 var file = context.Data["WorkingDirectory"] as string;
