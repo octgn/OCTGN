@@ -487,7 +487,13 @@ namespace Skylabs.Lobby
             if (message[0] == '/')
             {
                 var userCommand = message.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                var args = userCommand.Skip(1).ToArray();
+                var args = new string[0];
+                if (userCommand.Length > 1)
+                {
+                    args = String.Join(" ",userCommand.Skip(1)).Split(new[] { ',' });
+                    for (var i = 0; i < args.Length; i++) args[i] = args[i].Trim();
+                }
+                //var args = userCommand.Skip(1).ToArray();
                 var command = userCommand.Length > 0 ? userCommand[0] : string.Empty;
 
                 #region SlashCommands
@@ -500,10 +506,10 @@ namespace Skylabs.Lobby
                             helpMessage.AppendLine("/?                : This help");
                             helpMessage.AppendLine(
                                 "/topic            : Set the topic of the room if you have the proper credentials");
-                            helpMessage.AppendLine("/msg {username}   : Starts a chat with a specific user");
-                            helpMessage.AppendLine("/friend {username}: Add a friend, or multiple friends");
-                            helpMessage.AppendLine("/removefriend {username}: Remove a friend, or multiple friends");
-                            helpMessage.AppendLine("/invite {username}: Invite user, or multiple users, to a chat room");
+                            helpMessage.AppendLine("/msg {username} : Starts a chat with a specific user");
+                            helpMessage.AppendLine("/friend {username}: Add a friend, or multiple friends(separated by commas)");
+                            helpMessage.AppendLine("/removefriend {username}: Remove a friend, or multiple friends(separated by commas)");
+                            helpMessage.AppendLine("/invite {username}: Invite user, or multiple users, to a chat room(separated by commas)");
                             Message mess = null;
                             if (IsGroupChat)
                             {

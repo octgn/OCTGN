@@ -1,3 +1,8 @@
+#3.1.31.124 - Test
++ Usernames with spaces display correctly
++ Use comma to seperate / commands instead of spaces
+
+#3.1.31.123
 #3.1.30.123 - Test
 + Proxygen fixed schema and validation on the format attribute. -Gravecorp
 

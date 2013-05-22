@@ -177,6 +177,7 @@
     <Reference Include="Microsoft.Dynamic">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Dynamic.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Scripting">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.dll</HintPath>
     </Reference>
@@ -185,6 +186,9 @@
     </Reference>
     <Reference Include="Microsoft.Scripting.Metadata">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.XmlTransform">
+      <HintPath>..\..\packages\SlowCheetah.2.5.5\tools\Microsoft.Web.XmlTransform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="mscorlib" />
@@ -198,6 +202,9 @@
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="PresentationFramework.Classic" />
+    <Reference Include="SlowCheetah.Xdt">
+      <HintPath>..\..\packages\SlowCheetah.2.5.5\tools\SlowCheetah.Xdt.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
