@@ -469,6 +469,18 @@ namespace Skylabs.Lobby
             }
         }
 
+        public void Whisper(User user)
+        {
+            if (this.IsGroupChat)
+            {
+                if (user.UserName.Equals(this.GroupUser.UserName))
+                {
+                    this.client.Chatting.GetRoom(new User(new Jid(user.JidUser.Resource, this.client.Host, "")));
+                }
+            }
+            this.client.Chatting.GetRoom(user);
+        }
+
         /// <summary>
         /// The send message.
         /// </summary>
@@ -545,7 +557,7 @@ namespace Skylabs.Lobby
                         {
                             ChatRoom r =
                                 this.client.Chatting.GetRoom(
-                                    new User(new Jid(String.Join(" ", args), this.client.Host, "")));
+                                    new User(new Jid(args[0] ?? "", this.client.Host, "")));
                             break;
                         }
                     case "friend":
