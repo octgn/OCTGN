@@ -122,6 +122,7 @@ namespace Octgn.Windows
                 //CheckForXmlSetUpdates();
                 this.LoadDatabase();
                 this.UpdateGames();
+                GameFeedManager.Get().OnUpdateMessage -= GrOnUpdateMessage;
                 UpdateCheckDone();
 
             });
@@ -204,7 +205,14 @@ namespace Octgn.Windows
         private void UpdateGames()
         {
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
+            var gr = GameFeedManager.Get();
+            gr.OnUpdateMessage += GrOnUpdateMessage;
             Task.Factory.StartNew(GameFeedManager.Get().CheckForUpdates).Wait(TimeSpan.FromMinutes(5));
+        }
+
+        private void GrOnUpdateMessage(string s)
+        {
+            UpdateStatus(s);
         }
 
         private void Update()

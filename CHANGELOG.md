@@ -5,6 +5,8 @@
 + Right click users in chat list
 + In game chat resizing
 + Can double click in game chat resize to snap chat to full game table height, or double click to snap back again.
++ Game devs can now jump directly into a table after the 'Loading Window' using a command
++ Loading window now shows which games are being checked to update, and which are updating
 
 #3.1.31.123
 #3.1.30.123 - Test

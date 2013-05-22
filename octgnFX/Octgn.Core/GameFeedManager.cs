@@ -19,6 +19,7 @@
 
     public interface IGameFeedManager : IDisposable
     {
+        event Action<String> OnUpdateMessage;
         void CheckForUpdates();
         IEnumerable<NamedUrl> GetFeeds();
         void AddFeed(string name, string feed);
@@ -61,6 +62,17 @@
 
         public event EventHandler OnUpdateFeedList;
 
+        public event Action<string> OnUpdateMessage;
+
+        protected virtual void FireOnUpdateMessage(string obj, params object[] args)
+        {
+            var handler = this.OnUpdateMessage;
+            if (handler != null)
+            {
+                handler(string.Format(obj,args));
+            }
+        }
+
         public void CheckForUpdates()
         {
             Log.Info("Checking for updates");
@@ -68,6 +80,7 @@
             {
                 foreach (var g in DataManagers.GameManager.Get().Games)
                 {
+                    FireOnUpdateMessage("Checking for updates for game {0}", g.Name);
                     Log.DebugFormat("Checking for updates for game {0} {1}",g.Id,g.Name);
                     foreach (var f in this.GetFeeds())
                     {
@@ -114,6 +127,8 @@
                         var gameVersion = new SemanticVersion(g.Version);
                         if (newestPackage.Version.Version.CompareTo(gameVersion.Version) > 0)
                         {
+                            FireOnUpdateMessage(
+                                "Updating {0} from {1} to {2}", g.Name, g.Version, newestPackage.Version.Version);
                             Log.DebugFormat(
                                 "Update found. Updating from {0} to {1} for {2} {3} {4} {5}", g.Version, newestPackage.Version.Version,g.Id, g.Name, f.Name, f.Url);
                             DataManagers.GameManager.Get().InstallGame(newestPackage);
