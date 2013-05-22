@@ -88,7 +88,7 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <gui:TableControl Grid.Row="2" x:Name="table" DataContext="{Binding Table}" KeyboardNavigation.IsTabStop="True"
+        <gui:TableControl Grid.Row="2" Grid.RowSpan="3"  x:Name="table" DataContext="{Binding Table}" KeyboardNavigation.IsTabStop="True"
                       KeyboardNavigation.TabNavigation="Contained"/>
         <ctrl:ChildWindowManager x:Name="wndManager" Grid.Row="2" Grid.RowSpan="2" />
         <Decorator Grid.Row="2"  x:Name="backstage" Visibility="Collapsed"/>
@@ -101,29 +101,37 @@
              MaxHeight="{Binding ElementName=table, Path=ActualHeight, Converter={StaticResource Scale}, ConverterParameter=0.85}" />
         </Decorator>
 
-        <GridSplitter Grid.Row="3"
-                      Height="3"
-                      Width="Auto"
+        <Grid Grid.Row="2" Grid.RowSpan="3" ZIndex="5" Width="300" HorizontalAlignment="Left" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100*" x:Name="ChatGridEmptyPart"/>
+                <RowDefinition Height="3"/>
+                <RowDefinition x:Name="ChatGridChatPart" MinHeight="{Binding ElementName=playerTabs, Path=ActualHeight}"/>
+            </Grid.RowDefinitions>
+            <GridSplitter Grid.Row="1"
+            x:Name="ChatSplit"
+            MouseDoubleClick="ChatSplitDoubleClick"
+                      Height="4"
+                      Width="auto"
                       HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch"
-                      Background="Firebrick"
+                      VerticalAlignment="Bottom"
+                      Background="Transparent"
                       ResizeBehavior="PreviousAndNext" 
                       Cursor="SizeNS" 
                       ResizeDirection="Rows" 
-                      ShowsPreview="True" Visibility="Collapsed"></GridSplitter>
-        <Grid Grid.Row="4" Background="{StaticResource WindowBackgroundBrush}">
+                      ShowsPreview="True" Visibility="Visible"></GridSplitter>
+            <Border Margin="0" Padding="0,0,0,0"
+                    Grid.Row="2"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch">
+                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+            </Border>
+        </Grid>
+        <Grid Grid.Row="4" Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <GridSplitter Width="5" DragIncrement="1" Tag="{Binding BindsDirectlyToSource=True}" Opacity="0" />
-
-            <Border Style="{StaticResource Panel}" Margin="2" Padding="5"
-              MaxHeight="{Binding ElementName=playerTabs, Path=ActualHeight}">
-                <gui:ChatControl x:Name="chat" DockPanel.Dock="Left" DisplayKeyboardShortcut="True" />
-            </Border>
-
-            <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1" MinHeight="100"
+            <TabControl x:Name="playerTabs" Margin="0,2,2,2" Padding="0" Grid.Column="1" MinHeight="100" Background="Transparent" Style="{x:Null}" BorderThickness="0"
                   DataContext="{x:Static play:Player.All}" ItemsSource="{Binding}" SelectedItem="{x:Static play:Player.LocalPlayer}">
                 <TabControl.ItemTemplate>
                     <DataTemplate>

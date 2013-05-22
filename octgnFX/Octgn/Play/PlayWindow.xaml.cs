@@ -529,6 +529,26 @@ namespace Octgn.Play
             wnd.ShowDialog();
 
         }
+
+        private bool chatIsMaxed = false;
+
+        private void ChatSplitDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (chatIsMaxed)
+            {
+                ChatGridEmptyPart.Height = new GridLength(100, GridUnitType.Star);
+                ChatGridChatPart.Height = new GridLength(playerTabs.ActualHeight);
+                ChatSplit.DragIncrement = 1;
+                chatIsMaxed = false;
+            }
+            else
+            {
+                ChatGridEmptyPart.Height = new GridLength(0, GridUnitType.Star);
+                ChatGridChatPart.Height = new GridLength(100, GridUnitType.Star);
+                ChatSplit.DragIncrement = 10000;
+                chatIsMaxed = true;
+            }
+        }
     }
 
     internal class CanPlayConverter : IMultiValueConverter

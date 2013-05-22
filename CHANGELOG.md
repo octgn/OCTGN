@@ -3,6 +3,8 @@
 + Usernames with spaces display correctly
 + Use comma to seperate / commands instead of spaces
 + Right click users in chat list
++ In game chat resizing
++ Can double click in game chat resize to snap chat to full game table height, or double click to snap back again.
 
 #3.1.31.123
 #3.1.30.123 - Test
