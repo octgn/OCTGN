@@ -14,6 +14,7 @@ namespace Octgn.Windows
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using System.Windows.Input;
 
@@ -32,6 +33,7 @@ namespace Octgn.Windows
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsClosingDown { get; set; }
+        public bool GoDirectlyToTable { get; set; }
 
         private bool _realCloseWindow = false;
         private bool _isNotUpToDate = false;
@@ -40,10 +42,13 @@ namespace Octgn.Windows
 
         private bool _hasLoaded = false;
 
-        private Key[] keys = new Key[] { Key.None, Key.None, Key.None, Key.None, Key.None, Key.None, };
-        private Key[] correctKeys = new Key[]{Key.N,Key.U,Key.D, Key.I, Key.T, Key.Y};
+        private Key[] keys = new Key[] { Key.None, Key.None, Key.None, Key.None, Key.None };
+        private Key[] correctKeys = new Key[]{Key.O,Key.C,Key.T, Key.G, Key.N};
+        private Key[] tableKeys = new Key[] { Key.T, Key.A, Key.B, Key.L, Key.E };
 
         private bool cancel = false;
+
+        private bool toTable = false;
 
         public UpdateChecker()
         {
@@ -67,8 +72,8 @@ namespace Octgn.Windows
             }
             if (!gotOne)
             {
-                Array.Copy(keys.ToArray(),1,keys,0,5);
-                keys[5] = keyEventArgs.Key;
+                Array.Copy(keys.ToArray(),1,keys,0,4);
+                keys[4] = keyEventArgs.Key;
             }
             if (keys.SequenceEqual(correctKeys))
             {
@@ -76,6 +81,16 @@ namespace Octgn.Windows
                 cancel = true;
                 //this.UpdateCheckDone();
             }
+            else if (keys.SequenceEqual(tableKeys))
+            {
+                GoDirectlyToTable = true;
+            }
+            //var sb = new StringBuilder();
+            //foreach (var k in keys)
+            //{
+            //    sb.Append(new KeyConverter().ConvertTo(k, typeof(string)));
+            //}
+            //this.Title = sb.ToString();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)

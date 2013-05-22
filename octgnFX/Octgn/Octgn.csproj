@@ -306,6 +306,7 @@
       <DependentUpon>HostGameSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameUpdater.cs" />
+    <Compile Include="Launcher\GameTableLauncher.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Scripting\Controls\ChoiceDlg.xaml.cs">
