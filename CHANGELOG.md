@@ -4,6 +4,7 @@
 + Added options for sound
 + Sound alert when someone @yourusername's you in chat
 + Sound alert when someone sends you an whisper
++ Command line based game starting for devs - /table /game=f80624da-58d7-4957-acd6-8a9ccb41619d
 
 #3.1.32.124
 #3.1.31.124 - Test

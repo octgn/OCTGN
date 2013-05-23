@@ -177,7 +177,6 @@
     <Reference Include="Microsoft.Dynamic">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Dynamic.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Scripting">
       <HintPath>packages\IronPython.2.7.3\lib\Net40\Microsoft.Scripting.dll</HintPath>
     </Reference>
@@ -307,6 +306,7 @@
     </Compile>
     <Compile Include="GameUpdater.cs" />
     <Compile Include="Launcher\GameTableLauncher.cs" />
+    <Compile Include="Mono.Options\Options.cs" />
     <Compile Include="Play\Events.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Scripting\Controls\ChoiceDlg.xaml.cs">

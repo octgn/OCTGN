@@ -33,7 +33,6 @@ namespace Octgn.Windows
     {
         internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsClosingDown { get; set; }
-        public bool GoDirectlyToTable { get; set; }
 
         private bool _realCloseWindow = false;
         private bool _isNotUpToDate = false;
@@ -44,11 +43,8 @@ namespace Octgn.Windows
 
         private Key[] keys = new Key[] { Key.None, Key.None, Key.None, Key.None, Key.None };
         private Key[] correctKeys = new Key[]{Key.O,Key.C,Key.T, Key.G, Key.N};
-        private Key[] tableKeys = new Key[] { Key.T, Key.A, Key.B, Key.L, Key.E };
 
         private bool cancel = false;
-
-        private bool toTable = false;
 
         public UpdateChecker()
         {
@@ -81,10 +77,6 @@ namespace Octgn.Windows
                 cancel = true;
                 //this.UpdateCheckDone();
             }
-            else if (keys.SequenceEqual(tableKeys))
-            {
-                GoDirectlyToTable = true;
-            }
             //var sb = new StringBuilder();
             //foreach (var k in keys)
             //{
@@ -98,30 +90,45 @@ namespace Octgn.Windows
             Log.Info("Starting");
             if (_hasLoaded) return;
             _hasLoaded = true;
+            var doingTable = false;
+            try
+            {
+                if (Environment.GetCommandLineArgs().Any(x => x.ToLowerInvariant().Contains("table"))) doingTable = true;
+            }
+            catch (Exception)
+            {
+                
+            }
             ThreadPool.QueueUserWorkItem(s =>
             {
-#if(!DEBUG)
-                if (CheckForUpdates())
+//#if(!DEBUG)
+                bool localOnly = true;
+                if (doingTable == false)
                 {
-                    Dispatcher.Invoke(new Action(Update));
-                    return;
+                    if (CheckForUpdates())
+                    {
+                        Dispatcher.Invoke(new Action(Update));
+                        return;
+                    }
+                    this.RandomMessage();
+                    for (var i = 0; i < 10; i++)
+                    {
+                        Thread.Sleep(500);
+                        if (cancel) break;
+                    }
+                    if (cancel)
+                    {
+                        this.UpdateCheckDone();
+                        return;
+                    }
+                    this.ClearGarbage();
+                    localOnly = false;
+                    //CheckForXmlSetUpdates();
                 }
-#endif
-                this.RandomMessage();
-                for (var i = 0; i < 10; i++)
-                {
-                    Thread.Sleep(500);
-                    if (cancel) break;
-                }
-                if (cancel)
-                {
-                    this.UpdateCheckDone();
-                    return;
-                }
-                this.ClearGarbage();
-                //CheckForXmlSetUpdates();
+                //#endif
+
                 this.LoadDatabase();
-                this.UpdateGames();
+                this.UpdateGames(localOnly);
                 GameFeedManager.Get().OnUpdateMessage -= GrOnUpdateMessage;
                 UpdateCheckDone();
 
@@ -202,12 +209,12 @@ namespace Octgn.Windows
             }
         }
 
-        private void UpdateGames()
+        private void UpdateGames(bool localOnly)
         {
             this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
             var gr = GameFeedManager.Get();
             gr.OnUpdateMessage += GrOnUpdateMessage;
-            Task.Factory.StartNew(GameFeedManager.Get().CheckForUpdates).Wait(TimeSpan.FromMinutes(5));
+            Task.Factory.StartNew(()=>GameFeedManager.Get().CheckForUpdates(localOnly)).Wait(TimeSpan.FromMinutes(5));
         }
 
         private void GrOnUpdateMessage(string s)

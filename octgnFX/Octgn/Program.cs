@@ -102,15 +102,35 @@ namespace Octgn
             System.Threading.Tasks.Task.Factory.StartNew(pingOB);
 
             bool tableOnlyFailed = false;
+
+            int? hostport = null;
+            Guid? gameid = null;
+
+            var os = new Mono.Options.OptionSet()
+                         {
+                             { "t|table", x => TableOnly = true },
+                             { "g|game=",x=> gameid=Guid.Parse(x)}
+                         };
+            try
+            {
+                os.Parse(Environment.GetCommandLineArgs());
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Parse args exception: " +String.Join(",",Environment.GetCommandLineArgs()),e);
+            }
+
             if (TableOnly)
             {
                 try
                 {
-                    new GameTableLauncher().Launch();
+                    new GameTableLauncher().Launch(hostport,gameid);
                 }
                 catch (Exception e)
                 {
+                    Log.Warn("Couldn't host/join table mode",e);
                     tableOnlyFailed = true;
+                    Program.Exit();
                 }
             }
 
@@ -151,13 +171,13 @@ namespace Octgn
             Log.Info("Launching UpdateChecker");
             var uc = new UpdateChecker();
             uc.ShowDialog();
-            TableOnly = uc.GoDirectlyToTable;
             Log.Info("UpdateChecker Done.");
             return uc.IsClosingDown;
         }
 
         internal static void KillOtherOctgn(bool force = false)
         {
+            if (Environment.GetCommandLineArgs().Any(x => x.ToLowerInvariant().Contains("table"))) return;
             Log.Info("Getting octgn processes...");
             var pList = Process.GetProcessesByName("OCTGN");
             Log.Info("Got process list");
