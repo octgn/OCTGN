@@ -66,7 +66,31 @@ namespace Octgn
             {
                 SimpleConfig.Get().WriteValue("Username", value);
             }
-        }        
+        }
+
+        public static bool EnableWhisperSound
+        {
+            get
+            {
+                return bool.Parse(SimpleConfig.Get().ReadValue("EnableWhisperSound", "true"));
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("EnableWhisperSound", value.ToString());
+            }
+        }
+
+        public static bool EnableNameSound
+        {
+            get
+            {
+                return bool.Parse(SimpleConfig.Get().ReadValue("EnableNameSound", "true"));
+            }
+            set
+            {
+                SimpleConfig.Get().WriteValue("EnableNameSound", value.ToString());
+            }
+        }
 
         public static int MaxChatHistory
         {

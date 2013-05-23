@@ -48,7 +48,11 @@
             <Grid Height="10"></Grid>
             <CheckBox x:Name="CheckBoxEnableChatImages">Enable image in chat(subscribers only)</CheckBox>
             <Grid Height="10"></Grid>
-            <CheckBox x:Name="CheckBoxEnableChatGifs">Enable gifs in chat(subscribers only)</CheckBox>
+            <CheckBox x:Name="CheckBoxEnableWhisperSound">Enable alert sound when whispered(subscribers only)</CheckBox>
+            <Grid Height="10"></Grid>
+            <CheckBox x:Name="CheckBoxEnableNameSound">Enable alert sound when someone @username's you (subscribers only)</CheckBox>
+            <!--<Grid Height="10"></Grid>
+            <CheckBox x:Name="CheckBoxEnableChatGifs">Enable gifs in chat(subscribers only)</CheckBox>-->
             <Grid Height="10"></Grid>
             <CheckBox x:Name="CheckBoxUseWindowTransparency">**Use Window Transparency(May decrease performance)</CheckBox>
             <Grid Height="10"></Grid>
