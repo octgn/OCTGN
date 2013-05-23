@@ -4,6 +4,8 @@
     using System.ComponentModel;
     using System.Linq;
 
+    using Octgn.Core.DataManagers;
+
     using Skylabs.Lobby;
 
     public class HostedGameViewModel : INotifyPropertyChanged
@@ -177,7 +179,7 @@
 
         public HostedGameViewModel(HostedGameData data)
         {
-            var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == data.GameGuid);
+            var game = GameManager.Get().GetById(data.GameGuid);
             this.GameId = data.GameGuid;
             this.GameVersion = data.GameVersion;
             this.Name = data.Name;
@@ -192,7 +194,7 @@
         }
         public void Update()
         {
-            var game = Program.GamesRepository.Games.FirstOrDefault(x => x.Id == this.GameId);
+            var game = GameManager.Get().GetById(this.gameId);
             if (game == null)
             {
                 this.GameName = "{Unknown Game}";

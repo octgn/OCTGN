@@ -95,7 +95,12 @@
         /// <summary>
         /// The announcement.
         /// </summary>
-        Announcement
+        Announcement,
+
+        /// <summary>
+        /// Users subscription changed
+        /// </summary>
+        UserSubChanged
     }
 
     /// <summary>

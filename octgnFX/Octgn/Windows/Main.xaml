@@ -2,16 +2,17 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:Controls="clr-namespace:Octgn.Controls"
+        xmlns:gameManagement="clr-namespace:Octgn.Tabs.GameManagement"
         x:Class="Octgn.Windows.Main"
         Title="OCTGN"
-        Height="600" Width="1024" WindowStyle="None" 
-        MinHeight="600" MinWidth="1024" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
+        Height="600" Width="1054" WindowStyle="None" 
+        MinHeight="600" MinWidth="1054" WindowIcon="pack://application:,,,/OCTGN;component/Resources/Icon.ico"
     >
     <Grid x:Name="GridMain">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*" MinWidth="840"/>
             <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="185" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -20,6 +21,7 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="5"/>
         </Grid.RowDefinitions>
+        <Controls:SubscribeMessage x:Name="SubMessage" Grid.RowSpan="10" Grid.ColumnSpan="10" Visibility="Collapsed"></Controls:SubscribeMessage>
         <Controls:ChatBar x:Name="ChatBar" Panel.ZIndex="10" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Row="1" VerticalAlignment="Bottom" Background="Transparent"
                     HorizontalAlignment="Left" MinHeight="25" BarHeight="25" Style="{DynamicResource {x:Type TabControl}}"/>
         <TabControl x:Name="TabControlMain" Grid.Row="1" >
@@ -34,10 +36,10 @@
                     <Controls:CustomGameList></Controls:CustomGameList>
                 </Border>
             </TabItem>
-            <TabItem Header="Matchmaking (Coming Soon)" IsEnabled="false"/>
             <TabItem Header="Games Manager" IsEnabled="true">
-                <Controls:GameManagement Margin="5,5,5,5"></Controls:GameManagement>
+                <gameManagement:GameManagement Margin="5,5,5,5"></gameManagement:GameManagement>
             </TabItem>
+            <TabItem Header="Matchmaking (Coming Soon)" IsEnabled="false"/>
             <TabItem Header="Plugins Manager" IsEnabled="false">
                 
             </TabItem>
@@ -55,6 +57,10 @@
                 <MenuItem x:Name="menuHelp" Header="_Help" HorizontalAlignment="Left" Width="137"/>
                 <MenuItem x:Name="menuAbout" Header="_About" HorizontalAlignment="Left" Width="137" Click="MenuAboutClick"/>
             </MenuItem>
+            <MenuItem x:Name="menuSub"  Header="_Subscribe" Visibility="Collapsed">
+                <MenuItem x:Name="menuSilver" Header="_Silver($3 per month)" HorizontalAlignment="Left" Width="157" Click="MenuSubSilverClick"/>
+                <MenuItem x:Name="menuGold" Header="_Gold($33 per year)" HorizontalAlignment="Left" Width="157" Click="MenuSubGoldClick"/>
+            </MenuItem>
         </Menu>
         <StackPanel Grid.ColumnSpan="3" Grid.Row="3" Orientation="Horizontal" FlowDirection="RightToLeft" Background="#FF4B4B4B">
             <StackPanel x:Name="ConnectBox" Orientation="Horizontal" Visibility="Visible" Margin="10,0,10,0">
@@ -62,7 +68,7 @@
                 <Label x:Name="tbConnect" VerticalAlignment="Center" Margin="8,0,0,0" Content="Reconnecting"/>
             </StackPanel>
         </StackPanel>
-        <Border Margin="0,20,0,0" Style="{StaticResource Panel}" Grid.Column="3" Grid.Row="1" ClipToBounds="True">
+        <Border Margin="0,20,0,0" Style="{StaticResource Panel}" Grid.Column="3" Grid.Row="1" ClipToBounds="True" HorizontalAlignment="Stretch">
             <Controls:ContactList x:Name="ContactList"/>
         </Border>
     </Grid>

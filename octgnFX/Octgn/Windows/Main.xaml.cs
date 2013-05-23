@@ -11,11 +11,14 @@ namespace Octgn.Windows
 {
     using System;
     using System.ComponentModel;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Input;
 
+    using Octgn.Core.DataManagers;
     using Octgn.DeckBuilder;
-    using Octgn.GameManagement;
 
     using agsXMPP;
 
@@ -34,12 +37,30 @@ namespace Octgn.Windows
         public Main()
         {
             this.InitializeComponent();
+#if(Release_Test)
+            this.Title = "OCTGN " + "[Test v" + Const.OctgnVersion + "]";
+#endif
             ConnectBox.Visibility = Visibility.Hidden;
             Program.LobbyClient.OnStateChanged += this.LobbyClientOnOnStateChanged;
             Program.LobbyClient.OnLoginComplete += this.LobbyClientOnOnLoginComplete;
             this.PreviewKeyUp += this.OnPreviewKeyUp;
             this.Closing += this.OnClosing;
+            GameUpdater.Get().Start();
+            this.Loaded += OnLoaded;
             //new GameFeedManager().CheckForUpdates();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            this.Loaded -= OnLoaded;
+            SubscriptionModule.Get().IsSubbedChanged += Main_IsSubbedChanged;
+        }
+
+        void Main_IsSubbedChanged(bool obj)
+        {
+            Dispatcher.Invoke(
+                new Action(() =>
+                          { this.menuSub.Visibility = obj == false ? Visibility.Visible : Visibility.Collapsed; }));
         }
 
         /// <summary>
@@ -79,7 +100,11 @@ namespace Octgn.Windows
         /// </param>
         private void OnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
+            SubscriptionModule.Get().IsSubbedChanged -= this.Main_IsSubbedChanged;
             Program.LobbyClient.Stop();
+            GameUpdater.Get().Stop();
+            GameUpdater.Get().Dispose();
+            Task.Factory.StartNew(Program.Exit);
         }
 
         /// <summary>
@@ -137,7 +162,22 @@ namespace Octgn.Windows
             {
                 case LoginResults.Success:
                     this.SetStateOnline();
-                    this.Dispatcher.BeginInvoke(new Action(() => TabCommunityChat.Focus()));
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                        { 
+                            TabCommunityChat.Focus();
+
+                        })).Completed += (o, args) => Task.Factory.StartNew(() => { 
+                                                                                      Thread.Sleep(15000);
+                                                                                      this.Dispatcher.Invoke(new Action(()
+                                                                                                                        =>
+                                                                                          {
+                                                                                              var s =
+                                                                                                  SubscriptionModule.Get
+                                                                                                      ().IsSubscribed;
+                                                                                              if(s != null && s == false)
+                                                                                                this.SubMessage.Visibility = Visibility.Visible;
+                                                                                          }));
+                        });
                     break;
                 default:
                     this.SetStateOffline();
@@ -160,6 +200,7 @@ namespace Octgn.Windows
                     {
                         TabCommunityChat.IsEnabled = false;
                         TabMain.Focus();
+                        menuSub.Visibility = Visibility.Collapsed;
                     }));
         }
 
@@ -173,6 +214,11 @@ namespace Octgn.Windows
                     () =>
                     {
                         TabCommunityChat.IsEnabled = true;
+                        var subbed = SubscriptionModule.Get().IsSubscribed;
+                        if(subbed == null || subbed == false)
+                            menuSub.Visibility = Visibility.Visible;
+                        else
+                            menuSub.Visibility = Visibility.Collapsed;
                     }));
         }
 
@@ -209,19 +255,19 @@ namespace Octgn.Windows
 
         private void MenuDeckEditorClick(object sender, RoutedEventArgs e)
         {
-            if (Program.GamesRepository.Games.Count == 0)
+            if (GameManager.Get().GameCount == 0)
             {
-                MessageBox.Show(
+                TopMostMessageBox.Show(
                     "You need to install a game before you can use the deck editor.",
                     "OCTGN",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 return;
             }
-            if (Program.DeckEditor == null)
+            if (WindowManager.DeckEditor == null)
             {
-                Program.DeckEditor = new DeckBuilderWindow();
-                Program.DeckEditor.Show();
+                WindowManager.DeckEditor = new DeckBuilderWindow();
+                WindowManager.DeckEditor.Show();
             }
         }
 
@@ -234,6 +280,26 @@ namespace Octgn.Windows
         private void MenuLogOffClick(object sender, RoutedEventArgs e)
         {
             Program.LobbyClient.LogOut();
+        }
+
+        private void MenuSubSilverClick(object sender, RoutedEventArgs e)
+        {
+            var url =
+                SubscriptionModule.Get()
+                                  .GetSubscribeUrl(
+                                      SubscriptionModule.Get()
+                                                        .SubTypes.FirstOrDefault(x => x.Name.ToLower() == "silver"));
+            Program.LaunchUrl(url);
+        }
+
+        private void MenuSubGoldClick(object sender, RoutedEventArgs e)
+        {
+            var url =
+                SubscriptionModule.Get()
+                                  .GetSubscribeUrl(
+                                      SubscriptionModule.Get()
+                                                        .SubTypes.FirstOrDefault(x => x.Name.ToLower() == "gold"));
+            Program.LaunchUrl(url);
         }
     }
 }

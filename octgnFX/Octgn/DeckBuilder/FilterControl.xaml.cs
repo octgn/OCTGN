@@ -33,14 +33,14 @@ namespace Octgn.DeckBuilder
                                                 new CharInComparison("One of", "Card.[{0}] IN ({1})")
                                             };
 
-        private PropertyDef _property;
+        private DataNew.Entities.PropertyDef _property;
 
         public FilterControl()
         {
             InitializeComponent();
             DataContextChanged += delegate
                                       {
-                                          _property = DataContext as PropertyDef;
+                                          _property = DataContext as DataNew.Entities.PropertyDef;
                                           if (_property == null) return; // Happens when the control is unloaded
                                           CreateComparisons();
                                       };
@@ -48,11 +48,16 @@ namespace Octgn.DeckBuilder
 
         public event EventHandler RemoveFilter;
 
+        public bool IsOr;
+
         public string GetSqlCondition()
         {
             if (comparisonList.SelectedItem == null) return "";
             if (_property is SetPropertyDef)
-                return "set_id = '" + ((Set) comparisonList.SelectedItem).Id.ToString("D") + "'";
+            {
+                IsOr = true;
+                return "set_id = '" + ((DataNew.Entities.Set)comparisonList.SelectedItem).Id.ToString("D") + "'";
+            }
             return ((SqlComparison) comparisonList.SelectedItem).GetSql(_property.Name, comparisonText.Text);
         }
 
@@ -60,6 +65,7 @@ namespace Octgn.DeckBuilder
         {
             if (_property is SetPropertyDef)
             {
+                IsOr = true;
                 comparisonList.Width = 262;
                 comparisonText.Visibility = Visibility.Collapsed;
 
@@ -72,13 +78,13 @@ namespace Octgn.DeckBuilder
 
                 switch (_property.Type)
                 {
-                    case PropertyType.String:
+                    case DataNew.Entities.PropertyType.String:
                         comparisonList.ItemsSource = StringComparisons;
                         break;
-                    case PropertyType.Integer:
+                    case DataNew.Entities.PropertyType.Integer:
                         comparisonList.ItemsSource = IntegerComparisons;
                         break;
-                    case PropertyType.Char:
+                    case DataNew.Entities.PropertyType.Char:
                         comparisonList.ItemsSource = CharComparisons;
                         break;
                     default:

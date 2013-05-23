@@ -8,6 +8,9 @@ using Skylabs.Lobby;
 
 namespace Octgn.Controls
 {
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+
     /// <summary>
     ///   Interaction logic for FriendListItem.xaml
     /// </summary>
@@ -53,7 +56,7 @@ namespace Octgn.Controls
                          string.Format("runtime: about {0,0} minutes",r));
                 SetValue(GameVersionProperty,_hostedGame.GameVersion.ToString());
                 //SetValue(GameLengthProperty, "runtime: "+(System.DateTime.Now.ToUniversalTime() - _hostedGame.TimeStarted).TotalMinutes.ToString("N")+" minutes");
-                foreach(var g in Program.GamesRepository.Games)
+                foreach(var g in GameManager.Get().Games)
                 {
                     if(_hostedGame.GameGuid == g.Id)
                     {

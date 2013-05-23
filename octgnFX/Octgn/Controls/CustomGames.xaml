@@ -19,7 +19,7 @@
         <Border x:Name="DialogPlaceHolder" Grid.RowSpan="3" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Panel.ZIndex="10"></Border>
         <Border x:Name="BorderButtons" Padding="0,5,0,5">
             <StackPanel Orientation="Horizontal">
-                <Button Click="ButtonHostClick" Content="Host" Padding="10,0,10,0" Margin="0,0,5,0"></Button>
+                <Button Click="ButtonHostClick" Content="Start" Padding="10,0,10,0" Margin="0,0,5,0"></Button>
                 <Button Click="ButtonJoinClick" Content="Join" Padding="10,0,10,0" Margin="0,0,5,0"
                         IsEnabled="{Binding IsJoinableGameSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:CustomGameList}}}">
                 </Button>

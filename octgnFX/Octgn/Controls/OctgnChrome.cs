@@ -28,12 +28,13 @@ namespace Octgn.Controls
     using Cursors = System.Windows.Input.Cursors;
     using HorizontalAlignment = System.Windows.HorizontalAlignment;
     using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+    using WinInterop = System.Windows.Interop;
 
     /// <summary>
     /// Interaction logic for OctgnChrome.xaml
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. This rule fucks up using regions usefully."), SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed. Suppression is OK here.")]
-    public partial class OctgnChrome : Window
+    public partial class OctgnChrome : Window,IDisposable
     {
         #region Content Property
 
@@ -166,7 +167,7 @@ namespace Octgn.Controls
         /// </param>
         private void ResizeWindow(ResizeDirection direction)
         {
-            SendMessage(new WindowInteropHelper(this).Handle, WmSyscommand, (IntPtr) (61440 + direction), IntPtr.Zero);
+            SendMessage(new WindowInteropHelper(this).Handle, WmSyscommand, (IntPtr)(61440 + direction), IntPtr.Zero);
         }
 
         #endregion
@@ -231,7 +232,7 @@ namespace Octgn.Controls
                         this.TitleRow.Height = new GridLength(35);
                         break;
                     case Visibility.Hidden:
-                        this.TitleRow.Height =new GridLength(0);
+                        this.TitleRow.Height = new GridLength(0);
                         break;
                     case Visibility.Collapsed:
                         this.TitleRow.Height = new GridLength(0);
@@ -245,7 +246,7 @@ namespace Octgn.Controls
         /// </summary>
         public bool CanResize { get; set; }
 
-        #endregion 
+        #endregion
 
         #region private accessors
 
@@ -326,7 +327,7 @@ namespace Octgn.Controls
             {
                 ContentProperty = DependencyProperty.Register("Content", typeof(object), typeof(OctgnChrome), new UIPropertyMetadata(null, ContentChangedCallback));
                 BackgroundProperty = DependencyProperty.Register("Background", typeof(object), typeof(OctgnChrome), new UIPropertyMetadata(Brushes.Transparent, BackgroundChangedCallback));
-            }                     
+            }
         }
 
         /// <summary>
@@ -338,10 +339,10 @@ namespace Octgn.Controls
             this.ResizeMode = ResizeMode.CanResize;
             this.CanResize = true;
             this.MainBorder = new Border();
-
+            this.SourceInitialized += new EventHandler(win_SourceInitialized);
             if (!this.IsInDesignMode())
             {
-                if (Program.UseTransparentWindows)
+                if (Prefs.UseWindowTransparency)
                 {
                     this.AllowsTransparency = true;
                     base.Background = Brushes.Transparent;
@@ -467,6 +468,12 @@ namespace Octgn.Controls
 
         }
 
+        private void win_SourceInitialized(object sender, EventArgs e)
+        {
+            System.IntPtr handle = (new WinInterop.WindowInteropHelper(this)).Handle;
+            WinInterop.HwndSource.FromHwnd(handle).AddHook(WindowProc);
+        }
+
         private void OnLocationChanged(object sender, EventArgs eventArgs)
         {
             var myRec = new System.Drawing.Rectangle((int)this.Left + 50, (int)this.Top + 50, (int)this.Width - 50, (int)this.Height - 50);
@@ -477,6 +484,8 @@ namespace Octgn.Controls
                 this.Left = ((bounds.Right - bounds.Left) / 2) + (Width / 2);
                 this.Top = ((bounds.Bottom - bounds.Top) / 2) + (Height / 2);
             }
+            System.IntPtr handle = (new WinInterop.WindowInteropHelper(this)).Handle;
+            //WinInterop.HwndSource.FromHwnd(handle).AddHook(new WinInterop.HwndSourceHook(WindowProc));
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -524,6 +533,15 @@ namespace Octgn.Controls
             }
         }
 
+        private Rectangle recTopLeft;
+        private Rectangle recTop;
+        private Rectangle recTopRight;
+        private Rectangle recLeft;
+        private Rectangle recRight;
+        private Rectangle recBottomLeft;
+        private Rectangle recBottom;
+        private Rectangle recBottomRight;
+
         /// <summary>
         /// Makes the resize area around the window.
         /// </summary>
@@ -537,46 +555,43 @@ namespace Octgn.Controls
             this.DragGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100, GridUnitType.Star) });
             this.DragGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(8) });
 
-            var recTopLeft = new Rectangle { Cursor = Cursors.SizeNWSE, Name = "dTopLeft", Fill = Brushes.Transparent };
+            recTopLeft = new Rectangle { Cursor = Cursors.SizeNWSE, Name = "dTopLeft", Fill = Brushes.Transparent };
             recTopLeft.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recTopLeft);
 
-            var recTop = new Rectangle { Cursor = Cursors.SizeNS, Name = "dTop", Fill = Brushes.Transparent };
+            recTop = new Rectangle { Cursor = Cursors.SizeNS, Name = "dTop", Fill = Brushes.Transparent };
             recTop.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recTop);
             Grid.SetColumn(recTop, 1);
 
-            var recTopRight = new Rectangle
-                { Cursor = Cursors.SizeNESW, Name = "dTopRight", Fill = Brushes.Transparent };
+            recTopRight = new Rectangle { Cursor = Cursors.SizeNESW, Name = "dTopRight", Fill = Brushes.Transparent };
             recTopRight.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recTopRight);
             Grid.SetColumn(recTopRight, 2);
 
-            var recLeft = new Rectangle { Cursor = Cursors.SizeWE, Name = "dLeft", Fill = Brushes.Transparent };
+            recLeft = new Rectangle { Cursor = Cursors.SizeWE, Name = "dLeft", Fill = Brushes.Transparent };
             recLeft.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recLeft);
             Grid.SetRow(recLeft, 1);
 
-            var recRight = new Rectangle { Cursor = Cursors.SizeWE, Name = "dRight", Fill = Brushes.Transparent };
+            recRight = new Rectangle { Cursor = Cursors.SizeWE, Name = "dRight", Fill = Brushes.Transparent };
             recRight.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recRight);
             Grid.SetRow(recRight, 1);
             Grid.SetColumn(recRight, 2);
 
-            var recBottomLeft = new Rectangle
-                { Cursor = Cursors.SizeNESW, Name = "dBottomLeft", Fill = Brushes.Transparent };
+            recBottomLeft = new Rectangle { Cursor = Cursors.SizeNESW, Name = "dBottomLeft", Fill = Brushes.Transparent };
             recBottomLeft.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recBottomLeft);
             Grid.SetRow(recBottomLeft, 2);
 
-            var recBottom = new Rectangle { Cursor = Cursors.SizeNS, Name = "dBottom", Fill = Brushes.Transparent };
+            recBottom = new Rectangle { Cursor = Cursors.SizeNS, Name = "dBottom", Fill = Brushes.Transparent };
             recBottom.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recBottom);
             Grid.SetColumn(recBottom, 1);
             Grid.SetRow(recBottom, 2);
 
-            var recBottomRight = new Rectangle
-                { Cursor = Cursors.SizeNWSE, Name = "dBottomRight", Fill = Brushes.Transparent };
+            recBottomRight = new Rectangle { Cursor = Cursors.SizeNWSE, Name = "dBottomRight", Fill = Brushes.Transparent };
             recBottomRight.MouseDown += this.DragMouseDown;
             this.DragGrid.Children.Add(recBottomRight);
             Grid.SetColumn(recBottomRight, 2);
@@ -596,7 +611,7 @@ namespace Octgn.Controls
         /// </param>
         private void DragMouseDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            if (!this.CanResize)
+            if (!this.CanResize || this.WindowState == WindowState.Maximized)
             {
                 return;
             }
@@ -653,5 +668,237 @@ namespace Octgn.Controls
             if (e.MiddleButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed) return;
             this.DragMove();
         }
+
+        private System.IntPtr WindowProc(System.IntPtr hwnd,int msg,System.IntPtr wParam,System.IntPtr lParam,ref bool handled)
+        {
+            switch (msg)
+            {
+                case 0x0024:/* WM_GETMINMAXINFO */
+                    WmGetMinMaxInfo(hwnd, lParam);
+                    handled = true;
+                    break;
+            }
+
+            return (System.IntPtr)0;
+        }
+
+        private void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
+        {
+
+            MINMAXINFO mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
+
+            // Adjust the maximized size and position to fit the work area of the correct monitor
+            int MONITOR_DEFAULTTONEAREST = 0x00000002;
+            System.IntPtr monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+
+            if (monitor != System.IntPtr.Zero)
+            {
+
+                MONITORINFO monitorInfo = new MONITORINFO();
+                GetMonitorInfo(monitor, monitorInfo);
+                RECT rcWorkArea = monitorInfo.rcWork;
+                RECT rcMonitorArea = monitorInfo.rcMonitor;
+                mmi.ptMaxPosition.x = Math.Abs(rcWorkArea.left - rcMonitorArea.left);
+                mmi.ptMaxPosition.y = Math.Abs(rcWorkArea.top - rcMonitorArea.top);
+                mmi.ptMaxSize.x = Math.Abs(rcWorkArea.right - rcWorkArea.left);
+                mmi.ptMaxSize.y = Math.Abs(rcWorkArea.bottom - rcWorkArea.top);
+                mmi.ptMinTrackSize.x = (int)this.MinWidth;
+                mmi.ptMinTrackSize.y = (int)this.MinHeight;
+            }
+
+            Marshal.StructureToPtr(mmi, lParam, true);
+        }
+
+        /// <summary>
+        /// POINT aka POINTAPI
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            /// <summary>
+            /// x coordinate of point.
+            /// </summary>
+            public int x;
+            /// <summary>
+            /// y coordinate of point.
+            /// </summary>
+            public int y;
+
+            /// <summary>
+            /// Construct a point of coordinates (x,y).
+            /// </summary>
+            public POINT(int x, int y)
+            {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MINMAXINFO
+        {
+            public POINT ptReserved;
+            public POINT ptMaxSize;
+            public POINT ptMaxPosition;
+            public POINT ptMinTrackSize;
+            public POINT ptMaxTrackSize;
+        };
+        /// <summary>
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public class MONITORINFO
+        {
+            /// <summary>
+            /// </summary>            
+            public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+
+            /// <summary>
+            /// </summary>            
+            public RECT rcMonitor = new RECT();
+
+            /// <summary>
+            /// </summary>            
+            public RECT rcWork = new RECT();
+
+            /// <summary>
+            /// </summary>            
+            public int dwFlags = 0;
+        }
+
+
+        /// <summary> Win32 </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 0)]
+        public struct RECT
+        {
+            /// <summary> Win32 </summary>
+            public int left;
+            /// <summary> Win32 </summary>
+            public int top;
+            /// <summary> Win32 </summary>
+            public int right;
+            /// <summary> Win32 </summary>
+            public int bottom;
+
+            /// <summary> Win32 </summary>
+            public static readonly RECT Empty = new RECT();
+
+            /// <summary> Win32 </summary>
+            public int Width
+            {
+                get { return Math.Abs(right - left); }  // Abs needed for BIDI OS
+            }
+            /// <summary> Win32 </summary>
+            public int Height
+            {
+                get { return bottom - top; }
+            }
+
+            /// <summary> Win32 </summary>
+            public RECT(int left, int top, int right, int bottom)
+            {
+                this.left = left;
+                this.top = top;
+                this.right = right;
+                this.bottom = bottom;
+            }
+
+
+            /// <summary> Win32 </summary>
+            public RECT(RECT rcSrc)
+            {
+                this.left = rcSrc.left;
+                this.top = rcSrc.top;
+                this.right = rcSrc.right;
+                this.bottom = rcSrc.bottom;
+            }
+
+            /// <summary> Win32 </summary>
+            public bool IsEmpty
+            {
+                get
+                {
+                    // BUGBUG : On Bidi OS (hebrew arabic) left > right
+                    return left >= right || top >= bottom;
+                }
+            }
+            /// <summary> Return a user friendly representation of this struct </summary>
+            public override string ToString()
+            {
+                if (this == RECT.Empty) { return "RECT {Empty}"; }
+                return "RECT { left : " + left + " / top : " + top + " / right : " + right + " / bottom : " + bottom + " }";
+            }
+
+            /// <summary> Determine if 2 RECT are equal (deep compare) </summary>
+            public override bool Equals(object obj)
+            {
+                if (!(obj is Rect)) { return false; }
+                return (this == (RECT)obj);
+            }
+
+            /// <summary>Return the HashCode for this struct (not garanteed to be unique)</summary>
+            public override int GetHashCode()
+            {
+                return left.GetHashCode() + top.GetHashCode() + right.GetHashCode() + bottom.GetHashCode();
+            }
+
+
+            /// <summary> Determine if 2 RECT are equal (deep compare)</summary>
+            public static bool operator ==(RECT rect1, RECT rect2)
+            {
+                return (rect1.left == rect2.left && rect1.top == rect2.top && rect1.right == rect2.right && rect1.bottom == rect2.bottom);
+            }
+
+            /// <summary> Determine if 2 RECT are different(deep compare)</summary>
+            public static bool operator !=(RECT rect1, RECT rect2)
+            {
+                return !(rect1 == rect2);
+            }
+
+
+        }
+
+        [DllImport("user32")]
+        internal static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DllImport("User32")]
+        internal static extern IntPtr MonitorFromWindow(IntPtr handle, int flags);
+
+        #region Implementation of IDisposable
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            Dispose();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.SourceInitialized -= win_SourceInitialized;
+            this.LabelTitle.MouseDown -= this.BorderMouseDown1;
+            this.WindowMinimizeButton.MouseEnter -= this.WindowControlMouseEnter;
+            this.WindowMinimizeButton.MouseLeave -= this.WindowControlMouseLeave;
+            this.WindowResizeButton.MouseEnter -= this.WindowControlMouseEnter;
+            this.WindowResizeButton.MouseLeave -= this.WindowControlMouseLeave;
+            this.WindowCloseButton.MouseEnter -= this.WindowControlMouseEnter;
+            this.WindowCloseButton.MouseLeave -= this.WindowControlMouseLeave;
+            this.Loaded -= OnLoaded;
+            this.LocationChanged -= OnLocationChanged;
+            recTopLeft.MouseDown -= this.DragMouseDown;
+            recTop.MouseDown -= this.DragMouseDown;
+            recTopRight.MouseDown -= this.DragMouseDown;
+            recLeft.MouseDown -= this.DragMouseDown;
+            recRight.MouseDown -= this.DragMouseDown;
+            recBottomLeft.MouseDown -= this.DragMouseDown;
+            recBottom.MouseDown -= this.DragMouseDown;
+            recBottomRight.MouseDown -= this.DragMouseDown;
+        }
+
+        #endregion
     }
 }

@@ -7,10 +7,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.ComponentModel;
 using System.Web;
 using System.Windows;
-using Octgn.Data;
 
 namespace Octgn.Launcher
 {
@@ -20,10 +18,10 @@ namespace Octgn.Launcher
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Net;
+    using System.Reflection;
     using System.Text.RegularExpressions;
     using System.Windows.Controls;
     using System.Windows.Documents;
-    using System.Windows.Forms;
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Navigation;
@@ -31,15 +29,13 @@ namespace Octgn.Launcher
     using Octgn.Extentions;
 
     using Skylabs.Lobby;
-    using Skylabs.Lobby.Threading;
 
-	using System.Windows.Threading;
-	using Octgn.DeckBuilder;
-	using Octgn.Definitions;
+    using log4net;
 
     using HorizontalAlignment = System.Windows.HorizontalAlignment;
     using KeyEventArgs = System.Windows.Input.KeyEventArgs;
     using Uri = System.Uri;
+using Octgn.Controls;
 
     /// <summary>
     ///   Interaction logic for Login.xaml
@@ -48,6 +44,8 @@ namespace Octgn.Launcher
     SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:ElementsMustBeOrderedByAccess", Justification = "Reviewed. Suppression is OK here.")]
     public partial class LoginNew
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        
         private bool _isLoggingIn;
         private System.Threading.Timer _loginTimer;
         private bool _inLoginDone = false;
@@ -63,16 +61,15 @@ namespace Octgn.Launcher
             }
             textBox1.Text = Prefs.Username;
             //TODO ToString for state may be wrong.
-            Program.LobbyClient.OnStateChanged += (sender , state) => UpdateLoginStatus(state.ToString());
             Program.LobbyClient.OnLoginComplete += LobbyClientOnLoginComplete;
 	        Program.LobbyClient.OnDisconnect += LobbyClientOnDisconnect;
 
-            this.labelRegister.MouseLeftButtonUp += (sender, args) => Process.Start(Program.WebsitePath + "register.php");
+            this.labelRegister.MouseLeftButtonUp += (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath + "register.php");
             this.labelForgot.MouseLeftButtonUp +=
-				(sender, args) => Process.Start(Program.WebsitePath + "passwordresetrequest.php");
+                (sender, args) => Program.LaunchUrl(AppConfig.WebsitePath + "passwordresetrequest.php");
             this.labelResend.MouseLeftButtonUp += (sender, args) =>
                 {
-                    var url = Program.WebsitePath + "api/user/resendemailverify.php?username="
+                    var url = AppConfig.WebsitePath + "api/user/resendemailverify.php?username="
                               + HttpUtility.UrlEncode(textBox1.Text);
                     using (var wc = new WebClient())
                     {
@@ -85,8 +82,9 @@ namespace Octgn.Launcher
                         }
                     }
                 };
-
-            LazyAsync.Invoke(GetTwitterStuff);
+#if(!DEBUG)
+            Skylabs.Lobby.Threading.LazyAsync.Invoke(GetTwitterStuff);
+#endif
         }
 
         #region News Feed
@@ -96,7 +94,7 @@ namespace Octgn.Launcher
                 {
                     using (var wc = new WebClient())
                     {
-                        var str = wc.DownloadString(Program.WebsitePath + "news.xml");
+                        var str = wc.DownloadString(AppConfig.WebsitePath + "news.xml");
                         if (string.IsNullOrWhiteSpace(str))
                         {
                             throw new Exception("Null news feed.");
@@ -221,14 +219,15 @@ namespace Octgn.Launcher
         #region LoginStuff
 			void LobbyClientOnDisconnect(object o, EventArgs args)
 			{
+                Log.Info("Login Window Client Disconnected");
 				Dispatcher.BeginInvoke(new Action(() => spleft.IsEnabled = true));
 			}
             void LobbyClientOnLoginComplete(object sender, LoginResults results)
             {
+                Log.InfoFormat("Lobby Login Complete {0}",results);
                 switch (results)
                 {
                     case LoginResults.ConnectionError:
-                        UpdateLoginStatus("");
                         _isLoggingIn = false;
                         DoErrorMessage("Could not connect to the server.");
                         break;
@@ -244,7 +243,12 @@ namespace Octgn.Launcher
 
             private void DoLogin()
             {
-                if (_isLoggingIn) return;
+                if (_isLoggingIn)
+                {
+                    Log.Warn("Can't log in, already trying to log in");
+                    return;
+                }
+                Log.Info("Do Login");
 	            spleft.IsEnabled = false;
 
                 _isLoggingIn = true;
@@ -259,11 +263,15 @@ namespace Octgn.Launcher
                             {
                                 try
                                 {
-                                    var ustring = Program.WebsitePath + "api/user/login.php?username=" + HttpUtility.UrlEncode(username)
+                                    Log.Info("Sending login request");
+                                    var ustring = AppConfig.WebsitePath + "api/user/login.php?username=" + HttpUtility.UrlEncode(username)
                                                   + "&password=" + HttpUtility.UrlEncode(password);
+                                    var cstring = ustring.Replace(HttpUtility.UrlEncode(password) ?? "", "#############");
                                     if (email != null) ustring += "&email=" + HttpUtility.UrlEncode(email);
+                                    Log.Info("Sending login: " + cstring);
                                     var res = wc.DownloadString(new Uri(ustring));
                                     res = res.Trim();
+                                    Log.Info("Do Login Request Result: " + res);
                                     switch (res)
                                     {
                                         case "ok":
@@ -273,7 +281,6 @@ namespace Octgn.Launcher
                                             }
                                         case "EmailUnverifiedException":
                                             {
-                                                //TODO Needs a way to resend e-mail and stuff
                                                 this.LoginFinished(LoginResult.Failure, DateTime.Now,"Your e-mail hasn't been verified. Please check your e-mail. If you haven't received one, you can contact us as support@octgn.net for help.");
                                                 break;
                                             }
@@ -304,12 +311,13 @@ namespace Octgn.Launcher
                                             }
                                         default:
                                             {
-                                                throw new Exception();
+                                                throw new Exception("Unknown login request message");
                                             }
                                     }
                                 }
-                                catch (Exception)
+                                catch (Exception e)
                                 {
+                                    Log.Warn("Login Request Failed",e);
                                     this.LoginFinished(LoginResult.Failure, DateTime.Now,"Please try again later.");
                                 }
 
@@ -323,23 +331,25 @@ namespace Octgn.Launcher
                     new System.Threading.Timer(
                         o =>
                         {
+                            Log.Info("Login attempt timed out");
                             Program.LobbyClient.Stop();
                             LoginFinished(LoginResult.Failure , DateTime.Now ,
                                           "Please try again later.");
                         } ,
                         null , Prefs.LoginTimeout , System.Threading.Timeout.Infinite);
+                Log.Info("Starting Lobby login");
                 Program.LobbyClient.BeginLogin(username, password);
             }
 
 
-            private void UpdateLoginStatus(string message)
-            {
-                Dispatcher.Invoke(new Action(() => lblLoginStatus.Content = message));
-            }
-
             private void LoginFinished(LoginResult success, DateTime banEnd, string message, bool showEmail =false)
             {
-                if (_inLoginDone) return;
+                if (_inLoginDone)
+                {
+                    Log.Info("Already done logging in?");
+                    return;
+                }
+                Log.Info("Login Finished");
                 _inLoginDone = true;
                 Trace.TraceInformation("Login finished.");
                 if (_loginTimer != null)
@@ -349,6 +359,7 @@ namespace Octgn.Launcher
                 }
                 Dispatcher.Invoke((Action) (() =>
                                                 {
+                                                    Log.InfoFormat("Updating UI for Log result {0}",success);
                                                     _isLoggingIn = false;
                                                     switch (success)
                                                     {
@@ -372,27 +383,25 @@ namespace Octgn.Launcher
                                                     }
                                                     if (showEmail)
                                                     {
+                                                        Log.Info("No email found, must enter e-mail");
                                                         textBoxEmail.Text = "";
                                                         textBoxEmail.Visibility = Visibility.Visible;
                                                         labelEmail.Visibility = Visibility.Visible;
                                                     }
                                                     else
                                                     {
+                                                        Log.Info("Email stored");
                                                         textBoxEmail.Visibility = Visibility.Collapsed;
                                                         labelEmail.Visibility = Visibility.Collapsed;
                                                     }
+                                                    Log.Info("Full Login done");
                                                     _inLoginDone = false;
                                                 }), new object[] {});
             }
 
             private void DoErrorMessage(string message)
             {
-                Dispatcher.Invoke((Action) (() =>
-                    {
-                        MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-                                                    //lError.Text = message;
-                                                    //bError.Visibility = Visibility.Visible;
-                                                }), new object[] {});
+                TopMostMessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
         #endregion
 
@@ -426,7 +435,7 @@ namespace Octgn.Launcher
 
             private void PageLoaded(object sender, RoutedEventArgs e)
             {
-                //TODO Check for server here
+                //TODO [NEW UI] Check for server here
             }
         #endregion            
         internal struct NewsFeedItem

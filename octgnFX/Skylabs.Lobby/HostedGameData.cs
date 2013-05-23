@@ -7,6 +7,8 @@ using agsXMPP.protocol.component;
 
 namespace Skylabs.Lobby
 {
+    using System.Globalization;
+
     [Serializable]
     public enum EHostedGame
     {
@@ -99,8 +101,18 @@ namespace Skylabs.Lobby
         {
             get
             {
+                string[] formats = {"M/d/yyyy h:mm:ss tt", "M/d/yyyy h:mm tt", 
+                   "MM/dd/yyyy hh:mm:ss", "M/d/yyyy h:mm:ss", 
+                   "M/d/yyyy hh:mm tt", "M/d/yyyy hh tt", 
+                   "M/d/yyyy h:mm", "M/d/yyyy h:mm", 
+                   "MM/dd/yyyy hh:mm", "M/dd/yyyy hh:mm"};
                 DateTime ret = DateTime.Now;
-                DateTime.TryParse(GetTag("timestarted"), out ret);
+                var temp = GetTag("timestarted").Trim();
+                if (DateTime.TryParseExact(
+                    temp, formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out ret))
+                {
+                    ret = ret.ToLocalTime();
+                }
                 return ret;
             }
             set { SetTag("timestarted", value.ToString()); }

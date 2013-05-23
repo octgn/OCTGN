@@ -11,12 +11,13 @@
     using System.Windows.Controls;
     using System.Windows.Forms;
 
+    using Octgn.Core.DataManagers;
     using Octgn.Networking;
     using Octgn.ViewModels;
 
     using UserControl = System.Windows.Controls.UserControl;
 
-    public partial class ConnectOfflineGame : UserControl
+    public partial class ConnectOfflineGame : UserControl,IDisposable
     {
         public event Action<object, DialogResult> OnClose;
         protected virtual void FireOnClose(object sender, DialogResult result)
@@ -38,13 +39,13 @@
         }
 
         public bool Successful { get; private set; }
-        public Data.Game Game { get; private set; }
+        public DataNew.Entities.Game Game { get; private set; }
 
         public ObservableCollection<DataGameViewModel> Games { get; private set; }
         public ConnectOfflineGame()
         {
             InitializeComponent();
-            Program.Dispatcher = Program.MainWindowNew.Dispatcher;
+            Program.Dispatcher = WindowManager.Main.Dispatcher;
             Games = new ObservableCollection<DataGameViewModel>();
         }
 
@@ -52,7 +53,7 @@
         {
             if (Games == null)
                 Games = new ObservableCollection<DataGameViewModel>();
-            var list = Program.GamesRepository.Games.Select(x => new DataGameViewModel(x)).ToList();
+            var list = GameManager.Get().Games.Select(x => new DataGameViewModel(x)).ToList();
             Games.Clear();
             foreach (var l in list)
                 Games.Add(l);
@@ -93,7 +94,7 @@
                 Successful = false;
                 return;
             }
-            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame(Program.GamesRepository);
+            this.Game = (ComboBoxGame.SelectedItem as DataGameViewModel).GetGame();
             this.Close(DialogResult.OK);
         }
 
@@ -162,6 +163,24 @@
             task.ContinueWith(new Action<Task>((t) => this.Dispatcher.Invoke(new Action(() => this.ConnectDone(t)))));
             task.Start();
         }
+        #endregion
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (OnClose != null)
+            {
+                foreach (var d in OnClose.GetInvocationList())
+                {
+                    OnClose -= (Action<object, DialogResult>)d;
+                }
+            }
+        }
+
         #endregion
     }
 }

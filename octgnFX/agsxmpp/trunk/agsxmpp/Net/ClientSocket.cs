@@ -453,6 +453,7 @@ namespace agsXMPP.Net
             lock (this)
             {
                 // TODO maybe we should notify the user which packets were not sent.
+                // Yeah, cause the user would know what to do with that - kellye
                 m_PendingSend = false;
                 m_SendQueue.Clear();
             }

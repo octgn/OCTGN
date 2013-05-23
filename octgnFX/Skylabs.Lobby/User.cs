@@ -11,6 +11,7 @@ namespace Skylabs.Lobby
 {
     using System;
     using System.Collections;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
@@ -20,8 +21,14 @@ namespace Skylabs.Lobby
     /// <summary>
     /// A user model for lobby users.
     /// </summary>
-    public class User : IEquatable<User>, IEqualityComparer
+    public class User : IEquatable<User>, IEqualityComparer, INotifyPropertyChanged
     {
+        private Jid jidUser;
+
+        private UserStatus status;
+
+        private string customStatus;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="User"/> class.
         /// </summary>
@@ -30,7 +37,7 @@ namespace Skylabs.Lobby
         /// </param>
         public User(Jid user)
         {
-            this.JidUser = user.Bare;
+            this.JidUser = Jid.UnescapeNode(user.Bare);
             this.Status = UserStatus.Unknown;
             this.CustomStatus = string.Empty;
             this.Email = string.Empty;
@@ -40,7 +47,21 @@ namespace Skylabs.Lobby
         /// Gets or sets the raw JID user.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        public Jid JidUser { get; set; }
+        public Jid JidUser  
+        {
+            get
+            {
+                return this.jidUser;
+            }
+            private set
+            {
+                this.jidUser = value;
+                this.OnPropertyChanged("JidUser");
+                this.OnPropertyChanged("UserName");
+                this.OnPropertyChanged("FullUserName");
+                this.OnPropertyChanged("Server");
+            }
+        }
 
         /// <summary>
         /// Gets or sets the users User Name.
@@ -49,11 +70,15 @@ namespace Skylabs.Lobby
         {
             get
             {
-                return this.JidUser.User;
+                return Jid.UnescapeNode(this.JidUser.User);
             }
             set
             {
                 this.JidUser.User = value;
+                this.OnPropertyChanged("JidUser");
+                this.OnPropertyChanged("UserName");
+                this.OnPropertyChanged("FullUserName");
+                this.OnPropertyChanged("Server");
             }
         }
 
@@ -64,7 +89,7 @@ namespace Skylabs.Lobby
         {
             get
             {
-                return this.JidUser.Bare.ToLowerInvariant();
+                return Jid.UnescapeNode(this.JidUser.Bare.ToLowerInvariant());
             }
         }
 
@@ -83,17 +108,55 @@ namespace Skylabs.Lobby
         /// <summary>
         /// Gets the users status.
         /// </summary>
-        public UserStatus Status { get; private set; }
+        public UserStatus Status
+        {
+            get
+            {
+                return this.status;
+            }
+            private set
+            {
+                this.status = value;
+                this.OnPropertyChanged("Status");
+            }
+        }
 
         /// <summary>
         /// Gets or sets the custom status.
         /// </summary>
-        public string CustomStatus { get; set; }
+        public string CustomStatus
+        {
+            get
+            {
+                return this.customStatus;
+            }
+            set
+            {
+                this.customStatus = value;
+                this.OnPropertyChanged("CustomStatus");
+            }
+        }
 
         /// <summary>
         /// Gets or sets the email.
         /// </summary>
         public string Email { get; set; }
+
+        /// <summary>
+        /// Gets or Sets if the user is subbed
+        /// </summary>
+        public bool IsSubbed {
+            get
+            {
+                return UserManager.Get().IsUserSubbed(this);
+            }
+            set
+            {
+                UserManager.Get().SetUserSubbed(this,value);
+                this.OnPropertyChanged("IsSubbed");
+            }
+        }
+
 
         /// <summary>
         /// Convert a <see cref="Presence"/> packet into a <see cref="UserStatus"/>
@@ -160,6 +223,9 @@ namespace Skylabs.Lobby
         {
             string rid1 = null;
             string rid2 = null;
+
+            if ((null == a as object && null != b as object) || (null != a as object && null == b as object)) 
+                return false;
 
             // null must be on the left side of a, or we get a stack overflow
             if (null != a as object && a.JidUser != null && a.JidUser.Bare != null)
@@ -242,6 +308,10 @@ namespace Skylabs.Lobby
         /// </returns>
         public bool Equals(User other)
         {
+            if (this.FullUserName.Contains("tuberculosis") && other.FullUserName.Contains("tuberculosis"))
+            {
+                return other.FullUserName.ToLowerInvariant() == this.FullUserName.ToLowerInvariant();
+            }
             return other.FullUserName.ToLowerInvariant() == this.FullUserName.ToLowerInvariant();
         }
 
@@ -310,6 +380,17 @@ namespace Skylabs.Lobby
         public override bool Equals(object obj)
         {
             return obj.GetHashCode() == this.GetHashCode();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

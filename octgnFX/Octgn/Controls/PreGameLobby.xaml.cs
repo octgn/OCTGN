@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -17,7 +16,7 @@ namespace Octgn.Controls
     /// <summary>
     /// Interaction logic for PreGameLobby.xaml
     /// </summary>
-    public partial class PreGameLobby: UserControl 
+    public partial class PreGameLobby: UserControl ,IDisposable
     {
         public event Action<object> OnClose;
 
@@ -63,35 +62,38 @@ namespace Octgn.Controls
                 startBtn.Visibility = Visibility.Collapsed;
                 options.IsEnabled = playersList.IsEnabled = false;
             }
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
 
-            Loaded += delegate
-            {
-                Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
-                Program.Dispatcher = Dispatcher;
-                Program.ServerError += HandshakeError;
-                Program.GameSettings.PropertyChanged += SettingsChanged;
-                // Fix: defer the call to Program.Game.Begin(), so that the trace has 
-                // time to connect to the ChatControl (done inside ChatControl.Loaded).
-                // Otherwise, messages notifying a disconnection may be lost
-                try
-                {
-                    if (Program.Game != null)
-                        Dispatcher.BeginInvoke(new Action(Program.Game.Begin));
-                }
-                catch (Exception)
-                {
-                    if (Debugger.IsAttached) Debugger.Break();
-                }
-            };
-            Unloaded += delegate
-            {
-                if (_startingGame == false)
+        private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            if (_startingGame == false)
                     Program.StopGame();
-                Program.GameSettings.PropertyChanged -= SettingsChanged;
-                Program.ServerError -= HandshakeError;
-                Player.OnLocalPlayerWelcomed -= PlayerOnOnLocalPlayerWelcomed;
-                OnClose = null;
-            };
+            Program.GameSettings.PropertyChanged -= SettingsChanged;
+            Program.ServerError -= HandshakeError;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Loaded -= OnLoaded;
+            //new KickstarterWindow().ShowDialog();
+            Program.GameSettings.UseTwoSidedTable = Prefs.TwoSidedTable;
+            Program.Dispatcher = Dispatcher;
+            Program.ServerError += HandshakeError;
+            Program.GameSettings.PropertyChanged += SettingsChanged;
+            // Fix: defer the call to Program.Game.Begin(), so that the trace has 
+            // time to connect to the ChatControl (done inside ChatControl.Loaded).
+            // Otherwise, messages notifying a disconnection may be lost
+            try
+            {
+                if (Program.GameEngine != null)
+                    Dispatcher.BeginInvoke(new Action(Program.GameEngine.Begin));
+            }
+            catch (Exception)
+            {
+                if (Debugger.IsAttached) Debugger.Break();
+            }
         }
 
         private void GetIps()
@@ -184,7 +186,8 @@ namespace Octgn.Controls
         {
             this.IsEnabled = false;
             _startingGame = true;
-            Program.LobbyClient.HostedGameStarted();
+            if(!_isLocal)
+                Program.LobbyClient.HostedGameStarted();
             e.Handled = true;
             Start();
         }
@@ -203,7 +206,7 @@ namespace Octgn.Controls
 
         private void HandshakeError(object sender, ServerErrorEventArgs e)
         {
-            MessageBox.Show("The server returned an error:\n" + e.Message, "Error", MessageBoxButton.OK,
+            TopMostMessageBox.Show("The server returned an error:\n" + e.Message, "Error", MessageBoxButton.OK,
                             MessageBoxImage.Error);
             e.Handled = true;
             Back();
@@ -213,5 +216,24 @@ namespace Octgn.Controls
         {
             if (cbTwoSided.IsChecked != null) Program.GameSettings.UseTwoSidedTable = cbTwoSided.IsChecked.Value;
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Player.OnLocalPlayerWelcomed -= PlayerOnOnLocalPlayerWelcomed;
+            if (OnClose != null)
+            {
+                foreach (var d in OnClose.GetInvocationList())
+                {
+                    OnClose -= (Action<object>)d;
+                }
+            }
+        }
+
+        #endregion
     }
 }

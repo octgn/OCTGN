@@ -469,6 +469,18 @@ namespace Skylabs.Lobby
             }
         }
 
+        public void Whisper(User user)
+        {
+            if (this.IsGroupChat)
+            {
+                if (user.UserName.Equals(this.GroupUser.UserName))
+                {
+                    this.client.Chatting.GetRoom(new User(new Jid(user.JidUser.Resource, this.client.Host, "")));
+                }
+            }
+            this.client.Chatting.GetRoom(user);
+        }
+
         /// <summary>
         /// The send message.
         /// </summary>
@@ -484,13 +496,19 @@ namespace Skylabs.Lobby
             {
                 return;
             }
-
             if (message[0] == '/')
             {
                 var userCommand = message.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                var args = userCommand.Skip(1).ToArray();
+                var args = new string[0];
+                if (userCommand.Length > 1)
+                {
+                    args = String.Join(" ",userCommand.Skip(1)).Split(new[] { ',' });
+                    for (var i = 0; i < args.Length; i++) args[i] = args[i].Trim();
+                }
+                //var args = userCommand.Skip(1).ToArray();
                 var command = userCommand.Length > 0 ? userCommand[0] : string.Empty;
 
+                #region SlashCommands
                 switch (command)
                 {
                     case "?":
@@ -500,10 +518,10 @@ namespace Skylabs.Lobby
                             helpMessage.AppendLine("/?                : This help");
                             helpMessage.AppendLine(
                                 "/topic            : Set the topic of the room if you have the proper credentials");
-                            helpMessage.AppendLine("/msg {username}   : Starts a chat with a specific user");
-                            helpMessage.AppendLine("/friend {username}: Add a friend, or multiple friends");
-                            helpMessage.AppendLine("/removefriend {username}: Remove a friend, or multiple friends");
-                            helpMessage.AppendLine("/invite {username}: Invite user, or multiple users, to a chat room");
+                            helpMessage.AppendLine("/msg {username} : Starts a chat with a specific user");
+                            helpMessage.AppendLine("/friend {username}: Add a friend, or multiple friends(separated by commas)");
+                            helpMessage.AppendLine("/removefriend {username}: Remove a friend, or multiple friends(separated by commas)");
+                            helpMessage.AppendLine("/invite {username}: Invite user, or multiple users, to a chat room(separated by commas)");
                             Message mess = null;
                             if (IsGroupChat)
                             {
@@ -539,7 +557,7 @@ namespace Skylabs.Lobby
                         {
                             ChatRoom r =
                                 this.client.Chatting.GetRoom(
-                                    new User(new Jid(String.Join(" ", args), this.client.Host, "")));
+                                    new User(new Jid(args[0] ?? "", this.client.Host, "")));
                             break;
                         }
                     case "friend":
@@ -597,6 +615,7 @@ namespace Skylabs.Lobby
                             break;
                         }
                 }
+            #endregion SlashCommands
             }
             else
             {

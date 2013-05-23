@@ -8,20 +8,23 @@ using Octgn.Data;
 
 namespace Octgn.Play.Dialogs
 {
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Controls;
+
     public partial class LimitedDialog
     {
         public LimitedDialog()
         {
             Singleton = this;
             Packs = new ObservableCollection<SelectedPack>();
-            Sets = Database.GetAllSets();
+            Sets = Program.GameEngine.Definition.Sets().OrderBy(x=>x.Name).ToArray();
             InitializeComponent();
         }
 
         public static LimitedDialog Singleton { get; private set; }
 
         public ObservableCollection<SelectedPack> Packs { get; set; }
-        public IEnumerable<Set> Sets { get; set; }
+        public IEnumerable<DataNew.Entities.Set> Sets { get; set; } 
 
         protected override void OnClosed(EventArgs e)
         {
@@ -36,8 +39,8 @@ namespace Octgn.Play.Dialogs
             // I am creating lightweight "clones" of the pack, because the 
             // WPF ListBox doesn't like having multiple copies of the same 
             // instance and messes up selection
-            var pack = (Pack) packsCombo.SelectedItem;
-            Packs.Add(new SelectedPack {Id = pack.Id, FullName = pack.FullName});
+            var pack = (DataNew.Entities.Pack) packsCombo.SelectedItem;
+            Packs.Add(new SelectedPack {Id = pack.Id, FullName = pack.GetFullName()});
         }
 
         private void StartClicked(object sender, RoutedEventArgs e)
@@ -47,7 +50,7 @@ namespace Octgn.Play.Dialogs
             if (Player.All.Any(p => p.Groups.Any(x => x.Count > 0)))
             {
                 if (MessageBoxResult.Yes ==
-                    MessageBox.Show(
+                    TopMostMessageBox.Show(
                         "Some players have cards currently loaded.\n\nReset the game before starting limited game?",
                         "Warning", MessageBoxButton.YesNo))
                     Program.Client.Rpc.ResetReq();
@@ -57,7 +60,7 @@ namespace Octgn.Play.Dialogs
             Close();
             // Solves an issue where Dialog isn't the active window anymore if the confirmation dialog above was shown
             //fix MAINWINDOW bug
-            Program.PlayWindow.Activate();
+            WindowManager.PlayWindow.Activate();
         }
 
         private void CancelClicked(object sender, RoutedEventArgs e)

@@ -19,10 +19,10 @@ using System.Runtime.InteropServices;
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(true)]
-
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("d8e004a1-2898-4fee-984f-ca38982c5cbe")]
-
+[assembly: InternalsVisibleTo("Octgn.Test")]
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
@@ -33,5 +33,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.0.13.59")]
-[assembly: AssemblyFileVersion("3.0.13.59")]
+[assembly: AssemblyVersion("3.1.32.124")]
+[assembly: AssemblyFileVersion("3.1.32.124")]

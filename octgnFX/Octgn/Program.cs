@@ -7,50 +7,42 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
 using Octgn.Data;
-using Octgn.DeckBuilder;
 using Octgn.Networking;
 using Octgn.Play;
 using Octgn.Utils;
-using Skylabs.Lobby;
 
 using Client = Octgn.Networking.Client;
 
 namespace Octgn
 {
-    using System.Configuration;
+    using System.Reflection;
     using System.Windows.Interop;
     using System.Windows.Media;
 
+    using Microsoft.Win32;
+
+    using Octgn.DataNew;
+    using Octgn.Launcher;
     using Octgn.Windows;
+
+    using log4net;
+    using Octgn.Controls;
 
     public static class Program
     {
-        public static Windows.DWindow DebugWindow;
-        public static Windows.Main MainWindowNew;
-        public static DeckBuilderWindow DeckEditor;
-        public static PlayWindow PlayWindow;
-        public static PreGameLobbyWindow PreGameLobbyWindow { get; set; }
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static Game Game;
+        public static GameEngine GameEngine;
 
         public static string CurrentOnlineGameName = "";
         public static Skylabs.Lobby.Client LobbyClient;
         public static GameSettings GameSettings = new GameSettings();
-        public static GamesRepository GamesRepository = new GamesRepository();
         internal static Client Client;
         public static event Action OnOptionsChanged;
 
-        internal readonly static string WebsitePath;
-        internal readonly static string ChatServerPath;
-        internal readonly static string GameServerPath;
-        internal static readonly string UpdateInfoPath;
-        internal static readonly string GameFeed;
-
-        internal static readonly bool UseTransparentWindows;
-        internal static readonly bool UseGamePackageManagement;
 
         internal static bool IsGameRunning;
-        internal static readonly string BasePath = Octgn.Library.Paths.BasePath;
+        internal static readonly string BasePath = Octgn.Library.Paths.Get().BasePath;
         internal static readonly string GamesPath;
         internal static ulong PrivateKey = ((ulong) Crypto.PositiveRandom()) << 32 | Crypto.PositiveRandom();
 
@@ -67,55 +59,145 @@ namespace Octgn
         internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
         internal static Inline LastChatTrace;
 
+        internal static bool TableOnly;
+
         private static bool _locationUpdating;
 
         static Program()
         {
-
+            Log.Info("Starting OCTGN");
             try
             {
+                Log.Debug("Setting rendering mode.");
                 RenderOptions.ProcessRenderMode = Prefs.UseHardwareRendering ? RenderMode.Default : RenderMode.SoftwareOnly;
             }
             catch (Exception)
             {
                 // if the system gets mad, best to leave it alone.
             }
-            UseTransparentWindows = Prefs.UseWindowTransparency;
-            WebsitePath = ConfigurationManager.AppSettings["WebsitePath"];
-            ChatServerPath = ConfigurationManager.AppSettings["ChatServerPath"];
-            GameServerPath = ConfigurationManager.AppSettings["GameServerPath"];
-            GameFeed = ConfigurationManager.AppSettings["GameFeed"];
-            UseGamePackageManagement = bool.Parse(ConfigurationManager.AppSettings["UseGamePackageManagement"]);
-#if(Release_Test)
-            UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPathTest"];
-#else
-            UpdateInfoPath = ConfigurationManager.AppSettings["UpdateCheckPath"];
-#endif
-
-            var pList = Process.GetProcessesByName("OCTGN");
-            if(pList != null && pList.Length > 0 && pList.Any(x=>x.Id != Process.GetCurrentProcess().Id))
-            {
-                var res = MessageBox.Show("Another instance of OCTGN is current running. Would you like to close it?","OCTGN",MessageBoxButton.YesNo,MessageBoxImage.Question);
-                if (res == MessageBoxResult.Yes)
-                {
-                    foreach (var p in Process.GetProcessesByName("OCTGN"))
-                    {
-                        if (p.Id != Process.GetCurrentProcess().Id)
-                            p.Kill();
-                    }
-                }
-            }
-
-
-
-            LobbyClient = new Skylabs.Lobby.Client(ChatServerPath);
+            
+            Log.Info("Creating Lobby Client");
+            LobbyClient = new Skylabs.Lobby.Client(AppConfig.ChatServerPath);
+            Log.Info("Adding trace listeners");
             Debug.Listeners.Add(DebugListener);
             DebugTrace.Listeners.Add(DebugListener);
             Trace.Listeners.Add(DebugListener);
             //BasePath = Path.GetDirectoryName(typeof (Program).Assembly.Location) + '\\';
-            GamesPath = BasePath + @"Games\";
-            MainWindowNew = new Main();
-            Application.Current.MainWindow = MainWindowNew;
+            Log.Info("Setting Games Path");
+            GamesPath = BasePath + @"GameDatabase\";
+        }
+
+        internal static void Start()
+        {
+            Application.Current.MainWindow = new Window();
+            KillOtherOctgn();
+            bool isUpdate = RunUpdateChecker();
+            if (isUpdate)
+            {
+                KillOtherOctgn(true);
+                Program.Exit();
+                return;
+            }
+            Log.Info("Ping back");
+            System.Threading.Tasks.Task.Factory.StartNew(pingOB);
+
+            bool tableOnlyFailed = false;
+            if (TableOnly)
+            {
+                try
+                {
+                    new GameTableLauncher().Launch();
+                }
+                catch (Exception e)
+                {
+                    tableOnlyFailed = true;
+                }
+            }
+
+            if (!TableOnly || tableOnlyFailed)
+            {
+
+                Log.Info("Creating main window...");
+                WindowManager.Main = new Main();
+                Log.Info("Main window Created, Launching it.");
+                Application.Current.MainWindow = WindowManager.Main;
+                Log.Info("Main window set.");
+                Log.Info("Launching Main Window");
+                WindowManager.Main.Show();
+                Log.Info("Main Window Launched");
+            }
+
+        }
+
+        internal static void pingOB()
+        {
+            try
+            {
+                System.Net.WebRequest request = System.Net.WebRequest.Create("http://www.octgn.net/ping.php");
+                request.GetResponse();
+            }
+            catch (Exception ex)
+            {
+                int i = 0;
+            }
+        }
+
+        /// <summary>
+        /// Runs update checker
+        /// </summary>
+        /// <returns>True if there is an update, else false</returns>
+        internal static bool RunUpdateChecker()
+        {
+            Log.Info("Launching UpdateChecker");
+            var uc = new UpdateChecker();
+            uc.ShowDialog();
+            TableOnly = uc.GoDirectlyToTable;
+            Log.Info("UpdateChecker Done.");
+            return uc.IsClosingDown;
+        }
+
+        internal static void KillOtherOctgn(bool force = false)
+        {
+            Log.Info("Getting octgn processes...");
+            var pList = Process.GetProcessesByName("OCTGN");
+            Log.Info("Got process list");
+            if (pList != null && pList.Length > 0 && pList.Any(x => x.Id != Process.GetCurrentProcess().Id))
+            {
+                Log.Info("Found other octgn processes");
+                if (!force)
+                {
+                    var res =
+                        TopMostMessageBox.Show(
+                            "Another instance of OCTGN is current running. Would you like to close it?",
+                            "OCTGN",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question);
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        foreach (var p in Process.GetProcessesByName("OCTGN"))
+                        {
+                            if (p.Id != Process.GetCurrentProcess().Id)
+                            {
+                                Log.Info("Killing process...");
+                                p.Kill();
+                                Log.Info("Killed Process");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var p in Process.GetProcessesByName("OCTGN"))
+                    {
+                        if (p.Id != Process.GetCurrentProcess().Id)
+                        {
+                            Log.Info("Killing process...");
+                            p.Kill();
+                            Log.Info("Killed Process");
+                        }
+                    }
+                }
+            }
         }
 
         internal static void FireOptionsChanged()
@@ -138,12 +220,12 @@ namespace Octgn
                 foreach (Octgn.Play.Group group in Player.GlobalPlayer.Groups)
                     group.Controller = host;
             }
-            if (Program.PlayWindow != null) return;
+            if (WindowManager.PlayWindow != null) return;
             Program.Client.Rpc.Start();
-            Program.PlayWindow = new PlayWindow(Program.Game.IsLocal);
-            Program.PlayWindow.Show();
-            if(Program.PreGameLobbyWindow != null)
-                Program.PreGameLobbyWindow.Close();
+            WindowManager.PlayWindow = new PlayWindow(Program.GameEngine.IsLocal);
+            WindowManager.PlayWindow.Show();
+            if (WindowManager.PreGameLobbyWindow != null)
+                WindowManager.PreGameLobbyWindow.Close();
         }
         public static void StopGame()
         {
@@ -152,37 +234,39 @@ namespace Octgn
                 Client.Disconnect();
                 Client = null;
             }
-            if(Game != null)
-                Game.End();
-            Game = null;
+            if(GameEngine != null)
+                GameEngine.End();
+            GameEngine = null;
             Dispatcher = null;
-            Database.Close();
             IsGameRunning = false;
         }
 
         public static void Exit()
         {
+            LogManager.Shutdown();
+            Application.Current.Dispatcher.Invoke(new Action(() => { 
             Application.Current.MainWindow = null;
             if (LobbyClient != null)
                 LobbyClient.Stop();
 
             try
             {
-                if (DebugWindow != null)
-                    if (DebugWindow.IsLoaded)
-                        DebugWindow.Close();
+                if (WindowManager.DebugWindow != null)
+                    if (WindowManager.DebugWindow.IsLoaded)
+                        WindowManager.DebugWindow.Close();
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
                 if (Debugger.IsAttached) Debugger.Break();
             }
-            if (PlayWindow != null)
-                if (PlayWindow.IsLoaded)
-                    PlayWindow.Close();
+            if (WindowManager.PlayWindow != null)
+                if (WindowManager.PlayWindow.IsLoaded)
+                    WindowManager.PlayWindow.Close();
             //Apparently this can be null sometimes?
             if(Application.Current != null)
                 Application.Current.Shutdown(0);
+            }));
         }
 
         internal static void Print(Player player, string text)
@@ -240,6 +324,59 @@ namespace Octgn
         internal static void TraceWarning(string message, params object[] args)
         {
             Trace.TraceEvent(TraceEventType.Warning, EventIds.NonGame, message, args);
+        }
+
+        public static void LaunchUrl(string url)
+        {
+            if (GetDefaultBrowserPath() == null)
+            {
+                //TODO Launch in custom browser window
+                Application
+                    .Current
+                    .Dispatcher
+                    .Invoke(new Action(() => new BrowserWindow(url).Show()));
+                return;
+            }
+            Process.Start(url);
+
+        }
+
+        public static string GetDefaultBrowserPath()
+        {
+            string defaultBrowserPath = null;
+            try
+            {
+                RegistryKey regkey;
+
+                // Check if we are on Vista or Higher
+                OperatingSystem OS = Environment.OSVersion;
+                if ((OS.Platform == PlatformID.Win32NT) && (OS.Version.Major >= 6))
+                {
+                    regkey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\shell\\Associations\\UrlAssociations\\http\\UserChoice", false);
+                    if (regkey != null)
+                    {
+                        defaultBrowserPath = regkey.GetValue("Progid").ToString();
+                    }
+                    else
+                    {
+                        regkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Classes\\IE.HTTP\\shell\\open\\command", false);
+                        defaultBrowserPath = regkey.GetValue("").ToString();
+                    }
+                }
+                else
+                {
+                    regkey = Registry.ClassesRoot.OpenSubKey("http\\shell\\open\\command", false);
+                    defaultBrowserPath = regkey.GetValue("").ToString();
+                }
+
+                
+
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+            return defaultBrowserPath;
         }
     }
 }

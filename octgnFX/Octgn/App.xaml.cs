@@ -3,100 +3,74 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
-using System.Text;
 using System.Windows;
 
 using Octgn.Windows;
 
 namespace Octgn
 {
+    using System.Windows.Threading;
+
+    using Octgn.Library.Exceptions;
+
+    using log4net;
+
     public partial class OctgnApp
     {
-        internal const string ClientName = "Octgn.NET";
-        internal static readonly Version OctgnVersion = GetClientVersion();
-        internal static readonly Version BackwardCompatibility = new Version(0, 2, 0, 0);
-
-        private static Version GetClientVersion()
-        {
-            Assembly asm = typeof (OctgnApp).Assembly;
-            //var at = (AssemblyProductAttribute) asm.GetCustomAttributes(typeof (AssemblyProductAttribute), false)[0];
-            return asm.GetName().Version;
-        }
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
+            GlobalContext.Properties["version"] = Const.OctgnVersion;
 #if(!DEBUG)
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
+            Application.Current.DispatcherUnhandledException += CurrentOnDispatcherUnhandledException;
 #else
 
             AppDomain.CurrentDomain.FirstChanceException += this.CurrentDomainFirstChanceException;
 #endif
-			//Program.GamesRepository = new GamesRepository();
-
-            if (Program.GamesRepository.MissingFiles.Any())
-            {
-                var sb =
-                    new StringBuilder(
-                        "Octgn cannot find the following files. The corresponding games have been disabled.\n\n");
-                foreach (string file in Program.GamesRepository.MissingFiles)
-                    sb.Append(file).Append("\n\n");
-                sb.Append("You should restore those files, or re-install the corresponding games.");
-
-                ShutdownMode oldShutdown = ShutdownMode;
-                ShutdownMode = ShutdownMode.OnExplicitShutdown;
-                new Windows.MessageWindow(sb.ToString()).ShowDialog();
-                ShutdownMode = oldShutdown;
-            }
-
-            var uc = new UpdateChecker();
-            uc.ShowDialog();
-            if (!uc.IsClosingDown)
-            {
-                Program.MainWindowNew.Show();
-            }
-            else
-            {
-                Program.MainWindowNew.Close();
-                Current.MainWindow = null;
-                Program.Exit();
-            }
-
             if (e.Args.Any())
             {
                 Properties["ArbitraryArgName"] = e.Args[0];
             }
 
-
+            Log.Debug("Calling Base");
+            base.OnStartup(e);
+            Log.Debug("Base called.");
+            Program.Start();
 
         }
 
         private void CurrentDomainFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
 #if(DEBUG)
-            //if (e.Exception.Message.Contains("agsXMPP.Xml.xpnet.PartialTokenException"))
-            //    System.Diagnostics.Debugger.Break();
-            //Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, e.Exception.ToString());
+            Log.Error("FirstChanceException",e.Exception);
 #endif
+        }
+
+        private void CurrentOnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            if (e.Exception is UserMessageException)
+            {
+                e.Dispatcher.Invoke(new Action(() => MessageBox.Show(e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
+                e.Handled = true;
+            }
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = (Exception)e.ExceptionObject;
-            if (!Debugger.IsAttached)
+            if (e.IsTerminating) Log.Fatal("",ex);
+            else Log.Error("",ex);
+            if (ex is UserMessageException)
             {
-                var wnd = new Windows.ErrorWindow(ex);
-                wnd.ShowDialog();
-                ErrorReporter.SumbitException(ex);
+                Current.Dispatcher.Invoke(new Action(() => MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
             }
-            else
-            {
-                if (e.IsTerminating)
-                    Debugger.Break();
-            }
-
+            
+            Application.Current.Dispatcher.Invoke(new Action(() => MessageBox.Show("Something unexpected happened. We will now shut down OCTGN.\nIf this continues to happen please let us know!", "Error", MessageBoxButton.OK, MessageBoxImage.Exclamation)));
             if (!e.IsTerminating)
                 Program.DebugTrace.TraceEvent(TraceEventType.Error, 0, ex.ToString());
+            Application.Current.Shutdown(0);
         }
 
         protected override void OnExit(ExitEventArgs e)

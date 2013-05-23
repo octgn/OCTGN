@@ -17,11 +17,11 @@
   <xs:simpleType name="version">
     <xs:annotation>
       <xs:documentation>
-        Defines a version number: major.minor[.build[.revision]]
+        Defines a version number: major.minor.build.revision
       </xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
-      <xs:pattern value="\d+\.\d+(\.\d+(\.\d+)?)?" />
+      <xs:pattern value="\d+\.\d+\.\d+\.\d+" />
     </xs:restriction>
   </xs:simpleType>
 
@@ -68,6 +68,7 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="context" />
       <xs:enumeration value="chat" />
+      <xs:enumeration value="deckeditor" />
     </xs:restriction>
   </xs:simpleType>
 
@@ -124,7 +125,7 @@
                   <xs:attribute name="src" type="xs:string" use="required">
                     <xs:annotation>
                       <xs:documentation>
-                        The id of the relationship pointing to the font
+                        The relative path to the font file to be used.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
@@ -139,6 +140,63 @@
                     <xs:annotation>
                       <xs:documentation>
                         The target of the font(where it's used)
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="proxygen" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines the template file for the proxy generator.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:attribute name="definitionsrc" type="xs:string" use="required">
+              <xs:annotation>
+                <xs:documentation>
+                  The relative path to the template definition for the proxy generator.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="documents" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              Defines a list of documents used by the game.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="document" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:annotation>
+                    <xs:documentation>
+                      Defines a single document
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:attribute name="src" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The relative path to the document file to be used.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="icon" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The relative path to an icon to display for this document.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="name" type="xs:string" use="required">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The name of this document.
                       </xs:documentation>
                     </xs:annotation>
                   </xs:attribute>
@@ -315,7 +373,7 @@
                 </xs:complexType>
               </xs:element>
               <xs:element name="counter" type="counter" minOccurs="0" maxOccurs="unbounded" />
-              <xs:element name="hand" type="group" minOccurs="0" />
+              <xs:element name="hand" type="hand" minOccurs="0" />
               <xs:element name="group" type="group" minOccurs="0" maxOccurs="unbounded" />
             </xs:choice>
             <xs:attribute name="summary" type="xs:string" use="optional">
@@ -530,10 +588,10 @@
       </xs:documentation>
     </xs:annotation>
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="groupaction" type="action" />
-      <xs:element name="groupactions" type="actionSubmenu" />
-      <xs:element name="cardaction" type="action" />
-      <xs:element name="cardactions" type="actionSubmenu" />
+      <xs:element name="groupaction" type="groupAction" />
+      <xs:element name="groupactions" type="groupActionSubmenu" />
+      <xs:element name="cardaction" type="cardAction" />
+      <xs:element name="cardactions" type="cardActionSubmenu" />
     </xs:choice>
     <xs:attribute name="name" type="xs:string">
       <xs:annotation>
@@ -640,6 +698,17 @@
     </xs:attribute>
   </xs:complexType>
 
+  <xs:complexType name="hand">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the properties of one card group.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="group"/>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="deck">
     <xs:annotation>
       <xs:documentation>
@@ -727,6 +796,50 @@
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="cardAction">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a card action.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="action"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="cardActionSubmenu">
+    <xs:annotation>
+      <xs:documentation>
+        This type represents a sub menu and contains other cardAction items.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="actionSubmenu"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="groupAction">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a group action.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="action"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="groupActionSubmenu">
+    <xs:annotation>
+      <xs:documentation>
+        This type represents a sub menu and contains other groupAction items.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="actionSubmenu"/>
     </xs:complexContent>
   </xs:complexType>
 

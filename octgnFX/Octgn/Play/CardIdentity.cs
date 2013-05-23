@@ -5,6 +5,8 @@ using Octgn.Play.Gui;
 
 namespace Octgn.Play
 {
+    using Octgn.Core.DataExtensionMethods;
+
     public class CardIdentity
     {
         private static readonly Dictionary<int, CardIdentity> All = new Dictionary<int, CardIdentity>(100);
@@ -13,7 +15,7 @@ namespace Octgn.Play
         public bool Alias; // if alias is true, the type in key is not a card type but another CardIdentity to substitue
         public bool InUse; // if true, this cardidentity is currently linked to a card's Type property
         public ulong Key; // (nonce << 32 | type), either encrypted, or not
-        public CardModel Model; // card type
+        public DataNew.Entities.Card Model; // card type
         public bool MySecret; // if mySecret is true, key is not encrypted, and has not been made publicly available yet
         public bool Revealing; // true if the card is being - or has been - revealed
         public bool Visible; // indicates if a card is face up during a shuffle [transient]
@@ -45,7 +47,7 @@ namespace Octgn.Play
 
         public override string ToString()
         {
-            return Model == null ? "Card" : Model.Name;
+            return Model == null ? "Card" : Model.PropertyName();
         }
 
         public void OnRevealed(CardIdentity newId)

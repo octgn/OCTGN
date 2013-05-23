@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="templates" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:simpleType name="proxyBoolean">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="True" />
+			<xs:enumeration value="False" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="htmlcolor">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[#][a-fA-F0-9]{6}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="alignment">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="near" />
+			<xs:enumeration value="center" />
+			<xs:enumeration value="far" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="blocktype">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="text" />
+			<xs:enumeration value="overlay" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="degrees">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="360"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="positiveInt">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="link">
+		<xs:sequence>
+			<xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:string" use="required" />
+					<xs:attribute name="format" type="xs:string" default="{}" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="block" type="xs:string" use="required" />
+		<xs:attribute name="separator" type="xs:string" default=" " />
+	</xs:complexType>
+
+	<xs:complexType name="conditional">
+		<xs:choice>
+			<xs:sequence>
+				<xs:element name="if" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+						</xs:sequence>
+						<xs:attribute name="property" type="xs:string" use="required" />
+						<xs:attribute name="value" type="xs:string" use="optional" />
+						<xs:attribute name="contains" type="xs:string" use="optional" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="elseif" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+						</xs:sequence>
+						<xs:attribute name="property" type="xs:string" use="required" />
+						<xs:attribute name="value" type="xs:string" use="optional" />
+						<xs:attribute name="contains" type="xs:string" use="optional" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="else" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element name="switch" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="case" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+									</xs:sequence>
+									<xs:attribute name="value" type="xs:string" use="optional" />
+									<xs:attribute name="contains" type="xs:string" use="optional" />
+									<xs:attribute name="break" type="proxyBoolean" default="True" />
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="default" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="link" type="link" minOccurs="1" maxOccurs="unbounded" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="property" type="xs:string" use="required" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:element name="templates">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="blocks" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="block" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="location" minOccurs="1" maxOccurs="1">
+											<xs:complexType>
+												<xs:attribute name="x" type="positiveInt" use="required" />
+												<xs:attribute name="y" type="positiveInt" use="required" />
+												<xs:attribute name="rotate" type="degrees" default="0" />
+												<xs:attribute name="altrotate" type="proxyBoolean" default="False" />
+												<xs:attribute name="flip" type="proxyBoolean" default="False" />
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="text" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:attribute name="color" type="htmlcolor" use="required" />
+												<xs:attribute name="size" type="positiveInt" use="required" />
+												<xs:attribute name="font" type="xs:string" use="optional" />
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="border" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:attribute name="color" type="htmlcolor" use="required" />
+												<xs:attribute name="size" type="positiveInt" use="required" />
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="wordwrap" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:attribute name="height" type="positiveInt" use="required" />
+												<xs:attribute name="width" type="positiveInt" use="required" />
+												<xs:attribute name="align" type="alignment" default="near" />
+												<xs:attribute name="valign" type="alignment" default="near" />
+												<xs:attribute name="shrinktofit" type="proxyBoolean" default="False" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="type" type="blocktype" use="required" />
+									<xs:attribute name="id" type="xs:string" use="required" />
+									<xs:attribute name="src" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="template" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="matches" minOccurs="1" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="match" minOccurs="1" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="name" type="xs:string" use="required" />
+												<xs:attribute name="value" type="xs:string" use="required" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="overlayblocks" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="conditional" type="conditional" />
+										<xs:element name="link" type="link" />
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="textblocks" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="conditional" type="conditional" />
+										<xs:element name="link" type="link" />
+									</xs:choice>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="src" type="xs:string" use="required" />
+						<xs:attribute name="default" type="proxyBoolean" default="False" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

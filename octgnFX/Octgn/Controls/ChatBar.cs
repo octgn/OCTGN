@@ -44,9 +44,20 @@ namespace Octgn.Controls
             this.currentTabSelection = this.Items[0];
             if (!this.IsInDesignMode())
             {
-                this.Loaded +=
-                    (sender, args) => Program.LobbyClient.Chatting.OnCreateRoom += this.LobbyCreateRoom;
+                this.Loaded += OnLoaded;
+                this.Unloaded += OnUnloaded;
             }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Program.LobbyClient.Chatting.OnCreateRoom -= this.LobbyCreateRoom;
+        }
+
+        private void OnLoaded(object sender, EventArgs eventArgs)
+        {
+            Program.LobbyClient.Chatting.OnCreateRoom += this.LobbyCreateRoom;
+            
         }
 
         /// <summary>
@@ -96,6 +107,7 @@ namespace Octgn.Controls
             var r = room;
             this.Dispatcher.Invoke(new Action(() =>
                 {
+                    if (Items.OfType<ChatBarItem>().Any(x => x.Room.Rid == room.Rid)) return;
                     var chatBarItem = new ChatBarItem(r) { Height = this.barHeight.Value };
                     chatBarItem.HeaderMouseUp += ChatBarItemOnPreviewMouseUp;
                     this.Items.Add(chatBarItem);
@@ -117,7 +129,7 @@ namespace Octgn.Controls
         /// <param name="mouseButtonEventArgs">
         /// The mouse button event arguments.
         /// </param>
-        private void ChatBarItemOnPreviewMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        internal void ChatBarItemOnPreviewMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
             if (this.currentTabSelection is ChatBarItem && sender == this.currentTabSelection)
             {

@@ -11,16 +11,24 @@
         public PreGameLobbyWindow()
         {
             InitializeComponent();
-            Program.PreGameLobbyWindow = this;
+            WindowManager.PreGameLobbyWindow = this;
             this.CloseButtonVisibility = Visibility.Hidden;
-            this.Closed += (sender, args) => Program.PreGameLobbyWindow = null;
+            this.Closed += OnClosed;
+        }
+
+        private void OnClosed(object sender, EventArgs eventArgs)
+        {
+            WindowManager.PreGameLobbyWindow = null;
+            this.Dispose();
         }
 
         public void Setup(bool isLocalGame, Window owner)
         {
-            this.Owner = owner;
+            //this.Owner = owner;
+            //this.Topmost = false;
             if(this.Visibility != Visibility.Visible)
                 this.Show();
+            this.Focus();
             this.Content = null;
             this.lobby = null;
             lobby = new PreGameLobby(isLocalGame);
@@ -30,7 +38,14 @@
 
         private void PreGameLobbyOnOnClose(object o)
         {
+            lobby.OnClose -= this.PreGameLobbyOnOnClose;
+            lobby.Dispose();
             this.Close();
+        }
+        public new void Dispose()
+        {
+            this.Closed -= OnClosed;
+            base.Dispose();
         }
     }
 }

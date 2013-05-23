@@ -6,15 +6,21 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using Octgn.Data.Properties;
 using Octgn.Online.Library.Models;
 namespace Octgn.Server
 {
+    using System.Reflection;
+
     using Octgn.Online.Library;
     using Octgn.Online.Library.Enums;
 
+    using log4net;
+
     public sealed class Server
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+        
         #region Private fields
 
         private readonly List<Connection> _clients = new List<Connection>(); // List of all the connected clients		
@@ -38,6 +44,7 @@ namespace Octgn.Server
         public Server(IGameStateEngine stateEngine)
         {
             GameStateEngine.Set(stateEngine);
+            Log.InfoFormat("Creating server {0}",stateEngine.Game.HostUri);
             _tcp = new TcpListener(IPAddress.Any, stateEngine.Game.HostUri.Port);
             _handler = new Handler(stateEngine.Game.GameId, stateEngine.Game.GameVersion);
             _connectionChecker = new Thread(CheckConnections);
@@ -90,7 +97,7 @@ namespace Octgn.Server
         {
             while (!_closed)
             {
-                Thread.Sleep(20000);
+                Thread.Sleep(120000);
                 lock (_clients)
                 {
                     if (_clients.Count == 0)
@@ -105,8 +112,8 @@ namespace Octgn.Server
                         Stop();
                         break;
                     }
-                    _clients.FindAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 60).ForEach(me => me.Disconnect());
-                    _clients.RemoveAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 60);
+                    _clients.FindAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 240).ForEach(me => me.Disconnect());
+                    _clients.RemoveAll(x => x.Disposed || !x.Client.Connected || new TimeSpan(DateTime.Now.Ticks - x.LastPingTime.Ticks).TotalSeconds > 240);
                 }
             }
         }
@@ -185,7 +192,7 @@ namespace Octgn.Server
                     //lock (this)
                     //{
                     var ts = new TimeSpan(DateTime.Now.Ticks - _lastPing.Ticks);
-                    if (ts.TotalSeconds > 20)
+                    if (ts.TotalSeconds > 120)
                         Disconnect("Ping timeout");
                     if (Disposed) return;
                     //}
@@ -272,7 +279,7 @@ namespace Octgn.Server
             {
                 // Lock the disposed field
                 Console.WriteLine("Disconnect called for client : {0}", message);
-                Console.WriteLine(Resource1.Connection_Disconnect_Client_Disconnected_);
+                //Console.WriteLine(Resource1.Connection_Disconnect_Client_Disconnected_);
                 // Quit if this client is already disposed
                 if (Disposed) return;
                 // Mark as disposed

@@ -1,13 +1,11 @@
 ﻿<Window x:Class="Octgn.Play.Dialogs.RulesWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Game Rules" Height="304" Width="575"
-        ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Loaded="WindowLoaded">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Game Rules" Height="404" Width="675"
+        ShowInTaskbar="False" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" >
   <DockPanel>
     <DockPanel DockPanel.Dock="Bottom">
-      <TextBlock Text="Find: " DockPanel.Dock="Left" VerticalAlignment="Top" Margin="3,3,0,0" />
-      <TextBox x:Name="search" MaxLines="1" PreviewKeyDown="FindText" />
+      <TextBlock Text="Find: " DockPanel.Dock="Left" VerticalAlignment="Top" Margin="3,3,0,0" Visibility="Collapsed"/>
+      <TextBox x:Name="search" MaxLines="1" Visibility="Collapsed"/>
     </DockPanel>
-    <ScrollViewer x:Name="scroller">
-      <RichTextBox x:Name="rules" VerticalAlignment="Top" PreviewKeyDown="FindNext" />
-    </ScrollViewer>
+    <WebBrowser x:Name="rules" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"></WebBrowser>
   </DockPanel>
 </Window>

@@ -36,10 +36,10 @@
       </ItemsControl.ItemTemplate>
     </ItemsControl>
 
-    <gui:HandControl Grid.Row="1" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Top" />
+    <gui:HandControl Grid.Row="1" DataContext="{Binding Hand}" Margin="3,3,0,3" VerticalAlignment="Stretch" />
 
     <ItemsControl ItemsSource="{Binding Source={StaticResource ExpandedGroups}}" Grid.Row="1" Grid.Column="1"
-                  Margin="0,3,0,3" VerticalAlignment="Top" Focusable="False">
+                  Margin="0,3,0,3" VerticalAlignment="Stretch" Focusable="False">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
           <StackPanel Orientation="Horizontal" />
@@ -53,7 +53,7 @@
     </ItemsControl>
 
     <ItemsControl ItemsSource="{Binding Source={StaticResource CollapsedGroups}}" Grid.Row="1" Grid.Column="2"
-                  Margin="0,3,3,3" VerticalAlignment="Top" Focusable="False" x:Name="collapsedList">
+                  Margin="0,3,3,3" VerticalAlignment="Stretch" Focusable="False" x:Name="collapsedList">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
           <WrapPanel Orientation="Vertical" />

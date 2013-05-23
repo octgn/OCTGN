@@ -4,13 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" Height="397" Width="845" Focusable="True" x:Name="thisControl" >
-    <UserControl.Resources>
-        <SolidColorBrush x:Key="DarkChatBackBrush" Color="#FF333333"></SolidColorBrush>
-        <SolidColorBrush x:Key="LightChatBackBrush" Color="#FFF9F9F9"></SolidColorBrush>
-
-        <SolidColorBrush x:Key="DarkChatFontBrush" Color="#FFF9F9F9"></SolidColorBrush>
-        <SolidColorBrush x:Key="LightChatFontBrush" Color="#FF333333"></SolidColorBrush>
-    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
@@ -19,7 +12,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="100*"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" Grid.RowSpan="2" Width="2" ResizeBehavior="PreviousAndNext"/>
         <Grid Grid.Column="2" Grid.RowSpan="2" Background="#FF333333">
@@ -32,16 +25,56 @@
                 <RowDefinition Height="100*"/>
             </Grid.RowDefinitions>
 
-            <ListBox x:Name="UserList" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding UserListItems,ElementName=thisControl}">
-            </ListBox>
+            <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" Padding="5" Grid.Row="1" Grid.ColumnSpan="2">
+                <ItemsControl ItemsSource="{Binding UserListItems,ElementName=thisControl}" Margin="5">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical">
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
             <Image Source="../Resources/search.png" Width="16" Height="16"/>
             <TextBox x:Name="UserFilter"  TextWrapping="NoWrap" Text="" VerticalContentAlignment="Center" Grid.Column="2" TextChanged="UserFilterTextChanged" >
             </TextBox>
         </Grid>
-        <TextBox x:Name="ChatInput" Grid.Row="1" TextWrapping="Wrap" VerticalContentAlignment="Center" PreviewKeyUp="ChatInputPreviewKeyUp" PreviewKeyDown="ChatInputPreviewKeyDown"/>
+        <TextBlock 
+            Grid.Row="1"
+            VerticalAlignment="Center"
+            Margin="10,0,0,0"
+            Foreground="LightGray"
+            Canvas.ZIndex="1"
+            Text="/? for user and chat commands"
+            IsHitTestVisible="False"
+            Visibility="{Binding ShowChatInputHint,ElementName=thisControl,Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <TextBox x:Name="ChatInput" Grid.Row="1"  TextWrapping="Wrap" VerticalContentAlignment="Center" 
+                 PreviewKeyUp="ChatInputPreviewKeyUp" PreviewKeyDown="ChatInputPreviewKeyDown"
+                 AcceptsReturn="True"
+                 Padding="5,0,0,0"
+                 Height="Auto"
+                 MinHeight="30"
+                 MaxHeight="150"
+                 VerticalScrollBarVisibility="Auto"
+                 TextChanged="ChatInput_OnTextChanged"
+        >
+        </TextBox>
         <RichTextBox x:Name="Chat" VerticalScrollBarVisibility="Auto" 
-                     IsReadOnly="True" IsDocumentEnabled="True" Background="{StaticResource DarkChatBackBrush}"
-                     Foreground="{StaticResource DarkChatFontBrush}">
+                     IsReadOnly="True" IsDocumentEnabled="True">
+                     <RichTextBox.Style>
+                <Style TargetType="{x:Type RichTextBox}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=thisControl,Path=IsLightTheme}" Value="True">
+                            <Setter Property="Background" Value="{StaticResource ChatLightBackBrush}"></Setter>
+                            <Setter Property="Foreground" Value="{StaticResource ChatLightFontBrush}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ElementName=thisControl,Path=IsLightTheme}" Value="false">
+                            <Setter Property="Background" Value="{StaticResource ChatDarkBackBrush}"></Setter>
+                            <Setter Property="Foreground" Value="{StaticResource ChatDarkFontBrush}"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </RichTextBox.Style>
             <FlowDocument>
                 <Table CellSpacing="0">
                     <Table.Columns>
@@ -51,9 +84,12 @@
 
                     <TableRowGroup x:Name="ChatRowGroup">
                         <TableRow>
-                            <TableCell><Paragraph Foreground="#FFE66E09">-------></Paragraph></TableCell>
                             <TableCell>
-                                <Paragraph Foreground="#FFE66E09">Type /? for a list of commands</Paragraph></TableCell>
+                                <Paragraph Foreground="#FFE66E09">-------></Paragraph>
+                            </TableCell>
+                            <TableCell>
+                                <Paragraph Foreground="#FFE66E09">Type /? for a list of commands</Paragraph>
+                            </TableCell>
                         </TableRow>
                     </TableRowGroup>
                 </Table>

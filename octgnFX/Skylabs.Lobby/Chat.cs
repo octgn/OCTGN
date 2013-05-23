@@ -126,9 +126,10 @@ namespace Skylabs.Lobby
                 {
                     ret = new ChatRoom(this.NextRid, this.client, otherUser);
                     this.Rooms.Add(ret);
-                    this.FireOnCreateRoom(this, ret);
                 }
 
+                if(ret != null)
+                    this.FireOnCreateRoom(this,ret);
                 return ret;
             }
             else
@@ -138,9 +139,9 @@ namespace Skylabs.Lobby
                 {
                     ret = new ChatRoom(this.NextRid, this.client, otherUser);
                     this.Rooms.Add(ret);
-                    this.FireOnCreateRoom(this, ret);
                 }
-
+                if(ret != null)
+                    this.FireOnCreateRoom(this,ret);
                 return ret;
             }
         }

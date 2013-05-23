@@ -30,7 +30,7 @@ namespace Octgn.Scripting
         {
             get
             {
-                if (_uniqueId == 0) _uniqueId = (Player.LocalPlayer.Id) << 16 | Program.Game.GetUniqueId();
+                if (_uniqueId == 0) _uniqueId = (Player.LocalPlayer.Id) << 16 | Program.GameEngine.GetUniqueId();
                 return _uniqueId;
             }
         }

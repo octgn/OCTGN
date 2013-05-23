@@ -27,12 +27,12 @@ namespace Octgn.Controls
     /// <summary>
     /// The chat bar item.
     /// </summary>
-    public class ChatBarItem : TabItem
+    public class ChatBarItem : TabItem,IDisposable
     {
         /// <summary>
         /// Sets the Chat Room
         /// </summary>
-        private readonly ChatRoom room;
+        public readonly ChatRoom Room;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatBarItem"/> class.
@@ -42,7 +42,7 @@ namespace Octgn.Controls
         /// </param>
         public ChatBarItem(ChatRoom chatRoom = null)
         {
-            this.room = chatRoom;
+            this.Room = chatRoom;
             this.ConstructControl();
         }
 
@@ -103,25 +103,25 @@ namespace Octgn.Controls
 
             // Create item label
             var label = new TextBlock() { VerticalAlignment = VerticalAlignment.Center };
-            if (this.IsInDesignMode() || this.room == null)
+            if (this.IsInDesignMode() || this.Room == null)
             {
                 label.Inlines.Add(new Run("test"));
             }
             else
             {
-                if (this.room.GroupUser != null)
+                if (this.Room.GroupUser != null)
                 {
-                    label.Inlines.Add(new Run(this.room.GroupUser.UserName));
+                    label.Inlines.Add(new Run(this.Room.GroupUser.UserName));
 
                     // Lobby should never be able to be silenced.
-                    if (this.room.GroupUser.UserName.ToLowerInvariant() == "lobby")
+                    if (this.Room.GroupUser.UserName.ToLowerInvariant() == "lobby")
                     {
                         borderClose.Visibility = Visibility.Collapsed;
                     }
                 }
                 else
                 {
-                    var otherUser = this.room.Users.FirstOrDefault(x => x.UserName.ToLowerInvariant() != Program.LobbyClient.Me.UserName.ToLowerInvariant());
+                    var otherUser = this.Room.Users.FirstOrDefault(x => x.UserName.ToLowerInvariant() != Program.LobbyClient.Me.UserName.ToLowerInvariant());
                     if (
                         otherUser != null)
                     {
@@ -130,7 +130,7 @@ namespace Octgn.Controls
                 }
 
                 borderClose.MouseLeftButtonUp += this.BorderCloseOnMouseLeftButtonUp;
-                this.room.OnMessageReceived += (sender, @from, message, time, type) => this.Dispatcher.BeginInvoke(
+                this.Room.OnMessageReceived += (sender, @from, message, time, type) => this.Dispatcher.BeginInvoke(
                     new Action(
                                () =>
                                    {
@@ -172,7 +172,7 @@ namespace Octgn.Controls
         /// </param>
         private void BorderCloseOnMouseLeftButtonUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            this.room.LeaveRoom();
+            this.Room.LeaveRoom();
             this.Visibility = Visibility.Collapsed;
             mouseButtonEventArgs.Handled = true;
 
@@ -180,7 +180,9 @@ namespace Octgn.Controls
             var chatBar = this.Parent as ChatBar;
             if (chatBar != null)
             {
+                this.HeaderMouseUp -= chatBar.ChatBarItemOnPreviewMouseUp;
                 chatBar.SelectedIndex = 0;
+                chatBar.Items.Remove(this);
             }
         }
 
@@ -193,6 +195,8 @@ namespace Octgn.Controls
         {
             this.FireHeaderMouseUp(mouseButtonEventArgs);
         }
+
+        private ChatControl chatControl;
 
         /// <summary>
         /// Constructs the chat portion of the control.
@@ -211,16 +215,21 @@ namespace Octgn.Controls
                     MaxHeight = 253,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
-            var chatControl = new ChatControl { Width = 600, Height = 250 };
+            chatControl = new ChatControl { Width = 600, Height = 250 };
             
             chatBorder.Child = chatControl;
 
             this.Content = chatBorder;
 
-            if (this.room != null)
+            if (this.Room != null)
             {
-                chatControl.SetRoom(this.room);
+                chatControl.SetRoom(this.Room);
             }
+        }
+
+        public void Dispose()
+        {
+            chatControl.Dispose();
         }
     }
 }

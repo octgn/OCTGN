@@ -4,7 +4,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Themes/Ribbon.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="/Resources/Themes/Brushes.xaml"/>
                 <ResourceDictionary Source="/Resources/Themes/Full/ExpressionDark.xaml"/>
                 <ResourceDictionary Source="/Resources/Themes/Global.xaml" />
                 <ResourceDictionary Source="/Resources/Themes/NumericUpDown.xaml" />

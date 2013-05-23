@@ -16,6 +16,7 @@ namespace Skylabs.Lobby
     using System.Globalization;
     using System.Linq;
     using System.Net.Sockets;
+    using System.Reflection;
 
     using agsXMPP;
     using agsXMPP.Factory;
@@ -28,7 +29,7 @@ namespace Skylabs.Lobby
     using agsXMPP.protocol.x.muc;
     using agsXMPP.Xml.Dom;
 
-    using Octgn.Data;
+    using log4net;
 
     using Error = agsXMPP.protocol.Error;
 
@@ -97,6 +98,8 @@ namespace Skylabs.Lobby
 
     public class Client
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        
         #region Events
 
         /// <summary>
@@ -290,6 +293,7 @@ namespace Skylabs.Lobby
                 this.xmpp = new XmppClientConnection(Host);
                 this.Chatting = new Chat(this, this.xmpp);
                 ElementFactory.AddElementType("gameitem", "octgn:gameitem", typeof(HostedGameData));
+                ElementFactory.AddElementType("sub","octgn:sub",typeof(Sub));
                 this.Notifications = new List<Notification>();
                 this.Friends = new List<User>();
                 this.xmpp.OnRegistered += this.XmppOnOnRegistered;
@@ -347,6 +351,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnStreamError(object sender, Element element)
         {
+            Log.Warn(element);
             var st = element as Error;
             if (st != null && st.Condition == StreamErrorCondition.Conflict)
             {
@@ -374,6 +379,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnSocketError(object sender, Exception exception)
         {
+            Log.Warn("Xmpp Socket Error ",exception);
             var se = exception as SocketException;
             if (se != null)
             {
@@ -407,6 +413,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnError(object sender, Exception exception)
         {
+            Log.Warn("Xmpp Error ",exception);
             Trace.WriteLine("[Xmpp]Error: " + exception.Message);
         }
 
@@ -418,6 +425,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnClose(object sender)
         {
+            Log.Info("Xmpp Closed");
             Trace.WriteLine("[Xmpp]Closed");
             IsConnected = false;
         }
@@ -604,23 +612,44 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnMessage(object sender, Message msg)
         {
+            if (msg.Type == MessageType.groupchat)
+            {
+                if (msg.HasTag(typeof(Sub)))
+                {
+                    var sub = msg.SelectSingleElement<Sub>();
+                    if (this.OnDataReceived != null)
+                    {
+                        var u = new User(new Jid(msg.From.Resource + "@" + Host));
+                        u.IsSubbed = sub.IsSubbed;
+                        this.OnDataReceived.Invoke(this,DataRecType.UserSubChanged, u);
+                    }
+                }
+            }
             if (msg.Type == MessageType.normal)
             {
                 if (msg.Subject == "gameready")
                 {
+                    Log.Info("Got gameready message");
                     int port = -1;
                     if (int.TryParse(msg.Body, out port) && port != -1)
                     {
+                        Log.Info("gameready port " + port);
                         if (this.OnDataReceived != null)
                         {
+                            Log.Info("Firing gameready data on port " + port);
                             this.OnDataReceived.Invoke(this, DataRecType.HostedGameReady, port);
                         }
-
+                        Log.InfoFormat("CurrentHostedGamePort={0}", CurrentHostedGamePort);
                         this.CurrentHostedGamePort = port;
+                    }
+                    else
+                    {
+                        Log.Info("Couldn't parse gameready port " + msg.Body ?? "null");
                     }
                 }
                 else if (msg.Subject == "gamelist")
                 {
+                    Log.Info("Got game list");
                     var list = new List<HostedGameData>();
                     foreach (object a in msg.ChildNodes)
                     {
@@ -629,25 +658,22 @@ namespace Skylabs.Lobby
                         {
                             list.Add(gi);
                         }
-
-                        var el = a as Element;
-                        gi = el as HostedGameData;
-                        if (el == null)
-                        {
-                            continue;
-                        }
                     }
 
                     this.games = list;
+                    Log.Info("Going to fire game list event");
                     if (this.OnDataReceived != null)
                     {
+                        Log.Info("Firing game list event");
                         this.OnDataReceived.Invoke(this, DataRecType.GameList, list);
                     }
                 }
                 else if (msg.Subject == "refresh")
                 {
+                    Log.Info("Server wants a refresh of game list");
                     if (this.OnDataReceived != null)
                     {
+                        Log.Info("Firing server wants a refresh of game list");
                         this.OnDataReceived.Invoke(this, DataRecType.GamesNeedRefresh, null);
                     }
                 }
@@ -693,29 +719,6 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnRosterEnd(object sender)
         {
-            //foreach (var n in this.Friends)
-            //{
-            //    var email = DatabaseHandler.GetUser(n.FullUserName);
-            //    if (string.IsNullOrWhiteSpace(email))
-            //    {
-            //        /*
-            //        var viq = new VcardIq
-            //        {
-            //            Type = IqType.get ,
-            //            To = n.User.Bare
-            //        };
-            //        viq.From = Me.User.Bare;
-            //        viq.Vcard.JabberId = n.User.Bare;
-            //        viq.GenerateId();
-            //        Xmpp.Send(viq);
-            //         */
-            //    }
-            //    else
-            //    {
-            //        n.Email = email;
-            //    }
-            //}
-
             if (this.OnDataReceived != null)
             {
                 this.OnDataReceived.Invoke(this, DataRecType.FriendList, this.Friends);
@@ -807,6 +810,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnAuthError(object sender, Element element)
         {
+            Log.WarnFormat("Auth error {0}",element);
             this.FireLoginComplete(LoginResults.AuthError);
             Trace.WriteLine("[XMPP]AuthError: Closing...");
             this.IsConnected = false;
@@ -821,17 +825,19 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnLogin(object sender)
         {
+            Log.Info("Xmpp Login Complete");
             this.myPresence.Type = PresenceType.available;
             this.myPresence.Show = ShowType.chat;
             this.MucManager = new MucManager(this.xmpp);
             var room = new Jid("lobby@conference." + Host);
             this.MucManager.AcceptDefaultConfiguration(room);
-            //TODO Enable this with new UI
+            //TODO [NEW UI] Enable this with new UI
             //this.MucManager.JoinRoom(room, this.Username, this.Password, false);
             this.Me = new User(this.xmpp.MyJID);
             this.Me.SetStatus(UserStatus.Online);
             this.xmpp.PresenceManager.Subscribe(this.xmpp.MyJID);
             IsConnected = true;
+            Log.Info("Xmpp Login Firing Login Complete");
             this.FireLoginComplete(LoginResults.Success);
         }
 
@@ -846,6 +852,7 @@ namespace Skylabs.Lobby
         /// </param>
         private void XmppOnOnXmppConnectionStateChanged(object sender, XmppConnectionState state)
         {
+            Log.InfoFormat("Xmpp Connection State Changed To {0}",state);
             Trace.WriteLine("[Xmpp]State: " + state.ToString());
             if (this.OnStateChanged != null)
             {
@@ -944,8 +951,10 @@ namespace Skylabs.Lobby
         /// </param>
         private void FireLoginComplete(LoginResults result)
         {
+            Log.Info("Firing login complete");
             if (this.OnLoginComplete != null)
             {
+                Log.Info("Fired login complete");
                 this.OnLoginComplete.Invoke(this, result);
             }
         }
@@ -1020,12 +1029,16 @@ namespace Skylabs.Lobby
         /// <param name="gamename">
         /// The gamename.
         /// </param>
-        public void BeginHostGame(Game game, string gamename)
+        public void BeginHostGame(Octgn.DataNew.Entities.Game game, string gamename)
         {
             string data = string.Format("{0},:,{1},:,{2}", game.Id.ToString(), game.Version, gamename);
+            Log.InfoFormat("BeginHostGame {0}",data);
             var m = new Message(new Jid("gameserv@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
             m.GenerateId();
             this.xmpp.Send(m);
+            //m = new Message(new Jid("gameserv2@" + Host), this.Me.JidUser, MessageType.normal, data, "hostgame");
+            //m.GenerateId();
+            //this.xmpp.Send(m);
         }
 
         /// <summary>
@@ -1033,7 +1046,21 @@ namespace Skylabs.Lobby
         /// </summary>
         public void BeginGetGameList()
         {
+            Log.Info("Begin get game list");
             var m = new Message(new Jid("gameserv@" + Host), MessageType.normal, string.Empty, "gamelist");
+            m.GenerateId();
+            this.xmpp.Send(m);
+            //m = new Message(new Jid("gameserv2@" + Host), MessageType.normal, string.Empty, "gamelist");
+            //m.GenerateId();
+            //this.xmpp.Send(m);
+        }
+
+        public void SetSub(bool subbed)
+        {
+            if (!this.IsConnected) return;
+            var m = new Message(new Jid("lobby@conference." + Host), MessageType.groupchat, string.Empty);
+            //m.Body = Me.FullUserName + " " + subbed;
+            m.AddChild(new Sub(subbed));
             m.GenerateId();
             this.xmpp.Send(m);
         }
@@ -1043,6 +1070,7 @@ namespace Skylabs.Lobby
         /// </summary>
         public void BeginReconnect()
         {
+            Log.Info("Begin reconnect");
             this.RebuildXmpp();
             this.BeginLogin(this.Username, this.Password);
         }
@@ -1194,6 +1222,9 @@ namespace Skylabs.Lobby
             var m = new Message(
                 "gameserv@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
             this.xmpp.Send(m);
+            //m = new Message(
+            //    "gameserv2@" + Host, MessageType.normal, this.CurrentHostedGamePort.ToString(CultureInfo.InvariantCulture), "gamestarted");
+            //this.xmpp.Send(m);
         }
 
         /// <summary>
@@ -1201,6 +1232,7 @@ namespace Skylabs.Lobby
         /// </summary>
         public void LogOut()
         {
+            Log.Info("Logging out");
             Trace.WriteLine("[Lobby]Log out called.");
             this.Stop();
         }
@@ -1210,8 +1242,27 @@ namespace Skylabs.Lobby
         /// </summary>
         public void Stop()
         {
+            Log.Info("Xmpp Stop called");
             Trace.WriteLine("[Lobby]Stop Called.");
             this.RebuildXmpp();
+        }
+    }
+    internal class Sub : Element
+    {
+        public bool IsSubbed
+        {
+            get { return this.GetTagBool("issubbed"); }
+            set{SetTag("issubbed",value);}
+        }
+
+        public Sub()
+        {
+            this.TagName = "sub";
+            this.Namespace = "octgn:sub";
+        }
+        public Sub(bool isSubbed):this()
+        {
+            this.IsSubbed = isSubbed;
         }
     }
 }

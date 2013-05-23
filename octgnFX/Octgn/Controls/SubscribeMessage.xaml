@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="Octgn.Controls.SubscribeMessage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="900"
+             Background="#99333333"
+             Panel.ZIndex="5" Height="Auto"
+             x:Name="Me"
+             DataContext="{Binding ElementName=Me}">
+    <Border x:Name="BorderHostGame" VerticalAlignment="Center" Width="300" HorizontalAlignment="Center" Visibility="Visible" Style="{StaticResource Panel}" Padding="5">
+        <Border.Background>
+            <LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
+                <LinearGradientBrush.Transform>
+                    <RotateTransform Angle="-22" CenterY="0.5" CenterX="0.5"/>
+                </LinearGradientBrush.Transform>
+                <GradientStop Color="#FF333333" Offset="0.558"/>
+                <GradientStop Color="#FF555555" Offset="1"/>
+                <GradientStop Color="#FF777777" Offset="0"/>
+                <GradientStop Color="#FF555555" Offset="0.154"/>
+                <GradientStop Color="#FF333333" Offset="0.351"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid>
+            <Grid.RowDefinitions >
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="85"></ColumnDefinition>
+                <ColumnDefinition Width="100*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Text="Please Subscribe!" TextWrapping="Wrap" Grid.ColumnSpan="2" Margin="0,0,0,0" />
+            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" FontSize="16" Text="Subscribing helps us add new features and keep our servers running." TextWrapping="Wrap"/>
+            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" FontSize="14" Text="There are also subscriber exclusive features coming soon!" TextWrapping="Wrap"/>
+            <TextBlock Grid.Row="3" Text="Subscription"></TextBlock>
+            <ComboBox Grid.Row="3" Grid.Column="1" x:Name="SubBox"></ComboBox>
+            <Button Grid.Row="4" Height="30" Grid.Column="1" HorizontalAlignment="Right" Width="100" Click="SubscribeClick">Subscribe</Button>
+            <ProgressBar Grid.Row="5" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Margin="0,5,0,5" IsIndeterminate="False" Value="{Binding TotalSeconds}" Maximum="{Binding TotalSeconds}"></ProgressBar>
+        </Grid>
+    </Border>
+</UserControl>

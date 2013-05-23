@@ -6,6 +6,8 @@ using Octgn.Data;
 
 namespace Octgn.Definitions
 {
+    using Octgn.DataNew;
+
     public abstract class LocalDef
     {
         public CounterDef[] Counters { get; private set; }

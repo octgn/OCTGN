@@ -113,6 +113,10 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -141,6 +145,7 @@
     <Compile Include="Threading\LazyAsync.cs" />
     <Compile Include="ThreadSafeDictionary.cs" />
     <Compile Include="ThreadSafeList.cs" />
+    <Compile Include="UserManager.cs" />
     <Compile Include="ValueConverters.cs" />
     <Compile Include="Verify.cs" />
   </ItemGroup>
@@ -171,9 +176,9 @@
       <Project>{91ea0d0b-d3ba-497f-afeb-2cad59deba0e}</Project>
       <Name>agsXMPP2010</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Octgn.Data\Octgn.Data.csproj">
-      <Project>{6C6E53BA-E75B-4E93-98CA-3C39ED908B2C}</Project>
-      <Name>Octgn.Data</Name>
+    <ProjectReference Include="..\Octgn.DataNew\Octgn.DataNew.csproj">
+      <Project>{59759960-0a48-45ec-abb9-b4faad6d43ee}</Project>
+      <Name>Octgn.DataNew</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +193,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\nounlist.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

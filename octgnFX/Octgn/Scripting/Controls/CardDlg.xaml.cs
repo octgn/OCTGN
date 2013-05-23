@@ -10,38 +10,74 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Octgn.Controls;
 using Octgn.Data;
-using Octgn.Definitions;
 using Octgn.Utils;
 
 namespace Octgn.Scripting.Controls
 {
+    using System.Linq.Expressions;
+
+    using Octgn.Core.DataExtensionMethods;
+    using Octgn.Core.DataManagers;
+    using Octgn.DataNew.Entities;
+
     public partial class CardDlg
     {
         public static readonly DependencyProperty IsCardSelectedProperty = DependencyProperty.Register(
-            "IsCardSelected", typeof (bool), typeof (CardDlg), new UIPropertyMetadata(false));
+            "IsCardSelected", typeof(bool), typeof(CardDlg), new UIPropertyMetadata(false));
 
-        private List<CardModel> _allCards;
+        private List<DataNew.Entities.Card> _allCards;
         private string _filterText = "";
 
-        public CardDlg(string where)
+        public CardDlg(Dictionary<string, string> properties, string op)
         {
             InitializeComponent();
-            // Async load the cards (to make the GUI snappier with huge DB)
             Task.Factory.StartNew(() =>
-                                      {
-                                          _allCards = Database.GetCards(where).ToList();
-                                          Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
-                                      });
-            recentList.ItemsSource = Program.Game.RecentCards;
+              {
+                  var game = GameManager.Get().GetById(Program.GameEngine.Definition.Id);
+                  if (op == null) op = "";
+                  op = op.ToLower().Trim();
+                  if (String.IsNullOrWhiteSpace(op)) op = "and";
+                  if (properties == null) properties = new Dictionary<string, string>();
+                  
+                  switch (op)
+                  {
+                      case "or":
+                          _allCards = new List<Card>();
+                          foreach (var p in properties)
+                          {
+                              var tlist = game.AllCards()
+                                  .Where(x => x.Properties.SelectMany(y=>y.Value.Properties)
+                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
+                                          && y.Value.ToString().ToLower() == p.Value.ToLower())).ToList();
+                              _allCards.AddRange(tlist);
+                          }
+                          break;
+                      default:
+                          var query = game.AllCards();
+                          foreach (var p in properties)
+                          {
+                              query = query
+                                  .Where(
+                                  x => x.Properties.SelectMany(y=>y.Value.Properties)
+                                      .Any(y => y.Key.Name.ToLower() == p.Key.ToLower() 
+                                          && y.Value.ToString().ToLower() == p.Value.ToLower()));
+                          }
+                          _allCards = query.ToList();
+                          break;
+
+                  }
+                  Dispatcher.BeginInvoke(new Action(() => allList.ItemsSource = _allCards));
+              });
+            recentList.ItemsSource = Program.GameEngine.RecentCards;
         }
 
         public bool IsCardSelected
         {
-            get { return (bool) GetValue(IsCardSelectedProperty); }
+            get { return (bool)GetValue(IsCardSelectedProperty); }
             set { SetValue(IsCardSelectedProperty, value); }
         }
 
-        public CardModel SelectedCard { get; private set; }
+        public DataNew.Entities.Card SelectedCard { get; private set; }
 
         public int Quantity
         {
@@ -54,30 +90,29 @@ namespace Octgn.Scripting.Controls
 
             // A double-click can only select a marker in its own list
             // (Little bug here: double-clicking in the empty zone of a list with a selected marker adds it)
-            if (sender is ListBox && ((ListBox) sender).SelectedIndex == -1) return;
+            if (sender is ListBox && ((ListBox)sender).SelectedIndex == -1) return;
 
-            if (recentList.SelectedIndex != -1) SelectedCard = (CardModel) recentList.SelectedItem;
-            if (allList.SelectedIndex != -1) SelectedCard = (CardModel) allList.SelectedItem;
+            if (recentList.SelectedIndex != -1) SelectedCard = (DataNew.Entities.Card)recentList.SelectedItem;
+            if (allList.SelectedIndex != -1) SelectedCard = (DataNew.Entities.Card)allList.SelectedItem;
 
             if (SelectedCard == null) return;
 
             int qty;
             if (!int.TryParse(quantityBox.Text, out qty) || qty < 1)
             {
-                var anim = new ColorAnimation(Colors.Red, new Duration(TimeSpan.FromMilliseconds(800)))
-                               {AutoReverse = true};
+                var anim = new ColorAnimation(Colors.Red, new Duration(TimeSpan.FromMilliseconds(800))) { AutoReverse = true };
                 validationBrush.BeginAnimation(SolidColorBrush.ColorProperty, anim, HandoffBehavior.Compose);
                 return;
             }
 
-            Program.Game.AddRecentCard(SelectedCard);
+            Program.GameEngine.AddRecentCard(SelectedCard);
             DialogResult = true;
         }
 
         private void CardSelected(object sender, SelectionChangedEventArgs e)
         {
             e.Handled = true;
-            var list = (ListBox) sender;
+            var list = (ListBox)sender;
             if (list.SelectedIndex != -1)
             {
                 if (list != recentList) recentList.SelectedIndex = -1;
@@ -98,8 +133,8 @@ namespace Octgn.Scripting.Controls
             if (_allCards == null) return;
             ThreadPool.QueueUserWorkItem(searchObj =>
                                              {
-                                                 var search = (string) searchObj;
-                                                 List<CardModel> filtered =
+                                                 var search = (string)searchObj;
+                                                 List<DataNew.Entities.Card> filtered =
                                                      _allCards.Where(
                                                          m =>
                                                          m.Name.IndexOf(search,
@@ -121,15 +156,14 @@ namespace Octgn.Scripting.Controls
         {
             var img = sender as Image;
             if (img == null) return;
-            var model = img.DataContext as CardModel;
-            if (model != null) ImageUtils.GetCardImage(new Uri(model.Picture), x => img.Source = x);
+            var model = img.DataContext as DataNew.Entities.Card;
+            if (model != null) ImageUtils.GetCardImage(new Uri(model.GetPicture()), x => img.Source = x);
         }
 
         private void ComputeChildWidth(object sender, RoutedEventArgs e)
         {
             var panel = sender as VirtualizingWrapPanel;
-            CardDef cardDef = Program.Game.Definition.CardDefinition;
-            if (panel != null) panel.ChildWidth = panel.ChildHeight*cardDef.Width/cardDef.Height;
+            if (panel != null) panel.ChildWidth = panel.ChildHeight * Program.GameEngine.Definition.CardWidth / Program.GameEngine.Definition.CardHeight;
         }
     }
 }

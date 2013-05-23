@@ -5,13 +5,13 @@
   <Window.Resources>
     <DataTemplate x:Key="MarkerTemplate">
       <StackPanel Width="32" Orientation="Vertical">
-        <Image Source="{Binding Picture}" HorizontalAlignment="Center" Height="24" Width="24" />
+        <Image Source="{Binding IconUri}" HorizontalAlignment="Center" Height="24" Width="24" />
         <TextBlock TextAlignment="Center" Text="{Binding Name}" Margin="0,2,0,0" FontSize="9" />
       </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="NamelessMarkerTemplate">
-      <Image Source="{Binding Picture}" HorizontalAlignment="Center" Height="24" Width="24" />
+            <Image Source="{Binding IconUri}" HorizontalAlignment="Center" Height="24" Width="24" />
     </DataTemplate>
 
     <Style x:Key="WrapListBox" TargetType="{x:Type ListBox}" BasedOn="{StaticResource PanelListBox}">

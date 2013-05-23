@@ -39,8 +39,9 @@
                 // arguments didn't fail, so do stuff
                 // Setup game state engine
                 GameStateEngine.SetContext(HostedGame.ToHostedGameState(EnumHostedGameStatus.Booting),Local);
-                if (Debug || Local) StartServiceCommandLine();
-                else StartService();
+                //if (Debug || Local) 
+                //else StartService();
+                StartServiceCommandLine();
             }
             if (Debug)
             {

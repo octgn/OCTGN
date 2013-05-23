@@ -1,434 +1,304 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Windows;
 using System.Xml;
-using Octgn.Data;
-using Octgn.Definitions;
-using Octgn.Scripting;
+
 using Skylabs.Lobby.Threading;
-using vbAccelerator.Components.Shell;
 
 namespace Octgn.Windows
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Windows.Input;
+
+    using Octgn.Core;
+    using Octgn.Core.DataManagers;
+    using Octgn.DataNew;
+    using Octgn.Library;
+    using Octgn.Library.ExtensionMethods;
+
+    using log4net;
+
     /// <summary>
     ///   Interaction logic for UpdateChecker.xaml
     /// </summary>
     public partial class UpdateChecker
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         public bool IsClosingDown { get; set; }
+        public bool GoDirectlyToTable { get; set; }
 
         private bool _realCloseWindow = false;
-        private readonly List<string> _errors = new List<string>();
         private bool _isNotUpToDate = false;
         private string _downloadURL = "";
         private string _updateURL = "";
 
+        private bool _hasLoaded = false;
+
+        private Key[] keys = new Key[] { Key.None, Key.None, Key.None, Key.None, Key.None };
+        private Key[] correctKeys = new Key[]{Key.O,Key.C,Key.T, Key.G, Key.N};
+        private Key[] tableKeys = new Key[] { Key.T, Key.A, Key.B, Key.L, Key.E };
+
+        private bool cancel = false;
+
+        private bool toTable = false;
+
         public UpdateChecker()
         {
+            this.Loaded += OnLoaded;
             IsClosingDown = false;
             InitializeComponent();
-            if (Program.GamesRepository == null)
-                Program.GamesRepository = new GamesRepository();
+            this.PreviewKeyUp += OnPreviewKeyUp;
+        }
+
+        private void OnPreviewKeyUp(object sender, KeyEventArgs keyEventArgs)
+        {
+            bool gotOne = false;
+            for(var i =0;i<keys.Length;i++)
+            {
+                if (keys[i] == Key.None)
+                {
+                    keys[i] = keyEventArgs.Key;
+                    gotOne = true;
+                    break;
+                }
+            }
+            if (!gotOne)
+            {
+                Array.Copy(keys.ToArray(),1,keys,0,4);
+                keys[4] = keyEventArgs.Key;
+            }
+            if (keys.SequenceEqual(correctKeys))
+            {
+                // Blam
+                cancel = true;
+                //this.UpdateCheckDone();
+            }
+            else if (keys.SequenceEqual(tableKeys))
+            {
+                GoDirectlyToTable = true;
+            }
+            //var sb = new StringBuilder();
+            //foreach (var k in keys)
+            //{
+            //    sb.Append(new KeyConverter().ConvertTo(k, typeof(string)));
+            //}
+            //this.Title = sb.ToString();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            Log.Info("Starting");
+            if (_hasLoaded) return;
+            _hasLoaded = true;
             ThreadPool.QueueUserWorkItem(s =>
-                                             {
-                //UpdateUserShortcuts();
-                if (Prefs.CleanDatabase)
-                {
-                    Program.GamesRepository.RemoveAllGames();
-                    Prefs.CleanDatabase = false;
-                    InstallDefsFromFolders();
-                    InstallSetsFromFolders();
-                }
-
-                if (Prefs.InstallOnBoot)
-                {
-                    InstallDefsFromFolders();
-                    InstallSetsFromFolders();
-                }
-                VerifyAllDefs();
+            {
 #if(!DEBUG)
-                CheckForUpdates();
+                if (CheckForUpdates())
+                {
+                    Dispatcher.Invoke(new Action(Update));
+                    return;
+                }
 #endif
-                CheckForXmlSetUpdates();
+                this.RandomMessage();
+                for (var i = 0; i < 10; i++)
+                {
+                    Thread.Sleep(500);
+                    if (cancel) break;
+                }
+                if (cancel)
+                {
+                    this.UpdateCheckDone();
+                    return;
+                }
+                this.ClearGarbage();
+                //CheckForXmlSetUpdates();
+                this.LoadDatabase();
+                this.UpdateGames();
+                GameFeedManager.Get().OnUpdateMessage -= GrOnUpdateMessage;
                 UpdateCheckDone();
+
             });
-            lblStatus.Content = "";
+            lblStatus.Text = "";
+            Log.Info("Finsihed");
         }
 
-        private void UpdateUserShortcuts()
+        private void RandomMessage()
         {
-            try
+            var assembly = Assembly.GetExecutingAssembly();
+            var objStream = assembly.GetManifestResourceStream("Octgn.Resources.StartupMessages.txt");
+            var objReader = new StreamReader(objStream);
+            var lines = new List<string>();
+            while (!objReader.EndOfStream)
             {
-
-                UpdateStatus("Updating Links...");
-                var newWorkingDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OCTGN",
-                                           "OCTGN");
-                var newTarget = Path.Combine(newWorkingDirectory, "octgn.exe");
-
-                var fileList = new List<string>();
-
-                var sPath = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu);
-                if(Directory.Exists(sPath))
-                    fileList.AddRange(Directory.GetFiles(sPath, "*.lnk", SearchOption.AllDirectories));
-
-                sPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                if(Directory.Exists(sPath))
-                    fileList.AddRange(Directory.GetFiles(sPath, "*.lnk", SearchOption.AllDirectories));
-
-                //I guess doing a recursive search covers all pinned shortcuts in the taskbar and start menu as well in 7 and above
-                sPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"Microsoft","Internet Explorer","Quick Launch");
-                if(Directory.Exists(sPath))
-                    fileList.AddRange(Directory.GetFiles(sPath, "*.lnk", SearchOption.AllDirectories));
-
-                //Look through files for an octgn link
-                foreach( var fs in fileList)
-                {
-                    try
-                    {
-                        using(var s = new ShellLink(fs))
-                        {
-                            var finfo = new FileInfo(s.Target);
-                            if (finfo.Name.ToLowerInvariant() != "octgn.exe")
-                                continue;
-                            if (s.Target.ToLowerInvariant() == newTarget.ToLowerInvariant() &&
-                                s.WorkingDirectory.ToLowerInvariant() == newWorkingDirectory.ToLowerInvariant()) continue;
-                            s.Target = newTarget;
-                            s.WorkingDirectory = newWorkingDirectory;
-                            s.Save();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-    #if(DEBUG)
-                        UpdateStatus(String.Format("[UpdateLink Failure] {0}",e.Message));
-    #endif
-                    }
-                }
+                lines.Add(objReader.ReadLine());
             }
-            catch (Exception e )
-            {
-                new ErrorWindow(e).Show();
-            }
+            var rand = new Random();
+            var linenum = rand.Next(0, lines.Count - 1);
+            this.UpdateStatus(lines[linenum]);
         }
 
-        private void InstallDefsFromFolders()
+        private void LoadDatabase()
         {
-            UpdateStatus("Checking folders for games that aren't installed.");
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
-            var path2 = GamesRepository.BasePath;
-
-            //Grab all def files
-            var defList = Directory.GetFiles(path , "*.o8g" , SearchOption.AllDirectories);
-            String[] defList2 = new string[0];
-            if(path != path2)
-                defList2 = Directory.GetFiles(path2, "*.o8g", SearchOption.AllDirectories);
-
-            //Install if they aren't already
-            var dList = defList.Union(defList2);
-            foreach(var d in dList)
+            this.UpdateStatus("Loading games...");
+            foreach (var g in GameManager.Get().Games)
             {
-                var gd = GameDef.FromO8G(d);
-                var og = Program.GamesRepository.AllGames.FirstOrDefault(x => x.Id == gd.Id);
-                if(og != null)
-                {
-                    if (gd.Version > og.Version || (gd.Version == og.Version && gd.FileHash != og.FileHash))
-                    {
-                        UpdateStatus("Installing game " + gd.Name);
-                        if(!gd.Install())
-                            UpdateStatus("Couldn't install game " + gd.Name);
-                        else
-                            UpdateStatus("Installed game " + gd.Name);
-                    }
-                }
-                else
-                {
-                    UpdateStatus("Installing game " + gd.Name);
-                    if (!gd.Install())
-                        UpdateStatus("Couldn't install game " + gd.Name);
-                    else
-                        UpdateStatus("Installed game " + gd.Name);
-                }
+                Log.DebugFormat("Loaded Game {0}",g.Name);
             }
+            this.UpdateStatus("Loading sets...");
+            foreach (var s in SetManager.Get().Sets)
+            {
+                Log.DebugFormat("Loaded Set {0}",s.Name);
+            }
+            this.UpdateStatus("Loading scripts...");
+            foreach (var s in DbContext.Get().Scripts)
+            {
+                Log.DebugFormat("Loading Script {0}",s.Path);
+            }
+            this.UpdateStatus("Loading proxies...");
+            foreach (var p in DbContext.Get().ProxyDefinitions)
+            {
+                Log.DebugFormat("Loading Proxy {0}",p.Key);
+            }
+            this.UpdateStatus("Loaded database.");
         }
 
-        private void InstallSetsFromFolders()
+        private void ClearGarbage()
         {
-            UpdateStatus("Checking folders for sets that aren't installed.");
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Octgn");
-            var path2 = GamesRepository.BasePath;
-
-            //Grab all def files
-            var setList = Directory.GetFiles(path, "*.o8s", SearchOption.AllDirectories);
-            String[] setList2 = new string[0];
-            if (path != path2)
-                setList2 = Directory.GetFiles(path2, "*.o8s", SearchOption.AllDirectories);
-
-            //Install if they aren't already
-            var sList = setList.Union(setList2);
-            foreach(var s in sList)
+            this.UpdateStatus("Clearing out garbage...");
+            var gp = new DirectoryInfo(Paths.Get().GraveyardPath).Parent;
+            foreach (var file in gp.GetFiles("*.*", SearchOption.AllDirectories))
             {
                 try
                 {
-                    var ns = Set.SetFromFile(s , Program.GamesRepository);
-                    if (ns.Game == null) continue;
-                    var osg = Program.GamesRepository.AllGames.FirstOrDefault(x => x.Id == ns.Game.Id);
-                    if(osg == null)
-                        continue;
-                    var os = osg.GetSet(ns.Id);
-                    if(os == null)
-                        InstallSet(s,osg);
-                    else if(ns.Version > os.Version)
-                        InstallSet(s,osg);                    
+                    file.Delete();
                 }
                 catch(Exception e)
                 {
-                    UpdateStatus("Could not process set " + s + ": " + e.Message);
-                    UpdateStatus("---------------------");
-                    UpdateStatus(e.StackTrace);
-                    UpdateStatus("---------------------");
+                    Log.Warn("Couldn't delete garbage file " + file.FullName,e);
                 }
-
-
             }
-            Prefs.InstallOnBoot = false;
-        }
-
-        private void InstallSet(string fname, Octgn.Data.Game SelectedGame)
-        {
-            string shortName = Path.GetFileName(fname);
-            UpdateStatus("Installing Set " + shortName);
-            string path = Path.Combine(Prefs.DataDirectory, "Games", SelectedGame.Id.ToString(), "Sets");
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-
-            
-            try
+            for (var i = 0; i < 10; i++)
             {
-                if (shortName != null)
+                foreach (var dir in gp.GetDirectories("*", SearchOption.AllDirectories).ToArray())
                 {
-                    string copyto = Path.Combine(path, shortName);
-                    if (fname.ToLower() != copyto.ToLower())
-                        File.Copy(fname, copyto, true);
-                    SelectedGame.InstallSet(copyto);
+                    try
+                    {
+                        dir.Delete(true);
+
+                    }
+                    catch(Exception e)
+                    {
+                        Log.Warn("Couldn't delete garbage folder " + dir.FullName, e);
+                    }
                 }
-                UpdateStatus(string.Format("Set '{0}' installed.", shortName));
-            }
-            catch (Exception ex)
-            {
-                UpdateStatus(string.Format("'{0}' an error occured during installation:",shortName));
-                UpdateStatus(ex.Message);
             }
         }
 
-        private void CheckForUpdates()
+        private void UpdateGames()
+        {
+            this.UpdateStatus("Updating Games...This can take a little bit if there is an update.");
+            var gr = GameFeedManager.Get();
+            gr.OnUpdateMessage += GrOnUpdateMessage;
+            Task.Factory.StartNew(GameFeedManager.Get().CheckForUpdates).Wait(TimeSpan.FromMinutes(5));
+        }
+
+        private void GrOnUpdateMessage(string s)
+        {
+            UpdateStatus(s);
+        }
+
+        private void Update()
+        {
+            _realCloseWindow = true;
+            Log.Info("Not up to date.");
+            IsClosingDown = true;
+
+            var downloadUri = new Uri(_updateURL);
+            string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
+
+            UpdateStatus("Downloading new version.");
+            var c = new WebClient();
+            progressBar1.Maximum = 100;
+            progressBar1.IsIndeterminate = false;
+            progressBar1.Value = 0;
+            c.DownloadFileCompleted += delegate(object sender, AsyncCompletedEventArgs args)
+            {
+                Log.Info("Download complete");
+                if (!args.Cancelled)
+                {
+                    Log.Info("Launching updater");
+                    LazyAsync.Invoke(
+                        () =>Program.LaunchUrl(Path.Combine(Directory.GetCurrentDirectory(), filename)));
+                }
+                else
+                {
+                    Log.Info("Download failed");
+                    UpdateStatus("Downloading the new version failed. Please manually download.");
+                    Program.LaunchUrl(_downloadURL);
+                }
+                Close();
+            };
+            c.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
+            { progressBar1.Value = args.ProgressPercentage; };
+            Log.InfoFormat("Downloading new version to {0}", filename);
+            c.DownloadFileAsync(downloadUri, Path.Combine(Directory.GetCurrentDirectory(), filename));
+        }
+
+        private bool CheckForUpdates()
         {
             UpdateStatus("Checking for updates...");
             try
             {
-                string[] update = ReadUpdateXml(Program.UpdateInfoPath);
-
-
+                Log.InfoFormat("Getting update info from {0}",AppConfig.UpdateInfoPath);
+                string[] update = ReadUpdateXml(AppConfig.UpdateInfoPath);
+                Log.Info("Got update info");
+                
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Version local = assembly.GetName().Version;
                 var online = new Version(update[0]);
                 _isNotUpToDate = online > local;
+                Log.InfoFormat("Online: {0} Local:{1}",online,local);
                 _updateURL = update[1];
                 _downloadURL = update[2];
+                if (_isNotUpToDate) return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 _isNotUpToDate = false;
                 _downloadURL = "";
+                Log.Warn("Check For Updates Error",e);
             }
-        }
-
-        private void CheckForXmlSetUpdates()
-        {
-            UpdateStatus("Checking for xml game updates...");
-            foreach (Data.Game game in Program.GamesRepository.Games)
-            {
-                List<String> xml_links = game.GetAllXmls();
-                foreach (String xml_link in xml_links)
-                {
-                    try
-                    {
-                        Utils.XmlSetParser xmls = new Utils.XmlSetParser(xml_link);
-                        Utils.XmlSimpleValidate xml_validate = new Utils.XmlSimpleValidate(xmls);
-                        xml_validate.CheckXml(game);
-                        if (game.GetOldXmlByLink(xml_link) != null)
-                        {
-                            var xmlr = XmlReader.Create(new StringReader(game.GetOldXmlByLink(xml_link)));
-                            Utils.XmlSetParser old_xml = new Utils.XmlSetParser(xmlr);
-                            if (old_xml.uuid() != xmls.uuid())
-                            {
-                                UpdateStatus("Problem with xml at link " + xml_link + " - uuid of set changed");
-                            }
-                            if (xmls.version() > old_xml.version())
-                            {
-                                Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
-                                xmli.installSet(this, game);
-                                WebClient cli = new WebClient();
-                                try
-                                {
-                                    String xml_val = cli.DownloadString(xml_link);
-                                    game.WriteOldXmlByLink(xml_link, xml_val);
-                                }
-                                catch
-                                {
-                                    UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
-                                }
-
-                            }
-                        }
-                        else
-                        {
-                            try
-                            {
-                                Utils.XmlInstaller xmli = new Utils.XmlInstaller(xmls);
-                                xmli.installSet(this, game);
-                                WebClient cli = new WebClient();
-                                String xml_val = cli.DownloadString(xml_link);
-                                game.WriteOldXmlByLink(xml_link, xml_val);
-                            }
-                            catch
-                            {
-                                UpdateStatus("Problem with updating one of spoilers - maybe the server is down");
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Problem with getting one of the xmls - " + xml_link);
-                        UpdateStatus("Problem with getting one of the xmls - " + xml_link);
-                    }
-                }
-
-            }
-
+            return false;
         }
 
         private void UpdateCheckDone()
         {
+            Log.Info("UpdateCheckDone");
             Dispatcher.Invoke(new Action(() =>
                                          {
                                              _realCloseWindow = true;
-											 if (_isNotUpToDate)
-											 {
-												 IsClosingDown = true;
-
-											     var downloadUri = new Uri(_updateURL);
-                                                 string filename = System.IO.Path.GetFileName(downloadUri.LocalPath);
-
-												 UpdateStatus("Downloading new version.");
-												 var c = new WebClient();
-												 progressBar1.Maximum = 100;
-												 progressBar1.IsIndeterminate = false;
-												 progressBar1.Value = 0;
-												 c.DownloadFileCompleted += delegate(object sender, AsyncCompletedEventArgs args)
-												 {
-													 if (!args.Cancelled)
-													 {
-
-														 LazyAsync.Invoke(()=> Process.Start(Path.Combine(Directory.GetCurrentDirectory(),filename)));
-													 }
-													 else
-													 {
-														 UpdateStatus("Downloading the new version failed. Please manually download.");
-														 Process.Start(_downloadURL);
-													 }
-													 Close();
-												 };
-												 c.DownloadProgressChanged += delegate(object sender, DownloadProgressChangedEventArgs args)
-												 {
-													 progressBar1.Value = args.ProgressPercentage;
-												 };
-												 c.DownloadFileAsync(downloadUri, Path.Combine(Directory.GetCurrentDirectory(),filename));
-											 }
-											 else Close();
+                                             Log.Info("Up to date...Closing");
+                                             Close();
             }));
-        }
-		
-
-        private void VerifyAllDefs()
-        {
-            UpdateStatus("Loading Game Definitions...");
-            try
-            {
-                var g2R = new List<Data.Game>();
-                using (MD5 md5 = new MD5CryptoServiceProvider())
-                {
-                    foreach (Data.Game g in Program.GamesRepository.Games)
-                    {
-                        string fhash = "";
-
-                        UpdateStatus("Checking Game: " + g.Name);
-                        var fpath = g.FullPath;
-                        if (!File.Exists(fpath))
-                        {
-                            _errors.Add("[" + g.Name + "]: Def file doesn't exist at " + fpath);
-                            continue;
-                        }
-                        using (var file = new FileStream(fpath, FileMode.Open))
-                        {
-                            byte[] retVal = md5.ComputeHash(file);
-                            fhash = BitConverter.ToString(retVal).Replace("-", ""); // hex string
-                        }
-                        if (fhash.ToLower() == g.FileHash.ToLower()) continue;
-
-                        Program.Game = new Game(GameDef.FromO8G(fpath), "TestUser");
-                        Program.Game.TestBegin();
-                        //IEnumerable<Player> plz = Player.All;
-                        var engine = new Engine(true);
-                        string[] terr = engine.TestScripts(Program.Game);
-                        Program.Game.End();
-                        if (terr.Length <= 0)
-                        {
-                            Program.GamesRepository.UpdateGameHash(g,fhash);
-                            continue;
-                        }
-                        _errors.AddRange(terr);
-                        g2R.Add(g);
-                    }
-                }
-                foreach (Data.Game g in g2R)
-                    Program.GamesRepository.Games.Remove(g);
-                if (_errors.Count > 0)
-                {
-                    Dispatcher.BeginInvoke(new Action(() =>
-                                                          {
-                                                              String ewe = _errors.Aggregate("",
-                                                                                             (current, s) =>
-                                                                                             current +
-                                                                                             (s + Environment.NewLine));
-                                                              var er = new Windows.ErrorWindow(ewe);
-                                                              er.ShowDialog();
-                                                          }));
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                if (Debugger.IsAttached) Debugger.Break();
-            }
-            
+            Log.Info("UpdateCheckDone Complete");
         }
 
         public void UpdateStatus(string stat)
         {
+            Log.Info(stat);
             Dispatcher.BeginInvoke(new Action(() =>
                                                   {
                                                       try
                                                       {
-                                                          lblStatus.Content = stat;
+                                                          lblStatus.Text = stat;
                                                           listBox1.Items.Add(String.Format("[{0}] {1}" ,
                                                                                            DateTime.Now.
                                                                                                ToShortTimeString() ,
@@ -437,6 +307,7 @@ namespace Octgn.Windows
                                                       }
                                                       catch (Exception e)
                                                       {
+                                                          Log.Error("Update status error",e);
                                                           if(Debugger.IsAttached)Debugger.Break();
                                                       }
                                                   }));
@@ -444,18 +315,23 @@ namespace Octgn.Windows
 
         private static string[] ReadUpdateXml(string url)
         {
+            Log.Info("Reading update xml");
             var values = new string[3];
             try
             {
+                Log.InfoFormat("Downloading info from {0}", url);
                 WebRequest wr = WebRequest.Create(url);
                 wr.Timeout = 15000;
                 WebResponse resp = wr.GetResponse();
                 Stream rgrp = resp.GetResponseStream();
+                Log.Info("Got stream");
                 if (rgrp != null)
                 {
+                    Log.Info("Creating reader");
                     using (XmlReader reader = XmlReader.Create(rgrp))
                     {
-                        
+                        Log.Info("Created reader...reading");
+
                         while (reader.Read())
                         {
                             if (!reader.IsStartElement()) continue;
@@ -464,17 +340,21 @@ namespace Octgn.Windows
                             {
                                 case "version":
                                     if (reader.Read())
+                                    {
+                                        Log.InfoFormat("Reading version {0}", reader.Value);
                                         values[0] = reader.Value;
+                                    }
                                     break;
                                 case "updatepath":
                                     //if (reader.Read())
-                                        //values[1] = Program.WebsitePath + reader.Value;
+                                    //values[1] = Program.WebsitePath + reader.Value;
                                     break;
                                 case "installpath":
                                     if (reader.Read())
                                     {
-                                        values[2] = Program.WebsitePath + reader.Value;
-                                        values[1] = Program.WebsitePath + reader.Value;
+                                        Log.InfoFormat("Reading paths {0} {1}", reader.Value, reader.Value);
+                                        values[2] = AppConfig.WebsitePath + reader.Value;
+                                        values[1] = AppConfig.WebsitePath + reader.Value;
                                     }
                                     break;
 
@@ -483,8 +363,13 @@ namespace Octgn.Windows
                     }
                 }
             }
+            catch (WebException e)
+            {
+                Log.Warn("",e);
+            }
             catch (Exception e)
             {
+                Log.Error("Error",e);
                 Debug.WriteLine(e);
 #if(DEBUG)
                 if (Debugger.IsAttached) Debugger.Break();
@@ -493,28 +378,15 @@ namespace Octgn.Windows
             return values;
         }
 
-        public static bool CheckGameDef(GameDef game)
-        {
-            Program.Game = new Game(game, "TestUser");
-            Program.Game.TestBegin();
-            var engine = new Engine(true);
-            string[] terr = engine.TestScripts(Program.Game);
-            Program.Game.End();
-            if (terr.Length > 0)
-            {
-                String ewe = terr.Aggregate("",
-                                            (current, s) =>
-                                            current +
-                                            (s + Environment.NewLine));
-                var er = new Windows.ErrorWindow(ewe);
-                er.ShowDialog();
-            }
-            return terr.Length == 0;
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!_realCloseWindow) e.Cancel = true;
+            Log.Info("Closing Window");
+            if (!_realCloseWindow)
+            {
+                Log.Info("Not a real close");
+                e.Cancel = true;
+            }else
+            Log.Info("Real close");
         }
     }
 }
