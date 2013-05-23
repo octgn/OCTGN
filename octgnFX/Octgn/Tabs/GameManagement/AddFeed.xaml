@@ -6,8 +6,9 @@
              mc:Ignorable="d" d:DesignWidth="300"
              x:Name="Me"
              DataContext="{Binding ElementName=Me}"
-             Panel.ZIndex="5" Height="Auto">
-    <Border x:Name="BorderHostGame" Width="300" MinHeight="200" Visibility="Visible" Padding="10,10,10,10" Style="{StaticResource Panel}">
+             Panel.ZIndex="5" Height="Auto"
+             Width="330">
+    <Border x:Name="BorderHostGame" Width="330" MinHeight="200" Visibility="Visible" Padding="10,10,10,10" Style="{StaticResource Panel}">
         <Border.Background>
             <LinearGradientBrush EndPoint="0,0" StartPoint="1,0">
                 <LinearGradientBrush.Transform>
@@ -22,6 +23,7 @@
         </Border.Background>
         <Grid>
             <Grid.RowDefinitions >
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -41,15 +43,18 @@
                 <ColumnDefinition Width="85"></ColumnDefinition>
                 <ColumnDefinition Width="100*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.ColumnSpan="2" FontSize="15" HorizontalAlignment="Center">Add A Feed</Label>
-            <Label Grid.Row="1" Grid.ColumnSpan="2" Foreground="Firebrick" Margin="0,10,0,10" Content="{Binding Error}"/>
-            <Label Grid.Row="2" Grid.Column="0">Name</Label>
-            <TextBox Grid.Row="2" x:Name="TextBoxFeedName" Grid.Column="1" Text="{Binding Path=FeedName,Mode=TwoWay}"/>
-            <Label Grid.Row="4" Grid.Column="0">Feed Url/Path</Label>
-            <TextBox Grid.Row="4" x:Name="TextBoxFeedPath" Grid.Column="1" Text="{Binding Path=FeedUrl,Mode=TwoWay}"/>
-            <Button Grid.Row="13" Grid.Column="0" Width="101" HorizontalAlignment="Left" Click="ButtonCancelClick" Content="Cancel" Margin="0,10,0,0" Grid.ColumnSpan="2"></Button>
-            <Button Grid.Row="13" Grid.Column="1" Width="103" HorizontalAlignment="Right" Click="ButtonAddClick" Content="Add" Margin="0,10,0,0"></Button>
-            <ProgressBar Grid.Row="11" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="True"></ProgressBar>
+            <Label Grid.Row="0" Grid.ColumnSpan="2" FontSize="15" HorizontalAlignment="Center">Add A Feed of Games</Label>
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Style="{DynamicResource Panel}" Padding="10,0,10,0" Margin="0,10,0,10">
+                <TextBlock ><Bold>Name:</Bold> Anything to help you remember the feed<LineBreak/><Bold>Feed Url:</Bold> Url to the feed of games</TextBlock>
+            </Border>
+            <Label Grid.Row="2" Grid.ColumnSpan="2" Foreground="Firebrick" Margin="0,10,0,10" Content="{Binding Error}"/>
+            <Label Grid.Row="3" Grid.Column="0">Name</Label>
+            <TextBox Grid.Row="3" x:Name="TextBoxFeedName" Grid.Column="1" Text="{Binding Path=FeedName,Mode=TwoWay}"/>
+            <Label Grid.Row="5" Grid.Column="0">Feed Url/Path</Label>
+            <TextBox Grid.Row="5" x:Name="TextBoxFeedPath" Grid.Column="1" Text="{Binding Path=FeedUrl,Mode=TwoWay}"/>
+            <Button Grid.Row="14" Grid.Column="0" Width="101" HorizontalAlignment="Left" Click="ButtonCancelClick" Content="Cancel" Margin="0,10,0,0" Grid.ColumnSpan="2"></Button>
+            <Button Grid.Row="14" Grid.Column="1" Width="103" HorizontalAlignment="Right" Click="ButtonAddClick" Content="Add" Margin="0,10,0,0"></Button>
+            <ProgressBar Grid.Row="12" Grid.ColumnSpan="2" x:Name="ProgressBar" Height="20" VerticalAlignment="Bottom" Visibility="Hidden" Margin="0,5,0,5" IsIndeterminate="True"></ProgressBar>
         </Grid>
     </Border>
 </UserControl>
