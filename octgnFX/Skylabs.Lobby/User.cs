@@ -37,7 +37,7 @@ namespace Skylabs.Lobby
         /// </param>
         public User(Jid user)
         {
-            this.JidUser = user.Bare;
+            this.JidUser = Jid.UnescapeNode(user.Bare);
             this.Status = UserStatus.Unknown;
             this.CustomStatus = string.Empty;
             this.Email = string.Empty;
@@ -70,7 +70,7 @@ namespace Skylabs.Lobby
         {
             get
             {
-                return this.JidUser.User;
+                return Jid.UnescapeNode(this.JidUser.User);
             }
             set
             {
@@ -89,7 +89,7 @@ namespace Skylabs.Lobby
         {
             get
             {
-                return this.JidUser.Bare.ToLowerInvariant();
+                return Jid.UnescapeNode(this.JidUser.Bare.ToLowerInvariant());
             }
         }
 
@@ -308,6 +308,10 @@ namespace Skylabs.Lobby
         /// </returns>
         public bool Equals(User other)
         {
+            if (this.FullUserName.Contains("tuberculosis") && other.FullUserName.Contains("tuberculosis"))
+            {
+                return other.FullUserName.ToLowerInvariant() == this.FullUserName.ToLowerInvariant();
+            }
             return other.FullUserName.ToLowerInvariant() == this.FullUserName.ToLowerInvariant();
         }
 

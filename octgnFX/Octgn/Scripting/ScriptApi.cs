@@ -363,6 +363,11 @@ namespace Octgn.Scripting
         //ralig98
         public void CardSetIndex(int CardId, int idx, bool TableOnly = false)
         {
+            if (idx < 0)
+            {
+                Program.TraceWarning("Cannot setIndex({0}), number is less than 0",idx);
+                return;
+            }
             Card c = Card.Find(CardId);
             if (TableOnly)
             {

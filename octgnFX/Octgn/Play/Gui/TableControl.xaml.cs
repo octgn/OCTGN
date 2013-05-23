@@ -61,6 +61,31 @@ namespace Octgn.Play.Gui
                             };
             Loaded += delegate { CenterView(); };
             Program.GameEngine.PropertyChanged += GameOnPropertyChanged;
+            this.ManipulationDelta += OnManipulationDelta;
+        }
+
+        private void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e)
+        {
+            e.Handled = true;
+            IsCardSizeValid = false;
+
+            Point center = e.ManipulationOrigin;
+            double oldZoom = Zoom; // May be animated
+
+            // Set the new zoom level
+            if (e.DeltaManipulation.Scale.LengthSquared > 0)
+                Zoom = oldZoom + 0.125;
+            else if (oldZoom > 0.15)
+                Zoom = oldZoom - 0.125;
+            BeginAnimation(ZoomProperty, null); // Stop any animation, which could override the current zoom level
+
+            // Adjust the offset to center the zoom on the mouse pointer
+            double ratio = oldZoom - Zoom;
+            if (Player.LocalPlayer.InvertedTable) ratio = -ratio;
+            Offset += new Vector(center.X * ratio, center.Y * ratio);
+            BeginAnimation(OffsetProperty, null); // Stop any animation, which could override the current Offset
+
+            base.OnManipulationDelta(e);
         }
 
         private void GameOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)

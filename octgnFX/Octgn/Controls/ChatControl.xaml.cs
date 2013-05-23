@@ -24,6 +24,7 @@ namespace Octgn.Controls
     using CodeBits;
 
     using Octgn.Extentions;
+    using Octgn.Utils;
 
     using Skylabs.Lobby;
 
@@ -78,6 +79,32 @@ namespace Octgn.Controls
 
         public OrderedObservableCollection<ChatUserListItem> UserListItems { get; set; }
 
+        public bool IsAdmin
+        {
+            get
+            {
+                if (this.Room == null) return false;
+                return this.Room.AdminList.Any(x => x == Program.LobbyClient.Me);
+            }
+        }
+
+        public bool IsModerator
+        {
+            get
+            {
+                if (this.Room == null) return false;
+                return this.Room.ModeratorList.Any(x => x == Program.LobbyClient.Me);
+            }
+        }
+
+        public bool BanMenuVisible
+        {
+            get
+            {
+                return IsAdmin || IsModerator;
+            }
+        }
+
         public bool ShowChatInputHint
         {
             get
@@ -105,6 +132,9 @@ namespace Octgn.Controls
                 OnPropertyChanged("IsLightTheme");
             }
         }
+
+        public ContextMenu UserContextMenu { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatControl"/> class.
         /// </summary>
@@ -119,9 +149,70 @@ namespace Octgn.Controls
             {
                 return;
             }
+            this.CreateUserContextMenu();
             Program.OnOptionsChanged += ProgramOnOnOptionsChanged;
             Program.LobbyClient.OnDataReceived += LobbyClientOnOnDataReceived;
             this.Loaded += OnLoaded;
+        }
+
+        private void CreateUserContextMenu()
+        {
+            UserContextMenu = new ContextMenu();
+            var whisper = new MenuItem();
+            whisper.Header = "Whisper";
+            whisper.Click += WhisperOnClick;
+            UserContextMenu.Items.Add(whisper);
+
+            var addFriend = new MenuItem();
+            addFriend.Header = "Add Friend";
+            addFriend.Click += AddFriendOnClick;
+            UserContextMenu.Items.Add(addFriend);
+
+            var ban = new MenuItem();
+            ban.Header = "Ban";
+            ban.Click += BanOnClick;
+            UserContextMenu.Items.Add(ban);
+
+            var binding = new System.Windows.Data.Binding();
+            binding.Mode = System.Windows.Data.BindingMode.OneWay;
+            binding.Converter = new BooleanToVisibilityConverter();
+            binding.Source = BanMenuVisible;
+
+            ban.SetBinding(VisibilityProperty, binding);
+
+        }
+
+        private void BanOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as ChatUserListItem;
+            if (ui == null) return;
+            
+        }
+
+        private void AddFriendOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as ChatUserListItem;
+            if (ui == null) return;
+            Program.LobbyClient.SendFriendRequest(ui.User.UserName);
+        }
+
+        private void WhisperOnClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var mi = sender as MenuItem;
+            if (mi == null) return;
+            var cm = mi.Parent as ContextMenu;
+            if (cm == null) return;
+            var ui = cm.PlacementTarget as ChatUserListItem;
+            if (ui == null) return;
+            Room.Whisper(ui.User);
         }
 
         private void OnLoaded(object sender, EventArgs eventArgs)
@@ -199,6 +290,11 @@ namespace Octgn.Controls
             if (string.IsNullOrWhiteSpace(theFrom.UserName))
             {
                 theFrom.UserName = "SYSTEM";
+            }
+
+            if (message.ToLowerInvariant().Contains("@" + Program.LobbyClient.Me.UserName.ToLowerInvariant()))
+            {
+                Sounds.PlayMessageSound();
             }
 
             Dispatcher.Invoke(
@@ -405,7 +501,16 @@ namespace Octgn.Controls
                     }
                 }
 
+                foreach (var u in UserListItems)
+                {
+                    if (u.ContextMenu == null) 
+                        u.ContextMenu = UserContextMenu;
+                }
+
                 this.needsRefresh = false;
+                OnPropertyChanged("IsAdmin");
+                OnPropertyChanged("IsModerator");
+                OnPropertyChanged("BanMenuVisible");
             }
         }
 

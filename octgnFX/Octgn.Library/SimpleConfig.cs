@@ -25,7 +25,7 @@
 
         void WriteValue(string valName, string value);
 
-        IEnumerable<NamedUrl> GetFeeds();
+        IEnumerable<NamedUrl> GetFeeds(bool localOnly = false);
 
         void AddFeed(NamedUrl feed);
 
@@ -184,17 +184,20 @@
             }
         }
 
-        public IEnumerable<NamedUrl> GetFeeds()
+        public IEnumerable<NamedUrl> GetFeeds(bool localOnly = false)
         {
             try
             {
                 Log.Info("Getting feeds");
                 var ret = new List<NamedUrl>();
                 ret.Add(new NamedUrl("Local", Paths.Get().LocalFeedPath));
-                ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
-                Log.Info("Adding remote feeds from feed file");
-                ret.AddRange(this.GetFeedsList().ToList());
-                Log.Info("Got remote feeds from feed file");
+                if (!localOnly)
+                {
+                    ret.Add(new NamedUrl("OCTGN Official", Paths.Get().MainOctgnFeed));
+                    Log.Info("Adding remote feeds from feed file");
+                    ret.AddRange(this.GetFeedsList().ToList());
+                    Log.Info("Got remote feeds from feed file");
+                }
                 return ret;
 
             }

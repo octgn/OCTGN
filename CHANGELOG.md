@@ -1,3 +1,28 @@
+#3.1.33.125
+#3.1.32.125 - Test
++ More verbose buttons and labels for Game Management tab 
++ Allows for spaces and carriage returns before and after feed url
++ Added options for sound
++ Sound alert when someone @yourusername's you in chat
++ Sound alert when someone sends you an whisper
++ Command line based game starting for devs - /table /game=f80624da-58d7-4957-acd6-8a9ccb41619d
++ Fixes issue with cut off hover images
++ Hover chat or player area darkens background for easier reading
+
+#3.1.32.124
+#3.1.31.124 - Test
++ Usernames with spaces display correctly - Kelly
++ Use comma to seperate / commands instead of spaces - Kelly
++ Right click users in chat list - Kelly
++ In game chat resizing - Kelly
++ Can double click in game chat resize to snap chat to full game table height, or double click to snap back again. - Kelly
++ Game devs can now jump directly into a table after the 'Loading Window' using a command - Kelly
++ Loading window now shows which games are being checked to update, and which are updating - Kelly
++ Added a 'Full Game Log' option to the game menu, and the ability to save that log - Kelly
++ Added indenting on multiline chat in game - Kelly
++ Fixed #863 - Kelly
+
+#3.1.31.123
 #3.1.30.123 - Test
 + Proxygen fixed schema and validation on the format attribute. -Gravecorp
 

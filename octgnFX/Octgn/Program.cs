@@ -21,6 +21,8 @@ namespace Octgn
 
     using Microsoft.Win32;
 
+    using Octgn.DataNew;
+    using Octgn.Launcher;
     using Octgn.Windows;
 
     using log4net;
@@ -56,6 +58,8 @@ namespace Octgn
         internal static readonly TraceSource DebugTrace = new TraceSource("DebugTrace", SourceLevels.All);
         internal static readonly CacheTraceListener DebugListener = new CacheTraceListener();
         internal static Inline LastChatTrace;
+
+        internal static bool TableOnly;
 
         private static bool _locationUpdating;
 
@@ -96,15 +100,53 @@ namespace Octgn
             }
             Log.Info("Ping back");
             System.Threading.Tasks.Task.Factory.StartNew(pingOB);
-            Log.Info("Creating main window...");
-            WindowManager.Main = new Main();
-            Log.Info("Main window Created, Launching it.");
-            Application.Current.MainWindow = WindowManager.Main;
-            Log.Info("Main window set.");
-            Log.Info("Launching Main Window");
-            WindowManager.Main.Show();
-            Log.Info("Main Window Launched");
-            
+
+            bool tableOnlyFailed = false;
+
+            int? hostport = null;
+            Guid? gameid = null;
+
+            var os = new Mono.Options.OptionSet()
+                         {
+                             { "t|table", x => TableOnly = true },
+                             { "g|game=",x=> gameid=Guid.Parse(x)}
+                         };
+            try
+            {
+                os.Parse(Environment.GetCommandLineArgs());
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Parse args exception: " +String.Join(",",Environment.GetCommandLineArgs()),e);
+            }
+
+            if (TableOnly)
+            {
+                try
+                {
+                    new GameTableLauncher().Launch(hostport,gameid);
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("Couldn't host/join table mode",e);
+                    tableOnlyFailed = true;
+                    Program.Exit();
+                }
+            }
+
+            if (!TableOnly || tableOnlyFailed)
+            {
+
+                Log.Info("Creating main window...");
+                WindowManager.Main = new Main();
+                Log.Info("Main window Created, Launching it.");
+                Application.Current.MainWindow = WindowManager.Main;
+                Log.Info("Main window set.");
+                Log.Info("Launching Main Window");
+                WindowManager.Main.Show();
+                Log.Info("Main Window Launched");
+            }
+
         }
 
         internal static void pingOB()
@@ -135,6 +177,7 @@ namespace Octgn
 
         internal static void KillOtherOctgn(bool force = false)
         {
+            if (Environment.GetCommandLineArgs().Any(x => x.ToLowerInvariant().Contains("table"))) return;
             Log.Info("Getting octgn processes...");
             var pList = Process.GetProcessesByName("OCTGN");
             Log.Info("Got process list");

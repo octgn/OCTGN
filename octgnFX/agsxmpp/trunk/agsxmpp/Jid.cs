@@ -222,7 +222,7 @@ namespace agsXMPP
 			StringBuilder sb = new StringBuilder();
 			if (user != null)
 			{
-				sb.Append(user);
+                sb.Append(EscapeNode(user));
 				sb.Append("@");
 			}
 			sb.Append(server);

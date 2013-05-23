@@ -1,6 +1,6 @@
 <UserControl x:Class="Octgn.Play.Gui.ChatControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" VerticalContentAlignment="Stretch"
-             HorizontalContentAlignment="Stretch">
+             HorizontalContentAlignment="Stretch" x:Name="Me">
   <UserControl.Resources>
     <Style TargetType="TextBlock">
       <Setter Property="Effect" Value="{x:Null}" />
@@ -22,9 +22,9 @@
       <Rectangle Fill="White" Grid.Row="1" Height="1" />
 
       <TextBox x:Name="input" Grid.Row="2" KeyDown="KeyDownHandler" GotFocus="InputGotFocus" LostFocus="InputLostFocus"
-               BorderThickness="1" Background="Transparent" Style="{x:Null}" />
+               BorderThickness="1" Background="Transparent" Style="{x:Null}" DataContext="{Binding ElementName=Me}"  Visibility="{Binding ShowInput,Converter={StaticResource BooleanToVisibilityConverter}}"/>
       <TextBlock x:Name="watermark" Grid.Row="2" VerticalAlignment="Center" Margin="4,0,4,0" IsHitTestVisible="False"
-                 Text="Type here to chat" Style="{StaticResource HintText}" />
+                 Text="Type here to chat" Style="{StaticResource HintText}" DataContext="{Binding ElementName=Me}"  Visibility="{Binding ShowInput,Converter={StaticResource BooleanToVisibilityConverter}}"/>
     </Grid>
   </Border>
 </UserControl>
