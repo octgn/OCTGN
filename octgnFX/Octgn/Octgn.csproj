@@ -558,6 +558,7 @@
     <EmbeddedResource Include="Resources\StartupMessages.txt" />
     <Resource Include="Resources\log.ico" />
     <Resource Include="Resources\messagenotify.wav" />
+    <Resource Include="Resources\log2.ico" />
     <Content Include="Scripting\Lib\bisect.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
