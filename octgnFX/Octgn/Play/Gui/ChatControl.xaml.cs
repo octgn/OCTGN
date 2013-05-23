@@ -12,6 +12,7 @@ using Octgn.Data;
 namespace Octgn.Play.Gui
 {
     using System.Reflection;
+    using System.Windows.Controls;
     using System.Windows.Media.Animation;
     using System.Windows.Media.Media3D;
     using System.Windows.Threading;
@@ -228,11 +229,20 @@ namespace Octgn.Play.Gui
 
         private void InsertLine(Inline message)
         {
-            var p = (Paragraph)this._ctrl.output.Document.Blocks.LastBlock;
-            if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
+            //TextIndent="-60" Margin="60,20,0,0"
+            var p = new Paragraph();
+            p.TextIndent = -15;
+            p.Margin = new Thickness(15, 0, 0, 0);
             p.Inlines.Add(message);
             Program.LastChatTrace = message;
+            _ctrl.output.Document.Blocks.Add(p);
             _ctrl.output.ScrollToEnd();
+
+            //var p = (Paragraph)this._ctrl.output.Document.Blocks.LastBlock;
+            //if (p.Inlines.Count > 0) p.Inlines.Add(new LineBreak());
+            //p.Inlines.Add(message);
+            //Program.LastChatTrace = message;
+            //_ctrl.output.ScrollToEnd();
         }
 
         private static Inline FormatInline(ChatControl control, Inline inline, TraceEventType eventType, int id, Object[] args = null)
