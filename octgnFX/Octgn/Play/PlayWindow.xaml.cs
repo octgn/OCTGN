@@ -67,8 +67,8 @@ namespace Octgn.Play
         public PlayWindow(bool islocal = false)
             : base()
         {
-            GameLogWindow.Show();
-            GameLogWindow.Visibility = Visibility.Hidden;
+            //GameLogWindow.Show();
+            //GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
             InitializeComponent();
