@@ -1,14 +1,15 @@
 #3.1.32.124
 #3.1.31.124 - Test
-+ Usernames with spaces display correctly
-+ Use comma to seperate / commands instead of spaces
-+ Right click users in chat list
-+ In game chat resizing
-+ Can double click in game chat resize to snap chat to full game table height, or double click to snap back again.
-+ Game devs can now jump directly into a table after the 'Loading Window' using a command
-+ Loading window now shows which games are being checked to update, and which are updating
-+ Added a 'Full Game Log' option to the game menu, and the ability to save that log
-+ Added indenting on multiline chat in game
++ Usernames with spaces display correctly - Kelly
++ Use comma to seperate / commands instead of spaces - Kelly
++ Right click users in chat list - Kelly
++ In game chat resizing - Kelly
++ Can double click in game chat resize to snap chat to full game table height, or double click to snap back again. - Kelly
++ Game devs can now jump directly into a table after the 'Loading Window' using a command - Kelly
++ Loading window now shows which games are being checked to update, and which are updating - Kelly
++ Added a 'Full Game Log' option to the game menu, and the ability to save that log - Kelly
++ Added indenting on multiline chat in game - Kelly
++ Fixed #863 - Kelly
 
 #3.1.31.123
 #3.1.30.123 - Test
