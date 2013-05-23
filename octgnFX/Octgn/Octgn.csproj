@@ -242,9 +242,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\WpfAnimatedGif.1.4.2\lib\net\WpfAnimatedGif.dll</HintPath>
     </Reference>
-    <Reference Include="WPFToolkit">
-      <HintPath>..\..\..\clientservices\remindertestmvvm\packages\extended.wpf.toolkit.1.9.0\lib\net35\WPFToolkit.dll</HintPath>
-    </Reference>
     <Reference Include="Xceed.Wpf.DataGrid">
       <HintPath>..\..\packages\Extended.Wpf.Toolkit.1.9.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
     </Reference>
