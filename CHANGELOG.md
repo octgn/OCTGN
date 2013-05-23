@@ -1,5 +1,8 @@
-#3.1.33.125
-#3.1.32.125 - Test
+#3.1.33.126 - Test
++ Switched icon for game log window
+
+#3.1.33.124
+#3.1.32.124 - Test
 + More verbose buttons and labels for Game Management tab 
 + Allows for spaces and carriage returns before and after feed url
 + Added options for sound
