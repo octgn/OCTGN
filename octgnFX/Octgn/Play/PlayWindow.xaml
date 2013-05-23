@@ -46,6 +46,8 @@
                 <MenuItem Header="_Save Deck" Click="LimitedSaveClicked"/>
                 <MenuItem Header="L_imited Game" Command="gui:Commands.LimitedGame"/>
                 <Separator></Separator>
+                <MenuItem Header="Full _Game Log" Click="ShowGameLog"/>
+                <Separator></Separator>
                 <MenuItem Header="_Fullscreen" Command="gui:Commands.FullScreen" IsChecked="{Binding IsFullScreen, ElementName=self, Mode=OneWay}"/>
                 <MenuItem Header="_Reset" Command="gui:Commands.ResetGame"/>
                 <MenuItem Header="_Quit" Command="gui:Commands.Quit"/>

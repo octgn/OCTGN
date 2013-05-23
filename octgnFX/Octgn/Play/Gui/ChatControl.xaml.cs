@@ -11,14 +11,42 @@ using Octgn.Data;
 
 namespace Octgn.Play.Gui
 {
+    using System.Reflection;
     using System.Windows.Media.Animation;
     using System.Windows.Media.Media3D;
     using System.Windows.Threading;
 
+    using Microsoft.Win32;
+
+    using Octgn.Annotations;
     using Octgn.Core.DataExtensionMethods;
 
-    partial class ChatControl
+    using log4net;
+
+    partial class ChatControl : INotifyPropertyChanged
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private bool showInput = true;
+
+        public bool IgnoreMute { get; set; }
+
+        public bool ShowInput
+        {
+            get
+            {
+                return this.showInput;
+            }
+            set
+            {
+                if (value.Equals(this.showInput))
+                {
+                    return;
+                }
+                this.showInput = value;
+                this.OnPropertyChanged("ShowInput");
+            }
+        }
+
         public ChatControl()
         {
             InitializeComponent();
@@ -77,6 +105,45 @@ namespace Octgn.Play.Gui
         {
             input.Focus();
         }
+
+        public void Save()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(new Action(this.Save));
+                return;
+            }
+            try
+            {
+                var sfd = new SaveFileDialog { Filter = "Octgn Game Log (*.txt) | *.txt" };
+                if (sfd.ShowDialog().GetValueOrDefault(false))
+                {
+                    var tr = new TextRange(output.Document.ContentStart, output.Document.ContentEnd);
+                    using (var stream = sfd.OpenFile())
+                    {
+                        tr.Save(stream, DataFormats.Text);
+                        stream.Flush();
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Log.Warn("Save log error",e);
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 
     internal sealed class ChatTraceListener : TraceListener
@@ -112,11 +179,10 @@ namespace Octgn.Play.Gui
         {
             Program.LastChatTrace = null;
 
-            if (eventType > TraceEventType.Warning &&
-                IsMuted() &&
-                ((id & EventIds.Explicit) == 0))
-                return;
-
+            if (!_ctrl.IgnoreMute)
+            {
+                if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) return;
+            }
             if (id == EventIds.Turn)
             {
                 var p = new Paragraph
@@ -148,11 +214,10 @@ namespace Octgn.Play.Gui
         {
             Program.LastChatTrace = null;
 
-            if (eventType > TraceEventType.Warning &&
-                IsMuted() &&
-                ((id & EventIds.Explicit) == 0))
-                return;
-
+            if (!_ctrl.IgnoreMute)
+            {
+                if (eventType > TraceEventType.Warning && IsMuted() && ((id & EventIds.Explicit) == 0)) return;
+            }
             InsertLine(FormatMsg(_ctrl,message, eventType, id));
         }
 

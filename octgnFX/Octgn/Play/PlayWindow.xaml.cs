@@ -28,6 +28,8 @@ namespace Octgn.Play
     using Octgn.Core.DataManagers;
     using Octgn.DataNew.Entities;
     using Octgn.Library.Exceptions;
+    using Octgn.Windows;
+
     using log4net;
     using Octgn.Controls;
 
@@ -58,9 +60,14 @@ namespace Octgn.Play
 
         private Storyboard _fadeIn, _fadeOut;
         private static System.Collections.ArrayList fontName = new System.Collections.ArrayList();
+
+        internal GameLog GameLogWindow = new GameLog();
+
         public PlayWindow(bool islocal = false)
             : base()
         {
+            GameLogWindow.Show();
+            GameLogWindow.Visibility = Visibility.Hidden;
             Program.Dispatcher = Dispatcher;
             DataContext = Program.GameEngine;
             InitializeComponent();
@@ -211,8 +218,13 @@ namespace Octgn.Play
         protected void Close(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
-
+            GameLogWindow.RealClose();
             Close();
+        }
+
+        public void ShowGameLog(object sender, RoutedEventArgs routedEventArgs)
+        {
+            GameLogWindow.Visibility = Visibility.Visible;
         }
 
         protected override void OnClosing(CancelEventArgs e)
