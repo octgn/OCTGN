@@ -90,7 +90,7 @@
                 </StackPanel>
             </Border>
         </StackPanel>
-        <gui:TableControl Grid.Row="2" Grid.RowSpan="3"  x:Name="table" DataContext="{Binding Table}" KeyboardNavigation.IsTabStop="True"
+        <gui:TableControl Grid.Row="2" Grid.RowSpan="1"  x:Name="table" DataContext="{Binding Table}" KeyboardNavigation.IsTabStop="True"
                       KeyboardNavigation.TabNavigation="Contained"/>
         <ctrl:ChildWindowManager x:Name="wndManager" Grid.Row="2" Grid.RowSpan="1" />
         <Decorator Grid.Row="2"  x:Name="backstage" Visibility="Collapsed"/>

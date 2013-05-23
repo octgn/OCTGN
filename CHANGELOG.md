@@ -1,5 +1,6 @@
 #3.1.33.126 - Test
 + Switched icon for game log window
++ Got rid of game player tab transparency
 
 #3.1.33.124
 #3.1.32.124 - Test
