@@ -1,3 +1,7 @@
+#3.1.32.125 - Test
++ More verbose buttons and labels for Game Management tab 
++ Allows for spaces and carriage returns before and after feed url
+
 #3.1.32.124
 #3.1.31.124 - Test
 + Usernames with spaces display correctly - Kelly
