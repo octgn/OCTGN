@@ -24,6 +24,7 @@ namespace Octgn.Controls
     using CodeBits;
 
     using Octgn.Extentions;
+    using Octgn.Utils;
 
     using Skylabs.Lobby;
 
@@ -289,6 +290,11 @@ namespace Octgn.Controls
             if (string.IsNullOrWhiteSpace(theFrom.UserName))
             {
                 theFrom.UserName = "SYSTEM";
+            }
+
+            if (message.ToLowerInvariant().Contains("@" + Program.LobbyClient.Me.UserName.ToLowerInvariant()))
+            {
+                Sounds.PlayMessageSound();
             }
 
             Dispatcher.Invoke(

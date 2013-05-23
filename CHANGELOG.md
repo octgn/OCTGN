@@ -1,6 +1,9 @@
 #3.1.32.125 - Test
 + More verbose buttons and labels for Game Management tab 
 + Allows for spaces and carriage returns before and after feed url
++ Added options for sound
++ Sound alert when someone @yourusername's you in chat
++ Sound alert when someone sends you an whisper
 
 #3.1.32.124
 #3.1.31.124 - Test

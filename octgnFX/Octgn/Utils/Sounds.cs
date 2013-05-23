@@ -1,26 +1,75 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Media;
-using System.Text;
 
 namespace Octgn.Utils
 {
+    using System.Diagnostics;
+    using System.Reflection;
+    using System.Threading.Tasks;
+    using System.Windows;
+
+    using log4net;
+
     public class Sounds
     {
+        internal static ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         public static void PlaySound(Stream sound)
         {
-            SoundPlayer player = new SoundPlayer(sound);
-            player.Play();
-            player.Dispose();
+            if (SubscriptionModule.Get().IsSubscribed == false) return;
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    using(sound)
+                    using (var player = new SoundPlayer(sound))
+                    {
+                        player.PlaySync();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("Play Sound Error", e);
+                }
+            });
         }
 
         public static void PlaySound(string file)
         {
-            SoundPlayer player = new SoundPlayer(file);
-            player.Play();
-            player.Dispose();
+            if (SubscriptionModule.Get().IsSubscribed == false) return;
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    using (var player = new SoundPlayer(file))
+                    {
+                        player.PlaySync();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Log.Warn("Play Sound Error", e);
+                }
+            });
+        }
+
+        public static void PlayMessageSound()
+        {
+            if (Prefs.EnableNameSound)
+            {
+                try
+                {
+                    var si = Application.GetResourceStream(new Uri("pack://application:,,,/OCTGN;component/Resources/messagenotify.wav"));
+                    PlaySound(si.Stream);
+                }
+                catch (Exception e)
+                {
+                    Debugger.Break();
+                }
+            }
         }
     }
 }
